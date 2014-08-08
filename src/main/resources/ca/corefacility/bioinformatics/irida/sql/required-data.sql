@@ -277,7 +277,7 @@ insert into related_project (`subject_id`, `relatedProject_id`, `createdDate`) V
 insert into related_project (`subject_id`, `relatedProject_id`, `createdDate`) VALUES (2,5,now());
 
 -- remote apis
-insert into remote_api (clientId,clientSecret,description,serviceURI) values ("webClient","webClientSecret","A local testing api","http://localhost:8080");
+insert into remote_api (clientId,clientSecret,description,serviceURI,createdDate) values ("webClient","webClientSecret","A local testing api","http://localhost:8080",now());
 
 -- client details
 insert into client_details (clientId, clientSecret, token_validity, createdDate) values ("sequencer", "N9Ywc6GKWWZotzsJGutj3BZXJDRn65fXJqjrk29yTjI", 43200,now());

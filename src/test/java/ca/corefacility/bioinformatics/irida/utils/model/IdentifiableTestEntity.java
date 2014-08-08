@@ -1,9 +1,11 @@
 package ca.corefacility.bioinformatics.irida.utils.model;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
 import org.hibernate.envers.Audited;
 
 /**
@@ -90,10 +93,15 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
         this.label = label;
     }
 	
-    @Override
-    public Date getTimestamp() {
-        return createdDate;
-    }
+	@Override
+	public Date getTimestamp() {
+		return getCreatedDate();
+	}
+
+	@Override
+	public Date getCreatedDate() {
+		return createdDate;
+	}
 
     @Override
     public int hashCode() {

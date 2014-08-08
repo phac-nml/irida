@@ -281,9 +281,9 @@ public class ProjectServiceImplIT {
 
 		// test sorting
 		searchPagedProjectsForUser = projectService.searchProjectUsers(
-				ProjectUserJoinSpecification.searchProjectNameWithUser("project", user), 0, 10, Direction.ASC, "name");
+				ProjectUserJoinSpecification.searchProjectNameWithUser("project", user), 0, 10, Direction.ASC, "project.name");
 		Page<ProjectUserJoin> searchDesc = projectService.searchProjectUsers(
-				ProjectUserJoinSpecification.searchProjectNameWithUser("project", user), 0, 10, Direction.DESC, "name");
+				ProjectUserJoinSpecification.searchProjectNameWithUser("project", user), 0, 10, Direction.DESC, "project.name");
 		assertEquals(2, searchPagedProjectsForUser.getTotalElements());
 
 		List<ProjectUserJoin> reversed = Lists.reverse(searchDesc.getContent());

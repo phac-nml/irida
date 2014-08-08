@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.model.Timestamped;
 import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
@@ -30,10 +31,12 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class CRUDServiceImpl<KeyType extends Serializable, ValueType> implements CRUDService<KeyType, ValueType> {
+public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Timestamped> implements CRUDService<KeyType, ValueType> {
 	private static final String NO_SUCH_ID_EXCEPTION = "No such identifier exists in the database.";
 
 	protected static final String CREATED_DATE_SORT_PROPERTY = "createdDate";
+
+	private final static String[] DEFAULT_SORT_PROPERTIES = { CREATED_DATE_SORT_PROPERTY };
 
 	protected final IridaJpaRepository<ValueType, KeyType> repository;
 	protected final Validator validator;
@@ -195,6 +198,13 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType> implements
 	@Override
 	public Page<ValueType> search(Specification<ValueType> specification, int page, int size, Direction order,
 			String... sortProperties) {
+		// if the sort properties are null, empty, or are an empty string, use
+		// CREATED_DATE
+		if (sortProperties == null || sortProperties.length == 0
+				|| (sortProperties.length == 1 && sortProperties[0].equals(""))) {
+			sortProperties = DEFAULT_SORT_PROPERTIES;
+		}
+
 		return repository.findAll(specification, new PageRequest(page, size, order, sortProperties));
 	}
 }

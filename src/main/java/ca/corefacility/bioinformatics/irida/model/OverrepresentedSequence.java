@@ -137,6 +137,11 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 
 	@Override
 	public Date getTimestamp() {
+		return getCreatedDate();
+	}
+
+	@Override
+	public Date getCreatedDate() {
 		return createdDate;
 	}
 }

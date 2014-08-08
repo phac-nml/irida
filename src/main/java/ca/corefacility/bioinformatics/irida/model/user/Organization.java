@@ -16,6 +16,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.URL;
 
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
@@ -29,7 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 @Entity
 @Table(name = "organization")
 @Audited
-public class Organization {
+public class Organization implements IridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -101,6 +102,16 @@ public class Organization {
 	}
 
 	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	@Override
+	public String getLabel() {
+		return centreName;
+	}
+
+	@Override
+	public Date getTimestamp() {
 		return createdDate;
 	}
 }
