@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultit
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
@@ -94,6 +95,18 @@ public class WorkflowManagementServiceGalaxyIT {
 		return analysisSubmission;
 	}
 	
+	private void waitForAnalysisFinished(GalaxyAnalysisId analysisId) throws WorkflowException, InterruptedException {
+		final int max = 1000;
+		final int time = 5000;
+		for (int i = 0; i < max; i++) {
+			WorkflowStatus status = workflowManagement.getWorkflowStatus(analysisId);
+			if (WorkflowState.OK.equals(status.getState())) {
+				break;
+			}
+			Thread.sleep(time);
+		}
+	}
+	
 	/**
 	 * Asserts that the given status is in a valid state for a workflow.
 	 * @param status
@@ -108,9 +121,10 @@ public class WorkflowManagementServiceGalaxyIT {
 	/**
 	 * Tests out successfully submitting a workflow for execution.
 	 * @throws WorkflowException
+	 * @throws InterruptedException 
 	 */
 	@Test
-	public void testExecuteAnalysisSuccess() throws WorkflowException {
+	public void testExecuteAnalysisSuccess() throws WorkflowException, InterruptedException {
 		AnalysisSubmission<ExecutionManagerGalaxy> analysisSubmission = buildAnalysisSubmission();
 		
 		GalaxyAnalysisId analysisId = workflowManagement.executeAnalysis(analysisSubmission);
@@ -118,6 +132,16 @@ public class WorkflowManagementServiceGalaxyIT {
 		
 		WorkflowStatus status = workflowManagement.getWorkflowStatus(analysisId);
 		assertValidStatus(status);
+		
+		waitForAnalysisFinished(analysisId);
+		
+		Analysis analysis = workflowManagement.getAnalysisResults(analysisId);
+		assertTrue(analysis instanceof AnalysisTest);
+		AnalysisTest analysisResults = (AnalysisTest)analysis;
+		
+		Path outputFile = analysisResults.getOutputFile();
+		assertNotNull(outputFile);
+		assertTrue(outputFile.toFile().exists());
 	}
 
 	/**
