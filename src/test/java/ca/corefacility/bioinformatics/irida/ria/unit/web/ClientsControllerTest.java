@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
@@ -30,11 +31,13 @@ import com.google.common.collect.Lists;
 public class ClientsControllerTest {
 	private IridaClientDetailsService clientDetailsService;
 	private ClientsController controller;
+	private MessageSource messageSource;
 
 	@Before
 	public void setUp() {
 		clientDetailsService = mock(IridaClientDetailsService.class);
-		controller = new ClientsController(clientDetailsService);
+		messageSource = mock(MessageSource.class);
+		controller = new ClientsController(clientDetailsService, messageSource);
 	}
 
 	@Test
