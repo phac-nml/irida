@@ -35,6 +35,8 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType> implements
 
 	protected static final String CREATED_DATE_SORT_PROPERTY = "createdDate";
 
+	private final static String[] DEFAULT_SORT_PROPERTIES = { CREATED_DATE_SORT_PROPERTY };
+
 	protected final IridaJpaRepository<ValueType, KeyType> repository;
 	protected final Validator validator;
 	protected final Class<ValueType> valueType;
@@ -199,7 +201,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType> implements
 		// CREATED_DATE
 		if (sortProperties == null || sortProperties.length == 0
 				|| (sortProperties.length == 1 && sortProperties[0].equals(""))) {
-			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
+			sortProperties = DEFAULT_SORT_PROPERTIES;
 		}
 
 		return repository.findAll(specification, new PageRequest(page, size, order, sortProperties));
