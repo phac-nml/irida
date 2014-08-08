@@ -41,11 +41,12 @@ import com.google.common.collect.Maps;
  *
  */
 @Entity
-@Table(name = "client_details", uniqueConstraints = { @UniqueConstraint(columnNames = "clientId", name = "UK_CLIENT_DETAILS_CLIENT_ID") })
+@Table(name = "client_details", uniqueConstraints = { @UniqueConstraint(columnNames = "clientId", name = IridaClientDetails.CLIENT_ID_CONSTRAINT_NAME) })
 @Audited
 public class IridaClientDetails implements ClientDetails, IridaThing {
 	private static final long serialVersionUID = -1593194281520695701L;
 
+	public final static String CLIENT_ID_CONSTRAINT_NAME = "UK_CLIENT_DETAILS_CLIENT_ID";
 	// 12 hours
 	public final static Integer DEFAULT_TOKEN_VALIDITY = 43200;
 	public final static Integer DEFAULT_REFRESH_TOKEN_VALIDITY = 43200;
