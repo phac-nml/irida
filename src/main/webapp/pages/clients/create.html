@@ -38,7 +38,7 @@
 							<div class="form-group">
 								<label class="control-label" th:text="#{client.grant-types}" for="systemRole">_Grant Types_</label>
 								<div id="grant-error" th:if="${#maps.containsKey(errors, 'grant')}" th:text="${errors.grant}" class="alert alert-warning">_Role Error_</div>
-								<select multiple="multiple" id="authorizedGrantTypes" name="authorizedGrantTypes" class="form-control input-full" required="required" >
+								<select id="authorizedGrantTypes" name="authorizedGrantTypes" class="form-control input-full" required="required" >
                                     <option value="password">Password</option>
                                     <option value="authorization_code">Authorization Code</option>
 								</select>
