@@ -39,8 +39,7 @@
 								<label class="control-label" th:text="#{client.grant-types}" for="systemRole">_Grant Types_</label>
 								<div id="grant-error" th:if="${#maps.containsKey(errors, 'grant')}" th:text="${errors.grant}" class="alert alert-warning">_Role Error_</div>
 								<select id="authorizedGrantTypes" name="authorizedGrantTypes" class="form-control input-full" required="required" >
-                                    <option value="password">Password</option>
-                                    <option value="authorization_code">Authorization Code</option>
+                                    <option th:each="grant : ${available_grants}" th:value="${grant}" th:text="${grant}"/>
 								</select>
 							</div>
 							
@@ -59,9 +58,7 @@
 	<div layout:fragment="scripts" th:inline="javascript">
 		<script type="text/javascript">
 			$(document).ready(function () {
-				$("#authorizedGrantTypes").select2({
-						placeholder: [[#{client.add.selectGrant}]]
-				});
+				$("#authorizedGrantTypes").select2();
 			});
 			
 		</script>

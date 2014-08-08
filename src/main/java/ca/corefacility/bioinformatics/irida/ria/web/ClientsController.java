@@ -56,6 +56,8 @@ public class ClientsController {
 			"createdDate");
 	private static final String SORT_ASCENDING = "asc";
 
+	private final List<String> AVAILABLE_GRANTS = Lists.newArrayList("password", "authorization_code");
+
 	@Autowired
 	public ClientsController(IridaClientDetailsService clientDetailsService, MessageSource messageSource) {
 		this.clientDetailsService = clientDetailsService;
@@ -97,6 +99,8 @@ public class ClientsController {
 			model.addAttribute("errors", new HashMap<String, String>());
 		}
 
+		model.addAttribute("available_grants", AVAILABLE_GRANTS);
+
 		// set the default token validity
 		if (!model.containsAttribute("given_tokenValidity")) {
 			model.addAttribute("given_tokenValidity", IridaClientDetails.DEFAULT_TOKEN_VALIDITY);
@@ -116,12 +120,16 @@ public class ClientsController {
 			responsePage = "redirect:/clients/" + create.getId();
 		} catch (DataIntegrityViolationException ex) {
 			if (ex.getMessage().contains(IridaClientDetails.CLIENT_ID_CONSTRAINT_NAME)) {
-				errors.put("clientId", messageSource.getMessage("user.edit.emailConflict", null, locale));
+				errors.put("clientId", messageSource.getMessage("client.add.clientId.exists", null, locale));
 			}
 		}
-		
-		if(!errors.isEmpty()){
-			model.addAttribute("errors",errors);
+
+		if (!errors.isEmpty()) {
+			model.addAttribute("errors", errors);
+			
+			model.addAttribute("given_clientId",client.getClientId());
+			model.addAttribute("given_tokenValidity",client.getAccessTokenValiditySeconds());
+			
 			responsePage = getAddClientPage(model);
 		}
 
