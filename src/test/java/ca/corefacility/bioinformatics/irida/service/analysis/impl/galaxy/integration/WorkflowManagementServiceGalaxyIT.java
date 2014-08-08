@@ -51,6 +51,8 @@ public class WorkflowManagementServiceGalaxyIT {
 	private Path dataFile;
 	private Path referenceFile;
 	private Set<Path> sequenceFiles;
+	
+	private GalaxyAnalysisId invalidAnalysisId;
 
 	private WorkflowManagementServiceGalaxy workflowManagement;
 	
@@ -67,6 +69,8 @@ public class WorkflowManagementServiceGalaxyIT {
 		sequenceFiles.add(dataFile);
 		
 		workflowManagement = new WorkflowManagementServiceGalaxy();
+		
+		invalidAnalysisId = new GalaxyAnalysisId("invalid");
 	}
 	
 	private AnalysisSubmission buildAnalysisSubmission(String workflowId) {
@@ -119,5 +123,23 @@ public class WorkflowManagementServiceGalaxyIT {
 				buildAnalysisSubmission(localGalaxy.getInvalidWorkflowId());
 		
 		workflowManagement.executeAnalysis(analysisSubmission);
+	}
+	
+	/**
+	 * Tests out getting a workflow status from an invalid workflow id.
+	 * @throws WorkflowException 
+	 */
+	@Test(expected=WorkflowException.class)
+	public void testGetWorkflowStatusInvalidId() throws WorkflowException {
+		workflowManagement.getWorkflowStatus(invalidAnalysisId);
+	}
+	
+	/**
+	 * Tests out canceling an analysis with an invalid id.
+	 * @throws WorkflowException 
+	 */
+	@Test(expected=WorkflowException.class)
+	public void testCancelAnalysisInvalidId() throws WorkflowException {
+		workflowManagement.cancelAnalysis(invalidAnalysisId);
 	}
 }
