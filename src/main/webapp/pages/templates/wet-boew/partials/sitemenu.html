@@ -40,6 +40,12 @@
                 </li>
                 <li class="pull-right">
                     <ul class="list-inline menu">
+                        <li sec:authorize="hasRole('ROLE_ADMIN')"><a href="#admin" class="item" th:text="#{nav.main.admin}">_Admin_</a>
+                            <ul class="sm list-unstyled" role="menu">
+                                <li><a href="#" th:href="@{/clients}" th:text="#{nav.main.clients}">_Clients_</a>
+                                </li>
+                            </ul>
+                        </li>
                         <li><a href="#contribute" class="item" th:text="#{nav.main.settings}">Settings</a>
                             <ul class="sm list-unstyled" role="menu">
                                 <li><a href="#" th:href="@{/users/current}" th:text="#{nav.main.account}">Account</a>
