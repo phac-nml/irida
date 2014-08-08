@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="templates/wet-boew/wet-layout">
+<head>
+<title th:text="#{client.create}">_Create Client_</title>
+</head>
+<body>
+	<div class="container" layout:fragment="content">
+		<div class="row">
+			<div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">_MENU_</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
+				<form role="form" action="/clients/create"
+					th:action="@{/clients/create}" method="post">
+					<section class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title" th:text="#{client.create}">_Create Client_</h3>
+						</div>
+						<div class="panel-body">
+							<div class="form-group">
+								<label class="control-label" th:text="#{client.clientid}" for="clientId">_Username_</label> 
+								<div th:if="${#maps.containsKey(errors, 'clientId')}" th:text="${errors.clientId}" class="alert alert-warning">_Client ID Error_</div>
+								<input type="text" id="clientId" name="clientId" class="form-control input-full" required="required" 
+									th:placeholder="#{client.clientid}" th:value="${given_clientId}"/>
+							</div>
+                            
+                            <div class="form-group">
+                                <label class="control-label" th:text="#{client.details.tokenValidity}" for="clientId">_Token Validity_</label> 
+                                <div th:if="${#maps.containsKey(errors, 'tokenValidity')}" th:text="${errors.tokenValidity}" class="alert alert-warning">_Token Validity Error_</div>
+                                <input type="text" id="tokenValidity" name="tokenValidity" class="form-control input-full" required="required" 
+                                    th:placeholder="#{client.details.tokenValidity}" th:value="${given_tokenValidity}"/>
+                            </div>
+							
+
+							<div class="form-group">
+								<label class="control-label" th:text="#{client.grant-types}" for="systemRole">_Grant Types_</label>
+								<div id="grant-error" th:if="${#maps.containsKey(errors, 'grant')}" th:text="${errors.grant}" class="alert alert-warning">_Role Error_</div>
+								<select multiple="multiple" id="authorizedGrantTypes" name="authorizedGrantTypes" class="form-control input-full" required="required" >
+                                    <option value="password">Password</option>
+                                    <option value="authorization_code">Authorization Code</option>
+								</select>
+							</div>
+							
+						</div>
+                        <div class="panel-footer text-right">
+                            <a type="reset" class="btn btn-default" href="#" th:href="@{/clients}">Cancel</a>
+                            <button type="submit" th:text="#{client.create.button}" class="btn btn-primary submit">Create User</button>
+                        </div>
+					</section>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+	<div layout:fragment="scripts" th:inline="javascript">
+		<script type="text/javascript">
+			$(document).ready(function () {
+				$("#authorizedGrantTypes").select2({
+						placeholder: [[#{client.add.selectGrant}]]
+				});
+			});
+			
+		</script>
+	</div>
+</body>
+</html>
