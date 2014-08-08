@@ -320,11 +320,9 @@
 						</goals>
 						<configuration>
 							<!-- Uncomment below to disable Galaxy integration tests -->
-							<!-- 
 							<excludes>
 			                        		<exclude>/ca/corefacility/bioinformatics/irida/pipeline/upload/galaxy/**</exclude>
                     					</excludes> 
-							-->
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
 								<test.galaxy.repository.url>${test.galaxy.repository.url}</test.galaxy.repository.url>

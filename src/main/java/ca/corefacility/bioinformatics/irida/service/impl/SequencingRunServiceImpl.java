@@ -48,12 +48,21 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional(readOnly = true)
+	@Override
+	public SequencingRun read(Long id) {
+		return super.read(id);
+	}
+
+	/**
 	 * {@inheritDoc }
 	 */
 	@Override
 	@Transactional
 	public void addSequenceFileToSequencingRun(SequencingRun run, SequenceFile file) {
-		// attach a copy of the file to the current transaction. 
+		// attach a copy of the file to the current transaction.
 		file = sequenceFileRepository.findOne(file.getId());
 		file.setSequencingRun(run);
 		sequenceFileRepository.save(file);
@@ -87,23 +96,22 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 		SequencingRun read = read(id);
 		Set<SequenceFile> filesForSequencingRun = sequenceFileRepository.findSequenceFilesForSequencingRun(read);
 
-		//Get the Samples used in the SequencingRun that is going to be deleted
-		for(SequenceFile file : filesForSequencingRun){
+		// Get the Samples used in the SequencingRun that is going to be deleted
+		for (SequenceFile file : filesForSequencingRun) {
 			Join<Sample, SequenceFile> sampleForSequenceFile = ssfRepository.getSampleForSequenceFile(file);
 			logger.trace("Sample " + sampleForSequenceFile.getSubject().getId() + " is used in this run");
 			referencedSamples.add(sampleForSequenceFile.getSubject());
 		}
-		
 
 		// Delete the run
 		logger.trace("Deleting SequencingRun");
 		super.delete(id);
 
-		//Search if samples are empty.  If they are, delete the sample.
-		for(Sample sample : referencedSamples){
+		// Search if samples are empty. If they are, delete the sample.
+		for (Sample sample : referencedSamples) {
 			List<Join<Sample, SequenceFile>> filesForSample = ssfRepository.getFilesForSample(sample);
-			if(filesForSample.isEmpty()){
-				logger.trace("Sample " + sample.getId() +" is empty.  Deleting sample");
+			if (filesForSample.isEmpty()) {
+				logger.trace("Sample " + sample.getId() + " is empty.  Deleting sample");
 				sampleRepository.delete(sample.getId());
 			}
 		}
