@@ -49,4 +49,9 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
 	}
+
+	@Override
+	public Date getCreatedDate() {
+		return createdDate;
+	}
 }
