@@ -9,10 +9,11 @@ import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.service.analysis.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.WorkflowManagementServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integration.ExecutionManagerGalaxy;
 
 public class WorkflowManagementServiceGalaxyTest {
 	
-	@Mock private AnalysisSubmission analysisSubmission;
+	@Mock private AnalysisSubmission<ExecutionManagerGalaxy> analysisSubmission;
 	@Mock private GalaxyAnalysisId id;
 	
 	private WorkflowManagementServiceGalaxy workflowManagement;

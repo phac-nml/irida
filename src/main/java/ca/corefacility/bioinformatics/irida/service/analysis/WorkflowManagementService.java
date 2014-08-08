@@ -10,7 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public interface WorkflowManagementService<ID extends RemoteAnalysisId> {
+public interface WorkflowManagementService<ID extends RemoteAnalysisId, T extends ExecutionManager> {
 
 	/**
 	 * Submits the given analysis for processing on a remote workflow manager.
@@ -18,7 +18,7 @@ public interface WorkflowManagementService<ID extends RemoteAnalysisId> {
 	 * @return  An id used to access information about the remote workflow.
 	 * @throws WorkflowException  If there was an issue executing the workflow.
 	 */
-	public ID executeAnalysis(AnalysisSubmission analysisSubmission)
+	public ID executeAnalysis(AnalysisSubmission<T> analysisSubmission)
 		throws WorkflowException;
 	
 	/**

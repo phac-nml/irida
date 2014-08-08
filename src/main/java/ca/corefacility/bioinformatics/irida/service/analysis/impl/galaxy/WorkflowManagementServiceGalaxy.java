@@ -9,13 +9,15 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysis
 import ca.corefacility.bioinformatics.irida.service.analysis.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.analysis.Workflow;
 import ca.corefacility.bioinformatics.irida.service.analysis.WorkflowManagementService;
+import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integration.ExecutionManagerGalaxy;
 
 /**
  * Implements workflow management for a Galaxy-based workflow execution system.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class WorkflowManagementServiceGalaxy implements WorkflowManagementService<GalaxyAnalysisId> {
+public class WorkflowManagementServiceGalaxy implements
+	WorkflowManagementService<GalaxyAnalysisId, ExecutionManagerGalaxy> {
 	
 //	private static final Logger logger = LoggerFactory.getLogger(WorkflowManagementServiceGalaxy.class);
 //	
@@ -38,7 +40,7 @@ public class WorkflowManagementServiceGalaxy implements WorkflowManagementServic
 
 	@Override
 	public GalaxyAnalysisId executeAnalysis(
-			AnalysisSubmission analysisSubmission) throws WorkflowException {
+			AnalysisSubmission<ExecutionManagerGalaxy> analysisSubmission) throws WorkflowException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkArgument(validateWorkflow(analysisSubmission.getWorkflow()), "workflow is invalid");
 		

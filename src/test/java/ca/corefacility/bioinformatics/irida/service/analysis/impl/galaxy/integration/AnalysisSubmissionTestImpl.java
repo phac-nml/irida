@@ -7,7 +7,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.service.analysis.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.analysis.Workflow;
 
-public class AnalysisSubmissionTestImpl implements AnalysisSubmission {
+public class AnalysisSubmissionTestImpl implements AnalysisSubmission<ExecutionManagerGalaxy> {
 
 	@Override
 	public Workflow getWorkflow() {
@@ -25,12 +25,17 @@ public class AnalysisSubmissionTestImpl implements AnalysisSubmission {
 	}
 
 	@Override
-	public void setRemoteWorkflow(RemoteWorkflow remoteWorkflow) {
+	public void setRemoteWorkflow(RemoteWorkflow<ExecutionManagerGalaxy> remoteWorkflow) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void setAnalysisType(Class<? extends Analysis> analysisType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public RemoteWorkflow<ExecutionManagerGalaxy> getRemoteWorkflow() {
 		throw new UnsupportedOperationException();
 	}
 }
