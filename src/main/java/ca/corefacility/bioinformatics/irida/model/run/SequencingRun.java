@@ -70,6 +70,11 @@ public abstract class SequencingRun implements IridaThing, Comparable<Sequencing
 
 	@Override
 	public Date getTimestamp() {
+		return getCreatedDate();
+	}
+
+	@Override
+	public Date getCreatedDate() {
 		return createdDate;
 	}
 
@@ -87,12 +92,12 @@ public abstract class SequencingRun implements IridaThing, Comparable<Sequencing
 	public int compareTo(SequencingRun p) {
 		return modifiedDate.compareTo(p.modifiedDate);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getLabel(){
+	public String getLabel() {
 		return "SequencingRun " + createdDate;
 	}
 

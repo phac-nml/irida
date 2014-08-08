@@ -45,7 +45,7 @@ public class UserGroupJoin implements Join<User, Group> {
 	@JoinColumn(name = "logicalGroup_id", nullable = false)
 	@NotNull
 	private Group logicalGroup;
-	
+
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
@@ -100,6 +100,11 @@ public class UserGroupJoin implements Join<User, Group> {
 
 	@Override
 	public Date getTimestamp() {
+		return getCreatedDate();
+	}
+
+	@Override
+	public Date getCreatedDate() {
 		return createdDate;
 	}
 }

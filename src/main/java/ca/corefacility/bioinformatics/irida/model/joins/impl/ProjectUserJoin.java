@@ -51,7 +51,7 @@ public class ProjectUserJoin implements Join<Project, User> {
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private ProjectRole projectRole;
-	
+
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
@@ -109,6 +109,11 @@ public class ProjectUserJoin implements Join<Project, User> {
 
 	@Override
 	public Date getTimestamp() {
+		return getCreatedDate();
+	}
+
+	@Override
+	public Date getCreatedDate() {
 		return createdDate;
 	}
 

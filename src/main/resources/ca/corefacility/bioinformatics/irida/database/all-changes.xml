@@ -33,5 +33,6 @@
 	<include file="changesets/2.0/add-analysis-types.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/2.0/drop-user-revision-fk.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/2.0/liquibase-cleanup.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/remoteapi-dates.xml" relativeToChangelogFile="true"/>
 	
 </databaseChangeLog>

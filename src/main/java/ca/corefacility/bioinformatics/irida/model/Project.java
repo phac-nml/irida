@@ -66,16 +66,16 @@ public class Project implements IridaThing, Comparable<Project> {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
 	private List<ProjectSampleJoin> samples;
-	
+
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "subject")
 	private List<RelatedProjectJoin> relatedProjects;
-	
+
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "relatedProject")
 	private List<RelatedProjectJoin> projectsRelatedTo;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	private Organization organization;
-	
+
 	private String organism;
 
 	public Project() {
@@ -139,6 +139,11 @@ public class Project implements IridaThing, Comparable<Project> {
 
 	@Override
 	public Date getTimestamp() {
+		return getCreatedDate();
+	}
+
+	@Override
+	public Date getCreatedDate() {
 		return createdDate;
 	}
 

@@ -106,6 +106,11 @@ public class RelatedProjectJoin implements Join<Project, Project> {
 
 	@Override
 	public Date getTimestamp() {
+		return getCreatedDate();
+	}
+
+	@Override
+	public Date getCreatedDate() {
 		return createdDate;
 	}
 

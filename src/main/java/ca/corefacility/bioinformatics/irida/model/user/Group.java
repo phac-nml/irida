@@ -39,7 +39,7 @@ public class Group implements IridaThing {
 	@NotNull(message = "{group.name.notnull}")
 	@Size(min = 3, message = "{group.name.size}")
 	private String name;
-	
+
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
@@ -49,7 +49,7 @@ public class Group implements IridaThing {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "logicalGroup")
 	private Set<UserGroupJoin> userGroups;
-	
+
 	public Group() {
 		this.createdDate = new Date();
 	}
@@ -84,6 +84,11 @@ public class Group implements IridaThing {
 
 	@Override
 	public Date getTimestamp() {
-		return this.createdDate;
+		return getCreatedDate();
+	}
+
+	@Override
+	public Date getCreatedDate() {
+		return createdDate;
 	}
 }
