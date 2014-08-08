@@ -91,4 +91,9 @@ public class ReferenceFile implements IridaThing {
 	public void setFile(Path file) {
 		this.file = file;
 	}
+
+	@Override
+	public Date getCreatedDate() {
+		return this.createdDate;
+	}
 }

@@ -111,4 +111,19 @@ public class ProjectReferenceFileJoin implements Join<Project, ReferenceFile> {
 		return this.createdDate;
 	}
 
+	@Override
+	public Date getModifiedDate() {
+		return this.createdDate;
+	}
+
+	@Override
+	public void setModifiedDate(Date modifiedDate) {
+		
+	}
+
+	@Override
+	public Date getCreatedDate() {
+		return this.createdDate;
+	}
+
 }
