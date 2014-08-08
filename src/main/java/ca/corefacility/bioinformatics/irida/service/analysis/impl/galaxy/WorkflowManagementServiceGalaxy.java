@@ -1,11 +1,13 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.service.analysis.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.service.analysis.Workflow;
 import ca.corefacility.bioinformatics.irida.service.analysis.WorkflowManagementService;
 
 /**
@@ -15,7 +17,18 @@ import ca.corefacility.bioinformatics.irida.service.analysis.WorkflowManagementS
  */
 public class WorkflowManagementServiceGalaxy implements WorkflowManagementService<GalaxyAnalysisId> {
 	
-	private boolean validateWorkflow() {
+//	private static final Logger logger = LoggerFactory.getLogger(WorkflowManagementServiceGalaxy.class);
+//	
+//	private WorkflowsClient workflowsClient;
+//	private GalaxyWorkflowService galaxyWorkflowService;
+//	private GalaxyHistoriesService galaxyHistory;
+	
+	/**
+	 * Given a Workflow, connects to Galaxy and validates the structure of this workflow.
+	 * @param workflow  A Workflow to validate.
+	 * @return  True if this workflow is valid, false otherwise.
+	 */
+	private boolean validateWorkflow(Workflow workflow) {
 		return false;
 	}
 	
@@ -27,8 +40,8 @@ public class WorkflowManagementServiceGalaxy implements WorkflowManagementServic
 	public GalaxyAnalysisId executeAnalysis(
 			AnalysisSubmission analysisSubmission) throws WorkflowException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
+		checkArgument(validateWorkflow(analysisSubmission.getWorkflow()), "workflow is invalid");
 		
-		validateWorkflow();
 		prepareWorkflow();
 		
 		throw new UnsupportedOperationException();
