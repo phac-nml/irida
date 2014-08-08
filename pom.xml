@@ -149,13 +149,32 @@
         </profile>
     </profiles>
 
-    <repositories>
-        <repository>
-            <id>spring-milestone</id>
-            <url>https://repo.spring.io/milestone</url>
-        </repository>
-    </repositories>
+	<repositories>
+                <repository>
+                        <id>repo.springsource.org</id>
+                        <name>repo.springsource.org-releases</name>
+                        <url>https://repo.springsource.org/libs-milestone-local</url>
+                </repository>
+                <!-- Use maven central over HTTPS instead of HTTP -->
+                <repository>
+                        <id>central</id>
+                        <url>https://repo1.maven.org/maven2</url>
+                        <releases>
+                                <enabled>true</enabled>
+                        </releases>
+                </repository>
+        </repositories>
 
+        <pluginRepositories>
+                <!-- Use maven central over HTTPS instead of HTTP -->
+                <pluginRepository>
+                        <id>central</id>
+                        <url>https://repo1.maven.org/maven2</url>
+                        <releases>
+                                <enabled>true</enabled>
+                        </releases>
+                </pluginRepository>
+        </pluginRepositories>
 
     <dependencies>
         <!-- IRIDA API -->
