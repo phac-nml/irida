@@ -59,8 +59,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
-	/* statistics computed by fastqc */
-
 	private Long fileRevisionNumber; // the filesystem file revision number
 
 	// Key/value map of additional properties you could set on a sequence file.

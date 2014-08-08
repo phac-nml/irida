@@ -23,14 +23,14 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.utils.RecursiveDeleteVisitor;
 
 /**
- * Tests for {@link SequenceFileRepositoryImpl}.
+ * Tests for {@link FilesystemSupplementedRepositoryImpl}.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class SequenceFileRepositoryImplTest {
 
 	private static final String TEMP_FILE_PREFIX = UUID.randomUUID().toString().replaceAll("-", "");
-	private SequenceFileRepositoryImpl repository;
+	private FilesystemSupplementedRepositoryImpl<SequenceFile> repository;
 	private Path baseDirectory;
 	private EntityManager entityManager;
 

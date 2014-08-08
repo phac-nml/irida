@@ -44,6 +44,8 @@ public class IridaApiRepositoriesConfig {
 
 	private @Value("${sequence.file.base.directory}") String sequenceFileBaseDirectory;
 
+	private @Value("${reference.file.base.directory}") String referenceFileBaseDirectory;
+
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
 			JpaVendorAdapter jpaVendorAdapter) {
@@ -62,8 +64,18 @@ public class IridaApiRepositoriesConfig {
 		return new JpaTransactionManager();
 	}
 
-	@Bean(name = "baseDirectory")
-	public Path baseDirectory() throws IOException {
+	@Bean(name = "referenceFileBaseDirectory")
+	public Path referenceFileBaseDirectory() throws IOException {
+		Path baseDirectory = Paths.get(referenceFileBaseDirectory);
+		if (!Files.exists(baseDirectory)) {
+			throw new IllegalStateException("Cannot continue startup; base directory [" + baseDirectory
+					+ "] does not exist!");
+		}
+		return baseDirectory;
+	}
+
+	@Bean(name = "sequenceFileBaseDirectory")
+	public Path sequenceFileBaseDirectory() throws IOException {
 		Path baseDirectory = Paths.get(sequenceFileBaseDirectory);
 		if (!Files.exists(baseDirectory)) {
 			throw new IllegalStateException("Cannot continue startup; base directory [" + baseDirectory

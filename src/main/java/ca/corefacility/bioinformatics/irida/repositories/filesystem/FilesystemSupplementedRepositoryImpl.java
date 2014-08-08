@@ -8,21 +8,64 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ReflectionUtils;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 
 /**
- * Responsible for persisting {@link Path} to a disk.
+ * Custom implementation of a repository that writes the {@link Path} part of an
+ * entity to disk.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ *
  */
-public abstract class PathRepository {
+public abstract class FilesystemSupplementedRepositoryImpl<Type extends VersionedFileFields<Long>> implements
+		FilesystemSupplementedRepository<Type> {
 
-	private static final Logger logger = LoggerFactory.getLogger(PathRepository.class);
+	private static final Logger logger = LoggerFactory.getLogger(FilesystemSupplementedRepository.class);
+
+	private final Path baseDirectory;
+	private final EntityManager entityManager;
+	
+	@Autowired
+	public FilesystemSupplementedRepositoryImpl(final EntityManager entityManager, final Path baseDirectory) {
+		this.entityManager = entityManager;
+		this.baseDirectory = baseDirectory;
+	}
+
+	/**
+	 * Actually persist the entity to disk and to the database.
+	 * 
+	 * @param entity
+	 *            the entity to persist.
+	 * @return the persisted entity.
+	 */
+	protected Type __save(final Type entity) {
+		if (entity.getId() == null) {
+			// save the initial version of the file to the database so that we
+			// get an identifier attached to it.
+			entityManager.persist(entity);
+		}
+		writeFilesToDisk(baseDirectory, entity);
+		return entityManager.merge(entity);
+	}
+
+	/**
+	 * Persist an entity to disk and database. Implementors of this method are
+	 * recommended to call {@link FilesystemSupplementedRepositoryImpl#__save}
+	 * to avoid repeated boilerplate code.
+	 * 
+	 * @param entity
+	 *            the entity to persist.
+	 * @return the persisted entity.
+	 */
+	public abstract Type save(final Type entity);
 
 	/**
 	 * Write any files to disk and update the {@link Path} location. This method
@@ -33,12 +76,12 @@ public abstract class PathRepository {
 	 * @param baseDirectory
 	 * @param iridaThing
 	 */
-	public static VersionedFileFields<?> writeFilesToDisk(Path baseDirectory, VersionedFileFields<?> objectToWrite) {
+	private VersionedFileFields<?> writeFilesToDisk(Path baseDirectory, VersionedFileFields<?> objectToWrite) {
 		if (objectToWrite.getId() == null) {
 			throw new IllegalArgumentException("Identifier is required.");
 		}
 		objectToWrite.modifyFileRevisionNumber();
-		
+
 		Path sequenceFileDir = baseDirectory.resolve(objectToWrite.getId().toString());
 		Path sequenceFileDirWithRevision = sequenceFileDir.resolve(objectToWrite.getFileRevisionNumber().toString());
 

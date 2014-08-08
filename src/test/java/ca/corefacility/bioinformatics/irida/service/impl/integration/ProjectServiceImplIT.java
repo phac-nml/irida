@@ -17,6 +17,7 @@ import java.util.Set;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.AccessDeniedException;
@@ -76,6 +77,10 @@ public class ProjectServiceImplIT {
 	private SampleService sampleService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	@Qualifier("referenceFileBaseDirectory")
+	private Path referenceFileBaseDirectory;
 
 	@Test
 	public void testCreateProjectAsManager() {
@@ -285,9 +290,11 @@ public class ProjectServiceImplIT {
 
 		// test sorting
 		searchPagedProjectsForUser = projectService.searchProjectUsers(
-				ProjectUserJoinSpecification.searchProjectNameWithUser("project", user), 0, 10, Direction.ASC, "project.name");
+				ProjectUserJoinSpecification.searchProjectNameWithUser("project", user), 0, 10, Direction.ASC,
+				"project.name");
 		Page<ProjectUserJoin> searchDesc = projectService.searchProjectUsers(
-				ProjectUserJoinSpecification.searchProjectNameWithUser("project", user), 0, 10, Direction.DESC, "project.name");
+				ProjectUserJoinSpecification.searchProjectNameWithUser("project", user), 0, 10, Direction.DESC,
+				"project.name");
 		assertEquals(2, searchPagedProjectsForUser.getTotalElements());
 
 		List<ProjectUserJoin> reversed = Lists.reverse(searchDesc.getContent());
@@ -396,6 +403,12 @@ public class ProjectServiceImplIT {
 
 		Join<Project, ReferenceFile> pr = projectService.addReferenceFileToProject(p, f);
 		assertEquals("Project was set in the join.", p, pr.getSubject());
+
+		// verify that the reference file was persisted beneath the reference
+		// file directory
+		ReferenceFile rf = pr.getObject();
+		assertTrue("reference file should be beneath the base directory for reference files.",
+				rf.getFile().startsWith(referenceFileBaseDirectory));
 	}
 
 	@Test

@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileRepositoryCustom;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepository;
 
 /**
  * A repository to store information about sequence files. This repository will
@@ -15,8 +15,8 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFile
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-
-public interface SequenceFileRepository extends IridaJpaRepository<SequenceFile, Long>, SequenceFileRepositoryCustom {
+public interface SequenceFileRepository extends FilesystemSupplementedRepository<SequenceFile>,
+		IridaJpaRepository<SequenceFile, Long> {
 	/**
 	 * Get the collection of {@link SequenceFile} created as part of a
 	 * {@link SequencingRun}.

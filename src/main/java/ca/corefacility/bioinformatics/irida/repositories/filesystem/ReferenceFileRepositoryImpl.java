@@ -7,20 +7,20 @@ import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 
 /**
  * Custom implementation of {@link FilesystemSupplementedRepositoryImpl} for
- * {@link SequenceFile}.
+ * {@link ReferenceFile}.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
-public class SequenceFileRepositoryImpl extends FilesystemSupplementedRepositoryImpl<SequenceFile> {
+public class ReferenceFileRepositoryImpl extends FilesystemSupplementedRepositoryImpl<ReferenceFile> {
 
 	@Autowired
-	public SequenceFileRepositoryImpl(EntityManager entityManager,
-			@Qualifier("sequenceFileBaseDirectory") Path baseDirectory) {
+	public ReferenceFileRepositoryImpl(EntityManager entityManager,
+			@Qualifier("referenceFileBaseDirectory") Path baseDirectory) {
 		super(entityManager, baseDirectory);
 	}
 
@@ -28,7 +28,7 @@ public class SequenceFileRepositoryImpl extends FilesystemSupplementedRepository
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SequenceFile save(SequenceFile entity) {
+	public ReferenceFile save(ReferenceFile entity) {
 		return super.__save(entity);
 	}
 

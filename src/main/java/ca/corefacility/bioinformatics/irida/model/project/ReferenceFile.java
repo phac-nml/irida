@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 
 /**
  * A reference file to be associated with a {@link Project}.
@@ -29,7 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 @Entity
 @Table(name = "reference_file")
 @Audited
-public class ReferenceFile implements IridaThing {
+public class ReferenceFile implements VersionedFileFields<Long> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -50,8 +50,11 @@ public class ReferenceFile implements IridaThing {
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "referenceFile")
 	private ProjectReferenceFileJoin project;
 
+	private Long fileRevisionNumber; // the filesystem file revision number
+
 	public ReferenceFile() {
 		this.createdDate = new Date();
+		this.fileRevisionNumber = 0L;
 	}
 
 	public ReferenceFile(Path file) {
@@ -95,5 +98,12 @@ public class ReferenceFile implements IridaThing {
 	@Override
 	public Date getCreatedDate() {
 		return this.createdDate;
+	}
+	public void modifyFileRevisionNumber() {
+		this.fileRevisionNumber++;
+	}
+
+	public Long getFileRevisionNumber() {
+		return fileRevisionNumber;
 	}
 }

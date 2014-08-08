@@ -3,7 +3,9 @@ package ca.corefacility.bioinformatics.irida.config.data;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
@@ -23,14 +25,16 @@ import ca.corefacility.bioinformatics.irida.utils.RecursiveDeleteVisitor;
 @Profile("test")
 public class IridaApiTestDataSourceConfig implements DataConfig {
 
-	private Path baseDirectory;
+	private Set<Path> baseDirectory = new HashSet<>();
 
 	// Franklin: I assume that the scope of a configuration bean is the lifetime
 	// of the application, so the directory should only get deleted *after* the
 	// tests have finished running.
 	@PreDestroy
 	public void tearDown() throws IOException {
-		Files.walkFileTree(baseDirectory, new RecursiveDeleteVisitor());
+		for (Path b : baseDirectory) {
+			Files.walkFileTree(b, new RecursiveDeleteVisitor());
+		}
 	}
 
 	@Bean
@@ -55,7 +59,15 @@ public class IridaApiTestDataSourceConfig implements DataConfig {
 
 	@Bean(name = "baseDirectory")
 	public Path baseDirectory() throws IOException {
-		baseDirectory = Files.createTempDirectory("irida-test-dir");
-		return baseDirectory;
+		Path b = Files.createTempDirectory("irida-sequence-file-dir");
+		baseDirectory.add(b);
+		return b;
+	}
+
+	@Bean(name = "referenceFileBaseDirectory")
+	public Path referenceFileBaseDirectory() throws IOException {
+		Path b = Files.createTempDirectory("irida-reference-file-dir");
+		baseDirectory.add(b);
+		return b;
 	}
 }
