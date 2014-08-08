@@ -64,6 +64,7 @@ Maven
 `mvn package -Pprod`
 
 ### External Configuration
+
 An external configuration file canbe installed in /etc/irida/web.conf to set some web specific configuration parameters:
 mail.server.host -- The mail server to send emails from
 mail.server.protocol -- The mail protocol
