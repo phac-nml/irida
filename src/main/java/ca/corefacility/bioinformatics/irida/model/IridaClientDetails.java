@@ -347,6 +347,11 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 
 	@Override
 	public Date getTimestamp() {
+		return getCreatedDate();
+	}
+
+	@Override
+	public Date getCreatedDate() {
 		return createdDate;
 	}
 }

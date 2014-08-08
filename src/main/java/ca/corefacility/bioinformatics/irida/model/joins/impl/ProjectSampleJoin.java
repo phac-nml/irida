@@ -99,6 +99,11 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 
 	@Override
 	public Date getTimestamp() {
+		return getCreatedDate();
+	}
+
+	@Override
+	public Date getCreatedDate() {
 		return createdDate;
 	}
 }

@@ -7,6 +7,8 @@ import java.util.UUID;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import ca.corefacility.bioinformatics.irida.model.Timestamped;
+
 /**
  * A password reset object.
  * 
@@ -14,7 +16,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "password_reset")
-public class PasswordReset implements Comparable<PasswordReset> {
+public class PasswordReset implements Comparable<PasswordReset>, Timestamped {
 
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
@@ -65,9 +67,14 @@ public class PasswordReset implements Comparable<PasswordReset> {
 		if (other instanceof PasswordReset) {
 			PasswordReset p = (PasswordReset) other;
 			return Objects.equals(createdDate, p.createdDate) && Objects.equals(user, p.user)
-					&&	Objects.equals(id, p.id);
+					&& Objects.equals(id, p.id);
 		}
 
 		return false;
+	}
+
+	@Override
+	public Date getTimestamp() {
+		return createdDate;
 	}
 }

@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -10,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -25,7 +28,7 @@ import org.hibernate.validator.constraints.URL;
 @Entity
 @Table(name = "remote_api")
 @Audited
-public class RemoteAPI implements Comparable<RemoteAPI> {
+public class RemoteAPI implements Comparable<RemoteAPI>, Timestamped {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -49,10 +52,15 @@ public class RemoteAPI implements Comparable<RemoteAPI> {
 	@OneToMany(mappedBy = "remoteApi")
 	private Collection<RemoteAPIToken> tokens;
 
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdDate;
+
 	public RemoteAPI() {
+		createdDate = new Date();
 	}
 
 	public RemoteAPI(String serviceURI, String description, String clientId, String clientSecret) {
+		this();
 		this.serviceURI = serviceURI;
 		this.description = description;
 		this.clientId = clientId;
@@ -168,6 +176,16 @@ public class RemoteAPI implements Comparable<RemoteAPI> {
 	@Override
 	public int hashCode() {
 		return Objects.hash(serviceURI, clientId, clientSecret);
+	}
+
+	@Override
+	public Date getTimestamp() {
+		return getCreatedDate();
+	}
+
+	@Override
+	public Date getCreatedDate() {
+		return createdDate;
 	}
 
 }
