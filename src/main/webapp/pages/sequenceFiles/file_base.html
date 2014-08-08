@@ -74,7 +74,7 @@
     <script>
         $("#fileDownload").on('click', function () {
             var iframe = document.getElementById('invisible');
-            iframe.src = '/sequenceFiles/download/' + /*${file.id}*/ 11;
+            iframe.src = /*[[@{'/sequenceFiles/download/' + ${file.id}}]]*/ '/sequenceFiles/download/11';
         });
     </script>
 </div>
