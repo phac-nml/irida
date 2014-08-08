@@ -10,11 +10,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
@@ -94,5 +97,54 @@ public class ClientsControllerTest {
 		verify(clientDetailsService).search(any(Specification.class), eq(page), eq(size), any(Direction.class),
 				any(String.class));
 
+	}
+
+	@Test
+	public void testGetAddClientPage() {
+		ExtendedModelMap model = new ExtendedModelMap();
+
+		String addClientPage = controller.getAddClientPage(model);
+
+		assertEquals(ClientsController.ADD_CLIENT_PAGE, addClientPage);
+		assertTrue(model.containsAttribute("errors"));
+		assertTrue(model.containsAttribute("given_tokenValidity"));
+	}
+
+	@Test
+	public void testPostCreateClient() {
+		IridaClientDetails client = new IridaClientDetails();
+		client.setId(1l);
+		ExtendedModelMap model = new ExtendedModelMap();
+		Locale locale = LocaleContextHolder.getLocale();
+
+		when(clientDetailsService.create(client)).thenReturn(client);
+
+		String postCreateClient = controller.postCreateClient(client, model, locale);
+
+		assertEquals("redirect:/clients/1", postCreateClient);
+		verify(clientDetailsService).create(client);
+	}
+
+	@Test
+	public void testPostCreateClientError() {
+		IridaClientDetails client = new IridaClientDetails();
+		client.setId(1l);
+		ExtendedModelMap model = new ExtendedModelMap();
+		Locale locale = LocaleContextHolder.getLocale();
+
+		DataIntegrityViolationException ex = new DataIntegrityViolationException("Error: "
+				+ IridaClientDetails.CLIENT_ID_CONSTRAINT_NAME);
+
+		when(clientDetailsService.create(client)).thenThrow(ex);
+
+		String postCreateClient = controller.postCreateClient(client, model, locale);
+
+		assertEquals(ClientsController.ADD_CLIENT_PAGE, postCreateClient);
+		assertTrue(model.containsAttribute("errors"));
+		@SuppressWarnings("unchecked")
+		Map<String, String> errors = (Map<String, String>) model.get("errors");
+		assertTrue(errors.containsKey("clientId"));
+
+		verify(clientDetailsService).create(client);
 	}
 }
