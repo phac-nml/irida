@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ca.corefacility.bioinformatics.irida</groupId>
 	<artifactId>irida-web</artifactId>
-	<version>1.5.0</version>
+	<version>1.5.1</version>
 	<packaging>war</packaging>
 
 	<name>irida-web</name>
@@ -120,9 +120,28 @@
 		<repository>
 			<id>repo.springsource.org</id>
 			<name>repo.springsource.org-releases</name>
-			<url>http://repo.springsource.org/libs-milestone-local</url>
+			<url>https://repo.springsource.org/libs-milestone-local</url>
+		</repository>
+		<!-- Use maven central over HTTPS instead of HTTP -->
+		<repository>
+			<id>central</id>
+			<url>https://repo1.maven.org/maven2</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 		</repository>
 	</repositories>
+
+	<pluginRepositories>
+		<!-- Use maven central over HTTPS instead of HTTP -->
+		<pluginRepository>
+			<id>central</id>
+			<url>https://repo1.maven.org/maven2</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<dependencies>
 		<!-- IRIDA-API -->
