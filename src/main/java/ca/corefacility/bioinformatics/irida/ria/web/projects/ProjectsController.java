@@ -74,6 +74,8 @@ public class ProjectsController {
 	private static final String ACTIVE_NAV_DASHBOARD = "dashboard";
 	private static final String ACTIVE_NAV_METADATA = "metadata";
 	private static final String ACTIVE_NAV_SAMPLES = "samples";
+	
+	private static final String PROJECT_NAME_PROPERTY = "name";
 
 	// private static final String ACTIVE_NAV_ANALYSIS = "analysis";
 
@@ -467,7 +469,7 @@ public class ProjectsController {
 		Map<String, Object> response = new HashMap<>();
 		if (user.getAuthorities().contains(Role.ROLE_ADMIN)) {
 			Page<Project> projects = projectService.search(ProjectSpecification.searchProjectName(term), page,
-					pageSize, Direction.ASC);
+					pageSize, Direction.ASC, PROJECT_NAME_PROPERTY);
 			for (Project p : projects) {
 				vals.put(p.getId(), p.getName());
 			}
