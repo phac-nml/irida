@@ -12,6 +12,7 @@
         <div class="col-md-12">
             <main role="main" property="mainContentOfPage">
                 <h1 th:text="#{clients.title}">_Clients_</h1>
+                <a href="/clients/create" th:href="@{/clients/create}" th:text="#{clients.add}" class="btn btn-default">_Add Client_</a>
                 <table id="clientsTable" class="table table-striped table-hover">
                 <thead>
                 <tr th:inline="text">
