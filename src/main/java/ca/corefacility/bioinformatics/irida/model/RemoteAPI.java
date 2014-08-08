@@ -28,7 +28,7 @@ import org.hibernate.validator.constraints.URL;
 @Entity
 @Table(name = "remote_api")
 @Audited
-public class RemoteAPI implements Comparable<RemoteAPI>, Timestamped {
+public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -52,11 +52,16 @@ public class RemoteAPI implements Comparable<RemoteAPI>, Timestamped {
 	@OneToMany(mappedBy = "remoteApi")
 	private Collection<RemoteAPIToken> tokens;
 
+	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
 
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifiedDate;
+
 	public RemoteAPI() {
 		createdDate = new Date();
+		modifiedDate = createdDate;
 	}
 
 	public RemoteAPI(String serviceURI, String description, String clientId, String clientSecret) {
@@ -186,6 +191,21 @@ public class RemoteAPI implements Comparable<RemoteAPI>, Timestamped {
 	@Override
 	public Date getCreatedDate() {
 		return createdDate;
+	}
+
+	@Override
+	public String getLabel() {
+		return "RemoteApi[ " + clientId + " ]";
+	}
+
+	@Override
+	public Date getModifiedDate() {
+		return modifiedDate;
+	}
+
+	@Override
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
 	}
 
 }
