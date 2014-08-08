@@ -27,6 +27,8 @@ import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.AnalysisSubmission;
@@ -67,11 +69,28 @@ public class WorkflowManagementServiceGalaxyIT {
 		workflowManagement = new WorkflowManagementServiceGalaxy();
 	}
 	
-	private RemoteWorkflow buildRemoteWorkflow(String workflowId) {
+	private AnalysisSubmission buildAnalysisSubmission(String workflowId) {
 		RemoteWorkflow remoteWorkflow = new RemoteWorkflowGalaxy();
 		remoteWorkflow.setWorkflowId(workflowId);
 		
-		return remoteWorkflow;
+		AnalysisSubmission analysisSubmission = new AnalysisSubmissionTestImpl();
+		analysisSubmission.setSequenceFiles(sequenceFiles);
+		analysisSubmission.setReferenceFile(referenceFile);
+		analysisSubmission.setRemoteWorkflow(remoteWorkflow);
+		analysisSubmission.setAnalysisType(AnalysisTest.class);
+		
+		return analysisSubmission;
+	}
+	
+	/**
+	 * Asserts that the given status is in a valid state for a workflow.
+	 * @param status
+	 */
+	private void assertValidStatus(WorkflowStatus status) {
+		assertNotNull(status);
+		assertFalse(WorkflowState.UNKNOWN.equals(status.getState()));
+		float percentComplete = status.getPercentComplete();
+		assertTrue(0.0f <= percentComplete && percentComplete <= 100.0f);
 	}
 	
 	/**
@@ -80,31 +99,24 @@ public class WorkflowManagementServiceGalaxyIT {
 	 */
 	@Test
 	public void testExecuteAnalysisSuccess() throws WorkflowException {
-		RemoteWorkflow remoteWorkflow = buildRemoteWorkflow(localGalaxy.getSingleInputWorkflowId());
-		
-		AnalysisSubmission analysisSubmission = new AnalysisSubmissionTestImpl();
-		analysisSubmission.setSequenceFiles(sequenceFiles);
-		analysisSubmission.setReferenceFile(referenceFile);
-		analysisSubmission.setRemoteWorkflow(remoteWorkflow);
-		analysisSubmission.setAnalysisType(AnalysisTest.class);
+		AnalysisSubmission analysisSubmission =
+				buildAnalysisSubmission(localGalaxy.getWorklowCollectionListId());
 		
 		GalaxyAnalysisId analysisId = workflowManagement.executeAnalysis(analysisSubmission);
 		assertNotNull(analysisId);
+		
+		WorkflowStatus status = workflowManagement.getWorkflowStatus(analysisId);
+		assertValidStatus(status);
 	}
-	
+
 	/**
-	 * Tests out successfully submitting a workflow for execution.
+	 * Tests out attempting to submit an invalid workflow for execution.
 	 * @throws WorkflowException
 	 */
 	@Test(expected=WorkflowException.class)
 	public void testExecuteAnalysisFailInvalidWorkflow() throws WorkflowException {
-		RemoteWorkflow remoteWorkflow = buildRemoteWorkflow(localGalaxy.getInvalidWorkflowId());
-		
-		AnalysisSubmission analysisSubmission = new AnalysisSubmissionTestImpl();
-		analysisSubmission.setSequenceFiles(sequenceFiles);
-		analysisSubmission.setReferenceFile(referenceFile);
-		analysisSubmission.setRemoteWorkflow(remoteWorkflow);
-		analysisSubmission.setAnalysisType(AnalysisTest.class);
+		AnalysisSubmission analysisSubmission =
+				buildAnalysisSubmission(localGalaxy.getInvalidWorkflowId());
 		
 		workflowManagement.executeAnalysis(analysisSubmission);
 	}
