@@ -24,7 +24,7 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
  * 
  */
 @Configuration
-@PropertySource(value = { "classpath:configuration.properties" }, ignoreResourceNotFound = false)
+@PropertySource(value = { "classpath:configuration.properties", "file:/etc/irida/web.conf" }, ignoreResourceNotFound = true)
 public class WebEmailConfig {
 
 	private static final String MAIL_TEMPLATE_PREFIX = "/mail/";
