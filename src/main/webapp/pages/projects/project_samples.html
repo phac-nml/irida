@@ -82,7 +82,12 @@
             <table>
                 {{#files}}
                 <tr>
+                    {{#selected}}
+                    <td><input type="checkbox" checked="checked"/></td>
+                    {{/selected}}
+                    {{#notSelected}}
                     <td><input type="checkbox"/></td>
+                    {{/notSelected}}
                     <td class="files-name">
                         <a th:href="@{/sequenceFiles/{{id}}}">{{name}}</a>
                     </td>
@@ -294,7 +299,7 @@ function EditableDataTable() {
         }).done(function (data) {
             if (data.length > 0) {
                 var template = $('#files-view-template').html();
-                var content = Mustache.render(template, {files : data});
+                var content = Mustache.render(template, {files : data, selected: selected, notSelected: !selected});
                 $row.addClass('details').after(content);
             } else {
                 var msg = /*[[#{project.samples.files.not-available}]]*/ 'Cannot get file information right now';
