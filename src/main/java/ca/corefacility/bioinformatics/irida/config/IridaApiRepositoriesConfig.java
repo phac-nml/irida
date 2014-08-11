@@ -52,6 +52,9 @@ public class IridaApiRepositoriesConfig {
 	private @Value("${sequence.file.base.directory}") String sequenceFileBaseDirectory;
 
 	private @Value("${reference.file.base.directory}") String referenceFileBaseDirectory;
+	
+	// test profiles are dev, test, it but not prod.
+	private static final String[] TEST_PROFILES = {"dev", "test", "it", "!prod"};
 
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
@@ -84,7 +87,7 @@ public class IridaApiRepositoriesConfig {
 	private Path configureDirectory(String pathName, String defaultDevPathPrefix) throws IOException {
 		Path baseDirectory = Paths.get(pathName);
 		if (!Files.exists(baseDirectory)) {
-			if (environment.acceptsProfiles("dev", "!prod")) {
+			if (environment.acceptsProfiles(TEST_PROFILES)) {
 				baseDirectory = Files.createTempDirectory(defaultDevPathPrefix);
 				logger.info(String.format(
 						"The directory [%s] does not exist, but it looks like you're running in a dev environment, "
