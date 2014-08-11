@@ -80,7 +80,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 		if (objectToWrite.getId() == null) {
 			throw new IllegalArgumentException("Identifier is required.");
 		}
-		objectToWrite.modifyFileRevisionNumber();
+		objectToWrite.incrementFileRevisionNumber();
 
 		Path sequenceFileDir = baseDirectory.resolve(objectToWrite.getId().toString());
 		Path sequenceFileDirWithRevision = sequenceFileDir.resolve(objectToWrite.getFileRevisionNumber().toString());

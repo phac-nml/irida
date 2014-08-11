@@ -22,5 +22,5 @@ public interface VersionedFileFields<VersionType extends Serializable> extends I
 	/**
 	 * Internally modify the file revision number to something new.
 	 */
-	public void modifyFileRevisionNumber();
+	public void incrementFileRevisionNumber();
 }

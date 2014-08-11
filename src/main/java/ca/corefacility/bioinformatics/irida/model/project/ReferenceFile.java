@@ -99,7 +99,7 @@ public class ReferenceFile implements VersionedFileFields<Long> {
 	public Date getCreatedDate() {
 		return this.createdDate;
 	}
-	public void modifyFileRevisionNumber() {
+	public void incrementFileRevisionNumber() {
 		this.fileRevisionNumber++;
 	}
 

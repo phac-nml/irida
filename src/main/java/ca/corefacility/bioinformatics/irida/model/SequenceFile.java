@@ -212,7 +212,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	}
 
 	@Override
-	public void modifyFileRevisionNumber() {
+	public void incrementFileRevisionNumber() {
 		this.fileRevisionNumber++;
 	}
 }
