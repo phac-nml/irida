@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
@@ -70,7 +71,7 @@ public class WorkflowManagementServiceGalaxyIT {
 		sequenceFiles = new HashSet<>();
 		sequenceFiles.add(dataFile);
 		
-		workflowManagement = new WorkflowManagementServiceGalaxy();
+		workflowManagement = new WorkflowManagementServiceGalaxy(null);
 		
 		invalidAnalysisId = new GalaxyAnalysisId("invalid");
 	}
@@ -95,7 +96,7 @@ public class WorkflowManagementServiceGalaxyIT {
 		return analysisSubmission;
 	}
 	
-	private void waitForAnalysisFinished(GalaxyAnalysisId analysisId) throws WorkflowException, InterruptedException {
+	private void waitForAnalysisFinished(GalaxyAnalysisId analysisId) throws InterruptedException, ExecutionManagerException {
 		final int max = 1000;
 		final int time = 5000;
 		for (int i = 0; i < max; i++) {
@@ -120,11 +121,11 @@ public class WorkflowManagementServiceGalaxyIT {
 	
 	/**
 	 * Tests out successfully submitting a workflow for execution.
-	 * @throws WorkflowException
 	 * @throws InterruptedException 
+	 * @throws ExecutionManagerException 
 	 */
 	@Test
-	public void testExecuteAnalysisSuccess() throws WorkflowException, InterruptedException {
+	public void testExecuteAnalysisSuccess() throws InterruptedException, ExecutionManagerException {
 		AnalysisSubmission<ExecutionManagerGalaxy> analysisSubmission = buildAnalysisSubmission();
 		
 		GalaxyAnalysisId analysisId = workflowManagement.executeAnalysis(analysisSubmission);
@@ -172,10 +173,10 @@ public class WorkflowManagementServiceGalaxyIT {
 	
 	/**
 	 * Tests out getting a workflow status from an invalid workflow id.
-	 * @throws WorkflowException 
+	 * @throws ExecutionManagerException 
 	 */
 	@Test(expected=WorkflowException.class)
-	public void testGetWorkflowStatusInvalidId() throws WorkflowException {
+	public void testGetWorkflowStatusInvalidId() throws ExecutionManagerException {
 		workflowManagement.getWorkflowStatus(invalidAnalysisId);
 	}
 	

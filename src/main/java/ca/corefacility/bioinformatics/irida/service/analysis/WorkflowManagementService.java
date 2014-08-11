@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.analysis;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.RemoteAnalysisId;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
@@ -37,7 +38,7 @@ public interface WorkflowManagementService<ID extends RemoteAnalysisId, T extend
 	 * @throws WorkflowException  If an error occured getting the status.
 	 */
 	public WorkflowStatus getWorkflowStatus(ID workflowId) 
-		throws WorkflowException;
+		throws ExecutionManagerException;
 	
 	/**
 	 * Given an analysis exeuction object, cancels the corresponding analysis.

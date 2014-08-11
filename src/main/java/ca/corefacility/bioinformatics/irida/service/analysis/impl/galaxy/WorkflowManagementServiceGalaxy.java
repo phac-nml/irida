@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
@@ -27,6 +30,17 @@ public class WorkflowManagementServiceGalaxy implements
 //	private GalaxyWorkflowService galaxyWorkflowService;
 //	private GalaxyHistoriesService galaxyHistory;
 	
+	@Autowired
+	private GalaxyConnectionService galaxyConnectionService;
+	
+	/**
+	 * Builds a new WorkflowManagementService with the given GalaxyConnectionService.
+	 * @param galaxyConnectionService  The GalaxyConnectionService used to connect to Galaxy instances.
+	 */
+	public WorkflowManagementServiceGalaxy(GalaxyConnectionService galaxyConnectionService) {
+		this.galaxyConnectionService = galaxyConnectionService;
+	}
+	
 	/**
 	 * Given a Workflow, connects to Galaxy and validates the structure of this workflow.
 	 * @param workflow  A Workflow to validate.
@@ -38,15 +52,6 @@ public class WorkflowManagementServiceGalaxy implements
 	
 	private void prepareWorkflow() {
 		
-	}
-	
-	/**
-	 * Gets a GalaxyHistoriesService given an analysis id.
-	 * @param workflowId The id of the workflow.
-	 * @return  A GalaxyHistoriesService corresponding to this id.
-	 */
-	private GalaxyHistoriesService getGalaxyHistoriesService(GalaxyAnalysisId workflowId) {
-		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -77,14 +82,11 @@ public class WorkflowManagementServiceGalaxy implements
 	 */
 	@Override
 	public WorkflowStatus getWorkflowStatus(GalaxyAnalysisId workflowId)
-			throws WorkflowException {
-		GalaxyHistoriesService historiesService = getGalaxyHistoriesService(workflowId);
+			throws ExecutionManagerException {
+		GalaxyHistoriesService historiesService = 
+				galaxyConnectionService.getGalaxyHistoriesService(workflowId);
 
-		try {
-			return historiesService.getStatusForHistory(workflowId.getValue());
-		} catch (ExecutionManagerException e) {
-			throw new WorkflowException("Could not get status for workflow " + workflowId, e);
-		}
+		return historiesService.getStatusForHistory(workflowId.getValue());
 	}
 
 	/**
