@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +44,6 @@ public class GalaxyWorkflowService {
 	 * Constructs a new GalaxyWorkflowSubmitter with the given information.
 	 * @param historiesClient  The HistoriesClient used to connect to Galaxy histories.
 	 * @param workflowsClient  The WorkflowsClient used to connect to Galaxy workflows.
-	 * @throws NoSuchAlgorithmException If no MessageDigest algorithm is found.
 	 */
 	public GalaxyWorkflowService(HistoriesClient historiesClient,
 			WorkflowsClient workflowsClient) {
