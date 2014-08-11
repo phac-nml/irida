@@ -76,16 +76,6 @@
             <input type="text" id="copy-sample-project" name="project" class="form-control input-full" />
 			<span id="copy-samples-error" class="help-block bg-danger"></span>
     </script>
-    <script type="text/html" id="file-row-template">
-        <tr>
-            <td class="files-name">
-                <a href="{1}">{2}</a>
-                <button data-file-id="{0}" class="filedownload pull-right btn btn-default btn-xs glyphicon glyphicon-download-alt mrgn-rght-sm" title="{3}"></button>
-            </td>
-            <td>{4}</td>
-            <td>{5}</td>
-        </tr>
-    </script>
 	<script type="x-tmpl-mustache" id="files-view-template" th:inline="text">
         <tr id="files-view">
             <td colspan="5">
@@ -93,7 +83,7 @@
                 {{#files}}
                 <tr>
                     <td><input type="checkbox"/></td>
-                    <td class="file-name">
+                    <td class="files-name">
                         <a th:href="@{/sequenceFiles/{{id}}}">{{name}}</a>
                     </td>
                     <td><button data-file-id="{{id}}" class="filedownload pull-right btn btn-default btn-xs glyphicon glyphicon-download-alt mrgn-rght-sm" th:title="#{form.download}"></button></td>
