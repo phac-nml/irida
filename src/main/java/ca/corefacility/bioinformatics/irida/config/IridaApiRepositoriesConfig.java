@@ -11,11 +11,14 @@ import javax.sql.DataSource;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.RevisionListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.env.Environment;
 import org.springframework.data.envers.repository.support.EnversRevisionRepositoryFactoryBean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -39,8 +42,12 @@ import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.Use
 @EnableJpaRepositories(basePackages = "ca.corefacility.bioinformatics.irida.repositories", repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class)
 @Import({ IridaApiPropertyPlaceholderConfig.class, IridaApiJdbcDataSourceConfig.class })
 public class IridaApiRepositoriesConfig {
+	private static final Logger logger = LoggerFactory.getLogger(IridaApiRepositoriesConfig.class);
 	@Autowired
 	private DataConfig dataConfig;
+
+	@Autowired
+	private Environment environment;
 
 	private @Value("${sequence.file.base.directory}") String sequenceFileBaseDirectory;
 
@@ -66,20 +73,26 @@ public class IridaApiRepositoriesConfig {
 
 	@Bean(name = "referenceFileBaseDirectory")
 	public Path referenceFileBaseDirectory() throws IOException {
-		Path baseDirectory = Paths.get(referenceFileBaseDirectory);
-		if (!Files.exists(baseDirectory)) {
-			throw new IllegalStateException("Cannot continue startup; base directory [" + baseDirectory
-					+ "] does not exist!");
-		}
-		return baseDirectory;
+		return configureDirectory(referenceFileBaseDirectory, "reference-file-dev");
 	}
 
 	@Bean(name = "sequenceFileBaseDirectory")
 	public Path sequenceFileBaseDirectory() throws IOException {
-		Path baseDirectory = Paths.get(sequenceFileBaseDirectory);
+		return configureDirectory(sequenceFileBaseDirectory, "sequence-file-dev");
+	}
+
+	private Path configureDirectory(String pathName, String defaultDevPathPrefix) throws IOException {
+		Path baseDirectory = Paths.get(pathName);
 		if (!Files.exists(baseDirectory)) {
-			throw new IllegalStateException("Cannot continue startup; base directory [" + baseDirectory
-					+ "] does not exist!");
+			if (environment.acceptsProfiles("dev", "!prod")) {
+				baseDirectory = Files.createTempDirectory(defaultDevPathPrefix);
+				logger.info(String.format(
+						"The directory [%s] does not exist, but it looks like you're running in a dev environment, "
+								+ "so I created a temporary location at [%s].", pathName, baseDirectory.toString()));
+			} else {
+				throw new IllegalStateException("Cannot continue startup; base directory [" + baseDirectory
+						+ "] does not exist!");
+			}
 		}
 		return baseDirectory;
 	}
