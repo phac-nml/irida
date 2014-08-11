@@ -30,7 +30,7 @@ public class ReferenceFileRepositoryImpl extends FilesystemSupplementedRepositor
 	 */
 	@Override
 	public ReferenceFile save(ReferenceFile entity) {
-		return super.__save(entity);
+		return super.saveInternal(entity);
 	}
 
 }

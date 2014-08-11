@@ -30,7 +30,7 @@ public class SequenceFileRepositoryImpl extends FilesystemSupplementedRepository
 	 */
 	@Override
 	public SequenceFile save(SequenceFile entity) {
-		return super.__save(entity);
+		return super.saveInternal(entity);
 	}
 
 }

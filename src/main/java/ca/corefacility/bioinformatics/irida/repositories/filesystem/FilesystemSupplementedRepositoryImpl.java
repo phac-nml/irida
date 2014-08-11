@@ -46,7 +46,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	 *            the entity to persist.
 	 * @return the persisted entity.
 	 */
-	protected Type __save(final Type entity) {
+	protected Type saveInternal(final Type entity) {
 		if (entity.getId() == null) {
 			// save the initial version of the file to the database so that we
 			// get an identifier attached to it.
