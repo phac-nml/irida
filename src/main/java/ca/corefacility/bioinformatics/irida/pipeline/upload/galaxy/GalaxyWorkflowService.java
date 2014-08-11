@@ -68,7 +68,7 @@ public class GalaxyWorkflowService {
 		try
 		{
 			String workflowString = workflowsClient.exportWorkflow(workflowId);
-			logger.debug("Workflow string is " + workflowString);
+			logger.trace("Workflow string is " + workflowString);
 			
 			return encoder.encode(workflowString);
 		} catch (GalaxyResponseException | UniformInterfaceException e) {
