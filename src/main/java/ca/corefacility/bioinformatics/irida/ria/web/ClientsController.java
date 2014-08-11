@@ -93,6 +93,13 @@ public class ClientsController {
 		return CLIENT_DETAILS_PAGE;
 	}
 
+	/**
+	 * Get the create client page
+	 * 
+	 * @param model
+	 *            Model for the view
+	 * @return The name of the create client page
+	 */
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	public String getAddClientPage(Model model) {
 		if (!model.containsAttribute("errors")) {
@@ -109,6 +116,18 @@ public class ClientsController {
 		return ADD_CLIENT_PAGE;
 	}
 
+	/**
+	 * Create a new client
+	 * 
+	 * @param client
+	 *            The client to add
+	 * @param model
+	 *            Model for the view
+	 * @param locale
+	 *            Locale of the current user session
+	 * @return Redirect to the newly created client page, or back to the
+	 *         creation page in case of an error.
+	 */
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public String postCreateClient(IridaClientDetails client, Model model, Locale locale) {
 		client.setClientSecret(generateClientSecret());
@@ -126,10 +145,10 @@ public class ClientsController {
 
 		if (!errors.isEmpty()) {
 			model.addAttribute("errors", errors);
-			
-			model.addAttribute("given_clientId",client.getClientId());
-			model.addAttribute("given_tokenValidity",client.getAccessTokenValiditySeconds());
-			
+
+			model.addAttribute("given_clientId", client.getClientId());
+			model.addAttribute("given_tokenValidity", client.getAccessTokenValiditySeconds());
+
 			responsePage = getAddClientPage(model);
 		}
 
