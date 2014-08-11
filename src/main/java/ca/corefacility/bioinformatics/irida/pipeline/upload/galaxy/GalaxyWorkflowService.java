@@ -42,7 +42,7 @@ public class GalaxyWorkflowService {
 	 * @throws NoSuchAlgorithmException If no MessageDigest algorithm is found.
 	 */
 	public GalaxyWorkflowService(HistoriesClient historiesClient,
-			WorkflowsClient workflowsClient) throws NoSuchAlgorithmException {
+			WorkflowsClient workflowsClient) {
 		checkNotNull(historiesClient, "historiesClient is null");
 		checkNotNull(workflowsClient, "workflowsClient is null");
 		
