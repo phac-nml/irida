@@ -552,4 +552,20 @@ public class LocalGalaxy {
 	public URL getTestGalaxyURL() {
 		return testGalaxyURL;
 	}
+
+	/**
+	 * Gets a checksum for an example workflow.
+	 * @return  The checksum for an example workflow.
+	 */
+	public String getSingleInputWorkflowChecksum() {
+		return "db670b734c3808abc5e71acdd9bb23b1f12886158f2ae9b39d79d95d914e790f512a3420d913bb3a";
+	}
+	
+	/**
+	 * Gets an invalid checksum for an example workflow.
+	 * @return  An invalid checksum for an example workflow.
+	 */
+	public String getSingleInputWorkflowChecksumInvalid() {
+		return "eb670b734c3808abc5e71acdd9bb23b1f12886158f2ae9b39d79d95d914e790f512a3420d913bb3a";
+	}
 }

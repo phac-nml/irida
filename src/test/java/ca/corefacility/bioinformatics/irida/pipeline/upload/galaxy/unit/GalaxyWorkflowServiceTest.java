@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWo
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 
+import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
@@ -43,6 +44,7 @@ public class GalaxyWorkflowServiceTest {
 	@Mock private History workflowHistory;
 	@Mock private Dataset inputDataset;
 	@Mock private Dataset downloadDataset;
+	@Mock private GalaxyResponseException responseException;
 	
 	private GalaxyWorkflowService galaxyWorkflowService;
 	
@@ -98,9 +100,10 @@ public class GalaxyWorkflowServiceTest {
 	 */
 	@Test(expected=WorkflowException.class)
 	public void testCreateWorkflowChecksumFail() throws WorkflowException {
-		when(workflowsClient.exportWorkflow(INVALID_WORKFLOW_ID)).thenThrow(new RuntimeException());
+		when(workflowsClient.exportWorkflow(INVALID_WORKFLOW_ID)).
+			thenThrow(responseException);
 		
-		galaxyWorkflowService.getWorkflowChecksum(VALID_WORKFLOW_ID);
+		galaxyWorkflowService.getWorkflowChecksum(INVALID_WORKFLOW_ID);
 	}
 	
 	/**
