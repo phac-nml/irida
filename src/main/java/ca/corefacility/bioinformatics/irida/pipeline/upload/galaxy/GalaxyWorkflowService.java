@@ -4,10 +4,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
@@ -29,18 +33,63 @@ public class GalaxyWorkflowService {
 	private HistoriesClient historiesClient;
 	private WorkflowsClient workflowsClient;
 	
+	private final PasswordEncoder encoder;
+	
 	/**
 	 * Constructs a new GalaxyWorkflowSubmitter with the given information.
 	 * @param historiesClient  The HistoriesClient used to connect to Galaxy histories.
 	 * @param workflowsClient  The WorkflowsClient used to connect to Galaxy workflows.
+	 * @throws NoSuchAlgorithmException If no MessageDigest algorithm is found.
 	 */
 	public GalaxyWorkflowService(HistoriesClient historiesClient,
-			WorkflowsClient workflowsClient) {
+			WorkflowsClient workflowsClient) throws NoSuchAlgorithmException {
 		checkNotNull(historiesClient, "historiesClient is null");
 		checkNotNull(workflowsClient, "workflowsClient is null");
 		
 		this.historiesClient = historiesClient;
 		this.workflowsClient = workflowsClient;
+		
+		encoder = new StandardPasswordEncoder();
+	}
+	
+	/**
+	 * Gets a checksum for a workflow given the id of this workflow.
+	 * @param workflowId  The id of a workflow to generate a checksum for.
+	 * @return  The checksum of the workflow.
+	 * @throws WorkflowException If there was an issue getting the workflow.
+	 */
+	public String getWorkflowChecksum(String workflowId) throws WorkflowException {
+		checkNotNull(workflowId, "workflowId is null");
+		
+		try
+		{
+			String workflowString = workflowsClient.exportWorkflow(workflowId);
+			
+			return encoder.encode(workflowString);
+		} catch (RuntimeException e) {
+			throw new WorkflowException(e);
+		}
+	}
+	
+	
+	/**
+	 * Given a pre-generated checksum and a workflow id, validate the checksum with the corresponding workflow.
+	 * @param workflowChecksum  The checksum of the workflow.
+	 * @param workflowId  The id of the workflow in Galaxy.
+	 * @return True if this workflow has the same checksum, false otherwise.
+	 * @throws WorkflowException If an error occured while validating the workflow.
+	 */
+	public boolean validateWorkflowByChecksum(String workflowChecksum, String workflowId) throws WorkflowException {
+		checkNotNull(workflowChecksum, "workflowChecksum is null");
+		checkNotNull(workflowId, "workflowId is null");
+		
+		try {
+			String workflowString = workflowsClient.exportWorkflow(workflowId);
+			
+			return encoder.matches(workflowString, workflowChecksum);
+		} catch (RuntimeException e) {
+			throw new WorkflowException(e);
+		}
 	}
 	
 	/**
