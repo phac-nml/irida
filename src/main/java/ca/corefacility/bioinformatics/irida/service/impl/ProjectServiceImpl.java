@@ -62,17 +62,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final ReferenceFileRepository referenceFileRepository;
 	private final ProjectReferenceFileJoinRepository prfjRepository;
 
-	protected ProjectServiceImpl() {
-		super(null, null, Project.class);
-		this.pujRepository = null;
-		this.psjRepository = null;
-		this.sampleRepository = null;
-		this.userRepository = null;
-		this.relatedProjectRepository = null;
-		this.referenceFileRepository = null;
-		this.prfjRepository = null;
-	}
-
 	@Autowired
 	public ProjectServiceImpl(ProjectRepository projectRepository, SampleRepository sampleRepository,
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,

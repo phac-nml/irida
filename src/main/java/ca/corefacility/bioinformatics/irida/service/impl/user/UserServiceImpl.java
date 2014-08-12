@@ -84,10 +84,6 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		USER_CONSTRAINT_PATTERN = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 	}
 
-	protected UserServiceImpl() {
-		super(null, null, User.class);
-	}
-
 	/**
 	 * Constructor, requires a handle on a validator and a repository.
 	 * 

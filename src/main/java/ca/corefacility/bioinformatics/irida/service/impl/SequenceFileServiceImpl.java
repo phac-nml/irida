@@ -59,11 +59,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	
 	private static final String FILE_PROPERTY = "file";
 
-	protected SequenceFileServiceImpl() {
-		super(null, null, SequenceFile.class);
-		throw new UnsupportedOperationException();
-	}
-
 	/**
 	 * Constructor.
 	 * 

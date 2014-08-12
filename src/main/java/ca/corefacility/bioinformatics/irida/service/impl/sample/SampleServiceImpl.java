@@ -53,10 +53,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	private SampleSequenceFileJoinRepository ssfRepository;
 
-	protected SampleServiceImpl() {
-		super(null, null, Sample.class);
-	}
-
 	/**
 	 * Constructor.
 	 * 

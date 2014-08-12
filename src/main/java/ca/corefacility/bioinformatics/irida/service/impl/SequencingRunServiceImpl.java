@@ -34,10 +34,6 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	private SampleRepository sampleRepository;
 	private SequenceFileRepository sequenceFileRepository;
 
-	protected SequencingRunServiceImpl() {
-		super(null, null, SequencingRun.class);
-	}
-
 	@Autowired
 	public SequencingRunServiceImpl(SequencingRunRepository repository, SequenceFileRepository sequenceFileRepository,
 			SampleSequenceFileJoinRepository ssfRepository, SampleRepository sampleRepository, Validator validator) {
