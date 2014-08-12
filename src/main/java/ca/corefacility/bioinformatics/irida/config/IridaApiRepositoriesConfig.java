@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.annotation.PreDestroy;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
@@ -30,6 +33,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import ca.corefacility.bioinformatics.irida.config.data.DataConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.UserRevListener;
+import ca.corefacility.bioinformatics.irida.util.RecursiveDeleteVisitor;
 
 /**
  * Configuration for repository/data storage classes.
@@ -52,9 +56,21 @@ public class IridaApiRepositoriesConfig {
 	private @Value("${sequence.file.base.directory}") String sequenceFileBaseDirectory;
 
 	private @Value("${reference.file.base.directory}") String referenceFileBaseDirectory;
-	
+
 	// test profiles are dev, test, it but not prod.
-	private static final String[] TEST_PROFILES = {"dev", "test", "it", "!prod"};
+	private static final String[] TEST_PROFILES = { "dev", "test", "it", "!prod" };
+
+	private static final Set<Path> BASE_DIRECTORIES = new HashSet<>();
+
+	// Franklin: I assume that the scope of a configuration bean is the lifetime
+	// of the application, so the directory should only get deleted *after* the
+	// tests have finished running.
+	@PreDestroy
+	public void tearDown() throws IOException {
+		for (Path b : BASE_DIRECTORIES) {
+			Files.walkFileTree(b, new RecursiveDeleteVisitor());
+		}
+	}
 
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
@@ -89,6 +105,7 @@ public class IridaApiRepositoriesConfig {
 		if (!Files.exists(baseDirectory)) {
 			if (environment.acceptsProfiles(TEST_PROFILES)) {
 				baseDirectory = Files.createTempDirectory(defaultDevPathPrefix);
+				BASE_DIRECTORIES.add(baseDirectory);
 				logger.info(String.format(
 						"The directory [%s] does not exist, but it looks like you're running in a dev environment, "
 								+ "so I created a temporary location at [%s].", pathName, baseDirectory.toString()));

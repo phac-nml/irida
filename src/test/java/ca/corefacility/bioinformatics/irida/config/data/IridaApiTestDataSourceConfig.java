@@ -19,7 +19,7 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
-import ca.corefacility.bioinformatics.irida.utils.RecursiveDeleteVisitor;
+import ca.corefacility.bioinformatics.irida.util.RecursiveDeleteVisitor;
 
 @Configuration
 @Profile("test")

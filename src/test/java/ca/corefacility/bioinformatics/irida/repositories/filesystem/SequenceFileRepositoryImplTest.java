@@ -21,7 +21,7 @@ import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepositoryImpl;
-import ca.corefacility.bioinformatics.irida.utils.RecursiveDeleteVisitor;
+import ca.corefacility.bioinformatics.irida.util.RecursiveDeleteVisitor;
 
 /**
  * Tests for {@link FilesystemSupplementedRepositoryImpl}.
