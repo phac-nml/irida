@@ -12,7 +12,6 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
@@ -44,16 +43,17 @@ public class GalaxyWorkflowService {
 	 * Constructs a new GalaxyWorkflowSubmitter with the given information.
 	 * @param historiesClient  The HistoriesClient used to connect to Galaxy histories.
 	 * @param workflowsClient  The WorkflowsClient used to connect to Galaxy workflows.
+	 * @param encoder  A PasswordEncoder used to encode workflows to generate checksums.
 	 */
 	public GalaxyWorkflowService(HistoriesClient historiesClient,
-			WorkflowsClient workflowsClient) {
+			WorkflowsClient workflowsClient, PasswordEncoder encoder) {
 		checkNotNull(historiesClient, "historiesClient is null");
 		checkNotNull(workflowsClient, "workflowsClient is null");
+		checkNotNull(encoder, "encoder is null");
 		
 		this.historiesClient = historiesClient;
 		this.workflowsClient = workflowsClient;
-		
-		encoder = new StandardPasswordEncoder();
+		this.encoder = encoder;
 	}
 	
 	/**

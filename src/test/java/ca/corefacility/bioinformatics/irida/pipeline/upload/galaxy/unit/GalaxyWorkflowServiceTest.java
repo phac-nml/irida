@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
@@ -69,7 +70,8 @@ public class GalaxyWorkflowServiceTest {
 	public void setup() throws URISyntaxException {
 		MockitoAnnotations.initMocks(this);
 		
-		galaxyWorkflowService = new GalaxyWorkflowService(historiesClient, workflowsClient);
+		galaxyWorkflowService = new GalaxyWorkflowService(historiesClient, workflowsClient,
+				new StandardPasswordEncoder());
 		
 		String workflowInputId = "1";
 		WorkflowInputDefinition worklowInput = new WorkflowInputDefinition();
