@@ -82,12 +82,14 @@
             <table>
                 {{#files}}
                 <tr>
-                    {{#selected}}
-                    <td><input class="fileCB" data-sample-id="{{sampleId}}" data-file-id="{{id}}" type="checkbox" checked="checked"/></td>
-                    {{/selected}}
-                    {{#notSelected}}
-                    <td><input class="fileCB" data-sample-id="{{sampleId}}" data-file-id="{{id}}" type="checkbox"/></td>
-                    {{/notSelected}}
+                    <td>
+                    {{#checked}}
+                    <input class="fileCB" data-sample-id="{{sampleId}}" data-file-id="{{id}}" type="checkbox" checked="checked" />
+                    {{/checked}}
+                    {{#notChecked}}
+                    <input class="fileCB" data-sample-id="{{sampleId}}" data-file-id="{{id}}" type="checkbox" />
+                    {{/notChecked}}
+                    </td>
                     <td class="files-name">
                         <a th:href="@{/sequenceFiles/{{id}}}">{{name}}</a>
                     </td>
@@ -298,9 +300,26 @@ function EditableDataTable() {
             'url': url.format(sampleId),
             'type': 'post'
         }).done(function (data) {
+			var selectedFiles = {};
             if (data.length > 0) {
                 var template = $('#files-view-template').html();
-                var content = Mustache.render(template, {files: data, sampleId: sampleId, selected: selected, notSelected: !selected});
+				var omitted = that.allRowIds[sampleId].omit;
+				$.each(data, function (i, v) {
+					var checked = selected || omitted.indexOf(v.id) > -1;
+					if(checked) {
+						v.checked = true;
+					}
+					else {
+						v.notChecked = true;
+					}
+				});
+				var content = Mustache.render(template, {
+					files: data,
+					sampleId: sampleId,
+					selected: selected,
+					notSelected: !selected
+				});
+				console.log(content);
                 $row.addClass('details').after(content);
             } else {
                 var msg = /*[[#{project.samples.files.not-available}]]*/ 'Cannot get file information right now';
@@ -723,7 +742,8 @@ $(document).ready(function () {
             if (DT.selectedRowIds.indexOf(data.id) > -1 && DT.allRowIds[data.id].omit.length > 0) {
                 $(row)
                         .find('.sampleCB')
-                        .prop("indeterminate", true);
+                        .prop("indeterminate", true)
+						.prop("checked", false);
             }
         }
     }));
@@ -747,11 +767,11 @@ $(document).ready(function () {
                 $checkedCBs = $(".fileCB:checked");
         DT.allRowIds[sampleId].omit= [];
         $.each($checkedCBs, function(i, val) {
-            DT.allRowIds[sampleId].omit.push($(val).data("file-id"));
+            DT.allRowIds[sampleId].omit.push($(val).data("file-id") + '');
         });
 
 
-        sampleCB.prop('indeterminate', false);
+		sampleCB.prop('indeterminate', false).prop('checked', false);
         if ($checkedCBs.size() === 0) {
             sampleCB.prop('checked', false);
             DT.selectedRowIds.splice(DT.selectedRowIds.indexOf(sampleId));
