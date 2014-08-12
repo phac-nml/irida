@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -16,14 +18,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
  * <p>
@@ -188,7 +190,7 @@ public class ProjectSamplesPageIT {
 	@Test
 	public void testDisplaySampleFiles() {
 		page.goToPage();
-		page.toggleFilesView();
+		page.showFilesView();
 		assertTrue("Files view should be open", page.isFilesViewOpen());
 		assertEquals("There should be three files displayed", 3, page.getDisplayedFilesCount());
 	}
@@ -200,4 +202,56 @@ public class ProjectSamplesPageIT {
     	page.copySamples("2");
     	assertTrue(page.successMessageShown());
     }
+
+	@Test
+	public void testTriStateCheckboxes(){
+		page.goToPage();
+		page.showFilesView();
+		page.clickOnFileCheckBox(0);
+		assertTrue("Files master checkbox should be indeterminate", page.isFilesViewControllerIndeterminate());
+		assertTrue("Select all should be in indeterminate state", page.isSelectAllInIndeterminateState());
+		page.clickOnFileCheckBox(1);
+		assertTrue("Files master checkbox should be indeterminate", page.isFilesViewControllerIndeterminate());
+		assertTrue("Select all should be in indeterminate state", page.isSelectAllInIndeterminateState());
+		page.clickOnFileCheckBox(2);
+		assertFalse("Files master checkbox should not be indeterminate", page.isFilesViewControllerSelected());
+		assertTrue("Select all should be in indeterminate state", page.isSelectAllInIndeterminateState());
+		assertFalse("Select all should not be selected", page.isSelectAllSelected());
+
+		// Un-check all
+		page.clickOnFileCheckBox(0);
+		assertTrue("Files master checkbox should be indeterminate", page.isFilesViewControllerIndeterminate());
+		assertTrue("Select all should be in indeterminate state", page.isSelectAllInIndeterminateState());
+		page.clickOnFileCheckBox(1);
+		assertTrue("Files master checkbox should be indeterminate", page.isFilesViewControllerIndeterminate());
+		assertTrue("Select all should be in indeterminate state", page.isSelectAllInIndeterminateState());
+		page.clickOnFileCheckBox(2);
+		assertFalse("Files master checkbox should not be indeterminate", page.isFilesViewControllerSelected());
+		assertFalse("Select all should be in indeterminate state", page.isSelectAllInIndeterminateState());
+		assertFalse("Select all should not be selected", page.isSelectAllSelected());
+
+		// IF the select all is selected all files open should be selected
+		page.clickSelectAllCheckbox();
+		assertTrue("All files should be selected when select all is selected", page.areAllFilesSelected());
+		page.clickOnFileCheckBox(0);
+		assertTrue("Select all should be indeterminate if one file is not selected",
+				page.isSelectAllInIndeterminateState());
+		assertTrue("Checkbox controlling the files view should be indeterminate if one file is not selected",
+				page.isFilesViewControllerIndeterminate());
+		page.clickOnFileCheckBox(0);
+		assertFalse("Select all should be indeterminate if one file is not selected",
+				page.isSelectAllInIndeterminateState());
+		assertFalse("Checkbox controlling the files view should be indeterminate if one file is not selected",
+				page.isFilesViewControllerIndeterminate());
+
+		// Test to make sure the correct files are selected when opening and closing the file-details view
+		page.goToPage();
+		page.showFilesView();
+		page.clickOnFileCheckBox(2);
+		page.clickOnFileCheckBox(1);
+		assertTrue("Should have files 1 and 2 selected", page.ensureCorrectFilesSelected(new int[] { 1, 2 }));
+		page.hideFilesView();
+		page.showFilesView();
+		assertTrue("Should have files 1 and 2 selected", page.ensureCorrectFilesSelected(new int[] { 1, 2 }));
+	}
 }
