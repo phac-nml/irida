@@ -59,6 +59,7 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectsControllerTest {
+	public static final String PROJECT_ORGANISM = "E. coli";
 	// DATATABLES position for project information
 	// private static final int PROJECT_NAME_TABLE_LOCATION = 1;
 	// private static final int PROJECT_NUM_SAMPLES_TABLE_LOCATION = 4;
@@ -71,13 +72,10 @@ public class ProjectsControllerTest {
 	private static final String PROJECT_NAME = "test_project";
 	private static final Long PROJECT_ID = 1L;
 	private static final Long PROJECT_MODIFIED_DATE = 1403723706L;
-	public static final String PROJECT_ORGANISM = "E. coli";
-	private static Project project = null;
-
 	private static final ImmutableList<String> REQUIRED_DATATABLE_RESPONSE_PARAMS = ImmutableList.of(
 			DataTable.RESPONSE_PARAM_DATA, DataTable.RESPONSE_PARAM_DRAW, DataTable.RESPONSE_PARAM_RECORDS_FILTERED,
 			DataTable.RESPONSE_PARAM_RECORDS_FILTERED, DataTable.RESPONSE_PARAM_SORT_COLUMN);
-
+	private static Project project = null;
 	// Services
 	private ProjectService projectService;
 	private ProjectsController controller;
@@ -337,6 +335,7 @@ public class ProjectsControllerTest {
 		int page = 0;
 		int pagesize = 10;
 		Direction order = Direction.ASC;
+		String property = "name";
 
 		Principal principal = () -> USER_NAME;
 		User puser = new User(USER_NAME, null, null, null, null, null);
@@ -344,7 +343,8 @@ public class ProjectsControllerTest {
 		Page<Project> projects = new PageImpl<>(Lists.newArrayList(new Project("p1"), new Project("p2")));
 
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
-		when(projectService.search(any(Specification.class), eq(page), eq(pagesize), eq(order))).thenReturn(projects);
+		when(projectService.search(any(Specification.class), eq(page), eq(pagesize), eq(order), eq(property)))
+				.thenReturn(projects);
 
 		Map<String, Object> projectsAvailableToCopySamples = controller.getProjectsAvailableToCopySamples(projectId,
 				term, pagesize, page, principal);
@@ -354,7 +354,7 @@ public class ProjectsControllerTest {
 		assertTrue(projectsAvailableToCopySamples.containsKey("results"));
 
 		verify(userService).getUserByUsername(USER_NAME);
-		verify(projectService).search(any(Specification.class), eq(page), eq(pagesize), eq(order));
+		verify(projectService).search(any(Specification.class), eq(page), eq(pagesize), eq(order), eq(property));
 	}
 
 	@SuppressWarnings("unchecked")

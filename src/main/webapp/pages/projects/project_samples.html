@@ -76,16 +76,25 @@
             <input type="text" id="copy-sample-project" name="project" class="form-control input-full" />
 			<span id="copy-samples-error" class="help-block bg-danger"></span>
     </script>
-    <script type="text/html" id="file-row-template">
-        <tr>
-            <td class="files-name">
-                <a href="{1}">{2}</a>
-                <button data-file-id="{0}" class="filedownload pull-right btn btn-default btn-xs glyphicon glyphicon-download-alt mrgn-rght-sm" title="{3}"></button>
+	<script type="x-tmpl-mustache" id="files-view-template" th:inline="text">
+        <tr id="files-view">
+            <td colspan="5">
+            <table>
+                {{#files}}
+                <tr>
+                    <td><input type="checkbox"/></td>
+                    <td class="files-name">
+                        <a th:href="@{/sequenceFiles/{{id}}}">{{name}}</a>
+                    </td>
+                    <td><button data-file-id="{{id}}" class="filedownload pull-right btn btn-default btn-xs glyphicon glyphicon-download-alt mrgn-rght-sm" th:title="#{form.download}"></button></td>
+                    <td>{{size}}</td>
+                    <td>{{created}}</td>
+                </tr>
+                {{/files}}
+            </table>
             </td>
-            <td>{4}</td>
-            <td>{5}</td>
-        </tr>
-    </script>
+		</tr>
+	</script>
 	<script type="text/html" id="select2-merge">
             <h2 th:text="#{project.samples.combine-title}">__REMOVED_TITLE__</h2>
             <p th:text="#{project.samples.combine-warning}"></p>
@@ -239,26 +248,6 @@ function EditableDataTable() {
         });
     }
 
-    this._createFilesContent = function (data, selected) {
-        var mainTR = document.createElement('tr'),
-                mainTD = document.createElement('td');
-        mainTR.setAttribute("id", "files-view");
-        mainTD.setAttribute('colspan', 5);
-        mainTR.appendChild(mainTD);
-        var table = document.createElement('table');
-        table.className = "files-table";
-        mainTD.appendChild(table);
-        var template = document.getElementById('file-row-template').innerHTML;
-        for (var i = 0; i < data.length; i++) {
-            var d = data[i];
-            var href = /*[[@{/sequenceFiles/}]]*/ '/sequenceFiles/';
-            var download = /*[[#{form.download}]]*/ 'Download';
-            var row = template.format(d.id, href + d.id, d.name, download, d.size, d.created);
-            table.innerHTML += row;
-        }
-        return mainTR;
-    };
-
     function showSuccessModal(message) {
         noty({
             text: message,
@@ -304,7 +293,8 @@ function EditableDataTable() {
             'type': 'post'
         }).done(function (data) {
             if (data.length > 0) {
-                var content = that._createFilesContent(data, selected);
+                var template = $('#files-view-template').html();
+                var content = Mustache.render(template, {files : data});
                 $row.addClass('details').after(content);
             } else {
                 var msg = /*[[#{project.samples.files.not-available}]]*/ 'Cannot get file information right now';
