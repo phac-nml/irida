@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -55,6 +56,9 @@ public class AnalysisFastQC extends Analysis {
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<OverrepresentedSequence> overrepresentedSequences;
+
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private AnalysisOutputFile fastQCReport;
 
 	/**
 	 * Required for hibernate, should not be used anywhere else, so private.
@@ -179,5 +183,13 @@ public class AnalysisFastQC extends Analysis {
 
 	public void setOverrepresentedSequences(Set<OverrepresentedSequence> overrepresentedSequences) {
 		this.overrepresentedSequences = overrepresentedSequences;
+	}
+
+	public AnalysisOutputFile getFastQCReport() {
+		return fastQCReport;
+	}
+
+	public void setFastQCReport(AnalysisOutputFile fastQCReport) {
+		this.fastQCReport = fastQCReport;
 	}
 }
