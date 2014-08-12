@@ -99,7 +99,11 @@ public class ProjectSamplesPage {
 	 * @return True if in a checked state.
 	 */
 	public boolean isSelectAllSelected() {
-		return driver.findElement(By.id("selectAll")).getAttribute("checked").equals("true");
+		String exists = driver.findElement(By.id("selectAll")).getAttribute("checked");
+		if (Strings.isNullOrEmpty(exists)) {
+			return false;
+		}
+		return exists.equals("true");
 	}
 
 	/**
@@ -242,6 +246,35 @@ public class ProjectSamplesPage {
 		return driver.findElements(By.className("files-name")).size();
 	}
 
+	public boolean isFilesViewControllerIndeterminate() {
+		String exists = driver.findElement(By.cssSelector("tbody tr:nth-child(5) .sampleCB")).getAttribute(
+				"indeterminate");
+		if (Strings.isNullOrEmpty(exists)) {
+			return false;
+		}
+		return exists.equals("true");
+	}
+
+	public boolean isFilesViewControllerSelected() {
+		String exists = driver.findElement(By.cssSelector("tbody tr:nth-child(5) .sampleCB")).getAttribute("indeterminate");
+		if (Strings.isNullOrEmpty(exists)) {
+			return false;
+		}
+		return true;
+	}
+
+	public boolean areAllFilesSelected() {
+		boolean result = true;
+		List<WebElement> cbs = driver.findElements(By.className("fileCB"));
+		for (WebElement e : cbs) {
+			String exists = e.getAttribute("checked");
+			if(Strings.isNullOrEmpty(exists)) {
+				result = false;
+			}
+		}
+		return result;
+	}
+
 	/**************************************************************************************
 	 * EVENTS
 	 **************************************************************************************/
@@ -264,7 +297,9 @@ public class ProjectSamplesPage {
 	 * Open the row that contains files.
 	 */
 	public void toggleFilesView() {
-		driver.findElement(By.cssSelector("td.details-control a")).click();
+		driver.findElement(By.className("fileViewLink")).click();
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+				.id("files-view")));
 	}
 
 	/**
@@ -355,6 +390,11 @@ public class ProjectSamplesPage {
 		(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
 				.className("noty_message")));
     }
+
+	public void clickOnFileCheckBox(int boxNum) {
+		List<WebElement> cbs = driver.findElements(By.className("fileCB"));
+		cbs.get(boxNum).click();
+	}
 
     /**
      * When combining samples this will select and item in the select2 box based on the name passed.
