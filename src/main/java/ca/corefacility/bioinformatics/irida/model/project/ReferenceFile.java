@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.project;
 
 import java.nio.file.Path;
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -51,6 +52,20 @@ public class ReferenceFile implements VersionedFileFields<Long> {
 	private ProjectReferenceFileJoin project;
 
 	private Long fileRevisionNumber; // the filesystem file revision number
+	
+	public int hashCode() {
+		return file.hashCode();
+	}
+	
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		} else if (o instanceof ReferenceFile) {
+			return Objects.equals(file, ((ReferenceFile) o).file);
+		}
+		
+		return false;
+	}
 
 	public ReferenceFile() {
 		this.createdDate = new Date();
