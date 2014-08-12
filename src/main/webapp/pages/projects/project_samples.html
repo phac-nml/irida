@@ -319,7 +319,6 @@ function EditableDataTable() {
 					selected: selected,
 					notSelected: !selected
 				});
-				console.log(content);
                 $row.addClass('details').after(content);
             } else {
                 var msg = /*[[#{project.samples.files.not-available}]]*/ 'Cannot get file information right now';
@@ -599,6 +598,7 @@ EditableDataTable.prototype = {
         if (isAllSelected) {
             $.each(that.allRowIds, function (i, val) {
                 that.selectedRowIds.push(val.id)
+				val.omit = [];
             });
         }
     },
@@ -609,6 +609,7 @@ EditableDataTable.prototype = {
     },
     checkBoxClickedEvent: function (id, checked) {
 		var index = this.selectedRowIds.indexOf(id);
+		this.allRowIds[id].omit = [];
         if (checked) {
 			if(index === -1){
 				this.selectedRowIds.push(id)
@@ -732,7 +733,7 @@ $(document).ready(function () {
                 "width": "15%",
                 "render": function (data) {
                     if (data > 0) {
-                        return '<a href="#">' + data + '</a>';
+                        return '<a class="fileViewLink" href="#">' + data + '</a>';
                     }
                     return data;
                 }
@@ -782,8 +783,11 @@ $(document).ready(function () {
                 $allCBs = $(".fileCB"),
                 $checkedCBs = $(".fileCB:checked");
         DT.allRowIds[sampleId].omit= [];
-        $.each($checkedCBs, function(i, val) {
-            DT.allRowIds[sampleId].omit.push($(val).data("file-id") + '');
+        $.each($allCBs, function(i, val) {
+			var $val = $(val);
+			if($val.prop('checked') === false){
+				DT.allRowIds[sampleId].omit.push($val.data("file-id") + '');
+			}
         });
 
 
