@@ -608,11 +608,14 @@ EditableDataTable.prototype = {
         }
     },
     checkBoxClickedEvent: function (id, checked) {
+		var index = this.selectedRowIds.indexOf(id);
         if (checked) {
-            this.selectedRowIds.push(id)
+			if(index === -1){
+				this.selectedRowIds.push(id)
+			}
         }
         else {
-            this.selectedRowIds.splice(this.selectedRowIds.indexOf(id), 1);
+            this.selectedRowIds.splice(index, 1);
         }
     },
     toggleFilesView: function (el) {
@@ -645,12 +648,22 @@ EditableDataTable.prototype = {
         }
     },
     getSelectAllState: function () {
+		var result = "indeterminate";
         if (this.selectedRowIds.length === 0) {
             return false; // Checkbox unchecked
         } else if (this.selectedRowIds.length === this.totalSamples) {
-            return true; // Checkbox checked
+			// Need to see if there are any files omitted!
+			result = true;
+			$.each(this.allRowIds, function (i, v) {
+				if(v.omit.length > 0) {
+					result = "indeterminate"
+				}
+			});
         }
-        return "indeterminate"; // Checkbox indeterminant
+		else {
+			result = "indeterminate"
+		}
+        return result; // Checkbox indeterminant
     },
     deleteSelectedSamples: function () {
         if (this.selectedRowIds.length > 0) {
@@ -757,6 +770,9 @@ $(document).ready(function () {
                 id = $cb.val(),
                 checked = $cb.prop('checked');
         DT.checkBoxClickedEvent(id, checked);
+		if($cb.closest('tr').next().attr('id') === 'files-view') {
+			$('#files-view').find('.fileCB').prop('checked', checked);
+		}
         setSelectAllState();
     }).on('click', '.fileCB', function () {
         var $this = $(this),
@@ -826,7 +842,7 @@ $(document).ready(function () {
     $selectAll.on("click", function () {
         var $this = $(this),
                 allSelected = $this.prop("checked");
-        $samplesTable.find('input[type="checkbox"]').prop('checked', allSelected);
+        $samplesTable.find('input[type="checkbox"]').prop("indeterminate", false).prop('checked', allSelected);
         $btnAction.prop('disabled', !allSelected);
         $btnAction2.prop('disabled', !allSelected);
         DT.updateAllSelected(allSelected);
