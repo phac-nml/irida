@@ -275,6 +275,18 @@ public class ProjectSamplesPage {
 		return result;
 	}
 
+	public boolean ensureCorrectFilesSelected(int[] checkboxes) {
+		boolean result = true;
+		List<WebElement> cbs = driver.findElements(By.className("fileCB"));
+		for (int i = 0; i < checkboxes.length; i++) {
+			if (cbs.get(checkboxes[i]).getAttribute("checked").equals("false")) {
+				result = false;
+				break;
+			}
+		}
+		return result;
+	}
+
 	/**************************************************************************************
 	 * EVENTS
 	 **************************************************************************************/
@@ -296,9 +308,14 @@ public class ProjectSamplesPage {
 	/**
 	 * Open the row that contains files.
 	 */
-	public void toggleFilesView() {
+	public void showFilesView() {
 		driver.findElement(By.className("fileViewLink")).click();
 		(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+				.id("files-view")));
+	}
+	public void hideFilesView() {
+		driver.findElement(By.className("fileViewLink")).click();
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.invisibilityOfElementLocated(By
 				.id("files-view")));
 	}
 

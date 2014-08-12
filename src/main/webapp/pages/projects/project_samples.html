@@ -294,6 +294,7 @@ function EditableDataTable() {
                 $row = $(row),
                 checkbox = $row.find('.sampleCB'),
                 sampleId = checkbox.val(),
+				indeterminate = checkbox.prop('indeterminate'),
                 selected = checkbox.prop('checked'),
                 url = /*[[@{/samples/ajax/{0}/files}]]*/ '/samples/ajax/1/files';
         $.ajax({
@@ -302,22 +303,32 @@ function EditableDataTable() {
         }).done(function (data) {
 			var selectedFiles = {};
             if (data.length > 0) {
+				// sampleCB not selected
+				if(selected) {
+					$.each(data, function (i, v) {
+						v.checked = true
+					})
+				} else if(indeterminate) {
+					var omitted = that.allRowIds[sampleId].omit;
+					$.each(data, function (i, v) {
+						if(omitted.indexOf(v.id) === -1) {
+							v.checked = true;
+						}
+						else {
+							v.notChecked = true;
+						}
+					});
+				}
+				else {
+					$.each(data, function (i, v) {
+						v.notChecked = true
+					})
+				}
+
                 var template = $('#files-view-template').html();
-				var omitted = that.allRowIds[sampleId].omit;
-				$.each(data, function (i, v) {
-					var checked = selected || omitted.indexOf(v.id) > -1;
-					if(checked) {
-						v.checked = true;
-					}
-					else {
-						v.notChecked = true;
-					}
-				});
 				var content = Mustache.render(template, {
 					files: data,
-					sampleId: sampleId,
-					selected: selected,
-					notSelected: !selected
+					sampleId: sampleId
 				});
                 $row.addClass('details').after(content);
             } else {

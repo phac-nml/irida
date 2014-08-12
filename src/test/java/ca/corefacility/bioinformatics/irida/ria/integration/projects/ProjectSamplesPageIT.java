@@ -190,7 +190,7 @@ public class ProjectSamplesPageIT {
 	@Test
 	public void testDisplaySampleFiles() {
 		page.goToPage();
-		page.toggleFilesView();
+		page.showFilesView();
 		assertTrue("Files view should be open", page.isFilesViewOpen());
 		assertEquals("There should be three files displayed", 3, page.getDisplayedFilesCount());
 	}
@@ -206,7 +206,7 @@ public class ProjectSamplesPageIT {
 	@Test
 	public void testTriStateCheckboxes(){
 		page.goToPage();
-		page.toggleFilesView();
+		page.showFilesView();
 		page.clickOnFileCheckBox(0);
 		assertTrue("Files master checkbox should be indeterminate", page.isFilesViewControllerIndeterminate());
 		assertTrue("Select all should be in indeterminate state", page.isSelectAllInIndeterminateState());
@@ -243,5 +243,15 @@ public class ProjectSamplesPageIT {
 				page.isSelectAllInIndeterminateState());
 		assertFalse("Checkbox controlling the files view should be indeterminate if one file is not selected",
 				page.isFilesViewControllerIndeterminate());
+
+		// Test to make sure the correct files are selected when opening and closing the file-details view
+		page.goToPage();
+		page.showFilesView();
+		page.clickOnFileCheckBox(2);
+		page.clickOnFileCheckBox(1);
+		assertTrue("Should have files 1 and 2 selected", page.ensureCorrectFilesSelected(new int[] { 1, 2 }));
+		page.hideFilesView();
+		page.showFilesView();
+		assertTrue("Should have files 1 and 2 selected", page.ensureCorrectFilesSelected(new int[] { 1, 2 }));
 	}
 }
