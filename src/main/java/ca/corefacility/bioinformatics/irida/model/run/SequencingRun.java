@@ -69,11 +69,6 @@ public abstract class SequencingRun implements IridaThing, Comparable<Sequencing
 	}
 
 	@Override
-	public Date getTimestamp() {
-		return getCreatedDate();
-	}
-
-	@Override
 	public Date getCreatedDate() {
 		return createdDate;
 	}

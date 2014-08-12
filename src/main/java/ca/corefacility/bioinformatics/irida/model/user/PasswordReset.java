@@ -73,8 +73,4 @@ public class PasswordReset implements Comparable<PasswordReset>, Timestamped {
 		return false;
 	}
 
-	@Override
-	public Date getTimestamp() {
-		return createdDate;
-	}
 }

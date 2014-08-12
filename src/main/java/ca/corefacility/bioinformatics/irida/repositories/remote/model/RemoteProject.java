@@ -31,6 +31,6 @@ public class RemoteProject extends Project implements RemoteResource{
 	}
 	
 	public Date getDateCreated(){
-		return getTimestamp();
+		return getCreatedDate();
 	}
 }

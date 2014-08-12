@@ -83,11 +83,6 @@ public class Group implements IridaThing {
 	}
 
 	@Override
-	public Date getTimestamp() {
-		return getCreatedDate();
-	}
-
-	@Override
 	public Date getCreatedDate() {
 		return createdDate;
 	}

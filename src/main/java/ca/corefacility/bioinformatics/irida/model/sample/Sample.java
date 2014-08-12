@@ -336,11 +336,6 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	}
 
 	@Override
-	public Date getTimestamp() {
-		return createdDate;
-	}
-
-	@Override
 	public Date getModifiedDate() {
 		return modifiedDate;
 	}
