@@ -23,12 +23,7 @@ public enum DatasetCollectionType {
 	/**
 	 * Describes a list of paired end files.
 	 */
-	LIST_PAIRED("list:paired"),
-	
-	/**
-	 * Describes a list of a list of files.
-	 */
-	LIST_LIST("list:list");
+	LIST_PAIRED("list:paired");
 	
 	private String type;
 	

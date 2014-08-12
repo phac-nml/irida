@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.sun.jersey.api.client.ClientResponse;
 
@@ -41,12 +43,14 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
+import ca.corefacility.bioinformatics.irida.model.workflow.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
@@ -188,6 +192,40 @@ public class GalaxyHistoriesServiceIT {
 		}
 		
 		assertNotNull(foundHistory);
+	}
+	
+	/**
+	 * Tests out successfully constructing a collection list of datasets.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test
+	public void testConstructCollectionListSuccess() throws ExecutionManagerException {
+		History history = galaxyHistory.newHistoryForWorkflow();
+		Dataset dataset1 = galaxyHistory.fileToHistory(dataFile, FILE_TYPE, history);
+		Dataset dataset2 = galaxyHistory.fileToHistory(dataFile2, FILE_TYPE, history);
+		assertNotNull(dataset1);
+		assertNotNull(dataset2);
+		
+		CollectionResponse collectionResponse = 
+				galaxyHistory.constructCollectionList(Arrays.asList(dataset1, dataset2), history);
+		assertNotNull(collectionResponse);
+		assertEquals(DatasetCollectionType.LIST.toString(), collectionResponse.getCollectionType());
+		assertEquals(history.getId(), collectionResponse.getHistoryId());
+	}
+	
+	/**
+	 * Tests out failure to construct a collection list of datasets.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test(expected=ExecutionManagerException.class)
+	public void testConstructCollectionListFail() throws ExecutionManagerException {
+		History history = galaxyHistory.newHistoryForWorkflow();
+		Dataset dataset1 = galaxyHistory.fileToHistory(dataFile, FILE_TYPE, history);
+		Dataset datasetInvalid = new Dataset();
+		datasetInvalid.setId("invalidId");
+		assertNotNull(dataset1);
+		
+		galaxyHistory.constructCollectionList(Arrays.asList(dataset1, datasetInvalid), history);
 	}
 	
 	/**
