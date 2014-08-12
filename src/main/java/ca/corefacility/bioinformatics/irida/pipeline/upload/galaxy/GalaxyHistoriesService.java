@@ -282,6 +282,39 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	}
 	
 	/**
+	 * Constructs a collection containing a list of datasets within a history.
+	 * @param datasets  The datasets to construct a collection around.
+	 * @param history  The history to construct the collection within.
+	 * @return  A CollectionResponse describing the dataset collection.
+	 * @throws ExecutionManagerException  If an exception occured constructing the collection.
+	 */
+	public CollectionResponse constructCollectionList(List<Dataset> datasets,
+			History history) throws ExecutionManagerException {
+		checkNotNull(datasets, "datasets is null");
+		checkNotNull(history, "history is null");
+		checkNotNull(history.getId(), "history does not have an associated id");
+		
+		CollectionDescription collectionDescription = new CollectionDescription();
+		collectionDescription.setCollectionType(DatasetCollectionType.LIST.toString());
+		collectionDescription.setName(COLLECTION_NAME);
+		
+		for (Dataset dataset : datasets) {
+			HistoryDatasetElement element = new HistoryDatasetElement();
+			element.setId(dataset.getId());
+			element.setName(dataset.getName());
+			
+			collectionDescription.addDatasetElement(element);
+		}
+		
+		try {
+			return historiesClient.createDatasetCollection(history.getId(), collectionDescription);
+		} catch (RuntimeException e) {
+			throw new ExecutionManagerException("Could not construct dataset collection", e);
+		}
+	}
+	
+	
+	/**
 	 * Gets a Dataset object for a file with the given name in the given history.
 	 * @param filename  The name of the file to get a Dataset object for.
 	 * @param history  The history to look for the dataset.
