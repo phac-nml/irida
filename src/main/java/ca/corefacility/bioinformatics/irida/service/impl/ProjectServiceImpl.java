@@ -23,18 +23,22 @@ import org.springframework.transaction.annotation.Transactional;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
-import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
@@ -50,20 +54,19 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 
 	private static final Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
 
-	private ProjectUserJoinRepository pujRepository;
-	private ProjectSampleJoinRepository psjRepository;
-	private SampleRepository sampleRepository;
-	private UserRepository userRepository;
-	private RelatedProjectRepository relatedProjectRepository;
-
-	protected ProjectServiceImpl() {
-		super(null, null, Project.class);
-	}
+	private final ProjectUserJoinRepository pujRepository;
+	private final ProjectSampleJoinRepository psjRepository;
+	private final SampleRepository sampleRepository;
+	private final UserRepository userRepository;
+	private final RelatedProjectRepository relatedProjectRepository;
+	private final ReferenceFileRepository referenceFileRepository;
+	private final ProjectReferenceFileJoinRepository prfjRepository;
 
 	@Autowired
 	public ProjectServiceImpl(ProjectRepository projectRepository, SampleRepository sampleRepository,
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
+			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository,
 			Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.sampleRepository = sampleRepository;
@@ -71,6 +74,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.pujRepository = pujRepository;
 		this.psjRepository = psjRepository;
 		this.relatedProjectRepository = relatedProjectRepository;
+		this.referenceFileRepository = referenceFileRepository;
+		this.prfjRepository = prfjRepository;
 	}
 
 	@Override
@@ -293,5 +298,17 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	public List<Join<Project, Sample>> getProjectsForSample(Sample sample) {
 		return psjRepository.getProjectForSample(sample);
+	}
+
+	@Override
+	public Join<Project, ReferenceFile> addReferenceFileToProject(Project project, ReferenceFile referenceFile) {
+		referenceFile = referenceFileRepository.save(referenceFile);
+		ProjectReferenceFileJoin j = new ProjectReferenceFileJoin(project, referenceFile);
+		return prfjRepository.save(j);
+	}
+
+	@Override
+	public List<Join<Project, ReferenceFile>> getReferenceFilesForProject(Project project) {
+		return prfjRepository.findReferenceFilesForProject(project);
 	}
 }

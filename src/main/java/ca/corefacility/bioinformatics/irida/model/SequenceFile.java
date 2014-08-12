@@ -42,8 +42,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 @Entity
 @Table(name = "sequence_file")
 @Audited
-public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
-	
+public class SequenceFile implements IridaThing, Comparable<SequenceFile>, VersionedFileFields<Long> {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -59,10 +59,8 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
-	/* statistics computed by fastqc */
-	
 	private Long fileRevisionNumber; // the filesystem file revision number
-	
+
 	// Key/value map of additional properties you could set on a sequence file.
 	// This may contain optional sequencer specific properties.
 	@ElementCollection(fetch = FetchType.EAGER)
@@ -162,10 +160,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 		return fileRevisionNumber;
 	}
 
-	public void setFileRevisionNumber(Long fileRevisionNumber) {
-		this.fileRevisionNumber = fileRevisionNumber;
-	}
-
 	public SequencingRun getSequencingRun() {
 		return sequencingRun;
 	}
@@ -173,38 +167,52 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile> {
 	public void setSequencingRun(SequencingRun sequencingRun) {
 		this.sequencingRun = sequencingRun;
 	}
-	
+
 	/**
 	 * Add one optional property to the map of properties
-	 * @param key The key of the property to add
-	 * @param value The value of the property to add
+	 * 
+	 * @param key
+	 *            The key of the property to add
+	 * @param value
+	 *            The value of the property to add
 	 */
-	public void addOptionalProperty(String key,String value){
+	public void addOptionalProperty(String key, String value) {
 		optionalProperties.put(key, value);
 	}
-	
+
 	/**
 	 * Get the Map of optional properties
+	 * 
 	 * @return A Map<String,String> of all the optional propertie
 	 */
-	public Map<String,String> getOptionalProperties(){
+	public Map<String, String> getOptionalProperties() {
 		return optionalProperties;
 	}
-	
+
 	/**
 	 * Get an individual optional property
-	 * @param key The key of the property to read
+	 * 
+	 * @param key
+	 *            The key of the property to read
 	 * @return A String of the property's value
 	 */
-	public String getOptionalProperty(String key){
+	public String getOptionalProperty(String key) {
 		return optionalProperties.get(key);
 	}
-	
+
 	/**
 	 * Set the Map of optional properties
-	 * @param optionalProperties A Map<String,String> of all the optional properties for this object
+	 * 
+	 * @param optionalProperties
+	 *            A Map<String,String> of all the optional properties for this
+	 *            object
 	 */
-	public void setOptionalProperties(Map<String,String> optionalProperties){
+	public void setOptionalProperties(Map<String, String> optionalProperties) {
 		this.optionalProperties = optionalProperties;
+	}
+
+	@Override
+	public void incrementFileRevisionNumber() {
+		this.fileRevisionNumber++;
 	}
 }

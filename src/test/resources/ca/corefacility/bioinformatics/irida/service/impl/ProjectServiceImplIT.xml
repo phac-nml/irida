@@ -34,6 +34,7 @@
 
 	<sample id="1" sequencerSampleId="external" sampleName="sample"
 		createdDate="2013-07-18 14:20:19.0" />
+	<reference_file id="1" filePath="/" createdDate="2013-07-18 14:20:19.0" />
 
 	<project_user id="1" project_id="2" user_id="3"
 		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" />
@@ -54,5 +55,7 @@
 	<related_project id="1" subject_id="6"
 		relatedProject_id="8" createdDate="2013-07-18 14:20:19.0" />
 
+	<project_referencefile id="1" project_id="1"
+		referenceFile_id="1" createdDate="2013-07-18 14:20:19.0" />
 
 </dataset>

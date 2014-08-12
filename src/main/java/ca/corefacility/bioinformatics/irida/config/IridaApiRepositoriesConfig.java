@@ -1,10 +1,5 @@
 package ca.corefacility.bioinformatics.irida.config;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
@@ -12,10 +7,10 @@ import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.RevisionListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.env.Environment;
 import org.springframework.data.envers.repository.support.EnversRevisionRepositoryFactoryBean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -37,12 +32,14 @@ import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.Use
 @Configuration
 @EnableTransactionManagement(order = 1000)
 @EnableJpaRepositories(basePackages = "ca.corefacility.bioinformatics.irida.repositories", repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class)
-@Import({ IridaApiPropertyPlaceholderConfig.class, IridaApiJdbcDataSourceConfig.class })
+@Import({ IridaApiPropertyPlaceholderConfig.class, IridaApiJdbcDataSourceConfig.class,
+		IridaApiFilesystemRepositoryConfig.class })
 public class IridaApiRepositoriesConfig {
 	@Autowired
 	private DataConfig dataConfig;
 
-	private @Value("${sequence.file.base.directory}") String sequenceFileBaseDirectory;
+	@Autowired
+	private Environment environment;
 
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
@@ -60,16 +57,6 @@ public class IridaApiRepositoriesConfig {
 	@Bean
 	public PlatformTransactionManager transactionManager() {
 		return new JpaTransactionManager();
-	}
-
-	@Bean(name = "baseDirectory")
-	public Path baseDirectory() throws IOException {
-		Path baseDirectory = Paths.get(sequenceFileBaseDirectory);
-		if (!Files.exists(baseDirectory)) {
-			throw new IllegalStateException("Cannot continue startup; base directory [" + baseDirectory
-					+ "] does not exist!");
-		}
-		return baseDirectory;
 	}
 
 	@Bean(initMethod = "initialize")

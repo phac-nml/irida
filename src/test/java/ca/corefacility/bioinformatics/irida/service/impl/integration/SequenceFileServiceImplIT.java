@@ -85,7 +85,7 @@ public class SequenceFileServiceImplIT {
 	private SequencingRunService sequencingRunService;
 	
 	@Autowired
-	@Qualifier("baseDirectory")
+	@Qualifier("sequenceFileBaseDirectory")
 	private Path baseDirectory;
 
 	@Before
