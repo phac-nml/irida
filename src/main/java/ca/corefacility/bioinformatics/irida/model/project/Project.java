@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model;
+package ca.corefacility.bioinformatics.irida.model.project;
 
 import java.util.Date;
 import java.util.List;
@@ -22,6 +22,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.URL;
 
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
@@ -72,6 +73,9 @@ public class Project implements IridaThing, Comparable<Project> {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "relatedProject")
 	private List<RelatedProjectJoin> projectsRelatedTo;
+	
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
+	private List<ProjectReferenceFileJoin> referenceFiles;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	private Organization organization;

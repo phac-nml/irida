@@ -17,9 +17,9 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.repositories.SequencingRunRepository;
-import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
 /**
@@ -33,10 +33,6 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	private SampleSequenceFileJoinRepository ssfRepository;
 	private SampleRepository sampleRepository;
 	private SequenceFileRepository sequenceFileRepository;
-
-	protected SequencingRunServiceImpl() {
-		super(null, null, SequencingRun.class);
-	}
 
 	@Autowired
 	public SequencingRunServiceImpl(SequencingRunRepository repository, SequenceFileRepository sequenceFileRepository,

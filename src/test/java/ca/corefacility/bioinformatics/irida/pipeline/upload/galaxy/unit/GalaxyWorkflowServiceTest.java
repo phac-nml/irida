@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.unit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 import java.net.MalformedURLException;
@@ -17,12 +15,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 
+import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
@@ -45,6 +45,7 @@ public class GalaxyWorkflowServiceTest {
 	@Mock private History workflowHistory;
 	@Mock private Dataset inputDataset;
 	@Mock private Dataset downloadDataset;
+	@Mock private GalaxyResponseException responseException;
 	
 	private GalaxyWorkflowService galaxyWorkflowService;
 	
@@ -52,6 +53,12 @@ public class GalaxyWorkflowServiceTest {
 	private static final String INVALID_WORKFLOW_ID = "invalid";
 	
 	private static final String VALID_INPUT_LABEL = "fastq";
+	
+	private static final String EXAMPLE_WORKFLOW_STRING = "{\"a_galaxy_workflow\": \"true\"}";
+	private static final String EXAMPLE_WORKFLOW_CHECKSUM = 
+			"a8e3821b0b951388e4a385b46cf67eb39356f11d939d58b5346d1078e4b760c056b4f1ed6478d15e";
+	
+	private static final String EXAMPLE_CHANGED_WORKFLOW_STRING = "{\"a_galaxy_workflow\": \"false\"}";
 			
 	private Map<String, WorkflowInputDefinition> workflowInputs;
 	
@@ -63,7 +70,8 @@ public class GalaxyWorkflowServiceTest {
 	public void setup() throws URISyntaxException {
 		MockitoAnnotations.initMocks(this);
 		
-		galaxyWorkflowService = new GalaxyWorkflowService(historiesClient, workflowsClient);
+		galaxyWorkflowService = new GalaxyWorkflowService(historiesClient, workflowsClient,
+				new StandardPasswordEncoder());
 		
 		String workflowInputId = "1";
 		WorkflowInputDefinition worklowInput = new WorkflowInputDefinition();
@@ -74,6 +82,54 @@ public class GalaxyWorkflowServiceTest {
 		
 		when(workflowsClient.showWorkflow(VALID_WORKFLOW_ID)).thenReturn(workflowDetails);
 		when(workflowDetails.getInputs()).thenReturn(workflowInputs);
+	}
+	
+	/**
+	 * Tests out creating a workflow checksum successfully.
+	 * @throws WorkflowException
+	 */
+	@Test
+	public void testCreateWorkflowChecksumSuccess() throws WorkflowException {
+		when(workflowsClient.exportWorkflow(VALID_WORKFLOW_ID)).thenReturn(EXAMPLE_WORKFLOW_STRING);
+		
+		String checksum = galaxyWorkflowService.getWorkflowChecksum(VALID_WORKFLOW_ID);
+		assertNotNull(checksum);
+	}
+	
+	/**
+	 * Tests out failing to create a workflow checksum.
+	 * @throws WorkflowException
+	 */
+	@Test(expected=WorkflowException.class)
+	public void testCreateWorkflowChecksumFail() throws WorkflowException {
+		when(workflowsClient.exportWorkflow(INVALID_WORKFLOW_ID)).
+			thenThrow(responseException);
+		
+		galaxyWorkflowService.getWorkflowChecksum(INVALID_WORKFLOW_ID);
+	}
+	
+	/**
+	 * Tests out validating a workflow checksum successfully.
+	 * @throws WorkflowException
+	 */
+	@Test
+	public void testValidateWorkflowByChecksumSuccess() throws WorkflowException {
+		when(workflowsClient.exportWorkflow(VALID_WORKFLOW_ID)).thenReturn(EXAMPLE_WORKFLOW_STRING);
+		
+		assertTrue(galaxyWorkflowService.validateWorkflowByChecksum(
+				EXAMPLE_WORKFLOW_CHECKSUM, VALID_WORKFLOW_ID));	
+	}
+	
+	/**
+	 * Tests out validating a workflow checksum failure.
+	 * @throws WorkflowException
+	 */
+	@Test
+	public void testValidateWorkflowByChecksumFail() throws WorkflowException {
+		when(workflowsClient.exportWorkflow(VALID_WORKFLOW_ID)).thenReturn(EXAMPLE_CHANGED_WORKFLOW_STRING);
+		
+		assertFalse(galaxyWorkflowService.validateWorkflowByChecksum(
+				EXAMPLE_WORKFLOW_CHECKSUM, VALID_WORKFLOW_ID));	
 	}
 	
 	/**

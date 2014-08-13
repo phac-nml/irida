@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 
 /**
  * Repository for managing {@link RelatedProjectJoin}s
