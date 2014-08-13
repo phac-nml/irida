@@ -8,8 +8,6 @@ import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integra
 
 public interface AnalysisSubmission<T extends ExecutionManager> {
 
-	public Workflow getWorkflow();
-
 	public void setSequenceFiles(Set<Path> sequenceFiles);
 
 	public void setReferenceFile(Path referenceFile);

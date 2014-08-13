@@ -136,6 +136,8 @@ public class WorkflowManagementServiceGalaxy implements
 		
 		WorkflowOutputs output = galaxyWorkflowService.runWorkflow(inputs);
 		
+		// I need to store the outputs someplace
+		
 		return new GalaxyAnalysisId(output.getHistoryId());
 	}
 
