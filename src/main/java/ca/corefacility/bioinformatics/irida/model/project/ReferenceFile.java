@@ -97,11 +97,6 @@ public class ReferenceFile implements VersionedFileFields<Long> {
 		this.modifiedDate = modifiedDate;
 	}
 
-	@Override
-	public Date getTimestamp() {
-		return this.createdDate;
-	}
-
 	public Path getFile() {
 		return file;
 	}

@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.repositories.remote.model.resource;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -33,9 +32,4 @@ public interface RemoteResource {
 	 */
 	public void setLinks(List<Map<String, String>> links);
 	
-	/**
-	 * Get the date this resource was created
-	 * @return
-	 */
-	public Date getDateCreated();
 }

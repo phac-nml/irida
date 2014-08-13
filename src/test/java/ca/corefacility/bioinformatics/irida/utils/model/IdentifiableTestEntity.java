@@ -92,11 +92,6 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
     public void setLabel(String label){
         this.label = label;
     }
-	
-	@Override
-	public Date getTimestamp() {
-		return getCreatedDate();
-	}
 
 	@Override
 	public Date getCreatedDate() {

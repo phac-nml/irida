@@ -110,8 +110,4 @@ public class Organization implements IridaThing {
 		return centreName;
 	}
 
-	@Override
-	public Date getTimestamp() {
-		return createdDate;
-	}
 }

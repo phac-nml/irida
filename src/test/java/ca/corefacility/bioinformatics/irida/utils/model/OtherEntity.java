@@ -72,11 +72,6 @@ public class OtherEntity implements IridaThing, Comparable<OtherEntity> {
 	}
 
 	@Override
-	public Date getTimestamp() {
-		return getCreatedDate();
-	}
-
-	@Override
 	public Date getCreatedDate() {
 		return createdDate;
 	}

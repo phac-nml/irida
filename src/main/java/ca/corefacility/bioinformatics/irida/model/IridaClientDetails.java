@@ -346,10 +346,6 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 		this.modifiedDate = modifiedDate;
 	}
 
-	@Override
-	public Date getTimestamp() {
-		return getCreatedDate();
-	}
 
 	@Override
 	public Date getCreatedDate() {

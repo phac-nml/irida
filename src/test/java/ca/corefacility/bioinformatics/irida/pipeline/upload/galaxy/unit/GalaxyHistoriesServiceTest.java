@@ -384,6 +384,50 @@ public class GalaxyHistoriesServiceTest {
 	}
 	
 	/**
+	 * Tests successfull construction of a list of datasets.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test
+	public void testConstructCollectionListSuccess() throws ExecutionManagerException {
+		CollectionResponse collectionResponse = new CollectionResponse();
+		
+		History history = new History();
+		history.setId(HISTORY_ID);
+		
+		Dataset datasetForward = new Dataset();
+		datasetForward.setId(DATA_ID);
+		List<Dataset> datasets = Arrays.asList(datasetForward);
+		
+		when(historiesClient.createDatasetCollection(eq(HISTORY_ID), any(CollectionDescription.class))).
+			thenReturn(collectionResponse);
+		
+		assertEquals(collectionResponse,galaxyHistory.constructCollectionList(
+				datasets, history));
+	}
+	
+	/**
+	 * Tests failure to construct of a list of datasets.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test(expected=ExecutionManagerException.class)
+	public void testConstructCollectionListFail() throws ExecutionManagerException {
+		CollectionResponse collectionResponse = new CollectionResponse();
+		
+		History history = new History();
+		history.setId(HISTORY_ID);
+		
+		Dataset datasetForward = new Dataset();
+		datasetForward.setId(DATA_ID);
+		List<Dataset> datasets = Arrays.asList(datasetForward);
+		
+		when(historiesClient.createDatasetCollection(eq(HISTORY_ID), any(CollectionDescription.class))).
+			thenThrow(new RuntimeException());
+		
+		assertEquals(collectionResponse,galaxyHistory.constructCollectionList(
+				datasets, history));
+	}
+	
+	/**
 	 * Tests getting a History.
 	 * @throws ExecutionManagerObjectNotFoundException 
 	 */

@@ -142,11 +142,6 @@ public class Project implements IridaThing, Comparable<Project> {
 	}
 
 	@Override
-	public Date getTimestamp() {
-		return getCreatedDate();
-	}
-
-	@Override
 	public Date getCreatedDate() {
 		return createdDate;
 	}
