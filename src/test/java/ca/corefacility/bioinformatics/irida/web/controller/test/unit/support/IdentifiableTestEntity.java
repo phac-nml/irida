@@ -33,11 +33,6 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
 	}
 
 	@Override
-	public Date getTimestamp() {
-		return createdDate;
-	}
-
-	@Override
 	public String getLabel() {
 		return null;
 	}
