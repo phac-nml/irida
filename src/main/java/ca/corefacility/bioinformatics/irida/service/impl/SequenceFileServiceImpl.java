@@ -24,8 +24,8 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
-import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 /**
@@ -58,11 +58,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	private final FileProcessingChain fileProcessingChain;
 	
 	private static final String FILE_PROPERTY = "file";
-
-	protected SequenceFileServiceImpl() {
-		super(null, null, SequenceFile.class);
-		throw new UnsupportedOperationException();
-	}
 
 	/**
 	 * Constructor.

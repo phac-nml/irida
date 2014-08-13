@@ -25,9 +25,9 @@ import org.springframework.util.StringUtils;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Group;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
@@ -82,10 +82,6 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	static {
 		String regex = "^USER_(.*)_CONSTRAINT$";
 		USER_CONSTRAINT_PATTERN = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-	}
-
-	protected UserServiceImpl() {
-		super(null, null, User.class);
 	}
 
 	/**

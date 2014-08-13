@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
-import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 
 /**
  * Specialized repository for {@link Project}.

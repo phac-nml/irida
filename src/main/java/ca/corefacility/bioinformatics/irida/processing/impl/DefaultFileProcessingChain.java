@@ -11,7 +11,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.FileProcessorTimeoutExcep
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
-import ca.corefacility.bioinformatics.irida.repositories.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
 /**
  * Default implementation of {@link FileProcessingChain}. Simply iterates

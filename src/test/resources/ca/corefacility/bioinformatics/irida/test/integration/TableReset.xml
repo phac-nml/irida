@@ -27,6 +27,8 @@
 	<client_details_grant_types />
 	<client_details_scope />
 
+	<reference_file />
+
 	<password_reset />
 	<remote_api />
 	<remote_api_token />
@@ -35,6 +37,7 @@
 	<project_sample />
 	<logicalGroup />
 	<user_group />
+	<project_referencefile />
 
 	<!-- All auditing table references *only* refer to the Revisions table, 
 		so they can all be listed in an arbitrary order *after* the Revisions table. -->
@@ -69,4 +72,6 @@
 	<analysis_properties_AUD />
 	<analysis_sequence_file_AUD />
 	<analysis_fastqc_overrepresented_sequence_AUD />
+	<project_referencefile_AUD />
+	<reference_file_AUD />
 </dataset>

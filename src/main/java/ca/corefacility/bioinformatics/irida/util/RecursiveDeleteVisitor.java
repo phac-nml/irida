@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.utils;
+package ca.corefacility.bioinformatics.irida.util;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
