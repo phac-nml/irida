@@ -9,13 +9,6 @@ import java.util.Date;
  *
  */
 public interface Timestamped {
-	/**
-	 * Get the timestamp for this object
-	 * 
-	 * @return A {@link Date} object of the timestamp
-	 */
-	@Deprecated
-	public Date getTimestamp();
 
 	/**
 	 * Get the created date of the object

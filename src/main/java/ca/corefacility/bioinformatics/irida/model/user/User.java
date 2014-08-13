@@ -315,11 +315,6 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	}
 
 	@Override
-	public Date getTimestamp() {
-		return createdDate;
-	}
-
-	@Override
 	public Date getModifiedDate() {
 		return modifiedDate;
 	}

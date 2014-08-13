@@ -142,11 +142,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	}
 
 	@Override
-	public Date getTimestamp() {
-		return createdDate;
-	}
-
-	@Override
 	public Date getModifiedDate() {
 		return modifiedDate;
 	}

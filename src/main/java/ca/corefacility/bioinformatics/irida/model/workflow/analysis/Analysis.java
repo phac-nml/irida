@@ -145,11 +145,6 @@ public class Analysis implements IridaThing {
 		this.modifiedDate = modifiedDate;
 	}
 
-	@Override
-	public Date getTimestamp() {
-		return this.createdDate;
-	}
-
 	public Map<String, String> getAdditionalProperties() {
 		return additionalProperties;
 	}

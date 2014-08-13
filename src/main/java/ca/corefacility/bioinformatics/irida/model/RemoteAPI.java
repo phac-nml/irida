@@ -184,11 +184,6 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 	}
 
 	@Override
-	public Date getTimestamp() {
-		return getCreatedDate();
-	}
-
-	@Override
 	public Date getCreatedDate() {
 		return createdDate;
 	}
