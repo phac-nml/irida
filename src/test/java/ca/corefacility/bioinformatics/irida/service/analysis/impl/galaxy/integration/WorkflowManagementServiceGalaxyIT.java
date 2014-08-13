@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -33,10 +34,15 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.SubmittedAnalysisGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.WorkflowManagementServiceGalaxy;
 
+import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
+import com.github.jmchilton.blend4j.galaxy.ToolsClient;
+import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -71,10 +77,31 @@ public class WorkflowManagementServiceGalaxyIT {
 		sequenceFiles = new HashSet<>();
 		sequenceFiles.add(dataFile);
 		
-//		workflowManagement = new WorkflowManagementServiceGalaxy(null);
+		workflowManagement = buildWorkflowManagementGalaxy();
 		
 		invalidSubmittedAnalysis = new SubmittedAnalysisGalaxy(new GalaxyAnalysisId("invalid"), null);
 	}
+	
+	private GalaxyHistoriesService buildGalaxyHistoriesService() {
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceAdmin().getToolsClient();
+		return new GalaxyHistoriesService(historiesClient, toolsClient);
+	}
+	
+	private GalaxyWorkflowService buildGalaxyWorkflowService() {
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
+		
+		return new GalaxyWorkflowService(historiesClient, workflowsClient,
+						new StandardPasswordEncoder());
+	}
+	
+	private WorkflowManagementServiceGalaxy buildWorkflowManagementGalaxy() {
+		GalaxyHistoriesService galaxyHistoriesService = buildGalaxyHistoriesService();
+		GalaxyWorkflowService galaxyWorkflowService = buildGalaxyWorkflowService();
+		
+		return new WorkflowManagementServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService);
+	}	
 	
 	private AnalysisSubmissionTestImpl buildAnalysisSubmission() {
 		ExecutionManagerGalaxy executionManager = new ExecutionManagerGalaxy();
