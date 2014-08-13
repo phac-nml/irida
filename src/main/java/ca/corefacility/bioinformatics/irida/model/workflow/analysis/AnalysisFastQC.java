@@ -13,6 +13,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
+import com.google.common.collect.Sets;
+
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 
@@ -60,6 +62,8 @@ public class AnalysisFastQC extends Analysis {
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private AnalysisOutputFile fastQCReport;
 
+	private Long fileRevisionNumber;
+
 	/**
 	 * Required for hibernate, should not be used anywhere else, so private.
 	 */
@@ -69,6 +73,14 @@ public class AnalysisFastQC extends Analysis {
 
 	public AnalysisFastQC(Set<SequenceFile> inputFiles) {
 		super(inputFiles);
+		this.fileRevisionNumber = 0L;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Set<AnalysisOutputFile> getAnalysisOutputFiles() {
+		return Sets.newHashSet(fastQCReport);
 	}
 
 	/**
@@ -191,5 +203,15 @@ public class AnalysisFastQC extends Analysis {
 
 	public void setFastQCReport(AnalysisOutputFile fastQCReport) {
 		this.fastQCReport = fastQCReport;
+	}
+
+	@Override
+	public Long getFileRevisionNumber() {
+		return this.fileRevisionNumber;
+	}
+
+	@Override
+	public void incrementFileRevisionNumber() {
+		this.fileRevisionNumber++;
 	}
 }

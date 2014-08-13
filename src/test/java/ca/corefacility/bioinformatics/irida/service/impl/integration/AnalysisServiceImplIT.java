@@ -9,6 +9,8 @@ import java.nio.file.Path;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -28,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.Sets;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
@@ -41,24 +44,35 @@ public class AnalysisServiceImplIT {
 
 	@Autowired
 	private AnalysisService analysisService;
-	
+
+	@Autowired
+	@Qualifier("outputFileBaseDirectory")
+	private Path outputFileBaseDirectory;
+
 	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testCreatePhylogenomicsAnalysis() throws IOException {
-		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(null);
-		Path treePath = Files.createTempFile(null,  null);
-		Path tablePath = Files.createTempFile(null,  null);
-		Path matrixPath = Files.createTempFile(null,  null);
-		
+		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(Sets.newHashSet());
+		pipeline.setExecutionManagerAnalysisId("This is definitely an ID that's issued by an execution manager.");
+		pipeline.setDescription("This is a null pipeline.");
+
+		Path treePath = Files.createTempFile(null, null);
+		Path tablePath = Files.createTempFile(null, null);
+		Path matrixPath = Files.createTempFile(null, null);
+
 		AnalysisOutputFile tree = new AnalysisOutputFile(treePath, "internal-galaxy-tree-identifier");
 		AnalysisOutputFile table = new AnalysisOutputFile(tablePath, "internal-galaxy-table-identifier");
 		AnalysisOutputFile matrix = new AnalysisOutputFile(matrixPath, "internal-galaxy-matrix-identifier");
-		
+
 		pipeline.setPhylogeneticTree(tree);
 		pipeline.setSnpMatrix(matrix);
 		pipeline.setSnpTable(table);
-		
+
 		Analysis analysis = analysisService.create(pipeline);
-		
+
 		assertTrue("returned analysis was of the wrong type.", analysis instanceof AnalysisPhylogenomicsPipeline);
+		AnalysisPhylogenomicsPipeline saved = (AnalysisPhylogenomicsPipeline) analysis;
+		assertTrue("file was stored in the wrong directory.",
+				saved.getPhylogeneticTree().getFile().startsWith(outputFileBaseDirectory));
 	}
 }

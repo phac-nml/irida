@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.Set;
 
+import javax.transaction.Transactional;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.repositories.AnalysisRepository;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 
 /**
@@ -22,11 +25,23 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 public class AnalysisServiceImpl extends CRUDServiceImpl<Long, Analysis> implements AnalysisService {
 
 	private final AnalysisRepository analysisRepository;
+	private final AnalysisOutputFileRepository analysisOutputFileRepository;
 
 	@Autowired
-	public AnalysisServiceImpl(AnalysisRepository analysisRepository, Validator validator) {
+	public AnalysisServiceImpl(AnalysisRepository analysisRepository,
+			AnalysisOutputFileRepository analysisOutputFileRepository, Validator validator) {
 		super(analysisRepository, validator, Analysis.class);
 		this.analysisRepository = analysisRepository;
+		this.analysisOutputFileRepository = analysisOutputFileRepository;
+	}
+
+	@Override
+	@Transactional
+	public Analysis create(Analysis analysis) {
+		for (AnalysisOutputFile a : analysis.getAnalysisOutputFiles()) {
+			analysisOutputFileRepository.save(a);
+		}
+		return analysisRepository.save(analysis);
 	}
 
 	/**

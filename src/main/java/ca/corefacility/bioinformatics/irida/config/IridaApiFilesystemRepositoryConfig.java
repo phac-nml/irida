@@ -29,6 +29,8 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	private @Value("${reference.file.base.directory}") String referenceFileBaseDirectory;
 
+	private @Value("${output.file.base.directory}") String outputFileBaseDirectory;
+
 	private static final Set<Path> BASE_DIRECTORIES = new HashSet<>();
 
 	@Autowired
@@ -56,16 +58,28 @@ public class IridaApiFilesystemRepositoryConfig {
 		return getExistingPathOrThrow(sequenceFileBaseDirectory);
 	}
 
-	@Profile({"dev", "it"})
+	@Profile("prod")
+	@Bean(name = "outputFileBaseDirectory")
+	public Path outputFileBaseDirectoryProd() {
+		return getExistingPathOrThrow(outputFileBaseDirectory);
+	}
+
+	@Profile({ "dev", "it", "test" })
 	@Bean(name = "referenceFileBaseDirectory")
 	public Path referenceFileBaseDirectory() throws IOException {
 		return configureDirectory(referenceFileBaseDirectory, "reference-file-dev");
 	}
 
-	@Profile({"dev", "it"})
+	@Profile({ "dev", "it", "test" })
 	@Bean(name = "sequenceFileBaseDirectory")
 	public Path sequenceFileBaseDirectory() throws IOException {
 		return configureDirectory(sequenceFileBaseDirectory, "sequence-file-dev");
+	}
+
+	@Profile({ "dev", "it", "test" })
+	@Bean(name = "outputFileBaseDirectory")
+	public Path outputFileBaseDirectory() throws IOException {
+		return configureDirectory(outputFileBaseDirectory, "output-file-dev");
 	}
 
 	private Path getExistingPathOrThrow(String directory) {

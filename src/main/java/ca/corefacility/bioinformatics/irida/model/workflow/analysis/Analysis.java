@@ -28,8 +28,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 
 /**
  * An analysis object for storing results of an analysis execution.
@@ -41,7 +41,7 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 @Table(name = "analysis")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Audited
-public class Analysis implements IridaThing {
+public abstract class Analysis implements VersionedFileFields<Long> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -71,7 +71,14 @@ public class Analysis implements IridaThing {
 	@NotNull
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	private Set<SequenceFile> inputFiles;
-	
+
+	/**
+	 * Get all output files produced by this {@link Analysis}.
+	 * 
+	 * @return the set of all output files produced by the {@link Analysis}.
+	 */
+	public abstract Set<AnalysisOutputFile> getAnalysisOutputFiles();
+
 	private Analysis() {
 		this.createdDate = new Date();
 		this.modifiedDate = createdDate;
