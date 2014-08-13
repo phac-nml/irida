@@ -101,6 +101,18 @@ table.dataTable > tbody code {
 .mfp-no-margins .mfp-container {
   padding: 0; }
 
+.form-popup {
+  position: relative;
+  background: #ffffff;
+  width: auto;
+  max-width: 500px;
+  margin: 20px auto; }
+  .form-popup .modal-header {
+    background-color: #2572b4;
+    color: #ffffff; }
+  .form-popup .mfp-close {
+    color: #ffffff; }
+
 .noty_message h2 {
   margin-top: 5px;
   font-size: 1.4em; }

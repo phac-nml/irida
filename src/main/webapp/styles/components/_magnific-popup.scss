@@ -40,3 +40,18 @@
 .mfp-no-margins .mfp-container {
   padding: 0;
 }
+
+.form-popup {
+  position: relative;
+  background: #ffffff;
+  width:auto;
+  max-width: 500px;
+  margin: 20px auto;
+  .modal-header {
+    background-color: $color-primary;
+    color: #ffffff;
+  }
+  .mfp-close {
+    color: #ffffff;
+  }
+}
