@@ -65,12 +65,8 @@
             
 		<script type="text/javascript">
 			$(document).ready(function () {
-				$tokenValidity = $("#tokenValidity");
-				
+				$("#tokenValidity").select2().select2("val",[[${given_tokenValidity}]]);
 				$("#authorizedGrantTypes").select2();
-
-				$tokenValidity.select2().select2("val",[[${given_tokenValidity}]]);
-								
 			});
 			
 		</script>
