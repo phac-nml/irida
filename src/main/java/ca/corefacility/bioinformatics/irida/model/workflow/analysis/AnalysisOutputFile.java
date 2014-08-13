@@ -69,11 +69,6 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 	}
 
 	@Override
-	public Date getTimestamp() {
-		return this.createdDate;
-	}
-
-	@Override
 	public Date getCreatedDate() {
 		return this.createdDate;
 	}
