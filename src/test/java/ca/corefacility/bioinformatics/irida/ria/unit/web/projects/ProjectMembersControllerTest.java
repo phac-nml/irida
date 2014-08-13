@@ -19,9 +19,9 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
-import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
