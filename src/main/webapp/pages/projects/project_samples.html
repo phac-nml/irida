@@ -48,7 +48,7 @@
                         </div>
                         <div class="btn-group">
                             <button id="runPipelineBtn" aria-controls="runPipelineModal"
-                               class="btn btn-primary btn-sm btn-action2" role="button" disabled="true">
+                               class="btn btn-primary btn-sm btn-action3" role="button" disabled="true">
                                 <span class="fa fa-rocket fa-fw"></span>&nbsp;[[#{project.samples.run-pipeline}]]
                             </button>
                         </div>
@@ -89,9 +89,7 @@
                 </div>
                 <div class="form-group">
                     <label for="reference">Select a Reference File</label>
-                    <select name="reference" id="reference" class="input-full">
-                        <option value="">Big Ass File</option>
-                    </select>
+                    <input id="reference" name="reference" class="form-control input-full"/>
                 </div>
             </div>
             <div class="modal-footer">
@@ -736,6 +734,7 @@ $(document).ready(function () {
     var $deleteBtn = $("#deleteBtn"),
             $btnAction = $(".btn-action"),
 			$btnAction2 = $(".btn-action2"),
+			$btnAction3 = $(".btn-action3"),
             $combineBtn = $("#combineBtn"),
             $copyBtn = $("#copyBtn"),
             $moveBtn = $("#moveBtn"),
@@ -868,18 +867,23 @@ $(document).ready(function () {
 
     function setSelectAllState() {
         var state = DT.getSelectAllState();
+        $btnAction.prop('disabled', true);
+        $btnAction2.prop('disabled', true);
+        $btnAction3.prop('disabled', true);
         if (state == "indeterminate") {
             $selectAll.prop('indeterminate', true);
-            $btnAction.removeAttr('disabled');
+            $btnAction.prop('disabled', false);
         } else {
             $selectAll.prop('indeterminate', false).prop('checked', state);
             $btnAction.prop('disabled', !state);
         }
+
         if (DT.selectedRowIds.length > 1) {
             $btnAction2.prop('disabled', false);
         }
-        else {
-            $btnAction2.prop('disabled', true);
+
+        if(DT.selectedRowIds.length > 2) {
+            $btnAction3.prop('disabled', false);
         }
     }
 
@@ -924,32 +928,34 @@ $(document).ready(function () {
                 $.ajax({
                     url: /*@{/pipelines/ajax/list}*/ '/pipelines/ajax/list',
                     type: 'post',
-                    data: 'files='+result
+                    contentType: "application/json",
+                    data: JSON.stringify(result)
                 }).done(function(data){
                     $("#pipeline").select2({
-                        data: data
+                        data: data,
+                        initSelection: function(element, callback) {
+                            callback(data[0]);
+                        }
                     });
                 });
 
-                // TODO: Ajax call to get the project reference files.
-                $("#reference").select2();
+                // Ajax call to get applicable pipelines.
+                $.ajax({
+                    url: /*@{/projects/ajax/{projectId}/referenceFiles(projectId=${project.id})}*/ '/projects/ajax/1/referenceFiles',
+                    success: function(data){
+                        $("#reference").select2({
+                            data: data,
+                            initSelection: function(element, callback) {
+                                callback(data[0]);
+                            }
+                        });
+                    }
+                });
+
+
             }
         }
     });
-
-//    $("#runPipelineBtn").on('click', function() {
-//        if (DT.selectedRowIds.length > 0) {
-//            var result = [];
-//            $.each(DT.selectedRowIds, function (i, v) {
-//                result.push({id: v, omit: DT.allRowIds[v].omit});
-//            });
-//
-//            // TODO: AJAX Get list of available pipelines
-//            // This could be based on the samples sent
-//
-//
-//        }
-//    });
 
     DT.getAllSampleIds();
 });
