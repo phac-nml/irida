@@ -20,4 +20,6 @@ public interface RemoteWorkflow<T extends ExecutionManager> {
 	public String getReferenceFileInputLabel();
 	
 	public T getExecutionManager();
+
+	public String getWorkflowChecksum();
 }

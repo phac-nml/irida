@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.WorkflowManagementS
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integration.AnalysisSubmissionTestImpl;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integration.ExecutionManagerGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integration.RemoteWorkflow;
+import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integration.RemoteWorkflowGalaxy;
 
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
@@ -75,9 +76,11 @@ public class WorkflowManagementServiceGalaxy implements
 	 * Given a Workflow, connects to Galaxy and validates the structure of this workflow.
 	 * @param workflow  A Workflow to validate.
 	 * @return  True if this workflow is valid, false otherwise.
+	 * @throws WorkflowException 
 	 */
-	private boolean validateWorkflow(RemoteWorkflow<ExecutionManagerGalaxy> remoteWorkflow) {
-		return false;
+	private boolean validateWorkflow(RemoteWorkflowGalaxy remoteWorkflow) throws WorkflowException {
+		return galaxyWorkflowService.validateWorkflowByChecksum(
+				remoteWorkflow.getWorkflowChecksum(), remoteWorkflow.getWorkflowId());
 	}
 	
 	private PreparedWorkflow prepareWorkflow(AnalysisSubmissionTestImpl analysisSubmission) throws ExecutionManagerException {

@@ -31,4 +31,9 @@ public class RemoteWorkflowGalaxy implements RemoteWorkflow<ExecutionManagerGala
 	public String getWorkflowId() {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public String getWorkflowChecksum() {
+		throw new UnsupportedOperationException();
+	}
 }
