@@ -13,5 +13,11 @@ public interface RemoteWorkflow<T extends ExecutionManager> {
 
 	public void setExecutionManager(T executionManager);
 	
+	public String getSequenceFileInputLabel();
+	
+	public String getWorkflowId();
+	
+	public String getReferenceFileInputLabel();
+	
 	public T getExecutionManager();
 }

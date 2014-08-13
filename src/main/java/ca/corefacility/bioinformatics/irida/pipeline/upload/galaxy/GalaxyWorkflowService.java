@@ -22,6 +22,7 @@ import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputDefinition;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.sun.jersey.api.client.UniformInterfaceException;
 
@@ -174,5 +175,17 @@ public class GalaxyWorkflowService {
 		} catch (RuntimeException | MalformedURLException e) {
 			throw new GalaxyOutputsForWorkflowException(e);
 		}
+	}
+
+	public WorkflowDetails getWorkflowDetails(String workflowId) {
+		checkNotNull(workflowId, "workflowId is null");
+		
+		return workflowsClient.showWorkflow(workflowId);
+	}
+
+	public WorkflowOutputs runWorkflow(WorkflowInputs inputs) {
+		checkNotNull(inputs, "inputs is null");
+		
+		return workflowsClient.runWorkflow(inputs);
 	}
 }

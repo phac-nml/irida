@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integration.ExecutionManagerGalaxy;
 
 /**
@@ -31,6 +32,16 @@ public class GalaxyConnectionService {
 	 */
 	public GalaxyHistoriesService getGalaxyHistoriesService(
 			ExecutionManagerGalaxy executionManager) throws ExecutionManagerException {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Gets a WorkflowService from the given execution manager.
+	 * @param executionManager  The ExecutionManager used to find a workflows service for.
+	 * @return  A WorkflowService to connect to the given execution manager.
+	 */
+	public GalaxyWorkflowService getWorkflowService(
+			ExecutionManagerGalaxy executionManager) {
 		throw new UnsupportedOperationException();
 	}
 }

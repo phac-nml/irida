@@ -16,4 +16,19 @@ public class RemoteWorkflowGalaxy implements RemoteWorkflow<ExecutionManagerGala
 	public ExecutionManagerGalaxy getExecutionManager() {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public String getSequenceFileInputLabel() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String getReferenceFileInputLabel() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String getWorkflowId() {
+		throw new UnsupportedOperationException();
+	}
 }

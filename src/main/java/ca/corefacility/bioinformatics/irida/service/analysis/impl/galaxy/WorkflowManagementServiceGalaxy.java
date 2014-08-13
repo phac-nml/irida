@@ -4,16 +4,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
-import com.github.jmchilton.blend4j.galaxy.beans.History;
-import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
-import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
@@ -22,10 +16,19 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.analysis.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.service.analysis.Workflow;
 import ca.corefacility.bioinformatics.irida.service.analysis.WorkflowManagementService;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integration.ExecutionManagerGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integration.RemoteWorkflow;
+
+import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
+import com.github.jmchilton.blend4j.galaxy.beans.History;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
+import com.google.common.collect.Lists;
 
 /**
  * Implements workflow management for a Galaxy-based workflow execution system.
@@ -37,6 +40,7 @@ public class WorkflowManagementServiceGalaxy implements
 	
 	private class PreparedWorkflow {
 		private CollectionResponse sequenceFilesCollection;
+		@SuppressWarnings("unused")
 		private Dataset referenceDataset;
 		private History workflowHistory;
 		
@@ -51,9 +55,9 @@ public class WorkflowManagementServiceGalaxy implements
 			return sequenceFilesCollection;
 		}
 
-		public Dataset getReferenceDataset() {
-			return referenceDataset;
-		}
+//		public Dataset getReferenceDataset() {
+//			return referenceDataset;
+//		}
 
 		public History getWorkflowHistory() {
 			return workflowHistory;
@@ -76,7 +80,7 @@ public class WorkflowManagementServiceGalaxy implements
 	 * @param workflow  A Workflow to validate.
 	 * @return  True if this workflow is valid, false otherwise.
 	 */
-	private boolean validateWorkflow(Workflow workflow) {
+	private boolean validateWorkflow(RemoteWorkflow<ExecutionManagerGalaxy> remoteWorkflow) {
 		return false;
 	}
 	
@@ -113,12 +117,34 @@ public class WorkflowManagementServiceGalaxy implements
 	public GalaxyAnalysisId executeAnalysis(
 			AnalysisSubmission<ExecutionManagerGalaxy> analysisSubmission) throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
-		checkArgument(validateWorkflow(analysisSubmission.getWorkflow()), "workflow is invalid");
+		checkArgument(validateWorkflow(analysisSubmission.getRemoteWorkflow()), "workflow is invalid");
 		
 		PreparedWorkflow preparedWorkflow = prepareWorkflow(analysisSubmission);
+		RemoteWorkflow<ExecutionManagerGalaxy> remoteWorkflow = analysisSubmission.getRemoteWorkflow();
 		
+		GalaxyWorkflowService workflowService = 
+				galaxyConnectionService.getWorkflowService(remoteWorkflow.getExecutionManager());
+		String workflowId = remoteWorkflow.getWorkflowId();
+		WorkflowDetails workflowDetails = workflowService.getWorkflowDetails(workflowId);
 		
-		throw new UnsupportedOperationException();
+		String workflowSequenceFileInputId = workflowService.getWorkflowInputId(workflowDetails, 
+				remoteWorkflow.getSequenceFileInputLabel());
+		String workflowReferenceFileInputId = workflowService.getWorkflowInputId(workflowDetails, 
+				remoteWorkflow.getReferenceFileInputLabel());
+		
+		WorkflowInputs inputs = new WorkflowInputs();
+		inputs.setDestination(new WorkflowInputs.ExistingHistory(preparedWorkflow.getWorkflowHistory().getId()));
+		inputs.setWorkflowId(workflowDetails.getId());
+		inputs.setInput(workflowSequenceFileInputId,
+				new WorkflowInputs.WorkflowInput(preparedWorkflow.getSequenceFilesCollection().getId(),
+				WorkflowInputs.InputSourceType.HDCA));
+		inputs.setInput(workflowReferenceFileInputId,
+				new WorkflowInputs.WorkflowInput(preparedWorkflow.getSequenceFilesCollection().getId(),
+				WorkflowInputs.InputSourceType.HDCA));
+		
+		WorkflowOutputs output = workflowService.runWorkflow(inputs);
+		
+		return new GalaxyAnalysisId(output.getHistoryId());
 	}
 
 	/**
