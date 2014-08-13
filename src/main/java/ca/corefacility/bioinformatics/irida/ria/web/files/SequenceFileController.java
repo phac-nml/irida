@@ -171,7 +171,7 @@ public class SequenceFileController {
 		SequenceFile file = sequenceFileService.read(sequenceFileId);
 		AnalysisFastQC fastQC = getFastQCAnalysis(file);
 		model.addAttribute("file", file);
-		model.addAttribute("created", dateFormatter.print(file.getTimestamp(), LocaleContextHolder.getLocale()));
+		model.addAttribute("created", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
 		model.addAttribute("fastQC", fastQC);
 	}
 }
