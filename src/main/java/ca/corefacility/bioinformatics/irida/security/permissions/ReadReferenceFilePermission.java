@@ -2,7 +2,9 @@ package ca.corefacility.bioinformatics.irida.security.permissions;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -19,14 +21,16 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
+@Component
 public class ReadReferenceFilePermission extends BasePermission<ReferenceFile> {
 
-	private static final String PERMISSION_PROVIDED = "canReadReferencefile";
+	private static final String PERMISSION_PROVIDED = "canReadReferenceFile";
 
 	private UserRepository userRepository;
 	private ProjectUserJoinRepository pujRepository;
 	private ProjectReferenceFileJoinRepository prfRepository;
 
+	@Autowired
 	public ReadReferenceFilePermission(ReferenceFileRepository referenceFileRepository, UserRepository userRepository,
 			ProjectUserJoinRepository pujRepository, ProjectReferenceFileJoinRepository prfRepository) {
 		super(ReferenceFile.class, referenceFileRepository);
