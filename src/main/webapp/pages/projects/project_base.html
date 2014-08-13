@@ -46,7 +46,7 @@
                         id="project-owner" th:text="${owner.label}">__DATE_CREATED__</span>
                 </li>
                 <li><i class="glyphicon glyphicon-calendar"></i><em th:text="#{project.created}"></em><span
-                        id="project-created" th:text="${#calendars.format(project.timestamp, 'dd MMM yyyy')}">__DATE_CREATED__</span>
+                        id="project-created" th:text="${#calendars.format(project.createdDate, 'dd MMM yyyy')}">__DATE_CREATED__</span>
                 </li>
                 <li th:if="${project.modifiedDate} != null"><i class="glyphicon glyphicon-calendar"></i><em
                         th:text="#{project.modified}"></em><span id="project-modified" data:livestamp="*{modifiedDate}"

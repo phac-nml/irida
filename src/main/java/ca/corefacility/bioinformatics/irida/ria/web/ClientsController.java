@@ -211,7 +211,7 @@ public class ClientsController {
 			row.add(client.getId().toString());
 			row.add(client.getClientId());
 			row.add(grants);
-			row.add(Formats.DATE.format(client.getTimestamp()));
+			row.add(Formats.DATE.format(client.getCreatedDate()));
 
 			clientsData.add(row);
 		}

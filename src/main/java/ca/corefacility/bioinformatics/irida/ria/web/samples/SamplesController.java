@@ -98,7 +98,7 @@ public class SamplesController {
 			}
 			map.put("size", fileSizeConverter.convert(size));
 			map.put("name", file.getLabel());
-			map.put("created", dateFormatter.print(file.getTimestamp(), LocaleContextHolder.getLocale()));
+			map.put("created", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
 			response.add(map);
 		}
 		return response;
