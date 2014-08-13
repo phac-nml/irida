@@ -63,7 +63,7 @@ public abstract class Resource<Type extends IridaThing> extends ResourceSupport 
 	 */
 	@XmlElement
 	public Date getDateCreated() {
-		return resource.getTimestamp();
+		return resource.getCreatedDate();
 	}
 
 	/**
