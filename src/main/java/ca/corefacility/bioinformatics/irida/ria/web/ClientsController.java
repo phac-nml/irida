@@ -58,6 +58,9 @@ public class ClientsController {
 
 	private final List<String> AVAILABLE_GRANTS = Lists.newArrayList("password", "authorization_code");
 
+	private final List<Integer> AVAILABLE_TOKEN_VALIDITY = Lists.newArrayList(1800, 3600, 7200, 21600, 43200, 86400,
+			172800, 604800);
+
 	@Autowired
 	public ClientsController(IridaClientDetailsService clientDetailsService, MessageSource messageSource) {
 		this.clientDetailsService = clientDetailsService;
@@ -84,11 +87,12 @@ public class ClientsController {
 	 * @return The view name of the client details page
 	 */
 	@RequestMapping("/{clientId}")
-	public String read(@PathVariable Long clientId, Model model) {
+	public String read(@PathVariable Long clientId, Model model, Locale locale) {
 		IridaClientDetails client = clientDetailsService.read(clientId);
 
 		String grants = getAuthorizedGrantTypesString(client);
 		model.addAttribute("client", client);
+		
 		model.addAttribute("grants", grants);
 		return CLIENT_DETAILS_PAGE;
 	}
@@ -107,6 +111,8 @@ public class ClientsController {
 		}
 
 		model.addAttribute("available_grants", AVAILABLE_GRANTS);
+
+		model.addAttribute("available_token_validity", AVAILABLE_TOKEN_VALIDITY);
 
 		// set the default token validity
 		if (!model.containsAttribute("given_tokenValidity")) {

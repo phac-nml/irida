@@ -30,8 +30,11 @@
                             <div class="form-group">
                                 <label class="control-label" th:text="#{client.details.tokenValidity}" for="clientId">_Token Validity_</label> 
                                 <div th:if="${#maps.containsKey(errors, 'tokenValidity')}" th:text="${errors.tokenValidity}" class="alert alert-warning">_Token Validity Error_</div>
-                                <input type="text" id="tokenValidity" name="tokenValidity" class="form-control input-full" required="required" 
-                                    th:placeholder="#{client.details.tokenValidity}" th:value="${given_tokenValidity}"/>
+                                
+                                <select id="tokenValidity" name="accessTokenValiditySeconds" th:selected="${given_tokenValidity}" class="form-control input-full">
+                                    <option class="tokenValidityInSeconds" th:each="time : ${available_token_validity}" th:value="${time}" th:text="${time}" />
+                                </select>
+
                             </div>
 							
 
@@ -56,9 +59,18 @@
 
 
 	<div layout:fragment="scripts" th:inline="javascript">
+    <script th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}"
+            src="/resources/bower_components/moment/min/moment-with-langs.min.js"></script>
+    <script th:src="@{/resources/js/client.js}" src="/resources/js/client.js"></script>
+            
 		<script type="text/javascript">
 			$(document).ready(function () {
+				$tokenValidity = $("#tokenValidity");
+				
 				$("#authorizedGrantTypes").select2();
+
+				$tokenValidity.select2().select2("val",[[${given_tokenValidity}]]);
+								
 			});
 			
 		</script>

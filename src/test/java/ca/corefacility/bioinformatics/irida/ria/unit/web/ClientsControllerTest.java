@@ -35,12 +35,14 @@ public class ClientsControllerTest {
 	private IridaClientDetailsService clientDetailsService;
 	private ClientsController controller;
 	private MessageSource messageSource;
+	private Locale locale;
 
 	@Before
 	public void setUp() {
 		clientDetailsService = mock(IridaClientDetailsService.class);
 		messageSource = mock(MessageSource.class);
 		controller = new ClientsController(clientDetailsService, messageSource);
+		locale = LocaleContextHolder.getLocale();
 	}
 
 	@Test
@@ -58,7 +60,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.read(clientId)).thenReturn(iridaClientDetails);
 
-		String detailsPage = controller.read(clientId, model);
+		String detailsPage = controller.read(clientId, model, locale);
 
 		assertEquals(ClientsController.CLIENT_DETAILS_PAGE, detailsPage);
 		assertEquals(model.get("client"), iridaClientDetails);
@@ -115,7 +117,6 @@ public class ClientsControllerTest {
 		IridaClientDetails client = new IridaClientDetails();
 		client.setId(1l);
 		ExtendedModelMap model = new ExtendedModelMap();
-		Locale locale = LocaleContextHolder.getLocale();
 
 		when(clientDetailsService.create(client)).thenReturn(client);
 
