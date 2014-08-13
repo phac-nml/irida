@@ -75,5 +75,5 @@ Miscellaneous Doodads
 =====================
 Installing the API project *without* executing tests:
 
-    mvn clean install -Dmaven.test.skip=true
+    mvn clean install -DskipTests
 
