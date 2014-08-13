@@ -678,6 +678,17 @@ public class ProjectsController {
 		return result;
 	}
 
+	@RequestMapping(value = "/ajax/{projectId}/referenceFiles")
+	public @ResponseBody List<Map<String, String>> getProjectReferenceFiles(@PathVariable Long projectId) {
+		// TODO: (14-08-13 - Josh) Get real data from future version
+		List<Map<String, String>> response = new ArrayList<>();
+		Map<String, String> map = new HashMap<>();
+		map.put("id", "1");
+		map.put("text", "Reference File Name Here");
+		response.add(map);
+		return response;
+	}
+
 	/**
 	 * Changes a {@link ConstraintViolationException} to a usable map of strings
 	 * for displaing in the UI.
