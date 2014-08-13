@@ -1,11 +1,10 @@
 package ca.corefacility.bioinformatics.irida.repositories.remote.model;
 
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.RemoteResource;
-
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.RemoteResource;
 
 /**
  * A project read from a remote Irida instance
@@ -28,9 +27,5 @@ public class RemoteProject extends Project implements RemoteResource{
 
 	public void setLinks(List<Map<String, String>> links) {
 		this.links = links;
-	}
-	
-	public Date getDateCreated(){
-		return getCreatedDate();
 	}
 }

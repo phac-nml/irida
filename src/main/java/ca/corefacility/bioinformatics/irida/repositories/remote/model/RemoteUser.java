@@ -1,11 +1,10 @@
 package ca.corefacility.bioinformatics.irida.repositories.remote.model;
 
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.RemoteResource;
-
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.RemoteResource;
 
 /**
  * A user read from a remote irida API
@@ -34,11 +33,6 @@ public class RemoteUser extends User implements RemoteResource{
 	@Override
 	public void setLinks(List<Map<String, String>> links) {
 		this.links = links;
-	}
-
-	@Override
-	public Date getDateCreated() {
-		return this.getCreatedDate();
 	}
 	
 }
