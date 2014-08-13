@@ -6,12 +6,14 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+
 public class CreateClientPage {
 	private WebDriver driver;
 	private static final Logger logger = LoggerFactory.getLogger(CreateClientPage.class);
 
-	private final String CREATE_PAGE = "http://localhost:8080/clients/create";
-	public static String SUCCESS_PAGE = "http://localhost:8080/clients/\\d+";
+	private final String CREATE_PAGE = BasePage.URL + "clients/create";
+	public static String SUCCESS_PAGE = BasePage.URL + "clients/\\d+";
 
 	public CreateClientPage(WebDriver driver) {
 		this.driver = driver;
