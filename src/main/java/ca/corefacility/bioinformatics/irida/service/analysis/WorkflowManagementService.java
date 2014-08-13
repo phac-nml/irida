@@ -20,7 +20,7 @@ public interface WorkflowManagementService<ID extends RemoteAnalysisId, T extend
 	 * @throws WorkflowException  If there was an issue executing the workflow.
 	 */
 	public ID executeAnalysis(AnalysisSubmission<T> analysisSubmission)
-		throws WorkflowException;
+		throws ExecutionManagerException;
 	
 	/**
 	 * Given an analysis execution object gets an analysis result.

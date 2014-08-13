@@ -3,10 +3,21 @@ package ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
+import com.github.jmchilton.blend4j.galaxy.beans.History;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
+import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
@@ -24,11 +35,30 @@ import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integra
 public class WorkflowManagementServiceGalaxy implements
 	WorkflowManagementService<GalaxyAnalysisId, ExecutionManagerGalaxy> {
 	
-//	private static final Logger logger = LoggerFactory.getLogger(WorkflowManagementServiceGalaxy.class);
-//	
-//	private WorkflowsClient workflowsClient;
-//	private GalaxyWorkflowService galaxyWorkflowService;
-//	private GalaxyHistoriesService galaxyHistory;
+	private class PreparedWorkflow {
+		private CollectionResponse sequenceFilesCollection;
+		private Dataset referenceDataset;
+		private History workflowHistory;
+		
+		public PreparedWorkflow(CollectionResponse sequenceFilesCollection,
+				Dataset referenceDataset, History workflowHistory) {
+			this.sequenceFilesCollection = sequenceFilesCollection;
+			this.referenceDataset = referenceDataset;
+			this.workflowHistory = workflowHistory;
+		}
+
+		public CollectionResponse getSequenceFilesCollection() {
+			return sequenceFilesCollection;
+		}
+
+		public Dataset getReferenceDataset() {
+			return referenceDataset;
+		}
+
+		public History getWorkflowHistory() {
+			return workflowHistory;
+		}
+	}
 	
 	@Autowired
 	private GalaxyConnectionService galaxyConnectionService;
@@ -50,20 +80,43 @@ public class WorkflowManagementServiceGalaxy implements
 		return false;
 	}
 	
-	private void prepareWorkflow() {
+	private PreparedWorkflow prepareWorkflow(AnalysisSubmission<ExecutionManagerGalaxy> analysisSubmission) throws ExecutionManagerException {
+		GalaxyHistoriesService historyService = galaxyConnectionService.getGalaxyHistoriesService(
+				analysisSubmission.getRemoteWorkflow().getExecutionManager());
 		
+		Set<Path> sequenceFiles = analysisSubmission.getSequenceFiles();
+		Path referenceFile = analysisSubmission.getReferenceFile();
+		History workflowHistory = historyService.newHistoryForWorkflow();
+		
+		List<Dataset> sequenceDatasets = historyService.
+				uploadFilesListToHistory(Lists.newArrayList(sequenceFiles), InputFileType.FASTQ_SANGER, workflowHistory);
+		
+		Dataset referenceDataset = historyService.
+				fileToHistory(referenceFile, InputFileType.FASTQ_SANGER, workflowHistory);
+		
+		CollectionResponse collectionResponse = 
+				constructCollectionList(sequenceDatasets, workflowHistory);
+
+		return new PreparedWorkflow(collectionResponse, referenceDataset, workflowHistory);
+	}
+
+	private CollectionResponse constructCollectionList(List<Dataset> sequenceDatasets,
+			History workflowHistory) {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * @throws ExecutionManagerException 
 	 */
 	@Override
 	public GalaxyAnalysisId executeAnalysis(
-			AnalysisSubmission<ExecutionManagerGalaxy> analysisSubmission) throws WorkflowException {
+			AnalysisSubmission<ExecutionManagerGalaxy> analysisSubmission) throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkArgument(validateWorkflow(analysisSubmission.getWorkflow()), "workflow is invalid");
 		
-		prepareWorkflow();
+		PreparedWorkflow preparedWorkflow = prepareWorkflow(analysisSubmission);
+		
 		
 		throw new UnsupportedOperationException();
 	}

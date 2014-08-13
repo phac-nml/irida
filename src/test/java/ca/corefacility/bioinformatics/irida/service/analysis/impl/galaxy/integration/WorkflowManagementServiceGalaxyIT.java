@@ -147,10 +147,10 @@ public class WorkflowManagementServiceGalaxyIT {
 
 	/**
 	 * Tests out attempting to submit an invalid workflow for execution.
-	 * @throws WorkflowException
+	 * @throws ExecutionManagerException 
 	 */
 	@Test(expected=WorkflowException.class)
-	public void testExecuteAnalysisFailInvalidWorkflow() throws WorkflowException {
+	public void testExecuteAnalysisFailInvalidWorkflow() throws ExecutionManagerException {
 		AnalysisSubmission<ExecutionManagerGalaxy> analysisSubmission = buildAnalysisSubmission();
 		analysisSubmission.getRemoteWorkflow().
 			setWorkflowId(localGalaxy.getInvalidWorkflowId());
@@ -160,10 +160,10 @@ public class WorkflowManagementServiceGalaxyIT {
 	
 	/**
 	 * Tests out attempting to submit a workflow to an invalid execution manager.
-	 * @throws WorkflowException
+	 * @throws ExecutionManagerException 
 	 */
 	@Test(expected=WorkflowException.class)
-	public void testExecuteAnalysisFailInvalidExecutionManager() throws WorkflowException {
+	public void testExecuteAnalysisFailInvalidExecutionManager() throws ExecutionManagerException {
 		AnalysisSubmission<ExecutionManagerGalaxy> analysisSubmission = buildAnalysisSubmission();
 		analysisSubmission.getRemoteWorkflow().getExecutionManager().
 			setLocation(localGalaxy.getInvalidGalaxyURL());

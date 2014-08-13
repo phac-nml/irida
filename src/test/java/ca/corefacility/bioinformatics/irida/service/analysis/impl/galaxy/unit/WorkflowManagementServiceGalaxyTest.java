@@ -36,7 +36,7 @@ public class WorkflowManagementServiceGalaxyTest {
 	}
 	
 	@Test
-	public void testExecuteAnalysisSuccess() throws WorkflowException {
+	public void testExecuteAnalysisSuccess() throws ExecutionManagerException {
 		workflowManagement.executeAnalysis(analysisSubmission);
 	}
 	

@@ -19,4 +19,8 @@ public interface AnalysisSubmission<T extends ExecutionManager> {
 	public void setAnalysisType(Class<? extends Analysis> analysisType);
 
 	public RemoteWorkflow<T> getRemoteWorkflow();
+
+	public Set<Path> getSequenceFiles();
+
+	public Path getReferenceFile();
 }

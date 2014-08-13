@@ -38,4 +38,14 @@ public class AnalysisSubmissionTestImpl implements AnalysisSubmission<ExecutionM
 	public RemoteWorkflow<ExecutionManagerGalaxy> getRemoteWorkflow() {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public Set<Path> getSequenceFiles() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Path getReferenceFile() {
+		throw new UnsupportedOperationException();
+	}
 }
