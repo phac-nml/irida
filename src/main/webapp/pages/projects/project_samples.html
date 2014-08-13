@@ -76,13 +76,20 @@
             <input type="text" id="copy-sample-project" name="project" class="form-control input-full" />
 			<span id="copy-samples-error" class="help-block bg-danger"></span>
     </script>
-	<script type="x-tmpl-mustache" id="files-view-template" th:inline="text">
+    <script type="x-tmpl-mustache" id="files-view-template">
         <tr id="files-view">
             <td colspan="5">
             <table>
                 {{#files}}
                 <tr>
-                    <td><input type="checkbox"/></td>
+                    <td>
+                    {{#checked}}
+                    <input class="fileCB" data-sample-id="{{sampleId}}" data-file-id="{{id}}" type="checkbox" checked="checked" />
+                    {{/checked}}
+                    {{#notChecked}}
+                    <input class="fileCB" data-sample-id="{{sampleId}}" data-file-id="{{id}}" type="checkbox" />
+                    {{/notChecked}}
+                    </td>
                     <td class="files-name">
                         <a th:href="@{/sequenceFiles/{{id}}}">{{name}}</a>
                     </td>
@@ -129,6 +136,7 @@ function EditableDataTable() {
     this.allRowIds = [];
     this._isEditingRow = false;
     this._dataTable = null;
+    this.totalSamples = 0;
 
     function createEditForm(name) {
         var form = document.createElement("form");
@@ -284,17 +292,44 @@ function EditableDataTable() {
     this._openDetailsView = function (row) {
         var that = this,
                 $row = $(row),
-                checkbox = $row.find('input[type="checkbox"]'),
+                checkbox = $row.find('.sampleCB'),
                 sampleId = checkbox.val(),
+				indeterminate = checkbox.prop('indeterminate'),
                 selected = checkbox.prop('checked'),
                 url = /*[[@{/samples/ajax/{0}/files}]]*/ '/samples/ajax/1/files';
         $.ajax({
             'url': url.format(sampleId),
             'type': 'post'
         }).done(function (data) {
+			var selectedFiles = {};
             if (data.length > 0) {
+				// sampleCB not selected
+				if(selected) {
+					$.each(data, function (i, v) {
+						v.checked = true
+					})
+				} else if(indeterminate) {
+					var omitted = that.allRowIds[sampleId].omit;
+					$.each(data, function (i, v) {
+						if(omitted.indexOf(v.id) === -1) {
+							v.checked = true;
+						}
+						else {
+							v.notChecked = true;
+						}
+					});
+				}
+				else {
+					$.each(data, function (i, v) {
+						v.notChecked = true
+					})
+				}
+
                 var template = $('#files-view-template').html();
-                var content = Mustache.render(template, {files : data});
+				var content = Mustache.render(template, {
+					files: data,
+					sampleId: sampleId
+				});
                 $row.addClass('details').after(content);
             } else {
                 var msg = /*[[#{project.samples.files.not-available}]]*/ 'Cannot get file information right now';
@@ -548,25 +583,34 @@ EditableDataTable.prototype = {
             url: /*[[@{/projects/ajax/{projectId}/samples/getids(projectId=${project.getId()})}]]*/ "/ajax/1/samples/getids",
         }).done(function (data) {
             if (data.ids) {
-                that.setAllRowIds(data.ids);
+                that.totalSamples = data.ids.length;
                 $(".navbar li.active span.badge").html(data.ids.length);
+                that.allRowIds = {};
+                $.each(data.ids, function (id, val) {
+                    that.allRowIds[val] = {id: val, selected: false, omit: []};
+                });
             }
         });
     },
     setDataTable: function (table) {
         this._dataTable = table;
     },
-    setAllRowIds: function (allIds) {
-        this.allRowIds = allIds;
-    },
-    isSelectedRow: function (id) {
-        return this.selectedRowIds.indexOf(id) >= 0;
+    getRowState: function (id) {
+        if (this.selectedRowIds.indexOf(id) == -1) {
+            return "";
+        }
+        else {
+            return " checked='checked'"
+        }
     },
     updateAllSelected: function (isAllSelected) {
+        var that = this;
+        this.selectedRowIds = [];
         if (isAllSelected) {
-            this.selectedRowIds = this.allRowIds.slice(0);
-        } else {
-            this.selectedRowIds = [];
+            $.each(that.allRowIds, function (i, val) {
+                that.selectedRowIds.push(val.id)
+				val.omit = [];
+            });
         }
     },
     cancelEditRow: function () {
@@ -574,11 +618,15 @@ EditableDataTable.prototype = {
             this._cancelEditRow();
         }
     },
-    checkBoxClickedEvent: function (id) {
-        var index = this.selectedRowIds.indexOf(id);
-        if (index === -1) {
-            this.selectedRowIds.push(id);
-        } else {
+    checkBoxClickedEvent: function (id, checked) {
+		var index = this.selectedRowIds.indexOf(id);
+		this.allRowIds[id].omit = [];
+        if (checked) {
+			if(index === -1){
+				this.selectedRowIds.push(id)
+			}
+        }
+        else {
             this.selectedRowIds.splice(index, 1);
         }
     },
@@ -612,12 +660,22 @@ EditableDataTable.prototype = {
         }
     },
     getSelectAllState: function () {
+		var result = "indeterminate";
         if (this.selectedRowIds.length === 0) {
             return false; // Checkbox unchecked
-        } else if (this.selectedRowIds.length === this.allRowIds.length) {
-            return true; // Checkbox checked
+        } else if (this.selectedRowIds.length === this.totalSamples) {
+			// Need to see if there are any files omitted!
+			result = true;
+			$.each(this.allRowIds, function (i, v) {
+				if(v.omit.length > 0) {
+					result = "indeterminate"
+				}
+			});
         }
-        return "indeterminate"; // Checkbox indeterminant
+		else {
+			result = "indeterminate"
+		}
+        return result; // Checkbox indeterminant
     },
     deleteSelectedSamples: function () {
         if (this.selectedRowIds.length > 0) {
@@ -670,8 +728,8 @@ $(document).ready(function () {
                 "data": "id",
                 "orderable": false,
                 "render": function (data) {
-                    var checked = DT.isSelectedRow(data) ? " checked='checked'" : '';
-                    return '<input type="checkbox" value="' + data + '"' + checked + ' />';
+                    var state = DT.getRowState(data);
+                    return '<input id="sample-' + data + '" value="' + data + '" class="sampleCB" type="checkbox"' + state + ' />';
                 },
                 "width": "15px"
             },
@@ -683,7 +741,13 @@ $(document).ready(function () {
                 "data": "numFiles",
                 "orderable": false,
                 "class": "details-control",
-                "width": "15%"
+                "width": "15%",
+                "render": function (data) {
+                    if (data > 0) {
+                        return '<a class="fileViewLink" href="#">' + data + '</a>';
+                    }
+                    return data;
+                }
             },
             {
                 "data": "createdDate",
@@ -700,23 +764,12 @@ $(document).ready(function () {
             }
         ],
         'createdRow': function (row, data) {
-            if (parseInt(data.numFiles) > 0) {
+            if (DT.selectedRowIds.indexOf(data.id) > -1 && DT.allRowIds[data.id].omit.length > 0) {
                 $(row)
-                        .find('.details-control')
-                        .html('<a href="#">' + data.numFiles + '</a>');
+                        .find('.sampleCB')
+                        .prop("indeterminate", true)
+						.prop("checked", false);
             }
-        },
-        'fnDrawCallback': function () {
-            DT.getAllSampleIds();
-            var size = DT.selectedRowIds.length;
-            if(size === 0) {
-                $btnAction.prop('disabled', true);
-                $selectAll.prop('indeterminate', false).prop('checked', false);
-            }
-            if(size<=2) {
-                $btnAction2.prop('disabled', true);
-            }
-
         }
     }));
 
@@ -724,23 +777,49 @@ $(document).ready(function () {
     $samplesTable.find('tbody').on('click', 'td.details-control a', function (e) {
         e.preventDefault();
         DT.toggleFilesView($(this).closest('tr'));
-    }).on('click', 'input[type="checkbox"]', function (e) {
-        var id = $(this).val();
-        DT.checkBoxClickedEvent(id);
-        var state = DT.getSelectAllState();
-        if (state == "indeterminate") {
-            $selectAll.prop('indeterminate', true);
-            $btnAction.removeAttr('disabled');
-        } else {
-            $selectAll.prop('indeterminate', false).prop('checked', state);
-            $btnAction.prop('disabled', !state);
+    }).on('click', '.sampleCB', function (e) {
+        var $cb = $(this),
+                id = $cb.val(),
+                checked = $cb.prop('checked');
+        DT.checkBoxClickedEvent(id, checked);
+		if($cb.closest('tr').next().attr('id') === 'files-view') {
+			$('#files-view').find('.fileCB').prop('checked', checked);
+		}
+        setSelectAllState();
+    }).on('click', '.fileCB', function () {
+        var $this = $(this),
+                checked = $this.prop('checked'),
+                sampleId = $this.data("sample-id") + '',
+                sampleCB = $("#sample-" + sampleId),
+                $allCBs = $(".fileCB"),
+                $checkedCBs = $(".fileCB:checked");
+        DT.allRowIds[sampleId].omit= [];
+        $.each($allCBs, function(i, val) {
+			var $val = $(val);
+			if($val.prop('checked') === false){
+				DT.allRowIds[sampleId].omit.push($val.data("file-id") + '');
+			}
+        });
+
+
+		sampleCB.prop('indeterminate', false).prop('checked', false);
+        if ($checkedCBs.size() === 0) {
+            sampleCB.prop('checked', false);
+            DT.selectedRowIds.splice(DT.selectedRowIds.indexOf(sampleId));
         }
-        if(DT.selectedRowIds.length > 1) {
-            $btnAction2.prop('disabled', false);
+        else if ($checkedCBs.size() < $allCBs.size()) {
+            sampleCB.prop('indeterminate', true);
+            if (DT.selectedRowIds.indexOf(sampleId) === -1) {
+                DT.selectedRowIds.push(sampleId);
+            }
         }
         else {
-            $btnAction2.prop('disabled', true);
+            sampleCB.prop('checked', true);
+            if (DT.selectedRowIds.indexOf(sampleId) === -1) {
+                DT.selectedRowIds.push(sampleId);
+            }
         }
+        setSelectAllState();
     }).on('click', 'button.edit', function (e) {
         e.stopPropagation();
         DT.editRow($(this).closest('tr'));
@@ -758,10 +837,27 @@ $(document).ready(function () {
         iframe.src =  src + id;
     });
 
+    function setSelectAllState() {
+        var state = DT.getSelectAllState();
+        if (state == "indeterminate") {
+            $selectAll.prop('indeterminate', true);
+            $btnAction.removeAttr('disabled');
+        } else {
+            $selectAll.prop('indeterminate', false).prop('checked', state);
+            $btnAction.prop('disabled', !state);
+        }
+        if (DT.selectedRowIds.length > 1) {
+            $btnAction2.prop('disabled', false);
+        }
+        else {
+            $btnAction2.prop('disabled', true);
+        }
+    }
+
     $selectAll.on("click", function () {
-        var $this = $(this);
-        var allSelected = $this.prop("checked");
-        $samplesTable.find('input[type="checkbox"]').prop('checked', allSelected);
+        var $this = $(this),
+                allSelected = $this.prop("checked");
+        $samplesTable.find('input[type="checkbox"]').prop("indeterminate", false).prop('checked', allSelected);
         $btnAction.prop('disabled', !allSelected);
         $btnAction2.prop('disabled', !allSelected);
         DT.updateAllSelected(allSelected);
@@ -782,6 +878,8 @@ $(document).ready(function () {
 	$moveBtn.on('click', function(){
     	DT.copySelectedSamples(true);
     });
+
+    DT.getAllSampleIds();
 });
 
 $('[data-tooltip!=""]').qtip({ // Grab all elements with a non-blank data-tooltip attr.
@@ -792,20 +890,6 @@ $('[data-tooltip!=""]').qtip({ // Grab all elements with a non-blank data-toolti
         target: $('input'),
         at: 'top center',
         my: 'bottom center'
-    },
-    style: {
-        classes: 'qtip-dark qtip-shadow'
-    }
-});
-
-$(".sortable").qtip({
-    content: /*[[#{tooltip.table.click-sort}]]*/ "click to sort",
-    position: {
-        at: 'top center',
-        my: 'bottom center',
-        adjust: {
-            y: 10
-        }
     },
     style: {
         classes: 'qtip-dark qtip-shadow'
