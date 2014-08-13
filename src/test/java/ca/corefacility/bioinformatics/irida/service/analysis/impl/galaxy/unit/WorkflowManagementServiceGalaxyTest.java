@@ -14,15 +14,15 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.analysis.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.GalaxyConnectionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.WorkflowManagementServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integration.ExecutionManagerGalaxy;
 
 public class WorkflowManagementServiceGalaxyTest {
 	
-	@Mock private GalaxyConnectionService galaxyConnectionService;
 	@Mock private GalaxyHistoriesService galaxyHistoriesService;
+	@Mock private GalaxyWorkflowService galaxyWorkflowService;
 	@Mock private AnalysisSubmission<ExecutionManagerGalaxy> analysisSubmission;
 	@Mock private GalaxyAnalysisId id;
 	
@@ -32,7 +32,8 @@ public class WorkflowManagementServiceGalaxyTest {
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 		
-		workflowManagement = new WorkflowManagementServiceGalaxy(galaxyConnectionService);
+		workflowManagement = new WorkflowManagementServiceGalaxy(galaxyHistoriesService,
+				galaxyWorkflowService);
 	}
 	
 	@Test
@@ -53,7 +54,6 @@ public class WorkflowManagementServiceGalaxyTest {
 	public void testGetWorkflowStatusSuccess() throws ExecutionManagerException {
 		WorkflowStatus workflowStatus = new WorkflowStatus(WorkflowState.OK, 1.0f);
 		
-		when(galaxyConnectionService.getGalaxyHistoriesService(id)).thenReturn(galaxyHistoriesService);
 		when(galaxyHistoriesService.getStatusForHistory(id.getValue())).thenReturn(workflowStatus);
 		
 		assertEquals(workflowStatus, workflowManagement.getWorkflowStatus(id));
@@ -65,24 +65,9 @@ public class WorkflowManagementServiceGalaxyTest {
 	 */
 	@Test(expected=WorkflowException.class)
 	public void testGetWorkflowStatusFailNoStatus() throws ExecutionManagerException {		
-		when(galaxyConnectionService.getGalaxyHistoriesService(id)).thenReturn(galaxyHistoriesService);
 		when(galaxyHistoriesService.getStatusForHistory(id.getValue())).thenThrow(new WorkflowException());
 		
 		workflowManagement.getWorkflowStatus(id);
-	}
-	
-	/**
-	 * Tests failure to get the status of a workflow (no histories service).
-	 * @throws ExecutionManagerException
-	 */
-	@Test(expected=ExecutionManagerException.class)
-	public void testGetWorkflowStatusFailNoHistoriesService() throws ExecutionManagerException {
-		WorkflowStatus workflowStatus = new WorkflowStatus(WorkflowState.OK, 1.0f);
-		
-		when(galaxyConnectionService.getGalaxyHistoriesService(id)).thenThrow(new ExecutionManagerException());
-		when(galaxyHistoriesService.getStatusForHistory(id.getValue())).thenReturn(workflowStatus);
-		
-		assertEquals(workflowStatus, workflowManagement.getWorkflowStatus(id));
 	}
 	
 	@Test

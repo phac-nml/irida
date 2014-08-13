@@ -7,8 +7,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
@@ -64,15 +62,13 @@ public class WorkflowManagementServiceGalaxy implements
 		}
 	}
 	
-	@Autowired
-	private GalaxyConnectionService galaxyConnectionService;
+	private GalaxyHistoriesService galaxyHistoriesService;
+	private GalaxyWorkflowService galaxyWorkflowService;
 	
-	/**
-	 * Builds a new WorkflowManagementService with the given GalaxyConnectionService.
-	 * @param galaxyConnectionService  The GalaxyConnectionService used to connect to Galaxy instances.
-	 */
-	public WorkflowManagementServiceGalaxy(GalaxyConnectionService galaxyConnectionService) {
-		this.galaxyConnectionService = galaxyConnectionService;
+	public WorkflowManagementServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService,
+			GalaxyWorkflowService galaxyWorkflowService) {
+		this.galaxyHistoriesService = galaxyHistoriesService;
+		this.galaxyWorkflowService = galaxyWorkflowService;
 	}
 	
 	/**
@@ -85,17 +81,15 @@ public class WorkflowManagementServiceGalaxy implements
 	}
 	
 	private PreparedWorkflow prepareWorkflow(AnalysisSubmission<ExecutionManagerGalaxy> analysisSubmission) throws ExecutionManagerException {
-		GalaxyHistoriesService historyService = galaxyConnectionService.getGalaxyHistoriesService(
-				analysisSubmission.getRemoteWorkflow().getExecutionManager());
 		
 		Set<Path> sequenceFiles = analysisSubmission.getSequenceFiles();
 		Path referenceFile = analysisSubmission.getReferenceFile();
-		History workflowHistory = historyService.newHistoryForWorkflow();
+		History workflowHistory = galaxyHistoriesService.newHistoryForWorkflow();
 		
-		List<Dataset> sequenceDatasets = historyService.
+		List<Dataset> sequenceDatasets = galaxyHistoriesService.
 				uploadFilesListToHistory(Lists.newArrayList(sequenceFiles), InputFileType.FASTQ_SANGER, workflowHistory);
 		
-		Dataset referenceDataset = historyService.
+		Dataset referenceDataset = galaxyHistoriesService.
 				fileToHistory(referenceFile, InputFileType.FASTQ_SANGER, workflowHistory);
 		
 		CollectionResponse collectionResponse = 
@@ -122,14 +116,12 @@ public class WorkflowManagementServiceGalaxy implements
 		PreparedWorkflow preparedWorkflow = prepareWorkflow(analysisSubmission);
 		RemoteWorkflow<ExecutionManagerGalaxy> remoteWorkflow = analysisSubmission.getRemoteWorkflow();
 		
-		GalaxyWorkflowService workflowService = 
-				galaxyConnectionService.getWorkflowService(remoteWorkflow.getExecutionManager());
 		String workflowId = remoteWorkflow.getWorkflowId();
-		WorkflowDetails workflowDetails = workflowService.getWorkflowDetails(workflowId);
+		WorkflowDetails workflowDetails = galaxyWorkflowService.getWorkflowDetails(workflowId);
 		
-		String workflowSequenceFileInputId = workflowService.getWorkflowInputId(workflowDetails, 
+		String workflowSequenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, 
 				remoteWorkflow.getSequenceFileInputLabel());
-		String workflowReferenceFileInputId = workflowService.getWorkflowInputId(workflowDetails, 
+		String workflowReferenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, 
 				remoteWorkflow.getReferenceFileInputLabel());
 		
 		WorkflowInputs inputs = new WorkflowInputs();
@@ -142,7 +134,7 @@ public class WorkflowManagementServiceGalaxy implements
 				new WorkflowInputs.WorkflowInput(preparedWorkflow.getSequenceFilesCollection().getId(),
 				WorkflowInputs.InputSourceType.HDCA));
 		
-		WorkflowOutputs output = workflowService.runWorkflow(inputs);
+		WorkflowOutputs output = galaxyWorkflowService.runWorkflow(inputs);
 		
 		return new GalaxyAnalysisId(output.getHistoryId());
 	}
@@ -162,10 +154,7 @@ public class WorkflowManagementServiceGalaxy implements
 	@Override
 	public WorkflowStatus getWorkflowStatus(GalaxyAnalysisId workflowId)
 			throws ExecutionManagerException {
-		GalaxyHistoriesService historiesService = 
-				galaxyConnectionService.getGalaxyHistoriesService(workflowId);
-
-		return historiesService.getStatusForHistory(workflowId.getValue());
+		return galaxyHistoriesService.getStatusForHistory(workflowId.getValue());
 	}
 
 	/**

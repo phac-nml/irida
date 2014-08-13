@@ -71,7 +71,7 @@ public class WorkflowManagementServiceGalaxyIT {
 		sequenceFiles = new HashSet<>();
 		sequenceFiles.add(dataFile);
 		
-		workflowManagement = new WorkflowManagementServiceGalaxy(null);
+//		workflowManagement = new WorkflowManagementServiceGalaxy(null);
 		
 		invalidAnalysisId = new GalaxyAnalysisId("invalid");
 	}
