@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -44,9 +45,11 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
@@ -207,9 +210,13 @@ public class ProjectsController {
 	@RequestMapping("/{projectId}/metadata")
 	public String getProjectMetadataPage(final Model model, final Principal principal, @PathVariable long projectId) {
 		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		List<Join<Project, ReferenceFile>> joinList = projectService.getReferenceFilesForProject(project);
+		List<ReferenceFile> referenceFiles = joinList.stream().map(Join::getObject)
+				.collect(Collectors.toList());
 
+		model.addAttribute("project", project);
+		model.addAttribute("referenceFiles", referenceFiles);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
 		return PROJECT_METADATA_PAGE;
 	}
