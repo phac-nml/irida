@@ -35,7 +35,7 @@ import com.google.common.collect.Lists;
  *
  */
 public class WorkflowManagementServiceGalaxy implements
-	WorkflowManagementService<GalaxyAnalysisId, AnalysisSubmissionTestImpl> {
+	WorkflowManagementService<SubmittedAnalysisGalaxy, AnalysisSubmissionTestImpl> {
 	
 	private class PreparedWorkflow {
 		private CollectionResponse sequenceFilesCollection;
@@ -111,7 +111,7 @@ public class WorkflowManagementServiceGalaxy implements
 	 * @throws ExecutionManagerException 
 	 */
 	@Override
-	public GalaxyAnalysisId executeAnalysis(
+	public SubmittedAnalysisGalaxy executeAnalysis(
 			AnalysisSubmissionTestImpl analysisSubmission) throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkArgument(validateWorkflow(analysisSubmission.getRemoteWorkflow()), "workflow is invalid");
@@ -140,15 +140,18 @@ public class WorkflowManagementServiceGalaxy implements
 		WorkflowOutputs output = galaxyWorkflowService.runWorkflow(inputs);
 		
 		// I need to store the outputs someplace
+		SubmittedAnalysisGalaxy analysis = new SubmittedAnalysisGalaxy(
+				new GalaxyAnalysisId(preparedWorkflow.getWorkflowHistory().getId()),
+				output);
 		
-		return new GalaxyAnalysisId(output.getHistoryId());
+		return analysis;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Analysis getAnalysisResults(GalaxyAnalysisId workflowId)
+	public Analysis getAnalysisResults(SubmittedAnalysisGalaxy submittedAnalysis)
 			throws WorkflowException {
 		throw new UnsupportedOperationException();
 	}
@@ -157,16 +160,16 @@ public class WorkflowManagementServiceGalaxy implements
 	 * {@inheritDoc}
 	 */
 	@Override
-	public WorkflowStatus getWorkflowStatus(GalaxyAnalysisId workflowId)
+	public WorkflowStatus getWorkflowStatus(SubmittedAnalysisGalaxy submittedAnalysis)
 			throws ExecutionManagerException {
-		return galaxyHistoriesService.getStatusForHistory(workflowId.getValue());
+		return galaxyHistoriesService.getStatusForHistory(submittedAnalysis.getRemoteAnalysisId().getValue());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void cancelAnalysis(GalaxyAnalysisId workflowId)
+	public void cancelAnalysis(SubmittedAnalysisGalaxy submittedAnalysis)
 			throws WorkflowException {
 		throw new UnsupportedOperationException();
 	}

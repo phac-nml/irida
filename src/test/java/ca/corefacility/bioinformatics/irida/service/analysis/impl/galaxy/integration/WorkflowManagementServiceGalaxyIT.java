@@ -34,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.SubmittedAnalysisGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.WorkflowManagementServiceGalaxy;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -54,7 +55,7 @@ public class WorkflowManagementServiceGalaxyIT {
 	private Path referenceFile;
 	private Set<Path> sequenceFiles;
 	
-	private GalaxyAnalysisId invalidAnalysisId;
+	private SubmittedAnalysisGalaxy invalidSubmittedAnalysis;
 
 	private WorkflowManagementServiceGalaxy workflowManagement;
 	
@@ -72,7 +73,7 @@ public class WorkflowManagementServiceGalaxyIT {
 		
 //		workflowManagement = new WorkflowManagementServiceGalaxy(null);
 		
-		invalidAnalysisId = new GalaxyAnalysisId("invalid");
+		invalidSubmittedAnalysis = new SubmittedAnalysisGalaxy(new GalaxyAnalysisId("invalid"), null);
 	}
 	
 	private AnalysisSubmissionTestImpl buildAnalysisSubmission() {
@@ -95,11 +96,11 @@ public class WorkflowManagementServiceGalaxyIT {
 		return analysisSubmission;
 	}
 	
-	private void waitForAnalysisFinished(GalaxyAnalysisId analysisId) throws InterruptedException, ExecutionManagerException {
+	private void waitForAnalysisFinished(SubmittedAnalysisGalaxy analysis) throws InterruptedException, ExecutionManagerException {
 		final int max = 1000;
 		final int time = 5000;
 		for (int i = 0; i < max; i++) {
-			WorkflowStatus status = workflowManagement.getWorkflowStatus(analysisId);
+			WorkflowStatus status = workflowManagement.getWorkflowStatus(analysis);
 			if (WorkflowState.OK.equals(status.getState())) {
 				break;
 			}
@@ -127,15 +128,15 @@ public class WorkflowManagementServiceGalaxyIT {
 	public void testExecuteAnalysisSuccess() throws InterruptedException, ExecutionManagerException {
 		AnalysisSubmissionTestImpl analysisSubmission = buildAnalysisSubmission();
 		
-		GalaxyAnalysisId analysisId = workflowManagement.executeAnalysis(analysisSubmission);
-		assertNotNull(analysisId);
+		SubmittedAnalysisGalaxy analysisSubmitted = workflowManagement.executeAnalysis(analysisSubmission);
+		assertNotNull(analysisSubmitted);
 		
-		WorkflowStatus status = workflowManagement.getWorkflowStatus(analysisId);
+		WorkflowStatus status = workflowManagement.getWorkflowStatus(analysisSubmitted);
 		assertValidStatus(status);
 		
-		waitForAnalysisFinished(analysisId);
+		waitForAnalysisFinished(analysisSubmitted);
 		
-		Analysis analysis = workflowManagement.getAnalysisResults(analysisId);
+		Analysis analysis = workflowManagement.getAnalysisResults(analysisSubmitted);
 		assertTrue(analysis instanceof AnalysisTest);
 		AnalysisTest analysisResults = (AnalysisTest)analysis;
 		
@@ -176,7 +177,7 @@ public class WorkflowManagementServiceGalaxyIT {
 	 */
 	@Test(expected=WorkflowException.class)
 	public void testGetWorkflowStatusInvalidId() throws ExecutionManagerException {
-		workflowManagement.getWorkflowStatus(invalidAnalysisId);
+		workflowManagement.getWorkflowStatus(invalidSubmittedAnalysis);
 	}
 	
 	/**
@@ -185,6 +186,6 @@ public class WorkflowManagementServiceGalaxyIT {
 	 */
 	@Test(expected=WorkflowException.class)
 	public void testCancelAnalysisInvalidId() throws WorkflowException {
-		workflowManagement.cancelAnalysis(invalidAnalysisId);
+		workflowManagement.cancelAnalysis(invalidSubmittedAnalysis);
 	}
 }
