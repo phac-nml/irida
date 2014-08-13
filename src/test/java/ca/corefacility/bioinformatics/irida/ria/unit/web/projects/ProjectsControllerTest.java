@@ -249,6 +249,8 @@ public class ProjectsControllerTest {
 		Principal principal = () -> USER_NAME;
 		String page = controller.getProjectMetadataPage(model, principal, PROJECT_ID);
 		assertEquals("Returns the correct edit page.", "projects/project_metadata", page);
+		assertTrue("Model should contain a project", model.containsAttribute("project"));
+		assertTrue("Model should contain a list of reference files", model.containsAttribute("referenceFiles"));
 	}
 
 	@SuppressWarnings("unchecked")
