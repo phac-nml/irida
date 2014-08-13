@@ -56,13 +56,13 @@ public class IridaApiFilesystemRepositoryConfig {
 		return getExistingPathOrThrow(sequenceFileBaseDirectory);
 	}
 
-	@Profile("dev")
+	@Profile({"dev", "it"})
 	@Bean(name = "referenceFileBaseDirectory")
 	public Path referenceFileBaseDirectory() throws IOException {
 		return configureDirectory(referenceFileBaseDirectory, "reference-file-dev");
 	}
 
-	@Profile("dev")
+	@Profile({"dev", "it"})
 	@Bean(name = "sequenceFileBaseDirectory")
 	public Path sequenceFileBaseDirectory() throws IOException {
 		return configureDirectory(sequenceFileBaseDirectory, "sequence-file-dev");
