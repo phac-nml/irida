@@ -411,7 +411,7 @@ public class ProjectsController {
 			l.put("organism", p.getOrganism());
 			l.put("samples", String.valueOf(sampleService.getSamplesForProject(p).size()));
 			l.put("members", String.valueOf(userService.getUsersForProject(p).size()));
-			l.put("dateCreated", dateFormatter.print(p.getTimestamp(), LocaleContextHolder.getLocale()));
+			l.put("dateCreated", dateFormatter.print(p.getCreatedDate(), LocaleContextHolder.getLocale()));
 			l.put("dateModified", p.getModifiedDate().toString());
 			projectsData.add(l);
 		}
@@ -580,7 +580,7 @@ public class ProjectsController {
 			l.put("role", role);
 			l.put("samples", String.valueOf(sampleService.getSamplesForProject(p).size()));
 			l.put("members", String.valueOf(userService.getUsersForProject(p).size()));
-			l.put("dateCreated", dateFormatter.print(p.getTimestamp(), LocaleContextHolder.getLocale()));
+			l.put("dateCreated", dateFormatter.print(p.getCreatedDate(), LocaleContextHolder.getLocale()));
 			l.put("dateModified", p.getModifiedDate().toString());
 			projectsData.add(l);
 		}
