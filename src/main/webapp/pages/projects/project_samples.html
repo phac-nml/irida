@@ -27,28 +27,29 @@
                 <div class="col-md-12">
                     <div class="btn-toolbar mrgn-bttm-md" role="toolbar" th:inline="text">
                         <div class="btn-group">
-                            <button id="deleteBtn" class="btn btn-default btn-sm btn-action" disabled="true"
-                                    th:text="#{project.samples.delete}">__Delete_Samples__
+                            <button id="deleteBtn" class="btn btn-default btn-sm btn-action" disabled="true">
+                                <span class="fa fa-trash-o fa-fw"></span>&nbsp;[[#{project.samples.delete}]]
                             </button>
                         </div>
 						<div class="btn-group">
-                            <button id="copyBtn" class="btn btn-default btn-sm btn-action" disabled="true"
-                                    th:text="#{project.samples.copy}">__Copy Samples__
+                            <button id="copyBtn" class="btn btn-default btn-sm btn-action" disabled="true">
+                                <span class="fa fa-copy fa-fw"></span>&nbsp;[[#{project.samples.copy}]]
                             </button>
                         </div>
                         <div th:if="${isOwner} or ${isAdmin}" class="btn-group">
-                            <button id="moveBtn" class="btn btn-default btn-sm btn-action" disabled="true"
-                                        th:text="#{project.samples.move}">__Move Samples__
+                            <button id="moveBtn" class="btn btn-default btn-sm btn-action" disabled="true">
+                                <span class="fa fa-truck fa-fw"></span>&nbsp;[[#{project.samples.move}]]
                             </button>
                         </div>
 						<div class="btn-group">
-                            <button id="combineBtn" class="btn btn-default btn-sm btn-action2" disabled="true"
-                                    th:text="#{project.samples.combine}">__Combine_Samples__
+                            <button id="combineBtn" class="btn btn-default btn-sm btn-action2" disabled="true">
+                                <span class="fa fa-compress fa-fw"></span>&nbsp;[[#{project.samples.combine}]]
                             </button>
                         </div>
                         <div class="btn-group">
-                            <button id="runPipelineBtn" class="btn btn-primary btn-sm btn-action2" disabled="true">
-                                <span class="glyphicon glyphicon-transfer"></span>&nbsp;[[#{project.samples.run-pipeline}]]
+                            <button id="runPipelineBtn" aria-controls="runPipelineModal"
+                               class="btn btn-primary btn-sm btn-action2" role="button" disabled="true">
+                                <span class="fa fa-rocket fa-fw"></span>&nbsp;[[#{project.samples.run-pipeline}]]
                             </button>
                         </div>
                     </div>
@@ -75,8 +76,29 @@
         </main>
         <aside th:replace="projects/project_base :: sidebar"></aside>
     </div>
-    
-    
+
+    <section id="runPipelineModal" class="white-popup form-popup mfp-hide" th:inline="text">
+        <form role="form">
+            <header class="modal-header">
+                <h2 class="modal-title" th:text="#{project.samples.run-modal.title}">__Select_Pipeline__</h2>
+            </header>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="pipeline">Select a Pipeline</label>
+                    <input id="pipeline" name="pipeline" class="form-control input-full"/>
+                </div>
+                <div class="form-group">
+                    <label for="reference">Select a Reference File</label>
+                    <select name="reference" id="reference" class="input-full">
+                        <option value="">Big Ass File</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-default"><span class="fa fa-rocket fa-fw"></span>&nbsp;[[#{project.samples.run-pipeline}]]</button>
+            </div>
+        </form>
+    </section>
     <script type="text/html" id="copySamplesSection">
 			<h2 id="copyTitle">_Copy/Move Samples_</h2>
 
@@ -886,14 +908,48 @@ $(document).ready(function () {
     	DT.copySelectedSamples(true);
     });
 
-    $("#runPipelineBtn").on('click', function() {
-        var result = [];
-        if (DT.selectedRowIds.length > 0) {
-            $.each(DT.selectedRowIds, function (i, v) {
-                result.push({id: v, omit: DT.allRowIds[v].omit});
-            });
+    $("#runPipelineBtn").magnificPopup({
+        items: {
+            src: $('#runPipelineModal'),
+            type: 'inline'
+        },
+        closeBtnInside: true,
+        callbacks: {
+            beforeOpen: function () {
+                var result = [];
+                $.each(DT.selectedRowIds, function (i, v) {
+                    result.push({id: v, omit: DT.allRowIds[v].omit});
+                });
+                // Ajax call to get applicable pipelines.
+                $.ajax({
+                    url: /*@{/pipelines/ajax/list}*/ '/pipelines/ajax/list',
+                    type: 'post',
+                    data: 'files='+result
+                }).done(function(data){
+                    $("#pipeline").select2({
+                        data: data
+                    });
+                });
+
+                // TODO: Ajax call to get the project reference files.
+                $("#reference").select2();
+            }
         }
     });
+
+//    $("#runPipelineBtn").on('click', function() {
+//        if (DT.selectedRowIds.length > 0) {
+//            var result = [];
+//            $.each(DT.selectedRowIds, function (i, v) {
+//                result.push({id: v, omit: DT.allRowIds[v].omit});
+//            });
+//
+//            // TODO: AJAX Get list of available pipelines
+//            // This could be based on the samples sent
+//
+//
+//        }
+//    });
 
     DT.getAllSampleIds();
 });
