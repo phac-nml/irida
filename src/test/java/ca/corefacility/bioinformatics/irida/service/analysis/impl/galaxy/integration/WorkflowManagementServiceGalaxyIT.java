@@ -34,7 +34,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
-import ca.corefacility.bioinformatics.irida.service.analysis.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.WorkflowManagementServiceGalaxy;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -76,7 +75,7 @@ public class WorkflowManagementServiceGalaxyIT {
 		invalidAnalysisId = new GalaxyAnalysisId("invalid");
 	}
 	
-	private AnalysisSubmission<ExecutionManagerGalaxy> buildAnalysisSubmission() {
+	private AnalysisSubmissionTestImpl buildAnalysisSubmission() {
 		ExecutionManagerGalaxy executionManager = new ExecutionManagerGalaxy();
 		executionManager.setAdminAPIKey(localGalaxy.getAdminAPIKey());
 		executionManager.setAdminEmail(localGalaxy.getAdminName());
@@ -87,7 +86,7 @@ public class WorkflowManagementServiceGalaxyIT {
 		remoteWorkflow.setWorkflowId(localGalaxy.getSingleInputWorkflowId());
 		remoteWorkflow.setExecutionManager(executionManager);
 		
-		AnalysisSubmission<ExecutionManagerGalaxy> analysisSubmission = new AnalysisSubmissionTestImpl();
+		AnalysisSubmissionTestImpl analysisSubmission = new AnalysisSubmissionTestImpl();
 		analysisSubmission.setSequenceFiles(sequenceFiles);
 		analysisSubmission.setReferenceFile(referenceFile);
 		analysisSubmission.setRemoteWorkflow(remoteWorkflow);
@@ -126,7 +125,7 @@ public class WorkflowManagementServiceGalaxyIT {
 	 */
 	@Test
 	public void testExecuteAnalysisSuccess() throws InterruptedException, ExecutionManagerException {
-		AnalysisSubmission<ExecutionManagerGalaxy> analysisSubmission = buildAnalysisSubmission();
+		AnalysisSubmissionTestImpl analysisSubmission = buildAnalysisSubmission();
 		
 		GalaxyAnalysisId analysisId = workflowManagement.executeAnalysis(analysisSubmission);
 		assertNotNull(analysisId);
@@ -151,7 +150,7 @@ public class WorkflowManagementServiceGalaxyIT {
 	 */
 	@Test(expected=WorkflowException.class)
 	public void testExecuteAnalysisFailInvalidWorkflow() throws ExecutionManagerException {
-		AnalysisSubmission<ExecutionManagerGalaxy> analysisSubmission = buildAnalysisSubmission();
+		AnalysisSubmissionTestImpl analysisSubmission = buildAnalysisSubmission();
 		analysisSubmission.getRemoteWorkflow().
 			setWorkflowId(localGalaxy.getInvalidWorkflowId());
 		
@@ -164,7 +163,7 @@ public class WorkflowManagementServiceGalaxyIT {
 	 */
 	@Test(expected=WorkflowException.class)
 	public void testExecuteAnalysisFailInvalidExecutionManager() throws ExecutionManagerException {
-		AnalysisSubmission<ExecutionManagerGalaxy> analysisSubmission = buildAnalysisSubmission();
+		AnalysisSubmissionTestImpl analysisSubmission = buildAnalysisSubmission();
 		analysisSubmission.getRemoteWorkflow().getExecutionManager().
 			setLocation(localGalaxy.getInvalidGalaxyURL());
 		

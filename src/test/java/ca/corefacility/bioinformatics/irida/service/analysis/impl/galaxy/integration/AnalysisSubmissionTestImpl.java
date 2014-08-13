@@ -6,7 +6,7 @@ import java.util.Set;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.service.analysis.AnalysisSubmission;
 
-public class AnalysisSubmissionTestImpl implements AnalysisSubmission<ExecutionManagerGalaxy> {
+public class AnalysisSubmissionTestImpl implements AnalysisSubmission<RemoteWorkflowGalaxy> {
 
 	@Override
 	public void setSequenceFiles(Set<Path> sequenceFiles) {
@@ -19,7 +19,7 @@ public class AnalysisSubmissionTestImpl implements AnalysisSubmission<ExecutionM
 	}
 
 	@Override
-	public void setRemoteWorkflow(RemoteWorkflow<ExecutionManagerGalaxy> remoteWorkflow) {
+	public void setRemoteWorkflow(RemoteWorkflowGalaxy remoteWorkflow) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -29,7 +29,7 @@ public class AnalysisSubmissionTestImpl implements AnalysisSubmission<ExecutionM
 	}
 
 	@Override
-	public RemoteWorkflow<ExecutionManagerGalaxy> getRemoteWorkflow() {
+	public RemoteWorkflowGalaxy getRemoteWorkflow() {
 		throw new UnsupportedOperationException();
 	}
 

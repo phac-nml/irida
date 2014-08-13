@@ -15,8 +15,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.service.analysis.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.analysis.WorkflowManagementService;
+import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integration.AnalysisSubmissionTestImpl;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integration.ExecutionManagerGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integration.RemoteWorkflow;
 
@@ -34,7 +34,7 @@ import com.google.common.collect.Lists;
  *
  */
 public class WorkflowManagementServiceGalaxy implements
-	WorkflowManagementService<GalaxyAnalysisId, ExecutionManagerGalaxy> {
+	WorkflowManagementService<GalaxyAnalysisId, AnalysisSubmissionTestImpl> {
 	
 	private class PreparedWorkflow {
 		private CollectionResponse sequenceFilesCollection;
@@ -80,7 +80,7 @@ public class WorkflowManagementServiceGalaxy implements
 		return false;
 	}
 	
-	private PreparedWorkflow prepareWorkflow(AnalysisSubmission<ExecutionManagerGalaxy> analysisSubmission) throws ExecutionManagerException {
+	private PreparedWorkflow prepareWorkflow(AnalysisSubmissionTestImpl analysisSubmission) throws ExecutionManagerException {
 		
 		Set<Path> sequenceFiles = analysisSubmission.getSequenceFiles();
 		Path referenceFile = analysisSubmission.getReferenceFile();
@@ -109,7 +109,7 @@ public class WorkflowManagementServiceGalaxy implements
 	 */
 	@Override
 	public GalaxyAnalysisId executeAnalysis(
-			AnalysisSubmission<ExecutionManagerGalaxy> analysisSubmission) throws ExecutionManagerException {
+			AnalysisSubmissionTestImpl analysisSubmission) throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkArgument(validateWorkflow(analysisSubmission.getRemoteWorkflow()), "workflow is invalid");
 		

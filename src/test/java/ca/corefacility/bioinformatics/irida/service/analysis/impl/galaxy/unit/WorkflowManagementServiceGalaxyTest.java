@@ -15,15 +15,14 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.service.analysis.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.WorkflowManagementServiceGalaxy;
-import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integration.ExecutionManagerGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integration.AnalysisSubmissionTestImpl;
 
 public class WorkflowManagementServiceGalaxyTest {
 	
 	@Mock private GalaxyHistoriesService galaxyHistoriesService;
 	@Mock private GalaxyWorkflowService galaxyWorkflowService;
-	@Mock private AnalysisSubmission<ExecutionManagerGalaxy> analysisSubmission;
+	@Mock private AnalysisSubmissionTestImpl analysisSubmission;
 	@Mock private GalaxyAnalysisId id;
 	
 	private WorkflowManagementServiceGalaxy workflowManagement;
