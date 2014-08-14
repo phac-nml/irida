@@ -73,7 +73,7 @@
                             <h3 class="panel-title" th:text="#{projects.meta.reference-files}">__Reference Files__</h3>
                         </div>
                         <div class="panel-body">
-                            <table class="table">
+                            <table id="referenceFileTable" class="table">
                                 <thead>
                                 <tr>
                                     <th th:text="#{projects.meta.reference-file.name}">__Reference File Name__</th>
@@ -86,16 +86,15 @@
                                     <td th:text="${file.label}"></td>
                                     <td data:livestamp="${file.createdDate}" th:text="${file.createdDate}"></td>
                                     <td class="text-right">
-                                        <button data:file-id="${file.id}" class="btn btn-default btn-xs btn-download" data:tooltip="#{form.download}"><span
-                                                class="glyphicon glyphicon-download-alt"></span>
+                                        <button data:file-id="${file.id}" class="btn btn-danger btn-xs"
+                                                data:tooltip="#{form.btn.remove}"><span
+                                                class="fa fa-trash-o fa-fw"></span>
                                         </button>
                                     </td>
                                 </tr>
                                 </tbody>
                             </table>
-                        </div>
-                        <div class="panel-footer">
-                            <input type="file" name="file_upload" id="file_upload" />
+                            <input type="file" name="file_upload" id="file_upload"/>
                         </div>
                     </div>
                 </div>
@@ -103,6 +102,19 @@
         </main>
         <aside th:replace="projects/project_base :: sidebar"></aside>
     </div>
+    <script type="text/html" id="row-template">
+        <tr>
+            <td>{{name}}</td>
+            <td data-livestamp="{{date}}"></td>
+            <td class="text-right">
+                <button data-file-id="{{id}}" class="btn btn-danger btn-xs"
+                        data:tooltip="#{form.btn.remove}">
+                    <span class="fa fa-trash-o fa-fw"></span>
+                </button>
+            </td>
+        </tr>
+
+    </script>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
     <div th:replace="projects/project_base :: scripts"></div>
@@ -110,10 +122,46 @@
 
     <script>
         $(function() {
+            var tableBody = $("#referenceFileTable").find('tbody');
             $('#file_upload').uploadify({
                 'swf'      : /*[[@{/resources/bower_components/uploadify/uploadify.swf}]]*/ '/resources/bower_components/uploadify/uploadify.swf',
-                'uploader' : /*[[@{/referenceFiles/project/{projectId}/new(projectId=${project.getId()})}]]*/ '/referenceFiles/project/1/new'
-                // Put your options here
+                'uploader': /*[[@{/referenceFiles/project/{projectId}/new(projectId=${project.getId()})}]]*/ '/referenceFiles/project/1/new',
+                'cancelImg': /*[[@{/resources/bower_components/uploadify/uploadify-cancel.png}]]*/ '/resources/bower_components/uploadify/cancel.png',
+                'buttonText': /*[[#{form.btn.upload-reference}]]*/ "Upload New Reference",
+                'auto': true,
+                'multi': false,
+                'fileObjName': 'files',
+                'checkExisting': false,
+                'hideButton': true,
+                'wmode': 'transparent',
+                'height': '33px',
+                'width': '200px',
+                'onUploadSuccess': function (file, data) {
+                    var response = JSON.parse(data);
+                    var template = $("#row-template").html();
+                    var content = Mustache.render(template, {'name': file.name, 'id': response.id, date: new Date()});
+                    tableBody.append(content);
+                    tableBody.find('[data-tooltip!=""]').qtip(options);
+                }
+            });
+
+            var options = {
+                content: {
+                    attr: 'data-tooltip'
+                },
+                position: {
+                    at: 'top center',
+                    my: 'bottom center'
+                },
+                style: {
+                    classes: 'qtip-tipsy qtip-shadow'
+                }
+            };
+            $('[data-tooltip!=""]').qtip(options);
+
+            tableBody.on('click', ".btn-danger", function () {
+                alert("NOT IMPLEMENTED!");
+                // TODO: need to put up an notice.
             });
         });
     </script>
