@@ -33,6 +33,14 @@ public class ProjectMetadataPage {
         return driver.findElement(By.id("remoteURL")).getText();
     }
 
+	public int getReferenceFileCount() {
+		return driver.findElements(By.cssSelector("#referenceFiles tbody tr")).size();
+	}
+
+	public String getReferenceFileName() {
+		return driver.findElement(By.cssSelector("#referenceFiles tbody tr:nth-child(1) td:nth-child(1)")).getText();
+	}
+
     public boolean hasEditButton() {
         return driver.findElements(By.id("edit-metadata")).size() > 0;
     }
