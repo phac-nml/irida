@@ -34,8 +34,6 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
@@ -153,9 +151,10 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 		
 		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmitted = workflowManagement.executeAnalysis(analysisSubmission);
 		assertNotNull(analysisSubmitted);
-		
-		WorkflowStatus status = workflowManagement.getWorkflowStatus(analysisSubmitted);
-		assertValidStatus(status);
+		assertNotNull(analysisSubmitted.getRemoteAnalysisId());
+//		
+//		WorkflowStatus status = workflowManagement.getWorkflowStatus(analysisSubmitted);
+//		assertValidStatus(status);
 	}
 	
 	/**
@@ -176,8 +175,6 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 		
 		waitForAnalysisFinished(analysisSubmitted);
 		
-		Analysis analysis = workflowManagement.getAnalysisResults(analysisSubmitted);
-		assertTrue(analysis instanceof AnalysisPhylogenomicsPipeline);
 //		AnalysisPhylogenomicsPipeline analysisResults = (AnalysisPhylogenomicsPipeline)analysis;
 		
 //		Path outputFile = analysisResults.getOutputFile();
