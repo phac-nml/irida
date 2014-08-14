@@ -152,9 +152,9 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmitted = workflowManagement.executeAnalysis(analysisSubmission);
 		assertNotNull(analysisSubmitted);
 		assertNotNull(analysisSubmitted.getRemoteAnalysisId());
-//		
-//		WorkflowStatus status = workflowManagement.getWorkflowStatus(analysisSubmitted);
-//		assertValidStatus(status);
+		
+		WorkflowStatus status = workflowManagement.getWorkflowStatus(analysisSubmitted);
+		assertValidStatus(status);
 	}
 	
 	/**
