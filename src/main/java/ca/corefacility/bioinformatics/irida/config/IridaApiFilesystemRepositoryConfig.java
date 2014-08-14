@@ -86,11 +86,11 @@ public class IridaApiFilesystemRepositoryConfig {
 		Path baseDirectory = Paths.get(directory);
 		if (!Files.exists(baseDirectory)) {
 			throw new IllegalStateException(String.format(
-					"Cannot continue startup; base directory [%s] does not exist!", baseDirectory));
+					"Cannot continue startup; base directory [%s] does not exist!", baseDirectory.toString()));
 		} else {
-			logger.info(
-					String.format("Using specified existing directory at [%s]. The directory *will not* be removed at shutdown time."),
-					baseDirectory);
+			logger.info(String
+					.format("Using specified existing directory at [%s]. The directory *will not* be removed at shutdown time.",
+							baseDirectory.toString()));
 		}
 		return baseDirectory;
 	}
