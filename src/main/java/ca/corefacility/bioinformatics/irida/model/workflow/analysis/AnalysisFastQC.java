@@ -62,7 +62,6 @@ public class AnalysisFastQC extends Analysis {
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private AnalysisOutputFile fastQCReport;
 
-	private Long fileRevisionNumber;
 
 	/**
 	 * Required for hibernate, should not be used anywhere else, so private.
@@ -73,7 +72,6 @@ public class AnalysisFastQC extends Analysis {
 
 	public AnalysisFastQC(Set<SequenceFile> inputFiles, String executionManagerAnalysisId) {
 		super(inputFiles, executionManagerAnalysisId);
-		this.fileRevisionNumber = 0L;
 	}
 
 	/**
@@ -203,15 +201,5 @@ public class AnalysisFastQC extends Analysis {
 
 	public void setFastQCReport(AnalysisOutputFile fastQCReport) {
 		this.fastQCReport = fastQCReport;
-	}
-
-	@Override
-	public Long getFileRevisionNumber() {
-		return this.fileRevisionNumber;
-	}
-
-	@Override
-	public void incrementFileRevisionNumber() {
-		this.fileRevisionNumber++;
 	}
 }

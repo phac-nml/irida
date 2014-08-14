@@ -46,7 +46,6 @@
 		</createTable>
 
 		<addColumn tableName="analysis_fastqc">
-			<column name="fileRevisionNumber" type="bigint(20)" />
 			<column name="fastQCReport_id" type="bigint(20)">
 				<constraints referencedTableName="analysis_output_file"
 					referencedColumnNames="id" foreignKeyName="FK_ANALYSIS_FASTQC_REPORT" />
@@ -54,7 +53,6 @@
 		</addColumn>
 
 		<addColumn tableName="analysis_fastqc_AUD">
-			<column name="fileRevisionNumber" type="bigint(20)" />
 			<column name="fastQCReport_id" type="bigint(20)" />
 		</addColumn>
 
@@ -64,7 +62,6 @@
 					referencedTableName="analysis" referencedColumnNames="id"
 					foreignKeyName="FK_ANALYSIS_PHYLOGENOMICSPIPELINE_ANALYSIS" />
 			</column>
-			<column name="fileRevisionNumber" type="bigint(20)" />
 			<column name="phylogeneticTree_id" type="bigint(20)">
 				<constraints referencedTableName="analysis_output_file"
 					referencedColumnNames="id" foreignKeyName="FK_ANALYSIS_PHYLOGENOMICSPIPELINE_TREE" />
@@ -86,7 +83,6 @@
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="fileRevisionNumber" type="bigint(20)" />
 			<column name="phylogeneticTree_id" type="bigint(20)" />
 			<column name="snpMatrix_id" type="bigint(20)" />
 			<column name="snpTable_id" type="bigint(20)" />

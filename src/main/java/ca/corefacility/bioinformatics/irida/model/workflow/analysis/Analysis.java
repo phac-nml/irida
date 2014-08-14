@@ -30,7 +30,6 @@ import org.hibernate.envers.Audited;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 
 /**
  * An analysis object for storing results of an analysis execution.
@@ -42,7 +41,7 @@ import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 @Table(name = "analysis")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Audited
-public abstract class Analysis implements VersionedFileFields<Long>, IridaThing {
+public abstract class Analysis implements IridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

@@ -37,8 +37,6 @@ public class AnalysisPhylogenomicsPipeline extends Analysis {
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private AnalysisOutputFile snpTable;
 
-	private Long fileRevisionNumber;
-
 	/**
 	 * required for hibernate, marked as private so nobody else uses it.
 	 */
@@ -48,7 +46,6 @@ public class AnalysisPhylogenomicsPipeline extends Analysis {
 
 	public AnalysisPhylogenomicsPipeline(Set<SequenceFile> inputFiles, String executionManagerAnalysisId) {
 		super(inputFiles, executionManagerAnalysisId);
-		this.fileRevisionNumber = 0L;
 	}
 
 	/**
@@ -80,15 +77,5 @@ public class AnalysisPhylogenomicsPipeline extends Analysis {
 
 	public void setSnpTable(AnalysisOutputFile snpTable) {
 		this.snpTable = snpTable;
-	}
-
-	@Override
-	public Long getFileRevisionNumber() {
-		return this.fileRevisionNumber;
-	}
-
-	@Override
-	public void incrementFileRevisionNumber() {
-		this.fileRevisionNumber++;
 	}
 }
