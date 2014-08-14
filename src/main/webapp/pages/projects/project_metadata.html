@@ -4,6 +4,8 @@
       layout:decorator="templates/wet-boew/wet-layout">
 <head>
     <title th:inline="text">[[${project.label}]] - [[#{project.metadata.title}]]</title>
+    <link rel="stylesheet" href="/resources/wet-theme/css/wet-boew.min.css"/>
+    <link rel="stylesheet" href="/resources/wet-theme/css/theme.min.css"/>
 </head>
 <body>
 <div class="container" layout:fragment="content">
@@ -54,14 +56,65 @@
                             <a th:href="*{remoteURL}" id="remoteURL" th:text="*{remoteURL}"></a>
                         </div>
                     </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title" th:text="#{projects.meta.reference-files}">__Reference Files__</h3>
+                        </div>
+                        <div class="panel-body">
+                            <table id="referenceFiles" class="table">
+                                <thead>
+                                <tr>
+                                    <th th:text="#{projects.meta.reference-file.name}">__Reference File Name__</th>
+                                    <th th:text="#{projects.meta.reference-file.createdDate}">__Date Added__</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="file : ${referenceFiles}">
+                                    <td class="refFileName" th:text="${file.label}"></td>
+                                    <td data:livestamp="${file.createdDate}" th:text="${file.createdDate}"></td>
+                                    <td class="text-right">
+                                        <button data:file-id="${file.id}" class="btn btn-default btn-xs btn-download" data:tooltip="#{form.download}"><span
+                                                class="glyphicon glyphicon-download-alt"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
+            <iframe id="invisible" style="display:none;"></iframe>
         </main>
         <aside th:replace="projects/project_base :: sidebar"></aside>
     </div>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
     <div th:replace="projects/project_base :: scripts"></div>
+    <script>
+        $(function(){
+            $('[data-tooltip!=""]').qtip({ // Grab all elements with a non-blank data-tooltip attr.
+                content: {
+                    attr: 'data-tooltip' // Tell qTip2 to look inside this attr for its content
+                },
+                position: {
+                    at: 'top center',
+                    my: 'bottom center'
+                },
+                style: {
+                    classes: 'qtip-tipsy qtip-shadow'
+                }
+            });
+
+            $(".btn-download").on('click', function(){
+                var id = $(this).data('file-id');
+                var iframe = document.getElementById('invisible');
+                var src = /*[[@{/referenceFiles/download/}]]*/ '/referenceFiles/download/';
+                iframe.src = src + id;
+            });
+        });
+    </script>
 </div>
 </body>
 </html>
