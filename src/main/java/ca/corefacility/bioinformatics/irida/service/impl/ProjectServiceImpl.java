@@ -307,8 +307,4 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		return prfjRepository.save(j);
 	}
 
-	@Override
-	public List<Join<Project, ReferenceFile>> getReferenceFilesForProject(Project project) {
-		return prfjRepository.findReferenceFilesForProject(project);
-	}
 }
