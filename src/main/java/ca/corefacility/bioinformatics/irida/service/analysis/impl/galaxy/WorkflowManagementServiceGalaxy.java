@@ -14,14 +14,11 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.service.analysis.WorkflowManagementService;
 
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
@@ -35,8 +32,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionR
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class WorkflowManagementServiceGalaxy implements
-	WorkflowManagementService<AnalysisSubmissionGalaxyPhylogenomicsPipeline> {
+public class WorkflowManagementServiceGalaxy {
 	
 	private final static String sequenceFileInputLabel = "sequence_reads";
 	private final static String refereneFileInputLabel = "reference";
@@ -109,11 +105,6 @@ public class WorkflowManagementServiceGalaxy implements
 		return new PreparedWorkflow(collectionResponse, referenceDataset, workflowHistory);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * @throws ExecutionManagerException 
-	 */
-	@Override
 	public AnalysisSubmissionGalaxyPhylogenomicsPipeline executeAnalysis(
 			AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission) throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
@@ -145,19 +136,11 @@ public class WorkflowManagementServiceGalaxy implements
 		return analysisSubmission;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Analysis getAnalysisResults(AnalysisSubmissionGalaxyPhylogenomicsPipeline submittedAnalysis)
+	public AnalysisPhylogenomicsPipeline getAnalysisResults(AnalysisSubmissionGalaxyPhylogenomicsPipeline submittedAnalysis)
 			throws WorkflowException {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public WorkflowStatus getWorkflowStatus(AnalysisSubmissionGalaxyPhylogenomicsPipeline submittedAnalysis)
 			throws ExecutionManagerException {
 		return galaxyHistoriesService.getStatusForHistory(submittedAnalysis.getRemoteAnalysisId().getValue());

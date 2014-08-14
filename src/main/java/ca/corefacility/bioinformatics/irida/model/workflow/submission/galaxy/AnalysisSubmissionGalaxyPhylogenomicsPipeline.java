@@ -13,6 +13,7 @@ public class AnalysisSubmissionGalaxyPhylogenomicsPipeline extends
 		AnalysisSubmissionPhylogenomicsPipeline<RemoteWorkflowGalaxy> {
 	
 	private ReferenceFile referenceFile;
+	private GalaxyAnalysisId remoteAnalysisId;
 
 	public AnalysisSubmissionGalaxyPhylogenomicsPipeline(
 			Set<SequenceFile> inputFiles, ReferenceFile referenceFile, 
@@ -29,8 +30,12 @@ public class AnalysisSubmissionGalaxyPhylogenomicsPipeline extends
 	public ReferenceFile getReferenceFile() {
 		return referenceFile;
 	}
+	
+	public void setRemoteAnalysisId(GalaxyAnalysisId remoteAnalysisId) {
+		this.remoteAnalysisId = remoteAnalysisId;
+	}
 
 	public GalaxyAnalysisId getRemoteAnalysisId() {
-		throw new UnsupportedOperationException();
+		return remoteAnalysisId;
 	}
 }

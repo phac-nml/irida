@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
@@ -23,8 +25,7 @@ public class WorkflowManagementServiceGalaxyTest {
 	@Mock private GalaxyHistoriesService galaxyHistoriesService;
 	@Mock private GalaxyWorkflowService galaxyWorkflowService;
 	@Mock private AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission;
-
-	private AnalysisSubmissionGalaxyPhylogenomicsPipeline submittedAnalysisGalaxy;
+	@Mock private AnalysisSubmissionGalaxyPhylogenomicsPipeline submittedAnalysisGalaxy;
 
 	private WorkflowManagementServiceGalaxy workflowManagement;
 
@@ -34,6 +35,11 @@ public class WorkflowManagementServiceGalaxyTest {
 		
 		workflowManagement = new WorkflowManagementServiceGalaxy(galaxyHistoriesService,
 				galaxyWorkflowService);
+		
+		RemoteWorkflowGalaxy remoteWorkflow = new RemoteWorkflowGalaxy("1", "1");
+		
+		when(submittedAnalysisGalaxy.getRemoteWorkflow()).thenReturn(remoteWorkflow);
+		when(submittedAnalysisGalaxy.getRemoteAnalysisId()).thenReturn(new GalaxyAnalysisId("1"));
 	}
 	
 	@Ignore
