@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy;
+package ca.corefacility.bioinformatics.irida.model.workflow;
 
 /**
  * A reference to a workflow in a remote execution manager.
@@ -6,12 +6,7 @@ package ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy;
  *
  */
 public interface RemoteWorkflow {
-
-	public void setWorkflowId(String workflowId);
 		
 	public String getWorkflowId();
-		
 	public String getWorkflowChecksum();
-
-	public void setWorkflowChecksum(String workflowChecksum);
 }

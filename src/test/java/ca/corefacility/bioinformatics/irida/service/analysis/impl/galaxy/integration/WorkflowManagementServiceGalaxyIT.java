@@ -36,11 +36,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.AnalysisSubmissionTestImpl;
-import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.RemoteWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.SubmittedAnalysisGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.WorkflowManagementServiceGalaxy;
 
@@ -109,15 +109,13 @@ public class WorkflowManagementServiceGalaxyIT {
 	
 	private AnalysisSubmissionTestImpl buildAnalysisSubmission() {
 		
-		RemoteWorkflowGalaxy remoteWorkflow = new RemoteWorkflowGalaxy();
-		remoteWorkflow.setWorkflowId(localGalaxy.getWorkflowCorePipelineTestId());
-		remoteWorkflow.setWorkflowChecksum(localGalaxy.getWorkflowCorePipelineTestChecksum());
+		RemoteWorkflowGalaxy remoteWorkflow = new RemoteWorkflowGalaxy(localGalaxy.getWorkflowCorePipelineTestId(),
+				localGalaxy.getWorkflowCorePipelineTestChecksum());
 		
 		AnalysisSubmissionTestImpl analysisSubmission = new AnalysisSubmissionTestImpl();
 		analysisSubmission.setSequenceFiles(sequenceFiles);
 		analysisSubmission.setReferenceFile(referenceFile);
 		analysisSubmission.setRemoteWorkflow(remoteWorkflow);
-//		analysisSubmission.setAnalysisType(AnalysisTest.class);
 		
 		return analysisSubmission;
 	}
@@ -181,7 +179,7 @@ public class WorkflowManagementServiceGalaxyIT {
 		
 		Analysis analysis = workflowManagement.getAnalysisResults(analysisSubmitted);
 		assertTrue(analysis instanceof AnalysisPhylogenomicsPipeline);
-		AnalysisPhylogenomicsPipeline analysisResults = (AnalysisPhylogenomicsPipeline)analysis;
+//		AnalysisPhylogenomicsPipeline analysisResults = (AnalysisPhylogenomicsPipeline)analysis;
 		
 //		Path outputFile = analysisResults.getOutputFile();
 //		assertNotNull(outputFile);

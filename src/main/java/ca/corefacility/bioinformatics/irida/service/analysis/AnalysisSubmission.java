@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.RemoteWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.RemoteWorkflow;
 
 public interface AnalysisSubmission<T extends RemoteWorkflow> {
 

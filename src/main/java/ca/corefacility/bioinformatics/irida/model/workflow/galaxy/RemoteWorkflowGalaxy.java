@@ -1,11 +1,17 @@
-package ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy;
+package ca.corefacility.bioinformatics.irida.model.workflow.galaxy;
+
+import ca.corefacility.bioinformatics.irida.model.workflow.RemoteWorkflow;
 
 public class RemoteWorkflowGalaxy implements RemoteWorkflow {
 	
 	private String workflowId;
 	private String workflowChecksum;
+	
+	public RemoteWorkflowGalaxy(String workflowId, String workflowChecksum) {
+		this.workflowId = workflowId;
+		this.workflowChecksum = workflowChecksum;
+	}
 
-	@Override
 	public void setWorkflowId(String workflowId) {
 		this.workflowId = workflowId;
 	}
@@ -20,7 +26,6 @@ public class RemoteWorkflowGalaxy implements RemoteWorkflow {
 		return workflowChecksum;
 	}
 	
-	@Override
 	public void setWorkflowChecksum(String workflowChecksum) {
 		this.workflowChecksum = workflowChecksum;
 	}
