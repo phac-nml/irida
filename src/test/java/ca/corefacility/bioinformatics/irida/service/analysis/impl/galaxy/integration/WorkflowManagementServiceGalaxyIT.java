@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
@@ -73,7 +73,7 @@ public class WorkflowManagementServiceGalaxyIT {
 				"testData1.fastq").toURI());
 		referenceFile = Paths.get(WorkflowManagementServiceGalaxyIT.class.getResource(
 				"testReference.fasta").toURI());
-		
+				
 		sequenceFiles = new HashSet<>();
 		sequenceFiles.add(dataFile);
 		
@@ -104,15 +104,9 @@ public class WorkflowManagementServiceGalaxyIT {
 	}	
 	
 	private AnalysisSubmissionTestImpl buildAnalysisSubmission() {
-		ExecutionManagerGalaxy executionManager = new ExecutionManagerGalaxy();
-		executionManager.setAdminAPIKey(localGalaxy.getAdminAPIKey());
-		executionManager.setAdminEmail(localGalaxy.getAdminName());
-		executionManager.setLocation(localGalaxy.getGalaxyURL());
-		executionManager.setDataStorage(DataStorage.LOCAL);
 		
 		RemoteWorkflowGalaxy remoteWorkflow = new RemoteWorkflowGalaxy();
 		remoteWorkflow.setWorkflowId(localGalaxy.getSingleInputWorkflowId());
-		remoteWorkflow.setExecutionManager(executionManager);
 		
 		AnalysisSubmissionTestImpl analysisSubmission = new AnalysisSubmissionTestImpl();
 		analysisSubmission.setSequenceFiles(sequenceFiles);
@@ -160,6 +154,23 @@ public class WorkflowManagementServiceGalaxyIT {
 		
 		WorkflowStatus status = workflowManagement.getWorkflowStatus(analysisSubmitted);
 		assertValidStatus(status);
+	}
+	
+	/**
+	 * Tests getting results from an executed analysis.
+	 * @throws ExecutionManagerException
+	 * @throws InterruptedException
+	 */
+	@Ignore
+	@Test
+	public void testGetAnalysisResultsSuccess() throws ExecutionManagerException, InterruptedException {
+		AnalysisSubmissionTestImpl analysisSubmission = buildAnalysisSubmission();
+		
+		SubmittedAnalysisGalaxy analysisSubmitted = workflowManagement.executeAnalysis(analysisSubmission);
+		assertNotNull(analysisSubmitted);
+		
+		WorkflowStatus status = workflowManagement.getWorkflowStatus(analysisSubmitted);
+		assertValidStatus(status);
 		
 		waitForAnalysisFinished(analysisSubmitted);
 		
@@ -186,19 +197,6 @@ public class WorkflowManagementServiceGalaxyIT {
 	}
 	
 	/**
-	 * Tests out attempting to submit a workflow to an invalid execution manager.
-	 * @throws ExecutionManagerException 
-	 */
-	@Test(expected=WorkflowException.class)
-	public void testExecuteAnalysisFailInvalidExecutionManager() throws ExecutionManagerException {
-		AnalysisSubmissionTestImpl analysisSubmission = buildAnalysisSubmission();
-		analysisSubmission.getRemoteWorkflow().getExecutionManager().
-			setLocation(localGalaxy.getInvalidGalaxyURL());
-		
-		workflowManagement.executeAnalysis(analysisSubmission);
-	}
-	
-	/**
 	 * Tests out getting a workflow status from an invalid workflow id.
 	 * @throws ExecutionManagerException 
 	 */
@@ -211,6 +209,7 @@ public class WorkflowManagementServiceGalaxyIT {
 	 * Tests out canceling an analysis with an invalid id.
 	 * @throws WorkflowException 
 	 */
+	@Ignore
 	@Test(expected=WorkflowException.class)
 	public void testCancelAnalysisInvalidId() throws WorkflowException {
 		workflowManagement.cancelAnalysis(invalidSubmittedAnalysis);

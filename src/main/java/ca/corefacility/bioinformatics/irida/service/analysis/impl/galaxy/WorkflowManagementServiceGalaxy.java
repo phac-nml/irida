@@ -37,6 +37,9 @@ import com.google.common.collect.Lists;
 public class WorkflowManagementServiceGalaxy implements
 	WorkflowManagementService<SubmittedAnalysisGalaxy, AnalysisSubmissionTestImpl> {
 	
+	private final static String sequenceFileInputLabel = "input_label";
+	private final static String refereneFileInputLabel = "input_label";
+	
 	private class PreparedWorkflow {
 		private CollectionResponse sequenceFilesCollection;
 		@SuppressWarnings("unused")
@@ -123,9 +126,9 @@ public class WorkflowManagementServiceGalaxy implements
 		WorkflowDetails workflowDetails = galaxyWorkflowService.getWorkflowDetails(workflowId);
 		
 		String workflowSequenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, 
-				remoteWorkflow.getSequenceFileInputLabel());
+				sequenceFileInputLabel);
 		String workflowReferenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, 
-				remoteWorkflow.getReferenceFileInputLabel());
+				refereneFileInputLabel);
 		
 		WorkflowInputs inputs = new WorkflowInputs();
 		inputs.setDestination(new WorkflowInputs.ExistingHistory(preparedWorkflow.getWorkflowHistory().getId()));
@@ -133,9 +136,9 @@ public class WorkflowManagementServiceGalaxy implements
 		inputs.setInput(workflowSequenceFileInputId,
 				new WorkflowInputs.WorkflowInput(preparedWorkflow.getSequenceFilesCollection().getId(),
 				WorkflowInputs.InputSourceType.HDCA));
-		inputs.setInput(workflowReferenceFileInputId,
-				new WorkflowInputs.WorkflowInput(preparedWorkflow.getSequenceFilesCollection().getId(),
-				WorkflowInputs.InputSourceType.HDCA));
+//		inputs.setInput(workflowReferenceFileInputId,
+//				new WorkflowInputs.WorkflowInput(preparedWorkflow.getSequenceFilesCollection().getId(),
+//				WorkflowInputs.InputSourceType.HDCA));
 		
 		WorkflowOutputs output = galaxyWorkflowService.runWorkflow(inputs);
 		

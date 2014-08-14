@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -39,11 +40,13 @@ public class WorkflowManagementServiceGalaxyTest {
 		submittedAnalysisGalaxy = new SubmittedAnalysisGalaxy(new GalaxyAnalysisId("1"), null);
 	}
 	
+	@Ignore
 	@Test
 	public void testExecuteAnalysisSuccess() throws ExecutionManagerException {
 		workflowManagement.executeAnalysis(analysisSubmission);
 	}
 	
+	@Ignore
 	@Test
 	public void testGetAnalysisResults() throws WorkflowException {
 		workflowManagement.getAnalysisResults(submittedAnalysisGalaxy);
@@ -75,6 +78,7 @@ public class WorkflowManagementServiceGalaxyTest {
 		workflowManagement.getWorkflowStatus(submittedAnalysisGalaxy);
 	}
 	
+	@Ignore
 	@Test
 	public void testCancelAnalysis() throws WorkflowException {
 		workflowManagement.cancelAnalysis(submittedAnalysisGalaxy);

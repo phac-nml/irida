@@ -1,39 +1,43 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integration;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class RemoteWorkflowGalaxy implements RemoteWorkflow<ExecutionManagerGalaxy> {
+	
+	private String workflowId;
+	private ExecutionManagerGalaxy executionManager;
+	private String workflowChecksum;
 
 	@Override
 	public void setWorkflowId(String workflowId) {
-		throw new UnsupportedOperationException();
+		checkNotNull(workflowId, "workflowId is null");
+		this.workflowId = workflowId;
 	}
 
 	@Override
 	public void setExecutionManager(ExecutionManagerGalaxy executionManager) {
-		throw new UnsupportedOperationException();
+		checkNotNull(executionManager, "executionManager is null");
+		this.executionManager = executionManager;
 	}
 
 	@Override
 	public ExecutionManagerGalaxy getExecutionManager() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getSequenceFileInputLabel() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getReferenceFileInputLabel() {
-		throw new UnsupportedOperationException();
+		return executionManager;
 	}
 
 	@Override
 	public String getWorkflowId() {
-		throw new UnsupportedOperationException();
+		return workflowId;
 	}
 
 	@Override
 	public String getWorkflowChecksum() {
-		throw new UnsupportedOperationException();
+		return workflowChecksum;
+	}
+	
+	@Override
+	public void setWorkflowChecksum(String workflowChecksum) {
+		checkNotNull(workflowChecksum, "workflowChecksum is null");
+		this.workflowChecksum = workflowChecksum;
 	}
 }
