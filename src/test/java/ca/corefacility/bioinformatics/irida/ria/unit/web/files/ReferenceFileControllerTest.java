@@ -19,6 +19,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.files.ReferenceFileController;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 
 /**
@@ -36,13 +37,15 @@ public class ReferenceFileControllerTest {
 	private ReferenceFileController controller;
 
 	// Services
+	private ProjectService projectService;
 	private ReferenceFileService referenceFileService;
 
 	@Before
 	public void setUp() {
+		projectService = mock(ProjectService.class);
 		referenceFileService = mock(ReferenceFileService.class);
 
-		controller = new ReferenceFileController(referenceFileService);
+		controller = new ReferenceFileController(projectService, referenceFileService);
 
 		// Set up the reference file
 		Path path = Paths.get(FILE_PATH);
