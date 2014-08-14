@@ -24,7 +24,12 @@
 			<column name="authentication" type="longblob">
 				<constraints nullable="false" />
 			</column>
-			<column name="refresh_token" type="VARCHAR(256)"/>
+			<column name="refresh_token" type="VARCHAR(256)" />
 		</createTable>
+
+		<addForeignKeyConstraint baseColumnNames="client_id"
+			baseTableName="oauth_access_token" referencedTableName="client_details"
+			referencedColumnNames="clientId" constraintName="FK_OAUTH_TOKEN_CLIENT_DETAILS"
+			onDelete="CASCADE"/>
 	</changeSet>
 </databaseChangeLog>

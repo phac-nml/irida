@@ -1,20 +1,15 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import java.util.Collection;
 import java.util.Map;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
 import org.springframework.security.oauth2.provider.NoSuchClientException;
-import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -34,16 +29,12 @@ import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 @Service("clientDetails")
 public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaClientDetails> implements
 		IridaClientDetailsService {
-	private static final Logger logger = LoggerFactory.getLogger(IridaClientDetailsServiceImpl.class);
 	private IridaClientDetailsRepository clientDetailsRepository;
-	private TokenStore tokenStore;
 
 	@Autowired
-	public IridaClientDetailsServiceImpl(IridaClientDetailsRepository repository, TokenStore tokenStore,
-			Validator validator) {
+	public IridaClientDetailsServiceImpl(IridaClientDetailsRepository repository, Validator validator) {
 		super(repository, validator, IridaClientDetails.class);
 		this.clientDetailsRepository = repository;
-		this.tokenStore = tokenStore;
 	}
 
 	/**
@@ -81,15 +72,6 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 	 */
 	@Override
 	public void delete(Long id) throws EntityNotFoundException {
-		IridaClientDetails read = read(id);
-		String clientId = read.getClientId();
-		logger.debug("Deleting client " + clientId);
-		Collection<OAuth2AccessToken> findTokensByClientId = tokenStore.findTokensByClientId(clientId);
-		logger.debug("Removing " + findTokensByClientId.size() + " tokens for client");
-		for (OAuth2AccessToken token : findTokensByClientId) {
-			tokenStore.removeAccessToken(token);
-		}
-
 		super.delete(id);
 	}
 
