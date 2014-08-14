@@ -18,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.WorkflowManagementServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.AnalysisServiceGalaxyPhylogenomicsPipeline;
 
 public class WorkflowManagementServiceGalaxyTest {
 	
@@ -27,13 +27,13 @@ public class WorkflowManagementServiceGalaxyTest {
 	@Mock private AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission;
 	@Mock private AnalysisSubmissionGalaxyPhylogenomicsPipeline submittedAnalysisGalaxy;
 
-	private WorkflowManagementServiceGalaxy workflowManagement;
+	private AnalysisServiceGalaxyPhylogenomicsPipeline workflowManagement;
 
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 		
-		workflowManagement = new WorkflowManagementServiceGalaxy(galaxyHistoriesService,
+		workflowManagement = new AnalysisServiceGalaxyPhylogenomicsPipeline(galaxyHistoriesService,
 				galaxyWorkflowService);
 		
 		RemoteWorkflowGalaxy remoteWorkflow = new RemoteWorkflowGalaxy("1", "1");

@@ -41,7 +41,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.Ana
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
-import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.WorkflowManagementServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.AnalysisServiceGalaxyPhylogenomicsPipeline;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
@@ -64,7 +64,7 @@ public class WorkflowManagementServiceGalaxyIT {
 	private Path referenceFile;
 	private Set<SequenceFile> sequenceFiles;
 	
-	private WorkflowManagementServiceGalaxy workflowManagement;
+	private AnalysisServiceGalaxyPhylogenomicsPipeline workflowManagement;
 	
 	@Before
 	public void setup() throws URISyntaxException {
@@ -97,11 +97,11 @@ public class WorkflowManagementServiceGalaxyIT {
 						new StandardPasswordEncoder());
 	}
 	
-	private WorkflowManagementServiceGalaxy buildWorkflowManagementGalaxy() {
+	private AnalysisServiceGalaxyPhylogenomicsPipeline buildWorkflowManagementGalaxy() {
 		GalaxyHistoriesService galaxyHistoriesService = buildGalaxyHistoriesService();
 		GalaxyWorkflowService galaxyWorkflowService = buildGalaxyWorkflowService();
 		
-		return new WorkflowManagementServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService);
+		return new AnalysisServiceGalaxyPhylogenomicsPipeline(galaxyHistoriesService, galaxyWorkflowService);
 	}	
 	
 	private AnalysisSubmissionGalaxyPhylogenomicsPipeline buildAnalysisSubmission() {

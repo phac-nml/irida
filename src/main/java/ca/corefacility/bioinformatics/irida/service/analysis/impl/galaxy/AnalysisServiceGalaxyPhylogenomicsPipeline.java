@@ -32,7 +32,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionR
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class WorkflowManagementServiceGalaxy {
+public class AnalysisServiceGalaxyPhylogenomicsPipeline {
 	
 	private final static String sequenceFileInputLabel = "sequence_reads";
 	private final static String refereneFileInputLabel = "reference";
@@ -65,7 +65,7 @@ public class WorkflowManagementServiceGalaxy {
 	private GalaxyHistoriesService galaxyHistoriesService;
 	private GalaxyWorkflowService galaxyWorkflowService;
 	
-	public WorkflowManagementServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService,
+	public AnalysisServiceGalaxyPhylogenomicsPipeline(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
