@@ -82,5 +82,11 @@ public class ReferenceFileController {
 		result.put("id", projectReferenceFileJoin.getObject().getId());
 		return result;
 	}
+
+	@RequestMapping("/delete")
+	public @ResponseBody String deleteReferenceFile(@RequestParam Long fileId) {
+		// TODO: (14-08-14 - Josh) This will be done in next branch.
+		return "success";
+	}
 }
 
