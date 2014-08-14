@@ -7,10 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+
+import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -56,15 +59,26 @@ public class AnalysisFastQC extends Analysis {
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<OverrepresentedSequence> overrepresentedSequences;
 
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private AnalysisOutputFile fastQCReport;
+
+
 	/**
 	 * Required for hibernate, should not be used anywhere else, so private.
 	 */
 	private AnalysisFastQC() {
-		super(null);
+		super(null, null);
 	}
 
-	public AnalysisFastQC(Set<SequenceFile> inputFiles) {
-		super(inputFiles);
+	public AnalysisFastQC(Set<SequenceFile> inputFiles, String executionManagerAnalysisId) {
+		super(inputFiles, executionManagerAnalysisId);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Set<AnalysisOutputFile> getAnalysisOutputFiles() {
+		return Sets.newHashSet(fastQCReport);
 	}
 
 	/**
@@ -179,5 +193,13 @@ public class AnalysisFastQC extends Analysis {
 
 	public void setOverrepresentedSequences(Set<OverrepresentedSequence> overrepresentedSequences) {
 		this.overrepresentedSequences = overrepresentedSequences;
+	}
+
+	public AnalysisOutputFile getFastQCReport() {
+		return fastQCReport;
+	}
+
+	public void setFastQCReport(AnalysisOutputFile fastQCReport) {
+		this.fastQCReport = fastQCReport;
 	}
 }

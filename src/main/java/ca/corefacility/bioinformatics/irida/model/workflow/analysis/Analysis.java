@@ -41,7 +41,7 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 @Table(name = "analysis")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Audited
-public class Analysis implements IridaThing {
+public abstract class Analysis implements IridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -71,15 +71,23 @@ public class Analysis implements IridaThing {
 	@NotNull
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	private Set<SequenceFile> inputFiles;
-	
+
+	/**
+	 * Get all output files produced by this {@link Analysis}.
+	 * 
+	 * @return the set of all output files produced by the {@link Analysis}.
+	 */
+	public abstract Set<AnalysisOutputFile> getAnalysisOutputFiles();
+
 	private Analysis() {
 		this.createdDate = new Date();
 		this.modifiedDate = createdDate;
 	}
 
-	public Analysis(Set<SequenceFile> inputFiles) {
+	public Analysis(Set<SequenceFile> inputFiles, String executionManagerAnalysisId) {
 		this();
 		this.inputFiles = inputFiles;
+		this.executionManagerAnalysisId = executionManagerAnalysisId;
 	}
 
 	public int hashCode() {
@@ -127,7 +135,7 @@ public class Analysis implements IridaThing {
 
 	@Override
 	public String getLabel() {
-		return this.description;
+		return executionManagerAnalysisId;
 	}
 
 	@Override

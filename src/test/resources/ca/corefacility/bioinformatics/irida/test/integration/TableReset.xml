@@ -14,11 +14,13 @@
 	<related_project />
 
 	<analysis />
+	<analysis_output_file />
 	<analysis_fastqc />
 	<overrepresented_sequence />
 	<analysis_fastqc_overrepresented_sequence />
 	<analysis_properties />
 	<analysis_sequence_file />
+	<analysis_phylogenomicspipeline />
 
 	<client_details />
 	<client_role />
@@ -74,4 +76,6 @@
 	<analysis_fastqc_overrepresented_sequence_AUD />
 	<project_referencefile_AUD />
 	<reference_file_AUD />
+	<analysis_phylogenomicspipeline_AUD />
+	<analysis_output_file_AUD />
 </dataset>

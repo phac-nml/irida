@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author fbristow
  *
  */
-public interface VersionedFileFields<VersionType extends Serializable> extends IridaThing {
+public interface VersionedFileFields<VersionType extends Serializable> {
 
 	/**
 	 * Get the version of the instance.
