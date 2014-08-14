@@ -393,7 +393,6 @@
 						<exclude>**/model/**</exclude>
 						<exclude>**/config/**</exclude>
 						<exclude>**/exceptions/**</exclude>
-						<exclude>**/util/**</exclude>
 					</excludes>
 				</configuration>
 				<executions>
@@ -525,12 +524,12 @@
 		<liquibase.config.changeLogFile>src/main/resources/ca/corefacility/bioinformatics/irida/database/all-changes.xml</liquibase.config.changeLogFile>
 
 		<!-- URL to the Galaxy repository to test against by default -->
-		<test.galaxy.repository.url>https://bitbucket.org/galaxy/galaxy-central</test.galaxy.repository.url>
+		<test.galaxy.repository.url>https://bitbucket.org/galaxy/galaxy-dist</test.galaxy.repository.url>
 
 		<!-- Branch name within the Galaxy repository to test against -->
-		<test.galaxy.branch>next-stable</test.galaxy.branch>
+		<test.galaxy.branch>stable</test.galaxy.branch>
 
 		<!-- Galaxy Testing Revision: either 'latest' or a revision from the branch in the defined repository -->
-		<test.galaxy.revision>2559a58e62f292ae537974f8a3fc86ea32ccf8ad</test.galaxy.revision>
+		<test.galaxy.revision>7e4d21621ce12e13ebbdf9fd3259df58c3ef124c</test.galaxy.revision>
 	</properties>
 </project>
