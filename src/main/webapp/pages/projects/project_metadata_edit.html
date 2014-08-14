@@ -68,6 +68,36 @@
                                     th:text="#{form.btn.update}"></button>
                         </div>
                     </form>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title" th:text="#{projects.meta.reference-files}">__Reference Files__</h3>
+                        </div>
+                        <div class="panel-body">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th th:text="#{projects.meta.reference-file.name}">__Reference File Name__</th>
+                                    <th th:text="#{projects.meta.reference-file.createdDate}">__Date Added__</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="file : ${referenceFiles}">
+                                    <td th:text="${file.label}"></td>
+                                    <td data:livestamp="${file.createdDate}" th:text="${file.createdDate}"></td>
+                                    <td class="text-right">
+                                        <button data:file-id="${file.id}" class="btn btn-default btn-xs btn-download" data:tooltip="#{form.download}"><span
+                                                class="glyphicon glyphicon-download-alt"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="panel-footer">
+                            <input type="file" name="file_upload" id="file_upload" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -76,6 +106,17 @@
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
     <div th:replace="projects/project_base :: scripts"></div>
+    <script src="/resources/bower_components/uploadify/jquery.uploadify.js"></script>
+
+    <script>
+        $(function() {
+            $('#file_upload').uploadify({
+                'swf'      : /*[[@{/resources/bower_components/uploadify/uploadify.swf}]]*/ '/resources/bower_components/uploadify/uploadify.swf',
+                'uploader' : /*[[@{/referenceFiles/project/{projectId}/new(projectId=${project.getId()})}]]*/ '/referenceFiles/project/1/new'
+                // Put your options here
+            });
+        });
+    </script>
 </div>
 </body>
 </html>
