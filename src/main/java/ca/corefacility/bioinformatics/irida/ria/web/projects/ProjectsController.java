@@ -58,6 +58,7 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectSamp
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsAdminDataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -99,6 +100,7 @@ public class ProjectsController {
 	private final UserService userService;
 	private final SequenceFileService sequenceFileService;
 	private final ProjectControllerUtils projectControllerUtils;
+	private final ReferenceFileService referenceFileService;
 
 	/*
 	 * Converters
@@ -107,12 +109,13 @@ public class ProjectsController {
 
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
-			SequenceFileService sequenceFileService, ProjectControllerUtils projectControllerUtils) {
+			SequenceFileService sequenceFileService, ProjectControllerUtils projectControllerUtils, ReferenceFileService referenceFileService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
 		this.sequenceFileService = sequenceFileService;
 		this.projectControllerUtils = projectControllerUtils;
+		this.referenceFileService = referenceFileService;
 		this.dateFormatter = new DateFormatter();
 	}
 
@@ -210,7 +213,7 @@ public class ProjectsController {
 	@RequestMapping("/{projectId}/metadata")
 	public String getProjectMetadataPage(final Model model, final Principal principal, @PathVariable long projectId) {
 		Project project = projectService.read(projectId);
-		List<Join<Project, ReferenceFile>> joinList = projectService.getReferenceFilesForProject(project);
+		List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
 		List<ReferenceFile> referenceFiles = joinList.stream().map(Join::getObject)
 				.collect(Collectors.toList());
 

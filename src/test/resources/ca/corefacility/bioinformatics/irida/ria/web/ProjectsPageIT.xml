@@ -42,4 +42,7 @@
     <related_project id="3" subject_id="1" relatedProject_id="5" createdDate="2013-07-18 14:20:19.0" />
 
     <project_sample />
+
+    <reference_file id="1" createdDate="2014-08-06 10:01:02" filePath="/tmp/sequence-files/7/2/02-2222_S1_L001_R1_001.fastq" />
+    <project_referenceFile id="1" createdDate="2014-08-06 10:01:02" project_id="1" referenceFile_id="1"/>
 </dataset>

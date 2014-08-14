@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.files;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -15,10 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 
 /**
  * Controller for all {@link ReferenceFile} related views
@@ -28,25 +25,17 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 @Controller
 @RequestMapping("/referenceFiles")
 public class ReferenceFileController {
-	private ProjectService projectService;
+	private ReferenceFileService referenceFileService;
 
 	@Autowired
-	public ReferenceFileController(ProjectService projectService) {
-		this.projectService = projectService;
+	public ReferenceFileController(ReferenceFileService referenceFileService) {
+		this.referenceFileService = referenceFileService;
 	}
 
-	@RequestMapping(value = "/download/project/{projectId}/{fileId}")
-	public void downloadReferenceFile(@PathVariable Long projectId, @PathVariable Long fileId,
+	@RequestMapping(value = "/download/{fileId}")
+	public void downloadReferenceFile(@PathVariable Long fileId,
 			HttpServletResponse response) throws IOException {
-		Project p = projectService.read(projectId);
-		ReferenceFile file = null;
-		List<Join<Project, ReferenceFile>> filesJoin = projectService.getReferenceFilesForProject(p);
-		for (Join<Project, ReferenceFile> join : filesJoin) {
-			if (join.getObject().getId() == fileId) {
-				file = join.getObject();
-				break;
-			}
-		}
+		ReferenceFile file = referenceFileService.read(fileId);
 		if (file != null) {
 			Path path = file.getFile();
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getLabel() + "\"");
@@ -54,7 +43,7 @@ public class ReferenceFileController {
 			response.flushBuffer();
 		} else {
 			throw new EntityNotFoundException(
-					"Cannot find reference file with id [" + fileId + "] for project [" + p.getLabel() + "]");
+					"Cannot find reference file with id [" + fileId + "]");
 		}
 	}
 
