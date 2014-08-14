@@ -15,7 +15,6 @@ import javax.annotation.PreDestroy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 
@@ -69,6 +68,10 @@ public class LocalGalaxy {
 	
 	private String worklowCollectionListId;
 	private String workflowCollectionListLabel;
+	
+	private String workflowCorePipelineTestId;
+	private String workflowCorePipelineTestSequenceFilesLabel;
+	private String workflowCorePipelineTestReferenceLabel;
 	
 	private String invalidWorkflowId;
 	private String invalidWorkflowLabel = "invalid";
@@ -477,7 +480,25 @@ public class LocalGalaxy {
 			throw new RuntimeException(e);
 		}
 	}
-
+	
+	/**
+	 * Sets up a test of the core pipeline workflow.
+	 */
+	private void setupWorkflowCorePipelineTest() {
+		try {
+			Path workflowFile = Paths.get(LocalGalaxy.class.getResource(
+					"Workflow-Core_Pipeline_Test.ga").toURI());
+			
+			// build workflow
+			this.workflowCorePipelineTestId = constructTestWorkflow(workflowFile);
+			this.workflowCorePipelineTestSequenceFilesLabel = "sequence_reads";
+			this.workflowCorePipelineTestReferenceLabel = "reference";
+			
+			// find a workflow id that's invalid
+		} catch (URISyntaxException | IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	/**
 	 * Gets the workflow id for a single input workflow.
@@ -510,6 +531,30 @@ public class LocalGalaxy {
 	public String getWorkflowCollectionListLabel() {
 		return workflowCollectionListLabel;
 	}
+	
+	/**
+	 * Gets a test core pipeline workflow id.
+	 * @return  A test core pipeline workflow id.
+	 */
+	public String getWorkflowCorePipelineTestId() {
+		return workflowCorePipelineTestId;
+	}
+
+	/**
+	 * Gets a test core pipeline label for sequence files.
+	 * @return  A test core pipeline label for sequence files.
+	 */
+	public String getWorkflowCorePipelineTestSequenceFilesLabel() {
+		return workflowCorePipelineTestSequenceFilesLabel;
+	}
+
+	/**
+	 * Gets a test core pipeline label for reference files.
+	 * @return  A test core pipeline label for reference files.
+	 */
+	public String getWorkflowCorePipelineTestReferenceLabel() {
+		return workflowCorePipelineTestReferenceLabel;
+	}
 
 	/**
 	 * Sets up all workflows for this local galaxy.
@@ -517,6 +562,7 @@ public class LocalGalaxy {
 	public void setupWorkflows() {
 		setupWorkflowSingleInput();
 		setupWorkflowCollectionListPaired();
+		setupWorkflowCorePipelineTest();
 		
 		invalidWorkflowId = "invalid";
 	}
@@ -551,6 +597,14 @@ public class LocalGalaxy {
 	 */
 	public URL getTestGalaxyURL() {
 		return testGalaxyURL;
+	}
+	
+	/**
+	 * Gets a checksum for a example core pipeline workflow.
+	 * @return  The checksum for an example core pipeline workflow.
+	 */
+	public String getWorkflowCorePipelineTestChecksum() {
+		return "e431b89e9fccafc8ed0f1f3d826c6ab0591f3c7f81e1f1286ffd9523d28f5c3fda59b0b31b3b77c7";
 	}
 
 	/**

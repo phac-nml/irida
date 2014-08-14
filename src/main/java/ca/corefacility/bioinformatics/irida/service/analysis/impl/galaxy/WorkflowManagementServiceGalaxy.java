@@ -37,12 +37,11 @@ import com.google.common.collect.Lists;
 public class WorkflowManagementServiceGalaxy implements
 	WorkflowManagementService<SubmittedAnalysisGalaxy, AnalysisSubmissionTestImpl> {
 	
-	private final static String sequenceFileInputLabel = "fastq";
-	private final static String refereneFileInputLabel = "input_label";
+	private final static String sequenceFileInputLabel = "sequence_reads";
+	private final static String refereneFileInputLabel = "reference";
 	
 	private class PreparedWorkflow {
 		private CollectionResponse sequenceFilesCollection;
-		@SuppressWarnings("unused")
 		private Dataset referenceDataset;
 		private History workflowHistory;
 		
@@ -57,9 +56,9 @@ public class WorkflowManagementServiceGalaxy implements
 			return sequenceFilesCollection;
 		}
 
-//		public Dataset getReferenceDataset() {
-//			return referenceDataset;
-//		}
+		public Dataset getReferenceDataset() {
+			return referenceDataset;
+		}
 
 		public History getWorkflowHistory() {
 			return workflowHistory;
@@ -122,8 +121,8 @@ public class WorkflowManagementServiceGalaxy implements
 		
 		String workflowSequenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, 
 				sequenceFileInputLabel);
-//		String workflowReferenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, 
-//				refereneFileInputLabel);
+		String workflowReferenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, 
+				refereneFileInputLabel);
 		
 		WorkflowInputs inputs = new WorkflowInputs();
 		inputs.setDestination(new WorkflowInputs.ExistingHistory(preparedWorkflow.getWorkflowHistory().getId()));
@@ -131,9 +130,9 @@ public class WorkflowManagementServiceGalaxy implements
 		inputs.setInput(workflowSequenceFileInputId,
 				new WorkflowInputs.WorkflowInput(preparedWorkflow.getSequenceFilesCollection().getId(),
 				WorkflowInputs.InputSourceType.HDCA));
-//		inputs.setInput(workflowReferenceFileInputId,
-//				new WorkflowInputs.WorkflowInput(preparedWorkflow.getSequenceFilesCollection().getId(),
-//				WorkflowInputs.InputSourceType.HDCA));
+		inputs.setInput(workflowReferenceFileInputId,
+				new WorkflowInputs.WorkflowInput(preparedWorkflow.getReferenceDataset().getId(),
+				WorkflowInputs.InputSourceType.HDA));
 		
 		WorkflowOutputs output = galaxyWorkflowService.runWorkflow(inputs);
 		

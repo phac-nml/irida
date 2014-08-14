@@ -13,6 +13,7 @@ public class AnalysisSubmissionTestImpl implements AnalysisSubmission<RemoteWork
 	private Set<Path> sequenceFiles;
 	private Path referenceFile;
 	private RemoteWorkflowGalaxy remoteWorkflow;
+	@SuppressWarnings("unused")
 	private Class<? extends Analysis> analysisType;
 
 	@Override
