@@ -83,8 +83,8 @@
                                 </thead>
                                 <tbody>
                                 <tr th:each="file : ${referenceFiles}">
-                                    <td th:text="${file.label}"></td>
-                                    <td data:livestamp="${file.createdDate}" th:text="${file.createdDate}"></td>
+                                    <td class="file-name" th:text="${file.label}"></td>
+                                    <td data:livestamp="${file.createdDate}"></td>
                                     <td class="text-right">
                                         <button data:file-id="${file.id}" class="btn btn-danger btn-xs"
                                                 data:tooltip="#{form.btn.remove}"><span
@@ -104,8 +104,8 @@
     </div>
     <script type="text/html" id="row-template">
         <tr>
-            <td>{{name}}</td>
-            <td data-livestamp="{{date}}"></td>
+            <td class="file-name">{{name}}</td>
+            <td class="file-date" data-livestamp="{{date}}"></td>
             <td class="text-right">
                 <button data-file-id="{{id}}" class="btn btn-danger btn-xs"
                         data:tooltip="#{form.btn.remove}">
@@ -115,12 +115,24 @@
         </tr>
 
     </script>
+    <script type="text/html" id="delete-template">
+        <h2 th:text="#{projects.meta.reference-file.delete-title}">__DELETE_REFERENCE_FILE</h2>
+        <p th:text="#{projects.meta.reference-file.delete-msg}"></p>
+    </script>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
     <div th:replace="projects/project_base :: scripts"></div>
     <script src="/resources/bower_components/uploadify/jquery.uploadify.js"></script>
 
     <script>
+        function showErrorModal(msg) {
+            noty({
+                text: msg,
+                layout: "topCenter",
+                type: "error",
+                timeout: 3200
+            });
+        }
         $(function() {
             var tableBody = $("#referenceFileTable").find('tbody');
             $('#file_upload').uploadify({
@@ -131,9 +143,6 @@
                 'auto': true,
                 'multi': false,
                 'fileObjName': 'files',
-                'checkExisting': false,
-                'hideButton': true,
-                'wmode': 'transparent',
                 'height': '33px',
                 'width': '200px',
                 'onUploadSuccess': function (file, data) {
@@ -142,6 +151,9 @@
                     var content = Mustache.render(template, {'name': file.name, 'id': response.id, date: new Date()});
                     tableBody.append(content);
                     tableBody.find('[data-tooltip!=""]').qtip(options);
+                },
+                'onUploadError': function (file, errorCode, errorMsg, errorString) {
+                    alert('The file ' + file.name + ' could not be uploaded: ' + errorString);
                 }
             });
 
@@ -160,8 +172,51 @@
             $('[data-tooltip!=""]').qtip(options);
 
             tableBody.on('click', ".btn-danger", function () {
-                alert("NOT IMPLEMENTED!");
-                // TODO: need to put up an notice.
+                var $this = $(this),
+                        id = $this.data('file-id'),
+                        row = $this.closest('tr'),
+                        projectName = /*[[${project.label}]]*/ 'Project Name',
+                        template = $("#delete-template").html(),
+                        fileName = $(row).find("td.file-name").html();
+                $this.qtip('hide', true);
+
+                noty({
+                    'layout': 'center',
+                    'type': 'confirm',
+                    'text': Mustache.render(template, {'name': fileName, 'project': projectName}),
+                    'modal': 'true',
+                    'buttons': [
+                        {
+                            addClass: 'btn btn-primary btn-sm',
+                            text: /*[[#{form.btn.confim}]]*/ 'OK',
+                            onClick: function ($noty) {
+                                $noty.close();
+                                $.ajax({
+                                    type: 'post',
+                                    url: /*[[@{/referenceFiles/delete/}]]*/ '/referenceFiles/delete/',
+                                    data: "fileId=" + id,
+                                    success: function () {
+                                        $this.qtip('destroy', true);
+                                        $(row).remove();
+                                    },
+                                    error: function (data) {
+                                        var msg = /*[[#{projects.meta.reference-file.delete-error}]]*/ "__Error deleting reference file__";
+                                        showErrorModal(msg);
+                                    }
+                                });
+
+                            }
+                        },
+                        {
+                            addClass: 'btn btn-default btn-sm',
+                            text: /*#{form.btn.cancel}*/ 'Cancel',
+                            onClick: function ($noty) {
+                                $noty.close();
+                            }
+                        }
+                    ]
+                });
+
             });
         });
     </script>
