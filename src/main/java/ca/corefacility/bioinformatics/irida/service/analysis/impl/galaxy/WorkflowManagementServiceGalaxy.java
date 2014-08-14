@@ -37,7 +37,7 @@ import com.google.common.collect.Lists;
 public class WorkflowManagementServiceGalaxy implements
 	WorkflowManagementService<SubmittedAnalysisGalaxy, AnalysisSubmissionTestImpl> {
 	
-	private final static String sequenceFileInputLabel = "input_label";
+	private final static String sequenceFileInputLabel = "fastq";
 	private final static String refereneFileInputLabel = "input_label";
 	
 	private class PreparedWorkflow {
@@ -99,14 +99,9 @@ public class WorkflowManagementServiceGalaxy implements
 				fileToHistory(referenceFile, InputFileType.FASTQ_SANGER, workflowHistory);
 		
 		CollectionResponse collectionResponse = 
-				constructCollectionList(sequenceDatasets, workflowHistory);
+				galaxyHistoriesService.constructCollectionList(sequenceDatasets, workflowHistory);
 
 		return new PreparedWorkflow(collectionResponse, referenceDataset, workflowHistory);
-	}
-
-	private CollectionResponse constructCollectionList(List<Dataset> sequenceDatasets,
-			History workflowHistory) {
-		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -127,8 +122,8 @@ public class WorkflowManagementServiceGalaxy implements
 		
 		String workflowSequenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, 
 				sequenceFileInputLabel);
-		String workflowReferenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, 
-				refereneFileInputLabel);
+//		String workflowReferenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, 
+//				refereneFileInputLabel);
 		
 		WorkflowInputs inputs = new WorkflowInputs();
 		inputs.setDestination(new WorkflowInputs.ExistingHistory(preparedWorkflow.getWorkflowHistory().getId()));
