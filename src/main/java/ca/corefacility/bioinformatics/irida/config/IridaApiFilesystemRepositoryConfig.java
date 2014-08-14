@@ -29,6 +29,8 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	private @Value("${reference.file.base.directory}") String referenceFileBaseDirectory;
 
+	private @Value("${output.file.base.directory}") String outputFileBaseDirectory;
+
 	private static final Set<Path> BASE_DIRECTORIES = new HashSet<>();
 
 	@Autowired
@@ -56,27 +58,39 @@ public class IridaApiFilesystemRepositoryConfig {
 		return getExistingPathOrThrow(sequenceFileBaseDirectory);
 	}
 
-	@Profile({"dev", "it"})
+	@Profile("prod")
+	@Bean(name = "outputFileBaseDirectory")
+	public Path outputFileBaseDirectoryProd() {
+		return getExistingPathOrThrow(outputFileBaseDirectory);
+	}
+
+	@Profile({ "dev", "it", "test" })
 	@Bean(name = "referenceFileBaseDirectory")
 	public Path referenceFileBaseDirectory() throws IOException {
 		return configureDirectory(referenceFileBaseDirectory, "reference-file-dev");
 	}
 
-	@Profile({"dev", "it"})
+	@Profile({ "dev", "it", "test" })
 	@Bean(name = "sequenceFileBaseDirectory")
 	public Path sequenceFileBaseDirectory() throws IOException {
 		return configureDirectory(sequenceFileBaseDirectory, "sequence-file-dev");
+	}
+
+	@Profile({ "dev", "it", "test" })
+	@Bean(name = "outputFileBaseDirectory")
+	public Path outputFileBaseDirectory() throws IOException {
+		return configureDirectory(outputFileBaseDirectory, "output-file-dev");
 	}
 
 	private Path getExistingPathOrThrow(String directory) {
 		Path baseDirectory = Paths.get(directory);
 		if (!Files.exists(baseDirectory)) {
 			throw new IllegalStateException(String.format(
-					"Cannot continue startup; base directory [%s] does not exist!", baseDirectory));
+					"Cannot continue startup; base directory [%s] does not exist!", baseDirectory.toString()));
 		} else {
-			logger.info(
-					String.format("Using specified existing directory at [%s]. The directory *will not* be removed at shutdown time."),
-					baseDirectory);
+			logger.info(String
+					.format("Using specified existing directory at [%s]. The directory *will not* be removed at shutdown time.",
+							baseDirectory.toString()));
 		}
 		return baseDirectory;
 	}

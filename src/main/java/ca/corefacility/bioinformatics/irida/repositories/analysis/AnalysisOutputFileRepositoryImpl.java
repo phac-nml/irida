@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.repositories.sequencefile;
+package ca.corefacility.bioinformatics.irida.repositories.analysis;
 
 import java.nio.file.Path;
 
@@ -8,22 +8,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl;
 
 /**
  * Custom implementation of {@link FilesystemSupplementedRepositoryImpl} for
- * {@link SequenceFile}.
+ * {@link AnalysisOutputFile}.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Repository
-public class SequenceFileRepositoryImpl extends FilesystemSupplementedRepositoryImpl<SequenceFile> {
+public class AnalysisOutputFileRepositoryImpl extends FilesystemSupplementedRepositoryImpl<AnalysisOutputFile> {
 
 	@Autowired
-	public SequenceFileRepositoryImpl(EntityManager entityManager,
-			@Qualifier("sequenceFileBaseDirectory") Path baseDirectory) {
+	public AnalysisOutputFileRepositoryImpl(EntityManager entityManager,
+			@Qualifier("outputFileBaseDirectory") Path baseDirectory) {
 		super(entityManager, baseDirectory);
 	}
 
@@ -31,7 +31,7 @@ public class SequenceFileRepositoryImpl extends FilesystemSupplementedRepository
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SequenceFile save(SequenceFile entity) {
+	public AnalysisOutputFile save(AnalysisOutputFile entity) {
 		return super.saveInternal(entity);
 	}
 

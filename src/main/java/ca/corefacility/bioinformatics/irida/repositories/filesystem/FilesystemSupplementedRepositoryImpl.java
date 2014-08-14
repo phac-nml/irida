@@ -6,16 +6,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ReflectionUtils;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 
 /**
@@ -25,15 +26,14 @@ import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
-public abstract class FilesystemSupplementedRepositoryImpl<Type extends VersionedFileFields<Long>> implements
+public abstract class FilesystemSupplementedRepositoryImpl<Type extends VersionedFileFields<Long> & IridaThing> implements
 		FilesystemSupplementedRepository<Type> {
 
 	private static final Logger logger = LoggerFactory.getLogger(FilesystemSupplementedRepository.class);
 
 	private final Path baseDirectory;
 	private final EntityManager entityManager;
-	
-	@Autowired
+
 	public FilesystemSupplementedRepositoryImpl(final EntityManager entityManager, final Path baseDirectory) {
 		this.entityManager = entityManager;
 		this.baseDirectory = baseDirectory;
@@ -76,7 +76,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	 * @param baseDirectory
 	 * @param iridaThing
 	 */
-	private VersionedFileFields<?> writeFilesToDisk(Path baseDirectory, VersionedFileFields<?> objectToWrite) {
+	private Type writeFilesToDisk(Path baseDirectory, Type objectToWrite) {
 		if (objectToWrite.getId() == null) {
 			throw new IllegalArgumentException("Identifier is required.");
 		}
@@ -85,9 +85,10 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 		Path sequenceFileDir = baseDirectory.resolve(objectToWrite.getId().toString());
 		Path sequenceFileDirWithRevision = sequenceFileDir.resolve(objectToWrite.getFileRevisionNumber().toString());
 
+		Predicate<Field> pathFilter = f -> f.getType().equals(Path.class);
 		// now find any members that are of type Path and shuffle them around:
-		Set<Field> pathFields = Arrays.stream(objectToWrite.getClass().getDeclaredFields())
-				.filter(f -> f.getType().equals(Path.class)).collect(Collectors.toSet());
+		Set<Field> pathFields = Arrays.stream(objectToWrite.getClass().getDeclaredFields()).filter(pathFilter)
+				.collect(Collectors.toSet());
 
 		for (Field field : pathFields) {
 			ReflectionUtils.makeAccessible(field);

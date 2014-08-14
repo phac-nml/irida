@@ -1,8 +1,7 @@
-package ca.corefacility.bioinformatics.irida.model.project;
+package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
 import java.nio.file.Path;
 import java.util.Date;
-import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,7 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -23,22 +22,23 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 
 /**
- * A reference file to be associated with a {@link Project}.
+ * Store file references to files produced by a workflow execution that we
+ * otherwise don't want to parse metadata from.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Entity
-@Table(name = "reference_file")
+@Table(name = "analysis_output_file")
 @Audited
-public class ReferenceFile implements VersionedFileFields<Long>, IridaThing {
+public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
 	@Column(name = "filePath", unique = true)
-	@NotNull(message = "{reference.file.file.notnull}")
+	@NotNull(message = "{analysis.output.file.file.notnull}")
 	private Path file;
 
 	@NotNull
@@ -49,38 +49,43 @@ public class ReferenceFile implements VersionedFileFields<Long>, IridaThing {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "referenceFile")
-	private ProjectReferenceFileJoin project;
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	private Analysis analysis;
+
+	@NotNull(message = "{analysis.output.file.execution.manager.file.id}")
+	private String executionManagerFileId;
 
 	private Long fileRevisionNumber; // the filesystem file revision number
 	
-	public int hashCode() {
-		return file.hashCode();
-	}
-	
-	public boolean equals(Object o) {
-		if (o == this) {
-			return true;
-		} else if (o instanceof ReferenceFile) {
-			return Objects.equals(file, ((ReferenceFile) o).file);
-		}
-		
-		return false;
-	}
-
-	public ReferenceFile() {
+	private AnalysisOutputFile() {
 		this.createdDate = new Date();
 		this.fileRevisionNumber = 0L;
 	}
 
-	public ReferenceFile(Path file) {
+	public AnalysisOutputFile(Path file, String executionManagerFileId) {
 		this();
 		this.file = file;
+		this.executionManagerFileId = executionManagerFileId;
+	}
+
+	@Override
+	public Date getCreatedDate() {
+		return this.createdDate;
+	}
+
+	@Override
+	public Long getFileRevisionNumber() {
+		return this.fileRevisionNumber;
+	}
+
+	@Override
+	public void incrementFileRevisionNumber() {
+		this.fileRevisionNumber++;
 	}
 
 	@Override
 	public String getLabel() {
-		return file.getFileName().toString();
+		return this.file.getFileName().toString();
 	}
 
 	@Override
@@ -106,15 +111,28 @@ public class ReferenceFile implements VersionedFileFields<Long>, IridaThing {
 		this.file = file;
 	}
 
-	@Override
-	public Date getCreatedDate() {
-		return this.createdDate;
-	}
-	public void incrementFileRevisionNumber() {
-		this.fileRevisionNumber++;
+	public Analysis getAnalysis() {
+		return analysis;
 	}
 
-	public Long getFileRevisionNumber() {
-		return fileRevisionNumber;
+	public void setAnalysis(Analysis analysis) {
+		this.analysis = analysis;
 	}
+
+	public String getExecutionManagerFileId() {
+		return executionManagerFileId;
+	}
+
+	public void setExecutionManagerFileId(String executionManagerFileId) {
+		this.executionManagerFileId = executionManagerFileId;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setFileRevisionNumber(Long fileRevisionNumber) {
+		this.fileRevisionNumber = fileRevisionNumber;
+	}
+
 }

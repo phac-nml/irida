@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.repositories;
+package ca.corefacility.bioinformatics.irida.repositories.analysis;
 
 import java.util.Set;
 
@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 
 /**
  * A custom repository for managing {@link Analysis} objects.
