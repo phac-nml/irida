@@ -22,7 +22,7 @@
             }, 
             "tool_errors": null, 
             "tool_id": null, 
-            "tool_state": "{\"collection_type\": \"list\", \"name\": \"sequence_reads\"}", 
+            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads\"}", 
             "tool_version": null, 
             "type": "data_collection_input", 
             "user_outputs": []

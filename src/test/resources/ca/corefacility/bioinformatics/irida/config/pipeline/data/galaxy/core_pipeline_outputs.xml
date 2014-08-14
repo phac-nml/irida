@@ -3,7 +3,7 @@
     echo "csv" > $csv; echo "output_tree" > $output_tree; echo "positions" > $positions;
   </command>
   <inputs>
-    <param name="sequence_reads" label="sequence_reads" type="data_collection" collection_type="list" />
+    <param name="sequence_reads" label="sequence_reads" type="data_collection" collection_type="list:paired" />
     <param name="fasta" type="data" label="reference" format="fasta" />
   </inputs>
   <outputs>
