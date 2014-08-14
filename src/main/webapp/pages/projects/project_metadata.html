@@ -110,7 +110,7 @@
             $(".btn-download").on('click', function(){
                 var id = $(this).data('file-id');
                 var iframe = document.getElementById('invisible');
-                var src = /*[[@{/referenceFiles/download/project/{projectId}/(projectId=${project.getId()})}]]*/ '/referenceFiles/project/1/download/';
+                var src = /*[[@{/referenceFiles/download/}]]*/ '/referenceFiles/download/';
                 iframe.src = src + id;
             });
         });

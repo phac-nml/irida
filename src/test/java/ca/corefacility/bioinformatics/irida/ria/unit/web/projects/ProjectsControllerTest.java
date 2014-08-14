@@ -46,6 +46,7 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -82,6 +83,7 @@ public class ProjectsControllerTest {
 	private SampleService sampleService;
 	private UserService userService;
 	private SequenceFileService sequenceFileService;
+	private ReferenceFileService referenceFileService;
 	private ProjectControllerUtils projectUtils;
 
 	@Before
@@ -91,8 +93,9 @@ public class ProjectsControllerTest {
 		userService = mock(UserService.class);
 		sequenceFileService = mock(SequenceFileService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
+		referenceFileService = mock(ReferenceFileService.class);
 		controller = new ProjectsController(projectService, sampleService, userService, sequenceFileService,
-				projectUtils);
+				projectUtils, referenceFileService);
 		user.setId(1L);
 
 		mockSidebarInfo();
