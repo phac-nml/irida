@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.clients;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -64,6 +65,8 @@ public class ClientsPageIT {
 	public void testCheckClientsPageNumber() {
 		int clientsTableSize = clientsPage.clientsTableSize();
 		assertEquals(2, clientsTableSize);
+		assertTrue(clientsPage.checkClientExistsInTable("testClient"));
+		assertTrue(clientsPage.checkClientExistsInTable("testClient2"));
 	}
 
 }

@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.clients;
 
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -29,5 +31,16 @@ public class ClientsPage {
 		logger.trace("Getting table size");
 		WebElement element = driver.findElement(By.xpath("//table[@id='clientsTable']/tbody"));
 		return element.findElements(By.tagName("tr")).size();
+	}
+
+	public boolean checkClientExistsInTable(String clientId) {
+		List<WebElement> findElements = driver.findElements(By.className("clientLink"));
+		for (WebElement ele : findElements) {
+			if (ele.getText().equals(clientId)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
