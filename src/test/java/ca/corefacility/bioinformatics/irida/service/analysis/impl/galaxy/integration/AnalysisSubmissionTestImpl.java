@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integration;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.nio.file.Path;
 import java.util.Set;
 
@@ -7,39 +9,48 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.service.analysis.AnalysisSubmission;
 
 public class AnalysisSubmissionTestImpl implements AnalysisSubmission<RemoteWorkflowGalaxy> {
+	
+	private Set<Path> sequenceFiles;
+	private Path referenceFile;
+	private RemoteWorkflowGalaxy remoteWorkflow;
+	private Class<? extends Analysis> analysisType;
 
 	@Override
 	public void setSequenceFiles(Set<Path> sequenceFiles) {
-		throw new UnsupportedOperationException();
+		checkNotNull(sequenceFiles, "sequenceFiles is null");
+		this.sequenceFiles = sequenceFiles;
 	}
 
 	@Override
 	public void setReferenceFile(Path referenceFile) {
-		throw new UnsupportedOperationException();
+		checkNotNull(referenceFile, "referenceFile is null");
+		this.referenceFile = referenceFile;
 	}
 
 	@Override
 	public void setRemoteWorkflow(RemoteWorkflowGalaxy remoteWorkflow) {
-		throw new UnsupportedOperationException();
+		checkNotNull(remoteWorkflow, "remoteWorkflow is null");
+		this.remoteWorkflow = remoteWorkflow;
 	}
 
 	@Override
 	public void setAnalysisType(Class<? extends Analysis> analysisType) {
-		throw new UnsupportedOperationException();
+		checkNotNull(analysisType, "analysisType is null");
+		this.analysisType = analysisType;
 	}
 
 	@Override
 	public RemoteWorkflowGalaxy getRemoteWorkflow() {
-		throw new UnsupportedOperationException();
+		return remoteWorkflow;
 	}
 
 	@Override
 	public Set<Path> getSequenceFiles() {
-		throw new UnsupportedOperationException();
+		return sequenceFiles;
 	}
 
 	@Override
 	public Path getReferenceFile() {
-		throw new UnsupportedOperationException();
+		return referenceFile;
 	}
 }

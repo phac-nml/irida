@@ -107,6 +107,7 @@ public class WorkflowManagementServiceGalaxyIT {
 		
 		RemoteWorkflowGalaxy remoteWorkflow = new RemoteWorkflowGalaxy();
 		remoteWorkflow.setWorkflowId(localGalaxy.getSingleInputWorkflowId());
+		remoteWorkflow.setWorkflowChecksum(localGalaxy.getSingleInputWorkflowChecksum());
 		
 		AnalysisSubmissionTestImpl analysisSubmission = new AnalysisSubmissionTestImpl();
 		analysisSubmission.setSequenceFiles(sequenceFiles);
