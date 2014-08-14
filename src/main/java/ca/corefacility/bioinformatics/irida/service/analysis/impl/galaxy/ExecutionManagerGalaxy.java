@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integration;
+package ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy;
 
 import java.net.URL;
 

@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integration;
+package ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy;
 
 import ca.corefacility.bioinformatics.irida.service.analysis.ExecutionManager;
 

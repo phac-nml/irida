@@ -37,6 +37,9 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysis
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.AnalysisSubmissionTestImpl;
+import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.AnalysisTest;
+import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.RemoteWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.SubmittedAnalysisGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.WorkflowManagementServiceGalaxy;
 
