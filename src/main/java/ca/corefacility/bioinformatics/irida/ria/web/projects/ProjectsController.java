@@ -49,7 +49,6 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
@@ -78,7 +77,7 @@ public class ProjectsController {
 	private static final String ACTIVE_NAV_DASHBOARD = "dashboard";
 	private static final String ACTIVE_NAV_METADATA = "metadata";
 	private static final String ACTIVE_NAV_SAMPLES = "samples";
-	
+
 	private static final String PROJECT_NAME_PROPERTY = "name";
 
 	// private static final String ACTIVE_NAV_ANALYSIS = "analysis";
@@ -109,7 +108,8 @@ public class ProjectsController {
 
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
-			SequenceFileService sequenceFileService, ProjectControllerUtils projectControllerUtils, ReferenceFileService referenceFileService) {
+			SequenceFileService sequenceFileService, ProjectControllerUtils projectControllerUtils,
+			ReferenceFileService referenceFileService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;

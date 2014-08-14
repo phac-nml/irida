@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 
@@ -36,15 +35,10 @@ public class ReferenceFileController {
 	public void downloadReferenceFile(@PathVariable Long fileId,
 			HttpServletResponse response) throws IOException {
 		ReferenceFile file = referenceFileService.read(fileId);
-		if (file != null) {
-			Path path = file.getFile();
-			response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getLabel() + "\"");
-			Files.copy(path, response.getOutputStream());
-			response.flushBuffer();
-		} else {
-			throw new EntityNotFoundException(
-					"Cannot find reference file with id [" + fileId + "]");
-		}
+		Path path = file.getFile();
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getLabel() + "\"");
+		Files.copy(path, response.getOutputStream());
+		response.flushBuffer();
 	}
 
 	@RequestMapping("/porject/{projectId}/new")

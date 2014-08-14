@@ -38,7 +38,7 @@ public class ProjectMetadataPage {
 	}
 
 	public String getReferenceFileName() {
-		return driver.findElement(By.cssSelector("#referenceFiles tbody tr:nth-child(1) td:nth-child(1)")).getText();
+		return driver.findElement(By.cssSelector(".refFileName:nth-of-type(1)")).getText();
 	}
 
     public boolean hasEditButton() {

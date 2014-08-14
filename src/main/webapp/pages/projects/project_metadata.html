@@ -71,7 +71,7 @@
                                 </thead>
                                 <tbody>
                                 <tr th:each="file : ${referenceFiles}">
-                                    <td th:text="${file.label}"></td>
+                                    <td class="refFileName" th:text="${file.label}"></td>
                                     <td data:livestamp="${file.createdDate}" th:text="${file.createdDate}"></td>
                                     <td class="text-right">
                                         <button data:file-id="${file.id}" class="btn btn-default btn-xs btn-download" data:tooltip="#{form.download}"><span
