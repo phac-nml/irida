@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -54,6 +56,11 @@ public class ReferenceFileController {
 			throw new EntityNotFoundException(
 					"Cannot find reference file with id [" + fileId + "] for project [" + p.getLabel() + "]");
 		}
+	}
+
+	@RequestMapping("/porject/{projectId}/new")
+	public @ResponseBody Map<String, String> createNewReferenceFile(@PathVariable Long projectId) {
+
 	}
 }
 
