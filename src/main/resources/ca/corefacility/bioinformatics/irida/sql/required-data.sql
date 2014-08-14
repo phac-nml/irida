@@ -348,7 +348,7 @@ INSERT INTO `analysis_fastqc_overrepresented_sequence` (analysis_fastqc_id, over
 INSERT INTO `analysis_sequence_file` (analysis_id, inputFiles_id) VALUES (3,1),(1,2),(5,3),(2,4),(6,5),(4,6),(12,7),(9,8),(8,9),(7,10),(11,11),(10,12);
 
 -- reference_file
-INSERT INTO `reference_file` (id, createdDate, filePath, fileRevisionNumber, modifiedDate) VALUES (1, '2014-08-06 10:01:02', '/tmp/sequence-files/7/2/02-2222_S1_L001_R1_001.fastq', NULL, '2014-08-06 10:01:02');
+INSERT INTO `reference_file` (id, createdDate, filePath, fileRevisionNumber, modifiedDate) VALUES (1, '2014-08-06 10:01:02', '/tmp/sequence-files/7/2/02-2222_S1_L001_R1_001.fastq', 1, '2014-08-06 10:01:02');
 
 -- project_referencefile
 INSERT INTO `project_referencefile` (id, createdDate, project_id, referenceFile_id) VALUES (1, '2014-08-06 10:01:02', 4, 1);
