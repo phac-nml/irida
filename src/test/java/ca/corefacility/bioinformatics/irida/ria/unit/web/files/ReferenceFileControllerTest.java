@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.files.ReferenceFileController;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
@@ -28,13 +27,11 @@ import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ReferenceFileControllerTest {
-	private static final Logger logger = LoggerFactory.getLogger(ReferenceFileControllerTest.class);
-
 	// Constants
 	public static final Long FILE_ID = 1l;
 	public static final Long BAD_FILE_ID = 2l;
 	public static final String FILE_PATH = "src/test/resources/files/test_file.fastq";
-
+	private static final Logger logger = LoggerFactory.getLogger(ReferenceFileControllerTest.class);
 	// Controller
 	private ReferenceFileController controller;
 
@@ -72,12 +69,5 @@ public class ReferenceFileControllerTest {
 		byte[] origBytes = Files.readAllBytes(path);
 		byte[] responseBytes = response.getContentAsByteArray();
 		assertArrayEquals("Response contents the correct file content", origBytes, responseBytes);
-	}
-
-	@Test(expected = EntityNotFoundException.class)
-	public void testBadDownloadReferenceFile() throws IOException {
-		logger.debug("Testing download non-existent reference file");
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		controller.downloadReferenceFile(BAD_FILE_ID, response);
 	}
 }
