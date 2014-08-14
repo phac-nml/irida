@@ -41,7 +41,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.Ana
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
-import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.AnalysisServiceGalaxyPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.AnalysisExecutionServiceGalaxyPhylogenomicsPipeline;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
@@ -55,7 +55,7 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
-public class WorkflowManagementServiceGalaxyIT {
+public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 	
 	@Autowired
 	private LocalGalaxy localGalaxy;
@@ -64,15 +64,15 @@ public class WorkflowManagementServiceGalaxyIT {
 	private Path referenceFile;
 	private Set<SequenceFile> sequenceFiles;
 	
-	private AnalysisServiceGalaxyPhylogenomicsPipeline workflowManagement;
+	private AnalysisExecutionServiceGalaxyPhylogenomicsPipeline workflowManagement;
 	
 	@Before
 	public void setup() throws URISyntaxException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 		
-		dataFile = Paths.get(WorkflowManagementServiceGalaxyIT.class.getResource(
+		dataFile = Paths.get(AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT.class.getResource(
 				"testData1.fastq").toURI());
-		referenceFile = Paths.get(WorkflowManagementServiceGalaxyIT.class.getResource(
+		referenceFile = Paths.get(AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT.class.getResource(
 				"testReference.fasta").toURI());
 				
 		sequenceFiles = new HashSet<>();
@@ -97,11 +97,11 @@ public class WorkflowManagementServiceGalaxyIT {
 						new StandardPasswordEncoder());
 	}
 	
-	private AnalysisServiceGalaxyPhylogenomicsPipeline buildWorkflowManagementGalaxy() {
+	private AnalysisExecutionServiceGalaxyPhylogenomicsPipeline buildWorkflowManagementGalaxy() {
 		GalaxyHistoriesService galaxyHistoriesService = buildGalaxyHistoriesService();
 		GalaxyWorkflowService galaxyWorkflowService = buildGalaxyWorkflowService();
 		
-		return new AnalysisServiceGalaxyPhylogenomicsPipeline(galaxyHistoriesService, galaxyWorkflowService);
+		return new AnalysisExecutionServiceGalaxyPhylogenomicsPipeline(galaxyHistoriesService, galaxyWorkflowService);
 	}	
 	
 	private AnalysisSubmissionGalaxyPhylogenomicsPipeline buildAnalysisSubmission() {
