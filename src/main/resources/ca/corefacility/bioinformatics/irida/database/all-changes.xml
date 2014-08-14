@@ -35,5 +35,5 @@
 	<include file="changesets/2.0/liquibase-cleanup.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/2.0/remoteapi-dates.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/2.0/project-reference-file.xml" relativeToChangelogFile="true"/>
-	
+	<include file="changesets/2.0/analysis-output-file.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
