@@ -19,6 +19,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 
 /**
@@ -30,7 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 @Entity
 @Table(name = "reference_file")
 @Audited
-public class ReferenceFile implements VersionedFileFields<Long> {
+public class ReferenceFile implements VersionedFileFields<Long>, IridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

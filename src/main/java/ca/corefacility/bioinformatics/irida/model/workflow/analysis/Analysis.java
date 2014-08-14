@@ -28,6 +28,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 
@@ -41,7 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 @Table(name = "analysis")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Audited
-public abstract class Analysis implements VersionedFileFields<Long> {
+public abstract class Analysis implements VersionedFileFields<Long>, IridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

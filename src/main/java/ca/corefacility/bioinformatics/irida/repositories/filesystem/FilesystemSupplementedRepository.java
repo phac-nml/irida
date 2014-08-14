@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 
@@ -18,6 +19,6 @@ import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
  *
  */
 @NoRepositoryBean
-public interface FilesystemSupplementedRepository<Type extends VersionedFileFields<Long>> {
+public interface FilesystemSupplementedRepository<Type extends VersionedFileFields<Long> & IridaThing> {
 
 }

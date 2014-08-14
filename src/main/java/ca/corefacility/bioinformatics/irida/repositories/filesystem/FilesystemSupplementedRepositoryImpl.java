@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.ReflectionUtils;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 
 /**
@@ -25,7 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
-public abstract class FilesystemSupplementedRepositoryImpl<Type extends VersionedFileFields<Long>> implements
+public abstract class FilesystemSupplementedRepositoryImpl<Type extends VersionedFileFields<Long> & IridaThing> implements
 		FilesystemSupplementedRepository<Type> {
 
 	private static final Logger logger = LoggerFactory.getLogger(FilesystemSupplementedRepository.class);
@@ -75,7 +76,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	 * @param baseDirectory
 	 * @param iridaThing
 	 */
-	private VersionedFileFields<?> writeFilesToDisk(Path baseDirectory, VersionedFileFields<?> objectToWrite) {
+	private Type writeFilesToDisk(Path baseDirectory, Type objectToWrite) {
 		if (objectToWrite.getId() == null) {
 			throw new IllegalArgumentException("Identifier is required.");
 		}
