@@ -4,47 +4,21 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.SubmittedAnalysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
  * Used for executing workflows in a remote workflow manager.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public interface WorkflowManagementService<S extends SubmittedAnalysis<?>, T extends AnalysisSubmission<?>> {
-
-	/**
-	 * Submits the given analysis for processing on a remote workflow manager.
-	 * @param analysisSubmission  A description of the analysis to submit.
-	 * @return  An id used to access information about the remote workflow.
-	 * @throws WorkflowException  If there was an issue executing the workflow.
-	 */
-	public S executeAnalysis(T analysisSubmission)
+public interface WorkflowManagementService<T extends AnalysisSubmission<?>> {
+	
+	public T executeAnalysis(T analysisSubmission)
 		throws ExecutionManagerException;
 	
-	/**
-	 * Given an analysis execution object gets an analysis result.
-	 * @param workflowId  An id for the remote workflow.
-	 * @return  An Analysis object containing the results.
-	 * @throws WorkflowException  If there was an error getting the result.
-	 */
-	public Analysis getAnalysisResults(S workflowId)
+	public Analysis getAnalysisResults(T analysisSubmission)
 		throws WorkflowException;
 	
-	/**
-	 * Given an analysis execution object, gets the status for this analysis.
-	 * @param workflowId  An id for the remote workflow.
-	 * @return  A WorkflowStatus describing the status of the workflow.
-	 * @throws WorkflowException  If an error occured getting the status.
-	 */
-	public WorkflowStatus getWorkflowStatus(S workflowId) 
+	public WorkflowStatus getWorkflowStatus(T analysisSubmission) 
 		throws ExecutionManagerException;
-	
-	/**
-	 * Given an analysis exeuction object, cancels the corresponding analysis.
-	 * @param workflowId  An id for the remote workflow.
-	 * @throws WorkflowException  If an error occured canceling the analysis workflow. 
-	 */
-	public void cancelAnalysis(S workflowId)
-		throws WorkflowException;
 }

@@ -9,24 +9,22 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.AnalysisSubmissionTestImpl;
-import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.SubmittedAnalysisGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.WorkflowManagementServiceGalaxy;
 
 public class WorkflowManagementServiceGalaxyTest {
 	
 	@Mock private GalaxyHistoriesService galaxyHistoriesService;
 	@Mock private GalaxyWorkflowService galaxyWorkflowService;
-	@Mock private AnalysisSubmissionTestImpl analysisSubmission;
+	@Mock private AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission;
 
-	private SubmittedAnalysisGalaxy submittedAnalysisGalaxy;
+	private AnalysisSubmissionGalaxyPhylogenomicsPipeline submittedAnalysisGalaxy;
 
 	private WorkflowManagementServiceGalaxy workflowManagement;
 
@@ -36,8 +34,6 @@ public class WorkflowManagementServiceGalaxyTest {
 		
 		workflowManagement = new WorkflowManagementServiceGalaxy(galaxyHistoriesService,
 				galaxyWorkflowService);
-		
-		submittedAnalysisGalaxy = new SubmittedAnalysisGalaxy(new GalaxyAnalysisId("1"), null);
 	}
 	
 	@Ignore
@@ -76,11 +72,5 @@ public class WorkflowManagementServiceGalaxyTest {
 				getRemoteAnalysisId().getValue())).thenThrow(new WorkflowException());
 		
 		workflowManagement.getWorkflowStatus(submittedAnalysisGalaxy);
-	}
-	
-	@Ignore
-	@Test
-	public void testCancelAnalysis() throws WorkflowException {
-		workflowManagement.cancelAnalysis(submittedAnalysisGalaxy);
 	}
 }

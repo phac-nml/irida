@@ -11,11 +11,14 @@ import java.util.Set;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.analysis.WorkflowManagementService;
@@ -33,7 +36,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionR
  *
  */
 public class WorkflowManagementServiceGalaxy implements
-	WorkflowManagementService<SubmittedAnalysisGalaxy, AnalysisSubmissionTestImpl> {
+	WorkflowManagementService<AnalysisSubmissionGalaxyPhylogenomicsPipeline> {
 	
 	private final static String sequenceFileInputLabel = "sequence_reads";
 	private final static String refereneFileInputLabel = "reference";
@@ -83,22 +86,22 @@ public class WorkflowManagementServiceGalaxy implements
 				remoteWorkflow.getWorkflowChecksum(), remoteWorkflow.getWorkflowId());
 	}
 	
-	private PreparedWorkflow prepareWorkflow(AnalysisSubmissionTestImpl analysisSubmission) throws ExecutionManagerException {
+	private PreparedWorkflow prepareWorkflow(AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission) throws ExecutionManagerException {
 		
-		Set<SequenceFile> sequenceFiles = analysisSubmission.getSequenceFiles();
+		Set<SequenceFile> sequenceFiles = analysisSubmission.getInputFiles();
 		List<Path> sequenceFilePaths = new LinkedList<>();
 		for (SequenceFile file : sequenceFiles) {
 			sequenceFilePaths.add(file.getFile());
 		}
 		
-		Path referenceFile = analysisSubmission.getReferenceFile();
+		ReferenceFile referenceFile = analysisSubmission.getReferenceFile();
 		History workflowHistory = galaxyHistoriesService.newHistoryForWorkflow();
 		
 		List<Dataset> sequenceDatasets = galaxyHistoriesService.
 				uploadFilesListToHistory(sequenceFilePaths, InputFileType.FASTQ_SANGER, workflowHistory);
 		
 		Dataset referenceDataset = galaxyHistoriesService.
-				fileToHistory(referenceFile, InputFileType.FASTQ_SANGER, workflowHistory);
+				fileToHistory(referenceFile.getFile(), InputFileType.FASTQ_SANGER, workflowHistory);
 		
 		CollectionResponse collectionResponse = 
 				galaxyHistoriesService.constructCollectionList(sequenceDatasets, workflowHistory);
@@ -111,8 +114,8 @@ public class WorkflowManagementServiceGalaxy implements
 	 * @throws ExecutionManagerException 
 	 */
 	@Override
-	public SubmittedAnalysisGalaxy executeAnalysis(
-			AnalysisSubmissionTestImpl analysisSubmission) throws ExecutionManagerException {
+	public AnalysisSubmissionGalaxyPhylogenomicsPipeline executeAnalysis(
+			AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission) throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkArgument(validateWorkflow(analysisSubmission.getRemoteWorkflow()), "workflow is invalid");
 		
@@ -139,19 +142,14 @@ public class WorkflowManagementServiceGalaxy implements
 		
 		WorkflowOutputs output = galaxyWorkflowService.runWorkflow(inputs);
 		
-		// I need to store the outputs someplace
-		SubmittedAnalysisGalaxy analysis = new SubmittedAnalysisGalaxy(
-				new GalaxyAnalysisId(preparedWorkflow.getWorkflowHistory().getId()),
-				output);
-		
-		return analysis;
+		return analysisSubmission;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Analysis getAnalysisResults(SubmittedAnalysisGalaxy submittedAnalysis)
+	public Analysis getAnalysisResults(AnalysisSubmissionGalaxyPhylogenomicsPipeline submittedAnalysis)
 			throws WorkflowException {
 		throw new UnsupportedOperationException();
 	}
@@ -160,17 +158,8 @@ public class WorkflowManagementServiceGalaxy implements
 	 * {@inheritDoc}
 	 */
 	@Override
-	public WorkflowStatus getWorkflowStatus(SubmittedAnalysisGalaxy submittedAnalysis)
+	public WorkflowStatus getWorkflowStatus(AnalysisSubmissionGalaxyPhylogenomicsPipeline submittedAnalysis)
 			throws ExecutionManagerException {
 		return galaxyHistoriesService.getStatusForHistory(submittedAnalysis.getRemoteAnalysisId().getValue());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void cancelAnalysis(SubmittedAnalysisGalaxy submittedAnalysis)
-			throws WorkflowException {
-		throw new UnsupportedOperationException();
 	}
 }

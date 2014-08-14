@@ -31,17 +31,16 @@ import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultit
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
-import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.AnalysisSubmissionTestImpl;
-import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.SubmittedAnalysisGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.WorkflowManagementServiceGalaxy;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
@@ -65,8 +64,6 @@ public class WorkflowManagementServiceGalaxyIT {
 	private Path referenceFile;
 	private Set<SequenceFile> sequenceFiles;
 	
-	private SubmittedAnalysisGalaxy invalidSubmittedAnalysis;
-
 	private WorkflowManagementServiceGalaxy workflowManagement;
 	
 	@Before
@@ -83,7 +80,7 @@ public class WorkflowManagementServiceGalaxyIT {
 		
 		workflowManagement = buildWorkflowManagementGalaxy();
 		
-		invalidSubmittedAnalysis = new SubmittedAnalysisGalaxy(new GalaxyAnalysisId("invalid"), null);
+//		invalidSubmittedAnalysis = new AnalysisSubmissionGalaxyPhylogenomicsPipeline(new GalaxyAnalysisId("invalid"), null);
 	}
 	
 	private GalaxyHistoriesService buildGalaxyHistoriesService() {
@@ -107,20 +104,22 @@ public class WorkflowManagementServiceGalaxyIT {
 		return new WorkflowManagementServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService);
 	}	
 	
-	private AnalysisSubmissionTestImpl buildAnalysisSubmission() {
+	private AnalysisSubmissionGalaxyPhylogenomicsPipeline buildAnalysisSubmission() {
 		
 		RemoteWorkflowGalaxy remoteWorkflow = new RemoteWorkflowGalaxy(localGalaxy.getWorkflowCorePipelineTestId(),
 				localGalaxy.getWorkflowCorePipelineTestChecksum());
 		
-		AnalysisSubmissionTestImpl analysisSubmission = new AnalysisSubmissionTestImpl();
-		analysisSubmission.setSequenceFiles(sequenceFiles);
-		analysisSubmission.setReferenceFile(referenceFile);
+		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission = 
+				new AnalysisSubmissionGalaxyPhylogenomicsPipeline(sequenceFiles,
+						new ReferenceFile(referenceFile), remoteWorkflow);
+		analysisSubmission.setInputFiles(sequenceFiles);
+		analysisSubmission.setReferenceFile(new ReferenceFile(referenceFile));
 		analysisSubmission.setRemoteWorkflow(remoteWorkflow);
 		
 		return analysisSubmission;
 	}
 	
-	private void waitForAnalysisFinished(SubmittedAnalysisGalaxy analysis) throws InterruptedException, ExecutionManagerException {
+	private void waitForAnalysisFinished(AnalysisSubmissionGalaxyPhylogenomicsPipeline analysis) throws InterruptedException, ExecutionManagerException {
 		final int max = 1000;
 		final int time = 5000;
 		for (int i = 0; i < max; i++) {
@@ -150,9 +149,9 @@ public class WorkflowManagementServiceGalaxyIT {
 	 */
 	@Test
 	public void testExecuteAnalysisSuccess() throws InterruptedException, ExecutionManagerException {
-		AnalysisSubmissionTestImpl analysisSubmission = buildAnalysisSubmission();
+		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission = buildAnalysisSubmission();
 		
-		SubmittedAnalysisGalaxy analysisSubmitted = workflowManagement.executeAnalysis(analysisSubmission);
+		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmitted = workflowManagement.executeAnalysis(analysisSubmission);
 		assertNotNull(analysisSubmitted);
 		
 		WorkflowStatus status = workflowManagement.getWorkflowStatus(analysisSubmitted);
@@ -167,9 +166,9 @@ public class WorkflowManagementServiceGalaxyIT {
 	@Ignore
 	@Test
 	public void testGetAnalysisResultsSuccess() throws ExecutionManagerException, InterruptedException {
-		AnalysisSubmissionTestImpl analysisSubmission = buildAnalysisSubmission();
+		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission = buildAnalysisSubmission();
 		
-		SubmittedAnalysisGalaxy analysisSubmitted = workflowManagement.executeAnalysis(analysisSubmission);
+		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmitted = workflowManagement.executeAnalysis(analysisSubmission);
 		assertNotNull(analysisSubmitted);
 		
 		WorkflowStatus status = workflowManagement.getWorkflowStatus(analysisSubmitted);
@@ -192,29 +191,10 @@ public class WorkflowManagementServiceGalaxyIT {
 	 */
 	@Test(expected=WorkflowException.class)
 	public void testExecuteAnalysisFailInvalidWorkflow() throws ExecutionManagerException {
-		AnalysisSubmissionTestImpl analysisSubmission = buildAnalysisSubmission();
+		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission = buildAnalysisSubmission();
 		analysisSubmission.getRemoteWorkflow().
 			setWorkflowId(localGalaxy.getInvalidWorkflowId());
 		
 		workflowManagement.executeAnalysis(analysisSubmission);
-	}
-	
-	/**
-	 * Tests out getting a workflow status from an invalid workflow id.
-	 * @throws ExecutionManagerException 
-	 */
-	@Test(expected=WorkflowException.class)
-	public void testGetWorkflowStatusInvalidId() throws ExecutionManagerException {
-		workflowManagement.getWorkflowStatus(invalidSubmittedAnalysis);
-	}
-	
-	/**
-	 * Tests out canceling an analysis with an invalid id.
-	 * @throws WorkflowException 
-	 */
-	@Ignore
-	@Test(expected=WorkflowException.class)
-	public void testCancelAnalysisInvalidId() throws WorkflowException {
-		workflowManagement.cancelAnalysis(invalidSubmittedAnalysis);
 	}
 }
