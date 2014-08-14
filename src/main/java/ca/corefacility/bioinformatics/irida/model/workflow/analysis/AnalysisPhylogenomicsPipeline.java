@@ -43,11 +43,11 @@ public class AnalysisPhylogenomicsPipeline extends Analysis {
 	 * required for hibernate, marked as private so nobody else uses it.
 	 */
 	private AnalysisPhylogenomicsPipeline() {
-		super(null);
+		super(null, null);
 	}
 
-	public AnalysisPhylogenomicsPipeline(Set<SequenceFile> inputFiles) {
-		super(inputFiles);
+	public AnalysisPhylogenomicsPipeline(Set<SequenceFile> inputFiles, String executionManagerAnalysisId) {
+		super(inputFiles, executionManagerAnalysisId);
 		this.fileRevisionNumber = 0L;
 	}
 

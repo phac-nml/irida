@@ -68,11 +68,11 @@ public class AnalysisFastQC extends Analysis {
 	 * Required for hibernate, should not be used anywhere else, so private.
 	 */
 	private AnalysisFastQC() {
-		super(null);
+		super(null, null);
 	}
 
-	public AnalysisFastQC(Set<SequenceFile> inputFiles) {
-		super(inputFiles);
+	public AnalysisFastQC(Set<SequenceFile> inputFiles, String executionManagerAnalysisId) {
+		super(inputFiles, executionManagerAnalysisId);
 		this.fileRevisionNumber = 0L;
 	}
 

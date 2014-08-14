@@ -84,9 +84,10 @@ public abstract class Analysis implements VersionedFileFields<Long> {
 		this.modifiedDate = createdDate;
 	}
 
-	public Analysis(Set<SequenceFile> inputFiles) {
+	public Analysis(Set<SequenceFile> inputFiles, String executionManagerAnalysisId) {
 		this();
 		this.inputFiles = inputFiles;
+		this.executionManagerAnalysisId = executionManagerAnalysisId;
 	}
 
 	public int hashCode() {
@@ -134,7 +135,7 @@ public abstract class Analysis implements VersionedFileFields<Long> {
 
 	@Override
 	public String getLabel() {
-		return this.description;
+		return executionManagerAnalysisId;
 	}
 
 	@Override

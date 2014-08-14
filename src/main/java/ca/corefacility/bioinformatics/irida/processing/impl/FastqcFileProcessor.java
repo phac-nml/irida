@@ -51,6 +51,8 @@ import com.google.common.collect.ImmutableSet;
  */
 public class FastqcFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessor.class);
+	
+	private static final String EXECUTION_MANAGER_ANALYSIS_ID = "internal-fastqc";
 
 	private final AnalysisRepository analysisRepository;
 	private final SequenceFileRepository sequenceFileRepository;
@@ -69,7 +71,7 @@ public class FastqcFileProcessor implements FileProcessor {
 	public void process(final Long sequenceFileId) throws FileProcessorException {
 		final SequenceFile sequenceFile = sequenceFileRepository.findOne(sequenceFileId);		
 		Path fileToProcess = sequenceFile.getFile();
-		AnalysisFastQC analysis = new AnalysisFastQC(ImmutableSet.of(sequenceFile));
+		AnalysisFastQC analysis = new AnalysisFastQC(ImmutableSet.of(sequenceFile), EXECUTION_MANAGER_ANALYSIS_ID);
 		try {
 			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory
 					.getSequenceFile(fileToProcess.toFile());
@@ -98,7 +100,6 @@ public class FastqcFileProcessor implements FileProcessor {
 			analysis.setOverrepresentedSequences(overrepresentedSequences);
 			analysis.setDescription(messageSource.getMessage("fastqc.file.processor.analysis.description", null,
 					LocaleContextHolder.getLocale()));
-			analysis.setExecutionManagerAnalysisId("internal-fastqc");
 
 			analysisRepository.save(analysis);
 		} catch (Exception e) {
