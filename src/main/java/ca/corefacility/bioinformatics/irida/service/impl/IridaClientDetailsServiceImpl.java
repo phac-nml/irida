@@ -43,7 +43,7 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 	@Override
 	public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException {
 		IridaClientDetails client = clientDetailsRepository.loadClientDetailsByClientId(clientId);
-		if(client == null){
+		if (client == null) {
 			throw new NoSuchClientException("Client with this clientId does not exist: " + clientId);
 		}
 		return client;

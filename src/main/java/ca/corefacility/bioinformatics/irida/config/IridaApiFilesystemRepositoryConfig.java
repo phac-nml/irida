@@ -56,13 +56,13 @@ public class IridaApiFilesystemRepositoryConfig {
 		return getExistingPathOrThrow(sequenceFileBaseDirectory);
 	}
 
-	@Profile({"dev", "it"})
+	@Profile({ "dev", "it" })
 	@Bean(name = "referenceFileBaseDirectory")
 	public Path referenceFileBaseDirectory() throws IOException {
 		return configureDirectory(referenceFileBaseDirectory, "reference-file-dev");
 	}
 
-	@Profile({"dev", "it"})
+	@Profile({ "dev", "it" })
 	@Bean(name = "sequenceFileBaseDirectory")
 	public Path sequenceFileBaseDirectory() throws IOException {
 		return configureDirectory(sequenceFileBaseDirectory, "sequence-file-dev");
@@ -72,11 +72,11 @@ public class IridaApiFilesystemRepositoryConfig {
 		Path baseDirectory = Paths.get(directory);
 		if (!Files.exists(baseDirectory)) {
 			throw new IllegalStateException(String.format(
-					"Cannot continue startup; base directory [%s] does not exist!", baseDirectory));
+					"Cannot continue startup; base directory [%s] does not exist!", baseDirectory.toString()));
 		} else {
-			logger.info(
-					String.format("Using specified existing directory at [%s]. The directory *will not* be removed at shutdown time."),
-					baseDirectory);
+			logger.info(String
+					.format("Using specified existing directory at [%s]. The directory *will not* be removed at shutdown time.",
+							baseDirectory.toString()));
 		}
 		return baseDirectory;
 	}
