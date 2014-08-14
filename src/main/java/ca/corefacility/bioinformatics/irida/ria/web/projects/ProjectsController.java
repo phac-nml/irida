@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -44,6 +45,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -55,6 +57,7 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectSamp
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsAdminDataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -74,7 +77,7 @@ public class ProjectsController {
 	private static final String ACTIVE_NAV_DASHBOARD = "dashboard";
 	private static final String ACTIVE_NAV_METADATA = "metadata";
 	private static final String ACTIVE_NAV_SAMPLES = "samples";
-	
+
 	private static final String PROJECT_NAME_PROPERTY = "name";
 
 	// private static final String ACTIVE_NAV_ANALYSIS = "analysis";
@@ -96,6 +99,7 @@ public class ProjectsController {
 	private final UserService userService;
 	private final SequenceFileService sequenceFileService;
 	private final ProjectControllerUtils projectControllerUtils;
+	private final ReferenceFileService referenceFileService;
 
 	/*
 	 * Converters
@@ -104,12 +108,14 @@ public class ProjectsController {
 
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
-			SequenceFileService sequenceFileService, ProjectControllerUtils projectControllerUtils) {
+			SequenceFileService sequenceFileService, ProjectControllerUtils projectControllerUtils,
+			ReferenceFileService referenceFileService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
 		this.sequenceFileService = sequenceFileService;
 		this.projectControllerUtils = projectControllerUtils;
+		this.referenceFileService = referenceFileService;
 		this.dateFormatter = new DateFormatter();
 	}
 
@@ -207,9 +213,13 @@ public class ProjectsController {
 	@RequestMapping("/{projectId}/metadata")
 	public String getProjectMetadataPage(final Model model, final Principal principal, @PathVariable long projectId) {
 		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
+		List<ReferenceFile> referenceFiles = joinList.stream().map(Join::getObject)
+				.collect(Collectors.toList());
 
+		model.addAttribute("project", project);
+		model.addAttribute("referenceFiles", referenceFiles);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
 		return PROJECT_METADATA_PAGE;
 	}
