@@ -148,4 +148,15 @@ public class ClientsControllerTest {
 
 		verify(clientDetailsService).create(client);
 	}
+
+	@Test
+	public void testRemoveClient() {
+		Long id = 1l;
+
+		String removeClient = controller.removeClient(id);
+
+		assertEquals("redirect:/clients", removeClient);
+
+		verify(clientDetailsService).delete(id);
+	}
 }
