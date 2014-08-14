@@ -393,6 +393,7 @@
 						<exclude>**/model/**</exclude>
 						<exclude>**/config/**</exclude>
 						<exclude>**/exceptions/**</exclude>
+						<exclude>**/util/**</exclude>
 					</excludes>
 				</configuration>
 				<executions>
