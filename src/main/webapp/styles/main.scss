@@ -15,3 +15,16 @@
 // Pages
 @import "pages/project";
 @import "pages/sequenceFile";
+
+.uploadify-button {
+  background: $color-primary;
+  border-radius: 4px;
+  box-sizing: border-box;
+  border: 1px solid rgba(20, 61, 95, 1.0);
+  height: 33px;
+  font-size: 16px;
+  font-weight: normal;
+  width: 200px;
+  padding: 6px 12px;
+  cursor: pointer !important;
+}
