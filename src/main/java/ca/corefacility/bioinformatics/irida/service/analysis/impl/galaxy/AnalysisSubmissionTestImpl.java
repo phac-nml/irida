@@ -5,19 +5,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.nio.file.Path;
 import java.util.Set;
 
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.service.analysis.AnalysisSubmission;
 
 public class AnalysisSubmissionTestImpl implements AnalysisSubmission<RemoteWorkflowGalaxy> {
 	
-	private Set<Path> sequenceFiles;
+	private Set<SequenceFile> sequenceFiles;
 	private Path referenceFile;
 	private RemoteWorkflowGalaxy remoteWorkflow;
-	@SuppressWarnings("unused")
-	private Class<? extends Analysis> analysisType;
 
 	@Override
-	public void setSequenceFiles(Set<Path> sequenceFiles) {
+	public void setSequenceFiles(Set<SequenceFile> sequenceFiles) {
 		checkNotNull(sequenceFiles, "sequenceFiles is null");
 		this.sequenceFiles = sequenceFiles;
 	}
@@ -35,18 +33,12 @@ public class AnalysisSubmissionTestImpl implements AnalysisSubmission<RemoteWork
 	}
 
 	@Override
-	public void setAnalysisType(Class<? extends Analysis> analysisType) {
-		checkNotNull(analysisType, "analysisType is null");
-		this.analysisType = analysisType;
-	}
-
-	@Override
 	public RemoteWorkflowGalaxy getRemoteWorkflow() {
 		return remoteWorkflow;
 	}
 
 	@Override
-	public Set<Path> getSequenceFiles() {
+	public Set<SequenceFile> getSequenceFiles() {
 		return sequenceFiles;
 	}
 

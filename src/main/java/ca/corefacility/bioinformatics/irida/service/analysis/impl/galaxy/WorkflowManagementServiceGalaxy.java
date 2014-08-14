@@ -4,11 +4,13 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.nio.file.Path;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -23,7 +25,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
-import com.google.common.collect.Lists;
 
 /**
  * Implements workflow management for a Galaxy-based workflow execution system.
@@ -83,12 +84,17 @@ public class WorkflowManagementServiceGalaxy implements
 	
 	private PreparedWorkflow prepareWorkflow(AnalysisSubmissionTestImpl analysisSubmission) throws ExecutionManagerException {
 		
-		Set<Path> sequenceFiles = analysisSubmission.getSequenceFiles();
+		Set<SequenceFile> sequenceFiles = analysisSubmission.getSequenceFiles();
+		List<Path> sequenceFilePaths = new LinkedList<>();
+		for (SequenceFile file : sequenceFiles) {
+			sequenceFilePaths.add(file.getFile());
+		}
+		
 		Path referenceFile = analysisSubmission.getReferenceFile();
 		History workflowHistory = galaxyHistoriesService.newHistoryForWorkflow();
 		
 		List<Dataset> sequenceDatasets = galaxyHistoriesService.
-				uploadFilesListToHistory(Lists.newArrayList(sequenceFiles), InputFileType.FASTQ_SANGER, workflowHistory);
+				uploadFilesListToHistory(sequenceFilePaths, InputFileType.FASTQ_SANGER, workflowHistory);
 		
 		Dataset referenceDataset = galaxyHistoriesService.
 				fileToHistory(referenceFile, InputFileType.FASTQ_SANGER, workflowHistory);
@@ -110,7 +116,7 @@ public class WorkflowManagementServiceGalaxy implements
 		checkArgument(validateWorkflow(analysisSubmission.getRemoteWorkflow()), "workflow is invalid");
 		
 		PreparedWorkflow preparedWorkflow = prepareWorkflow(analysisSubmission);
-		RemoteWorkflow<ExecutionManagerGalaxy> remoteWorkflow = analysisSubmission.getRemoteWorkflow();
+		RemoteWorkflowGalaxy remoteWorkflow = analysisSubmission.getRemoteWorkflow();
 		
 		String workflowId = remoteWorkflow.getWorkflowId();
 		WorkflowDetails workflowDetails = galaxyWorkflowService.getWorkflowDetails(workflowId);
