@@ -237,16 +237,4 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public Join<Project, ReferenceFile> addReferenceFileToProject(Project project, ReferenceFile referenceFile);
 
-	/**
-	 * Get the collection of {@link ReferenceFile} attached to the specified
-	 * {@link Project}.
-	 * 
-	 * @param project
-	 *            the {@link Project} to get {@link ReferenceFile}s for.
-	 * @return the collection of {@link ReferenceFile} attached to the
-	 *         {@link Project}.
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
-	public List<Join<Project, ReferenceFile>> getReferenceFilesForProject(Project project);
-
 }

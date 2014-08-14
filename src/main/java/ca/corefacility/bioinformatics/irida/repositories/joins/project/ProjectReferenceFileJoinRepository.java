@@ -29,4 +29,16 @@ public interface ProjectReferenceFileJoinRepository extends IridaJpaRepository<P
 	 */
 	@Query("select j from ProjectReferenceFileJoin j where j.project = ?1")
 	public List<Join<Project, ReferenceFile>> findReferenceFilesForProject(Project project);
+
+	/**
+	 * Get the collection of {@link ReferenceFile} for the specified
+	 * {@link Project}.
+	 * 
+	 * @param project
+	 *            the {@link Project} to get {@link ReferenceFile} for.
+	 * @return the collection of {@link ReferenceFile} for the specified
+	 *         {@link Project}.
+	 */
+	@Query("select j from ProjectReferenceFileJoin j where j.referenceFile = ?1")
+	public List<Join<Project, ReferenceFile>> findProjectsForReferenceFile(ReferenceFile referenceFile);
 }

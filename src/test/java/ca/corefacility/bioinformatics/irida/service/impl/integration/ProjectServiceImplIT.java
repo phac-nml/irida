@@ -411,16 +411,6 @@ public class ProjectServiceImplIT {
 				rf.getFile().startsWith(referenceFileBaseDirectory));
 	}
 
-	@Test
-	@WithMockUser(username = "fbristow", roles = "ADMIN")
-	public void testGetReferenceFilesForProject() {
-		Project p = projectService.read(1L);
-		List<Join<Project, ReferenceFile>> prs = projectService.getReferenceFilesForProject(p);
-		assertEquals("Wrong number of reference files for project.", 1, prs.size());
-		ReferenceFile rf = prs.iterator().next().getObject();
-		assertEquals("Wrong reference file attached to project.", Long.valueOf(1), rf.getId());
-	}
-
 	private Project p() {
 		Project p = new Project();
 		p.setName("Project name");
