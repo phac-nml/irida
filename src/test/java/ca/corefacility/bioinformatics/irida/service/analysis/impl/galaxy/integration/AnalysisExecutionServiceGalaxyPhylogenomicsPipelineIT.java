@@ -115,8 +115,8 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 		
 		galaxyWorkflowPreparationServicePhylogenomicsPipeline = 
 				new GalaxyWorkflowPreparationServicePhylogenomicsPipeline(galaxyHistoriesService, galaxyWorkflowService);
-		workflowManagement = new AnalysisExecutionServiceGalaxyPhylogenomicsPipeline(galaxyHistoriesService, 
-				galaxyWorkflowService, galaxyWorkflowPreparationServicePhylogenomicsPipeline);
+		workflowManagement = new AnalysisExecutionServiceGalaxyPhylogenomicsPipeline(galaxyWorkflowService,
+				galaxyHistoriesService, galaxyWorkflowPreparationServicePhylogenomicsPipeline);
 	}	
 	
 	private AnalysisSubmissionGalaxyPhylogenomicsPipeline buildAnalysisSubmission() {
@@ -237,8 +237,8 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 		GalaxyWorkflowPreparationServicePhylogenomicsPipeline galaxyWorkflowPreparationServicePhylogenomicsPipeline =
 				new GalaxyWorkflowPreparationServicePhylogenomicsPipeline(historiesService, workflowService);
 		AnalysisExecutionServiceGalaxyPhylogenomicsPipeline analysisService = 
-				new AnalysisExecutionServiceGalaxyPhylogenomicsPipeline(
-						historiesService, workflowService, galaxyWorkflowPreparationServicePhylogenomicsPipeline);
+				new AnalysisExecutionServiceGalaxyPhylogenomicsPipeline(workflowService, historiesService, 
+						galaxyWorkflowPreparationServicePhylogenomicsPipeline);
 		
 		SequenceFile a1 = new SequenceFile(Paths.get(new URI("file:////home/aaron/workspace/irida-api/1/input/fastq/a_1.fastq")));
 		SequenceFile a2 = new SequenceFile(Paths.get(new URI("file:////home/aaron/workspace/irida-api/1/input/fastq/a_2.fastq")));

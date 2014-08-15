@@ -1,26 +1,20 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.PreparedWorkflowGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.PreparedWorkflow;
 
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 
-/**
- * Defines a prepared workflow for the phylogenomics pipeline.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
- *
- */
-public class GalaxyPreparedWorkflowPhylogenomicsPipeline implements PreparedWorkflowGalaxy {
-
+public class PreparedWorkflowGalaxy implements PreparedWorkflow {
+	
 	private WorkflowInputs workflowInputs;
 	private GalaxyAnalysisId galaxyAnalysisId;
 	
-	public GalaxyPreparedWorkflowPhylogenomicsPipeline(GalaxyAnalysisId galaxyAnalysisId, WorkflowInputs workflowInputs) {
+	public PreparedWorkflowGalaxy(GalaxyAnalysisId galaxyAnalysisId, WorkflowInputs workflowInputs) {
 		this.galaxyAnalysisId = galaxyAnalysisId;
 		this.workflowInputs = workflowInputs;
 	}
 	
-	@Override
 	public WorkflowInputs getWorkflowInputs() {
 		return workflowInputs;
 	}

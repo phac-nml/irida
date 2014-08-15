@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.GalaxyPreparedWorkflowPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.galaxy.AnalysisPreparationServiceGalaxy;
@@ -31,14 +31,20 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionR
  *
  */
 public class GalaxyWorkflowPreparationServicePhylogenomicsPipeline 
-	extends AnalysisPreparationServiceGalaxy<AnalysisSubmissionGalaxyPhylogenomicsPipeline, GalaxyPreparedWorkflowPhylogenomicsPipeline> {
-
+	extends AnalysisPreparationServiceGalaxy<AnalysisSubmissionGalaxyPhylogenomicsPipeline> {
+	
+	private GalaxyHistoriesService galaxyHistoriesService;
+	private GalaxyWorkflowService galaxyWorkflowService;
+	
 	public GalaxyWorkflowPreparationServicePhylogenomicsPipeline(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService) {
-		super(galaxyHistoriesService, galaxyWorkflowService);
+		this.galaxyHistoriesService = galaxyHistoriesService;
+		this.galaxyWorkflowService = galaxyWorkflowService;
 	}
 	
-	public GalaxyPreparedWorkflowPhylogenomicsPipeline prepareWorkflowFiles(AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission) throws ExecutionManagerException {
+	@Override
+	public PreparedWorkflowGalaxy prepareAnalysisWorkspace(AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission)
+			throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		
 		Set<SequenceFile> sequenceFiles = analysisSubmission.getInputFiles();
@@ -81,6 +87,6 @@ public class GalaxyWorkflowPreparationServicePhylogenomicsPipeline
 		
 		GalaxyAnalysisId analysisId = new GalaxyAnalysisId(workflowHistory.getId());
 		
-		return new GalaxyPreparedWorkflowPhylogenomicsPipeline(analysisId, inputs);
+		return new PreparedWorkflowGalaxy(analysisId, inputs);
 	}
 }

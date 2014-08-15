@@ -35,8 +35,8 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineTest {
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 		
-		workflowManagement = new AnalysisExecutionServiceGalaxyPhylogenomicsPipeline(galaxyHistoriesService,
-				galaxyWorkflowService, galaxyWorkflowPreparationServicePhylogenomicsPipeline);
+		workflowManagement = new AnalysisExecutionServiceGalaxyPhylogenomicsPipeline(galaxyWorkflowService,
+				galaxyHistoriesService, galaxyWorkflowPreparationServicePhylogenomicsPipeline);
 		
 		RemoteWorkflowGalaxy remoteWorkflow = new RemoteWorkflowGalaxy("1", "1");
 		
