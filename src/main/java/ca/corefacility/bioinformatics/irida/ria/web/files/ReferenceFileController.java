@@ -24,6 +24,8 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 
+import com.google.common.collect.ImmutableMap;
+
 /**
  * Controller for all {@link ReferenceFile} related views
  *
@@ -78,9 +80,7 @@ public class ReferenceFileController {
 		Files.deleteIfExists(target);
 		Files.deleteIfExists(temp);
 
-		Map<String, Long> result = new HashMap<>();
-		result.put("id", projectReferenceFileJoin.getObject().getId());
-		return result;
+		return ImmutableMap.of("id", projectReferenceFileJoin.getObject().getId());
 	}
 
 	@RequestMapping("/delete")
