@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -74,11 +75,12 @@ public class ProjectMetadataEditPageIT {
 
     @Test
     public void pageCreateCorrectly() {
-        driver.get("http://localhost:8080/projects/" + PROJECT_ID_OWNER + "/metadata/edit");
-        assertEquals("Contains a placeholder with the project name", PROJECT_NAME, page.getNamePlaceholder());
+	    page.gotoPage();
+	    assertEquals("Contains a placeholder with the project name", PROJECT_NAME, page.getNamePlaceholder());
         assertEquals("Contains a placeholder with the project organism", PROJECT_ORGANISM, page.getOrganismPlaceholder());
         assertEquals("Contains a placeholder with the project description", PROJECT_DESCRIPTION, page.getDescriptionPlaceholder());
         assertEquals("Contains a placeholder with the project remoteURL", PROJECT_REMOTE_URL, page.getRemoteURLPlaceholder());
+	    assertEquals("Should display on reference file", 1, page.getReferenceFileCount());
     }
 
     @Test
@@ -97,9 +99,18 @@ public class ProjectMetadataEditPageIT {
 
     @Test
     public void errorsIfBadProjectInformation() {
-        String currentURL = "http://localhost:8080/projects/" + PROJECT_ID_OWNER + "/metadata/edit";
-        driver.get(currentURL);
-        page.updateProject(GOOD_PROJECT_NAME, GOOD_PROJECT_ORGANISM, GOOD_PROJECT_DESCRIPTION, BAD_PROJECT_URL);
-        assertEquals("Remains on the same page", driver.getCurrentUrl(), currentURL);
+	    page.gotoPage();
+	    page.updateProject(GOOD_PROJECT_NAME, GOOD_PROJECT_ORGANISM, GOOD_PROJECT_DESCRIPTION, BAD_PROJECT_URL);
+	    assertEquals("Remains on the same page", driver.getCurrentUrl(), page.URL);
     }
+
+	@Test
+	public void testDeleteReferenceFile() {
+		page.gotoPage();
+		assertEquals("Should display on reference file", 1, page.getReferenceFileCount());
+		page.clickDeleteReferenceFileButton();
+		assertTrue("Should display a delete reference file warning",
+				page.isDeleteReferenceFileWarningMessageDisplayed());
+		page.clickOKtoDeleteReferenceFile();
+	}
 }
