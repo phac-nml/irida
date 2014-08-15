@@ -11,12 +11,13 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 
 public class ClientDetailsPage {
 	private WebDriver driver;
 
-	public static String CLIENT_LIST = "http://localhost:8080/clients";
+	public static String CLIENT_LIST = BasePage.URL+"clients";
 
 	private static final Logger logger = LoggerFactory.getLogger(ClientsPage.class);
 
