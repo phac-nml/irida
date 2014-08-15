@@ -72,15 +72,11 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipeline {
 		this.galaxyWorkflowService = galaxyWorkflowService;
 	}
 	
-	/**
-	 * Given a Workflow, connects to Galaxy and validates the structure of this workflow.
-	 * @param workflow  A Workflow to validate.
-	 * @return  True if this workflow is valid, false otherwise.
-	 * @throws WorkflowException 
-	 */
-	private boolean validateWorkflow(RemoteWorkflowGalaxy remoteWorkflow) throws WorkflowException {
-		return galaxyWorkflowService.validateWorkflowByChecksum(
-				remoteWorkflow.getWorkflowChecksum(), remoteWorkflow.getWorkflowId());
+	private void validateWorkflow(RemoteWorkflowGalaxy remoteWorkflow) throws WorkflowException {
+		checkNotNull(remoteWorkflow, "remoteWorkflow is null");
+		checkArgument(galaxyWorkflowService.validateWorkflowByChecksum(
+				remoteWorkflow.getWorkflowChecksum(), remoteWorkflow.getWorkflowId()),
+				"workflow checksums do not match");
 	}
 	
 	private PreparedWorkflow prepareWorkflow(AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission) throws ExecutionManagerException {
@@ -107,9 +103,11 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipeline {
 	}
 
 	public AnalysisSubmissionGalaxyPhylogenomicsPipeline executeAnalysis(
-			AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission) throws ExecutionManagerException {
+			AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission)
+					throws ExecutionManagerException {
+		
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
-		checkArgument(validateWorkflow(analysisSubmission.getRemoteWorkflow()), "workflow is invalid");
+		validateWorkflow(analysisSubmission.getRemoteWorkflow());
 		
 		PreparedWorkflow preparedWorkflow = prepareWorkflow(analysisSubmission);
 		RemoteWorkflowGalaxy remoteWorkflow = analysisSubmission.getRemoteWorkflow();
@@ -118,9 +116,9 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipeline {
 		WorkflowDetails workflowDetails = galaxyWorkflowService.getWorkflowDetails(workflowId);
 		
 		String workflowSequenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, 
-				sequenceFileInputLabel);
+				analysisSubmission.getSequenceFileInputLabel());
 		String workflowReferenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, 
-				refereneFileInputLabel);
+				analysisSubmission.getReferenceFileInputLabel());
 		
 		WorkflowInputs inputs = new WorkflowInputs();
 		inputs.setDestination(new WorkflowInputs.ExistingHistory(preparedWorkflow.getWorkflowHistory().getId()));
