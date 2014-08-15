@@ -4,12 +4,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.GalaxyPreparedWorkflowPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.galaxy.AnalysisExecutionServiceGalaxy;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.GalaxyPreparedWorkflowPhylogenomicsPipeline;
 
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
@@ -43,15 +42,14 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipeline
 	public AnalysisSubmissionGalaxyPhylogenomicsPipeline executeAnalysis(
 			AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission)
 					throws ExecutionManagerException {
-		
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
+		
 		validateWorkflow(analysisSubmission.getRemoteWorkflow());
 		
 		GalaxyPreparedWorkflowPhylogenomicsPipeline preparedWorkflow = preparationService.prepareWorkflowFiles(analysisSubmission);
-
-		WorkflowInputs input = preparationService.prepareWorkflowInput(analysisSubmission, preparedWorkflow);
+		WorkflowInputs input = preparedWorkflow.getWorkflowInputs();
 		WorkflowOutputs output = galaxyWorkflowService.runWorkflow(input);
-		analysisSubmission.setRemoteAnalysisId(new GalaxyAnalysisId(preparedWorkflow.getWorkflowHistory().getId()));
+		analysisSubmission.setRemoteAnalysisId(preparedWorkflow.getRemoteAnalysisId());
 		analysisSubmission.setOutputs(output);
 		
 		return analysisSubmission;

@@ -8,15 +8,16 @@ import java.util.List;
 import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.GalaxyPreparedWorkflowPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
+import ca.corefacility.bioinformatics.irida.service.galaxy.AnalysisPreparationServiceGalaxy;
 
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
@@ -29,15 +30,12 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionR
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyWorkflowPreparationServicePhylogenomicsPipeline {
-	
-	private GalaxyHistoriesService galaxyHistoriesService;
-	private GalaxyWorkflowService galaxyWorkflowService;
-	
+public class GalaxyWorkflowPreparationServicePhylogenomicsPipeline 
+	extends AnalysisPreparationServiceGalaxy<AnalysisSubmissionGalaxyPhylogenomicsPipeline, GalaxyPreparedWorkflowPhylogenomicsPipeline> {
+
 	public GalaxyWorkflowPreparationServicePhylogenomicsPipeline(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService) {
-		this.galaxyHistoriesService = galaxyHistoriesService;
-		this.galaxyWorkflowService = galaxyWorkflowService;
+		super(galaxyHistoriesService, galaxyWorkflowService);
 	}
 	
 	public GalaxyPreparedWorkflowPhylogenomicsPipeline prepareWorkflowFiles(AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission) throws ExecutionManagerException {
@@ -60,12 +58,7 @@ public class GalaxyWorkflowPreparationServicePhylogenomicsPipeline {
 		
 		CollectionResponse collectionResponse = 
 				galaxyHistoriesService.constructCollectionList(sequenceDatasets, workflowHistory);
-
-		return new GalaxyPreparedWorkflowPhylogenomicsPipeline(collectionResponse, referenceDataset, workflowHistory);
-	}
-	
-	public WorkflowInputs prepareWorkflowInput(AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission,
-			GalaxyPreparedWorkflowPhylogenomicsPipeline preparedWorkflow) throws WorkflowException {
+		
 		RemoteWorkflowGalaxy remoteWorkflow = analysisSubmission.getRemoteWorkflow();
 		
 		String workflowId = remoteWorkflow.getWorkflowId();
@@ -77,15 +70,17 @@ public class GalaxyWorkflowPreparationServicePhylogenomicsPipeline {
 				analysisSubmission.getReferenceFileInputLabel());
 		
 		WorkflowInputs inputs = new WorkflowInputs();
-		inputs.setDestination(new WorkflowInputs.ExistingHistory(preparedWorkflow.getWorkflowHistory().getId()));
+		inputs.setDestination(new WorkflowInputs.ExistingHistory(workflowHistory.getId()));
 		inputs.setWorkflowId(workflowDetails.getId());
 		inputs.setInput(workflowSequenceFileInputId,
-				new WorkflowInputs.WorkflowInput(preparedWorkflow.getSequenceFilesCollection().getId(),
+				new WorkflowInputs.WorkflowInput(collectionResponse.getId(),
 				WorkflowInputs.InputSourceType.HDCA));
 		inputs.setInput(workflowReferenceFileInputId,
-				new WorkflowInputs.WorkflowInput(preparedWorkflow.getReferenceDataset().getId(),
+				new WorkflowInputs.WorkflowInput(referenceDataset.getId(),
 				WorkflowInputs.InputSourceType.HDA));
 		
-		return inputs;
+		GalaxyAnalysisId analysisId = new GalaxyAnalysisId(workflowHistory.getId());
+		
+		return new GalaxyPreparedWorkflowPhylogenomicsPipeline(analysisId, inputs);
 	}
 }

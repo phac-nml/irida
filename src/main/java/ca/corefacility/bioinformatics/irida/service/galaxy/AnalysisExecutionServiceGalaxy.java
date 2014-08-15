@@ -33,7 +33,7 @@ public abstract class AnalysisExecutionServiceGalaxy<A extends Analysis, T exten
 	public void validateWorkflow(RemoteWorkflowGalaxy remoteWorkflow) throws WorkflowException {
 		checkNotNull(remoteWorkflow, "remoteWorkflow is null");
 		
-		if (galaxyWorkflowService.validateWorkflowByChecksum(
+		if (!galaxyWorkflowService.validateWorkflowByChecksum(
 				remoteWorkflow.getWorkflowChecksum(), remoteWorkflow.getWorkflowId())) {
 			throw new WorkflowInvalidException("passed workflow with id=" +
 					remoteWorkflow.getWorkflowId() + " does not have correct checksum " + 
