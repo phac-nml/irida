@@ -44,6 +44,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.Analysi
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -153,6 +154,8 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 		assertNotNull(analysisSubmitted);
 		assertNotNull(analysisSubmitted.getRemoteAnalysisId());
 		
+		WorkflowOutputs output = analysisSubmitted.getOutputs();
+		assertNotNull(output);
 		WorkflowStatus status = workflowManagement.getWorkflowStatus(analysisSubmitted);
 		assertValidStatus(status);
 	}

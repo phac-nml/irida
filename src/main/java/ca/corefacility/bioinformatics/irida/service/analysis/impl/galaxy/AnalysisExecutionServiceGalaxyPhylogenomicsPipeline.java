@@ -134,6 +134,7 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipeline {
 		
 		WorkflowOutputs output = galaxyWorkflowService.runWorkflow(inputs);
 		analysisSubmission.setRemoteAnalysisId(new GalaxyAnalysisId(preparedWorkflow.getWorkflowHistory().getId()));
+		analysisSubmission.setOutputs(output);
 		
 		return analysisSubmission;
 	}
