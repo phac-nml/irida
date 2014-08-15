@@ -4,6 +4,13 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.PreparedWorkflow;
 
+/**
+ * Defines a service used to prepare input files for a workflow.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ * @param <S>  The AnalysisSubmission to prepare.
+ * @param <P>  The PreparedWorkflow to generate.
+ */
 public interface AnalysisPreparationService<S extends AnalysisSubmission<?>, P extends PreparedWorkflow> {
 	
 	/**

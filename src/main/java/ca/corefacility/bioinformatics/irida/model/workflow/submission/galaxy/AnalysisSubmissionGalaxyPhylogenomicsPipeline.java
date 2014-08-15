@@ -19,6 +19,14 @@ public class AnalysisSubmissionGalaxyPhylogenomicsPipeline extends
 	private ReferenceFile referenceFile;
 	private String referenceFileInputLabel;
 
+	/**
+	 * Builds a new Phylogenomics Pipeline analysis submission with the given information.
+	 * @param inputFiles  The set of input files to submit.
+	 * @param sequenceFileInputLabel  The label for the analysis input files.
+	 * @param referenceFile  The reference file to submit.
+	 * @param referenceFileInputLabel  The input label for the reference file.
+	 * @param remoteWorkflow  The remote workflow to submit.
+	 */
 	public AnalysisSubmissionGalaxyPhylogenomicsPipeline(
 			Set<SequenceFile> inputFiles, String sequenceFileInputLabel, 
 			ReferenceFile referenceFile, String referenceFileInputLabel,
