@@ -2,13 +2,15 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import static org.springframework.data.jpa.domain.Specifications.where;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -56,6 +58,7 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectSamplesDataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsAdminDataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
+import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -105,6 +108,7 @@ public class ProjectsController {
 	 * Converters
 	 */
 	Formatter<Date> dateFormatter;
+	FileSizeConverter fileSizeConverter;
 
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
@@ -117,6 +121,7 @@ public class ProjectsController {
 		this.projectControllerUtils = projectControllerUtils;
 		this.referenceFileService = referenceFileService;
 		this.dateFormatter = new DateFormatter();
+		this.fileSizeConverter = new FileSizeConverter();
 	}
 
 	/**
@@ -211,11 +216,12 @@ public class ProjectsController {
 	 * @return The name of the add users to new project page.
 	 */
 	@RequestMapping("/{projectId}/metadata")
-	public String getProjectMetadataPage(final Model model, final Principal principal, @PathVariable long projectId) {
+	public String getProjectMetadataPage(final Model model, final Principal principal, @PathVariable long projectId)
+			throws IOException {
 		Project project = projectService.read(projectId);
-		List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
-		List<ReferenceFile> referenceFiles = joinList.stream().map(Join::getObject)
-				.collect(Collectors.toList());
+
+		// Let's add the reference files
+		List<Map<String, String>> referenceFiles = getReferenceFileData(project);
 
 		model.addAttribute("project", project);
 		model.addAttribute("referenceFiles", referenceFiles);
@@ -226,7 +232,7 @@ public class ProjectsController {
 
 	@RequestMapping(value = "/{projectId}/metadata/edit", method = RequestMethod.GET)
 	public String getProjectMetadataEditPage(final Model model, final Principal principal,
-			@PathVariable long projectId) {
+			@PathVariable long projectId) throws IOException {
 		Project project = projectService.read(projectId);
 		User user = userService.getUserByUsername(principal.getName());
 		if (user.getSystemRole().equals(Role.ROLE_ADMIN) || projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER)) {
@@ -236,9 +242,7 @@ public class ProjectsController {
 			projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
 			// Let's add the reference files
-			List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
-			List<ReferenceFile> referenceFiles = joinList.stream().map(Join::getObject)
-					.collect(Collectors.toList());
+			List<Map<String, String>> referenceFiles = getReferenceFileData(project);
 
 			model.addAttribute("referenceFiles", referenceFiles);
 			model.addAttribute("project", project);
@@ -254,7 +258,7 @@ public class ProjectsController {
 			@PathVariable long projectId, @RequestParam(required = false, defaultValue = "") String name,
 			@RequestParam(required = false, defaultValue = "") String organism,
 			@RequestParam(required = false, defaultValue = "") String projectDescription,
-			@RequestParam(required = false, defaultValue = "") String remoteURL) {
+			@RequestParam(required = false, defaultValue = "") String remoteURL) throws IOException {
 
 		Map<String, Object> updatedValues = new HashMap<>();
 		if (!Strings.isNullOrEmpty(name)) {
@@ -377,7 +381,6 @@ public class ProjectsController {
 	 * Handles AJAX request for getting a list of projects available to the
 	 * admin user. Produces JSON.
 	 *
-	 * @param principal   {@link Principal} The currently authenticated users
 	 * @param start       The start position in the list to page.
 	 * @param length      The size of the page to display.
 	 * @param draw        Id for the table to draw, this must be returned.
@@ -716,5 +719,32 @@ public class ProjectsController {
 	@ResponseBody
 	public ResponseEntity<String> roleChangeErrorHandler(Exception ex) {
 		return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+	}
+
+	/**
+	 * Get the information about a projects reference files in a format that can be used by the UI.
+	 *
+	 * @param project {@link Project} Currently viewed project.
+	 * @return List of reference file info.
+	 * @throws IOException
+	 */
+	private List<Map<String, String>> getReferenceFileData(Project project) throws IOException {
+		List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
+		List<Map<String, String>> mapList = new ArrayList<>();
+		for (Join<Project, ReferenceFile> join : joinList) {
+			ReferenceFile file = join.getObject();
+			Map<String, String> map = new HashMap<>();
+			map.put("id", file.getId().toString());
+			map.put("label", file.getLabel());
+			map.put("createdDate", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
+			Path path = file.getFile();
+			long size = 0;
+			if (Files.exists(path)) {
+				size = Files.size(path);
+			}
+			map.put("size", fileSizeConverter.convert(size));
+			mapList.add(map);
+		}
+		return mapList;
 	}
 }
