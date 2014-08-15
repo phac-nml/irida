@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.ria.web.files;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -10,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.format.Formatter;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,10 +25,9 @@ import org.springframework.web.multipart.MultipartFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for all {@link ReferenceFile} related views
@@ -34,13 +38,18 @@ import com.google.common.collect.ImmutableMap;
 @RequestMapping("/referenceFiles")
 public class ReferenceFileController {
 	private static final Logger logger = LoggerFactory.getLogger(ReferenceFileController.class);
+	// Converters
+	Formatter<Date> dateFormatter;
 	private ProjectService projectService;
 	private ReferenceFileService referenceFileService;
+	private FileSizeConverter fileSizeConverter;
 
 	@Autowired
 	public ReferenceFileController(ProjectService projectService, ReferenceFileService referenceFileService) {
 		this.projectService = projectService;
 		this.referenceFileService = referenceFileService;
+		this.fileSizeConverter = new FileSizeConverter();
+		this.dateFormatter = new DateFormatter();
 	}
 
 	@RequestMapping(value = "/download/{fileId}")
@@ -54,8 +63,8 @@ public class ReferenceFileController {
 	}
 
 	@RequestMapping("/project/{projectId}/new")
-	public @ResponseBody Map<String, Long> createNewReferenceFile(@PathVariable Long projectId,
-			@RequestParam MultipartFile files) throws IOException {
+	public @ResponseBody Map<String, String> createNewReferenceFile(@PathVariable Long projectId,
+			@RequestParam("files[]") MultipartFile files) throws IOException {
 
 		logger.debug("Adding reference file to project " + projectId);
 		logger.trace("Uploaded file size: " + files.getSize() + " bytes");
@@ -63,7 +72,7 @@ public class ReferenceFileController {
 		Project project = projectService.read(projectId);
 		logger.trace("Read project " + projectId);
 
-		// Prepare a new reference file using the mulipart file supplied by the caller
+		// Prepare a new reference file using the multipart file supplied by the caller
 		Path temp = Files.createTempDirectory(null);
 		Path target = temp.resolve(files.getOriginalFilename());
 
@@ -75,11 +84,22 @@ public class ReferenceFileController {
 				.addReferenceFileToProject(project, referenceFile);
 		logger.debug("Created reference file in project " + projectId);
 
+		ReferenceFile file = projectReferenceFileJoin.getObject();
+		Map<String, String> result = new HashMap<>();
+		Path path = file.getFile();
+		long size = 0;
+		if (Files.exists(path)) {
+			size = Files.size(path);
+		}
+		result.put("size", fileSizeConverter.convert(size));
+		result.put("id", file.getId().toString());
+		result.put("label", file.getLabel());
+		result.put("createdDate", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
+
 		// Clean up temporary files
 		Files.deleteIfExists(target);
 		Files.deleteIfExists(temp);
-
-		return ImmutableMap.of("id", projectReferenceFileJoin.getObject().getId());
+		return result;
 	}
 
 	@RequestMapping("/delete")
