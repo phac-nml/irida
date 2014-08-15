@@ -26,7 +26,8 @@ import ca.corefacility.bioinformatics.irida.service.analysis.prepration.galaxy.A
  * @param <S> The type of AnalysisSubmissionGalaxy to perform.
  */
 public abstract class AnalysisExecutionServiceGalaxy
-	<A extends Analysis, P extends AnalysisPreparationServiceGalaxy<T>, T extends AnalysisSubmissionGalaxy>
+	<A extends Analysis, P extends AnalysisPreparationServiceGalaxy<R,T>, 
+	R extends RemoteWorkflowGalaxy, T extends AnalysisSubmissionGalaxy<R>>
 	implements AnalysisExecutionService<A,T> {
 	
 	private P preparationService;

@@ -12,7 +12,7 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowGalaxyPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.preparation.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
@@ -31,7 +31,8 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionR
  *
  */
 public class GalaxyWorkflowPreparationServicePhylogenomicsPipeline 
-	extends AnalysisPreparationServiceGalaxy<AnalysisSubmissionGalaxyPhylogenomicsPipeline> {
+	extends AnalysisPreparationServiceGalaxy<RemoteWorkflowGalaxyPhylogenomics,
+		AnalysisSubmissionGalaxyPhylogenomicsPipeline> {
 	
 	private GalaxyHistoriesService galaxyHistoriesService;
 	private GalaxyWorkflowService galaxyWorkflowService;
@@ -65,15 +66,15 @@ public class GalaxyWorkflowPreparationServicePhylogenomicsPipeline
 		CollectionResponse collectionResponse = 
 				galaxyHistoriesService.constructCollectionList(sequenceDatasets, workflowHistory);
 		
-		RemoteWorkflowGalaxy remoteWorkflow = analysisSubmission.getRemoteWorkflow();
+		RemoteWorkflowGalaxyPhylogenomics remoteWorkflow = analysisSubmission.getRemoteWorkflow();
 		
 		String workflowId = remoteWorkflow.getWorkflowId();
 		WorkflowDetails workflowDetails = galaxyWorkflowService.getWorkflowDetails(workflowId);
 		
 		String workflowSequenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, 
-				analysisSubmission.getSequenceFileInputLabel());
+				remoteWorkflow.getInputSequenceFilesId());
 		String workflowReferenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, 
-				analysisSubmission.getReferenceFileInputLabel());
+				remoteWorkflow.getInputReferenceFilesId());
 		
 		WorkflowInputs inputs = new WorkflowInputs();
 		inputs.setDestination(new WorkflowInputs.ExistingHistory(workflowHistory.getId()));

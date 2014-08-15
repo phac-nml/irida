@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowGalaxyPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
@@ -16,6 +17,7 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipeline
 	extends AnalysisExecutionServiceGalaxy
 		<AnalysisPhylogenomicsPipeline,
 		GalaxyWorkflowPreparationServicePhylogenomicsPipeline,
+		RemoteWorkflowGalaxyPhylogenomics,
 		AnalysisSubmissionGalaxyPhylogenomicsPipeline> {
 		
 	/**

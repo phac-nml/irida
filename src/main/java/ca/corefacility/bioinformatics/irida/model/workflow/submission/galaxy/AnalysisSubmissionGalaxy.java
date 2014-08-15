@@ -14,11 +14,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public abstract class AnalysisSubmissionGalaxy implements AnalysisSubmission<RemoteWorkflowGalaxy> {
+public abstract class AnalysisSubmissionGalaxy<R extends RemoteWorkflowGalaxy>
+	implements AnalysisSubmission<R> {
 	
-	private RemoteWorkflowGalaxy remoteWorkflow;
+	private R remoteWorkflow;
 	private Set<SequenceFile> inputFiles;
-	private String sequenceFileInputLabel;
 	
 	private GalaxyAnalysisId remoteAnalysisId;
 	private WorkflowOutputs outputs;
@@ -26,19 +26,16 @@ public abstract class AnalysisSubmissionGalaxy implements AnalysisSubmission<Rem
 	/**
 	 * Builds a new AnalysisSubmissionGalaxy with the given information.
 	 * @param inputFiles  A set of SequenceFiles to use for the analysis.
-	 * @param sequenceFileInputLabel  A label within the RemoteWorkflow implementation for the sequence files.
 	 * @param remoteWorkflow  A RemoteWorkflow implementation for this analysis.
 	 */
 	public AnalysisSubmissionGalaxy(Set<SequenceFile> inputFiles,
-			String sequenceFileInputLabel,
-			RemoteWorkflowGalaxy remoteWorkflow) {
+			R remoteWorkflow) {
 		this.remoteWorkflow = remoteWorkflow;
-		this.sequenceFileInputLabel = sequenceFileInputLabel;
 		this.inputFiles = inputFiles;
 	}
 
 	@Override
-	public RemoteWorkflowGalaxy getRemoteWorkflow() {
+	public R getRemoteWorkflow() {
 		return remoteWorkflow;
 	}
 
@@ -47,16 +44,7 @@ public abstract class AnalysisSubmissionGalaxy implements AnalysisSubmission<Rem
 		return inputFiles;
 	}
 
-	@Override
-	public String getSequenceFileInputLabel() {
-		return sequenceFileInputLabel;
-	}
-
-	public void setSequenceFileInputLabel(String sequenceFileInputLabel) {
-		this.sequenceFileInputLabel = sequenceFileInputLabel;
-	}
-
-	public void setRemoteWorkflow(RemoteWorkflowGalaxy remoteWorkflow) {
+	public void setRemoteWorkflow(R remoteWorkflow) {
 		this.remoteWorkflow = remoteWorkflow;
 	}
 

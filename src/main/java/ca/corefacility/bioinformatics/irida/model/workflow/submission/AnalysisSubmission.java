@@ -15,5 +15,4 @@ public interface AnalysisSubmission<T extends RemoteWorkflow> {
 
 	public T getRemoteWorkflow();
 	public Set<SequenceFile> getInputFiles();
-	public String getSequenceFileInputLabel();
 }

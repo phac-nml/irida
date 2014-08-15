@@ -41,7 +41,7 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowGalaxyPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
@@ -121,16 +121,18 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 	
 	private AnalysisSubmissionGalaxyPhylogenomicsPipeline buildAnalysisSubmission() {
 		
-		RemoteWorkflowGalaxy remoteWorkflow = new RemoteWorkflowGalaxy(localGalaxy.getWorkflowCorePipelineTestId(),
-				localGalaxy.getWorkflowCorePipelineTestChecksum());
-		
 		String sequenceFileInputLabel = localGalaxy.getWorkflowCorePipelineTestSequenceFilesLabel();
 		String referenceFileInputLabel = localGalaxy.getWorkflowCorePipelineTestReferenceLabel();
 		
+		RemoteWorkflowGalaxyPhylogenomics remoteWorkflow =
+				new RemoteWorkflowGalaxyPhylogenomics(localGalaxy.getWorkflowCorePipelineTestId(),
+				localGalaxy.getWorkflowCorePipelineTestChecksum(),
+				sequenceFileInputLabel, referenceFileInputLabel);
+
+		
 		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission = 
 				new AnalysisSubmissionGalaxyPhylogenomicsPipeline(sequenceFiles,
-						sequenceFileInputLabel, new ReferenceFile(referenceFile),
-						referenceFileInputLabel, remoteWorkflow);
+						new ReferenceFile(referenceFile),remoteWorkflow);
 		analysisSubmission.setInputFiles(sequenceFiles);
 		analysisSubmission.setReferenceFile(new ReferenceFile(referenceFile));
 		analysisSubmission.setRemoteWorkflow(remoteWorkflow);
@@ -251,15 +253,17 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 		Set<SequenceFile> sequenceFiles = new HashSet<>();
 		sequenceFiles.addAll(Lists.newArrayList(a1,b1,c1));
 		
-		RemoteWorkflowGalaxy remoteWorkflow =
-				new RemoteWorkflowGalaxy(workflowId,checksum);
-		
 		String sequenceFileInputLabel = "sequence_reads";
 		String referenceFileInputLabel = "reference";
 		
+		RemoteWorkflowGalaxyPhylogenomics remoteWorkflow =
+				new RemoteWorkflowGalaxyPhylogenomics(workflowId,checksum,
+						sequenceFileInputLabel, referenceFileInputLabel);
+
+		
 		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission = 
-				new AnalysisSubmissionGalaxyPhylogenomicsPipeline(sequenceFiles,sequenceFileInputLabel,
-						reference, referenceFileInputLabel, remoteWorkflow);
+				new AnalysisSubmissionGalaxyPhylogenomicsPipeline(sequenceFiles,
+						reference, remoteWorkflow);
 		
 		analysisService.executeAnalysis(analysisSubmission);
 		

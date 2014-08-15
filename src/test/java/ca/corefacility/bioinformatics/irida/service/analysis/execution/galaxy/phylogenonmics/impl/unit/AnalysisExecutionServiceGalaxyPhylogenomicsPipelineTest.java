@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowGalaxyPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
@@ -38,7 +38,8 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineTest {
 		workflowManagement = new AnalysisExecutionServiceGalaxyPhylogenomicsPipeline(galaxyWorkflowService,
 				galaxyHistoriesService, galaxyWorkflowPreparationServicePhylogenomicsPipeline);
 		
-		RemoteWorkflowGalaxy remoteWorkflow = new RemoteWorkflowGalaxy("1", "1");
+		RemoteWorkflowGalaxyPhylogenomics remoteWorkflow = 
+				new RemoteWorkflowGalaxyPhylogenomics("1", "1", "1", "1");
 		
 		when(submittedAnalysisGalaxy.getRemoteWorkflow()).thenReturn(remoteWorkflow);
 		when(submittedAnalysisGalaxy.getRemoteAnalysisId()).thenReturn(new GalaxyAnalysisId("1"));

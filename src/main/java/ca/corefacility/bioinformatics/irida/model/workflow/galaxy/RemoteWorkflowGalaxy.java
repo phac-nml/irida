@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.workflow.galaxy;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.RemoteWorkflow;
 
-public class RemoteWorkflowGalaxy implements RemoteWorkflow {
+public abstract class RemoteWorkflowGalaxy implements RemoteWorkflow {
 	
 	private String workflowId;
 	private String workflowChecksum;
