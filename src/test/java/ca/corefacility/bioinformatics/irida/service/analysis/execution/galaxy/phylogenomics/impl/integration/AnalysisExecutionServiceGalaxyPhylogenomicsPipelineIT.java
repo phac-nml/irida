@@ -76,7 +76,6 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 	private Set<SequenceFile> sequenceFiles;
 	
 	private AnalysisExecutionServiceGalaxyPhylogenomicsPipeline workflowManagement;
-	private GalaxyWorkflowPreparationServicePhylogenomicsPipeline galaxyWorkflowPreparationServicePhylogenomicsPipeline;
 	
 	@Before
 	public void setup() throws URISyntaxException {
@@ -113,11 +112,11 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 		GalaxyHistoriesService galaxyHistoriesService = buildGalaxyHistoriesService();
 		GalaxyWorkflowService galaxyWorkflowService = buildGalaxyWorkflowService();
 		
-		galaxyWorkflowPreparationServicePhylogenomicsPipeline = 
+		GalaxyWorkflowPreparationServicePhylogenomicsPipeline galaxyWorkflowPreparationServicePhylogenomicsPipeline = 
 				new GalaxyWorkflowPreparationServicePhylogenomicsPipeline(galaxyHistoriesService, galaxyWorkflowService);
 		workflowManagement = new AnalysisExecutionServiceGalaxyPhylogenomicsPipeline(galaxyWorkflowService,
 				galaxyHistoriesService, galaxyWorkflowPreparationServicePhylogenomicsPipeline);
-	}	
+	}
 	
 	private AnalysisSubmissionGalaxyPhylogenomicsPipeline buildAnalysisSubmission() {
 		
