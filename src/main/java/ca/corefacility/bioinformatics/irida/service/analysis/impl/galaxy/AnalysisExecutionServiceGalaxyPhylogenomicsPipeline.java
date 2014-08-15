@@ -18,7 +18,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 
 /**
- * Implements workflow management for a Galaxy-based workflow execution system.
+ * An execution service for performing a Phylogenomics Pipeline analysis.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
@@ -29,6 +29,12 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipeline
 	private GalaxyWorkflowService galaxyWorkflowService;
 	private GalaxyWorkflowPreparationServicePhylogenomicsPipeline preparationService;
 	
+	/**
+	 * Builds a new Phylogenomis Pipeline analysis with the given service classes.
+	 * @param galaxyHistoriesService  A GalaxyHistoriesService for interacting with Galaxy Histories.
+	 * @param galaxyWorkflowService  A GalaxyWorkflowService for interacting with Galaxy workflows.
+	 * @param preparationService  A PreparationService for preparing workflows.
+	 */
 	public AnalysisExecutionServiceGalaxyPhylogenomicsPipeline(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService,
 			GalaxyWorkflowPreparationServicePhylogenomicsPipeline preparationService) {

@@ -4,6 +4,11 @@ import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 
+/**
+ * Defines a prepared workflow for the phylogenomics pipeline.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 public class GalaxyPreparedWorkflowPhylogenomicsPipeline {
 	private CollectionResponse sequenceFilesCollection;
 	private Dataset referenceDataset;

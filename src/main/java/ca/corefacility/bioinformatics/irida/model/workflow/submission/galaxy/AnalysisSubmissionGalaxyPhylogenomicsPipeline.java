@@ -10,6 +10,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysis
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionPhylogenomicsPipeline;
 
+/**
+ * Defines a Phylogenomics Pipeline analysis submission.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 public class AnalysisSubmissionGalaxyPhylogenomicsPipeline extends
 		AnalysisSubmissionGalaxy implements
 		AnalysisSubmissionPhylogenomicsPipeline<RemoteWorkflowGalaxy> {

@@ -5,6 +5,13 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
+/**
+ * Service for submission of analyses to an execution manager.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ * @param <A> The type of Analysis expected to be performed.
+ * @param <S> The type of AnalysisSubmission to perform.
+ */
 public interface AnalysisExecutionService
 	<A extends Analysis, S extends AnalysisSubmission<?>> {
 

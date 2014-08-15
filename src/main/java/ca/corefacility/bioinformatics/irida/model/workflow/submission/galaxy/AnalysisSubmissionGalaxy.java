@@ -6,13 +6,25 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
+/**
+ * Defines an AnalysisSubmission to a Galaxy execution manager.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 public abstract class AnalysisSubmissionGalaxy implements AnalysisSubmission<RemoteWorkflowGalaxy> {
 	
 	private RemoteWorkflowGalaxy remoteWorkflow;
 	private Set<SequenceFile> inputFiles;
 	private String sequenceFileInputLabel;
 	
-	public AnalysisSubmissionGalaxy(Set<SequenceFile> inputFiles, String sequenceFileInputLabel,
+	/**
+	 * Builds a new AnalysisSubmissionGalaxy with the given information.
+	 * @param inputFiles  A set of SequenceFiles to use for the analysis.
+	 * @param sequenceFileInputLabel  A label within the RemoteWorkflow implementation for the sequence files.
+	 * @param remoteWorkflow  A RemoteWorkflow implementation for this analysis.
+	 */
+	public AnalysisSubmissionGalaxy(Set<SequenceFile> inputFiles,
+			String sequenceFileInputLabel,
 			RemoteWorkflowGalaxy remoteWorkflow) {
 		this.remoteWorkflow = remoteWorkflow;
 		this.sequenceFileInputLabel = sequenceFileInputLabel;
