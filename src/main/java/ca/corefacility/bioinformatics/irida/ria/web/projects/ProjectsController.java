@@ -700,12 +700,16 @@ public class ProjectsController {
 
 	@RequestMapping(value = "/ajax/{projectId}/referenceFiles")
 	public @ResponseBody List<Map<String, String>> getProjectReferenceFiles(@PathVariable Long projectId) {
-		// TODO: (14-08-13 - Josh) Get real data from future version
+		Project project = projectService.read(projectId);
+		List<Join<Project, ReferenceFile>> projectFileJoin = referenceFileService.getReferenceFilesForProject(project);
 		List<Map<String, String>> response = new ArrayList<>();
-		Map<String, String> map = new HashMap<>();
-		map.put("id", "1");
-		map.put("text", "Reference File Name Here");
-		response.add(map);
+		for (Join<Project, ReferenceFile> join : projectFileJoin) {
+			ReferenceFile file = join.getObject();
+			Map<String, String> map = new HashMap<>();
+			map.put("id", file.getId().toString());
+			map.put("text", file.getLabel());
+			response.add(map);
+		}
 		return response;
 	}
 
