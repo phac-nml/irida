@@ -13,7 +13,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistori
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.GalaxyWorkflowPreparationServicePhylogenomicsPipeline.GalaxyPreparedWorkflow;
 
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 
@@ -33,7 +32,7 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipeline {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.preparationService= new GalaxyWorkflowPreparationServicePhylogenomicsPipeline(
-				galaxyHistoriesService);
+				galaxyHistoriesService, galaxyWorkflowService);
 	}
 	
 	private void validateWorkflow(RemoteWorkflowGalaxy remoteWorkflow) throws WorkflowException {
@@ -50,28 +49,10 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipeline {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		validateWorkflow(analysisSubmission.getRemoteWorkflow());
 		
-		GalaxyPreparedWorkflow preparedWorkflow = preparationService.prepareWorkflow(analysisSubmission);
-		RemoteWorkflowGalaxy remoteWorkflow = analysisSubmission.getRemoteWorkflow();
-		
-		String workflowId = remoteWorkflow.getWorkflowId();
-		WorkflowDetails workflowDetails = galaxyWorkflowService.getWorkflowDetails(workflowId);
-		
-		String workflowSequenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, 
-				analysisSubmission.getSequenceFileInputLabel());
-		String workflowReferenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, 
-				analysisSubmission.getReferenceFileInputLabel());
-		
-		WorkflowInputs inputs = new WorkflowInputs();
-		inputs.setDestination(new WorkflowInputs.ExistingHistory(preparedWorkflow.getWorkflowHistory().getId()));
-		inputs.setWorkflowId(workflowDetails.getId());
-		inputs.setInput(workflowSequenceFileInputId,
-				new WorkflowInputs.WorkflowInput(preparedWorkflow.getSequenceFilesCollection().getId(),
-				WorkflowInputs.InputSourceType.HDCA));
-		inputs.setInput(workflowReferenceFileInputId,
-				new WorkflowInputs.WorkflowInput(preparedWorkflow.getReferenceDataset().getId(),
-				WorkflowInputs.InputSourceType.HDA));
-		
-		WorkflowOutputs output = galaxyWorkflowService.runWorkflow(inputs);
+		GalaxyPreparedWorkflow preparedWorkflow = preparationService.prepareWorkflowFiles(analysisSubmission);
+
+		WorkflowInputs input = preparationService.prepareWorkflowInput(analysisSubmission, preparedWorkflow);
+		WorkflowOutputs output = galaxyWorkflowService.runWorkflow(input);
 		analysisSubmission.setRemoteAnalysisId(new GalaxyAnalysisId(preparedWorkflow.getWorkflowHistory().getId()));
 		analysisSubmission.setOutputs(output);
 		
@@ -85,6 +66,9 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipeline {
 
 	public WorkflowStatus getWorkflowStatus(AnalysisSubmissionGalaxyPhylogenomicsPipeline submittedAnalysis)
 			throws ExecutionManagerException {
-		return galaxyHistoriesService.getStatusForHistory(submittedAnalysis.getRemoteAnalysisId().getValue());
+		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
+		
+		String analysisId = submittedAnalysis.getRemoteAnalysisId().getValue();		
+		return galaxyHistoriesService.getStatusForHistory(analysisId);
 	}
 }

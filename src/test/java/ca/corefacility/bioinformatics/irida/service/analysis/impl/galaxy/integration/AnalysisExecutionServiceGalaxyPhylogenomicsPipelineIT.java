@@ -213,6 +213,7 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 		workflowManagement.executeAnalysis(analysisSubmission);
 	}
 	
+	@SuppressWarnings("unused")
 	public static void main(String[] args) throws URISyntaxException, ExecutionManagerException, InterruptedException, IOException {
 		StandardPasswordEncoder passwordCoder = new StandardPasswordEncoder();
 		String workflowId = "ebfb8f50c6abde6d";
