@@ -54,6 +54,8 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 	private static final String DEFAULT_ENCODING = "UTF-8";
 	private static final String[] RESOURCE_LOCATIONS = { "classpath:/i18n/messages", "classpath:/i18n/mobile" };
 	private static final Logger logger = LoggerFactory.getLogger(WebConfigurer.class);
+	public static final long MAX_UPLOAD_SIZE = 20971520L;
+	public static final int MAX_IN_MEMORY_SIZE = 1048576;
 	@Autowired
 	private Environment env;
 
@@ -138,8 +140,8 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 	@Bean
 	public CommonsMultipartResolver multipartResolver() {
 		CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-		resolver.setMaxUploadSize(20971520L); // TODO: (14-08-13 - Josh) What should this be?
-		resolver.setMaxInMemorySize(1048576);
+		resolver.setMaxUploadSize(MAX_UPLOAD_SIZE);
+		resolver.setMaxInMemorySize(MAX_IN_MEMORY_SIZE);
 		return resolver;
 	}
 
