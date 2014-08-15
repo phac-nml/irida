@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.galaxy;
+package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -11,11 +11,12 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowInvalidExc
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.preparation.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxy;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionService;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
+import ca.corefacility.bioinformatics.irida.service.analysis.prepration.galaxy.AnalysisPreparationServiceGalaxy;
 
 /**
  * Service for performing analyses within a Galaxy execution manager.

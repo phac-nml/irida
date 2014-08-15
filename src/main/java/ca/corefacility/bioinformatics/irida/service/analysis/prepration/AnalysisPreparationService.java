@@ -1,8 +1,8 @@
-package ca.corefacility.bioinformatics.irida.service;
+package ca.corefacility.bioinformatics.irida.service.analysis.prepration;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.model.workflow.preparation.PreparedWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.PreparedWorkflow;
 
 /**
  * Defines a service used to prepare input files for a workflow.

@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service;
+package ca.corefacility.bioinformatics.irida.service.analysis.execution;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;

@@ -1,20 +1,18 @@
-package ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy;
+package ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics;
 
 import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxy;
 
 /**
  * Defines a Phylogenomics Pipeline analysis submission.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class AnalysisSubmissionGalaxyPhylogenomicsPipeline extends
-		AnalysisSubmissionGalaxy implements
-		AnalysisSubmissionPhylogenomicsPipeline<RemoteWorkflowGalaxy> {
+public class AnalysisSubmissionGalaxyPhylogenomicsPipeline extends AnalysisSubmissionGalaxy {
 	
 	private ReferenceFile referenceFile;
 	private String referenceFileInputLabel;
@@ -40,7 +38,6 @@ public class AnalysisSubmissionGalaxyPhylogenomicsPipeline extends
 		this.referenceFile = referenceFile;
 	}
 
-	@Override
 	public ReferenceFile getReferenceFile() {
 		return referenceFile;
 	}

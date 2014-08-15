@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model.workflow.submission;
+package ca.corefacility.bioinformatics.irida.model.workflow.preparation;
 
 /**
  * A Workflow that has been prepared for execution.

@@ -1,8 +1,8 @@
-package ca.corefacility.bioinformatics.irida.service.galaxy;
+package ca.corefacility.bioinformatics.irida.service.analysis.prepration.galaxy;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.preparation.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxy;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.PreparedWorkflowGalaxy;
-import ca.corefacility.bioinformatics.irida.service.AnalysisPreparationService;
+import ca.corefacility.bioinformatics.irida.service.analysis.prepration.AnalysisPreparationService;
 
 /**
  * Prepares a Galaxy analysis for submission.
