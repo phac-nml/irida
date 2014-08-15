@@ -74,7 +74,7 @@ public class ReferenceFileControllerTest {
 		when(projectService.addReferenceFileToProject(eq(project), any(ReferenceFile.class)))
 				.thenReturn(new ProjectReferenceFileJoin(project, referenceFile));
 
-		Map<String, Long> result = controller.createNewReferenceFile(PROJECT_ID, mockMultipartFile);
+		Map<String, String> result = controller.createNewReferenceFile(PROJECT_ID, mockMultipartFile);
 
 		assertTrue("Should contain the id of the new sequence file", result.containsKey("id"));
 
