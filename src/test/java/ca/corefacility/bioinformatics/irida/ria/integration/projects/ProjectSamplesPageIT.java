@@ -18,14 +18,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
  * <p>
@@ -253,5 +253,12 @@ public class ProjectSamplesPageIT {
 		page.hideFilesView();
 		page.showFilesView();
 		assertTrue("Should have files 1 and 2 selected", page.ensureCorrectFilesSelected(new int[] { 1, 2 }));
+	}
+
+	@Test
+	public void testRunPipeline() {
+		page.goToPage();
+		page.clickFirstThreeCheckboxes();
+		page.clickRunPipelineButton();
 	}
 }
