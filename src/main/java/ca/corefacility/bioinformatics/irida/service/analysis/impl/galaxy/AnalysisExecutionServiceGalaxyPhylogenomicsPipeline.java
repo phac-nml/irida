@@ -2,17 +2,8 @@ package ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.nio.file.Path;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
@@ -20,13 +11,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflow
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
+import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.GalaxyWorkflowPreparationServicePhylogenomicsPipeline.GalaxyPreparedWorkflow;
 
-import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
-import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
-import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 
 /**
  * Implements workflow management for a Galaxy-based workflow execution system.
@@ -35,41 +24,16 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionR
  */
 public class AnalysisExecutionServiceGalaxyPhylogenomicsPipeline {
 	
-	private final static String sequenceFileInputLabel = "sequence_reads";
-	private final static String refereneFileInputLabel = "reference";
-	
-	private class PreparedWorkflow {
-		private CollectionResponse sequenceFilesCollection;
-		private Dataset referenceDataset;
-		private History workflowHistory;
-		
-		public PreparedWorkflow(CollectionResponse sequenceFilesCollection,
-				Dataset referenceDataset, History workflowHistory) {
-			this.sequenceFilesCollection = sequenceFilesCollection;
-			this.referenceDataset = referenceDataset;
-			this.workflowHistory = workflowHistory;
-		}
-
-		public CollectionResponse getSequenceFilesCollection() {
-			return sequenceFilesCollection;
-		}
-
-		public Dataset getReferenceDataset() {
-			return referenceDataset;
-		}
-
-		public History getWorkflowHistory() {
-			return workflowHistory;
-		}
-	}
-	
 	private GalaxyHistoriesService galaxyHistoriesService;
 	private GalaxyWorkflowService galaxyWorkflowService;
+	private GalaxyWorkflowPreparationServicePhylogenomicsPipeline preparationService;
 	
 	public AnalysisExecutionServiceGalaxyPhylogenomicsPipeline(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
+		this.preparationService= new GalaxyWorkflowPreparationServicePhylogenomicsPipeline(
+				galaxyHistoriesService);
 	}
 	
 	private void validateWorkflow(RemoteWorkflowGalaxy remoteWorkflow) throws WorkflowException {
@@ -79,29 +43,6 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipeline {
 				"workflow checksums do not match");
 	}
 	
-	private PreparedWorkflow prepareWorkflow(AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission) throws ExecutionManagerException {
-		
-		Set<SequenceFile> sequenceFiles = analysisSubmission.getInputFiles();
-		List<Path> sequenceFilePaths = new LinkedList<>();
-		for (SequenceFile file : sequenceFiles) {
-			sequenceFilePaths.add(file.getFile());
-		}
-		
-		ReferenceFile referenceFile = analysisSubmission.getReferenceFile();
-		History workflowHistory = galaxyHistoriesService.newHistoryForWorkflow();
-		
-		List<Dataset> sequenceDatasets = galaxyHistoriesService.
-				uploadFilesListToHistory(sequenceFilePaths, InputFileType.FASTQ_SANGER, workflowHistory);
-		
-		Dataset referenceDataset = galaxyHistoriesService.
-				fileToHistory(referenceFile.getFile(), InputFileType.FASTQ_SANGER, workflowHistory);
-		
-		CollectionResponse collectionResponse = 
-				galaxyHistoriesService.constructCollectionList(sequenceDatasets, workflowHistory);
-
-		return new PreparedWorkflow(collectionResponse, referenceDataset, workflowHistory);
-	}
-
 	public AnalysisSubmissionGalaxyPhylogenomicsPipeline executeAnalysis(
 			AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission)
 					throws ExecutionManagerException {
@@ -109,7 +50,7 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipeline {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		validateWorkflow(analysisSubmission.getRemoteWorkflow());
 		
-		PreparedWorkflow preparedWorkflow = prepareWorkflow(analysisSubmission);
+		GalaxyPreparedWorkflow preparedWorkflow = preparationService.prepareWorkflow(analysisSubmission);
 		RemoteWorkflowGalaxy remoteWorkflow = analysisSubmission.getRemoteWorkflow();
 		
 		String workflowId = remoteWorkflow.getWorkflowId();
