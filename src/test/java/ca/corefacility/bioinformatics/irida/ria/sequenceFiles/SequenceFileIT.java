@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ActiveProfiles;
@@ -18,14 +18,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.sequenceFiles.SequenceFilePages;
+
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
  * Created by josh on 14-08-06.
@@ -39,10 +39,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.sequenceFiles.
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SequenceFileIT {
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileIT.class);
-
-	private WebDriver driver;
-	private SequenceFilePages page;
-
 	/*
 	 * FILE ATTRIBUTES
 	 */
@@ -55,11 +51,12 @@ public class SequenceFileIT {
 	private static final String FILE_MIN_LENGTH = "184";
 	private static final String FILE_MAX_LENGTH = "251";
 	private static final String FILE_GC_CONTENT = "30";
-
+	private WebDriver driver;
+	private SequenceFilePages page;
 
 	@Before
 	public void setUp() {
-		this.driver = new ChromeDriver();
+		this.driver = new PhantomJSDriver();
 		driver.manage().window().setSize(new Dimension(1024, 900));
 		LoginPage loginPage = LoginPage.to(driver);
 		loginPage.doLogin();
