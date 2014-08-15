@@ -229,7 +229,7 @@ public class ProjectsController {
 			@PathVariable long projectId) {
 		Project project = projectService.read(projectId);
 		User user = userService.getUserByUsername(principal.getName());
-		if (projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER)) {
+		if (user.getSystemRole().equals(Role.ROLE_ADMIN) || projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER)) {
 			if (!model.containsAttribute("errors")) {
 				model.addAttribute("errors", new HashMap<>());
 			}
