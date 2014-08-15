@@ -197,7 +197,9 @@
                                     data: "fileId=" + id,
                                     success: function () {
                                         $this.qtip('destroy', true);
-                                        $(row).remove();
+                                        $(row).fadeOut(300, function () {
+                                            $(this).remove();
+                                        });
                                     },
                                     error: function (data) {
                                         var msg = /*[[#{projects.meta.reference-file.delete-error}]]*/ "__Error deleting reference file__";
