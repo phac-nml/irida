@@ -12,10 +12,10 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.google.common.base.Strings;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.SortUtilities;
+
+import com.google.common.base.Strings;
 
 /**
  * <p>
@@ -426,6 +426,12 @@ public class ProjectSamplesPage {
         driver.findElement(By.cssSelector(".noty_buttons .btn-primary")).click();
         waitForAjax();
     }
+
+	public void clickRunPipelineButton() {
+		driver.findElement(By.id("runPipelineBtn")).click();
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+				.className("mfp-content")));
+	}
 
 	private void waitForAjax() {
 		Wait<WebDriver> wait = new WebDriverWait(driver, 60);
