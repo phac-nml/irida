@@ -48,12 +48,6 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineTest {
 		workflowManagement.executeAnalysis(analysisSubmission);
 	}
 	
-	@Ignore
-	@Test
-	public void testGetAnalysisResults() throws WorkflowException {
-		workflowManagement.getAnalysisResults(submittedAnalysisGalaxy);
-	}
-	
 	/**
 	 * Tests out successfully getting the status of a workflow.
 	 * @throws ExecutionManagerException

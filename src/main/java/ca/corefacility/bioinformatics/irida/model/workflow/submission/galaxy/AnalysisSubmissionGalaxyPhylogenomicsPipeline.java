@@ -17,12 +17,15 @@ public class AnalysisSubmissionGalaxyPhylogenomicsPipeline extends
 	private ReferenceFile referenceFile;
 	private GalaxyAnalysisId remoteAnalysisId;
 	private WorkflowOutputs outputs;
+	private String referenceFileInputLabel;
 
 	public AnalysisSubmissionGalaxyPhylogenomicsPipeline(
-			Set<SequenceFile> inputFiles, ReferenceFile referenceFile, 
+			Set<SequenceFile> inputFiles, String sequenceFileInputLabel, 
+			ReferenceFile referenceFile, String referenceFileInputLabel,
 			RemoteWorkflowGalaxy remoteWorkflow) {
-		super(inputFiles, remoteWorkflow);
+		super(inputFiles, sequenceFileInputLabel, remoteWorkflow);
 		this.referenceFile = referenceFile;
+		this.referenceFileInputLabel = referenceFileInputLabel;
 	}
 
 	public void setReferenceFile(ReferenceFile referenceFile) {
@@ -48,5 +51,13 @@ public class AnalysisSubmissionGalaxyPhylogenomicsPipeline extends
 
 	public WorkflowOutputs getOutputs() {
 		return outputs;
+	}
+
+	public String getReferenceFileInputLabel() {
+		return referenceFileInputLabel;
+	}
+
+	public void setReferenceFileInputLabel(String referenceFileInputLabel) {
+		this.referenceFileInputLabel = referenceFileInputLabel;
 	}
 }

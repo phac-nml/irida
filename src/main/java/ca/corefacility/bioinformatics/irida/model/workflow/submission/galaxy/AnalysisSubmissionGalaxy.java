@@ -10,9 +10,12 @@ public abstract class AnalysisSubmissionGalaxy implements AnalysisSubmission<Rem
 	
 	private RemoteWorkflowGalaxy remoteWorkflow;
 	private Set<SequenceFile> inputFiles;
+	private String sequenceFileInputLabel;
 	
-	public AnalysisSubmissionGalaxy(Set<SequenceFile> inputFiles, RemoteWorkflowGalaxy remoteWorkflow) {
+	public AnalysisSubmissionGalaxy(Set<SequenceFile> inputFiles, String sequenceFileInputLabel,
+			RemoteWorkflowGalaxy remoteWorkflow) {
 		this.remoteWorkflow = remoteWorkflow;
+		this.sequenceFileInputLabel = sequenceFileInputLabel;
 		this.inputFiles = inputFiles;
 	}
 
@@ -24,6 +27,15 @@ public abstract class AnalysisSubmissionGalaxy implements AnalysisSubmission<Rem
 	@Override
 	public Set<SequenceFile> getInputFiles() {
 		return inputFiles;
+	}
+
+	@Override
+	public String getSequenceFileInputLabel() {
+		return sequenceFileInputLabel;
+	}
+
+	public void setSequenceFileInputLabel(String sequenceFileInputLabel) {
+		this.sequenceFileInputLabel = sequenceFileInputLabel;
 	}
 
 	public void setRemoteWorkflow(RemoteWorkflowGalaxy remoteWorkflow) {

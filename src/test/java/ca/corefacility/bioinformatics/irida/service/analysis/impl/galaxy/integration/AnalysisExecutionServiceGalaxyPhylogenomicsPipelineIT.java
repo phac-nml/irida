@@ -119,9 +119,13 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 		RemoteWorkflowGalaxy remoteWorkflow = new RemoteWorkflowGalaxy(localGalaxy.getWorkflowCorePipelineTestId(),
 				localGalaxy.getWorkflowCorePipelineTestChecksum());
 		
+		String sequenceFileInputLabel = localGalaxy.getWorkflowCorePipelineTestSequenceFilesLabel();
+		String referenceFileInputLabel = localGalaxy.getWorkflowCorePipelineTestReferenceLabel();
+		
 		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission = 
 				new AnalysisSubmissionGalaxyPhylogenomicsPipeline(sequenceFiles,
-						new ReferenceFile(referenceFile), remoteWorkflow);
+						sequenceFileInputLabel, new ReferenceFile(referenceFile),
+						referenceFileInputLabel, remoteWorkflow);
 		analysisSubmission.setInputFiles(sequenceFiles);
 		analysisSubmission.setReferenceFile(new ReferenceFile(referenceFile));
 		analysisSubmission.setRemoteWorkflow(remoteWorkflow);
@@ -242,9 +246,12 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 		RemoteWorkflowGalaxy remoteWorkflow =
 				new RemoteWorkflowGalaxy(workflowId,checksum);
 		
+		String sequenceFileInputLabel = "sequence_reads";
+		String referenceFileInputLabel = "reference";
+		
 		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission = 
-				new AnalysisSubmissionGalaxyPhylogenomicsPipeline(sequenceFiles,
-						reference, remoteWorkflow);
+				new AnalysisSubmissionGalaxyPhylogenomicsPipeline(sequenceFiles,sequenceFileInputLabel,
+						reference, referenceFileInputLabel, remoteWorkflow);
 		
 		analysisService.executeAnalysis(analysisSubmission);
 		
