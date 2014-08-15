@@ -2,8 +2,14 @@ package ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integr
 
 import static org.junit.Assert.*;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
@@ -47,6 +53,7 @@ import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
+import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.google.common.collect.Lists;
@@ -202,7 +209,7 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 		workflowManagement.executeAnalysis(analysisSubmission);
 	}
 	
-	public static void main(String[] args) throws URISyntaxException, ExecutionManagerException {
+	public static void main(String[] args) throws URISyntaxException, ExecutionManagerException, InterruptedException, IOException {
 		StandardPasswordEncoder passwordCoder = new StandardPasswordEncoder();
 		String workflowId = "ebfb8f50c6abde6d";
 		
@@ -241,11 +248,46 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 		
 		analysisService.executeAnalysis(analysisSubmission);
 		
+		final int max = 1000;
+		final int time = 5000;
+		for (int i = 0; i < max; i++) {
+			WorkflowStatus status = analysisService.getWorkflowStatus(analysisSubmission);
+			if (WorkflowState.OK.equals(status.getState())) {
+				break;
+			}
+			Thread.sleep(time);
+		}
+		
 		WorkflowOutputs outputs = analysisSubmission.getOutputs();
 		for (String outputId : outputs.getOutputIds()) {
 			System.out.println("output:"+ outputId);
+			
+			Dataset dataset = historiesClient.showDataset(analysisSubmission.getRemoteAnalysisId().getValue(), outputId);
+			String name = dataset.getName();
+			System.out.println("\t"+name);
+			
+			if ("pseudo-positions.tsv".equals(name)) {
+				URL url = new URL(dataset.getFullDownloadUrl());
+				
+				HttpURLConnection con = (HttpURLConnection) url.openConnection();
+				InputStream stream = con.getInputStream();
+
+				String galaxyFileContents = readFileContentsFromReader(new BufferedReader(
+						new InputStreamReader(stream)));
+				
+				System.out.println(galaxyFileContents);
+			}
 		}
-		
-		
+	}
+	
+	private static String readFileContentsFromReader(BufferedReader reader)
+			throws IOException {
+		String line;
+		String contents = "";
+		while ((line = reader.readLine()) != null) {
+			contents += line + "\n";
+		}
+
+		return contents;
 	}
 }
