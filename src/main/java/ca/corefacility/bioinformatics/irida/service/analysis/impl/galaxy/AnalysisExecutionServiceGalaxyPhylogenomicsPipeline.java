@@ -11,6 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflow
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
+import ca.corefacility.bioinformatics.irida.service.galaxy.AnalysisExecutionServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.GalaxyPreparedWorkflowPhylogenomicsPipeline;
 
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
@@ -21,7 +22,8 @@ import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class AnalysisExecutionServiceGalaxyPhylogenomicsPipeline {
+public class AnalysisExecutionServiceGalaxyPhylogenomicsPipeline
+	implements AnalysisExecutionServiceGalaxy<AnalysisPhylogenomicsPipeline, AnalysisSubmissionGalaxyPhylogenomicsPipeline> {
 	
 	private GalaxyHistoriesService galaxyHistoriesService;
 	private GalaxyWorkflowService galaxyWorkflowService;
@@ -42,6 +44,7 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipeline {
 				"workflow checksums do not match");
 	}
 	
+	@Override
 	public AnalysisSubmissionGalaxyPhylogenomicsPipeline executeAnalysis(
 			AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission)
 					throws ExecutionManagerException {
@@ -59,11 +62,13 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipeline {
 		return analysisSubmission;
 	}
 
+	@Override
 	public AnalysisPhylogenomicsPipeline getAnalysisResults(AnalysisSubmissionGalaxyPhylogenomicsPipeline submittedAnalysis)
-			throws WorkflowException {
+			throws ExecutionManagerException {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public WorkflowStatus getWorkflowStatus(AnalysisSubmissionGalaxyPhylogenomicsPipeline submittedAnalysis)
 			throws ExecutionManagerException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
