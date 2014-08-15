@@ -14,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.GalaxyPreparedWorkflowPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 
@@ -32,31 +33,6 @@ public class GalaxyWorkflowPreparationServicePhylogenomicsPipeline {
 	
 	private GalaxyHistoriesService galaxyHistoriesService;
 	private GalaxyWorkflowService galaxyWorkflowService;
-	
-	public class GalaxyPreparedWorkflowPhylogenomicsPipeline {
-		private CollectionResponse sequenceFilesCollection;
-		private Dataset referenceDataset;
-		private History workflowHistory;
-		
-		public GalaxyPreparedWorkflowPhylogenomicsPipeline(CollectionResponse sequenceFilesCollection,
-				Dataset referenceDataset, History workflowHistory) {
-			this.sequenceFilesCollection = sequenceFilesCollection;
-			this.referenceDataset = referenceDataset;
-			this.workflowHistory = workflowHistory;
-		}
-
-		public CollectionResponse getSequenceFilesCollection() {
-			return sequenceFilesCollection;
-		}
-
-		public Dataset getReferenceDataset() {
-			return referenceDataset;
-		}
-
-		public History getWorkflowHistory() {
-			return workflowHistory;
-		}
-	}
 	
 	public GalaxyWorkflowPreparationServicePhylogenomicsPipeline(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService) {

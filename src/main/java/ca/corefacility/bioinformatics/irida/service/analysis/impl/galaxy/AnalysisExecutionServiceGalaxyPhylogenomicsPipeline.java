@@ -11,7 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflow
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.GalaxyWorkflowPreparationServicePhylogenomicsPipeline.GalaxyPreparedWorkflowPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.GalaxyPreparedWorkflowPhylogenomicsPipeline;
 
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
@@ -28,11 +28,11 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipeline {
 	private GalaxyWorkflowPreparationServicePhylogenomicsPipeline preparationService;
 	
 	public AnalysisExecutionServiceGalaxyPhylogenomicsPipeline(GalaxyHistoriesService galaxyHistoriesService,
-			GalaxyWorkflowService galaxyWorkflowService) {
+			GalaxyWorkflowService galaxyWorkflowService,
+			GalaxyWorkflowPreparationServicePhylogenomicsPipeline preparationService) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
-		this.preparationService= new GalaxyWorkflowPreparationServicePhylogenomicsPipeline(
-				galaxyHistoriesService, galaxyWorkflowService);
+		this.preparationService = preparationService;
 	}
 	
 	private void validateWorkflow(RemoteWorkflowGalaxy remoteWorkflow) throws WorkflowException {

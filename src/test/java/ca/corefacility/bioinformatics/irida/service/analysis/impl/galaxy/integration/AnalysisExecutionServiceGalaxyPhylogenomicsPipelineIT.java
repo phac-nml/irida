@@ -47,6 +47,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistori
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.AnalysisExecutionServiceGalaxyPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.GalaxyWorkflowPreparationServicePhylogenomicsPipeline;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
@@ -75,6 +76,7 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 	private Set<SequenceFile> sequenceFiles;
 	
 	private AnalysisExecutionServiceGalaxyPhylogenomicsPipeline workflowManagement;
+	private GalaxyWorkflowPreparationServicePhylogenomicsPipeline galaxyWorkflowPreparationServicePhylogenomicsPipeline;
 	
 	@Before
 	public void setup() throws URISyntaxException {
@@ -88,7 +90,7 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 		sequenceFiles = new HashSet<>();
 		sequenceFiles.add(new SequenceFile(dataFile));
 		
-		workflowManagement = buildWorkflowManagementGalaxy();
+		buildWorkflowManagementGalaxy();
 		
 //		invalidSubmittedAnalysis = new AnalysisSubmissionGalaxyPhylogenomicsPipeline(new GalaxyAnalysisId("invalid"), null);
 	}
@@ -107,11 +109,14 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 						new StandardPasswordEncoder());
 	}
 	
-	private AnalysisExecutionServiceGalaxyPhylogenomicsPipeline buildWorkflowManagementGalaxy() {
+	private void buildWorkflowManagementGalaxy() {
 		GalaxyHistoriesService galaxyHistoriesService = buildGalaxyHistoriesService();
 		GalaxyWorkflowService galaxyWorkflowService = buildGalaxyWorkflowService();
 		
-		return new AnalysisExecutionServiceGalaxyPhylogenomicsPipeline(galaxyHistoriesService, galaxyWorkflowService);
+		galaxyWorkflowPreparationServicePhylogenomicsPipeline = 
+				new GalaxyWorkflowPreparationServicePhylogenomicsPipeline(galaxyHistoriesService, galaxyWorkflowService);
+		workflowManagement = new AnalysisExecutionServiceGalaxyPhylogenomicsPipeline(galaxyHistoriesService, 
+				galaxyWorkflowService, galaxyWorkflowPreparationServicePhylogenomicsPipeline);
 	}	
 	
 	private AnalysisSubmissionGalaxyPhylogenomicsPipeline buildAnalysisSubmission() {
@@ -229,9 +234,11 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 		GalaxyWorkflowService workflowService = new GalaxyWorkflowService(historiesClient, workflowsClient,
 				new StandardPasswordEncoder());
 		
+		GalaxyWorkflowPreparationServicePhylogenomicsPipeline galaxyWorkflowPreparationServicePhylogenomicsPipeline =
+				new GalaxyWorkflowPreparationServicePhylogenomicsPipeline(historiesService, workflowService);
 		AnalysisExecutionServiceGalaxyPhylogenomicsPipeline analysisService = 
 				new AnalysisExecutionServiceGalaxyPhylogenomicsPipeline(
-						historiesService, workflowService);
+						historiesService, workflowService, galaxyWorkflowPreparationServicePhylogenomicsPipeline);
 		
 		SequenceFile a1 = new SequenceFile(Paths.get(new URI("file:////home/aaron/workspace/irida-api/1/input/fastq/a_1.fastq")));
 		SequenceFile a2 = new SequenceFile(Paths.get(new URI("file:////home/aaron/workspace/irida-api/1/input/fastq/a_2.fastq")));
