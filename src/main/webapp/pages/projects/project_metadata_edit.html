@@ -68,14 +68,170 @@
                                     th:text="#{form.btn.update}"></button>
                         </div>
                     </form>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title" th:text="#{projects.meta.reference-files}">__Reference Files__</h3>
+                        </div>
+                        <div class="panel-body">
+                            <table id="referenceFileTable" class="table">
+                                <thead>
+                                <tr>
+                                    <th th:text="#{projects.meta.reference-file.name}">__Reference File Name__</th>
+                                    <th th:text="#{projects.meta.reference-file.createdDate}">__Date Added__</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="file : ${referenceFiles}">
+                                    <td class="file-name" th:text="${file.label}"></td>
+                                    <td data:livestamp="${file.createdDate}"></td>
+                                    <td class="text-right">
+                                        <button data:file-id="${file.id}" class="btn btn-danger btn-xs"
+                                                data:tooltip="#{form.btn.remove}"><span
+                                                class="fa fa-trash-o fa-fw"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <input type="file" name="file_upload" id="file_upload"/>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
         <aside th:replace="projects/project_base :: sidebar"></aside>
     </div>
+    <script type="text/html" id="row-template">
+        <tr>
+            <td class="file-name">{{name}}</td>
+            <td class="file-date" data-livestamp="{{date}}"></td>
+            <td class="text-right">
+                <button data-file-id="{{id}}" class="btn btn-danger btn-xs"
+                        data:tooltip="#{form.btn.remove}">
+                    <span class="fa fa-trash-o fa-fw"></span>
+                </button>
+            </td>
+        </tr>
+
+    </script>
+    <script type="text/html" id="delete-template">
+        <h2 th:text="#{projects.meta.reference-file.delete-title}">__DELETE_REFERENCE_FILE</h2>
+        <p th:text="#{projects.meta.reference-file.delete-msg}"></p>
+    </script>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
     <div th:replace="projects/project_base :: scripts"></div>
+    <script src="/resources/bower_components/uploadify/jquery.uploadify.js"></script>
+
+    <script>
+        function showErrorModal(msg) {
+            noty({
+                text: msg,
+                layout: "topCenter",
+                type: "error",
+                timeout: 3200
+            });
+        }
+        function showSuccessModal(msg) {
+            noty({
+                text: msg,
+                layout: "topCenter",
+                type: "success",
+                timeout: 3200
+            });
+        }
+        $(function() {
+            var tableBody = $("#referenceFileTable").find('tbody');
+            $('#file_upload').uploadify({
+                'swf'      : /*[[@{/resources/bower_components/uploadify/uploadify.swf}]]*/ '/resources/bower_components/uploadify/uploadify.swf',
+                'uploader': /*[[@{/referenceFiles/project/{projectId}/new(projectId=${project.getId()})}]]*/ '/referenceFiles/project/1/new',
+                'cancelImg': /*[[@{/resources/bower_components/uploadify/uploadify-cancel.png}]]*/ '/resources/bower_components/uploadify/cancel.png',
+                'buttonText': /*[[#{form.btn.upload-reference}]]*/ "Upload New Reference",
+                'auto': true,
+                'multi': false,
+                'fileObjName': 'files',
+                'height': '33px',
+                'width': '200px',
+                'onUploadSuccess': function (file, data) {
+                    var response = JSON.parse(data);
+                    var template = $("#row-template").html();
+                    var content = Mustache.render(template, {'name': file.name, 'id': response.id, date: new Date()});
+                    tableBody.append(content);
+                    tableBody.find('[data-tooltip!=""]').qtip(options);
+                },
+                'onUploadError': function (file, errorCode, errorMsg, errorString) {
+                    showErrorModal('The file ' + file.name + ' could not be uploaded: ' + errorString);
+                }
+            });
+
+            var options = {
+                content: {
+                    attr: 'data-tooltip'
+                },
+                position: {
+                    at: 'top center',
+                    my: 'bottom center'
+                },
+                style: {
+                    classes: 'qtip-tipsy qtip-shadow'
+                }
+            };
+            $('[data-tooltip!=""]').qtip(options);
+
+            tableBody.on('click', ".btn-danger", function () {
+                var $this = $(this),
+                        id = $this.data('file-id'),
+                        row = $this.closest('tr'),
+                        projectName = /*[[${project.label}]]*/ 'Project Name',
+                        template = $("#delete-template").html(),
+                        fileName = $(row).find("td.file-name").html();
+                $this.qtip('hide', true);
+
+                noty({
+                    'layout': 'center',
+                    'type': 'confirm',
+                    'text': Mustache.render(template, {'name': fileName, 'project': projectName}),
+                    'modal': 'true',
+                    'buttons': [
+                        {
+                            addClass: 'btn btn-primary btn-sm',
+                            text: /*[[#{form.btn.confim}]]*/ 'OK',
+                            onClick: function ($noty) {
+                                $noty.close();
+                                $.ajax({
+                                    type: 'post',
+                                    url: /*[[@{/referenceFiles/delete/}]]*/ '/referenceFiles/delete/',
+                                    data: "fileId=" + id,
+                                    success: function () {
+                                        $this.qtip('destroy', true);
+                                        $(row).fadeOut(300, function () {
+                                            $(this).remove();
+                                        });
+                                        var msg = /*[[#{projects.meta.reference-file.delete-success}]]*/ 'Reference file successfully removed';
+                                        showErrorModal(Mustache.render(msg, {'name' : fileName, 'project': projectName}));
+                                    },
+                                    error: function (data) {
+                                        var msg = /*[[#{projects.meta.reference-file.delete-error}]]*/ "__Error deleting reference file__";
+                                        showErrorModal(Mustache.render(msg, {'name' : fileName, 'project': projectName}));
+                                    }
+                                });
+
+                            }
+                        },
+                        {
+                            addClass: 'btn btn-default btn-sm',
+                            text: /*#{form.btn.cancel}*/ 'Cancel',
+                            onClick: function ($noty) {
+                                $noty.close();
+                            }
+                        }
+                    ]
+                });
+
+            });
+        });
+    </script>
 </div>
 </body>
 </html>

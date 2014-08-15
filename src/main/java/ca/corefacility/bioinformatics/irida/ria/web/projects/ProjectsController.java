@@ -234,6 +234,13 @@ public class ProjectsController {
 				model.addAttribute("errors", new HashMap<>());
 			}
 			projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+
+			// Let's add the reference files
+			List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
+			List<ReferenceFile> referenceFiles = joinList.stream().map(Join::getObject)
+					.collect(Collectors.toList());
+
+			model.addAttribute("referenceFiles", referenceFiles);
 			model.addAttribute("project", project);
 			model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
 			return PROJECT_METADATA_EDIT_PAGE;

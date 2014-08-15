@@ -13,7 +13,9 @@
     "select2": "3.5.0",
     "jquery": "2.1.1",
     "noty": "~2.2.5",
-    "mustache": "0.8.2"
+    "mustache": "0.8.2",
+    "uploadify": "3.2.1",
+    "font-awesome-css": "4.0.3"
   },
   "devDependencies": {}
 }

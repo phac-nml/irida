@@ -1,8 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.config;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
-import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
-import nz.net.ultraq.thymeleaf.LayoutDialect;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +14,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.thymeleaf.dialect.IDialect;
@@ -25,9 +31,11 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+
+import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
+
+import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 /**
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
@@ -46,6 +54,8 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 	private static final String DEFAULT_ENCODING = "UTF-8";
 	private static final String[] RESOURCE_LOCATIONS = { "classpath:/i18n/messages", "classpath:/i18n/mobile" };
 	private static final Logger logger = LoggerFactory.getLogger(WebConfigurer.class);
+	public static final long MAX_UPLOAD_SIZE = 20971520L;
+	public static final int MAX_IN_MEMORY_SIZE = 1048576;
 	@Autowired
 	private Environment env;
 
@@ -125,6 +135,14 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		viewResolver.setTemplateEngine(templateEngine());
 		viewResolver.setOrder(1);
 		return viewResolver;
+	}
+
+	@Bean
+	public CommonsMultipartResolver multipartResolver() {
+		CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+		resolver.setMaxUploadSize(MAX_UPLOAD_SIZE);
+		resolver.setMaxInMemorySize(MAX_IN_MEMORY_SIZE);
+		return resolver;
 	}
 
 	@Override

@@ -25,9 +25,9 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
-
 /**
  * IT for the client details page
+ * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
@@ -41,7 +41,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 public class ClientDetailsPageIT {
 	private WebDriver driver;
 	private ClientDetailsPage page;
-	
+
 	Long id = 1l;
 	String clientId = "testClient";
 
@@ -52,7 +52,7 @@ public class ClientDetailsPageIT {
 		LoginPage loginPage = LoginPage.to(driver);
 		loginPage.doLogin();
 
-		page = new ClientDetailsPage(driver,id);
+		page = new ClientDetailsPage(driver, id);
 	}
 
 	@After
@@ -67,6 +67,13 @@ public class ClientDetailsPageIT {
 	public void testCheckClientsPageNumber() {
 		assertTrue(page.verifyClient(id, clientId));
 
+	}
+
+	@Test
+	public void testDeleteClient() {
+		page.clickDeleteButton();
+		page.confirmDelete();
+		assertTrue(page.checkDeleteSuccess());
 	}
 
 }
