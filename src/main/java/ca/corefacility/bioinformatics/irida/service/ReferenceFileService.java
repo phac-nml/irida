@@ -36,4 +36,10 @@ public interface ReferenceFileService extends CRUDService<Long, ReferenceFile> {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadReferenceFile')")
 	public ReferenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException;
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canUpdateReferenceFile')")
+	public void delete(Long id);
 }

@@ -75,4 +75,25 @@ public class ReferenceFileServiceImplIT {
 		ReferenceFile read = referenceFileService.read(1l);
 		assertNotNull(read);
 	}
+	
+	@Test
+	@WithMockUser(username = "fbristow", roles= "USER")
+	public void testDeleteReferenceFile() {
+		Project p = projectService.read(1L);
+		List<Join<Project, ReferenceFile>> prs = referenceFileService.getReferenceFilesForProject(p);
+		assertEquals("Wrong number of reference files for project.", 1, prs.size());
+		ReferenceFile rf = prs.iterator().next().getObject();
+		assertEquals("Wrong reference file attached to project.", Long.valueOf(1), rf.getId());
+		
+		referenceFileService.delete(rf.getId());
+		p = projectService.read(1L);
+		prs = referenceFileService.getReferenceFilesForProject(p);
+		assertEquals("No more reference files should be in the project.", 0, prs.size());
+	}
+	
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "user", roles = "USER")
+	public void testDeleteRefereneFilePermissionDenied() {
+		referenceFileService.delete(1L);
+	}
 }
