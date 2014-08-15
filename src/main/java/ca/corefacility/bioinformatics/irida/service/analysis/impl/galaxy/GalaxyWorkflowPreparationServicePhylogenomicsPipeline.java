@@ -33,12 +33,12 @@ public class GalaxyWorkflowPreparationServicePhylogenomicsPipeline {
 	private GalaxyHistoriesService galaxyHistoriesService;
 	private GalaxyWorkflowService galaxyWorkflowService;
 	
-	public class GalaxyPreparedWorkflow {
+	public class GalaxyPreparedWorkflowPhylogenomicsPipeline {
 		private CollectionResponse sequenceFilesCollection;
 		private Dataset referenceDataset;
 		private History workflowHistory;
 		
-		public GalaxyPreparedWorkflow(CollectionResponse sequenceFilesCollection,
+		public GalaxyPreparedWorkflowPhylogenomicsPipeline(CollectionResponse sequenceFilesCollection,
 				Dataset referenceDataset, History workflowHistory) {
 			this.sequenceFilesCollection = sequenceFilesCollection;
 			this.referenceDataset = referenceDataset;
@@ -64,7 +64,7 @@ public class GalaxyWorkflowPreparationServicePhylogenomicsPipeline {
 		this.galaxyWorkflowService = galaxyWorkflowService;
 	}
 	
-	public GalaxyPreparedWorkflow prepareWorkflowFiles(AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission) throws ExecutionManagerException {
+	public GalaxyPreparedWorkflowPhylogenomicsPipeline prepareWorkflowFiles(AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission) throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		
 		Set<SequenceFile> sequenceFiles = analysisSubmission.getInputFiles();
@@ -85,11 +85,11 @@ public class GalaxyWorkflowPreparationServicePhylogenomicsPipeline {
 		CollectionResponse collectionResponse = 
 				galaxyHistoriesService.constructCollectionList(sequenceDatasets, workflowHistory);
 
-		return new GalaxyPreparedWorkflow(collectionResponse, referenceDataset, workflowHistory);
+		return new GalaxyPreparedWorkflowPhylogenomicsPipeline(collectionResponse, referenceDataset, workflowHistory);
 	}
 	
 	public WorkflowInputs prepareWorkflowInput(AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission,
-			GalaxyPreparedWorkflow preparedWorkflow) throws WorkflowException {
+			GalaxyPreparedWorkflowPhylogenomicsPipeline preparedWorkflow) throws WorkflowException {
 		RemoteWorkflowGalaxy remoteWorkflow = analysisSubmission.getRemoteWorkflow();
 		
 		String workflowId = remoteWorkflow.getWorkflowId();
