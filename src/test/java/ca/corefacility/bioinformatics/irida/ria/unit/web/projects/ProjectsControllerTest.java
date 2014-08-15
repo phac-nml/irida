@@ -13,6 +13,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -247,7 +248,7 @@ public class ProjectsControllerTest {
 	}
 
 	@Test
-	public void testGetProjectMetadataPage() {
+	public void testGetProjectMetadataPage() throws IOException {
 		Model model = new ExtendedModelMap();
 		Principal principal = () -> USER_NAME;
 		String page = controller.getProjectMetadataPage(model, principal, PROJECT_ID);
@@ -258,7 +259,7 @@ public class ProjectsControllerTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testPostProjectMetadataEditPage() {
+	public void testPostProjectMetadataEditPage() throws IOException {
 		Model model = new ExtendedModelMap();
 		Principal principal = () -> USER_NAME;
 
