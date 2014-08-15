@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
@@ -48,6 +49,7 @@ public class ReferenceFileServiceImpl extends CRUDServiceImpl<Long, ReferenceFil
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional
 	public ReferenceFile update(Long id, Map<String, Object> updatedFields) throws ConstraintViolationException,
 			EntityExistsException, InvalidPropertyException {
 		return super.update(id, updatedFields);
@@ -71,9 +73,13 @@ public class ReferenceFileServiceImpl extends CRUDServiceImpl<Long, ReferenceFil
 		throw new UnsupportedOperationException("Reference file must be created in a project");
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
+	@Transactional
 	public void delete(Long id) throws EntityNotFoundException {
-		throw new UnsupportedOperationException("Reference file must be deleted from a project");
+		super.delete(id);
 	}
 
 }
