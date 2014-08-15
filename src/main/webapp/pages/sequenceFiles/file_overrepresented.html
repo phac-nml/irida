@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="templates/wet-boew/wet-layout">
 <head>
-    <title th:text="${file.label}">THIS IS SOMETHING WRONG</title>
+    <title th:text="${file.getLabel()}">THIS IS SOMETHING WRONG</title>
 </head>
 <body>
 <div class="container" layout:fragment="content">
@@ -13,7 +13,7 @@
     <div class="row">
         <nav th:replace="sequenceFiles/file_base :: nav"></nav>
         <main class="col-md-8 col-md-push-4" role="main" property="mainContentOfPage">
-            <h1 id="wb-cont" role="heading" th:text="${file.label}"></h1>
+            <h1 id="wb-cont" role="heading" th:text="${file.getLabel()}"></h1>
 
             <p class="lead" th:text="${fastQC.description}">...</p>
 
@@ -46,9 +46,9 @@
     <script>
         /*<![CDATA[*/
         $("#orTable").dataTable({
-            dom: "<'top'il>rt<'bottom'p><'clear'>",
+            dom      : "<'top'il>rt<'bottom'p><'clear'>",
             "bFilter": false,
-            "bSort": false
+            "bSort"  : false
         });
         /*]]>*/
     </script>

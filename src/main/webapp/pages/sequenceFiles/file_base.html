@@ -6,8 +6,8 @@
 </head>
 <body>
 <nav class="navbar navbar-default navbar-sm" role="navigation" th:fragment="nav">
-    <ul class="nav navbar-nav" th:inline="text" th:with="baseLink=${'/sequenceFiles/' + file.id}">
-        <li th:class="${activeNav} == 'dashboard' ? 'active'"><a th:href="@{${baseLink}}"><span
+    <ul class="nav navbar-nav" th:inline="text" th:with="baseLink=${'/sequenceFiles/' + file.getId()}">
+    <li th:class="${activeNav} == 'dashboard' ? 'active'"><a th:href="@{${baseLink}}"><span
                 class="glyphicon glyphicon-home"></span></a></li>
         <li th:class="${activeNav} == 'overrepresented' ? 'active'"><a th:href="@{${baseLink} + '/overrepresented'}">Overrepresented
             Sequences<span class="badge" th:text="${fastQC.overrepresentedSequences.size()}"></span></a></li>
@@ -32,7 +32,7 @@
                 <li>
                     <i class="glyphicon glyphicon-barcode"></i>
                     <em th:text="#{sf.sidebar.file-id}"></em>
-                    <span id="file-id" th:text="${file.id}"></span></li>
+                    <span id="file-id" th:text="${file.getId()}"></span></li>
                 <li>
                     <i class="glyphicon glyphicon-calendar"></i>
                     <em th:text="#{sf.sidebar.created}"></em>
@@ -74,7 +74,7 @@
     <script>
         $("#fileDownload").on('click', function () {
             var iframe = document.getElementById('invisible');
-            iframe.src = /*[[@{'/sequenceFiles/download/' + ${file.id}}]]*/ '/sequenceFiles/download/11';
+            iframe.src = /*[[@{'/sequenceFiles/download/' + ${file.getId()}}]]*/ '/sequenceFiles/download/11';
         });
     </script>
 </div>

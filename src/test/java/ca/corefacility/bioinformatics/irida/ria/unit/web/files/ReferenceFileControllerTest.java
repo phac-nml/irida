@@ -68,13 +68,13 @@ public class ReferenceFileControllerTest {
 		byte[] origBytes = Files.readAllBytes(path);
 		MockMultipartFile mockMultipartFile = new MockMultipartFile(FILE_NAME, FILE_NAME, "octet-stream",origBytes);
 		Project project = new Project("foo"); // TODO: (14-08-14 - Josh) look at Franklin's TestDataFactory
-		ReferenceFile referenceFile = new ReferenceFile(path);
+		ReferenceFile referenceFile = new TestReferenceFile(path, 2L);
 
 		when(projectService.read(PROJECT_ID)).thenReturn(project);
 		when(projectService.addReferenceFileToProject(eq(project), any(ReferenceFile.class)))
 				.thenReturn(new ProjectReferenceFileJoin(project, referenceFile));
 
-		Map<String, Long> result = controller.createNewReferenceFile(PROJECT_ID, mockMultipartFile);
+		Map<String, String> result = controller.createNewReferenceFile(PROJECT_ID, mockMultipartFile);
 
 		assertTrue("Should contain the id of the new sequence file", result.containsKey("id"));
 
@@ -101,5 +101,19 @@ public class ReferenceFileControllerTest {
 		byte[] origBytes = Files.readAllBytes(path);
 		byte[] responseBytes = response.getContentAsByteArray();
 		assertArrayEquals("Response contents the correct file content", origBytes, responseBytes);
+	}
+
+	class TestReferenceFile extends ReferenceFile {
+		private Long id;
+
+		public TestReferenceFile(Path path, Long id) {
+			super(path);
+			this.id = id;
+		}
+
+		@Override
+		public Long getId() {
+			return this.id;
+		}
 	}
 }

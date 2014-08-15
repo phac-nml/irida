@@ -31,7 +31,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="projectOrganism" th:text="#{projects.create.form.organism}">Project
-                                                                                                        Organism</label>
+                                    Organism</label>
 
                                 <div th:if="${#maps.containsKey(errors, 'organism')}" class="alert alert-warning"
                                      th:text="${errors.organism}"></div>
@@ -44,7 +44,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="projectDescription" th:text="#{projects.create.form.description}">Project
-                                                                                                              Description</label>
+                                    Description</label>
 
                                 <div th:if="${#maps.containsKey(errors, 'description')}" class="alert alert-warning"
                                      th:text="${errors.description}"></div>
@@ -77,6 +77,7 @@
                                 <thead>
                                 <tr>
                                     <th th:text="#{projects.meta.reference-file.name}">__Reference File Name__</th>
+                                    <th th:text="#{projects.meta.reference-file.size}">__File Size__</th>
                                     <th th:text="#{projects.meta.reference-file.createdDate}">__Date Added__</th>
                                     <th></th>
                                 </tr>
@@ -84,7 +85,8 @@
                                 <tbody>
                                 <tr th:each="file : ${referenceFiles}">
                                     <td class="file-name" th:text="${file.label}"></td>
-                                    <td data:livestamp="${file.createdDate}"></td>
+                                    <td th:text="${file.size}"></td>
+                                    <td data:livestamp="${file.createdDate}" th:text="${file.createdDate}"></td>
                                     <td class="text-right">
                                         <button data:file-id="${file.id}" class="btn btn-danger btn-xs"
                                                 data:tooltip="#{form.btn.remove}"><span
@@ -94,7 +96,13 @@
                                 </tr>
                                 </tbody>
                             </table>
-                            <input type="file" name="file_upload" id="file_upload"/>
+                        </div>
+                        <div class="panel-footer text-right">
+                            <span class="btn btn-primary fileinput-button">
+                                <i class="fa fa-plus fa-fw"></i>
+                                <span th:text="#{form.btn.upload-reference}">Select files...</span>
+                                <input id="fileupload" type="file" name="files[]" multiple="true"/>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -104,8 +112,9 @@
     </div>
     <script type="text/html" id="row-template">
         <tr>
-            <td class="file-name">{{name}}</td>
-            <td class="file-date" data-livestamp="{{date}}"></td>
+            <td class="file-name">{{label}}</td>
+            <td>{{size}}</td>
+            <td class="file-date" data-livestamp="{{createdDate}}"></td>
             <td class="text-right">
                 <button data-file-id="{{id}}" class="btn btn-danger btn-xs"
                         data:tooltip="#{form.btn.remove}">
@@ -122,8 +131,9 @@
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
     <div th:replace="projects/project_base :: scripts"></div>
-    <script src="/resources/bower_components/uploadify/jquery.uploadify.js"></script>
-
+    <script src="/resources/bower_components/jquery-file-upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="/resources/bower_components/jquery-file-upload/js/jquery.iframe-transport.js"></script>
+    <script src="/resources/bower_components/jquery-file-upload/js/jquery.fileupload.js"></script>
     <script>
         function showErrorModal(msg) {
             noty({
@@ -141,29 +151,27 @@
                 timeout: 3200
             });
         }
-        $(function() {
-            var tableBody = $("#referenceFileTable").find('tbody');
-            $('#file_upload').uploadify({
-                'swf'      : /*[[@{/resources/bower_components/uploadify/uploadify.swf}]]*/ '/resources/bower_components/uploadify/uploadify.swf',
-                'uploader': /*[[@{/referenceFiles/project/{projectId}/new(projectId=${project.getId()})}]]*/ '/referenceFiles/project/1/new',
-                'cancelImg': /*[[@{/resources/bower_components/uploadify/uploadify-cancel.png}]]*/ '/resources/bower_components/uploadify/cancel.png',
-                'buttonText': /*[[#{form.btn.upload-reference}]]*/ "Upload New Reference",
-                'auto': true,
-                'multi': false,
-                'fileObjName': 'files',
-                'height': '33px',
-                'width': '200px',
-                'onUploadSuccess': function (file, data) {
-                    var response = JSON.parse(data);
+        $(function () {
+            var tableBody = $("#referenceFileTable").find('tbody'),
+                projectName = /*[[${project.label}]]*/ 'Project Name';
+
+            $("#fileupload").fileupload({
+                url     : /*[[@{/referenceFiles/project/{projectId}/new(projectId=${project.getId()})}]]*/ '/referenceFiles/project/1/new',
+                dataType: 'json',
+                done    : function (e, data) {
                     var template = $("#row-template").html();
-                    var content = Mustache.render(template, {'name': file.name, 'id': response.id, date: new Date()});
+                    var content = Mustache.render(template, data.result);
                     tableBody.append(content);
-                    tableBody.find('[data-tooltip!=""]').qtip(options);
+                    tableBody.find('tr:last [data-tooltip!=""]').qtip(options);
+                    var msg = /*[[#{projects.meta.reference-file.add-success}]]*/ 'File added to project';
+                    showSuccessModal(Mustache.render(msg, {'name': data.result.label, 'project': projectName}));
                 },
-                'onUploadError': function (file, errorCode, errorMsg, errorString) {
-                    showErrorModal('The file ' + file.name + ' could not be uploaded: ' + errorString);
+                error   : function (e, data) {
+                    var msg = /*#{projects.meta.reference-file.add-error}*/ '__ERROR_MSG__';
+                    showErrorModal(Mustache.render(msg, {'name': data.result.label, 'project': projectName}));
                 }
-            });
+            }).prop('disabled', !$.support.fileInput)
+                    .parent().addClass($.support.fileInput ? undefined : 'disabled');
 
             var options = {
                 content: {
@@ -181,39 +189,38 @@
 
             tableBody.on('click', ".btn-danger", function () {
                 var $this = $(this),
-                        id = $this.data('file-id'),
-                        row = $this.closest('tr'),
-                        projectName = /*[[${project.label}]]*/ 'Project Name',
-                        template = $("#delete-template").html(),
-                        fileName = $(row).find("td.file-name").html();
+                    id = $this.data('file-id'),
+                    row = $this.closest('tr'),
+                    template = $("#delete-template").html(),
+                    fileName = $(row).find("td.file-name").html();
                 $this.qtip('hide', true);
 
                 noty({
-                    'layout': 'center',
-                    'type': 'confirm',
-                    'text': Mustache.render(template, {'name': fileName, 'project': projectName}),
-                    'modal': 'true',
+                    'layout' : 'center',
+                    'type'   : 'confirm',
+                    'text'   : Mustache.render(template, {'name': fileName, 'project': projectName}),
+                    'modal'  : 'true',
                     'buttons': [
                         {
                             addClass: 'btn btn-primary btn-sm',
-                            text: /*[[#{form.btn.confim}]]*/ 'OK',
+                            text   : /*[[#{form.btn.confim}]]*/ 'OK',
                             onClick: function ($noty) {
                                 $noty.close();
                                 $.ajax({
-                                    type: 'post',
-                                    url: /*[[@{/referenceFiles/delete/}]]*/ '/referenceFiles/delete/',
-                                    data: "fileId=" + id,
+                                    type   : 'post',
+                                    url    : /*[[@{/referenceFiles/delete/}]]*/ '/referenceFiles/delete/',
+                                    data   : "fileId=" + id,
                                     success: function () {
                                         $this.qtip('destroy', true);
                                         $(row).fadeOut(300, function () {
                                             $(this).remove();
                                         });
                                         var msg = /*[[#{projects.meta.reference-file.delete-success}]]*/ 'Reference file successfully removed';
-                                        showErrorModal(Mustache.render(msg, {'name' : fileName, 'project': projectName}));
+                                        showSuccessModal(Mustache.render(msg, {'name': fileName, 'project': projectName}));
                                     },
-                                    error: function (data) {
+                                    error  : function (data) {
                                         var msg = /*[[#{projects.meta.reference-file.delete-error}]]*/ "__Error deleting reference file__";
-                                        showErrorModal(Mustache.render(msg, {'name' : fileName, 'project': projectName}));
+                                        showErrorModal(Mustache.render(msg, {'name': fileName, 'project': projectName}));
                                     }
                                 });
 
