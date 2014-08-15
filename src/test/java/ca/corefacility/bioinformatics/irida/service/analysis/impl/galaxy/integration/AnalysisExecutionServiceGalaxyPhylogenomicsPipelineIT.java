@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.integr
 
 import static org.junit.Assert.*;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,11 +42,14 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflo
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.impl.galaxy.AnalysisExecutionServiceGalaxyPhylogenomicsPipeline;
 
+import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
+import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.google.common.collect.Lists;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
@@ -196,5 +200,52 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 			setWorkflowId(localGalaxy.getInvalidWorkflowId());
 		
 		workflowManagement.executeAnalysis(analysisSubmission);
+	}
+	
+	public static void main(String[] args) throws URISyntaxException, ExecutionManagerException {
+		StandardPasswordEncoder passwordCoder = new StandardPasswordEncoder();
+		String workflowId = "ebfb8f50c6abde6d";
+		
+		GalaxyInstance galaxyInstance = GalaxyInstanceFactory.get("http://localhost:8888", "3196a4a894a8bccbefc32ccff25ddf9d");
+		WorkflowsClient workflowsClient = galaxyInstance.getWorkflowsClient();
+		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
+		ToolsClient toolsClient = galaxyInstance.getToolsClient();
+		
+		String checksum = passwordCoder.encode(workflowsClient.exportWorkflow(workflowId));
+		
+		GalaxyHistoriesService historiesService = new GalaxyHistoriesService(historiesClient, toolsClient);
+		GalaxyWorkflowService workflowService = new GalaxyWorkflowService(historiesClient, workflowsClient,
+				new StandardPasswordEncoder());
+		
+		AnalysisExecutionServiceGalaxyPhylogenomicsPipeline analysisService = 
+				new AnalysisExecutionServiceGalaxyPhylogenomicsPipeline(
+						historiesService, workflowService);
+		
+		SequenceFile a1 = new SequenceFile(Paths.get(new URI("file:////home/aaron/workspace/irida-api/1/input/fastq/a_1.fastq")));
+		SequenceFile a2 = new SequenceFile(Paths.get(new URI("file:////home/aaron/workspace/irida-api/1/input/fastq/a_2.fastq")));
+		SequenceFile b1 = new SequenceFile(Paths.get(new URI("file:////home/aaron/workspace/irida-api/1/input/fastq/b_1.fastq")));
+		SequenceFile b2 = new SequenceFile(Paths.get(new URI("file:////home/aaron/workspace/irida-api/1/input/fastq/b_2.fastq")));
+		SequenceFile c1 = new SequenceFile(Paths.get(new URI("file:////home/aaron/workspace/irida-api/1/input/fastq/c_1.fastq")));
+		SequenceFile c2 = new SequenceFile(Paths.get(new URI("file:////home/aaron/workspace/irida-api/1/input/fastq/c_2.fastq")));
+		ReferenceFile reference = new ReferenceFile(Paths.get(new URI("file:////home/aaron/workspace/irida-api/1/input/reference.fasta")));
+		
+		Set<SequenceFile> sequenceFiles = new HashSet<>();
+		sequenceFiles.addAll(Lists.newArrayList(a1,b1,c1));
+		
+		RemoteWorkflowGalaxy remoteWorkflow =
+				new RemoteWorkflowGalaxy(workflowId,checksum);
+		
+		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission = 
+				new AnalysisSubmissionGalaxyPhylogenomicsPipeline(sequenceFiles,
+						reference, remoteWorkflow);
+		
+		analysisService.executeAnalysis(analysisSubmission);
+		
+		WorkflowOutputs outputs = analysisSubmission.getOutputs();
+		for (String outputId : outputs.getOutputIds()) {
+			System.out.println("output:"+ outputId);
+		}
+		
+		
 	}
 }
