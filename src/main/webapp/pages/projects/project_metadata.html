@@ -72,7 +72,7 @@
                                 <tbody>
                                 <tr th:each="file : ${referenceFiles}">
                                     <td class="refFileName" th:text="${file.label}"></td>
-                                    <td>{{size}}</td>
+                                    <td th:text="${file.size}"></td>
                                     <td data:livestamp="${file.createdDate}" th:text="${file.createdDate}"></td>
                                     <td class="text-right">
                                         <button data:file-id="${file.id}" class="btn btn-default btn-xs btn-download" data:tooltip="#{form.download}"><span
