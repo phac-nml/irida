@@ -92,7 +92,7 @@ public class ClientsController {
 
 		String grants = getAuthorizedGrantTypesString(client);
 		model.addAttribute("client", client);
-		
+
 		model.addAttribute("grants", grants);
 		return CLIENT_DETAILS_PAGE;
 	}
@@ -159,6 +159,20 @@ public class ClientsController {
 		}
 
 		return responsePage;
+	}
+
+	/**
+	 * Remove a client with the given id
+	 * 
+	 * @param id
+	 *            The ID to remove
+	 * @return redirect to the clients list
+	 */
+	@RequestMapping(value = "/remove", method = RequestMethod.POST)
+	public String removeClient(@RequestParam Long id) {
+		clientDetailsService.delete(id);
+
+		return "redirect:/clients";
 	}
 
 	/**

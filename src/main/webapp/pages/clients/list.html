@@ -45,8 +45,12 @@
                 order: [[1, "desc"]],
                 columnDefs: [
                     {
+                    	'className': "clientIdCol",
+                    	'targets': 0
+                    },
+                    {
                         'render': function (data, type, row) {
-                            return '<a href="' + [[@{/clients/}]] + row[0] + '">' + data + '</a>';
+                            return '<a class="clientLink" href="' + [[@{/clients/}]] + row[0] + '">' + data + '</a>';
                         },
                         'targets':1
                     }
