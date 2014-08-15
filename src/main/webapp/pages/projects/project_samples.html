@@ -941,7 +941,7 @@ $(document).ready(function () {
 
                 // Ajax call to get applicable pipelines.
                 $.ajax({
-                    url: /*@{/projects/ajax/{projectId}/referenceFiles(projectId=${project.id})}*/ '/projects/ajax/1/referenceFiles',
+                    url: /*[[@{/projects/ajax/{projectId}/referenceFiles(projectId=${project.getId()})}]]*/ '/projects/ajax/1/referenceFiles',
                     success: function(data){
                         $("#reference").select2({
                             data: data,
