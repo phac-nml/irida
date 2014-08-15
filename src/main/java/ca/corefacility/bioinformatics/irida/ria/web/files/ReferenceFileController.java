@@ -84,8 +84,14 @@ public class ReferenceFileController {
 	}
 
 	@RequestMapping("/delete")
-	public @ResponseBody String deleteReferenceFile(@RequestParam Long fileId) {
-		// TODO: (14-08-14 - Josh) This will be done in next branch.
+	public @ResponseBody String deleteReferenceFile(@RequestParam Long fileId, HttpServletResponse response) {
+		try {
+			referenceFileService.delete(fileId);
+		} catch (Exception e) {
+			// This is required else the client does not know that an error was thrown!
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return e.getLocalizedMessage();
+		}
 		return "success";
 	}
 }
