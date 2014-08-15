@@ -133,6 +133,14 @@
                 timeout: 3200
             });
         }
+        function showSuccessModal(msg) {
+            noty({
+                text: msg,
+                layout: "topCenter",
+                type: "error",
+                timeout: 3200
+            });
+        }
         $(function() {
             var tableBody = $("#referenceFileTable").find('tbody');
             $('#file_upload').uploadify({
@@ -200,6 +208,8 @@
                                         $(row).fadeOut(300, function () {
                                             $(this).remove();
                                         });
+                                        var msg = /*[[#{projects.meta.reference-file.delete-success}]]*/ 'Reference file successfully removed';
+                                        showErrorModal(Mustache.render(msg, {'name' : fileName, 'project': projectName}));
                                     },
                                     error: function (data) {
                                         var msg = /*[[#{projects.meta.reference-file.delete-error}]]*/ "__Error deleting reference file__";
