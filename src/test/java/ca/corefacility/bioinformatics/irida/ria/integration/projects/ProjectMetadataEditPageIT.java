@@ -1,13 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataEditPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataPage;
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +16,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import static org.junit.Assert.assertEquals;
+import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataEditPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataPage;
+
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
  * Edit Project Metadata Integration Test
@@ -88,8 +90,8 @@ public class ProjectMetadataEditPageIT {
         ProjectMetadataPage metadataPage = new ProjectMetadataPage(driver);
         driver.get("http://localhost:8080/projects/" + PROJECT_ID_OWNER + "/metadata");
         assertEquals("Updated the project name", GOOD_PROJECT_NAME, metadataPage.getDataProjectName());
-        assertEquals("Updated the oragnism", GOOD_PROJECT_ORGANISM, metadataPage.getDataProjectOrganism());
-        assertEquals("Updated the description", GOOD_PROJECT_DESCRIPTION, metadataPage.getDataProjectDescription());
+	    assertEquals("Updated the organism", GOOD_PROJECT_ORGANISM, metadataPage.getDataProjectOrganism());
+	    assertEquals("Updated the description", GOOD_PROJECT_DESCRIPTION, metadataPage.getDataProjectDescription());
         assertEquals("Updated the remoteULR", GOOD_PROJECT_REMOTEURL, metadataPage.getDataProjectRemoteURL());
     }
 
