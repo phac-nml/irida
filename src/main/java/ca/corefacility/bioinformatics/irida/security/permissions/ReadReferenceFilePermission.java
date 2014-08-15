@@ -24,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 @Component
 public class ReadReferenceFilePermission extends BasePermission<ReferenceFile> {
 
-	private static final String PERMISSION_PROVIDED = "canReadReferenceFile";
+	public static final String PERMISSION_PROVIDED = "canReadReferenceFile";
 
 	private UserRepository userRepository;
 	private ProjectUserJoinRepository pujRepository;
