@@ -1,13 +1,17 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.exception;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.web.assembler.lookup.ModelLookup;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
-import com.google.gson.Gson;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,10 +25,13 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.web.assembler.lookup.ModelLookup;
 
-import java.util.*;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
 /**
  * Globally handles exceptions thrown by controllers.
@@ -38,7 +45,7 @@ public class ControllerExceptionHandler {
 
 	private static final MediaType[] ACCEPTABLE_MEDIA_TYPES_ARRAY = new MediaType[] { MediaType.APPLICATION_JSON,
 			MediaType.APPLICATION_XML };
-	private static final String ACCEPTABLE_MEDIA_TYPES = Arrays.toString(ACCEPTABLE_MEDIA_TYPES_ARRAY);	
+	private static final String ACCEPTABLE_MEDIA_TYPES = Arrays.toString(ACCEPTABLE_MEDIA_TYPES_ARRAY);
 
 	/**
 	 * Handle {@link Exception}.
@@ -66,20 +73,19 @@ public class ControllerExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleInvalidPropertyException(InvalidPropertyException e) {
 		logger.error("A client attempted to update a resource with an" + " invalid property at " + new Date()
 				+ ". The stack trace follows: ", e);
-		
+
 		ErrorResponse errorResponse;
 		Class<? extends Object> affectedClass = e.getAffectedClass();
-		if(affectedClass != null){
+		if (affectedClass != null) {
 			List<String> properties = ModelLookup.getProperties(affectedClass);
 			String message = "Cannot update resource with supplied properties.";
 			errorResponse = new ErrorResponse(message);
 			errorResponse.addProperty("available-properties", properties);
-		}
-		else{
+		} else {
 			String message = "Cannot update resource with supplied properties: " + e.getMessage();
 			errorResponse = new ErrorResponse(message);
 		}
-		
+
 		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
 	}
 
@@ -94,8 +100,8 @@ public class ControllerExceptionHandler {
 	 */
 	@ExceptionHandler(EntityNotFoundException.class)
 	public ResponseEntity<ErrorResponse> handleNotFoundException(EntityNotFoundException e) {
-		logger.info("A client attempted to retrieve a resource with an identifier that does not exist at "
-				+ new Date() + ".");
+		logger.info("A client attempted to retrieve a resource with an identifier that does not exist at " + new Date()
+				+ ".");
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
@@ -107,7 +113,7 @@ public class ControllerExceptionHandler {
 	 * @return an appropriate HTTP response.
 	 */
 	@ExceptionHandler(ConstraintViolationException.class)
-	public ResponseEntity<String> handleConstraintViolations(ConstraintViolationException e) {
+	public ResponseEntity<Map<String, List<String>>> handleConstraintViolations(ConstraintViolationException e) {
 		Set<ConstraintViolation<?>> constraintViolations = new HashSet<>();
 		for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
 			constraintViolations.add(violation);
@@ -128,8 +134,10 @@ public class ControllerExceptionHandler {
 	@ExceptionHandler(EntityExistsException.class)
 	public ResponseEntity<ErrorResponse> handleExistsException(EntityExistsException e) {
 		logger.info("A client attempted to create a new resource with an identifier that exists, "
-				+ "or modify a resource to have an identifier that already exists at " + new Date() + " : " + e.getMessage());
-		return new ResponseEntity<>(new ErrorResponse("An entity already exists with that identifier: " +e.getMessage()), HttpStatus.CONFLICT);
+				+ "or modify a resource to have an identifier that already exists at " + new Date() + " : "
+				+ e.getMessage());
+		return new ResponseEntity<>(new ErrorResponse("An entity already exists with that identifier: "
+				+ e.getMessage()), HttpStatus.CONFLICT);
 	}
 
 	/**
@@ -173,12 +181,12 @@ public class ControllerExceptionHandler {
 			// this is thrown when Jackson tries to de-serialize JSON into an
 			// object and the JSON object has a field that
 			// doesn't exist
-			Map<String,Object> properties = new HashMap<>();
+			Map<String, Object> properties = new HashMap<>();
 			UnrecognizedPropertyException unrecognizedProperty = (UnrecognizedPropertyException) cause;
 			Collection<Object> acceptableProperties = unrecognizedProperty.getKnownPropertyIds();
-			
+
 			message += " Unrecognized property in JSON request.";
-			
+
 			List<Object> acceptable = new ArrayList<>();
 			for (Object acceptableProperty : acceptableProperties) {
 				// DON'T append the links entry
@@ -186,10 +194,10 @@ public class ControllerExceptionHandler {
 					acceptable.add(acceptableProperty);
 				}
 			}
-			properties.put("acceptable-properties",acceptable);
-			
+			properties.put("acceptable-properties", acceptable);
+
 			errorResponse.setOtherProperties(properties);
-			
+
 			logger.debug("Sending the following message to the client: [" + message + "]");
 		} else if (cause instanceof JsonParseException) {
 			logger.debug("Client attempted to send JSON with the wrong type of double quotes.");
@@ -203,7 +211,7 @@ public class ControllerExceptionHandler {
 
 			}
 		}
-		
+
 		errorResponse.setMessage(message);
 
 		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
@@ -228,7 +236,7 @@ public class ControllerExceptionHandler {
 	 *            the set of constraint violations.
 	 * @return the constraint violations as a JSON object.
 	 */
-	private String validationMessages(Set<ConstraintViolation<?>> failures) {
+	private Map<String, List<String>> validationMessages(Set<ConstraintViolation<?>> failures) {
 		Map<String, List<String>> mp = new HashMap<>();
 		for (ConstraintViolation<?> failure : failures) {
 			logger.debug(failure.getPropertyPath().toString() + ": " + failure.getMessage());
@@ -241,6 +249,6 @@ public class ControllerExceptionHandler {
 				mp.put(property, list);
 			}
 		}
-		return new Gson().toJson(mp);
+		return mp;
 	}
 }
