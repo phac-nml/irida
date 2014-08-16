@@ -29,16 +29,18 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
+import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServiceConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowInvalidException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowGalaxyPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServiceGalaxyPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServiceGalaxyPhylogenomics;
 
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -52,22 +54,35 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
 		IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class,
 		IridaApiTestMultithreadingConfig.class, NonWindowsLocalGalaxyConfig.class,
-		WindowsLocalGalaxyConfig.class, AnalysisExecutionServiceConfig.class})
+		WindowsLocalGalaxyConfig.class, AnalysisExecutionServiceConfig.class,
+		RemoteWorkflowServiceConfig.class})
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
 public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 	
 	@Autowired
-	private LocalGalaxy localGalaxy;
+	private AnalysisExecutionServiceGalaxyPhylogenomicsPipeline 
+		analysisExecutionServiceGalaxyPhylogenomicsPipeline;
+	
+	@Autowired
+	private RemoteWorkflowServiceGalaxyPhylogenomics
+		remoteWorkflowServiceGalaxyPhylogenomics;
+	
+	@Autowired
+	private RemoteWorkflowServiceGalaxyPhylogenomics
+		remoteWorkflowServiceGalaxyPhylogenomicsInvalidId;
+	
+	@Autowired
+	private RemoteWorkflowServiceGalaxyPhylogenomics
+		remoteWorkflowServiceGalaxyPhylogenomicsInvalidChecksum;
 	
 	private Path dataFile;
 	private Path referenceFile;
 	private Set<SequenceFile> sequenceFiles;
 	
-	@Autowired
-	private AnalysisExecutionServiceGalaxyPhylogenomicsPipeline 
-		analysisExecutionServiceGalaxyPhylogenomicsPipeline;
+	private AnalysisSubmissionGalaxyPhylogenomicsPipeline
+		analysisSubmission;
 	
 	/**
 	 * Sets up variables for testing.
@@ -83,27 +98,13 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 				"testReference.fasta").toURI());
 				
 		sequenceFiles = new HashSet<>();
-		sequenceFiles.add(new SequenceFile(dataFile));				
-	}
-	
-	private AnalysisSubmissionGalaxyPhylogenomicsPipeline buildAnalysisSubmission() {
-		
-		String sequenceFileInputLabel = localGalaxy.getWorkflowCorePipelineTestSequenceFilesLabel();
-		String referenceFileInputLabel = localGalaxy.getWorkflowCorePipelineTestReferenceLabel();
+		sequenceFiles.add(new SequenceFile(dataFile));
 		
 		RemoteWorkflowGalaxyPhylogenomics remoteWorkflow =
-				new RemoteWorkflowGalaxyPhylogenomics(localGalaxy.getWorkflowCorePipelineTestId(),
-				localGalaxy.getWorkflowCorePipelineTestChecksum(),
-				sequenceFileInputLabel, referenceFileInputLabel);
+				remoteWorkflowServiceGalaxyPhylogenomics.getCurrentWorkflow();
 		
-		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission = 
-				new AnalysisSubmissionGalaxyPhylogenomicsPipeline(sequenceFiles,
-						new ReferenceFile(referenceFile),remoteWorkflow);
-		analysisSubmission.setInputFiles(sequenceFiles);
-		analysisSubmission.setReferenceFile(new ReferenceFile(referenceFile));
-		analysisSubmission.setRemoteWorkflow(remoteWorkflow);
-		
-		return analysisSubmission;
+		analysisSubmission = new AnalysisSubmissionGalaxyPhylogenomicsPipeline(sequenceFiles,
+				new ReferenceFile(referenceFile),remoteWorkflow);
 	}
 	
 	/**
@@ -123,9 +124,7 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 	 * @throws ExecutionManagerException 
 	 */
 	@Test
-	public void testExecuteAnalysisSuccess() throws InterruptedException, ExecutionManagerException {
-		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission = buildAnalysisSubmission();
-		
+	public void testExecuteAnalysisSuccess() throws InterruptedException, ExecutionManagerException {		
 		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmitted = 
 				analysisExecutionServiceGalaxyPhylogenomicsPipeline.executeAnalysis(analysisSubmission);
 		assertNotNull(analysisSubmitted);
@@ -139,14 +138,25 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 	}
 
 	/**
-	 * Tests out attempting to submit an invalid workflow for execution.
+	 * Tests out attempting to submit a workflow with an invalid id for execution.
 	 * @throws ExecutionManagerException 
 	 */
 	@Test(expected=WorkflowException.class)
-	public void testExecuteAnalysisFailInvalidWorkflow() throws ExecutionManagerException {
-		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission = buildAnalysisSubmission();
-		analysisSubmission.getRemoteWorkflow().
-			setWorkflowId(localGalaxy.getInvalidWorkflowId());
+	public void tWorkflowExceptionestExecuteAnalysisFailInvalidWorkflow() throws ExecutionManagerException {
+		analysisSubmission.setRemoteWorkflow(
+				remoteWorkflowServiceGalaxyPhylogenomicsInvalidId.getCurrentWorkflow());
+		
+		analysisExecutionServiceGalaxyPhylogenomicsPipeline.executeAnalysis(analysisSubmission);
+	}
+	
+	/**
+	 * Tests out attempting to submit a workflow with an invalid checksum for execution.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test(expected=WorkflowInvalidException.class)
+	public void testExecuteAnalysisFailInvalidChecksum() throws ExecutionManagerException {
+		analysisSubmission.setRemoteWorkflow(
+				remoteWorkflowServiceGalaxyPhylogenomicsInvalidChecksum.getCurrentWorkflow());
 		
 		analysisExecutionServiceGalaxyPhylogenomicsPipeline.executeAnalysis(analysisSubmission);
 	}
