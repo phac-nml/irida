@@ -104,14 +104,16 @@ public class ReferenceFileController {
 
 	@RequestMapping("/delete")
 	public @ResponseBody String deleteReferenceFile(@RequestParam Long fileId, HttpServletResponse response) {
+		String result = "success";
 		try {
 			referenceFileService.delete(fileId);
 		} catch (Exception e) {
 			// This is required else the client does not know that an error was thrown!
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return e.getLocalizedMessage();
+			logger.error(e.getLocalizedMessage());
+			result = "error";
 		}
-		return "success";
+		return result;
 	}
 }
 
