@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.prepration;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.model.workflow.preparation.PreparedWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.PreparedWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**

@@ -1,7 +1,6 @@
-package ca.corefacility.bioinformatics.irida.model.workflow.preparation.galaxy;
+package ca.corefacility.bioinformatics.irida.model.workflow.galaxy;
 
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
-import ca.corefacility.bioinformatics.irida.model.workflow.preparation.PreparedWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.PreparedWorkflow;
 
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 
