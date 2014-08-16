@@ -17,7 +17,6 @@ import java.util.Set;
 
 import org.junit.Assume;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +29,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
@@ -62,7 +62,8 @@ import com.google.common.collect.Lists;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
 		IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class,
-		IridaApiTestMultithreadingConfig.class, NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class  })
+		IridaApiTestMultithreadingConfig.class, NonWindowsLocalGalaxyConfig.class,
+		WindowsLocalGalaxyConfig.class, AnalysisExecutionServiceConfig.class})
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
@@ -75,7 +76,9 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 	private Path referenceFile;
 	private Set<SequenceFile> sequenceFiles;
 	
-	private AnalysisExecutionServiceGalaxyPhylogenomicsPipeline workflowManagement;
+	@Autowired
+	private AnalysisExecutionServiceGalaxyPhylogenomicsPipeline 
+		analysisExecutionServiceGalaxyPhylogenomicsPipeline;
 	
 	@Before
 	public void setup() throws URISyntaxException {
@@ -87,35 +90,7 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 				"testReference.fasta").toURI());
 				
 		sequenceFiles = new HashSet<>();
-		sequenceFiles.add(new SequenceFile(dataFile));
-		
-		buildWorkflowManagementGalaxy();
-		
-//		invalidSubmittedAnalysis = new AnalysisSubmissionGalaxyPhylogenomicsPipeline(new GalaxyAnalysisId("invalid"), null);
-	}
-	
-	private GalaxyHistoriesService buildGalaxyHistoriesService() {
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
-		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceAdmin().getToolsClient();
-		return new GalaxyHistoriesService(historiesClient, toolsClient);
-	}
-	
-	private GalaxyWorkflowService buildGalaxyWorkflowService() {
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
-		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
-		
-		return new GalaxyWorkflowService(historiesClient, workflowsClient,
-						new StandardPasswordEncoder());
-	}
-	
-	private void buildWorkflowManagementGalaxy() {
-		GalaxyHistoriesService galaxyHistoriesService = buildGalaxyHistoriesService();
-		GalaxyWorkflowService galaxyWorkflowService = buildGalaxyWorkflowService();
-		
-		GalaxyWorkflowPreparationServicePhylogenomicsPipeline galaxyWorkflowPreparationServicePhylogenomicsPipeline = 
-				new GalaxyWorkflowPreparationServicePhylogenomicsPipeline(galaxyHistoriesService, galaxyWorkflowService);
-		workflowManagement = new AnalysisExecutionServiceGalaxyPhylogenomicsPipeline(galaxyWorkflowService,
-				galaxyHistoriesService, galaxyWorkflowPreparationServicePhylogenomicsPipeline);
+		sequenceFiles.add(new SequenceFile(dataFile));				
 	}
 	
 	private AnalysisSubmissionGalaxyPhylogenomicsPipeline buildAnalysisSubmission() {
@@ -127,7 +102,6 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 				new RemoteWorkflowGalaxyPhylogenomics(localGalaxy.getWorkflowCorePipelineTestId(),
 				localGalaxy.getWorkflowCorePipelineTestChecksum(),
 				sequenceFileInputLabel, referenceFileInputLabel);
-
 		
 		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission = 
 				new AnalysisSubmissionGalaxyPhylogenomicsPipeline(sequenceFiles,
@@ -137,18 +111,6 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 		analysisSubmission.setRemoteWorkflow(remoteWorkflow);
 		
 		return analysisSubmission;
-	}
-	
-	private void waitForAnalysisFinished(AnalysisSubmissionGalaxyPhylogenomicsPipeline analysis) throws InterruptedException, ExecutionManagerException {
-		final int max = 1000;
-		final int time = 5000;
-		for (int i = 0; i < max; i++) {
-			WorkflowStatus status = workflowManagement.getWorkflowStatus(analysis);
-			if (WorkflowState.OK.equals(status.getState())) {
-				break;
-			}
-			Thread.sleep(time);
-		}
 	}
 	
 	/**
@@ -171,39 +133,16 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 	public void testExecuteAnalysisSuccess() throws InterruptedException, ExecutionManagerException {
 		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission = buildAnalysisSubmission();
 		
-		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmitted = workflowManagement.executeAnalysis(analysisSubmission);
+		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmitted = 
+				analysisExecutionServiceGalaxyPhylogenomicsPipeline.executeAnalysis(analysisSubmission);
 		assertNotNull(analysisSubmitted);
 		assertNotNull(analysisSubmitted.getRemoteAnalysisId());
 		
 		WorkflowOutputs output = analysisSubmitted.getOutputs();
 		assertNotNull(output);
-		WorkflowStatus status = workflowManagement.getWorkflowStatus(analysisSubmitted);
+		WorkflowStatus status = 
+				analysisExecutionServiceGalaxyPhylogenomicsPipeline.getWorkflowStatus(analysisSubmitted);
 		assertValidStatus(status);
-	}
-	
-	/**
-	 * Tests getting results from an executed analysis.
-	 * @throws ExecutionManagerException
-	 * @throws InterruptedException
-	 */
-	@Ignore
-	@Test
-	public void testGetAnalysisResultsSuccess() throws ExecutionManagerException, InterruptedException {
-		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission = buildAnalysisSubmission();
-		
-		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmitted = workflowManagement.executeAnalysis(analysisSubmission);
-		assertNotNull(analysisSubmitted);
-		
-		WorkflowStatus status = workflowManagement.getWorkflowStatus(analysisSubmitted);
-		assertValidStatus(status);
-		
-		waitForAnalysisFinished(analysisSubmitted);
-		
-//		AnalysisPhylogenomicsPipeline analysisResults = (AnalysisPhylogenomicsPipeline)analysis;
-		
-//		Path outputFile = analysisResults.getOutputFile();
-//		assertNotNull(outputFile);
-//		assertTrue(outputFile.toFile().exists());
 	}
 
 	/**
@@ -216,7 +155,7 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 		analysisSubmission.getRemoteWorkflow().
 			setWorkflowId(localGalaxy.getInvalidWorkflowId());
 		
-		workflowManagement.executeAnalysis(analysisSubmission);
+		analysisExecutionServiceGalaxyPhylogenomicsPipeline.executeAnalysis(analysisSubmission);
 	}
 	
 	@SuppressWarnings("unused")
