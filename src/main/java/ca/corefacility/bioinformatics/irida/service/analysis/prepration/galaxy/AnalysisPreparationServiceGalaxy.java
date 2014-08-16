@@ -6,10 +6,18 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.Ana
 import ca.corefacility.bioinformatics.irida.service.analysis.prepration.AnalysisPreparationService;
 
 /**
+
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+
+ */
+
+/**
  * Prepares a Galaxy analysis for submission.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
- * @param <S>  The AnalysisSubmissionGalaxy to prepare.
+ * @param <R> The type of RemoteWorkflow to use.
+ * @param <S> The AnalysisSubmissionGalaxy to prepare.
  */
 public abstract class AnalysisPreparationServiceGalaxy<R extends RemoteWorkflowGalaxy,
 	S extends AnalysisSubmissionGalaxy<R>> 

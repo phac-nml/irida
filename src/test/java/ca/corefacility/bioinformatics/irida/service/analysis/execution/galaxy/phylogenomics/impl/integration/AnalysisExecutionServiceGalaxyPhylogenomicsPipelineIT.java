@@ -1,15 +1,10 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.integration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
@@ -20,7 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -43,22 +37,17 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowGalaxyPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServiceGalaxyPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.service.analysis.prepration.galaxy.phylogenomics.impl.GalaxyWorkflowPreparationServicePhylogenomicsPipeline;
 
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
-import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
-import com.github.jmchilton.blend4j.galaxy.ToolsClient;
-import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
-import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.google.common.collect.Lists;
 
+/**
+ * Tests out the analysis service for the phylogenomic pipeline.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
 		IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class,
@@ -80,6 +69,10 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 	private AnalysisExecutionServiceGalaxyPhylogenomicsPipeline 
 		analysisExecutionServiceGalaxyPhylogenomicsPipeline;
 	
+	/**
+	 * Sets up variables for testing.
+	 * @throws URISyntaxException
+	 */
 	@Before
 	public void setup() throws URISyntaxException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
@@ -156,95 +149,5 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 			setWorkflowId(localGalaxy.getInvalidWorkflowId());
 		
 		analysisExecutionServiceGalaxyPhylogenomicsPipeline.executeAnalysis(analysisSubmission);
-	}
-	
-	@SuppressWarnings("unused")
-	public static void main(String[] args) throws URISyntaxException, ExecutionManagerException, InterruptedException, IOException {
-		StandardPasswordEncoder passwordCoder = new StandardPasswordEncoder();
-		String workflowId = "ebfb8f50c6abde6d";
-		
-		GalaxyInstance galaxyInstance = GalaxyInstanceFactory.get("http://localhost:8888", "3196a4a894a8bccbefc32ccff25ddf9d");
-		WorkflowsClient workflowsClient = galaxyInstance.getWorkflowsClient();
-		HistoriesClient historiesClient = galaxyInstance.getHistoriesClient();
-		ToolsClient toolsClient = galaxyInstance.getToolsClient();
-		
-		String checksum = passwordCoder.encode(workflowsClient.exportWorkflow(workflowId));
-		
-		GalaxyHistoriesService historiesService = new GalaxyHistoriesService(historiesClient, toolsClient);
-		GalaxyWorkflowService workflowService = new GalaxyWorkflowService(historiesClient, workflowsClient,
-				new StandardPasswordEncoder());
-		
-		GalaxyWorkflowPreparationServicePhylogenomicsPipeline galaxyWorkflowPreparationServicePhylogenomicsPipeline =
-				new GalaxyWorkflowPreparationServicePhylogenomicsPipeline(historiesService, workflowService);
-		AnalysisExecutionServiceGalaxyPhylogenomicsPipeline analysisService = 
-				new AnalysisExecutionServiceGalaxyPhylogenomicsPipeline(workflowService, historiesService, 
-						galaxyWorkflowPreparationServicePhylogenomicsPipeline);
-		
-		SequenceFile a1 = new SequenceFile(Paths.get(new URI("file:////home/aaron/workspace/irida-api/1/input/fastq/a_1.fastq")));
-		SequenceFile a2 = new SequenceFile(Paths.get(new URI("file:////home/aaron/workspace/irida-api/1/input/fastq/a_2.fastq")));
-		SequenceFile b1 = new SequenceFile(Paths.get(new URI("file:////home/aaron/workspace/irida-api/1/input/fastq/b_1.fastq")));
-		SequenceFile b2 = new SequenceFile(Paths.get(new URI("file:////home/aaron/workspace/irida-api/1/input/fastq/b_2.fastq")));
-		SequenceFile c1 = new SequenceFile(Paths.get(new URI("file:////home/aaron/workspace/irida-api/1/input/fastq/c_1.fastq")));
-		SequenceFile c2 = new SequenceFile(Paths.get(new URI("file:////home/aaron/workspace/irida-api/1/input/fastq/c_2.fastq")));
-		ReferenceFile reference = new ReferenceFile(Paths.get(new URI("file:////home/aaron/workspace/irida-api/1/input/reference.fasta")));
-		
-		Set<SequenceFile> sequenceFiles = new HashSet<>();
-		sequenceFiles.addAll(Lists.newArrayList(a1,b1,c1));
-		
-		String sequenceFileInputLabel = "sequence_reads";
-		String referenceFileInputLabel = "reference";
-		
-		RemoteWorkflowGalaxyPhylogenomics remoteWorkflow =
-				new RemoteWorkflowGalaxyPhylogenomics(workflowId,checksum,
-						sequenceFileInputLabel, referenceFileInputLabel);
-
-		
-		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission = 
-				new AnalysisSubmissionGalaxyPhylogenomicsPipeline(sequenceFiles,
-						reference, remoteWorkflow);
-		
-		analysisService.executeAnalysis(analysisSubmission);
-		
-		final int max = 1000;
-		final int time = 5000;
-		for (int i = 0; i < max; i++) {
-			WorkflowStatus status = analysisService.getWorkflowStatus(analysisSubmission);
-			if (WorkflowState.OK.equals(status.getState())) {
-				break;
-			}
-			Thread.sleep(time);
-		}
-		
-		WorkflowOutputs outputs = analysisSubmission.getOutputs();
-		for (String outputId : outputs.getOutputIds()) {
-			System.out.println("output:"+ outputId);
-			
-			Dataset dataset = historiesClient.showDataset(analysisSubmission.getRemoteAnalysisId().getValue(), outputId);
-			String name = dataset.getName();
-			System.out.println("\t"+name);
-			
-			if ("pseudo-positions.tsv".equals(name)) {
-				URL url = new URL(dataset.getFullDownloadUrl());
-				
-				HttpURLConnection con = (HttpURLConnection) url.openConnection();
-				InputStream stream = con.getInputStream();
-
-				String galaxyFileContents = readFileContentsFromReader(new BufferedReader(
-						new InputStreamReader(stream)));
-				
-				System.out.println(galaxyFileContents);
-			}
-		}
-	}
-	
-	private static String readFileContentsFromReader(BufferedReader reader)
-			throws IOException {
-		String line;
-		String contents = "";
-		while ((line = reader.readLine()) != null) {
-			contents += line + "\n";
-		}
-
-		return contents;
 	}
 }

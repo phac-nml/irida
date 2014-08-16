@@ -74,7 +74,7 @@ public class GalaxyWorkflowPreparationServicePhylogenomicsPipeline
 		String workflowSequenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, 
 				remoteWorkflow.getInputSequenceFilesLabel());
 		String workflowReferenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, 
-				remoteWorkflow.getInputReferenceFilesLabel());
+				remoteWorkflow.getInputReferenceFileLabel());
 		
 		WorkflowInputs inputs = new WorkflowInputs();
 		inputs.setDestination(new WorkflowInputs.ExistingHistory(workflowHistory.getId()));

@@ -31,10 +31,18 @@ public class AnalysisSubmissionGalaxyPhylogenomicsPipeline
 		this.referenceFile = referenceFile;
 	}
 
+	/**
+	 * Sets the reference file.
+	 * @param referenceFile  The reference file.
+	 */
 	public void setReferenceFile(ReferenceFile referenceFile) {
 		this.referenceFile = referenceFile;
 	}
 
+	/**
+	 * Gets the ReferenceFile.
+	 * @return  The ReferenceFile.
+	 */
 	public ReferenceFile getReferenceFile() {
 		return referenceFile;
 	}

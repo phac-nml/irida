@@ -23,12 +23,14 @@ import ca.corefacility.bioinformatics.irida.service.analysis.prepration.galaxy.A
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  * @param <A> The type of Analysis expected to be performed.
+ * @param <P> The type of AnalysisPreparationService to use.
+ * @param <R> The type of RemoteWorkflow to use.
  * @param <S> The type of AnalysisSubmissionGalaxy to perform.
  */
 public abstract class AnalysisExecutionServiceGalaxy
-	<A extends Analysis, P extends AnalysisPreparationServiceGalaxy<R,T>, 
-	R extends RemoteWorkflowGalaxy, T extends AnalysisSubmissionGalaxy<R>>
-	implements AnalysisExecutionService<A,T> {
+	<A extends Analysis, P extends AnalysisPreparationServiceGalaxy<R,S>, 
+	R extends RemoteWorkflowGalaxy, S extends AnalysisSubmissionGalaxy<R>>
+	implements AnalysisExecutionService<A,S> {
 	
 	private P preparationService;
 	
@@ -43,7 +45,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	}
 	
 	@Override
-	public T executeAnalysis(T analysisSubmission)
+	public S executeAnalysis(S analysisSubmission)
 					throws ExecutionManagerException {
 		
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
@@ -62,13 +64,13 @@ public abstract class AnalysisExecutionServiceGalaxy
 	
 
 	@Override
-	public A getAnalysisResults(T submittedAnalysis)
+	public A getAnalysisResults(S submittedAnalysis)
 			throws ExecutionManagerException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public WorkflowStatus getWorkflowStatus(T submittedAnalysis)
+	public WorkflowStatus getWorkflowStatus(S submittedAnalysis)
 			throws ExecutionManagerException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
 		
@@ -79,7 +81,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	/**
 	 * Validates the given workflow.
 	 * @param remoteWorkflow  The Galaxy workflow to validate.
-	 * @throws WorkflowException  If there was 
+	 * @throws WorkflowException  If there was an issue validating the workflow.
 	 */
 	public void validateWorkflow(RemoteWorkflowGalaxy remoteWorkflow) throws WorkflowException {
 		checkNotNull(remoteWorkflow, "remoteWorkflow is null");

@@ -13,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  * Defines an AnalysisSubmission to a Galaxy execution manager.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
+ * @param <R> The RemoteWorkflow to submit.
  */
 public abstract class AnalysisSubmissionGalaxy<R extends RemoteWorkflowGalaxy>
 	implements AnalysisSubmission<R> {
