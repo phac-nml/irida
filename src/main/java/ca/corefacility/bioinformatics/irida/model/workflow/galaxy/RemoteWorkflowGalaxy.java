@@ -39,4 +39,10 @@ public abstract class RemoteWorkflowGalaxy implements RemoteWorkflow {
 	public void setWorkflowChecksum(String workflowChecksum) {
 		this.workflowChecksum = workflowChecksum;
 	}
+
+	@Override
+	public String toString() {
+		return "RemoteWorkflowGalaxy [workflowId=" + workflowId
+				+ ", workflowChecksum=" + workflowChecksum + "]";
+	}
 }

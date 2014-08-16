@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 
@@ -32,6 +35,8 @@ public abstract class AnalysisExecutionServiceGalaxy
 	R extends RemoteWorkflowGalaxy, S extends AnalysisSubmissionGalaxy<R>>
 	implements AnalysisExecutionService<A,S> {
 	
+	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxy.class);
+	
 	private P preparationService;
 	
 	protected GalaxyHistoriesService galaxyHistoriesService;
@@ -49,12 +54,18 @@ public abstract class AnalysisExecutionServiceGalaxy
 					throws ExecutionManagerException {
 		
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
+		String analysisName = analysisSubmission.getClass().getSimpleName();
+		RemoteWorkflowGalaxy remoteWorkflow = analysisSubmission.getRemoteWorkflow();
+		logger.debug("Running " + analysisName + ": " + remoteWorkflow);
 		
+		logger.trace("Validating " + analysisName + ": " + remoteWorkflow);
 		validateWorkflow(analysisSubmission.getRemoteWorkflow());
 		
+		logger.trace("Preparing " + analysisName + ": " + remoteWorkflow);
 		PreparedWorkflowGalaxy preparedWorkflow = preparationService.prepareAnalysisWorkspace(analysisSubmission);
 		WorkflowInputs input = preparedWorkflow.getWorkflowInputs();
 		
+		logger.trace("Executing " + analysisName + ": " + remoteWorkflow);
 		WorkflowOutputs output = galaxyWorkflowService.runWorkflow(input);
 		analysisSubmission.setRemoteAnalysisId(preparedWorkflow.getRemoteAnalysisId());
 		analysisSubmission.setOutputs(output);
