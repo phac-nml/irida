@@ -86,7 +86,7 @@
                                 <tr th:each="file : ${referenceFiles}">
                                     <td class="file-name" th:text="${file.label}"></td>
                                     <td th:text="${file.size}"></td>
-                                    <td data:livestamp="${file.createdDate}" th:text="${file.createdDate}"></td>
+                                    <td th:text="${file.createdDate}"></td>
                                     <td class="text-right">
                                         <button data:file-id="${file.id}" class="btn btn-danger btn-xs file-delete-btn"
                                                 data:tooltip="#{form.btn.remove}"><span
@@ -114,7 +114,7 @@
         <tr>
             <td class="file-name">{{label}}</td>
             <td>{{size}}</td>
-            <td class="file-date" data-livestamp="{{createdDate}}"></td>
+            <td class="file-date">{{createdDate}}</td>
             <td class="text-right">
                 <button data-file-id="{{id}}" class="btn btn-danger btn-xs file-delete-btn"
                         data:tooltip="#{form.btn.remove}">
