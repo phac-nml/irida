@@ -61,7 +61,7 @@ public class GalaxyWorkflowPreparationServicePhylogenomicsPipeline
 				uploadFilesListToHistory(sequenceFilePaths, InputFileType.FASTQ_SANGER, workflowHistory);
 		
 		Dataset referenceDataset = galaxyHistoriesService.
-				fileToHistory(referenceFile.getFile(), InputFileType.FASTQ_SANGER, workflowHistory);
+				fileToHistory(referenceFile.getFile(), InputFileType.FASTA, workflowHistory);
 		
 		CollectionResponse collectionResponse = 
 				galaxyHistoriesService.constructCollectionList(sequenceDatasets, workflowHistory);
