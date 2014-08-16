@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.analysis.prepration.galaxy.phylogenomics.impl;
+package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -17,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.service.analysis.prepration.galaxy.AnalysisPreparationServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
 
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
@@ -26,18 +26,18 @@ import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 
 /**
- * Prepares a Phylogenomics Pipeline for execution in Galaxy.
+ * Tasks for executing a Phylogenomics Pipeline in Galaxy.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyWorkflowPreparationServicePhylogenomicsPipeline 
-	extends AnalysisPreparationServiceGalaxy<RemoteWorkflowGalaxyPhylogenomics,
+public class GalaxyWorkflowExecutionServicePhylogenomicsPipeline 
+	extends AnalysisExecutionServiceGalaxy<RemoteWorkflowGalaxyPhylogenomics,
 		AnalysisSubmissionGalaxyPhylogenomicsPipeline> {
 	
 	private GalaxyHistoriesService galaxyHistoriesService;
 	private GalaxyWorkflowService galaxyWorkflowService;
 	
-	public GalaxyWorkflowPreparationServicePhylogenomicsPipeline(GalaxyHistoriesService galaxyHistoriesService,
+	public GalaxyWorkflowExecutionServicePhylogenomicsPipeline(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.galaxyWorkflowService = galaxyWorkflowService;

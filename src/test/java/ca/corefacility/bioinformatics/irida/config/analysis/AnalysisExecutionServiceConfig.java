@@ -15,7 +15,7 @@ import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatform
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
-import ca.corefacility.bioinformatics.irida.service.analysis.prepration.galaxy.phylogenomics.impl.GalaxyWorkflowPreparationServicePhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.GalaxyWorkflowExecutionServicePhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.service.analysis.submission.galaxy.phylogenomics.impl.AnalysisSubmissionServiceGalaxyPhylogenomicsPipeline;
 
 /**
@@ -36,8 +36,8 @@ public class AnalysisExecutionServiceConfig {
 		analysisExecutionServiceGalaxyPhylogenomicsPipeline(
 				GalaxyHistoriesService galaxyHistoriesService, GalaxyWorkflowService galaxyWorkflowService) {
 		
-		GalaxyWorkflowPreparationServicePhylogenomicsPipeline galaxyWorkflowPreparationServicePhylogenomicsPipeline = 
-				new GalaxyWorkflowPreparationServicePhylogenomicsPipeline(galaxyHistoriesService, galaxyWorkflowService);
+		GalaxyWorkflowExecutionServicePhylogenomicsPipeline galaxyWorkflowPreparationServicePhylogenomicsPipeline = 
+				new GalaxyWorkflowExecutionServicePhylogenomicsPipeline(galaxyHistoriesService, galaxyWorkflowService);
 		return new AnalysisSubmissionServiceGalaxyPhylogenomicsPipeline(galaxyWorkflowService,
 				galaxyHistoriesService, galaxyWorkflowPreparationServicePhylogenomicsPipeline);
 	}

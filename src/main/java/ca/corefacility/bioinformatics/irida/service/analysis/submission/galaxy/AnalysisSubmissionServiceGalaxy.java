@@ -18,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflow
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.service.analysis.prepration.galaxy.AnalysisPreparationServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.submission.AnalysisSubmissionService;
 
 /**
@@ -31,7 +31,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.submission.Analysis
  * @param <S> The type of AnalysisSubmissionGalaxy to perform.
  */
 public abstract class AnalysisSubmissionServiceGalaxy
-	<A extends Analysis, P extends AnalysisPreparationServiceGalaxy<R,S>, 
+	<A extends Analysis, P extends AnalysisExecutionServiceGalaxy<R,S>, 
 	R extends RemoteWorkflowGalaxy, S extends AnalysisSubmissionGalaxy<R>>
 	implements AnalysisSubmissionService<A,S> {
 	
