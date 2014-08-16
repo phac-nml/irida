@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy;
+package ca.corefacility.bioinformatics.irida.service.analysis.submission.galaxy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -18,8 +18,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.preparation.galaxy.Pr
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.prepration.galaxy.AnalysisPreparationServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.submission.AnalysisSubmissionService;
 
 /**
  * Service for performing analyses within a Galaxy execution manager.
@@ -30,19 +30,19 @@ import ca.corefacility.bioinformatics.irida.service.analysis.prepration.galaxy.A
  * @param <R> The type of RemoteWorkflow to use.
  * @param <S> The type of AnalysisSubmissionGalaxy to perform.
  */
-public abstract class AnalysisExecutionServiceGalaxy
+public abstract class AnalysisSubmissionServiceGalaxy
 	<A extends Analysis, P extends AnalysisPreparationServiceGalaxy<R,S>, 
 	R extends RemoteWorkflowGalaxy, S extends AnalysisSubmissionGalaxy<R>>
-	implements AnalysisExecutionService<A,S> {
+	implements AnalysisSubmissionService<A,S> {
 	
-	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxy.class);
+	private static final Logger logger = LoggerFactory.getLogger(AnalysisSubmissionServiceGalaxy.class);
 	
 	private P preparationService;
 	
 	protected GalaxyHistoriesService galaxyHistoriesService;
 	protected GalaxyWorkflowService galaxyWorkflowService;
 	
-	public AnalysisExecutionServiceGalaxy(GalaxyWorkflowService galaxyWorkflowService,
+	public AnalysisSubmissionServiceGalaxy(GalaxyWorkflowService galaxyWorkflowService,
 			GalaxyHistoriesService galaxyHistoriesService, P preparationService) {
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.galaxyHistoriesService = galaxyHistoriesService;

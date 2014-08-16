@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.integration;
+package ca.corefacility.bioinformatics.irida.service.analysis.submission.galaxy.phylogenomics.impl.integration;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -39,7 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowGalaxyPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServiceGalaxyPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.service.analysis.submission.galaxy.phylogenomics.impl.AnalysisSubmissionServiceGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServiceGalaxyPhylogenomics;
 
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
@@ -59,10 +59,10 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
-public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
+public class AnalysisSubmissionServiceGalaxyPhylogenomicsPipelineIT {
 	
 	@Autowired
-	private AnalysisExecutionServiceGalaxyPhylogenomicsPipeline 
+	private AnalysisSubmissionServiceGalaxyPhylogenomicsPipeline 
 		analysisExecutionServiceGalaxyPhylogenomicsPipeline;
 	
 	@Autowired
@@ -92,9 +92,9 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT {
 	public void setup() throws URISyntaxException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 		
-		dataFile = Paths.get(AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT.class.getResource(
+		dataFile = Paths.get(AnalysisSubmissionServiceGalaxyPhylogenomicsPipelineIT.class.getResource(
 				"testData1.fastq").toURI());
-		referenceFile = Paths.get(AnalysisExecutionServiceGalaxyPhylogenomicsPipelineIT.class.getResource(
+		referenceFile = Paths.get(AnalysisSubmissionServiceGalaxyPhylogenomicsPipelineIT.class.getResource(
 				"testReference.fasta").toURI());
 				
 		sequenceFiles = new HashSet<>();

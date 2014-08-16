@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenonmics.impl.unit;
+package ca.corefacility.bioinformatics.irida.service.analysis.submission.galaxy.phylogenonmics.impl.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
@@ -18,10 +18,10 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServiceGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.service.analysis.prepration.galaxy.phylogenomics.impl.GalaxyWorkflowPreparationServicePhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.service.analysis.submission.galaxy.phylogenomics.impl.AnalysisSubmissionServiceGalaxyPhylogenomicsPipeline;
 
-public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineTest {
+public class AnalysisSubmissionServiceGalaxyPhylogenomicsPipelineTest {
 	
 	@Mock private GalaxyHistoriesService galaxyHistoriesService;
 	@Mock private GalaxyWorkflowService galaxyWorkflowService;
@@ -29,13 +29,13 @@ public class AnalysisExecutionServiceGalaxyPhylogenomicsPipelineTest {
 	@Mock private AnalysisSubmissionGalaxyPhylogenomicsPipeline submittedAnalysisGalaxy;
 	@Mock private GalaxyWorkflowPreparationServicePhylogenomicsPipeline galaxyWorkflowPreparationServicePhylogenomicsPipeline;
 
-	private AnalysisExecutionServiceGalaxyPhylogenomicsPipeline workflowManagement;
+	private AnalysisSubmissionServiceGalaxyPhylogenomicsPipeline workflowManagement;
 
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 		
-		workflowManagement = new AnalysisExecutionServiceGalaxyPhylogenomicsPipeline(galaxyWorkflowService,
+		workflowManagement = new AnalysisSubmissionServiceGalaxyPhylogenomicsPipeline(galaxyWorkflowService,
 				galaxyHistoriesService, galaxyWorkflowPreparationServicePhylogenomicsPipeline);
 		
 		RemoteWorkflowGalaxyPhylogenomics remoteWorkflow = 
