@@ -88,7 +88,7 @@
                                     <td th:text="${file.size}"></td>
                                     <td data:livestamp="${file.createdDate}" th:text="${file.createdDate}"></td>
                                     <td class="text-right">
-                                        <button data:file-id="${file.id}" class="btn btn-danger btn-xs"
+                                        <button data:file-id="${file.id}" class="btn btn-danger btn-xs file-delete-btn"
                                                 data:tooltip="#{form.btn.remove}"><span
                                                 class="fa fa-trash-o fa-fw"></span>
                                         </button>
@@ -116,7 +116,7 @@
             <td>{{size}}</td>
             <td class="file-date" data-livestamp="{{createdDate}}"></td>
             <td class="text-right">
-                <button data-file-id="{{id}}" class="btn btn-danger btn-xs"
+                <button data-file-id="{{id}}" class="btn btn-danger btn-xs file-delete-btn"
                         data:tooltip="#{form.btn.remove}">
                     <span class="fa fa-trash-o fa-fw"></span>
                 </button>
@@ -187,7 +187,7 @@
             };
             $('[data-tooltip!=""]').qtip(options);
 
-            tableBody.on('click', ".btn-danger", function () {
+            tableBody.on('click', ".file-delete-btn", function () {
                 var $this = $(this),
                     id = $this.data('file-id'),
                     row = $this.closest('tr'),
