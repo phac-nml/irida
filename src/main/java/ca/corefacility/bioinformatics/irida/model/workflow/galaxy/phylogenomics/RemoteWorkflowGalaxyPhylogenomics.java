@@ -4,22 +4,22 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflow
 
 public class RemoteWorkflowGalaxyPhylogenomics extends RemoteWorkflowGalaxy {
 
-	private String inputSequenceFilesId;
-	private String inputReferenceFilesId;
+	private String inputSequenceFilesLabel;
+	private String inputReferenceFilesLabel;
 	
 	public RemoteWorkflowGalaxyPhylogenomics(String workflowId,
-			String workflowChecksum, String inputSequenceFilesId,
-			String inputReferenceFilesId) {
+			String workflowChecksum, String inputSequenceFilesLabel,
+			String inputReferenceFilesLabel) {
 		super(workflowId, workflowChecksum);
-		this.inputSequenceFilesId = inputSequenceFilesId;
-		this.inputReferenceFilesId = inputReferenceFilesId;
+		this.inputSequenceFilesLabel = inputSequenceFilesLabel;
+		this.inputReferenceFilesLabel = inputReferenceFilesLabel;
 	}
 
-	public String getInputSequenceFilesId() {
-		return inputSequenceFilesId;
+	public String getInputSequenceFilesLabel() {
+		return inputSequenceFilesLabel;
 	}
 
-	public String getInputReferenceFilesId() {
-		return inputReferenceFilesId;
+	public String getInputReferenceFilesLabel() {
+		return inputReferenceFilesLabel;
 	}
 }
