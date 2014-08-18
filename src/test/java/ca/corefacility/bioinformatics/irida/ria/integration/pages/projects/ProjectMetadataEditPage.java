@@ -74,4 +74,8 @@ public class ProjectMetadataEditPage {
 				.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".noty_buttons .btn-primary")));
 		driver.findElement(By.cssSelector(".noty_buttons .btn-primary")).click();
 	}
+
+	public void clickReferenceFilesTab() {
+		driver.findElement(By.id("refTab")).click();
+	}
 }

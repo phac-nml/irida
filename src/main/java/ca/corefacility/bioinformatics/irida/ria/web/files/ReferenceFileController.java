@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -52,6 +53,13 @@ public class ReferenceFileController {
 		this.dateFormatter = new DateFormatter();
 	}
 
+	/**
+	 * Download a reference file based on the id passed.
+	 *
+	 * @param fileId   The id of the file to download
+	 * @param response {@link HttpServletResponse} to write to file to
+	 * @throws IOException
+	 */
 	@RequestMapping(value = "/download/{fileId}")
 	public void downloadReferenceFile(@PathVariable Long fileId,
 			HttpServletResponse response) throws IOException {
@@ -62,21 +70,28 @@ public class ReferenceFileController {
 		response.flushBuffer();
 	}
 
+	/**
+	 * Add a new reference file to a project.
+	 * @param projectId The id of the project to add the file to.
+	 * @param file {@link MultipartFile} file being uploaded.
+	 * @return
+	 * @throws IOException
+	 */
 	@RequestMapping("/project/{projectId}/new")
 	public @ResponseBody Map<String, String> createNewReferenceFile(@PathVariable Long projectId,
-			@RequestParam("files[]") MultipartFile files) throws IOException {
+			@RequestParam("file") MultipartFile file) throws IOException {
 
 		logger.debug("Adding reference file to project " + projectId);
-		logger.trace("Uploaded file size: " + files.getSize() + " bytes");
+		logger.trace("Uploaded file size: " + file.getSize() + " bytes");
 
 		Project project = projectService.read(projectId);
 		logger.trace("Read project " + projectId);
 
 		// Prepare a new reference file using the multipart file supplied by the caller
 		Path temp = Files.createTempDirectory(null);
-		Path target = temp.resolve(files.getOriginalFilename());
+		Path target = temp.resolve(file.getOriginalFilename());
 
-		files.transferTo(target.toFile());
+		file.transferTo(target.toFile());
 		logger.debug("Wrote temp file to " + target);
 
 		ReferenceFile referenceFile = new ReferenceFile(target);
@@ -84,17 +99,17 @@ public class ReferenceFileController {
 				.addReferenceFileToProject(project, referenceFile);
 		logger.debug("Created reference file in project " + projectId);
 
-		ReferenceFile file = projectReferenceFileJoin.getObject();
+		ReferenceFile refFile = projectReferenceFileJoin.getObject();
 		Map<String, String> result = new HashMap<>();
-		Path path = file.getFile();
+		Path path = refFile.getFile();
 		long size = 0;
 		if (Files.exists(path)) {
 			size = Files.size(path);
 		}
 		result.put("size", fileSizeConverter.convert(size));
-		result.put("id", file.getId().toString());
-		result.put("label", file.getLabel());
-		result.put("createdDate", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
+		result.put("id", refFile.getId().toString());
+		result.put("label", refFile.getLabel());
+		result.put("createdDate", dateFormatter.print(refFile.getCreatedDate(), LocaleContextHolder.getLocale()));
 
 		// Clean up temporary files
 		Files.deleteIfExists(target);
@@ -102,16 +117,24 @@ public class ReferenceFileController {
 		return result;
 	}
 
+	/**
+	 * Delete a reference file.  This will remove it from the project.
+	 * @param fileId The id of the file to remove.
+	 * @param response {@link HttpServletResponse} required for returning an error state.
+	 * @return Success or error based on the result of deleting the file.
+	 */
 	@RequestMapping("/delete")
 	public @ResponseBody String deleteReferenceFile(@RequestParam Long fileId, HttpServletResponse response) {
+		String result = "success";
 		try {
 			referenceFileService.delete(fileId);
-		} catch (Exception e) {
+		} catch (EntityNotFoundException e) {
 			// This is required else the client does not know that an error was thrown!
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return e.getLocalizedMessage();
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			logger.error("Failed to upload reference file, reason unknown.", e);
+			result = "error";
 		}
-		return "success";
+		return result;
 	}
 }
 

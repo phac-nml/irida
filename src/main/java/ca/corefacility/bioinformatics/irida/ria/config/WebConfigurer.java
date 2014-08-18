@@ -31,10 +31,9 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
-
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 
+import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 /**
@@ -54,8 +53,8 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 	private static final String DEFAULT_ENCODING = "UTF-8";
 	private static final String[] RESOURCE_LOCATIONS = { "classpath:/i18n/messages", "classpath:/i18n/mobile" };
 	private static final Logger logger = LoggerFactory.getLogger(WebConfigurer.class);
-	public static final long MAX_UPLOAD_SIZE = 20971520L;
-	public static final int MAX_IN_MEMORY_SIZE = 1048576;
+	public static final long MAX_UPLOAD_SIZE = 20971520L; // 20MB
+	public static final int MAX_IN_MEMORY_SIZE = 1048576; // 1MB
 	@Autowired
 	private Environment env;
 

@@ -101,12 +101,13 @@ public class ProjectMetadataEditPageIT {
     public void errorsIfBadProjectInformation() {
 	    page.gotoPage();
 	    page.updateProject(GOOD_PROJECT_NAME, GOOD_PROJECT_ORGANISM, GOOD_PROJECT_DESCRIPTION, BAD_PROJECT_URL);
-	    assertEquals("Remains on the same page", driver.getCurrentUrl(), page.URL);
+	    assertEquals("Remains on the same page", driver.getCurrentUrl(), ProjectMetadataEditPage.URL);
     }
 
 	@Test
 	public void testDeleteReferenceFile() {
 		page.gotoPage();
+		page.clickReferenceFilesTab();
 		assertEquals("Should display on reference file", 1, page.getReferenceFileCount());
 		page.clickDeleteReferenceFileButton();
 		assertTrue("Should display a delete reference file warning",

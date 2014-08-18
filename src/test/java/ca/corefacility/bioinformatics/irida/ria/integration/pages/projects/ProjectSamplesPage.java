@@ -112,6 +112,8 @@ public class ProjectSamplesPage {
 	 * @return True if entire column is sorted ascending
 	 */
 	public boolean isSampleNameColumnSortedAsc() {
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+				.cssSelector("tbody td:nth-child(2)")));
 		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(2)")).stream()
 				.map(WebElement::getText).collect(Collectors.toList());
 		return SortUtilities.isStringListSortedAsc(list);
@@ -134,6 +136,8 @@ public class ProjectSamplesPage {
 	 * @return True if entire column is sorted ascending
 	 */
 	public boolean isAddedOnDateColumnSortedAsc() {
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+				.cssSelector("tbody td:nth-child(4)")));
 		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(4)")).stream()
 				.map(WebElement::getText).collect(Collectors.toList());
 		return SortUtilities.isDateSortedAsc(list, DATE_FORMAT);
@@ -145,6 +149,8 @@ public class ProjectSamplesPage {
 	 * @return True if entire column is sorted descending
 	 */
 	public boolean isAddedOnDateColumnSortedDesc() {
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+				.cssSelector("tbody td:nth-child(4)")));
 		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(4)")).stream()
 				.map(WebElement::getText).collect(Collectors.toList());
 		return SortUtilities.isDateSortedDesc(list, DATE_FORMAT);
@@ -309,11 +315,16 @@ public class ProjectSamplesPage {
 	 * Open the row that contains files.
 	 */
 	public void showFilesView() {
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+				.className("fileViewLink")));
 		driver.findElement(By.className("fileViewLink")).click();
 		(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
 				.id("files-view")));
 	}
+
 	public void hideFilesView() {
+		(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+				.id("files-view")));
 		driver.findElement(By.className("fileViewLink")).click();
 		(new WebDriverWait(driver, 10)).until(ExpectedConditions.invisibilityOfElementLocated(By
 				.id("files-view")));
@@ -419,6 +430,8 @@ public class ProjectSamplesPage {
      * @param name The new name for the samples
      */
     public void selectTheMergedSampleName(String name) {
+	    (new WebDriverWait(driver, 10))
+			    .until(ExpectedConditions.presenceOfElementLocated(By.className("select2-choice")));
         WebElement el = driver.findElement(By.className("select2-choice"));
         el.click();
         el.sendKeys(name);

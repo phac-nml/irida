@@ -80,6 +80,8 @@ public class ProjectMetadataPageIT {
         assertEquals("Displays the correct organism", PROJECT_ORGANISM, page.getDataProjectOrganism());
         assertEquals("Displays the correct remoteURL", PROJECT_REMOTE_URL, page.getDataProjectRemoteURL());
         assertEquals("Display reference files", 1, page.getReferenceFileCount());
+
+	    page.clickReferenceFilesTab();
 	    assertEquals("Displays the name of the reference file", REFERENCE_FILE_NAME, page.getReferenceFileName());
 	    
 	    assertTrue("Contains edit metadata button", page.hasEditButton());

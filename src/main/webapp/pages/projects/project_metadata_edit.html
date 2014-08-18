@@ -14,8 +14,19 @@
         <nav th:replace="projects/project_base :: nav"></nav>
         <main class="col-md-9 col-md-push-3" role="main" property="mainContentOfPage" th:object="${project}">
             <div class="row">
-                <div class="col-md-12">
-                    <form th:action="@{__${#httpServletRequest.requestURI}__}" method="post" role="form"
+                <div class="col-md-10">
+                    <h1 role="heading" th:text="#{project.metadata.title(*{label})}"></h1>
+                </div>
+            </div>
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="active"><a id="metaTab" href="#meta" role="tab" data-toggle="tab">Meta Data</a></li>
+                <li><a id="refTab" href="#references" role="tab" data-toggle="tab">Reference Files</a></li>
+            </ul>
+
+
+            <div class="tab-content mrgn-tp-md">
+                <div class="tab-pane active" id="meta">
+                <form th:action="@{__${#httpServletRequest.requestURI}__}" method="post" role="form"
                           class="panel panel-info" th:object="${project}">
                         <div class="panel-heading">
                             <h3 class="panel-title">Edit Project Metadata</h3>
@@ -68,8 +79,10 @@
                                     th:text="#{form.btn.update}"></button>
                         </div>
                     </form>
+                </div>
+                <div class="tab-pane" id="references">
                     <div class="panel panel-info">
-                        <div class="panel-heading">
+                    <div class="panel-heading">
                             <h3 class="panel-title" th:text="#{projects.meta.reference-files}">__Reference Files__</h3>
                         </div>
                         <div class="panel-body">
@@ -86,9 +99,9 @@
                                 <tr th:each="file : ${referenceFiles}">
                                     <td class="file-name" th:text="${file.label}"></td>
                                     <td th:text="${file.size}"></td>
-                                    <td data:livestamp="${file.createdDate}" th:text="${file.createdDate}"></td>
+                                    <td th:text="${file.createdDate}"></td>
                                     <td class="text-right">
-                                        <button data:file-id="${file.id}" class="btn btn-danger btn-xs"
+                                        <button data:file-id="${file.id}" class="btn btn-danger btn-xs file-delete-btn"
                                                 data:tooltip="#{form.btn.remove}"><span
                                                 class="fa fa-trash-o fa-fw"></span>
                                         </button>
@@ -101,7 +114,7 @@
                             <span class="btn btn-primary fileinput-button">
                                 <i class="fa fa-plus fa-fw"></i>
                                 <span th:text="#{form.btn.upload-reference}">Select files...</span>
-                                <input id="fileupload" type="file" name="files[]" multiple="true"/>
+                                <input id="fileupload" type="file" name="file" multiple="false"/>
                             </span>
                         </div>
                     </div>
@@ -114,9 +127,9 @@
         <tr>
             <td class="file-name">{{label}}</td>
             <td>{{size}}</td>
-            <td class="file-date" data-livestamp="{{createdDate}}"></td>
+            <td class="file-date">{{createdDate}}</td>
             <td class="text-right">
-                <button data-file-id="{{id}}" class="btn btn-danger btn-xs"
+                <button data-file-id="{{id}}" class="btn btn-danger btn-xs file-delete-btn"
                         data:tooltip="#{form.btn.remove}">
                     <span class="fa fa-trash-o fa-fw"></span>
                 </button>
@@ -158,6 +171,14 @@
             $("#fileupload").fileupload({
                 url     : /*[[@{/referenceFiles/project/{projectId}/new(projectId=${project.getId()})}]]*/ '/referenceFiles/project/1/new',
                 dataType: 'json',
+                beforeSend:function(event,files,index,xhr,handler,callBack){
+                    var max_size = /*[[${maxFileSize}]]*/ 20971520;
+                    if(files.files[0].size > max_size) {
+                        event.abort();
+                        var msg = /*[[#{projects.meta.reference-file.error-too-large(${maxFileSizeString})}]]*/ 'The file you are uploading exceeds the maximum file size limit of 20 MB';
+                        showErrorModal(files.files[0].name + ' ' + msg);
+                    }
+                },
                 done    : function (e, data) {
                     var template = $("#row-template").html();
                     var content = Mustache.render(template, data.result);
@@ -167,7 +188,7 @@
                     showSuccessModal(Mustache.render(msg, {'name': data.result.label, 'project': projectName}));
                 },
                 error   : function (e, data) {
-                    var msg = /*#{projects.meta.reference-file.add-error}*/ '__ERROR_MSG__';
+                    var msg = /*[[#{projects.meta.reference-file.add-error}]]*/ '__ERROR_MSG__';
                     showErrorModal(Mustache.render(msg, {'name': data.result.label, 'project': projectName}));
                 }
             }).prop('disabled', !$.support.fileInput)
@@ -187,7 +208,7 @@
             };
             $('[data-tooltip!=""]').qtip(options);
 
-            tableBody.on('click', ".btn-danger", function () {
+            tableBody.on('click', ".file-delete-btn", function () {
                 var $this = $(this),
                     id = $this.data('file-id'),
                     row = $this.closest('tr'),

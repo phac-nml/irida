@@ -53,6 +53,7 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
+import ca.corefacility.bioinformatics.irida.ria.config.WebConfigurer;
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectSamplesDataTable;
@@ -246,6 +247,8 @@ public class ProjectsController {
 
 			model.addAttribute("referenceFiles", referenceFiles);
 			model.addAttribute("project", project);
+			model.addAttribute("maxFileSize", WebConfigurer.MAX_UPLOAD_SIZE);
+			model.addAttribute("maxFileSizeString", fileSizeConverter.convert(WebConfigurer.MAX_UPLOAD_SIZE));
 			model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
 			return PROJECT_METADATA_EDIT_PAGE;
 		} else {
