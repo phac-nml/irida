@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
@@ -45,6 +46,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	private AnalysisExecutionServicePhylogenomics workflowManagement;
 	private PreparedWorkflowGalaxy preparedWorkflow;
 	private GalaxyAnalysisId analysisId;
+	private WorkflowInputsGalaxy workflowInputsGalaxy;
 
 	/**
 	 * Setup variables for tests.
@@ -64,7 +66,8 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(new GalaxyAnalysisId("1"));
 		
 		analysisId = new GalaxyAnalysisId("1");
-		preparedWorkflow = new PreparedWorkflowGalaxy(analysisId, workflowInputs);		
+		workflowInputsGalaxy = new WorkflowInputsGalaxy(workflowInputs);
+		preparedWorkflow = new PreparedWorkflowGalaxy(analysisId, workflowInputsGalaxy);		
 	}
 	
 	/**
@@ -77,7 +80,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 			thenReturn(true);
 		when(workspaceServicePhylogenomics.prepareAnalysisWorkspace(analysisSubmission)).
 			thenReturn(preparedWorkflow);
-		when(galaxyWorkflowService.runWorkflow(workflowInputs)).thenReturn(workflowOutputs);
+		when(galaxyWorkflowService.runWorkflow(workflowInputsGalaxy)).thenReturn(workflowOutputs);
 		
 		AnalysisSubmissionPhylogenomics returnedSubmission = 
 				workflowManagement.executeAnalysis(analysisSubmission);
@@ -86,7 +89,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		
 		verify(galaxyWorkflowService).validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID);
 		verify(workspaceServicePhylogenomics).prepareAnalysisWorkspace(analysisSubmission);
-		verify(galaxyWorkflowService).runWorkflow(workflowInputs);
+		verify(galaxyWorkflowService).runWorkflow(workflowInputsGalaxy);
 	}
 	
 	/**
@@ -125,7 +128,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 			thenReturn(true);
 		when(workspaceServicePhylogenomics.prepareAnalysisWorkspace(analysisSubmission)).
 			thenReturn(preparedWorkflow);
-		when(galaxyWorkflowService.runWorkflow(workflowInputs)).
+		when(galaxyWorkflowService.runWorkflow(workflowInputsGalaxy)).
 			thenThrow(new WorkflowException());
 		
 		workflowManagement.executeAnalysis(analysisSubmission);

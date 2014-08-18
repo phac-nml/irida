@@ -2,16 +2,14 @@ package ca.corefacility.bioinformatics.irida.model.workflow.galaxy;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.PreparedWorkflow;
 
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
-
 /**
  * A Galaxy workflow that has been prepared for execution.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class PreparedWorkflowGalaxy implements PreparedWorkflow {
+public class PreparedWorkflowGalaxy implements PreparedWorkflow<GalaxyAnalysisId, WorkflowInputsGalaxy> {
 	
-	private WorkflowInputs workflowInputs;
+	private WorkflowInputsGalaxy workflowInputs;
 	private GalaxyAnalysisId galaxyAnalysisId;
 	
 	/**
@@ -19,23 +17,23 @@ public class PreparedWorkflowGalaxy implements PreparedWorkflow {
 	 * @param galaxyAnalysisId  The analysisId for the workflow history.
 	 * @param workflowInputs  The inputs to this workflow.
 	 */
-	public PreparedWorkflowGalaxy(GalaxyAnalysisId galaxyAnalysisId, WorkflowInputs workflowInputs) {
+	public PreparedWorkflowGalaxy(GalaxyAnalysisId galaxyAnalysisId, WorkflowInputsGalaxy workflowInputs) {
 		this.galaxyAnalysisId = galaxyAnalysisId;
 		this.workflowInputs = workflowInputs;
 	}
 	
 	/**
-	 * Gets the inputs to this workflow.
-	 * @return  The inputs to this workflow.
+	 * {@inheritDoc}
 	 */
-	public WorkflowInputs getWorkflowInputs() {
+	@Override
+	public WorkflowInputsGalaxy getWorkflowInputs() {
 		return workflowInputs;
 	}
 
 	/**
-	 * Gets the analysis id for this workflow.
-	 * @return  The analysis id for this workflow.
+	 * {@inheritDoc}
 	 */
+	@Override
 	public GalaxyAnalysisId getRemoteAnalysisId() {
 		return galaxyAnalysisId;
 	}

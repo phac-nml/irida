@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
@@ -22,7 +23,6 @@ import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputDefinition;
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.sun.jersey.api.client.UniformInterfaceException;
 
@@ -194,11 +194,11 @@ public class GalaxyWorkflowService {
 	 * @return  A WorkflowOutputs object with information on output files in the workflow.
 	 * @throws WorkflowException  If there was an issue running the workflow.
 	 */
-	public WorkflowOutputs runWorkflow(WorkflowInputs inputs) throws WorkflowException {
+	public WorkflowOutputs runWorkflow(WorkflowInputsGalaxy inputs) throws WorkflowException {
 		checkNotNull(inputs, "inputs is null");
 		
 		try {
-			return workflowsClient.runWorkflow(inputs);
+			return workflowsClient.runWorkflow(inputs.getInputsObject());
 		} catch (RuntimeException e) {
 			throw new WorkflowException(e);
 		}

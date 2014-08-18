@@ -13,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
@@ -88,6 +89,6 @@ public class WorkspaceServicePhylogenomics
 		
 		GalaxyAnalysisId analysisId = new GalaxyAnalysisId(workflowHistory.getId());
 		
-		return new PreparedWorkflowGalaxy(analysisId, inputs);
+		return new PreparedWorkflowGalaxy(analysisId, new WorkflowInputsGalaxy(inputs));
 	}
 }

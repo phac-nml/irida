@@ -5,7 +5,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
@@ -15,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
@@ -63,7 +63,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 		
 		logger.trace("Preparing " + analysisName + ": " + remoteWorkflow);
 		PreparedWorkflowGalaxy preparedWorkflow = workspaceService.prepareAnalysisWorkspace(analysisSubmission);
-		WorkflowInputs input = preparedWorkflow.getWorkflowInputs();
+		WorkflowInputsGalaxy input = preparedWorkflow.getWorkflowInputs();
 		
 		logger.trace("Executing " + analysisName + ": " + remoteWorkflow);
 		WorkflowOutputs output = galaxyWorkflowService.runWorkflow(input);
