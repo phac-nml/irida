@@ -24,11 +24,11 @@ public class AnalysisExecutionServicePhylogenomics
 	 * Builds a new Phylogenomis Pipeline analysis with the given service classes.
 	 * @param galaxyWorkflowService  A GalaxyWorkflowService for interacting with Galaxy workflows.
 	 * @param galaxyHistoriesService  A GalaxyHistoriesService for interacting with Galaxy Histories.
-	 * @param preparationService  A PreparationService for preparing workflows.
+	 * @param workspaceService  A PreparationService for preparing workflows.
 	 */
 	public AnalysisExecutionServicePhylogenomics(GalaxyWorkflowService galaxyWorkflowService,
 			GalaxyHistoriesService galaxyHistoriesService,
-			WorkspaceServicePhylogenomics preparationService) {
-		super(galaxyWorkflowService, galaxyHistoriesService, preparationService);
+			WorkspaceServicePhylogenomics workspaceService) {
+		super(galaxyWorkflowService, galaxyHistoriesService, workspaceService);
 	}
 }

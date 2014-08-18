@@ -177,15 +177,30 @@ public class GalaxyWorkflowService {
 		}
 	}
 
+	/**
+	 * Gets details about a given workflow.
+	 * @param workflowId  The id of the workflow.
+	 * @return  A details object for this workflow.
+	 */
 	public WorkflowDetails getWorkflowDetails(String workflowId) {
 		checkNotNull(workflowId, "workflowId is null");
 		
 		return workflowsClient.showWorkflow(workflowId);
 	}
 
-	public WorkflowOutputs runWorkflow(WorkflowInputs inputs) {
+	/**
+	 * Attempts to run the workflow definined by the given WorkflowInputs object.
+	 * @param inputs  The inputs to the workflow.
+	 * @return  A WorkflowOutputs object with information on output files in the workflow.
+	 * @throws WorkflowException  If there was an issue running the workflow.
+	 */
+	public WorkflowOutputs runWorkflow(WorkflowInputs inputs) throws WorkflowException {
 		checkNotNull(inputs, "inputs is null");
 		
-		return workflowsClient.runWorkflow(inputs);
+		try {
+			return workflowsClient.runWorkflow(inputs);
+		} catch (RuntimeException e) {
+			throw new WorkflowException(e);
+		}
 	}
 }

@@ -26,27 +26,27 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.An
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  * @param <A> The type of Analysis expected to be performed.
- * @param <P> The type of AnalysisPreparationService to use.
+ * @param <P> The type of AnalysisWorkspaceServiceGalaxy to use.
  * @param <R> The type of RemoteWorkflow to use.
  * @param <S> The type of AnalysisSubmissionGalaxy to perform.
  */
 public abstract class AnalysisExecutionServiceGalaxy
-	<A extends Analysis, P extends AnalysisWorkspaceServiceGalaxy<R,S>, 
+	<A extends Analysis, W extends AnalysisWorkspaceServiceGalaxy<R,S>, 
 	R extends RemoteWorkflowGalaxy, S extends AnalysisSubmissionGalaxy<R>>
 	implements AnalysisExecutionService<A,S> {
 	
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxy.class);
 	
-	private P preparationService;
+	private W workspaceService;
 	
 	protected GalaxyHistoriesService galaxyHistoriesService;
 	protected GalaxyWorkflowService galaxyWorkflowService;
 	
 	public AnalysisExecutionServiceGalaxy(GalaxyWorkflowService galaxyWorkflowService,
-			GalaxyHistoriesService galaxyHistoriesService, P preparationService) {
+			GalaxyHistoriesService galaxyHistoriesService, W workspaceService) {
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.galaxyHistoriesService = galaxyHistoriesService;
-		this.preparationService = preparationService;
+		this.workspaceService = workspaceService;
 	}
 	
 	@Override
@@ -62,7 +62,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 		validateWorkflow(analysisSubmission.getRemoteWorkflow());
 		
 		logger.trace("Preparing " + analysisName + ": " + remoteWorkflow);
-		PreparedWorkflowGalaxy preparedWorkflow = preparationService.prepareAnalysisWorkspace(analysisSubmission);
+		PreparedWorkflowGalaxy preparedWorkflow = workspaceService.prepareAnalysisWorkspace(analysisSubmission);
 		WorkflowInputs input = preparedWorkflow.getWorkflowInputs();
 		
 		logger.trace("Executing " + analysisName + ": " + remoteWorkflow);

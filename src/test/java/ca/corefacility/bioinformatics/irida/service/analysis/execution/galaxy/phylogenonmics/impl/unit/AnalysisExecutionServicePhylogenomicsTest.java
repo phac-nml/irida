@@ -1,53 +1,132 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenonmics.impl.unit;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
 
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
+
+/**
+ * Tests out an execution service for phylogenomics analyses.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 public class AnalysisExecutionServicePhylogenomicsTest {
 	
 	@Mock private GalaxyHistoriesService galaxyHistoriesService;
 	@Mock private GalaxyWorkflowService galaxyWorkflowService;
 	@Mock private AnalysisSubmissionPhylogenomics analysisSubmission;
-	@Mock private AnalysisSubmissionPhylogenomics submittedAnalysisGalaxy;
-	@Mock private WorkspaceServicePhylogenomics galaxyWorkflowPreparationServicePhylogenomicsPipeline;
+	@Mock private WorkspaceServicePhylogenomics workspaceServicePhylogenomics;
+	@Mock private WorkflowInputs workflowInputs;
+	@Mock private WorkflowOutputs workflowOutputs;
 
+	private static final String WORKFLOW_ID = "1";
+	private static final String WORKFLOW_CHECKSUM = "1";
 	private AnalysisExecutionServicePhylogenomics workflowManagement;
+	private PreparedWorkflowGalaxy preparedWorkflow;
+	private GalaxyAnalysisId analysisId;
 
+	/**
+	 * Setup variables for tests.
+	 * @throws WorkflowException 
+	 */
 	@Before
-	public void setup() {
+	public void setup() throws WorkflowException {
 		MockitoAnnotations.initMocks(this);
 		
 		workflowManagement = new AnalysisExecutionServicePhylogenomics(galaxyWorkflowService,
-				galaxyHistoriesService, galaxyWorkflowPreparationServicePhylogenomicsPipeline);
+				galaxyHistoriesService, workspaceServicePhylogenomics);
 		
 		RemoteWorkflowPhylogenomics remoteWorkflow = 
-				new RemoteWorkflowPhylogenomics("1", "1", "1", "1");
+				new RemoteWorkflowPhylogenomics(WORKFLOW_ID, WORKFLOW_CHECKSUM, "1", "1");
 		
-		when(submittedAnalysisGalaxy.getRemoteWorkflow()).thenReturn(remoteWorkflow);
-		when(submittedAnalysisGalaxy.getRemoteAnalysisId()).thenReturn(new GalaxyAnalysisId("1"));
+		when(analysisSubmission.getRemoteWorkflow()).thenReturn(remoteWorkflow);
+		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(new GalaxyAnalysisId("1"));
+		
+		analysisId = new GalaxyAnalysisId("1");
+		preparedWorkflow = new PreparedWorkflowGalaxy(analysisId, workflowInputs);		
 	}
 	
-	@Ignore
+	/**
+	 * Tests successfully executing an analysis.
+	 * @throws ExecutionManagerException
+	 */
 	@Test
 	public void testExecuteAnalysisSuccess() throws ExecutionManagerException {
+		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
+			thenReturn(true);
+		when(workspaceServicePhylogenomics.prepareAnalysisWorkspace(analysisSubmission)).
+			thenReturn(preparedWorkflow);
+		when(galaxyWorkflowService.runWorkflow(workflowInputs)).thenReturn(workflowOutputs);
+		
+		AnalysisSubmissionPhylogenomics returnedSubmission = 
+				workflowManagement.executeAnalysis(analysisSubmission);
+		
+		assertEquals(analysisSubmission, returnedSubmission);
+		
+		verify(galaxyWorkflowService).validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID);
+		verify(workspaceServicePhylogenomics).prepareAnalysisWorkspace(analysisSubmission);
+		verify(galaxyWorkflowService).runWorkflow(workflowInputs);
+	}
+	
+	/**
+	 * Tests failing to executing an analysis due to invalid workflow.
+	 * @throws ExecutionManagerException
+	 */
+	@Test(expected=WorkflowException.class)
+	public void testExecuteAnalysisFailInvalidWorkflow() throws ExecutionManagerException {
+		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
+			thenThrow(new WorkflowException());
+		
+		workflowManagement.executeAnalysis(analysisSubmission);
+	}
+	
+	/**
+	 * Tests failing to prepare a workflow.
+	 * @throws ExecutionManagerException
+	 */
+	@Test(expected=ExecutionManagerException.class)
+	public void testExecuteAnalysisFailPrepareWorkflow() throws ExecutionManagerException {
+		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
+			thenReturn(true);
+		when(workspaceServicePhylogenomics.prepareAnalysisWorkspace(analysisSubmission)).
+			thenThrow(new ExecutionManagerException());
+		
+		workflowManagement.executeAnalysis(analysisSubmission);
+	}
+	
+	/**
+	 * Tests failing to execute a workflow.
+	 * @throws ExecutionManagerException
+	 */
+	@Test(expected=WorkflowException.class)
+	public void testExecuteAnalysisFail() throws ExecutionManagerException {
+		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
+			thenReturn(true);
+		when(workspaceServicePhylogenomics.prepareAnalysisWorkspace(analysisSubmission)).
+			thenReturn(preparedWorkflow);
+		when(galaxyWorkflowService.runWorkflow(workflowInputs)).
+			thenThrow(new WorkflowException());
+		
 		workflowManagement.executeAnalysis(analysisSubmission);
 	}
 	
@@ -60,9 +139,9 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		WorkflowStatus workflowStatus = new WorkflowStatus(WorkflowState.OK, 1.0f);
 		
 		when(galaxyHistoriesService.getStatusForHistory(
-				submittedAnalysisGalaxy.getRemoteAnalysisId().getValue())).thenReturn(workflowStatus);
+				analysisSubmission.getRemoteAnalysisId().getValue())).thenReturn(workflowStatus);
 		
-		assertEquals(workflowStatus, workflowManagement.getWorkflowStatus(submittedAnalysisGalaxy));
+		assertEquals(workflowStatus, workflowManagement.getWorkflowStatus(analysisSubmission));
 	}
 	
 	/**
@@ -71,9 +150,9 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test(expected=WorkflowException.class)
 	public void testGetWorkflowStatusFailNoStatus() throws ExecutionManagerException {		
-		when(galaxyHistoriesService.getStatusForHistory(submittedAnalysisGalaxy.
+		when(galaxyHistoriesService.getStatusForHistory(analysisSubmission.
 				getRemoteAnalysisId().getValue())).thenThrow(new WorkflowException());
 		
-		workflowManagement.getWorkflowStatus(submittedAnalysisGalaxy);
+		workflowManagement.getWorkflowStatus(analysisSubmission);
 	}
 }
