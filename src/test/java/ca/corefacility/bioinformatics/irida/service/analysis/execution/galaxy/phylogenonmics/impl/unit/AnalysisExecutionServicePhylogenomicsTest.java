@@ -85,7 +85,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		AnalysisSubmissionPhylogenomics returnedSubmission = 
 				workflowManagement.executeAnalysis(analysisSubmission);
 		
-		assertEquals(analysisSubmission, returnedSubmission);
+		assertEquals("analysisSubmission not equal to returned submission", analysisSubmission, returnedSubmission);
 		
 		verify(galaxyWorkflowService).validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID);
 		verify(workspaceServicePhylogenomics).prepareAnalysisWorkspace(analysisSubmission);

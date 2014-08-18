@@ -112,10 +112,10 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	 * @param status
 	 */
 	private void assertValidStatus(WorkflowStatus status) {
-		assertNotNull(status);
-		assertFalse(WorkflowState.UNKNOWN.equals(status.getState()));
+		assertNotNull("WorkflowStatus is null", status);
+		assertFalse("WorkflowState is " + WorkflowState.UNKNOWN, WorkflowState.UNKNOWN.equals(status.getState()));
 		float percentComplete = status.getPercentComplete();
-		assertTrue(0.0f <= percentComplete && percentComplete <= 100.0f);
+		assertTrue("percentComplete not in range of 0 to 100", 0.0f <= percentComplete && percentComplete <= 100.0f);
 	}
 	
 	/**
@@ -127,11 +127,11 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	public void testExecuteAnalysisSuccess() throws InterruptedException, ExecutionManagerException {		
 		AnalysisSubmissionPhylogenomics analysisSubmitted = 
 				analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmission);
-		assertNotNull(analysisSubmitted);
-		assertNotNull(analysisSubmitted.getRemoteAnalysisId());
+		assertNotNull("analysisSubmitted is null", analysisSubmitted);
+		assertNotNull("remoteAnalysisId is null", analysisSubmitted.getRemoteAnalysisId());
 		
 		WorkflowOutputs output = analysisSubmitted.getOutputs();
-		assertNotNull(output);
+		assertNotNull("output of submitted analysis is null", output);
 		WorkflowStatus status = 
 				analysisExecutionServicePhylogenomics.getWorkflowStatus(analysisSubmitted);
 		assertValidStatus(status);
