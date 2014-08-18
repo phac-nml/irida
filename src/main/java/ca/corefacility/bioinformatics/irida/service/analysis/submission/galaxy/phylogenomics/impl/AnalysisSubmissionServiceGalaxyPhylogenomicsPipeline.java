@@ -5,8 +5,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.GalaxyWorkflowExecutionServicePhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.service.analysis.submission.galaxy.AnalysisSubmissionServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
 
 /**
  * An execution service for performing a Phylogenomics Pipeline analysis.
@@ -16,7 +16,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.submission.galaxy.A
 public class AnalysisSubmissionServiceGalaxyPhylogenomicsPipeline
 	extends AnalysisSubmissionServiceGalaxy
 		<AnalysisPhylogenomicsPipeline,
-		GalaxyWorkflowExecutionServicePhylogenomicsPipeline,
+		WorkspaceServicePhylogenomics,
 		RemoteWorkflowGalaxyPhylogenomics,
 		AnalysisSubmissionGalaxyPhylogenomicsPipeline> {
 		
@@ -28,7 +28,7 @@ public class AnalysisSubmissionServiceGalaxyPhylogenomicsPipeline
 	 */
 	public AnalysisSubmissionServiceGalaxyPhylogenomicsPipeline(GalaxyWorkflowService galaxyWorkflowService,
 			GalaxyHistoriesService galaxyHistoriesService,
-			GalaxyWorkflowExecutionServicePhylogenomicsPipeline preparationService) {
+			WorkspaceServicePhylogenomics preparationService) {
 		super(galaxyWorkflowService, galaxyHistoriesService, preparationService);
 	}
 }

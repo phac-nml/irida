@@ -18,8 +18,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.GalaxyWorkflowExecutionServicePhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.service.analysis.submission.galaxy.phylogenomics.impl.AnalysisSubmissionServiceGalaxyPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
 
 public class AnalysisSubmissionServiceGalaxyPhylogenomicsPipelineTest {
 	
@@ -27,7 +27,7 @@ public class AnalysisSubmissionServiceGalaxyPhylogenomicsPipelineTest {
 	@Mock private GalaxyWorkflowService galaxyWorkflowService;
 	@Mock private AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission;
 	@Mock private AnalysisSubmissionGalaxyPhylogenomicsPipeline submittedAnalysisGalaxy;
-	@Mock private GalaxyWorkflowExecutionServicePhylogenomicsPipeline galaxyWorkflowPreparationServicePhylogenomicsPipeline;
+	@Mock private WorkspaceServicePhylogenomics galaxyWorkflowPreparationServicePhylogenomicsPipeline;
 
 	private AnalysisSubmissionServiceGalaxyPhylogenomicsPipeline workflowManagement;
 

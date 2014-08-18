@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.unit;
+package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -29,7 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.GalaxyWorkflowExecutionServicePhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
 
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
@@ -41,14 +41,14 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionR
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyWorkflowExecutionServicePhylogenomicsPipelineTest {
+public class WorkspaceServicePhylogenomicsTest {
 
 	@Mock private GalaxyHistoriesService galaxyHistoriesService;
 	@Mock private GalaxyWorkflowService galaxyWorkflowService;
 	@Mock private List<Dataset> sequenceDatasets;
 	@Mock private Dataset refDataset;
 	
-	private GalaxyWorkflowExecutionServicePhylogenomicsPipeline
+	private WorkspaceServicePhylogenomics
 		workflowPreparation;
 	
 	private Set<SequenceFile> inputFiles;
@@ -104,7 +104,7 @@ public class GalaxyWorkflowExecutionServicePhylogenomicsPipelineTest {
 		workflowDetails.setId(WORKFLOW_ID);
 		
 		workflowPreparation = 
-				new GalaxyWorkflowExecutionServicePhylogenomicsPipeline(
+				new WorkspaceServicePhylogenomics(
 						galaxyHistoriesService, galaxyWorkflowService);
 	}
 	

@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl;
+package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -17,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
@@ -30,14 +30,14 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionR
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyWorkflowExecutionServicePhylogenomicsPipeline 
-	extends AnalysisExecutionServiceGalaxy<RemoteWorkflowGalaxyPhylogenomics,
+public class WorkspaceServicePhylogenomics 
+	extends AnalysisWorkspaceServiceGalaxy<RemoteWorkflowGalaxyPhylogenomics,
 		AnalysisSubmissionGalaxyPhylogenomicsPipeline> {
 	
 	private GalaxyHistoriesService galaxyHistoriesService;
 	private GalaxyWorkflowService galaxyWorkflowService;
 	
-	public GalaxyWorkflowExecutionServicePhylogenomicsPipeline(GalaxyHistoriesService galaxyHistoriesService,
+	public WorkspaceServicePhylogenomics(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
