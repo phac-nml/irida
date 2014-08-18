@@ -49,6 +49,10 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	private PreparedWorkflowGalaxy preparedWorkflow;
 	private GalaxyAnalysisId analysisId;
 	private WorkflowInputsGalaxy workflowInputsGalaxy;
+	
+	private static final String TREE_LABEL = "tree";
+	private static final String MATRIX_LABEL = "snp_matrix";
+	private static final String TABLE_LABEL = "snp_table";
 
 	/**
 	 * Setup variables for tests.
@@ -62,7 +66,8 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 				galaxyHistoriesService, workspaceServicePhylogenomics);
 		
 		RemoteWorkflowPhylogenomics remoteWorkflow = 
-				new RemoteWorkflowPhylogenomics(WORKFLOW_ID, WORKFLOW_CHECKSUM, "1", "1");
+				new RemoteWorkflowPhylogenomics(WORKFLOW_ID, WORKFLOW_CHECKSUM, "1", "1",
+						TREE_LABEL, MATRIX_LABEL, TABLE_LABEL);
 		
 		when(analysisSubmission.getRemoteWorkflow()).thenReturn(remoteWorkflow);
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(new GalaxyAnalysisId("1"));

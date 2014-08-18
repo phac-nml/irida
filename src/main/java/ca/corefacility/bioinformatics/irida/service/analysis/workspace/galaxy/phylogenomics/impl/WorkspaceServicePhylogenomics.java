@@ -11,6 +11,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
@@ -25,6 +26,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 
 /**
@@ -103,6 +105,41 @@ public class WorkspaceServicePhylogenomics
 	public AnalysisPhylogenomicsPipeline getAnalysisResults(
 			AnalysisSubmissionPhylogenomics analysisSubmission)
 			throws ExecutionManagerException {
-		throw new UnsupportedOperationException();
+		checkNotNull(analysisSubmission, "analysisSubmission is null");
+		checkNotNull(analysisSubmission.getOutputs(), "outputs for analysis is null");
+		checkNotNull(analysisSubmission.getRemoteWorkflow(), "remote workflow is null");
+		checkNotNull(analysisSubmission.getInputFiles(), "input sequence files is null");
+		
+		RemoteWorkflowPhylogenomics remoteWorkflow = analysisSubmission.getRemoteWorkflow();
+		
+		AnalysisPhylogenomicsPipeline results =
+				new AnalysisPhylogenomicsPipeline(analysisSubmission.getInputFiles(), "fake");
+		
+		WorkflowOutputs outputs = analysisSubmission.getOutputs();
+		List<String> outputIds = outputs.getOutputIds();
+		
+//		String treeOutputId = galaxyHistoriesService.getOutputIdFor(
+		
+		results.setPhylogeneticTree(getPhylogeneticTree());
+		results.setSnpMatrix(getSnpMatrix());
+		results.setSnpTable(getSnpTable());
+
+		return results;
+	}
+	
+	private AnalysisOutputFile getSnpTable() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private AnalysisOutputFile getSnpMatrix() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private AnalysisOutputFile getPhylogeneticTree() {
+		AnalysisOutputFile treeOutputFile = null;
+		
+		return treeOutputFile;
 	}
 }

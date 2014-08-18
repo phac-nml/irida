@@ -72,6 +72,9 @@ public class LocalGalaxy {
 	private String workflowCorePipelineTestId;
 	private String workflowCorePipelineTestSequenceFilesLabel;
 	private String workflowCorePipelineTestReferenceLabel;
+	private String workflowCorePipelineTestTreeLabel;
+	private String workflowCorePipelineTestMatrixLabel;
+	private String workflowCorePipelineTestTabelLabel;
 	
 	private String invalidWorkflowId;
 	private String invalidWorkflowLabel = "invalid";
@@ -493,6 +496,9 @@ public class LocalGalaxy {
 			this.workflowCorePipelineTestId = constructTestWorkflow(workflowFile);
 			this.workflowCorePipelineTestSequenceFilesLabel = "sequence_reads";
 			this.workflowCorePipelineTestReferenceLabel = "reference";
+			this.workflowCorePipelineTestTreeLabel = "output_tree";
+			this.workflowCorePipelineTestTabelLabel = "positions";
+			this.workflowCorePipelineTestMatrixLabel = "csv";
 			
 			// find a workflow id that's invalid
 		} catch (URISyntaxException | IOException e) {
@@ -554,6 +560,30 @@ public class LocalGalaxy {
 	 */
 	public String getWorkflowCorePipelineTestReferenceLabel() {
 		return workflowCorePipelineTestReferenceLabel;
+	}
+
+	/**
+	 * Gets the label for the tree output from the test workflow.
+	 * @return  The label for the tree output from the test workflow. 
+	 */
+	public String getWorkflowCorePipelineTestTreeLabel() {
+		return workflowCorePipelineTestTreeLabel;
+	}
+
+	/**
+	 * Gets the label for the matrix output from the test workflow.
+	 * @return The label for the matrix output from the test workflow.
+	 */
+	public String getWorkflowCorePipelineTestMatrixLabel() {
+		return workflowCorePipelineTestMatrixLabel;
+	}
+
+	/**
+	 * Gets the label for the snp table label from the test workflow.
+	 * @return The label for the snp table label from the test workflow.
+	 */
+	public String getWorkflowCorePipelineTestTabelLabel() {
+		return workflowCorePipelineTestTabelLabel;
 	}
 
 	/**
