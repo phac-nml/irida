@@ -14,8 +14,19 @@
         <nav th:replace="projects/project_base :: nav"></nav>
         <main class="col-md-9 col-md-push-3" role="main" property="mainContentOfPage" th:object="${project}">
             <div class="row">
-                <div class="col-md-12">
-                    <form th:action="@{__${#httpServletRequest.requestURI}__}" method="post" role="form"
+                <div class="col-md-10">
+                    <h1 role="heading" th:text="#{project.metadata.title(*{label})}"></h1>
+                </div>
+            </div>
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="active"><a id="metaTab" href="#meta" role="tab" data-toggle="tab">Meta Data</a></li>
+                <li><a id="refTab" href="#references" role="tab" data-toggle="tab">Reference Files</a></li>
+            </ul>
+
+
+            <div class="tab-content mrgn-tp-md">
+                <div class="tab-pane active" id="meta">
+                <form th:action="@{__${#httpServletRequest.requestURI}__}" method="post" role="form"
                           class="panel panel-info" th:object="${project}">
                         <div class="panel-heading">
                             <h3 class="panel-title">Edit Project Metadata</h3>
@@ -31,7 +42,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="projectOrganism" th:text="#{projects.create.form.organism}">Project
-                                                                                                        Organism</label>
+                                    Organism</label>
 
                                 <div th:if="${#maps.containsKey(errors, 'organism')}" class="alert alert-warning"
                                      th:text="${errors.organism}"></div>
@@ -44,7 +55,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="projectDescription" th:text="#{projects.create.form.description}">Project
-                                                                                                              Description</label>
+                                    Description</label>
 
                                 <div th:if="${#maps.containsKey(errors, 'description')}" class="alert alert-warning"
                                      th:text="${errors.description}"></div>
@@ -69,13 +80,186 @@
                         </div>
                     </form>
                 </div>
+                <div class="tab-pane" id="references">
+                    <div class="panel panel-info">
+                    <div class="panel-heading">
+                            <h3 class="panel-title" th:text="#{projects.meta.reference-files}">__Reference Files__</h3>
+                        </div>
+                        <div class="panel-body">
+                            <table id="referenceFileTable" class="table">
+                                <thead>
+                                <tr>
+                                    <th th:text="#{projects.meta.reference-file.name}">__Reference File Name__</th>
+                                    <th th:text="#{projects.meta.reference-file.size}">__File Size__</th>
+                                    <th th:text="#{projects.meta.reference-file.createdDate}">__Date Added__</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="file : ${referenceFiles}">
+                                    <td class="file-name" th:text="${file.label}"></td>
+                                    <td th:text="${file.size}"></td>
+                                    <td th:text="${file.createdDate}"></td>
+                                    <td class="text-right">
+                                        <button data:file-id="${file.id}" class="btn btn-danger btn-xs file-delete-btn"
+                                                data:tooltip="#{form.btn.remove}"><span
+                                                class="fa fa-trash-o fa-fw"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="panel-footer text-right">
+                            <span class="btn btn-primary fileinput-button">
+                                <i class="fa fa-plus fa-fw"></i>
+                                <span th:text="#{form.btn.upload-reference}">Select files...</span>
+                                <input id="fileupload" type="file" name="file" multiple="false"/>
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
         <aside th:replace="projects/project_base :: sidebar"></aside>
     </div>
+    <script type="text/html" id="row-template">
+        <tr>
+            <td class="file-name">{{label}}</td>
+            <td>{{size}}</td>
+            <td class="file-date">{{createdDate}}</td>
+            <td class="text-right">
+                <button data-file-id="{{id}}" class="btn btn-danger btn-xs file-delete-btn"
+                        data:tooltip="#{form.btn.remove}">
+                    <span class="fa fa-trash-o fa-fw"></span>
+                </button>
+            </td>
+        </tr>
+
+    </script>
+    <script type="text/html" id="delete-template">
+        <h2 th:text="#{projects.meta.reference-file.delete-title}">__DELETE_REFERENCE_FILE</h2>
+        <p th:text="#{projects.meta.reference-file.delete-msg}"></p>
+    </script>
 </div>
 <div layout:fragment="scripts" th:inline="javascript">
     <div th:replace="projects/project_base :: scripts"></div>
+    <script src="/resources/bower_components/jquery-file-upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="/resources/bower_components/jquery-file-upload/js/jquery.iframe-transport.js"></script>
+    <script src="/resources/bower_components/jquery-file-upload/js/jquery.fileupload.js"></script>
+    <script>
+        function showErrorModal(msg) {
+            noty({
+                text: msg,
+                layout: "topCenter",
+                type: "error",
+                timeout: 3200
+            });
+        }
+        function showSuccessModal(msg) {
+            noty({
+                text: msg,
+                layout: "topCenter",
+                type: "success",
+                timeout: 3200
+            });
+        }
+        $(function () {
+            var tableBody = $("#referenceFileTable").find('tbody'),
+                projectName = /*[[${project.label}]]*/ 'Project Name';
+
+            $("#fileupload").fileupload({
+                url     : /*[[@{/referenceFiles/project/{projectId}/new(projectId=${project.getId()})}]]*/ '/referenceFiles/project/1/new',
+                dataType: 'json',
+                beforeSend:function(event,files,index,xhr,handler,callBack){
+                    var max_size = /*[[${maxFileSize}]]*/ 20971520;
+                    if(files.files[0].size > max_size) {
+                        event.abort();
+                        var msg = /*[[#{projects.meta.reference-file.error-too-large(${maxFileSizeString})}]]*/ 'The file you are uploading exceeds the maximum file size limit of 20 MB';
+                        showErrorModal(files.files[0].name + ' ' + msg);
+                    }
+                },
+                done    : function (e, data) {
+                    var template = $("#row-template").html();
+                    var content = Mustache.render(template, data.result);
+                    tableBody.append(content);
+                    tableBody.find('tr:last [data-tooltip!=""]').qtip(options);
+                    var msg = /*[[#{projects.meta.reference-file.add-success}]]*/ 'File added to project';
+                    showSuccessModal(Mustache.render(msg, {'name': data.result.label, 'project': projectName}));
+                },
+                error   : function (e, data) {
+                    var msg = /*[[#{projects.meta.reference-file.add-error}]]*/ '__ERROR_MSG__';
+                    showErrorModal(Mustache.render(msg, {'name': data.result.label, 'project': projectName}));
+                }
+            }).prop('disabled', !$.support.fileInput)
+                    .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
+            var options = {
+                content: {
+                    attr: 'data-tooltip'
+                },
+                position: {
+                    at: 'top center',
+                    my: 'bottom center'
+                },
+                style: {
+                    classes: 'qtip-tipsy qtip-shadow'
+                }
+            };
+            $('[data-tooltip!=""]').qtip(options);
+
+            tableBody.on('click', ".file-delete-btn", function () {
+                var $this = $(this),
+                    id = $this.data('file-id'),
+                    row = $this.closest('tr'),
+                    template = $("#delete-template").html(),
+                    fileName = $(row).find("td.file-name").html();
+                $this.qtip('hide', true);
+
+                noty({
+                    'layout' : 'center',
+                    'type'   : 'confirm',
+                    'text'   : Mustache.render(template, {'name': fileName, 'project': projectName}),
+                    'modal'  : 'true',
+                    'buttons': [
+                        {
+                            addClass: 'btn btn-primary btn-sm',
+                            text   : /*[[#{form.btn.confim}]]*/ 'OK',
+                            onClick: function ($noty) {
+                                $noty.close();
+                                $.ajax({
+                                    type   : 'post',
+                                    url    : /*[[@{/referenceFiles/delete/}]]*/ '/referenceFiles/delete/',
+                                    data   : "fileId=" + id,
+                                    success: function () {
+                                        $this.qtip('destroy', true);
+                                        $(row).fadeOut(300, function () {
+                                            $(this).remove();
+                                        });
+                                        var msg = /*[[#{projects.meta.reference-file.delete-success}]]*/ 'Reference file successfully removed';
+                                        showSuccessModal(Mustache.render(msg, {'name': fileName, 'project': projectName}));
+                                    },
+                                    error  : function (data) {
+                                        var msg = /*[[#{projects.meta.reference-file.delete-error}]]*/ "__Error deleting reference file__";
+                                        showErrorModal(Mustache.render(msg, {'name': fileName, 'project': projectName}));
+                                    }
+                                });
+
+                            }
+                        },
+                        {
+                            addClass: 'btn btn-default btn-sm',
+                            text: /*#{form.btn.cancel}*/ 'Cancel',
+                            onClick: function ($noty) {
+                                $noty.close();
+                            }
+                        }
+                    ]
+                });
+
+            });
+        });
+    </script>
 </div>
 </body>
 </html>

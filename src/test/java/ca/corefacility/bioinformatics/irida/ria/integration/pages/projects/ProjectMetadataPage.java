@@ -44,4 +44,11 @@ public class ProjectMetadataPage {
     public boolean hasEditButton() {
         return driver.findElements(By.id("edit-metadata")).size() > 0;
     }
+
+	// ************************************************************************************************
+	// ACTIONS
+	// ************************************************************************************************
+	public void clickReferenceFilesTab() {
+		driver.findElement(By.id("refTab")).click();
+	}
 }

@@ -180,4 +180,16 @@ main.col-md-9 h1 {
 .sequenceFile .col-md-4 img {
   width: 100%; }
 
+.uploadify-button {
+  background: #2572b4;
+  border-radius: 4px;
+  box-sizing: border-box;
+  border: 1px solid #143d5f;
+  height: 33px;
+  font-size: 16px;
+  font-weight: normal;
+  width: 200px;
+  padding: 6px 12px;
+  cursor: pointer !important; }
+
 /*# sourceMappingURL=main.css.map */
