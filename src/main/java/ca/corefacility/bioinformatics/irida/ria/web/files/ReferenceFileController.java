@@ -73,25 +73,25 @@ public class ReferenceFileController {
 	/**
 	 * Add a new reference file to a project.
 	 * @param projectId The id of the project to add the file to.
-	 * @param files {@link MultipartFile} file being uploaded.
+	 * @param file {@link MultipartFile} file being uploaded.
 	 * @return
 	 * @throws IOException
 	 */
 	@RequestMapping("/project/{projectId}/new")
 	public @ResponseBody Map<String, String> createNewReferenceFile(@PathVariable Long projectId,
-			@RequestParam("files[]") MultipartFile files) throws IOException {
+			@RequestParam("file") MultipartFile file) throws IOException {
 
 		logger.debug("Adding reference file to project " + projectId);
-		logger.trace("Uploaded file size: " + files.getSize() + " bytes");
+		logger.trace("Uploaded file size: " + file.getSize() + " bytes");
 
 		Project project = projectService.read(projectId);
 		logger.trace("Read project " + projectId);
 
 		// Prepare a new reference file using the multipart file supplied by the caller
 		Path temp = Files.createTempDirectory(null);
-		Path target = temp.resolve(files.getOriginalFilename());
+		Path target = temp.resolve(file.getOriginalFilename());
 
-		files.transferTo(target.toFile());
+		file.transferTo(target.toFile());
 		logger.debug("Wrote temp file to " + target);
 
 		ReferenceFile referenceFile = new ReferenceFile(target);
@@ -99,17 +99,17 @@ public class ReferenceFileController {
 				.addReferenceFileToProject(project, referenceFile);
 		logger.debug("Created reference file in project " + projectId);
 
-		ReferenceFile file = projectReferenceFileJoin.getObject();
+		ReferenceFile refFile = projectReferenceFileJoin.getObject();
 		Map<String, String> result = new HashMap<>();
-		Path path = file.getFile();
+		Path path = refFile.getFile();
 		long size = 0;
 		if (Files.exists(path)) {
 			size = Files.size(path);
 		}
 		result.put("size", fileSizeConverter.convert(size));
-		result.put("id", file.getId().toString());
-		result.put("label", file.getLabel());
-		result.put("createdDate", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
+		result.put("id", refFile.getId().toString());
+		result.put("label", refFile.getLabel());
+		result.put("createdDate", dateFormatter.print(refFile.getCreatedDate(), LocaleContextHolder.getLocale()));
 
 		// Clean up temporary files
 		Files.deleteIfExists(target);
