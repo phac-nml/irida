@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -127,9 +128,9 @@ public class ReferenceFileController {
 		String result = "success";
 		try {
 			referenceFileService.delete(fileId);
-		} catch (Exception e) {
+		} catch (EntityNotFoundException e) {
 			// This is required else the client does not know that an error was thrown!
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			logger.error("Failed to upload reference file, reason unknown.", e);
 			result = "error";
 		}
