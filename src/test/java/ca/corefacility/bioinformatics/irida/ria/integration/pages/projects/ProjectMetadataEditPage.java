@@ -2,10 +2,10 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.WebElement;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
 
 /**
  * Project Edit Metadata Page
@@ -16,9 +16,11 @@ public class ProjectMetadataEditPage {
 	public static final String URL = BasePage.URL + "/projects/1/metadata/edit";
 	public static final String ATTR_PLACEHOLDER = "placeholder";
     private WebDriver driver;
+	private PageUtilities pageUtilities;
 
     public ProjectMetadataEditPage(WebDriver driver) {
         this.driver = driver;
+	    this.pageUtilities = new PageUtilities(driver);
     }
 
 	public void gotoPage() {
@@ -54,8 +56,7 @@ public class ProjectMetadataEditPage {
 	}
 
 	public boolean isDeleteReferenceFileWarningMessageDisplayed() {
-		(new WebDriverWait(driver, 10))
-				.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("noty_message")));
+		pageUtilities.waitForElementVisible(By.className("noty_message"));
 		return driver.findElement(By.cssSelector(".noty_message h2")).getText().contains("Removing Reference");
 	}
 
@@ -65,14 +66,13 @@ public class ProjectMetadataEditPage {
 
 	public void clickDeleteReferenceFileButton() {
 		driver.findElement(By.className("btn-danger")).click();
-		(new WebDriverWait(driver, 10))
-				.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("noty_message")));
+		pageUtilities.waitForElementVisible(By.className("noty_message"));
 	}
 
 	public void clickOKtoDeleteReferenceFile() {
-		(new WebDriverWait(driver, 10))
-				.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".noty_buttons .btn-primary")));
-		driver.findElement(By.cssSelector(".noty_buttons .btn-primary")).click();
+		pageUtilities.waitForElementVisible(By.id("button-0"));
+		WebElement el = driver.findElement(By.id("button-0"));
+		el.click();
 	}
 
 	public void clickReferenceFilesTab() {
