@@ -123,6 +123,7 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 			for (Type entity : entities) {
 				ResourceType resource = getResourceInstance(entity);
 				resource.setResource(entity);
+				resource.add(constructCustomResourceLinks(entity));
 				resource.add(linkTo(getClass()).slash(entity.getId()).withSelfRel());
 				resources.add(resource);
 			}

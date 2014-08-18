@@ -72,10 +72,9 @@
 		<thymeleaf.version>2.1.3.RELEASE</thymeleaf.version>
 
 		<!-- Spring -->
-		<spring-framework.version>4.0.5.RELEASE</spring-framework.version>
-		<org.springframework.hateoas.version>0.12.0.RELEASE</org.springframework.hateoas.version>
+		<spring-framework.version>4.0.6.RELEASE</spring-framework.version>
+		<org.springframework.hateoas.version>0.15.0.RELEASE</org.springframework.hateoas.version>
 		<org.springframework.security.version>4.0.0.M1</org.springframework.security.version>
-		<org.springframework.plugin.version>0.8.0.RELEASE</org.springframework.plugin.version>
 		<springframework.security.oauth.version>1.0.5.RELEASE</springframework.security.oauth.version>
 		<spring.test.dbunit.version>1.1.0</spring.test.dbunit.version>
 		<dbunit.version>2.4.9</dbunit.version>
@@ -85,9 +84,6 @@
 
 		<!-- Logging -->
 		<slf4j.version>1.7.7</slf4j.version>
-
-		<!-- Gson -->
-		<gson.version>2.2.4</gson.version>
 
 		<!-- JavaEE web API version -->
 		<javax.servlet-api.version>3.1.0</javax.servlet-api.version>
@@ -99,7 +95,7 @@
 		<mockito.version>1.9.5</mockito.version>
 
 		<!-- commons file upload -->
-		<commons.fileupload.version>1.3</commons.fileupload.version>
+		<commons.fileupload.version>1.3.1</commons.fileupload.version>
 
 		<!-- jaxb -->
 		<jaxb-api.version>2.2.7</jaxb-api.version>
@@ -111,7 +107,7 @@
 		<plugin.maven.war.version>2.4</plugin.maven.war.version>
 		<plugin.maven.failsafe.version>2.17</plugin.maven.failsafe.version>
 		<plugin.maven.surefire.version>2.17</plugin.maven.surefire.version>
-		<plugin.maven.jacoco.version>0.7.1.201405082137</plugin.maven.jacoco.version>
+		<plugin.maven.jacoco.version> 0.7.1.201405082137</plugin.maven.jacoco.version>
 	</properties>
 
 	<repositories>
@@ -185,11 +181,6 @@
 			<version>${org.springframework.security.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.plugin</groupId>
-			<artifactId>spring-plugin-core</artifactId>
-			<version>${org.springframework.plugin.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.security.oauth</groupId>
 			<artifactId>spring-security-oauth2</artifactId>
 			<version>${springframework.security.oauth.version}</version>
@@ -260,13 +251,6 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>${jackson.version}</version>
-		</dependency>
-
-		<!-- Gson -->
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>${gson.version}</version>
 		</dependency>
 
 		<dependency>

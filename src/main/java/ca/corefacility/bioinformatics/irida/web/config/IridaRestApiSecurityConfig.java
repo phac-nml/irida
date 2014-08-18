@@ -21,9 +21,13 @@ import org.springframework.security.oauth2.provider.vote.ScopeVoter;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
+import ca.corefacility.bioinformatics.irida.web.controller.api.exception.CustomOAuth2ExceptionTranslator;
+
 /**
  * Configuration for web security using OAuth2
- * @author "Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>"
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Configuration
@@ -31,35 +35,37 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 @ImportResource("classpath:oauth2-web-config.xml")
 public class IridaRestApiSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
-	public AuthenticationEntryPoint oauthAuthenticationEntryPoint(){
+	public AuthenticationEntryPoint oauthAuthenticationEntryPoint() {
 		OAuth2AuthenticationEntryPoint entryPoint = new OAuth2AuthenticationEntryPoint();
+		entryPoint.setExceptionTranslator(new CustomOAuth2ExceptionTranslator());
 		return entryPoint;
 	}
-	
+
 	@Bean
-	public AccessDeniedHandler oauthAccessDeniedHandler(){
+	public AccessDeniedHandler oauthAccessDeniedHandler() {
 		OAuth2AccessDeniedHandler handler = new OAuth2AccessDeniedHandler();
+		handler.setExceptionTranslator(new CustomOAuth2ExceptionTranslator());
 		return handler;
 	}
-	
-	
+
 	@Bean
-	public AuthenticationEntryPoint clientAuthenticationEntryPoint(){
+	public AuthenticationEntryPoint clientAuthenticationEntryPoint() {
 		OAuth2AuthenticationEntryPoint clientAuthenticationEntryPoint = new OAuth2AuthenticationEntryPoint();
 		clientAuthenticationEntryPoint.setRealmName("NmlIrida/client");
 		clientAuthenticationEntryPoint.setTypeName("Basic");
 		return clientAuthenticationEntryPoint;
 	}
-	
+
 	@Bean
-	public ClientCredentialsTokenEndpointFilter clientCredentialsTokenEndpointFilter(AuthenticationManager clientAuthenticationManager){
+	public ClientCredentialsTokenEndpointFilter clientCredentialsTokenEndpointFilter(
+			AuthenticationManager clientAuthenticationManager) {
 		ClientCredentialsTokenEndpointFilter clientCredentialsTokenEndpointFilter = new ClientCredentialsTokenEndpointFilter();
 		clientCredentialsTokenEndpointFilter.setAuthenticationManager(clientAuthenticationManager);
 		return clientCredentialsTokenEndpointFilter;
 	}
-	
+
 	@Bean
-	public AccessDecisionManager accessDecisionManager(){
+	public AccessDecisionManager accessDecisionManager() {
 		@SuppressWarnings("rawtypes")
 		List<AccessDecisionVoter> voters = new ArrayList<>();
 		voters.add(new ScopeVoter());

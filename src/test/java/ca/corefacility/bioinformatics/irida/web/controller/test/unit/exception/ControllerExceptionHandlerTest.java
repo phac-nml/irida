@@ -1,8 +1,11 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.exception;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.validation.Configuration;
@@ -56,10 +59,16 @@ public class ControllerExceptionHandlerTest {
         for (ConstraintViolation<IdentifiableTestEntity> v : violations) {
             constraintViolations.add(v);
         }
-        ResponseEntity<String> response = controller.handleConstraintViolations(
+        ResponseEntity<Map<String, List<String>>> response = controller.handleConstraintViolations(
                 new ConstraintViolationException(constraintViolations));
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("{\"label\":[\"You must provide a label.\"]}", response.getBody());
+        //assertEquals("{\"label\":[\"You must provide a label.\"]}", response.getBody());
+        Map<String, List<String>> body = response.getBody();
+        assertTrue("The response must contain an error about a missing label.", body.containsKey("label"));
+        List<String> labels = body.get("label");
+        assertEquals("There must only be one error with the label.", 1, labels.size());
+        String error = labels.get(0);
+        assertEquals("The error must be 'You must provide a label.'", "You must provide a label.", error);
     }
 
     @Test
