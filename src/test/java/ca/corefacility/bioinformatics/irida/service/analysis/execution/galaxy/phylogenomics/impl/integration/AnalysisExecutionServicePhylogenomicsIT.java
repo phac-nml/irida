@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.analysis.submission.galaxy.phylogenomics.impl.integration;
+package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.integration;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -39,7 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowGalaxyPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.service.analysis.submission.galaxy.phylogenomics.impl.AnalysisSubmissionServiceGalaxyPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServiceGalaxyPhylogenomics;
 
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
@@ -59,11 +59,11 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
-public class AnalysisSubmissionServiceGalaxyPhylogenomicsPipelineIT {
+public class AnalysisExecutionServicePhylogenomicsIT {
 	
 	@Autowired
-	private AnalysisSubmissionServiceGalaxyPhylogenomicsPipeline 
-		analysisExecutionServiceGalaxyPhylogenomicsPipeline;
+	private AnalysisExecutionServicePhylogenomics 
+		analysisExecutionServicePhylogenomics;
 	
 	@Autowired
 	private RemoteWorkflowServiceGalaxyPhylogenomics
@@ -92,9 +92,9 @@ public class AnalysisSubmissionServiceGalaxyPhylogenomicsPipelineIT {
 	public void setup() throws URISyntaxException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 		
-		dataFile = Paths.get(AnalysisSubmissionServiceGalaxyPhylogenomicsPipelineIT.class.getResource(
+		dataFile = Paths.get(AnalysisExecutionServicePhylogenomicsIT.class.getResource(
 				"testData1.fastq").toURI());
-		referenceFile = Paths.get(AnalysisSubmissionServiceGalaxyPhylogenomicsPipelineIT.class.getResource(
+		referenceFile = Paths.get(AnalysisExecutionServicePhylogenomicsIT.class.getResource(
 				"testReference.fasta").toURI());
 				
 		sequenceFiles = new HashSet<>();
@@ -126,14 +126,14 @@ public class AnalysisSubmissionServiceGalaxyPhylogenomicsPipelineIT {
 	@Test
 	public void testExecuteAnalysisSuccess() throws InterruptedException, ExecutionManagerException {		
 		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmitted = 
-				analysisExecutionServiceGalaxyPhylogenomicsPipeline.executeAnalysis(analysisSubmission);
+				analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmission);
 		assertNotNull(analysisSubmitted);
 		assertNotNull(analysisSubmitted.getRemoteAnalysisId());
 		
 		WorkflowOutputs output = analysisSubmitted.getOutputs();
 		assertNotNull(output);
 		WorkflowStatus status = 
-				analysisExecutionServiceGalaxyPhylogenomicsPipeline.getWorkflowStatus(analysisSubmitted);
+				analysisExecutionServicePhylogenomics.getWorkflowStatus(analysisSubmitted);
 		assertValidStatus(status);
 	}
 
@@ -146,7 +146,7 @@ public class AnalysisSubmissionServiceGalaxyPhylogenomicsPipelineIT {
 		analysisSubmission.setRemoteWorkflow(
 				remoteWorkflowServiceGalaxyPhylogenomicsInvalidId.getCurrentWorkflow());
 		
-		analysisExecutionServiceGalaxyPhylogenomicsPipeline.executeAnalysis(analysisSubmission);
+		analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmission);
 	}
 	
 	/**
@@ -158,6 +158,6 @@ public class AnalysisSubmissionServiceGalaxyPhylogenomicsPipelineIT {
 		analysisSubmission.setRemoteWorkflow(
 				remoteWorkflowServiceGalaxyPhylogenomicsInvalidChecksum.getCurrentWorkflow());
 		
-		analysisExecutionServiceGalaxyPhylogenomicsPipeline.executeAnalysis(analysisSubmission);
+		analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmission);
 	}
 }

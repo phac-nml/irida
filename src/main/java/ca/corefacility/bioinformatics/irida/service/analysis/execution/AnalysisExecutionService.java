@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.analysis.submission;
+package ca.corefacility.bioinformatics.irida.service.analysis.execution;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
@@ -12,7 +12,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  * @param <A> The type of Analysis expected to be performed.
  * @param <S> The type of AnalysisSubmission to perform.
  */
-public interface AnalysisSubmissionService
+public interface AnalysisExecutionService
 	<A extends Analysis, S extends AnalysisSubmission<?>> {
 
 	/**

@@ -1,11 +1,11 @@
-package ca.corefacility.bioinformatics.irida.service.analysis.submission.galaxy.phylogenomics.impl;
+package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowGalaxyPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.service.analysis.submission.galaxy.AnalysisSubmissionServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
 
 /**
@@ -13,8 +13,8 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.ph
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class AnalysisSubmissionServiceGalaxyPhylogenomicsPipeline
-	extends AnalysisSubmissionServiceGalaxy
+public class AnalysisExecutionServicePhylogenomics
+	extends AnalysisExecutionServiceGalaxy
 		<AnalysisPhylogenomicsPipeline,
 		WorkspaceServicePhylogenomics,
 		RemoteWorkflowGalaxyPhylogenomics,
@@ -26,7 +26,7 @@ public class AnalysisSubmissionServiceGalaxyPhylogenomicsPipeline
 	 * @param galaxyHistoriesService  A GalaxyHistoriesService for interacting with Galaxy Histories.
 	 * @param preparationService  A PreparationService for preparing workflows.
 	 */
-	public AnalysisSubmissionServiceGalaxyPhylogenomicsPipeline(GalaxyWorkflowService galaxyWorkflowService,
+	public AnalysisExecutionServicePhylogenomics(GalaxyWorkflowService galaxyWorkflowService,
 			GalaxyHistoriesService galaxyHistoriesService,
 			WorkspaceServicePhylogenomics preparationService) {
 		super(galaxyWorkflowService, galaxyHistoriesService, preparationService);
