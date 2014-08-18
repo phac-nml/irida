@@ -52,6 +52,13 @@ public class ReferenceFileController {
 		this.dateFormatter = new DateFormatter();
 	}
 
+	/**
+	 * Download a reference file based on the id passed.
+	 *
+	 * @param fileId   The id of the file to download
+	 * @param response {@link HttpServletResponse} to write to file to
+	 * @throws IOException
+	 */
 	@RequestMapping(value = "/download/{fileId}")
 	public void downloadReferenceFile(@PathVariable Long fileId,
 			HttpServletResponse response) throws IOException {
@@ -62,6 +69,13 @@ public class ReferenceFileController {
 		response.flushBuffer();
 	}
 
+	/**
+	 * Add a new reference file to a project.
+	 * @param projectId The id of the project to add the file to.
+	 * @param files {@link MultipartFile} file being uploaded.
+	 * @return
+	 * @throws IOException
+	 */
 	@RequestMapping("/project/{projectId}/new")
 	public @ResponseBody Map<String, String> createNewReferenceFile(@PathVariable Long projectId,
 			@RequestParam("files[]") MultipartFile files) throws IOException {
@@ -102,6 +116,12 @@ public class ReferenceFileController {
 		return result;
 	}
 
+	/**
+	 * Delete a reference file.  This will remove it from the project.
+	 * @param fileId The id of the file to remove.
+	 * @param response {@link HttpServletResponse} required for returning an error state.
+	 * @return Success or error based on the result of deleting the file.
+	 */
 	@RequestMapping("/delete")
 	public @ResponseBody String deleteReferenceFile(@RequestParam Long fileId, HttpServletResponse response) {
 		String result = "success";
