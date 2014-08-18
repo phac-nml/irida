@@ -49,6 +49,9 @@ public abstract class AnalysisExecutionServiceGalaxy
 		this.workspaceService = workspaceService;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public S executeAnalysis(S analysisSubmission)
 					throws ExecutionManagerException {
@@ -73,13 +76,18 @@ public abstract class AnalysisExecutionServiceGalaxy
 		return analysisSubmission;
 	}
 	
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public A getAnalysisResults(S submittedAnalysis)
 			throws ExecutionManagerException {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public WorkflowStatus getWorkflowStatus(S submittedAnalysis)
 			throws ExecutionManagerException {

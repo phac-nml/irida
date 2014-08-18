@@ -24,6 +24,9 @@ public class RemoteWorkflowServicePhylogenomics
 		this.currentWorkflow = currentWorkflow;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public RemoteWorkflowPhylogenomics getCurrentWorkflow() {
 		return currentWorkflow;

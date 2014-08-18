@@ -44,6 +44,9 @@ public class WorkspaceServicePhylogenomics
 		this.galaxyWorkflowService = galaxyWorkflowService;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public PreparedWorkflowGalaxy prepareAnalysisWorkspace(AnalysisSubmissionPhylogenomics analysisSubmission)
 			throws ExecutionManagerException {

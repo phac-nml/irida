@@ -35,11 +35,17 @@ public abstract class AnalysisSubmissionGalaxy<R extends RemoteWorkflowGalaxy>
 		this.inputFiles = inputFiles;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public R getRemoteWorkflow() {
 		return remoteWorkflow;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Set<SequenceFile> getInputFiles() {
 		return inputFiles;
