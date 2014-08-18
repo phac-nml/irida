@@ -10,13 +10,23 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.security.permissions.ReadProjectPermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.ReadReferenceFilePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.UpdateReferenceFilePermission;
 
+/**
+ * Interface for interactions with {@link ReferenceFile}.
+ * 
+ * @author Tom Matthews <thomas.matthews@phac-aspc.gc.ca>
+ * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ */
 public interface ReferenceFileService extends CRUDService<Long, ReferenceFile> {
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadReferenceFile')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, '" + ReadReferenceFilePermission.PERMISSION_PROVIDED
+			+ "')")
 	public ReferenceFile read(Long id) throws EntityNotFoundException;
 
 	/**
@@ -28,12 +38,21 @@ public interface ReferenceFileService extends CRUDService<Long, ReferenceFile> {
 	 * @return the collection of {@link ReferenceFile} attached to the
 	 *         {@link Project}.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, '" + ReadProjectPermission.PERMISSION_PROVIDED
+			+ "')")
 	public List<Join<Project, ReferenceFile>> getReferenceFilesForProject(Project project);
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadReferenceFile')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, '" + UpdateReferenceFilePermission.PERMISSION_PROVIDED
+			+ "')")
 	public ReferenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException;
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, '" + UpdateReferenceFilePermission.PERMISSION_PROVIDED
+			+ "')")
+	public void delete(Long id);
 }

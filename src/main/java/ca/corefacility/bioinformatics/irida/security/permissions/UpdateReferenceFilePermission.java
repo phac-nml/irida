@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -16,23 +18,24 @@ import ca.corefacility.bioinformatics.irida.repositories.referencefile.Reference
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
 /**
- * Permission testing if a given user can read a given reference file.
+ * Confirms that the authenticated user is allowed to modify a reference file.
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
- *
+ * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ * 
  */
 @Component
-public class ReadReferenceFilePermission extends BasePermission<ReferenceFile> {
+public class UpdateReferenceFilePermission extends BasePermission<ReferenceFile> {
 
-	public static final String PERMISSION_PROVIDED = "canReadReferenceFile";
+	public static final String PERMISSION_PROVIDED = "canUpdateReferenceFile";
 
-	private UserRepository userRepository;
-	private ProjectUserJoinRepository pujRepository;
-	private ProjectReferenceFileJoinRepository prfRepository;
+	private final UserRepository userRepository;
+	private final ProjectUserJoinRepository pujRepository;
+	private final ProjectReferenceFileJoinRepository prfRepository;
 
 	@Autowired
-	public ReadReferenceFilePermission(ReferenceFileRepository referenceFileRepository, UserRepository userRepository,
-			ProjectUserJoinRepository pujRepository, ProjectReferenceFileJoinRepository prfRepository) {
+	public UpdateReferenceFilePermission(ReferenceFileRepository referenceFileRepository,
+			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
+			ProjectReferenceFileJoinRepository prfRepository) {
 		super(ReferenceFile.class, referenceFileRepository);
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
@@ -59,9 +62,10 @@ public class ReadReferenceFilePermission extends BasePermission<ReferenceFile> {
 		for (Join<Project, ReferenceFile> prJoin : findProjectsForReferenceFile) {
 			// get the users on the project
 			List<Join<Project, User>> usersForProject = pujRepository.getUsersForProject(prJoin.getSubject());
-			for (Join<Project, User> puJoin : usersForProject) {
+			for (Join<Project, User> pj : usersForProject) {
+				ProjectUserJoin puJoin = (ProjectUserJoin) pj;
 				// if the user is on the project, they can read the file
-				if (puJoin.getObject().equals(user)) {
+				if (puJoin.getObject().equals(user) && puJoin.getProjectRole().equals(ProjectRole.PROJECT_OWNER)) {
 					return true;
 				}
 			}
@@ -69,4 +73,5 @@ public class ReadReferenceFilePermission extends BasePermission<ReferenceFile> {
 
 		return false;
 	}
+
 }

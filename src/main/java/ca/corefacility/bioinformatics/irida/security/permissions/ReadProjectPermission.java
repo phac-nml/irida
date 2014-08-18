@@ -25,7 +25,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 public class ReadProjectPermission extends BasePermission<Project> {
 
 	private static final Logger logger = LoggerFactory.getLogger(ReadProjectPermission.class);
-	private static final String PERMISSION_PROVIDED = "canReadProject";
+	public static final String PERMISSION_PROVIDED = "canReadProject";
 
 	private UserRepository userRepository;
 	private ProjectUserJoinRepository pujRepository;
