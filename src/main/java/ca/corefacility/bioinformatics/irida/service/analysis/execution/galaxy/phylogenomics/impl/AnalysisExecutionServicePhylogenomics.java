@@ -10,23 +10,28 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.ph
 
 /**
  * An execution service for performing a Phylogenomics Pipeline analysis.
+ * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class AnalysisExecutionServicePhylogenomics
-	extends AnalysisExecutionServiceGalaxy
-		<AnalysisPhylogenomicsPipeline,
-		WorkspaceServicePhylogenomics,
-		RemoteWorkflowPhylogenomics,
-		AnalysisSubmissionPhylogenomics> {
-		
+		extends
+		AnalysisExecutionServiceGalaxy<AnalysisPhylogenomicsPipeline, WorkspaceServicePhylogenomics, RemoteWorkflowPhylogenomics, AnalysisSubmissionPhylogenomics> {
+
 	/**
-	 * Builds a new Phylogenomis Pipeline analysis with the given service classes.
-	 * @param galaxyWorkflowService  A GalaxyWorkflowService for interacting with Galaxy workflows.
-	 * @param galaxyHistoriesService  A GalaxyHistoriesService for interacting with Galaxy Histories.
-	 * @param workspaceService  A PreparationService for preparing workflows.
+	 * Builds a new Phylogenomis Pipeline analysis with the given service
+	 * classes.
+	 * 
+	 * @param galaxyWorkflowService
+	 *            A GalaxyWorkflowService for interacting with Galaxy workflows.
+	 * @param galaxyHistoriesService
+	 *            A GalaxyHistoriesService for interacting with Galaxy
+	 *            Histories.
+	 * @param workspaceService
+	 *            A PreparationService for preparing workflows.
 	 */
-	public AnalysisExecutionServicePhylogenomics(GalaxyWorkflowService galaxyWorkflowService,
+	public AnalysisExecutionServicePhylogenomics(
+			GalaxyWorkflowService galaxyWorkflowService,
 			GalaxyHistoriesService galaxyHistoriesService,
 			WorkspaceServicePhylogenomics workspaceService) {
 		super(galaxyWorkflowService, galaxyHistoriesService, workspaceService);
