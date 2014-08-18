@@ -7,8 +7,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowGalaxyPhylogenomics;
-import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServiceGalaxyPhylogenomics;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
+import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
 /**
  * Tests for RemoteWorkflowServiceGalaxyPhylogenomics.
@@ -17,9 +17,9 @@ import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomic
  */
 public class RemoteWorkflowServiceGalaxyPhylogenomicsTest {
 
-	@Mock private RemoteWorkflowGalaxyPhylogenomics currentWorkflow;
+	@Mock private RemoteWorkflowPhylogenomics currentWorkflow;
 	
-	private RemoteWorkflowServiceGalaxyPhylogenomics workflowService;
+	private RemoteWorkflowServicePhylogenomics workflowService;
 	
 	/**
 	 * Sets up variables for test.
@@ -28,7 +28,7 @@ public class RemoteWorkflowServiceGalaxyPhylogenomicsTest {
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 		
-		workflowService = new RemoteWorkflowServiceGalaxyPhylogenomics(currentWorkflow);
+		workflowService = new RemoteWorkflowServicePhylogenomics(currentWorkflow);
 	}
 	
 	/**

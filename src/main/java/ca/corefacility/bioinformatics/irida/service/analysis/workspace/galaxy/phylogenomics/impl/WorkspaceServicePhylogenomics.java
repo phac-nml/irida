@@ -13,8 +13,8 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowGalaxyPhylogenomics;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
@@ -31,8 +31,8 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionR
  *
  */
 public class WorkspaceServicePhylogenomics 
-	extends AnalysisWorkspaceServiceGalaxy<RemoteWorkflowGalaxyPhylogenomics,
-		AnalysisSubmissionGalaxyPhylogenomicsPipeline> {
+	extends AnalysisWorkspaceServiceGalaxy<RemoteWorkflowPhylogenomics,
+		AnalysisSubmissionPhylogenomics> {
 	
 	private GalaxyHistoriesService galaxyHistoriesService;
 	private GalaxyWorkflowService galaxyWorkflowService;
@@ -44,7 +44,7 @@ public class WorkspaceServicePhylogenomics
 	}
 	
 	@Override
-	public PreparedWorkflowGalaxy prepareAnalysisWorkspace(AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission)
+	public PreparedWorkflowGalaxy prepareAnalysisWorkspace(AnalysisSubmissionPhylogenomics analysisSubmission)
 			throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		
@@ -66,7 +66,7 @@ public class WorkspaceServicePhylogenomics
 		CollectionResponse collectionResponse = 
 				galaxyHistoriesService.constructCollectionList(sequenceDatasets, workflowHistory);
 		
-		RemoteWorkflowGalaxyPhylogenomics remoteWorkflow = analysisSubmission.getRemoteWorkflow();
+		RemoteWorkflowPhylogenomics remoteWorkflow = analysisSubmission.getRemoteWorkflow();
 		
 		String workflowId = remoteWorkflow.getWorkflowId();
 		WorkflowDetails workflowDetails = galaxyWorkflowService.getWorkflowDetails(workflowId);

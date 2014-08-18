@@ -7,19 +7,19 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflow
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class RemoteWorkflowGalaxyPhylogenomics extends RemoteWorkflowGalaxy {
+public class RemoteWorkflowPhylogenomics extends RemoteWorkflowGalaxy {
 
 	private String inputSequenceFilesLabel;
 	private String inputReferenceFileLabel;
 	
 	/**
-	 * Creates a new RemoteWorkflowGalaxyPhylogenomics.
+	 * Creates a new RemoteWorkflowPhylogenomics.
 	 * @param workflowId The ID of the implementing workflow.
 	 * @param workflowChecksum The checksum of the implementing workflow.
 	 * @param inputSequenceFilesLabel The label to use as input for sequence files.
 	 * @param inputReferenceFileLabel The label to use as input for a reference file.
 	 */
-	public RemoteWorkflowGalaxyPhylogenomics(String workflowId,
+	public RemoteWorkflowPhylogenomics(String workflowId,
 			String workflowChecksum, String inputSequenceFilesLabel,
 			String inputReferenceFileLabel) {
 		super(workflowId, workflowChecksum);

@@ -10,8 +10,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowGalaxyPhylogenomics;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
@@ -25,8 +25,8 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	
 	@Mock private GalaxyHistoriesService galaxyHistoriesService;
 	@Mock private GalaxyWorkflowService galaxyWorkflowService;
-	@Mock private AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmission;
-	@Mock private AnalysisSubmissionGalaxyPhylogenomicsPipeline submittedAnalysisGalaxy;
+	@Mock private AnalysisSubmissionPhylogenomics analysisSubmission;
+	@Mock private AnalysisSubmissionPhylogenomics submittedAnalysisGalaxy;
 	@Mock private WorkspaceServicePhylogenomics galaxyWorkflowPreparationServicePhylogenomicsPipeline;
 
 	private AnalysisExecutionServicePhylogenomics workflowManagement;
@@ -38,8 +38,8 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		workflowManagement = new AnalysisExecutionServicePhylogenomics(galaxyWorkflowService,
 				galaxyHistoriesService, galaxyWorkflowPreparationServicePhylogenomicsPipeline);
 		
-		RemoteWorkflowGalaxyPhylogenomics remoteWorkflow = 
-				new RemoteWorkflowGalaxyPhylogenomics("1", "1", "1", "1");
+		RemoteWorkflowPhylogenomics remoteWorkflow = 
+				new RemoteWorkflowPhylogenomics("1", "1", "1", "1");
 		
 		when(submittedAnalysisGalaxy.getRemoteWorkflow()).thenReturn(remoteWorkflow);
 		when(submittedAnalysisGalaxy.getRemoteAnalysisId()).thenReturn(new GalaxyAnalysisId("1"));

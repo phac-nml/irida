@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowGalaxyPhylogenomics;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
-import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServiceGalaxyPhylogenomics;
+import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
 /**
  * Test configuration for AnalysisExecutionService classes.
@@ -25,53 +25,53 @@ public class RemoteWorkflowServiceConfig {
 	private LocalGalaxy localGalaxy;
 	
 	/**
-	 * @return A RemoteWorkflowServiceGalaxyPhylogenomics with a correnctly implemented workflow.
+	 * @return A RemoteWorkflowServicePhylogenomics with a correnctly implemented workflow.
 	 */
 	@Bean
-	public RemoteWorkflowServiceGalaxyPhylogenomics remoteWorkflowServiceGalaxyPhylogenomics() {
+	public RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics() {
 		String workflowCorePipelineTestId = localGalaxy.getWorkflowCorePipelineTestId();
 		String workflowChecksum = localGalaxy.getWorkflowCorePipelineTestChecksum();
 		String sequenceFileInputLabel = localGalaxy.getWorkflowCorePipelineTestSequenceFilesLabel();
 		String referenceFileInputLabel = localGalaxy.getWorkflowCorePipelineTestReferenceLabel();
 		
-		RemoteWorkflowGalaxyPhylogenomics remoteWorkflow =
-				new RemoteWorkflowGalaxyPhylogenomics(workflowCorePipelineTestId,
+		RemoteWorkflowPhylogenomics remoteWorkflow =
+				new RemoteWorkflowPhylogenomics(workflowCorePipelineTestId,
 				workflowChecksum, sequenceFileInputLabel, referenceFileInputLabel);
 		
-		return new RemoteWorkflowServiceGalaxyPhylogenomics(remoteWorkflow);
+		return new RemoteWorkflowServicePhylogenomics(remoteWorkflow);
 	}
 	
 	/**
-	 * @return A RemoteWorkflowServiceGalaxyPhylogenomics with a workflow with an invalid id.
+	 * @return A RemoteWorkflowServicePhylogenomics with a workflow with an invalid id.
 	 */
 	@Bean
-	public RemoteWorkflowServiceGalaxyPhylogenomics remoteWorkflowServiceGalaxyPhylogenomicsInvalidId() {
+	public RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomicsInvalidId() {
 		String workflowCorePipelineTestId = localGalaxy.getInvalidWorkflowId();
 		String workflowChecksum = localGalaxy.getWorkflowCorePipelineTestChecksum();
 		String sequenceFileInputLabel = localGalaxy.getWorkflowCorePipelineTestSequenceFilesLabel();
 		String referenceFileInputLabel = localGalaxy.getWorkflowCorePipelineTestReferenceLabel();
 		
-		RemoteWorkflowGalaxyPhylogenomics remoteWorkflow =
-				new RemoteWorkflowGalaxyPhylogenomics(workflowCorePipelineTestId,
+		RemoteWorkflowPhylogenomics remoteWorkflow =
+				new RemoteWorkflowPhylogenomics(workflowCorePipelineTestId,
 				workflowChecksum, sequenceFileInputLabel, referenceFileInputLabel);
 		
-		return new RemoteWorkflowServiceGalaxyPhylogenomics(remoteWorkflow);
+		return new RemoteWorkflowServicePhylogenomics(remoteWorkflow);
 	}
 	
 	/**
-	 * @return A RemoteWorkflowServiceGalaxyPhylogenomics with a workflow with an invalid checksum.
+	 * @return A RemoteWorkflowServicePhylogenomics with a workflow with an invalid checksum.
 	 */
 	@Bean
-	public RemoteWorkflowServiceGalaxyPhylogenomics remoteWorkflowServiceGalaxyPhylogenomicsInvalidChecksum() {
+	public RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomicsInvalidChecksum() {
 		String workflowCorePipelineTestId = localGalaxy.getWorkflowCorePipelineTestId();
 		String workflowChecksum = localGalaxy.getSingleInputWorkflowChecksumInvalid();
 		String sequenceFileInputLabel = localGalaxy.getWorkflowCorePipelineTestSequenceFilesLabel();
 		String referenceFileInputLabel = localGalaxy.getWorkflowCorePipelineTestReferenceLabel();
 		
-		RemoteWorkflowGalaxyPhylogenomics remoteWorkflow =
-				new RemoteWorkflowGalaxyPhylogenomics(workflowCorePipelineTestId,
+		RemoteWorkflowPhylogenomics remoteWorkflow =
+				new RemoteWorkflowPhylogenomics(workflowCorePipelineTestId,
 				workflowChecksum, sequenceFileInputLabel, referenceFileInputLabel);
 		
-		return new RemoteWorkflowServiceGalaxyPhylogenomics(remoteWorkflow);
+		return new RemoteWorkflowServicePhylogenomics(remoteWorkflow);
 	}
 }

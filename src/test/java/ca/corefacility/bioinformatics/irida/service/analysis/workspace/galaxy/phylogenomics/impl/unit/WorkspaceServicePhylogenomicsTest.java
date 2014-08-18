@@ -25,8 +25,8 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowGalaxyPhylogenomics;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
@@ -54,8 +54,8 @@ public class WorkspaceServicePhylogenomicsTest {
 	private Set<SequenceFile> inputFiles;
 	private ReferenceFile referenceFile;
 	private Path refFile;
-	private RemoteWorkflowGalaxyPhylogenomics remoteWorkflow;
-	private AnalysisSubmissionGalaxyPhylogenomicsPipeline submission;
+	private RemoteWorkflowPhylogenomics remoteWorkflow;
+	private AnalysisSubmissionPhylogenomics submission;
 	private CollectionResponse collectionResponse;
 	private WorkflowDetails workflowDetails;
 		
@@ -88,10 +88,10 @@ public class WorkspaceServicePhylogenomicsTest {
 		
 		String workflowChecksum = "1";
 		
-		remoteWorkflow = new RemoteWorkflowGalaxyPhylogenomics(WORKFLOW_ID,
+		remoteWorkflow = new RemoteWorkflowPhylogenomics(WORKFLOW_ID,
 				workflowChecksum, SEQUENCE_FILE_LABEL, REFERENCE_FILE_LABEL);
 		
-		submission = new AnalysisSubmissionGalaxyPhylogenomicsPipeline(
+		submission = new AnalysisSubmissionPhylogenomics(
 			inputFiles, referenceFile, remoteWorkflow);
 		
 		workflowHistory = new History();

@@ -37,10 +37,10 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowGalaxyPhylogenomics;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionGalaxyPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
-import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServiceGalaxyPhylogenomics;
+import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -66,22 +66,22 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		analysisExecutionServicePhylogenomics;
 	
 	@Autowired
-	private RemoteWorkflowServiceGalaxyPhylogenomics
-		remoteWorkflowServiceGalaxyPhylogenomics;
+	private RemoteWorkflowServicePhylogenomics
+		remoteWorkflowServicePhylogenomics;
 	
 	@Autowired
-	private RemoteWorkflowServiceGalaxyPhylogenomics
-		remoteWorkflowServiceGalaxyPhylogenomicsInvalidId;
+	private RemoteWorkflowServicePhylogenomics
+		remoteWorkflowServicePhylogenomicsInvalidId;
 	
 	@Autowired
-	private RemoteWorkflowServiceGalaxyPhylogenomics
-		remoteWorkflowServiceGalaxyPhylogenomicsInvalidChecksum;
+	private RemoteWorkflowServicePhylogenomics
+		remoteWorkflowServicePhylogenomicsInvalidChecksum;
 	
 	private Path dataFile;
 	private Path referenceFile;
 	private Set<SequenceFile> sequenceFiles;
 	
-	private AnalysisSubmissionGalaxyPhylogenomicsPipeline
+	private AnalysisSubmissionPhylogenomics
 		analysisSubmission;
 	
 	/**
@@ -100,10 +100,10 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		sequenceFiles = new HashSet<>();
 		sequenceFiles.add(new SequenceFile(dataFile));
 		
-		RemoteWorkflowGalaxyPhylogenomics remoteWorkflow =
-				remoteWorkflowServiceGalaxyPhylogenomics.getCurrentWorkflow();
+		RemoteWorkflowPhylogenomics remoteWorkflow =
+				remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
 		
-		analysisSubmission = new AnalysisSubmissionGalaxyPhylogenomicsPipeline(sequenceFiles,
+		analysisSubmission = new AnalysisSubmissionPhylogenomics(sequenceFiles,
 				new ReferenceFile(referenceFile),remoteWorkflow);
 	}
 	
@@ -125,7 +125,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	 */
 	@Test
 	public void testExecuteAnalysisSuccess() throws InterruptedException, ExecutionManagerException {		
-		AnalysisSubmissionGalaxyPhylogenomicsPipeline analysisSubmitted = 
+		AnalysisSubmissionPhylogenomics analysisSubmitted = 
 				analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmission);
 		assertNotNull(analysisSubmitted);
 		assertNotNull(analysisSubmitted.getRemoteAnalysisId());
@@ -144,7 +144,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	@Test(expected=WorkflowException.class)
 	public void tWorkflowExceptionestExecuteAnalysisFailInvalidWorkflow() throws ExecutionManagerException {
 		analysisSubmission.setRemoteWorkflow(
-				remoteWorkflowServiceGalaxyPhylogenomicsInvalidId.getCurrentWorkflow());
+				remoteWorkflowServicePhylogenomicsInvalidId.getCurrentWorkflow());
 		
 		analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmission);
 	}
@@ -156,7 +156,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	@Test(expected=WorkflowInvalidException.class)
 	public void testExecuteAnalysisFailInvalidChecksum() throws ExecutionManagerException {
 		analysisSubmission.setRemoteWorkflow(
-				remoteWorkflowServiceGalaxyPhylogenomicsInvalidChecksum.getCurrentWorkflow());
+				remoteWorkflowServicePhylogenomicsInvalidChecksum.getCurrentWorkflow());
 		
 		analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmission);
 	}

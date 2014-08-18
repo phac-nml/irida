@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl;
 
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowGalaxyPhylogenomics;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.RemoteWorkflowServiceGalaxy;
 
 /**
@@ -8,24 +8,24 @@ import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.RemoteWorkfl
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class RemoteWorkflowServiceGalaxyPhylogenomics 
-	extends RemoteWorkflowServiceGalaxy<RemoteWorkflowGalaxyPhylogenomics> {
+public class RemoteWorkflowServicePhylogenomics 
+	extends RemoteWorkflowServiceGalaxy<RemoteWorkflowPhylogenomics> {
 
-	private RemoteWorkflowGalaxyPhylogenomics currentWorkflow;
+	private RemoteWorkflowPhylogenomics currentWorkflow;
 	
 	/**
-	 * Builds a new RemoteWorkflowGalaxyPhylogenomics with the given current workflow.
+	 * Builds a new RemoteWorkflowServicePhylogenomics with the given current workflow.
 	 * This is just temporary as I need to implement a way to get/set this information
 	 * from the database.
 	 * @param currentWorkflow  The currentWorkflow to use.
 	 */
-	public RemoteWorkflowServiceGalaxyPhylogenomics(
-			RemoteWorkflowGalaxyPhylogenomics currentWorkflow) {
+	public RemoteWorkflowServicePhylogenomics(
+			RemoteWorkflowPhylogenomics currentWorkflow) {
 		this.currentWorkflow = currentWorkflow;
 	}
 
 	@Override
-	public RemoteWorkflowGalaxyPhylogenomics getCurrentWorkflow() {
+	public RemoteWorkflowPhylogenomics getCurrentWorkflow() {
 		return currentWorkflow;
 	}
 }
