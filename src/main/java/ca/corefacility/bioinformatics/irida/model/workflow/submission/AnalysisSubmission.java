@@ -13,6 +13,15 @@ import ca.corefacility.bioinformatics.irida.model.workflow.RemoteWorkflow;
  */
 public interface AnalysisSubmission<T extends RemoteWorkflow> {
 
+	/**
+	 * Gets a RemoteWorkflow implementing this submission.
+	 * @return  A RemoteWorkflow implementing this submission.
+	 */
 	public T getRemoteWorkflow();
+	
+	/**
+	 * Gets the set of input sequence files.
+	 * @return  The set of input sequence files.
+	 */
 	public Set<SequenceFile> getInputFiles();
 }
