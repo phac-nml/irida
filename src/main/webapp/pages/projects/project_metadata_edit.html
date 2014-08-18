@@ -158,6 +158,14 @@
             $("#fileupload").fileupload({
                 url     : /*[[@{/referenceFiles/project/{projectId}/new(projectId=${project.getId()})}]]*/ '/referenceFiles/project/1/new',
                 dataType: 'json',
+                beforeSend:function(event,files,index,xhr,handler,callBack){
+                    var max_size = /*[[${maxFileSize}]]*/ 20971520;
+                    if(files.files[0].size > max_size) {
+                        event.abort();
+                        var msg = /*[[#{projects.meta.reference-file.error-too-large(${maxFileSizeString})}]]*/ 'The file you are uploading exceeds the maximum file size limit of 20 MB';
+                        showErrorModal(files.files[0].name + ' ' + msg);
+                    }
+                },
                 done    : function (e, data) {
                     var template = $("#row-template").html();
                     var content = Mustache.render(template, data.result);
@@ -167,7 +175,7 @@
                     showSuccessModal(Mustache.render(msg, {'name': data.result.label, 'project': projectName}));
                 },
                 error   : function (e, data) {
-                    var msg = /*#{projects.meta.reference-file.add-error}*/ '__ERROR_MSG__';
+                    var msg = /*[[#{projects.meta.reference-file.add-error}]]*/ '__ERROR_MSG__';
                     showErrorModal(Mustache.render(msg, {'name': data.result.label, 'project': projectName}));
                 }
             }).prop('disabled', !$.support.fileInput)
