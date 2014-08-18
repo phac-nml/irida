@@ -11,6 +11,7 @@ import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowChecksumInvalidException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
@@ -92,10 +93,10 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 * Tests failing to executing an analysis due to invalid workflow.
 	 * @throws ExecutionManagerException
 	 */
-	@Test(expected=WorkflowException.class)
+	@Test(expected=WorkflowChecksumInvalidException.class)
 	public void testExecuteAnalysisFailInvalidWorkflow() throws ExecutionManagerException {
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
-			thenThrow(new WorkflowException());
+			thenThrow(new WorkflowChecksumInvalidException());
 		
 		workflowManagement.executeAnalysis(analysisSubmission);
 	}

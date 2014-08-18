@@ -32,7 +32,7 @@ import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultit
 import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServiceConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowInvalidException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowChecksumInvalidException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
@@ -153,7 +153,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	 * Tests out attempting to submit a workflow with an invalid checksum for execution.
 	 * @throws ExecutionManagerException 
 	 */
-	@Test(expected=WorkflowInvalidException.class)
+	@Test(expected=WorkflowChecksumInvalidException.class)
 	public void testExecuteAnalysisFailInvalidChecksum() throws ExecutionManagerException {
 		analysisSubmission.setRemoteWorkflow(
 				remoteWorkflowServicePhylogenomicsInvalidChecksum.getCurrentWorkflow());

@@ -10,7 +10,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowInvalidException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowChecksumInvalidException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
@@ -99,7 +99,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 		
 		if (!galaxyWorkflowService.validateWorkflowByChecksum(
 				remoteWorkflow.getWorkflowChecksum(), remoteWorkflow.getWorkflowId())) {
-			throw new WorkflowInvalidException("passed workflow with id=" +
+			throw new WorkflowChecksumInvalidException("passed workflow with id=" +
 					remoteWorkflow.getWorkflowId() + " does not have correct checksum " + 
 					remoteWorkflow.getWorkflowChecksum());
 		}

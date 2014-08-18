@@ -1,9 +1,8 @@
-package ca.corefacility.bioinformatics.irida.exceptions.galaxy;
+package ca.corefacility.bioinformatics.irida.exceptions;
 
-import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 
 /**
- * If a workflow is invalid.
+ * An exception thrown if a workflow is invalid.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
