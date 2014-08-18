@@ -137,7 +137,7 @@ public class WorkspaceServicePhylogenomicsTest {
 				workflowDetails, REFERENCE_FILE_LABEL)).thenReturn(REFERENCE_FILE_ID);
 		
 		PreparedWorkflowGalaxy preparedWorkflow = workflowPreparation.prepareAnalysisWorkspace(submission);
-		assertEquals(HISTORY_ID, preparedWorkflow.getRemoteAnalysisId().getValue());
+		assertEquals(HISTORY_ID, preparedWorkflow.getRemoteAnalysisId().getRemoteAnalysisId());
 		assertNotNull(preparedWorkflow.getWorkflowInputs());
 	}
 	

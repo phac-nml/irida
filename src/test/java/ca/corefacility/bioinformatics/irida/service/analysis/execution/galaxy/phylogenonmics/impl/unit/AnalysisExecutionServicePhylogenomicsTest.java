@@ -140,7 +140,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		WorkflowStatus workflowStatus = new WorkflowStatus(WorkflowState.OK, 1.0f);
 		
 		when(galaxyHistoriesService.getStatusForHistory(
-				analysisSubmission.getRemoteAnalysisId().getValue())).thenReturn(workflowStatus);
+				analysisSubmission.getRemoteAnalysisId().getRemoteAnalysisId())).thenReturn(workflowStatus);
 		
 		assertEquals(workflowStatus, workflowManagement.getWorkflowStatus(analysisSubmission));
 	}
@@ -152,7 +152,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Test(expected=WorkflowException.class)
 	public void testGetWorkflowStatusFailNoStatus() throws ExecutionManagerException {		
 		when(galaxyHistoriesService.getStatusForHistory(analysisSubmission.
-				getRemoteAnalysisId().getValue())).thenThrow(new WorkflowException());
+				getRemoteAnalysisId().getRemoteAnalysisId())).thenThrow(new WorkflowException());
 		
 		workflowManagement.getWorkflowStatus(analysisSubmission);
 	}

@@ -25,7 +25,7 @@ public class GalaxyAnalysisId implements RemoteAnalysisId {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getValue() {
+	public String getRemoteAnalysisId() {
 		return id;
 	}
 }

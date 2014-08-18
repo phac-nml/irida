@@ -85,7 +85,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 			throws ExecutionManagerException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
 		
-		String analysisId = submittedAnalysis.getRemoteAnalysisId().getValue();		
+		String analysisId = submittedAnalysis.getRemoteAnalysisId().getRemoteAnalysisId();		
 		return galaxyHistoriesService.getStatusForHistory(analysisId);
 	}
 	

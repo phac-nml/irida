@@ -11,5 +11,5 @@ public interface RemoteAnalysisId {
 	 * Gets the String value of this id.
 	 * @return  The String value of this id.
 	 */
-	public String getValue();
+	public String getRemoteAnalysisId();
 }
