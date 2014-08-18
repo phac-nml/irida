@@ -28,4 +28,12 @@ public class GalaxyAnalysisId implements RemoteAnalysisId {
 	public String getRemoteAnalysisId() {
 		return id;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return "GalaxyAnalysisId [id=" + id + "]";
+	}
 }

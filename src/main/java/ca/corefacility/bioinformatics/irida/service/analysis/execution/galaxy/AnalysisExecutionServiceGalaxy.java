@@ -31,7 +31,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.An
  * @param <S> The type of AnalysisSubmissionGalaxy to perform.
  */
 public abstract class AnalysisExecutionServiceGalaxy
-	<A extends Analysis, W extends AnalysisWorkspaceServiceGalaxy<R,S>, 
+	<A extends Analysis, W extends AnalysisWorkspaceServiceGalaxy<R,S,A>, 
 	R extends RemoteWorkflowGalaxy, S extends AnalysisSubmissionGalaxy<R>>
 	implements AnalysisExecutionService<A,S> {
 	
@@ -82,7 +82,9 @@ public abstract class AnalysisExecutionServiceGalaxy
 	@Override
 	public A getAnalysisResults(S submittedAnalysis)
 			throws ExecutionManagerException {
-		throw new UnsupportedOperationException();
+		String analysisName = submittedAnalysis.getClass().getSimpleName();
+		logger.debug("Getting results for " + analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
+		return workspaceService.getAnalysisResults(submittedAnalysis);
 	}
 
 	/**

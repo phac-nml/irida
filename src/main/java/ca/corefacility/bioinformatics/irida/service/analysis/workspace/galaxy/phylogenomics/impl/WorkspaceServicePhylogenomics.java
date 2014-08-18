@@ -11,6 +11,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
@@ -33,7 +34,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionR
  */
 public class WorkspaceServicePhylogenomics 
 	extends AnalysisWorkspaceServiceGalaxy<RemoteWorkflowPhylogenomics,
-		AnalysisSubmissionPhylogenomics> {
+		AnalysisSubmissionPhylogenomics, AnalysisPhylogenomicsPipeline> {
 	
 	private GalaxyHistoriesService galaxyHistoriesService;
 	private GalaxyWorkflowService galaxyWorkflowService;
@@ -93,5 +94,15 @@ public class WorkspaceServicePhylogenomics
 		GalaxyAnalysisId analysisId = new GalaxyAnalysisId(workflowHistory.getId());
 		
 		return new PreparedWorkflowGalaxy(analysisId, new WorkflowInputsGalaxy(inputs));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public AnalysisPhylogenomicsPipeline getAnalysisResults(
+			AnalysisSubmissionPhylogenomics analysisSubmission)
+			throws ExecutionManagerException {
+		throw new UnsupportedOperationException();
 	}
 }

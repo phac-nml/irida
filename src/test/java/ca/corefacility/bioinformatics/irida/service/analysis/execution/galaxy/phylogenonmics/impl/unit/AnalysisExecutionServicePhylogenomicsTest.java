@@ -14,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowChecksumInvalidException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
@@ -40,6 +41,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Mock private WorkspaceServicePhylogenomics workspaceServicePhylogenomics;
 	@Mock private WorkflowInputs workflowInputs;
 	@Mock private WorkflowOutputs workflowOutputs;
+	@Mock private AnalysisPhylogenomicsPipeline analysisResults;
 
 	private static final String WORKFLOW_ID = "1";
 	private static final String WORKFLOW_CHECKSUM = "1";
@@ -158,5 +160,30 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 				getRemoteAnalysisId().getRemoteAnalysisId())).thenThrow(new WorkflowException());
 		
 		workflowManagement.getWorkflowStatus(analysisSubmission);
+	}
+	
+	/**
+	 * Tests successfully getting analysis results.
+	 * @throws ExecutionManagerException
+	 */
+	@Test
+	public void testGetAnalysisResultsSuccess() throws ExecutionManagerException {
+		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).thenReturn(analysisResults);
+		
+		AnalysisPhylogenomicsPipeline actualResults = workflowManagement.getAnalysisResults(analysisSubmission);
+		
+		assertEquals("analysisResults should be equal", analysisResults, actualResults);
+	}
+	
+	/**
+	 * Tests failing to get analysis results.
+	 * @throws ExecutionManagerException
+	 */
+	@Test(expected=ExecutionManagerException.class)
+	public void testGetAnalysisResultsFail() throws ExecutionManagerException {
+		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).
+			thenThrow(new ExecutionManagerException());
+		
+		workflowManagement.getAnalysisResults(analysisSubmission);
 	}
 }
