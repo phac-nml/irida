@@ -110,7 +110,7 @@ public class ReferenceFileController {
 		} catch (Exception e) {
 			// This is required else the client does not know that an error was thrown!
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			logger.error(e.getLocalizedMessage());
+			logger.error("Failed to upload reference file, reason unknown.", e);
 			result = "error";
 		}
 		return result;
