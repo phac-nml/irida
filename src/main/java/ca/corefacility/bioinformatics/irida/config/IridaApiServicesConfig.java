@@ -1,13 +1,19 @@
 package ca.corefacility.bioinformatics.irida.config;
 
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import javax.validation.Validator;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
@@ -19,6 +25,8 @@ import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
+import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
 
 /**
  * Configuration for the IRIDA platform.
@@ -31,6 +39,8 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
 		GalaxyAPIConfig.class, IridaOAuth2Config.class })
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.service")
 public class IridaApiServicesConfig {
+	@Value("${taxonomy.location}")
+	private String taxonomyFileLocation;
 
 	@Bean
 	public MessageSource apiMessageSource() {
@@ -63,5 +73,14 @@ public class IridaApiServicesConfig {
 		LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
 		validator.setValidationMessageSource(validatorMessageSource);
 		return validator;
+	}
+
+	@Bean
+	public TaxonomyService taxonomyService() throws URISyntaxException {
+		//URL resource = getClass().getResource(taxonomyFileLocation);
+		ClassPathResource res = new ClassPathResource(taxonomyFileLocation);
+		String path2 = res.getPath();
+		Path path = Paths.get(path2);
+		return new InMemoryTaxonomyService(path);
 	}
 }
