@@ -16,7 +16,7 @@ public interface TaxonomyService {
 	 * 
 	 * @param searchTerm
 	 *            The term to search
-	 * @return a {@link TreeNode} with the requested search term
+	 * @return a List of {@link TreeNode}s with the requested search term
 	 */
 	public Collection<TreeNode<String>> search(String searchTerm);
 }
