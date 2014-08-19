@@ -9,12 +9,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.jena.atlas.lib.StrUtils;
-import org.apache.jena.query.text.EntityDefinition;
-import org.apache.jena.query.text.TextDatasetFactory;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.RAMDirectory;
 
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
@@ -45,14 +41,7 @@ public class InMemoryTaxonomyService implements TaxonomyService {
 	private Dataset dataset;
 
 	public InMemoryTaxonomyService(Path taxonomyFileLocation) {
-		Dataset ds1 = DatasetFactory.createMem();
-
-		EntityDefinition entDef = new EntityDefinition("uri", "text", RDFS.label.asNode());
-
-		Directory dir = new RAMDirectory();
-
-		// Join together into a dataset
-		dataset = TextDatasetFactory.createLucene(ds1, dir, entDef);
+		dataset = DatasetFactory.createMem();
 
 		dataset.begin(ReadWrite.WRITE);
 
@@ -89,7 +78,6 @@ public class InMemoryTaxonomyService implements TaxonomyService {
 			Query q = query.asQuery();
 			QueryExecution qexec = QueryExecutionFactory.create(q, dataset);
 			ResultSet result = qexec.execSelect();
-			
 
 			while (result.hasNext()) {
 				QuerySolution next = result.next();
