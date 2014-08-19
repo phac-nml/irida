@@ -52,8 +52,7 @@ public class InMemoryTaxonomyService implements TaxonomyService {
 	 */
 	@Override
 	public Collection<TreeNode<String>> search(String searchTerm) {
-		String queryString = StrUtils.strjoinNL("PREFIX text: <http://jena.apache.org/text#>",
-				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+		String queryString = StrUtils.strjoinNL("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
 				"PREFIX go: <http://www.geneontology.org/formats/oboInOwl#>", "SELECT * ",
 				"{ ?s go:hasOBONamespace 'ncbi_taxonomy'; ", "rdfs:label ?label .", "FILTER regex(?label, ?term, 'i')",
 				"}");
