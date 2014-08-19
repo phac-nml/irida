@@ -22,7 +22,6 @@ import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
@@ -43,15 +42,9 @@ public class InMemoryTaxonomyService implements TaxonomyService {
 	public InMemoryTaxonomyService(Path taxonomyFileLocation) {
 		dataset = DatasetFactory.createMem();
 
-		dataset.begin(ReadWrite.WRITE);
+		model = dataset.getDefaultModel();
+		RDFDataMgr.read(model, taxonomyFileLocation.toString());
 
-		try {
-			model = dataset.getDefaultModel();
-			RDFDataMgr.read(model, taxonomyFileLocation.toString());
-			dataset.commit();
-		} finally {
-			dataset.end();
-		}
 	}
 
 	/**
@@ -65,28 +58,22 @@ public class InMemoryTaxonomyService implements TaxonomyService {
 				"{ ?s go:hasOBONamespace 'ncbi_taxonomy'; ", "rdfs:label ?label .", "FILTER regex(?label, ?term, 'i')",
 				"}");
 
-		dataset.begin(ReadWrite.READ);
-
 		HashMap<String, TreeNode<String>> visited = new HashMap<>();
 
 		Set<TreeNode<String>> visitedRoots = new HashSet<>();
 
-		try {
-			ParameterizedSparqlString query = new ParameterizedSparqlString(queryString);
-			// add a * for wildcard search
-			query.setLiteral("term", QueryParser.escape(searchTerm));
-			Query q = query.asQuery();
-			QueryExecution qexec = QueryExecutionFactory.create(q, dataset);
-			ResultSet result = qexec.execSelect();
+		ParameterizedSparqlString query = new ParameterizedSparqlString(queryString);
+		// add a * for wildcard search
+		query.setLiteral("term", QueryParser.escape(searchTerm));
+		Query q = query.asQuery();
+		QueryExecution qexec = QueryExecutionFactory.create(q, dataset);
+		ResultSet result = qexec.execSelect();
 
-			while (result.hasNext()) {
-				QuerySolution next = result.next();
+		while (result.hasNext()) {
+			QuerySolution next = result.next();
 
-				buildTrimmedResultTree(next.getResource("s"), searchTerm, visited);
+			buildTrimmedResultTree(next.getResource("s"), searchTerm, visited);
 
-			}
-		} finally {
-			dataset.end();
 		}
 
 		// get all the roots
