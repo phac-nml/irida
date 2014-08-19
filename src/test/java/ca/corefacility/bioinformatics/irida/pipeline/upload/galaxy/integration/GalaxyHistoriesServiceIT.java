@@ -370,6 +370,41 @@ public class GalaxyHistoriesServiceIT {
 	}
 	
 	/**
+	 * Tests getting an output dataset successfully.
+	 * @throws GalaxyDatasetNotFoundException 
+	 * @throws UploadException 
+	 */
+	@Test
+	public void testGetOutputDatasetSuccess() throws UploadException, GalaxyDatasetNotFoundException {
+		
+		History history = galaxyHistory.newHistoryForWorkflow();
+		Dataset dataset = galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
+		String label = dataset.getName();
+		
+		List<String> outputIds = Arrays.asList(dataset.getId());
+		
+		Dataset actualDataset = galaxyHistory.getOutputDataset(history.getId(), label, outputIds);
+		assertEquals("actual output dataset should equal dataset created", dataset, actualDataset);
+	}
+	
+	/**
+	 * Tests failing to get an output dataset.
+	 * @throws GalaxyDatasetNotFoundException 
+	 * @throws UploadException 
+	 */
+	@Test(expected=GalaxyDatasetNotFoundException.class)
+	public void testGetOutputDatasetFail() throws UploadException, GalaxyDatasetNotFoundException {
+		
+		History history = galaxyHistory.newHistoryForWorkflow();
+		Dataset dataset = galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
+		String label = dataset.getName() + "invalid";
+		
+		List<String> outputIds = Arrays.asList(dataset.getId());
+		
+		galaxyHistory.getOutputDataset(history.getId(), label, outputIds);
+	}
+	
+	/**
 	 * Tests moving a library dataset to a history fail.
 	 */
 	@Test(expected=GalaxyResponseException.class)

@@ -65,6 +65,7 @@ public class GalaxyHistoriesServiceTest {
 	private static final String INVALID_HISTORY_ID = "2";
 	
 	private static final String FILENAME = "filename";
+	private static final String INVALID_FILENAME = "invalid";
 	private static final String DATA_ID = "2";
 	private static final String DATA_ID_2 = "2";
 	
@@ -506,5 +507,42 @@ public class GalaxyHistoriesServiceTest {
 		when(historiesClient.showHistoryContents(HISTORY_ID)).thenReturn(datasetHistoryContents);
 		
 		galaxyHistory.getDatasetForFileInHistory(FILENAME, history);
+	}
+	
+	/**
+	 * Tests getting an output dataset for the given information.
+	 * @throws GalaxyDatasetNotFoundException 
+	 */
+	@Test
+	public void testGetOutputDatasetSuccess() throws GalaxyDatasetNotFoundException {
+		Dataset dataset = new Dataset();
+		dataset.setName(FILENAME);
+		dataset.setId(DATA_ID);
+		
+		List<String> outputIds = Arrays.asList(DATA_ID);
+		
+		when(historiesClient.showHistoryContents(HISTORY_ID)).thenReturn(datasetHistoryContents);
+		when(historiesClient.showDataset(HISTORY_ID, DATA_ID)).thenReturn(dataset);
+		
+		Dataset result = galaxyHistory.getOutputDataset(HISTORY_ID, FILENAME, outputIds);
+		assertEquals("dataset should be equals to returned output dataset", dataset, result);
+	}
+	
+	/**
+	 * Tests failing to get an output dataset for the given information.
+	 * @throws GalaxyDatasetNotFoundException 
+	 */
+	@Test(expected=GalaxyDatasetNotFoundException.class)
+	public void testGetOutputDatasetFail() throws GalaxyDatasetNotFoundException {
+		Dataset dataset = new Dataset();
+		dataset.setName(FILENAME);
+		dataset.setId(DATA_ID);
+		
+		List<String> outputIds = Arrays.asList(DATA_ID);
+		
+		when(historiesClient.showHistoryContents(HISTORY_ID)).thenReturn(datasetHistoryContents);
+		when(historiesClient.showDataset(HISTORY_ID, DATA_ID)).thenReturn(dataset);
+		
+		galaxyHistory.getOutputDataset(HISTORY_ID, INVALID_FILENAME, outputIds);
 	}
 }
