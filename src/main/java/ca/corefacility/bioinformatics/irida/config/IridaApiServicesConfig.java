@@ -40,7 +40,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.service")
 public class IridaApiServicesConfig {
 	@Value("${taxonomy.location}")
-	private String taxonomyFileLocation;
+	private ClassPathResource taxonomyFileLocation;
 
 	@Bean
 	public MessageSource apiMessageSource() {
@@ -77,10 +77,7 @@ public class IridaApiServicesConfig {
 
 	@Bean
 	public TaxonomyService taxonomyService() throws URISyntaxException {
-		//URL resource = getClass().getResource(taxonomyFileLocation);
-		ClassPathResource res = new ClassPathResource(taxonomyFileLocation);
-		String path2 = res.getPath();
-		Path path = Paths.get(path2);
+		Path path = Paths.get(taxonomyFileLocation.getPath());
 		return new InMemoryTaxonomyService(path);
 	}
 }
