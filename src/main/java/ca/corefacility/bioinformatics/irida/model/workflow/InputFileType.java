@@ -10,7 +10,12 @@ public enum InputFileType {
 	/**
 	 * The fastqsanger file type (quality scores are Phred+33).
 	 */
-	FASTQ_SANGER("fastqsanger");
+	FASTQ_SANGER("fastqsanger"),
+	
+	/**
+	 * A FASTA formatted file.
+	 */
+	FASTA("fasta");
 
 	private String fileType;
 
