@@ -1,8 +1,9 @@
 package ca.corefacility.bioinformatics.irida.util;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Simple generic tree node with links to parent and a list of children
@@ -17,7 +18,7 @@ public class TreeNode<ValueType> {
 	private TreeNode<ValueType> parent;
 
 	// All the childen of the node. May be empty
-	private List<TreeNode<ValueType>> children;
+	private Set<TreeNode<ValueType>> children;
 
 	// The value to be stored by this node
 	private ValueType value;
@@ -30,7 +31,7 @@ public class TreeNode<ValueType> {
 	 */
 	public TreeNode(ValueType value) {
 		this.value = value;
-		children = new ArrayList<>();
+		children = new HashSet<>();
 	}
 
 	/**
@@ -38,7 +39,7 @@ public class TreeNode<ValueType> {
 	 * 
 	 * @return A List<TreeNode>
 	 */
-	public List<TreeNode<ValueType>> getChildren() {
+	public Collection<TreeNode<ValueType>> getChildren() {
 		return children;
 	}
 
