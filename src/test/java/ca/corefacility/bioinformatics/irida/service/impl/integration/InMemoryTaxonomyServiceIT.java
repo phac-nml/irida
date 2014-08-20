@@ -22,7 +22,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
-import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
+import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -37,7 +37,7 @@ public class InMemoryTaxonomyServiceIT {
 	private static final Logger logger = LoggerFactory.getLogger(InMemoryTaxonomyServiceIT.class);
 
 	@Autowired
-	InMemoryTaxonomyService taxonomyService;
+	TaxonomyService taxonomyService;
 
 	@Test
 	public void testSearch() {
