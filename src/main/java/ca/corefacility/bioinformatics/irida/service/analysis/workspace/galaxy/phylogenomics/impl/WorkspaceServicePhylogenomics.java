@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.p
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedList;
@@ -10,11 +9,9 @@ import java.util.List;
 import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDownloadException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
@@ -41,12 +38,16 @@ public class WorkspaceServicePhylogenomics
 	extends AnalysisWorkspaceServiceGalaxy<RemoteWorkflowPhylogenomics,
 		AnalysisSubmissionPhylogenomics, AnalysisPhylogenomicsPipeline> {
 	
-	private GalaxyHistoriesService galaxyHistoriesService;
 	private GalaxyWorkflowService galaxyWorkflowService;
 	
+	/**
+	 * Builds a new WorkspaceServicePhylogenomics with the given information.
+	 * @param galaxyHistoriesService  A GalaxyHistoriesService for interacting with Galaxy Histories.
+	 * @param galaxyWorkflowService  A GalaxyWorkflowService for interacting with Galaxy workflows.
+	 */
 	public WorkspaceServicePhylogenomics(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService) {
-		this.galaxyHistoriesService = galaxyHistoriesService;
+		super(galaxyHistoriesService);
 		this.galaxyWorkflowService = galaxyWorkflowService;
 	}
 	
@@ -143,20 +144,5 @@ public class WorkspaceServicePhylogenomics
 		results.setSnpTable(buildOutputFile(analysisId, tableOutput));
 
 		return results;
-	}
-
-	private AnalysisOutputFile buildOutputFile(GalaxyAnalysisId analysisId,
-			Dataset dataset) throws IOException, GalaxyDownloadException {
-		String historyId = analysisId.getRemoteAnalysisId();
-		String datasetId = dataset.getId();
-		String fileName = dataset.getName();
-
-		Path outputFile = File.createTempFile(fileName, ".dat").toPath();
-		galaxyHistoriesService.downloadDatasetTo(historyId, datasetId,
-				outputFile);
-		
-		AnalysisOutputFile analysisOutputFile = new AnalysisOutputFile(outputFile, datasetId);
-
-		return analysisOutputFile;
 	}
 }
