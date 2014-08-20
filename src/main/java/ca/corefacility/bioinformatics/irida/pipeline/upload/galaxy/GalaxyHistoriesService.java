@@ -16,12 +16,12 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerDownloadException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDownloadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.model.workflow.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
@@ -418,11 +418,11 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	 *            exisiting content).
 	 * @throws IOException
 	 *             If there was an error downloading the file.
-	 * @throws GalaxyDownloadException
+	 * @throws ExecutionManagerDownloadException
 	 *             If there was an issue downloading the dataset.
 	 */
 	public void downloadDatasetTo(String historyId, String datasetId,
-			Path destination) throws IOException, GalaxyDownloadException {
+			Path destination) throws IOException, ExecutionManagerDownloadException {
 		checkNotNull(historyId, "historyId is null");
 		checkNotNull(datasetId, "datasetId is null");
 		checkNotNull(destination, "destination is null");
@@ -431,10 +431,10 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 			historiesClient.downloadDataset(historyId, datasetId,
 					destination.toFile());
 		} catch (RuntimeException e) {
-			throw new GalaxyDownloadException(
+			throw new ExecutionManagerDownloadException(
 					"Could not download dataset identified by historyId="
 							+ historyId + ", datasetId=" + datasetId
-							+ " to destination=" + destination);
+							+ " to destination=" + destination, e);
 		}
 	}
 }

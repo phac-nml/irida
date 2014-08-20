@@ -6,7 +6,7 @@ import java.nio.file.Path;
 
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDownloadException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerDownloadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
@@ -45,10 +45,10 @@ public abstract class AnalysisWorkspaceServiceGalaxy<R extends RemoteWorkflowGal
 	 * @param dataset  The dataset containing the data for the AnalysisOutputFile.
 	 * @return  An AnalysisOutputFile storing a local copy of the Galaxy file.
 	 * @throws IOException  If there was an issue creating a local file.
-	 * @throws GalaxyDownloadException  If there was an issue downloading the data from Galaxy.
+	 * @throws ExecutionManagerDownloadException  If there was an issue downloading the data from Galaxy.
 	 */
 	protected AnalysisOutputFile buildOutputFile(GalaxyAnalysisId analysisId,
-			Dataset dataset) throws IOException, GalaxyDownloadException {
+			Dataset dataset) throws IOException, ExecutionManagerDownloadException {
 		String historyId = analysisId.getRemoteAnalysisId();
 		String datasetId = dataset.getId();
 		String fileName = dataset.getName();
