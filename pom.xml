@@ -255,6 +255,12 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
 			<version>${hibernate.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -311,6 +317,39 @@
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
 			<version>${aspectj.version}</version>
+		</dependency>
+
+		<!-- Apache Jena -->
+		<dependency>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>jena-tdb</artifactId>
+			<version>${apache.jena.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>jena-text</artifactId>
+			<version>${apache.jena.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- This dependency is brought in by hibernate and jena with conflicting 
+			versions. Solution was to exclude it from both of their imports and import 
+			it explicitly. -->
+		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<version>${xml.apis.version}</version>
 		</dependency>
 
 		<!-- Galaxy blend4j/testing -->
@@ -501,6 +540,8 @@
 		<com.github.jmchilton.galaxybootstrap.version>0.3.0</com.github.jmchilton.galaxybootstrap.version>
 		<com.github.jmchilton.blend4j.version>0.2.0-SNAPSHOT</com.github.jmchilton.blend4j.version>
 		<com.github.jmchilton.galaxybootstrap.version>0.4.0</com.github.jmchilton.galaxybootstrap.version>
+		<apache.jena.version>1.1.0</apache.jena.version>
+		<xml.apis.version>1.4.01</xml.apis.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.17</maven.failsafe.plugin.version>
@@ -530,7 +571,8 @@
 		<!-- Branch name within the Galaxy repository to test against -->
 		<test.galaxy.branch>stable</test.galaxy.branch>
 
-		<!-- Galaxy Testing Revision: either 'latest' or a revision from the branch in the defined repository -->
+		<!-- Galaxy Testing Revision: either 'latest' or a revision from the branch 
+			in the defined repository -->
 		<test.galaxy.revision>7e4d21621ce12e13ebbdf9fd3259df58c3ef124c</test.galaxy.revision>
 	</properties>
 </project>
