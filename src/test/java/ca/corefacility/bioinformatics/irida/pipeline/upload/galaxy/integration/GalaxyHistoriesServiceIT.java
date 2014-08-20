@@ -390,7 +390,7 @@ public class GalaxyHistoriesServiceIT {
 				
 		galaxyHistory.downloadDatasetTo(history.getId(), dataset.getId(), datasetPath);
 		assertEquals("file lengths should be equals", 
-				dataFile.toFile().length(), datasetPath.toFile().length());
+				Files.size(dataFile), Files.size(datasetPath));
 		assertTrue("uploaded and downloaded dataset should be equal",
 				com.google.common.io.Files.equal(dataFile.toFile(), datasetPath.toFile()));
 	}
