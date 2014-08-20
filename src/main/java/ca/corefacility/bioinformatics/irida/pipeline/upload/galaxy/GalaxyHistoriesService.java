@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNot
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDownloadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.model.workflow.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
@@ -400,6 +402,39 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 			return dataset;
 		} else {
 			throw new GalaxyDatasetNotFoundException("Could not find valid dataset for label " + label + " in history " + historyId);
+		}
+	}
+
+	/**
+	 * Given a particular dataset id within a Galaxy history download this
+	 * dataset to the local filesystem.
+	 * 
+	 * @param historyId
+	 *            The id of the history containing the dataset.
+	 * @param datasetId
+	 *            The id of the dataset to download.
+	 * @param destination
+	 *            The destination to download a file to (will overwrite any
+	 *            exisiting content).
+	 * @throws IOException
+	 *             If there was an error downloading the file.
+	 * @throws GalaxyDownloadException
+	 *             If there was an issue downloading the dataset.
+	 */
+	public void downloadDatasetTo(String historyId, String datasetId,
+			Path destination) throws IOException, GalaxyDownloadException {
+		checkNotNull(historyId, "historyId is null");
+		checkNotNull(datasetId, "datasetId is null");
+		checkNotNull(destination, "destination is null");
+
+		try {
+			historiesClient.downloadDataset(historyId, datasetId,
+					destination.toFile());
+		} catch (RuntimeException e) {
+			throw new GalaxyDownloadException(
+					"Could not download dataset identified by historyId="
+							+ historyId + ", datasetId=" + datasetId
+							+ " to destination=" + destination);
 		}
 	}
 }

@@ -79,6 +79,8 @@ public class GalaxyHistoriesServiceTest {
 	private Path dataFile;
 	private Path dataFile2;
 	
+	private Dataset datasetForFile;
+	
 	/**
 	 * Sets up objects for history tests.
 	 * @throws URISyntaxException
@@ -101,6 +103,13 @@ public class GalaxyHistoriesServiceTest {
 		history.setId(HISTORY_ID);
 
 		datasetHistoryContents = buildHistoryContentsList(FILENAME, DATA_ID);
+		
+		datasetForFile = new Dataset();
+		datasetForFile.setName(FILENAME);
+		datasetForFile.setId(DATA_ID);
+		datasetForFile.setUrl("datasets/" + DATA_ID + "/display");
+		datasetForFile.setGalaxyUrl("http://fakehost");
+		datasetForFile.setApiKey("1");
 	}
 	
 	private List<HistoryContents> buildHistoryContentsList(String filename, String id) {
@@ -515,17 +524,13 @@ public class GalaxyHistoriesServiceTest {
 	 */
 	@Test
 	public void testGetOutputDatasetSuccess() throws GalaxyDatasetNotFoundException {
-		Dataset dataset = new Dataset();
-		dataset.setName(FILENAME);
-		dataset.setId(DATA_ID);
-		
 		List<String> outputIds = Arrays.asList(DATA_ID);
 		
 		when(historiesClient.showHistoryContents(HISTORY_ID)).thenReturn(datasetHistoryContents);
-		when(historiesClient.showDataset(HISTORY_ID, DATA_ID)).thenReturn(dataset);
+		when(historiesClient.showDataset(HISTORY_ID, DATA_ID)).thenReturn(datasetForFile);
 		
 		Dataset result = galaxyHistory.getOutputDataset(HISTORY_ID, FILENAME, outputIds);
-		assertEquals("dataset should be equals to returned output dataset", dataset, result);
+		assertEquals("dataset should be equals to returned output dataset", datasetForFile, result);
 	}
 	
 	/**
@@ -534,14 +539,10 @@ public class GalaxyHistoriesServiceTest {
 	 */
 	@Test(expected=GalaxyDatasetNotFoundException.class)
 	public void testGetOutputDatasetFail() throws GalaxyDatasetNotFoundException {
-		Dataset dataset = new Dataset();
-		dataset.setName(FILENAME);
-		dataset.setId(DATA_ID);
-		
 		List<String> outputIds = Arrays.asList(DATA_ID);
 		
 		when(historiesClient.showHistoryContents(HISTORY_ID)).thenReturn(datasetHistoryContents);
-		when(historiesClient.showDataset(HISTORY_ID, DATA_ID)).thenReturn(dataset);
+		when(historiesClient.showDataset(HISTORY_ID, DATA_ID)).thenReturn(datasetForFile);
 		
 		galaxyHistory.getOutputDataset(HISTORY_ID, INVALID_FILENAME, outputIds);
 	}
