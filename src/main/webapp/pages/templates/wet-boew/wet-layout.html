@@ -30,7 +30,6 @@
           href="/resources/wet-theme/css/wet-boew.min.css"/>
     <!--<![endif]-->
 
-    <link rel="stylesheet" th:href="@{/resources/bower_components/leaflet/dist/leaflet.css}" href="/resources/bower_components/leaflet/dist/leaflet.css"/>
     <link rel="stylesheet" th:href="@{/resources/wet-theme/css/theme.min.css}"
           href="/resources/wet-theme/css/theme.min.css"/>
     <link rel="stylesheet" th:href="@{/resources/bower_components/qtip2/jquery.qtip.min.css}"
@@ -76,6 +75,10 @@
 <script th:src="@{/resources/wet-theme/js/wet-boew.min.js}" src="/resources/wet-theme/js/wet-boew.min.js"></script>
 <!--<![endif]-->
 
+<script th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}"
+        src="/resources/bower_components/moment/min/moment-with-langs.min.js" th:if="${livestamp} !=null"></script>
+<script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"
+        src="/resources/bower_components/livestampjs/livestamp.min.js" th:if="${livestamp} !=null"></script>
 <script th:src="@{/resources/bower_components/select2/select2.min.js}"
         src="/resources/bower_components/select2/select2.min.js"></script>
 <script th:src="@{/resources/bower_components/qtip2/jquery.qtip.min.js}"
@@ -89,6 +92,6 @@
 <![endif]-->
 
 <!-- any custom scripts for pages go here.-->
-<div layout:fragment="scripts"></div>
+<th:block layout:fragment="scripts"></th:block>
 </body>
 </html>

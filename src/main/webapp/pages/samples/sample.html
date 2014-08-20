@@ -11,9 +11,6 @@
     <div class="row">
         <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
     </div>
-    <div class="row" th:if="${sample.getLongitude()} != null">
-        <div id="map"></div>
-    </div>
     <div class="row">
         <nav class="navbar navbar-default navbar-sm" role="navigation"
              th:with="baseLink=@{'/samples/' + ${sample.getId()}}">
@@ -127,32 +124,11 @@
         </div>
     </aside>
 </div>
-<div layout:fragment="scripts" th:inline="javascript">
-    <script th:src="@{/resources/bower_components/leaflet/dist/leaflet.js}"
-            src="/resources/bower_components/leaflet/dist/leaflet.js" th:if="${sample.getLongitude()} != null"></script>
+<th:block layout:fragment="scripts" th:inline="javascript">
     <script th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}"
             src="/resources/bower_components/moment/min/moment-with-langs.min.js"></script>
     <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"
             src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
-    <script th:if="${sample.getLongitude()} != null">
-        // <![CDATA[
-        $(document).ready(function () {
-            'use strict';
-            var latitude = /*[[${sample.getLatitude()} != null ? ${sample.getLatitude()} : 0]]*/ 49.8994,
-                longitude = /*[[${sample.getLongitude()} != null ? ${sample.getLongitude()} : 0]]*/ -97.1392;
-
-            var map = L.map('map', {'zoomControl': false}).setView([latitude, longitude], 4);
-            L.control.zoom({
-                position: 'bottomright'
-            }).addTo(map);
-            L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
-                maxZoom: 18,
-                id: 'jsadam.j99hn7k4'
-            }).addTo(map);
-            L.marker([latitude, longitude]).addTo(map);
-        });
-        // ]]>
-    </script>
-</div>
+</th:block>
 </body>
 </html>
