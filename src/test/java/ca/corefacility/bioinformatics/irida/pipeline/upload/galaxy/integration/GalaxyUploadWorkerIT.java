@@ -32,7 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploaderAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploadWorker;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.ProgressUpdate;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.UploadEventListenerTracker;
@@ -92,7 +92,7 @@ public class GalaxyUploadWorkerIT {
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 		
-		GalaxyAPI galaxyAPI = new GalaxyAPI(localGalaxy.getGalaxyURL(), localGalaxy
+		GalaxyUploaderAPI galaxyAPI = new GalaxyUploaderAPI(localGalaxy.getGalaxyURL(), localGalaxy
 				.getAdminName(), localGalaxy.getAdminAPIKey());
 		galaxyAPI.setDataStorage(Uploader.DataStorage.REMOTE);
 		
@@ -131,7 +131,7 @@ public class GalaxyUploadWorkerIT {
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 		
-		GalaxyAPI galaxyAPI = new GalaxyAPI(localGalaxy.getGalaxyURL(), localGalaxy
+		GalaxyUploaderAPI galaxyAPI = new GalaxyUploaderAPI(localGalaxy.getGalaxyURL(), localGalaxy
 				.getAdminName(), localGalaxy.getAdminAPIKey());
 		galaxyAPI.setDataStorage(Uploader.DataStorage.REMOTE);
 		

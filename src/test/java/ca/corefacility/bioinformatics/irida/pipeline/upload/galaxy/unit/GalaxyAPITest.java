@@ -49,7 +49,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResu
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.LibraryContentId;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker.UploadEventListener;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploaderAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryContentSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
@@ -137,7 +137,7 @@ public class GalaxyAPITest {
 	LibraryContentId referencesContentId = new LibraryContentId(libraryId, referencesFolderPath);
 	final private String galaxyURL = "http://localhost/";
 
-	private GalaxyAPI workflowRESTAPI;
+	private GalaxyUploaderAPI workflowRESTAPI;
 	private Map<String, LibraryContent> libraryMap;
 	private Path dataFile1;
 	private Path dataFile2;
@@ -170,7 +170,7 @@ public class GalaxyAPITest {
 
 		when(galaxyUserSearch.exists(realAdminEmail)).thenReturn(true);
 
-		workflowRESTAPI = new GalaxyAPI(galaxyInstance, realAdminEmail,
+		workflowRESTAPI = new GalaxyUploaderAPI(galaxyInstance, realAdminEmail,
 				galaxySearch, galaxyLibraryContentSearch, galaxyRoleSearch, galaxyUserSearch, galaxyLibrary);
 		workflowRESTAPI.setDataStorage(Uploader.DataStorage.REMOTE);
 
@@ -530,7 +530,7 @@ public class GalaxyAPITest {
 			UploadException {
 		setupBuildLibrary();
 
-		workflowRESTAPI = new GalaxyAPI(galaxyInstance, nonExistentAdminEmail);
+		workflowRESTAPI = new GalaxyUploaderAPI(galaxyInstance, nonExistentAdminEmail);
 	}
 
 	/**

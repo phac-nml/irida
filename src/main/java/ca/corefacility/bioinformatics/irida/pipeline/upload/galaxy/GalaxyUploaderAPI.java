@@ -55,14 +55,14 @@ import com.sun.jersey.api.client.UniformInterfaceException;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyAPI {
+public class GalaxyUploaderAPI {
 
 	/**
 	 * Sets default filetype for fastq files uploaded to Galaxy libraries.
 	 */
 	private static final InputFileType DEFAULT_FILE_TYPE = InputFileType.FASTQ_SANGER;
 
-	private static final Logger logger = LoggerFactory.getLogger(GalaxyAPI.class);
+	private static final Logger logger = LoggerFactory.getLogger(GalaxyUploaderAPI.class);
 
 	private static final GalaxyFolderName ILLUMINA_FOLDER_NAME = new GalaxyFolderName("illumina_reads");
 	private static final GalaxyFolderName REFERENCES_FOLDER_NAME = new GalaxyFolderName("references");
@@ -95,7 +95,7 @@ public class GalaxyAPI {
 	 * @throws GalaxyConnectException
 	 *             If an error occred when connecting to Galaxy.
 	 */
-	public GalaxyAPI(URL galaxyURL, @Valid GalaxyAccountEmail adminEmail, String adminAPIKey)
+	public GalaxyUploaderAPI(URL galaxyURL, @Valid GalaxyAccountEmail adminEmail, String adminAPIKey)
 			throws ConstraintViolationException, GalaxyConnectException {
 		checkNotNull(galaxyURL, "galaxyURL is null");
 		checkNotNull(adminEmail, "adminEmail is null");
@@ -137,7 +137,7 @@ public class GalaxyAPI {
 	 * @throws GalaxyConnectException
 	 *             If an issue connecting to Galaxy occurred.
 	 */
-	public GalaxyAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail)
+	public GalaxyUploaderAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail)
 			throws ConstraintViolationException, GalaxyConnectException {
 		checkNotNull(galaxyInstance, "galaxyInstance is null");
 		checkNotNull(adminEmail, "adminEmail is null");
@@ -193,7 +193,7 @@ public class GalaxyAPI {
 	 * @throws GalaxyConnectException
 	 *             If an issue connecting to Galaxy occurred.
 	 */
-	public GalaxyAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail, 
+	public GalaxyUploaderAPI(GalaxyInstance galaxyInstance, @Valid GalaxyAccountEmail adminEmail, 
 			GalaxyLibrarySearch galaxyLibrarySearch, GalaxyLibraryContentSearch galaxyLibraryContentSearch,
 			GalaxyRoleSearch galaxyRoleSearch, GalaxyUserSearch galaxyUserSearch,
 			GalaxyLibraryBuilder galaxyLibrary) throws ConstraintViolationException, GalaxyConnectException {

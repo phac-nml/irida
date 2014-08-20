@@ -65,7 +65,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectNam
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploaderAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrarySearch;
@@ -86,7 +86,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 
 /**
- * Integration tests for {@link GalaxyAPI}.  Will use a running instance of Galaxy to test against.
+ * Integration tests for {@link GalaxyUploaderAPI}.  Will use a running instance of Galaxy to test against.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
@@ -106,7 +106,7 @@ public class GalaxyAPIIT {
 	private LocalGalaxy localGalaxy;
 
 	@Autowired
-	private GalaxyAPI galaxyAPI;
+	private GalaxyUploaderAPI galaxyAPI;
 	
 	private List<Path> dataFilesSingle;
 	private List<Path> dataFilesDouble;
@@ -356,7 +356,7 @@ public class GalaxyAPIIT {
 	@Test(expected = GalaxyConnectException.class)
 	public void testCreateGalaxyAPIInvalidAdmin()
 			throws ConstraintViolationException, UploadException {
-		new GalaxyAPI(localGalaxy.getGalaxyURL(),
+		new GalaxyUploaderAPI(localGalaxy.getGalaxyURL(),
 				localGalaxy.getNonExistentGalaxyAdminName(),
 				localGalaxy.getAdminAPIKey());
 	}
@@ -378,7 +378,7 @@ public class GalaxyAPIIT {
 			wrongAdminAPIKey = "badbadbadbadbadbadbadbadbadbadbaa";
 		}
 
-		new GalaxyAPI(localGalaxy.getGalaxyURL(), localGalaxy.getAdminName(),
+		new GalaxyUploaderAPI(localGalaxy.getGalaxyURL(), localGalaxy.getAdminName(),
 				wrongAdminAPIKey);
 	}
 
@@ -821,7 +821,7 @@ public class GalaxyAPIIT {
 	@Test(expected = GalaxyConnectException.class)
 	public void testGalaxyWrongAddress() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
-		new GalaxyAPI(localGalaxy.getInvalidGalaxyURL(),
+		new GalaxyUploaderAPI(localGalaxy.getInvalidGalaxyURL(),
 				localGalaxy.getAdminName(), localGalaxy.getAdminAPIKey());
 	}
 
@@ -1570,6 +1570,6 @@ public class GalaxyAPIIT {
 		
 		GalaxyInstance galaxyInstance = GalaxyInstanceFactory.get(
 				localGalaxy.getTestGalaxyURL().toString(), "1");
-		new GalaxyAPI(galaxyInstance, new GalaxyAccountEmail("a@b.c"));
+		new GalaxyUploaderAPI(galaxyInstance, new GalaxyAccountEmail("a@b.c"));
 	}
 }

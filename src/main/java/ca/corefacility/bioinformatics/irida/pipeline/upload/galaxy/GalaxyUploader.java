@@ -129,7 +129,7 @@ public class GalaxyUploader implements Uploader<GalaxyProjectName, GalaxyAccount
 		try {
 			
 			if (isDataLocationConnected()) {
-				GalaxyAPI galaxyAPI = galaxyConnector.createGalaxyConnection();
+				GalaxyUploaderAPI galaxyAPI = galaxyConnector.createGalaxyConnection();
 				return new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
 			} else {
 				throw new RuntimeException("Uploader is not connected to any instance of Galaxy");
