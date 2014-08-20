@@ -345,7 +345,7 @@
 
 		<!-- This dependency is brought in by hibernate and jena with conflicting 
 			versions. Solution was to exclude it from both of their imports and import 
-			it implicitly. -->
+			it explicitly. -->
 		<dependency>
 			<groupId>xml-apis</groupId>
 			<artifactId>xml-apis</artifactId>
