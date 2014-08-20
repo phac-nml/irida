@@ -17,9 +17,6 @@ public class RemoteWorkflowPhylogenomics extends RemoteWorkflowGalaxy {
 	private String outputSnpTableName;
 	
 	/**
-
-	 */
-	/**
 	 * Creates a new RemoteWorkflowPhylogenomics.
 	 * @param workflowId The ID of the implementing workflow.
 	 * @param workflowChecksum The checksum of the implementing workflow.
