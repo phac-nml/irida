@@ -15,6 +15,7 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
+import com.google.common.base.Strings;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.DatasetFactory;
 import com.hp.hpl.jena.query.ParameterizedSparqlString;
@@ -54,36 +55,38 @@ public class InMemoryTaxonomyService implements TaxonomyService {
 	public Collection<TreeNode<String>> search(String searchTerm) {
 		String queryString = StrUtils.strjoinNL("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
 				"PREFIX go: <http://www.geneontology.org/formats/oboInOwl#>", "SELECT * ",
-				"{ ?s go:hasOBONamespace 'ncbi_taxonomy'; ", "rdfs:label ?label .", "FILTER regex(?label, ?term, 'i')",
-				"}");
+				"WHERE { ?s go:hasOBONamespace 'ncbi_taxonomy'; ", "rdfs:label ?label .",
+				"FILTER regex(?label, ?term, 'i')", "}");
 
 		HashMap<String, TreeNode<String>> visited = new HashMap<>();
 
 		Set<TreeNode<String>> visitedRoots = new HashSet<>();
 
-		ParameterizedSparqlString query = new ParameterizedSparqlString(queryString);
-		// add a * for wildcard search
-		query.setLiteral("term", QueryParser.escape(searchTerm));
-		Query q = query.asQuery();
-		QueryExecution qexec = QueryExecutionFactory.create(q, dataset);
-		ResultSet result = qexec.execSelect();
+		if (!Strings.isNullOrEmpty(searchTerm)) {
+			ParameterizedSparqlString query = new ParameterizedSparqlString(queryString);
+			// add a * for wildcard search
+			query.setLiteral("term", QueryParser.escape(searchTerm));
+			Query q = query.asQuery();
+			QueryExecution qexec = QueryExecutionFactory.create(q, dataset);
+			ResultSet result = qexec.execSelect();
 
-		while (result.hasNext()) {
-			QuerySolution next = result.next();
+			while (result.hasNext()) {
+				QuerySolution next = result.next();
 
-			buildTrimmedResultTree(next.getResource("s"), searchTerm, visited);
+				buildTrimmedResultTree(next.getResource("s"), searchTerm, visited);
 
-		}
-
-		// get all the roots
-		for (Entry<String, TreeNode<String>> entry : visited.entrySet()) {
-			TreeNode<String> current = entry.getValue();
-			while (current.getParent() != null) {
-				current = current.getParent();
 			}
 
-			if (!visitedRoots.contains(current)) {
-				visitedRoots.add(current);
+			// get all the roots
+			for (Entry<String, TreeNode<String>> entry : visited.entrySet()) {
+				TreeNode<String> current = entry.getValue();
+				while (current.getParent() != null) {
+					current = current.getParent();
+				}
+
+				if (!visitedRoots.contains(current)) {
+					visitedRoots.add(current);
+				}
 			}
 		}
 

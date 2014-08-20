@@ -53,5 +53,10 @@ public class TreeNode<ValueType> {
 		}
 		return false;
 	}
+	
+	@Override
+	public String toString() {
+		return "TreeNode["+value.toString()+"]";
+	}
 
 }
