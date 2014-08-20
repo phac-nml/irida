@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.samples;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,8 +55,40 @@ public class SamplesControllerTest {
 		Sample sample = TestDataFactory.constructSample();
 		when(sampleService.read(sample.getId())).thenReturn(sample);
 		String result = controller.getSampleSpecificPage(model, sample.getId());
-		assertEquals("Returns the correct page namge", "samples/sample", result);
+		assertEquals("Returns the correct page name", "samples/sample", result);
 		assertTrue("Model contains the sample", model.containsAttribute("sample"));
+	}
+
+	@Test
+	public void testGetEditSampleSpecificPage() {
+		Model model = new ExtendedModelMap();
+		Sample sample = TestDataFactory.constructSample();
+		when(sampleService.read(sample.getId())).thenReturn(sample);
+		String result = controller.getEditSampleSpecificPage(model, sample.getId());
+		assertEquals("Returns the correct page name", "samples/sample_edit", result);
+		assertTrue("Model contains the sample", model.containsAttribute("sample"));
+		assertTrue("Model should ALWAYS have an error attribute", model.containsAttribute("errors"));
+	}
+
+	@Test
+	public void testUpdateSample() {
+		Model model = new ExtendedModelMap();
+		Sample sample = TestDataFactory.constructSample();
+		String organism = "E. coli";
+		String geographicLocationName = "The Forks";
+		Map<String, Object> updatedValues = new HashMap<>();
+		updatedValues.put("organism", organism);
+		updatedValues.put("geographicLocationName", geographicLocationName);
+		when(sampleService.update(sample.getId(), updatedValues)).thenReturn(sample);
+		String result = controller
+				.updateSample(model, sample.getId(), organism, "", "", "", "", "", geographicLocationName,
+						"", "");
+		assertEquals("Returns the correct redirect", "redirect:/samples/" + sample.getId(), result);
+		assertTrue("Model should be populated with updated attributes", model.containsAttribute("organism"));
+		assertTrue("Model should be populated with updated attributes",
+				model.containsAttribute("geographicLocationName"));
+		assertFalse("Model should not be populated with non-updated attributes",
+				model.containsAttribute("latitude"));
 	}
 
 	// ************************************************************************************************
