@@ -57,6 +57,7 @@ public class InMemoryTaxonomyServiceIT {
 	private void testTreeHasString(TreeNode<String> node, String searchTerm) {
 		assertTrue(node.getValue().toLowerCase().contains(searchTerm.toLowerCase()));
 		for (TreeNode<String> child : node.getChildren()) {
+			System.out.println(child);
 			testTreeHasString(child, searchTerm);
 		}
 	}

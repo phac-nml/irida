@@ -40,6 +40,8 @@ public class InMemoryTaxonomyService implements TaxonomyService {
 	private Model model;
 	private Dataset dataset;
 
+	private final String ROOT_IRI = "http://purl.obolibrary.org/obo/NCBITaxon_2";
+
 	public InMemoryTaxonomyService(Path taxonomyFileLocation) {
 		dataset = DatasetFactory.createMem();
 
@@ -53,10 +55,8 @@ public class InMemoryTaxonomyService implements TaxonomyService {
 	 */
 	@Override
 	public Collection<TreeNode<String>> search(String searchTerm) {
-		String queryString = StrUtils.strjoinNL("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
-				"PREFIX go: <http://www.geneontology.org/formats/oboInOwl#>", "SELECT * ",
-				"WHERE { ?s go:hasOBONamespace 'ncbi_taxonomy'; ", "rdfs:label ?label .",
-				"FILTER regex(?label, ?term, 'i')", "}");
+		String queryString = StrUtils.strjoinNL("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>", "SELECT * ",
+				"WHERE { ?s rdfs:subClassOf* ?parent;", "rdfs:label ?label.", "FILTER regex(?label, ?term, 'i')", "}");
 
 		HashMap<String, TreeNode<String>> visited = new HashMap<>();
 
@@ -64,8 +64,9 @@ public class InMemoryTaxonomyService implements TaxonomyService {
 
 		if (!Strings.isNullOrEmpty(searchTerm)) {
 			ParameterizedSparqlString query = new ParameterizedSparqlString(queryString);
-			// add a * for wildcard search
+
 			query.setLiteral("term", QueryParser.escape(searchTerm));
+			query.setIri("parent", ROOT_IRI);
 			Query q = query.asQuery();
 			QueryExecution qexec = QueryExecutionFactory.create(q, dataset);
 			ResultSet result = qexec.execSelect();
