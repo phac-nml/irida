@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
@@ -31,6 +32,7 @@ public class AnalysisExecutionServiceConfig {
 	@Autowired
 	private LocalGalaxy localGalaxy;
 	
+	@Lazy
 	@Bean
 	public AnalysisExecutionServicePhylogenomics
 		analysisExecutionServicePhylogenomics(
@@ -42,6 +44,7 @@ public class AnalysisExecutionServiceConfig {
 				galaxyHistoriesService, galaxyWorkflowPreparationServicePhylogenomicsPipeline);
 	}
 	
+	@Lazy
 	@Bean
 	public GalaxyHistoriesService galaxyHistoriesService() {
 		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
@@ -49,6 +52,7 @@ public class AnalysisExecutionServiceConfig {
 		return new GalaxyHistoriesService(historiesClient, toolsClient);
 	}
 	
+	@Lazy
 	@Bean
 	public GalaxyWorkflowService galaxyWorkflowService() {
 		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();

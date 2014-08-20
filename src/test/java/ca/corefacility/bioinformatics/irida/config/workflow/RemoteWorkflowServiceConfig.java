@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
@@ -38,6 +39,7 @@ public class RemoteWorkflowServiceConfig {
 	 * @return A RemoteWorkflowServicePhylogenomics with a correnctly implemented workflow.
 	 * @throws WorkflowException 
 	 */
+	@Lazy
 	@Bean
 	public RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics() throws WorkflowException {
 		String workflowCorePipelineTestId = localGalaxy.getWorkflowCorePipelineTestId();
@@ -62,6 +64,7 @@ public class RemoteWorkflowServiceConfig {
 	/**
 	 * @return A RemoteWorkflowServicePhylogenomics with a workflow with an invalid id.
 	 */
+	@Lazy
 	@Bean
 	public RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomicsInvalidId() {
 		String workflowCorePipelineTestId = localGalaxy.getInvalidWorkflowId();
@@ -83,6 +86,7 @@ public class RemoteWorkflowServiceConfig {
 	/**
 	 * @return A RemoteWorkflowServicePhylogenomics with a workflow with an invalid checksum.
 	 */
+	@Lazy
 	@Bean
 	public RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomicsInvalidChecksum() {
 		String workflowCorePipelineTestId = localGalaxy.getWorkflowCorePipelineTestId();
