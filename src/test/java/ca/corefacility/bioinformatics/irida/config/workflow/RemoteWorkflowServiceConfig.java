@@ -44,9 +44,9 @@ public class RemoteWorkflowServiceConfig {
 		String workflowChecksum = localGalaxy.getWorkflowCorePipelineTestChecksum();
 		String sequenceFileInputLabel = localGalaxy.getWorkflowCorePipelineTestSequenceFilesLabel();
 		String referenceFileInputLabel = localGalaxy.getWorkflowCorePipelineTestReferenceLabel();
-		String treeLabel = localGalaxy.getWorkflowCorePipelineTestTreeLabel();
-		String matrixLabel = localGalaxy.getWorkflowCorePipelineTestMatrixLabel();
-		String tableLabel = localGalaxy.getWorkflowCorePipelineTestTabelLabel();
+		String treeLabel = localGalaxy.getWorkflowCorePipelineTestTreeName();
+		String matrixLabel = localGalaxy.getWorkflowCorePipelineTestMatrixName();
+		String tableLabel = localGalaxy.getWorkflowCorePipelineTestTabelName();
 		
 		String currentWorkflowChecksum = galaxyWorkflowService.getWorkflowChecksum(workflowCorePipelineTestId);
 		logger.debug("A valid Core Pipeline Test Workflow checksum=" + currentWorkflowChecksum);
@@ -68,9 +68,9 @@ public class RemoteWorkflowServiceConfig {
 		String workflowChecksum = localGalaxy.getWorkflowCorePipelineTestChecksum();
 		String sequenceFileInputLabel = localGalaxy.getWorkflowCorePipelineTestSequenceFilesLabel();
 		String referenceFileInputLabel = localGalaxy.getWorkflowCorePipelineTestReferenceLabel();
-		String treeLabel = localGalaxy.getWorkflowCorePipelineTestTreeLabel();
-		String matrixLabel = localGalaxy.getWorkflowCorePipelineTestMatrixLabel();
-		String tableLabel = localGalaxy.getWorkflowCorePipelineTestTabelLabel();
+		String treeLabel = localGalaxy.getWorkflowCorePipelineTestTreeName();
+		String matrixLabel = localGalaxy.getWorkflowCorePipelineTestMatrixName();
+		String tableLabel = localGalaxy.getWorkflowCorePipelineTestTabelName();
 		
 		RemoteWorkflowPhylogenomics remoteWorkflow =
 				new RemoteWorkflowPhylogenomics(workflowCorePipelineTestId,
@@ -89,9 +89,9 @@ public class RemoteWorkflowServiceConfig {
 		String workflowChecksum = localGalaxy.getSingleInputWorkflowChecksumInvalid();
 		String sequenceFileInputLabel = localGalaxy.getWorkflowCorePipelineTestSequenceFilesLabel();
 		String referenceFileInputLabel = localGalaxy.getWorkflowCorePipelineTestReferenceLabel();
-		String treeLabel = localGalaxy.getWorkflowCorePipelineTestTreeLabel();
-		String matrixLabel = localGalaxy.getWorkflowCorePipelineTestMatrixLabel();
-		String tableLabel = localGalaxy.getWorkflowCorePipelineTestTabelLabel();
+		String treeLabel = localGalaxy.getWorkflowCorePipelineTestTreeName();
+		String matrixLabel = localGalaxy.getWorkflowCorePipelineTestMatrixName();
+		String tableLabel = localGalaxy.getWorkflowCorePipelineTestTabelName();
 		
 		RemoteWorkflowPhylogenomics remoteWorkflow =
 				new RemoteWorkflowPhylogenomics(workflowCorePipelineTestId,

@@ -128,15 +128,15 @@ public class WorkspaceServicePhylogenomics
 
 		Dataset treeOutput = galaxyHistoriesService.getOutputDataset(
 				analysisId.getRemoteAnalysisId(),
-				remoteWorkflow.getPhylogeneticTreeLabel(), outputIds);
+				remoteWorkflow.getOutputPhylogeneticTreeName(), outputIds);
 		
 		Dataset matrixOutput = galaxyHistoriesService.getOutputDataset(
 				analysisId.getRemoteAnalysisId(),
-				remoteWorkflow.getSnpMatrixLabel(), outputIds);
+				remoteWorkflow.getOutputSnpMatrixName(), outputIds);
 		
 		Dataset tableOutput = galaxyHistoriesService.getOutputDataset(
 				analysisId.getRemoteAnalysisId(),
-				remoteWorkflow.getSnpTableLabel(), outputIds);
+				remoteWorkflow.getOutputSnpTableName(), outputIds);
 
 		results.setPhylogeneticTree(buildOutputFile(analysisId, treeOutput));
 		results.setSnpMatrix(buildOutputFile(analysisId, matrixOutput));

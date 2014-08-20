@@ -72,9 +72,9 @@ public class LocalGalaxy {
 	private String workflowCorePipelineTestId;
 	private String workflowCorePipelineTestSequenceFilesLabel;
 	private String workflowCorePipelineTestReferenceLabel;
-	private String workflowCorePipelineTestTreeLabel;
-	private String workflowCorePipelineTestMatrixLabel;
-	private String workflowCorePipelineTestTabelLabel;
+	private String workflowCorePipelineTestTreeName;
+	private String workflowCorePipelineTestMatrixName;
+	private String workflowCorePipelineTestTabelName;
 	private Path workflowCorePipelineTestMatrix;
 	private Path workflowCorePipelineTestTree;
 	private Path workflowCorePipelineTestSnpTable;
@@ -506,9 +506,9 @@ public class LocalGalaxy {
 			this.workflowCorePipelineTestId = constructTestWorkflow(workflowFile);
 			this.workflowCorePipelineTestSequenceFilesLabel = "sequence_reads";
 			this.workflowCorePipelineTestReferenceLabel = "reference";
-			this.workflowCorePipelineTestTreeLabel = "phylogeneticTree.txt";
-			this.workflowCorePipelineTestTabelLabel = "snpTable.tsv";
-			this.workflowCorePipelineTestMatrixLabel = "snpMatrix.tsv";
+			this.workflowCorePipelineTestTreeName = "phylogeneticTree.txt";
+			this.workflowCorePipelineTestTabelName = "snpTable.tsv";
+			this.workflowCorePipelineTestMatrixName = "snpMatrix.tsv";
 			
 			// find a workflow id that's invalid
 		} catch (URISyntaxException | IOException e) {
@@ -573,27 +573,27 @@ public class LocalGalaxy {
 	}
 
 	/**
-	 * Gets the label for the tree output from the test workflow.
-	 * @return  The label for the tree output from the test workflow. 
+	 * Gets the name for the tree output from the test workflow.
+	 * @return  The name for the tree output from the test workflow. 
 	 */
-	public String getWorkflowCorePipelineTestTreeLabel() {
-		return workflowCorePipelineTestTreeLabel;
+	public String getWorkflowCorePipelineTestTreeName() {
+		return workflowCorePipelineTestTreeName;
 	}
 
 	/**
-	 * Gets the label for the matrix output from the test workflow.
-	 * @return The label for the matrix output from the test workflow.
+	 * Gets the name for the matrix output from the test workflow.
+	 * @return The name for the matrix output from the test workflow.
 	 */
-	public String getWorkflowCorePipelineTestMatrixLabel() {
-		return workflowCorePipelineTestMatrixLabel;
+	public String getWorkflowCorePipelineTestMatrixName() {
+		return workflowCorePipelineTestMatrixName;
 	}
 
 	/**
-	 * Gets the label for the snp table label from the test workflow.
-	 * @return The label for the snp table label from the test workflow.
+	 * Gets the name for the snp table label from the test workflow.
+	 * @return The name for the snp table label from the test workflow.
 	 */
-	public String getWorkflowCorePipelineTestTabelLabel() {
-		return workflowCorePipelineTestTabelLabel;
+	public String getWorkflowCorePipelineTestTabelName() {
+		return workflowCorePipelineTestTabelName;
 	}
 
 	/**
