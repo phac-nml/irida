@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
@@ -53,7 +53,7 @@ public abstract class AnalysisWorkspaceServiceGalaxy<R extends RemoteWorkflowGal
 		String datasetId = dataset.getId();
 		String fileName = dataset.getName();
 
-		Path outputFile = File.createTempFile(fileName, ".dat").toPath();
+		Path outputFile = Files.createTempFile(fileName, ".dat");
 		galaxyHistoriesService.downloadDatasetTo(historyId, datasetId,
 				outputFile);
 		
