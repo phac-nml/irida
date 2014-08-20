@@ -75,6 +75,9 @@ public class LocalGalaxy {
 	private String workflowCorePipelineTestTreeLabel;
 	private String workflowCorePipelineTestMatrixLabel;
 	private String workflowCorePipelineTestTabelLabel;
+	private Path workflowCorePipelineTestMatrix;
+	private Path workflowCorePipelineTestTree;
+	private Path workflowCorePipelineTestSnpTable;
 	
 	private String invalidWorkflowId;
 	private String invalidWorkflowLabel = "invalid";
@@ -492,6 +495,13 @@ public class LocalGalaxy {
 			Path workflowFile = Paths.get(LocalGalaxy.class.getResource(
 					"Workflow-Core_Pipeline_Test.ga").toURI());
 			
+			this.workflowCorePipelineTestTree = Paths.get(LocalGalaxy.class.getResource(
+					"testTree.txt").toURI());
+			this.workflowCorePipelineTestMatrix = Paths.get(LocalGalaxy.class.getResource(
+					"snpMatrix.tsv").toURI());
+			this.workflowCorePipelineTestSnpTable = Paths.get(LocalGalaxy.class.getResource(
+					"snpTable.tsv").toURI());
+			
 			// build workflow
 			this.workflowCorePipelineTestId = constructTestWorkflow(workflowFile);
 			this.workflowCorePipelineTestSequenceFilesLabel = "sequence_reads";
@@ -651,5 +661,29 @@ public class LocalGalaxy {
 	 */
 	public String getSingleInputWorkflowChecksumInvalid() {
 		return "eb670b734c3808abc5e71acdd9bb23b1f12886158f2ae9b39d79d95d914e790f512a3420d913bb3a";
+	}
+
+	/**
+	 * Gets an example output snp matrix.
+	 * @return  An example output snp matrix.
+	 */
+	public Path getWorkflowCorePipelineTestMatrix() {
+		return workflowCorePipelineTestMatrix;
+	}
+
+	/**
+	 * Gets an exampe output phylogenetic tree.
+	 * @return  An example output phylogenetic tree.
+	 */
+	public Path getWorkflowCorePipelineTestTree() {
+		return workflowCorePipelineTestTree;
+	}
+
+	/**
+	 * Gets an example output snp table.
+	 * @return  An example output snp table.
+	 */
+	public Path getWorkflowCorePipelineTestSnpTable() {
+		return workflowCorePipelineTestSnpTable;
 	}
 }

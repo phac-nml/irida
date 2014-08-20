@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -170,9 +172,10 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	/**
 	 * Tests successfully getting analysis results.
 	 * @throws ExecutionManagerException
+	 * @throws IOException 
 	 */
 	@Test
-	public void testGetAnalysisResultsSuccess() throws ExecutionManagerException {
+	public void testGetAnalysisResultsSuccess() throws ExecutionManagerException, IOException {
 		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).thenReturn(analysisResults);
 		
 		AnalysisPhylogenomicsPipeline actualResults = workflowManagement.getAnalysisResults(analysisSubmission);
@@ -183,9 +186,10 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	/**
 	 * Tests failing to get analysis results.
 	 * @throws ExecutionManagerException
+	 * @throws IOException 
 	 */
 	@Test(expected=ExecutionManagerException.class)
-	public void testGetAnalysisResultsFail() throws ExecutionManagerException {
+	public void testGetAnalysisResultsFail() throws ExecutionManagerException, IOException {
 		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).
 			thenThrow(new ExecutionManagerException());
 		

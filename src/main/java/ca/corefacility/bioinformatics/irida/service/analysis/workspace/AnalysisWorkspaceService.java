@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace;
 
+import java.io.IOException;
+
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.workflow.PreparedWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -28,6 +30,7 @@ public interface AnalysisWorkspaceService<S extends AnalysisSubmission<?>, P ext
 	 * @param analysisSubmission  The submission to get the results for.
 	 * @return  An Analysis object containing the results.
 	 * @throws ExecutionManagerException  If there was an error getting the results.
+	 * @throws IOException  If there was an error when loading the results of an analysis.
 	 */
-	public A getAnalysisResults(S analysisSubmission) throws ExecutionManagerException;
+	public A getAnalysisResults(S analysisSubmission) throws ExecutionManagerException, IOException;
 }

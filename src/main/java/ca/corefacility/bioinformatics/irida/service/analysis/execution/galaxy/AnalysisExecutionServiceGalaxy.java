@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +83,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	 */
 	@Override
 	public A getAnalysisResults(S submittedAnalysis)
-			throws ExecutionManagerException {
+			throws ExecutionManagerException, IOException {
 		String analysisName = submittedAnalysis.getClass().getSimpleName();
 		logger.debug("Getting results for " + analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
 		return workspaceService.getAnalysisResults(submittedAnalysis);

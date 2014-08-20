@@ -68,6 +68,10 @@ public class WorkspaceServicePhylogenomicsTest {
 	private static final String SEQUENCE_FILE_ID = "12";
 	private static final String REFERENCE_FILE_ID = "13";
 	
+	private static final String TREE_LABEL = "tree";
+	private static final String MATRIX_LABEL = "snp_matrix";
+	private static final String TABLE_LABEL = "snp_table";
+	
 	/**
 	 * Sets up variables for testing.
 	 * @throws IOException
@@ -89,7 +93,8 @@ public class WorkspaceServicePhylogenomicsTest {
 		String workflowChecksum = "1";
 		
 		remoteWorkflow = new RemoteWorkflowPhylogenomics(WORKFLOW_ID,
-				workflowChecksum, SEQUENCE_FILE_LABEL, REFERENCE_FILE_LABEL);
+				workflowChecksum, SEQUENCE_FILE_LABEL, REFERENCE_FILE_LABEL,
+				TREE_LABEL, MATRIX_LABEL, TABLE_LABEL);
 		
 		submission = new AnalysisSubmissionPhylogenomics(
 			inputFiles, referenceFile, remoteWorkflow);

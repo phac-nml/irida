@@ -2,12 +2,15 @@ package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.p
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDownloadException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
@@ -104,42 +107,56 @@ public class WorkspaceServicePhylogenomics
 	@Override
 	public AnalysisPhylogenomicsPipeline getAnalysisResults(
 			AnalysisSubmissionPhylogenomics analysisSubmission)
-			throws ExecutionManagerException {
+			throws ExecutionManagerException, IOException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
-		checkNotNull(analysisSubmission.getOutputs(), "outputs for analysis is null");
-		checkNotNull(analysisSubmission.getRemoteWorkflow(), "remote workflow is null");
-		checkNotNull(analysisSubmission.getInputFiles(), "input sequence files is null");
-		
-		RemoteWorkflowPhylogenomics remoteWorkflow = analysisSubmission.getRemoteWorkflow();
-		
-		AnalysisPhylogenomicsPipeline results =
-				new AnalysisPhylogenomicsPipeline(analysisSubmission.getInputFiles(), "fake");
-		
+		checkNotNull(analysisSubmission.getOutputs(),
+				"outputs for analysis is null");
+		checkNotNull(analysisSubmission.getRemoteWorkflow(),
+				"remote workflow is null");
+		checkNotNull(analysisSubmission.getInputFiles(),
+				"input sequence files is null");
+
+		RemoteWorkflowPhylogenomics remoteWorkflow = analysisSubmission
+				.getRemoteWorkflow();
+		GalaxyAnalysisId analysisId = analysisSubmission.getRemoteAnalysisId();
+
+		AnalysisPhylogenomicsPipeline results = new AnalysisPhylogenomicsPipeline(
+				analysisSubmission.getInputFiles(), analysisId.getRemoteAnalysisId());
+
 		WorkflowOutputs outputs = analysisSubmission.getOutputs();
 		List<String> outputIds = outputs.getOutputIds();
+
+		Dataset treeOutput = galaxyHistoriesService.getOutputDataset(
+				analysisId.getRemoteAnalysisId(),
+				remoteWorkflow.getPhylogeneticTreeLabel(), outputIds);
 		
-//		String treeOutputId = galaxyHistoriesService.getOutputIdFor(
+		Dataset matrixOutput = galaxyHistoriesService.getOutputDataset(
+				analysisId.getRemoteAnalysisId(),
+				remoteWorkflow.getSnpMatrixLabel(), outputIds);
 		
-		results.setPhylogeneticTree(getPhylogeneticTree());
-		results.setSnpMatrix(getSnpMatrix());
-		results.setSnpTable(getSnpTable());
+		Dataset tableOutput = galaxyHistoriesService.getOutputDataset(
+				analysisId.getRemoteAnalysisId(),
+				remoteWorkflow.getSnpTableLabel(), outputIds);
+
+		results.setPhylogeneticTree(buildOutputFile(analysisId, treeOutput));
+		results.setSnpMatrix(buildOutputFile(analysisId, matrixOutput));
+		results.setSnpTable(buildOutputFile(analysisId, tableOutput));
 
 		return results;
 	}
-	
-	private AnalysisOutputFile getSnpTable() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	private AnalysisOutputFile getSnpMatrix() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	private AnalysisOutputFile buildOutputFile(GalaxyAnalysisId analysisId,
+			Dataset dataset) throws IOException, GalaxyDownloadException {
+		String historyId = analysisId.getRemoteAnalysisId();
+		String datasetId = dataset.getId();
+		String fileName = dataset.getName();
 
-	private AnalysisOutputFile getPhylogeneticTree() {
-		AnalysisOutputFile treeOutputFile = null;
+		Path outputFile = File.createTempFile(fileName, ".dat").toPath();
+		galaxyHistoriesService.downloadDatasetTo(historyId, datasetId,
+				outputFile);
 		
-		return treeOutputFile;
+		AnalysisOutputFile analysisOutputFile = new AnalysisOutputFile(outputFile, datasetId);
+
+		return analysisOutputFile;
 	}
 }
