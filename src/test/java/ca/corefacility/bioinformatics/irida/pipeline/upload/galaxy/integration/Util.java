@@ -1,6 +1,12 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
 import java.util.List;
+import java.util.concurrent.TimeoutException;
+
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
@@ -32,5 +38,32 @@ public class Util {
 		}
 
 		return dataId;
+	}
+	
+	/**
+	 * Waits for the given history to complete or until a timeout occurs.
+	 * @param historyId  The id of the history to wait for.
+	 * @param historyService  The history service to get the status of the history.
+	 * @param timeout  The timeout, in seconds.
+	 * @throws TimeoutException  If a timeout occurs
+	 * @throws ExecutionManagerException 
+	 * @throws InterruptedException 
+	 */
+	public static void waitUntilHistoryComplete(String historyId, GalaxyHistoriesService historyService, int timeout) throws TimeoutException, ExecutionManagerException, InterruptedException {
+		
+		WorkflowStatus workflowStatus;
+		
+		long timeBefore = System.currentTimeMillis();
+		do {
+			workflowStatus = historyService.getStatusForHistory(historyId);
+			long timeAfter = System.currentTimeMillis();
+			double deltaSeconds = (timeAfter - timeBefore)/1000.0;
+			if (deltaSeconds <= timeout) {
+				Thread.sleep(2000);
+			} else {
+				throw new TimeoutException("Timeout for history " + historyId +
+						" " + deltaSeconds + "s > " + timeout + "s");
+			}
+		} while (!WorkflowState.OK.equals(workflowStatus.getState()));
 	}
 }

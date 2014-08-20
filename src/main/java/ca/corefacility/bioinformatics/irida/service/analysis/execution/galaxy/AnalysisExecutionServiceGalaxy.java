@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +33,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.An
  * @param <S> The type of AnalysisSubmissionGalaxy to perform.
  */
 public abstract class AnalysisExecutionServiceGalaxy
-	<A extends Analysis, W extends AnalysisWorkspaceServiceGalaxy<R,S>, 
+	<A extends Analysis, W extends AnalysisWorkspaceServiceGalaxy<R,S,A>, 
 	R extends RemoteWorkflowGalaxy, S extends AnalysisSubmissionGalaxy<R>>
 	implements AnalysisExecutionService<A,S> {
 	
@@ -81,8 +83,10 @@ public abstract class AnalysisExecutionServiceGalaxy
 	 */
 	@Override
 	public A getAnalysisResults(S submittedAnalysis)
-			throws ExecutionManagerException {
-		throw new UnsupportedOperationException();
+			throws ExecutionManagerException, IOException {
+		String analysisName = submittedAnalysis.getClass().getSimpleName();
+		logger.debug("Getting results for " + analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
+		return workspaceService.getAnalysisResults(submittedAnalysis);
 	}
 
 	/**

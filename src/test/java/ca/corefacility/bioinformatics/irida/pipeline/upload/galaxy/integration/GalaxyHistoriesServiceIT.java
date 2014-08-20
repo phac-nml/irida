@@ -5,12 +5,14 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -43,6 +45,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerDownloadException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
@@ -367,6 +370,106 @@ public class GalaxyHistoriesServiceIT {
 				galaxyHistory.libraryDatasetToHistory(fileId, history);
 		
 		assertNotNull(details);
+	}
+	
+	/**
+	 * Tests downloading a dataset successfully.
+	 * @throws IOException 
+	 * @throws InterruptedException 
+	 * @throws ExecutionManagerException 
+	 * @throws TimeoutException 
+	 */
+	@Test
+	public void testDownloadDatasetSuccess() throws IOException, TimeoutException, ExecutionManagerException, InterruptedException {
+		History history = galaxyHistory.newHistoryForWorkflow();
+		Dataset dataset = galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
+		
+		Util.waitUntilHistoryComplete(history.getId(), galaxyHistory, 60);
+		
+		Path datasetPath = Files.createTempFile("data", "fastq"); 
+				
+		galaxyHistory.downloadDatasetTo(history.getId(), dataset.getId(), datasetPath);
+		assertEquals("file lengths should be equals", 
+				Files.size(dataFile), Files.size(datasetPath));
+		assertTrue("uploaded and downloaded dataset should be equal",
+				com.google.common.io.Files.equal(dataFile.toFile(), datasetPath.toFile()));
+	}
+	
+	/**
+	 * Tests failing to download a dataset (invalid history id)
+	 * @throws IOException 
+	 * @throws InterruptedException 
+	 * @throws ExecutionManagerException 
+	 * @throws TimeoutException 
+	 */
+	@Test(expected=ExecutionManagerDownloadException.class)
+	public void testDownloadDatasetFailHistoryId() throws IOException, TimeoutException, ExecutionManagerException, InterruptedException {
+		History history = galaxyHistory.newHistoryForWorkflow();
+		Dataset dataset = galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
+		
+		Util.waitUntilHistoryComplete(history.getId(), galaxyHistory, 60);
+		
+		String invalidHistoryId = history.getId() + "a";
+		
+		Path datasetPath = Files.createTempFile("data", "fastq");
+		
+		galaxyHistory.downloadDatasetTo(invalidHistoryId, dataset.getId(), datasetPath);
+	}
+	
+	/**
+	 * Tests failing to download a dataset (invalid dataset id)
+	 * @throws IOException 
+	 * @throws InterruptedException 
+	 * @throws ExecutionManagerException 
+	 * @throws TimeoutException 
+	 */
+	@Test(expected=ExecutionManagerDownloadException.class)
+	public void testDownloadDatasetFailDatasetId() throws IOException, TimeoutException, ExecutionManagerException, InterruptedException {
+		History history = galaxyHistory.newHistoryForWorkflow();
+		Dataset dataset = galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
+		
+		Util.waitUntilHistoryComplete(history.getId(), galaxyHistory, 60);
+		
+		String invalidDatasetId = dataset.getId() + "a";
+		
+		Path datasetPath = Files.createTempFile("data", "fastq");
+		
+		galaxyHistory.downloadDatasetTo(history.getId(), invalidDatasetId, datasetPath);
+	}
+	
+	/**
+	 * Tests getting an output dataset successfully.
+	 * @throws GalaxyDatasetNotFoundException 
+	 * @throws UploadException 
+	 */
+	@Test
+	public void testGetOutputDatasetSuccess() throws UploadException, GalaxyDatasetNotFoundException {
+		
+		History history = galaxyHistory.newHistoryForWorkflow();
+		Dataset dataset = galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
+		String label = dataset.getName();
+		
+		List<String> outputIds = Arrays.asList(dataset.getId());
+
+		Dataset actualDataset = galaxyHistory.getOutputDataset(history.getId(), label, outputIds);
+		assertEquals("actual output dataset id should equal dataset created id", dataset.getId(), actualDataset.getId());
+	}
+	
+	/**
+	 * Tests failing to get an output dataset.
+	 * @throws GalaxyDatasetNotFoundException 
+	 * @throws UploadException 
+	 */
+	@Test(expected=GalaxyDatasetNotFoundException.class)
+	public void testGetOutputDatasetFail() throws UploadException, GalaxyDatasetNotFoundException {
+		
+		History history = galaxyHistory.newHistoryForWorkflow();
+		Dataset dataset = galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
+		String label = dataset.getName() + "invalid";
+		
+		List<String> outputIds = Arrays.asList(dataset.getId());
+		
+		galaxyHistory.getOutputDataset(history.getId(), label, outputIds);
 	}
 	
 	/**

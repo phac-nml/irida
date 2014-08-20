@@ -72,6 +72,12 @@ public class LocalGalaxy {
 	private String workflowCorePipelineTestId;
 	private String workflowCorePipelineTestSequenceFilesLabel;
 	private String workflowCorePipelineTestReferenceLabel;
+	private String workflowCorePipelineTestTreeName;
+	private String workflowCorePipelineTestMatrixName;
+	private String workflowCorePipelineTestTabelName;
+	private Path workflowCorePipelineTestMatrix;
+	private Path workflowCorePipelineTestTree;
+	private Path workflowCorePipelineTestSnpTable;
 	
 	private String invalidWorkflowId;
 	private String invalidWorkflowLabel = "invalid";
@@ -489,10 +495,20 @@ public class LocalGalaxy {
 			Path workflowFile = Paths.get(LocalGalaxy.class.getResource(
 					"Workflow-Core_Pipeline_Test.ga").toURI());
 			
+			this.workflowCorePipelineTestTree = Paths.get(LocalGalaxy.class.getResource(
+					"phylogeneticTree.txt").toURI());
+			this.workflowCorePipelineTestMatrix = Paths.get(LocalGalaxy.class.getResource(
+					"snpMatrix.tsv").toURI());
+			this.workflowCorePipelineTestSnpTable = Paths.get(LocalGalaxy.class.getResource(
+					"snpTable.tsv").toURI());
+			
 			// build workflow
 			this.workflowCorePipelineTestId = constructTestWorkflow(workflowFile);
 			this.workflowCorePipelineTestSequenceFilesLabel = "sequence_reads";
 			this.workflowCorePipelineTestReferenceLabel = "reference";
+			this.workflowCorePipelineTestTreeName = "phylogeneticTree.txt";
+			this.workflowCorePipelineTestTabelName = "snpTable.tsv";
+			this.workflowCorePipelineTestMatrixName = "snpMatrix.tsv";
 			
 			// find a workflow id that's invalid
 		} catch (URISyntaxException | IOException e) {
@@ -557,6 +573,30 @@ public class LocalGalaxy {
 	}
 
 	/**
+	 * Gets the name for the tree output from the test workflow.
+	 * @return  The name for the tree output from the test workflow. 
+	 */
+	public String getWorkflowCorePipelineTestTreeName() {
+		return workflowCorePipelineTestTreeName;
+	}
+
+	/**
+	 * Gets the name for the matrix output from the test workflow.
+	 * @return The name for the matrix output from the test workflow.
+	 */
+	public String getWorkflowCorePipelineTestMatrixName() {
+		return workflowCorePipelineTestMatrixName;
+	}
+
+	/**
+	 * Gets the name for the snp table label from the test workflow.
+	 * @return The name for the snp table label from the test workflow.
+	 */
+	public String getWorkflowCorePipelineTestTabelName() {
+		return workflowCorePipelineTestTabelName;
+	}
+
+	/**
 	 * Sets up all workflows for this local galaxy.
 	 */
 	public void setupWorkflows() {
@@ -604,7 +644,7 @@ public class LocalGalaxy {
 	 * @return  The checksum for an example core pipeline workflow.
 	 */
 	public String getWorkflowCorePipelineTestChecksum() {
-		return "e431b89e9fccafc8ed0f1f3d826c6ab0591f3c7f81e1f1286ffd9523d28f5c3fda59b0b31b3b77c7";
+		return "1ed4352eed1a4e00188affbd9c2b954934522598a9951e92732a13cdabf15f0e46e9e112531cbb29";
 	}
 
 	/**
@@ -621,5 +661,29 @@ public class LocalGalaxy {
 	 */
 	public String getSingleInputWorkflowChecksumInvalid() {
 		return "eb670b734c3808abc5e71acdd9bb23b1f12886158f2ae9b39d79d95d914e790f512a3420d913bb3a";
+	}
+
+	/**
+	 * Gets an example output snp matrix.
+	 * @return  An example output snp matrix.
+	 */
+	public Path getWorkflowCorePipelineTestMatrix() {
+		return workflowCorePipelineTestMatrix;
+	}
+
+	/**
+	 * Gets an exampe output phylogenetic tree.
+	 * @return  An example output phylogenetic tree.
+	 */
+	public Path getWorkflowCorePipelineTestTree() {
+		return workflowCorePipelineTestTree;
+	}
+
+	/**
+	 * Gets an example output snp table.
+	 * @return  An example output snp table.
+	 */
+	public Path getWorkflowCorePipelineTestSnpTable() {
+		return workflowCorePipelineTestSnpTable;
 	}
 }

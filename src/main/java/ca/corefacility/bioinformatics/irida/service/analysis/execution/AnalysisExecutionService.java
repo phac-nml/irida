@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.execution;
 
+import java.io.IOException;
+
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -33,11 +35,13 @@ public interface AnalysisExecutionService
 			throws ExecutionManagerException;
 	
 	/**
-	 * Gets the results of an analysis that was previously submitted.
+	 * Gets the results of an analysis that was previously submitted.  These are currently not persisted in
+	 *  the database.
 	 * @param submittedAnalysis  An analysis that was previously submitted.
 	 * @return  An Analysis object containing information about the particular analysis.
 	 * @throws ExecutionManagerException  If there was an issue with the execution manager.
+	 * @throws IOException If there was an error loading the analysis results from an execution manager.
 	 */
 	public A getAnalysisResults(S submittedAnalysis)
-			throws ExecutionManagerException;
+			throws ExecutionManagerException, IOException;
 }

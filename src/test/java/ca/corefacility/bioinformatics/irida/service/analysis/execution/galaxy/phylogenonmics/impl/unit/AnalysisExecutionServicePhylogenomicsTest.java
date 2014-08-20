@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -14,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowChecksumInvalidException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
@@ -40,6 +43,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Mock private WorkspaceServicePhylogenomics workspaceServicePhylogenomics;
 	@Mock private WorkflowInputs workflowInputs;
 	@Mock private WorkflowOutputs workflowOutputs;
+	@Mock private AnalysisPhylogenomicsPipeline analysisResults;
 
 	private static final String WORKFLOW_ID = "1";
 	private static final String WORKFLOW_CHECKSUM = "1";
@@ -47,6 +51,10 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	private PreparedWorkflowGalaxy preparedWorkflow;
 	private GalaxyAnalysisId analysisId;
 	private WorkflowInputsGalaxy workflowInputsGalaxy;
+	
+	private static final String TREE_LABEL = "tree";
+	private static final String MATRIX_LABEL = "snp_matrix";
+	private static final String TABLE_LABEL = "snp_table";
 
 	/**
 	 * Setup variables for tests.
@@ -60,7 +68,8 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 				galaxyHistoriesService, workspaceServicePhylogenomics);
 		
 		RemoteWorkflowPhylogenomics remoteWorkflow = 
-				new RemoteWorkflowPhylogenomics(WORKFLOW_ID, WORKFLOW_CHECKSUM, "1", "1");
+				new RemoteWorkflowPhylogenomics(WORKFLOW_ID, WORKFLOW_CHECKSUM, "1", "1",
+						TREE_LABEL, MATRIX_LABEL, TABLE_LABEL);
 		
 		when(analysisSubmission.getRemoteWorkflow()).thenReturn(remoteWorkflow);
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(new GalaxyAnalysisId("1"));
@@ -158,5 +167,32 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 				getRemoteAnalysisId().getRemoteAnalysisId())).thenThrow(new WorkflowException());
 		
 		workflowManagement.getWorkflowStatus(analysisSubmission);
+	}
+	
+	/**
+	 * Tests successfully getting analysis results.
+	 * @throws ExecutionManagerException
+	 * @throws IOException 
+	 */
+	@Test
+	public void testGetAnalysisResultsSuccess() throws ExecutionManagerException, IOException {
+		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).thenReturn(analysisResults);
+		
+		AnalysisPhylogenomicsPipeline actualResults = workflowManagement.getAnalysisResults(analysisSubmission);
+		
+		assertEquals("analysisResults should be equal", analysisResults, actualResults);
+	}
+	
+	/**
+	 * Tests failing to get analysis results.
+	 * @throws ExecutionManagerException
+	 * @throws IOException 
+	 */
+	@Test(expected=ExecutionManagerException.class)
+	public void testGetAnalysisResultsFail() throws ExecutionManagerException, IOException {
+		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).
+			thenThrow(new ExecutionManagerException());
+		
+		workflowManagement.getAnalysisResults(analysisSubmission);
 	}
 }
