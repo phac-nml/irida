@@ -40,6 +40,12 @@ public class InMemoryTaxonomyService implements TaxonomyService {
 	private Model model;
 	private Dataset dataset;
 
+	// query to select all resources that are a subclass of the specified
+	// parent that have the given word in their label
+	private final static String LABEL_SEARCH_QUERY = StrUtils.strjoinNL(
+			"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>", "SELECT * ",
+			"WHERE { ?s rdfs:subClassOf* ?parent;", "rdfs:label ?label.", "FILTER regex(?label, ?term, 'i')", "}");
+
 	private final String ROOT_IRI = "http://purl.obolibrary.org/obo/NCBITaxon_2";
 
 	public InMemoryTaxonomyService(Path taxonomyFileLocation) {
@@ -55,17 +61,12 @@ public class InMemoryTaxonomyService implements TaxonomyService {
 	 */
 	@Override
 	public Collection<TreeNode<String>> search(String searchTerm) {
-		// query to select all resources that are a subclass of the specified
-		// parent that have the given word in their label
-		String queryString = StrUtils.strjoinNL("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>", "SELECT * ",
-				"WHERE { ?s rdfs:subClassOf* ?parent;", "rdfs:label ?label.", "FILTER regex(?label, ?term, 'i')", "}");
-
 		HashMap<String, TreeNode<String>> visited = new HashMap<>();
 
 		Set<TreeNode<String>> visitedRoots = new HashSet<>();
 
 		if (!Strings.isNullOrEmpty(searchTerm)) {
-			ParameterizedSparqlString query = new ParameterizedSparqlString(queryString);
+			ParameterizedSparqlString query = new ParameterizedSparqlString(LABEL_SEARCH_QUERY);
 
 			query.setLiteral("term", QueryParser.escape(searchTerm));
 			query.setIri("parent", ROOT_IRI);
