@@ -32,7 +32,7 @@ public class GalaxyUploadWorker implements UploadWorker {
 	
 	private List<UploadEventListener> eventListeners;
 
-	private GalaxyAPI galaxyAPI;
+	private GalaxyUploaderAPI galaxyAPI;
 	
 	private List<UploadSample> samples;
 	private GalaxyProjectName dataLocation;
@@ -48,7 +48,7 @@ public class GalaxyUploadWorker implements UploadWorker {
 	 * @param dataLocation  The location of the Galaxy project to upload into.
 	 * @param userName  The user to upload the data as.
 	 */
-	public GalaxyUploadWorker(GalaxyAPI galaxyAPI, List<UploadSample> samples,
+	public GalaxyUploadWorker(GalaxyUploaderAPI galaxyAPI, List<UploadSample> samples,
 			GalaxyProjectName dataLocation, GalaxyAccountEmail userName) {
 		checkNotNull(galaxyAPI, "galaxyAPI is null");
 		checkNotNull(samples, "samples is null");

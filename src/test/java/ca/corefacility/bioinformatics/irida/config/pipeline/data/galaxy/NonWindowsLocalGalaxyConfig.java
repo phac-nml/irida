@@ -31,7 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEma
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploaderAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyConnector;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
@@ -116,8 +116,8 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	 */
 	@Lazy
 	@Bean
-	public GalaxyAPI galaxyAPI() throws Exception {
-		return new GalaxyAPI(localGalaxy().getGalaxyURL(), localGalaxy()
+	public GalaxyUploaderAPI galaxyAPI() throws Exception {
+		return new GalaxyUploaderAPI(localGalaxy().getGalaxyURL(), localGalaxy()
 				.getAdminName(), localGalaxy().getAdminAPIKey());
 	}
 

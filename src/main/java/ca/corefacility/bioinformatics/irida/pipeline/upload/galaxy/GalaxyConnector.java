@@ -58,8 +58,8 @@ public class GalaxyConnector {
 	 * @throws ConstraintViolationException  If a constraint was violated.
 	 * @throws GalaxyConnectException  If there was an issue connecting to Galaxy.
 	 */
-	public GalaxyAPI createGalaxyConnection() throws ConstraintViolationException, GalaxyConnectException {
-		GalaxyAPI galaxyAPI = new GalaxyAPI(galaxyURL, adminEmail, adminAPIKey);
+	public GalaxyUploaderAPI createGalaxyConnection() throws ConstraintViolationException, GalaxyConnectException {
+		GalaxyUploaderAPI galaxyAPI = new GalaxyUploaderAPI(galaxyURL, adminEmail, adminAPIKey);
 		galaxyAPI.setDataStorage(dataStorage);
 		return galaxyAPI;
 	}
