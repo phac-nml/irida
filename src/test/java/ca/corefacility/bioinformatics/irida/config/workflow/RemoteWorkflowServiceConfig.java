@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config.workflow;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -7,7 +9,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
+import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
@@ -20,15 +24,22 @@ import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomic
 @Profile("test")
 @Conditional(NonWindowsPlatformCondition.class)
 public class RemoteWorkflowServiceConfig {
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(RemoteWorkflowServiceConfig.class);
 
 	@Autowired
 	private LocalGalaxy localGalaxy;
 	
+	@Autowired
+	private GalaxyWorkflowService galaxyWorkflowService;
+	
 	/**
 	 * @return A RemoteWorkflowServicePhylogenomics with a correnctly implemented workflow.
+	 * @throws WorkflowException 
 	 */
 	@Bean
-	public RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics() {
+	public RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics() throws WorkflowException {
 		String workflowCorePipelineTestId = localGalaxy.getWorkflowCorePipelineTestId();
 		String workflowChecksum = localGalaxy.getWorkflowCorePipelineTestChecksum();
 		String sequenceFileInputLabel = localGalaxy.getWorkflowCorePipelineTestSequenceFilesLabel();
@@ -36,6 +47,9 @@ public class RemoteWorkflowServiceConfig {
 		String treeLabel = localGalaxy.getWorkflowCorePipelineTestTreeLabel();
 		String matrixLabel = localGalaxy.getWorkflowCorePipelineTestMatrixLabel();
 		String tableLabel = localGalaxy.getWorkflowCorePipelineTestTabelLabel();
+		
+		String currentWorkflowChecksum = galaxyWorkflowService.getWorkflowChecksum(workflowCorePipelineTestId);
+		logger.debug("A valid Core Pipeline Test Workflow checksum=" + currentWorkflowChecksum);
 		
 		RemoteWorkflowPhylogenomics remoteWorkflow =
 				new RemoteWorkflowPhylogenomics(workflowCorePipelineTestId,

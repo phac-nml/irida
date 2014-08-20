@@ -496,7 +496,7 @@ public class LocalGalaxy {
 					"Workflow-Core_Pipeline_Test.ga").toURI());
 			
 			this.workflowCorePipelineTestTree = Paths.get(LocalGalaxy.class.getResource(
-					"testTree.txt").toURI());
+					"phylogeneticTree.txt").toURI());
 			this.workflowCorePipelineTestMatrix = Paths.get(LocalGalaxy.class.getResource(
 					"snpMatrix.tsv").toURI());
 			this.workflowCorePipelineTestSnpTable = Paths.get(LocalGalaxy.class.getResource(
@@ -506,9 +506,9 @@ public class LocalGalaxy {
 			this.workflowCorePipelineTestId = constructTestWorkflow(workflowFile);
 			this.workflowCorePipelineTestSequenceFilesLabel = "sequence_reads";
 			this.workflowCorePipelineTestReferenceLabel = "reference";
-			this.workflowCorePipelineTestTreeLabel = "output_tree";
-			this.workflowCorePipelineTestTabelLabel = "positions";
-			this.workflowCorePipelineTestMatrixLabel = "csv";
+			this.workflowCorePipelineTestTreeLabel = "phylogeneticTree.txt";
+			this.workflowCorePipelineTestTabelLabel = "snpTable.tsv";
+			this.workflowCorePipelineTestMatrixLabel = "snpMatrix.tsv";
 			
 			// find a workflow id that's invalid
 		} catch (URISyntaxException | IOException e) {
@@ -644,7 +644,7 @@ public class LocalGalaxy {
 	 * @return  The checksum for an example core pipeline workflow.
 	 */
 	public String getWorkflowCorePipelineTestChecksum() {
-		return "e431b89e9fccafc8ed0f1f3d826c6ab0591f3c7f81e1f1286ffd9523d28f5c3fda59b0b31b3b77c7";
+		return "1ed4352eed1a4e00188affbd9c2b954934522598a9951e92732a13cdabf15f0e46e9e112531cbb29";
 	}
 
 	/**
