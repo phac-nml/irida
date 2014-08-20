@@ -198,6 +198,9 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				analysisId.getRemoteAnalysisId(),
 				analysisResults.getExecutionManagerAnalysisId());
 
+		assertEquals("inputFiles should be the same for submission and results",
+				analysisSubmission.getInputFiles(), analysisResults.getInputSequenceFiles());
+		
 		assertEquals(3, analysisResults.getAnalysisOutputFiles().size());
 		AnalysisOutputFile phylogeneticTree = analysisResults
 				.getPhylogeneticTree();
