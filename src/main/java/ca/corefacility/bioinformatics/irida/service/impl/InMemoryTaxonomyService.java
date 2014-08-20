@@ -75,7 +75,6 @@ public class InMemoryTaxonomyService implements TaxonomyService {
 				QuerySolution next = result.next();
 
 				buildTrimmedResultTree(next.getResource("s"), searchTerm, visited);
-
 			}
 
 			// get all the roots
