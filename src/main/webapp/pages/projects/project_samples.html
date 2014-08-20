@@ -763,6 +763,12 @@ $(document).ready(function () {
             },
             {
                 "data": "name",
+                "render": function (data, type, row) {
+                    'use strict';
+                    var url = /*[[@{/samples/}]]*/ '/samples/',
+                        template = "<a href='{{url}}{{id}}'>{{name}}</a>";
+                    return Mustache.render(template, {url:url, name:data, id:row.id});
+                },
                 "class": "name"
             },
             {
