@@ -8,6 +8,8 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -32,6 +34,8 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExcecutionListener.class })
 public class InMemoryTaxonomyServiceIT {
+	private static final Logger logger = LoggerFactory.getLogger(InMemoryTaxonomyServiceIT.class);
+
 	@Autowired
 	InMemoryTaxonomyService taxonomyService;
 
@@ -57,7 +61,7 @@ public class InMemoryTaxonomyServiceIT {
 	private void testTreeHasString(TreeNode<String> node, String searchTerm) {
 		assertTrue(node.getValue().toLowerCase().contains(searchTerm.toLowerCase()));
 		for (TreeNode<String> child : node.getChildren()) {
-			System.out.println(child);
+			logger.trace("Visited " + child);
 			testTreeHasString(child, searchTerm);
 		}
 	}
