@@ -4,6 +4,11 @@
   right: 0;
 }
 
+/* line 10, ../../styles/base/_wet-overrides.scss */
+.has-error label {
+  color: #d9534f;
+}
+
 /* line 1, ../../styles/components/_buttons.scss */
 .btn-xs.glyphicon {
   font-size: 10px;

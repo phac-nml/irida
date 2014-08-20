@@ -5,3 +5,8 @@
   position: absolute;
   right: 0;
 }
+
+// Label is not set to red on an error state
+.has-error label {
+  color: $color-danger;
+}

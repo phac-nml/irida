@@ -15,7 +15,7 @@
         <nav class="navbar navbar-default navbar-sm" role="navigation"
              th:with="baseLink=@{'/samples/' + ${sample.getId()}}">
             <ul class="nav navbar-nav">
-                <li class="active"><a th:href="${baseLink}" href="#" th:text="#{samples.nav.details}">Details</a></li>
+                <li th:class="${activeNav} == 'details' ? 'active' : ''"><a th:href="${baseLink}" href="#" th:text="#{samples.nav.details}">Details</a></li>
                 <li><a href="#" th:text="#{samples.nav.files}">Files</a></li>
             </ul>
         </nav>
