@@ -384,6 +384,8 @@ public class GalaxyHistoriesServiceIT {
 		Path datasetPath = Files.createTempFile("data", "fastq"); 
 				
 		galaxyHistory.downloadDatasetTo(history.getId(), dataset.getId(), datasetPath);
+		assertEquals("file lengths should be equals", 
+				dataFile.toFile().length(), datasetPath.toFile().length());
 		assertTrue("uploaded and downloaded dataset should be equal",
 				com.google.common.io.Files.equal(dataFile.toFile(), datasetPath.toFile()));
 	}
