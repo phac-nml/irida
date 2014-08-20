@@ -209,7 +209,7 @@ INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `sequencerSampl
 INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `sequencerSampleId`, `description`) VALUES (now(), now() , 'Sample 50', 'sample50', 'The 50th sample');
 INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `sequencerSampleId`, `description`) VALUES ('2014-07-30 08:24:09', '2014-07-30 08:24:09' , '01-1111', '01-1111', 'The 51th sample');
 INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `sequencerSampleId`, `description`) VALUES ('2014-07-30 08:24:10', '2014-07-30 08:24:10' , '02-2222', '02-2222', 'The 52nd sample');
-INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `sequencerSampleId`, `description`) VALUES ('2014-07-30 08:24:10', '2014-07-30 08:24:10' , '03-3333', '03-3333', 'The 53rd sample');
+INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `sequencerSampleId`, `description`, `latitude`, `longitude`) VALUES ('2014-07-30 08:24:10', '2014-07-30 08:24:10' , '03-3333', '03-3333', 'The 53rd sample', '49.8994','-97.1392');
 
 -- sample relationship
 INSERT INTO project_sample (`createdDate`, `project_id`, `sample_id`) VALUES (now(), 5, 1);

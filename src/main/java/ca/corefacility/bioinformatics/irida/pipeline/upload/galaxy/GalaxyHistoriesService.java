@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerDownloadException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
@@ -374,6 +376,65 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 			return findById(id) != null;
 		} catch (ExecutionManagerObjectNotFoundException e) {
 			return false;
+		}
+	}
+
+	/**
+	 * Given a particular output dataset id within a history, get the Galaxy id of this output dataset.
+	 * @param historyId  The history to search through.
+	 * @param name  The file name to find an output id for.
+	 * @param outputIds  The list of output ids to search through.
+	 * @return  The dataset of the corresponding output for the given label within the given history.
+	 * @throws GalaxyDatasetNotFoundException If a dataset could not be found for the corresponding Galaxy information.
+	 */
+	public Dataset getOutputDataset(String historyId,
+			String name, List<String> outputIds) throws GalaxyDatasetNotFoundException {
+		checkNotNull(historyId, "historyId is null");
+		checkNotNull(name, "label is null");
+		checkNotNull(outputIds, "outputIds is null");
+		
+		History history = new History();
+		history.setId(historyId);
+		
+		Dataset dataset = getDatasetForFileInHistory(name, history);
+		
+		if (outputIds.contains(dataset.getId())) {
+			return dataset;
+		} else {
+			throw new GalaxyDatasetNotFoundException("Could not find valid dataset for label " + name + " in history " + historyId);
+		}
+	}
+
+	/**
+	 * Given a particular dataset id within a Galaxy history download this
+	 * dataset to the local filesystem.
+	 * 
+	 * @param historyId
+	 *            The id of the history containing the dataset.
+	 * @param datasetId
+	 *            The id of the dataset to download.
+	 * @param destination
+	 *            The destination to download a file to (will overwrite any
+	 *            exisiting content).
+	 * @throws IOException
+	 *             If there was an error downloading the file.
+	 * @throws ExecutionManagerDownloadException
+	 *             If there was an issue downloading the dataset.
+	 */
+	public void downloadDatasetTo(String historyId, String datasetId,
+			Path destination) throws IOException, ExecutionManagerDownloadException {
+		checkNotNull(historyId, "historyId is null");
+		checkNotNull(datasetId, "datasetId is null");
+		checkNotNull(destination, "destination is null");
+
+		try {
+			historiesClient.downloadDataset(historyId, datasetId,
+					destination.toFile());
+		} catch (RuntimeException e) {
+			throw new ExecutionManagerDownloadException(
+					"Could not download dataset identified by historyId="
+							+ historyId + ", datasetId=" + datasetId
+							+ " to destination=" + destination, e);
 		}
 	}
 }

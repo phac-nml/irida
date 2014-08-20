@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
@@ -173,6 +174,33 @@ public class GalaxyWorkflowService {
 			return workflowDownloadURLs;
 		} catch (RuntimeException | MalformedURLException e) {
 			throw new GalaxyOutputsForWorkflowException(e);
+		}
+	}
+
+	/**
+	 * Gets details about a given workflow.
+	 * @param workflowId  The id of the workflow.
+	 * @return  A details object for this workflow.
+	 */
+	public WorkflowDetails getWorkflowDetails(String workflowId) {
+		checkNotNull(workflowId, "workflowId is null");
+		
+		return workflowsClient.showWorkflow(workflowId);
+	}
+
+	/**
+	 * Attempts to run the workflow definined by the given WorkflowInputs object.
+	 * @param inputs  The inputs to the workflow.
+	 * @return  A WorkflowOutputs object with information on output files in the workflow.
+	 * @throws WorkflowException  If there was an issue running the workflow.
+	 */
+	public WorkflowOutputs runWorkflow(WorkflowInputsGalaxy inputs) throws WorkflowException {
+		checkNotNull(inputs, "inputs is null");
+		
+		try {
+			return workflowsClient.runWorkflow(inputs.getInputsObject());
+		} catch (RuntimeException e) {
+			throw new WorkflowException(e);
 		}
 	}
 }
