@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,8 +81,9 @@ public class SamplesControllerTest {
 		updatedValues.put("organism", organism);
 		updatedValues.put("geographicLocationName", geographicLocationName);
 		when(sampleService.update(sample.getId(), updatedValues)).thenReturn(sample);
+		Date date = new Date();
 		String result = controller
-				.updateSample(model, sample.getId(), organism, "", "", "", "", "", geographicLocationName,
+				.updateSample(model, sample.getId(), organism, "", "", "", date, "", geographicLocationName,
 						"", "");
 		assertEquals("Returns the correct redirect", "redirect:/samples/" + sample.getId(), result);
 		assertTrue("Model should be populated with updated attributes", model.containsAttribute("organism"));

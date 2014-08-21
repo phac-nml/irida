@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.Formatter;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.base.Strings;
+
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -36,8 +38,6 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeCon
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
-import com.google.common.base.Strings;
 
 /**
  * Controller for all sample related views
@@ -145,7 +145,7 @@ public class SamplesController extends BaseController {
 			@RequestParam String isolate,
 			@RequestParam String strain,
 			@RequestParam String collectedBy,
-			@RequestParam String collectionDate,
+			@RequestParam @DateTimeFormat(iso= DateTimeFormat.ISO.DATE) Date collectionDate,
 			@RequestParam String isolationSource,
 			@RequestParam String geographicLocationName,
 			@RequestParam String latitude,
@@ -169,12 +169,7 @@ public class SamplesController extends BaseController {
 			model.addAttribute(COLLECTED_BY, collectedBy);
 		}
 		if (!Strings.isNullOrEmpty(collectionDate.toString())) {
-			/*
-			This conversion is from (http://blog.tompawlak.org/java-8-conversion-new-date-time-api)
-			 */
-			LocalDate date = LocalDate.parse(collectionDate);
-			updatedValues.put(COLLECTION_DATE, Date.from(
-					date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+			updatedValues.put(COLLECTION_DATE, collectionDate);
 			model.addAttribute(COLLECTION_DATE, collectionDate);
 		}
 		if (!Strings.isNullOrEmpty(isolationSource)) {
