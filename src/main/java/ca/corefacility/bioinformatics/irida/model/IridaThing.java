@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model;
 
-import java.util.Date;
-
 import javax.validation.constraints.NotNull;
 
 /**
@@ -10,13 +8,19 @@ import javax.validation.constraints.NotNull;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public interface IridaThing extends Timestamped {
+	/**
+	 * Get a human readable label for this object.
+	 * 
+	 * @return
+	 */
 	@NotNull(message = "{irida.label.notnull}")
 	public String getLabel();
 
+	/**
+	 * Get the numerical identifier for this object
+	 * 
+	 * @return
+	 */
 	public Long getId();
-
-	public Date getModifiedDate();
-
-	public void setModifiedDate(Date modifiedDate);
 
 }

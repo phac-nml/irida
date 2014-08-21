@@ -45,6 +45,8 @@ public class IdentifiableTestEntity implements IridaThing, Comparable<Identifiab
 	private List<EntityJoin> otherEntity;
 
     public IdentifiableTestEntity() {
+    	createdDate = new Date();
+    	modifiedDate = createdDate;
     }
 
     @Override

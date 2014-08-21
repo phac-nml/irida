@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,6 +19,8 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -31,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 @Entity
 @Table(name = "project_sample", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "sample_id" }))
 @Audited
+@EntityListeners(AuditingEntityListener.class)
 public class ProjectSampleJoin implements Join<Project, Sample> {
 
 	@Id
@@ -45,6 +49,7 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 	@JoinColumn(name = "sample_id")
 	private Sample sample;
 
+	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;

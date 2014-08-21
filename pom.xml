@@ -158,6 +158,11 @@
 			<version>${spring.data.jpa.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-envers</artifactId>
 			<version>${spring.data.envers.version}</version>
@@ -378,10 +383,10 @@
 						</goals>
 						<configuration>
 							<!-- Uncomment below to disable Galaxy integration tests -->
-							<!-- 
+							<!--
 							<excludes>
-			                        		<exclude>/ca/corefacility/bioinformatics/irida/pipeline/upload/galaxy/**</exclude>
-                    					</excludes> 
+			                    <exclude>/ca/corefacility/bioinformatics/irida/**/galaxy/**</exclude>
+                    		</excludes>
 							-->
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>

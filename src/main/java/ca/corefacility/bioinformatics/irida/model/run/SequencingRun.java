@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,6 +21,9 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -28,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 @Table(name = "sequencing_run")
 @Audited
 @Inheritance(strategy = InheritanceType.JOINED)
+@EntityListeners(AuditingEntityListener.class)
 public abstract class SequencingRun implements IridaThing, Comparable<SequencingRun> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,10 +41,12 @@ public abstract class SequencingRun implements IridaThing, Comparable<Sequencing
 	@Lob
 	private String description;
 
+	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
 
+	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
@@ -48,7 +55,6 @@ public abstract class SequencingRun implements IridaThing, Comparable<Sequencing
 
 	public SequencingRun() {
 		createdDate = new Date();
-		modifiedDate = createdDate;
 	}
 
 	@Override

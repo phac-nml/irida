@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,6 +22,9 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.URL;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -38,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectN
 @Entity
 @Table(name = "project")
 @Audited
+@EntityListeners(AuditingEntityListener.class)
 public class Project implements IridaThing, Comparable<Project> {
 
 	@Id
@@ -49,10 +54,12 @@ public class Project implements IridaThing, Comparable<Project> {
 	@ValidProjectName
 	private String name;
 
+	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
 
+	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
@@ -84,7 +91,6 @@ public class Project implements IridaThing, Comparable<Project> {
 
 	public Project() {
 		createdDate = new Date();
-		modifiedDate = createdDate;
 	}
 
 	/**

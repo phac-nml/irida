@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,6 +19,8 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 
@@ -31,12 +34,14 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 @Table(name = "project_referencefile", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id",
 		"referenceFile_id" }))
 @Audited
+@EntityListeners(AuditingEntityListener.class)
 public class ProjectReferenceFileJoin implements Join<Project, ReferenceFile> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
+	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;

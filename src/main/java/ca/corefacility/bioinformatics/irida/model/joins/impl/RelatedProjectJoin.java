@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,10 +12,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -31,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 @Table(name = "related_project", uniqueConstraints = @UniqueConstraint(columnNames = { "subject_id",
 		"relatedProject_id" }))
 @Audited
+@EntityListeners(AuditingEntityListener.class)
 public class RelatedProjectJoin implements Join<Project, Project> {
 
 	@Id
@@ -49,12 +55,13 @@ public class RelatedProjectJoin implements Join<Project, Project> {
 
 	private Date modifiedDate;
 
+	@CreatedDate
 	@NotNull
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
 
 	public RelatedProjectJoin() {
 		createdDate = new Date();
-		modifiedDate = createdDate;
 	}
 
 	public RelatedProjectJoin(Project subject, Project object) {

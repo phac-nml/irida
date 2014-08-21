@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,6 +23,9 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -47,15 +51,19 @@ import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmissionOneO
 @Entity
 @Table(name = "sample")
 @Audited
+@EntityListeners(AuditingEntityListener.class)
 public class Sample implements IridaThing, Comparable<Sample> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+
+	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
 
+	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
@@ -111,6 +119,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	/**
 	 * Date of sampling
 	 */
+	@Temporal(TemporalType.DATE)
 	@NotNull(message = "{sample.collection.date.notnull}", groups = NCBISubmission.class)
 	private Date collectionDate;
 
@@ -223,13 +232,12 @@ public class Sample implements IridaThing, Comparable<Sample> {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
 	private List<SampleSequenceFileJoin> sequenceFiles;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	private Organization organization;
 
 	public Sample() {
 		createdDate = new Date();
-		modifiedDate = createdDate;
 	}
 
 	/**
