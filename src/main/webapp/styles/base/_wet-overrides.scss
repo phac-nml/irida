@@ -10,3 +10,15 @@
 .has-error label {
   color: $color-danger;
 }
+
+span.wb-date-wrap {
+  label + & {
+    display: block;
+    width: 100%;
+  }
+  .input-full {
+    width: auto;
+    display: inline-block;
+
+  }
+}
