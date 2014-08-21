@@ -49,9 +49,14 @@ import com.google.common.collect.ImmutableList;
 public class SamplesController extends BaseController {
 	private static final Logger logger = LoggerFactory.getLogger(SamplesController.class);
 	// Sub Navigation Strings
-	private static final String ACTIVE_NAV = "activeNav";
+	private static final String MODEL_ATTR_ACTIVE_NAV = "activeNav";
 	public static final String ACTIVE_NAV_DETAILS = "details";
 	public static final String ACTIVE_NAV_DETAILS_EDIT = ACTIVE_NAV_DETAILS;
+	public static final String ACTIVE_NAV_FILES = "files";
+
+	// Model attributes
+	private static final String MODEL_ATTR_SAMPLE = "sample";
+	private static final String MODEL_ATTR_FILES = "files";
 
 	// Page Names
 	private static final String SAMPLES_DIR = "samples/";
@@ -103,8 +108,8 @@ public class SamplesController extends BaseController {
 	public String getSampleSpecificPage(final Model model, @PathVariable Long sampleId) {
 		logger.debug("Getting sample page for sample [" + sampleId + "]");
 		Sample sample = sampleService.read(sampleId);
-		model.addAttribute("sample", sample);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_DETAILS);
+		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
+		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_DETAILS);
 		return SAMPLE_PAGE;
 	}
 
@@ -122,8 +127,8 @@ public class SamplesController extends BaseController {
 			model.addAttribute(MODEL_ERROR_ATTR, new HashMap<>());
 		}
 		Sample sample = sampleService.read(sampleId);
-		model.addAttribute("sample", sample);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_DETAILS_EDIT);
+		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
+		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_DETAILS_EDIT);
 		return SAMPLE_EDIT_PAGE;
 	}
 
@@ -168,6 +173,15 @@ public class SamplesController extends BaseController {
 
 	@RequestMapping("/{sampleId}/files")
 	public String getSampleFiles(final Model model, @PathVariable Long sampleId) {
+		Sample sample = sampleService.read(sampleId);
+		List<Join<Sample, SequenceFile>> joinList = sequenceFileService.getSequenceFilesForSample(sample);
+		List<SequenceFile> files = new ArrayList<>();
+		for (Join<Sample, SequenceFile> j : joinList) {
+			files.add(j.getObject());
+		}
+		model.addAttribute(MODEL_ATTR_FILES, files);
+		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
+		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
 		return SAMPLE_FILES_PAGE;
 	}
 

@@ -5,8 +5,41 @@
 <head lang="en">
     <meta charset="UTF-8"/>
     <title th:text="#{samples.files.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css}"
+              href="/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css"/>
+    </th:block>
 </head>
 <body>
-<h1>FILES!</h1>
+<main class="col-md-9 col-md-push-3" role="main" property="mainContentOfPage" layout:fragment="mainContent">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 role="heading" th:text="#{samples.files.page-title(${sample.getLabel()})}">__TITLE__</h1>
+        </div>
+    </div>
+    <div class="row">
+        <table id="filesTable" class="table table-striped table-bordered">
+            <thead>
+            <tr role="row">
+                <th>ID</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr role="row" th:each="file in ${files}">
+                <td th:text="${file.getId()">ID</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<th:block layout:fragment="scripts" th:inline="javascript">
+    <script th:src="@{/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js}" src="/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            'use strict';
+            $("#filesTable").dataTable();
+        });
+    </script>
+</th:block>
 </body>
 </html>
