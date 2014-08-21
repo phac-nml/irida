@@ -55,9 +55,9 @@
                         <dt th:text="#{samples.collected-by}"></dt>
                         <dd id="dd-collectedby" th:text="${sample.getCollectedBy()}"></dd>
                     </dl>
-                    <dl>
+                    <dl th:with="df=#{locale.date.short}">
                         <dt th:text="#{samples.collection-date.title}"></dt>
-                        <dd th:text="${sample.getCollectionDate()} != null ? ${#dates.format(sample.getCollectionDate())} : #{samples.collection-date.unknown}"></dd>
+                        <dd th:text="${sample.getCollectionDate()} != null ? ${#dates.format(sample.getCollectionDate(), df)} : #{samples.collection-date.unknown}"></dd>
                     </dl>
                     <dl th:if="${sample.getIsolationSource()} != null">
                         <dt th:text="#{samples.isolation-source.title}"></dt>
