@@ -18,15 +18,17 @@
         </div>
     </div>
     <div class="row">
-        <table id="filesTable" class="table table-striped table-bordered">
+        <table id="filesTable">
             <thead>
             <tr role="row">
                 <th>ID</th>
+                <th>Date</th>
             </tr>
             </thead>
             <tbody>
-            <tr role="row" th:each="file in ${files}">
-                <td th:text="${file.getId()">ID</td>
+            <tr role="row" th:each="file : ${files}">
+                <td th:text="${file.getId()}">ID</td>
+                <td th:text="${file.getCreatedDate()}">Date</td>
             </tr>
             </tbody>
         </table>

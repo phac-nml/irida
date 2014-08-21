@@ -65,6 +65,8 @@ public class SamplesController extends BaseController {
 	private static final String SAMPLE_FILES_PAGE = SAMPLES_DIR + "sample_files";
 
 	// Field Names
+	public static final String SAMPLE_NAME = "sampleName";
+	public static final String DESCRIPTION = "description";
 	public static final String ORGANISM = "organism";
 	public static final String ISOLATE = "isolate";
 	public static final String STRAIN = "strain";
@@ -75,7 +77,8 @@ public class SamplesController extends BaseController {
 	public static final String LATITUDE = "latitude";
 	public static final String LONGITUDE = "longitude";
 	private static final ImmutableList<String> FIELDS = ImmutableList
-			.of(ORGANISM, ISOLATE, STRAIN, COLLECTED_BY, ISOLATION_SOURCE, GEOGRAPHIC_LOCATION_NAME, LATITUDE,
+			.of(SAMPLE_NAME, DESCRIPTION, ORGANISM, ISOLATE, STRAIN, COLLECTED_BY, ISOLATION_SOURCE,
+					GEOGRAPHIC_LOCATION_NAME, LATITUDE,
 					LONGITUDE);
 
 	// Services
