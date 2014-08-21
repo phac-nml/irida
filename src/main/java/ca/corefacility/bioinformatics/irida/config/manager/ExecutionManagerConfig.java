@@ -44,8 +44,8 @@ public class ExecutionManagerConfig {
 	private static final String ADMIN_EMAIL_UPLOADER_PROPERTY = "galaxy.uploader.admin.email";
 	private static final String DATA_STORAGE_UPLOADER_PROPERTY = "galaxy.uploader.dataStorage";
 
-	private static final Map<String, Uploader.DataStorage> VALID_STORAGE =
-			ImmutableMap.of("remote", Uploader.DataStorage.REMOTE,
+	private static final Map<String, Uploader.DataStorage> VALID_STORAGE = ImmutableMap.of(
+					"remote", Uploader.DataStorage.REMOTE,
 					"local", Uploader.DataStorage.LOCAL);
 	
 	private static final Uploader.DataStorage DEFAULT_DATA_STORAGE = Uploader.DataStorage.REMOTE;
@@ -110,7 +110,7 @@ public class ExecutionManagerConfig {
 	}
 	
 	/**
-	 * Gets and validates a GalacyAccount email from the given property.
+	 * Gets and validates a GalaxyAccountEmail from the given property.
 	 * @param emailProperty  The property to find the email address.
 	 * @return  A valid GalaxyAccountEmail.
 	 * @throws ExecutionManagerConfigurationException  If the properties value was invalid.
