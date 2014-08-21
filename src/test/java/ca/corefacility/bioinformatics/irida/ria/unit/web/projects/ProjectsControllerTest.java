@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -52,6 +53,7 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -95,10 +97,11 @@ public class ProjectsControllerTest {
 		sampleService = mock(SampleService.class);
 		userService = mock(UserService.class);
 		sequenceFileService = mock(SequenceFileService.class);
+		taxonomyService = mock(TaxonomyService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
 		referenceFileService = mock(ReferenceFileService.class);
 		controller = new ProjectsController(projectService, sampleService, userService, sequenceFileService,
-				projectUtils, referenceFileService,taxonomyService);
+				projectUtils, referenceFileService, taxonomyService);
 		user.setId(1L);
 
 		mockSidebarInfo();
@@ -192,7 +195,7 @@ public class ProjectsControllerTest {
 		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(samplesJoin);
 		when(userService.getUsersForProject(any(Project.class))).thenReturn(usersJoin);
 
-		Map<String, Object> response = controller.getAjaxProjectListForAdmin( 0, 10, 1, 0, "asc", "");
+		Map<String, Object> response = controller.getAjaxProjectListForAdmin(0, 10, 1, 0, "asc", "");
 
 		assertEquals("Has the correct draw number", Integer.parseInt(requestDraw),
 				response.get(DataTable.RESPONSE_PARAM_DRAW));
@@ -492,6 +495,35 @@ public class ProjectsControllerTest {
 		verify(projectService).addSampleToProject(newProject, s3);
 		verify(projectService).removeSampleFromProject(oldProject, s2);
 		verify(projectService).removeSampleFromProject(oldProject, s3);
+	}
+
+	@Test
+	public void testSearchTaxonomy() {
+		String searchTerm = "bac";
+		TreeNode<String> root = new TreeNode<>("Bacteria");
+		TreeNode<String> child = new TreeNode<>("ChildBacteria");
+		child.setParent(root);
+		root.addChild(child);
+		List<TreeNode<String>> resultList = new ArrayList<>();
+		resultList.add(root);
+
+		// the elements that should be at the root
+		List<String> results = Lists.newArrayList(searchTerm, "Bacteria");
+
+		when(taxonomyService.search(searchTerm)).thenReturn(resultList);
+		List<Map<String, Object>> searchTaxonomy = controller.searchTaxonomy(searchTerm);
+
+		verify(taxonomyService).search(searchTerm);
+		
+		assertFalse(searchTaxonomy.isEmpty());
+		assertEquals(2, searchTaxonomy.size());
+
+		for (Map<String, Object> element : searchTaxonomy) {
+			assertTrue(element.containsKey("text"));
+			assertTrue(element.containsKey("id"));
+			assertTrue(results.contains(element.get("text")));
+		}
+
 	}
 
 	/**
