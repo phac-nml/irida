@@ -570,7 +570,11 @@ public class ProjectsController {
 	}
 	
 	/**
-	 * Search for taxonomy terms
+	 * Search for taxonomy terms. This method will return a map of found
+	 * taxonomy terms and their child nodes.
+	 * 
+	 * Note: If the search term was not included in the results, it will be
+	 * added as an option
 	 * 
 	 * @param searchTerm
 	 *            The term to find taxa for
