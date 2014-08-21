@@ -38,7 +38,7 @@ public class ExecutionManagerGalaxy implements ExecutionManager {
 		return location;
 	}
 
-	public String getAdminAPIKey() {
+	public String getAPIKey() {
 		return apiKey;
 	}
 

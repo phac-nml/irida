@@ -67,7 +67,7 @@ public class ExecutionManagerConfig {
 
 			galaxyConnector = new GalaxyConnector(executionManager.getLocation(),
 					executionManager.getAccountEmail(),
-					executionManager.getAdminAPIKey());
+					executionManager.getAPIKey());
 			galaxyConnector.setDataStorage(executionManager.getDataStorage());
 			
 			galaxyUploader.connectToGalaxy(galaxyConnector);
