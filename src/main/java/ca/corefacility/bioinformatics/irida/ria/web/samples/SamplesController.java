@@ -58,6 +58,17 @@ public class SamplesController extends BaseController {
 	private static final String SAMPLE_PAGE = SAMPLES_DIR + "sample";
 	private static final String SAMPLE_EDIT_PAGE = SAMPLES_DIR + "sample_edit";
 
+	// Field Names
+	public static final String ORGANISM = "organism";
+	public static final String ISOLATE = "isolate";
+	public static final String STRAIN = "strain";
+	public static final String COLLECTED_BY = "collectedBy";
+	public static final String COLLECTION_DATE = "collectionDate";
+	public static final String ISOLATION_SOURCE = "isolationSource";
+	public static final String GEOGRAPHIC_LOCATION_NAME = "geographicLocationName";
+	public static final String LATITUDE = "latitude";
+	public static final String LONGITUDE = "longitude";
+
 	// Services
 	private final SampleService sampleService;
 	private final SequenceFileService sequenceFileService;
@@ -142,45 +153,45 @@ public class SamplesController extends BaseController {
 		logger.debug("Updating sample [" + sampleId + "]");
 		Map<String, Object> updatedValues = new HashMap<>();
 		if (!Strings.isNullOrEmpty(organism)) {
-			updatedValues.put("organism", organism);
-			model.addAttribute("organism", organism);
+			updatedValues.put(ORGANISM, organism);
+			model.addAttribute(ORGANISM, organism);
 		}
 		if (!Strings.isNullOrEmpty(isolate)) {
-			updatedValues.put("isolate", isolate);
-			model.addAttribute("isolate", isolate);
+			updatedValues.put(ISOLATE, isolate);
+			model.addAttribute(ISOLATE, isolate);
 		}
 		if (!Strings.isNullOrEmpty(strain)) {
-			updatedValues.put("strain", strain);
-			model.addAttribute("strain", strain);
+			updatedValues.put(STRAIN, strain);
+			model.addAttribute(STRAIN, strain);
 		}
 		if (!Strings.isNullOrEmpty(collectedBy)) {
-			updatedValues.put("collectedBy", collectedBy);
-			model.addAttribute("collectedBy", collectedBy);
+			updatedValues.put(COLLECTED_BY, collectedBy);
+			model.addAttribute(COLLECTED_BY, collectedBy);
 		}
 		if (!Strings.isNullOrEmpty(collectionDate.toString())) {
 			/*
 			This conversion is from (http://blog.tompawlak.org/java-8-conversion-new-date-time-api)
 			 */
 			LocalDate date = LocalDate.parse(collectionDate);
-			updatedValues.put("collectionDate", Date.from(
+			updatedValues.put(COLLECTION_DATE, Date.from(
 					date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
-			model.addAttribute("collectionDate", collectionDate);
+			model.addAttribute(COLLECTION_DATE, collectionDate);
 		}
 		if (!Strings.isNullOrEmpty(isolationSource)) {
-			updatedValues.put("isolationSource", isolationSource);
-			model.addAttribute("isolationSource", isolationSource);
+			updatedValues.put(ISOLATION_SOURCE, isolationSource);
+			model.addAttribute(ISOLATION_SOURCE, isolationSource);
 		}
 		if (!Strings.isNullOrEmpty(geographicLocationName)) {
-			updatedValues.put("geographicLocationName", geographicLocationName);
-			model.addAttribute("geographicLocationName", geographicLocationName);
+			updatedValues.put(GEOGRAPHIC_LOCATION_NAME, geographicLocationName);
+			model.addAttribute(GEOGRAPHIC_LOCATION_NAME, geographicLocationName);
 		}
 		if (!Strings.isNullOrEmpty(latitude)) {
-			updatedValues.put("latitude", latitude);
-			model.addAttribute("latitude", latitude);
+			updatedValues.put(LATITUDE, latitude);
+			model.addAttribute(LATITUDE, latitude);
 		}
 		if (!Strings.isNullOrEmpty(longitude)) {
-			updatedValues.put("longitude", longitude);
-			model.addAttribute("longitude", longitude);
+			updatedValues.put(LONGITUDE, longitude);
+			model.addAttribute(LONGITUDE, longitude);
 		}
 		if (updatedValues.size() > 0) {
 			try {
