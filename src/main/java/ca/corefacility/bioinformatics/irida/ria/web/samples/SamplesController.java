@@ -111,7 +111,7 @@ public class SamplesController extends BaseController {
 	 * @param sampleId The id for the sample
 	 * @return The name of the edit page
 	 */
-	@RequestMapping("/{sampleId}/edit")
+	@RequestMapping(value = "/{sampleId}/edit", method = RequestMethod.GET)
 	public String getEditSampleSpecificPage(final Model model, @PathVariable Long sampleId) {
 		logger.debug("Getting sample edit for sample [" + sampleId + "]");
 		if (!model.containsAttribute(MODEL_ERROR_ATTR)) {
@@ -139,7 +139,7 @@ public class SamplesController extends BaseController {
 	 * @param longitude              The longitude for the sample
 	 * @return Name of the details page.
 	 */
-	@RequestMapping(value = "/{sampleId}/update", method = RequestMethod.POST)
+	@RequestMapping(value = "/{sampleId}/edit", method = RequestMethod.POST)
 	public String updateSample(final Model model, @PathVariable Long sampleId,
 			@RequestParam String organism,
 			@RequestParam String isolate,
