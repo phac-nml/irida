@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
-import ca.corefacility.bioinformatics.irida.config.pipeline.upload.galaxy.GalaxyAPIConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerConfigurationException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
@@ -32,7 +31,7 @@ import com.google.common.collect.ImmutableMap;
 @Profile({ "dev", "prod", "it" })
 public class ExecutionManagerConfig {
 	private static final Logger logger = LoggerFactory
-			.getLogger(GalaxyAPIConfig.class);
+			.getLogger(ExecutionManagerConfig.class);
 
 	private static final String URL_PROPERTY = "galaxy.url";
 	private static final String API_KEY_PROPERTY = "galaxy.admin.apiKey";

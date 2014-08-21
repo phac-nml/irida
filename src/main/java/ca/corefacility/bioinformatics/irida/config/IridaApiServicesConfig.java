@@ -18,7 +18,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import ca.corefacility.bioinformatics.irida.config.pipeline.upload.galaxy.GalaxyAPIConfig;
+import ca.corefacility.bioinformatics.irida.config.manager.ExecutionManagerConfig;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
@@ -36,7 +36,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService
  */
 @Configuration
 @Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
-		GalaxyAPIConfig.class, IridaOAuth2Config.class })
+		ExecutionManagerConfig.class, IridaOAuth2Config.class })
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.service")
 public class IridaApiServicesConfig {
 	@Value("${taxonomy.location}")
