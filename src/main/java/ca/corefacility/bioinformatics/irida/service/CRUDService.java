@@ -72,6 +72,9 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	/**
 	 * Update the specified object in the database. The object <b>must</b> have
 	 * a valid identifier prior to being passed to this method.
+	 * 
+	 * Note: Implementations should update the entity <code>modifiedDate</code>
+	 * property when updating.
 	 *
 	 * @param id
 	 *            The identifier of the object to update.
