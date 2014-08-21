@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.repositories.workflow.integration;
 
 import static org.junit.Assert.*;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,17 +30,22 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 	WithSecurityContextTestExcecutionListener.class })
-@DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/remote/resttemplate/OAuthTokenRestTemplateIT.xml")
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
 //@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class RemoteWorkflowRepositoryIT {
 
 	@Autowired
 	private RemoteWorkflowRepository remoteWorkflowRepository;
 	
-	@Test
-	@WithMockUser(username = "tom", roles = "ADMIN")
-	public void testSaveRemoteWorkflowPhylogenomics() {
-		String workflowId = "5f5";
+	private String workflowId;
+	private RemoteWorkflowPhylogenomics remoteWorkflowPhylogenomics;
+	
+	/**
+	 * Sets up variables for test
+	 */
+	@Before
+	public void setup() {
+		workflowId = "5f5";
 		String workflowChecksum = "55";
 		
 		String inputSequenceFilesLabel = "input_sequences";
@@ -49,15 +55,23 @@ public class RemoteWorkflowRepositoryIT {
 		String outputSnpMatrixName = "matrix.tsv";
 		String outputSnpTableName = "table.tsv";
 		
-		RemoteWorkflowPhylogenomics remoteWorkflow = 
+		remoteWorkflowPhylogenomics = 
 				new RemoteWorkflowPhylogenomics(workflowId, workflowChecksum, inputSequenceFilesLabel,
 						inputReferenceFileLabel, outputPhylogeneticTreeName, outputSnpMatrixName,
 						outputSnpTableName);
+	}
+	
+	/**
+	 * Tests saving a remote workflow and re-loading it.
+	 */
+	@Test
+	@WithMockUser(username = "tom", roles = "ADMIN")
+	public void testSaveRemoteWorkflowPhylogenomics() {		
+		remoteWorkflowRepository.save(remoteWorkflowPhylogenomics);
 		
-		remoteWorkflowRepository.save(remoteWorkflow);
+		RemoteWorkflowPhylogenomics savedWorkflow = 
+				remoteWorkflowRepository.getWorkflowByType(workflowId, RemoteWorkflowPhylogenomics.class);
 		
-		RemoteWorkflowPhylogenomics savedWorkflow = remoteWorkflowRepository.
-				getWorkflowByType(workflowId, RemoteWorkflowPhylogenomics.class);
-		assertEquals(remoteWorkflow, savedWorkflow);
+		assertEquals(remoteWorkflowPhylogenomics, savedWorkflow);
 	}
 }
