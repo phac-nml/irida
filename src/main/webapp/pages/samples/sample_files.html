@@ -27,7 +27,7 @@
             </thead>
             <tbody>
             <tr role="row" th:each="file : ${files}">
-                <td th:text="${file.getId()}">ID</td>
+                <td th:text="${file.fileId}">ID</td>
                 <td th:text="${file.getCreatedDate()}">Date</td>
             </tr>
             </tbody>

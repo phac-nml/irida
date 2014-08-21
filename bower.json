@@ -17,7 +17,7 @@
     "font-awesome-css": "4.0.3",
     "jquery-file-upload": "9.7.0",
     "bootstrap": "3.2.0",
-    "DataTables": "1.10.2"
+		"DataTables": "1.10.2"
   },
   "devDependencies": {}
 }

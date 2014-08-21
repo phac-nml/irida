@@ -178,9 +178,13 @@ public class SamplesController extends BaseController {
 	public String getSampleFiles(final Model model, @PathVariable Long sampleId) {
 		Sample sample = sampleService.read(sampleId);
 		List<Join<Sample, SequenceFile>> joinList = sequenceFileService.getSequenceFilesForSample(sample);
-		List<SequenceFile> files = new ArrayList<>();
+		List<Map<String, String>> files = new ArrayList<>();
 		for (Join<Sample, SequenceFile> j : joinList) {
-			files.add(j.getObject());
+			SequenceFile file = j.getObject();
+			Map<String, String> m = new HashMap<>();
+			m.put("fileId", file.getId().toString());
+			m.put("created", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
+			files.add(m);
 		}
 		model.addAttribute(MODEL_ATTR_FILES, files);
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
