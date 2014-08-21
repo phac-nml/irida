@@ -19,5 +19,5 @@ public interface RemoteWorkflowRepository extends IridaJpaRepository<RemoteWorkf
 	 * @return  A RemoteWorkflow of the specified by with the given id.
 	 */
 	@Query("select w from RemoteWorkflow w where w.workflowId = ?1 and type(w) = ?2")
-	public <T extends RemoteWorkflow> T getWorkflowByType(String workflowId, Class<T> workflowType);
+	public <T extends RemoteWorkflow> T getByType(String workflowId, Class<T> workflowType);
 }

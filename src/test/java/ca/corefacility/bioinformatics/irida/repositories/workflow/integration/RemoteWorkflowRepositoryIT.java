@@ -71,8 +71,19 @@ public class RemoteWorkflowRepositoryIT {
 		remoteWorkflowRepository.save(remoteWorkflowPhylogenomics);
 		
 		RemoteWorkflowPhylogenomics savedWorkflow = 
-				remoteWorkflowRepository.getWorkflowByType(workflowId, RemoteWorkflowPhylogenomics.class);
+				remoteWorkflowRepository.getByType(workflowId, RemoteWorkflowPhylogenomics.class);
 		
 		assertEquals(remoteWorkflowPhylogenomics, savedWorkflow);
+	}
+	
+	/**
+	 * Tests failing to get a remote workflow
+	 */
+	@Test
+	@WithMockUser(username = "tom", roles = "ADMIN")
+	public void testGetRemoteWorkflowFail() {		
+		RemoteWorkflowPhylogenomics workflow = 
+				remoteWorkflowRepository.getByType(workflowId, RemoteWorkflowPhylogenomics.class);
+		assertNull(workflow);
 	}
 }

@@ -42,7 +42,7 @@ import com.google.common.collect.Sets;
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 	WithSecurityContextTestExcecutionListener.class })
-@DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/remote/resttemplate/OAuthTokenRestTemplateIT.xml")
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisSubmissionRepositoryIT {
 
@@ -63,6 +63,10 @@ public class AnalysisSubmissionRepositoryIT {
 	
 	private RemoteWorkflowPhylogenomics remoteWorkflow;
 	
+	/**
+	 * Sets up objects for test.
+	 * @throws IOException
+	 */
 	@Before
 	public void setup() throws IOException {
 		Path sequenceFilePath = Files.createTempFile("test", ".fastq");
@@ -89,13 +93,18 @@ public class AnalysisSubmissionRepositoryIT {
 						outputSnpTableName);
 	}
 	
+	/**
+	 * Tests saving an analysis submission.
+	 */
 	@Test
 	@WithMockUser(username = "tom", roles = "ADMIN")
 	public void testSaveAnalysisSubmission() {
+		String analysisId = "10";
+		
 		AnalysisSubmissionPhylogenomics submission =
 				new AnalysisSubmissionPhylogenomics(sequenceFiles, referenceFile,
 						remoteWorkflow);
-		submission.setRemoteAnalysisId("10");
+		submission.setRemoteAnalysisId(analysisId);
 		
 		sequenceFileRepository.save(sequenceFiles);
 		referenceFileRepository.save(referenceFile);
@@ -103,11 +112,22 @@ public class AnalysisSubmissionRepositoryIT {
 		analysisSubmissionRepository.save(submission);
 		
 		AnalysisSubmissionPhylogenomics savedSubmission = 
-				analysisSubmissionRepository.getByType("10", AnalysisSubmissionPhylogenomics.class);
+				analysisSubmissionRepository.getByType(analysisId, AnalysisSubmissionPhylogenomics.class);
 		
 		assertEquals(submission.getRemoteAnalysisId(), savedSubmission.getRemoteAnalysisId());
 		assertEquals(submission.getRemoteWorkflow(), savedSubmission.getRemoteWorkflow());
 		assertEquals(submission.getInputFiles(), savedSubmission.getInputFiles());
 		assertEquals(submission.getReferenceFile(), savedSubmission.getReferenceFile());
+	}
+	
+	/**
+	 * Tests failing to get an analysis submission
+	 */
+	@Test
+	@WithMockUser(username = "tom", roles = "ADMIN")
+	public void testGetAnalysisSubmissionFail() {		
+		AnalysisSubmissionPhylogenomics savedSubmission = 
+				analysisSubmissionRepository.getByType("invalid", AnalysisSubmissionPhylogenomics.class);
+		assertNull(savedSubmission);
 	}
 }
