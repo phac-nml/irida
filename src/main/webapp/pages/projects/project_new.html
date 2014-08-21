@@ -84,7 +84,7 @@
         });
 
         $(".organism-select").select2({
-        	placeholder: "Enter Organism",
+        	placeholder: /*[[#{projects.create.form.select-organism}]]*/ "Enter Organism",
     		minimumInputLength: 2,
     		ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
     	        url: [[@{/projects/ajax/taxonomy/search}]],
