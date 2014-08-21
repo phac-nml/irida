@@ -112,7 +112,7 @@ public class ExecutionManagerConfig {
 				.validate(galaxyEmail);
 
 		if (!violations.isEmpty()) {
-			throw new ExecutionManagerConfigurationException(emailProperty, 
+			throw new ExecutionManagerConfigurationException("Invalid email address", emailProperty, 
 					new ConstraintViolationException(violations));
 		}
 		
@@ -123,7 +123,7 @@ public class ExecutionManagerConfig {
 		String apiKey = environment.getProperty(apiKeyProperty);
 		
 		if (apiKey == null) {
-			throw new ExecutionManagerConfigurationException(apiKeyProperty);
+			throw new ExecutionManagerConfigurationException("Missing apiKey",apiKeyProperty);
 		} else {
 			return apiKey;
 		}
@@ -134,17 +134,17 @@ public class ExecutionManagerConfig {
 
 		try {
 			if (galaxyURLString == null) {
-				throw new ExecutionManagerConfigurationException(urlProperty);
+				throw new ExecutionManagerConfigurationException("Missing Galaxy URL", urlProperty);
 			} else {
 				return new URL(galaxyURLString);
 			}
 		} catch (MalformedURLException e) {
-			throw new ExecutionManagerConfigurationException(urlProperty, e);
+			throw new ExecutionManagerConfigurationException("Invalid Galaxy URL", urlProperty, e);
 		}
 	}
 	
 	private Uploader.DataStorage getDataStorage(String dataStorageProperty) {
-		String dataStorageString = environment.getProperty(dataStorageProperty);
+		String dataStorageString = environment.getProperty(dataStorageProperty,"");
 		Uploader.DataStorage dataStorage = VALID_STORAGE.get(dataStorageString.toLowerCase());
 		
 		if (dataStorage == null) {
@@ -152,7 +152,7 @@ public class ExecutionManagerConfig {
 			
 			logger.warn("Invalid configuration property \""
 					+ dataStorageProperty
-					+ "="
+					+ "\"=\""
 					+ dataStorageString
 					+ "\" must be one of "
 					+ VALID_STORAGE.keySet()

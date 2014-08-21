@@ -12,17 +12,19 @@ public class ExecutionManagerConfigurationException extends Exception {
 	/**
 	 * Constructs a new ExecutionManagerConfigurationException with the given message and cause.
 	 * @param message  The message explaining the error.
+	 * @param configurationProperty  The configuration property causing the issue.
 	 * @param cause  The cause of this message.
 	 */
-	public ExecutionManagerConfigurationException(String configurationProperty, Throwable cause) {
-		super("Invalid configuration property \"" + configurationProperty + "\"", cause);
+	public ExecutionManagerConfigurationException(String message, String configurationProperty, Throwable cause) {
+		super(message + " for property \"" + configurationProperty + "\"", cause);
 	}
 
 	/**
 	 * Constructs a new ExecutionManagerConfigurationException with the given property name.
 	 * @param message  The property name causing the error.
+	 * @param configurationProperty  The configuration property causing the issue.
 	 */
-	public ExecutionManagerConfigurationException(String configurationProperty) {
-		super("Invalid configuration property \"" + configurationProperty + "\"");
+	public ExecutionManagerConfigurationException(String message, String configurationProperty) {
+		super(message + " for property \"" + configurationProperty + "\"");
 	}
 }
