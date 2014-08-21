@@ -59,6 +59,6 @@ public class RemoteWorkflowRepositoryIT {
 		
 		RemoteWorkflow savedWorkflow = remoteWorkflowRepository.findOne(workflowId);
 		RemoteWorkflowPhylogenomics savedWorkflowGalaxy = (RemoteWorkflowPhylogenomics)savedWorkflow;
-		assertEquals(remoteWorkflow.getWorkflowId(), savedWorkflowGalaxy.getWorkflowId());
+		assertEquals(remoteWorkflow, savedWorkflowGalaxy);
 	}
 }

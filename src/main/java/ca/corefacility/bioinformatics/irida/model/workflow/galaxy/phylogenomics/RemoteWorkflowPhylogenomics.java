@@ -1,11 +1,14 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics;
 
+import java.util.Objects;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.RemoteWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
 
 /**
@@ -33,6 +36,7 @@ public class RemoteWorkflowPhylogenomics extends RemoteWorkflowGalaxy {
 	@NotNull
 	private String outputSnpTableName;
 	
+	@SuppressWarnings("unused")
 	private RemoteWorkflowPhylogenomics() {
 	}
 	
@@ -89,5 +93,29 @@ public class RemoteWorkflowPhylogenomics extends RemoteWorkflowGalaxy {
 				+ outputPhylogeneticTreeName + ", outputSsnpMatrixName="
 				+ outputSsnpMatrixName + ", outputSnpTableName="
 				+ outputSnpTableName + ", toString()=" + super.toString() + "]";
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), inputSequenceFilesLabel,
+				inputReferenceFileLabel, outputPhylogeneticTreeName, outputSsnpMatrixName,
+				outputSnpTableName);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		else if (obj instanceof RemoteWorkflowPhylogenomics) {
+			RemoteWorkflowPhylogenomics other = (RemoteWorkflowPhylogenomics)obj;
+			
+			return super.equals(other) && Objects.equals(inputSequenceFilesLabel, other.inputSequenceFilesLabel) &&
+					Objects.equals(inputReferenceFileLabel, other.inputReferenceFileLabel) &&
+					Objects.equals(outputPhylogeneticTreeName, other.outputPhylogeneticTreeName) &&
+					Objects.equals(outputSsnpMatrixName, other.outputSsnpMatrixName) &&
+					Objects.equals(outputSnpTableName, other.outputSnpTableName);		
+		}
+		
+		return false;
 	}
 }

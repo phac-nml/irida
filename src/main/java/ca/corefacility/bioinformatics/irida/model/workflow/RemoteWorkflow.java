@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.workflow;
 
+import java.util.Objects;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -59,5 +61,24 @@ public abstract class RemoteWorkflow {
 	public String toString() {
 		return "RemoteWorkflow [workflowId=" + workflowId
 				+ ", workflowChecksum=" + workflowChecksum + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(workflowId, workflowChecksum);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		else if (obj instanceof RemoteWorkflow) {
+			RemoteWorkflow other = (RemoteWorkflow)obj;
+			
+			return Objects.equals(workflowId, other.workflowId) &&
+					Objects.equals(workflowChecksum, other.workflowChecksum);
+		}
+		
+		return false;
 	}
 }
