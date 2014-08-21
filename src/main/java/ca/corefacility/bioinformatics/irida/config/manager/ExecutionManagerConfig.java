@@ -78,11 +78,11 @@ public class ExecutionManagerConfig {
 			galaxyUploader.connectToGalaxy(galaxyConnector);
 
 		} catch (ExecutionManagerConfigurationException e) {
-			logger.error("Could not build ExecutionManagerGalaxy", e);
+			logger.error("Could not build ExecutionManagerGalaxy: " + e.getMessage());
 		} catch (ConstraintViolationException e) {
-			logger.error("Exception attempting to connect to Galaxy", e);
+			logger.error("Could not build ExecutionManagerGalaxy: " + e.getMessage());
 		} catch (GalaxyConnectException e) {
-			logger.error("Exception attempting to connect to Galaxy", e);
+			logger.error("Exception attempting to connect to Galaxy: " + e.getMessage());
 		}
 
 		return galaxyUploader;
