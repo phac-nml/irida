@@ -27,6 +27,11 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploade
 
 import com.google.common.collect.ImmutableMap;
 
+/**
+ * Configuration for connections to an ExecutionManager in IRIDA.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 @Configuration
 @Profile({ "dev", "prod", "it" })
 public class ExecutionManagerConfig {
@@ -104,6 +109,12 @@ public class ExecutionManagerConfig {
 		return new ExecutionManagerGalaxy(galaxyURL, apiKey, galaxyEmail, dataStorage);
 	}
 	
+	/**
+	 * Gets and validates a GalacyAccount email from the given property.
+	 * @param emailProperty  The property to find the email address.
+	 * @return  A valid GalaxyAccountEmail.
+	 * @throws ExecutionManagerConfigurationException  If the properties value was invalid.
+	 */
 	private GalaxyAccountEmail getGalaxyEmail(String emailProperty) throws ExecutionManagerConfigurationException {
 		String galaxyEmailString = environment.getProperty(emailProperty);
 		GalaxyAccountEmail galaxyEmail = new GalaxyAccountEmail(galaxyEmailString);
@@ -119,6 +130,12 @@ public class ExecutionManagerConfig {
 		return galaxyEmail;
 	}
 	
+	/**
+	 * Gets and validates a Galaxy API key from the given property.
+	 * @param apiKeyProperty  The API key property to get.
+	 * @return  A API key for Galaxy.
+	 * @throws ExecutionManagerConfigurationException  If the given properties value was invalid.
+	 */
 	private String getAPIKey(String apiKeyProperty) throws ExecutionManagerConfigurationException {
 		String apiKey = environment.getProperty(apiKeyProperty);
 		
@@ -129,6 +146,12 @@ public class ExecutionManagerConfig {
 		}
 	}
 	
+	/**
+	 * Gets and validates the given property for a Galaxy url.
+	 * @param urlProperty  The property with the Galaxy URL.
+	 * @return  A valid Galaxy URL.
+	 * @throws ExecutionManagerConfigurationException  If the properties value was invalid.
+	 */
 	private URL getGalaxyURL(String urlProperty) throws ExecutionManagerConfigurationException {
 		String galaxyURLString = environment.getProperty(urlProperty);
 
@@ -143,6 +166,11 @@ public class ExecutionManagerConfig {
 		}
 	}
 	
+	/**
+	 * Gets and validates a property with the storage strategy for Galaxy.
+	 * @param dataStorageProperty  The property with the storage strategy for Galaxy.
+	 * @return  The corresponding storage strategy object, defaults to DEFAULT_DATA_STORAGE if invalid.
+	 */
 	private Uploader.DataStorage getDataStorage(String dataStorageProperty) {
 		String dataStorageString = environment.getProperty(dataStorageProperty,"");
 		Uploader.DataStorage dataStorage = VALID_STORAGE.get(dataStorageString.toLowerCase());
