@@ -33,10 +33,10 @@ public class ExecutionManagerConfig {
 	private static final Logger logger = LoggerFactory
 			.getLogger(ExecutionManagerConfig.class);
 
-	private static final String URL_PROPERTY = "galaxy.url";
-	private static final String API_KEY_PROPERTY = "galaxy.admin.apiKey";
-	private static final String ADMIN_EMAIL_PROPERTY = "galaxy.admin.email";
-	private static final String DATA_STORAGE_PROPERTY = "galaxy.dataStorage";
+	private static final String URL_UPLODER_PROPERTY = "galaxy.uploader.url";
+	private static final String API_KEY_UPLOADER_PROPERTY = "galaxy.uploader.admin.apiKey";
+	private static final String ADMIN_EMAIL_UPLOADER_PROPERTY = "galaxy.uploader.admin.email";
+	private static final String DATA_STORAGE_UPLOADER_PROPERTY = "galaxy.uploader.dataStorage";
 
 	private static final Map<String, Uploader.DataStorage> VALID_STORAGE = ImmutableMap
 			.<String, Uploader.DataStorage> builder()
@@ -62,8 +62,8 @@ public class ExecutionManagerConfig {
 		try {
 			GalaxyConnector galaxyConnector;
 			
-			ExecutionManagerGalaxy executionManager = buildExecutionManager(URL_PROPERTY, API_KEY_PROPERTY,
-					ADMIN_EMAIL_PROPERTY, DATA_STORAGE_PROPERTY);
+			ExecutionManagerGalaxy executionManager = buildExecutionManager(URL_UPLODER_PROPERTY, API_KEY_UPLOADER_PROPERTY,
+					ADMIN_EMAIL_UPLOADER_PROPERTY, DATA_STORAGE_UPLOADER_PROPERTY);
 
 			galaxyConnector = new GalaxyConnector(executionManager.getLocation(),
 					executionManager.getAccountEmail(),
