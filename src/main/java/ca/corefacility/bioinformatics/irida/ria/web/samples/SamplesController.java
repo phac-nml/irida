@@ -57,6 +57,7 @@ public class SamplesController extends BaseController {
 	private static final String SAMPLES_DIR = "samples/";
 	private static final String SAMPLE_PAGE = SAMPLES_DIR + "sample";
 	private static final String SAMPLE_EDIT_PAGE = SAMPLES_DIR + "sample_edit";
+	private static final String SAMPLE_FILES_PAGE = SAMPLES_DIR + "sample_files";
 
 	// Field Names
 	public static final String ORGANISM = "organism";
@@ -163,6 +164,11 @@ public class SamplesController extends BaseController {
 			}
 		}
 		return "redirect:/samples/" + sampleId;
+	}
+
+	@RequestMapping("/{sampleId}/files")
+	public String getSampleFiles(final Model model, @PathVariable Long sampleId) {
+		return SAMPLE_FILES_PAGE;
 	}
 
 	/************************************************************************************************
