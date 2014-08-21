@@ -281,17 +281,6 @@ public class ProjectsControllerTest {
 	}
 
 	@Test
-	public void testPostUpdateProjectSamples() {
-		Long sampleId = 1L;
-		String newName = "Barney";
-		Map<String, Object> updateMap = new HashMap<>();
-		updateMap.put("sampleName", newName);
-		when(sampleService.update(sampleId, updateMap)).thenReturn(null);
-		Map<String, Object> resultMap = controller.postUpdateProjectSamples(sampleId, newName);
-		assertTrue("Result contains the word success", resultMap.containsKey("success"));
-	}
-
-	@Test
 	public void testDeleteProjectSamples() {
 		Project project1 = getProject();
 		Sample sample = new Sample("test");

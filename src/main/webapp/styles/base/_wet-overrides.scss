@@ -5,3 +5,24 @@
   position: absolute;
   right: 0;
 }
+
+// Label is not set to red on an error state
+.has-error label {
+  color: $color-danger;
+}
+
+span.wb-date-wrap {
+  label + & {
+    display: block;
+    width: 100%;
+  }
+  .input-full {
+    width: auto;
+    display: inline-block;
+
+  }
+}
+
+label {
+  margin-top: 5px;
+}

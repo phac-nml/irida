@@ -443,25 +443,6 @@ public class ProjectsController {
 		return map;
 	}
 
-	@RequestMapping(value = "/ajax/{projectId}/samples/update", method = RequestMethod.POST,
-			produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Object> postUpdateProjectSamples(@RequestParam(required = true) Long sampleId,
-			@RequestParam(required = false) String name) {
-		Map<String, Object> updateMap = new HashMap<>();
-		if (!Strings.isNullOrEmpty(name)) {
-			updateMap.put("sampleName", name);
-		}
-
-		Map<String, Object> resultMap = new HashMap<>();
-		try {
-			sampleService.update(sampleId, updateMap);
-			resultMap.put("success", "Updated name");
-		} catch (ConstraintViolationException e) {
-			resultMap.put("error", getErrorsFromViolationException(e));
-		}
-		return resultMap;
-	}
-
 	@RequestMapping(value = "/ajax/{projectId}/samples/getids", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, List<String>> getAllProjectIds(@PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
