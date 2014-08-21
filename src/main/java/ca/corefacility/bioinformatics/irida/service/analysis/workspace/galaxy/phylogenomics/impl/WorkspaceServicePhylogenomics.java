@@ -13,7 +13,6 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
@@ -97,7 +96,7 @@ public class WorkspaceServicePhylogenomics
 				new WorkflowInputs.WorkflowInput(referenceDataset.getId(),
 				WorkflowInputs.InputSourceType.HDA));
 		
-		GalaxyAnalysisId analysisId = new GalaxyAnalysisId(workflowHistory.getId());
+		String analysisId = workflowHistory.getId();
 		
 		return new PreparedWorkflowGalaxy(analysisId, new WorkflowInputsGalaxy(inputs));
 	}
@@ -119,24 +118,24 @@ public class WorkspaceServicePhylogenomics
 
 		RemoteWorkflowPhylogenomics remoteWorkflow = analysisSubmission
 				.getRemoteWorkflow();
-		GalaxyAnalysisId analysisId = analysisSubmission.getRemoteAnalysisId();
+		String analysisId = analysisSubmission.getRemoteAnalysisId();
 
 		AnalysisPhylogenomicsPipeline results = new AnalysisPhylogenomicsPipeline(
-				analysisSubmission.getInputFiles(), analysisId.getRemoteAnalysisId());
+				analysisSubmission.getInputFiles(), analysisId);
 
 		WorkflowOutputs outputs = analysisSubmission.getOutputs();
 		List<String> outputIds = outputs.getOutputIds();
 
 		Dataset treeOutput = galaxyHistoriesService.getOutputDataset(
-				analysisId.getRemoteAnalysisId(),
+				analysisId,
 				remoteWorkflow.getOutputPhylogeneticTreeName(), outputIds);
 		
 		Dataset matrixOutput = galaxyHistoriesService.getOutputDataset(
-				analysisId.getRemoteAnalysisId(),
+				analysisId,
 				remoteWorkflow.getOutputSnpMatrixName(), outputIds);
 		
 		Dataset tableOutput = galaxyHistoriesService.getOutputDataset(
-				analysisId.getRemoteAnalysisId(),
+				analysisId,
 				remoteWorkflow.getOutputSnpTableName(), outputIds);
 
 		results.setPhylogeneticTree(buildOutputFile(analysisId, treeOutput));

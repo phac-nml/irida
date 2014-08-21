@@ -22,7 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.Ana
  *
  */
 @Entity
-@Table(name = "analysis_submissionphylogenomics")
+@Table(name = "analysis_submission_phylogenomics")
 @Audited
 public class AnalysisSubmissionPhylogenomics
 	extends AnalysisSubmissionGalaxy<RemoteWorkflowPhylogenomics> {

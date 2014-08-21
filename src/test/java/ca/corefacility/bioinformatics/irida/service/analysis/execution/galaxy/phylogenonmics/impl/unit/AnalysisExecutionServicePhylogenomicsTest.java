@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowChecksumIn
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
@@ -49,7 +48,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	private static final String WORKFLOW_CHECKSUM = "1";
 	private AnalysisExecutionServicePhylogenomics workflowManagement;
 	private PreparedWorkflowGalaxy preparedWorkflow;
-	private GalaxyAnalysisId analysisId;
+	private String analysisId;
 	private WorkflowInputsGalaxy workflowInputsGalaxy;
 	
 	private static final String TREE_LABEL = "tree";
@@ -72,9 +71,9 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 						TREE_LABEL, MATRIX_LABEL, TABLE_LABEL);
 		
 		when(analysisSubmission.getRemoteWorkflow()).thenReturn(remoteWorkflow);
-		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(new GalaxyAnalysisId("1"));
+		when(analysisSubmission.getRemoteAnalysisId()).thenReturn("1");
 		
-		analysisId = new GalaxyAnalysisId("1");
+		analysisId = "1";
 		workflowInputsGalaxy = new WorkflowInputsGalaxy(workflowInputs);
 		preparedWorkflow = new PreparedWorkflowGalaxy(analysisId, workflowInputsGalaxy);		
 	}
@@ -152,7 +151,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		WorkflowStatus workflowStatus = new WorkflowStatus(WorkflowState.OK, 1.0f);
 		
 		when(galaxyHistoriesService.getStatusForHistory(
-				analysisSubmission.getRemoteAnalysisId().getRemoteAnalysisId())).thenReturn(workflowStatus);
+				analysisSubmission.getRemoteAnalysisId())).thenReturn(workflowStatus);
 		
 		assertEquals(workflowStatus, workflowManagement.getWorkflowStatus(analysisSubmission));
 	}
@@ -164,7 +163,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Test(expected=WorkflowException.class)
 	public void testGetWorkflowStatusFailNoStatus() throws ExecutionManagerException {		
 		when(galaxyHistoriesService.getStatusForHistory(analysisSubmission.
-				getRemoteAnalysisId().getRemoteAnalysisId())).thenThrow(new WorkflowException());
+				getRemoteAnalysisId())).thenThrow(new WorkflowException());
 		
 		workflowManagement.getWorkflowStatus(analysisSubmission);
 	}
