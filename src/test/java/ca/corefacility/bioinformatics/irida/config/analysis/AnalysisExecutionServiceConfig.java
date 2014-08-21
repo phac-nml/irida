@@ -47,16 +47,16 @@ public class AnalysisExecutionServiceConfig {
 	@Lazy
 	@Bean
 	public GalaxyHistoriesService galaxyHistoriesService() {
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
-		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceAdmin().getToolsClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
+		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getToolsClient();
 		return new GalaxyHistoriesService(historiesClient, toolsClient);
 	}
 	
 	@Lazy
 	@Bean
 	public GalaxyWorkflowService galaxyWorkflowService() {
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient();
-		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
 		
 		return new GalaxyWorkflowService(historiesClient, workflowsClient,
 						new StandardPasswordEncoder());

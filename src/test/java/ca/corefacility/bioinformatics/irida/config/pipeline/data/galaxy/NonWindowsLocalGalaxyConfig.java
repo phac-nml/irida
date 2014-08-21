@@ -150,6 +150,8 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 				localGalaxy.setUser1Password(randomPassword);
 				localGalaxy.setUser2Name(new GalaxyAccountEmail("user2@localhost"));
 				localGalaxy.setUser2Password(randomPassword);
+				localGalaxy.setWorkflowUserName(new GalaxyAccountEmail("workflow@localhost"));
+				localGalaxy.setWorkflowUserPassword(randomPassword);
 				localGalaxy.setNonExistentGalaxyAdminName(new GalaxyAccountEmail(
 						"admin_no_exist@localhost"));
 				localGalaxy.setNonExistentGalaxyUserName(new GalaxyAccountEmail(
@@ -182,6 +184,9 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 				localGalaxy.setGalaxyInstanceUser2(GalaxyInstanceFactory.get(
 						localGalaxy.getGalaxyURL().toString(),
 						localGalaxy.getUser2APIKey()));
+				localGalaxy.setGalaxyInstanceWorkflowUser(GalaxyInstanceFactory.get(
+						localGalaxy.getGalaxyURL().toString(),
+						localGalaxy.getWorkflowUserAPIKey()));
 				
 				localGalaxy.setupWorkflows();
 				
@@ -383,10 +388,15 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		User user2 = new User(localGalaxy.getUser2Name().getName());
 		user2.setPassword(localGalaxy.getUser2Password());
 		localGalaxy.setUser2APIKey(user2.getApiKey());
+		
+		User workflowUser = new User(localGalaxy.getWorkflowUserName().getName());
+		workflowUser.setPassword(localGalaxy.getWorkflowUserPassword());
+		localGalaxy.setWorkflowUserAPIKey(workflowUser.getApiKey());
 
 		galaxyData.getUsers().add(adminUser);
 		galaxyData.getUsers().add(user1);
 		galaxyData.getUsers().add(user2);
+		galaxyData.getUsers().add(workflowUser);
 
 		galaxyProperties.setAdminUser(adminUser.getUsername());
 	}

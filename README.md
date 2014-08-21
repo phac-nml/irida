@@ -45,20 +45,24 @@ To link up the API with a running instance of Galaxy, the following steps need t
    * Make sure to set the property `allow_library_path_paste = True` within the `universe_wsgi.ini` configuration file to properly upload files.
 2. Construct a configuration file with the Galaxy connection parameters.  This should be located within `/etc/irida/irida.conf` and contain the following information:
 
-        # The URL where Galaxy is being run
-        galaxy.url=http://localhost/
+        ########################################################
+        # Uploader configuration for uploading files to Galaxy #
+        ########################################################
+
+        # The URL Galaxy is being run
+        galaxy.uploader.url=http://localhost/
 
         # An email address of an administrator account on Galaxy
-        galaxy.admin.email=admin@localhost
+        galaxy.uploader.admin.email=admin@localhost
 
         # An API key for the above admin account
-        galaxy.admin.apiKey=xxxx
+        galaxy.uploader.admin.apiKey=xxxx
 
         # How to store data on Galaxy.  One of 'remote' or 'local'.
         ## remote:  Uploads a copy of a file to Galaxy.
         ## local:  Uploads only a filesystem location (link) of a file to Galaxy.  Assumes
         ##  files are shared between the NGS Archive and Galaxy (e.g. over NFS).
-        galaxy.dataStorage=local
+        galaxy.uploader.dataStorage=local
 
 Please see the main IRIDA installation guide for more details.
 
