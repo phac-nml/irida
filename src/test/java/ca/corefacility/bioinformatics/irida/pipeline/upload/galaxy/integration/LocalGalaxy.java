@@ -54,6 +54,10 @@ public class LocalGalaxy {
 	private String user2Password;
 	private String user2APIKey;
 	
+	private GalaxyAccountEmail workflowUserName;
+	private String workflowUserPassword;
+	private String workflowUserAPIKey;
+	
 	private GalaxyAccountEmail nonExistentGalaxyAdminName;
 	private GalaxyAccountEmail nonExistentGalaxyUserName;
 
@@ -62,6 +66,7 @@ public class LocalGalaxy {
 	private GalaxyInstance galaxyInstanceAdmin;
 	private GalaxyInstance galaxyInstanceUser1;
 	private GalaxyInstance galaxyInstanceUser2;
+	private GalaxyInstance galaxyInstanceWorkflowUser;
 	
 	private String singleInputWorkflowId;
 	private String singleInputWorkflowLabel;
@@ -442,7 +447,7 @@ public class LocalGalaxy {
 				
 		String content = readFile(workflowFile);
 		
-		WorkflowsClient workflowsClient = galaxyInstanceAdmin.getWorkflowsClient();
+		WorkflowsClient workflowsClient = galaxyInstanceWorkflowUser.getWorkflowsClient();
 		Workflow workflow = workflowsClient.importWorkflow(content);
 		
 		if (workflow != null && workflow.getId() != null) {	
@@ -685,5 +690,70 @@ public class LocalGalaxy {
 	 */
 	public Path getWorkflowCorePipelineTestSnpTable() {
 		return workflowCorePipelineTestSnpTable;
+	}
+
+	/**
+	 * Gets a user name for running workflows.
+	 * @return A user name for running workflows.
+	 */
+	public GalaxyAccountEmail getWorkflowUserName() {
+		return workflowUserName;
+	}
+
+	/**
+	 * Sets a user name for running workflows.
+	 * @param workflowUserName  A user name for running workflows.
+	 */
+	public void setWorkflowUserName(GalaxyAccountEmail workflowUserName) {
+		this.workflowUserName = workflowUserName;
+	}
+
+	/**
+	 * Gets a password for a user for running workflows.
+	 * @return  A password for a user for running workflows.
+	 */
+	public String getWorkflowUserPassword() {
+		return workflowUserPassword;
+	}
+
+	/**
+	 * Sets a password for a user running workflows.
+	 * @param workflowUserPassword  A password for a user running workflows.
+	 */
+	public void setWorkflowUserPassword(String workflowUserPassword) {
+		this.workflowUserPassword = workflowUserPassword;
+	}
+
+	/**
+	 * Gets an API key for a user running workflows.
+	 * @return An API key for a user running workflows.
+	 */
+	public String getWorkflowUserAPIKey() {
+		return workflowUserAPIKey;
+	}
+
+	/**
+	 * Sets an API key for a user running workflows.
+	 * @param workflowUserAPIKey  An API key for a user running workflows.
+	 */
+	public void setWorkflowUserAPIKey(String workflowUserAPIKey) {
+		this.workflowUserAPIKey = workflowUserAPIKey;
+	}
+
+	/**
+	 * Gets a GalaxyInstace for a workflow user.
+	 * @return  A GalaxyInstance for a workflow user.
+	 */
+	public GalaxyInstance getGalaxyInstanceWorkflowUser() {
+		return galaxyInstanceWorkflowUser;
+	}
+
+	/**
+	 * Sets a GalaxyInstance for a workflow user.
+	 * @param galaxyInstanceWorkflowUser  A GalaxyInstance for a workflow user.
+	 */
+	public void setGalaxyInstanceWorkflowUser(
+			GalaxyInstance galaxyInstanceWorkflowUser) {
+		this.galaxyInstanceWorkflowUser = galaxyInstanceWorkflowUser;
 	}
 }
