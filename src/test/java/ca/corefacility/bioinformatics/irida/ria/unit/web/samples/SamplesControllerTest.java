@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,19 +77,17 @@ public class SamplesControllerTest {
 		Sample sample = TestDataFactory.constructSample();
 		String organism = "E. coli";
 		String geographicLocationName = "The Forks";
-		Map<String, Object> updatedValues = new HashMap<>();
-		updatedValues.put("organism", organism);
-		updatedValues.put("geographicLocationName", geographicLocationName);
-		when(sampleService.update(sample.getId(), updatedValues)).thenReturn(sample);
+		Map<String, Object> updatedValues = ImmutableMap.of(SamplesController.ORGANISM, organism, SamplesController.GEOGRAPHIC_LOCATION_NAME, geographicLocationName);
 		Map<String, String> update = ImmutableMap.of(SamplesController.ORGANISM, organism, SamplesController.GEOGRAPHIC_LOCATION_NAME, geographicLocationName);
+		when(sampleService.update(sample.getId(), updatedValues)).thenReturn(sample);
 		String result = controller
 				.updateSample(model, sample.getId(), null, update);
 		assertEquals("Returns the correct redirect", "redirect:/samples/" + sample.getId(), result);
-		assertTrue("Model should be populated with updated attributes", model.containsAttribute("organism"));
+		assertTrue("Model should be populated with updated attributes", model.containsAttribute(SamplesController.ORGANISM));
 		assertTrue("Model should be populated with updated attributes",
-				model.containsAttribute("geographicLocationName"));
+				model.containsAttribute(SamplesController.GEOGRAPHIC_LOCATION_NAME));
 		assertFalse("Model should not be populated with non-updated attributes",
-				model.containsAttribute("latitude"));
+				model.containsAttribute(SamplesController.LATITUDE));
 	}
 
 	// ************************************************************************************************
