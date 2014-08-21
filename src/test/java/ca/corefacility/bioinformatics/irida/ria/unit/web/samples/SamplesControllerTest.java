@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +27,8 @@ import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesController;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Created by josh on 14-07-30.
@@ -81,10 +82,9 @@ public class SamplesControllerTest {
 		updatedValues.put("organism", organism);
 		updatedValues.put("geographicLocationName", geographicLocationName);
 		when(sampleService.update(sample.getId(), updatedValues)).thenReturn(sample);
-		Date date = new Date();
+		Map<String, String> update = ImmutableMap.of(SamplesController.ORGANISM, organism, SamplesController.GEOGRAPHIC_LOCATION_NAME, geographicLocationName);
 		String result = controller
-				.updateSample(model, sample.getId(), organism, "", "", "", date, "", geographicLocationName,
-						"", "");
+				.updateSample(model, sample.getId(), null, update);
 		assertEquals("Returns the correct redirect", "redirect:/samples/" + sample.getId(), result);
 		assertTrue("Model should be populated with updated attributes", model.containsAttribute("organism"));
 		assertTrue("Model should be populated with updated attributes",

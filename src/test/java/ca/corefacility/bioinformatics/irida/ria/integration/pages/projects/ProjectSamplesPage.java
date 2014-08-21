@@ -426,7 +426,7 @@ public class ProjectSamplesPage {
 	 * @param name The new name for the samples
 	 */
 	public void selectTheMergedSampleName(String name) {
-		pageUtilities.waitForElementPresent(By.className("select2-choice"));
+		pageUtilities.waitForElementVisible(By.className("select2-choice"));
 		WebElement el = driver.findElement(By.className("select2-choice"));
 		el.click();
 		el.sendKeys(name);

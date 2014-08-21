@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.samples;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,8 +28,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.common.base.Strings;
-
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -38,6 +35,9 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeCon
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Controller for all sample related views
@@ -68,6 +68,9 @@ public class SamplesController extends BaseController {
 	public static final String GEOGRAPHIC_LOCATION_NAME = "geographicLocationName";
 	public static final String LATITUDE = "latitude";
 	public static final String LONGITUDE = "longitude";
+	private static final ImmutableList<String> FIELDS = ImmutableList
+			.of(ORGANISM, ISOLATE, STRAIN, COLLECTED_BY, ISOLATION_SOURCE, GEOGRAPHIC_LOCATION_NAME, LATITUDE,
+					LONGITUDE);
 
 	// Services
 	private final SampleService sampleService;
@@ -124,70 +127,33 @@ public class SamplesController extends BaseController {
 	}
 
 	/**
-	 * Update the sample information.
+	 * Update the details of a sample
 	 *
-	 * @param model                  Spring {@link Model}
-	 * @param sampleId               The id for the sample
-	 * @param organism               The organism the sample is from
-	 * @param isolate                The isolate the sample belongs to
-	 * @param strain                 The strain the sample belongs to
-	 * @param collectedBy            Who collected the sample
-	 * @param collectionDate         The {@link LocalDate} the sample was collected
-	 * @param isolationSource        The source of the isolation
-	 * @param geographicLocationName The geographic location the sample was found
-	 * @param latitude               The latitude for the sample
-	 * @param longitude              The longitude for the sample
-	 * @return Name of the details page.
+	 * @param model Spring {@link Model}
+	 * @param sampleId The id for the sample
+	 * @param collectionDate Date the sample was collected (Optional)
+	 * @param params Map of fields to update.  See FIELDS.
+	 * @return The name of the details page.
 	 */
 	@RequestMapping(value = "/{sampleId}/edit", method = RequestMethod.POST)
 	public String updateSample(final Model model, @PathVariable Long sampleId,
-			@RequestParam String organism,
-			@RequestParam String isolate,
-			@RequestParam String strain,
-			@RequestParam String collectedBy,
-			@RequestParam @DateTimeFormat(iso= DateTimeFormat.ISO.DATE) Date collectionDate,
-			@RequestParam String isolationSource,
-			@RequestParam String geographicLocationName,
-			@RequestParam String latitude,
-			@RequestParam String longitude) {
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date collectionDate,
+			@RequestParam Map<String, String> params) {
 		logger.debug("Updating sample [" + sampleId + "]");
 		Map<String, Object> updatedValues = new HashMap<>();
-		if (!Strings.isNullOrEmpty(organism)) {
-			updatedValues.put(ORGANISM, organism);
-			model.addAttribute(ORGANISM, organism);
+		for (String field : FIELDS) {
+			String fieldValue = params.get(field);
+			if (!Strings.isNullOrEmpty(fieldValue)) {
+				updatedValues.put(field, fieldValue);
+				model.addAttribute(field, fieldValue);
+			}
 		}
-		if (!Strings.isNullOrEmpty(isolate)) {
-			updatedValues.put(ISOLATE, isolate);
-			model.addAttribute(ISOLATE, isolate);
-		}
-		if (!Strings.isNullOrEmpty(strain)) {
-			updatedValues.put(STRAIN, strain);
-			model.addAttribute(STRAIN, strain);
-		}
-		if (!Strings.isNullOrEmpty(collectedBy)) {
-			updatedValues.put(COLLECTED_BY, collectedBy);
-			model.addAttribute(COLLECTED_BY, collectedBy);
-		}
+		// Special case because it is a date field.
 		if (collectionDate != null) {
 			updatedValues.put(COLLECTION_DATE, collectionDate);
 			model.addAttribute(COLLECTION_DATE, collectionDate);
 		}
-		if (!Strings.isNullOrEmpty(isolationSource)) {
-			updatedValues.put(ISOLATION_SOURCE, isolationSource);
-			model.addAttribute(ISOLATION_SOURCE, isolationSource);
-		}
-		if (!Strings.isNullOrEmpty(geographicLocationName)) {
-			updatedValues.put(GEOGRAPHIC_LOCATION_NAME, geographicLocationName);
-			model.addAttribute(GEOGRAPHIC_LOCATION_NAME, geographicLocationName);
-		}
-		if (!Strings.isNullOrEmpty(latitude)) {
-			updatedValues.put(LATITUDE, latitude);
-			model.addAttribute(LATITUDE, latitude);
-		}
-		if (!Strings.isNullOrEmpty(longitude)) {
-			updatedValues.put(LONGITUDE, longitude);
-			model.addAttribute(LONGITUDE, longitude);
-		}
+
 		if (updatedValues.size() > 0) {
 			try {
 				sampleService.update(sampleId, updatedValues);
