@@ -12,25 +12,31 @@ import ca.corefacility.bioinformatics.irida.service.remote.model.resource.Resour
 import ca.corefacility.bioinformatics.irida.service.remote.resttemplate.OAuthTokenRestTemplate;
 
 /**
- * Remote repository for retrieving {@link RemoteProject}s
+ * Remote service for retrieving {@link RemoteProject}s
+ * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Repository
-public class ProjectRemoteServiceImpl extends RemoteServiceImpl<RemoteProject> implements ProjectRemoteService{
+public class ProjectRemoteServiceImpl extends RemoteServiceImpl<RemoteProject> implements ProjectRemoteService {
 
 	public final static String RELATIVE_URI = "projects";
-	
-	//the type references for this repo
-	private static ParameterizedTypeReference<ListResourceWrapper<RemoteProject>> listTypeReference = new ParameterizedTypeReference<ListResourceWrapper<RemoteProject>>() {};
-	private static ParameterizedTypeReference<ResourceWrapper<RemoteProject>> objectTypeReference = new ParameterizedTypeReference<ResourceWrapper<RemoteProject>>() {};
-	
+
+	// the type references for this repo
+	private static ParameterizedTypeReference<ListResourceWrapper<RemoteProject>> listTypeReference = new ParameterizedTypeReference<ListResourceWrapper<RemoteProject>>() {
+	};
+	private static ParameterizedTypeReference<ResourceWrapper<RemoteProject>> objectTypeReference = new ParameterizedTypeReference<ResourceWrapper<RemoteProject>>() {
+	};
+
 	/**
-	 * Create a new {@link ProjectRemoteServiceImpl} with the given rest template
-	 * @param restTemplate a {@link OAuthTokenRestTemplate}
+	 * Create a new {@link ProjectRemoteServiceImpl} with the given rest
+	 * template
+	 * 
+	 * @param restTemplate
+	 *            a {@link OAuthTokenRestTemplate}
 	 */
 	@Autowired
-	public ProjectRemoteServiceImpl(RemoteAPITokenService tokenService){
-		super(RELATIVE_URI,tokenService,listTypeReference,objectTypeReference);
+	public ProjectRemoteServiceImpl(RemoteAPITokenService tokenService) {
+		super(RELATIVE_URI, tokenService, listTypeReference, objectTypeReference);
 	}
 }

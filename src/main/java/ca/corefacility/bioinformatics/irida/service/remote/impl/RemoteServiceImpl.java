@@ -19,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.service.remote.model.resource.Resour
 import ca.corefacility.bioinformatics.irida.service.remote.resttemplate.OAuthTokenRestTemplate;
 
 /**
- * Remote repository to request from remote IRIDA instances using OAuth2
+ * Remote service to request from remote IRIDA instances using OAuth2
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
