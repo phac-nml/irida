@@ -17,7 +17,6 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
-import ca.corefacility.bioinformatics.irida.model.workflow.RemoteWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflowRepository;
 
@@ -57,8 +56,8 @@ public class RemoteWorkflowRepositoryIT {
 		
 		remoteWorkflowRepository.save(remoteWorkflow);
 		
-		RemoteWorkflow savedWorkflow = remoteWorkflowRepository.findOne(workflowId);
-		RemoteWorkflowPhylogenomics savedWorkflowGalaxy = (RemoteWorkflowPhylogenomics)savedWorkflow;
-		assertEquals(remoteWorkflow, savedWorkflowGalaxy);
+		RemoteWorkflowPhylogenomics savedWorkflow = remoteWorkflowRepository.
+				getWorkflowByType(workflowId, RemoteWorkflowPhylogenomics.class);
+		assertEquals(remoteWorkflow, savedWorkflow);
 	}
 }

@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.workflow;
 
+import org.springframework.data.jpa.repository.Query;
+
 import ca.corefacility.bioinformatics.irida.model.workflow.RemoteWorkflow;
 import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 
@@ -10,4 +12,12 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
  */
 public interface RemoteWorkflowRepository extends IridaJpaRepository<RemoteWorkflow, String>  {
 
+	/**
+	 * Load up a @{link RemoteWorkflow} by an id for the passed type of RemoteWorkflow.
+	 * @param workflowId  The id of the workflow to load.
+	 * @param workflowType  The type of the workflow to load.
+	 * @return  A RemoteWorkflow of the specified by with the given id.
+	 */
+	@Query("select w from RemoteWorkflow w where w.workflowId = ?1 and type(w) = ?2")
+	public <T extends RemoteWorkflow> T getWorkflowByType(String workflowId, Class<T> workflowType);
 }
