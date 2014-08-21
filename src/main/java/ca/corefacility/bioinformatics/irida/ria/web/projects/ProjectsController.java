@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -63,8 +64,10 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeCon
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
 import com.google.common.base.Strings;
 
@@ -104,6 +107,7 @@ public class ProjectsController {
 	private final SequenceFileService sequenceFileService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private final ReferenceFileService referenceFileService;
+	private final TaxonomyService taxonomyService;
 
 	/*
 	 * Converters
@@ -114,13 +118,14 @@ public class ProjectsController {
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
 			SequenceFileService sequenceFileService, ProjectControllerUtils projectControllerUtils,
-			ReferenceFileService referenceFileService) {
+			ReferenceFileService referenceFileService, TaxonomyService taxonomyService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
 		this.sequenceFileService = sequenceFileService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.referenceFileService = referenceFileService;
+		this.taxonomyService = taxonomyService;
 		this.dateFormatter = new DateFormatter();
 		this.fileSizeConverter = new FileSizeConverter();
 	}
@@ -544,6 +549,39 @@ public class ProjectsController {
 
 		return response;
 	}
+	
+	/**
+	 * Search for taxonomy terms. This method will return a map of found
+	 * taxonomy terms and their child nodes.
+	 * 
+	 * Note: If the search term was not included in the results, it will be
+	 * added as an option
+	 * 
+	 * @param searchTerm
+	 *            The term to find taxa for
+	 * @return A List<Map<String,Object>> which will contain a taxonomic tree of
+	 *         matching terms
+	 */
+	@RequestMapping("/ajax/taxonomy/search")
+	@ResponseBody
+	public List<Map<String, Object>> searchTaxonomy(@RequestParam String searchTerm) {
+		Collection<TreeNode<String>> search = taxonomyService.search(searchTerm);
+
+		TreeNode<String> searchTermNode = new TreeNode<>(searchTerm);
+
+		List<Map<String, Object>> elements = new ArrayList<>();
+
+		// get the search term in first if it's not there yet
+		if (!search.contains(searchTermNode)) {
+			elements.add(transformTreeNode(searchTermNode));
+		}
+
+		for (TreeNode<String> node : search) {
+			Map<String, Object> transformTreeNode = transformTreeNode(node);
+			elements.add(transformTreeNode);
+		}
+		return elements;
+	}
 
 	/**
 	 * Generates a map of project information for the {@link ProjectsDataTable}
@@ -730,5 +768,30 @@ public class ProjectsController {
 			mapList.add(map);
 		}
 		return mapList;
+	}
+	
+	/**
+	 * Recursively transform a {@link TreeNode} into a json parsable map object
+	 * 
+	 * @param node
+	 *            The node to transform
+	 * @return A Map<String,Object> which may contain more children
+	 */
+	private Map<String, Object> transformTreeNode(TreeNode<String> node) {
+		Map<String, Object> current = new HashMap<>();
+		current.put("id", node.getValue());
+		current.put("text", node.getValue());
+
+		List<Object> children = new ArrayList<>();
+		for (TreeNode<String> child : node.getChildren()) {
+			Map<String, Object> transformTreeNode = transformTreeNode(child);
+			children.add(transformTreeNode);
+		}
+
+		if (!children.isEmpty()) {
+			current.put("children", children);
+		}
+
+		return current;
 	}
 }
