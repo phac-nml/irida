@@ -17,6 +17,9 @@
                     </div>
                     <div class="panel-body">
                         <fieldset>
+                            <legend>Basic Info</legend>
+                        </fieldset>
+                        <fieldset>
                             <legend th:text="#{samples.details.section.organism-title}"></legend>
                             <div class="form-group" th:class="${#maps.containsKey(errors, 'organism')} ? has-error">
                                 <label for="organism" th:text="#{samples.details.organism}">Organism</label>
