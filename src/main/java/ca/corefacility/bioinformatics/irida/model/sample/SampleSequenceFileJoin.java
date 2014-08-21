@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,6 +18,8 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -28,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 @Entity
 @Table(name = "sequencefile_sample")
 @Audited
+@EntityListeners(AuditingEntityListener.class)
 public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 
 	@Id
@@ -42,6 +46,7 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 	@JoinColumn(name = "sample_id")
 	private Sample sample;
 
+	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;

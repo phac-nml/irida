@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -20,6 +21,8 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -34,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 @Entity
 @Table(name = "project_user", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "user_id" }))
 @Audited
+@EntityListeners(AuditingEntityListener.class)
 public class ProjectUserJoin implements Join<Project, User> {
 
 	@Id
@@ -52,9 +56,10 @@ public class ProjectUserJoin implements Join<Project, User> {
 	@Enumerated(EnumType.STRING)
 	private ProjectRole projectRole;
 
+	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private final Date createdDate;
+	private Date createdDate;
 
 	public ProjectUserJoin() {
 		createdDate = new Date();

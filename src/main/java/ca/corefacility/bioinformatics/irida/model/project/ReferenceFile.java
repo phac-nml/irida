@@ -7,6 +7,7 @@ import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,6 +19,9 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
@@ -31,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 @Entity
 @Table(name = "reference_file")
 @Audited
+@EntityListeners(AuditingEntityListener.class)
 public class ReferenceFile implements VersionedFileFields<Long>, IridaThing {
 
 	@Id
@@ -41,11 +46,13 @@ public class ReferenceFile implements VersionedFileFields<Long>, IridaThing {
 	@NotNull(message = "{reference.file.file.notnull}")
 	private Path file;
 
+	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = false)
 	private final Date createdDate;
 
+	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 

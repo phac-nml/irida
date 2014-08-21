@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,6 +16,9 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.URL;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -30,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 @Entity
 @Table(name = "organization")
 @Audited
+@EntityListeners(AuditingEntityListener.class)
 public class Organization implements IridaThing {
 
 	@Id
@@ -44,16 +49,17 @@ public class Organization implements IridaThing {
 	@URL(message = "{organization.href.url}")
 	private String href;
 
+	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
 
+	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
 	public Organization() {
 		this.createdDate = new Date();
-		this.modifiedDate = createdDate;
 	}
 
 	public boolean equals(Object o) {

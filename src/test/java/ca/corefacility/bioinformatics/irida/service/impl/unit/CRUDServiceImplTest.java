@@ -75,6 +75,32 @@ public class CRUDServiceImplTest {
 		}
 	}
 
+	@Test
+	public void testUpdate() throws InterruptedException {
+		IdentifiableTestEntity before = new IdentifiableTestEntity();
+		before.setNonNull("Definitely not null.");
+		before.setIntegerValue(Integer.MIN_VALUE);
+		Long id = 1l;
+		before.setId(id);
+		String newNonNull = "new value";
+
+		when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
+		when(crudRepository.findOne(id)).thenReturn(before);
+
+		ArgumentCaptor<IdentifiableTestEntity> pageArgument = ArgumentCaptor.forClass(IdentifiableTestEntity.class);
+
+		Map<String, Object> updatedFields = new HashMap<>();
+		updatedFields.put("nonNull", newNonNull);
+		// need to sleep for a bit so that the dates are different
+		Thread.sleep(500l);
+		crudService.update(id, updatedFields);
+
+		verify(crudRepository).save(pageArgument.capture());
+
+		IdentifiableTestEntity captured = pageArgument.getValue();
+		assertEquals(newNonNull, captured.getNonNull());
+	}
+
 	@Test(expected = EntityNotFoundException.class)
 	public void testUpdateMissingEntity() {
 		Long id = new Long(1);

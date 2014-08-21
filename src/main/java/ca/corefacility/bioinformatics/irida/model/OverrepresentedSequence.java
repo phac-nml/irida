@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +15,9 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * A {@link SequenceFile} may have 0 or more over-represented sequences.
@@ -23,6 +27,7 @@ import org.hibernate.envers.Audited;
 @Entity
 @Table(name = "overrepresented_sequence")
 @Audited
+@EntityListeners(AuditingEntityListener.class)
 public class OverrepresentedSequence implements IridaThing, Comparable<OverrepresentedSequence> {
 
 	@Id
@@ -41,10 +46,12 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 	@NotNull(message = "{overrepresented.sequence.possibleSource.notnull}")
 	private String possibleSource;
 
+	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
 
+	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 

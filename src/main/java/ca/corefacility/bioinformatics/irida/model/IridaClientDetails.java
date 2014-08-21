@@ -13,6 +13,7 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,6 +29,9 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.provider.ClientDetails;
 
@@ -43,6 +47,7 @@ import com.google.common.collect.Maps;
 @Entity
 @Table(name = "client_details", uniqueConstraints = { @UniqueConstraint(columnNames = "clientId", name = IridaClientDetails.CLIENT_ID_CONSTRAINT_NAME) })
 @Audited
+@EntityListeners(AuditingEntityListener.class)
 public class IridaClientDetails implements ClientDetails, IridaThing {
 	private static final long serialVersionUID = -1593194281520695701L;
 
@@ -96,8 +101,11 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	@JoinTable(name = "client_details_authorities", joinColumns = @JoinColumn(name = "client_details_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "authority_name", nullable = false))
 	Collection<ClientRole> authorities;
 
+	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
+	
+	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
@@ -108,7 +116,6 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	 */
 	public IridaClientDetails() {
 		createdDate = new Date();
-		modifiedDate = new Date();
 		accessTokenValiditySeconds = DEFAULT_TOKEN_VALIDITY;
 		refreshTokenValiditySeconds = DEFAULT_REFRESH_TOKEN_VALIDITY;
 

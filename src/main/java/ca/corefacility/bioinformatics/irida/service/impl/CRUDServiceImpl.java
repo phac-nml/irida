@@ -31,7 +31,8 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Timestamped> implements CRUDService<KeyType, ValueType> {
+public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Timestamped> implements
+		CRUDService<KeyType, ValueType> {
 	private static final String NO_SUCH_ID_EXCEPTION = "No such identifier exists in the database.";
 
 	protected static final String CREATED_DATE_SORT_PROPERTY = "createdDate";
