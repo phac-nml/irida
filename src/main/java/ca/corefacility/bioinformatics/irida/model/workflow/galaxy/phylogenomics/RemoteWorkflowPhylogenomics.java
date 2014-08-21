@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflow
  *
  */
 @Entity
-@Table(name = "analysis_workflowphylogenomics")
+@Table(name = "remote_workflow_phylogenomics")
 @Audited
 public class RemoteWorkflowPhylogenomics extends RemoteWorkflowGalaxy {
 
@@ -73,5 +73,18 @@ public class RemoteWorkflowPhylogenomics extends RemoteWorkflowGalaxy {
 
 	public String getOutputSnpTableName() {
 		return outputSnpTableName;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return "RemoteWorkflowPhylogenomics [inputSequenceFilesLabel="
+				+ inputSequenceFilesLabel + ", inputReferenceFileLabel="
+				+ inputReferenceFileLabel + ", outputPhylogeneticTreeName="
+				+ outputPhylogeneticTreeName + ", outputSsnpMatrixName="
+				+ outputSsnpMatrixName + ", outputSnpTableName="
+				+ outputSnpTableName + ", toString()=" + super.toString() + "]";
 	}
 }
