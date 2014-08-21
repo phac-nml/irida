@@ -7,6 +7,6 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.model.RemoteProj
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
-public interface ProjectRemoteRepository extends GenericRemoteRepository<RemoteProject>{
+public interface ProjectRemoteService extends RemoteService<RemoteProject>{
 
 }

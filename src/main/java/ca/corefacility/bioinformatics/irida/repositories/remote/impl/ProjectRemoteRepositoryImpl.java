@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Repository;
 
-import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRepository;
+import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.repositories.remote.model.RemoteProject;
 import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.ListResourceWrapper;
 import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.ResourceWrapper;
@@ -17,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
  *
  */
 @Repository
-public class ProjectRemoteRepositoryImpl extends GenericRemoteRepositoryImpl<RemoteProject> implements ProjectRemoteRepository{
+public class ProjectRemoteRepositoryImpl extends GenericRemoteRepositoryImpl<RemoteProject> implements ProjectRemoteService{
 
 	public final static String RELATIVE_URI = "projects";
 	

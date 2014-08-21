@@ -11,7 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.repositories.remote.GenericRemoteRepository;
+import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteService;
 import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.ListResourceWrapper;
 import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.RemoteResource;
 import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.ResourceWrapper;
@@ -27,7 +27,7 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
  *            The type of object to be stored in this repository (extends
  *            {@link RemoteResource})
  */
-public abstract class GenericRemoteRepositoryImpl<Type extends RemoteResource> implements GenericRemoteRepository<Type> {
+public abstract class GenericRemoteRepositoryImpl<Type extends RemoteResource> implements RemoteService<Type> {
 
 	// relative URI to the resource collection
 	private String relativeURI;

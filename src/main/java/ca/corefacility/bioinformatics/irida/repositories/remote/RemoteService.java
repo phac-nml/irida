@@ -11,7 +11,7 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.R
  *
  * @param <Type> The type of object this repository will store
  */
-public interface GenericRemoteRepository<Type extends RemoteResource> {
+public interface RemoteService<Type extends RemoteResource> {
 	/**
 	 * Read an individual resource
 	 * @param id The ID of the resource to read
