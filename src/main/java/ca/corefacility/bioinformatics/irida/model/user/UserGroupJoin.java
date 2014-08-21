@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,6 +19,8 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 
@@ -30,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 @Entity
 @Table(name = "user_group", uniqueConstraints = @UniqueConstraint(columnNames = { "user_id", "logicalGroup_id" }))
 @Audited
+@EntityListeners(AuditingEntityListener.class)
 public class UserGroupJoin implements Join<User, Group> {
 
 	@Id
@@ -46,6 +50,7 @@ public class UserGroupJoin implements Join<User, Group> {
 	@NotNull
 	private Group logicalGroup;
 
+	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;

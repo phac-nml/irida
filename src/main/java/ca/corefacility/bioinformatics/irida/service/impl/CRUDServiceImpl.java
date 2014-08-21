@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -133,9 +132,6 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 			EntityExistsException, InvalidPropertyException {
 		// check if you can actually update the properties requested
 		ValueType instance = read(id);
-
-		// Update the modified date
-		instance.setModifiedDate(new Date());
 
 		for (String key : updatedFields.keySet()) {
 			Object value = updatedFields.get(key);

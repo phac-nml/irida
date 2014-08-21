@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -11,7 +10,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,8 +87,6 @@ public class CRUDServiceImplTest {
 		when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
 		when(crudRepository.findOne(id)).thenReturn(before);
 
-		Date beforeModifiedDate = before.getModifiedDate();
-
 		ArgumentCaptor<IdentifiableTestEntity> pageArgument = ArgumentCaptor.forClass(IdentifiableTestEntity.class);
 
 		Map<String, Object> updatedFields = new HashMap<>();
@@ -102,37 +98,7 @@ public class CRUDServiceImplTest {
 		verify(crudRepository).save(pageArgument.capture());
 
 		IdentifiableTestEntity captured = pageArgument.getValue();
-		assertNotEquals(beforeModifiedDate, captured.getModifiedDate());
 		assertEquals(newNonNull, captured.getNonNull());
-	}
-
-	@Test
-	public void testUpdateWithSetModifiedDate() {
-		IdentifiableTestEntity before = new IdentifiableTestEntity();
-		before.setNonNull("Definitely not null.");
-		before.setIntegerValue(Integer.MIN_VALUE);
-		Long id = 1l;
-		before.setId(id);
-		Date newModifiedDate = new Date(System.currentTimeMillis() - 10000);
-
-		when(crudRepository.exists(id)).thenReturn(Boolean.TRUE);
-		when(crudRepository.findOne(id)).thenReturn(before);
-
-		Date beforeModifiedDate = before.getModifiedDate();
-
-		ArgumentCaptor<IdentifiableTestEntity> pageArgument = ArgumentCaptor.forClass(IdentifiableTestEntity.class);
-
-		Map<String, Object> updatedFields = new HashMap<>();
-		updatedFields.put("modifiedDate", newModifiedDate);
-		crudService.update(id, updatedFields);
-
-		verify(crudRepository).save(pageArgument.capture());
-
-		IdentifiableTestEntity captured = pageArgument.getValue();
-		assertEquals("modified date should be updated to our set date", newModifiedDate, captured.getModifiedDate());
-		assertNotEquals("updated modified date should be different than the prior date", beforeModifiedDate,
-				captured.getModifiedDate());
-
 	}
 
 	@Test(expected = EntityNotFoundException.class)

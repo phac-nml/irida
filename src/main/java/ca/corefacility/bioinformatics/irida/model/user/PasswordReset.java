@@ -7,6 +7,9 @@ import java.util.UUID;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import ca.corefacility.bioinformatics.irida.model.Timestamped;
 
 /**
@@ -16,8 +19,10 @@ import ca.corefacility.bioinformatics.irida.model.Timestamped;
  */
 @Entity
 @Table(name = "password_reset")
+@EntityListeners(AuditingEntityListener.class)
 public class PasswordReset implements Comparable<PasswordReset>, Timestamped {
 
+	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;

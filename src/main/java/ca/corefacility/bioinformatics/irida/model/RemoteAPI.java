@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,6 +18,9 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.URL;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * Description of a remote Irida API that this API can communicate with via
@@ -28,6 +32,7 @@ import org.hibernate.validator.constraints.URL;
 @Entity
 @Table(name = "remote_api")
 @Audited
+@EntityListeners(AuditingEntityListener.class)
 public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 
 	@Id
@@ -52,16 +57,17 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 	@OneToMany(mappedBy = "remoteApi")
 	private Collection<RemoteAPIToken> tokens;
 
+	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
 
+	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
 	public RemoteAPI() {
 		createdDate = new Date();
-		modifiedDate = createdDate;
 	}
 
 	public RemoteAPI(String serviceURI, String description, String clientId, String clientSecret) {

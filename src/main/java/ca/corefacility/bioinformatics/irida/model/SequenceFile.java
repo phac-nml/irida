@@ -12,6 +12,7 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,6 +28,9 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -42,6 +46,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 @Entity
 @Table(name = "sequence_file")
 @Audited
+@EntityListeners(AuditingEntityListener.class)
 public class SequenceFile implements IridaThing, Comparable<SequenceFile>, VersionedFileFields<Long> {
 
 	@Id
@@ -51,11 +56,14 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	@Column(name = "filePath", unique = true)
 	@NotNull(message = "{sequencefile.file.notnull}")
 	private Path file;
+	
+	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = false)
 	private final Date createdDate;
 
+	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
@@ -79,7 +87,6 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 
 	public SequenceFile() {
 		createdDate = new Date();
-		modifiedDate = createdDate;
 		fileRevisionNumber = 0L;
 		optionalProperties = new HashMap<>();
 	}
