@@ -378,10 +378,11 @@
 						</goals>
 						<configuration>
 							<!-- Uncomment below to disable Galaxy integration tests -->
-							<!-- 
+							<!--
 							<excludes>
-			                        		<exclude>/ca/corefacility/bioinformatics/irida/pipeline/upload/galaxy/**</exclude>
-                    					</excludes> 
+			                    <exclude>/ca/corefacility/bioinformatics/irida/pipeline/upload/galaxy/**</exclude>
+								<exclude>ca/corefacility/bioinformatics/irida/service/analysis/execution/galaxy/**</exclude>
+                    		</excludes>
 							-->
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
