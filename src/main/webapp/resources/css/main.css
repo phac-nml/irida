@@ -4,6 +4,27 @@
   right: 0;
 }
 
+/* line 10, ../../styles/base/_wet-overrides.scss */
+.has-error label {
+  color: #d9534f;
+}
+
+/* line 15, ../../styles/base/_wet-overrides.scss */
+label + span.wb-date-wrap {
+  display: block;
+  width: 100%;
+}
+/* line 19, ../../styles/base/_wet-overrides.scss */
+span.wb-date-wrap .input-full {
+  width: auto;
+  display: inline-block;
+}
+
+/* line 26, ../../styles/base/_wet-overrides.scss */
+label {
+  margin-top: 5px;
+}
+
 /* line 1, ../../styles/components/_buttons.scss */
 .btn-xs.glyphicon {
   font-size: 10px;

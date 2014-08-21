@@ -26,12 +26,13 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class ProjectMembersPage {
+	public static final String URL = BasePage.URL + "projects/1/members";
 	private WebDriver driver;
 	private static final Logger logger = LoggerFactory.getLogger(ProjectMembersPage.class);
 
-	public ProjectMembersPage(WebDriver driver, Long projectId) {
+	public ProjectMembersPage(WebDriver driver) {
 		this.driver = driver;
-		driver.get("http://localhost:8080/projects/" + projectId + "/members");
+		driver.get(URL);
 		waitForAjax();
 	}
 
