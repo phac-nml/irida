@@ -57,7 +57,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	
+
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
@@ -119,6 +119,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	/**
 	 * Date of sampling
 	 */
+	@Temporal(TemporalType.DATE)
 	@NotNull(message = "{sample.collection.date.notnull}", groups = NCBISubmission.class)
 	private Date collectionDate;
 
@@ -231,7 +232,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
 	private List<SampleSequenceFileJoin> sequenceFiles;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	private Organization organization;
 
