@@ -44,10 +44,9 @@ public class ExecutionManagerConfig {
 	private static final String ADMIN_EMAIL_UPLOADER_PROPERTY = "galaxy.uploader.admin.email";
 	private static final String DATA_STORAGE_UPLOADER_PROPERTY = "galaxy.uploader.dataStorage";
 
-	private static final Map<String, Uploader.DataStorage> VALID_STORAGE = ImmutableMap
-			.<String, Uploader.DataStorage> builder()
-			.put("remote", Uploader.DataStorage.REMOTE)
-			.put("local", Uploader.DataStorage.LOCAL).build();
+	private static final Map<String, Uploader.DataStorage> VALID_STORAGE =
+			ImmutableMap.of("remote", Uploader.DataStorage.REMOTE,
+					"local", Uploader.DataStorage.LOCAL);
 	
 	private static final Uploader.DataStorage DEFAULT_DATA_STORAGE = Uploader.DataStorage.REMOTE;
 
