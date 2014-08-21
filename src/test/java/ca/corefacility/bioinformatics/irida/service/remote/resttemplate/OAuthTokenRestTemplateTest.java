@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate;
+package ca.corefacility.bioinformatics.irida.service.remote.resttemplate;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
