@@ -45,9 +45,9 @@ To link up the API with a running instance of Galaxy, the following steps need t
    * Make sure to set the property `allow_library_path_paste = True` within the `universe_wsgi.ini` configuration file to properly upload files.
 2. Construct a configuration file with the Galaxy connection parameters.  This should be located within `/etc/irida/irida.conf` and contain the following information:
 
-	########################################################
-	# Uploader configuration for uploading files to Galaxy #
-	########################################################
+        ########################################################
+        # Uploader configuration for uploading files to Galaxy #
+        ########################################################
 
         # The URL Galaxy is being run
         galaxy.uploader.url=http://localhost/
