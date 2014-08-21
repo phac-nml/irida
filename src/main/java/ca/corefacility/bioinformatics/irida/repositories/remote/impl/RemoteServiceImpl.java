@@ -27,7 +27,7 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
  *            The type of object to be stored in this repository (extends
  *            {@link RemoteResource})
  */
-public abstract class GenericRemoteRepositoryImpl<Type extends RemoteResource> implements RemoteService<Type> {
+public abstract class RemoteServiceImpl<Type extends RemoteResource> implements RemoteService<Type> {
 
 	// relative URI to the resource collection
 	private String relativeURI;
@@ -56,7 +56,7 @@ public abstract class GenericRemoteRepositoryImpl<Type extends RemoteResource> i
 	 *            A {@link ParameterizedTypeReference} for individual resources
 	 *            read by the rest template
 	 */
-	public GenericRemoteRepositoryImpl(String relativeURI, RemoteAPITokenService tokenService,
+	public RemoteServiceImpl(String relativeURI, RemoteAPITokenService tokenService,
 			ParameterizedTypeReference<ListResourceWrapper<Type>> listTypeReference,
 			ParameterizedTypeReference<ResourceWrapper<Type>> objectTypeReference) {
 		this.relativeURI = relativeURI;

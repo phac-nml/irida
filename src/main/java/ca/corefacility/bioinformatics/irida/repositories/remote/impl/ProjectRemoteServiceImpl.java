@@ -17,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
  *
  */
 @Repository
-public class ProjectRemoteRepositoryImpl extends GenericRemoteRepositoryImpl<RemoteProject> implements ProjectRemoteService{
+public class ProjectRemoteServiceImpl extends RemoteServiceImpl<RemoteProject> implements ProjectRemoteService{
 
 	public final static String RELATIVE_URI = "projects";
 	
@@ -26,11 +26,11 @@ public class ProjectRemoteRepositoryImpl extends GenericRemoteRepositoryImpl<Rem
 	private static ParameterizedTypeReference<ResourceWrapper<RemoteProject>> objectTypeReference = new ParameterizedTypeReference<ResourceWrapper<RemoteProject>>() {};
 	
 	/**
-	 * Create a new {@link ProjectRemoteRepositoryImpl} with the given rest template
+	 * Create a new {@link ProjectRemoteServiceImpl} with the given rest template
 	 * @param restTemplate a {@link OAuthTokenRestTemplate}
 	 */
 	@Autowired
-	public ProjectRemoteRepositoryImpl(RemoteAPITokenService tokenService){
+	public ProjectRemoteServiceImpl(RemoteAPITokenService tokenService){
 		super(RELATIVE_URI,tokenService,listTypeReference,objectTypeReference);
 	}
 }
