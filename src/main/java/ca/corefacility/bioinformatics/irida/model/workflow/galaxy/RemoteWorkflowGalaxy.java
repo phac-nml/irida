@@ -1,5 +1,14 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.galaxy;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.envers.Audited;
+
 import ca.corefacility.bioinformatics.irida.model.workflow.RemoteWorkflow;
 
 /**
@@ -7,9 +16,16 @@ import ca.corefacility.bioinformatics.irida.model.workflow.RemoteWorkflow;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
+@Entity
+@Table(name = "remote_workflowgalaxy")
+@Inheritance(strategy = InheritanceType.JOINED)
+@Audited
 public abstract class RemoteWorkflowGalaxy implements RemoteWorkflow {
 	
+	@Id
 	private String workflowId;
+	
+	@NotNull
 	private String workflowChecksum;
 	
 	/**

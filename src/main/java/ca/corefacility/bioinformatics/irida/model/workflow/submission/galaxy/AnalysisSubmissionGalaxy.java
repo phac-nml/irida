@@ -2,6 +2,21 @@ package ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.hibernate.envers.Audited;
+
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -15,13 +30,24 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  *
  * @param <R> The RemoteWorkflow to submit.
  */
+@Entity
+@Table(name = "analysis_submissiongalaxy")
+@Inheritance(strategy = InheritanceType.JOINED)
+@Audited
 public abstract class AnalysisSubmissionGalaxy<R extends RemoteWorkflowGalaxy>
 	implements AnalysisSubmission<R> {
 	
+	@EmbeddedId
+	private GalaxyAnalysisId remoteAnalysisId;
+	
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH, targetEntity=RemoteWorkflowGalaxy.class)
+	@JoinColumn(name = "remote_workflow_id")
 	private R remoteWorkflow;
+	
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	private Set<SequenceFile> inputFiles;
 	
-	private GalaxyAnalysisId remoteAnalysisId;
+	@Transient
 	private WorkflowOutputs outputs;
 	
 	/**
@@ -67,11 +93,11 @@ public abstract class AnalysisSubmissionGalaxy<R extends RemoteWorkflowGalaxy>
 		return remoteAnalysisId;
 	}
 
-	public void setOutputs(WorkflowOutputs outputs) {
-		this.outputs = outputs;
-	}
-
 	public WorkflowOutputs getOutputs() {
 		return outputs;
+	}
+
+	public void setOutputs(WorkflowOutputs outputs) {
+		this.outputs = outputs;
 	}
 }

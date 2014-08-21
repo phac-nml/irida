@@ -1,6 +1,11 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.galaxy;
 
 import static com.google.common.base.Preconditions.*;
+
+import java.io.Serializable;
+
+import javax.persistence.Embeddable;
+
 import ca.corefacility.bioinformatics.irida.model.workflow.RemoteAnalysisId;
 
 /**
@@ -8,8 +13,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.RemoteAnalysisId;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyAnalysisId implements RemoteAnalysisId {
+@Embeddable
+public class GalaxyAnalysisId implements RemoteAnalysisId, Serializable {
 
+	private static final long serialVersionUID = 3745413868527944767L;
+	
 	private String id;
 	
 	/**

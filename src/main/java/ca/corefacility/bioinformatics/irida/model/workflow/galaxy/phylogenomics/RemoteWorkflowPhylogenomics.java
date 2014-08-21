@@ -1,5 +1,11 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.envers.Audited;
+
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
 
 /**
@@ -7,13 +13,24 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflow
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
+@Entity
+@Table(name = "analysis_workflowphylogenomics")
+@Audited
 public class RemoteWorkflowPhylogenomics extends RemoteWorkflowGalaxy {
 
+	@NotNull
 	private String inputSequenceFilesLabel;
+	
+	@NotNull
 	private String inputReferenceFileLabel;
 	
+	@NotNull
 	private String outputPhylogeneticTreeName;
+	
+	@NotNull
 	private String outputSsnpMatrixName;
+	
+	@NotNull
 	private String outputSnpTableName;
 	
 	/**
