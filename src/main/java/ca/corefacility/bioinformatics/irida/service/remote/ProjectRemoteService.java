@@ -1,6 +1,6 @@
-package ca.corefacility.bioinformatics.irida.repositories.remote;
+package ca.corefacility.bioinformatics.irida.service.remote;
 
-import ca.corefacility.bioinformatics.irida.repositories.remote.model.RemoteProject;
+import ca.corefacility.bioinformatics.irida.service.remote.model.RemoteProject;
 
 /**
  * Repository for reading Project objects from a remote IRIDA API

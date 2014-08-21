@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.repositories.remote.impl;
+package ca.corefacility.bioinformatics.irida.service.remote.impl;
 
 import java.net.URI;
 import java.util.List;
@@ -11,12 +11,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteService;
-import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.ListResourceWrapper;
-import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.RemoteResource;
-import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.ResourceWrapper;
-import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
+import ca.corefacility.bioinformatics.irida.service.remote.RemoteService;
+import ca.corefacility.bioinformatics.irida.service.remote.model.resource.ListResourceWrapper;
+import ca.corefacility.bioinformatics.irida.service.remote.model.resource.RemoteResource;
+import ca.corefacility.bioinformatics.irida.service.remote.model.resource.ResourceWrapper;
+import ca.corefacility.bioinformatics.irida.service.remote.resttemplate.OAuthTokenRestTemplate;
 
 /**
  * Remote repository to request from remote IRIDA instances using OAuth2

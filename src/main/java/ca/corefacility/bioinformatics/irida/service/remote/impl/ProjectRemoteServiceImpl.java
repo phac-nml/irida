@@ -1,15 +1,15 @@
-package ca.corefacility.bioinformatics.irida.repositories.remote.impl;
+package ca.corefacility.bioinformatics.irida.service.remote.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Repository;
 
-import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteService;
-import ca.corefacility.bioinformatics.irida.repositories.remote.model.RemoteProject;
-import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.ListResourceWrapper;
-import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.ResourceWrapper;
-import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import ca.corefacility.bioinformatics.irida.service.remote.model.RemoteProject;
+import ca.corefacility.bioinformatics.irida.service.remote.model.resource.ListResourceWrapper;
+import ca.corefacility.bioinformatics.irida.service.remote.model.resource.ResourceWrapper;
+import ca.corefacility.bioinformatics.irida.service.remote.resttemplate.OAuthTokenRestTemplate;
 
 /**
  * Remote repository for retrieving {@link RemoteProject}s

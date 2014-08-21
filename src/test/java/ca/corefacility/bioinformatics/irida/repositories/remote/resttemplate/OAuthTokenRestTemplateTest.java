@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
+import ca.corefacility.bioinformatics.irida.service.remote.resttemplate.OAuthTokenRestTemplate;
 
 /**
  * Unit tests for OAuthTokenRestTemplate

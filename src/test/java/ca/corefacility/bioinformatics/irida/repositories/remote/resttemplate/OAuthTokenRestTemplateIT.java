@@ -38,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
+import ca.corefacility.bioinformatics.irida.service.remote.resttemplate.OAuthTokenRestTemplate;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;

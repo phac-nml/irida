@@ -1,9 +1,9 @@
-package ca.corefacility.bioinformatics.irida.repositories.remote;
+package ca.corefacility.bioinformatics.irida.service.remote;
 
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.RemoteResource;
+import ca.corefacility.bioinformatics.irida.service.remote.model.resource.RemoteResource;
 
 /**
  * Repository for communicating with a remote IRIDA instance
