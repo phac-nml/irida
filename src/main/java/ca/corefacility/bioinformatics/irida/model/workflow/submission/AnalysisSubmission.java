@@ -40,6 +40,9 @@ public abstract class AnalysisSubmission<T extends RemoteWorkflow> {
 	@JoinColumn(name = "remote_workflow_id")
 	private T remoteWorkflow;
 	
+	protected AnalysisSubmission() {
+	}
+	
 	/**
 	 * Builds a new AnalysisSubmission object with the given information.
 	 * @param inputFiles  The set of input files to perform an analysis on.

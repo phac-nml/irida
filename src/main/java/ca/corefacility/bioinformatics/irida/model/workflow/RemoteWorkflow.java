@@ -26,6 +26,9 @@ public abstract class RemoteWorkflow {
 	@NotNull
 	private String workflowChecksum;
 	
+	protected RemoteWorkflow() {
+	}
+	
 	/**
 	 * Builds a new RemoteWorkflow with the given id.
 	 * @param workflowId  The id for the workflow.

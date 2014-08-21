@@ -22,6 +22,9 @@ public abstract class AnalysisSubmissionGalaxy<R extends RemoteWorkflowGalaxy>
 	@Transient
 	private WorkflowOutputs outputs;
 	
+	protected AnalysisSubmissionGalaxy() {
+	}
+	
 	/**
 	 * Builds a new AnalysisSubmissionGalaxy with the given information.
 	 * @param inputFiles  A set of SequenceFiles to use for the analysis.

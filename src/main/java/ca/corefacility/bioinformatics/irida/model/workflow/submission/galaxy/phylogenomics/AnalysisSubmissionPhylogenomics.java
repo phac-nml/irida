@@ -30,6 +30,10 @@ public class AnalysisSubmissionPhylogenomics
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "reference_file_id")
 	private ReferenceFile referenceFile;
+	
+	@SuppressWarnings("unused")
+	private AnalysisSubmissionPhylogenomics() {
+	}
 
 	/**
 	 * Builds a new Phylogenomics Pipeline analysis submission with the given information.

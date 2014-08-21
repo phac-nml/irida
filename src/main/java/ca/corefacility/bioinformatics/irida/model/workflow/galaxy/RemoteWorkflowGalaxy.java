@@ -9,6 +9,9 @@ import ca.corefacility.bioinformatics.irida.model.workflow.RemoteWorkflow;
  */
 public abstract class RemoteWorkflowGalaxy extends RemoteWorkflow {
 	
+	protected RemoteWorkflowGalaxy() {
+	}
+	
 	/**
 	 * Builds a new RemoteWorkflowGalaxy.
 	 * @param workflowId The id of the workflow in Galaxy.
