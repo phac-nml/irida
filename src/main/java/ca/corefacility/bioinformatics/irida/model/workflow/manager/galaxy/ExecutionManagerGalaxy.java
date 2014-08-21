@@ -22,14 +22,14 @@ public class ExecutionManagerGalaxy implements ExecutionManager {
 	/**
 	 * Builds a new ExecutionManagerGalaxy with the given information.
 	 * @param location  The location to Galaxy.
-	 * @param adminAPIKey  An Admin API key for Galaxy.
-	 * @param accountEmail An email for the admin account in Galaxy.
+	 * @param apiKey  An API key for Galaxy.
+	 * @param accountEmail An email for an account in Galaxy.
 	 * @param dataStorage The data storage mode for Galaxy.
 	 */
-	public ExecutionManagerGalaxy(URL location, String adminAPIKey,
+	public ExecutionManagerGalaxy(URL location, String apiKey,
 			GalaxyAccountEmail accountEmail, DataStorage dataStorage) {
 		this.location = location;
-		this.apiKey = adminAPIKey;
+		this.apiKey = apiKey;
 		this.accountEmail = accountEmail;
 		this.dataStorage = dataStorage;
 	}
