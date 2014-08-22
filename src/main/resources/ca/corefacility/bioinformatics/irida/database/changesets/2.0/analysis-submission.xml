@@ -44,7 +44,7 @@
 			<column name="outputSnpTableName" type="VARCHAR(255)">
 				<constraints nullable="false" />
 			</column>
-			<column name="outputSsnpMatrixName" type="VARCHAR(255)">
+			<column name="outputSnpMatrixName" type="VARCHAR(255)">
 				<constraints nullable="false" />
 			</column>
 			<column name="workflowId" type="VARCHAR(255)">
@@ -65,7 +65,7 @@
 			<column name="inputSequenceFilesLabel" type="VARCHAR(255)" />
 			<column name="outputPhylogeneticTreeName" type="VARCHAR(255)" />
 			<column name="outputSnpTableName" type="VARCHAR(255)" />
-			<column name="outputSsnpMatrixName" type="VARCHAR(255)" />
+			<column name="outputSnpMatrixName" type="VARCHAR(255)" />
 		</createTable>
 		<addForeignKeyConstraint baseColumnNames="workflowId, REV"
 			baseTableName="remote_workflow_phylogenomics_AUD" constraintName="FK_REMOTE_WORKFLOW_PHYLOGENOMICS_REVISION"

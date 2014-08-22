@@ -30,7 +30,7 @@ public class RemoteWorkflowPhylogenomics extends RemoteWorkflowGalaxy {
 	private String outputPhylogeneticTreeName;
 	
 	@NotNull
-	private String outputSsnpMatrixName;
+	private String outputSnpMatrixName;
 	
 	@NotNull
 	private String outputSnpTableName;
@@ -57,7 +57,7 @@ public class RemoteWorkflowPhylogenomics extends RemoteWorkflowGalaxy {
 		this.inputSequenceFilesLabel = inputSequenceFilesLabel;
 		this.inputReferenceFileLabel = inputReferenceFileLabel;
 		this.outputPhylogeneticTreeName = outputPhylogeneticTreeName;
-		this.outputSsnpMatrixName = outputSnpMatrixName;
+		this.outputSnpMatrixName = outputSnpMatrixName;
 		this.outputSnpTableName = outputSnpTableName;
 	}
 
@@ -74,7 +74,7 @@ public class RemoteWorkflowPhylogenomics extends RemoteWorkflowGalaxy {
 	}
 
 	public String getOutputSnpMatrixName() {
-		return outputSsnpMatrixName;
+		return outputSnpMatrixName;
 	}
 
 	public String getOutputSnpTableName() {
@@ -89,15 +89,15 @@ public class RemoteWorkflowPhylogenomics extends RemoteWorkflowGalaxy {
 		return "RemoteWorkflowPhylogenomics [inputSequenceFilesLabel="
 				+ inputSequenceFilesLabel + ", inputReferenceFileLabel="
 				+ inputReferenceFileLabel + ", outputPhylogeneticTreeName="
-				+ outputPhylogeneticTreeName + ", outputSsnpMatrixName="
-				+ outputSsnpMatrixName + ", outputSnpTableName="
+				+ outputPhylogeneticTreeName + ", outputSnpMatrixName="
+				+ outputSnpMatrixName + ", outputSnpTableName="
 				+ outputSnpTableName + ", toString()=" + super.toString() + "]";
 	}
 	
 	@Override
 	public int hashCode() {
 		return Objects.hash(super.hashCode(), inputSequenceFilesLabel,
-				inputReferenceFileLabel, outputPhylogeneticTreeName, outputSsnpMatrixName,
+				inputReferenceFileLabel, outputPhylogeneticTreeName, outputSnpMatrixName,
 				outputSnpTableName);
 	}
 	
@@ -111,7 +111,7 @@ public class RemoteWorkflowPhylogenomics extends RemoteWorkflowGalaxy {
 			return super.equals(other) && Objects.equals(inputSequenceFilesLabel, other.inputSequenceFilesLabel) &&
 					Objects.equals(inputReferenceFileLabel, other.inputReferenceFileLabel) &&
 					Objects.equals(outputPhylogeneticTreeName, other.outputPhylogeneticTreeName) &&
-					Objects.equals(outputSsnpMatrixName, other.outputSsnpMatrixName) &&
+					Objects.equals(outputSnpMatrixName, other.outputSnpMatrixName) &&
 					Objects.equals(outputSnpTableName, other.outputSnpTableName);		
 		}
 		
