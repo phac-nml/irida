@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.remote.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
@@ -17,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.service.remote.resttemplate.OAuthTok
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
-@Repository
+@Service
 public class ProjectRemoteServiceImpl extends RemoteServiceImpl<RemoteProject> implements ProjectRemoteService {
 
 	public final static String RELATIVE_URI = "projects";
