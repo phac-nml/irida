@@ -41,7 +41,7 @@ public class OAuthTokenRestTemplateTest {
 	public void setUp() throws URISyntaxException {
 		tokenService = mock(RemoteAPITokenService.class);
 		serviceURI = new URI("http://uri");
-		remoteAPI = new RemoteAPI(serviceURI.toString(), "a service", "clientId", "clientSecret");
+		remoteAPI = new RemoteAPI("service name", serviceURI.toString(), "a service", "clientId", "clientSecret");
 		restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
 	}
 
