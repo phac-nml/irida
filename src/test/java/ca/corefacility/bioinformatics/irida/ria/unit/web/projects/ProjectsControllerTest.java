@@ -503,7 +503,7 @@ public class ProjectsControllerTest {
 		List<Map<String, Object>> searchTaxonomy = controller.searchTaxonomy(searchTerm);
 
 		verify(taxonomyService).search(searchTerm);
-		
+
 		assertFalse(searchTaxonomy.isEmpty());
 		assertEquals(2, searchTaxonomy.size());
 
@@ -597,6 +597,7 @@ public class ProjectsControllerTest {
 			Project p = new Project("project" + i);
 			p.setId((long) i);
 			p.setOrganism(PROJECT_ORGANISM);
+			p.setModifiedDate(new Date());
 			projects.add(p);
 		}
 		return projects;
