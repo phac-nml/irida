@@ -204,7 +204,7 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 			
 			throw new UploadException(message);
 		} else {
-			return getDatasetForFileInHistory(file.getName(), history);
+			return getDatasetForFileInHistory(file.getName(), history.getId());
 		}
 	}
 	
@@ -319,23 +319,23 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	/**
 	 * Gets a Dataset object for a file with the given name in the given history.
 	 * @param filename  The name of the file to get a Dataset object for.
-	 * @param history  The history to look for the dataset.
+	 * @param historyId  The history id to look for the dataset.
 	 * @return The corresponding dataset for the given file name.
 	 * @throws GalaxyDatasetNotFoundException  If the dataset could not be found.
 	 */
-	public Dataset getDatasetForFileInHistory(String filename, History history) throws GalaxyDatasetNotFoundException {
+	public Dataset getDatasetForFileInHistory(String filename, String historyId) throws GalaxyDatasetNotFoundException {
 		checkNotNull(filename, "filename is null");
-		checkNotNull(history, "history is null");
+		checkNotNull(historyId, "historyId is null");
 				
 		List<HistoryContents> historyContentsList =
-				historiesClient.showHistoryContents(history.getId());
+				historiesClient.showHistoryContents(historyId);
 
 		Optional<HistoryContents> h = historyContentsList.stream().
 				filter((historyContents) -> filename.equals(historyContents.getName())).findFirst();
 		if (h.isPresent()) {
 			String dataId = h.get().getId();
 			if (dataId != null) {
-				Dataset dataset = historiesClient.showDataset(history.getId(), dataId);	
+				Dataset dataset = historiesClient.showDataset(historyId, dataId);	
 				if (dataset != null) {
 					return dataset;
 				}
@@ -343,7 +343,7 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 		}
 
 		throw new GalaxyDatasetNotFoundException("dataset for file " + filename +
-				" not found in Galaxy history " + history.getId());
+				" not found in Galaxy history " + historyId);
 	}
 
 	/**
@@ -396,7 +396,7 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 		History history = new History();
 		history.setId(historyId);
 		
-		Dataset dataset = getDatasetForFileInHistory(name, history);
+		Dataset dataset = getDatasetForFileInHistory(name, history.getId());
 		
 		if (outputIds.contains(dataset.getId())) {
 			return dataset;

@@ -494,7 +494,7 @@ public class GalaxyHistoriesServiceTest {
 		when(historiesClient.showHistoryContents(HISTORY_ID)).thenReturn(datasetHistoryContents);
 		when(historiesClient.showDataset(HISTORY_ID, DATA_ID)).thenReturn(dataset);
 		
-		assertNotNull(galaxyHistory.getDatasetForFileInHistory(FILENAME, history));
+		assertNotNull(galaxyHistory.getDatasetForFileInHistory(FILENAME, HISTORY_ID));
 	}
 	
 	/**
@@ -503,7 +503,7 @@ public class GalaxyHistoriesServiceTest {
 	 */
 	@Test(expected=GalaxyDatasetNotFoundException.class)
 	public void testGetDatasetForFileInHistoryNoHistoryContents() throws GalaxyDatasetNotFoundException {		
-		galaxyHistory.getDatasetForFileInHistory(FILENAME, history);
+		galaxyHistory.getDatasetForFileInHistory(FILENAME, HISTORY_ID);
 	}
 	
 	
@@ -515,7 +515,7 @@ public class GalaxyHistoriesServiceTest {
 	public void testGetDatasetForFileInHistoryNoDataset() throws GalaxyDatasetNotFoundException {
 		when(historiesClient.showHistoryContents(HISTORY_ID)).thenReturn(datasetHistoryContents);
 		
-		galaxyHistory.getDatasetForFileInHistory(FILENAME, history);
+		galaxyHistory.getDatasetForFileInHistory(FILENAME, HISTORY_ID);
 	}
 	
 	/**
