@@ -44,6 +44,9 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 	@Column(name = "serviceURI", unique = true)
 	private String serviceURI;
 
+	@NotNull
+	private String name;
+
 	private String description;
 
 	@NotNull
@@ -130,6 +133,14 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
