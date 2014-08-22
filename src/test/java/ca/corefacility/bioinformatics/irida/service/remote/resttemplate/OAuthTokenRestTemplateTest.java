@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate;
+package ca.corefacility.bioinformatics.irida.service.remote.resttemplate;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
+import ca.corefacility.bioinformatics.irida.service.remote.resttemplate.OAuthTokenRestTemplate;
 
 /**
  * Unit tests for OAuthTokenRestTemplate
@@ -40,7 +41,7 @@ public class OAuthTokenRestTemplateTest {
 	public void setUp() throws URISyntaxException {
 		tokenService = mock(RemoteAPITokenService.class);
 		serviceURI = new URI("http://uri");
-		remoteAPI = new RemoteAPI(serviceURI.toString(), "a service", "clientId", "clientSecret");
+		remoteAPI = new RemoteAPI("service name", serviceURI.toString(), "a service", "clientId", "clientSecret");
 		restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
 	}
 

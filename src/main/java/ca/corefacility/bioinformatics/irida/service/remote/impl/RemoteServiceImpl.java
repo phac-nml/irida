@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.repositories.remote.impl;
+package ca.corefacility.bioinformatics.irida.service.remote.impl;
 
 import java.net.URI;
 import java.util.List;
@@ -11,15 +11,15 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.repositories.remote.GenericRemoteRepository;
-import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.ListResourceWrapper;
-import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.RemoteResource;
-import ca.corefacility.bioinformatics.irida.repositories.remote.model.resource.ResourceWrapper;
-import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
+import ca.corefacility.bioinformatics.irida.service.remote.RemoteService;
+import ca.corefacility.bioinformatics.irida.service.remote.model.resource.ListResourceWrapper;
+import ca.corefacility.bioinformatics.irida.service.remote.model.resource.RemoteResource;
+import ca.corefacility.bioinformatics.irida.service.remote.model.resource.ResourceWrapper;
+import ca.corefacility.bioinformatics.irida.service.remote.resttemplate.OAuthTokenRestTemplate;
 
 /**
- * Remote repository to request from remote IRIDA instances using OAuth2
+ * Remote service to request from remote IRIDA instances using OAuth2
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
@@ -27,7 +27,7 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
  *            The type of object to be stored in this repository (extends
  *            {@link RemoteResource})
  */
-public abstract class GenericRemoteRepositoryImpl<Type extends RemoteResource> implements GenericRemoteRepository<Type> {
+public abstract class RemoteServiceImpl<Type extends RemoteResource> implements RemoteService<Type> {
 
 	// relative URI to the resource collection
 	private String relativeURI;
@@ -56,7 +56,7 @@ public abstract class GenericRemoteRepositoryImpl<Type extends RemoteResource> i
 	 *            A {@link ParameterizedTypeReference} for individual resources
 	 *            read by the rest template
 	 */
-	public GenericRemoteRepositoryImpl(String relativeURI, RemoteAPITokenService tokenService,
+	public RemoteServiceImpl(String relativeURI, RemoteAPITokenService tokenService,
 			ParameterizedTypeReference<ListResourceWrapper<Type>> listTypeReference,
 			ParameterizedTypeReference<ResourceWrapper<Type>> objectTypeReference) {
 		this.relativeURI = relativeURI;
