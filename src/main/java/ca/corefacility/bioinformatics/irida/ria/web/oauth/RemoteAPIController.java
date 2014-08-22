@@ -28,6 +28,13 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 
 import com.google.common.collect.Lists;
 
+/**
+ * Controller handling basic operations for listing, viewing, adding, and
+ * removing {@link RemoteAPI}s
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Controller
 @RequestMapping("/remote_api")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -75,11 +82,11 @@ public class RemoteAPIController {
 	}
 
 	/**
-	 * Remove a client with the given id
+	 * Remove a {@link RemoteAPI} with the given id
 	 * 
 	 * @param id
 	 *            The ID to remove
-	 * @return redirect to the clients list
+	 * @return redirect to the remote apis list
 	 */
 	@RequestMapping(value = "/remove", method = RequestMethod.POST)
 	public String removeClient(@RequestParam Long id) {
