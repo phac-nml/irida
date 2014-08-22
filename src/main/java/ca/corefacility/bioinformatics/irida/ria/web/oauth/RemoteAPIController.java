@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -71,6 +72,20 @@ public class RemoteAPIController {
 		RemoteAPI remoteApi = remoteAPIService.read(apiId);
 		model.addAttribute("remoteApi", remoteApi);
 		return DETAILS_PAGE;
+	}
+
+	/**
+	 * Remove a client with the given id
+	 * 
+	 * @param id
+	 *            The ID to remove
+	 * @return redirect to the clients list
+	 */
+	@RequestMapping(value = "/remove", method = RequestMethod.POST)
+	public String removeClient(@RequestParam Long id) {
+		remoteAPIService.delete(id);
+
+		return "redirect:/remote_api";
 	}
 
 	/**
