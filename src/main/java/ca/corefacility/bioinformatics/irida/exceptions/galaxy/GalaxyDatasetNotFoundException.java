@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.exceptions.galaxy;
 
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-
-public class GalaxyDatasetNotFoundException extends ExecutionManagerException {
+public class GalaxyDatasetNotFoundException extends GalaxyDatasetException {
 
 	private static final long serialVersionUID = -9021987573289725500L;
 
