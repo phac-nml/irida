@@ -27,6 +27,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
@@ -255,7 +256,7 @@ public class UserServiceImplIT {
 		assertEquals("Username is wrong.", username, u.getUsername());
 	}
 
-	@Test(expected = EntityNotFoundException.class)
+	@Test(expected = UsernameNotFoundException.class)
 	public void testGetUserByInvalidUsername() {
 		String username = "random garbage";
 		userService.getUserByUsername(username);
