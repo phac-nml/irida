@@ -3,8 +3,6 @@ package ca.corefacility.bioinformatics.irida.repositories.analysis.submission;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Set;
 
 import org.junit.Before;
@@ -58,57 +56,35 @@ public class AnalysisSubmissionRepositoryIT {
 	@Autowired
 	private SequenceFileRepository sequenceFileRepository;
 	
-	private Set<SequenceFile> sequenceFiles;
-	private ReferenceFile referenceFile;
-	
-	private RemoteWorkflowPhylogenomics remoteWorkflow;
-	
 	/**
 	 * Sets up objects for test.
 	 * @throws IOException
 	 */
 	@Before
 	public void setup() throws IOException {
-		Path sequenceFilePath = Files.createTempFile("test", ".fastq");
-		Path referenceFilePath = Files.createTempFile("reference", ".fasta");
-		
-		SequenceFile sequenceFile = new SequenceFile(sequenceFilePath);
-		sequenceFiles = Sets.newHashSet(sequenceFile);
-		
-		referenceFile = new ReferenceFile(referenceFilePath);
-		
-		String workflowId = "5f5";
-		String workflowChecksum = "55";
-		
-		String inputSequenceFilesLabel = "input_sequences";
-		String inputReferenceFileLabel = "input_reference";
-		
-		String outputPhylogeneticTreeName = "tree.txt";
-		String outputSnpMatrixName = "matrix.tsv";
-		String outputSnpTableName = "table.tsv";
-		
-		remoteWorkflow = 
-				new RemoteWorkflowPhylogenomics(workflowId, workflowChecksum, inputSequenceFilesLabel,
-						inputReferenceFileLabel, outputPhylogeneticTreeName, outputSnpMatrixName,
-						outputSnpTableName);
 	}
 	
 	/**
 	 * Tests saving an analysis submission.
 	 */
 	@Test
-	@WithMockUser(username = "tom", roles = "ADMIN")
+	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSaveAnalysisSubmission() {
-		String analysisId = "10";
+		String analysisId = "10";		
+		
+		SequenceFile sequenceFile = sequenceFileRepository.findOne(1L);
+		assertNotNull(sequenceFile);
+		Set<SequenceFile> sequenceFiles = Sets.newHashSet(sequenceFile);
+		ReferenceFile referenceFile = referenceFileRepository.findOne(1L);
+		assertNotNull(referenceFile);
+		RemoteWorkflowPhylogenomics remoteWorkflow = remoteWorkflowRepository.getByType("1", RemoteWorkflowPhylogenomics.class);
+		assertNotNull(remoteWorkflow);
 		
 		AnalysisSubmissionPhylogenomics submission =
 				new AnalysisSubmissionPhylogenomics(sequenceFiles, referenceFile,
 						remoteWorkflow);
 		submission.setRemoteAnalysisId(analysisId);
-		
-		sequenceFileRepository.save(sequenceFiles);
-		referenceFileRepository.save(referenceFile);
-		remoteWorkflowRepository.save(remoteWorkflow);
+
 		analysisSubmissionRepository.save(submission);
 		
 		AnalysisSubmissionPhylogenomics savedSubmission = 
@@ -124,7 +100,7 @@ public class AnalysisSubmissionRepositoryIT {
 	 * Tests failing to get an analysis submission
 	 */
 	@Test
-	@WithMockUser(username = "tom", roles = "ADMIN")
+	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetAnalysisSubmissionFail() {		
 		AnalysisSubmissionPhylogenomics savedSubmission = 
 				analysisSubmissionRepository.getByType("invalid", AnalysisSubmissionPhylogenomics.class);
