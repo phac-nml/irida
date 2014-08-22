@@ -66,7 +66,7 @@ public class RemoteWorkflowRepositoryIT {
 	 * Tests saving a remote workflow and re-loading it.
 	 */
 	@Test
-	@WithMockUser(username = "tom", roles = "ADMIN")
+	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSaveRemoteWorkflowPhylogenomics() {		
 		remoteWorkflowRepository.save(remoteWorkflowPhylogenomics);
 		
@@ -77,13 +77,24 @@ public class RemoteWorkflowRepositoryIT {
 	}
 	
 	/**
+	 * Tests succeeding to get a remote workflow
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testGetRemoteWorkflowSuccess() {		
+		RemoteWorkflowPhylogenomics workflow = 
+				remoteWorkflowRepository.getByType("1", RemoteWorkflowPhylogenomics.class);
+		assertNotNull(workflow);
+	}
+	
+	/**
 	 * Tests failing to get a remote workflow
 	 */
 	@Test
-	@WithMockUser(username = "tom", roles = "ADMIN")
+	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetRemoteWorkflowFail() {		
 		RemoteWorkflowPhylogenomics workflow = 
-				remoteWorkflowRepository.getByType(workflowId, RemoteWorkflowPhylogenomics.class);
+				remoteWorkflowRepository.getByType("invalid", RemoteWorkflowPhylogenomics.class);
 		assertNull(workflow);
 	}
 }
