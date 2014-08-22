@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.unit.web;
+package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
