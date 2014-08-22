@@ -25,7 +25,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 
 /**
@@ -123,20 +122,17 @@ public class WorkspaceServicePhylogenomics
 		AnalysisPhylogenomicsPipeline results = new AnalysisPhylogenomicsPipeline(
 				analysisSubmission.getInputFiles(), analysisId);
 
-		WorkflowOutputs outputs = analysisSubmission.getOutputs();
-		List<String> outputIds = outputs.getOutputIds();
-
-		Dataset treeOutput = galaxyHistoriesService.getOutputDataset(
-				analysisId,
-				remoteWorkflow.getOutputPhylogeneticTreeName(), outputIds);
+		Dataset treeOutput = galaxyHistoriesService.getDatasetForFileInHistory(
+				remoteWorkflow.getOutputPhylogeneticTreeName(),
+				analysisId);
 		
-		Dataset matrixOutput = galaxyHistoriesService.getOutputDataset(
-				analysisId,
-				remoteWorkflow.getOutputSnpMatrixName(), outputIds);
+		Dataset matrixOutput = galaxyHistoriesService.getDatasetForFileInHistory(
+				remoteWorkflow.getOutputSnpMatrixName(),
+				analysisId);
 		
-		Dataset tableOutput = galaxyHistoriesService.getOutputDataset(
-				analysisId,
-				remoteWorkflow.getOutputSnpTableName(), outputIds);
+		Dataset tableOutput = galaxyHistoriesService.getDatasetForFileInHistory(
+				remoteWorkflow.getOutputSnpTableName(),
+				analysisId);
 
 		results.setPhylogeneticTree(buildOutputFile(analysisId, treeOutput));
 		results.setSnpMatrix(buildOutputFile(analysisId, matrixOutput));

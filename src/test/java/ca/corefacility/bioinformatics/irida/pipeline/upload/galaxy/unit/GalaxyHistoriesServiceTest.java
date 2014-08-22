@@ -1,7 +1,12 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.unit;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -18,6 +23,18 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
+import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
+import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient.FileUploadRequest;
@@ -30,18 +47,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDe
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
-
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
-import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
-import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 
 /**
  * Tests the GalaxyHistory class
@@ -66,7 +71,6 @@ public class GalaxyHistoriesServiceTest {
 	private static final String INVALID_HISTORY_ID = "2";
 	
 	private static final String FILENAME = "filename";
-	private static final String INVALID_FILENAME = "invalid";
 	private static final String DATA_ID = "2";
 	private static final String DATA_ID_2 = "2";
 	
@@ -532,41 +536,5 @@ public class GalaxyHistoriesServiceTest {
 		when(historiesClient.showHistoryContents(HISTORY_ID)).thenReturn(datasetHistoryContents);
 		
 		galaxyHistory.getDatasetForFileInHistory(FILENAME, HISTORY_ID);
-	}
-	
-	/**
-	 * Tests getting an output dataset for the given information.		String filename = dataFile.toFile().getName();
-		String filename2 = dataFile2.toFile().getName();
-		History createdHistory = new History();
-		Dataset dataset = new Dataset();
-		createdHistory.setId(HISTORY_ID);
-		Dataset dataset2 = new Dataset();
-		List<HistoryContents> historyContentsList = buildHistoryContentsList(filename, DATA_ID,
-				filename2, DATA_ID_2);
-	 * @throws GalaxyDatasetException 
-	 */
-	@Test
-	public void testGetOutputDatasetSuccess() throws GalaxyDatasetException {
-		List<String> outputIds = Arrays.asList(DATA_ID);
-		
-		when(historiesClient.showHistoryContents(HISTORY_ID)).thenReturn(datasetHistoryContents);
-		when(historiesClient.showDataset(HISTORY_ID, DATA_ID)).thenReturn(datasetForFile);
-		
-		Dataset result = galaxyHistory.getOutputDataset(HISTORY_ID, FILENAME, outputIds);
-		assertEquals("dataset should be equals to returned output dataset", datasetForFile, result);
-	}
-	
-	/**
-	 * Tests failing to get an output dataset for the given information.
-	 * @throws GalaxyDatasetException 
-	 */
-	@Test(expected=GalaxyDatasetNotFoundException.class)
-	public void testGetOutputDatasetFail() throws GalaxyDatasetException {
-		List<String> outputIds = Arrays.asList(DATA_ID);
-		
-		when(historiesClient.showHistoryContents(HISTORY_ID)).thenReturn(datasetHistoryContents);
-		when(historiesClient.showDataset(HISTORY_ID, DATA_ID)).thenReturn(datasetForFile);
-		
-		galaxyHistory.getOutputDataset(HISTORY_ID, INVALID_FILENAME, outputIds);
 	}
 }

@@ -394,32 +394,6 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	}
 
 	/**
-	 * Given a particular output dataset id within a history, get the Galaxy id of this output dataset.
-	 * @param historyId  The history to search through.
-	 * @param name  The file name to find an output id for.
-	 * @param outputIds  The list of output ids to search through.
-	 * @return  The dataset of the corresponding output for the given label within the given history.
-	 * @throws GalaxyDatasetException If there was an issue finding a dataset within a history.
-	 */
-	public Dataset getOutputDataset(String historyId,
-			String name, List<String> outputIds) throws GalaxyDatasetException {
-		checkNotNull(historyId, "historyId is null");
-		checkNotNull(name, "label is null");
-		checkNotNull(outputIds, "outputIds is null");
-		
-		History history = new History();
-		history.setId(historyId);
-		
-		Dataset dataset = getDatasetForFileInHistory(name, history.getId());
-		
-		if (outputIds.contains(dataset.getId())) {
-			return dataset;
-		} else {
-			throw new GalaxyDatasetNotFoundException("Could not find valid dataset for label " + name + " in history " + historyId);
-		}
-	}
-
-	/**
 	 * Given a particular dataset id within a Galaxy history download this
 	 * dataset to the local filesystem.
 	 * 
