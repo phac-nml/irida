@@ -18,4 +18,15 @@ public class EntityNotFoundException extends RuntimeException {
     public EntityNotFoundException(String message) {
         super(message);
     }
+    
+	/**
+     * Construct a new {@link EntityNotFoundException} with the specified
+     * message and cause.
+     *
+     * @param message the message explaining the exception.
+     * @param cause the original cause of the exception 
+     */
+    public EntityNotFoundException(String message, Throwable cause) {
+    	super(message, cause);
+    }
 }
