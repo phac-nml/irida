@@ -79,7 +79,7 @@
 				<constraints nullable="false" primaryKey="true" />
 			</column>
 			<column name="remote_workflow_id" type="VARCHAR(255)">
-				<constraints foreignKeyName="FK_REMOTE_WORKFLOW_ID" referencedColumnNames="workflowId"
+				<constraints foreignKeyName="FK_ANALYSIS_SUBMISSION_REMOTE_WORKFLOW_ID" referencedColumnNames="workflowId"
 					referencedTableName="remote_workflow" />
 			</column>
 		</createTable>
@@ -109,7 +109,7 @@
 
 		<createTable tableName="analysis_submission_phylogenomics_AUD">
 			<column name="remoteAnalysisId" type="VARCHAR(255)">
-				<constraints nullable="false" primaryKey="true" foreignKeyName="FK_ANALYSIS_SUBMISSION_ID"
+				<constraints nullable="false" primaryKey="true" foreignKeyName="FK_ANALYSIS_SUBMISSION_PHYLOGENOMICS_ID"
 					referencedColumnNames="remoteAnalysisId" referencedTableName="analysis_submission_AUD" />
 			</column>
 			<column name="REV" type="INT(11)">
