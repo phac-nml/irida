@@ -56,14 +56,10 @@
 
 		<createTable tableName="remote_workflow_phylogenomics_AUD">
 			<column name="workflowId" type="VARCHAR(255)">
-				<constraints nullable="false" primaryKey="true" 
-				foreignKeyName="FK_REMOTE_WORKFLOW_PHYLOGENOMICS_ID" referencedColumnNames="workflowId"
-					referencedTableName="remote_workflow_AUD"/>
+				<constraints nullable="false" primaryKey="true" />
 			</column>
 			<column name="REV" type="INT(11)">
-				<constraints primaryKey="true" nullable="false"
-					foreignKeyName="FK_REMOTE_WORKFLOW_PHYLOGENOMICS_REVISION" referencedColumnNames="REV"
-					referencedTableName="remote_workflow_AUD" />
+				<constraints nullable="false" />
 			</column>
 			<column name="inputReferenceFileLabel" type="VARCHAR(255)" />
 			<column name="inputSequenceFilesLabel" type="VARCHAR(255)" />
@@ -71,6 +67,9 @@
 			<column name="outputSnpTableName" type="VARCHAR(255)" />
 			<column name="outputSsnpMatrixName" type="VARCHAR(255)" />
 		</createTable>
+		<addForeignKeyConstraint baseColumnNames="workflowId, REV"
+			baseTableName="remote_workflow_phylogenomics_AUD" constraintName="FK_REMOTE_WORKFLOW_PHYLOGENOMICS_REVISION"
+			referencedTableName="remote_workflow_AUD" referencedColumnNames="workflowId, REV" />
 
 		<!-- Analysis Submission Tables -->
 
@@ -109,15 +108,16 @@
 
 		<createTable tableName="analysis_submission_phylogenomics_AUD">
 			<column name="remoteAnalysisId" type="VARCHAR(255)">
-				<constraints nullable="false" primaryKey="true" foreignKeyName="FK_ANALYSIS_SUBMISSION_PHYLOGENOMICS_ID"
-					referencedColumnNames="remoteAnalysisId" referencedTableName="analysis_submission_AUD" />
+				<constraints nullable="false" primaryKey="true" />
 			</column>
 			<column name="REV" type="INT(11)">
-				<constraints primaryKey="true" nullable="false" foreignKeyName="FK_ANALYSIS_SUBMISSION_PHYLOGENOMICS_REV"
-					referencedColumnNames="REV" referencedTableName="analysis_submission_AUD" />
+				<constraints nullable="false" />
 			</column>
 			<column name="reference_file_id" type="BIGINT(20)" />
 		</createTable>
+		<addForeignKeyConstraint baseColumnNames="remoteAnalysisId, REV"
+			baseTableName="analysis_submission_phylogenomics_AUD" constraintName="FK_ANALYSIS_SUBMISSION_PHYLOGENOMICS_REVISION"
+			referencedTableName="analysis_submission_AUD" referencedColumnNames="remoteAnalysisId, REV" />
 
 		<createTable tableName="analysis_submission_sequence_file">
 			<column name="analysis_submission_remoteAnalysisId" type="VARCHAR(255)">
