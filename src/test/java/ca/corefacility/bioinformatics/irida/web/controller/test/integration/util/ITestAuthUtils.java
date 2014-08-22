@@ -23,6 +23,8 @@ public class ITestAuthUtils {
 	private static final String ROLE_MANAGER = "manager";
 	private static final String ROLE_ADMIN = "admin";
 	private static final String ROLE_SEQUENCER = "sequencer";
+	public static final String BAD_USERNAME = "bad_username";
+	public static final String BAD_PASSWORD = "bad_password";
 	
 	private static final String CLIENT_ID = "testClient";
 	private static final String CLIENT_SECRET = "testClientSecret";
@@ -34,9 +36,11 @@ public class ITestAuthUtils {
 		ROLE_TO_USER.put(ROLE_USER, new UsernamePasswordPair("fbristow", "password1"));
 		ROLE_TO_USER.put(ROLE_MANAGER, new UsernamePasswordPair("manager", "password1"));
 		ROLE_TO_USER.put(ROLE_SEQUENCER, new UsernamePasswordPair("uploader", "password1"));
+		ROLE_TO_USER.put(BAD_USERNAME, new UsernamePasswordPair("bad", "bad"));
+		ROLE_TO_USER.put(BAD_PASSWORD, new UsernamePasswordPair("admin", "bad"));
 	}
 
-	private static RequestSpecification asRole(String role) {
+	public static RequestSpecification asRole(String role) {
 		UsernamePasswordPair pair = ROLE_TO_USER.get(role);
 		String oAuthToken = getOAuthToken(pair.username,pair.password);
 		String authString = "Bearer " + oAuthToken;
