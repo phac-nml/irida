@@ -44,6 +44,9 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 	@Column(name = "serviceURI", unique = true)
 	private String serviceURI;
 
+	@NotNull
+	private String name;
+
 	private String description;
 
 	@NotNull
@@ -70,8 +73,9 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 		createdDate = new Date();
 	}
 
-	public RemoteAPI(String serviceURI, String description, String clientId, String clientSecret) {
+	public RemoteAPI(String name, String serviceURI, String description, String clientId, String clientSecret) {
 		this();
+		this.name = name;
 		this.serviceURI = serviceURI;
 		this.description = description;
 		this.clientId = clientId;
@@ -132,6 +136,14 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 		this.description = description;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	/**
 	 * @return the clientId
 	 */
@@ -172,8 +184,8 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 	public boolean equals(Object other) {
 		if (other instanceof RemoteAPI) {
 			RemoteAPI p = (RemoteAPI) other;
-			return Objects.equals(serviceURI, p.serviceURI) && Objects.equals(clientId, p.clientId)
-					&& Objects.equals(clientSecret, p.clientSecret);
+			return Objects.equals(name, p.name) && Objects.equals(serviceURI, p.serviceURI)
+					&& Objects.equals(clientId, p.clientId) && Objects.equals(clientSecret, p.clientSecret);
 		}
 
 		return false;
@@ -186,7 +198,7 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(serviceURI, clientId, clientSecret);
+		return Objects.hash(name, serviceURI, clientId, clientSecret);
 	}
 
 	@Override

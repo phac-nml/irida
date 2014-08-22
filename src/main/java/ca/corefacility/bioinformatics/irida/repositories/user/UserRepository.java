@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -23,11 +24,10 @@ public interface UserRepository extends IridaJpaRepository<User, Long>, UserDeta
 	 * @param username
 	 *            the user's username.
 	 * @return the user corresponding to the username.
-	 * @throws EntityNotFoundException
+	 * @throws UsernameNotFoundException
 	 *             If no user can be found with the supplied username.
 	 */
-	@Query("select u from User u where u.username = ?1")
-	public User loadUserByUsername(String username) throws EntityNotFoundException;
+	public User loadUserByUsername(String username) throws UsernameNotFoundException;
 
 	/**
 	 * Get the list of {@link User}s that are not associated with the current
