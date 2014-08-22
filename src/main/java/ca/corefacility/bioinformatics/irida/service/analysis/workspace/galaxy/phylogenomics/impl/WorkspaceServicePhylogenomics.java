@@ -108,8 +108,6 @@ public class WorkspaceServicePhylogenomics
 			AnalysisSubmissionPhylogenomics analysisSubmission)
 			throws ExecutionManagerException, IOException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
-		checkNotNull(analysisSubmission.getOutputs(),
-				"outputs for analysis is null");
 		checkNotNull(analysisSubmission.getRemoteWorkflow(),
 				"remote workflow is null");
 		checkNotNull(analysisSubmission.getInputFiles(),
