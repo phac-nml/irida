@@ -3,6 +3,9 @@ package ca.corefacility.bioinformatics.irida.web.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -15,8 +18,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter;
+import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
 import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler;
 import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint;
+import org.springframework.security.oauth2.provider.error.WebResponseExceptionTranslator;
 import org.springframework.security.oauth2.provider.vote.ScopeVoter;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -34,17 +39,37 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.exception.CustomO
 @EnableWebSecurity
 @ImportResource("classpath:oauth2-web-config.xml")
 public class IridaRestApiSecurityConfig extends WebSecurityConfigurerAdapter {
+
+	@Autowired
+	private TokenEndpoint tokenEndpoint;
+
+	@PostConstruct
+	public void configureTokenEndpoint() {
+		// since Spring Security OAuth2 sets up this bean automagically
+		// somewhere in the bowels of its XML config and no apparent way to
+		// change the exception handler property, the easiest way for us to get
+		// our own custom error handling set up is to get the token endpoint
+		// autowired into our config bean, then set the exception handler
+		// ourself.
+		tokenEndpoint.setProviderExceptionHandler(webResponseExceptionTranslator());
+	}
+
+	@Bean
+	public WebResponseExceptionTranslator webResponseExceptionTranslator() {
+		return new CustomOAuth2ExceptionTranslator();
+	}
+
 	@Bean
 	public AuthenticationEntryPoint oauthAuthenticationEntryPoint() {
 		OAuth2AuthenticationEntryPoint entryPoint = new OAuth2AuthenticationEntryPoint();
-		entryPoint.setExceptionTranslator(new CustomOAuth2ExceptionTranslator());
+		entryPoint.setExceptionTranslator(webResponseExceptionTranslator());
 		return entryPoint;
 	}
 
 	@Bean
 	public AccessDeniedHandler oauthAccessDeniedHandler() {
 		OAuth2AccessDeniedHandler handler = new OAuth2AccessDeniedHandler();
-		handler.setExceptionTranslator(new CustomOAuth2ExceptionTranslator());
+		handler.setExceptionTranslator(webResponseExceptionTranslator());
 		return handler;
 	}
 
@@ -53,6 +78,7 @@ public class IridaRestApiSecurityConfig extends WebSecurityConfigurerAdapter {
 		OAuth2AuthenticationEntryPoint clientAuthenticationEntryPoint = new OAuth2AuthenticationEntryPoint();
 		clientAuthenticationEntryPoint.setRealmName("NmlIrida/client");
 		clientAuthenticationEntryPoint.setTypeName("Basic");
+		clientAuthenticationEntryPoint.setExceptionTranslator(webResponseExceptionTranslator());
 		return clientAuthenticationEntryPoint;
 	}
 

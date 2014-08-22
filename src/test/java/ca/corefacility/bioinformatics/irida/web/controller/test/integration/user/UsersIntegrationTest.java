@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.integration.use
 
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asAdmin;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asManager;
+import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asRole;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
 import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -24,6 +25,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -42,7 +44,17 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/user/UserIntegrationTest.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class UsersIntegrationTest {
-	
+
+	@Test
+	public void testBadUsernameLogin() {
+		asRole(ITestAuthUtils.BAD_USERNAME).expect().statusCode(HttpStatus.SC_UNAUTHORIZED).when().get("/");
+	}
+
+	@Test
+	public void testBadPasswordLogin() {
+		asRole(ITestAuthUtils.BAD_PASSWORD).expect().statusCode(HttpStatus.SC_UNAUTHORIZED).when().get("/");
+	}
+
 	@Test
 	public void testGetAllUsers() {
 		asAdmin().expect().body("resource.links.rel", hasItems("self")).and()
