@@ -89,8 +89,8 @@
 				<constraints nullable="false" primaryKey="true" />
 			</column>
 			<column name="REV" type="INT(11)">
-				<constraints foreignKeyName="FK_ANALYSIS_SUBMISSION_REVISION" referencedColumnNames="id"
-					referencedTableName="Revisions" />
+				<constraints primaryKey="true" nullable="false" foreignKeyName="FK_ANALYSIS_SUBMISSION_REVISION"
+					referencedColumnNames="id" referencedTableName="Revisions" />
 			</column>
 			<column name="REVTYPE" type="TINYINT(4)" />
 			<column name="remote_workflow_id" type="VARCHAR(255)" />
@@ -113,7 +113,7 @@
 					referencedColumnNames="remoteAnalysisId" referencedTableName="analysis_submission_AUD" />
 			</column>
 			<column name="REV" type="INT(11)">
-				<constraints nullable="false" foreignKeyName="FK_ANALYSIS_SUBMISSION_PHYLOGENOMICS_REV"
+				<constraints primaryKey="true" nullable="false" foreignKeyName="FK_ANALYSIS_SUBMISSION_PHYLOGENOMICS_REV"
 					referencedColumnNames="REV" referencedTableName="analysis_submission_AUD" />
 			</column>
 			<column name="reference_file_id" type="BIGINT(20)" />
