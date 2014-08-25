@@ -35,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServiceConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowChecksumInvalidException;
@@ -214,6 +215,24 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		assertEquals(analysisSubmitted.getInputFiles(), savedSubmission.getInputFiles());
 		assertEquals(analysisSubmitted.getReferenceFile(), savedSubmission.getReferenceFile());
 	}
+	
+	/**
+	 * Tests out attempting to submit an analysis twice.
+	 * @throws IllegalArgumentException 
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testExecuteAnalysisFailTwice() throws ExecutionManagerException {
+		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = 
+				remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
+		
+		AnalysisSubmissionPhylogenomics analysisSubmission 
+			= setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
+		
+		AnalysisSubmissionPhylogenomics submitted 
+			= analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmission);
+		analysisExecutionServicePhylogenomics.executeAnalysis(submitted);
+	}
 
 	/**
 	 * Tests out attempting to submit a workflow with an invalid id for execution.
@@ -304,10 +323,10 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	}
 	
 	/**
-	 * Tests out failing to get analysis results due to an invalid analysis id.
+	 * Tests out failing to get analysis results due to analysis not being submitted.
 	 * @throws Exception 
 	 */
-	@Test(expected=RuntimeException.class)
+	@Test(expected=EntityNotFoundException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetAnalysisResultsFail() throws Exception {	
 		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = 
@@ -321,7 +340,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 
 		waitUntilSubmissionComplete(analysisSubmittedAfter);
 
-		analysisSubmittedAfter.setRemoteAnalysisId("invalid");
+		analysisSubmittedAfter.setRemoteAnalysisId("notSubmittedId");
 		
 		analysisExecutionServicePhylogenomics
 				.getAnalysisResults(analysisSubmittedAfter);

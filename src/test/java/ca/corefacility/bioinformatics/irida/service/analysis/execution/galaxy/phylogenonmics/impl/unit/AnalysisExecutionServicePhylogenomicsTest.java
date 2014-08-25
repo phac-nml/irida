@@ -92,6 +92,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test
 	public void testExecuteAnalysisSuccess() throws ExecutionManagerException {
+		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
 		when(workspaceServicePhylogenomics.prepareAnalysisWorkspace(analysisSubmission)).
@@ -115,8 +116,20 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test(expected=WorkflowChecksumInvalidException.class)
 	public void testExecuteAnalysisFailInvalidWorkflow() throws ExecutionManagerException {
+		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenThrow(new WorkflowChecksumInvalidException());
+		
+		workflowManagement.executeAnalysis(analysisSubmission);
+	}
+	
+	/**
+	 * Tests failing to executing an analysis due to already being submitted.
+	 * @throws IllegalArgumentException
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void testExecuteAnalysisFailAlreadySubmitted() throws ExecutionManagerException {
+		when(analysisSubmission.getRemoteAnalysisId()).thenReturn("1");
 		
 		workflowManagement.executeAnalysis(analysisSubmission);
 	}
@@ -127,6 +140,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test(expected=ExecutionManagerException.class)
 	public void testExecuteAnalysisFailPrepareWorkflow() throws ExecutionManagerException {
+		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
 		when(workspaceServicePhylogenomics.prepareAnalysisWorkspace(analysisSubmission)).
@@ -141,6 +155,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test(expected=WorkflowException.class)
 	public void testExecuteAnalysisFail() throws ExecutionManagerException {
+		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
 		when(workspaceServicePhylogenomics.prepareAnalysisWorkspace(analysisSubmission)).

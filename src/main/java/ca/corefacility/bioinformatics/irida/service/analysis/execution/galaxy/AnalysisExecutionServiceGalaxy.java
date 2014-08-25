@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import java.io.IOException;
 
@@ -17,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
@@ -78,6 +80,9 @@ public abstract class AnalysisExecutionServiceGalaxy
 					throws ExecutionManagerException {
 		
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
+		checkArgument(null == analysisSubmission.getRemoteAnalysisId(),
+				"remote analyis id should be null");
+		
 		String analysisName = analysisSubmission.getClass().getSimpleName();
 		RemoteWorkflowGalaxy remoteWorkflow = analysisSubmission.getRemoteWorkflow();
 		logger.debug("Running " + analysisName + ": " + remoteWorkflow);
@@ -106,11 +111,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 			throws ExecutionManagerException, IOException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
 		checkNotNull(submittedAnalysis.getRemoteAnalysisId(), "remoteAnalysisId is null");
-		
-		if (!analysisSubmissionRepository.exists(submittedAnalysis.getRemoteAnalysisId())) {
-			throw new EntityNotFoundException("Could not find analysis submission for " + 
-					submittedAnalysis);
-		}
+		verifyAnalysisSubmissionExists(submittedAnalysis);
 		
 		String analysisName = submittedAnalysis.getClass().getSimpleName();
 		
@@ -147,6 +148,19 @@ public abstract class AnalysisExecutionServiceGalaxy
 			throw new WorkflowChecksumInvalidException("passed workflow with id=" +
 					remoteWorkflow.getWorkflowId() + " does not have correct checksum " + 
 					remoteWorkflow.getWorkflowChecksum());
+		}
+	}
+
+	/**
+	 * Verifies if the analysis submission exists.
+	 * @param submission  The submission to check.
+	 * @throws EntityNotFoundException  If the given analysis submission does not exist in the database.
+	 */
+	private void verifyAnalysisSubmissionExists(AnalysisSubmission<?> submission) 
+			throws EntityNotFoundException {
+		if (!analysisSubmissionRepository.exists(submission.getRemoteAnalysisId())) {
+			throw new EntityNotFoundException("Could not find analysis submission for " + 
+					submission);
 		}
 	}
 }
