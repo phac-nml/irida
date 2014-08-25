@@ -346,7 +346,7 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 			historyIds += "]";
 			throw new GalaxyDatasetException("Found " + matchingHistoryContents.size() + " datasets for file "
 					+ filename + ": " + historyIds);
-		} else if (matchingHistoryContents.size() > 0) {
+		} else if (matchingHistoryContents.size() == 1) {
 			String dataId = matchingHistoryContents.get(0).getId();
 			if (dataId != null) {
 				Dataset dataset = historiesClient.showDataset(historyId, dataId);	
