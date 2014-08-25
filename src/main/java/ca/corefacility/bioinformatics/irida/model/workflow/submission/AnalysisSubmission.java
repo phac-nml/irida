@@ -1,8 +1,10 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.submission;
 
+import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -12,10 +14,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.Timestamped;
 import ca.corefacility.bioinformatics.irida.model.workflow.RemoteWorkflow;
 
 /**
@@ -28,7 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.RemoteWorkflow;
 @Table(name = "analysis_submission")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Audited
-public abstract class AnalysisSubmission<T extends RemoteWorkflow> {
+public abstract class AnalysisSubmission<T extends RemoteWorkflow> implements Timestamped {
 
 	@Id
 	private String remoteAnalysisId;
@@ -40,7 +48,18 @@ public abstract class AnalysisSubmission<T extends RemoteWorkflow> {
 	@JoinColumn(name = "remote_workflow_id")
 	private T remoteWorkflow;
 	
+	@CreatedDate
+	@NotNull
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(nullable = false)
+	private final Date createdDate;
+
+	@LastModifiedDate
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifiedDate;
+	
 	protected AnalysisSubmission() {
+		this.createdDate = new Date();
 	}
 	
 	/**
@@ -49,6 +68,7 @@ public abstract class AnalysisSubmission<T extends RemoteWorkflow> {
 	 * @param remoteWorkflow  The remote workflow implementing this analysis.
 	 */
 	public AnalysisSubmission(Set<SequenceFile> inputFiles, T remoteWorkflow) {
+		this();
 		this.inputFiles = inputFiles;
 		this.remoteWorkflow = remoteWorkflow;
 	}
@@ -91,5 +111,20 @@ public abstract class AnalysisSubmission<T extends RemoteWorkflow> {
 	 */
 	public void setRemoteWorkflow(T remoteWorkflow) {
 		this.remoteWorkflow = remoteWorkflow;
+	}
+
+	@Override
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	@Override
+	public Date getModifiedDate() {
+		return modifiedDate;
+	}
+
+	@Override
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
 	}
 }

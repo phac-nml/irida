@@ -1,15 +1,25 @@
 package ca.corefacility.bioinformatics.irida.model.workflow;
 
+import java.util.Date;
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import ca.corefacility.bioinformatics.irida.model.Timestamped;
 
 /**
  * A reference to a workflow in a remote execution manager.
@@ -20,7 +30,8 @@ import org.hibernate.envers.Audited;
 @Table(name = "remote_workflow")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Audited
-public abstract class RemoteWorkflow {
+@EntityListeners(AuditingEntityListener.class)
+public abstract class RemoteWorkflow implements Timestamped {
 	
 	@Id
 	private String workflowId;
@@ -28,7 +39,18 @@ public abstract class RemoteWorkflow {
 	@NotNull
 	private String workflowChecksum;
 	
+	@CreatedDate
+	@NotNull
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(nullable = false)
+	private final Date createdDate;
+
+	@LastModifiedDate
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifiedDate;
+	
 	protected RemoteWorkflow() {
+		createdDate = new Date();
 	}
 	
 	/**
@@ -37,6 +59,7 @@ public abstract class RemoteWorkflow {
 	 * @param workflowChecksum A checksum for this workflow.
 	 */
 	public RemoteWorkflow(String workflowId, String workflowChecksum) {
+		this();
 		this.workflowId = workflowId;
 		this.workflowChecksum = workflowChecksum;
 	}
@@ -55,6 +78,21 @@ public abstract class RemoteWorkflow {
 	 */
 	public String getWorkflowChecksum() {
 		return workflowChecksum;
+	}
+
+	@Override
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	@Override
+	public Date getModifiedDate() {
+		return modifiedDate;
+	}
+
+	@Override
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
 	}
 
 	@Override
