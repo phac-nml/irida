@@ -12,7 +12,7 @@
 
 	<remote_workflow_phylogenomics workflowId="1" inputReferenceFileLabel="input_reference"
 		inputSequenceFilesLabel="input_sequences" outputPhylogeneticTreeName="tree.txt"
-		outputSnpTableName="table.tsv" outputSsnpMatrixName="matrix.tsv"/>
+		outputSnpTableName="table.tsv" outputSnpMatrixName="matrix.tsv"/>
 
 	<reference_file id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
 		filePath="/tmp/file.fasta" fileRevisionNumber="1"/>
