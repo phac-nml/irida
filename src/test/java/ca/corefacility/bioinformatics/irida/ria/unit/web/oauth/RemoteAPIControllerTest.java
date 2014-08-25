@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
@@ -29,11 +30,13 @@ import com.google.common.collect.Lists;
 public class RemoteAPIControllerTest {
 	private RemoteAPIController remoteAPIController;
 	private RemoteAPIService remoteAPIService;
+	private MessageSource messageSource;
 
 	@Before
 	public void setUp() {
 		remoteAPIService = mock(RemoteAPIService.class);
-		remoteAPIController = new RemoteAPIController(remoteAPIService);
+		messageSource = mock(MessageSource.class);
+		remoteAPIController = new RemoteAPIController(remoteAPIService,messageSource);
 	}
 
 	@Test

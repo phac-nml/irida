@@ -3,11 +3,17 @@ package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -43,16 +49,19 @@ public class RemoteAPIController {
 
 	public static final String CLIENTS_PAGE = "remote_apis/list";
 	public static final String DETAILS_PAGE = "remote_apis/remote_api_details";
+	public static final String ADD_API_PAGE = "remote_apis/create";
 
 	private final String SORT_BY_ID = "id";
 	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "name", "clientId", "createdDate");
 	private static final String SORT_ASCENDING = "asc";
 
 	private final RemoteAPIService remoteAPIService;
+	private final MessageSource messageSource;
 
 	@Autowired
-	public RemoteAPIController(RemoteAPIService remoteAPIService) {
+	public RemoteAPIController(RemoteAPIService remoteAPIService, MessageSource messageSource) {
 		this.remoteAPIService = remoteAPIService;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -94,6 +103,72 @@ public class RemoteAPIController {
 		remoteAPIService.delete(id);
 
 		return "redirect:/remote_api";
+	}
+
+	/**
+	 * Get the create client page
+	 * 
+	 * @param model
+	 *            Model for the view
+	 * @return The name of the create client page
+	 */
+	@RequestMapping(value = "/create", method = RequestMethod.GET)
+	public String getAddRemoteAPIPage(Model model) {
+		if (!model.containsAttribute("errors")) {
+			model.addAttribute("errors", new HashMap<String, String>());
+		}
+
+		return ADD_API_PAGE;
+	}
+
+	/**
+	 * Create a new client
+	 * 
+	 * @param client
+	 *            The client to add
+	 * @param model
+	 *            Model for the view
+	 * @param locale
+	 *            Locale of the current user session
+	 * @return Redirect to the newly created client page, or back to the
+	 *         creation page in case of an error.
+	 */
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	public String postCreateRemoteAPI(RemoteAPI client, Model model, Locale locale) {
+
+		Map<String, String> errors = new HashMap<>();
+		String responsePage = null;
+		try {
+			RemoteAPI create = remoteAPIService.create(client);
+			responsePage = "redirect:/remote_api/" + create.getId();
+		} catch (ConstraintViolationException ex) {
+			logger.error("Error creating api: " + ex.getMessage());
+			for (ConstraintViolation<?> cv : ex.getConstraintViolations()) {
+				String paramError = cv.getPropertyPath().toString();
+				logger.error("Error in field: " + paramError + " message: " + cv.getMessage());
+				errors.put(paramError, cv.getMessage());
+			}
+		} catch (DataIntegrityViolationException ex) {
+			logger.error("Error creating api: " + ex.getMessage());
+			if (ex.getMessage().contains(RemoteAPI.SERVICE_URI_CONSTRAINT_NAME)) {
+				errors.put("serviceURI", messageSource.getMessage("remoteapi.create.serviceURIConflict", null, locale));
+			} else {
+				throw ex;
+			}
+		}
+
+		if (!errors.isEmpty()) {
+			model.addAttribute("errors", errors);
+
+			model.addAttribute("given_name", client.getName());
+			model.addAttribute("given_clientId", client.getClientId());
+			model.addAttribute("given_clientSecret", client.getClientSecret());
+			model.addAttribute("given_serviceURI", client.getServiceURI());
+
+			responsePage = getAddRemoteAPIPage(model);
+		}
+
+		return responsePage;
 	}
 
 	/**
