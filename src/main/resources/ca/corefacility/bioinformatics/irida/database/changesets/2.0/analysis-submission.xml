@@ -8,7 +8,7 @@
 	<changeSet id="analysis-submission" author="aaron.petkau">
 
 		<!-- Remote Workflow Tables -->
-		
+
 		<createTable tableName="remote_workflow">
 			<column name="workflowId" type="VARCHAR(255)">
 				<constraints primaryKey="true" nullable="false" />
@@ -16,6 +16,10 @@
 			<column name="workflowChecksum" type="VARCHAR(255)">
 				<constraints nullable="false" />
 			</column>
+			<column name="createdDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="modifiedDate" type="datetime" />
 		</createTable>
 
 		<createTable tableName="remote_workflow_AUD">
@@ -29,6 +33,8 @@
 			</column>
 			<column name="REVTYPE" type="TINYINT(4)" />
 			<column name="workflowChecksum" type="VARCHAR(255)" />
+			<column name="createdDate" type="datetime" />
+			<column name="modifiedDate" type="datetime" />
 		</createTable>
 
 		<createTable tableName="remote_workflow_phylogenomics">
@@ -49,7 +55,7 @@
 			</column>
 			<column name="workflowId" type="VARCHAR(255)">
 				<constraints nullable="false" primaryKey="true"
-				foreignKeyName="FK_REMOTE_WORKFLOW_ID" referencedColumnNames="workflowId"
+					foreignKeyName="FK_REMOTE_WORKFLOW_ID" referencedColumnNames="workflowId"
 					referencedTableName="remote_workflow" />
 			</column>
 		</createTable>
@@ -78,9 +84,13 @@
 				<constraints nullable="false" primaryKey="true" />
 			</column>
 			<column name="remote_workflow_id" type="VARCHAR(255)">
-				<constraints foreignKeyName="FK_ANALYSIS_SUBMISSION_REMOTE_WORKFLOW_ID" referencedColumnNames="workflowId"
-					referencedTableName="remote_workflow" />
+				<constraints foreignKeyName="FK_ANALYSIS_SUBMISSION_REMOTE_WORKFLOW_ID"
+					referencedColumnNames="workflowId" referencedTableName="remote_workflow" />
 			</column>
+			<column name="createdDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="modifiedDate" type="datetime" />
 		</createTable>
 
 		<createTable tableName="analysis_submission_AUD">
@@ -88,21 +98,25 @@
 				<constraints nullable="false" primaryKey="true" />
 			</column>
 			<column name="REV" type="INT(11)">
-				<constraints primaryKey="true" nullable="false" foreignKeyName="FK_ANALYSIS_SUBMISSION_REVISION"
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_ANALYSIS_SUBMISSION_REVISION"
 					referencedColumnNames="id" referencedTableName="Revisions" />
 			</column>
 			<column name="REVTYPE" type="TINYINT(4)" />
 			<column name="remote_workflow_id" type="VARCHAR(255)" />
+			<column name="createdDate" type="datetime" />
+			<column name="modifiedDate" type="datetime" />
 		</createTable>
 
 		<createTable tableName="analysis_submission_phylogenomics">
 			<column name="remoteAnalysisId" type="VARCHAR(255)">
-				<constraints nullable="false" primaryKey="true" foreignKeyName="FK_ANALYSIS_SUBMISSION_ID"
-					referencedColumnNames="remoteAnalysisId" referencedTableName="analysis_submission" />
+				<constraints nullable="false" primaryKey="true"
+					foreignKeyName="FK_ANALYSIS_SUBMISSION_ID" referencedColumnNames="remoteAnalysisId"
+					referencedTableName="analysis_submission" />
 			</column>
 			<column name="reference_file_id" type="BIGINT(20)">
 				<constraints foreignKeyName="FK_REFERENCE_FILE_ID"
-						referencedColumnNames="id" referencedTableName="reference_file" />
+					referencedColumnNames="id" referencedTableName="reference_file" />
 			</column>
 		</createTable>
 
@@ -121,20 +135,22 @@
 
 		<createTable tableName="analysis_submission_sequence_file">
 			<column name="analysis_submission_remoteAnalysisId" type="VARCHAR(255)">
-				<constraints nullable="false" primaryKey="true" foreignKeyName="FK_ANALYSIS_SUBMISSION_SEQUENCE_FILE_ID"
+				<constraints nullable="false" primaryKey="true"
+					foreignKeyName="FK_ANALYSIS_SUBMISSION_SEQUENCE_FILE_ID"
 					referencedColumnNames="remoteAnalysisId" referencedTableName="analysis_submission" />
 			</column>
 			<column name="inputFiles_id" type="BIGINT(20)">
-				<constraints unique="true" nullable="false" primaryKey="true" foreignKeyName="FK_INPUT_FILES_ID"
-					referencedColumnNames="id" referencedTableName="sequence_file" />
+				<constraints unique="true" nullable="false" primaryKey="true"
+					foreignKeyName="FK_INPUT_FILES_ID" referencedColumnNames="id"
+					referencedTableName="sequence_file" />
 			</column>
 		</createTable>
 
 		<createTable tableName="analysis_submission_sequence_file_AUD">
 			<column name="REV" type="INT(11)">
 				<constraints nullable="false" primaryKey="true"
-					foreignKeyName="FK_ANALYSIS_SUBMISSION_SEQUENCE_FILE_ID_REV" referencedColumnNames="id"
-					referencedTableName="Revisions" />
+					foreignKeyName="FK_ANALYSIS_SUBMISSION_SEQUENCE_FILE_ID_REV"
+					referencedColumnNames="id" referencedTableName="Revisions" />
 			</column>
 			<column name="analysis_submission_remoteAnalysisId" type="VARCHAR(255)">
 				<constraints primaryKey="true" nullable="false" />
