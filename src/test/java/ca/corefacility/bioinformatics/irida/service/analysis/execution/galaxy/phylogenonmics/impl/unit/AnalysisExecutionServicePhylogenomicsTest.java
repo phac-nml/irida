@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenonmics.impl.unit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowChecksumInvalidException;
@@ -183,6 +184,10 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test
 	public void testGetAnalysisResultsSuccess() throws ExecutionManagerException, IOException {
+		String id = "invalid";
+		
+		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(id);
+		when(analysisSubmissionRepository.exists(id)).thenReturn(true);
 		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).thenReturn(analysisResults);
 		when(analysisService.create(analysisResults)).thenReturn(analysisResults);
 		
@@ -199,8 +204,40 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test(expected=ExecutionManagerException.class)
 	public void testGetAnalysisResultsFail() throws ExecutionManagerException, IOException {
+		String id = "invalid";
+		
+		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(id);
+		when(analysisSubmissionRepository.exists(id)).thenReturn(true);
+		
 		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).
 			thenThrow(new ExecutionManagerException());
+		
+		workflowManagement.getAnalysisResults(analysisSubmission);
+	}
+	
+	/**
+	 * Tests failing to get analysis results due to not being submitted (null id).
+	 * @throws ExecutionManagerException
+	 * @throws IOException 
+	 */
+	@Test(expected=NullPointerException.class)
+	public void testGetAnalysisResultsFailNotSubmittedNullId() throws ExecutionManagerException, IOException {
+		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
+		
+		workflowManagement.getAnalysisResults(analysisSubmission);
+	}
+	
+	/**
+	 * Tests failing to get analysis results due to submission with invalid id.
+	 * @throws ExecutionManagerException
+	 * @throws IOException 
+	 */
+	@Test(expected=EntityNotFoundException.class)
+	public void testGetAnalysisResultsFailAnalysisIdInvalid() throws ExecutionManagerException, IOException {
+		String id = "invalid";
+		
+		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(id);
+		when(analysisSubmissionRepository.exists(id)).thenReturn(false);
 		
 		workflowManagement.getAnalysisResults(analysisSubmission);
 	}

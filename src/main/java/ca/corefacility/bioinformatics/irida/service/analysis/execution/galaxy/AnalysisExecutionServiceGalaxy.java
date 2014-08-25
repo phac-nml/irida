@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowChecksumInvalidException;
@@ -103,6 +104,14 @@ public abstract class AnalysisExecutionServiceGalaxy
 	@Override
 	public A getAnalysisResults(S submittedAnalysis)
 			throws ExecutionManagerException, IOException {
+		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
+		checkNotNull(submittedAnalysis.getRemoteAnalysisId(), "remoteAnalysisId is null");
+		
+		if (!analysisSubmissionRepository.exists(submittedAnalysis.getRemoteAnalysisId())) {
+			throw new EntityNotFoundException("Could not find analysis submission for " + 
+					submittedAnalysis);
+		}
+		
 		String analysisName = submittedAnalysis.getClass().getSimpleName();
 		
 		logger.debug("Getting results for " + analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
@@ -119,8 +128,9 @@ public abstract class AnalysisExecutionServiceGalaxy
 	public WorkflowStatus getWorkflowStatus(S submittedAnalysis)
 			throws ExecutionManagerException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
+		checkNotNull(submittedAnalysis.getRemoteAnalysisId(), "remote analysis id is null");
 		
-		String analysisId = submittedAnalysis.getRemoteAnalysisId();		
+		String analysisId = submittedAnalysis.getRemoteAnalysisId();	
 		return galaxyHistoriesService.getStatusForHistory(analysisId);
 	}
 	
