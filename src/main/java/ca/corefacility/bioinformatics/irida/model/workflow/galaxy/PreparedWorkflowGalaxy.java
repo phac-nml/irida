@@ -7,17 +7,17 @@ import ca.corefacility.bioinformatics.irida.model.workflow.PreparedWorkflow;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class PreparedWorkflowGalaxy implements PreparedWorkflow<GalaxyAnalysisId, WorkflowInputsGalaxy> {
+public class PreparedWorkflowGalaxy implements PreparedWorkflow<WorkflowInputsGalaxy> {
 	
 	private WorkflowInputsGalaxy workflowInputs;
-	private GalaxyAnalysisId galaxyAnalysisId;
+	private String galaxyAnalysisId;
 	
 	/**
 	 * Builds a new PreparedWorkflowGalaxy with the given parameters.
 	 * @param galaxyAnalysisId  The analysisId for the workflow history.
 	 * @param workflowInputs  The inputs to this workflow.
 	 */
-	public PreparedWorkflowGalaxy(GalaxyAnalysisId galaxyAnalysisId, WorkflowInputsGalaxy workflowInputs) {
+	public PreparedWorkflowGalaxy(String galaxyAnalysisId, WorkflowInputsGalaxy workflowInputs) {
 		this.galaxyAnalysisId = galaxyAnalysisId;
 		this.workflowInputs = workflowInputs;
 	}
@@ -34,7 +34,7 @@ public class PreparedWorkflowGalaxy implements PreparedWorkflow<GalaxyAnalysisId
 	 * {@inheritDoc}
 	 */
 	@Override
-	public GalaxyAnalysisId getRemoteAnalysisId() {
+	public String getRemoteAnalysisId() {
 		return galaxyAnalysisId;
 	}
 }

@@ -2,6 +2,15 @@ package ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.ph
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import org.hibernate.envers.Audited;
+
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
@@ -12,10 +21,19 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.Ana
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
+@Entity
+@Table(name = "analysis_submission_phylogenomics")
+@Audited
 public class AnalysisSubmissionPhylogenomics
 	extends AnalysisSubmissionGalaxy<RemoteWorkflowPhylogenomics> {
 	
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "reference_file_id")
 	private ReferenceFile referenceFile;
+	
+	@SuppressWarnings("unused")
+	private AnalysisSubmissionPhylogenomics() {
+	}
 
 	/**
 	 * Builds a new Phylogenomics Pipeline analysis submission with the given information.

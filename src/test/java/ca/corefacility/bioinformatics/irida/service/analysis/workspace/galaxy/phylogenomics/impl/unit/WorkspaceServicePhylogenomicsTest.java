@@ -143,7 +143,7 @@ public class WorkspaceServicePhylogenomicsTest {
 		
 		PreparedWorkflowGalaxy preparedWorkflow = workflowPreparation.prepareAnalysisWorkspace(submission);
 		assertEquals("preparedWorflow history id not equal to " + HISTORY_ID,
-				HISTORY_ID, preparedWorkflow.getRemoteAnalysisId().getRemoteAnalysisId());
+				HISTORY_ID, preparedWorkflow.getRemoteAnalysisId());
 		assertNotNull("workflowInputs in preparedWorkflow is null", preparedWorkflow.getWorkflowInputs());
 	}
 	

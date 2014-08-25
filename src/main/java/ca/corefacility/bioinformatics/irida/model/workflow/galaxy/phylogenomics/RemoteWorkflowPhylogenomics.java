@@ -1,5 +1,13 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics;
 
+import java.util.Objects;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.envers.Audited;
+
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
 
 /**
@@ -7,14 +15,29 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflow
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
+@Entity
+@Table(name = "remote_workflow_phylogenomics")
+@Audited
 public class RemoteWorkflowPhylogenomics extends RemoteWorkflowGalaxy {
 
+	@NotNull
 	private String inputSequenceFilesLabel;
+	
+	@NotNull
 	private String inputReferenceFileLabel;
 	
+	@NotNull
 	private String outputPhylogeneticTreeName;
-	private String outputSsnpMatrixName;
+	
+	@NotNull
+	private String outputSnpMatrixName;
+	
+	@NotNull
 	private String outputSnpTableName;
+	
+	@SuppressWarnings("unused")
+	private RemoteWorkflowPhylogenomics() {
+	}
 	
 	/**
 	 * Creates a new RemoteWorkflowPhylogenomics.
@@ -34,7 +57,7 @@ public class RemoteWorkflowPhylogenomics extends RemoteWorkflowGalaxy {
 		this.inputSequenceFilesLabel = inputSequenceFilesLabel;
 		this.inputReferenceFileLabel = inputReferenceFileLabel;
 		this.outputPhylogeneticTreeName = outputPhylogeneticTreeName;
-		this.outputSsnpMatrixName = outputSnpMatrixName;
+		this.outputSnpMatrixName = outputSnpMatrixName;
 		this.outputSnpTableName = outputSnpTableName;
 	}
 
@@ -51,10 +74,47 @@ public class RemoteWorkflowPhylogenomics extends RemoteWorkflowGalaxy {
 	}
 
 	public String getOutputSnpMatrixName() {
-		return outputSsnpMatrixName;
+		return outputSnpMatrixName;
 	}
 
 	public String getOutputSnpTableName() {
 		return outputSnpTableName;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return "RemoteWorkflowPhylogenomics [inputSequenceFilesLabel="
+				+ inputSequenceFilesLabel + ", inputReferenceFileLabel="
+				+ inputReferenceFileLabel + ", outputPhylogeneticTreeName="
+				+ outputPhylogeneticTreeName + ", outputSnpMatrixName="
+				+ outputSnpMatrixName + ", outputSnpTableName="
+				+ outputSnpTableName + ", toString()=" + super.toString() + "]";
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), inputSequenceFilesLabel,
+				inputReferenceFileLabel, outputPhylogeneticTreeName, outputSnpMatrixName,
+				outputSnpTableName);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		else if (obj instanceof RemoteWorkflowPhylogenomics) {
+			RemoteWorkflowPhylogenomics other = (RemoteWorkflowPhylogenomics)obj;
+			
+			return super.equals(other) && Objects.equals(inputSequenceFilesLabel, other.inputSequenceFilesLabel) &&
+					Objects.equals(inputReferenceFileLabel, other.inputReferenceFileLabel) &&
+					Objects.equals(outputPhylogeneticTreeName, other.outputPhylogeneticTreeName) &&
+					Objects.equals(outputSnpMatrixName, other.outputSnpMatrixName) &&
+					Objects.equals(outputSnpTableName, other.outputSnpTableName);		
+		}
+		
+		return false;
 	}
 }

@@ -13,13 +13,13 @@ package ca.corefacility.bioinformatics.irida.model.workflow;
  * @param <AnalysisIdType> The type of remote analysis id.
  * @param <WorkflowInputsType> The type of WorkflowInputsGeneric.
  */
-public interface PreparedWorkflow<AnalysisIdType extends RemoteAnalysisId, WorkflowInputsType extends WorkflowInputsGeneric> {
+public interface PreparedWorkflow<WorkflowInputsType extends WorkflowInputsGeneric> {
 	
 	/**
-	 * Gets the RemoteAnalysisId this workflow.
-	 * @return  The RemoteAnalysisId for this workflow.
+	 * Gets the analysis id this workflow.
+	 * @return  The analysis id for this workflow.
 	 */
-	public AnalysisIdType getRemoteAnalysisId();
+	public String getRemoteAnalysisId();
 	
 	/**
 	 * Gets the inputs to a workflow.
