@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
@@ -18,6 +19,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputs
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 
@@ -37,13 +40,30 @@ public abstract class AnalysisExecutionServiceGalaxy
 	
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxy.class);
 	
+	@Autowired
+	private AnalysisSubmissionRepository analysisSubmissionRepository;
+	
+	@Autowired
+	private AnalysisRepository analysisRepository;
+	
 	private W workspaceService;
 	
 	protected GalaxyHistoriesService galaxyHistoriesService;
 	protected GalaxyWorkflowService galaxyWorkflowService;
 	
-	public AnalysisExecutionServiceGalaxy(GalaxyWorkflowService galaxyWorkflowService,
+	/**
+	 * Builds a new AnalysisExecutionServiceGalaxy with the given information.
+	 * @param analysisSubmissionRepository  A repository for analysis submissions.
+	 * @param analysisRepository  A repository for analysis results.
+	 * @param galaxyWorkflowService  A service for Galaxy workflows.
+	 * @param galaxyHistoriesService  A service for Galaxy histories.
+	 * @param workspaceService  A service for a workflow workspace.
+	 */
+	public AnalysisExecutionServiceGalaxy(AnalysisSubmissionRepository analysisSubmissionRepository,
+			AnalysisRepository analysisRepository, GalaxyWorkflowService galaxyWorkflowService,
 			GalaxyHistoriesService galaxyHistoriesService, W workspaceService) {
+		this.analysisSubmissionRepository = analysisSubmissionRepository;
+		this.analysisRepository = analysisRepository;
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.workspaceService = workspaceService;
@@ -72,7 +92,8 @@ public abstract class AnalysisExecutionServiceGalaxy
 		galaxyWorkflowService.runWorkflow(input);
 		analysisSubmission.setRemoteAnalysisId(preparedWorkflow.getRemoteAnalysisId());
 		
-		return analysisSubmission;
+		logger.trace("Saving submission " +  analysisName + ": " + remoteWorkflow);
+		return analysisSubmissionRepository.save(analysisSubmission);		
 	}
 	
 	/**
@@ -82,8 +103,12 @@ public abstract class AnalysisExecutionServiceGalaxy
 	public A getAnalysisResults(S submittedAnalysis)
 			throws ExecutionManagerException, IOException {
 		String analysisName = submittedAnalysis.getClass().getSimpleName();
+		
 		logger.debug("Getting results for " + analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
-		return workspaceService.getAnalysisResults(submittedAnalysis);
+		A analysisResults = workspaceService.getAnalysisResults(submittedAnalysis);
+		
+		logger.trace("Saving results " +  analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
+		return analysisRepository.save(analysisResults);
 	}
 
 	/**
