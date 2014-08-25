@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -21,6 +22,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.Timestamped;
@@ -36,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.RemoteWorkflow;
 @Table(name = "analysis_submission")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Audited
+@EntityListeners(AuditingEntityListener.class)
 public abstract class AnalysisSubmission<T extends RemoteWorkflow> implements Timestamped {
 
 	@Id
