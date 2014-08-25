@@ -5,8 +5,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
 
@@ -25,7 +25,7 @@ public class AnalysisExecutionServicePhylogenomics
 	 * classes.
 	 * 
 	 * @param  analysisSubmissionRepository A repository for analysis submissions.
-	 * @param analysisRepository A repository for analysis results.
+	 * @param analysisService A service for analysis results.
 	 * @param galaxyWorkflowService
 	 *            A GalaxyWorkflowService for interacting with Galaxy workflows.
 	 * @param galaxyHistoriesService
@@ -36,11 +36,11 @@ public class AnalysisExecutionServicePhylogenomics
 	 */
 	public AnalysisExecutionServicePhylogenomics(
 			AnalysisSubmissionRepository analysisSubmissionRepository,
-			AnalysisRepository analysisRepository,
+			AnalysisService analysisService,
 			GalaxyWorkflowService galaxyWorkflowService,
 			GalaxyHistoriesService galaxyHistoriesService,
 			WorkspaceServicePhylogenomics workspaceService) {
-		super(analysisSubmissionRepository, analysisRepository,
+		super(analysisSubmissionRepository, analysisService,
 				galaxyWorkflowService, galaxyHistoriesService, workspaceService);
 	}
 }

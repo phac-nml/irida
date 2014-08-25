@@ -19,8 +19,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputs
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 
@@ -44,7 +44,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	
 	@Autowired
-	private AnalysisRepository analysisRepository;
+	private AnalysisService analysisService;
 	
 	private W workspaceService;
 	
@@ -54,16 +54,16 @@ public abstract class AnalysisExecutionServiceGalaxy
 	/**
 	 * Builds a new AnalysisExecutionServiceGalaxy with the given information.
 	 * @param analysisSubmissionRepository  A repository for analysis submissions.
-	 * @param analysisRepository  A repository for analysis results.
+	 * @param analysisService  A service for analysis results.
 	 * @param galaxyWorkflowService  A service for Galaxy workflows.
 	 * @param galaxyHistoriesService  A service for Galaxy histories.
 	 * @param workspaceService  A service for a workflow workspace.
 	 */
 	public AnalysisExecutionServiceGalaxy(AnalysisSubmissionRepository analysisSubmissionRepository,
-			AnalysisRepository analysisRepository, GalaxyWorkflowService galaxyWorkflowService,
+			AnalysisService analysisService, GalaxyWorkflowService galaxyWorkflowService,
 			GalaxyHistoriesService galaxyHistoriesService, W workspaceService) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
-		this.analysisRepository = analysisRepository;
+		this.analysisService = analysisService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.workspaceService = workspaceService;
@@ -99,6 +99,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public A getAnalysisResults(S submittedAnalysis)
 			throws ExecutionManagerException, IOException {
@@ -108,7 +109,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 		A analysisResults = workspaceService.getAnalysisResults(submittedAnalysis);
 		
 		logger.trace("Saving results " +  analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
-		return analysisRepository.save(analysisResults);
+		return (A)analysisService.create(analysisResults);
 	}
 
 	/**

@@ -23,8 +23,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
 
@@ -39,7 +39,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 public class AnalysisExecutionServicePhylogenomicsTest {
 	
 	@Mock private AnalysisSubmissionRepository analysisSubmissionRepository;
-	@Mock private AnalysisRepository analysisRepository;
+	@Mock private AnalysisService analysisService;
 	@Mock private GalaxyHistoriesService galaxyHistoriesService;
 	@Mock private GalaxyWorkflowService galaxyWorkflowService;
 	@Mock private AnalysisSubmissionPhylogenomics analysisSubmission;
@@ -68,7 +68,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		MockitoAnnotations.initMocks(this);
 		
 		workflowManagement = new AnalysisExecutionServicePhylogenomics(analysisSubmissionRepository,
-				analysisRepository, galaxyWorkflowService, galaxyHistoriesService,
+				analysisService, galaxyWorkflowService, galaxyHistoriesService,
 				workspaceServicePhylogenomics);
 		
 		RemoteWorkflowPhylogenomics remoteWorkflow = 
@@ -184,12 +184,12 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Test
 	public void testGetAnalysisResultsSuccess() throws ExecutionManagerException, IOException {
 		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).thenReturn(analysisResults);
-		when(analysisRepository.save(analysisResults)).thenReturn(analysisResults);
+		when(analysisService.create(analysisResults)).thenReturn(analysisResults);
 		
 		AnalysisPhylogenomicsPipeline actualResults = workflowManagement.getAnalysisResults(analysisSubmission);
 		assertEquals("analysisResults should be equal", analysisResults, actualResults);
 		
-		verify(analysisRepository).save(analysisResults);
+		verify(analysisService).create(analysisResults);
 	}
 	
 	/**
