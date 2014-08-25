@@ -90,6 +90,7 @@ public class RemoteAPIController {
 	 */
 	@RequestMapping(value = "/remove", method = RequestMethod.POST)
 	public String removeClient(@RequestParam Long id) {
+		logger.trace("Deleting remote client " + id);
 		remoteAPIService.delete(id);
 
 		return "redirect:/remote_api";
@@ -120,7 +121,6 @@ public class RemoteAPIController {
 			@RequestParam(value = DataTable.REQUEST_PARAM_SORT_DIRECTION, defaultValue = "asc") String direction,
 			@RequestParam(DataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue) {
 
-		logger.trace("Listing apis");
 		String sortString;
 
 		try {
