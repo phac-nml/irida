@@ -33,9 +33,7 @@
 			</column>
 			<column name="REVTYPE" type="TINYINT(4)" />
 			<column name="workflowChecksum" type="VARCHAR(255)" />
-			<column name="createdDate" type="datetime">
-				<constraints nullable="false" />
-			</column>
+			<column name="createdDate" type="datetime" />
 			<column name="modifiedDate" type="datetime" />
 		</createTable>
 
@@ -106,9 +104,7 @@
 			</column>
 			<column name="REVTYPE" type="TINYINT(4)" />
 			<column name="remote_workflow_id" type="VARCHAR(255)" />
-			<column name="createdDate" type="datetime">
-				<constraints nullable="false" />
-			</column>
+			<column name="createdDate" type="datetime" />
 			<column name="modifiedDate" type="datetime" />
 		</createTable>
 
