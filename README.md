@@ -26,7 +26,7 @@ Install Development Environment
 
 This will allow you to make changes to the front end and have them reloaded automagically in the browser when you save a file.
 
-﻿[Livereload Browser Extenions](http://feedback.livereload.com/knowledgebase/articles/86242-how-do-i-install-and-use-the-browser-extensions-)
+[Livereload Browser Extenions](http://feedback.livereload.com/knowledgebase/articles/86242-how-do-i-install-and-use-the-browser-extensions-)
 
 Updating Development Environment
 --------------------------------
@@ -70,6 +70,6 @@ An external configuration file can be installed in /etc/irida/web.conf to set so
 * mail.server.host -- The mail server to send emails from
 * mail.server.protocol -- The mail protocol
 * mail.server.email -- Reply-to email address
-* mail.server.url -- URL of the IRIDA instance for email links
+* server.base.url -- URL of the IRIDA instance for email links
 * mail.server.username -- Reply-to name in the emails
 

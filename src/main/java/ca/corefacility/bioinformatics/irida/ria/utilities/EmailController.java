@@ -39,7 +39,7 @@ public class EmailController {
 	
 	private @Value("${mail.server.email}") String serverEmail;
 
-	private @Value("${mail.server.url}") String serverURL;
+	private @Value("${server.base.url}") String serverURL;
 
 	private JavaMailSender javaMailSender;
 	private TemplateEngine templateEngine;

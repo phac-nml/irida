@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.unit.web;
+package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -26,7 +26,7 @@ import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
-import ca.corefacility.bioinformatics.irida.ria.web.ClientsController;
+import ca.corefacility.bioinformatics.irida.ria.web.oauth.ClientsController;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
 import com.google.common.collect.Lists;
