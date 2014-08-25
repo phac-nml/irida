@@ -70,6 +70,6 @@ An external configuration file can be installed in /etc/irida/web.conf to set so
 * mail.server.host -- The mail server to send emails from
 * mail.server.protocol -- The mail protocol
 * mail.server.email -- Reply-to email address
-* server.baseurl -- URL of the IRIDA instance for email links
+* server.base.url -- URL of the IRIDA instance for email links
 * mail.server.username -- Reply-to name in the emails
 
