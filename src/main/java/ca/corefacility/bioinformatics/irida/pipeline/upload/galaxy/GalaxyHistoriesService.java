@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.model.workflow.DatasetCollectionType;
@@ -175,9 +177,10 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	 * @param history  The history to upload the file into.
 	 * @return A Dataset object for the uploaded file.
 	 * @throws UploadException  If there was an issue uploading the file to Galaxy.
-	 * @throws GalaxyDatasetNotFoundException If a Dataset could not be found for the uploaded file to Galaxy.
+	 * @throws GalaxyDatasetException  If there was an issue finding the corresponding Dataset for the file
+	 * 	in the history.
 	 */
-	public Dataset fileToHistory(Path path, InputFileType fileType, History history) throws UploadException, GalaxyDatasetNotFoundException {
+	public Dataset fileToHistory(Path path, InputFileType fileType, History history) throws UploadException, GalaxyDatasetException {
 		checkNotNull(path, "path is null");
 		checkNotNull(fileType, "fileType is null");
 		checkNotNull(history, "history is null");
@@ -204,7 +207,7 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 			
 			throw new UploadException(message);
 		} else {
-			return getDatasetForFileInHistory(file.getName(), history);
+			return getDatasetForFileInHistory(file.getName(), history.getId());
 		}
 	}
 	
@@ -215,10 +218,11 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	 * @param workflowHistory  The history to upload the files into.String
 	 * @return  A list of Datasets describing each uploaded file.
 	 * @throws UploadException  If an error occured uploading the file.
-	 * @throws GalaxyDatasetNotFoundException If a dataset could not be cpnstructed for the uploaded file.
+	 * @throws GalaxyDatasetException If there was an issue finding the corresponding dataset for
+	 * 	the file in the history
 	 */
 	public List<Dataset> uploadFilesListToHistory(List<Path> dataFiles,
-			InputFileType inputFileType, History history) throws UploadException, GalaxyDatasetNotFoundException {
+			InputFileType inputFileType, History history) throws UploadException, GalaxyDatasetException {
 		checkNotNull(dataFiles, "dataFiles is null");
 		checkNotNull(inputFileType, "inputFileType is null");
 		checkNotNull(history, "history is null");
@@ -319,23 +323,33 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	/**
 	 * Gets a Dataset object for a file with the given name in the given history.
 	 * @param filename  The name of the file to get a Dataset object for.
-	 * @param history  The history to look for the dataset.
+	 * @param historyId  The history id to look for the dataset.
 	 * @return The corresponding dataset for the given file name.
-	 * @throws GalaxyDatasetNotFoundException  If the dataset could not be found.
+	 * @throws GalaxyDatasetException If there was an issue when searching for a dataset.
 	 */
-	public Dataset getDatasetForFileInHistory(String filename, History history) throws GalaxyDatasetNotFoundException {
+	public Dataset getDatasetForFileInHistory(String filename, String historyId) throws GalaxyDatasetException {
 		checkNotNull(filename, "filename is null");
-		checkNotNull(history, "history is null");
+		checkNotNull(historyId, "historyId is null");
 				
 		List<HistoryContents> historyContentsList =
-				historiesClient.showHistoryContents(history.getId());
+				historiesClient.showHistoryContents(historyId);
 
-		Optional<HistoryContents> h = historyContentsList.stream().
-				filter((historyContents) -> filename.equals(historyContents.getName())).findFirst();
-		if (h.isPresent()) {
-			String dataId = h.get().getId();
+		List<HistoryContents> matchingHistoryContents = historyContentsList.stream().
+				filter((historyContents) -> filename.equals(historyContents.getName())).collect(Collectors.toList());
+		
+		// if more than one matching history item
+		if (matchingHistoryContents.size() > 1) {
+			String historyIds = "[";
+			for (HistoryContents content : matchingHistoryContents) {
+				historyIds += content.getId() + ",";
+			}
+			historyIds += "]";
+			throw new GalaxyDatasetException("Found " + matchingHistoryContents.size() + " datasets for file "
+					+ filename + ": " + historyIds);
+		} else if (matchingHistoryContents.size() == 1) {
+			String dataId = matchingHistoryContents.get(0).getId();
 			if (dataId != null) {
-				Dataset dataset = historiesClient.showDataset(history.getId(), dataId);	
+				Dataset dataset = historiesClient.showDataset(historyId, dataId);	
 				if (dataset != null) {
 					return dataset;
 				}
@@ -343,7 +357,7 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 		}
 
 		throw new GalaxyDatasetNotFoundException("dataset for file " + filename +
-				" not found in Galaxy history " + history.getId());
+				" not found in Galaxy history " + historyId);
 	}
 
 	/**
@@ -376,32 +390,6 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 			return findById(id) != null;
 		} catch (ExecutionManagerObjectNotFoundException e) {
 			return false;
-		}
-	}
-
-	/**
-	 * Given a particular output dataset id within a history, get the Galaxy id of this output dataset.
-	 * @param historyId  The history to search through.
-	 * @param name  The file name to find an output id for.
-	 * @param outputIds  The list of output ids to search through.
-	 * @return  The dataset of the corresponding output for the given label within the given history.
-	 * @throws GalaxyDatasetNotFoundException If a dataset could not be found for the corresponding Galaxy information.
-	 */
-	public Dataset getOutputDataset(String historyId,
-			String name, List<String> outputIds) throws GalaxyDatasetNotFoundException {
-		checkNotNull(historyId, "historyId is null");
-		checkNotNull(name, "label is null");
-		checkNotNull(outputIds, "outputIds is null");
-		
-		History history = new History();
-		history.setId(historyId);
-		
-		Dataset dataset = getDatasetForFileInHistory(name, history);
-		
-		if (outputIds.contains(dataset.getId())) {
-			return dataset;
-		} else {
-			throw new GalaxyDatasetNotFoundException("Could not find valid dataset for label " + name + " in history " + historyId);
 		}
 	}
 

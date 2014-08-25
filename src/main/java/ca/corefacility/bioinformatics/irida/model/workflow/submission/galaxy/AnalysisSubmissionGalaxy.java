@@ -2,13 +2,9 @@ package ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy;
 
 import java.util.Set;
 
-import javax.persistence.Transient;
-
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 
 /**
  * Defines an AnalysisSubmission to a Galaxy execution manager.
@@ -18,9 +14,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
  */
 public abstract class AnalysisSubmissionGalaxy<R extends RemoteWorkflowGalaxy>
 	extends AnalysisSubmission<R> {
-	
-	@Transient
-	private WorkflowOutputs outputs;
 	
 	protected AnalysisSubmissionGalaxy() {
 	}
@@ -33,13 +26,5 @@ public abstract class AnalysisSubmissionGalaxy<R extends RemoteWorkflowGalaxy>
 	public AnalysisSubmissionGalaxy(Set<SequenceFile> inputFiles,
 			R remoteWorkflow) {
 		super(inputFiles, remoteWorkflow);
-	}
-
-	public WorkflowOutputs getOutputs() {
-		return outputs;
-	}
-
-	public void setOutputs(WorkflowOutputs outputs) {
-		this.outputs = outputs;
 	}
 }

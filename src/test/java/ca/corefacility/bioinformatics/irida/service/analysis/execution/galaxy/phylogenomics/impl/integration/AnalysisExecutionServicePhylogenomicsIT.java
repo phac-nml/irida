@@ -44,7 +44,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.L
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 
 /**
@@ -145,9 +144,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmission);
 		assertNotNull("analysisSubmitted is null", analysisSubmitted);
 		assertNotNull("remoteAnalysisId is null", analysisSubmitted.getRemoteAnalysisId());
-		
-		WorkflowOutputs output = analysisSubmitted.getOutputs();
-		assertNotNull("output of submitted analysis is null", output);
+
 		WorkflowStatus status = 
 				analysisExecutionServicePhylogenomics.getWorkflowStatus(analysisSubmitted);
 		assertValidStatus(status);
