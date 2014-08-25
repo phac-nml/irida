@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -30,10 +31,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
  *
  */
 @Entity
-@Table(name = "remote_api")
+@Table(name = "remote_api", uniqueConstraints = { @UniqueConstraint(name = RemoteAPI.SERVICE_URI_CONSTRAINT_NAME, columnNames = "serviceURI") })
 @Audited
 @EntityListeners(AuditingEntityListener.class)
 public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
+
+	public static final String SERVICE_URI_CONSTRAINT_NAME = "UK_REMOTE_API_SERVICEURI";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -41,7 +44,7 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 
 	@NotNull
 	@URL
-	@Column(name = "serviceURI", unique = true)
+	@Column(name = "serviceURI")
 	private String serviceURI;
 
 	@NotNull
@@ -50,7 +53,7 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 	private String description;
 
 	@NotNull
-	@Column(name = "clientId", unique = true)
+	@Column(name = "clientId")
 	private String clientId;
 
 	@NotNull
