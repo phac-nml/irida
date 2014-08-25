@@ -50,7 +50,8 @@
                     },
                     {
                         'render': function (data, type, row) {
-                            return '<a class="remoteApiLink" href="' + [[@{/remote_api/}]] + row[0] + '">' + data + '</a>';
+                        	var urlbase = /*[[@{/remote_api/}]]*/ '/remote_api/';
+                            return '<a class="remoteApiLink" href="' + urlbase + row[0] + '">' + data + '</a>';
                         },
                         'targets':1
                     }
