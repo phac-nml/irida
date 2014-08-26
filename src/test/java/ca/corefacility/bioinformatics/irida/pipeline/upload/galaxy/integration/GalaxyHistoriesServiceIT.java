@@ -36,6 +36,8 @@ import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.sun.jersey.api.client.ClientResponse;
@@ -196,6 +198,73 @@ public class GalaxyHistoriesServiceIT {
 		}
 		
 		assertNotNull(foundHistory);
+	}
+	
+	/**
+	 * Tests out successfully constructing a collection of datasets.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test
+	public void testConstructCollectionSuccess() throws ExecutionManagerException {
+		History history = galaxyHistory.newHistoryForWorkflow();
+		Dataset dataset1 = galaxyHistory.fileToHistory(dataFile, FILE_TYPE, history);
+		Dataset dataset2 = galaxyHistory.fileToHistory(dataFile2, FILE_TYPE, history);
+		assertNotNull(dataset1);
+		assertNotNull(dataset2);
+		
+		String collectionName = "collection";
+		
+		CollectionDescription description = new CollectionDescription();
+		description.setName(collectionName);
+		description.setCollectionType(DatasetCollectionType.LIST.toString());
+		
+		HistoryDatasetElement element1 = new HistoryDatasetElement();
+		element1.setId(dataset1.getId());
+		element1.setName(dataset1.getName());
+		description.addDatasetElement(element1);
+		
+		HistoryDatasetElement element2 = new HistoryDatasetElement();
+		element2.setId(dataset2.getId());
+		element2.setName(dataset2.getName());
+		description.addDatasetElement(element2);
+		
+		CollectionResponse collectionResponse = 
+				galaxyHistory.constructCollection(description, history);
+		assertNotNull(collectionResponse);
+		assertEquals(DatasetCollectionType.LIST.toString(), collectionResponse.getCollectionType());
+		assertEquals(history.getId(), collectionResponse.getHistoryId());
+		assertEquals(2, collectionResponse.getElements().size());
+	}
+	
+	/**
+	 * Tests out failure to construct a collection of datasets.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test(expected=ExecutionManagerException.class)
+	public void testConstructCollectionFail() throws ExecutionManagerException {
+		History history = galaxyHistory.newHistoryForWorkflow();
+		Dataset dataset1 = galaxyHistory.fileToHistory(dataFile, FILE_TYPE, history);
+		Dataset datasetInvalid = new Dataset();
+		datasetInvalid.setId("invalidId");
+		assertNotNull(dataset1);
+		
+		String collectionName = "collectionInvalid";
+		
+		CollectionDescription description = new CollectionDescription();
+		description.setName(collectionName);
+		description.setCollectionType(DatasetCollectionType.LIST.toString());
+		
+		HistoryDatasetElement element1 = new HistoryDatasetElement();
+		element1.setId(dataset1.getId());
+		element1.setName(dataset1.getName());
+		description.addDatasetElement(element1);
+		
+		HistoryDatasetElement elementInvalid = new HistoryDatasetElement();
+		elementInvalid.setId(datasetInvalid.getId());
+		elementInvalid.setName(datasetInvalid.getName());
+		description.addDatasetElement(elementInvalid);
+		
+		galaxyHistory.constructCollection(description, history);
 	}
 	
 	/**

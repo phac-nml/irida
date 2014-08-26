@@ -288,6 +288,25 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	}
 	
 	/**
+	 * Builds a new Dataset Collection given the description of this collection.
+	 * @param collectionDescription  A description of the collection to build.
+	 * @param history  The history to build the collection within.
+	 * @return  A CollectionResponse describing the constructed collection.
+	 * @throws ExecutionManagerException  If there was an issue constructing the collection.
+	 */
+	public CollectionResponse constructCollection(CollectionDescription collectionDescription,
+			History history) throws ExecutionManagerException {
+		checkNotNull(collectionDescription, "collectionDescription is null");
+		checkNotNull(history, "history is null");
+		
+		try {
+			return historiesClient.createDatasetCollection(history.getId(), collectionDescription);
+		} catch (RuntimeException e) {
+			throw new ExecutionManagerException("Could not construct dataset collection", e);
+		}
+	}
+	
+	/**
 	 * Constructs a collection containing a list of datasets within a history.
 	 * @param datasets  The datasets to construct a collection around.
 	 * @param history  The history to construct the collection within.
@@ -312,11 +331,7 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 			collectionDescription.addDatasetElement(element);
 		}
 		
-		try {
-			return historiesClient.createDatasetCollection(history.getId(), collectionDescription);
-		} catch (RuntimeException e) {
-			throw new ExecutionManagerException("Could not construct dataset collection", e);
-		}
+		return constructCollection(collectionDescription, history);
 	}
 	
 	
