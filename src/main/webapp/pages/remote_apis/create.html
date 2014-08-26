@@ -47,17 +47,13 @@
 							
 						</div>
                         <div class="panel-footer text-right">
-                            <a type="reset" class="btn btn-default" href="#" th:href="@{/remote_api}">Cancel</a>
+                            <a type="reset" th:text="#{form.btn.cancel}" class="btn btn-default" href="#" th:href="@{/remote_api}">Cancel</a>
                             <button id="create-remoteapi-submit" type="submit" th:text="#{remoteapi.create.button}" class="btn btn-primary submit">Create API</button>
                         </div>
 					</section>
 				</form>
 			</div>
 		</div>
-	</div>
-
-
-	<div layout:fragment="scripts" th:inline="javascript">
 	</div>
 </body>
 </html>
