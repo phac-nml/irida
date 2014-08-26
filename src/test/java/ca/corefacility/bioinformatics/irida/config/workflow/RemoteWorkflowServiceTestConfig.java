@@ -24,10 +24,10 @@ import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomic
 @Configuration
 @Profile("test")
 @Conditional(NonWindowsPlatformCondition.class)
-public class RemoteWorkflowServiceConfig {
+public class RemoteWorkflowServiceTestConfig {
 	
 	private static final Logger logger = LoggerFactory
-			.getLogger(RemoteWorkflowServiceConfig.class);
+			.getLogger(RemoteWorkflowServiceTestConfig.class);
 
 	@Autowired
 	private LocalGalaxy localGalaxy;

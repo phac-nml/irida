@@ -29,7 +29,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.ph
 @Configuration
 @Profile("test")
 @Conditional(NonWindowsPlatformCondition.class)
-public class AnalysisExecutionServiceConfig {
+public class AnalysisExecutionServiceTestConfig {
 
 	@Autowired
 	private LocalGalaxy localGalaxy;
