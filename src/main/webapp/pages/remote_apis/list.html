@@ -16,7 +16,6 @@
                 <table id="remoteapiTable" class="table table-striped table-hover">
                 <thead>
                 <tr th:inline="text">
-                    <th id="id-header">[[#{iridaThing.id}]]<i class="glyphicon"></i></th>
                     <th id="name-header">[[#{remoteapi.name}]]<i class="glyphicon"></i></th>
                     <th id="clientid-header">[[#{remoteapi.clientid}]]<i class="glyphicon"></i></th>
                     <th id="created-header">[[#{iridaThing.timestamp}]]<i class="glyphicon"></i></th>
@@ -42,20 +41,23 @@
                 ajax: /*[[@{'/remote_api/ajax/list'}]]*/ '/remote_api/ajax/list',
                 stateSave: true,
                 stateDuration: -1,
-                order: [[1, "desc"]],
-                columnDefs: [
+                order: [[0, "desc"]],
+                columns: [
                     {
-                    	'className': "remoteApiCol",
-                    	'targets': 0
+                    	"data": "name",
+                    	"render": function (data, type, row) {
+	                         var urlbase = /*[[@{/remote_api/}]]*/ '/remote_api/';
+                             return '<a class="remoteApiLink" href="' + urlbase + row.id + '">' + data + '</a>';
+                         }
                     },
                     {
-                        'render': function (data, type, row) {
-                        	var urlbase = /*[[@{/remote_api/}]]*/ '/remote_api/';
-                            return '<a class="remoteApiLink" href="' + urlbase + row[0] + '">' + data + '</a>';
-                        },
-                        'targets':1
+                    	"data": "clientId"
+                    },
+                    {
+                    	"data": "createdDate"
                     }
                 ]
+                
             });
         });
         /*]]>*/
