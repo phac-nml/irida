@@ -37,7 +37,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
@@ -45,7 +44,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.L
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 
 /**
@@ -146,9 +144,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmission);
 		assertNotNull("analysisSubmitted is null", analysisSubmitted);
 		assertNotNull("remoteAnalysisId is null", analysisSubmitted.getRemoteAnalysisId());
-		
-		WorkflowOutputs output = analysisSubmitted.getOutputs();
-		assertNotNull("output of submitted analysis is null", output);
+
 		WorkflowStatus status = 
 				analysisExecutionServicePhylogenomics.getWorkflowStatus(analysisSubmitted);
 		assertValidStatus(status);
@@ -193,9 +189,9 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		AnalysisPhylogenomicsPipeline analysisResults = analysisExecutionServicePhylogenomics
 				.getAnalysisResults(analysisSubmission);
 
-		GalaxyAnalysisId analysisId = analysisSubmitted.getRemoteAnalysisId();
+		String analysisId = analysisSubmitted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis",
-				analysisId.getRemoteAnalysisId(),
+				analysisId,
 				analysisResults.getExecutionManagerAnalysisId());
 
 		assertEquals("inputFiles should be the same for submission and results",
@@ -230,7 +226,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 
 		waitUntilSubmissionComplete(analysisSubmitted);
 
-		analysisSubmitted.setRemoteAnalysisId(new GalaxyAnalysisId("invalid"));
+		analysisSubmitted.setRemoteAnalysisId("invalid");
 		
 		analysisExecutionServicePhylogenomics
 				.getAnalysisResults(analysisSubmission);

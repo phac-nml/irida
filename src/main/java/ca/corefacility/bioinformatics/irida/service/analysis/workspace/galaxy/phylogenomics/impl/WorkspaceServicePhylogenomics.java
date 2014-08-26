@@ -13,7 +13,6 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyAnalysisId;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
@@ -26,7 +25,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 
 /**
@@ -97,7 +95,7 @@ public class WorkspaceServicePhylogenomics
 				new WorkflowInputs.WorkflowInput(referenceDataset.getId(),
 				WorkflowInputs.InputSourceType.HDA));
 		
-		GalaxyAnalysisId analysisId = new GalaxyAnalysisId(workflowHistory.getId());
+		String analysisId = workflowHistory.getId();
 		
 		return new PreparedWorkflowGalaxy(analysisId, new WorkflowInputsGalaxy(inputs));
 	}
@@ -110,8 +108,6 @@ public class WorkspaceServicePhylogenomics
 			AnalysisSubmissionPhylogenomics analysisSubmission)
 			throws ExecutionManagerException, IOException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
-		checkNotNull(analysisSubmission.getOutputs(),
-				"outputs for analysis is null");
 		checkNotNull(analysisSubmission.getRemoteWorkflow(),
 				"remote workflow is null");
 		checkNotNull(analysisSubmission.getInputFiles(),
@@ -119,25 +115,22 @@ public class WorkspaceServicePhylogenomics
 
 		RemoteWorkflowPhylogenomics remoteWorkflow = analysisSubmission
 				.getRemoteWorkflow();
-		GalaxyAnalysisId analysisId = analysisSubmission.getRemoteAnalysisId();
+		String analysisId = analysisSubmission.getRemoteAnalysisId();
 
 		AnalysisPhylogenomicsPipeline results = new AnalysisPhylogenomicsPipeline(
-				analysisSubmission.getInputFiles(), analysisId.getRemoteAnalysisId());
+				analysisSubmission.getInputFiles(), analysisId);
 
-		WorkflowOutputs outputs = analysisSubmission.getOutputs();
-		List<String> outputIds = outputs.getOutputIds();
-
-		Dataset treeOutput = galaxyHistoriesService.getOutputDataset(
-				analysisId.getRemoteAnalysisId(),
-				remoteWorkflow.getOutputPhylogeneticTreeName(), outputIds);
+		Dataset treeOutput = galaxyHistoriesService.getDatasetForFileInHistory(
+				remoteWorkflow.getOutputPhylogeneticTreeName(),
+				analysisId);
 		
-		Dataset matrixOutput = galaxyHistoriesService.getOutputDataset(
-				analysisId.getRemoteAnalysisId(),
-				remoteWorkflow.getOutputSnpMatrixName(), outputIds);
+		Dataset matrixOutput = galaxyHistoriesService.getDatasetForFileInHistory(
+				remoteWorkflow.getOutputSnpMatrixName(),
+				analysisId);
 		
-		Dataset tableOutput = galaxyHistoriesService.getOutputDataset(
-				analysisId.getRemoteAnalysisId(),
-				remoteWorkflow.getOutputSnpTableName(), outputIds);
+		Dataset tableOutput = galaxyHistoriesService.getDatasetForFileInHistory(
+				remoteWorkflow.getOutputSnpTableName(),
+				analysisId);
 
 		results.setPhylogeneticTree(buildOutputFile(analysisId, treeOutput));
 		results.setSnpMatrix(buildOutputFile(analysisId, matrixOutput));

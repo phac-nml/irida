@@ -7,8 +7,6 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
-
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowChecksumInvalidException;
@@ -71,9 +69,8 @@ public abstract class AnalysisExecutionServiceGalaxy
 		WorkflowInputsGalaxy input = preparedWorkflow.getWorkflowInputs();
 		
 		logger.trace("Executing " + analysisName + ": " + remoteWorkflow);
-		WorkflowOutputs output = galaxyWorkflowService.runWorkflow(input);
+		galaxyWorkflowService.runWorkflow(input);
 		analysisSubmission.setRemoteAnalysisId(preparedWorkflow.getRemoteAnalysisId());
-		analysisSubmission.setOutputs(output);
 		
 		return analysisSubmission;
 	}
@@ -97,7 +94,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 			throws ExecutionManagerException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
 		
-		String analysisId = submittedAnalysis.getRemoteAnalysisId().getRemoteAnalysisId();		
+		String analysisId = submittedAnalysis.getRemoteAnalysisId();		
 		return galaxyHistoriesService.getStatusForHistory(analysisId);
 	}
 	

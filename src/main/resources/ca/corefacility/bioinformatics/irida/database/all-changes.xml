@@ -38,5 +38,6 @@
 	<include file="changesets/2.0/analysis-output-file.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/2.0/oauth-token.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/2.0/remote-api-name.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/analysis-submission.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/2.0/samples-collection-date.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

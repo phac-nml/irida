@@ -77,6 +77,8 @@ public class GalaxyWorkflowsIT {
 
 	private Path dataFile1;
 	private Path dataFile2;
+	private Path dataFile3;
+	private Path dataFile4;
 	private Path dataFileNotExists;
 	
 	private GalaxyInstance galaxyAdminInstance;
@@ -103,6 +105,11 @@ public class GalaxyWorkflowsIT {
 				"testData1.fastq").toURI());
 		dataFile2 = Paths.get(GalaxyWorkflowsIT.class.getResource(
 				"testData2.fastq").toURI());
+		
+		dataFile3 = Paths.get(GalaxyWorkflowsIT.class.getResource(
+				"testData3.fastq").toURI());
+		dataFile4 = Paths.get(GalaxyWorkflowsIT.class.getResource(
+				"testData4.fastq").toURI());
 		
 		dataFileNotExists = Files.createTempFile("temp", ".temp");
 		Files.delete(dataFileNotExists);
@@ -197,11 +204,11 @@ public class GalaxyWorkflowsIT {
 		
 		List<Path> dataFilesForward = new LinkedList<Path>();
 		dataFilesForward.add(dataFile1);
-		dataFilesForward.add(dataFile1);
+		dataFilesForward.add(dataFile2);
 		
 		List<Path> dataFilesReverse = new LinkedList<Path>();
-		dataFilesReverse.add(dataFile2);
-		dataFilesReverse.add(dataFile2);
+		dataFilesReverse.add(dataFile3);
+		dataFilesReverse.add(dataFile4);
 		
 		WorkflowOutputs workflowOutput = runSingleCollectionWorkflow(dataFilesForward,
 						dataFilesReverse, FILE_TYPE, workflowId, workflowInputLabel);

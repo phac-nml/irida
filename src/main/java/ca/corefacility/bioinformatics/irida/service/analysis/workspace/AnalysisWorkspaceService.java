@@ -15,7 +15,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  * @param <P>  The PreparedWorkflow to generate.
  * @param <A>  The Analysis object to return as a result.
  */
-public interface AnalysisWorkspaceService<S extends AnalysisSubmission<?>, P extends PreparedWorkflow<?,?>, A extends Analysis> {
+public interface AnalysisWorkspaceService<S extends AnalysisSubmission<?>, P extends PreparedWorkflow<?>, A extends Analysis> {
 	
 	/**
 	 * Prepares a workflow for an analysis given an analysis submission.

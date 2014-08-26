@@ -50,6 +50,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
@@ -233,11 +234,11 @@ public class GalaxyHistoriesServiceIT {
 	
 	/**
 	 * Tests direct upload of a list of files to a Galaxy history.
-	 * @throws GalaxyDatasetNotFoundException 
 	 * @throws UploadException 
+	 * @throws GalaxyDatasetException 
 	 */
 	@Test
-	public void testUploadFilesListToHistory() throws UploadException, GalaxyDatasetNotFoundException {
+	public void testUploadFilesListToHistory() throws UploadException, GalaxyDatasetException {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		String filename1 = dataFile.toFile().getName();
 		String filename2 = dataFile2.toFile().getName();
@@ -262,11 +263,11 @@ public class GalaxyHistoriesServiceIT {
 	
 	/**
 	 * Tests direct upload of a list of files to a Galaxy history (fail to upload).
-	 * @throws GalaxyDatasetNotFoundException 
 	 * @throws UploadException 
+	 * @throws GalaxyDatasetException 
 	 */
 	@Test(expected=IllegalStateException.class)
-	public void testUploadFilesListToHistoryFail() throws UploadException, GalaxyDatasetNotFoundException {
+	public void testUploadFilesListToHistoryFail() throws UploadException, GalaxyDatasetException {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		List<Path> dataFiles = new LinkedList<>();
 		dataFiles.add(dataFile);
@@ -277,11 +278,11 @@ public class GalaxyHistoriesServiceIT {
 	
 	/**
 	 * Tests direct upload of a file to a Galaxy history.
-	 * @throws GalaxyDatasetNotFoundException 
 	 * @throws UploadException 
+	 * @throws GalaxyDatasetException 
 	 */
 	@Test
-	public void testFileToHistory() throws UploadException, GalaxyDatasetNotFoundException {
+	public void testFileToHistory() throws UploadException, GalaxyDatasetException {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		String filename = dataFile.toFile().getName();
 		Dataset actualDataset = galaxyHistory.fileToHistory(dataFile, FILE_TYPE, history);
@@ -294,22 +295,22 @@ public class GalaxyHistoriesServiceIT {
 	
 	/**
 	 * Tests direct upload of an invalid (not found) file to a Galaxy history.
-	 * @throws GalaxyDatasetNotFoundException 
 	 * @throws UploadException 
+	 * @throws GalaxyDatasetException 
 	 */
 	@Test(expected=IllegalStateException.class)
-	public void testInvalidFileToHistory() throws UploadException, GalaxyDatasetNotFoundException {
+	public void testInvalidFileToHistory() throws UploadException, GalaxyDatasetException {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		galaxyHistory.fileToHistory(dataFileInvalid, FILE_TYPE, history);
 	}
 	
 	/**
 	 * Tests failure to upload file to history due to invalid file type.
-	 * @throws GalaxyDatasetNotFoundException 
 	 * @throws UploadException 
+	 * @throws GalaxyDatasetException 
 	 */
 	@Test(expected=NullPointerException.class)
-	public void testFileToHistoryInvalidType() throws UploadException, GalaxyDatasetNotFoundException {
+	public void testFileToHistoryInvalidType() throws UploadException, GalaxyDatasetException {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		galaxyHistory.fileToHistory(dataFile, INVALID_FILE_TYPE, history);
 	}
@@ -438,38 +439,50 @@ public class GalaxyHistoriesServiceIT {
 	}
 	
 	/**
-	 * Tests getting an output dataset successfully.
-	 * @throws GalaxyDatasetNotFoundException 
+	 * Tests getting a dataset for a file in the history.
 	 * @throws UploadException 
+	 * @throws GalaxyDatasetException 
 	 */
 	@Test
-	public void testGetOutputDatasetSuccess() throws UploadException, GalaxyDatasetNotFoundException {
+	public void testGetDatasetForFileInHistorySuccess() throws UploadException, GalaxyDatasetException {
 		
 		History history = galaxyHistory.newHistoryForWorkflow();
 		Dataset dataset = galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
-		String label = dataset.getName();
+		String datasetName = dataset.getName();
 		
-		List<String> outputIds = Arrays.asList(dataset.getId());
-
-		Dataset actualDataset = galaxyHistory.getOutputDataset(history.getId(), label, outputIds);
+		Dataset actualDataset = galaxyHistory.getDatasetForFileInHistory(datasetName, history.getId());
 		assertEquals("actual output dataset id should equal dataset created id", dataset.getId(), actualDataset.getId());
 	}
 	
 	/**
-	 * Tests failing to get an output dataset.
-	 * @throws GalaxyDatasetNotFoundException 
+	 * Tests getting a dataset for a file in the history and failing.
 	 * @throws UploadException 
+	 * @throws GalaxyDatasetException 
 	 */
 	@Test(expected=GalaxyDatasetNotFoundException.class)
-	public void testGetOutputDatasetFail() throws UploadException, GalaxyDatasetNotFoundException {
+	public void testGetDatasetForFileInHistoryFail() throws UploadException, GalaxyDatasetException {
 		
 		History history = galaxyHistory.newHistoryForWorkflow();
 		Dataset dataset = galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
-		String label = dataset.getName() + "invalid";
+		String datasetName = dataset.getName() + "invalid";
 		
-		List<String> outputIds = Arrays.asList(dataset.getId());
+		galaxyHistory.getDatasetForFileInHistory(datasetName, history.getId());
+	}
+	
+	/**
+	 * Tests getting a dataset for a file in the history and failing due to multiple datasets.
+	 * @throws UploadException 
+	 * @throws GalaxyDatasetException 
+	 */
+	@Test(expected=GalaxyDatasetException.class)
+	public void testGetDatasetForFileInHistoryFailMultipleDatasets() throws UploadException, GalaxyDatasetException {
 		
-		galaxyHistory.getOutputDataset(history.getId(), label, outputIds);
+		History history = galaxyHistory.newHistoryForWorkflow();
+		Dataset dataset1 = galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
+		galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
+		String datasetName = dataset1.getName();
+		
+		galaxyHistory.getDatasetForFileInHistory(datasetName, history.getId());
 	}
 	
 	/**
