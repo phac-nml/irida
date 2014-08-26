@@ -80,6 +80,7 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	@CollectionTable(name = "client_details_scope", joinColumns = @JoinColumn(name = "client_details_id"))
 	private Set<String> scope;
 
+	@Size(min = 1, message = "{client.details.grant.notempty}")
 	@NotNull
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Column(name = "grant_value", nullable = false)
