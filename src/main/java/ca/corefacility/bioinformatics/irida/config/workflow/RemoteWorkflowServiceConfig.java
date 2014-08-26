@@ -28,7 +28,7 @@ public class RemoteWorkflowServiceConfig {
 	private static final Logger logger = LoggerFactory
 			.getLogger(RemoteWorkflowServiceConfig.class);
 	
-	private static final String WORKFLOW_ID = "galaxy.workflow.id";
+	private static final String WORKFLOW_ID = "galaxy.execution.workflow.phylogenomics.id";
 	
 	@Autowired
 	private Environment environment;
