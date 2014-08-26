@@ -211,13 +211,13 @@ public class RemoteAPIController extends BaseController {
 		Page<RemoteAPI> search = remoteAPIService.search(RemoteAPISpecification.searchRemoteAPI(searchValue), pageNum,
 				length, sortDirection, sortString);
 
-		List<List<String>> apiData = new ArrayList<>();
+		List<Map<String, String>> apiData = new ArrayList<>();
 		for (RemoteAPI api : search) {
-			List<String> row = new ArrayList<>();
-			row.add(api.getId().toString());
-			row.add(api.getName());
-			row.add(api.getClientId());
-			row.add(Formats.DATE.format(api.getCreatedDate()));
+			Map<String, String> row = new HashMap<>();
+			row.put("id", api.getId().toString());
+			row.put("name", api.getName());
+			row.put("clientId", api.getClientId());
+			row.put("createdDate", Formats.DATE.format(api.getCreatedDate()));
 
 			apiData.add(row);
 		}
