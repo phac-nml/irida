@@ -18,7 +18,7 @@
 		<!-- add new properties that we're storing for sample -->
 		<addColumn tableName="sample">
 			<column name="collectedBy" type="varchar(255)" />
-			<column name="collectionDate" type="date" />
+			<column name="collectionDate" type="datetime" />
 			<column name="cultureCollection" type="varchar(255)" />
 			<column name="genotype" type="longtext" />
 			<column name="geographicLocationName" type="varchar(255)" />
@@ -39,7 +39,7 @@
 		</addColumn>
 		<addColumn tableName="sample_AUD">
 			<column name="collectedBy" type="varchar(255)" />
-			<column name="collectionDate" type="date" />
+			<column name="collectionDate" type="datetime" />
 			<column name="cultureCollection" type="varchar(255)" />
 			<column name="genotype" type="longtext" />
 			<column name="geographicLocationName" type="varchar(255)" />
