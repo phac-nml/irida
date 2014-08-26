@@ -90,6 +90,17 @@ public class RemoteAPIControllerTest {
 	}
 
 	@Test
+	public void testRemoveRemoteAPI() {
+		Long id = 1l;
+
+		String removeClient = remoteAPIController.removeClient(id);
+
+		assertEquals("redirect:/remote_api", removeClient);
+
+		verify(remoteAPIService).delete(id);
+	}
+
+	@Test
 	public void testGetAddRemoteAPIPage() {
 		ExtendedModelMap model = new ExtendedModelMap();
 
