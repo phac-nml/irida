@@ -206,7 +206,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).thenReturn(analysisResults);
 		when(analysisService.create(analysisResults)).thenReturn(analysisResults);
 		
-		AnalysisPhylogenomicsPipeline actualResults = workflowManagement.getAnalysisResults(analysisSubmission);
+		AnalysisPhylogenomicsPipeline actualResults = workflowManagement.transferAnalysisResults(analysisSubmission);
 		assertEquals("analysisResults should be equal", analysisResults, actualResults);
 		
 		verify(analysisService).create(analysisResults);
@@ -227,7 +227,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).
 			thenThrow(new ExecutionManagerException());
 		
-		workflowManagement.getAnalysisResults(analysisSubmission);
+		workflowManagement.transferAnalysisResults(analysisSubmission);
 	}
 	
 	/**
@@ -239,7 +239,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	public void testGetAnalysisResultsFailNotSubmittedNullId() throws ExecutionManagerException, IOException {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
 		
-		workflowManagement.getAnalysisResults(analysisSubmission);
+		workflowManagement.transferAnalysisResults(analysisSubmission);
 	}
 	
 	/**
@@ -254,6 +254,6 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(id);
 		when(analysisSubmissionRepository.exists(id)).thenReturn(false);
 		
-		workflowManagement.getAnalysisResults(analysisSubmission);
+		workflowManagement.transferAnalysisResults(analysisSubmission);
 	}
 }

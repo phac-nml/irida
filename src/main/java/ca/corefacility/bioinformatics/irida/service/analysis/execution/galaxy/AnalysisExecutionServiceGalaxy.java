@@ -107,7 +107,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public A getAnalysisResults(S submittedAnalysis)
+	public A transferAnalysisResults(S submittedAnalysis)
 			throws ExecutionManagerException, IOException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
 		checkNotNull(submittedAnalysis.getRemoteAnalysisId(), "remoteAnalysisId is null");

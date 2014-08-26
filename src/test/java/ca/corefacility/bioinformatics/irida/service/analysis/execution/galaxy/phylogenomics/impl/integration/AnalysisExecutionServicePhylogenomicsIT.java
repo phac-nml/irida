@@ -285,7 +285,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		waitUntilSubmissionComplete(analysisSubmitted);
 
 		AnalysisPhylogenomicsPipeline analysisResults = analysisExecutionServicePhylogenomics
-				.getAnalysisResults(analysisSubmission);
+				.transferAnalysisResults(analysisSubmission);
 
 		String analysisId = analysisSubmitted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis",
@@ -343,7 +343,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		analysisSubmittedAfter.setRemoteAnalysisId("notSubmittedId");
 		
 		analysisExecutionServicePhylogenomics
-				.getAnalysisResults(analysisSubmittedAfter);
+				.transferAnalysisResults(analysisSubmittedAfter);
 	}
 	
 	/**
