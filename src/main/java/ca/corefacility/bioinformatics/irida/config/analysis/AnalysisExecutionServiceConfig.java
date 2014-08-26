@@ -52,41 +52,65 @@ public class AnalysisExecutionServiceConfig {
 				workspaceService());
 	}
 
+	/**
+	 * @return A new WorkspaceService for the phylogenomic pipeline.
+	 */
 	@Lazy @Bean
 	public WorkspaceServicePhylogenomics workspaceService() {
 		return new WorkspaceServicePhylogenomics(galaxyHistoriesService(), galaxyWorkflowService());
 	}
 
+	/**
+	 * @return A GalaxyWorkflowService for interacting with Galaxy workflows.
+	 */
 	@Lazy @Bean
 	public GalaxyWorkflowService galaxyWorkflowService() {
 		return new GalaxyWorkflowService(historiesClient(), workflowsClient(), workflowChecksumEncoder());
 	}
 
+	/**
+	 * @return  A PasswordEncoder for generating or validating workflow checksums.
+	 */
 	@Lazy @Bean
 	public PasswordEncoder workflowChecksumEncoder() {
 		return new StandardPasswordEncoder();
 	}
 
+	/**
+	 * @return  A WorkflowsClient for interacting with Galaxy.
+	 */
 	@Lazy @Bean
 	public WorkflowsClient workflowsClient() {
 		return galaxyInstance().getWorkflowsClient();
 	}
 
+	/**
+	 * @return  A GalaxyHistoriesService for interacting with Galaxy histories.
+	 */
 	@Lazy @Bean
 	public GalaxyHistoriesService galaxyHistoriesService() {
 		return new GalaxyHistoriesService(historiesClient(), toolsClient());
 	}
 	
+	/**
+	 * @return  A ToolsClient for interacting with Galaxy tools.
+	 */
 	@Lazy @Bean
 	public ToolsClient toolsClient() {
 		return galaxyInstance().getToolsClient();
 	}
 
+	/**
+	 * @return  A HistoriesClient for interacting with Galaxy histories.
+	 */
 	@Lazy @Bean
 	public HistoriesClient historiesClient() {
 		return galaxyInstance().getHistoriesClient();
 	}
 	
+	/**
+	 * @return  An instance of a connection to Galaxy.
+	 */
 	@Lazy @Bean
 	public GalaxyInstance galaxyInstance() {
 		return GalaxyInstanceFactory.get(executionManager.getLocation().toString(),

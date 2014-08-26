@@ -29,7 +29,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflowRepository;
 
 /**
- * Installs a remote workflow within the database.
+ * A class with a main method for installing a remote workflow within the database.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
@@ -38,9 +38,15 @@ public class InstallRemoteWorkflowPhylogenomics {
 	private static final Logger logger = LoggerFactory
 			.getLogger(InstallRemoteWorkflowPhylogenomics.class);
 	
+	/**
+	 * Account authentication parameters.
+	 */
 	private static final String USERNAME_NAME = "username";
 	private static final String PASSWORD_NAME = "password";
 
+	/**
+	 * Workflow parameters.
+	 */
 	private static final String WORKFLOW_ID = "workflowId";
 	private static final String SEQUENCE_INPUT_LABEL = "inputSequenceLabel";
 	private static final String REFERENCE_INPUT_LABEL = "inputReferenceLabel";
@@ -93,7 +99,7 @@ public class InstallRemoteWorkflowPhylogenomics {
 		String username = null;
 		
 		try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
-			context.getEnvironment().setActiveProfiles("dev");
+			context.getEnvironment().setActiveProfiles("prod", "dev", "it");
 			context.register(IridaApiServicesConfig.class);
 			context.register(AnalysisExecutionServiceConfig.class);
 			context.register(ExecutionManagerConfig.class);
