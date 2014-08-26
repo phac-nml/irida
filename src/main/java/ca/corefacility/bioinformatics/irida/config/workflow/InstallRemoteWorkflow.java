@@ -36,8 +36,8 @@ public class InstallRemoteWorkflow {
 	private static final Logger logger = LoggerFactory
 			.getLogger(InstallRemoteWorkflow.class);
 	
-	private static final String USERNAME = "username";
-	private static final String PASSWORD = "password";
+	private static final String USERNAME_NAME = "username";
+	private static final String PASSWORD_NAME = "password";
 
 	private static final String WORKFLOW_ID = "workflowId";
 	private static final String SEQUENCE_INPUT_LABEL = "inputSequenceLabel";
@@ -45,6 +45,33 @@ public class InstallRemoteWorkflow {
 	private static final String TREE_OUTPUT_NAME = "outputTreeName";
 	private static final String MATRIX_OUTPUT_NAME = "outputMatrixName";
 	private static final String SNP_TABLE_OUTPUT_NAME = "outputSnpTableName";
+
+	public static void main(String[] args) {
+		Options options = new Options();
+		options.addOption(null, USERNAME_NAME, true, "username to access the database.");
+		options.addOption(null, PASSWORD_NAME, true, "password for the user.");
+		options.addOption(null, WORKFLOW_ID, true, "id of the workflow in Galaxy.");
+		options.addOption(null, SEQUENCE_INPUT_LABEL, true, "the label of the input sequence files.");
+		options.addOption(null, REFERENCE_INPUT_LABEL, true, "the label of the input reference file.");
+		options.addOption(null, TREE_OUTPUT_NAME, true, "the name of the output tree.");
+		options.addOption(null, MATRIX_OUTPUT_NAME, true, "the name of the output matrix.");
+		options.addOption(null, SNP_TABLE_OUTPUT_NAME, true, "the name of the output snp table.");
+		options.addOption("h", "help", false, "print help statement.");
+		
+		CommandLineParser parser = new BasicParser();
+		try {
+			CommandLine commandLine = parser.parse(options, args);
+			
+			if (commandLine.hasOption("help")) {
+				printUsage(options);
+			} else {
+				handleInstallWorkflow(commandLine, options);
+			}
+		} catch (ParseException e) {
+			logger.error("Error: Command line could not be parsed: " + e.getMessage());
+			printUsage(options);
+		}
+	}
 	
 	/**
 	 * Prints a usage statement for the given options.
@@ -54,8 +81,15 @@ public class InstallRemoteWorkflow {
 		HelpFormatter formatter = new HelpFormatter();
 		formatter.printHelp(InstallRemoteWorkflow.class.getSimpleName(), options);
 	}
-
-	public static void main(String[] args) {
+	
+	/**
+	 * Handles installing a workflow within the database.
+	 * @param commandLine  The parsed command line options to use.
+	 * @param options  The set of options (for printing usage statements).
+	 */
+	private static void handleInstallWorkflow(CommandLine commandLine, Options options) {
+		String username = null;
+		
 		try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
 			context.getEnvironment().setActiveProfiles("dev");
 			context.register(IridaApiServicesConfig.class);
@@ -67,54 +101,32 @@ public class InstallRemoteWorkflow {
 			UserRepository userRepository = context.getBean(UserRepository.class);
 			RemoteWorkflowRepository workflowRepository = context.getBean(RemoteWorkflowRepository.class);
 			AuthenticationProvider authenticationProvider = context.getBean(AuthenticationProvider.class);
-		
-			Options options = new Options();
-			options.addOption(null, USERNAME, true, "username to access the database.");
-			options.addOption(null, PASSWORD, true, "password for the user.");
-			options.addOption(null, WORKFLOW_ID, true, "id of the workflow in Galaxy.");
-			options.addOption(null, SEQUENCE_INPUT_LABEL, true, "the label of the input sequence files.");
-			options.addOption(null, REFERENCE_INPUT_LABEL, true, "the label of the input reference file.");
-			options.addOption(null, TREE_OUTPUT_NAME, true, "the name of the output tree.");
-			options.addOption(null, MATRIX_OUTPUT_NAME, true, "the name of the output matrix.");
-			options.addOption(null, SNP_TABLE_OUTPUT_NAME, true, "the name of the output snp table.");
-			options.addOption("h", "help", true, "print help statement.");
+
+			username = getOptionValue(commandLine, USERNAME_NAME);
+			Authentication authentication = getAuthentication(commandLine, userRepository, authenticationProvider);
 			
-			CommandLineParser parser = new BasicParser();
-			String username = null;
-			try {
-				CommandLine commandLine = parser.parse(options, args);
-				
-				if (commandLine.hasOption("help")) {
-					printUsage(options);
-					System.exit(0);
-				}
-				
-				username = getOptionValue(commandLine, USERNAME);
-				Authentication authentication = getAuthentication(commandLine, userRepository, authenticationProvider);
-				
-				RemoteWorkflowPhylogenomics remoteWorkflow = generateRemoteWorkflow(commandLine, galaxyWorkflowService);
-				logger.info("Built remote workflow: " + remoteWorkflow);
-				
-				logger.info("Attempting to log in as user: " + username);
-				SecurityContextHolder.getContext().setAuthentication(authentication);
-				
-				if (workflowRepository.exists(remoteWorkflow.getWorkflowId())) {
-					logger.info("Workflow " + remoteWorkflow + " already exists, not saving");
-				} else {
-					logger.info("Saving workflow: " + remoteWorkflow);
-					RemoteWorkflow savedWorkflow = workflowRepository.save(remoteWorkflow);
-					logger.info("Workflow saved: " + savedWorkflow);
-				}
-				
-				SecurityContextHolder.clearContext();
-			} catch (ParseException e) {
-				logger.error("Error: Command line could not be parsed: " + e.getMessage());
-				printUsage(options);
-			} catch (WorkflowException e) {
-				logger.error("WorkflowException " + e.getMessage());
-			} catch (BadCredentialsException e) {
-				logger.error("Invalid credentials for user " + username);
+			RemoteWorkflowPhylogenomics remoteWorkflow = generateRemoteWorkflow(commandLine, galaxyWorkflowService);
+			logger.info("Built remote workflow: " + remoteWorkflow);
+			
+			logger.info("Attempting to log in as user: " + username);
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			
+			if (workflowRepository.exists(remoteWorkflow.getWorkflowId())) {
+				logger.info("Workflow " + remoteWorkflow + " already exists, not saving");
+			} else {
+				logger.info("Saving workflow: " + remoteWorkflow);
+				RemoteWorkflow savedWorkflow = workflowRepository.save(remoteWorkflow);
+				logger.info("Workflow saved: " + savedWorkflow);
 			}
+			
+			SecurityContextHolder.clearContext();
+		} catch (ParseException e) {
+			logger.error("Error: Command line could not be parsed: " + e.getMessage());
+			printUsage(options);
+		} catch (WorkflowException e) {
+			logger.error("WorkflowException " + e.getMessage());
+		} catch (BadCredentialsException e) {
+			logger.error("Invalid credentials for user \"" + username + "\"");
 		}
 	}
 
@@ -127,8 +139,8 @@ public class InstallRemoteWorkflow {
 	 * @throws ParseException  If there was an issue parsing user information.
 	 */
 	private static Authentication getAuthentication(CommandLine commandLine, UserRepository userRepository, AuthenticationProvider authenticationProvider) throws ParseException {
-		String userName = getOptionValue(commandLine, USERNAME);
-		String password = getOptionValue(commandLine, PASSWORD);
+		String userName = getOptionValue(commandLine, USERNAME_NAME);
+		String password = getOptionValue(commandLine, PASSWORD_NAME);
 		
 		User user = userRepository.loadUserByUsername(userName);
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, password);
