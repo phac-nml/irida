@@ -1,9 +1,10 @@
 package ca.corefacility.bioinformatics.irida.analysis.integration;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -69,20 +70,41 @@ public class AnalysisWithGalaxyMain {
 			Authentication authentication = new UsernamePasswordAuthenticationToken(adminUser, "password1");
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 			
-			Path sf1 = Paths.get("/Warehouse/Temporary/irida-test/cholera-files-subsample/fastq/2010EL-1749.fastq");
-			Path sf2 = Paths.get("/Warehouse/Temporary/irida-test/cholera-files-subsample/fastq/2010EL-1796.fastq");
-			Path sf3 = Paths.get("/Warehouse/Temporary/irida-test/cholera-files-subsample/fastq/2010EL-1798.fastq");
-			List<Path> sequenceFilePaths = Arrays.asList(sf1, sf2, sf3);
+			List<Path> sequenceFiles = new ArrayList<>();
+			Files.walk(Paths.get("/home/aaron/tmp/cholera-files-subsample/fastq")).forEach(filePath -> {
+			    if (Files.isRegularFile(filePath)) {
+			        sequenceFiles.add(filePath);
+			    }
+			});
+			List<Path> sequenceFilePaths = createTemporaryFilesFrom(sequenceFiles);
 			
-			Path rf = Paths.get("/Warehouse/Temporary/irida-test/cholera-files-subsample/reference/2010EL-1786-c1_2000_2400kb.fasta");
+			Path rf = Paths.get("/home/aaron/tmp/cholera-files-subsample/reference/2010EL-1786-c1_2000_2400kb.fasta");			
+			Path referenceFile = createTempFileFor(rf);
 			
 			RemoteWorkflowPhylogenomics remoteWorkflow = remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
 
 			AnalysisSubmissionPhylogenomics submission = setupSubmissionInDatabase(sequenceFilePaths,
-					rf, remoteWorkflow);
+					referenceFile, remoteWorkflow);
 			
 			analysisExecutionServicePhylogenomics.executeAnalysis(submission);
 		}
+	}
+	
+	private static Path createTempFileFor(Path file) throws IOException {
+		String filename = file.getFileName().toString();
+		Path temp = Files.createTempFile(filename, ".fastq");
+		temp.toFile().delete();
+		Files.createLink(temp, file);
+		return temp;
+	}
+	
+	private static List<Path> createTemporaryFilesFrom(List<Path> files) throws IOException {
+		List<Path> tempFiles = new ArrayList<>();
+		for (Path file : files) {
+			tempFiles.add(createTempFileFor(file));
+		}
+		
+		return tempFiles;
 	}
 	
 	private static ReferenceFile saveReferenceFile(Path referenceFilePath) {
