@@ -44,8 +44,8 @@ public class ExecutionManagerConfig {
 	 * Property names for a Galaxy instance to execution jobs on.
 	 */
 	private static final String URL_EXECUTION_PROPERTY = "galaxy.execution.url";
-	private static final String API_KEY_EXECUTION_PROPERTY = "galaxy.execution.admin.apiKey";
-	private static final String ADMIN_EMAIL_EXECUTION_PROPERTY = "galaxy.execution.admin.email";
+	private static final String API_KEY_EXECUTION_PROPERTY = "galaxy.execution.apiKey";
+	private static final String EMAIL_EXECUTION_PROPERTY = "galaxy.execution.email";
 	private static final String DATA_STORAGE_EXECUTION_PROPERTY = "galaxy.execution.dataStorage";
 
 	/**
@@ -77,7 +77,7 @@ public class ExecutionManagerConfig {
 	public ExecutionManagerGalaxy executionManager() {
 		try {			
 			return buildExecutionManager(URL_EXECUTION_PROPERTY, API_KEY_EXECUTION_PROPERTY,
-					ADMIN_EMAIL_EXECUTION_PROPERTY, DATA_STORAGE_EXECUTION_PROPERTY);
+					EMAIL_EXECUTION_PROPERTY, DATA_STORAGE_EXECUTION_PROPERTY);
 		} catch (ExecutionManagerConfigurationException e) {
 			logger.error("Could not build ExecutionManagerGalaxy: " + e.getMessage());
 		} catch (ConstraintViolationException e) {
