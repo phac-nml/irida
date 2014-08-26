@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import org.slf4j.Logger;
@@ -28,10 +27,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.repositories.specification.RemoteAPISpecification;
+import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMessage;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
+import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 /**
@@ -44,7 +46,7 @@ import com.google.common.collect.Lists;
 @Controller
 @RequestMapping("/remote_api")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
-public class RemoteAPIController {
+public class RemoteAPIController extends BaseController {
 	private static final Logger logger = LoggerFactory.getLogger(RemoteAPIController.class);
 
 	public static final String CLIENTS_PAGE = "remote_apis/list";
@@ -57,6 +59,12 @@ public class RemoteAPIController {
 
 	private final RemoteAPIService remoteAPIService;
 	private final MessageSource messageSource;
+
+	// Map storing the message names for the
+	// getErrorsFromDataIntegrityViolationException method
+	private Map<String, ExceptionPropertyAndMessage> errorMessages = ImmutableMap.of(
+			RemoteAPI.SERVICE_URI_CONSTRAINT_NAME, new ExceptionPropertyAndMessage("serviceURI",
+					"remoteapi.create.serviceURIConflict"));
 
 	@Autowired
 	public RemoteAPIController(RemoteAPIService remoteAPIService, MessageSource messageSource) {
@@ -143,18 +151,10 @@ public class RemoteAPIController {
 			responsePage = "redirect:/remote_api/" + create.getId();
 		} catch (ConstraintViolationException ex) {
 			logger.error("Error creating api: " + ex.getMessage());
-			for (ConstraintViolation<?> cv : ex.getConstraintViolations()) {
-				String paramError = cv.getPropertyPath().toString();
-				logger.error("Error in field: " + paramError + " message: " + cv.getMessage());
-				errors.put(paramError, cv.getMessage());
-			}
+			errors.putAll(getErrorsFromViolationException(ex));
 		} catch (DataIntegrityViolationException ex) {
 			logger.error("Error creating api: " + ex.getMessage());
-			if (ex.getMessage().contains(RemoteAPI.SERVICE_URI_CONSTRAINT_NAME)) {
-				errors.put("serviceURI", messageSource.getMessage("remoteapi.create.serviceURIConflict", null, locale));
-			} else {
-				throw ex;
-			}
+			errors.putAll(getErrorsFromDataIntegrityViolationException(ex, errorMessages, messageSource, locale));
 		}
 
 		if (!errors.isEmpty()) {
