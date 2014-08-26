@@ -29,6 +29,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -78,6 +79,7 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	@CollectionTable(name = "client_details_scope", joinColumns = @JoinColumn(name = "client_details_id"))
 	private Set<String> scope;
 
+	@NotEmpty
 	@NotNull
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Column(name = "grant_value", nullable = false)
