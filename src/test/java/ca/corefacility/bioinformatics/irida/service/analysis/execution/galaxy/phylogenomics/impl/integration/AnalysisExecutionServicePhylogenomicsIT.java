@@ -1,8 +1,13 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.integration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
@@ -13,6 +18,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -28,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServiceConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowChecksumInvalidException;
@@ -35,16 +43,24 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflowRepository;
+import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
  * Tests out the analysis service for the phylogenomic pipeline.
@@ -59,11 +75,28 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 		RemoteWorkflowServiceConfig.class})
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-		DbUnitTestExecutionListener.class })
+		DbUnitTestExecutionListener.class, WithSecurityContextTestExcecutionListener.class })
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
+@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisExecutionServicePhylogenomicsIT {
 	
 	@Autowired
 	private LocalGalaxy localGalaxy;
+	
+	@Autowired
+	private ReferenceFileRepository referenceFileRepository;
+	
+	@Autowired
+	private SequenceFileRepository sequenceFileRepository;
+	
+	@Autowired
+	private RemoteWorkflowRepository remoteWorkflowRepository;
+	
+	@Autowired
+	private AnalysisSubmissionRepository analysisSubmissionRepository;
+	
+	@Autowired
+	private AnalysisService analysisService;
 	
 	@Autowired
 	private AnalysisExecutionServicePhylogenomics 
@@ -83,43 +116,61 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	
 	@Autowired
 	private GalaxyWorkflowService galaxyWorkflowService;
-	
-	private Path dataFile;
-	private Path referenceFile;
-	private Set<SequenceFile> sequenceFiles;
+		
+	private Path sequenceFilePath;
+	private Path referenceFilePath;
 	
 	private Path expectedSnpMatrix;
 	private Path expectedSnpTable;
-	private Path expectedTree;
-	
-	private AnalysisSubmissionPhylogenomics
-		analysisSubmission;
+	private Path expectedTree;	
 	
 	/**
 	 * Sets up variables for testing.
 	 * @throws URISyntaxException
+	 * @throws IOException 
 	 */
 	@Before
-	public void setup() throws URISyntaxException {
+	public void setup() throws URISyntaxException, IOException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 		
-		dataFile = Paths.get(AnalysisExecutionServicePhylogenomicsIT.class.getResource(
-				"testData1.fastq").toURI());
-		referenceFile = Paths.get(AnalysisExecutionServicePhylogenomicsIT.class.getResource(
+		Path sequenceFilePathReal = Paths.get(AnalysisExecutionServicePhylogenomicsIT.class.getResource(
+				"testData1.fastq").toURI());		
+		Path referenceFilePathReal = Paths.get(AnalysisExecutionServicePhylogenomicsIT.class.getResource(
 				"testReference.fasta").toURI());
+		
+		sequenceFilePath = Files.createTempFile("testData1", ".fastq");
+		Files.delete(sequenceFilePath);
+		Files.copy(sequenceFilePathReal, sequenceFilePath);
+		
+		referenceFilePath = Files.createTempFile("testReference", ".fasta");
+		Files.delete(referenceFilePath);
+		Files.copy(referenceFilePathReal, referenceFilePath);
 		
 		expectedSnpMatrix = localGalaxy.getWorkflowCorePipelineTestMatrix();
 		expectedSnpTable = localGalaxy.getWorkflowCorePipelineTestSnpTable();
 		expectedTree = localGalaxy.getWorkflowCorePipelineTestTree();
+	}
+	
+	/**
+	 * Sets up an AnalysisSubmission and saves all dependencies in database.
+	 * @param sequenceFilePath  The path to an input sequence file for this test.
+	 * @param referenceFilePath  The path to an input reference file for this test.
+	 * @param remoteWorkflow  A remote workflow to execute for this test.
+	 * @return  An AnalysisSubmissionPhylogenomics which has been saved to the database.
+	 */
+	private AnalysisSubmissionPhylogenomics setupSubmissionInDatabase(Path sequenceFilePath,
+		Path referenceFilePath, RemoteWorkflowPhylogenomics remoteWorkflow) {					
+		SequenceFile sequenceFile = sequenceFileRepository.save(new SequenceFile(sequenceFilePath));
+		
+		Set<SequenceFile> sequenceFiles = new HashSet<>();
+		sequenceFiles.add(sequenceFile);
+		
+		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 				
-		sequenceFiles = new HashSet<>();
-		sequenceFiles.add(new SequenceFile(dataFile));
+		RemoteWorkflowPhylogenomics remoteWorkflowSaved = remoteWorkflowRepository.save(remoteWorkflow);
 		
-		RemoteWorkflowPhylogenomics remoteWorkflow =
-				remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
-		
-		analysisSubmission = new AnalysisSubmissionPhylogenomics(sequenceFiles,
-				new ReferenceFile(referenceFile),remoteWorkflow);
+		return new AnalysisSubmissionPhylogenomics(sequenceFiles,
+				referenceFile, remoteWorkflowSaved);
 	}
 	
 	/**
@@ -139,7 +190,14 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	 * @throws ExecutionManagerException 
 	 */
 	@Test
-	public void testExecuteAnalysisSuccess() throws InterruptedException, ExecutionManagerException {		
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testExecuteAnalysisSuccess() throws InterruptedException, ExecutionManagerException {
+		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = 
+				remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
+		
+		AnalysisSubmissionPhylogenomics analysisSubmission = 
+				setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
+		
 		AnalysisSubmissionPhylogenomics analysisSubmitted = 
 				analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmission);
 		assertNotNull("analysisSubmitted is null", analysisSubmitted);
@@ -148,6 +206,32 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		WorkflowStatus status = 
 				analysisExecutionServicePhylogenomics.getWorkflowStatus(analysisSubmitted);
 		assertValidStatus(status);
+		
+		AnalysisSubmissionPhylogenomics savedSubmission = analysisSubmissionRepository.getByType(analysisSubmitted.getRemoteAnalysisId(),
+				AnalysisSubmissionPhylogenomics.class);
+		
+		assertEquals(analysisSubmitted.getRemoteAnalysisId(), savedSubmission.getRemoteAnalysisId());
+		assertEquals(analysisSubmitted.getRemoteWorkflow(), savedSubmission.getRemoteWorkflow());
+		assertEquals(analysisSubmitted.getInputFiles(), savedSubmission.getInputFiles());
+		assertEquals(analysisSubmitted.getReferenceFile(), savedSubmission.getReferenceFile());
+	}
+	
+	/**
+	 * Tests out attempting to submit an analysis twice.
+	 * @throws IllegalArgumentException 
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testExecuteAnalysisFailTwice() throws ExecutionManagerException {
+		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = 
+				remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
+		
+		AnalysisSubmissionPhylogenomics analysisSubmission 
+			= setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
+		
+		AnalysisSubmissionPhylogenomics submitted 
+			= analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmission);
+		analysisExecutionServicePhylogenomics.executeAnalysis(submitted);
 	}
 
 	/**
@@ -155,9 +239,13 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	 * @throws ExecutionManagerException 
 	 */
 	@Test(expected=WorkflowException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testExecuteAnalysisFailInvalidWorkflow() throws ExecutionManagerException {
-		analysisSubmission.setRemoteWorkflow(
-				remoteWorkflowServicePhylogenomicsInvalidId.getCurrentWorkflow());
+		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = 
+				remoteWorkflowServicePhylogenomicsInvalidId.getCurrentWorkflow();
+		
+		AnalysisSubmissionPhylogenomics analysisSubmission = 
+				setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
 		analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmission);
 	}
@@ -167,9 +255,13 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	 * @throws ExecutionManagerException 
 	 */
 	@Test(expected=WorkflowChecksumInvalidException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testExecuteAnalysisFailInvalidChecksum() throws ExecutionManagerException {
-		analysisSubmission.setRemoteWorkflow(
-				remoteWorkflowServicePhylogenomicsInvalidChecksum.getCurrentWorkflow());
+		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = 
+				remoteWorkflowServicePhylogenomicsInvalidChecksum.getCurrentWorkflow();
+		
+		AnalysisSubmissionPhylogenomics analysisSubmission = 
+				setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
 		analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmission);
 	}
@@ -179,15 +271,21 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	 * @throws Exception 
 	 */
 	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetAnalysisResultsSuccess() throws Exception {	
-
+		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = 
+				remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
+		
+		AnalysisSubmissionPhylogenomics analysisSubmission = 
+				setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
+		
 		AnalysisSubmissionPhylogenomics analysisSubmitted = analysisExecutionServicePhylogenomics
 				.executeAnalysis(analysisSubmission);
 
 		waitUntilSubmissionComplete(analysisSubmitted);
 
 		AnalysisPhylogenomicsPipeline analysisResults = analysisExecutionServicePhylogenomics
-				.getAnalysisResults(analysisSubmission);
+				.transferAnalysisResults(analysisSubmission);
 
 		String analysisId = analysisSubmitted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis",
@@ -212,24 +310,40 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		assertTrue("snpTable should be correct",
 				com.google.common.io.Files.equal(expectedSnpTable.toFile(),
 						snpTable.getFile().toFile()));
+		
+		Analysis savedAnalysis = analysisService.read(analysisResults.getId());
+		assertTrue(savedAnalysis instanceof AnalysisPhylogenomicsPipeline);
+		AnalysisPhylogenomicsPipeline savedPhylogenomics = (AnalysisPhylogenomicsPipeline)savedAnalysis;
+		
+		assertEquals(analysisResults.getId(), savedPhylogenomics.getId());
+		assertEquals(analysisResults.getPhylogeneticTree().getFile(), savedPhylogenomics.getPhylogeneticTree().getFile());
+		assertEquals(analysisResults.getSnpMatrix().getFile(), savedPhylogenomics.getSnpMatrix().getFile());
+		assertEquals(analysisResults.getSnpTable().getFile(), savedPhylogenomics.getSnpTable().getFile());
+		assertEquals(analysisResults.getInputSequenceFiles(), savedPhylogenomics.getInputSequenceFiles());
 	}
 	
 	/**
-	 * Tests out failing to get analysis results due to an invalid analysis id.
+	 * Tests out failing to get analysis results due to analysis not being submitted.
 	 * @throws Exception 
 	 */
-	@Test(expected=RuntimeException.class)
+	@Test(expected=EntityNotFoundException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetAnalysisResultsFail() throws Exception {	
+		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = 
+				remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
+		
+		AnalysisSubmissionPhylogenomics analysisSubmissionBefore = 
+				setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
+		
+		AnalysisSubmissionPhylogenomics analysisSubmittedAfter = analysisExecutionServicePhylogenomics
+				.executeAnalysis(analysisSubmissionBefore);
 
-		AnalysisSubmissionPhylogenomics analysisSubmitted = analysisExecutionServicePhylogenomics
-				.executeAnalysis(analysisSubmission);
+		waitUntilSubmissionComplete(analysisSubmittedAfter);
 
-		waitUntilSubmissionComplete(analysisSubmitted);
-
-		analysisSubmitted.setRemoteAnalysisId("invalid");
+		analysisSubmittedAfter.setRemoteAnalysisId("notSubmittedId");
 		
 		analysisExecutionServicePhylogenomics
-				.getAnalysisResults(analysisSubmission);
+				.transferAnalysisResults(analysisSubmittedAfter);
 	}
 	
 	/**
