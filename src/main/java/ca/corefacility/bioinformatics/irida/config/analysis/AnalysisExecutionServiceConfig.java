@@ -59,11 +59,11 @@ public class AnalysisExecutionServiceConfig {
 
 	@Lazy @Bean
 	public GalaxyWorkflowService galaxyWorkflowService() {
-		return new GalaxyWorkflowService(historiesClient(), workflowsClient(), passwordEncoder());
+		return new GalaxyWorkflowService(historiesClient(), workflowsClient(), workflowChecksumEncoder());
 	}
 
 	@Lazy @Bean
-	public PasswordEncoder passwordEncoder() {
+	public PasswordEncoder workflowChecksumEncoder() {
 		return new StandardPasswordEncoder();
 	}
 
