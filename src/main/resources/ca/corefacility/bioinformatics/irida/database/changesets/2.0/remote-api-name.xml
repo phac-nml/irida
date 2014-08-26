@@ -15,5 +15,28 @@
 		<addColumn tableName="remote_api_AUD">
 			<column name="name" type="varchar(255)" />
 		</addColumn>
+
+
+		<!-- Update the name of the remote api uk constraint -->
+		<dropColumn columnName="serviceURI" tableName="remote_api" />
+
+		<addColumn tableName="remote_api">
+			<column name="serviceURI" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+
+		<addUniqueConstraint columnNames="serviceURI"
+			constraintName="UK_REMOTE_API_SERVICEURI" tableName="remote_api" />
+			
+		<!-- Remove the clientid unique key -->
+		<dropColumn columnName="clientId" tableName="remote_api" />
+		
+		<addColumn tableName="remote_api">
+			<column name="clientId" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+
 	</changeSet>
 </databaseChangeLog>
