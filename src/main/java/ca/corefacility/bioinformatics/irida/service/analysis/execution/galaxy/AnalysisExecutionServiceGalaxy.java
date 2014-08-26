@@ -5,6 +5,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.io.IOException;
 
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +78,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional
 	public S executeAnalysis(S analysisSubmission)
 					throws ExecutionManagerException {
 		
@@ -107,6 +110,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional
 	public A transferAnalysisResults(S submittedAnalysis)
 			throws ExecutionManagerException, IOException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
