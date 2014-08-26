@@ -90,7 +90,7 @@ public class RemoteAPIControllerTest {
 	}
 
 	@Test
-	public void testGetAddClientPage() {
+	public void testGetAddRemoteAPIPage() {
 		ExtendedModelMap model = new ExtendedModelMap();
 
 		String addClientPage = remoteAPIController.getAddRemoteAPIPage(model);
@@ -100,7 +100,7 @@ public class RemoteAPIControllerTest {
 	}
 
 	@Test
-	public void testPostCreateClient() {
+	public void testPostCreateRemoteAPI() {
 		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
 		client.setId(1l);
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -114,7 +114,7 @@ public class RemoteAPIControllerTest {
 	}
 
 	@Test
-	public void testPostCreateClientError() {
+	public void testPostCreateRemoteAPIError() {
 		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
 		client.setId(1l);
 		ExtendedModelMap model = new ExtendedModelMap();
