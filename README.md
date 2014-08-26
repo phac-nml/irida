@@ -64,6 +64,12 @@ To link up the API with a running instance of Galaxy, the following steps need t
         ##  files are shared between the NGS Archive and Galaxy (e.g. over NFS).
         galaxy.uploader.dataStorage=local
 
+3. A workflow must be installed within the database.  This can be accomplished by running the following command:
+
+        java -jar irida-tools.jar ca.corefacility.bioinformatics.irida.config.workflow.InstallRemoteWorkflowPhylogenomics --username [username] --password [password] --workflowId [id] --inputSequenceLabel [label] --inputReferenceLabel [label] --outputTreeName [tree name] --outputMatrixName [matrix name] --outputSnpTableName [snp table name]
+
+   Where the above options can be found within the Galaxy workflow.
+
 Please see the main IRIDA installation guide for more details.
 
 Running the Tests

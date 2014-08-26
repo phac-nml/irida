@@ -33,10 +33,10 @@ import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflow
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class InstallRemoteWorkflow {
+public class InstallRemoteWorkflowPhylogenomics {
 	
 	private static final Logger logger = LoggerFactory
-			.getLogger(InstallRemoteWorkflow.class);
+			.getLogger(InstallRemoteWorkflowPhylogenomics.class);
 	
 	private static final String USERNAME_NAME = "username";
 	private static final String PASSWORD_NAME = "password";
@@ -81,7 +81,7 @@ public class InstallRemoteWorkflow {
 	 */
 	private static void printUsage(Options options) {
 		HelpFormatter formatter = new HelpFormatter();
-		formatter.printHelp(InstallRemoteWorkflow.class.getSimpleName(), options);
+		formatter.printHelp(InstallRemoteWorkflowPhylogenomics.class.getSimpleName(), options);
 	}
 	
 	/**
