@@ -34,7 +34,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
-import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServiceConfig;
+import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServiceTestConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
@@ -72,7 +72,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 		IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class,
 		IridaApiTestMultithreadingConfig.class, NonWindowsLocalGalaxyConfig.class,
 		WindowsLocalGalaxyConfig.class, AnalysisExecutionServiceTestConfig.class,
-		RemoteWorkflowServiceConfig.class})
+		RemoteWorkflowServiceTestConfig.class})
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class, WithSecurityContextTestExcecutionListener.class })
