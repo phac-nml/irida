@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config.workflow;
 
+import java.io.Console;
+
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -140,7 +142,16 @@ public class InstallRemoteWorkflow {
 	 */
 	private static Authentication getAuthentication(CommandLine commandLine, UserRepository userRepository, AuthenticationProvider authenticationProvider) throws ParseException {
 		String userName = getOptionValue(commandLine, USERNAME_NAME);
-		String password = getOptionValue(commandLine, PASSWORD_NAME);
+		String password;
+		
+		if (!commandLine.hasOption(PASSWORD_NAME)) {
+			Console console = System.console();
+
+			System.out.print("Password: ");
+			password = new String(console.readPassword());
+		} else {
+			password = getOptionValue(commandLine, PASSWORD_NAME);
+		}
 		
 		User user = userRepository.loadUserByUsername(userName);
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, password);
