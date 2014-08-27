@@ -15,7 +15,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  * @param <S> The type of AnalysisSubmission to perform.
  */
 public interface AnalysisExecutionService
-	<A extends Analysis, S extends AnalysisSubmission<?>> {
+	<A extends Analysis, S extends AnalysisSubmission> {
 
 	/**
 	 * Executes the passed AnalysisSubmission in an execution manager.

@@ -35,6 +35,7 @@
 	<reference_file />
 
 	<analysis_submission />
+	<analysis_submission_galaxy />
 	<analysis_submission_phylogenomics />
 	<analysis_submission_sequence_file />
 
@@ -65,6 +66,7 @@
 	<remote_workflow_AUD />
 	<remote_workflow_phylogenomics_AUD />
 	<analysis_submission_AUD />
+	<analysis_submission_galaxy_AUD />
 	<analysis_submission_phylogenomics_AUD />
 	<analysis_submission_sequence_file_AUD />
 	<system_role_AUD />

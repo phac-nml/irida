@@ -162,7 +162,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	 * @param submission  The submission to check.
 	 * @throws EntityNotFoundException  If the given analysis submission does not exist in the database.
 	 */
-	private void verifyAnalysisSubmissionExists(AnalysisSubmission<?> submission) 
+	private void verifyAnalysisSubmissionExists(AnalysisSubmission submission) 
 			throws EntityNotFoundException {
 		if (!analysisSubmissionRepository.exists(submission.getRemoteAnalysisId())) {
 			throw new EntityNotFoundException("Could not find analysis submission for " + 
