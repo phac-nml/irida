@@ -48,12 +48,14 @@
                             <div class="form-group">
                                 <label class="control-label" th:text="#{client.scopes}" for="scopes">_Scopes_</label>
                                 <div id="scope-error" th:if="${#maps.containsKey(errors, 'scope')}" th:text="${errors.scope}" class="alert alert-warning">_Scope Error_</div>
-                                <p>
-                                <label for="scope_read">Read</label>
-                                <input type="checkbox" id="scope_read" name="scope_read" th:checked="${given_scope_read}" checked="checked" value="read"/>
-                                <label for="scope_write">Write</label>
-                                <input type="checkbox" id="scope_write" name="scope_write" th:checked="${given_scope_write}" checked="checked" value="write"/>
-                                </p>
+                                <div class="checkbox">
+                                    <input type="checkbox" id="scope_read" name="scope_read" th:checked="${given_scope_read}" checked="checked" value="read"/>
+                                    <label for="scope_read">Read</label>
+                                </div>
+                                <div class="checkbox">
+                                    <input type="checkbox" id="scope_write" name="scope_write" th:checked="${given_scope_write}" checked="checked" value="write"/>
+                                    <label for="scope_write">Write</label>
+                                </div>
                             </div>
 							
 						</div>
