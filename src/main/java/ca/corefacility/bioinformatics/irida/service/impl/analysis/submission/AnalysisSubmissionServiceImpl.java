@@ -7,6 +7,8 @@ import javax.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -51,5 +53,17 @@ public class AnalysisSubmissionServiceImpl extends
 		AnalysisSubmission submission = this.read(analysisSubmissionId);
 
 		return submission.getAnalysisState();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setStateForAnalysisSubmission(String analysisSubmissionId,
+			AnalysisState state) throws EntityNotFoundException {
+		checkNotNull(analysisSubmissionId, "analysisSubmissionId is null");
+		checkNotNull(state, "state is null");
+		
+		update(analysisSubmissionId, ImmutableMap.of("analysisState", state));
 	}
 }

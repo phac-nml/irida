@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionServiceImpl;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -60,5 +61,28 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetStateForAnalysisFail() {		
 		analysisSubmissionService.getStateForAnalysis("2");
+	}
+	
+	/**
+	 * Tests successfully setting the state for an analysis submission.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testSetStateForAnalysisSubmissionSuccess() {		
+		AnalysisSubmission submission = analysisSubmissionService.read("1");
+		assertEquals(AnalysisState.SUBMITTED, submission.getAnalysisState());
+		
+		analysisSubmissionService.setStateForAnalysisSubmission("1", AnalysisState.RUNNING);
+		submission = analysisSubmissionService.read("1");
+		assertEquals(AnalysisState.RUNNING, submission.getAnalysisState());
+	}
+	
+	/**
+	 * Tests failing to set the state for an analysis submission.
+	 */
+	@Test(expected=EntityNotFoundException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testSetStateForAnalysisSubmissionFailing() {		
+		analysisSubmissionService.setStateForAnalysisSubmission("2", AnalysisState.RUNNING);
 	}
 }
