@@ -64,6 +64,38 @@ To link up the API with a running instance of Galaxy, the following steps need t
         ##  files are shared between the NGS Archive and Galaxy (e.g. over NFS).
         galaxy.uploader.dataStorage=local
 
+        ###########################################
+        # Execution Manager configuration Galaxy  #
+        ###########################################
+        
+        # The URL for the Galaxy execution manager
+        galaxy.execution.url=http://localhost/
+
+        # The API key of an account to run workflows in Galaxy.
+        # This does not have to be an administrator account.
+        galaxy.execution.apiKey=xxxx
+
+        # The email address of an account to run workflows in Galaxy
+        galaxy.execution.email=user@localhost
+
+        # The data storage method for uploading data into a Galaxy execution manager.
+        galaxy.execution.dataStorage=local
+
+
+3. A workflow must be installed within the database.  This can be accomplished by running the following command:
+
+        mvn clean package -DskipTests # to clean and package code
+
+        mvn exec:java -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="ca.corefacility.bioinformatics.irida.config.workflow.InstallRemoteWorkflowPhylogenomics" -Dexec.args="--username [username] --password [password] --workflowId [id] --inputSequenceLabel [label] --inputReferenceLabel [label] --outputTreeName [tree name] --outputMatrixName [matrix name] --outputSnpTableName [snp table name]"
+
+   Where the above options can be found within the Galaxy workflow.
+
+4. The workflow must be configured as the current workflow to use within IRIDA by adding a configuration parameter.  This must be added to `/etc/irida/irida.conf`.
+
+        # The id of a phylogenomics workflow within Galaxy.
+        # The corresponding workflow must already exist within the IRIDA database to be valid.
+        galaxy.execution.workflow.phylogenomics.id=xxxx
+
 Please see the main IRIDA installation guide for more details.
 
 Running the Tests
