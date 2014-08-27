@@ -17,7 +17,7 @@ public interface AnalysisSubmissionService extends CRUDService<String, AnalysisS
 	 * @return  The state of this analysis.
 	 * @throws EntityNotFoundException  If the corresponding analysis cannot be found.
 	 */
-	public AnalysisState getStateForAnalysis(String analysisSubmissionId) throws EntityNotFoundException;
+	public AnalysisState getStateForAnalysisSubmission(String analysisSubmissionId) throws EntityNotFoundException;
 	
 	/**
 	 * Sets the state for an analysis submission.

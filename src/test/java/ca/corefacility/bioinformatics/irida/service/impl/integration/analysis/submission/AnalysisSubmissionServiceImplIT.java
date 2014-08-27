@@ -49,8 +49,8 @@ public class AnalysisSubmissionServiceImplIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetStateForAnalysisSuccess() {		
-		AnalysisState state = analysisSubmissionService.getStateForAnalysis("1");
+	public void testGetStateForAnalysisSubmissionSuccess() {		
+		AnalysisState state = analysisSubmissionService.getStateForAnalysisSubmission("1");
 		assertEquals(AnalysisState.SUBMITTED, state);
 	}
 	
@@ -59,8 +59,8 @@ public class AnalysisSubmissionServiceImplIT {
 	 */
 	@Test(expected=EntityNotFoundException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetStateForAnalysisFail() {		
-		analysisSubmissionService.getStateForAnalysis("2");
+	public void testGetStateForAnalysisSubmissionFail() {		
+		analysisSubmissionService.getStateForAnalysisSubmission("2");
 	}
 	
 	/**

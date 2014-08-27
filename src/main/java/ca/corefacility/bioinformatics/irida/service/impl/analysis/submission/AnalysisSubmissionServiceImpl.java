@@ -46,7 +46,7 @@ public class AnalysisSubmissionServiceImpl extends
 	 * {@inheritDoc}
 	 */
 	@Override
-	public AnalysisState getStateForAnalysis(String analysisSubmissionId)
+	public AnalysisState getStateForAnalysisSubmission(String analysisSubmissionId)
 			throws EntityNotFoundException {
 		checkNotNull(analysisSubmissionId, "analysisSubmissionId is null");
 
