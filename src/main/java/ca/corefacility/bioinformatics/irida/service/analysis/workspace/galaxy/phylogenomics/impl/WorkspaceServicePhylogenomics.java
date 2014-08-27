@@ -85,6 +85,8 @@ public class WorkspaceServicePhylogenomics
 	
 	/**
 	 * Uploads a list of sequence files belonging to the given samples to Galaxy.
+	 * TODO Only supports one sequence file per sample right now and throws an exception if more 
+	 * 	than one sequence file shares the same sample.  This will be fixed in a future release.
 	 * @param sampleSequenceFiles  A join between sequence files and samples.
 	 * @param workflowHistory  The history to upload the sequence files into.
 	 * @return  A CollectionResponse for the dataset collection constructed from the given files.
