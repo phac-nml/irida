@@ -174,9 +174,18 @@ public class SamplesController extends BaseController {
 		return "redirect:/samples/" + sampleId;
 	}
 
+	/**
+	 * Get the page that shows the files belonging to that sample.
+	 *
+	 * @param model    Spring {@link Model}
+	 * @param sampleId Sample id
+	 * @return
+	 * @throws IOException
+	 */
 	@RequestMapping("/{sampleId}/files")
 	public String getSampleFiles(final Model model, @PathVariable Long sampleId) throws IOException {
 		Sample sample = sampleService.read(sampleId);
+		List<Join<Sample, SequenceFile>> joinList = sequenceFileService.getSequenceFilesForSample(sample);
 		List<Map<String, Object>> files = getFilesForSample(sampleId);
 		model.addAttribute(MODEL_ATTR_FILES, files);
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
