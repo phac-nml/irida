@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config.workflow;
 
 import java.io.Console;
+import java.util.Optional;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -10,16 +11,19 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.util.ThrowableAnalyzer;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
 import ca.corefacility.bioinformatics.irida.config.manager.ExecutionManagerConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerConfigurationException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.RemoteWorkflow;
@@ -100,9 +104,9 @@ public class InstallRemoteWorkflowPhylogenomics {
 		
 		try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
 			context.getEnvironment().setActiveProfiles("prod", "dev", "it");
+			context.register(ExecutionManagerConfig.class);
 			context.register(IridaApiServicesConfig.class);
 			context.register(AnalysisExecutionServiceConfig.class);
-			context.register(ExecutionManagerConfig.class);
 			context.refresh();
 			
 			GalaxyWorkflowService galaxyWorkflowService = context.getBean(GalaxyWorkflowService.class);
@@ -135,7 +139,30 @@ public class InstallRemoteWorkflowPhylogenomics {
 			logger.error("WorkflowException " + e.getMessage());
 		} catch (BadCredentialsException e) {
 			logger.error("Invalid credentials for user \"" + username + "\"");
+		} catch (BeanCreationException e) {
+			Optional<Throwable> cause = getExecutionManagerCause(e);
+			
+			if (cause.isPresent()) {
+				logger.error("No Galaxy configured: " + cause.get().getMessage());
+			} else {
+				logger.error("Exception: ", e);
+			}
 		}
+	}
+	
+	/**
+	 * Gets the ExecutionManagerConfigurationException cause of this exception, if any.
+	 * @param e  The BeanCreationException to find the cause.
+	 * @return  An ExecutionManagerException within an optional variable.
+	 */
+	private static Optional<Throwable> getExecutionManagerCause(BeanCreationException e) {
+		ThrowableAnalyzer throwableAnalyzer = new ThrowableAnalyzer();
+		Throwable[] causeChain = throwableAnalyzer.determineCauseChain(e);
+
+		Throwable cause = 
+				throwableAnalyzer.getFirstThrowableOfType(ExecutionManagerConfigurationException.class, causeChain);
+		
+		return Optional.ofNullable(cause);
 	}
 
 	/**
