@@ -75,10 +75,21 @@
         		url: urlBase + apiId,
         		type: "POST",
         		success: function(data, textStatus, jqXHR){
-        			span.html(data);
+    				span.html(data);
+
+        			if(data == "valid"){
+        				span.addClass("badge alert-success");
+        			}
+        			else if(data == "invalid_token"){
+        				span.addClass("badge alert-warning");
+        			}
+        			else if(data == "inactive"){
+        				span.addClass("badge alert-warning");
+        			}
         		},
         		error: function(data, textStatus, jqXHR){
         			span.html(data);
+        			span.addClass("badge alert-danger");
         		}
         	});
         }
