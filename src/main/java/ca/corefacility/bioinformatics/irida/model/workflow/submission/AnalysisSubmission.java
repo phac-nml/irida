@@ -38,7 +38,7 @@ import ca.corefacility.bioinformatics.irida.model.Timestamped;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public abstract class AnalysisSubmission implements Timestamped {
+public class AnalysisSubmission implements Timestamped {
 
 	@Id
 	private String remoteAnalysisId;
