@@ -37,7 +37,6 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
-import ca.corefacility.bioinformatics.irida.service.remote.model.RemoteProject;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
@@ -258,6 +257,7 @@ public class RemoteAPIController extends BaseController {
 		return STATUS_PAGE;
 	}
 
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping("/status/{apiId}")
 	@ResponseBody
 	public String statusActive(@PathVariable Long apiId) {
@@ -271,5 +271,14 @@ public class RemoteAPIController extends BaseController {
 		}
 
 		return "inactive";
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping("/connect/{apiId}")
+	public String connect(@PathVariable Long apiId) {
+		RemoteAPI api = remoteAPIService.read(apiId);
+		projectRemoteService.list(api);
+
+		return "redirect:/remote_api/status";
 	}
 }

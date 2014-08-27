@@ -51,7 +51,10 @@
                     {
                     	"render": function (data, type, row) {
                     		var id = "status-" + row.id;
-                    		return "<span data-api-id='"+row.id+"' class='connection-status' id="+ id + ">Waiting for response...</span>";
+                    		var connectUrlBase = /*[[@{/remote_api/connect/}]]*/ "/remote_api/connect";
+                    		var span = "<span data-api-id='"+row.id+"' class='connection-status' id="+ id + ">Waiting for response...</span>";
+                    		var button = "<a class='btn btn-default' href='"+ connectUrlBase + row.id + "'>Connect</a>";
+                    		return span + button;
                     	}
                     }
                 ],
