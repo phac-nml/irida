@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config.workflow;
 
 import java.io.Console;
+import java.util.Optional;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -10,16 +11,19 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.util.ThrowableAnalyzer;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
 import ca.corefacility.bioinformatics.irida.config.manager.ExecutionManagerConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerConfigurationException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.RemoteWorkflow;
@@ -53,17 +57,33 @@ public class InstallRemoteWorkflowPhylogenomics {
 	private static final String TREE_OUTPUT_NAME = "outputTreeName";
 	private static final String MATRIX_OUTPUT_NAME = "outputMatrixName";
 	private static final String SNP_TABLE_OUTPUT_NAME = "outputSnpTableName";
+	
+	private static final String DEFAULT_SEQUENCE_INPUT = "sequence_reads";
+	private static final String DEFAULT_REFERENCE_INPUT = "reference";
+	private static final String DEFAULT_TREE_OUTPUT = "snp_tree.tre";
+	private static final String DEFAULT_MATRIX_OUTPUT = "snp_matrix.tsv";
+	private static final String DEFAULT_SNP_TABLE_OUTPUT = "snp_table.tsv";
+	
+	/**
+	 * Converts the given message and default value to a message + default value.
+	 * @param message  The message to use.
+	 * @param defaultValue  The default value.
+	 * @return  The message + default value.
+	 */
+	private static String toMessage(String message, String defaultValue) {
+		return message + " [" + defaultValue + "].";
+	}
 
 	public static void main(String[] args) {
 		Options options = new Options();
 		options.addOption(null, USERNAME_NAME, true, "username to access the database.");
 		options.addOption(null, PASSWORD_NAME, true, "password for the user.");
 		options.addOption(null, WORKFLOW_ID, true, "id of the workflow in Galaxy.");
-		options.addOption(null, SEQUENCE_INPUT_LABEL, true, "the label of the input sequence files.");
-		options.addOption(null, REFERENCE_INPUT_LABEL, true, "the label of the input reference file.");
-		options.addOption(null, TREE_OUTPUT_NAME, true, "the name of the output tree.");
-		options.addOption(null, MATRIX_OUTPUT_NAME, true, "the name of the output matrix.");
-		options.addOption(null, SNP_TABLE_OUTPUT_NAME, true, "the name of the output snp table.");
+		options.addOption(null, SEQUENCE_INPUT_LABEL, true, toMessage("the label of the input sequence files",DEFAULT_SEQUENCE_INPUT));
+		options.addOption(null, REFERENCE_INPUT_LABEL, true, toMessage("the label of the input reference file",DEFAULT_REFERENCE_INPUT));
+		options.addOption(null, TREE_OUTPUT_NAME, true, toMessage("the name of the output tree",DEFAULT_TREE_OUTPUT));
+		options.addOption(null, MATRIX_OUTPUT_NAME, true, toMessage("the name of the output matrix",DEFAULT_MATRIX_OUTPUT));
+		options.addOption(null, SNP_TABLE_OUTPUT_NAME, true, toMessage("the name of the output snp table",DEFAULT_SNP_TABLE_OUTPUT));
 		options.addOption("h", "help", false, "print help statement.");
 		
 		CommandLineParser parser = new BasicParser();
@@ -100,9 +120,9 @@ public class InstallRemoteWorkflowPhylogenomics {
 		
 		try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
 			context.getEnvironment().setActiveProfiles("prod", "dev", "it");
+			context.register(ExecutionManagerConfig.class);
 			context.register(IridaApiServicesConfig.class);
 			context.register(AnalysisExecutionServiceConfig.class);
-			context.register(ExecutionManagerConfig.class);
 			context.refresh();
 			
 			GalaxyWorkflowService galaxyWorkflowService = context.getBean(GalaxyWorkflowService.class);
@@ -135,7 +155,30 @@ public class InstallRemoteWorkflowPhylogenomics {
 			logger.error("WorkflowException " + e.getMessage());
 		} catch (BadCredentialsException e) {
 			logger.error("Invalid credentials for user \"" + username + "\"");
+		} catch (BeanCreationException e) {
+			Optional<Throwable> cause = getExecutionManagerCause(e);
+			
+			if (cause.isPresent()) {
+				logger.error("No Galaxy configured: " + cause.get().getMessage());
+			} else {
+				logger.error("Exception: ", e);
+			}
 		}
+	}
+	
+	/**
+	 * Gets the ExecutionManagerConfigurationException cause of this exception, if any.
+	 * @param e  The BeanCreationException to find the cause.
+	 * @return  An ExecutionManagerException within an optional variable.
+	 */
+	private static Optional<Throwable> getExecutionManagerCause(BeanCreationException e) {
+		ThrowableAnalyzer throwableAnalyzer = new ThrowableAnalyzer();
+		Throwable[] causeChain = throwableAnalyzer.determineCauseChain(e);
+
+		Throwable cause = 
+				throwableAnalyzer.getFirstThrowableOfType(ExecutionManagerConfigurationException.class, causeChain);
+		
+		return Optional.ofNullable(cause);
 	}
 
 	/**
@@ -180,11 +223,11 @@ public class InstallRemoteWorkflowPhylogenomics {
 		
 		String workflowChecksum = getChecksum(workflowId, workflowService);
 		
-		String sequenceFileInputLabel = getOptionValue(commandLine,SEQUENCE_INPUT_LABEL);
-		String referenceFileInputLabel = getOptionValue(commandLine,REFERENCE_INPUT_LABEL);
-		String treeName = getOptionValue(commandLine,TREE_OUTPUT_NAME);
-		String matrixName = getOptionValue(commandLine,MATRIX_OUTPUT_NAME);
-		String tableName = getOptionValue(commandLine,SNP_TABLE_OUTPUT_NAME);
+		String sequenceFileInputLabel = commandLine.getOptionValue(SEQUENCE_INPUT_LABEL, DEFAULT_SEQUENCE_INPUT);
+		String referenceFileInputLabel = commandLine.getOptionValue(REFERENCE_INPUT_LABEL, DEFAULT_REFERENCE_INPUT);
+		String treeName = commandLine.getOptionValue(TREE_OUTPUT_NAME, DEFAULT_TREE_OUTPUT);
+		String matrixName = commandLine.getOptionValue(MATRIX_OUTPUT_NAME, DEFAULT_MATRIX_OUTPUT);
+		String tableName = commandLine.getOptionValue(SNP_TABLE_OUTPUT_NAME, DEFAULT_SNP_TABLE_OUTPUT);
 		
 		return new RemoteWorkflowPhylogenomics(workflowId,
 			workflowChecksum, sequenceFileInputLabel, referenceFileInputLabel,

@@ -71,20 +71,13 @@ public class ExecutionManagerConfig {
 	/**
 	 * Builds a new ExecutionManagerGalaxy from the given properties.
 	 * @return  An ExecutionManagerGalaxy.
+	 * @throws NoExecutionManagerException If no execution manager is configured.
 	 */
 	@Lazy
 	@Bean
-	public ExecutionManagerGalaxy executionManager() {
-		try {			
-			return buildExecutionManager(URL_EXECUTION_PROPERTY, API_KEY_EXECUTION_PROPERTY,
-					EMAIL_EXECUTION_PROPERTY, DATA_STORAGE_EXECUTION_PROPERTY);
-		} catch (ExecutionManagerConfigurationException e) {
-			logger.error("Could not build ExecutionManagerGalaxy: " + e.getMessage());
-		} catch (ConstraintViolationException e) {
-			logger.error("Could not build ExecutionManagerGalaxy: " + e.getMessage());
-		}
-		
-		return null;
+	public ExecutionManagerGalaxy executionManager() throws ExecutionManagerConfigurationException {		
+		return buildExecutionManager(URL_EXECUTION_PROPERTY, API_KEY_EXECUTION_PROPERTY,
+				EMAIL_EXECUTION_PROPERTY, DATA_STORAGE_EXECUTION_PROPERTY);
 	}
 
 	/**
