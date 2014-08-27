@@ -139,7 +139,7 @@ public class WorkspaceServicePhylogenomics
 	 * {@inheritDoc}
 	 */
 	@Override
-	public PreparedWorkflowGalaxy prepareAnalysisWorkspace(AnalysisSubmissionPhylogenomics analysisSubmission)
+	public PreparedWorkflowGalaxy prepareAnalysisFiles(AnalysisSubmissionPhylogenomics analysisSubmission)
 			throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getInputFiles(), "inputFiles are null");

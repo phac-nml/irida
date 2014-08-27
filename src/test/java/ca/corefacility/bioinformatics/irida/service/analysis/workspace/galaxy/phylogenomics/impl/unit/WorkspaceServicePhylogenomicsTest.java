@@ -198,7 +198,7 @@ public class WorkspaceServicePhylogenomicsTest {
 		when(galaxyWorkflowService.getWorkflowInputId(
 				workflowDetails, REFERENCE_FILE_LABEL)).thenReturn(REFERENCE_FILE_ID);
 		
-		PreparedWorkflowGalaxy preparedWorkflow = workflowPreparation.prepareAnalysisWorkspace(submission);
+		PreparedWorkflowGalaxy preparedWorkflow = workflowPreparation.prepareAnalysisFiles(submission);
 		assertEquals("preparedWorflow history id not equal to " + HISTORY_ID,
 				HISTORY_ID, preparedWorkflow.getRemoteAnalysisId());
 		assertNotNull("workflowInputs in preparedWorkflow is null", preparedWorkflow.getWorkflowInputs());
@@ -226,7 +226,7 @@ public class WorkspaceServicePhylogenomicsTest {
 		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileC))
 				.thenReturn(sampleCJoin);
 		
-		workflowPreparation.prepareAnalysisWorkspace(submission);
+		workflowPreparation.prepareAnalysisFiles(submission);
 	}
 	
 	/**
@@ -251,6 +251,6 @@ public class WorkspaceServicePhylogenomicsTest {
 		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileC))
 				.thenReturn(sampleCJoin);
 		
-		workflowPreparation.prepareAnalysisWorkspace(submission);
+		workflowPreparation.prepareAnalysisFiles(submission);
 	}
 }

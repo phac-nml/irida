@@ -95,7 +95,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
-		when(workspaceServicePhylogenomics.prepareAnalysisWorkspace(analysisSubmission)).
+		when(workspaceServicePhylogenomics.prepareAnalysisFiles(analysisSubmission)).
 			thenReturn(preparedWorkflow);
 		when(galaxyWorkflowService.runWorkflow(workflowInputsGalaxy)).thenReturn(workflowOutputs);
 		
@@ -105,7 +105,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		assertEquals("analysisSubmission not equal to returned submission", analysisSubmission, returnedSubmission);
 		
 		verify(galaxyWorkflowService).validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID);
-		verify(workspaceServicePhylogenomics).prepareAnalysisWorkspace(analysisSubmission);
+		verify(workspaceServicePhylogenomics).prepareAnalysisFiles(analysisSubmission);
 		verify(galaxyWorkflowService).runWorkflow(workflowInputsGalaxy);
 		verify(analysisSubmissionRepository).save(analysisSubmission);
 	}
@@ -143,7 +143,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
-		when(workspaceServicePhylogenomics.prepareAnalysisWorkspace(analysisSubmission)).
+		when(workspaceServicePhylogenomics.prepareAnalysisFiles(analysisSubmission)).
 			thenThrow(new ExecutionManagerException());
 		
 		workflowManagement.executeAnalysis(analysisSubmission);
@@ -158,7 +158,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
-		when(workspaceServicePhylogenomics.prepareAnalysisWorkspace(analysisSubmission)).
+		when(workspaceServicePhylogenomics.prepareAnalysisFiles(analysisSubmission)).
 			thenReturn(preparedWorkflow);
 		when(galaxyWorkflowService.runWorkflow(workflowInputsGalaxy)).
 			thenThrow(new WorkflowException());

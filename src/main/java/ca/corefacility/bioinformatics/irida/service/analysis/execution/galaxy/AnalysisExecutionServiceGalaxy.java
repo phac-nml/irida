@@ -94,7 +94,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 		validateWorkflow(analysisSubmission.getRemoteWorkflow());
 		
 		logger.trace("Preparing " + analysisName + ": " + remoteWorkflow);
-		PreparedWorkflowGalaxy preparedWorkflow = workspaceService.prepareAnalysisWorkspace(analysisSubmission);
+		PreparedWorkflowGalaxy preparedWorkflow = workspaceService.prepareAnalysisFiles(analysisSubmission);
 		WorkflowInputsGalaxy input = preparedWorkflow.getWorkflowInputs();
 		
 		logger.trace("Executing " + analysisName + ": " + remoteWorkflow);
