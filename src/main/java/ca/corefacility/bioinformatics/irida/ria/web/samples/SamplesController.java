@@ -185,7 +185,6 @@ public class SamplesController extends BaseController {
 	@RequestMapping("/{sampleId}/files")
 	public String getSampleFiles(final Model model, @PathVariable Long sampleId) throws IOException {
 		Sample sample = sampleService.read(sampleId);
-		List<Join<Sample, SequenceFile>> joinList = sequenceFileService.getSequenceFilesForSample(sample);
 		List<Map<String, Object>> files = getFilesForSample(sampleId);
 		model.addAttribute(MODEL_ATTR_FILES, files);
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
