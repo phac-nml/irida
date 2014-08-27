@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
  */
 public class UserTest {
 
-	private static final String MESSAGES_BASENAME = "ca.corefacility.bioinformatics.irida.validation.ValidationMessages";
+	private static final String MESSAGES_BASENAME = "ValidationMessages";
 	private Validator validator;
 	private ResourceBundle b;
 
