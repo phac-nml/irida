@@ -46,7 +46,7 @@
 							</div>
                             
                             <div class="form-group">
-                                <label class="control-label" th:text="#{client.scopes}" for="scopes">_Scopes_</label>
+                                <label class="control-label" th:text="#{client.scopes}">_Scopes_</label>
                                 <div id="scope-error" th:if="${#maps.containsKey(errors, 'scope')}" th:text="${errors.scope}" class="alert alert-warning">_Scope Error_</div>
                                 <div class="checkbox">
                                     <input type="checkbox" id="scope_read" name="scope_read" th:checked="${given_scope_read}" checked="checked" value="read"/>
