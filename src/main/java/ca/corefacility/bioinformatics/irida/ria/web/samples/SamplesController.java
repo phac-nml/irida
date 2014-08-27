@@ -177,26 +177,7 @@ public class SamplesController extends BaseController {
 	@RequestMapping("/{sampleId}/files")
 	public String getSampleFiles(final Model model, @PathVariable Long sampleId) throws IOException {
 		Sample sample = sampleService.read(sampleId);
-		List<Join<Sample, SequenceFile>> joinList = sequenceFileService.getSequenceFilesForSample(sample);
-		List<Map<String, Object>> files = new ArrayList<>();
-		for (Join<Sample, SequenceFile> j : joinList) {
-			SequenceFile f = j.getObject();
-			Path path = f.getFile();
-			Long realSize = 0L;
-
-			if (Files.exists(path)) {
-				realSize = Files.size(path);
-			}
-			String size = fileSizeConverter.convert(realSize);
-			Map<String, Object> m = new HashMap<>();
-			m.put("id", f.getId().toString());
-			m.put("label", f.getLabel());
-			m.put("realCreatedDate", f.getCreatedDate());
-			m.put("createdDate", dateFormatter.print(f.getCreatedDate(), LocaleContextHolder.getLocale()));
-			m.put("size", size);
-			m.put("realSize", realSize.toString());
-			files.add(m);
-		}
+		List<Map<String, Object>> files = getFilesForSample(sampleId);
 		model.addAttribute(MODEL_ATTR_FILES, files);
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
@@ -222,20 +203,29 @@ public class SamplesController extends BaseController {
 
 		List<Map<String, Object>> response = new ArrayList<>();
 		for (Join<Sample, SequenceFile> join : joinList) {
-			SequenceFile file = join.getObject();
-			Map<String, Object> map = new HashMap<>();
-			map.put("id", file.getId().toString());
-
-			Path path = file.getFile();
-			long size = 0;
-			if(Files.exists(path)) {
-				size = Files.size(path);
-			}
-			map.put("size", fileSizeConverter.convert(size));
-			map.put("name", file.getLabel());
-			map.put("created", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
-			response.add(map);
+			response.add(getFileDataMap(join.getObject()));
 		}
 		return response;
+	}
+
+	// ************************************************************************************************
+	// Helper Methods
+	// ************************************************************************************************
+	private Map<String, Object> getFileDataMap(SequenceFile file) throws IOException {
+		Path path = file.getFile();
+		Long realSize = 0L;
+
+		if (Files.exists(path)) {
+			realSize = Files.size(path);
+		}
+		String size = fileSizeConverter.convert(realSize);
+		Map<String, Object> m = new HashMap<>();
+		m.put("id", file.getId().toString());
+		m.put("label", file.getLabel());
+		m.put("realCreatedDate", file.getCreatedDate());
+		m.put("createdDate", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
+		m.put("size", size);
+		m.put("realSize", realSize.toString());
+		return m;
 	}
 }

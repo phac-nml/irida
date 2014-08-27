@@ -121,11 +121,11 @@
                     {{/notChecked}}
                     </td>
                     <td class="files-name">
-                        <a th:href="@{/sequenceFiles/{{id}}}">{{name}}</a>
+                        <a th:href="@{/sequenceFiles/{{id}}}">{{label}}</a>
                     </td>
                     <td><button data-file-id="{{id}}" class="filedownload pull-right btn btn-default btn-xs glyphicon glyphicon-download-alt mrgn-rght-sm" th:title="#{form.download}"></button></td>
                     <td>{{size}}</td>
-                    <td>{{created}}</td>
+                    <td>{{createdDate}}</td>
                 </tr>
                 {{/files}}
             </table>
