@@ -7,6 +7,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -61,6 +63,10 @@ public abstract class AnalysisSubmission<T extends RemoteWorkflow> implements Ti
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 	
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private AnalysisState analysisState;
+	
 	protected AnalysisSubmission() {
 		this.createdDate = new Date();
 	}
@@ -114,6 +120,22 @@ public abstract class AnalysisSubmission<T extends RemoteWorkflow> implements Ti
 	 */
 	public void setRemoteWorkflow(T remoteWorkflow) {
 		this.remoteWorkflow = remoteWorkflow;
+	}
+	
+	/**
+	 * Gets the state of this analysis.
+	 * @return  The state of this analysis.
+	 */
+	public AnalysisState getAnalysisState() {
+		return analysisState;
+	}
+
+	/**
+	 * Sets the state of this analysis.
+	 * @param analysisState  The state of this analysis.
+	 */
+	public void setAnalysisState(AnalysisState analysisState) {
+		this.analysisState = analysisState;
 	}
 
 	@Override
