@@ -27,6 +27,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
@@ -72,12 +73,14 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	@NotNull
 	private String clientSecret;
 
+	@Size(min = 1, message = "{client.details.scope.notempty}")
 	@NotNull
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Column(name = "scope", nullable = false)
 	@CollectionTable(name = "client_details_scope", joinColumns = @JoinColumn(name = "client_details_id"))
 	private Set<String> scope;
 
+	@Size(min = 1, message = "{client.details.grant.notempty}")
 	@NotNull
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Column(name = "grant_value", nullable = false)
@@ -104,7 +107,7 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
-	
+
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
@@ -352,7 +355,6 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
 	}
-
 
 	@Override
 	public Date getCreatedDate() {

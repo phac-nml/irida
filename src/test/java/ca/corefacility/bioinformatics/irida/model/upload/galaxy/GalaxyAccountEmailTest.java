@@ -24,7 +24,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
  */
 public class GalaxyAccountEmailTest {
 	
-	private static final String MESSAGES_BASENAME = "ca.corefacility.bioinformatics.irida.validation.ValidationMessages";
+	private static final String MESSAGES_BASENAME = "ValidationMessages";
 	private Validator validator;
 	private ResourceBundle b;
 
