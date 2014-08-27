@@ -96,7 +96,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-default"><span class="fa fa-rocket fa-fw"></span>&nbsp;[[#{project.samples.run-pipeline}]]</button>
+                <button id="launchBtn" class="btn btn-default"><span class="fa fa-rocket fa-fw"></span>&nbsp;[[#{project.samples.run-pipeline}]]</button>
             </div>
         </form>
     </section>
@@ -858,6 +858,12 @@ $('[data-tooltip!=""]').qtip({ // Grab all elements with a non-blank data-toolti
     style: {
         classes: 'qtip-tipsy qtip-shadow'
     }
+});
+
+$('#launchBtn').on('click', function () {
+    'use strict';
+//    contentType: "application/json",
+//            data: JSON.stringify(result)
 });
 /*]]>*/
 </script>
