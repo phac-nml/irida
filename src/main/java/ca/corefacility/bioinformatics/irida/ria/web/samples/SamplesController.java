@@ -175,15 +175,26 @@ public class SamplesController extends BaseController {
 	}
 
 	@RequestMapping("/{sampleId}/files")
-	public String getSampleFiles(final Model model, @PathVariable Long sampleId) {
+	public String getSampleFiles(final Model model, @PathVariable Long sampleId) throws IOException {
 		Sample sample = sampleService.read(sampleId);
 		List<Join<Sample, SequenceFile>> joinList = sequenceFileService.getSequenceFilesForSample(sample);
-		List<Map<String, String>> files = new ArrayList<>();
+		List<Map<String, Object>> files = new ArrayList<>();
 		for (Join<Sample, SequenceFile> j : joinList) {
-			SequenceFile file = j.getObject();
-			Map<String, String> m = new HashMap<>();
-			m.put("fileId", file.getId().toString());
-			m.put("created", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
+			SequenceFile f = j.getObject();
+			Path path = f.getFile();
+			Long realSize = 0L;
+
+			if (Files.exists(path)) {
+				realSize = Files.size(path);
+			}
+			String size = fileSizeConverter.convert(realSize);
+			Map<String, Object> m = new HashMap<>();
+			m.put("id", f.getId().toString());
+			m.put("label", f.getLabel());
+			m.put("realCreatedDate", f.getCreatedDate());
+			m.put("createdDate", dateFormatter.print(f.getCreatedDate(), LocaleContextHolder.getLocale()));
+			m.put("size", size);
+			m.put("realSize", realSize.toString());
 			files.add(m);
 		}
 		model.addAttribute(MODEL_ATTR_FILES, files);
