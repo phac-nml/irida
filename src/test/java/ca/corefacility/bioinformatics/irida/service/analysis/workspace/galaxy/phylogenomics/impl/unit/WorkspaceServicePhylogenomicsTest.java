@@ -21,19 +21,25 @@ import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
 
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 
 /**
@@ -45,6 +51,7 @@ public class WorkspaceServicePhylogenomicsTest {
 
 	@Mock private GalaxyHistoriesService galaxyHistoriesService;
 	@Mock private GalaxyWorkflowService galaxyWorkflowService;
+	@Mock private SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository;
 	@Mock private List<Dataset> sequenceDatasets;
 	@Mock private Dataset refDataset;
 	
@@ -72,17 +79,54 @@ public class WorkspaceServicePhylogenomicsTest {
 	private static final String MATRIX_LABEL = "snp_matrix";
 	private static final String TABLE_LABEL = "snp_table";
 	
+	private SequenceFile sFileA;
+	private SequenceFile sFileB;
+	private SequenceFile sFileC;
+	
+	private Dataset datasetA;
+	private Dataset datasetB;
+	private Dataset datasetC;
+	
 	/**
 	 * Sets up variables for testing.
 	 * @throws IOException
+	 * @throws GalaxyDatasetException 
+	 * @throws UploadException 
 	 */
 	@Before
-	public void setup() throws IOException {
+	public void setup() throws IOException, UploadException, GalaxyDatasetException {
 		MockitoAnnotations.initMocks(this);
 
-		SequenceFile sFileA = new SequenceFile(createTempFile("fileA" , "fastq"));
-		SequenceFile sFileB = new SequenceFile(createTempFile("fileB" , "fastq"));
-		SequenceFile sFileC = new SequenceFile(createTempFile("fileC" , "fastq"));
+		sFileA = new SequenceFile(createTempFile("fileA" , "fastq"));
+		sFileB = new SequenceFile(createTempFile("fileB" , "fastq"));
+		sFileC = new SequenceFile(createTempFile("fileC" , "fastq"));
+		
+		Sample sampleA = new Sample();
+		sampleA.setSampleName("SampleA");
+		
+		Sample sampleB = new Sample();
+		sampleB.setSampleName("SampleB");
+		
+		Sample sampleC = new Sample();
+		sampleC.setSampleName("SampleC");
+		
+		Join<Sample, SequenceFile> sampleAJoin = new SampleSequenceFileJoin(sampleA, sFileA);
+		Join<Sample, SequenceFile> sampleBJoin = new SampleSequenceFileJoin(sampleB, sFileB);
+		Join<Sample, SequenceFile> sampleCJoin = new SampleSequenceFileJoin(sampleC, sFileC);
+		
+		datasetA = new Dataset();
+		datasetA.setId("1");
+		datasetB = new Dataset();
+		datasetB.setId("2");
+		datasetC = new Dataset();
+		datasetC.setId("3");
+		
+		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileA)).
+			thenReturn(sampleAJoin);
+		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileB)).
+			thenReturn(sampleBJoin);
+		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileC)).
+			thenReturn(sampleCJoin);
 		
 		refFile = createTempFile("reference", "fasta");
 		referenceFile = new ReferenceFile(refFile);
@@ -110,7 +154,7 @@ public class WorkspaceServicePhylogenomicsTest {
 		
 		workflowPreparation = 
 				new WorkspaceServicePhylogenomics(
-						galaxyHistoriesService, galaxyWorkflowService);
+						galaxyHistoriesService, galaxyWorkflowService, sampleSequenceFileJoinRepository);
 	}
 	
 	private Path createTempFile(String prefix, String suffix) throws IOException {
@@ -124,17 +168,21 @@ public class WorkspaceServicePhylogenomicsTest {
 	 * Tests out successfully to preparing an analysis
 	 * @throws ExecutionManagerException
 	 */
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testPrepareAnalysisWorkspaceSuccess() throws ExecutionManagerException {
 		when(galaxyHistoriesService.newHistoryForWorkflow()).thenReturn(workflowHistory);
-		when(galaxyHistoriesService.uploadFilesListToHistory(
-				any(List.class), eq(InputFileType.FASTQ_SANGER), eq(workflowHistory))).
-				thenReturn(sequenceDatasets);
+		
+		when(galaxyHistoriesService.fileToHistory(sFileA.getFile(), InputFileType.FASTQ_SANGER,
+				workflowHistory)).thenReturn(datasetA);
+		when(galaxyHistoriesService.fileToHistory(sFileB.getFile(), InputFileType.FASTQ_SANGER,
+				workflowHistory)).thenReturn(datasetB);
+		when(galaxyHistoriesService.fileToHistory(sFileC.getFile(), InputFileType.FASTQ_SANGER,
+				workflowHistory)).thenReturn(datasetC);
+		
 		when(galaxyHistoriesService.fileToHistory(
 				refFile, InputFileType.FASTA, workflowHistory)).thenReturn(refDataset);
-		when(galaxyHistoriesService.constructCollectionList(
-				any(List.class), eq(workflowHistory))).thenReturn(collectionResponse);
+		when(galaxyHistoriesService.constructCollection(
+				any(CollectionDescription.class), eq(workflowHistory))).thenReturn(collectionResponse);
 		when(galaxyWorkflowService.getWorkflowDetails(WORKFLOW_ID)).thenReturn(workflowDetails);
 		when(galaxyWorkflowService.getWorkflowInputId(
 				workflowDetails, SEQUENCE_FILE_LABEL)).thenReturn(SEQUENCE_FILE_ID);
@@ -151,13 +199,16 @@ public class WorkspaceServicePhylogenomicsTest {
 	 * Tests out failing to prepare an analysis.
 	 * @throws ExecutionManagerException
 	 */
-	@SuppressWarnings("unchecked")
 	@Test(expected=UploadException.class)
 	public void testPrepareAnalysisWorkspaceFail() throws ExecutionManagerException {
 		when(galaxyHistoriesService.newHistoryForWorkflow()).thenReturn(workflowHistory);
-		when(galaxyHistoriesService.uploadFilesListToHistory(
-				any(List.class), eq(InputFileType.FASTQ_SANGER), eq(workflowHistory))).
-				thenThrow(new UploadException());
+		
+		when(galaxyHistoriesService.fileToHistory(sFileA.getFile(), InputFileType.FASTQ_SANGER,
+				workflowHistory)).thenThrow(new UploadException());
+		when(galaxyHistoriesService.fileToHistory(sFileB.getFile(), InputFileType.FASTQ_SANGER,
+				workflowHistory)).thenReturn(datasetB);
+		when(galaxyHistoriesService.fileToHistory(sFileC.getFile(), InputFileType.FASTQ_SANGER,
+				workflowHistory)).thenReturn(datasetC);
 		
 		workflowPreparation.prepareAnalysisWorkspace(submission);
 	}

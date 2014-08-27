@@ -159,7 +159,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	 * @return  An AnalysisSubmissionPhylogenomics which has been saved to the database.
 	 */
 	private AnalysisSubmissionPhylogenomics setupSubmissionInDatabase(Path sequenceFilePath,
-		Path referenceFilePath, RemoteWorkflowPhylogenomics remoteWorkflow) {					
+		Path referenceFilePath, RemoteWorkflowPhylogenomics remoteWorkflow) {			
 		SequenceFile sequenceFile = sequenceFileRepository.save(new SequenceFile(sequenceFilePath));
 		
 		Set<SequenceFile> sequenceFiles = new HashSet<>();
