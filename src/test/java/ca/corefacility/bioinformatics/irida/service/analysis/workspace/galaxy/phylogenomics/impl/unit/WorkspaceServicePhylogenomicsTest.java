@@ -21,6 +21,7 @@ import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.WorkflowPreprationException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -87,6 +88,12 @@ public class WorkspaceServicePhylogenomicsTest {
 	private Dataset datasetB;
 	private Dataset datasetC;
 	
+	private Join<Sample, SequenceFile> sampleAJoin;
+	private Join<Sample, SequenceFile> sampleBJoin;
+	private Join<Sample, SequenceFile> sampleCJoin;
+	
+	private Join<Sample, SequenceFile> sampleAJoinWithB;
+	
 	/**
 	 * Sets up variables for testing.
 	 * @throws IOException
@@ -110,9 +117,11 @@ public class WorkspaceServicePhylogenomicsTest {
 		Sample sampleC = new Sample();
 		sampleC.setSampleName("SampleC");
 		
-		Join<Sample, SequenceFile> sampleAJoin = new SampleSequenceFileJoin(sampleA, sFileA);
-		Join<Sample, SequenceFile> sampleBJoin = new SampleSequenceFileJoin(sampleB, sFileB);
-		Join<Sample, SequenceFile> sampleCJoin = new SampleSequenceFileJoin(sampleC, sFileC);
+		sampleAJoin = new SampleSequenceFileJoin(sampleA, sFileA);
+		sampleBJoin = new SampleSequenceFileJoin(sampleB, sFileB);
+		sampleCJoin = new SampleSequenceFileJoin(sampleC, sFileC);
+		
+		sampleAJoinWithB = new SampleSequenceFileJoin(sampleA, sFileB);
 		
 		datasetA = new Dataset();
 		datasetA.setId("1");
@@ -120,13 +129,6 @@ public class WorkspaceServicePhylogenomicsTest {
 		datasetB.setId("2");
 		datasetC = new Dataset();
 		datasetC.setId("3");
-		
-		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileA)).
-			thenReturn(sampleAJoin);
-		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileB)).
-			thenReturn(sampleBJoin);
-		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileC)).
-			thenReturn(sampleCJoin);
 		
 		refFile = createTempFile("reference", "fasta");
 		referenceFile = new ReferenceFile(refFile);
@@ -179,6 +181,13 @@ public class WorkspaceServicePhylogenomicsTest {
 		when(galaxyHistoriesService.fileToHistory(sFileC.getFile(), InputFileType.FASTQ_SANGER,
 				workflowHistory)).thenReturn(datasetC);
 		
+		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileA))
+				.thenReturn(sampleAJoin);
+		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileB))
+				.thenReturn(sampleBJoin);
+		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileC))
+				.thenReturn(sampleCJoin);
+		
 		when(galaxyHistoriesService.fileToHistory(
 				refFile, InputFileType.FASTA, workflowHistory)).thenReturn(refDataset);
 		when(galaxyHistoriesService.constructCollection(
@@ -209,6 +218,38 @@ public class WorkspaceServicePhylogenomicsTest {
 				workflowHistory)).thenReturn(datasetB);
 		when(galaxyHistoriesService.fileToHistory(sFileC.getFile(), InputFileType.FASTQ_SANGER,
 				workflowHistory)).thenReturn(datasetC);
+
+		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileA))
+				.thenReturn(sampleAJoin);
+		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileB))
+				.thenReturn(sampleBJoin);
+		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileC))
+				.thenReturn(sampleCJoin);
+		
+		workflowPreparation.prepareAnalysisWorkspace(submission);
+	}
+	
+	/**
+	 * Tests out failing to prepare an analysis due to two different sequence files with the same sample.
+	 * @throws ExecutionManagerException
+	 */
+	@Test(expected=WorkflowPreprationException.class)
+	public void testPrepareAnalysisWorkspaceFailDuplicateSamples() throws ExecutionManagerException {
+		when(galaxyHistoriesService.newHistoryForWorkflow()).thenReturn(workflowHistory);
+		
+		when(galaxyHistoriesService.fileToHistory(sFileA.getFile(), InputFileType.FASTQ_SANGER,
+				workflowHistory)).thenReturn(datasetA);
+		when(galaxyHistoriesService.fileToHistory(sFileB.getFile(), InputFileType.FASTQ_SANGER,
+				workflowHistory)).thenReturn(datasetB);
+		when(galaxyHistoriesService.fileToHistory(sFileC.getFile(), InputFileType.FASTQ_SANGER,
+				workflowHistory)).thenReturn(datasetC);
+
+		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileA))
+				.thenReturn(sampleAJoin);
+		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileB))
+				.thenReturn(sampleAJoinWithB);
+		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileC))
+				.thenReturn(sampleCJoin);
 		
 		workflowPreparation.prepareAnalysisWorkspace(submission);
 	}

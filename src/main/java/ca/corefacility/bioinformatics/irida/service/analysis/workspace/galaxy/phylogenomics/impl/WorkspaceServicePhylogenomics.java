@@ -10,6 +10,7 @@ import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.WorkflowPreprationException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -102,7 +103,7 @@ public class WorkspaceServicePhylogenomics
 			Sample sample = sampleSequenceJoin.getSubject();
 			
 			if (samples.contains(sample)) {
-				throw new RuntimeException("Sequence file: " + sequenceFile.getFile() + " belongs to sample " +
+				throw new WorkflowPreprationException("Sequence file: " + sequenceFile.getFile() + " belongs to sample " +
 						sample + " but there is another sequence file with this sample");
 			} else {
 				samples.add(sample);
