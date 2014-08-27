@@ -82,6 +82,13 @@ public class WorkspaceServicePhylogenomics
 		return sampleSequenceFiles;
 	}
 	
+	/**
+	 * Uploads a list of sequence files belonging to the given samples to Galaxy.
+	 * @param sampleSequenceFiles  A join between sequence files and samples.
+	 * @param workflowHistory  The history to upload the sequence files into.
+	 * @return  A CollectionResponse for the dataset collection constructed from the given files.
+	 * @throws ExecutionManagerException  If there was an error uploading the files.
+	 */
 	private CollectionResponse uploadSequenceFiles(List<Join<Sample, SequenceFile>> sampleSequenceFiles,
 			History workflowHistory) throws ExecutionManagerException {
 		
@@ -114,6 +121,14 @@ public class WorkspaceServicePhylogenomics
 		return galaxyHistoriesService.constructCollection(description, workflowHistory);
 	}
 	
+	/**
+	 * Uploads the given reference file to the given history.
+	 * @param referenceFile  The reference file to upload.
+	 * @param workflowHistory  The history to upload the reference file to.
+	 * @return  A Dataset containing the reference file within Galaxy.
+	 * @throws UploadException  If there was an issue uploading a reference file.
+	 * @throws GalaxyDatasetException  If there was an issue getting the corresponding Galaxy dataset.
+	 */
 	private Dataset uploadReferenceFile(ReferenceFile referenceFile, History workflowHistory) throws UploadException, GalaxyDatasetException {
 		return galaxyHistoriesService.
 				fileToHistory(referenceFile.getFile(), InputFileType.FASTA, workflowHistory);	
