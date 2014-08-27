@@ -74,26 +74,49 @@ public abstract class AnalysisExecutionServiceGalaxy
 		this.workspaceService = workspaceService;
 	}
 	
+	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	@Transactional
-	public S executeAnalysis(S analysisSubmission)
-					throws ExecutionManagerException {
-		
+	public S prepareSubmission(S analysisSubmission)
+			throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkArgument(null == analysisSubmission.getRemoteAnalysisId(),
 				"remote analyis id should be null");
 		
 		String analysisName = analysisSubmission.getClass().getSimpleName();
 		RemoteWorkflowGalaxy remoteWorkflow = analysisSubmission.getRemoteWorkflow();
-		logger.debug("Running " + analysisName + ": " + remoteWorkflow);
+		logger.debug("Preparing submission for " + analysisName + ": " + remoteWorkflow);
 		
 		logger.trace("Validating " + analysisName + ": " + remoteWorkflow);
 		validateWorkflow(analysisSubmission.getRemoteWorkflow());
 		
-		logger.trace("Preparing " + analysisName + ": " + remoteWorkflow);
+		String analysisId = workspaceService.prepareAnalysisWorkspace(analysisSubmission);
+		logger.trace("Created id for " + analysisName + " id=" + analysisId + 
+				", workflow=" + remoteWorkflow);
+		
+		analysisSubmission.setRemoteAnalysisId(analysisId);
+		
+		return analysisSubmissionRepository.save(analysisSubmission);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public S executeAnalysis(S analysisSubmission)
+					throws ExecutionManagerException {
+		checkNotNull(analysisSubmission, "analysisSubmission is null");
+		checkNotNull(analysisSubmission.getRemoteAnalysisId(), "remote analyis id is null");
+		
+		String analysisName = analysisSubmission.getClass().getSimpleName();
+		RemoteWorkflowGalaxy remoteWorkflow = analysisSubmission.getRemoteWorkflow();
+		
+		logger.debug("Running submission for " + analysisName + ": " + remoteWorkflow);
+		
+		logger.trace("Preparing files for " + analysisName + ": " + remoteWorkflow);
 		PreparedWorkflowGalaxy preparedWorkflow = workspaceService.prepareAnalysisFiles(analysisSubmission);
 		WorkflowInputsGalaxy input = preparedWorkflow.getWorkflowInputs();
 		
@@ -102,7 +125,8 @@ public abstract class AnalysisExecutionServiceGalaxy
 		analysisSubmission.setRemoteAnalysisId(preparedWorkflow.getRemoteAnalysisId());
 		
 		logger.trace("Saving submission " +  analysisName + ": " + remoteWorkflow);
-		return analysisSubmissionRepository.save(analysisSubmission);		
+		
+		return analysisSubmission;
 	}
 	
 	/**
