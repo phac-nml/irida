@@ -114,7 +114,7 @@ public class ProjectSamplesPage {
 	 * @return True if entire column is sorted ascending
 	 */
 	public boolean isSampleNameColumnSortedAsc() {
-		pageUtilities.waitForElementPresent(By.cssSelector("tbody td:nth-child(2)"));
+		pageUtilities.waitForElementVisible(By.cssSelector("tbody td:nth-child(2)"));
 		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(2)")).stream()
 				.map(WebElement::getText).collect(Collectors.toList());
 		return SortUtilities.isStringListSortedAsc(list);
@@ -137,7 +137,7 @@ public class ProjectSamplesPage {
 	 * @return True if entire column is sorted ascending
 	 */
 	public boolean isAddedOnDateColumnSortedAsc() {
-		pageUtilities.waitForElementPresent(By.cssSelector("tbody td:nth-child(4)"));
+		pageUtilities.waitForElementVisible(By.cssSelector("tbody td:nth-child(4)"));
 		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(4)")).stream()
 				.map(WebElement::getText).collect(Collectors.toList());
 		return SortUtilities.isDateSortedAsc(list, DATE_FORMAT);
@@ -149,7 +149,7 @@ public class ProjectSamplesPage {
 	 * @return True if entire column is sorted descending
 	 */
 	public boolean isAddedOnDateColumnSortedDesc() {
-		pageUtilities.waitForElementPresent(By.cssSelector("tbody td:nth-child(4)"));
+		pageUtilities.waitForElementVisible(By.cssSelector("tbody td:nth-child(4)"));
 		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(4)")).stream()
 				.map(WebElement::getText).collect(Collectors.toList());
 		return SortUtilities.isDateSortedDesc(list, DATE_FORMAT);
@@ -230,6 +230,7 @@ public class ProjectSamplesPage {
 	 * @return The name of the sampel in the row
 	 */
 	public String getSampleNameForRow(int rowNum) {
+		pageUtilities.waitForElementPresent(By.cssSelector("tbody tr:nth-child(" + rowNum + ") .name"));
 		return driver.findElement(By.cssSelector("tbody tr:nth-child(" + rowNum + ") .name")).getText();
 	}
 
@@ -426,7 +427,7 @@ public class ProjectSamplesPage {
 	 * @param name The new name for the samples
 	 */
 	public void selectTheMergedSampleName(String name) {
-		pageUtilities.waitForElementPresent(By.className("select2-choice"));
+		pageUtilities.waitForElementVisible(By.className("select2-choice"));
 		WebElement el = driver.findElement(By.className("select2-choice"));
 		el.click();
 		el.sendKeys(name);

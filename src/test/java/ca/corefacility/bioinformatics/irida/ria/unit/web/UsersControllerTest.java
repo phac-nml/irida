@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.security.Principal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -61,8 +62,7 @@ public class UsersControllerTest {
 	private static final long NUM_TOTAL_ELEMENTS = 2L;
 	private static final String USER_NAME = "testme";
 
-	Page<User> userPage = new PageImpl<>(Lists.newArrayList(new User(1l, "tom", "tom@nowhere.com", "123456798", "Tom",
-			"Matthews", "1234"), new User(2l, "jeff", "jeff@somewhere.com", "ABCDEFGHIJ", "Jeff", "Guy", "5678")));
+	Page<User> userPage;
 
 	// Services
 	private UserService userService;
@@ -81,6 +81,12 @@ public class UsersControllerTest {
 		passwordResetService = mock(PasswordResetService.class);
 		controller = new UsersController(userService, projectService, passwordResetService, emailController,
 				messageSource);
+
+		User u1 = new User(1l, "tom", "tom@nowhere.com", "123456798", "Tom", "Matthews", "1234");
+		u1.setModifiedDate(new Date());
+		User u2 = new User(2l, "jeff", "jeff@somewhere.com", "ABCDEFGHIJ", "Jeff", "Guy", "5678");
+		u2.setModifiedDate(new Date());
+		userPage = new PageImpl<>(Lists.newArrayList(u1, u2));
 	}
 
 	@Test
@@ -94,7 +100,8 @@ public class UsersControllerTest {
 
 		Principal principal = () -> USER_NAME;
 
-		when(userService.search(any(Specification.class), eq(0), eq(10), eq(Sort.Direction.ASC), eq("id"))).thenReturn(userPage);
+		when(userService.search(any(Specification.class), eq(0), eq(10), eq(Sort.Direction.ASC), eq("id"))).thenReturn(
+				userPage);
 		when(messageSource.getMessage(any(String.class), eq(null), any(Locale.class))).thenReturn("User");
 
 		Map<String, Object> response = controller.getAjaxUserList(principal, 0, 10, 1, 0, "asc", "");
@@ -282,7 +289,7 @@ public class UsersControllerTest {
 		verifyZeroInteractions(passwordResetService);
 		verify(emailController).sendWelcomeEmail(eq(u), eq(pu), eq(null));
 	}
-	
+
 	@Test
 	public void testSubmitCreateUserWithActivationLink() {
 		String username = "tom";
@@ -294,7 +301,7 @@ public class UsersControllerTest {
 		u.setSystemRole(Role.ROLE_USER);
 		User pu = new User(USER_NAME, email, password, null, null, null);
 		pu.setSystemRole(Role.ROLE_ADMIN);
-		
+
 		PasswordReset reset = new PasswordReset(u);
 
 		when(userService.create(any(User.class))).thenReturn(u);
@@ -319,8 +326,7 @@ public class UsersControllerTest {
 		Principal principal = () -> USER_NAME;
 		User u = new User(1l, username, email, password, null, null, null);
 
-		String submitCreateUser = controller.submitCreateUser(u, null, "NotTheSamePassword", null, model,
-				principal);
+		String submitCreateUser = controller.submitCreateUser(u, null, "NotTheSamePassword", null, model, principal);
 		assertEquals("user/create", submitCreateUser);
 		assertTrue(model.containsKey("errors"));
 		@SuppressWarnings("unchecked")

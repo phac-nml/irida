@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.concurrent.TimeUnit;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +22,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 
@@ -51,6 +54,7 @@ public class ProjectSamplesPageIT {
 	public void setUp() {
 		driver = new ChromeDriver();
 		driver.manage().window().setSize(new Dimension(1024, 900));
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		LoginPage loginPage = LoginPage.to(driver);
 		loginPage.doLogin();
 		this.page = new ProjectSamplesPage(driver);
@@ -58,10 +62,7 @@ public class ProjectSamplesPageIT {
 
 	@After
 	public void destroy() {
-		if (driver != null) {
-			driver.close();
-			driver.quit();
-		}
+		BasePage.destroyDriver(driver);
 	}
 
 	@Test
@@ -100,31 +101,6 @@ public class ProjectSamplesPageIT {
 	}
 
 	@Test
-	public void testEditSampleName() {
-		page.goToPage();
-		page.clickEditFirstSample();
-		assertTrue("Display a input to rename the sample", page.isRenameInputVisible());
-		// Try to rename a sample correctly
-		page.sendRenameSample(GOOD_SAMPLE_NAME);
-		assertTrue("Success message shown", page.successMessageShown());
-		assertEquals("Has renamed the sample", GOOD_SAMPLE_NAME, page.getSampleName());
-	}
-
-	@Test
-	public void testEditSampleBadly() {
-		page.goToPage();
-		page.clickEditFirstSample();
-		page.sendRenameSample("really bad name");
-		assertFalse("Success message shown", page.successMessageShown());
-		assertTrue("Has error field", page.hasErrorMessage());
-		assertTrue("Shows correct message", page.hasFormattingMessage());
-
-		// Cancel button should reset the state
-		page.clickOnEditCancel();
-		assertFalse("Error field should be gone", page.isRenameInputVisible());
-	}
-
-	@Test
 	public void testDeleteProjectSample() {
 		page.goToPage();
 		int orig = page.getDisplayedSampleCount();
@@ -153,7 +129,7 @@ public class ProjectSamplesPageIT {
         page.clickFirstThreeCheckboxes();
         page.clickCombineSamples();
         assertTrue("Combine samples modal should be open", page.isCombineSamplesModalOpen());
-        page.selectTheMergedSampleName("5");
+        page.selectTheMergedSampleName("sample5");
         assertEquals("Now only has 3 samples since 3 were merged", 3, page.getDisplayedSampleCount());
         assertEquals("Sample has the correct name", "sample5", page.getSampleNameForRow(1));
     }
@@ -184,6 +160,7 @@ public class ProjectSamplesPageIT {
         page.clickCombineSamples();
         assertTrue("Combine samples modal should be open", page.isCombineSamplesModalOpen());
         page.selectTheMergedSampleName(newName);
+	    // TODO: This is the test that causes phantomjs to fail
         assertTrue("Displays merge error", page.isSampleMergeErrorDisplayed());
     }
 

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="templates/wet-boew/wet-layout">
+<head lang="en">
+    <meta charset="UTF-8"/>
+    <title>THIS IS SOMETHING WRONG</title>
+</head>
+<body>
+<div class="container" layout:fragment="content">
+    <div class="row">
+        <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
+    </div>
+    <div class="row">
+        <nav class="navbar navbar-default navbar-sm" role="navigation"
+             th:with="baseLink=@{'/samples/' + ${sample.getId()}}">
+            <ul class="nav navbar-nav">
+                <li th:class="${activeNav} == 'details' ? 'active' : ''"><a th:href="${baseLink}" href="#" th:text="#{samples.nav.details}">Details</a></li>
+                <li><a href="#" th:text="#{samples.nav.files}">Files</a></li>
+            </ul>
+        </nav>
+    </div>
+    <main class="col-md-9 col-md-push-3" role="main" property="mainContentOfPage" layout:fragment="mainContent">
+
+    </main>
+    <aside class="col-md-3 col-md-pull-9 visible-md visible-lg">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <b class="panel-title" th:text="${sample.getLabel()}">__NAME__</b>
+            </div>
+            <div class="panel-body">
+                <ul class="nav nav-pills nav-stacked details">
+                    <li>
+                        <i class="glyphicon glyphicon-barcode"></i>
+                        <em th:text="#{samples.details.id}">ID</em>
+                        <span id="sb-id" th:text="${sample.getId()}"></span>
+                    </li>
+                    <li>
+                        <i class="glyphicon glyphicon-leaf"></i>
+                        <em th:text="#{samples.details.organism}">Organism</em>
+                        <span><i
+                                th:text="${sample.getOrganism()} != null ? ${sample.getOrganism()} : #{organism.unknown}"></i></span>
+                    </li>
+                    <li>
+                        <i class="glyphicon glyphicon-calendar"></i>
+                        <em th:text="#{samples.details.created}">Created</em>
+                        <span id="sb-created" th:text="${#calendars.format(sample.getCreatedDate(), 'dd MMM yyyy')}"></span>
+                    </li>
+                    <li>
+                        <i class="glyphicon glyphicon-calendar"></i>
+                        <em th:text="#{samples.details.modified}">Modified</em>
+                        <span id="sb-modified" data:livestamp="${sample.getModifiedDate()}"
+                              th:title="${#calendars.format(sample.getModifiedDate(), 'dd MMM yyyy')}"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </aside>
+</div>
+<th:block layout:fragment="scripts" th:inline="javascript">
+    <script th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}"
+            src="/resources/bower_components/moment/min/moment-with-langs.min.js"></script>
+    <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"
+            src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
+</th:block>
+</body>
+</html>

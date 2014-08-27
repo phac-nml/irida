@@ -9,9 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -22,7 +20,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectMembersPage;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -45,7 +43,6 @@ import com.google.common.collect.ImmutableList;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectMembersPageIT {
-	public static final Long PROJECT_ID = 1L;
 	private WebDriver driver;
 	private ProjectMembersPage membersPage;
 
@@ -53,20 +50,13 @@ public class ProjectMembersPageIT {
 
 	@Before
 	public void setUp() {
-        driver = new PhantomJSDriver();
-        driver.manage().window().setSize(new Dimension(1024, 900));
-		LoginPage loginPage = LoginPage.to(driver);
-		loginPage.doLogin();
-
-		membersPage = new ProjectMembersPage(driver, PROJECT_ID);
+        driver = BasePage.initializeDriver();
+		membersPage = new ProjectMembersPage(driver);
 	}
 
 	@After
 	public void destroy() {
-		if (driver != null) {
-			driver.close();
-			driver.quit();
-		}
+		BasePage.destroyDriver(driver);
 	}
 
 	@Test

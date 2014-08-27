@@ -57,21 +57,21 @@
     </div>
     <div layout:replace="partials/associated-projects :: list (projects=${associatedProjects})"></div>
 </aside>
-<div th:fragment="scripts">
+<th:block th:fragment="scripts">
     <script th:src="@{/resources/bower_components/bootstrap/js/tab.js}"
             src="/resources/bower_components/bootstrap/js/tab.js"></script>
-    <script th:src="@{/resources/wet-theme/js/deps/jquery.dataTables.min.js}"
-            src="/resources/wet-theme/js/deps/jquery.dataTables.min.js"></script>
     <script th:src="@{/resources/bower_components/select2/select2.min.js}"
             src="/resources/bower_components/select2/select2.min.js"></script>
     <script th:src="@{/resources/bower_components/magnific-popup/dist/jquery.magnific-popup.min.js}"
             src="/resources/bower_components/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
+    <script th:src="@{/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js}"
+            src="/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js"></script>
     <script th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}"
             src="/resources/bower_components/moment/min/moment-with-langs.min.js"></script>
     <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"
             src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
 	<script th:src="@{/resources/js/project.js}" src="/resources/js/project.js"></script>
 	<script th:src="@{/resources/bower_components/mustache/mustache.js}" src="/resources/bower_components/mustache/mustache.js"></script>
-</div>
+</th:block>
 </body>
 </html>

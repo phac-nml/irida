@@ -37,7 +37,7 @@
 
     <sample id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-20 14:20:19.0" description="description1"
             sequencerSampleId="sample1" sampleName="sample1" organism="E. coli" latitude="49.8994" longitude="-97.1392"
-            collectedBy="Fred Penner" isolationSource="grass" geographicLocationName="The Forks" strain="O157" isolate="54343"/>
+            collectedBy="Fred Penner" isolationSource="grass" geographicLocationName="Somewhere:nowhere" strain="O157" isolate="54343"/>
     <sample id="2" createdDate="2013-07-18 14:20:19.0" description="description2"
             sequencerSampleId="sample2" sampleName="sample2"/>
     <sample id="3" createdDate="2013-07-18 14:20:19.0" description="description3"

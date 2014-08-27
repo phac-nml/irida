@@ -23,7 +23,7 @@
                         th:text="#{project.samples.h1(${project.label})}">__PAGE_TITLE__</h1>
                 </div>
             </div>
-            <div class="row">
+            <div class="row mrgn-bttm-md">
                 <div class="col-md-12">
                     <div class="btn-toolbar mrgn-bttm-md" role="toolbar" th:inline="text">
                         <div class="btn-group">
@@ -66,7 +66,6 @@
                             <th>[[#{project.samples.table.numFiles}]]</th>
                             <th class="sortable">[[#{project.samples.table.dateCreated}]]<i
                                     class="glyphicon"></i></th>
-                            <th></th>
                         </tr>
                         </thead>
                         <tbody></tbody>
@@ -139,8 +138,8 @@
     </script>
     <iframe id="invisible" style="display:none;"></iframe>
 </div>
-<div layout:fragment="scripts" th:inline="javascript">
-<div th:replace="projects/project_base :: scripts"></div>
+<th:block layout:fragment="scripts" th:inline="javascript">
+<th:block th:replace="projects/project_base :: scripts"></th:block>
 <script th:inline="javascript">
 /*<![CDATA[*/
 /*
@@ -161,7 +160,6 @@ if (!String.prototype.format) {
 function EditableDataTable() {
     this.selectedRowIds = [];
     this.allRowIds = [];
-    this._isEditingRow = false;
     this._dataTable = null;
     this.totalSamples = 0;
 
@@ -187,20 +185,6 @@ function EditableDataTable() {
         group.appendChild(btn);
 
         return form;
-    }
-
-    function createEditBtn() {
-        var btn = document.createElement("button");
-        btn.className = "btn btn-default btn-xs pull-right edit";
-        btn.innerHTML = /*[[#{form.btn.edit}]]*/ "Edit";
-        return btn;
-    }
-
-    function createCancelBtn() {
-        var btn = document.createElement("button");
-        btn.className = "btn btn-info btn-sm pull-right cancel";
-        btn.innerHTML = /*[[#{form.btn.cancel}]]*/ "Cancel";
-        return btn;
     }
 
     function undoRename(sampleId, origName) {
@@ -266,7 +250,7 @@ function EditableDataTable() {
 	function combineSamples(table, noty, nameId, newName) {
         $.ajax({
             url: /*[[@{/projects/ajax/{projectId}/samples/merge(projectId=${project.getId()})}]]*/ '/projects/ajax/1/samples/merge',
-            data: "sampleIds=" + table.selectedRowIds + "&nameId=" + nameId + "&newName=" + newName,
+            data: "sampleIds=" + table.selectedRowIds + "&mergeSampleId=" + nameId + "&newName=" + newName,
             type: "post"
         }).done(function(data) {
             if (data.success) {
@@ -363,27 +347,6 @@ function EditableDataTable() {
                 showErrorModal(msg);
             }
         });
-    };
-
-    this._createEditRow = function (row) {
-        var tdName = row.find('td.name'),
-                tdBtns = row.find('td.btns'),
-                name = tdName.html();
-        row.addClass("editing");
-        tdName.html(createEditForm(name)).find('input').focus();
-        tdBtns.html(createCancelBtn());
-        this._isEditingRow = true;
-    };
-
-    this._cancelEditRow = function () {
-        var row = $("tr.editing"),
-                tdName = row.find("td.name"),
-                tdBtns = row.find("td.btns"),
-                name = tdName.find("input").attr("placeholder");
-        tdName.html(name);
-        tdBtns.html(createEditBtn());
-        row.removeClass("editing");
-        this._isEditingRow = false;
     };
 
     this._showDeleteSampleModal = function () {
@@ -488,60 +451,6 @@ function EditableDataTable() {
         });
     };
 
-    this._sendAjaxNameUpdate = function (id, name, origName) {
-        var that = this;
-        $.ajax({
-            url: /*[[@{/projects/ajax/{projectId}/samples/update(projectId=${project.getId()})}]]*/ '/projects/ajax/update',
-            type: 'post',
-            data: {'sampleId': id, 'name': name}
-        }).done(function (data) {
-            if (data.success) {
-                that.updateTable();
-                if (typeof origName != 'undefined') {
-                    noty({
-                        layout: 'topCenter',
-                        type: 'success',
-                        text: /*[[#{project.samples.rename-success}]]*/ 'Successfully updated sample name'
-                                + '  <a href="#" id="undoRename">' +
-                            /*[[#{form.btn.undo}]]*/ 'Undo'
-                                + '</a>',
-                        timeout: 3200,
-                        callback: {
-                            onShow: function () {
-                                $("#undoRename").on('click', function () {
-                                    undoRename(id, origName);
-                                });
-                            },
-                            onClose: function () {
-                                $("#undoRename").off('click');
-                            }
-                        }
-                    });
-                }
-            }
-            else {
-                var input = $("tr.editing").find('input[type="text"]');
-                input.focus().select();
-                input.qtip({
-                    content: data.error.sampleName,
-                    position: {
-                        at: 'top center',
-                        my: 'bottom center'
-                    },
-                    style: {
-                        classes: 'qtip-red qtip-shadow'
-                    },
-                    show: {
-                        ready: true
-                    },
-                    hide: {
-                        event: 'unfocus'
-                    }
-                });
-            }
-        });
-    };
-
     this._showCombineSamplesModal = function () {
         var that = this;
         // TODO: get ajax list of samples names from server.
@@ -564,7 +473,7 @@ function EditableDataTable() {
                         onClick: function ($noty) {
                             var mergeSampleId = $("#select2-merge-input").val();
                             var newName = "";
-                            if(isNaN(mergeSampleId)){
+                            if(that.selectedRowIds.indexOf(mergeSampleId) === -1){
                                 newName = mergeSampleId;
                                 mergeSampleId = "";
                             }
@@ -640,11 +549,6 @@ EditableDataTable.prototype = {
             });
         }
     },
-    cancelEditRow: function () {
-        if (this._isEditingRow) {
-            this._cancelEditRow();
-        }
-    },
     checkBoxClickedEvent: function (id, checked) {
 		var index = this.selectedRowIds.indexOf(id);
 		this.allRowIds[id].omit = [];
@@ -665,25 +569,6 @@ EditableDataTable.prototype = {
         }
         if (!isSame) {
             this._openDetailsView(el);
-        }
-    },
-    editRow: function (row) {
-        if (this._isEditingRow) {
-            this._cancelEditRow();
-        }
-        this._createEditRow(row);
-    },
-    sendUpdateName: function () {
-        var row = $("tr.editing"),
-                id = row.find('input[type="checkbox"]').val(),
-                input = row.find("#editName"),
-                origName = input.attr("placeholder"),
-                newName = input.val();
-        if (input.data("qtip")) {
-            input.qtip('destroy');
-        }
-        if (newName != "" && newName != origName) {
-            this._sendAjaxNameUpdate(id, newName, origName);
         }
     },
     getSelectAllState: function () {
@@ -785,16 +670,7 @@ $(document).ready(function () {
             },
             {
                 "data": "createdDate",
-                "width": "15%"
-            },
-            {
-                "data": "id",
-                "orderable": false,
-                "render": function (data) {
-                    return '<button class="btn btn-default btn-xs pull-right edit">Edit</button>';
-                },
-                "class": "btns",
-                "width": "10%"
+                "width": "25%"
             }
         ],
         'createdRow': function (row, data) {
@@ -981,6 +857,6 @@ $('[data-tooltip!=""]').qtip({ // Grab all elements with a non-blank data-toolti
 });
 /*]]>*/
 </script>
-</div>
+</th:block>
 </body>
 </html>

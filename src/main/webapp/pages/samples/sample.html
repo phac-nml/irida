@@ -1,134 +1,92 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="templates/wet-boew/wet-layout">>
+      layout:decorator="samples/base">
 <head lang="en">
     <meta charset="UTF-8"/>
     <title th:text="#{samples.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
 </head>
 <body>
-<div class="container" layout:fragment="content">
+<main class="col-md-9 col-md-push-3" role="main" property="mainContentOfPage" layout:fragment="mainContent">
     <div class="row">
-        <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
+        <div class="col-md-10">
+            <h1 role="heading" th:text="#{samples.details.page-title(${sample.getLabel()})}">__TITLE__</h1>
+        </div>
+        <div class="col-md-2">
+            <a id="edit-sample" class="btn btn-default btn-sm pull-right"
+               th:href="@{'/samples/' + ${sample.getId()} + '/edit'}" th:text="#{form.btn.edit}">__EDIT__</a>
+        </div>
     </div>
     <div class="row">
-        <nav class="navbar navbar-default navbar-sm" role="navigation"
-             th:with="baseLink=@{'/samples/' + ${sample.getId()}}">
-            <ul class="nav navbar-nav">
-                <li class="active"><a th:href="${baseLink}" href="#" th:text="#{samples.nav.details}">Details</a></li>
-                <li><a href="#" th:text="#{samples.nav.files}">Files</a></li>
-            </ul>
-        </nav>
+        <div class="col-md-12">
+            <p class="lead" th:text="${sample.getDescription()}"></p>
+        </div>
     </div>
-    <main class="col-md-9 col-md-push-3" role="main">
-        <div class="row">
-            <div class="col-md-10">
-                <h1 role="heading" th:text="#{samples.details.page-title(${sample.getLabel()})}">__TITLE__</h1>
-            </div>
-            <div class="col-md-2">
-                <a id="edit-sample" class="btn btn-default btn-sm pull-right"
-                   th:href="@{'/samples/' + ${sample.getId()} + '/edit'}" th:text="#{form.btn.edit}">__EDIT__</a>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <p class="lead" th:text="${sample.getDescription()}"></p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        <b class="panel-title">Organism Details</b>
-                    </div>
-                    <div class="panel-body">
-                        <dl>
-                            <dt th:text="#{samples.details.organism}"></dt>
-                            <dd id="dd-organism" th:text="${sample.getOrganism()} != null ? ${sample.getOrganism()} : #{organism.unknown}"></dd>
-                        </dl>
-                        <dl>
-                            <dt th:text="#{samples.details.isolate}"></dt>
-                            <dd id="dd-isolate" th:text="${sample.getIsolate()} != null ? ${sample.getIsolate()} : #{isolate.unknown}"></dd>
-                        </dl>
-                        <dl>
-                            <dt th:text="#{samples.details.strain}"></dt>
-                            <dd id="dd-strain" th:text="${sample.getStrain()} != null ? ${sample.getStrain()} : #{strain.unknown}"></dd>
-                        </dl>
-                    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <b class="panel-title" th:text="#{samples.details.section.organism-title}">Organism Details</b>
                 </div>
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        <b class="panel-title" th:text="#{samples.collection.title}">__TITLE__</b>
-                    </div>
-                    <div class="panel-body">
-                        <dl th:if="${sample.getCollectedBy()} != null">
-                            <dt th:text="#{samples.collected-by}"></dt>
-                            <dd id="dd-collectedby" th:text="${sample.getCollectedBy()}"></dd>
-                        </dl>
-                        <dl>
-                            <dt th:text="#{samples.collection-date.title}"></dt>
-                            <dd th:text="${sample.getCollectionDate()} != null ? ${sample.getCollectionDate()} : #{samples.collection-date.unknown}"></dd>
-                        </dl>
-                        <dl th:if="${sample.getIsolationSource()} != null">
-                            <dt th:text="#{samples.isolation-source.title}"></dt>
-                            <dd id="dd-isolation-source" th:text="${sample.getIsolationSource()}"></dd>
-                        </dl>
-                        <dl th:if="${sample.getGeographicLocationName()} != null">
-                            <dt th:text="#{location.geographic.title}"></dt>
-                            <dd id="dd-geo-name" th:text="${sample.getGeographicLocationName()}"></dd>
-                        </dl>
-                        <dl>
-                            <dt th:text="#{location.latitude}"></dt>
-                            <dd id="dd-latitude" th:text="${sample.getLatitude()} != null ? ${sample.getLatitude()} : #{location.unknown}"></dd>
-                        </dl>
-                        <dl>
-                            <dt th:text="#{location.longitude}"></dt>
-                            <dd id="dd-longitude" th:text="${sample.getLongitude()} != null ? ${sample.getLongitude()} : #{location.unknown}"></dd>
-                        </dl>
+                <div class="panel-body">
+                    <dl>
+                        <dt th:text="#{samples.details.organism}"></dt>
+                        <dd id="dd-organism"
+                            th:text="${sample.getOrganism()} != null ? ${sample.getOrganism()} : #{organism.unknown}"></dd>
+                    </dl>
+                    <dl>
+                        <dt th:text="#{samples.details.isolate}"></dt>
+                        <dd id="dd-isolate"
+                            th:text="${sample.getIsolate()} != null ? ${sample.getIsolate()} : #{isolate.unknown}"></dd>
+                    </dl>
+                    <dl>
+                        <dt th:text="#{samples.details.strain}"></dt>
+                        <dd id="dd-strain"
+                            th:text="${sample.getStrain()} != null ? ${sample.getStrain()} : #{strain.unknown}"></dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <b class="panel-title" th:text="#{samples.collection.title}">__TITLE__</b>
+                </div>
+                <div class="panel-body">
+                    <dl th:if="${sample.getCollectedBy()} != null">
+                        <dt th:text="#{samples.collected-by}"></dt>
+                        <dd id="dd-collectedby" th:text="${sample.getCollectedBy()}"></dd>
+                    </dl>
+                    <dl th:with="df=#{locale.date.short}">
+                        <dt th:text="#{samples.collection-date.title}"></dt>
+                        <dd th:text="${sample.getCollectionDate()} != null ? ${#dates.format(sample.getCollectionDate(), df)} : #{samples.collection-date.unknown}"></dd>
+                    </dl>
+                    <dl th:if="${sample.getIsolationSource()} != null">
+                        <dt th:text="#{samples.isolation-source.title}"></dt>
+                        <dd id="dd-isolation-source" th:text="${sample.getIsolationSource()}"></dd>
+                    </dl>
+                    <dl th:if="${sample.getGeographicLocationName()} != null">
+                        <dt th:text="#{location.geographic.title}"></dt>
+                        <dd id="dd-geo-name" th:text="${sample.getGeographicLocationName()}"></dd>
+                    </dl>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl>
+                                <dt th:text="#{location.latitude}"></dt>
+                                <dd id="dd-latitude"
+                                    th:text="${sample.getLatitude()} != null ? ${sample.getLatitude()} : #{location.unknown}"></dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl>
+                                <dt th:text="#{location.longitude}"></dt>
+                                <dd id="dd-longitude"
+                                    th:text="${sample.getLongitude()} != null ? ${sample.getLongitude()} : #{location.unknown}"></dd>
+                            </dl>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
-    <aside class="col-md-3 col-md-pull-9 visible-md visible-lg">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <b class="panel-title" th:text="${sample.getLabel()}">__NAME__</b>
-            </div>
-            <div class="panel-body">
-                <ul class="nav nav-pills nav-stacked details">
-                    <li>
-                        <i class="glyphicon glyphicon-barcode"></i>
-                        <em th:text="#{samples.details.id}">ID</em>
-                        <span id="sb-id" th:text="${sample.getId()}"></span>
-                    </li>
-                    <li>
-                        <i class="glyphicon glyphicon-leaf"></i>
-                        <em th:text="#{samples.details.organism}">Organism</em>
-                        <span><i
-                                th:text="${sample.getOrganism()} != null ? ${sample.getOrganism()} : #{organism.unknown}"></i></span>
-                    </li>
-                    <li>
-                        <i class="glyphicon glyphicon-calendar"></i>
-                        <em th:text="#{samples.details.created}">Created</em>
-                        <span id="sb-created" th:text="${#calendars.format(sample.getCreatedDate(), 'dd MMM yyyy')}"></span>
-                    </li>
-                    <li>
-                        <i class="glyphicon glyphicon-calendar"></i>
-                        <em th:text="#{samples.details.modified}">Modified</em>
-                        <span id="sb-modified" data:livestamp="${sample.getModifiedDate()}"
-                              th:title="${#calendars.format(sample.getModifiedDate(), 'dd MMM yyyy')}"></span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </aside>
-</div>
-<th:block layout:fragment="scripts" th:inline="javascript">
-    <script th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}"
-            src="/resources/bower_components/moment/min/moment-with-langs.min.js"></script>
-    <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"
-            src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
-</th:block>
+    </div>
+</main>
 </body>
 </html>
