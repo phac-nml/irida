@@ -176,6 +176,24 @@ table.dataTable > tbody code {
   padding: 0;
 }
 
+/* line 44, ../../styles/components/_magnific-popup.scss */
+.form-popup {
+  position: relative;
+  background: #ffffff;
+  width: auto;
+  max-width: 500px;
+  margin: 20px auto;
+}
+/* line 50, ../../styles/components/_magnific-popup.scss */
+.form-popup .modal-header {
+  background-color: #2572b4;
+  color: #ffffff;
+}
+/* line 54, ../../styles/components/_magnific-popup.scss */
+.form-popup .mfp-close {
+  color: #ffffff;
+}
+
 /* line 1, ../../styles/components/_noty.scss */
 .noty_message h2 {
   margin-top: 5px;

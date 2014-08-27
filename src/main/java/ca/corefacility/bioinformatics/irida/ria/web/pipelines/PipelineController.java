@@ -69,7 +69,7 @@ public class PipelineController {
 		List<Map<String, String>> response = new ArrayList<>();
 		Map<String, String> map = new HashMap<>();
 		map.put("id", "1");
-		map.put("text", "Aaron's Awesome Phylogenetic Pipeline");
+		map.put("text", "Whole Genome Phylogenomics Pipeline");
 		response.add(map);
 		return response;
 	}
