@@ -10,6 +10,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -29,13 +30,19 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.Lists;
 
 public class RemoteAPIControllerTest {
 	private RemoteAPIController remoteAPIController;
 	private RemoteAPIService remoteAPIService;
+	private UserService userService;
+	private ProjectRemoteService projectRemoteService;
 	private MessageSource messageSource;
+
+	private static final String USER_NAME = "testme";
 
 	private Locale locale;
 
@@ -43,7 +50,10 @@ public class RemoteAPIControllerTest {
 	public void setUp() {
 		remoteAPIService = mock(RemoteAPIService.class);
 		messageSource = mock(MessageSource.class);
-		remoteAPIController = new RemoteAPIController(remoteAPIService, messageSource);
+		userService = mock(UserService.class);
+		projectRemoteService = mock(ProjectRemoteService.class);
+		remoteAPIController = new RemoteAPIController(remoteAPIService, userService, projectRemoteService,
+				messageSource);
 		locale = LocaleContextHolder.getLocale();
 
 	}
@@ -63,6 +73,7 @@ public class RemoteAPIControllerTest {
 		int sortColumn = 0;
 		String direction = "asc";
 		String searchValue = "";
+		Principal principal = () -> USER_NAME;
 
 		RemoteAPI api1 = new RemoteAPI("api name", "http://somewhere", "an api", "client1", "secret1");
 		api1.setId(1l);
@@ -76,7 +87,7 @@ public class RemoteAPIControllerTest {
 						any(String.class))).thenReturn(apiPage);
 
 		Map<String, Object> ajaxAPIList = remoteAPIController.getAjaxAPIList(page, size, draw, sortColumn, direction,
-				searchValue);
+				searchValue, principal);
 
 		verify(remoteAPIService).search(any(Specification.class), eq(page), eq(size), any(Direction.class),
 				any(String.class));

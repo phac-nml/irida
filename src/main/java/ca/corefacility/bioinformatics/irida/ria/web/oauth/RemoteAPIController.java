@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,13 +26,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.RemoteAPISpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMessage;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import ca.corefacility.bioinformatics.irida.service.remote.model.RemoteProject;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -52,12 +59,15 @@ public class RemoteAPIController extends BaseController {
 	public static final String CLIENTS_PAGE = "remote_apis/list";
 	public static final String DETAILS_PAGE = "remote_apis/remote_api_details";
 	public static final String ADD_API_PAGE = "remote_apis/create";
+	public static final String STATUS_PAGE = "remote_apis/status";
 
 	private final String SORT_BY_ID = "id";
 	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "name", "clientId", "createdDate");
 	private static final String SORT_ASCENDING = "asc";
 
 	private final RemoteAPIService remoteAPIService;
+	private final UserService userService;
+	private final ProjectRemoteService projectRemoteService;
 	private final MessageSource messageSource;
 
 	// Map storing the message names for the
@@ -67,8 +77,11 @@ public class RemoteAPIController extends BaseController {
 					"remoteapi.create.serviceURIConflict"));
 
 	@Autowired
-	public RemoteAPIController(RemoteAPIService remoteAPIService, MessageSource messageSource) {
+	public RemoteAPIController(RemoteAPIService remoteAPIService, UserService userService,
+			ProjectRemoteService projectRemoteService, MessageSource messageSource) {
 		this.remoteAPIService = remoteAPIService;
+		this.userService = userService;
+		this.projectRemoteService = projectRemoteService;
 		this.messageSource = messageSource;
 	}
 
@@ -188,15 +201,18 @@ public class RemoteAPIController extends BaseController {
 	 *            The string search value for the table
 	 * @return a Map<String,Object> for the table
 	 */
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> getAjaxAPIList(@RequestParam(DataTable.REQUEST_PARAM_START) Integer start,
 			@RequestParam(DataTable.REQUEST_PARAM_LENGTH) Integer length,
 			@RequestParam(DataTable.REQUEST_PARAM_DRAW) Integer draw,
 			@RequestParam(value = DataTable.REQUEST_PARAM_SORT_COLUMN, defaultValue = "0") Integer sortColumn,
 			@RequestParam(value = DataTable.REQUEST_PARAM_SORT_DIRECTION, defaultValue = "asc") String direction,
-			@RequestParam(DataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue) {
+			@RequestParam(DataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue, Principal principal) {
 
 		String sortString;
+
+		User principalUser = userService.getUserByUsername(principal.getName());
 
 		try {
 			sortString = SORT_COLUMNS.get(sortColumn);
@@ -216,7 +232,12 @@ public class RemoteAPIController extends BaseController {
 			Map<String, String> row = new HashMap<>();
 			row.put("id", api.getId().toString());
 			row.put("name", api.getName());
-			row.put("clientId", api.getClientId());
+
+			// only pass clientId to admin users
+			if (principalUser.getSystemRole().equals(Role.ROLE_ADMIN)) {
+				row.put("clientId", api.getClientId());
+			}
+
 			row.put("createdDate", Formats.DATE.format(api.getCreatedDate()));
 
 			apiData.add(row);
@@ -229,5 +250,26 @@ public class RemoteAPIController extends BaseController {
 
 		map.put(DataTable.RESPONSE_PARAM_DATA, apiData);
 		return map;
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping("/status")
+	public String connectionStatus() {
+		return STATUS_PAGE;
+	}
+
+	@RequestMapping("/status/{apiId}")
+	@ResponseBody
+	public String statusActive(@PathVariable Long apiId) {
+		RemoteAPI api = remoteAPIService.read(apiId);
+
+		try {
+			projectRemoteService.list(api);
+			return "success";
+		} catch (IridaOAuthException ex) {
+			logger.debug("Can't connect to API: " + ex.getMessage());
+		}
+
+		return "inactive";
 	}
 }
