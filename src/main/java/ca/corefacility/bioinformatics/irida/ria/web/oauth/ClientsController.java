@@ -98,7 +98,7 @@ public class ClientsController extends BaseController {
 	public String read(@PathVariable Long clientId, Model model, Locale locale) {
 		IridaClientDetails client = clientDetailsService.read(clientId);
 
-		String grants = StringUtils.collectionToDelimitedString(client.getAuthorizedGrantTypes(), ",");
+		String grants = StringUtils.collectionToDelimitedString(client.getAuthorizedGrantTypes(), ", ");
 		String scopes = StringUtils.collectionToDelimitedString(client.getScope(), ",");
 		model.addAttribute("client", client);
 
