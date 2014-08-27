@@ -57,17 +57,33 @@ public class InstallRemoteWorkflowPhylogenomics {
 	private static final String TREE_OUTPUT_NAME = "outputTreeName";
 	private static final String MATRIX_OUTPUT_NAME = "outputMatrixName";
 	private static final String SNP_TABLE_OUTPUT_NAME = "outputSnpTableName";
+	
+	private static final String DEFAULT_SEQUENCE_INPUT = "sequence_reads";
+	private static final String DEFAULT_REFERENCE_INPUT = "reference";
+	private static final String DEFAULT_TREE_OUTPUT = "snp_tree.tre";
+	private static final String DEFAULT_MATRIX_OUTPUT = "snp_matrix.tsv";
+	private static final String DEFAULT_SNP_TABLE_OUTPUT = "snp_table.tsv";
+	
+	/**
+	 * Converts the given message and default value to a message + default value.
+	 * @param message  The message to use.
+	 * @param defaultValue  The default value.
+	 * @return  The message + default value.
+	 */
+	private static String toMessage(String message, String defaultValue) {
+		return message + " [" + defaultValue + "].";
+	}
 
 	public static void main(String[] args) {
 		Options options = new Options();
 		options.addOption(null, USERNAME_NAME, true, "username to access the database.");
 		options.addOption(null, PASSWORD_NAME, true, "password for the user.");
 		options.addOption(null, WORKFLOW_ID, true, "id of the workflow in Galaxy.");
-		options.addOption(null, SEQUENCE_INPUT_LABEL, true, "the label of the input sequence files.");
-		options.addOption(null, REFERENCE_INPUT_LABEL, true, "the label of the input reference file.");
-		options.addOption(null, TREE_OUTPUT_NAME, true, "the name of the output tree.");
-		options.addOption(null, MATRIX_OUTPUT_NAME, true, "the name of the output matrix.");
-		options.addOption(null, SNP_TABLE_OUTPUT_NAME, true, "the name of the output snp table.");
+		options.addOption(null, SEQUENCE_INPUT_LABEL, true, toMessage("the label of the input sequence files",DEFAULT_SEQUENCE_INPUT));
+		options.addOption(null, REFERENCE_INPUT_LABEL, true, toMessage("the label of the input reference file",DEFAULT_REFERENCE_INPUT));
+		options.addOption(null, TREE_OUTPUT_NAME, true, toMessage("the name of the output tree",DEFAULT_TREE_OUTPUT));
+		options.addOption(null, MATRIX_OUTPUT_NAME, true, toMessage("the name of the output matrix",DEFAULT_MATRIX_OUTPUT));
+		options.addOption(null, SNP_TABLE_OUTPUT_NAME, true, toMessage("the name of the output snp table",DEFAULT_SNP_TABLE_OUTPUT));
 		options.addOption("h", "help", false, "print help statement.");
 		
 		CommandLineParser parser = new BasicParser();
@@ -207,11 +223,11 @@ public class InstallRemoteWorkflowPhylogenomics {
 		
 		String workflowChecksum = getChecksum(workflowId, workflowService);
 		
-		String sequenceFileInputLabel = getOptionValue(commandLine,SEQUENCE_INPUT_LABEL);
-		String referenceFileInputLabel = getOptionValue(commandLine,REFERENCE_INPUT_LABEL);
-		String treeName = getOptionValue(commandLine,TREE_OUTPUT_NAME);
-		String matrixName = getOptionValue(commandLine,MATRIX_OUTPUT_NAME);
-		String tableName = getOptionValue(commandLine,SNP_TABLE_OUTPUT_NAME);
+		String sequenceFileInputLabel = commandLine.getOptionValue(SEQUENCE_INPUT_LABEL, DEFAULT_SEQUENCE_INPUT);
+		String referenceFileInputLabel = commandLine.getOptionValue(REFERENCE_INPUT_LABEL, DEFAULT_REFERENCE_INPUT);
+		String treeName = commandLine.getOptionValue(TREE_OUTPUT_NAME, DEFAULT_TREE_OUTPUT);
+		String matrixName = commandLine.getOptionValue(MATRIX_OUTPUT_NAME, DEFAULT_MATRIX_OUTPUT);
+		String tableName = commandLine.getOptionValue(SNP_TABLE_OUTPUT_NAME, DEFAULT_SNP_TABLE_OUTPUT);
 		
 		return new RemoteWorkflowPhylogenomics(workflowId,
 			workflowChecksum, sequenceFileInputLabel, referenceFileInputLabel,
