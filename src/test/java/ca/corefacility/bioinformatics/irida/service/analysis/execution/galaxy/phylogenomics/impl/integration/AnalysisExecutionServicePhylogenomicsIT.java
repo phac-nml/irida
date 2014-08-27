@@ -40,7 +40,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowChecksumInvalidException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -55,7 +57,9 @@ import ca.corefacility.bioinformatics.irida.repositories.referencefile.Reference
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflowRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -90,6 +94,9 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	private SequenceFileRepository sequenceFileRepository;
 	
 	@Autowired
+	private SequenceFileService seqeunceFileService;
+	
+	@Autowired
 	private RemoteWorkflowRepository remoteWorkflowRepository;
 	
 	@Autowired
@@ -115,6 +122,9 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		remoteWorkflowServicePhylogenomicsInvalidChecksum;
 	
 	@Autowired
+	private SampleService sampleService;
+	
+	@Autowired
 	private GalaxyWorkflowService galaxyWorkflowService;
 		
 	private Path sequenceFilePath;
@@ -122,8 +132,8 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	
 	private Path expectedSnpMatrix;
 	private Path expectedSnpTable;
-	private Path expectedTree;	
-	
+	private Path expectedTree;
+		
 	/**
 	 * Sets up variables for testing.
 	 * @throws URISyntaxException
@@ -159,8 +169,12 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	 * @return  An AnalysisSubmissionPhylogenomics which has been saved to the database.
 	 */
 	private AnalysisSubmissionPhylogenomics setupSubmissionInDatabase(Path sequenceFilePath,
-		Path referenceFilePath, RemoteWorkflowPhylogenomics remoteWorkflow) {					
-		SequenceFile sequenceFile = sequenceFileRepository.save(new SequenceFile(sequenceFilePath));
+		Path referenceFilePath, RemoteWorkflowPhylogenomics remoteWorkflow) {
+		
+		Sample sample = sampleService.read(1L);
+		Join<Sample, SequenceFile> sampleSeqFile = 
+				seqeunceFileService.createSequenceFileInSample(new SequenceFile(sequenceFilePath), sample);
+		SequenceFile sequenceFile = sampleSeqFile.getObject();
 		
 		Set<SequenceFile> sequenceFiles = new HashSet<>();
 		sequenceFiles.add(sequenceFile);

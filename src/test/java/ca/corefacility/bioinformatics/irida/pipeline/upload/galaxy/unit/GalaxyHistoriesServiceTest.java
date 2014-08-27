@@ -44,6 +44,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
@@ -399,6 +400,49 @@ public class GalaxyHistoriesServiceTest {
 	}
 	
 	/**
+	 * Tests successfull construction of a dataset collection.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test
+	public void testConstructCollectionSuccess() throws ExecutionManagerException {
+		CollectionResponse collectionResponse = new CollectionResponse();
+		
+		History history = new History();
+		history.setId(HISTORY_ID);
+		
+		HistoryDatasetElement datasetElement = new HistoryDatasetElement();
+		datasetElement.setId(DATA_ID);
+		CollectionDescription description = new CollectionDescription();
+		description.addDatasetElement(datasetElement);
+				
+		when(historiesClient.createDatasetCollection(eq(HISTORY_ID), any(CollectionDescription.class))).
+			thenReturn(collectionResponse);
+		
+		assertEquals(collectionResponse,galaxyHistory.constructCollection(
+				description, history));
+	}
+	
+	/**
+	 * Tests failing to construct a dataset collection.
+	 * @throws ExecutionManagerException 
+	 */
+	@Test(expected=ExecutionManagerException.class)
+	public void testConstructCollectionFail() throws ExecutionManagerException {		
+		History history = new History();
+		history.setId(HISTORY_ID);
+		
+		HistoryDatasetElement datasetElement = new HistoryDatasetElement();
+		datasetElement.setId(DATA_ID);
+		CollectionDescription description = new CollectionDescription();
+		description.addDatasetElement(datasetElement);
+				
+		when(historiesClient.createDatasetCollection(eq(HISTORY_ID), any(CollectionDescription.class))).
+			thenThrow(new RuntimeException());
+		
+		galaxyHistory.constructCollection(description, history);
+	}
+	
+	/**
 	 * Tests successfull construction of a list of datasets.
 	 * @throws ExecutionManagerException 
 	 */
@@ -425,9 +469,7 @@ public class GalaxyHistoriesServiceTest {
 	 * @throws ExecutionManagerException 
 	 */
 	@Test(expected=ExecutionManagerException.class)
-	public void testConstructCollectionListFail() throws ExecutionManagerException {
-		CollectionResponse collectionResponse = new CollectionResponse();
-		
+	public void testConstructCollectionListFail() throws ExecutionManagerException {		
 		History history = new History();
 		history.setId(HISTORY_ID);
 		
@@ -438,8 +480,7 @@ public class GalaxyHistoriesServiceTest {
 		when(historiesClient.createDatasetCollection(eq(HISTORY_ID), any(CollectionDescription.class))).
 			thenThrow(new RuntimeException());
 		
-		assertEquals(collectionResponse,galaxyHistory.constructCollectionList(
-				datasets, history));
+		galaxyHistory.constructCollectionList(datasets, history);
 	}
 	
 	/**
