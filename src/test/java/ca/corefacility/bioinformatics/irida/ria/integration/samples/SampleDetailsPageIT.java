@@ -7,8 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -40,7 +38,6 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/samples/SamplePagesIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SampleDetailsPageIT {
-	private static final Logger logger = LoggerFactory.getLogger(SampleDetailsPageIT.class);
 	private static final Long SAMPLE_ID = 1L;
 	private static final String SAMPLE_CREATED_DATE = "18 Jul 2013";
 	private static final String SAMPLE_ORGANISM = "E. coli";

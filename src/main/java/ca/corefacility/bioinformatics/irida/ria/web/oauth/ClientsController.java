@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web;
+package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
