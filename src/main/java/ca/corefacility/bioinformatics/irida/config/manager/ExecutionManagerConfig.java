@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
@@ -38,7 +39,18 @@ import com.google.common.collect.ImmutableMap;
 public class ExecutionManagerConfig {
 	private static final Logger logger = LoggerFactory
 			.getLogger(ExecutionManagerConfig.class);
+	
+	/**
+	 * Property names for a Galaxy instance to execution jobs on.
+	 */
+	private static final String URL_EXECUTION_PROPERTY = "galaxy.execution.url";
+	private static final String API_KEY_EXECUTION_PROPERTY = "galaxy.execution.apiKey";
+	private static final String EMAIL_EXECUTION_PROPERTY = "galaxy.execution.email";
+	private static final String DATA_STORAGE_EXECUTION_PROPERTY = "galaxy.execution.dataStorage";
 
+	/**
+	 * Property names for a Galaxy instance to upload files into.
+	 */
 	private static final String URL_UPLODER_PROPERTY = "galaxy.uploader.url";
 	private static final String API_KEY_UPLOADER_PROPERTY = "galaxy.uploader.admin.apiKey";
 	private static final String ADMIN_EMAIL_UPLOADER_PROPERTY = "galaxy.uploader.admin.email";
@@ -55,6 +67,25 @@ public class ExecutionManagerConfig {
 
 	@Autowired
 	private Validator validator;
+	
+	/**
+	 * Builds a new ExecutionManagerGalaxy from the given properties.
+	 * @return  An ExecutionManagerGalaxy.
+	 */
+	@Lazy
+	@Bean
+	public ExecutionManagerGalaxy executionManager() {
+		try {			
+			return buildExecutionManager(URL_EXECUTION_PROPERTY, API_KEY_EXECUTION_PROPERTY,
+					EMAIL_EXECUTION_PROPERTY, DATA_STORAGE_EXECUTION_PROPERTY);
+		} catch (ExecutionManagerConfigurationException e) {
+			logger.error("Could not build ExecutionManagerGalaxy: " + e.getMessage());
+		} catch (ConstraintViolationException e) {
+			logger.error("Could not build ExecutionManagerGalaxy: " + e.getMessage());
+		}
+		
+		return null;
+	}
 
 	/**
 	 * Builds a new GalaxyUploader for uploading files to Galaxy.
