@@ -43,6 +43,11 @@
                             <span class="pull-right" id="client-grants"
                                 th:text="${grants}">_Grants_</span>
                         </li>
+                        <li>
+                            <i class="glyphicon glyphicon-transfer"></i>&nbsp;[[#{client.scopes}]]
+                            <span class="pull-right" id="client-scopes"
+                                th:text="${scopes}">_Scopes_</span>
+                        </li>
                         
                         <li>
                             <i class="glyphicon glyphicon-time"></i>&nbsp;[[#{client.details.tokenValidity}]]
