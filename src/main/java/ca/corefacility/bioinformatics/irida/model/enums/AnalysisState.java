@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model.workflow.submission;
+package ca.corefacility.bioinformatics.irida.model.enums;
 
 /**
  * Defins a set of states that an analysis submission can be in.
