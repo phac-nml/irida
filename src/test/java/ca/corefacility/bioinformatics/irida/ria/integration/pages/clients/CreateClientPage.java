@@ -20,7 +20,7 @@ public class CreateClientPage {
 		driver.get(CREATE_PAGE);
 	}
 
-	public void createClientWithDetails(String id, String grant) {
+	public void createClientWithDetails(String id, String grant, boolean scope_read, boolean scope_write) {
 		logger.trace("Creating client with id: " + id + " and grant: " + grant);
 
 		WebElement idField = driver.findElement(By.id("clientId"));
@@ -30,6 +30,14 @@ public class CreateClientPage {
 		grantField.sendKeys(grant);
 
 		WebElement submit = driver.findElement(By.id("create-client-submit"));
+
+		if (scope_read) {
+			driver.findElement(By.id("scope_read")).click();
+		}
+		if (scope_write) {
+			driver.findElement(By.id("scope_write")).click();
+		}
+
 		submit.click();
 	}
 

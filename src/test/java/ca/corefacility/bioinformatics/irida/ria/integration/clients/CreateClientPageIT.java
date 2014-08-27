@@ -63,13 +63,19 @@ public class CreateClientPageIT {
 
 	@Test
 	public void testCreateGoodClient() {
-		page.createClientWithDetails("newClient", "password");
+		page.createClientWithDetails("newClient", "password", true, false);
 		assertTrue(page.checkSuccess());
 	}
 
 	@Test
 	public void testCreateClientWithExistingId() {
-		page.createClientWithDetails("testClient", "password");
+		page.createClientWithDetails("testClient", "password", true, false);
+		assertFalse(page.checkSuccess());
+	}
+
+	@Test
+	public void testCreateClientWithNoScope() {
+		page.createClientWithDetails("testClient", "password", false, false);
 		assertFalse(page.checkSuccess());
 	}
 

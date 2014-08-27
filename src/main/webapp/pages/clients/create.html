@@ -28,7 +28,7 @@
 							</div>
                             
                             <div class="form-group">
-                                <label class="control-label" th:text="#{client.details.tokenValidity}" for="clientId">_Token Validity_</label> 
+                                <label class="control-label" th:text="#{client.details.tokenValidity}" for="tokenValidity">_Token Validity_</label> 
                                 <div th:if="${#maps.containsKey(errors, 'tokenValidity')}" th:text="${errors.tokenValidity}" class="alert alert-warning">_Token Validity Error_</div>
                                 
                                 <select id="tokenValidity" name="accessTokenValiditySeconds" th:selected="${given_tokenValidity}" class="form-control input-full">
@@ -37,14 +37,24 @@
 
                             </div>
 							
-
 							<div class="form-group">
-								<label class="control-label" th:text="#{client.grant-types}" for="systemRole">_Grant Types_</label>
+								<label class="control-label" th:text="#{client.grant-types}" for="authorizedGrantTypes">_Grant Types_</label>
 								<div id="grant-error" th:if="${#maps.containsKey(errors, 'grant')}" th:text="${errors.grant}" class="alert alert-warning">_Role Error_</div>
 								<select id="authorizedGrantTypes" name="authorizedGrantTypes" class="form-control input-full" required="required" >
                                     <option th:each="grant : ${available_grants}" th:value="${grant}" th:text="${grant}"/>
 								</select>
 							</div>
+                            
+                            <div class="form-group">
+                                <label class="control-label" th:text="#{client.scopes}" for="scopes">_Scopes_</label>
+                                <div id="scope-error" th:if="${#maps.containsKey(errors, 'scope')}" th:text="${errors.scope}" class="alert alert-warning">_Scope Error_</div>
+                                <p>
+                                <label for="scope_read">Read</label>
+                                <input type="checkbox" id="scope_read" name="scope_read" th:checked="${given_scope_read}" checked="checked" value="read"/>
+                                <label for="scope_write">Write</label>
+                                <input type="checkbox" id="scope_write" name="scope_write" th:checked="${given_scope_write}" checked="checked" value="write"/>
+                                </p>
+                            </div>
 							
 						</div>
                         <div class="panel-footer text-right">
