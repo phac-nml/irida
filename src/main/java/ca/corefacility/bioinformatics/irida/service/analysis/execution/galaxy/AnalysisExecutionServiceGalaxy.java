@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
@@ -100,6 +101,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 		logger.trace("Executing " + analysisName + ": " + remoteWorkflow);
 		galaxyWorkflowService.runWorkflow(input);
 		analysisSubmission.setRemoteAnalysisId(preparedWorkflow.getRemoteAnalysisId());
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
 		
 		logger.trace("Saving submission " +  analysisName + ": " + remoteWorkflow);
 		return analysisSubmissionRepository.save(analysisSubmission);		
