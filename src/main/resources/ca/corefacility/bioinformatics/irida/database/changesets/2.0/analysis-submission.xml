@@ -87,6 +87,9 @@
 				<constraints foreignKeyName="FK_ANALYSIS_SUBMISSION_REMOTE_WORKFLOW_ID"
 					referencedColumnNames="workflowId" referencedTableName="remote_workflow" />
 			</column>
+			<column name="analysisState" type="VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
 			<column name="createdDate" type="datetime">
 				<constraints nullable="false" />
 			</column>
@@ -104,6 +107,7 @@
 			</column>
 			<column name="REVTYPE" type="TINYINT(4)" />
 			<column name="remote_workflow_id" type="VARCHAR(255)" />
+			<column name="analysisState" type="VARCHAR(255)"/>
 			<column name="createdDate" type="datetime" />
 			<column name="modifiedDate" type="datetime" />
 		</createTable>
