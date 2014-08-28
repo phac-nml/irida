@@ -46,7 +46,7 @@ public class ControllerExceptionHandlerTest {
 
     @Test
     public void testHandleConstraintViolations() {
-    	final String MESSAGES_BASENAME = "ca.corefacility.bioinformatics.irida.validation.ValidationMessages";
+    	final String MESSAGES_BASENAME = "ValidationMessages";
 		Configuration<?> configuration = Validation.byDefaultProvider().configure();
 		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
 		messageSource.setBasename(MESSAGES_BASENAME);
