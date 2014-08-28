@@ -13,9 +13,25 @@ import java.util.Map;
  *
  */
 public enum WorkflowState {
-	OK("ok"),
-	RUNNING("running"),
+	NEW("new"),
+	UPLOAD("upload"),
+	WAITING("waiting"),
 	QUEUED("queued"),
+	RUNNING("running"),
+	
+	/**
+	 * The workflow will be in this state when everything is complete.
+	 */
+	OK("ok"),
+	
+	ERROR("error"),
+	PAUSED("paused"),
+	DELETED("deleted"),
+	DELETED_NEW("deleted_new"),
+	
+	/**
+	 * Unknown is used if the state from Galaxy is different from the above states (say if a new state was added to Galaxy).
+	 */
 	UNKNOWN("unknown");
 	
 	private static Map<String, WorkflowState> stateMap = new HashMap<>();
