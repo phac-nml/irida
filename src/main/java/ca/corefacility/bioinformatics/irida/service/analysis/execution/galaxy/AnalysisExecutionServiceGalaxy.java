@@ -46,10 +46,8 @@ public abstract class AnalysisExecutionServiceGalaxy
 	
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxy.class);
 	
-	@Autowired
 	private AnalysisSubmissionService analysisSubmissionService;
 	
-	@Autowired
 	private AnalysisService analysisService;
 	
 	private W workspaceService;
@@ -65,6 +63,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	 * @param galaxyHistoriesService  A service for Galaxy histories.
 	 * @param workspaceService  A service for a workflow workspace.
 	 */
+	@Autowired
 	public AnalysisExecutionServiceGalaxy(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisService analysisService, GalaxyWorkflowService galaxyWorkflowService,
 			GalaxyHistoriesService galaxyHistoriesService, W workspaceService) {
