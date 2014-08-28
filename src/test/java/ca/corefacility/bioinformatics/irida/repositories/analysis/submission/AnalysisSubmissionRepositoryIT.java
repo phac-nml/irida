@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.repositories.analysis.submission;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
@@ -25,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
@@ -57,22 +59,15 @@ public class AnalysisSubmissionRepositoryIT {
 	@Autowired
 	private SequenceFileRepository sequenceFileRepository;
 	
+	private AnalysisSubmissionPhylogenomics analysisSubmission;
+	private static final String analysisId = "10";
+	
 	/**
 	 * Sets up objects for test.
 	 * @throws IOException
 	 */
 	@Before
 	public void setup() throws IOException {
-	}
-	
-	/**
-	 * Tests saving an analysis submission.
-	 */
-	@Test
-	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testSaveAnalysisSubmission() {
-		String analysisId = "10";		
-		
 		SequenceFile sequenceFile = sequenceFileRepository.findOne(1L);
 		assertNotNull(sequenceFile);
 		Set<SequenceFile> sequenceFiles = Sets.newHashSet(sequenceFile);
@@ -81,22 +76,29 @@ public class AnalysisSubmissionRepositoryIT {
 		RemoteWorkflowPhylogenomics remoteWorkflow = remoteWorkflowRepository.getByType("1", RemoteWorkflowPhylogenomics.class);
 		assertNotNull(remoteWorkflow);
 		
-		AnalysisSubmissionPhylogenomics submission =
+		analysisSubmission =
 				new AnalysisSubmissionPhylogenomics(sequenceFiles, referenceFile,
 						remoteWorkflow);
-		submission.setRemoteAnalysisId(analysisId);
-		submission.setAnalysisState(AnalysisState.SUBMITTED);
-
-		analysisSubmissionRepository.save(submission);
+		analysisSubmission.setRemoteAnalysisId(analysisId);
+		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTED);
+	}
+	
+	/**
+	 * Tests saving an analysis submission.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testSaveAnalysisSubmission() {
+		analysisSubmissionRepository.save(analysisSubmission);
 		
 		AnalysisSubmissionPhylogenomics savedSubmission = 
 				analysisSubmissionRepository.getByType(analysisId, AnalysisSubmissionPhylogenomics.class);
 		
-		assertEquals(submission.getRemoteAnalysisId(), savedSubmission.getRemoteAnalysisId());
-		assertEquals(submission.getRemoteWorkflow(), savedSubmission.getRemoteWorkflow());
-		assertEquals(submission.getInputFiles(), savedSubmission.getInputFiles());
-		assertEquals(submission.getReferenceFile(), savedSubmission.getReferenceFile());
-		assertEquals(submission.getAnalysisState(), savedSubmission.getAnalysisState());
+		assertEquals(analysisSubmission.getRemoteAnalysisId(), savedSubmission.getRemoteAnalysisId());
+		assertEquals(analysisSubmission.getRemoteWorkflow(), savedSubmission.getRemoteWorkflow());
+		assertEquals(analysisSubmission.getInputFiles(), savedSubmission.getInputFiles());
+		assertEquals(analysisSubmission.getReferenceFile(), savedSubmission.getReferenceFile());
+		assertEquals(analysisSubmission.getAnalysisState(), savedSubmission.getAnalysisState());
 	}
 	
 	/**
@@ -108,5 +110,27 @@ public class AnalysisSubmissionRepositoryIT {
 		AnalysisSubmissionPhylogenomics savedSubmission = 
 				analysisSubmissionRepository.getByType("invalid", AnalysisSubmissionPhylogenomics.class);
 		assertNull(savedSubmission);
+	}
+	
+	/**
+	 * Tests getting an analysis by its state and succeeding.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testSearchByAnalysisStateSuccess() {
+		analysisSubmissionRepository.save(analysisSubmission);
+		List<AnalysisSubmission> submittedAnalysis = analysisSubmissionRepository.searchByAnalysisState(analysisId, AnalysisState.SUBMITTED);
+		assertEquals(1,submittedAnalysis.size());
+	}
+	
+	/**
+	 * Tests getting an analysis by its state and failing.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testSearchByAnalysisStateFail() {
+		analysisSubmissionRepository.save(analysisSubmission);
+		List<AnalysisSubmission> submittedAnalysis = analysisSubmissionRepository.searchByAnalysisState(analysisId, AnalysisState.RUNNING);
+		assertEquals(0,submittedAnalysis.size());
 	}
 }
