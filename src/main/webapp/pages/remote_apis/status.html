@@ -71,25 +71,29 @@
         function getApiStatus(span){
         	var apiId = span.data("api-id");
         	var urlBase = /*[[@{/remote_api/status/}]]*/ '/remote_api/status/'
+        	var invalidTokenText = /*[[#{remoteapi.status.invalid}]]*/ "Expired Token";
+        	var validTokenText = /*[[#{remoteapi.status.valid}]]*/ "Valid Token";
+        	var errorText = /*[[#{remoteapi.status.error}]]*/ "Connection Error";
+        	
+        	var connectUrlBase = /*[[@{/remote_api/connect/}]]*/ "/remote_api/connect";
+        	var button = "<a class='btn btn-default' href='"+ connectUrlBase + apiId + "'>Connect</a>";
+        	
         	$.ajax({
         		url: urlBase + apiId,
         		type: "POST",
         		success: function(data, textStatus, jqXHR){
-    				span.html(data);
-
         			if(data == "valid"){
         				span.addClass("badge alert-success");
+        				span.html(validTokenText);
         			}
-        			else if(data == "invalid_token"){
+        			else if(data == "invalid_token" || data == "inactive"){
         				span.addClass("badge alert-warning");
-        			}
-        			else if(data == "inactive"){
-        				span.addClass("badge alert-warning");
+        				span.html(invalidTokenText);
         			}
         		},
         		error: function(data, textStatus, jqXHR){
-        			span.html(data);
         			span.addClass("badge alert-danger");
+        			span.html(errorText)
         		}
         	});
         }
