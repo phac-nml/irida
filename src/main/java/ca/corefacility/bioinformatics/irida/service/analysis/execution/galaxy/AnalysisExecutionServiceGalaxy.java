@@ -87,6 +87,8 @@ public abstract class AnalysisExecutionServiceGalaxy
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkArgument(null == analysisSubmission.getRemoteAnalysisId(),
 				"remote analyis id should be null");
+		checkArgument(null == analysisSubmission.getAnalysisState(),
+				"analysis state should be null");
 		
 		String analysisName = analysisSubmission.getClass().getSimpleName();
 		RemoteWorkflowGalaxy remoteWorkflow = analysisSubmission.getRemoteWorkflow();
@@ -105,6 +107,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
 		
 		logger.trace("Saving submission " +  analysisName + ": " + remoteWorkflow);
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
 		return (S)analysisSubmissionService.create(analysisSubmission);
 	}
 	
@@ -118,12 +121,16 @@ public abstract class AnalysisExecutionServiceGalaxy
 			throws ExecutionManagerException, IOException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
 		checkNotNull(submittedAnalysis.getRemoteAnalysisId(), "remoteAnalysisId is null");
+		checkNotNull(submittedAnalysis.getAnalysisState());
 		verifyAnalysisSubmissionExists(submittedAnalysis);
 		
 		String analysisName = submittedAnalysis.getClass().getSimpleName();
 		
 		logger.debug("Getting results for " + analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
 		A analysisResults = workspaceService.getAnalysisResults(submittedAnalysis);
+		
+		analysisSubmissionService.setStateForAnalysisSubmission(submittedAnalysis.getRemoteAnalysisId(),
+				AnalysisState.COMPLETED);
 		
 		logger.trace("Saving results " +  analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
 		return (A)analysisService.create(analysisResults);

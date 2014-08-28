@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowChecksumInvalidException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
@@ -202,6 +203,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		String id = "invalid";
 		
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(id);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
 		when(analysisSubmissionService.exists(id)).thenReturn(true);
 		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).thenReturn(analysisResults);
 		when(analysisService.create(analysisResults)).thenReturn(analysisResults);
@@ -222,6 +224,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		String id = "invalid";
 		
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(id);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
 		when(analysisSubmissionService.exists(id)).thenReturn(true);
 		
 		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).
@@ -238,6 +241,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Test(expected=NullPointerException.class)
 	public void testGetAnalysisResultsFailNotSubmittedNullId() throws ExecutionManagerException, IOException {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
 		
 		workflowManagement.transferAnalysisResults(analysisSubmission);
 	}
@@ -252,6 +256,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		String id = "invalid";
 		
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(id);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
 		when(analysisSubmissionService.exists(id)).thenReturn(false);
 		
 		workflowManagement.transferAnalysisResults(analysisSubmission);
