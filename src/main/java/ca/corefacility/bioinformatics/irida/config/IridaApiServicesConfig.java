@@ -18,7 +18,9 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
 import ca.corefacility.bioinformatics.irida.config.manager.ExecutionManagerConfig;
+import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServiceConfig;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
@@ -35,8 +37,10 @@ import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService
  * 
  */
 @Configuration
-@Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
-		ExecutionManagerConfig.class, IridaOAuth2Config.class })
+@Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class,
+		IridaApiRepositoriesConfig.class, ExecutionManagerConfig.class,
+		AnalysisExecutionServiceConfig.class,
+		RemoteWorkflowServiceConfig.class, IridaOAuth2Config.class })
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.service")
 public class IridaApiServicesConfig {
 	@Value("${taxonomy.location}")
