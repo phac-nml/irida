@@ -24,11 +24,10 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	public <T extends AnalysisSubmission> T getByType(String analysisId, Class<T> analysisType);
 	
 	/**
-	 * Loads up an @{link AnalysisSubmission} with the given state.
-	 * @param analysisId  The id of the analysis to search for.
+	 * Loads up a list of @{link AnalysisSubmission}s with the given state.
 	 * @param state  The state of the analyses to search for.
 	 * @return  A List of AnalysisSubmission objects with the given state.
 	 */
-	@Query("select s from AnalysisSubmission s where s.remoteAnalysisId = ?1 and s.analysisState = ?2")
-	public List<AnalysisSubmission> searchByAnalysisState(String analysisId, AnalysisState state);
+	@Query("select s from AnalysisSubmission s where s.analysisState = ?1")
+	public List<AnalysisSubmission> findByAnalysisState(AnalysisState state);
 }

@@ -117,10 +117,11 @@ public class AnalysisSubmissionRepositoryIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testSearchByAnalysisStateSuccess() {
+	public void testFindByAnalysisStateSuccess() {
 		analysisSubmissionRepository.save(analysisSubmission);
-		List<AnalysisSubmission> submittedAnalysis = analysisSubmissionRepository.searchByAnalysisState(analysisId, AnalysisState.SUBMITTED);
-		assertEquals(1,submittedAnalysis.size());
+		List<AnalysisSubmission> submittedAnalyses = analysisSubmissionRepository.findByAnalysisState(AnalysisState.SUBMITTED);
+		assertEquals(1,submittedAnalyses.size());
+		assertEquals(analysisId, submittedAnalyses.get(0).getRemoteAnalysisId());
 	}
 	
 	/**
@@ -128,9 +129,9 @@ public class AnalysisSubmissionRepositoryIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testSearchByAnalysisStateFail() {
+	public void testFindByAnalysisStateFail() {
 		analysisSubmissionRepository.save(analysisSubmission);
-		List<AnalysisSubmission> submittedAnalysis = analysisSubmissionRepository.searchByAnalysisState(analysisId, AnalysisState.RUNNING);
-		assertEquals(0,submittedAnalysis.size());
+		List<AnalysisSubmission> submittedAnalyses = analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING);
+		assertEquals(0,submittedAnalyses.size());
 	}
 }
