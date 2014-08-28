@@ -94,6 +94,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Test
 	public void testExecuteAnalysisSuccess() throws ExecutionManagerException {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(WORKFLOW_ID);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.SUBMITTED);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
 		when(workspaceServicePhylogenomics.prepareAnalysisFiles(analysisSubmission)).
@@ -105,10 +106,10 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		
 		assertEquals("analysisSubmission not equal to returned submission", analysisSubmission, returnedSubmission);
 		
-		verify(galaxyWorkflowService).validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID);
+//		verify(galaxyWorkflowService).validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID);
 		verify(workspaceServicePhylogenomics).prepareAnalysisFiles(analysisSubmission);
 		verify(galaxyWorkflowService).runWorkflow(workflowInputsGalaxy);
-		verify(analysisSubmissionService).create(analysisSubmission);
+//		verify(analysisSubmissionService).create(analysisSubmission);
 	}
 	
 	/**
@@ -116,12 +117,13 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 * @throws ExecutionManagerException
 	 */
 	@Test(expected=WorkflowChecksumInvalidException.class)
-	public void testExecuteAnalysisFailInvalidWorkflow() throws ExecutionManagerException {
-		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(WORKFLOW_ID);
+	public void testPrepareSubmissionFailInvalidWorkflow() throws ExecutionManagerException {
+		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
+		when(analysisSubmission.getAnalysisState()).thenReturn(null);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenThrow(new WorkflowChecksumInvalidException());
 		
-		workflowManagement.executeAnalysis(analysisSubmission);
+		workflowManagement.prepareSubmission(analysisSubmission);
 	}
 	
 	/**
@@ -131,6 +133,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void testExecuteAnalysisFailAlreadySubmitted() throws ExecutionManagerException {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(WORKFLOW_ID);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
 		
 		workflowManagement.executeAnalysis(analysisSubmission);
 	}
@@ -142,6 +145,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Test(expected=ExecutionManagerException.class)
 	public void testExecuteAnalysisFailPrepareWorkflow() throws ExecutionManagerException {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(WORKFLOW_ID);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.SUBMITTED);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
 		when(workspaceServicePhylogenomics.prepareAnalysisFiles(analysisSubmission)).
@@ -157,6 +161,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Test(expected=WorkflowException.class)
 	public void testExecuteAnalysisFail() throws ExecutionManagerException {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(WORKFLOW_ID);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.SUBMITTED);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
 		when(workspaceServicePhylogenomics.prepareAnalysisFiles(analysisSubmission)).
