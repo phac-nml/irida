@@ -144,10 +144,11 @@ public class WorkspaceServicePhylogenomics
 	public PreparedWorkflowGalaxy prepareAnalysisFiles(AnalysisSubmissionPhylogenomics analysisSubmission)
 			throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
+		checkNotNull(analysisSubmission.getRemoteAnalysisId(), "analysisId is null");
 		checkNotNull(analysisSubmission.getInputFiles(), "inputFiles are null");
 		checkNotNull(analysisSubmission.getReferenceFile(), "referenceFile is null");
 		
-		History workflowHistory = galaxyHistoriesService.newHistoryForWorkflow();
+		History workflowHistory = galaxyHistoriesService.findById(analysisSubmission.getRemoteAnalysisId());
 		
 		List<Join<Sample, SequenceFile>> sampleSequenceFiles =
 				getSequenceFileSamples(analysisSubmission.getInputFiles());
