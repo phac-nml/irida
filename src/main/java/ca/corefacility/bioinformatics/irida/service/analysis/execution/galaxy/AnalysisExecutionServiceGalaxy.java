@@ -112,6 +112,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional
 	public S executeAnalysis(S analysisSubmission)
 					throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
