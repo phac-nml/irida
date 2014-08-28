@@ -6,25 +6,25 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 	<changeSet id="oauth-token" author="tom">
 		<createTable tableName="oauth_access_token">
-			<column name="token_id" type="VARCHAR(256)">
+			<column name="token_id" type="VARCHAR(255)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="token" type="longblob">
 				<constraints nullable="false" />
 			</column>
-			<column name="authentication_id" type="VARCHAR(256)">
+			<column name="authentication_id" type="VARCHAR(255)">
 				<constraints nullable="false" />
 			</column>
-			<column name="user_name" type="VARCHAR(256)">
+			<column name="user_name" type="VARCHAR(255)">
 				<constraints nullable="false" />
 			</column>
-			<column name="client_id" type="VARCHAR(256)">
+			<column name="client_id" type="VARCHAR(255)">
 				<constraints nullable="false" />
 			</column>
 			<column name="authentication" type="longblob">
 				<constraints nullable="false" />
 			</column>
-			<column name="refresh_token" type="VARCHAR(256)" />
+			<column name="refresh_token" type="VARCHAR(255)" />
 		</createTable>
 
 		<addForeignKeyConstraint baseColumnNames="client_id"
