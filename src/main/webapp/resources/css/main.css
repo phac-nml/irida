@@ -53,58 +53,50 @@ label {
 }
 
 /* line 19, ../../styles/components/_datatables.scss */
-table.dataTable > thead .sortable:hover {
-  background-color: #5bc0de;
-  -moz-transition: background-color 0.25s ease-in;
-  -o-transition: background-color 0.25s ease-in;
-  -webkit-transition: background-color 0.25s ease-in;
-  transition: background-color 0.25s ease-in;
-}
-/* line 23, ../../styles/components/_datatables.scss */
 table.dataTable > thead i {
   float: right;
   margin: 0 5px;
 }
-/* line 26, ../../styles/components/_datatables.scss */
+/* line 22, ../../styles/components/_datatables.scss */
 table.dataTable > thead i:before {
   content: "\e150";
 }
-/* line 30, ../../styles/components/_datatables.scss */
+/* line 26, ../../styles/components/_datatables.scss */
 table.dataTable > thead th.sorting_asc > i.glyphicon:before {
   content: "\e155";
 }
-/* line 33, ../../styles/components/_datatables.scss */
+/* line 29, ../../styles/components/_datatables.scss */
 table.dataTable > thead th.sorting_desc > i.glyphicon:before {
   content: "\e156";
 }
-/* line 39, ../../styles/components/_datatables.scss */
+/* line 35, ../../styles/components/_datatables.scss */
 table.dataTable > tbody tr.has-files td:not(:first-child) {
   cursor: pointer;
 }
-/* line 44, ../../styles/components/_datatables.scss */
+/* line 40, ../../styles/components/_datatables.scss */
 table.dataTable > tbody tr.odd.details + tr > td, table.dataTable > tbody tr.even.details + tr > td {
   background-color: white;
   border-left: 5px solid #5bc0de;
   padding: 5px 15px;
 }
-/* line 49, ../../styles/components/_datatables.scss */
+/* line 45, ../../styles/components/_datatables.scss */
 table.dataTable > tbody tr.odd.details + tr table, table.dataTable > tbody tr.even.details + tr table {
   background-color: white;
   width: 100%;
 }
-/* line 52, ../../styles/components/_datatables.scss */
+/* line 48, ../../styles/components/_datatables.scss */
 table.dataTable > tbody tr.odd.details + tr table tr, table.dataTable > tbody tr.even.details + tr table tr {
   background-color: transparent;
 }
-/* line 56, ../../styles/components/_datatables.scss */
+/* line 52, ../../styles/components/_datatables.scss */
 table.dataTable > tbody tr.odd.details + tr table td.files-check, table.dataTable > tbody tr.even.details + tr table td.files-check {
   padding: 0 5px;
 }
-/* line 59, ../../styles/components/_datatables.scss */
+/* line 55, ../../styles/components/_datatables.scss */
 table.dataTable > tbody tr.odd.details + tr table td.files-created, table.dataTable > tbody tr.even.details + tr table td.files-created {
   text-align: right;
 }
-/* line 66, ../../styles/components/_datatables.scss */
+/* line 62, ../../styles/components/_datatables.scss */
 table.dataTable > tbody code {
   color: #333333;
   background-color: transparent;
@@ -183,13 +175,15 @@ table.dataTable > tbody code {
   width: auto;
   max-width: 500px;
   margin: 20px auto;
+  border-radius: 4px;
 }
-/* line 50, ../../styles/components/_magnific-popup.scss */
+/* line 51, ../../styles/components/_magnific-popup.scss */
 .form-popup .modal-header {
   background-color: #2572b4;
   color: #ffffff;
+  border-radius: 4px 4px 0 0;
 }
-/* line 54, ../../styles/components/_magnific-popup.scss */
+/* line 56, ../../styles/components/_magnific-popup.scss */
 .form-popup .mfp-close {
   color: #ffffff;
 }

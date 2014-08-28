@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +19,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.components.PipelineSubmission;
+import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for pipeline related views
@@ -34,25 +38,21 @@ import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomic
 @Controller
 @Scope("session")
 @RequestMapping(value = "/pipelines")
-public class PipelineController {
+public class PipelineController extends BaseController {
 	private static final Logger logger = LoggerFactory.getLogger(PipelineController.class);
 	/*
 	 * CONSTANTS
 	 */
 
-	// Directories
-	public static final String PIPELINE_DIR = "pipelines/";
-
 	// URI's
-	public static final String URI_LIST_PIPELINES = "/ajax/list";
+	public static final String URI_LIST_PIPELINES = "/ajax/list.json";
+	public static final String URI_AJAX_START_PIPELINE = "/ajax/start.json";
 
 	/*
 	 * SERVICES
 	 */
 	private SampleService sampleService;
 	private SequenceFileService sequenceFileService;
-	private RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics;
-	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
 
 	/*
 	 * COMPONENTS
@@ -61,13 +61,9 @@ public class PipelineController {
 
 	@Autowired
 	public PipelineController(SampleService sampleService, SequenceFileService sequenceFileService,
-			RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics,
-			AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics,
 			PipelineSubmission pipelineSubmission) {
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
-		this.remoteWorkflowServicePhylogenomics = remoteWorkflowServicePhylogenomics;
-		this.analysisExecutionServicePhylogenomics = analysisExecutionServicePhylogenomics;
 		this.pipelineSubmission = pipelineSubmission;
 	}
 
@@ -97,7 +93,7 @@ public class PipelineController {
 				}
 			}
 		}
-		// TODO: (14-08-28 - Josh) Need to determine what reference files and pipelines can be run with these files.
+		// TODO: (14-08-28 - Josh) Need to determine what pipelines can be run with these files.
 		pipelineSubmission.setSequenceFiles(fileIds);
 
 		// TODO: (14-08-13 - Josh) Get real data from Aaron's stuff
@@ -109,10 +105,28 @@ public class PipelineController {
 		return response;
 	}
 
-	@RequestMapping(value = "/ajax/start.json", produces = MediaType.APPLICATION_JSON_VALUE,
-			consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Map<String, String>> ajaxStartNewPipelines(@RequestParam(value = "pId") Long pipelineId) {
-
-		return null;
+	/**
+	 * Start a new pipeline based on the pipeline id
+	 *
+	 * @param pId      Id for the pipeline
+	 * @param rId      Id for the reference file
+	 * @param response {@link HttpServletResponse}
+	 * @return
+	 */
+	@RequestMapping(value = URI_AJAX_START_PIPELINE, produces = MediaType.APPLICATION_JSON_VALUE,
+			method = RequestMethod.POST)
+	public @ResponseBody List<Map<String, String>> ajaxStartNewPipelines(@RequestParam Long pId,
+			@RequestParam Long rId, HttpServletResponse response) {
+		pipelineSubmission.setReferenceFile(rId);
+		List<Map<String, String>> result = new ArrayList<>();
+		try {
+			pipelineSubmission.startPipeline(pId);
+			result.add(ImmutableMap.of("success", "success"));
+		} catch (ExecutionManagerException e) {
+			logger.error("Error starting pipeline (id = " + pId + ") [" + e.getMessage() + "]");
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			result.add(ImmutableMap.of("error", e.getMessage()));
+		}
+		return result;
 	}
 }

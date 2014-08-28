@@ -111,7 +111,7 @@ public class SamplesControllerTest {
 
 		Map<String, Object> file1 = result.get(0);
 		assertTrue("File has an id", file1.containsKey("id"));
-		assertTrue("File has an name", file1.containsKey("name"));
-		assertTrue("File has an created", file1.containsKey("created"));
+		assertTrue("File has an name", file1.containsKey("label"));
+		assertTrue("File has an created", file1.containsKey("createdDate"));
 	}
 }

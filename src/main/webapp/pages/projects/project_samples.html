@@ -81,24 +81,23 @@
     </div>
 
     <section id="runPipelineModal" class="white-popup form-popup mfp-hide" th:inline="text">
-        <form role="form">
-            <header class="modal-header">
-                <h2 class="modal-title" th:text="#{project.samples.run-modal.title}">__Select_Pipeline__</h2>
-            </header>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="pipeline">Select a Pipeline</label>
-                    <input id="pipeline" name="pipeline" class="form-control input-full"/>
-                </div>
-                <div class="form-group">
-                    <label for="reference">Select a Reference File</label>
-                    <input id="reference" name="reference" class="form-control input-full"/>
-                </div>
+        <header class="modal-header">
+            <h2 class="modal-title" th:text="#{project.samples.run-modal.title}">__Select_Pipeline__</h2>
+        </header>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="pipeline">Select a Pipeline</label>
+                <input id="pipeline" name="pipeline" class="form-control input-full"/>
             </div>
-            <div class="modal-footer">
-                <button id="launchBtn" class="btn btn-default"><span class="fa fa-rocket fa-fw"></span>&nbsp;[[#{project.samples.run-pipeline}]]</button>
+            <div class="form-group">
+                <label for="reference">Select a Reference File</label>
+                <input id="reference" name="reference" class="form-control input-full"/>
             </div>
-        </form>
+        </div>
+        <div class="modal-footer">
+            <button id="launchBtn" class="btn btn-primary btn-sm"><span class="fa fa-rocket fa-fw"></span>&nbsp;[[#{project.samples.run-pipeline}]]
+            </button>
+        </div>
     </section>
     <script type="text/html" id="copySamplesSection">
 			<h2 id="copyTitle">_Copy/Move Samples_</h2>
@@ -779,6 +778,7 @@ $(document).ready(function () {
         $samplesTable.find('input[type="checkbox"]').prop("indeterminate", false).prop('checked', allSelected);
         $btnAction.prop('disabled', !allSelected);
         $btnAction2.prop('disabled', !allSelected);
+        $btnAction3.prop('disabled', !allSelected);
         DT.updateAllSelected(allSelected);
     });
 
@@ -798,7 +798,7 @@ $(document).ready(function () {
     	DT.copySelectedSamples(true);
     });
 
-    $("#runPipelineBtn").magnificPopup({
+    var runPipelineModal = $("#runPipelineBtn").magnificPopup({
         items: {
             src: $('#runPipelineModal'),
             type: 'inline'
@@ -812,7 +812,7 @@ $(document).ready(function () {
                 });
                 // Ajax call to get applicable pipelines.
                 $.ajax({
-                    url: /*@{/pipelines/ajax/list}*/ '/pipelines/ajax/list',
+                    url: /*@{/pipelines/ajax/list.json}*/ '/pipelines/ajax/list.json',
                     type: 'post',
                     contentType: "application/json",
                     data: JSON.stringify(result)
@@ -821,6 +821,7 @@ $(document).ready(function () {
                         data: data,
                         initSelection: function(element, callback) {
                             callback(data[0]);
+                            $(element).val(data[0].id);
                         }
                     });
                 });
@@ -833,6 +834,7 @@ $(document).ready(function () {
                             data: data,
                             initSelection: function(element, callback) {
                                 callback(data[0]);
+                                $(element).val(data[0].id);
                             }
                         });
                     }
@@ -841,6 +843,26 @@ $(document).ready(function () {
 
             }
         }
+    });
+
+    $('#launchBtn').on('click', function () {
+        'use strict';
+        var pId = $("#pipeline").val(),
+            rId = $("#reference").val();
+
+        $.ajax({
+            'url'     : /*@{'/pipelines/ajax/start.json'}*/ '/pipelines/ajax/start.json',
+            'type'    : 'post',
+            'data'    : 'pId=' + pId + '&rId=' + rId,
+            'success' : function(data) {
+                console.log(data);
+                runPipelineModal.close();
+            },
+            'error': function (xhr,status,error) {
+                // TODO: (14-08-28 - Josh) Need to determine what errors will occur. Reference file?
+                console.log(error);
+            }
+        });
     });
 
     DT.getAllSampleIds();
@@ -858,12 +880,6 @@ $('[data-tooltip!=""]').qtip({ // Grab all elements with a non-blank data-toolti
     style: {
         classes: 'qtip-tipsy qtip-shadow'
     }
-});
-
-$('#launchBtn').on('click', function () {
-    'use strict';
-//    contentType: "application/json",
-//            data: JSON.stringify(result)
 });
 /*]]>*/
 </script>

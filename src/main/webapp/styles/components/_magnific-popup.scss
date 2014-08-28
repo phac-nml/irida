@@ -47,9 +47,11 @@
   width:auto;
   max-width: 500px;
   margin: 20px auto;
+  border-radius: 4px;
   .modal-header {
     background-color: $color-primary;
     color: #ffffff;
+    border-radius: 4px 4px 0 0;
   }
   .mfp-close {
     color: #ffffff;
