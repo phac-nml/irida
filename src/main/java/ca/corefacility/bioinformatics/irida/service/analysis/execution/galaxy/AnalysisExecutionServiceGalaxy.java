@@ -25,8 +25,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 
@@ -47,7 +47,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxy.class);
 	
 	@Autowired
-	private AnalysisSubmissionRepository analysisSubmissionRepository;
+	private AnalysisSubmissionService analysisSubmissionService;
 	
 	@Autowired
 	private AnalysisService analysisService;
@@ -59,16 +59,16 @@ public abstract class AnalysisExecutionServiceGalaxy
 	
 	/**
 	 * Builds a new AnalysisExecutionServiceGalaxy with the given information.
-	 * @param analysisSubmissionRepository  A repository for analysis submissions.
+	 * @param analysisSubmissionService  A service for analysis submissions.
 	 * @param analysisService  A service for analysis results.
 	 * @param galaxyWorkflowService  A service for Galaxy workflows.
 	 * @param galaxyHistoriesService  A service for Galaxy histories.
 	 * @param workspaceService  A service for a workflow workspace.
 	 */
-	public AnalysisExecutionServiceGalaxy(AnalysisSubmissionRepository analysisSubmissionRepository,
+	public AnalysisExecutionServiceGalaxy(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisService analysisService, GalaxyWorkflowService galaxyWorkflowService,
 			GalaxyHistoriesService galaxyHistoriesService, W workspaceService) {
-		this.analysisSubmissionRepository = analysisSubmissionRepository;
+		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisService = analysisService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.galaxyHistoriesService = galaxyHistoriesService;
@@ -78,6 +78,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
 	public S executeAnalysis(S analysisSubmission)
@@ -104,7 +105,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
 		
 		logger.trace("Saving submission " +  analysisName + ": " + remoteWorkflow);
-		return analysisSubmissionRepository.save(analysisSubmission);		
+		return (S)analysisSubmissionService.create(analysisSubmission);
 	}
 	
 	/**
@@ -164,7 +165,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	 */
 	private void verifyAnalysisSubmissionExists(AnalysisSubmission submission) 
 			throws EntityNotFoundException {
-		if (!analysisSubmissionRepository.exists(submission.getRemoteAnalysisId())) {
+		if (!analysisSubmissionService.exists(submission.getRemoteAnalysisId())) {
 			throw new EntityNotFoundException("Could not find analysis submission for " + 
 					submission);
 		}
