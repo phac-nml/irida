@@ -128,4 +128,15 @@ public class AnalysisSubmission implements Timestamped {
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return "AnalysisSubmission [remoteAnalysisId=" + remoteAnalysisId
+				+ ", inputFiles=" + inputFiles + ", createdDate=" + createdDate
+				+ ", modifiedDate=" + modifiedDate + ", analysisState="
+				+ analysisState + "]";
+	}
 }
