@@ -46,8 +46,8 @@ public class AnalysisSubmissionServiceImpl extends
 	 * {@inheritDoc}
 	 */
 	@Override
-	public AnalysisState getStateForAnalysisSubmission(String analysisSubmissionId)
-			throws EntityNotFoundException {
+	public AnalysisState getStateForAnalysisSubmission(
+			String analysisSubmissionId) throws EntityNotFoundException {
 		checkNotNull(analysisSubmissionId, "analysisSubmissionId is null");
 
 		AnalysisSubmission submission = this.read(analysisSubmissionId);
@@ -63,7 +63,7 @@ public class AnalysisSubmissionServiceImpl extends
 			AnalysisState state) throws EntityNotFoundException {
 		checkNotNull(analysisSubmissionId, "analysisSubmissionId is null");
 		checkNotNull(state, "state is null");
-		
+
 		update(analysisSubmissionId, ImmutableMap.of("analysisState", state));
 	}
 }
