@@ -145,9 +145,9 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	public void setup() throws URISyntaxException, IOException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 		
-		Path sequenceFilePathReal = Paths.get(AnalysisExecutionServicePhylogenomicsIT.class.getResource(
+		Path sequenceFilePathReal = Paths.get(AnalysisExecutionGalaxyITService.class.getResource(
 				"testData1.fastq").toURI());		
-		Path referenceFilePathReal = Paths.get(AnalysisExecutionServicePhylogenomicsIT.class.getResource(
+		Path referenceFilePathReal = Paths.get(AnalysisExecutionGalaxyITService.class.getResource(
 				"testReference.fasta").toURI());
 		
 		sequenceFilePath = Files.createTempFile("testData1", ".fastq");
