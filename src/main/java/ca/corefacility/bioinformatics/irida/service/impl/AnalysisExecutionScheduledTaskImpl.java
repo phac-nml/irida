@@ -65,16 +65,7 @@ public class AnalysisExecutionScheduledTaskImpl implements
 	 */
 	@Override
 	@Scheduled(initialDelay = 1000, fixedRate = 60000)
-	public void handleSubmissions() {
-		executeAnalyses();
-		transferAnalysesResults();
-	}
-
-	/**
-	 * Scans for and executes any {@link AnalysisSubmission} entities that have
-	 * a state set to {@link AnalysisState.SUBMITTED}.
-	 */
-	private void executeAnalyses() {
+	public void executeAnalyses() {
 		logger.debug("Looking for analyses with state "
 				+ AnalysisState.SUBMITTED);
 
@@ -101,11 +92,11 @@ public class AnalysisExecutionScheduledTaskImpl implements
 	}
 
 	/**
-	 * Scans for and executes any {@link AnalysisSubmission} entities that have
-	 * a state set to {@link AnalysisState.RUNNING} and check if they are
-	 * complete.
+	 * {@inheritDoc}
 	 */
-	private void transferAnalysesResults() {
+	@Override
+	@Scheduled(initialDelay = 1000, fixedRate = 60000)
+	public void transferAnalysesResults() {
 		logger.debug("Looking for analyses with state " + AnalysisState.RUNNING);
 
 		List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
