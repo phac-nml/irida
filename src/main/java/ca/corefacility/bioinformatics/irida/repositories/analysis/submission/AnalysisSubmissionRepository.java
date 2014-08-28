@@ -10,7 +10,7 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public interface AnalysisSubmissionRepository extends IridaJpaRepository<AnalysisSubmission<?>, String> {
+public interface AnalysisSubmissionRepository extends IridaJpaRepository<AnalysisSubmission, String> {
 	/**
 	 * Load up an @{link AnalysisSubmission} by an id for the passed type of AnalysisSubmission.
 	 * @param analysisId  The id of the AnalysisSubmission to load.
@@ -18,5 +18,5 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 * @return  An AnalysisSubmission of the specified type by with the given id.
 	 */
 	@Query("select s from AnalysisSubmission s where s.remoteAnalysisId = ?1 and type(s) = ?2")
-	public <T extends AnalysisSubmission<?>> T getByType(String analysisId, Class<T> analysisType);
+	public <T extends AnalysisSubmission> T getByType(String analysisId, Class<T> analysisType);
 }

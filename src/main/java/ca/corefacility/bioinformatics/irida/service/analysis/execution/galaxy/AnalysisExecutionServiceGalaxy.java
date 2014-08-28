@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowChecksumInvalidException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
@@ -24,8 +25,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 
@@ -46,7 +47,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxy.class);
 	
 	@Autowired
-	private AnalysisSubmissionRepository analysisSubmissionRepository;
+	private AnalysisSubmissionService analysisSubmissionService;
 	
 	@Autowired
 	private AnalysisService analysisService;
@@ -58,26 +59,26 @@ public abstract class AnalysisExecutionServiceGalaxy
 	
 	/**
 	 * Builds a new AnalysisExecutionServiceGalaxy with the given information.
-	 * @param analysisSubmissionRepository  A repository for analysis submissions.
+	 * @param analysisSubmissionService  A service for analysis submissions.
 	 * @param analysisService  A service for analysis results.
 	 * @param galaxyWorkflowService  A service for Galaxy workflows.
 	 * @param galaxyHistoriesService  A service for Galaxy histories.
 	 * @param workspaceService  A service for a workflow workspace.
 	 */
-	public AnalysisExecutionServiceGalaxy(AnalysisSubmissionRepository analysisSubmissionRepository,
+	public AnalysisExecutionServiceGalaxy(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisService analysisService, GalaxyWorkflowService galaxyWorkflowService,
 			GalaxyHistoriesService galaxyHistoriesService, W workspaceService) {
-		this.analysisSubmissionRepository = analysisSubmissionRepository;
+		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisService = analysisService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.workspaceService = workspaceService;
 	}
 	
-	
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
 	public S prepareSubmission(S analysisSubmission)
@@ -85,6 +86,8 @@ public abstract class AnalysisExecutionServiceGalaxy
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkArgument(null == analysisSubmission.getRemoteAnalysisId(),
 				"remote analyis id should be null");
+		checkArgument(null == analysisSubmission.getAnalysisState(),
+				"analysis state should be null");
 		
 		String analysisName = analysisSubmission.getClass().getSimpleName();
 		RemoteWorkflowGalaxy remoteWorkflow = analysisSubmission.getRemoteWorkflow();
@@ -99,7 +102,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 		
 		analysisSubmission.setRemoteAnalysisId(analysisId);
 		
-		return analysisSubmissionRepository.save(analysisSubmission);
+		return (S)analysisSubmissionService.create(analysisSubmission);
 	}
 
 	/**
@@ -139,12 +142,16 @@ public abstract class AnalysisExecutionServiceGalaxy
 			throws ExecutionManagerException, IOException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
 		checkNotNull(submittedAnalysis.getRemoteAnalysisId(), "remoteAnalysisId is null");
+		checkNotNull(submittedAnalysis.getAnalysisState());
 		verifyAnalysisSubmissionExists(submittedAnalysis);
 		
 		String analysisName = submittedAnalysis.getClass().getSimpleName();
 		
 		logger.debug("Getting results for " + analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
 		A analysisResults = workspaceService.getAnalysisResults(submittedAnalysis);
+		
+		analysisSubmissionService.setStateForAnalysisSubmission(submittedAnalysis.getRemoteAnalysisId(),
+				AnalysisState.COMPLETED);
 		
 		logger.trace("Saving results " +  analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
 		return (A)analysisService.create(analysisResults);
@@ -184,9 +191,9 @@ public abstract class AnalysisExecutionServiceGalaxy
 	 * @param submission  The submission to check.
 	 * @throws EntityNotFoundException  If the given analysis submission does not exist in the database.
 	 */
-	private void verifyAnalysisSubmissionExists(AnalysisSubmission<?> submission) 
+	private void verifyAnalysisSubmissionExists(AnalysisSubmission submission) 
 			throws EntityNotFoundException {
-		if (!analysisSubmissionRepository.exists(submission.getRemoteAnalysisId())) {
+		if (!analysisSubmissionService.exists(submission.getRemoteAnalysisId())) {
 			throw new EntityNotFoundException("Could not find analysis submission for " + 
 					submission);
 		}

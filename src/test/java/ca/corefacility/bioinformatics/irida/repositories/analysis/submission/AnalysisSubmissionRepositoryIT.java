@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
@@ -84,6 +85,7 @@ public class AnalysisSubmissionRepositoryIT {
 				new AnalysisSubmissionPhylogenomics(sequenceFiles, referenceFile,
 						remoteWorkflow);
 		submission.setRemoteAnalysisId(analysisId);
+		submission.setAnalysisState(AnalysisState.SUBMITTED);
 
 		analysisSubmissionRepository.save(submission);
 		
@@ -94,6 +96,7 @@ public class AnalysisSubmissionRepositoryIT {
 		assertEquals(submission.getRemoteWorkflow(), savedSubmission.getRemoteWorkflow());
 		assertEquals(submission.getInputFiles(), savedSubmission.getInputFiles());
 		assertEquals(submission.getReferenceFile(), savedSubmission.getReferenceFile());
+		assertEquals(submission.getAnalysisState(), savedSubmission.getAnalysisState());
 	}
 	
 	/**
