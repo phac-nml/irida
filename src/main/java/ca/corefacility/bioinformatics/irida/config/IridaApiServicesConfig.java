@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
@@ -38,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService
 @Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
 		ExecutionManagerConfig.class, IridaOAuth2Config.class })
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.service")
+@EnableScheduling
 public class IridaApiServicesConfig {
 	@Value("${taxonomy.location}")
 	private ClassPathResource taxonomyFileLocation;
