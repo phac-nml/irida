@@ -110,6 +110,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public S executeAnalysis(S analysisSubmission)
 					throws ExecutionManagerException {
@@ -135,7 +136,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 		
 		logger.trace("Saving submission " +  analysisName + ": " + remoteWorkflow);
 		
-		return analysisSubmission;
+		return (S)analysisSubmissionService.read(analysisSubmission.getRemoteAnalysisId());
 	}
 	
 	/**
