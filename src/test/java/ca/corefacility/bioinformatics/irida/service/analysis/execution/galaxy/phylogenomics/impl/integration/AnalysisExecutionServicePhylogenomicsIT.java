@@ -307,7 +307,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		AnalysisPhylogenomicsPipeline analysisResults = analysisExecutionServicePhylogenomics
 				.transferAnalysisResults(analysisSubmission);
 		AnalysisState state
-			= analysisSubmissionService.getStateForAnalysisSubmission(analysisSubmitted.getRemoteAnalysisId());
+			= analysisSubmissionService.getStateForAnalysisSubmission(analysisSubmitted.getId());
 		assertEquals(AnalysisState.COMPLETED, state);
 
 		String analysisId = analysisSubmitted.getRemoteAnalysisId();
