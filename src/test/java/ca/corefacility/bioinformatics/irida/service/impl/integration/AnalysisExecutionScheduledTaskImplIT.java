@@ -65,8 +65,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 		WithSecurityContextTestExcecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class AnalysisExecutionScheduledTaskImplIT extends
-		AnalysisExecutionGalaxyITService {
+public class AnalysisExecutionScheduledTaskImplIT {
 
 	@Autowired
 	private AnalysisExecutionGalaxyITService analysisExecutionGalaxyITService;
@@ -149,9 +148,9 @@ public class AnalysisExecutionScheduledTaskImplIT extends
 		WorkflowStatus status = analysisExecutionServicePhylogenomics
 				.getWorkflowStatus(submission);
 
-		assertValidStatus(status);
+		analysisExecutionGalaxyITService.assertValidStatus(status);
 
-		waitUntilSubmissionComplete(submission);
+		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(submission);
 
 		analysisExecutionScheduledTask.transferAnalysesResults();
 

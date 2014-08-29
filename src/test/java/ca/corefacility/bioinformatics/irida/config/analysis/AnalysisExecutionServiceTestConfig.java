@@ -17,10 +17,15 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistori
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflowRepository;
+import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
  * Test configuration for AnalysisExecutionService classes.
@@ -43,6 +48,21 @@ public class AnalysisExecutionServiceTestConfig {
 	
 	@Autowired
 	private SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository;
+	
+	@Autowired
+	private RemoteWorkflowRepository remoteWorkflowRepository;
+	
+	@Autowired
+	private ReferenceFileRepository referenceFileRepository;
+	
+	@Autowired
+	private SequenceFileService seqeunceFileService;
+	
+	@Autowired
+	private SampleService sampleService;
+	
+	@Autowired
+	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
 	
 	@Lazy
 	@Bean
@@ -74,5 +94,10 @@ public class AnalysisExecutionServiceTestConfig {
 		
 		return new GalaxyWorkflowService(historiesClient, workflowsClient,
 						new StandardPasswordEncoder());
+	}
+	
+	@Bean
+	public AnalysisExecutionGalaxyITService analysisExecutionGalaxyITService() {
+		return new AnalysisExecutionGalaxyITService(remoteWorkflowRepository, referenceFileRepository, seqeunceFileService, sampleService, analysisExecutionServicePhylogenomics);
 	}
 }

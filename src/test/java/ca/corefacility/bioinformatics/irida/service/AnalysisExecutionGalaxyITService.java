@@ -48,6 +48,28 @@ public class AnalysisExecutionGalaxyITService {
 	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
 	
 	/**
+	 * Builds a new AnalysisExecutionGalaxyITService with the given services/repositories.
+	 * @param remoteWorkflowRepository
+	 * @param referenceFileRepository
+	 * @param seqeunceFileService
+	 * @param sampleService
+	 * @param analysisExecutionServicePhylogenomics
+	 */
+	public AnalysisExecutionGalaxyITService(
+			RemoteWorkflowRepository remoteWorkflowRepository,
+			ReferenceFileRepository referenceFileRepository,
+			SequenceFileService seqeunceFileService,
+			SampleService sampleService,
+			AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics) {
+		super();
+		this.remoteWorkflowRepository = remoteWorkflowRepository;
+		this.referenceFileRepository = referenceFileRepository;
+		this.seqeunceFileService = seqeunceFileService;
+		this.sampleService = sampleService;
+		this.analysisExecutionServicePhylogenomics = analysisExecutionServicePhylogenomics;
+	}
+
+	/**
 	 * Sets up an AnalysisSubmission and saves all dependencies in database.
 	 * @param sequenceFilePath  The path to an input sequence file for this test.
 	 * @param referenceFilePath  The path to an input reference file for this test.
