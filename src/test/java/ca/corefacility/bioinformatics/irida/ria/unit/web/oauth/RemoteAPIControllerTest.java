@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.ExtendedModelMap;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -33,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import ca.corefacility.bioinformatics.irida.service.remote.model.RemoteProject;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.Lists;
@@ -162,5 +165,42 @@ public class RemoteAPIControllerTest {
 		assertTrue(errors.containsKey("serviceURI"));
 
 		verify(remoteAPIService).create(client);
+	}
+
+	@Test
+	public void testgetConnectionStatusPage() {
+		String connectionStatusPage = remoteAPIController.getConnectionStatusPage();
+		assertEquals(RemoteAPIController.STATUS_PAGE, connectionStatusPage);
+	}
+
+	@Test
+	public void testCheckApiStatusActive() {
+		Long apiId = 1l;
+		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
+		ArrayList<RemoteProject> remoteProjects = Lists.newArrayList(new RemoteProject());
+		when(remoteAPIService.read(apiId)).thenReturn(client);
+		when(projectRemoteService.list(client)).thenReturn(remoteProjects);
+		String checkApiStatus = remoteAPIController.checkApiStatus(apiId);
+
+		assertEquals(RemoteAPIController.VALID_OAUTH_CONNECTION, checkApiStatus);
+
+		verify(remoteAPIService).read(apiId);
+		verify(projectRemoteService).list(client);
+	}
+
+	@Test
+	public void testCheckApiStatusInactive() {
+		Long apiId = 1l;
+		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
+
+		when(remoteAPIService.read(apiId)).thenReturn(client);
+		when(projectRemoteService.list(client)).thenThrow(new IridaOAuthException("invalid token", client));
+
+		String checkApiStatus = remoteAPIController.checkApiStatus(apiId);
+
+		assertEquals(RemoteAPIController.INVALID_OAUTH_TOKEN, checkApiStatus);
+
+		verify(remoteAPIService).read(apiId);
+		verify(projectRemoteService).list(client);
 	}
 }

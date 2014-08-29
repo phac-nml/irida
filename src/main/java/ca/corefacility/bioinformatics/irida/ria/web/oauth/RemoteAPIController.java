@@ -60,6 +60,9 @@ public class RemoteAPIController extends BaseController {
 	public static final String ADD_API_PAGE = "remote_apis/create";
 	public static final String STATUS_PAGE = "remote_apis/status";
 
+	public static final String VALID_OAUTH_CONNECTION = "valid";
+	public static final String INVALID_OAUTH_TOKEN = "invalid_token";
+
 	private final String SORT_BY_ID = "id";
 	private final List<String> SORT_COLUMNS = Lists.newArrayList(SORT_BY_ID, "name", "clientId", "createdDate");
 	private static final String SORT_ASCENDING = "asc";
@@ -253,22 +256,22 @@ public class RemoteAPIController extends BaseController {
 
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping("/status")
-	public String connectionStatus() {
+	public String getConnectionStatusPage() {
 		return STATUS_PAGE;
 	}
 
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping("/status/{apiId}")
 	@ResponseBody
-	public String statusActive(@PathVariable Long apiId) {
+	public String checkApiStatus(@PathVariable Long apiId) {
 		RemoteAPI api = remoteAPIService.read(apiId);
 
 		try {
 			projectRemoteService.list(api);
-			return "valid";
+			return VALID_OAUTH_CONNECTION;
 		} catch (IridaOAuthException ex) {
 			logger.debug("Can't connect to API: " + ex.getMessage());
-			return "invalid_token";
+			return INVALID_OAUTH_TOKEN;
 		}
 	}
 
