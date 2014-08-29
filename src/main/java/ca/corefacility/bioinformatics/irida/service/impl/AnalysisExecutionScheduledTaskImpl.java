@@ -71,7 +71,10 @@ public class AnalysisExecutionScheduledTaskImpl implements
 				.findByAnalysisState(AnalysisState.SUBMITTED);
 
 		for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
-			logger.debug("Checking analysis " + analysisSubmission);
+			logger.debug("Changing submission to state " + AnalysisState.RUNNING + ": " + analysisSubmission);
+			analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getRemoteAnalysisId(),
+					AnalysisState.RUNNING);
+			
 			String analysisSubmissionId = analysisSubmission
 					.getRemoteAnalysisId();
 			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
@@ -101,6 +104,10 @@ public class AnalysisExecutionScheduledTaskImpl implements
 				.findByAnalysisState(AnalysisState.RUNNING);
 
 		for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
+			logger.debug("Changing submission to state " + AnalysisState.COMPLETED + ": " + analysisSubmission);
+			analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getRemoteAnalysisId(),
+					AnalysisState.COMPLETED);
+			
 			String analysisSubmissionId = analysisSubmission
 					.getRemoteAnalysisId();
 			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository

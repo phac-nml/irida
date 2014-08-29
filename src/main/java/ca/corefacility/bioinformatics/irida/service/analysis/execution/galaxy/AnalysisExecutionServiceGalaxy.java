@@ -111,20 +111,17 @@ public abstract class AnalysisExecutionServiceGalaxy
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	@Transactional
 	public S executeAnalysis(S analysisSubmission)
 					throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getRemoteAnalysisId(), "remote analyis id is null");
-		checkArgument(AnalysisState.SUBMITTED.equals(analysisSubmission.getAnalysisState()), 
+		checkArgument(AnalysisState.RUNNING.equals(analysisSubmission.getAnalysisState()), 
 				" analysis should be submitted");
 		
 		String analysisName = analysisSubmission.getClass().getSimpleName();
 		RemoteWorkflowGalaxy remoteWorkflow = analysisSubmission.getRemoteWorkflow();
 		
 		logger.debug("Running submission for " + analysisName + ": " + remoteWorkflow);
-		analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getRemoteAnalysisId(),
-				AnalysisState.RUNNING);
 		
 		logger.trace("Preparing files for " + analysisName + ": " + remoteWorkflow);
 		PreparedWorkflowGalaxy preparedWorkflow = workspaceService.prepareAnalysisFiles(analysisSubmission);
@@ -144,12 +141,11 @@ public abstract class AnalysisExecutionServiceGalaxy
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	@Transactional
 	public A transferAnalysisResults(S submittedAnalysis)
 			throws ExecutionManagerException, IOException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
 		checkNotNull(submittedAnalysis.getRemoteAnalysisId(), "remoteAnalysisId is null");
-		checkArgument(AnalysisState.RUNNING.equals(submittedAnalysis.getAnalysisState()),
+		checkArgument(AnalysisState.COMPLETED.equals(submittedAnalysis.getAnalysisState()),
 				" analysis should be running");
 		verifyAnalysisSubmissionExists(submittedAnalysis);
 		
@@ -157,9 +153,6 @@ public abstract class AnalysisExecutionServiceGalaxy
 		
 		logger.debug("Getting results for " + analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
 		A analysisResults = workspaceService.getAnalysisResults(submittedAnalysis);
-		
-		analysisSubmissionService.setStateForAnalysisSubmission(submittedAnalysis.getRemoteAnalysisId(),
-				AnalysisState.COMPLETED);
 		
 		logger.trace("Saving results " +  analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
 		return (A)analysisService.create(analysisResults);
