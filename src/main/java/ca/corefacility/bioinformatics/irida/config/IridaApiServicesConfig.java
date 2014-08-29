@@ -40,7 +40,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService
 @Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class,
 		IridaApiRepositoriesConfig.class, ExecutionManagerConfig.class,
 		AnalysisExecutionServiceConfig.class,
-		RemoteWorkflowServiceConfig.class, IridaOAuth2Config.class, IridaScheduledTasksConfig.class })
+		RemoteWorkflowServiceConfig.class, IridaOAuth2Config.class })
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.service")
 public class IridaApiServicesConfig {
 	@Value("${taxonomy.location}")
