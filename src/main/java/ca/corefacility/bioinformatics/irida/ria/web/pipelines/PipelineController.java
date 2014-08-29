@@ -23,10 +23,15 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.ria.components.PipelineSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -52,7 +57,10 @@ public class PipelineController extends BaseController {
 	 * SERVICES
 	 */
 	private SampleService sampleService;
+	private ReferenceFileService referenceFileService;
 	private SequenceFileService sequenceFileService;
+	private RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics;
+	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
 
 	/*
 	 * COMPONENTS
@@ -61,10 +69,16 @@ public class PipelineController extends BaseController {
 
 	@Autowired
 	public PipelineController(SampleService sampleService, SequenceFileService sequenceFileService,
-			PipelineSubmission pipelineSubmission) {
+			ReferenceFileService referenceFileService,
+			RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics,
+			AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics) {
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
-		this.pipelineSubmission = pipelineSubmission;
+		this.referenceFileService = referenceFileService;
+		this.remoteWorkflowServicePhylogenomics = remoteWorkflowServicePhylogenomics;
+		this.analysisExecutionServicePhylogenomics = analysisExecutionServicePhylogenomics;
+
+		this.pipelineSubmission = new PipelineSubmission();
 	}
 
 	// ************************************************************************************************
@@ -94,7 +108,8 @@ public class PipelineController extends BaseController {
 			}
 		}
 		// TODO: (14-08-28 - Josh) Need to determine what pipelines can be run with these files.
-		pipelineSubmission.setSequenceFiles(fileIds);
+		Iterable<SequenceFile> files = sequenceFileService.readMultiple(fileIds);
+		pipelineSubmission.setSequenceFiles(files);
 
 		// TODO: (14-08-13 - Josh) Get real data from Aaron's stuff
 		List<Map<String, String>> response = new ArrayList<>();
@@ -117,10 +132,10 @@ public class PipelineController extends BaseController {
 			method = RequestMethod.POST)
 	public @ResponseBody List<Map<String, String>> ajaxStartNewPipelines(@RequestParam Long pId,
 			@RequestParam Long rId, HttpServletResponse response) {
-		pipelineSubmission.setReferenceFile(rId);
+		pipelineSubmission.setReferenceFile(referenceFileService.read(rId));
 		List<Map<String, String>> result = new ArrayList<>();
 		try {
-			pipelineSubmission.startPipeline(pId);
+			startPipeline(pId);
 			result.add(ImmutableMap.of("success", "success"));
 		} catch (ExecutionManagerException e) {
 			logger.error("Error starting pipeline (id = " + pId + ") [" + e.getMessage() + "]");
@@ -128,5 +143,21 @@ public class PipelineController extends BaseController {
 			result.add(ImmutableMap.of("error", e.getMessage()));
 		}
 		return result;
+	}
+
+	// ************************************************************************************************
+	// RUNNING PIPELINE INTERNAL METHODS
+	// ************************************************************************************************
+
+	private void startPipeline(Long pipelineId) throws ExecutionManagerException {
+		// TODO: (14-08-28 - Josh) pipelineId needs to be passed b/c front end does not need to know the details.
+		RemoteWorkflowPhylogenomics workflow = remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
+		AnalysisSubmissionPhylogenomics asp = new AnalysisSubmissionPhylogenomics(pipelineSubmission.getSequenceFiles(),
+				pipelineSubmission.getReferenceFile(),
+				workflow);
+		analysisExecutionServicePhylogenomics.executeAnalysis(asp);
+
+		// Reset the pipeline submission
+		pipelineSubmission.clear();
 	}
 }
