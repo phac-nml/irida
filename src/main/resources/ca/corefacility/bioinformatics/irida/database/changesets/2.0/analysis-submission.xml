@@ -94,7 +94,7 @@
 		</createTable>
 
 		<createTable tableName="analysis_submission_AUD">
-			<column name="id" type="bigint(20)" autoIncrement="true">
+			<column name="id" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="remoteAnalysisId" type="VARCHAR(255)" />
