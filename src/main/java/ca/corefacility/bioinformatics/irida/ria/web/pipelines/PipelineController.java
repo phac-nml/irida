@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Controller for pipeline related views
@@ -52,6 +54,8 @@ public class PipelineController extends BaseController {
 	// URI's
 	public static final String URI_LIST_PIPELINES = "/ajax/list.json";
 	public static final String URI_AJAX_START_PIPELINE = "/ajax/start.json";
+	public static final String JSON_KEY_SAMPLE_ID = "id";
+	public static final String JSON_KEY_SAMPLE_OMIT_FILES_LIST = "omit";
 
 	/*
 	 * SERVICES
@@ -93,10 +97,14 @@ public class PipelineController extends BaseController {
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Map<String, String>> ajaxCreateNewPipelineFromProject(
 			@RequestBody List<Map<String, Object>> json) {
+
+		// Since the UI only knows about sample id's (unless the files view is expanded) only a list
+		// of sample id's are passed to the server.  If the user opens the sample files view, they can
+		// deselect specific files.  These are added to an omit files list.
 		ArrayList<Long> fileIds = new ArrayList<>();
 		for (Map map : json) {
-			Long id = Long.parseLong((String) map.get("id"));
-			List omit = (List) map.get("omit");
+			Long id = Long.parseLong((String) map.get(JSON_KEY_SAMPLE_ID));
+			Set omit = ImmutableSet.copyOf((List) map.get(JSON_KEY_SAMPLE_OMIT_FILES_LIST));
 
 			Sample sample = sampleService.read(id);
 			List<Join<Sample, SequenceFile>> fileList = sequenceFileService.getSequenceFilesForSample(sample);
