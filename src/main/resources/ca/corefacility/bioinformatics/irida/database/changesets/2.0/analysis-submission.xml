@@ -83,9 +83,9 @@
 			<column name="id" type="bigint(20)" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="remoteAnalysisId" type="VARCHAR(255)"/>
+			<column name="remoteAnalysisId" type="VARCHAR(255)" />
 			<column name="analysisState" type="VARCHAR(255)">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
 			<column name="createdDate" type="datetime">
 				<constraints nullable="false" />
@@ -97,32 +97,32 @@
 			<column name="id" type="bigint(20)" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="remoteAnalysisId" type="VARCHAR(255)"/>
+			<column name="remoteAnalysisId" type="VARCHAR(255)" />
 			<column name="REV" type="INT(11)">
 				<constraints primaryKey="true" nullable="false"
 					foreignKeyName="FK_ANALYSIS_SUBMISSION_REVISION"
 					referencedColumnNames="id" referencedTableName="Revisions" />
 			</column>
 			<column name="REVTYPE" type="TINYINT(4)" />
-			<column name="analysisState" type="VARCHAR(255)"/>
+			<column name="analysisState" type="VARCHAR(255)" />
 			<column name="createdDate" type="datetime" />
 			<column name="modifiedDate" type="datetime" />
 		</createTable>
-		
+
 		<createTable tableName="analysis_submission_galaxy">
-			<column name="remoteAnalysisId" type="VARCHAR(255)">
-				<constraints nullable="false" primaryKey="true"
-					foreignKeyName="FK_ANALYSIS_SUBMISSION_ID" referencedColumnNames="remoteAnalysisId"
-					referencedTableName="analysis_submission" />
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_ANALYSIS_SUBMISSION_GALAXY_ID"
+					referencedColumnNames="id" referencedTableName="analysis_submission" />
 			</column>
 			<column name="remote_workflow_id" type="VARCHAR(255)">
 				<constraints foreignKeyName="FK_ANALYSIS_SUBMISSION_REMOTE_WORKFLOW_ID"
 					referencedColumnNames="workflowId" referencedTableName="remote_workflow" />
 			</column>
 		</createTable>
-		
+
 		<createTable tableName="analysis_submission_galaxy_AUD">
-			<column name="remoteAnalysisId" type="VARCHAR(255)">
+			<column name="id" type="bigint(20)">
 				<constraints nullable="false" primaryKey="true" />
 			</column>
 			<column name="REV" type="INT(11)">
@@ -130,15 +130,16 @@
 			</column>
 			<column name="remote_workflow_id" type="VARCHAR(255)" />
 		</createTable>
-		<addForeignKeyConstraint baseColumnNames="remoteAnalysisId, REV"
+
+		<addForeignKeyConstraint baseColumnNames="id, REV"
 			baseTableName="analysis_submission_galaxy_AUD" constraintName="FK_ANALYSIS_SUBMISSION_GALAXY_REVISION"
-			referencedTableName="analysis_submission_AUD" referencedColumnNames="remoteAnalysisId, REV" />
+			referencedTableName="analysis_submission_AUD" referencedColumnNames="id, REV" />
 
 		<createTable tableName="analysis_submission_phylogenomics">
-			<column name="remoteAnalysisId" type="VARCHAR(255)">
-				<constraints nullable="false" primaryKey="true"
-					foreignKeyName="FK_ANALYSIS_SUBMISSION_GALAXY_ID" referencedColumnNames="remoteAnalysisId"
-					referencedTableName="analysis_submission_galaxy" />
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_ANALYSIS_SUBMISSION_PHYLOGENOMICS_ID"
+					referencedColumnNames="id" referencedTableName="analysis_submission_galaxy" />
 			</column>
 			<column name="reference_file_id" type="BIGINT(20)">
 				<constraints foreignKeyName="FK_REFERENCE_FILE_ID"
@@ -147,7 +148,7 @@
 		</createTable>
 
 		<createTable tableName="analysis_submission_phylogenomics_AUD">
-			<column name="remoteAnalysisId" type="VARCHAR(255)">
+			<column name="id" type="bigint(20)">
 				<constraints nullable="false" primaryKey="true" />
 			</column>
 			<column name="REV" type="INT(11)">
@@ -155,15 +156,17 @@
 			</column>
 			<column name="reference_file_id" type="BIGINT(20)" />
 		</createTable>
-		<addForeignKeyConstraint baseColumnNames="remoteAnalysisId, REV"
+
+		<addForeignKeyConstraint baseColumnNames="id, REV"
 			baseTableName="analysis_submission_phylogenomics_AUD" constraintName="FK_ANALYSIS_SUBMISSION_PHYLOGENOMICS_REVISION"
-			referencedTableName="analysis_submission_galaxy_AUD" referencedColumnNames="remoteAnalysisId, REV" />
+			referencedTableName="analysis_submission_galaxy_AUD"
+			referencedColumnNames="id, REV" />
 
 		<createTable tableName="analysis_submission_sequence_file">
-			<column name="analysis_submission_remoteAnalysisId" type="VARCHAR(255)">
+			<column name="analysis_submission_id" type="bigint(20)">
 				<constraints nullable="false" primaryKey="true"
 					foreignKeyName="FK_ANALYSIS_SUBMISSION_SEQUENCE_FILE_ID"
-					referencedColumnNames="remoteAnalysisId" referencedTableName="analysis_submission" />
+					referencedColumnNames="id" referencedTableName="analysis_submission" />
 			</column>
 			<column name="inputFiles_id" type="BIGINT(20)">
 				<constraints unique="true" nullable="false" primaryKey="true"
@@ -178,7 +181,7 @@
 					foreignKeyName="FK_ANALYSIS_SUBMISSION_SEQUENCE_FILE_ID_REV"
 					referencedColumnNames="id" referencedTableName="Revisions" />
 			</column>
-			<column name="analysis_submission_remoteAnalysisId" type="VARCHAR(255)">
+			<column name="analysis_submission_id" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="inputFiles_id" type="BIGINT(20)">
