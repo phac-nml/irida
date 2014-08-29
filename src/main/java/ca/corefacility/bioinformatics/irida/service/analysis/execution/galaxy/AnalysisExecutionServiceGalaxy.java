@@ -103,7 +103,6 @@ public abstract class AnalysisExecutionServiceGalaxy
 		logger.trace("Executing " + analysisName + ": " + remoteWorkflow);
 		galaxyWorkflowService.runWorkflow(input);
 		analysisSubmission.setRemoteAnalysisId(preparedWorkflow.getRemoteAnalysisId());
-		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
 		
 		logger.trace("Saving submission " +  analysisName + ": " + remoteWorkflow);
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
