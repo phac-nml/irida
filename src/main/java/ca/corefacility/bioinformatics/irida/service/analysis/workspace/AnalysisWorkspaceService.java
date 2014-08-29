@@ -18,12 +18,20 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 public interface AnalysisWorkspaceService<S extends AnalysisSubmission, P extends PreparedWorkflow<?>, A extends Analysis> {
 	
 	/**
-	 * Prepares a workflow for an analysis given an analysis submission.
+	 * Prepares the workspace for an analysis given an analysis submission.
+	 * @param analysisSubmission  The submission used to perform an analysis.
+	 * @return  A String identifiying the analysis workspace.
+	 * @throws ExecutionManagerException If there was an issue preparing the workflow workspace.
+	 */
+	public String prepareAnalysisWorkspace(S analysisSubmission) throws ExecutionManagerException;
+	
+	/**
+	 * Prepares the files for a workflow for an analysis given an analysis submission.
 	 * @param analysisSubmission  The submission used to perform an analysis.
 	 * @return  A PreparedWorkflow which can be submitted.
 	 * @throws ExecutionManagerException If there was an issue preparing the workflow workspace.
 	 */
-	public P prepareAnalysisWorkspace(S analysisSubmission) throws ExecutionManagerException;
+	public P prepareAnalysisFiles(S analysisSubmission) throws ExecutionManagerException;
 	
 	/**
 	 * Gets an Analysis object containing the results for this analysis.  This object is not persisted

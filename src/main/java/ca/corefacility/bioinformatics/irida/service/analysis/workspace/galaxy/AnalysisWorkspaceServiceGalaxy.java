@@ -1,12 +1,17 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
+import com.github.jmchilton.blend4j.galaxy.beans.History;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerDownloadException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
@@ -36,6 +41,21 @@ public abstract class AnalysisWorkspaceServiceGalaxy<R extends RemoteWorkflowGal
 	public AnalysisWorkspaceServiceGalaxy(
 			GalaxyHistoriesService galaxyHistoriesService) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String prepareAnalysisWorkspace(S analysisSubmission)
+			throws ExecutionManagerException {
+		checkNotNull(analysisSubmission, "analysisSubmission is null");
+		checkNotNull(analysisSubmission.getInputFiles(), "inputFiles are null");
+		checkArgument(analysisSubmission.getRemoteAnalysisId() == null, "analysis id should be null");
+		
+		History workflowHistory = galaxyHistoriesService.newHistoryForWorkflow();
+		
+		return workflowHistory.getId();
 	}
 
 	/**
