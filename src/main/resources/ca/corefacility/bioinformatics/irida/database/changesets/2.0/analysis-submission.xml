@@ -5,7 +5,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-	<changeSet id="analysis-submission" author="aaron.petkau">
+	<changeSet id="analysis-submission" author="aaron.petkau, tom">
 
 		<!-- Remote Workflow Tables -->
 
@@ -87,6 +87,10 @@
 			<column name="analysisState" type="VARCHAR(255)">
 				<constraints nullable="false" />
 			</column>
+			<column name="analysis_id" type="bigint(20)">
+				<constraints foreignKeyName="FK_ANALYSIS_SUBMISSION_ANALYSIS"
+					referencedColumnNames="id" referencedTableName="analysis" />
+			</column>
 			<column name="createdDate" type="datetime">
 				<constraints nullable="false" />
 			</column>
@@ -105,6 +109,7 @@
 			</column>
 			<column name="REVTYPE" type="TINYINT(4)" />
 			<column name="analysisState" type="VARCHAR(255)" />
+			<column name="analysis_id" type="bigint(20)" />
 			<column name="createdDate" type="datetime" />
 			<column name="modifiedDate" type="datetime" />
 		</createTable>
