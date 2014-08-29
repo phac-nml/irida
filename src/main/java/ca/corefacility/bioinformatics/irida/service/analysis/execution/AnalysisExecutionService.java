@@ -16,9 +16,18 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  */
 public interface AnalysisExecutionService
 	<A extends Analysis, S extends AnalysisSubmission> {
+	
+	/**
+	 * Prepares the given submission to be executed within an execution manager.  This
+	 *  will persist the submission within the database.
+	 * @param analysisSubmission  The submission to prepare.
+	 * @return  An AnalysisSubmission for the prepared submission.
+	 * @throws ExecutionManagerException  If there was an issue preparing the analysis.
+	 */
+	public S prepareSubmission(S analysisSubmission) throws ExecutionManagerException;
 
 	/**
-	 * Executes the passed AnalysisSubmission in an execution manager.
+	 * Executes the passed prepared AnalysisSubmission in an execution manager.
 	 * @param analysisSubmission  The submission to execute.
 	 * @return  An AnalysisSubmission for the executed analysis.
 	 * @throws ExecutionManagerException  If there was an issue executing the analysis.

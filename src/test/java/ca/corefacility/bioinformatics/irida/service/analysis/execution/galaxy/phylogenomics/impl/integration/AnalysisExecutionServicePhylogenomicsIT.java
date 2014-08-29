@@ -111,8 +111,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	private AnalysisService analysisService;
 	
 	@Autowired
-	private AnalysisExecutionServicePhylogenomics 
-		analysisExecutionServicePhylogenomics;
+	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
 	
 	@Autowired
 	private RemoteWorkflowServicePhylogenomics
@@ -218,22 +217,25 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
 		AnalysisSubmissionPhylogenomics analysisSubmitted = 
-				analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmission);
-		assertNotNull("analysisSubmitted is null", analysisSubmitted);
-		assertNotNull("remoteAnalysisId is null", analysisSubmitted.getRemoteAnalysisId());
-		assertEquals(AnalysisState.RUNNING, analysisSubmitted.getAnalysisState());
+				analysisExecutionServicePhylogenomics.prepareSubmission(analysisSubmission);
+		
+		AnalysisSubmissionPhylogenomics analysisExecuted = 
+				analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmitted);
+		assertNotNull("analysisExecuted is null", analysisExecuted);
+		assertNotNull("remoteAnalysisId is null", analysisExecuted.getRemoteAnalysisId());
+		assertEquals(AnalysisState.RUNNING, analysisExecuted.getAnalysisState());
 
 		WorkflowStatus status = 
-				analysisExecutionServicePhylogenomics.getWorkflowStatus(analysisSubmitted);
+				analysisExecutionServicePhylogenomics.getWorkflowStatus(analysisExecuted);
 		assertValidStatus(status);
 		
-		AnalysisSubmissionPhylogenomics savedSubmission = analysisSubmissionRepository.getByType(analysisSubmitted.getRemoteAnalysisId(),
+		AnalysisSubmissionPhylogenomics savedSubmission = analysisSubmissionRepository.getByType(analysisExecuted.getRemoteAnalysisId(),
 				AnalysisSubmissionPhylogenomics.class);
 		
-		assertEquals(analysisSubmitted.getRemoteAnalysisId(), savedSubmission.getRemoteAnalysisId());
-		assertEquals(analysisSubmitted.getRemoteWorkflow(), savedSubmission.getRemoteWorkflow());
-		assertEquals(analysisSubmitted.getInputFiles(), savedSubmission.getInputFiles());
-		assertEquals(analysisSubmitted.getReferenceFile(), savedSubmission.getReferenceFile());
+		assertEquals(analysisExecuted.getRemoteAnalysisId(), savedSubmission.getRemoteAnalysisId());
+		assertEquals(analysisExecuted.getRemoteWorkflow(), savedSubmission.getRemoteWorkflow());
+		assertEquals(analysisExecuted.getInputFiles(), savedSubmission.getInputFiles());
+		assertEquals(analysisExecuted.getReferenceFile(), savedSubmission.getReferenceFile());
 	}
 	
 	/**
@@ -249,25 +251,50 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		AnalysisSubmissionPhylogenomics analysisSubmission 
 			= setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
-		AnalysisSubmissionPhylogenomics submitted 
-			= analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmission);
-		analysisExecutionServicePhylogenomics.executeAnalysis(submitted);
+		AnalysisSubmissionPhylogenomics analysisSubmitted = 
+				analysisExecutionServicePhylogenomics.prepareSubmission(analysisSubmission);
+		
+		AnalysisSubmissionPhylogenomics executed 
+			= analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmitted);
+		
+		analysisExecutionServicePhylogenomics.executeAnalysis(executed);
+	}
+	
+	/**
+	 * Tests out successfully preparing a workflow submission.
+	 * @throws InterruptedException 
+	 * @throws ExecutionManagerException 
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testPrepareSubmissionSuccess() throws InterruptedException, ExecutionManagerException {
+		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = 
+				remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
+		
+		AnalysisSubmissionPhylogenomics analysisSubmission = 
+				setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
+		
+		AnalysisSubmissionPhylogenomics analysisSubmitted = 
+				analysisExecutionServicePhylogenomics.prepareSubmission(analysisSubmission);
+		assertNotNull("analysisSubmitted is null", analysisSubmitted);
+		assertNotNull("remoteAnalysisId is null", analysisSubmitted.getRemoteAnalysisId());
+		assertEquals(AnalysisState.SUBMITTED, analysisSubmitted.getAnalysisState());
 	}
 
 	/**
-	 * Tests out attempting to submit a workflow with an invalid id for execution.
+	 * Tests out attempting to prepare a workflow with an invalid id for execution.
 	 * @throws ExecutionManagerException 
 	 */
 	@Test(expected=WorkflowException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testExecuteAnalysisFailInvalidWorkflow() throws ExecutionManagerException {
+	public void testPrepareSubmissionFailInvalidWorkflow() throws ExecutionManagerException {
 		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = 
 				remoteWorkflowServicePhylogenomicsInvalidId.getCurrentWorkflow();
 		
 		AnalysisSubmissionPhylogenomics analysisSubmission = 
 				setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
-		analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmission);
+		analysisExecutionServicePhylogenomics.prepareSubmission(analysisSubmission);
 	}
 	
 	/**
@@ -276,14 +303,14 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	 */
 	@Test(expected=WorkflowChecksumInvalidException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testExecuteAnalysisFailInvalidChecksum() throws ExecutionManagerException {
+	public void testPrepareSubmissionFailInvalidChecksum() throws ExecutionManagerException {
 		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = 
 				remoteWorkflowServicePhylogenomicsInvalidChecksum.getCurrentWorkflow();
 		
 		AnalysisSubmissionPhylogenomics analysisSubmission = 
 				setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
-		analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmission);
+		analysisExecutionServicePhylogenomics.prepareSubmission(analysisSubmission);
 	}
 	
 	/**
@@ -300,23 +327,26 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
 		AnalysisSubmissionPhylogenomics analysisSubmitted = analysisExecutionServicePhylogenomics
-				.executeAnalysis(analysisSubmission);
+				.prepareSubmission(analysisSubmission);
+		
+		AnalysisSubmissionPhylogenomics analysisExecuted = analysisExecutionServicePhylogenomics
+				.executeAnalysis(analysisSubmitted);
 
-		waitUntilSubmissionComplete(analysisSubmitted);
+		waitUntilSubmissionComplete(analysisExecuted);
 
 		AnalysisPhylogenomicsPipeline analysisResults = analysisExecutionServicePhylogenomics
-				.transferAnalysisResults(analysisSubmission);
+				.transferAnalysisResults(analysisExecuted);
 		AnalysisState state
-			= analysisSubmissionService.getStateForAnalysisSubmission(analysisSubmitted.getId());
+			= analysisSubmissionService.getStateForAnalysisSubmission(analysisExecuted.getId());
 		assertEquals(AnalysisState.COMPLETED, state);
 
-		String analysisId = analysisSubmitted.getRemoteAnalysisId();
+		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis",
 				analysisId,
 				analysisResults.getExecutionManagerAnalysisId());
 
 		assertEquals("inputFiles should be the same for submission and results",
-				analysisSubmission.getInputFiles(), analysisResults.getInputSequenceFiles());
+				analysisExecuted.getInputFiles(), analysisResults.getInputSequenceFiles());
 		
 		assertEquals(3, analysisResults.getAnalysisOutputFiles().size());
 		AnalysisOutputFile phylogeneticTree = analysisResults
@@ -355,18 +385,21 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = 
 				remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
 		
-		AnalysisSubmissionPhylogenomics analysisSubmissionBefore = 
+		AnalysisSubmissionPhylogenomics analysisSubmission = 
 				setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
-		AnalysisSubmissionPhylogenomics analysisSubmittedAfter = analysisExecutionServicePhylogenomics
-				.executeAnalysis(analysisSubmissionBefore);
+		AnalysisSubmissionPhylogenomics analysisSubmitted = analysisExecutionServicePhylogenomics
+				.prepareSubmission(analysisSubmission);
+		
+		AnalysisSubmissionPhylogenomics analysisExecuted = analysisExecutionServicePhylogenomics
+				.executeAnalysis(analysisSubmitted);
 
-		waitUntilSubmissionComplete(analysisSubmittedAfter);
+		waitUntilSubmissionComplete(analysisExecuted);
 
-		analysisSubmittedAfter.setId(999l);
+		analysisExecuted.setId(555l);
 		
 		analysisExecutionServicePhylogenomics
-				.transferAnalysisResults(analysisSubmittedAfter);
+				.transferAnalysisResults(analysisExecuted);
 	}
 	
 	/**

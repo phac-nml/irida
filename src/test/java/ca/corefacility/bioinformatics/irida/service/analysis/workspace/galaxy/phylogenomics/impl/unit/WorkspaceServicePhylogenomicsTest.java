@@ -167,12 +167,35 @@ public class WorkspaceServicePhylogenomicsTest {
 	}
 	
 	/**
-	 * Tests out successfully to preparing an analysis
+	 * Tests out successfully to preparing an analysis workspace
 	 * @throws ExecutionManagerException
 	 */
 	@Test
 	public void testPrepareAnalysisWorkspaceSuccess() throws ExecutionManagerException {
 		when(galaxyHistoriesService.newHistoryForWorkflow()).thenReturn(workflowHistory);
+		assertEquals(HISTORY_ID,
+				workflowPreparation.prepareAnalysisWorkspace(submission));
+	}
+	
+	/**
+	 * Tests out failing to preparing an analysis workspace
+	 * @throws ExecutionManagerException
+	 */
+	@Test(expected=RuntimeException.class)
+	public void testPrepareAnalysisWorkspaceFail() throws ExecutionManagerException {
+		when(galaxyHistoriesService.newHistoryForWorkflow()).thenThrow(new RuntimeException());
+		assertEquals(HISTORY_ID,
+				workflowPreparation.prepareAnalysisWorkspace(submission));
+	}
+	
+	/**
+	 * Tests out successfully to preparing an analysis
+	 * @throws ExecutionManagerException
+	 */
+	@Test
+	public void testPrepareAnalysisFilesSuccess() throws ExecutionManagerException {
+		submission.setRemoteAnalysisId(HISTORY_ID);
+		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		
 		when(galaxyHistoriesService.fileToHistory(sFileA.getFile(), InputFileType.FASTQ_SANGER,
 				workflowHistory)).thenReturn(datasetA);
@@ -198,7 +221,7 @@ public class WorkspaceServicePhylogenomicsTest {
 		when(galaxyWorkflowService.getWorkflowInputId(
 				workflowDetails, REFERENCE_FILE_LABEL)).thenReturn(REFERENCE_FILE_ID);
 		
-		PreparedWorkflowGalaxy preparedWorkflow = workflowPreparation.prepareAnalysisWorkspace(submission);
+		PreparedWorkflowGalaxy preparedWorkflow = workflowPreparation.prepareAnalysisFiles(submission);
 		assertEquals("preparedWorflow history id not equal to " + HISTORY_ID,
 				HISTORY_ID, preparedWorkflow.getRemoteAnalysisId());
 		assertNotNull("workflowInputs in preparedWorkflow is null", preparedWorkflow.getWorkflowInputs());
@@ -209,8 +232,9 @@ public class WorkspaceServicePhylogenomicsTest {
 	 * @throws ExecutionManagerException
 	 */
 	@Test(expected=UploadException.class)
-	public void testPrepareAnalysisWorkspaceFail() throws ExecutionManagerException {
-		when(galaxyHistoriesService.newHistoryForWorkflow()).thenReturn(workflowHistory);
+	public void testPrepareAnalysisFilesFail() throws ExecutionManagerException {
+		submission.setRemoteAnalysisId(HISTORY_ID);
+		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		
 		when(galaxyHistoriesService.fileToHistory(sFileA.getFile(), InputFileType.FASTQ_SANGER,
 				workflowHistory)).thenThrow(new UploadException());
@@ -226,7 +250,7 @@ public class WorkspaceServicePhylogenomicsTest {
 		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileC))
 				.thenReturn(sampleCJoin);
 		
-		workflowPreparation.prepareAnalysisWorkspace(submission);
+		workflowPreparation.prepareAnalysisFiles(submission);
 	}
 	
 	/**
@@ -234,8 +258,9 @@ public class WorkspaceServicePhylogenomicsTest {
 	 * @throws ExecutionManagerException
 	 */
 	@Test(expected=WorkflowPreprationException.class)
-	public void testPrepareAnalysisWorkspaceFailDuplicateSamples() throws ExecutionManagerException {
-		when(galaxyHistoriesService.newHistoryForWorkflow()).thenReturn(workflowHistory);
+	public void testPrepareAnalysisWorkspaceFilesDuplicateSamples() throws ExecutionManagerException {
+		submission.setRemoteAnalysisId(HISTORY_ID);
+		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		
 		when(galaxyHistoriesService.fileToHistory(sFileA.getFile(), InputFileType.FASTQ_SANGER,
 				workflowHistory)).thenReturn(datasetA);
@@ -251,6 +276,6 @@ public class WorkspaceServicePhylogenomicsTest {
 		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileC))
 				.thenReturn(sampleCJoin);
 		
-		workflowPreparation.prepareAnalysisWorkspace(submission);
+		workflowPreparation.prepareAnalysisFiles(submission);
 	}
 }
