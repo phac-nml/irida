@@ -147,7 +147,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test
 	public void testExecuteAnalysisSuccess() throws ExecutionManagerException {
-		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.SUBMITTED);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.START_RUNNING);
 		when(workspaceServicePhylogenomics.prepareAnalysisFiles(analysisSubmission)).
 			thenReturn(preparedWorkflow);
 		when(galaxyWorkflowService.runWorkflow(workflowInputsGalaxy)).thenReturn(workflowOutputs);
@@ -179,7 +179,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test(expected=ExecutionManagerException.class)
 	public void testExecuteAnalysisFailPrepareWorkflow() throws ExecutionManagerException {
-		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.SUBMITTED);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.START_RUNNING);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
 		when(workspaceServicePhylogenomics.prepareAnalysisFiles(analysisSubmission)).
@@ -194,7 +194,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test(expected=WorkflowException.class)
 	public void testExecuteAnalysisFail() throws ExecutionManagerException {
-		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.SUBMITTED);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.START_RUNNING);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
 		when(workspaceServicePhylogenomics.prepareAnalysisFiles(analysisSubmission)).
@@ -241,7 +241,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		String id = "invalid";
 		
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(id);
-		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.FINISHED_RUNNING);
 		when(analysisSubmissionService.exists(id)).thenReturn(true);
 		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).thenReturn(analysisResults);
 		when(analysisService.create(analysisResults)).thenReturn(analysisResults);
@@ -262,7 +262,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		String id = "invalid";
 		
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(id);
-		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.FINISHED_RUNNING);
 		when(analysisSubmissionService.exists(id)).thenReturn(true);
 		
 		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).
@@ -279,7 +279,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Test(expected=NullPointerException.class)
 	public void testGetAnalysisResultsFailNotSubmittedNullId() throws ExecutionManagerException, IOException {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
-		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.FINISHED_RUNNING);
 		
 		workflowManagement.transferAnalysisResults(analysisSubmission);
 	}
@@ -294,7 +294,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		String id = "invalid";
 		
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(id);
-		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.FINISHED_RUNNING);
 		when(analysisSubmissionService.exists(id)).thenReturn(false);
 		
 		workflowManagement.transferAnalysisResults(analysisSubmission);

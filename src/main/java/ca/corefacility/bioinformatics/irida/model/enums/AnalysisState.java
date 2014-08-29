@@ -19,7 +19,12 @@ public enum AnalysisState {
 	SUBMITTED("SUBMITTED"),
 
 	/**
-	 * An analysis that is executing in the execution manager.
+	 * An analysis that is starting to run in the execution manager.
+	 */
+	START_RUNNING("START_RUNNING"),
+	
+	/**
+	 * An analysis that is running in the execution manager.
 	 */
 	RUNNING("RUNNING"),
 

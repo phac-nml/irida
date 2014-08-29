@@ -115,8 +115,8 @@ public abstract class AnalysisExecutionServiceGalaxy
 					throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getRemoteAnalysisId(), "remote analyis id is null");
-		checkArgument(AnalysisState.RUNNING.equals(analysisSubmission.getAnalysisState()), 
-				" analysis should be submitted");
+		checkArgument(AnalysisState.START_RUNNING.equals(analysisSubmission.getAnalysisState()), 
+				" analysis should be starting to run");
 		
 		String analysisName = analysisSubmission.getClass().getSimpleName();
 		RemoteWorkflowGalaxy remoteWorkflow = analysisSubmission.getRemoteWorkflow();
@@ -145,8 +145,8 @@ public abstract class AnalysisExecutionServiceGalaxy
 			throws ExecutionManagerException, IOException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
 		checkNotNull(submittedAnalysis.getRemoteAnalysisId(), "remoteAnalysisId is null");
-		checkArgument(AnalysisState.COMPLETED.equals(submittedAnalysis.getAnalysisState()),
-				" analysis should be running");
+		checkArgument(AnalysisState.FINISHED_RUNNING.equals(submittedAnalysis.getAnalysisState()),
+				" analysis should be finished running");
 		verifyAnalysisSubmissionExists(submittedAnalysis);
 		
 		String analysisName = submittedAnalysis.getClass().getSimpleName();

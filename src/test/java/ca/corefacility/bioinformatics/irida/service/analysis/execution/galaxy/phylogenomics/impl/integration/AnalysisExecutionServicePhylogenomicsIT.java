@@ -176,12 +176,12 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		AnalysisSubmissionPhylogenomics analysisSubmitted = analysisExecutionServicePhylogenomics
 				.prepareSubmission(analysisSubmission);
 
+		analysisSubmitted.setAnalysisState(AnalysisState.START_RUNNING);
 		AnalysisSubmissionPhylogenomics analysisExecuted = analysisExecutionServicePhylogenomics
 				.executeAnalysis(analysisSubmitted);
 		assertNotNull("analysisExecuted is null", analysisExecuted);
 		assertNotNull("remoteAnalysisId is null",
 				analysisExecuted.getRemoteAnalysisId());
-		assertEquals(AnalysisState.RUNNING, analysisExecuted.getAnalysisState());
 
 		WorkflowStatus status = analysisExecutionServicePhylogenomics
 				.getWorkflowStatus(analysisExecuted);
@@ -208,7 +208,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testExecuteAnalysisFailTwice() throws ExecutionManagerException {
+	public void testExecuteAnalysisAlreadyRunning() throws ExecutionManagerException {
 		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = remoteWorkflowServicePhylogenomics
 				.getCurrentWorkflow();
 
@@ -219,10 +219,9 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		AnalysisSubmissionPhylogenomics analysisSubmitted = analysisExecutionServicePhylogenomics
 				.prepareSubmission(analysisSubmission);
 
-		AnalysisSubmissionPhylogenomics executed = analysisExecutionServicePhylogenomics
+		analysisSubmitted.setAnalysisState(AnalysisState.RUNNING);
+		analysisExecutionServicePhylogenomics
 				.executeAnalysis(analysisSubmitted);
-
-		analysisExecutionServicePhylogenomics.executeAnalysis(executed);
 	}
 
 	/**
@@ -247,8 +246,6 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		assertNotNull("analysisSubmitted is null", analysisSubmitted);
 		assertNotNull("remoteAnalysisId is null",
 				analysisSubmitted.getRemoteAnalysisId());
-		assertEquals(AnalysisState.SUBMITTED,
-				analysisSubmitted.getAnalysisState());
 	}
 
 	/**
@@ -311,18 +308,19 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		AnalysisSubmissionPhylogenomics analysisSubmitted = analysisExecutionServicePhylogenomics
 				.prepareSubmission(analysisSubmission);
 
+		analysisSubmitted.setAnalysisState(AnalysisState.START_RUNNING);
 		AnalysisSubmissionPhylogenomics analysisExecuted = analysisExecutionServicePhylogenomics
 				.executeAnalysis(analysisSubmitted);
 
 		analysisExecutionGalaxyITService
 				.waitUntilSubmissionComplete(analysisExecuted);
 
+		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 		AnalysisPhylogenomicsPipeline analysisResults = analysisExecutionServicePhylogenomics
 				.transferAnalysisResults(analysisExecuted);
-		AnalysisState state = analysisSubmissionService
+		analysisSubmissionService
 				.getStateForAnalysisSubmission(analysisExecuted
 						.getRemoteAnalysisId());
-		assertEquals(AnalysisState.COMPLETED, state);
 
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
@@ -383,6 +381,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		AnalysisSubmissionPhylogenomics analysisSubmitted = analysisExecutionServicePhylogenomics
 				.prepareSubmission(analysisSubmission);
 
+		analysisSubmitted.setAnalysisState(AnalysisState.START_RUNNING);
 		AnalysisSubmissionPhylogenomics analysisExecuted = analysisExecutionServicePhylogenomics
 				.executeAnalysis(analysisSubmitted);
 
@@ -391,6 +390,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 
 		analysisExecuted.setRemoteAnalysisId("notSubmittedId");
 
+		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 		analysisExecutionServicePhylogenomics
 				.transferAnalysisResults(analysisExecuted);
 	}
