@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.integration;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -10,8 +9,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.Assume;
 import org.junit.Before;
@@ -39,29 +36,19 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowChecksumInvalidException;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflowRepository;
+import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -87,19 +74,10 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 public class AnalysisExecutionServicePhylogenomicsIT {
 	
 	@Autowired
+	private AnalysisExecutionGalaxyITService analysisExecutionGalaxyITService;
+	
+	@Autowired
 	private LocalGalaxy localGalaxy;
-	
-	@Autowired
-	private ReferenceFileRepository referenceFileRepository;
-	
-	@Autowired
-	private SequenceFileRepository sequenceFileRepository;
-	
-	@Autowired
-	private SequenceFileService seqeunceFileService;
-	
-	@Autowired
-	private RemoteWorkflowRepository remoteWorkflowRepository;
 	
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
@@ -124,12 +102,6 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	@Autowired
 	private RemoteWorkflowServicePhylogenomics
 		remoteWorkflowServicePhylogenomicsInvalidChecksum;
-	
-	@Autowired
-	private SampleService sampleService;
-	
-	@Autowired
-	private GalaxyWorkflowService galaxyWorkflowService;
 		
 	private Path sequenceFilePath;
 	private Path referenceFilePath;
@@ -147,9 +119,9 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	public void setup() throws URISyntaxException, IOException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 		
-		Path sequenceFilePathReal = Paths.get(AnalysisExecutionServicePhylogenomicsIT.class.getResource(
+		Path sequenceFilePathReal = Paths.get(AnalysisExecutionGalaxyITService.class.getResource(
 				"testData1.fastq").toURI());		
-		Path referenceFilePathReal = Paths.get(AnalysisExecutionServicePhylogenomicsIT.class.getResource(
+		Path referenceFilePathReal = Paths.get(AnalysisExecutionGalaxyITService.class.getResource(
 				"testReference.fasta").toURI());
 		
 		sequenceFilePath = Files.createTempFile("testData1", ".fastq");
@@ -166,43 +138,6 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	}
 	
 	/**
-	 * Sets up an AnalysisSubmission and saves all dependencies in database.
-	 * @param sequenceFilePath  The path to an input sequence file for this test.
-	 * @param referenceFilePath  The path to an input reference file for this test.
-	 * @param remoteWorkflow  A remote workflow to execute for this test.
-	 * @return  An AnalysisSubmissionPhylogenomics which has been saved to the database.
-	 */
-	private AnalysisSubmissionPhylogenomics setupSubmissionInDatabase(Path sequenceFilePath,
-		Path referenceFilePath, RemoteWorkflowPhylogenomics remoteWorkflow) {
-		
-		Sample sample = sampleService.read(1L);
-		Join<Sample, SequenceFile> sampleSeqFile = 
-				seqeunceFileService.createSequenceFileInSample(new SequenceFile(sequenceFilePath), sample);
-		SequenceFile sequenceFile = sampleSeqFile.getObject();
-		
-		Set<SequenceFile> sequenceFiles = new HashSet<>();
-		sequenceFiles.add(sequenceFile);
-		
-		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
-				
-		RemoteWorkflowPhylogenomics remoteWorkflowSaved = remoteWorkflowRepository.save(remoteWorkflow);
-		
-		return new AnalysisSubmissionPhylogenomics(sequenceFiles,
-				referenceFile, remoteWorkflowSaved);
-	}
-	
-	/**
-	 * Asserts that the given status is in a valid state for a workflow.
-	 * @param status
-	 */
-	private void assertValidStatus(WorkflowStatus status) {
-		assertNotNull("WorkflowStatus is null", status);
-		assertFalse("WorkflowState is " + WorkflowState.UNKNOWN, WorkflowState.UNKNOWN.equals(status.getState()));
-		float percentComplete = status.getPercentComplete();
-		assertTrue("percentComplete not in range of 0 to 100", 0.0f <= percentComplete && percentComplete <= 100.0f);
-	}
-	
-	/**
 	 * Tests out successfully submitting a workflow for execution.
 	 * @throws InterruptedException 
 	 * @throws ExecutionManagerException 
@@ -214,20 +149,21 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
 		
 		AnalysisSubmissionPhylogenomics analysisSubmission = 
-				setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
+				analysisExecutionGalaxyITService.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
 		AnalysisSubmissionPhylogenomics analysisSubmitted = 
 				analysisExecutionServicePhylogenomics.prepareSubmission(analysisSubmission);
 		
+		analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmitted.getId(), AnalysisState.START_RUNNING);
+		analysisSubmitted.setAnalysisState(AnalysisState.START_RUNNING);
 		AnalysisSubmissionPhylogenomics analysisExecuted = 
 				analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmitted);
 		assertNotNull("analysisExecuted is null", analysisExecuted);
 		assertNotNull("remoteAnalysisId is null", analysisExecuted.getRemoteAnalysisId());
-		assertEquals(AnalysisState.RUNNING, analysisExecuted.getAnalysisState());
 
 		WorkflowStatus status = 
 				analysisExecutionServicePhylogenomics.getWorkflowStatus(analysisExecuted);
-		assertValidStatus(status);
+		analysisExecutionGalaxyITService.assertValidStatus(status);
 		
 		AnalysisSubmissionPhylogenomics savedSubmission = analysisSubmissionRepository.getByType(analysisExecuted.getRemoteAnalysisId(),
 				AnalysisSubmissionPhylogenomics.class);
@@ -239,25 +175,23 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	}
 	
 	/**
-	 * Tests out attempting to submit an analysis twice.
+	 * Tests out attempting to execute an anlysis with an invalid initial state..
 	 * @throws IllegalArgumentException 
 	 */
 	@Test(expected=IllegalArgumentException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testExecuteAnalysisFailTwice() throws ExecutionManagerException {
+	public void testExecuteAnalysisFailState() throws ExecutionManagerException {
 		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = 
 				remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
 		
 		AnalysisSubmissionPhylogenomics analysisSubmission 
-			= setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
+			= analysisExecutionGalaxyITService.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
 		AnalysisSubmissionPhylogenomics analysisSubmitted = 
 				analysisExecutionServicePhylogenomics.prepareSubmission(analysisSubmission);
 		
-		AnalysisSubmissionPhylogenomics executed 
-			= analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmitted);
-		
-		analysisExecutionServicePhylogenomics.executeAnalysis(executed);
+		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTED);
+		analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmitted);
 	}
 	
 	/**
@@ -272,7 +206,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
 		
 		AnalysisSubmissionPhylogenomics analysisSubmission = 
-				setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
+				analysisExecutionGalaxyITService.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
 		AnalysisSubmissionPhylogenomics analysisSubmitted = 
 				analysisExecutionServicePhylogenomics.prepareSubmission(analysisSubmission);
@@ -292,7 +226,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				remoteWorkflowServicePhylogenomicsInvalidId.getCurrentWorkflow();
 		
 		AnalysisSubmissionPhylogenomics analysisSubmission = 
-				setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
+				analysisExecutionGalaxyITService.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
 		analysisExecutionServicePhylogenomics.prepareSubmission(analysisSubmission);
 	}
@@ -308,7 +242,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				remoteWorkflowServicePhylogenomicsInvalidChecksum.getCurrentWorkflow();
 		
 		AnalysisSubmissionPhylogenomics analysisSubmission = 
-				setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
+				analysisExecutionGalaxyITService.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
 		analysisExecutionServicePhylogenomics.prepareSubmission(analysisSubmission);
 	}
@@ -324,21 +258,22 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
 		
 		AnalysisSubmissionPhylogenomics analysisSubmission = 
-				setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
+				analysisExecutionGalaxyITService.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
 		AnalysisSubmissionPhylogenomics analysisSubmitted = analysisExecutionServicePhylogenomics
 				.prepareSubmission(analysisSubmission);
 		
+		analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmitted.getId(), AnalysisState.START_RUNNING);
+		analysisSubmitted.setAnalysisState(AnalysisState.START_RUNNING);
 		AnalysisSubmissionPhylogenomics analysisExecuted = analysisExecutionServicePhylogenomics
 				.executeAnalysis(analysisSubmitted);
 
-		waitUntilSubmissionComplete(analysisExecuted);
+		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
 
+		analysisSubmissionService.setStateForAnalysisSubmission(analysisExecuted.getId(), AnalysisState.FINISHED_RUNNING);
+		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 		AnalysisPhylogenomicsPipeline analysisResults = analysisExecutionServicePhylogenomics
 				.transferAnalysisResults(analysisExecuted);
-		AnalysisState state
-			= analysisSubmissionService.getStateForAnalysisSubmission(analysisExecuted.getId());
-		assertEquals(AnalysisState.COMPLETED, state);
 
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis",
@@ -386,44 +321,22 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
 		
 		AnalysisSubmissionPhylogenomics analysisSubmission = 
-				setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
+				analysisExecutionGalaxyITService.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
 		AnalysisSubmissionPhylogenomics analysisSubmitted = analysisExecutionServicePhylogenomics
 				.prepareSubmission(analysisSubmission);
 		
+		analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmitted.getId(), AnalysisState.START_RUNNING);
+		analysisSubmitted.setAnalysisState(AnalysisState.START_RUNNING);
 		AnalysisSubmissionPhylogenomics analysisExecuted = analysisExecutionServicePhylogenomics
 				.executeAnalysis(analysisSubmitted);
 
-		waitUntilSubmissionComplete(analysisExecuted);
+		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
 
 		analysisExecuted.setId(555l);
-		
+		analysisSubmissionService.setStateForAnalysisSubmission(analysisExecuted.getId(), AnalysisState.FINISHED_RUNNING);
+		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 		analysisExecutionServicePhylogenomics
 				.transferAnalysisResults(analysisExecuted);
-	}
-	
-	/**
-	 * Wait for the given analysis submission to be complete.
-	 * @param analysisSubmission  The analysis submission to wait for.
-	 * @throws Exception 
-	 */
-	private void waitUntilSubmissionComplete(AnalysisSubmissionPhylogenomics analysisSubmission) throws Exception {
-		final int totalSecondsWait = 1*60; // 1 minute
-		
-		WorkflowStatus workflowStatus;
-		
-		long timeBefore = System.currentTimeMillis();
-		do {
-			workflowStatus = analysisExecutionServicePhylogenomics.getWorkflowStatus(analysisSubmission);
-			
-			long timeAfter = System.currentTimeMillis();
-			double deltaSeconds = (timeAfter - timeBefore)/1000.0;
-			if (deltaSeconds <= totalSecondsWait) {
-				Thread.sleep(2000);
-			} else {
-				throw new Exception("Timeout for submission " + analysisSubmission.getRemoteAnalysisId() +
-						" " + deltaSeconds + "s > " + totalSecondsWait + "s");
-			}
-		} while (!WorkflowState.OK.equals(workflowStatus.getState()));
 	}
 }
