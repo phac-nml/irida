@@ -1,5 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.unit;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 /**
@@ -20,5 +25,25 @@ public class TestDataFactory {
 		s.setSampleName(sampleName);
 		s.setId(1L);
 		return s;
+	}
+
+	/**
+	 * Construct a {@link ca.corefacility.bioinformatics.irida.model.SequenceFile}
+	 *
+	 * @return A fake sequence files with a randomly generated path.
+	 */
+	public static SequenceFile constructSequenceFile() {
+		Path path = Paths.get("/tmp/sequence-files/fake-file" + Math.random() + ".fast");
+		return new SequenceFile(path);
+	}
+
+	/**
+	 * Construct a {@link ca.corefacility.bioinformatics.irida.model.project.ReferenceFile}
+	 *
+	 * @return A fake reference files with a randomly generated path.
+	 */
+	public static ReferenceFile constructReferenceFile() {
+		Path path = Paths.get("/tmp/sequence-files/fake-file" + Math.random() + ".fast");
+		return new ReferenceFile(path);
 	}
 }
