@@ -46,7 +46,6 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectSamplesPageIT {
 
-	public static final String GOOD_SAMPLE_NAME = "GoodSampleName";
 	private WebDriver driver;
 	private ProjectSamplesPage page;
 
@@ -237,5 +236,8 @@ public class ProjectSamplesPageIT {
 		page.goToPage();
 		page.clickFirstThreeCheckboxes();
 		page.clickRunPipelineButton();
+		assertTrue("Modal dialogue should be open.", page.isSelectPipelineModalOpen());
+		page.clickOffSelectPipelineModal();
+		assertTrue("Modal dialogue should be open.", page.isSelectPipelineModalClosed());
 	}
 }

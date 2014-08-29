@@ -8,10 +8,11 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.SortUtilities;
@@ -27,8 +28,7 @@ import com.google.common.base.Strings;
  */
 public class ProjectSamplesPage {
 	public static final String DATE_FORMAT = "dd MMM YYYY";
-	private static final String URL = "http://localhost:8080/projects/1/samples";
-	private static int TIMEOUT_TIME = 100000;
+	private static final String URL = BasePage.URL + "/projects/1/samples";
 	private PageUtilities pageUtilities;
 	private WebDriver driver;
 
@@ -40,8 +40,7 @@ public class ProjectSamplesPage {
 	public void goToPage() throws NoSuchElementException {
 		driver.get(URL);
 		waitForAjax();
-		(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
-				.id("samplesTable")));
+		pageUtilities.waitForElementPresent(By.cssSelector("#samplesTable tbody"));
 	}
 
 	/**
@@ -121,17 +120,6 @@ public class ProjectSamplesPage {
 	}
 
 	/**
-	 * Checks to see if the Sample Name column is sorted descending
-	 *
-	 * @return True if entire column is sorted descending
-	 */
-	public boolean isSampleNameColumnSortedDesc() {
-		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(2)")).stream()
-				.map(WebElement::getText).collect(Collectors.toList());
-		return SortUtilities.isStringListSortedDesc(list);
-	}
-
-	/**
 	 * Checks to see if the Sample Added On column is sorted ascending
 	 *
 	 * @return True if entire column is sorted ascending
@@ -156,44 +144,12 @@ public class ProjectSamplesPage {
 	}
 
 	/**
-	 * Checks to see if the is an input field named "editName" visible and that
-	 * there is only one.
-	 *
-	 * @return true if there is 1 visisble
-	 */
-	public boolean isRenameInputVisible() {
-		return driver.findElements(By.id("editName")).size() == 1;
-	}
-
-	public String getSampleName() {
-		return driver.findElement(By.cssSelector("tbody tr:nth-child(1) td:nth-child(2)")).getText();
-	}
-
-	/**
 	 * Test to show that the noty message was shown.
 	 *
 	 * @return True if the message area is present.
 	 */
 	public boolean successMessageShown() {
 		return driver.findElements(By.cssSelector(".noty_message")).size() > 0;
-	}
-
-	/**
-	 * Test to see fi the qtip message is shown.
-	 *
-	 * @return True if the qtip message is shown.
-	 */
-	public boolean hasErrorMessage() {
-		return driver.findElements(By.className("qtip-content")).size() == 1;
-	}
-
-	/**
-	 * Test to see if there is a formatting message displayed.
-	 *
-	 * @return True if the words "space character" is shown.
-	 */
-	public boolean hasFormattingMessage() {
-		return driver.findElement(By.className("qtip-content")).getText().contains("space character");
 	}
 
 	/**
@@ -295,6 +251,26 @@ public class ProjectSamplesPage {
 		return result;
 	}
 
+	/**
+	 * Check to see if the Select Pipeline Modal is open.
+	 *
+	 * @return true if the modal is open
+	 */
+	public boolean isSelectPipelineModalOpen() {
+		pageUtilities.waitForElementVisible(By.className("mfp-content"));
+		return true;
+	}
+
+	/**
+	 * Check to see if the Select Pipeline Modal is closed
+	 *
+	 * @return true if the modal is closed
+	 */
+	public boolean isSelectPipelineModalClosed() {
+		pageUtilities.waitForElementInvisible(By.className("mfp-content"));
+		return true;
+	}
+
 	/**************************************************************************************
 	 * EVENTS
 	 **************************************************************************************/
@@ -322,6 +298,9 @@ public class ProjectSamplesPage {
 		pageUtilities.waitForElementPresent(By.id("files-view"));
 	}
 
+	/**
+	 * Hide the files view.
+	 */
 	public void hideFilesView() {
 		pageUtilities.waitForElementPresent(By.id("files-view"));
 		driver.findElement(By.className("fileViewLink")).click();
@@ -347,40 +326,11 @@ public class ProjectSamplesPage {
 	}
 
 	/**
-	 * Display the sample edit
-	 */
-	public void clickEditFirstSample() {
-		driver.findElement(By.cssSelector("tbody tr:nth-child(1) button.edit")).click();
-	}
-
-	public void selectFirstSample() {
-		driver.findElement(By.cssSelector("tbody tr:nth-child(1) input[type=\"checkbox\"]")).click();
-	}
-
-	/**
-	 * Rename a sample
-	 */
-	public void sendRenameSample(String name) {
-		WebElement el = driver.findElement(By.id("editName"));
-		el.sendKeys(name);
-		el.sendKeys(Keys.ENTER);
-		waitForAjax();
-	}
-
-	/**
-	 * Click on the cancel edit button
-	 */
-	public void clickOnEditCancel() {
-		driver.findElement(By.cssSelector("button.cancel")).click();
-	}
-
-	/**
 	 * Delete selected samples samples
 	 */
 	public void clickDeleteSamples() {
 		driver.findElement(By.id("deleteBtn")).click();
-		WebDriverWait wait = new WebDriverWait(driver, TIMEOUT_TIME);
-		wait.until(ExpectedConditions.elementToBeClickable(By.id("button-0")));
+		pageUtilities.waitForElementToBeClickable(By.id("button-0"));
 		driver.findElement(By.id("button-0")).click();
 		waitForAjax();
 	}
@@ -395,6 +345,13 @@ public class ProjectSamplesPage {
 		driver.findElement(By.id("copy-sample-project")).sendKeys(id);
 		pageUtilities.waitForElementVisible(By.id("button-0"));
 		driver.findElement(By.id("button-0")).click();
+	}
+
+	/**
+	 * Select the first sample in the table
+	 */
+	public void selectFirstSample() {
+		driver.findElement(By.cssSelector("tbody tr:nth-child(1) input[type=\"checkbox\"]")).click();
 	}
 
 	/**
@@ -415,6 +372,10 @@ public class ProjectSamplesPage {
 		pageUtilities.waitForElementPresent(By.className("noty_message"));
 	}
 
+	/**
+	 * Click on a specific file checkbox
+	 * @param boxNum The index of the checkbox
+	 */
 	public void clickOnFileCheckBox(int boxNum) {
 		List<WebElement> cbs = driver.findElements(By.className("fileCB"));
 		cbs.get(boxNum).click();
@@ -436,11 +397,26 @@ public class ProjectSamplesPage {
 		waitForAjax();
 	}
 
+	/**
+	 * Click of the Select Pipeline modal to see if it closes.
+	 */
+	public void clickOffSelectPipelineModal() {
+		WebElement element = driver.findElement(By.className("mfp-container"));
+		Actions builder = new Actions(driver);
+		builder.moveToElement(element, 5, 5).click().build().perform();
+	}
+
+	/**
+	 * Click the run pipeline button
+	 */
 	public void clickRunPipelineButton() {
 		driver.findElement(By.id("runPipelineBtn")).click();
-		(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
-				.className("mfp-content")));
+		pageUtilities.waitForElementVisible(By.className("mfp-content"));
 	}
+
+	// ************************************************************************************************
+	// UTILITY METHODS
+	// ************************************************************************************************
 
 	private void waitForAjax() {
 		Wait<WebDriver> wait = new WebDriverWait(driver, 60);

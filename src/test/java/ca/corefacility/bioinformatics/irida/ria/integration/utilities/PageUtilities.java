@@ -11,6 +11,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class PageUtilities {
+	public static final int TIME_OUT_IN_SECONDS = 10;
 	private WebDriver driver;
 
 	public PageUtilities(WebDriver driver) {
@@ -23,7 +24,7 @@ public class PageUtilities {
 	 * @param locator {@link org.openqa.selenium.By}
 	 */
 	public void waitForElementPresent(By locator) {
-		(new WebDriverWait(this.driver, 10)).until(ExpectedConditions.presenceOfElementLocated(locator));
+		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(locator));
 	}
 
 	/**
@@ -32,7 +33,16 @@ public class PageUtilities {
 	 * @param locator {@link org.openqa.selenium.By}
 	 */
 	public void waitForElementVisible(By locator) {
-		(new WebDriverWait(this.driver, 10)).until(ExpectedConditions.visibilityOfElementLocated(locator));
+		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(locator));
+	}
+
+	/**
+	 * Wait for an {@link org.openqa.selenium.WebElement} to be invisible on the screen. 10 seconds.
+	 *
+	 * @param locator {@link org.openqa.selenium.By}
+	 */
+	public void waitForElementInvisible(By locator) {
+		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(ExpectedConditions.invisibilityOfElementLocated(locator));
 	}
 
 	/**
@@ -41,6 +51,10 @@ public class PageUtilities {
 	 * @param locator {@link org.openqa.selenium.By}
 	 */
 	public void waitForElementToBeAbsent(By locator) {
-		(new WebDriverWait(this.driver, 10)).until(ExpectedConditions.invisibilityOfElementLocated(locator));
+		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(ExpectedConditions.invisibilityOfElementLocated(locator));
+	}
+
+	public void waitForElementToBeClickable(By locator){
+		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(ExpectedConditions.elementToBeClickable(locator));
 	}
 }
