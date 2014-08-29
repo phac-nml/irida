@@ -26,8 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import ca.corefacility.bioinformatics.irida.exceptions.oauth.InvalidTokenException;
-import ca.corefacility.bioinformatics.irida.exceptions.oauth.IridaOAuthException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -267,14 +266,10 @@ public class RemoteAPIController extends BaseController {
 		try {
 			projectRemoteService.list(api);
 			return "valid";
-		}catch (InvalidTokenException ex){
+		} catch (IridaOAuthException ex) {
+			logger.debug("Can't connect to API: " + ex.getMessage());
 			return "invalid_token";
 		}
-		catch (IridaOAuthException ex) {
-			logger.debug("Can't connect to API: " + ex.getMessage());
-		}
-
-		return "inactive";
 	}
 
 	@PreAuthorize("isAuthenticated()")
