@@ -147,8 +147,7 @@ public class AnalysisSubmission implements IridaThing {
 
 	@Override
 	public String getLabel() {
-		// TODO Auto-generated method stub
-		return null;
+		return "AnalysisSubmission[ id=" + id + " ]";
 	}
 
 	@Override
