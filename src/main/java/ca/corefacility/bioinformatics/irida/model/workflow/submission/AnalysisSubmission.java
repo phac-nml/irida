@@ -70,7 +70,10 @@ public class AnalysisSubmission implements IridaThing {
 	@Enumerated(EnumType.STRING)
 	private AnalysisState analysisState;
 
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	// Analysis entity for this analysis submission. Cascading everything except
+	// removals
+	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
+			CascadeType.REFRESH })
 	private Analysis analysis;
 
 	protected AnalysisSubmission() {
