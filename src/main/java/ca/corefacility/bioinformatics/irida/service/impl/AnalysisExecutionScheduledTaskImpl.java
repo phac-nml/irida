@@ -72,7 +72,6 @@ public class AnalysisExecutionScheduledTaskImpl implements
 
 		for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
 			logger.debug("Changing submission to state " + AnalysisState.START_RUNNING + ": " + analysisSubmission);
-			analysisSubmission.setAnalysisState(AnalysisState.START_RUNNING);
 			analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getRemoteAnalysisId(),
 					AnalysisState.START_RUNNING);
 			
@@ -81,6 +80,8 @@ public class AnalysisExecutionScheduledTaskImpl implements
 			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
 					.getByType(analysisSubmissionId,
 							AnalysisSubmissionPhylogenomics.class);
+			analysisSubmissionPhylogenomics.setAnalysisState(AnalysisState.START_RUNNING);
+
 			try {
 				analysisExecutionServicePhylogenomics
 						.executeAnalysis(analysisSubmissionPhylogenomics);
@@ -124,7 +125,7 @@ public class AnalysisExecutionScheduledTaskImpl implements
 						logger.debug("Changing submission to state " + AnalysisState.FINISHED_RUNNING + ": " + analysisSubmission);
 						analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getRemoteAnalysisId(),
 								AnalysisState.FINISHED_RUNNING);
-						analysisSubmission.setAnalysisState(AnalysisState.FINISHED_RUNNING);
+						analysisSubmissionPhylogenomics.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 
 						Analysis analysisResults = analysisExecutionServicePhylogenomics
 								.transferAnalysisResults(analysisSubmissionPhylogenomics);
