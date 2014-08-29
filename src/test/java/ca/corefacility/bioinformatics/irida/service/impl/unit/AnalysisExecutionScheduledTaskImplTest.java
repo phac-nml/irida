@@ -56,6 +56,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	private AnalysisPhylogenomicsPipeline analysis;
 
 	private static final String ANALYSIS_ID = "1";
+	private static final Long INTERNAL_ID = 1L;
 	private AnalysisSubmissionPhylogenomics analysisSubmission;
 
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
@@ -73,6 +74,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisSubmission = new AnalysisSubmissionPhylogenomics(sequenceFiles,
 				referenceFile, remoteWorkflow);
+		analysisSubmission.setId(INTERNAL_ID);
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
 
 		when(
@@ -131,7 +133,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		verify(analysisExecutionServicePhylogenomics).executeAnalysis(
 				analysisSubmission);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
-				ANALYSIS_ID, AnalysisState.ERROR);
+				INTERNAL_ID, AnalysisState.ERROR);
 	}
 
 	/**
@@ -234,7 +236,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		verify(analysisExecutionServicePhylogenomics).getWorkflowStatus(
 				analysisSubmission);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
-				ANALYSIS_ID, AnalysisState.ERROR);
+				INTERNAL_ID, AnalysisState.ERROR);
 		verify(analysisExecutionServicePhylogenomics, never())
 				.transferAnalysisResults(analysisSubmission);
 	}

@@ -72,7 +72,7 @@ public class AnalysisExecutionScheduledTaskImpl implements
 
 		for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
 			logger.debug("Changing submission to state " + AnalysisState.START_RUNNING + ": " + analysisSubmission);
-			analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getRemoteAnalysisId(),
+			analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getId(),
 					AnalysisState.START_RUNNING);
 			
 			String analysisSubmissionId = analysisSubmission
@@ -87,13 +87,13 @@ public class AnalysisExecutionScheduledTaskImpl implements
 						.executeAnalysis(analysisSubmissionPhylogenomics);
 				
 				logger.debug("Changing submission to state " + AnalysisState.RUNNING + ": " + analysisSubmission);
-				analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getRemoteAnalysisId(),
+				analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getId(),
 						AnalysisState.RUNNING);
 			} catch (ExecutionManagerException e) {
 				logger.error(
 						"Could not execute analysis " + analysisSubmission, e);
 				analysisSubmissionService.setStateForAnalysisSubmission(
-						analysisSubmissionId, AnalysisState.ERROR);
+						analysisSubmission.getId(), AnalysisState.ERROR);
 			}
 		}
 	}
@@ -123,7 +123,7 @@ public class AnalysisExecutionScheduledTaskImpl implements
 				switch (workflowState) {
 					case OK:
 						logger.debug("Changing submission to state " + AnalysisState.FINISHED_RUNNING + ": " + analysisSubmission);
-						analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getRemoteAnalysisId(),
+						analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getId(),
 								AnalysisState.FINISHED_RUNNING);
 						analysisSubmissionPhylogenomics.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 
@@ -135,7 +135,7 @@ public class AnalysisExecutionScheduledTaskImpl implements
 								+ " to analysis " + analysisResults.getId());
 						
 						logger.debug("Changing submission to state " + AnalysisState.COMPLETED + ": " + analysisSubmission);
-						analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getRemoteAnalysisId(),
+						analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getId(),
 								AnalysisState.COMPLETED);
 						break;
 
@@ -154,7 +154,7 @@ public class AnalysisExecutionScheduledTaskImpl implements
 								+ analysisSubmission + " in error state");
 						analysisSubmissionService
 								.setStateForAnalysisSubmission(
-										analysisSubmissionId,
+										analysisSubmission.getId(),
 										AnalysisState.ERROR);
 						break;
 				}
@@ -162,12 +162,12 @@ public class AnalysisExecutionScheduledTaskImpl implements
 				logger.error("Could not get status for analysis "
 						+ analysisSubmission, e);
 				analysisSubmissionService.setStateForAnalysisSubmission(
-						analysisSubmissionId, AnalysisState.ERROR);
+						analysisSubmission.getId(), AnalysisState.ERROR);
 			} catch (IOException e) {
 				logger.error("Could not transfer results for analysis "
 						+ analysisSubmission, e);
 				analysisSubmissionService.setStateForAnalysisSubmission(
-						analysisSubmissionId, AnalysisState.ERROR);
+						analysisSubmission.getId(), AnalysisState.ERROR);
 			}
 		}
 	}

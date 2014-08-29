@@ -133,7 +133,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 		
 		logger.trace("Saving submission " +  analysisName + ": " + remoteWorkflow);
 		
-		return (S)analysisSubmissionService.read(analysisSubmission.getRemoteAnalysisId());
+		return (S)analysisSubmissionService.read(analysisSubmission.getId());
 	}
 	
 	/**
@@ -194,7 +194,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	 */
 	private void verifyAnalysisSubmissionExists(AnalysisSubmission submission) 
 			throws EntityNotFoundException {
-		if (!analysisSubmissionService.exists(submission.getRemoteAnalysisId())) {
+		if (!analysisSubmissionService.exists(submission.getId())) {
 			throw new EntityNotFoundException("Could not find analysis submission for " + 
 					submission);
 		}

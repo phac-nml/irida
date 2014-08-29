@@ -136,13 +136,13 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		AnalysisSubmissionPhylogenomics submission = analysisExecutionServicePhylogenomics
 				.prepareSubmission(analysisSubmission);
 		AnalysisState state = analysisSubmissionService
-				.getStateForAnalysisSubmission(submission.getRemoteAnalysisId());
+				.getStateForAnalysisSubmission(submission.getId());
 		assertEquals(AnalysisState.SUBMITTED, state);
 
 		analysisExecutionScheduledTask.executeAnalyses();
 
 		state = analysisSubmissionService
-				.getStateForAnalysisSubmission(submission.getRemoteAnalysisId());
+				.getStateForAnalysisSubmission(submission.getId());
 		assertEquals(AnalysisState.RUNNING, state);
 
 		WorkflowStatus status = analysisExecutionServicePhylogenomics
@@ -155,7 +155,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		analysisExecutionScheduledTask.transferAnalysesResults();
 
 		state = analysisSubmissionService
-				.getStateForAnalysisSubmission(submission.getRemoteAnalysisId());
+				.getStateForAnalysisSubmission(submission.getId());
 		assertEquals(AnalysisState.COMPLETED, state);
 	}
 }
