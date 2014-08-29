@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -29,6 +30,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 
 /**
  * Defines a submission to an AnalysisService for executing a remote workflow.
@@ -67,6 +69,9 @@ public class AnalysisSubmission implements IridaThing {
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private AnalysisState analysisState;
+
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private Analysis analysis;
 
 	protected AnalysisSubmission() {
 		this.createdDate = new Date();
@@ -157,5 +162,20 @@ public class AnalysisSubmission implements IridaThing {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the analysis
+	 */
+	public Analysis getAnalysis() {
+		return analysis;
+	}
+
+	/**
+	 * @param analysis
+	 *            the analysis to set
+	 */
+	public void setAnalysis(Analysis analysis) {
+		this.analysis = analysis;
 	}
 }
