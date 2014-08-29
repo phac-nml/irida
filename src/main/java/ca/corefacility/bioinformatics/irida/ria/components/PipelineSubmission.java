@@ -50,14 +50,30 @@ public class PipelineSubmission {
 		this.sequenceFiles = new HashSet<>();
 	}
 
+	/**
+	 * Set the reference file (if applicable) for the pipeline submission.
+	 *
+	 * @param referenceFileId Long id for the reference file.
+	 */
 	public void setReferenceFile(Long referenceFileId) {
 		this.referenceFile = referenceFileService.read(referenceFileId);
 	}
 
+	/**
+	 * Set the sequence files to run the pipeline on.
+	 *
+	 * @param fileIds List of Long ids for sequence files.
+	 */
 	public void setSequenceFiles(List<Long> fileIds) {
 		sequenceFiles.addAll(fileIds.stream().map(sequenceFileService::read).collect(Collectors.toList()));
 	}
 
+	/**
+	 * Initiate a pipeline
+	 *
+	 * @param pipelineId Id for the pipeline
+	 * @throws ExecutionManagerException
+	 */
 	public void startPipeline(Long pipelineId) throws ExecutionManagerException {
 		// TODO: (14-08-28 - Josh) pipelineId needs to be passed b/c front end does not need to know the details.
 		RemoteWorkflowPhylogenomics workflow = remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
