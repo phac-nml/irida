@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenonmics.impl.unit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowChecksumInvalidException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
@@ -24,8 +25,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
 
@@ -39,7 +40,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
  */
 public class AnalysisExecutionServicePhylogenomicsTest {
 	
-	@Mock private AnalysisSubmissionRepository analysisSubmissionRepository;
+	@Mock private AnalysisSubmissionService analysisSubmissionService;
 	@Mock private AnalysisService analysisService;
 	@Mock private GalaxyHistoriesService galaxyHistoriesService;
 	@Mock private GalaxyWorkflowService galaxyWorkflowService;
@@ -68,7 +69,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	public void setup() throws WorkflowException {
 		MockitoAnnotations.initMocks(this);
 		
-		workflowManagement = new AnalysisExecutionServicePhylogenomics(analysisSubmissionRepository,
+		workflowManagement = new AnalysisExecutionServicePhylogenomics(analysisSubmissionService,
 				analysisService, galaxyWorkflowService, galaxyHistoriesService,
 				workspaceServicePhylogenomics);
 		
@@ -79,7 +80,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		when(analysisSubmission.getRemoteWorkflow()).thenReturn(remoteWorkflow);
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn("1");
 		
-		when(analysisSubmissionRepository.save(analysisSubmission)).thenReturn(analysisSubmission);
+		when(analysisSubmissionService.create(analysisSubmission)).thenReturn(analysisSubmission);
 		
 		analysisId = "1";
 		workflowInputsGalaxy = new WorkflowInputsGalaxy(workflowInputs);
@@ -107,7 +108,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		verify(galaxyWorkflowService).validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID);
 		verify(workspaceServicePhylogenomics).prepareAnalysisWorkspace(analysisSubmission);
 		verify(galaxyWorkflowService).runWorkflow(workflowInputsGalaxy);
-		verify(analysisSubmissionRepository).save(analysisSubmission);
+		verify(analysisSubmissionService).create(analysisSubmission);
 	}
 	
 	/**
@@ -202,7 +203,8 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		String id = "invalid";
 		
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(id);
-		when(analysisSubmissionRepository.exists(id)).thenReturn(true);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
+		when(analysisSubmissionService.exists(id)).thenReturn(true);
 		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).thenReturn(analysisResults);
 		when(analysisService.create(analysisResults)).thenReturn(analysisResults);
 		
@@ -222,7 +224,8 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		String id = "invalid";
 		
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(id);
-		when(analysisSubmissionRepository.exists(id)).thenReturn(true);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
+		when(analysisSubmissionService.exists(id)).thenReturn(true);
 		
 		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).
 			thenThrow(new ExecutionManagerException());
@@ -238,6 +241,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Test(expected=NullPointerException.class)
 	public void testGetAnalysisResultsFailNotSubmittedNullId() throws ExecutionManagerException, IOException {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
 		
 		workflowManagement.transferAnalysisResults(analysisSubmission);
 	}
@@ -252,7 +256,8 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		String id = "invalid";
 		
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(id);
-		when(analysisSubmissionRepository.exists(id)).thenReturn(false);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
+		when(analysisSubmissionService.exists(id)).thenReturn(false);
 		
 		workflowManagement.transferAnalysisResults(analysisSubmission);
 	}

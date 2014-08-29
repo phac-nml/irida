@@ -8,20 +8,20 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.manager.galaxy.ExecutionManagerGalaxy;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.service.AnalysisService;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
+
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
-
-import ca.corefacility.bioinformatics.irida.model.workflow.manager.galaxy.ExecutionManagerGalaxy;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
-import ca.corefacility.bioinformatics.irida.service.AnalysisService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
 
 /**
  * Configuration for an AnalysisExecutionService class.
@@ -36,7 +36,7 @@ public class AnalysisExecutionServiceConfig {
 	private ExecutionManagerGalaxy executionManager;
 	
 	@Autowired
-	private AnalysisSubmissionRepository analysisSubmissionRepository;
+	private AnalysisSubmissionService analysisSubmissionService;
 	
 	@Autowired
 	private AnalysisService analysisService;
@@ -51,7 +51,7 @@ public class AnalysisExecutionServiceConfig {
 	 */
 	@Lazy @Bean
 	public AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics() {
-		return new AnalysisExecutionServicePhylogenomics(analysisSubmissionRepository,
+		return new AnalysisExecutionServicePhylogenomics(analysisSubmissionService,
 				analysisService, galaxyWorkflowService(), galaxyHistoriesService(),
 				workspaceService());
 	}

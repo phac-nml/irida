@@ -40,6 +40,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowChecksumInvalidException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -57,6 +58,7 @@ import ca.corefacility.bioinformatics.irida.repositories.referencefile.Reference
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflowRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -101,6 +103,9 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
+	
+	@Autowired
+	private AnalysisSubmissionService analysisSubmissionService;
 	
 	@Autowired
 	private AnalysisService analysisService;
@@ -216,6 +221,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmission);
 		assertNotNull("analysisSubmitted is null", analysisSubmitted);
 		assertNotNull("remoteAnalysisId is null", analysisSubmitted.getRemoteAnalysisId());
+		assertEquals(AnalysisState.RUNNING, analysisSubmitted.getAnalysisState());
 
 		WorkflowStatus status = 
 				analysisExecutionServicePhylogenomics.getWorkflowStatus(analysisSubmitted);
@@ -300,6 +306,9 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 
 		AnalysisPhylogenomicsPipeline analysisResults = analysisExecutionServicePhylogenomics
 				.transferAnalysisResults(analysisSubmission);
+		AnalysisState state
+			= analysisSubmissionService.getStateForAnalysisSubmission(analysisSubmitted.getRemoteAnalysisId());
+		assertEquals(AnalysisState.COMPLETED, state);
 
 		String analysisId = analysisSubmitted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis",
