@@ -200,9 +200,11 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test
 	public void testGetAnalysisResultsSuccess() throws ExecutionManagerException, IOException {
-		String id = "invalid";
+		Long id = 99999l;
+		String remoteAnalysisId = "invalid";
 		
-		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(id);
+		when(analysisSubmission.getId()).thenReturn(id);
+		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(remoteAnalysisId);
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
 		when(analysisSubmissionService.exists(id)).thenReturn(true);
 		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).thenReturn(analysisResults);
@@ -221,9 +223,11 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test(expected=ExecutionManagerException.class)
 	public void testGetAnalysisResultsFail() throws ExecutionManagerException, IOException {
-		String id = "invalid";
+		Long id = 1l;
+		String remoteAnalysisId = "invalid";
 		
-		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(id);
+		when(analysisSubmission.getId()).thenReturn(id);
+		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(remoteAnalysisId);
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
 		when(analysisSubmissionService.exists(id)).thenReturn(true);
 		
@@ -253,9 +257,10 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test(expected=EntityNotFoundException.class)
 	public void testGetAnalysisResultsFailAnalysisIdInvalid() throws ExecutionManagerException, IOException {
-		String id = "invalid";
+		Long id = 1l;
+		String remoteAnalysisId = "invalid";
 		
-		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(id);
+		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(remoteAnalysisId);
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
 		when(analysisSubmissionService.exists(id)).thenReturn(false);
 		
