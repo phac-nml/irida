@@ -127,7 +127,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 		logger.debug("Getting results for " + analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
 		A analysisResults = workspaceService.getAnalysisResults(submittedAnalysis);
 		
-		analysisSubmissionService.setStateForAnalysisSubmission(submittedAnalysis.getRemoteAnalysisId(),
+		analysisSubmissionService.setStateForAnalysisSubmission(submittedAnalysis.getId(),
 				AnalysisState.COMPLETED);
 		
 		logger.trace("Saving results " +  analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
@@ -170,7 +170,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	 */
 	private void verifyAnalysisSubmissionExists(AnalysisSubmission submission) 
 			throws EntityNotFoundException {
-		if (!analysisSubmissionService.exists(submission.getRemoteAnalysisId())) {
+		if (!analysisSubmissionService.exists(submission.getId())) {
 			throw new EntityNotFoundException("Could not find analysis submission for " + 
 					submission);
 		}
