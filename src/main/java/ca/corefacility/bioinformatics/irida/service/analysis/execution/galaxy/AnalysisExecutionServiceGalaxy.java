@@ -123,7 +123,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 		RemoteWorkflowGalaxy remoteWorkflow = analysisSubmission.getRemoteWorkflow();
 		
 		logger.debug("Running submission for " + analysisName + ": " + remoteWorkflow);
-		analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getRemoteAnalysisId(),
+		analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getId(),
 				AnalysisState.RUNNING);
 		
 		logger.trace("Preparing files for " + analysisName + ": " + remoteWorkflow);
@@ -136,7 +136,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 		
 		logger.trace("Saving submission " +  analysisName + ": " + remoteWorkflow);
 		
-		return (S)analysisSubmissionService.read(analysisSubmission.getRemoteAnalysisId());
+		return (S)analysisSubmissionService.read(analysisSubmission.getId());
 	}
 	
 	/**
@@ -158,7 +158,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 		logger.debug("Getting results for " + analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
 		A analysisResults = workspaceService.getAnalysisResults(submittedAnalysis);
 		
-		analysisSubmissionService.setStateForAnalysisSubmission(submittedAnalysis.getRemoteAnalysisId(),
+		analysisSubmissionService.setStateForAnalysisSubmission(submittedAnalysis.getId(),
 				AnalysisState.COMPLETED);
 		
 		logger.trace("Saving results " +  analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
@@ -201,7 +201,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	 */
 	private void verifyAnalysisSubmissionExists(AnalysisSubmission submission) 
 			throws EntityNotFoundException {
-		if (!analysisSubmissionService.exists(submission.getRemoteAnalysisId())) {
+		if (!analysisSubmissionService.exists(submission.getId())) {
 			throw new EntityNotFoundException("Could not find analysis submission for " + 
 					submission);
 		}

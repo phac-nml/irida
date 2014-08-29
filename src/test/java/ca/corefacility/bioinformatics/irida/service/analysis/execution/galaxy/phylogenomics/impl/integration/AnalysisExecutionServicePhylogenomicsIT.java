@@ -337,7 +337,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		AnalysisPhylogenomicsPipeline analysisResults = analysisExecutionServicePhylogenomics
 				.transferAnalysisResults(analysisExecuted);
 		AnalysisState state
-			= analysisSubmissionService.getStateForAnalysisSubmission(analysisExecuted.getRemoteAnalysisId());
+			= analysisSubmissionService.getStateForAnalysisSubmission(analysisExecuted.getId());
 		assertEquals(AnalysisState.COMPLETED, state);
 
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
@@ -396,7 +396,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 
 		waitUntilSubmissionComplete(analysisExecuted);
 
-		analysisExecuted.setRemoteAnalysisId("notSubmittedId");
+		analysisExecuted.setId(555l);
 		
 		analysisExecutionServicePhylogenomics
 				.transferAnalysisResults(analysisExecuted);

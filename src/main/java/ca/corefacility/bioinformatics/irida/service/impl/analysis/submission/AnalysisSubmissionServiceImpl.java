@@ -7,14 +7,14 @@ import javax.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.ImmutableMap;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Implementation of an AnalysisSubmissionService.
@@ -23,8 +23,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
  *
  */
 @Service
-public class AnalysisSubmissionServiceImpl extends
-		CRUDServiceImpl<String, AnalysisSubmission> implements
+public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, AnalysisSubmission> implements
 		AnalysisSubmissionService {
 
 	/**
@@ -36,9 +35,7 @@ public class AnalysisSubmissionServiceImpl extends
 	 *            A validator.
 	 */
 	@Autowired
-	public AnalysisSubmissionServiceImpl(
-			AnalysisSubmissionRepository analysisSubmissionRepository,
-			Validator validator) {
+	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository, Validator validator) {
 		super(analysisSubmissionRepository, validator, AnalysisSubmission.class);
 	}
 
@@ -46,8 +43,7 @@ public class AnalysisSubmissionServiceImpl extends
 	 * {@inheritDoc}
 	 */
 	@Override
-	public AnalysisState getStateForAnalysisSubmission(
-			String analysisSubmissionId) throws EntityNotFoundException {
+	public AnalysisState getStateForAnalysisSubmission(Long analysisSubmissionId) throws EntityNotFoundException {
 		checkNotNull(analysisSubmissionId, "analysisSubmissionId is null");
 
 		AnalysisSubmission submission = this.read(analysisSubmissionId);
@@ -59,8 +55,8 @@ public class AnalysisSubmissionServiceImpl extends
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setStateForAnalysisSubmission(String analysisSubmissionId,
-			AnalysisState state) throws EntityNotFoundException {
+	public void setStateForAnalysisSubmission(Long analysisSubmissionId, AnalysisState state)
+			throws EntityNotFoundException {
 		checkNotNull(analysisSubmissionId, "analysisSubmissionId is null");
 		checkNotNull(state, "state is null");
 
