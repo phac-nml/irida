@@ -10,8 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public interface AnalysisSubmissionService extends
-		CRUDService<String, AnalysisSubmission> {
+public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSubmission> {
 
 	/**
 	 * Given an analysis submission id, gets the state of this analysis.
@@ -22,8 +21,7 @@ public interface AnalysisSubmissionService extends
 	 * @throws EntityNotFoundException
 	 *             If the corresponding analysis cannot be found.
 	 */
-	public AnalysisState getStateForAnalysisSubmission(
-			String analysisSubmissionId) throws EntityNotFoundException;
+	public AnalysisState getStateForAnalysisSubmission(Long analysisSubmissionId) throws EntityNotFoundException;
 
 	/**
 	 * Sets the state for an analysis submission.
@@ -36,6 +34,6 @@ public interface AnalysisSubmissionService extends
 	 *             If the analysis submission corresponding to the given id does
 	 *             not exist.
 	 */
-	public void setStateForAnalysisSubmission(String analysisSubmissionId,
-			AnalysisState state) throws EntityNotFoundException;
+	public void setStateForAnalysisSubmission(Long analysisSubmissionId, AnalysisState state)
+			throws EntityNotFoundException;
 }

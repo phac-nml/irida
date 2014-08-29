@@ -13,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public interface AnalysisSubmissionRepository extends IridaJpaRepository<AnalysisSubmission, String> {
+public interface AnalysisSubmissionRepository extends IridaJpaRepository<AnalysisSubmission, Long> {
 	/**
 	 * Load up an @{link AnalysisSubmission} by an id for the passed type of AnalysisSubmission.
 	 * @param analysisId  The id of the AnalysisSubmission to load.
