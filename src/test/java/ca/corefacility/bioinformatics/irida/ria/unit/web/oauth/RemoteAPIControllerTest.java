@@ -27,6 +27,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
@@ -80,8 +82,12 @@ public class RemoteAPIControllerTest {
 		RemoteAPI api2 = new RemoteAPI("api name 2", "http://nowhere", "another api", "client2", "secret2");
 		api2.setId(2l);
 
+		User u = new User();
+		u.setSystemRole(Role.ROLE_ADMIN);
+
 		Page<RemoteAPI> apiPage = new PageImpl<>(Lists.newArrayList(api1, api2));
 
+		when(userService.getUserByUsername(USER_NAME)).thenReturn(u);
 		when(
 				remoteAPIService.search(any(Specification.class), eq(page), eq(size), any(Direction.class),
 						any(String.class))).thenReturn(apiPage);
