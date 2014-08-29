@@ -363,7 +363,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 
 		waitUntilSubmissionComplete(analysisSubmittedAfter);
 
-		analysisSubmittedAfter.setRemoteAnalysisId("notSubmittedId");
+		analysisSubmittedAfter.setId(999l);
 		
 		analysisExecutionServicePhylogenomics
 				.transferAnalysisResults(analysisSubmittedAfter);
