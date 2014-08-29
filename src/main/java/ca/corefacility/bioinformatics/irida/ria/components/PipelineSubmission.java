@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.components;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -65,7 +64,10 @@ public class PipelineSubmission {
 	 * @param fileIds List of Long ids for sequence files.
 	 */
 	public void setSequenceFiles(List<Long> fileIds) {
-		sequenceFiles.addAll(fileIds.stream().map(sequenceFileService::read).collect(Collectors.toList()));
+		Iterable<SequenceFile> files = sequenceFileService.readMultiple(fileIds);
+		for (SequenceFile file : files) {
+			sequenceFiles.add(file);
+		}
 	}
 
 	/**
