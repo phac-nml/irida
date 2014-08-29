@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
  * Test configuration for AnalysisExecutionService classes.
+ * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
@@ -39,65 +40,70 @@ public class AnalysisExecutionServiceTestConfig {
 
 	@Autowired
 	private LocalGalaxy localGalaxy;
-	
+
 	@Autowired
 	private AnalysisSubmissionService analysisSubmissionService;
-	
+
 	@Autowired
 	private AnalysisService analysisService;
-	
+
 	@Autowired
 	private SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository;
-	
+
 	@Autowired
 	private RemoteWorkflowRepository remoteWorkflowRepository;
-	
+
 	@Autowired
 	private ReferenceFileRepository referenceFileRepository;
-	
+
 	@Autowired
 	private SequenceFileService seqeunceFileService;
-	
+
 	@Autowired
 	private SampleService sampleService;
-	
-	@Autowired
-	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
-	
+
 	@Lazy
 	@Bean
-	public AnalysisExecutionServicePhylogenomics
-		analysisExecutionServicePhylogenomics(
-				GalaxyHistoriesService galaxyHistoriesService, GalaxyWorkflowService galaxyWorkflowService) {
-		
-		WorkspaceServicePhylogenomics galaxyWorkflowPreparationServicePhylogenomicsPipeline = 
-				new WorkspaceServicePhylogenomics(galaxyHistoriesService, galaxyWorkflowService,
-						sampleSequenceFileJoinRepository);
-		return new AnalysisExecutionServicePhylogenomics(analysisSubmissionService,
-				analysisService, galaxyWorkflowService, galaxyHistoriesService,
+	public AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics(
+			GalaxyHistoriesService galaxyHistoriesService,
+			GalaxyWorkflowService galaxyWorkflowService) {
+
+		WorkspaceServicePhylogenomics galaxyWorkflowPreparationServicePhylogenomicsPipeline = new WorkspaceServicePhylogenomics(
+				galaxyHistoriesService, galaxyWorkflowService,
+				sampleSequenceFileJoinRepository);
+		return new AnalysisExecutionServicePhylogenomics(
+				analysisSubmissionService, analysisService,
+				galaxyWorkflowService, galaxyHistoriesService,
 				galaxyWorkflowPreparationServicePhylogenomicsPipeline);
 	}
-	
+
 	@Lazy
 	@Bean
 	public GalaxyHistoriesService galaxyHistoriesService() {
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getToolsClient();
+		HistoriesClient historiesClient = localGalaxy
+				.getGalaxyInstanceWorkflowUser().getHistoriesClient();
+		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser()
+				.getToolsClient();
 		return new GalaxyHistoriesService(historiesClient, toolsClient);
 	}
-	
+
 	@Lazy
 	@Bean
 	public GalaxyWorkflowService galaxyWorkflowService() {
-		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
-		
+		HistoriesClient historiesClient = localGalaxy
+				.getGalaxyInstanceWorkflowUser().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy
+				.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
+
 		return new GalaxyWorkflowService(historiesClient, workflowsClient,
-						new StandardPasswordEncoder());
+				new StandardPasswordEncoder());
 	}
-	
+
 	@Bean
 	public AnalysisExecutionGalaxyITService analysisExecutionGalaxyITService() {
-		return new AnalysisExecutionGalaxyITService(remoteWorkflowRepository, referenceFileRepository, seqeunceFileService, sampleService, analysisExecutionServicePhylogenomics);
+		return new AnalysisExecutionGalaxyITService(remoteWorkflowRepository,
+				referenceFileRepository, seqeunceFileService, sampleService,
+				analysisExecutionServicePhylogenomics(galaxyHistoriesService(),
+						galaxyWorkflowService()));
 	}
 }

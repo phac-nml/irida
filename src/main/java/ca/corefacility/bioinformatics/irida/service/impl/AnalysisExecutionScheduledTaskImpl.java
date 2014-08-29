@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
@@ -28,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.ph
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-@Service
 public class AnalysisExecutionScheduledTaskImpl implements
 		AnalysisExecutionScheduledTask {
 
