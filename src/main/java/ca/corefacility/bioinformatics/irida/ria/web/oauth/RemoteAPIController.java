@@ -277,7 +277,7 @@ public class RemoteAPIController extends BaseController {
 
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping("/connect/{apiId}")
-	public String connect(@PathVariable Long apiId) {
+	public String connectToAPI(@PathVariable Long apiId) {
 		RemoteAPI api = remoteAPIService.read(apiId);
 		projectRemoteService.list(api);
 

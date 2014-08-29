@@ -203,4 +203,23 @@ public class RemoteAPIControllerTest {
 		verify(remoteAPIService).read(apiId);
 		verify(projectRemoteService).list(client);
 	}
+
+	@Test(expected = IridaOAuthException.class)
+	public void testConnectToAPI() {
+		Long apiId = 1l;
+		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
+		when(remoteAPIService.read(apiId)).thenReturn(client);
+		when(projectRemoteService.list(client)).thenThrow(new IridaOAuthException("invalid token", client));
+		remoteAPIController.connectToAPI(apiId);
+	}
+
+	@Test
+	public void testConnectToAPIActiveToken() {
+		Long apiId = 1l;
+		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
+		when(remoteAPIService.read(apiId)).thenReturn(client);
+		when(projectRemoteService.list(client)).thenReturn(new ArrayList<>());
+		String connectToAPI = remoteAPIController.connectToAPI(apiId);
+		assertEquals("redirect:/remote_api/status", connectToAPI);
+	}
 }
