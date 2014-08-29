@@ -80,9 +80,10 @@
 		<!-- Analysis Submission Tables -->
 
 		<createTable tableName="analysis_submission">
-			<column name="remoteAnalysisId" type="VARCHAR(255)">
-				<constraints nullable="false" primaryKey="true" />
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
 			</column>
+			<column name="remoteAnalysisId" type="VARCHAR(255)"/>
 			<column name="analysisState" type="VARCHAR(255)">
 				<constraints nullable="false"/>
 			</column>
@@ -93,9 +94,10 @@
 		</createTable>
 
 		<createTable tableName="analysis_submission_AUD">
-			<column name="remoteAnalysisId" type="VARCHAR(255)">
-				<constraints nullable="false" primaryKey="true" />
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
 			</column>
+			<column name="remoteAnalysisId" type="VARCHAR(255)"/>
 			<column name="REV" type="INT(11)">
 				<constraints primaryKey="true" nullable="false"
 					foreignKeyName="FK_ANALYSIS_SUBMISSION_REVISION"
