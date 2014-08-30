@@ -68,17 +68,19 @@ public class AnalysisExecutionServiceTestConfig {
 
 	@Lazy
 	@Bean
-	public AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics(
-			GalaxyHistoriesService galaxyHistoriesService,
-			GalaxyWorkflowService galaxyWorkflowService) {
-
-		WorkspaceServicePhylogenomics galaxyWorkflowPreparationServicePhylogenomicsPipeline = new WorkspaceServicePhylogenomics(
-				galaxyHistoriesService, galaxyWorkflowService,
-				sampleSequenceFileJoinRepository);
+	public AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics() {
 		return new AnalysisExecutionServicePhylogenomics(
 				analysisSubmissionService, analysisService,
-				galaxyWorkflowService, galaxyHistoriesService,
-				galaxyWorkflowPreparationServicePhylogenomicsPipeline);
+				galaxyWorkflowService(), galaxyHistoriesService(),
+				workspaceServicePhylogenomics());
+	}
+	
+	@Lazy
+	@Bean
+	public WorkspaceServicePhylogenomics workspaceServicePhylogenomics() {
+		return new WorkspaceServicePhylogenomics(
+				galaxyHistoriesService(), galaxyWorkflowService(),
+				sampleSequenceFileJoinRepository);
 	}
 
 	@Lazy
@@ -103,11 +105,11 @@ public class AnalysisExecutionServiceTestConfig {
 				new StandardPasswordEncoder());
 	}
 
+	@Lazy
 	@Bean
 	public AnalysisExecutionGalaxyITService analysisExecutionGalaxyITService() {
 		return new AnalysisExecutionGalaxyITService(remoteWorkflowRepository,
 				referenceFileRepository, seqeunceFileService, sampleService,
-				analysisExecutionServicePhylogenomics(galaxyHistoriesService(),
-						galaxyWorkflowService()), analysisSubmissionService, analysisSubmissionRepository);
+				analysisExecutionServicePhylogenomics(), analysisSubmissionService, analysisSubmissionRepository);
 	}
 }
