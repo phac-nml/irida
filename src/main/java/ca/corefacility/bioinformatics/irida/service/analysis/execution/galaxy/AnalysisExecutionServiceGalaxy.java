@@ -111,6 +111,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional
 	public S executeAnalysis(S analysisSubmission)
 					throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
@@ -139,6 +140,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional
 	public A transferAnalysisResults(S submittedAnalysis)
 			throws ExecutionManagerException, IOException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
@@ -152,6 +154,11 @@ public abstract class AnalysisExecutionServiceGalaxy
 		logger.debug("Getting results for " + analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
 		A analysisResults = workspaceService.getAnalysisResults(submittedAnalysis);
 		
+		// TODO this statement is magic.  It is needed for everything to work properly, otherwise
+		// I get a SQL constraint exception even though this statement does nothing.
+		// Or, it could be eclipse messing up with database tests.  Needs to be checked later.
+		analysisSubmissionService.setStateForAnalysisSubmission(submittedAnalysis.getId(),
+				submittedAnalysis.getAnalysisState());
 		logger.trace("Saving results " +  analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
 		return (A)analysisService.create(analysisResults);
 	}
