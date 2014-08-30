@@ -116,7 +116,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getRemoteAnalysisId(), "remote analyis id is null");
 		checkArgument(AnalysisState.SUBMITTING.equals(analysisSubmission.getAnalysisState()), 
-				" analysis should be submitted");
+				" analysis should be " + AnalysisState.SUBMITTING);
 				
 		logger.debug("Running submission for " + analysisSubmission);
 		
@@ -141,7 +141,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
 		checkNotNull(submittedAnalysis.getRemoteAnalysisId(), "remoteAnalysisId is null");
 		checkArgument(AnalysisState.FINISHED_RUNNING.equals(submittedAnalysis.getAnalysisState()),
-				" analysis should be finished running");
+				" analysis should be " + AnalysisState.FINISHED_RUNNING);
 		verifyAnalysisSubmissionExists(submittedAnalysis);
 				
 		logger.debug("Getting results for " + submittedAnalysis);
