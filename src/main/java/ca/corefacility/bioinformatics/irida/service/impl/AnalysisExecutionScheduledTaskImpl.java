@@ -65,24 +65,31 @@ public class AnalysisExecutionScheduledTaskImpl implements
 	@Scheduled(initialDelay = 5000, fixedRate = 15000)
 	public void executeAnalyses() {
 		logger.debug("Looking for analyses with state "
-				+ AnalysisState.SUBMITTED);
+				+ AnalysisState.NEW);
 
 		List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-				.findByAnalysisState(AnalysisState.SUBMITTED);
+				.findByAnalysisState(AnalysisState.NEW);
 
 		for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
-			logger.debug("Changing submission to state " + AnalysisState.START_RUNNING + ": " + analysisSubmission);
-			analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getId(),
-					AnalysisState.START_RUNNING);
 			
 			String analysisSubmissionId = analysisSubmission
 					.getRemoteAnalysisId();
 			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
 					.getByType(analysisSubmissionId,
 							AnalysisSubmissionPhylogenomics.class);
-			analysisSubmissionPhylogenomics.setAnalysisState(AnalysisState.START_RUNNING);
 
 			try {
+				logger.debug("Changing submission to state " + AnalysisState.PREPARING + ": " + analysisSubmission);
+				analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getId(),
+						AnalysisState.PREPARING);
+				
+				analysisExecutionServicePhylogenomics
+					.prepareSubmission(analysisSubmissionPhylogenomics);
+				
+				logger.debug("Changing submission to state " + AnalysisState.SUBMITTING + ": " + analysisSubmission);
+				analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getId(),
+						AnalysisState.SUBMITTING);
+				
 				analysisExecutionServicePhylogenomics
 						.executeAnalysis(analysisSubmissionPhylogenomics);
 				

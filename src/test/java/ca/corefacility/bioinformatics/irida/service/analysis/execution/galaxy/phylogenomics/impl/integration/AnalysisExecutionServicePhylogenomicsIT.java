@@ -154,8 +154,8 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		AnalysisSubmissionPhylogenomics analysisSubmitted = 
 				analysisExecutionServicePhylogenomics.prepareSubmission(analysisSubmission);
 		
-		analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmitted.getId(), AnalysisState.START_RUNNING);
-		analysisSubmitted.setAnalysisState(AnalysisState.START_RUNNING);
+		analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmitted.getId(), AnalysisState.SUBMITTING);
+		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
 		AnalysisSubmissionPhylogenomics analysisExecuted = 
 				analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmitted);
 		assertNotNull("analysisExecuted is null", analysisExecuted);
@@ -175,7 +175,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	}
 	
 	/**
-	 * Tests out attempting to execute an anlysis with an invalid initial state..
+	 * Tests out attempting to execute an analysis with an invalid initial state..
 	 * @throws IllegalArgumentException 
 	 */
 	@Test(expected=IllegalArgumentException.class)
@@ -190,7 +190,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		AnalysisSubmissionPhylogenomics analysisSubmitted = 
 				analysisExecutionServicePhylogenomics.prepareSubmission(analysisSubmission);
 		
-		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTED);
+		analysisSubmitted.setAnalysisState(AnalysisState.NEW);
 		analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmitted);
 	}
 	
@@ -212,7 +212,6 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				analysisExecutionServicePhylogenomics.prepareSubmission(analysisSubmission);
 		assertNotNull("analysisSubmitted is null", analysisSubmitted);
 		assertNotNull("remoteAnalysisId is null", analysisSubmitted.getRemoteAnalysisId());
-		assertEquals(AnalysisState.SUBMITTED, analysisSubmitted.getAnalysisState());
 	}
 
 	/**
@@ -263,8 +262,8 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		AnalysisSubmissionPhylogenomics analysisSubmitted = analysisExecutionServicePhylogenomics
 				.prepareSubmission(analysisSubmission);
 		
-		analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmitted.getId(), AnalysisState.START_RUNNING);
-		analysisSubmitted.setAnalysisState(AnalysisState.START_RUNNING);
+		analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmitted.getId(), AnalysisState.PREPARING);
+		analysisSubmitted.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisSubmissionPhylogenomics analysisExecuted = analysisExecutionServicePhylogenomics
 				.executeAnalysis(analysisSubmitted);
 
@@ -326,8 +325,8 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		AnalysisSubmissionPhylogenomics analysisSubmitted = analysisExecutionServicePhylogenomics
 				.prepareSubmission(analysisSubmission);
 		
-		analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmitted.getId(), AnalysisState.START_RUNNING);
-		analysisSubmitted.setAnalysisState(AnalysisState.START_RUNNING);
+		analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmitted.getId(), AnalysisState.PREPARING);
+		analysisSubmitted.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisSubmissionPhylogenomics analysisExecuted = analysisExecutionServicePhylogenomics
 				.executeAnalysis(analysisSubmitted);
 

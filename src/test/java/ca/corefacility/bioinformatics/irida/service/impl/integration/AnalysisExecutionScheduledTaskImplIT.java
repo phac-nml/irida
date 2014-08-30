@@ -137,7 +137,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 				.prepareSubmission(analysisSubmission);
 		AnalysisState state = analysisSubmissionService
 				.getStateForAnalysisSubmission(submission.getId());
-		assertEquals(AnalysisState.SUBMITTED, state);
+		assertEquals(AnalysisState.SUBMITTING, state);
 
 		analysisExecutionScheduledTask.executeAnalyses();
 

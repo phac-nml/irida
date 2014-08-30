@@ -12,16 +12,21 @@ import java.util.Map;
  *
  */
 public enum AnalysisState {
+	
+	/**
+	 * Occurs when an analysis is first entered for submission.
+	 */
+	NEW("NEW"),
+	
+	/**
+	 * Occurs when an analysis is starting to be submitted.
+	 */
+	PREPARING("PREPARING"),
 
 	/**
 	 * Occurs when an analysis is first submitted.
 	 */
-	SUBMITTED("SUBMITTED"),
-
-	/**
-	 * An analysis that is starting to run in the execution manager.
-	 */
-	START_RUNNING("START_RUNNING"),
+	SUBMITTING("SUBMITTED"),
 	
 	/**
 	 * An analysis that is running in the execution manager.

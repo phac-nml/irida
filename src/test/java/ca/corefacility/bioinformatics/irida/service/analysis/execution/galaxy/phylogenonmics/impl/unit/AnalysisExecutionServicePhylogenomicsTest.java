@@ -96,7 +96,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Test
 	public void testPrepareSubmissionSuccess() throws ExecutionManagerException {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
-		when(analysisSubmission.getAnalysisState()).thenReturn(null);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.PREPARING);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
 		when(workspaceServicePhylogenomics.prepareAnalysisWorkspace(analysisSubmission)).
@@ -119,7 +119,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Test(expected=WorkflowChecksumInvalidException.class)
 	public void testPrepareSubmissionFailInvalidWorkflow() throws ExecutionManagerException {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
-		when(analysisSubmission.getAnalysisState()).thenReturn(null);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.PREPARING);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenThrow(new WorkflowChecksumInvalidException());
 		
@@ -133,7 +133,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Test(expected=ExecutionManagerException.class)
 	public void testPrepareSubmissionFailWorkspace() throws ExecutionManagerException {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
-		when(analysisSubmission.getAnalysisState()).thenReturn(null);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.PREPARING);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
 		when(workspaceServicePhylogenomics.prepareAnalysisWorkspace(analysisSubmission)).
@@ -148,7 +148,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test
 	public void testExecuteAnalysisSuccess() throws ExecutionManagerException {
-		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.START_RUNNING);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.SUBMITTING);
 		when(workspaceServicePhylogenomics.prepareAnalysisFiles(analysisSubmission)).
 			thenReturn(preparedWorkflow);
 		when(analysisSubmission.getId()).thenReturn(INTERNAL_ANALYSIS_ID);
@@ -181,7 +181,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test(expected=ExecutionManagerException.class)
 	public void testExecuteAnalysisFailPrepareWorkflow() throws ExecutionManagerException {
-		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.START_RUNNING);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.SUBMITTING);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
 		when(workspaceServicePhylogenomics.prepareAnalysisFiles(analysisSubmission)).
@@ -196,7 +196,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test(expected=WorkflowException.class)
 	public void testExecuteAnalysisFail() throws ExecutionManagerException {
-		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.START_RUNNING);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.SUBMITTING);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
 		when(workspaceServicePhylogenomics.prepareAnalysisFiles(analysisSubmission)).

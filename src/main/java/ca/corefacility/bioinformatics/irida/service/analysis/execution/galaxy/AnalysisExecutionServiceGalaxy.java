@@ -85,8 +85,8 @@ public abstract class AnalysisExecutionServiceGalaxy
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkArgument(null == analysisSubmission.getRemoteAnalysisId(),
 				"remote analyis id should be null");
-		checkArgument(null == analysisSubmission.getAnalysisState(),
-				"analysis state should be null");
+		checkArgument(AnalysisState.PREPARING.equals(analysisSubmission.getAnalysisState()),
+				"analysis state should be " + AnalysisState.PREPARING);
 		
 		String analysisName = analysisSubmission.getClass().getSimpleName();
 		RemoteWorkflowGalaxy remoteWorkflow = analysisSubmission.getRemoteWorkflow();
@@ -100,8 +100,6 @@ public abstract class AnalysisExecutionServiceGalaxy
 				", workflow=" + remoteWorkflow);
 		
 		analysisSubmission.setRemoteAnalysisId(analysisId);
-		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTED);
-		logger.trace("Changed state of analysis " + analysisName + ", id=" + analysisId + " to " + AnalysisState.SUBMITTED);
 		
 		return (S)analysisSubmissionService.create(analysisSubmission);
 	}
@@ -116,8 +114,8 @@ public abstract class AnalysisExecutionServiceGalaxy
 					throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getRemoteAnalysisId(), "remote analyis id is null");
-		checkArgument(AnalysisState.START_RUNNING.equals(analysisSubmission.getAnalysisState()), 
-				" analysis should be starting to run");
+		checkArgument(AnalysisState.SUBMITTING.equals(analysisSubmission.getAnalysisState()), 
+				" analysis should be submitted");
 		
 		String analysisName = analysisSubmission.getClass().getSimpleName();
 		RemoteWorkflowGalaxy remoteWorkflow = analysisSubmission.getRemoteWorkflow();
@@ -131,7 +129,6 @@ public abstract class AnalysisExecutionServiceGalaxy
 		logger.trace("Executing " + analysisName + ": " + remoteWorkflow);
 		galaxyWorkflowService.runWorkflow(input);
 		
-		logger.trace("Saving submission " +  analysisName + ": " + remoteWorkflow);
 		return (S)analysisSubmissionService.read(analysisSubmission.getId());
 	}
 	

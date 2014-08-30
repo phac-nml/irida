@@ -90,35 +90,75 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	 */
 	@Test
 	public void testExecuteAnalysesSuccess() throws ExecutionManagerException {
-		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTED);
+		analysisSubmission.setAnalysisState(AnalysisState.NEW);
 
 		when(
 				analysisSubmissionRepository
-						.findByAnalysisState(AnalysisState.SUBMITTED))
+						.findByAnalysisState(AnalysisState.NEW))
 				.thenReturn(Arrays.asList(analysisSubmission));
 
 		analysisExecutionScheduledTask.executeAnalyses();
 
 		verify(analysisSubmissionRepository).findByAnalysisState(
-				AnalysisState.SUBMITTED);
+				AnalysisState.NEW);
+		verify(analysisSubmissionService).setStateForAnalysisSubmission(INTERNAL_ID, AnalysisState.PREPARING);
+		verify(analysisExecutionServicePhylogenomics).prepareSubmission(
+				analysisSubmission);
+		verify(analysisSubmissionService).setStateForAnalysisSubmission(INTERNAL_ID, AnalysisState.SUBMITTING);
 		verify(analysisExecutionServicePhylogenomics).executeAnalysis(
 				analysisSubmission);
+		verify(analysisSubmissionService).setStateForAnalysisSubmission(INTERNAL_ID, AnalysisState.RUNNING);
 	}
-
+	
 	/**
-	 * Tests successfully executing submitted analyses and moving it to an error
+	 * Tests preparing an analysis and receiving an error exception.
 	 * state.
 	 * 
 	 * @throws ExecutionManagerException
 	 */
 	@Test
-	public void testExecuteAnalysesAnalysisError()
+	public void testExecuteAnalysesPrepareError()
 			throws ExecutionManagerException {
-		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTED);
+		analysisSubmission.setAnalysisState(AnalysisState.NEW);
 
 		when(
 				analysisSubmissionRepository
-						.findByAnalysisState(AnalysisState.SUBMITTED))
+						.findByAnalysisState(AnalysisState.NEW))
+				.thenReturn(Arrays.asList(analysisSubmission));
+
+		when(
+				analysisExecutionServicePhylogenomics
+						.prepareSubmission(analysisSubmission)).thenThrow(
+				new ExecutionManagerException());
+
+		analysisExecutionScheduledTask.executeAnalyses();
+
+		verify(analysisSubmissionRepository).findByAnalysisState(
+				AnalysisState.NEW);
+		verify(analysisSubmissionService).setStateForAnalysisSubmission(
+				INTERNAL_ID, AnalysisState.PREPARING);
+		verify(analysisExecutionServicePhylogenomics).prepareSubmission(
+				analysisSubmission);
+		verify(analysisExecutionServicePhylogenomics,never()).executeAnalysis(
+				analysisSubmission);
+		verify(analysisSubmissionService).setStateForAnalysisSubmission(
+				INTERNAL_ID, AnalysisState.ERROR);
+	}
+
+	/**
+	 * Tests executing submitted analyses and moving it to an error
+	 * state.
+	 * 
+	 * @throws ExecutionManagerException
+	 */
+	@Test
+	public void testExecuteAnalysesExecuteError()
+			throws ExecutionManagerException {
+		analysisSubmission.setAnalysisState(AnalysisState.NEW);
+
+		when(
+				analysisSubmissionRepository
+						.findByAnalysisState(AnalysisState.NEW))
 				.thenReturn(Arrays.asList(analysisSubmission));
 
 		when(
@@ -129,7 +169,13 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisExecutionScheduledTask.executeAnalyses();
 
 		verify(analysisSubmissionRepository).findByAnalysisState(
-				AnalysisState.SUBMITTED);
+				AnalysisState.NEW);
+		verify(analysisSubmissionService).setStateForAnalysisSubmission(
+				INTERNAL_ID, AnalysisState.PREPARING);
+		verify(analysisExecutionServicePhylogenomics).prepareSubmission(
+				analysisSubmission);
+		verify(analysisSubmissionService).setStateForAnalysisSubmission(
+				INTERNAL_ID, AnalysisState.SUBMITTING);
 		verify(analysisExecutionServicePhylogenomics).executeAnalysis(
 				analysisSubmission);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
@@ -168,6 +214,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				analysisSubmission);
 		verify(analysisExecutionServicePhylogenomics).transferAnalysisResults(
 				analysisSubmission);
+		verify(analysisSubmissionService).setStateForAnalysisSubmission(
+				INTERNAL_ID, AnalysisState.COMPLETED);
 	}
 
 	/**
@@ -206,13 +254,13 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests placing analysis results in an error state.
+	 * Tests placing analysis results in an error state due to an error state in Galaxy.
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IOException
 	 */
 	@Test
-	public void testTransferAnalysesResultsError()
+	public void testTransferAnalysesGalaxyError()
 			throws ExecutionManagerException, IOException {
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
 
@@ -239,5 +287,43 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				INTERNAL_ID, AnalysisState.ERROR);
 		verify(analysisExecutionServicePhylogenomics, never())
 				.transferAnalysisResults(analysisSubmission);
+	}
+	
+	/**
+	 * Tests placing analysis results in an error state due to an error transfering results from Galaxy.
+	 * 
+	 * @throws ExecutionManagerException
+	 * @throws IOException
+	 */
+	@Test
+	public void testTransferAnalysesTransferError()
+			throws ExecutionManagerException, IOException {
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
+
+		when(
+				analysisSubmissionRepository
+						.findByAnalysisState(AnalysisState.RUNNING))
+				.thenReturn(Arrays.asList(analysisSubmission));
+		when(
+				analysisExecutionServicePhylogenomics
+						.transferAnalysisResults(analysisSubmission))
+				.thenThrow(new ExecutionManagerException());
+		when(
+				analysisExecutionServicePhylogenomics
+						.getWorkflowStatus(analysisSubmission)).thenReturn(
+				new WorkflowStatus(WorkflowState.OK, 100.0f));
+
+		analysisExecutionScheduledTask.transferAnalysesResults();
+
+		verify(analysisSubmissionRepository).findByAnalysisState(
+				AnalysisState.RUNNING);
+		verify(analysisExecutionServicePhylogenomics).getWorkflowStatus(
+				analysisSubmission);
+		verify(analysisSubmissionService).setStateForAnalysisSubmission(
+				INTERNAL_ID, AnalysisState.FINISHED_RUNNING);
+		verify(analysisExecutionServicePhylogenomics)
+			.transferAnalysisResults(analysisSubmission);
+		verify(analysisSubmissionService).setStateForAnalysisSubmission(
+				INTERNAL_ID, AnalysisState.ERROR);
 	}
 }

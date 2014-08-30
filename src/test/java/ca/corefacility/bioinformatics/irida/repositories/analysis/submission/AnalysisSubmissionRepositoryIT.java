@@ -80,7 +80,7 @@ public class AnalysisSubmissionRepositoryIT {
 				new AnalysisSubmissionPhylogenomics(sequenceFiles, referenceFile,
 						remoteWorkflow);
 		analysisSubmission.setRemoteAnalysisId(analysisId);
-		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTED);
+		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTING);
 	}
 	
 	/**
@@ -119,7 +119,7 @@ public class AnalysisSubmissionRepositoryIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFindByAnalysisStateSuccess() {
 		analysisSubmissionRepository.save(analysisSubmission);
-		List<AnalysisSubmission> submittedAnalyses = analysisSubmissionRepository.findByAnalysisState(AnalysisState.SUBMITTED);
+		List<AnalysisSubmission> submittedAnalyses = analysisSubmissionRepository.findByAnalysisState(AnalysisState.SUBMITTING);
 		assertEquals(1,submittedAnalyses.size());
 		assertEquals(analysisId, submittedAnalyses.get(0).getRemoteAnalysisId());
 	}
