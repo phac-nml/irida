@@ -166,7 +166,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				analysisExecutionServicePhylogenomics.getWorkflowStatus(analysisExecuted);
 		analysisExecutionGalaxyITService.assertValidStatus(status);
 		
-		AnalysisSubmissionPhylogenomics savedSubmission = analysisSubmissionRepository.getByType(analysisExecuted.getRemoteAnalysisId(),
+		AnalysisSubmissionPhylogenomics savedSubmission = analysisSubmissionRepository.getByType(analysisExecuted.getId(),
 				AnalysisSubmissionPhylogenomics.class);
 		
 		assertEquals(analysisExecuted.getRemoteAnalysisId(), savedSubmission.getRemoteAnalysisId());

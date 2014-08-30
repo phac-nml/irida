@@ -77,7 +77,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
 
 		when(
-				analysisSubmissionRepository.getByType(ANALYSIS_ID,
+				analysisSubmissionRepository.getByType(INTERNAL_ID,
 						AnalysisSubmissionPhylogenomics.class)).thenReturn(
 				analysisSubmission);
 	}

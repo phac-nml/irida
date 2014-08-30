@@ -73,9 +73,8 @@ public class AnalysisExecutionScheduledTaskImpl implements
 		analysisSubmissionService.setStateForAnalysisSubmission(
 				analysisSubmission.getId(), AnalysisState.PREPARING);
 
-		String analysisSubmissionId = analysisSubmission.getRemoteAnalysisId();
 		AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
-				.getByType(analysisSubmissionId,
+				.getByType(analysisSubmission.getId(),
 						AnalysisSubmissionPhylogenomics.class);
 
 		try {
@@ -112,9 +111,8 @@ public class AnalysisExecutionScheduledTaskImpl implements
 		AnalysisSubmission analysisSubmission = analysisSubmissionRepository
 				.findOneByAnalysisState(AnalysisState.RUNNING);
 
-		String analysisSubmissionId = analysisSubmission.getRemoteAnalysisId();
 		AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
-				.getByType(analysisSubmissionId,
+				.getByType(analysisSubmission.getId(),
 						AnalysisSubmissionPhylogenomics.class);
 		try {
 			WorkflowStatus workflowStatus = analysisExecutionServicePhylogenomics

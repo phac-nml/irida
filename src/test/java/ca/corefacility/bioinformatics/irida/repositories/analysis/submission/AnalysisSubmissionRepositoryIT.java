@@ -63,7 +63,6 @@ public class AnalysisSubmissionRepositoryIT {
 	private SequenceFileRepository sequenceFileRepository;
 
 	private AnalysisSubmissionPhylogenomics analysisSubmission;
-	private AnalysisSubmissionPhylogenomics analysisSubmission2;
 	private static final String analysisId = "10";
 
 	/**
@@ -94,21 +93,23 @@ public class AnalysisSubmissionRepositoryIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSaveAnalysisSubmission() {
-		analysisSubmissionRepository.save(analysisSubmission);
-
 		AnalysisSubmissionPhylogenomics savedSubmission = analysisSubmissionRepository
-				.getByType(analysisId, AnalysisSubmissionPhylogenomics.class);
+				.save(analysisSubmission);
+
+		AnalysisSubmissionPhylogenomics loadedSubmission = analysisSubmissionRepository
+				.getByType(savedSubmission.getId(),
+						AnalysisSubmissionPhylogenomics.class);
 
 		assertEquals(analysisSubmission.getRemoteAnalysisId(),
-				savedSubmission.getRemoteAnalysisId());
+				loadedSubmission.getRemoteAnalysisId());
 		assertEquals(analysisSubmission.getRemoteWorkflow(),
-				savedSubmission.getRemoteWorkflow());
+				loadedSubmission.getRemoteWorkflow());
 		assertEquals(analysisSubmission.getInputFiles(),
-				savedSubmission.getInputFiles());
+				loadedSubmission.getInputFiles());
 		assertEquals(analysisSubmission.getReferenceFile(),
-				savedSubmission.getReferenceFile());
+				loadedSubmission.getReferenceFile());
 		assertEquals(analysisSubmission.getAnalysisState(),
-				savedSubmission.getAnalysisState());
+				loadedSubmission.getAnalysisState());
 	}
 
 	/**
@@ -118,7 +119,7 @@ public class AnalysisSubmissionRepositoryIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetAnalysisSubmissionFail() {
 		AnalysisSubmissionPhylogenomics savedSubmission = analysisSubmissionRepository
-				.getByType("invalid", AnalysisSubmissionPhylogenomics.class);
+				.getByType(999L, AnalysisSubmissionPhylogenomics.class);
 		assertNull(savedSubmission);
 	}
 
