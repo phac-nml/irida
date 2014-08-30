@@ -78,6 +78,7 @@ public class AnalysisSubmission implements IridaThing {
 
 	protected AnalysisSubmission() {
 		this.createdDate = new Date();
+		this.analysisState = AnalysisState.NEW;
 	}
 
 	/**
