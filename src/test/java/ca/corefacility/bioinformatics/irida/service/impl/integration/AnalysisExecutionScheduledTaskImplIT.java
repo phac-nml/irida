@@ -132,13 +132,15 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		AnalysisSubmissionPhylogenomics analysisSubmission = analysisExecutionGalaxyITService
 				.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath,
 						remoteWorkflowUnsaved);
+		assertEquals(AnalysisState.NEW, analysisSubmission.getAnalysisState());
 
+		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisSubmissionPhylogenomics submission = analysisExecutionServicePhylogenomics
 				.prepareSubmission(analysisSubmission);
 		AnalysisState state = analysisSubmissionService
 				.getStateForAnalysisSubmission(submission.getId());
-		assertEquals(AnalysisState.SUBMITTING, state);
 
+		
 		analysisExecutionScheduledTask.executeAnalyses();
 
 		state = analysisSubmissionService

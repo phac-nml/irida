@@ -155,7 +155,6 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		AnalysisSubmissionPhylogenomics analysisSubmitted = 
 				analysisExecutionServicePhylogenomics.prepareSubmission(analysisSubmission);
 		
-		analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmitted.getId(), AnalysisState.SUBMITTING);
 		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
 		AnalysisSubmissionPhylogenomics analysisExecuted = 
 				analysisExecutionServicePhylogenomics.executeAnalysis(analysisSubmitted);
@@ -188,6 +187,7 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		AnalysisSubmissionPhylogenomics analysisSubmission 
 			= analysisExecutionGalaxyITService.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
+		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisSubmissionPhylogenomics analysisSubmitted = 
 				analysisExecutionServicePhylogenomics.prepareSubmission(analysisSubmission);
 		
@@ -267,14 +267,12 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		AnalysisSubmissionPhylogenomics analysisSubmitted = analysisExecutionServicePhylogenomics
 				.prepareSubmission(analysisSubmission);
 		
-		analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmitted.getId(), AnalysisState.SUBMITTING);
 		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
 		AnalysisSubmissionPhylogenomics analysisExecuted = analysisExecutionServicePhylogenomics
 				.executeAnalysis(analysisSubmitted);
 
 		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
 
-		analysisSubmissionService.setStateForAnalysisSubmission(analysisExecuted.getId(), AnalysisState.FINISHED_RUNNING);
 		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 		AnalysisPhylogenomicsPipeline analysisResults = analysisExecutionServicePhylogenomics
 				.transferAnalysisResults(analysisExecuted);
@@ -331,7 +329,6 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		AnalysisSubmissionPhylogenomics analysisSubmitted = analysisExecutionServicePhylogenomics
 				.prepareSubmission(analysisSubmission);
 		
-		analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmitted.getId(), AnalysisState.SUBMITTING);
 		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
 		AnalysisSubmissionPhylogenomics analysisExecuted = analysisExecutionServicePhylogenomics
 				.executeAnalysis(analysisSubmitted);
@@ -339,7 +336,6 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
 
 		analysisExecuted.setId(555l);
-		analysisSubmissionService.setStateForAnalysisSubmission(analysisExecuted.getId(), AnalysisState.FINISHED_RUNNING);
 		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 		analysisExecutionServicePhylogenomics
 				.transferAnalysisResults(analysisExecuted);

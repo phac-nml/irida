@@ -17,7 +17,9 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflowRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -47,6 +49,12 @@ public class AnalysisExecutionGalaxyITService {
 	@Autowired
 	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
 	
+	@Autowired
+	private AnalysisSubmissionService analysisSubmissionService;
+	
+	@Autowired
+	private AnalysisSubmissionRepository analysisSubmissionRepository;
+	
 	/**
 	 * Builds a new AnalysisExecutionGalaxyITService with the given services/repositories.
 	 * @param remoteWorkflowRepository
@@ -54,19 +62,25 @@ public class AnalysisExecutionGalaxyITService {
 	 * @param seqeunceFileService
 	 * @param sampleService
 	 * @param analysisExecutionServicePhylogenomics
+	 * @param analysisSubmissionService
+	 * @param analysisSubmissionRepsitory
 	 */
 	public AnalysisExecutionGalaxyITService(
 			RemoteWorkflowRepository remoteWorkflowRepository,
 			ReferenceFileRepository referenceFileRepository,
 			SequenceFileService seqeunceFileService,
 			SampleService sampleService,
-			AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics) {
+			AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics,
+			AnalysisSubmissionService analysisSubmissionService,
+			AnalysisSubmissionRepository analysisSubmissionRepository) {
 		super();
 		this.remoteWorkflowRepository = remoteWorkflowRepository;
 		this.referenceFileRepository = referenceFileRepository;
 		this.seqeunceFileService = seqeunceFileService;
 		this.sampleService = sampleService;
 		this.analysisExecutionServicePhylogenomics = analysisExecutionServicePhylogenomics;
+		this.analysisSubmissionService = analysisSubmissionService;
+		this.analysisSubmissionRepository = analysisSubmissionRepository;
 	}
 
 	/**
@@ -91,8 +105,10 @@ public class AnalysisExecutionGalaxyITService {
 				
 		RemoteWorkflowPhylogenomics remoteWorkflowSaved = remoteWorkflowRepository.save(remoteWorkflow);
 		
-		return new AnalysisSubmissionPhylogenomics(sequenceFiles,
-				referenceFile, remoteWorkflowSaved);
+		AnalysisSubmission submission =  analysisSubmissionService.create(new AnalysisSubmissionPhylogenomics(sequenceFiles,
+				referenceFile, remoteWorkflowSaved));
+		
+		return analysisSubmissionRepository.getByType(submission.getId(), AnalysisSubmissionPhylogenomics.class);
 	}
 	
 	/**

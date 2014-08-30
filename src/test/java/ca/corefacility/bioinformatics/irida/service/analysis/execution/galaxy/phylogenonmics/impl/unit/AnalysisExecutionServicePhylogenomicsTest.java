@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.ph
 
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Tests out an execution service for phylogenomics analyses.
@@ -45,6 +46,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Mock private GalaxyHistoriesService galaxyHistoriesService;
 	@Mock private GalaxyWorkflowService galaxyWorkflowService;
 	@Mock private AnalysisSubmissionPhylogenomics analysisSubmission;
+	@Mock private AnalysisSubmissionPhylogenomics analysisSubmitted;
 	@Mock private WorkspaceServicePhylogenomics workspaceServicePhylogenomics;
 	@Mock private WorkflowInputs workflowInputs;
 	@Mock private WorkflowOutputs workflowOutputs;
@@ -96,7 +98,14 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Test
 	public void testPrepareSubmissionSuccess() throws ExecutionManagerException {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
+		when(analysisSubmission.getId()).thenReturn(INTERNAL_ANALYSIS_ID);
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.PREPARING);
+		
+		when(analysisSubmitted.getRemoteAnalysisId()).thenReturn(ANALYSIS_ID);
+		when(analysisSubmitted.getId()).thenReturn(INTERNAL_ANALYSIS_ID);
+		when(analysisSubmitted.getAnalysisState()).thenReturn(AnalysisState.PREPARING);
+		
+		when(analysisSubmissionService.read(INTERNAL_ANALYSIS_ID)).thenReturn(analysisSubmitted);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
 		when(workspaceServicePhylogenomics.prepareAnalysisWorkspace(analysisSubmission)).
@@ -105,11 +114,12 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		AnalysisSubmissionPhylogenomics returnedSubmission = 
 				workflowManagement.prepareSubmission(analysisSubmission);
 		
-		assertEquals("analysisSubmission not equal to returned submission", analysisSubmission, returnedSubmission);
+		assertEquals("analysisSubmission not equal to returned submission", analysisSubmitted, returnedSubmission);
 		
 		verify(galaxyWorkflowService).validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID);
 		verify(workspaceServicePhylogenomics).prepareAnalysisWorkspace(analysisSubmission);
-		verify(analysisSubmissionService).create(analysisSubmission);
+		verify(analysisSubmissionService).update(INTERNAL_ANALYSIS_ID, ImmutableMap.of("remoteAnalysisId", ANALYSIS_ID));
+		verify(analysisSubmissionService).read(INTERNAL_ANALYSIS_ID);
 	}
 	
 	/**

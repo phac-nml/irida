@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.collect.ImmutableMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
@@ -83,6 +85,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 	public S prepareSubmission(S analysisSubmission)
 			throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
+		checkNotNull(analysisSubmission.getId(), "analysisSubmission id is null");
 		checkArgument(null == analysisSubmission.getRemoteAnalysisId(),
 				"remote analyis id should be null");
 		checkArgument(AnalysisState.PREPARING.equals(analysisSubmission.getAnalysisState()),
@@ -99,9 +102,10 @@ public abstract class AnalysisExecutionServiceGalaxy
 		logger.trace("Created id for " + analysisName + " id=" + analysisId + 
 				", workflow=" + remoteWorkflow);
 		
-		analysisSubmission.setRemoteAnalysisId(analysisId);
+		analysisSubmissionService.update(analysisSubmission.getId(),
+				ImmutableMap.of("remoteAnalysisId", analysisId));
 		
-		return (S)analysisSubmissionService.create(analysisSubmission);
+		return (S)analysisSubmissionService.read(analysisSubmission.getId());
 	}
 
 	/**
