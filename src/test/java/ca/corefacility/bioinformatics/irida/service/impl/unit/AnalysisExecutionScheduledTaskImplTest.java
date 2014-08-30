@@ -96,6 +96,11 @@ public class AnalysisExecutionScheduledTaskImplTest {
 						.findOneByAnalysisState(AnalysisState.NEW)).thenReturn(
 				analysisSubmission);
 
+		when(
+				analysisExecutionServicePhylogenomics
+						.prepareSubmission(analysisSubmission)).thenReturn(
+				analysisSubmission);
+
 		analysisExecutionScheduledTask.executeAnalyses();
 
 		verify(analysisSubmissionRepository).findOneByAnalysisState(
@@ -159,6 +164,11 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		when(
 				analysisSubmissionRepository
 						.findOneByAnalysisState(AnalysisState.NEW)).thenReturn(
+				analysisSubmission);
+
+		when(
+				analysisExecutionServicePhylogenomics
+						.prepareSubmission(analysisSubmission)).thenReturn(
 				analysisSubmission);
 
 		when(

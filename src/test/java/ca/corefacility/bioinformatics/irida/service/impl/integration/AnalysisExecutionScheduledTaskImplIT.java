@@ -133,31 +133,25 @@ public class AnalysisExecutionScheduledTaskImplIT {
 				.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath,
 						remoteWorkflowUnsaved);
 		assertEquals(AnalysisState.NEW, analysisSubmission.getAnalysisState());
-
-		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
-		AnalysisSubmissionPhylogenomics submission = analysisExecutionServicePhylogenomics
-				.prepareSubmission(analysisSubmission);
-		AnalysisState state = analysisSubmissionService
-				.getStateForAnalysisSubmission(submission.getId());
-
 		
 		analysisExecutionScheduledTask.executeAnalyses();
+		AnalysisSubmissionPhylogenomics executedSubmission = analysisSubmissionRepository.
+					getByType(analysisSubmission.getId(), AnalysisSubmissionPhylogenomics.class);
 
-		state = analysisSubmissionService
-				.getStateForAnalysisSubmission(submission.getId());
-		assertEquals(AnalysisState.RUNNING, state);
+		assertEquals(AnalysisState.RUNNING, executedSubmission.getAnalysisState());
 
 		WorkflowStatus status = analysisExecutionServicePhylogenomics
-				.getWorkflowStatus(submission);
+				.getWorkflowStatus(executedSubmission);
 
 		analysisExecutionGalaxyITService.assertValidStatus(status);
 
-		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(submission);
+		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(executedSubmission);
 
 		analysisExecutionScheduledTask.transferAnalysesResults();
+		
+		AnalysisSubmissionPhylogenomics transferedSubmission = analysisSubmissionRepository.
+				getByType(executedSubmission.getId(), AnalysisSubmissionPhylogenomics.class);
 
-		state = analysisSubmissionService
-				.getStateForAnalysisSubmission(submission.getId());
-		assertEquals(AnalysisState.COMPLETED, state);
+		assertEquals(AnalysisState.COMPLETED, transferedSubmission.getAnalysisState());
 	}
 }

@@ -78,16 +78,17 @@ public class AnalysisExecutionScheduledTaskImpl implements
 						AnalysisSubmissionPhylogenomics.class);
 
 		try {
-			analysisExecutionServicePhylogenomics
+			AnalysisSubmissionPhylogenomics preparedSubmission = analysisExecutionServicePhylogenomics
 					.prepareSubmission(analysisSubmissionPhylogenomics);
 
 			logger.debug("Changing submission to state "
 					+ AnalysisState.SUBMITTING + ": " + analysisSubmission);
 			analysisSubmissionService.setStateForAnalysisSubmission(
-					analysisSubmission.getId(), AnalysisState.SUBMITTING);
+					preparedSubmission.getId(), AnalysisState.SUBMITTING);
+			preparedSubmission.setAnalysisState(AnalysisState.SUBMITTING);
 
 			analysisExecutionServicePhylogenomics
-					.executeAnalysis(analysisSubmissionPhylogenomics);
+					.executeAnalysis(preparedSubmission);
 
 			logger.debug("Changing submission to state "
 					+ AnalysisState.RUNNING + ": " + analysisSubmission);
