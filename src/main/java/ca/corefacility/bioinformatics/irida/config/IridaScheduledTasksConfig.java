@@ -36,6 +36,6 @@ public class IridaScheduledTasksConfig {
 	public AnalysisExecutionScheduledTask analysisExecutionScheduledTask() {
 		return new AnalysisExecutionScheduledTaskImpl(
 				analysisSubmissionService, analysisSubmissionRepository,
-				analysisExecutionServicePhylogenomics);
+				analysisExecutionServicePhylogenomics, null);
 	}
 }

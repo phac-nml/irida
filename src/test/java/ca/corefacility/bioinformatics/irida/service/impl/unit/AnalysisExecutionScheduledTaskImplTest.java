@@ -69,7 +69,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(
 				analysisSubmissionService, analysisSubmissionRepository,
-				analysisExecutionServicePhylogenomics);
+				analysisExecutionServicePhylogenomics, null);
 
 		analysisSubmission = new AnalysisSubmissionPhylogenomics(sequenceFiles,
 				referenceFile, remoteWorkflow);

@@ -13,6 +13,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -31,11 +35,13 @@ import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsL
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServiceTestConfig;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -87,6 +93,12 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@Autowired
 	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
 
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private AuthenticationProvider authenticationProvider;
+
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
 	private Path sequenceFilePath;
@@ -102,9 +114,15 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	public void setup() throws URISyntaxException, IOException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 
+		User user = userRepository.loadUserByUsername("aaron");
+		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+				user, "password1");
+		Authentication authentication = authenticationProvider
+				.authenticate(token);
+
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(
 				analysisSubmissionService, analysisSubmissionRepository,
-				analysisExecutionServicePhylogenomics);
+				analysisExecutionServicePhylogenomics, authentication);
 
 		Path sequenceFilePathReal = Paths
 				.get(AnalysisExecutionGalaxyITService.class.getResource(
@@ -196,5 +214,24 @@ public class AnalysisExecutionScheduledTaskImplIT {
 						AnalysisSubmissionPhylogenomics.class);
 
 		assertEquals(AnalysisState.ERROR, errorSubmission.getAnalysisState());
+	}
+
+	/**
+	 * Tests out an invalid authentication object for the schduler. during
+	 * execution
+	 */
+	@Test(expected = BadCredentialsException.class)
+	public void testInvalidAuthentication() {
+		User user = userRepository.loadUserByUsername("aaron");
+		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+				user, "bad");
+		Authentication authentication = authenticationProvider
+				.authenticate(token);
+
+		AnalysisExecutionScheduledTask analysisExecutionScheduledTaskInvalidCredentials = new AnalysisExecutionScheduledTaskImpl(
+				analysisSubmissionService, analysisSubmissionRepository,
+				analysisExecutionServicePhylogenomics, authentication);
+
+		analysisExecutionScheduledTaskInvalidCredentials.executeAnalyses();
 	}
 }

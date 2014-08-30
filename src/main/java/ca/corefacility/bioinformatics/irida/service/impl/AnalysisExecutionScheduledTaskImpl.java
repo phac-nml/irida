@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
@@ -35,6 +37,7 @@ public class AnalysisExecutionScheduledTaskImpl implements
 	private AnalysisSubmissionService analysisSubmissionService;
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
+	private Authentication authentication;
 
 	/**
 	 * Builds a new AnalysisExecutionScheduledTaskImpl with the given service
@@ -46,15 +49,20 @@ public class AnalysisExecutionScheduledTaskImpl implements
 	 *            A repository for analysis submissions.
 	 * @param analysisExecutionServicePhylogenomics
 	 *            A service for executing analyses.
+	 * @param authentication
+	 *            An authentication object for authenticating each of the
+	 *            scheduled tasks.
 	 */
 	@Autowired
 	public AnalysisExecutionScheduledTaskImpl(
 			AnalysisSubmissionService analysisSubmissionService,
 			AnalysisSubmissionRepository analysisSubmissionRepository,
-			AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics) {
+			AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics,
+			Authentication authentication) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.analysisExecutionServicePhylogenomics = analysisExecutionServicePhylogenomics;
+		this.authentication = authentication;
 	}
 
 	/**
@@ -63,6 +71,8 @@ public class AnalysisExecutionScheduledTaskImpl implements
 	@Override
 	@Scheduled(initialDelay = 5000, fixedRate = 15000)
 	public void executeAnalyses() {
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+
 		logger.debug("Looking for analyses with state " + AnalysisState.NEW);
 
 		AnalysisSubmission analysisSubmission = analysisSubmissionRepository
@@ -89,6 +99,9 @@ public class AnalysisExecutionScheduledTaskImpl implements
 					+ analysisSubmissionPhylogenomics, e);
 			setStateForSubmission(analysisSubmissionPhylogenomics,
 					AnalysisState.ERROR);
+		} finally {
+			// Should this be cleared?
+			//SecurityContextHolder.clearContext();
 		}
 	}
 
@@ -98,6 +111,8 @@ public class AnalysisExecutionScheduledTaskImpl implements
 	@Override
 	@Scheduled(initialDelay = 1000, fixedRate = 15000)
 	public void transferAnalysesResults() {
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+
 		logger.debug("Looking for analyses with state " + AnalysisState.RUNNING);
 
 		AnalysisSubmission analysisSubmission = analysisSubmissionRepository
@@ -157,6 +172,8 @@ public class AnalysisExecutionScheduledTaskImpl implements
 					+ analysisSubmissionPhylogenomics, e);
 			setStateForSubmission(analysisSubmissionPhylogenomics,
 					AnalysisState.ERROR);
+		} finally {
+			//SecurityContextHolder.clearContext();
 		}
 	}
 
