@@ -34,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
@@ -45,6 +46,7 @@ import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomic
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Integration tests for analysis schedulers.
@@ -66,6 +68,9 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisExecutionScheduledTaskImplIT {
+
+	@Autowired
+	private LocalGalaxy localGalaxy;
 
 	@Autowired
 	private AnalysisExecutionGalaxyITService analysisExecutionGalaxyITService;
@@ -133,25 +138,63 @@ public class AnalysisExecutionScheduledTaskImplIT {
 				.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath,
 						remoteWorkflowUnsaved);
 		assertEquals(AnalysisState.NEW, analysisSubmission.getAnalysisState());
-		
-		analysisExecutionScheduledTask.executeAnalyses();
-		AnalysisSubmissionPhylogenomics executedSubmission = analysisSubmissionRepository.
-					getByType(analysisSubmission.getId(), AnalysisSubmissionPhylogenomics.class);
 
-		assertEquals(AnalysisState.RUNNING, executedSubmission.getAnalysisState());
+		analysisExecutionScheduledTask.executeAnalyses();
+		AnalysisSubmissionPhylogenomics executedSubmission = analysisSubmissionRepository
+				.getByType(analysisSubmission.getId(),
+						AnalysisSubmissionPhylogenomics.class);
+
+		assertEquals(AnalysisState.RUNNING,
+				executedSubmission.getAnalysisState());
 
 		WorkflowStatus status = analysisExecutionServicePhylogenomics
 				.getWorkflowStatus(executedSubmission);
 
 		analysisExecutionGalaxyITService.assertValidStatus(status);
 
-		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(executedSubmission);
+		analysisExecutionGalaxyITService
+				.waitUntilSubmissionComplete(executedSubmission);
 
 		analysisExecutionScheduledTask.transferAnalysesResults();
-		
-		AnalysisSubmissionPhylogenomics transferedSubmission = analysisSubmissionRepository.
-				getByType(executedSubmission.getId(), AnalysisSubmissionPhylogenomics.class);
 
-		assertEquals(AnalysisState.COMPLETED, transferedSubmission.getAnalysisState());
+		AnalysisSubmissionPhylogenomics transferedSubmission = analysisSubmissionRepository
+				.getByType(executedSubmission.getId(),
+						AnalysisSubmissionPhylogenomics.class);
+
+		assertEquals(AnalysisState.COMPLETED,
+				transferedSubmission.getAnalysisState());
+	}
+
+	/**
+	 * Tests out successfully changing an analysis to error after an error
+	 * during execution
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testErrorExecute() {
+		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = remoteWorkflowServicePhylogenomics
+				.getCurrentWorkflow();
+
+		AnalysisSubmissionPhylogenomics analysisSubmission = analysisExecutionGalaxyITService
+				.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath,
+						remoteWorkflowUnsaved);
+
+		analysisExecutionScheduledTask.executeAnalyses();
+
+		AnalysisSubmissionPhylogenomics executedSubmission = analysisSubmissionRepository
+				.getByType(analysisSubmission.getId(),
+						AnalysisSubmissionPhylogenomics.class);
+
+		// set Galaxy analysis id to invalid to force an error
+		analysisSubmissionService.update(executedSubmission.getId(),
+				ImmutableMap.of("remoteAnalysisId", "invalid"));
+
+		analysisExecutionScheduledTask.transferAnalysesResults();
+
+		AnalysisSubmissionPhylogenomics errorSubmission = analysisSubmissionRepository
+				.getByType(executedSubmission.getId(),
+						AnalysisSubmissionPhylogenomics.class);
+
+		assertEquals(AnalysisState.ERROR, errorSubmission.getAnalysisState());
 	}
 }
