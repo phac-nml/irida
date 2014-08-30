@@ -91,16 +91,13 @@ public abstract class AnalysisExecutionServiceGalaxy
 		checkArgument(AnalysisState.PREPARING.equals(analysisSubmission.getAnalysisState()),
 				"analysis state should be " + AnalysisState.PREPARING);
 		
-		String analysisName = analysisSubmission.getClass().getSimpleName();
-		RemoteWorkflowGalaxy remoteWorkflow = analysisSubmission.getRemoteWorkflow();
-		logger.debug("Preparing submission for " + analysisName + ": " + remoteWorkflow);
+		logger.debug("Preparing submission for " + analysisSubmission);
 		
-		logger.trace("Validating " + analysisName + ": " + remoteWorkflow);
+		logger.trace("Validating " + analysisSubmission);
 		validateWorkflow(analysisSubmission.getRemoteWorkflow());
 		
 		String analysisId = workspaceService.prepareAnalysisWorkspace(analysisSubmission);
-		logger.trace("Created id for " + analysisName + " id=" + analysisId + 
-				", workflow=" + remoteWorkflow);
+		logger.trace("Created Galaxy history for analysis " + " id=" + analysisId + ", " + analysisSubmission);
 		
 		analysisSubmissionService.update(analysisSubmission.getId(),
 				ImmutableMap.of("remoteAnalysisId", analysisId));
@@ -120,17 +117,14 @@ public abstract class AnalysisExecutionServiceGalaxy
 		checkNotNull(analysisSubmission.getRemoteAnalysisId(), "remote analyis id is null");
 		checkArgument(AnalysisState.SUBMITTING.equals(analysisSubmission.getAnalysisState()), 
 				" analysis should be submitted");
+				
+		logger.debug("Running submission for " + analysisSubmission);
 		
-		String analysisName = analysisSubmission.getClass().getSimpleName();
-		RemoteWorkflowGalaxy remoteWorkflow = analysisSubmission.getRemoteWorkflow();
-		
-		logger.debug("Running submission for " + analysisName + ": " + remoteWorkflow);
-		
-		logger.trace("Preparing files for " + analysisName + ": " + remoteWorkflow);
+		logger.trace("Preparing files for " + analysisSubmission);
 		PreparedWorkflowGalaxy preparedWorkflow = workspaceService.prepareAnalysisFiles(analysisSubmission);
 		WorkflowInputsGalaxy input = preparedWorkflow.getWorkflowInputs();
 		
-		logger.trace("Executing " + analysisName + ": " + remoteWorkflow);
+		logger.trace("Executing " + analysisSubmission);
 		galaxyWorkflowService.runWorkflow(input);
 		
 		return (S)analysisSubmissionService.read(analysisSubmission.getId());
@@ -149,10 +143,8 @@ public abstract class AnalysisExecutionServiceGalaxy
 		checkArgument(AnalysisState.FINISHED_RUNNING.equals(submittedAnalysis.getAnalysisState()),
 				" analysis should be finished running");
 		verifyAnalysisSubmissionExists(submittedAnalysis);
-		
-		String analysisName = submittedAnalysis.getClass().getSimpleName();
-		
-		logger.debug("Getting results for " + analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
+				
+		logger.debug("Getting results for " + submittedAnalysis);
 		A analysisResults = workspaceService.getAnalysisResults(submittedAnalysis);
 		
 		// TODO this statement is magic.  It is needed for everything to work properly, otherwise
@@ -160,7 +152,7 @@ public abstract class AnalysisExecutionServiceGalaxy
 		// Or, it could be eclipse messing up with database tests.  Needs to be checked later.
 		analysisSubmissionService.setStateForAnalysisSubmission(submittedAnalysis.getId(),
 				submittedAnalysis.getAnalysisState());
-		logger.trace("Saving results " +  analysisName + ": " + submittedAnalysis.getRemoteAnalysisId());
+		logger.trace("Saving results for " +  submittedAnalysis);
 		return (A)analysisService.create(analysisResults);
 	}
 

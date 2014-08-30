@@ -182,4 +182,13 @@ public class AnalysisSubmission implements IridaThing {
 	public void setAnalysis(Analysis analysis) {
 		this.analysis = analysis;
 	}
+
+	@Override
+	public String toString() {
+		return "AnalysisSubmission [id=" + id + ", remoteAnalysisId="
+				+ remoteAnalysisId + ", inputFiles=" + inputFiles
+				+ ", createdDate=" + createdDate + ", modifiedDate="
+				+ modifiedDate + ", analysisState=" + analysisState
+				+ ", analysis=" + analysis + "]";
+	}
 }
