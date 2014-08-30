@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.security.core.Authentication;
 
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
@@ -34,8 +35,11 @@ public class IridaScheduledTasksConfig {
 
 	@Bean
 	public AnalysisExecutionScheduledTask analysisExecutionScheduledTask() {
+		// TODO How do I properly authenticate the scheduled tasks object.
+		Authentication scheduledTasksAuthentication = null;
+		
 		return new AnalysisExecutionScheduledTaskImpl(
 				analysisSubmissionService, analysisSubmissionRepository,
-				analysisExecutionServicePhylogenomics, null);
+				analysisExecutionServicePhylogenomics, scheduledTasksAuthentication);
 	}
 }
