@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,44 +63,41 @@ public class AnalysisExecutionScheduledTaskImpl implements
 	@Override
 	@Scheduled(initialDelay = 5000, fixedRate = 15000)
 	public void executeAnalyses() {
-		logger.debug("Looking for analyses with state "
-				+ AnalysisState.NEW);
+		logger.debug("Looking for analyses with state " + AnalysisState.NEW);
 
-		List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-				.findByAnalysisState(AnalysisState.NEW);
+		AnalysisSubmission analysisSubmission = analysisSubmissionRepository
+				.findOneByAnalysisState(AnalysisState.NEW);
 
-		for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
-			
-			String analysisSubmissionId = analysisSubmission
-					.getRemoteAnalysisId();
-			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
-					.getByType(analysisSubmissionId,
-							AnalysisSubmissionPhylogenomics.class);
+		logger.debug("Changing submission to state " + AnalysisState.PREPARING
+				+ ": " + analysisSubmission);
+		analysisSubmissionService.setStateForAnalysisSubmission(
+				analysisSubmission.getId(), AnalysisState.PREPARING);
 
-			try {
-				logger.debug("Changing submission to state " + AnalysisState.PREPARING + ": " + analysisSubmission);
-				analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getId(),
-						AnalysisState.PREPARING);
-				
-				analysisExecutionServicePhylogenomics
+		String analysisSubmissionId = analysisSubmission.getRemoteAnalysisId();
+		AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
+				.getByType(analysisSubmissionId,
+						AnalysisSubmissionPhylogenomics.class);
+
+		try {
+			analysisExecutionServicePhylogenomics
 					.prepareSubmission(analysisSubmissionPhylogenomics);
-				
-				logger.debug("Changing submission to state " + AnalysisState.SUBMITTING + ": " + analysisSubmission);
-				analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getId(),
-						AnalysisState.SUBMITTING);
-				
-				analysisExecutionServicePhylogenomics
-						.executeAnalysis(analysisSubmissionPhylogenomics);
-				
-				logger.debug("Changing submission to state " + AnalysisState.RUNNING + ": " + analysisSubmission);
-				analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getId(),
-						AnalysisState.RUNNING);
-			} catch (ExecutionManagerException e) {
-				logger.error(
-						"Could not execute analysis " + analysisSubmission, e);
-				analysisSubmissionService.setStateForAnalysisSubmission(
-						analysisSubmission.getId(), AnalysisState.ERROR);
-			}
+
+			logger.debug("Changing submission to state "
+					+ AnalysisState.SUBMITTING + ": " + analysisSubmission);
+			analysisSubmissionService.setStateForAnalysisSubmission(
+					analysisSubmission.getId(), AnalysisState.SUBMITTING);
+
+			analysisExecutionServicePhylogenomics
+					.executeAnalysis(analysisSubmissionPhylogenomics);
+
+			logger.debug("Changing submission to state "
+					+ AnalysisState.RUNNING + ": " + analysisSubmission);
+			analysisSubmissionService.setStateForAnalysisSubmission(
+					analysisSubmission.getId(), AnalysisState.RUNNING);
+		} catch (ExecutionManagerException e) {
+			logger.error("Could not execute analysis " + analysisSubmission, e);
+			analysisSubmissionService.setStateForAnalysisSubmission(
+					analysisSubmission.getId(), AnalysisState.ERROR);
 		}
 	}
 
@@ -113,69 +109,72 @@ public class AnalysisExecutionScheduledTaskImpl implements
 	public void transferAnalysesResults() {
 		logger.debug("Looking for analyses with state " + AnalysisState.RUNNING);
 
-		List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-				.findByAnalysisState(AnalysisState.RUNNING);
+		AnalysisSubmission analysisSubmission = analysisSubmissionRepository
+				.findOneByAnalysisState(AnalysisState.RUNNING);
 
-		for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
-			String analysisSubmissionId = analysisSubmission
-					.getRemoteAnalysisId();
-			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
-					.getByType(analysisSubmissionId,
-							AnalysisSubmissionPhylogenomics.class);
-			try {
-				WorkflowStatus workflowStatus = analysisExecutionServicePhylogenomics
-						.getWorkflowStatus(analysisSubmissionPhylogenomics);
-				WorkflowState workflowState = workflowStatus.getState();
+		String analysisSubmissionId = analysisSubmission.getRemoteAnalysisId();
+		AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
+				.getByType(analysisSubmissionId,
+						AnalysisSubmissionPhylogenomics.class);
+		try {
+			WorkflowStatus workflowStatus = analysisExecutionServicePhylogenomics
+					.getWorkflowStatus(analysisSubmissionPhylogenomics);
+			WorkflowState workflowState = workflowStatus.getState();
 
-				switch (workflowState) {
-					case OK:
-						logger.debug("Changing submission to state " + AnalysisState.FINISHED_RUNNING + ": " + analysisSubmission);
-						analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getId(),
-								AnalysisState.FINISHED_RUNNING);
-						analysisSubmissionPhylogenomics.setAnalysisState(AnalysisState.FINISHED_RUNNING);
+			switch (workflowState) {
+				case OK:
+					logger.debug("Changing submission to state "
+							+ AnalysisState.FINISHED_RUNNING + ": "
+							+ analysisSubmission);
+					analysisSubmissionService.setStateForAnalysisSubmission(
+							analysisSubmission.getId(),
+							AnalysisState.FINISHED_RUNNING);
+					analysisSubmissionPhylogenomics
+							.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 
-						Analysis analysisResults = analysisExecutionServicePhylogenomics
-								.transferAnalysisResults(analysisSubmissionPhylogenomics);
-						logger.debug("Transfered results for analysis submission "
-								+ analysisSubmissionPhylogenomics
-										.getRemoteAnalysisId()
-								+ " to analysis " + analysisResults.getId());
-						
-						logger.debug("Changing submission to state " + AnalysisState.COMPLETED + ": " + analysisSubmission);
-						analysisSubmissionService.setStateForAnalysisSubmission(analysisSubmission.getId(),
-								AnalysisState.COMPLETED);
-						break;
+					Analysis analysisResults = analysisExecutionServicePhylogenomics
+							.transferAnalysisResults(analysisSubmissionPhylogenomics);
+					logger.debug("Transfered results for analysis submission "
+							+ analysisSubmissionPhylogenomics
+									.getRemoteAnalysisId() + " to analysis "
+							+ analysisResults.getId());
 
-					case NEW:
-					case UPLOAD:
-					case WAITING:
-					case QUEUED:
-					case RUNNING:
-						logger.debug("Workflow for analysis "
-								+ analysisSubmission + " is running: percent "
-								+ workflowStatus.getPercentComplete());
-						break;
+					logger.debug("Changing submission to state "
+							+ AnalysisState.COMPLETED + ": "
+							+ analysisSubmission);
+					analysisSubmissionService
+							.setStateForAnalysisSubmission(
+									analysisSubmission.getId(),
+									AnalysisState.COMPLETED);
+					break;
 
-					default:
-						logger.error("Workflow for analysis "
-								+ analysisSubmission + " in error state");
-						analysisSubmissionService
-								.setStateForAnalysisSubmission(
-										analysisSubmission.getId(),
-										AnalysisState.ERROR);
-						break;
-				}
-			} catch (ExecutionManagerException e) {
-				logger.error("Could not get status for analysis "
-						+ analysisSubmission, e);
-				analysisSubmissionService.setStateForAnalysisSubmission(
-						analysisSubmission.getId(), AnalysisState.ERROR);
-			} catch (IOException e) {
-				logger.error("Could not transfer results for analysis "
-						+ analysisSubmission, e);
-				analysisSubmissionService.setStateForAnalysisSubmission(
-						analysisSubmission.getId(), AnalysisState.ERROR);
+				case NEW:
+				case UPLOAD:
+				case WAITING:
+				case QUEUED:
+				case RUNNING:
+					logger.debug("Workflow for analysis " + analysisSubmission
+							+ " is running: percent "
+							+ workflowStatus.getPercentComplete());
+					break;
+
+				default:
+					logger.error("Workflow for analysis " + analysisSubmission
+							+ " in error state");
+					analysisSubmissionService.setStateForAnalysisSubmission(
+							analysisSubmission.getId(), AnalysisState.ERROR);
+					break;
 			}
+		} catch (ExecutionManagerException e) {
+			logger.error("Could not get status for analysis "
+					+ analysisSubmission, e);
+			analysisSubmissionService.setStateForAnalysisSubmission(
+					analysisSubmission.getId(), AnalysisState.ERROR);
+		} catch (IOException e) {
+			logger.error("Could not transfer results for analysis "
+					+ analysisSubmission, e);
+			analysisSubmissionService.setStateForAnalysisSubmission(
+					analysisSubmission.getId(), AnalysisState.ERROR);
 		}
 	}
 }

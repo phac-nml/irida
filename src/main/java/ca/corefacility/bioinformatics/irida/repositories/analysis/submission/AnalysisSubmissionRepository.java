@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.repositories.analysis.submission;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.Query;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
@@ -24,10 +22,10 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	public <T extends AnalysisSubmission> T getByType(String analysisId, Class<T> analysisType);
 	
 	/**
-	 * Loads up a list of @{link AnalysisSubmission}s with the given state.
+	 * Loads up one @{link AnalysisSubmission} with the given state.
 	 * @param state  The state of the analyses to search for.
-	 * @return  A List of AnalysisSubmission objects with the given state.
+	 * @return  An AnalysisSubmission object with the given state.
 	 */
 	@Query("select s from AnalysisSubmission s where s.analysisState = ?1")
-	public List<AnalysisSubmission> findByAnalysisState(AnalysisState state);
+	public AnalysisSubmission findOneByAnalysisState(AnalysisState state);
 }
