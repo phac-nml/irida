@@ -14,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionSchedu
 
 /**
  * Config for only activating scheduled tasks in certain profiles.
+ * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
@@ -21,16 +22,16 @@ import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionSchedu
 @Configuration
 @EnableScheduling
 public class IridaScheduledTasksConfig {
-	
+
 	@Autowired
 	private AnalysisSubmissionService analysisSubmissionService;
-	
+
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
-	
+
 	@Autowired
 	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
-	
+
 	@Bean
 	public AnalysisExecutionScheduledTask analysisExecutionScheduledTask() {
 		return new AnalysisExecutionScheduledTaskImpl(

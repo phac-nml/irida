@@ -69,6 +69,9 @@ public abstract class AnalysisSubmissionGalaxy<R extends RemoteWorkflowGalaxy>
 		this.remoteWorkflow = remoteWorkflow;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return "AnalysisSubmissionGalaxy [remoteWorkflow=" + remoteWorkflow

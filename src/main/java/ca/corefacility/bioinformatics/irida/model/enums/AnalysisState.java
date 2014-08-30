@@ -12,12 +12,12 @@ import java.util.Map;
  *
  */
 public enum AnalysisState {
-	
+
 	/**
 	 * Occurs when an analysis is first entered for submission.
 	 */
 	NEW("NEW"),
-	
+
 	/**
 	 * Occurs when an analysis is starting to be submitted.
 	 */
@@ -27,7 +27,7 @@ public enum AnalysisState {
 	 * Occurs when an analysis is first submitted.
 	 */
 	SUBMITTING("SUBMITTED"),
-	
+
 	/**
 	 * An analysis that is running in the execution manager.
 	 */
@@ -47,10 +47,10 @@ public enum AnalysisState {
 	 * An analysis that was not successfully able to run.
 	 */
 	ERROR("ERROR");
-	
+
 	private static Map<String, AnalysisState> stateMap = new HashMap<>();
 	private String stateString;
-	
+
 	/**
 	 * Sets of a Map used to convert a string to a WorkflowState
 	 */
@@ -59,25 +59,31 @@ public enum AnalysisState {
 			stateMap.put(state.toString(), state);
 		}
 	}
-	
+
 	private AnalysisState(String stateString) {
 		this.stateString = stateString;
 	}
-	
+
 	/**
 	 * Given a string defining a state, converts this to a AnalysisState.
-	 * @param stateString  The string defining the state.
-	 * @return  A AnalysisState for the corresponding state.
+	 * 
+	 * @param stateString
+	 *            The string defining the state.
+	 * @return A AnalysisState for the corresponding state.
 	 */
 	public static AnalysisState fromString(String stateString) {
 		AnalysisState state = stateMap.get(stateString);
-		checkNotNull(state, "state for string \"" + stateString + "\" does not exist");
-		
+		checkNotNull(state, "state for string \"" + stateString
+				+ "\" does not exist");
+
 		return state;
 	}
-	
-    @Override
-    public String toString() {
-        return stateString;
-    }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return stateString;
+	}
 }

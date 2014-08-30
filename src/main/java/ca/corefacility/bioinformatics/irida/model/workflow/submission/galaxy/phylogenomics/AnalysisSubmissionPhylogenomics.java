@@ -65,6 +65,9 @@ public class AnalysisSubmissionPhylogenomics
 		return referenceFile;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return "AnalysisSubmissionPhylogenomics [referenceFile="

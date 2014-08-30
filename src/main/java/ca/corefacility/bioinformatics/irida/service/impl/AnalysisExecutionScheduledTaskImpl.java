@@ -85,8 +85,10 @@ public class AnalysisExecutionScheduledTaskImpl implements
 
 			setStateForSubmission(preparedSubmission, AnalysisState.RUNNING);
 		} catch (ExecutionManagerException e) {
-			logger.error("Could not execute analysis " + analysisSubmissionPhylogenomics, e);
-			setStateForSubmission(analysisSubmissionPhylogenomics, AnalysisState.ERROR);
+			logger.error("Could not execute analysis "
+					+ analysisSubmissionPhylogenomics, e);
+			setStateForSubmission(analysisSubmissionPhylogenomics,
+					AnalysisState.ERROR);
 		}
 	}
 
@@ -131,13 +133,15 @@ public class AnalysisExecutionScheduledTaskImpl implements
 				case WAITING:
 				case QUEUED:
 				case RUNNING:
-					logger.debug("Workflow for analysis " + analysisSubmissionPhylogenomics
+					logger.debug("Workflow for analysis "
+							+ analysisSubmissionPhylogenomics
 							+ " is running: percent "
 							+ workflowStatus.getPercentComplete());
 					break;
 
 				default:
-					logger.error("Workflow for analysis " + analysisSubmissionPhylogenomics
+					logger.error("Workflow for analysis "
+							+ analysisSubmissionPhylogenomics
 							+ " in error state " + workflowStatus);
 					setStateForSubmission(analysisSubmissionPhylogenomics,
 							AnalysisState.ERROR);
@@ -146,11 +150,13 @@ public class AnalysisExecutionScheduledTaskImpl implements
 		} catch (ExecutionManagerException e) {
 			logger.error("Could not get status for analysis "
 					+ analysisSubmissionPhylogenomics, e);
-			setStateForSubmission(analysisSubmissionPhylogenomics, AnalysisState.ERROR);
+			setStateForSubmission(analysisSubmissionPhylogenomics,
+					AnalysisState.ERROR);
 		} catch (IOException e) {
 			logger.error("Could not transfer results for analysis "
 					+ analysisSubmissionPhylogenomics, e);
-			setStateForSubmission(analysisSubmissionPhylogenomics, AnalysisState.ERROR);
+			setStateForSubmission(analysisSubmissionPhylogenomics,
+					AnalysisState.ERROR);
 		}
 	}
 

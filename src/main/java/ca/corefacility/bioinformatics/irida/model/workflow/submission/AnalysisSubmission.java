@@ -183,6 +183,9 @@ public class AnalysisSubmission implements IridaThing {
 		this.analysis = analysis;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return "AnalysisSubmission [id=" + id + ", remoteAnalysisId="
