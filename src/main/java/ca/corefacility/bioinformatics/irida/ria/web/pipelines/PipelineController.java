@@ -54,6 +54,8 @@ public class PipelineController extends BaseController {
 	// URI's
 	public static final String URI_LIST_PIPELINES = "/ajax/list.json";
 	public static final String URI_AJAX_START_PIPELINE = "/ajax/start.json";
+
+	// JSON KEYS
 	public static final String JSON_KEY_SAMPLE_ID = "id";
 	public static final String JSON_KEY_SAMPLE_OMIT_FILES_LIST = "omit";
 

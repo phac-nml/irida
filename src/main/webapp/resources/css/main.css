@@ -308,7 +308,11 @@ main.col-md-9 h1 {
 }
 
 /* line 19, ../../styles/main.scss */
-#map {
-  width: 100%;
-  height: 200px;
+.clickable {
+  display: block;
+  cursor: pointer;
+}
+/* line 22, ../../styles/main.scss */
+.clickable span {
+  display: inline-block;
 }
