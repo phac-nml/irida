@@ -189,9 +189,8 @@ public class AnalysisSubmission implements IridaThing {
 	@Override
 	public String toString() {
 		return "AnalysisSubmission [id=" + id + ", remoteAnalysisId="
-				+ remoteAnalysisId + ", inputFiles=" + inputFiles
-				+ ", createdDate=" + createdDate + ", modifiedDate="
-				+ modifiedDate + ", analysisState=" + analysisState
-				+ ", analysis=" + analysis + "]";
+				+ remoteAnalysisId + ", createdDate=" + createdDate
+				+ ", modifiedDate=" + modifiedDate + ", analysisState="
+				+ analysisState + ", analysis=" + analysis + "]";
 	}
 }
