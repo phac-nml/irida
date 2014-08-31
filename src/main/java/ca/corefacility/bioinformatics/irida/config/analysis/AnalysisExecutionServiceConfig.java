@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.ph
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
+import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 
@@ -88,13 +89,21 @@ public class AnalysisExecutionServiceConfig {
 	public WorkflowsClient workflowsClient() {
 		return galaxyInstance().getWorkflowsClient();
 	}
+	
+	/**
+	 * @return  A LibrariesClient for interacting with Galaxy.
+	 */
+	@Lazy @Bean
+	public LibrariesClient librariesClient() {
+		return galaxyInstance().getLibrariesClient();
+	}
 
 	/**
 	 * @return  A GalaxyHistoriesService for interacting with Galaxy histories.
 	 */
 	@Lazy @Bean
 	public GalaxyHistoriesService galaxyHistoriesService() {
-		return new GalaxyHistoriesService(historiesClient(), toolsClient());
+		return new GalaxyHistoriesService(historiesClient(), toolsClient(), librariesClient());
 	}
 	
 	/**

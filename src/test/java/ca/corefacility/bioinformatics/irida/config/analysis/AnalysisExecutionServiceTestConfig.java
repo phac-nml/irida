@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
+import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 
@@ -90,7 +91,8 @@ public class AnalysisExecutionServiceTestConfig {
 				.getGalaxyInstanceWorkflowUser().getHistoriesClient();
 		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser()
 				.getToolsClient();
-		return new GalaxyHistoriesService(historiesClient, toolsClient);
+		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
+		return new GalaxyHistoriesService(historiesClient, toolsClient, librariesClient);
 	}
 
 	@Lazy

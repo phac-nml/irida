@@ -30,16 +30,22 @@ import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.ExecutionManagerSearch;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
+import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient.FileUploadRequest;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
+import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
+import com.github.jmchilton.blend4j.galaxy.beans.GalaxyObject;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset.Source;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
+import com.github.jmchilton.blend4j.galaxy.beans.Library;
+import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
@@ -59,6 +65,7 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 			.getLogger(GalaxyHistoriesService.class);
 
 	private HistoriesClient historiesClient;
+	private LibrariesClient librariesClient;
 	private ToolsClient toolsClient;
 	
 	private static final String FORWARD_PAIR_NAME = "forward";
@@ -72,14 +79,17 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	 * Builds a new GalaxyHistory object for working with Galaxy Histories.
 	 * @param historiesClient  The HistoriesClient for interacting with Galaxy histories.
 	 * @param toolsClient  The ToolsClient for interacting with tools in Galaxy.
+	 * @param librariesClient  The LibrariesClient for interacting with libraries in Galaxy.
 	 */
 	public GalaxyHistoriesService(HistoriesClient historiesClient,
-			ToolsClient toolsClient) {
+			ToolsClient toolsClient, LibrariesClient librariesClient) {
 		checkNotNull(historiesClient, "historiesClient is null");
 		checkNotNull(toolsClient, "toolsClient is null");
+		checkNotNull(librariesClient, "librariesClient is null");
 		
 		this.historiesClient = historiesClient;
 		this.toolsClient = toolsClient;
+		this.librariesClient = librariesClient;
 	}
 	
 	/**
@@ -208,6 +218,69 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 			throw new UploadException(message);
 		} else {
 			return getDatasetForFileInHistory(file.getName(), history.getId());
+		}
+	}
+	
+	/**
+	 * Uploads a file to a given history through the given library.
+	 * @param path  The path to the file to upload.
+	 * @param fileType The file type of the file to upload.
+	 * @param history  The history to upload the file into.
+	 * @param library  The library to initially upload the file into.
+	 * @param dataStorage  The type of DataStorage strategy to use.
+	 * @return An id for a dataset object in this history.
+	 * @throws UploadException  If there was an issue uploading the file to Galaxy.
+	 * @throws GalaxyDatasetException  If there was an issue finding the corresponding Dataset for the file
+	 * 	in the history.
+	 */
+	public String fileToLibraryToHistory(Path path, InputFileType fileType, History history, Library library,
+			DataStorage dataStorage) throws UploadException, GalaxyDatasetException {
+		checkNotNull(path, "path is null");
+		checkNotNull(fileType, "fileType is null");
+		checkNotNull(history, "history is null");
+		checkNotNull(history.getId(), "history id is null");
+		checkNotNull(library, "library is null");
+		checkNotNull(library.getId(), "library id is null");
+		checkState(path.toFile().exists(), "path " + path + " does not exist");
+		
+		File file = path.toFile();
+		
+		try {
+			// to library
+			LibraryContent rootContent = librariesClient.getRootFolder(library
+					.getId());
+			FilesystemPathsLibraryUpload upload = new FilesystemPathsLibraryUpload();
+			upload.setFolderId(rootContent.getId());
+	
+			upload.setContent(file.getAbsolutePath());
+			upload.setName(file.getName());
+			upload.setLinkData(DataStorage.LOCAL.equals(dataStorage));
+			upload.setFileType(fileType.toString());
+	
+			GalaxyObject uploadObject = 
+					librariesClient.uploadFilesystemPaths(library.getId(), upload);
+			
+			if (uploadObject == null) {
+				throw new UploadException("Could not upload " + file + " to library " + library.getId() +
+						" upload object is null");
+			} else {
+				// dataset from library upload
+				HistoryDataset historyDataset = new HistoryDataset();
+				historyDataset.setSource(Source.LIBRARY);
+				historyDataset.setContent(uploadObject.getId());
+				HistoryDetails historyDetails = historiesClient.createHistoryDataset(
+						history.getId(), historyDataset);
+		
+				if (historyDetails == null) {
+					throw new UploadException("Could not transfer " + file + " from library " + library.getId() + 
+							" to history " + history.getId() +
+							" historyDetails is null");
+				} else {
+					return historyDetails.getId();
+				}
+			}
+		} catch (RuntimeException e) {
+			throw new UploadException(e);
 		}
 	}
 	
