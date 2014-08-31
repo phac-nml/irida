@@ -78,30 +78,33 @@ public class AnalysisExecutionScheduledTaskImpl implements
 		AnalysisSubmission analysisSubmission = analysisSubmissionRepository
 				.findOneByAnalysisState(AnalysisState.NEW);
 
-		setStateForSubmission(analysisSubmission, AnalysisState.PREPARING);
+		if (analysisSubmission != null) {
+			setStateForSubmission(analysisSubmission, AnalysisState.PREPARING);
 
-		AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
-				.getByType(analysisSubmission.getId(),
-						AnalysisSubmissionPhylogenomics.class);
+			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
+					.getByType(analysisSubmission.getId(),
+							AnalysisSubmissionPhylogenomics.class);
 
-		try {
-			AnalysisSubmissionPhylogenomics preparedSubmission = analysisExecutionServicePhylogenomics
-					.prepareSubmission(analysisSubmissionPhylogenomics);
+			try {
+				AnalysisSubmissionPhylogenomics preparedSubmission = analysisExecutionServicePhylogenomics
+						.prepareSubmission(analysisSubmissionPhylogenomics);
 
-			setStateForSubmission(preparedSubmission, AnalysisState.SUBMITTING);
+				setStateForSubmission(preparedSubmission,
+						AnalysisState.SUBMITTING);
 
-			analysisExecutionServicePhylogenomics
-					.executeAnalysis(preparedSubmission);
+				analysisExecutionServicePhylogenomics
+						.executeAnalysis(preparedSubmission);
 
-			setStateForSubmission(preparedSubmission, AnalysisState.RUNNING);
-		} catch (ExecutionManagerException e) {
-			logger.error("Could not execute analysis "
-					+ analysisSubmissionPhylogenomics, e);
-			setStateForSubmission(analysisSubmissionPhylogenomics,
-					AnalysisState.ERROR);
-		} finally {
-			// Should this be cleared?
-			//SecurityContextHolder.clearContext();
+				setStateForSubmission(preparedSubmission, AnalysisState.RUNNING);
+			} catch (ExecutionManagerException e) {
+				logger.error("Could not execute analysis "
+						+ analysisSubmissionPhylogenomics, e);
+				setStateForSubmission(analysisSubmissionPhylogenomics,
+						AnalysisState.ERROR);
+			} finally {
+				// Should this be cleared?
+				// SecurityContextHolder.clearContext();
+			}
 		}
 	}
 
@@ -118,62 +121,83 @@ public class AnalysisExecutionScheduledTaskImpl implements
 		AnalysisSubmission analysisSubmission = analysisSubmissionRepository
 				.findOneByAnalysisState(AnalysisState.RUNNING);
 
-		AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
-				.getByType(analysisSubmission.getId(),
-						AnalysisSubmissionPhylogenomics.class);
-		try {
-			WorkflowStatus workflowStatus = analysisExecutionServicePhylogenomics
-					.getWorkflowStatus(analysisSubmissionPhylogenomics);
-			WorkflowState workflowState = workflowStatus.getState();
+		if (analysisSubmission != null) {
+			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
+					.getByType(analysisSubmission.getId(),
+							AnalysisSubmissionPhylogenomics.class);
+			try {
+				WorkflowStatus workflowStatus = analysisExecutionServicePhylogenomics
+						.getWorkflowStatus(analysisSubmissionPhylogenomics);
 
-			switch (workflowState) {
-				case OK:
-					setStateForSubmission(analysisSubmissionPhylogenomics,
-							AnalysisState.FINISHED_RUNNING);
+				handleWorkflowStatus(workflowStatus,
+						analysisSubmissionPhylogenomics);
 
-					Analysis analysisResults = analysisExecutionServicePhylogenomics
-							.transferAnalysisResults(analysisSubmissionPhylogenomics);
-
-					logger.debug("Transfered results for analysis submission "
-							+ analysisSubmissionPhylogenomics
-									.getRemoteAnalysisId() + " to analysis "
-							+ analysisResults.getId());
-
-					setStateForSubmission(analysisSubmissionPhylogenomics,
-							AnalysisState.COMPLETED);
-					break;
-
-				case NEW:
-				case UPLOAD:
-				case WAITING:
-				case QUEUED:
-				case RUNNING:
-					logger.debug("Workflow for analysis "
-							+ analysisSubmissionPhylogenomics
-							+ " is running: percent "
-							+ workflowStatus.getPercentComplete());
-					break;
-
-				default:
-					logger.error("Workflow for analysis "
-							+ analysisSubmissionPhylogenomics
-							+ " in error state " + workflowStatus);
-					setStateForSubmission(analysisSubmissionPhylogenomics,
-							AnalysisState.ERROR);
-					break;
+			} catch (ExecutionManagerException e) {
+				logger.error("Could not get status for analysis "
+						+ analysisSubmissionPhylogenomics, e);
+				setStateForSubmission(analysisSubmissionPhylogenomics,
+						AnalysisState.ERROR);
+			} catch (IOException e) {
+				logger.error("Could not transfer results for analysis "
+						+ analysisSubmissionPhylogenomics, e);
+				setStateForSubmission(analysisSubmissionPhylogenomics,
+						AnalysisState.ERROR);
+			} finally {
+				// SecurityContextHolder.clearContext();
 			}
-		} catch (ExecutionManagerException e) {
-			logger.error("Could not get status for analysis "
-					+ analysisSubmissionPhylogenomics, e);
-			setStateForSubmission(analysisSubmissionPhylogenomics,
-					AnalysisState.ERROR);
-		} catch (IOException e) {
-			logger.error("Could not transfer results for analysis "
-					+ analysisSubmissionPhylogenomics, e);
-			setStateForSubmission(analysisSubmissionPhylogenomics,
-					AnalysisState.ERROR);
-		} finally {
-			//SecurityContextHolder.clearContext();
+		}
+	}
+
+	/**
+	 * Handles checking the status of a workflow in an execution manager.
+	 * 
+	 * @param workflowStatus
+	 *            The status of the workflow.
+	 * @param analysisSubmissionPhylogenomics
+	 *            The analysis submission.
+	 * @throws ExecutionManagerException
+	 *             If there was an issue in the execution manager.
+	 * @throws IOException
+	 *             If there was an issue saving the results on an analysis.
+	 */
+	private void handleWorkflowStatus(WorkflowStatus workflowStatus,
+			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics)
+			throws ExecutionManagerException, IOException {
+		WorkflowState workflowState = workflowStatus.getState();
+		switch (workflowState) {
+			case OK:
+				setStateForSubmission(analysisSubmissionPhylogenomics,
+						AnalysisState.FINISHED_RUNNING);
+
+				Analysis analysisResults = analysisExecutionServicePhylogenomics
+						.transferAnalysisResults(analysisSubmissionPhylogenomics);
+
+				logger.debug("Transfered results for analysis submission "
+						+ analysisSubmissionPhylogenomics.getRemoteAnalysisId()
+						+ " to analysis " + analysisResults.getId());
+
+				setStateForSubmission(analysisSubmissionPhylogenomics,
+						AnalysisState.COMPLETED);
+				break;
+
+			case NEW:
+			case UPLOAD:
+			case WAITING:
+			case QUEUED:
+			case RUNNING:
+				logger.debug("Workflow for analysis "
+						+ analysisSubmissionPhylogenomics
+						+ " is running: percent "
+						+ workflowStatus.getPercentComplete());
+				break;
+
+			default:
+				logger.error("Workflow for analysis "
+						+ analysisSubmissionPhylogenomics + " in error state "
+						+ workflowStatus);
+				setStateForSubmission(analysisSubmissionPhylogenomics,
+						AnalysisState.ERROR);
+				break;
 		}
 	}
 

@@ -116,6 +116,27 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.RUNNING);
 	}
+	
+	/**
+	 * Tests no analyses to submit.
+	 * 
+	 * @throws ExecutionManagerException
+	 */
+	@Test
+	public void testExecuteAnalysesNoAnalyses() throws ExecutionManagerException {
+
+		when(
+				analysisSubmissionRepository
+						.findOneByAnalysisState(AnalysisState.NEW)).thenReturn(
+				null);
+
+		analysisExecutionScheduledTask.executeAnalyses();
+
+		verify(analysisSubmissionRepository).findOneByAnalysisState(
+				AnalysisState.NEW);
+		verify(analysisExecutionServicePhylogenomics,never()).prepareSubmission(
+				analysisSubmission);
+	}
 
 	/**
 	 * Tests preparing an analysis and receiving an error exception. state.
@@ -226,6 +247,26 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				analysisSubmission);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.COMPLETED);
+	}
+	
+	/**
+	 * Tests no analysis results to check if they can be transferred.
+	 * 
+	 * @throws ExecutionManagerException
+	 * @throws IOException
+	 */
+	@Test
+	public void testTransferAnalysesResultsNoAnalyses()
+			throws ExecutionManagerException, IOException {
+		when(
+				analysisSubmissionRepository
+						.findOneByAnalysisState(AnalysisState.RUNNING))
+				.thenReturn(null);
+
+		analysisExecutionScheduledTask.transferAnalysesResults();
+
+		verify(analysisSubmissionRepository).findOneByAnalysisState(
+				AnalysisState.RUNNING);
 	}
 
 	/**
