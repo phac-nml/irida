@@ -28,10 +28,12 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
@@ -40,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.ph
 
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
+import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
@@ -70,6 +73,7 @@ public class WorkspaceServicePhylogenomicsTest {
 	private WorkflowDetails workflowDetails;
 		
 	private History workflowHistory;
+	private Library workflowLibrary;
 	
 	private static final String HISTORY_ID = "10";
 	private static final String WORKFLOW_ID = "11";
@@ -150,6 +154,9 @@ public class WorkspaceServicePhylogenomicsTest {
 		workflowHistory = new History();
 		workflowHistory.setId(HISTORY_ID);
 		
+		workflowLibrary = new Library();
+		workflowLibrary.setId("1");
+		
 		collectionResponse = new CollectionResponse();
 		collectionResponse.setId("1");
 		
@@ -199,13 +206,14 @@ public class WorkspaceServicePhylogenomicsTest {
 	public void testPrepareAnalysisFilesSuccess() throws ExecutionManagerException {
 		submission.setRemoteAnalysisId(HISTORY_ID);
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
+		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 		
-		when(galaxyHistoriesService.fileToHistory(sFileA.getFile(), InputFileType.FASTQ_SANGER,
-				workflowHistory)).thenReturn(datasetA);
-		when(galaxyHistoriesService.fileToHistory(sFileB.getFile(), InputFileType.FASTQ_SANGER,
-				workflowHistory)).thenReturn(datasetB);
-		when(galaxyHistoriesService.fileToHistory(sFileC.getFile(), InputFileType.FASTQ_SANGER,
-				workflowHistory)).thenReturn(datasetC);
+		when(galaxyHistoriesService.fileToLibraryToHistory(sFileA.getFile(), InputFileType.FASTQ_SANGER,
+				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenReturn(datasetA.getId());
+		when(galaxyHistoriesService.fileToLibraryToHistory(sFileB.getFile(), InputFileType.FASTQ_SANGER,
+				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenReturn(datasetB.getId());
+		when(galaxyHistoriesService.fileToLibraryToHistory(sFileC.getFile(), InputFileType.FASTQ_SANGER,
+				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenReturn(datasetC.getId());
 		
 		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileA))
 				.thenReturn(sampleAJoin);
@@ -238,13 +246,16 @@ public class WorkspaceServicePhylogenomicsTest {
 	public void testPrepareAnalysisFilesFail() throws ExecutionManagerException {
 		submission.setRemoteAnalysisId(HISTORY_ID);
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
+		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 		
-		when(galaxyHistoriesService.fileToHistory(sFileA.getFile(), InputFileType.FASTQ_SANGER,
-				workflowHistory)).thenThrow(new UploadException());
-		when(galaxyHistoriesService.fileToHistory(sFileB.getFile(), InputFileType.FASTQ_SANGER,
-				workflowHistory)).thenReturn(datasetB);
-		when(galaxyHistoriesService.fileToHistory(sFileC.getFile(), InputFileType.FASTQ_SANGER,
-				workflowHistory)).thenReturn(datasetC);
+		when(galaxyHistoriesService.fileToLibraryToHistory(sFileB.getFile(), InputFileType.FASTQ_SANGER,
+				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenReturn(datasetB.getId());
+		when(galaxyHistoriesService.fileToLibraryToHistory(sFileA.getFile(), InputFileType.FASTQ_SANGER,
+				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenThrow(new UploadException());
+		when(galaxyHistoriesService.fileToLibraryToHistory(sFileB.getFile(), InputFileType.FASTQ_SANGER,
+				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenReturn(datasetB.getId());
+		when(galaxyHistoriesService.fileToLibraryToHistory(sFileC.getFile(), InputFileType.FASTQ_SANGER,
+				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenReturn(datasetC.getId());
 
 		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileA))
 				.thenReturn(sampleAJoin);
@@ -264,13 +275,14 @@ public class WorkspaceServicePhylogenomicsTest {
 	public void testPrepareAnalysisWorkspaceFilesDuplicateSamples() throws ExecutionManagerException {
 		submission.setRemoteAnalysisId(HISTORY_ID);
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
+		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 		
-		when(galaxyHistoriesService.fileToHistory(sFileA.getFile(), InputFileType.FASTQ_SANGER,
-				workflowHistory)).thenReturn(datasetA);
-		when(galaxyHistoriesService.fileToHistory(sFileB.getFile(), InputFileType.FASTQ_SANGER,
-				workflowHistory)).thenReturn(datasetB);
-		when(galaxyHistoriesService.fileToHistory(sFileC.getFile(), InputFileType.FASTQ_SANGER,
-				workflowHistory)).thenReturn(datasetC);
+		when(galaxyHistoriesService.fileToLibraryToHistory(sFileA.getFile(), InputFileType.FASTQ_SANGER,
+				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenReturn(datasetA.getId());
+		when(galaxyHistoriesService.fileToLibraryToHistory(sFileB.getFile(), InputFileType.FASTQ_SANGER,
+				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenReturn(datasetB.getId());
+		when(galaxyHistoriesService.fileToLibraryToHistory(sFileC.getFile(), InputFileType.FASTQ_SANGER,
+				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenReturn(datasetC.getId());
 
 		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileA))
 				.thenReturn(sampleAJoin);
