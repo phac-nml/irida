@@ -152,8 +152,13 @@ public abstract class AnalysisExecutionServiceGalaxy
 		// Or, it could be eclipse messing up with database tests.  Needs to be checked later.
 		analysisSubmissionService.setStateForAnalysisSubmission(submittedAnalysis.getId(),
 				submittedAnalysis.getAnalysisState());
+		
 		logger.trace("Saving results for " +  submittedAnalysis);
-		return (A)analysisService.create(analysisResults);
+		A savedAnalysis = (A)analysisService.create(analysisResults);
+		
+		analysisSubmissionService.update(submittedAnalysis.getId(), ImmutableMap.of("analysis", savedAnalysis));
+		
+		return savedAnalysis;
 	}
 
 	/**

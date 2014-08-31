@@ -306,11 +306,22 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		assertTrue("snpTable should be correct",
 				com.google.common.io.Files.equal(expectedSnpTable.toFile(),
 						snpTable.getFile().toFile()));
-		
-		Analysis savedAnalysis = analysisService.read(analysisResults.getId());
-		assertTrue(savedAnalysis instanceof AnalysisPhylogenomicsPipeline);
-		AnalysisPhylogenomicsPipeline savedPhylogenomics = (AnalysisPhylogenomicsPipeline)savedAnalysis;
-		
+
+		AnalysisSubmissionPhylogenomics finalSubmission = analysisSubmissionRepository
+				.getByType(analysisExecuted.getId(),
+						AnalysisSubmissionPhylogenomics.class);
+		Analysis analysis = finalSubmission.getAnalysis();
+		assertNotNull(analysis);
+
+		Analysis savedAnalysisFromDatabase = analysisService
+				.read(analysisResults.getId());
+		assertTrue(savedAnalysisFromDatabase instanceof AnalysisPhylogenomicsPipeline);
+		AnalysisPhylogenomicsPipeline savedPhylogenomics = (AnalysisPhylogenomicsPipeline) savedAnalysisFromDatabase;
+
+		assertEquals(
+				"Analysis from submission and from database should be the same",
+				savedAnalysisFromDatabase.getId(), analysis.getId());
+
 		assertEquals(analysisResults.getId(), savedPhylogenomics.getId());
 		assertEquals(analysisResults.getPhylogeneticTree().getFile(), savedPhylogenomics.getPhylogeneticTree().getFile());
 		assertEquals(analysisResults.getSnpMatrix().getFile(), savedPhylogenomics.getSnpMatrix().getFile());
