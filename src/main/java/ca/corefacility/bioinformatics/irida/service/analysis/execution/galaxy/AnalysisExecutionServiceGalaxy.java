@@ -154,9 +154,9 @@ public abstract class AnalysisExecutionServiceGalaxy
 				submittedAnalysis.getAnalysisState());
 		
 		logger.trace("Saving results for " +  submittedAnalysis);
-		A savedAnalysis = (A)analysisService.create(analysisResults);
-		
-		analysisSubmissionService.update(submittedAnalysis.getId(), ImmutableMap.of("analysis", savedAnalysis));
+		A savedAnalysis = (A) analysisService.create(analysisResults);
+		analysisSubmissionService.update(submittedAnalysis.getId(),
+				ImmutableMap.of("analysis", savedAnalysis));
 		
 		return savedAnalysis;
 	}
