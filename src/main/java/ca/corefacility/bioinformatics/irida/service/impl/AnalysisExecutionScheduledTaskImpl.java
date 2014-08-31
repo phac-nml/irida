@@ -81,7 +81,7 @@ public class AnalysisExecutionScheduledTaskImpl implements
 
 		if (analysisSubmissions.size() > 0) {
 			AnalysisSubmission analysisSubmission = analysisSubmissions.get(0);
-			
+
 			setStateForSubmission(analysisSubmission, AnalysisState.PREPARING);
 
 			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
@@ -102,6 +102,10 @@ public class AnalysisExecutionScheduledTaskImpl implements
 			} catch (ExecutionManagerException e) {
 				logger.error("Could not execute analysis "
 						+ analysisSubmissionPhylogenomics, e);
+				setStateForSubmission(analysisSubmissionPhylogenomics,
+						AnalysisState.ERROR);
+			} catch (Exception e) {
+				logger.error("Error for analysis", e);
 				setStateForSubmission(analysisSubmissionPhylogenomics,
 						AnalysisState.ERROR);
 			} finally {
@@ -126,7 +130,7 @@ public class AnalysisExecutionScheduledTaskImpl implements
 
 		if (analysisSubmissions.size() > 0) {
 			AnalysisSubmission analysisSubmission = analysisSubmissions.get(0);
-			
+
 			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
 					.getByType(analysisSubmission.getId(),
 							AnalysisSubmissionPhylogenomics.class);
@@ -145,6 +149,10 @@ public class AnalysisExecutionScheduledTaskImpl implements
 			} catch (IOException e) {
 				logger.error("Could not transfer results for analysis "
 						+ analysisSubmissionPhylogenomics, e);
+				setStateForSubmission(analysisSubmissionPhylogenomics,
+						AnalysisState.ERROR);
+			} catch (Exception e) {
+				logger.error("Error for analysis", e);
 				setStateForSubmission(analysisSubmissionPhylogenomics,
 						AnalysisState.ERROR);
 			} finally {

@@ -177,6 +177,40 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
+	 * Tests preparing an analysis and receiving an some random error exception.
+	 * 
+	 * @throws ExecutionManagerException
+	 */
+	@Test
+	public void testExecuteAnalysesPrepareOtherException()
+			throws ExecutionManagerException {
+		analysisSubmission.setAnalysisState(AnalysisState.NEW);
+
+		when(
+				analysisSubmissionRepository
+						.findByAnalysisState(AnalysisState.NEW)).thenReturn(
+				Arrays.asList(analysisSubmission));
+
+		when(
+				analysisExecutionServicePhylogenomics
+						.prepareSubmission(analysisSubmission)).thenThrow(
+				new RuntimeException());
+
+		analysisExecutionScheduledTask.executeAnalyses();
+
+		verify(analysisSubmissionRepository).findByAnalysisState(
+				AnalysisState.NEW);
+		verify(analysisSubmissionService).setStateForAnalysisSubmission(
+				INTERNAL_ID, AnalysisState.PREPARING);
+		verify(analysisExecutionServicePhylogenomics).prepareSubmission(
+				analysisSubmission);
+		verify(analysisExecutionServicePhylogenomics, never()).executeAnalysis(
+				analysisSubmission);
+		verify(analysisSubmissionService).setStateForAnalysisSubmission(
+				INTERNAL_ID, AnalysisState.ERROR);
+	}
+
+	/**
 	 * Tests executing submitted analyses and moving it to an error state.
 	 * 
 	 * @throws ExecutionManagerException
@@ -380,6 +414,37 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				INTERNAL_ID, AnalysisState.FINISHED_RUNNING);
 		verify(analysisExecutionServicePhylogenomics).transferAnalysisResults(
 				analysisSubmission);
+		verify(analysisSubmissionService).setStateForAnalysisSubmission(
+				INTERNAL_ID, AnalysisState.ERROR);
+	}
+
+	/**
+	 * Tests placing analysis results in an error state due to an a generic
+	 * exception.
+	 * 
+	 * @throws ExecutionManagerException
+	 * @throws IOException
+	 */
+	@Test
+	public void testTransferAnalysesOtherException()
+			throws ExecutionManagerException, IOException {
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
+
+		when(
+				analysisSubmissionRepository
+						.findByAnalysisState(AnalysisState.RUNNING))
+				.thenReturn(Arrays.asList(analysisSubmission));
+		when(
+				analysisExecutionServicePhylogenomics
+						.transferAnalysisResults(analysisSubmission))
+				.thenThrow(new RuntimeException());
+
+		analysisExecutionScheduledTask.transferAnalysesResults();
+
+		verify(analysisSubmissionRepository).findByAnalysisState(
+				AnalysisState.RUNNING);
+		verify(analysisExecutionServicePhylogenomics, never())
+				.transferAnalysisResults(analysisSubmission);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.ERROR);
 	}
