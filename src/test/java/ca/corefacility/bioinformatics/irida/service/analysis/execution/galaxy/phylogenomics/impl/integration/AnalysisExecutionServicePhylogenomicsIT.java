@@ -149,7 +149,8 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
 		
 		AnalysisSubmissionPhylogenomics analysisSubmission = 
-				analysisExecutionGalaxyITService.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
+				analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+						sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisSubmissionPhylogenomics analysisSubmitted = 
@@ -185,7 +186,8 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
 		
 		AnalysisSubmissionPhylogenomics analysisSubmission 
-			= analysisExecutionGalaxyITService.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
+			= analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+					sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisSubmissionPhylogenomics analysisSubmitted = 
@@ -207,7 +209,8 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
 		
 		AnalysisSubmissionPhylogenomics analysisSubmission = 
-				analysisExecutionGalaxyITService.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
+				analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+						sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisSubmissionPhylogenomics analysisSubmitted = 
@@ -227,7 +230,8 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				remoteWorkflowServicePhylogenomicsInvalidId.getCurrentWorkflow();
 		
 		AnalysisSubmissionPhylogenomics analysisSubmission = 
-				analysisExecutionGalaxyITService.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
+				analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+						sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		analysisExecutionServicePhylogenomics.prepareSubmission(analysisSubmission);
@@ -244,7 +248,8 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				remoteWorkflowServicePhylogenomicsInvalidChecksum.getCurrentWorkflow();
 		
 		AnalysisSubmissionPhylogenomics analysisSubmission = 
-				analysisExecutionGalaxyITService.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
+				analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+						sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		analysisExecutionServicePhylogenomics.prepareSubmission(analysisSubmission);
@@ -261,7 +266,8 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
 		
 		AnalysisSubmissionPhylogenomics analysisSubmission = 
-				analysisExecutionGalaxyITService.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
+				analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+						sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisSubmissionPhylogenomics analysisSubmitted = analysisExecutionServicePhylogenomics
@@ -323,7 +329,8 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 				remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
 		
 		AnalysisSubmissionPhylogenomics analysisSubmission = 
-				analysisExecutionGalaxyITService.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
+				analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+						sequenceFilePath, referenceFilePath, remoteWorkflowUnsaved);
 		
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisSubmissionPhylogenomics analysisSubmitted = analysisExecutionServicePhylogenomics

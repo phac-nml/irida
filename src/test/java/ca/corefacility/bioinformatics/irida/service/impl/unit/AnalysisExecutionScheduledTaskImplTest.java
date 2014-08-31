@@ -5,6 +5,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 
 import org.junit.Before;
@@ -20,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
@@ -93,8 +96,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		when(
 				analysisSubmissionRepository
-						.findOneByAnalysisState(AnalysisState.NEW)).thenReturn(
-				analysisSubmission);
+						.findByAnalysisState(AnalysisState.NEW)).thenReturn(
+				Arrays.asList(analysisSubmission));
 
 		when(
 				analysisExecutionServicePhylogenomics
@@ -103,7 +106,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask.executeAnalyses();
 
-		verify(analysisSubmissionRepository).findOneByAnalysisState(
+		verify(analysisSubmissionRepository).findByAnalysisState(
 				AnalysisState.NEW);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.PREPARING);
@@ -116,26 +119,27 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.RUNNING);
 	}
-	
+
 	/**
 	 * Tests no analyses to submit.
 	 * 
 	 * @throws ExecutionManagerException
 	 */
 	@Test
-	public void testExecuteAnalysesNoAnalyses() throws ExecutionManagerException {
+	public void testExecuteAnalysesNoAnalyses()
+			throws ExecutionManagerException {
 
 		when(
 				analysisSubmissionRepository
-						.findOneByAnalysisState(AnalysisState.NEW)).thenReturn(
-				null);
+						.findByAnalysisState(AnalysisState.NEW)).thenReturn(
+				new ArrayList<AnalysisSubmission>());
 
 		analysisExecutionScheduledTask.executeAnalyses();
 
-		verify(analysisSubmissionRepository).findOneByAnalysisState(
+		verify(analysisSubmissionRepository).findByAnalysisState(
 				AnalysisState.NEW);
-		verify(analysisExecutionServicePhylogenomics,never()).prepareSubmission(
-				analysisSubmission);
+		verify(analysisExecutionServicePhylogenomics, never())
+				.prepareSubmission(analysisSubmission);
 	}
 
 	/**
@@ -150,8 +154,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		when(
 				analysisSubmissionRepository
-						.findOneByAnalysisState(AnalysisState.NEW)).thenReturn(
-				analysisSubmission);
+						.findByAnalysisState(AnalysisState.NEW)).thenReturn(
+				Arrays.asList(analysisSubmission));
 
 		when(
 				analysisExecutionServicePhylogenomics
@@ -160,7 +164,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask.executeAnalyses();
 
-		verify(analysisSubmissionRepository).findOneByAnalysisState(
+		verify(analysisSubmissionRepository).findByAnalysisState(
 				AnalysisState.NEW);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.PREPARING);
@@ -184,8 +188,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		when(
 				analysisSubmissionRepository
-						.findOneByAnalysisState(AnalysisState.NEW)).thenReturn(
-				analysisSubmission);
+						.findByAnalysisState(AnalysisState.NEW)).thenReturn(
+				Arrays.asList(analysisSubmission));
 
 		when(
 				analysisExecutionServicePhylogenomics
@@ -199,7 +203,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask.executeAnalyses();
 
-		verify(analysisSubmissionRepository).findOneByAnalysisState(
+		verify(analysisSubmissionRepository).findByAnalysisState(
 				AnalysisState.NEW);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.PREPARING);
@@ -226,8 +230,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		when(
 				analysisSubmissionRepository
-						.findOneByAnalysisState(AnalysisState.RUNNING))
-				.thenReturn(analysisSubmission);
+						.findByAnalysisState(AnalysisState.RUNNING))
+				.thenReturn(Arrays.asList(analysisSubmission));
 		when(
 				analysisExecutionServicePhylogenomics
 						.transferAnalysisResults(analysisSubmission))
@@ -239,7 +243,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask.transferAnalysesResults();
 
-		verify(analysisSubmissionRepository).findOneByAnalysisState(
+		verify(analysisSubmissionRepository).findByAnalysisState(
 				AnalysisState.RUNNING);
 		verify(analysisExecutionServicePhylogenomics).getWorkflowStatus(
 				analysisSubmission);
@@ -248,7 +252,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.COMPLETED);
 	}
-	
+
 	/**
 	 * Tests no analysis results to check if they can be transferred.
 	 * 
@@ -260,12 +264,12 @@ public class AnalysisExecutionScheduledTaskImplTest {
 			throws ExecutionManagerException, IOException {
 		when(
 				analysisSubmissionRepository
-						.findOneByAnalysisState(AnalysisState.RUNNING))
-				.thenReturn(null);
+						.findByAnalysisState(AnalysisState.RUNNING))
+				.thenReturn(new ArrayList<AnalysisSubmission>());
 
 		analysisExecutionScheduledTask.transferAnalysesResults();
 
-		verify(analysisSubmissionRepository).findOneByAnalysisState(
+		verify(analysisSubmissionRepository).findByAnalysisState(
 				AnalysisState.RUNNING);
 	}
 
@@ -283,8 +287,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		when(
 				analysisSubmissionRepository
-						.findOneByAnalysisState(AnalysisState.RUNNING))
-				.thenReturn(analysisSubmission);
+						.findByAnalysisState(AnalysisState.RUNNING))
+				.thenReturn(Arrays.asList(analysisSubmission));
 		when(
 				analysisExecutionServicePhylogenomics
 						.transferAnalysisResults(analysisSubmission))
@@ -296,7 +300,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask.transferAnalysesResults();
 
-		verify(analysisSubmissionRepository).findOneByAnalysisState(
+		verify(analysisSubmissionRepository).findByAnalysisState(
 				AnalysisState.RUNNING);
 		verify(analysisExecutionServicePhylogenomics).getWorkflowStatus(
 				analysisSubmission);
@@ -318,8 +322,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		when(
 				analysisSubmissionRepository
-						.findOneByAnalysisState(AnalysisState.RUNNING))
-				.thenReturn(analysisSubmission);
+						.findByAnalysisState(AnalysisState.RUNNING))
+				.thenReturn(Arrays.asList(analysisSubmission));
 		when(
 				analysisExecutionServicePhylogenomics
 						.transferAnalysisResults(analysisSubmission))
@@ -331,7 +335,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask.transferAnalysesResults();
 
-		verify(analysisSubmissionRepository).findOneByAnalysisState(
+		verify(analysisSubmissionRepository).findByAnalysisState(
 				AnalysisState.RUNNING);
 		verify(analysisExecutionServicePhylogenomics).getWorkflowStatus(
 				analysisSubmission);
@@ -355,8 +359,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		when(
 				analysisSubmissionRepository
-						.findOneByAnalysisState(AnalysisState.RUNNING))
-				.thenReturn(analysisSubmission);
+						.findByAnalysisState(AnalysisState.RUNNING))
+				.thenReturn(Arrays.asList(analysisSubmission));
 		when(
 				analysisExecutionServicePhylogenomics
 						.transferAnalysisResults(analysisSubmission))
@@ -368,7 +372,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask.transferAnalysesResults();
 
-		verify(analysisSubmissionRepository).findOneByAnalysisState(
+		verify(analysisSubmissionRepository).findByAnalysisState(
 				AnalysisState.RUNNING);
 		verify(analysisExecutionServicePhylogenomics).getWorkflowStatus(
 				analysisSubmission);

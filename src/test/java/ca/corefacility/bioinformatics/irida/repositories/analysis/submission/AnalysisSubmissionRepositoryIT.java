@@ -5,6 +5,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
@@ -63,7 +65,9 @@ public class AnalysisSubmissionRepositoryIT {
 	private SequenceFileRepository sequenceFileRepository;
 
 	private AnalysisSubmissionPhylogenomics analysisSubmission;
+	private AnalysisSubmissionPhylogenomics analysisSubmission2;
 	private static final String analysisId = "10";
+	private static final String analysisId2 = "11";
 
 	/**
 	 * Sets up objects for test.
@@ -75,6 +79,11 @@ public class AnalysisSubmissionRepositoryIT {
 		SequenceFile sequenceFile = sequenceFileRepository.findOne(1L);
 		assertNotNull(sequenceFile);
 		Set<SequenceFile> sequenceFiles = Sets.newHashSet(sequenceFile);
+		
+		SequenceFile sequenceFile2 = sequenceFileRepository.findOne(2L);
+		assertNotNull(sequenceFile2);
+		Set<SequenceFile> sequenceFiles2 = Sets.newHashSet(sequenceFile2);
+		
 		ReferenceFile referenceFile = referenceFileRepository.findOne(1L);
 		assertNotNull(referenceFile);
 		RemoteWorkflowPhylogenomics remoteWorkflow = remoteWorkflowRepository
@@ -85,6 +94,11 @@ public class AnalysisSubmissionRepositoryIT {
 				referenceFile, remoteWorkflow);
 		analysisSubmission.setRemoteAnalysisId(analysisId);
 		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTING);
+		
+		analysisSubmission2 = new AnalysisSubmissionPhylogenomics(sequenceFiles2,
+				referenceFile, remoteWorkflow);
+		analysisSubmission2.setRemoteAnalysisId(analysisId2);
+		analysisSubmission2.setAnalysisState(AnalysisState.SUBMITTING);
 	}
 
 	/**
@@ -124,26 +138,41 @@ public class AnalysisSubmissionRepositoryIT {
 	}
 
 	/**
-	 * Tests getting an analysis by its state and succeeding.
+	 * Tests getting a single analysis by its state and succeeding.
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testFindByAnalysisStateSuccess() {
 		analysisSubmissionRepository.save(analysisSubmission);
-		AnalysisSubmission submittedAnalysis = analysisSubmissionRepository
-				.findOneByAnalysisState(AnalysisState.SUBMITTING);
-		assertEquals(analysisId, submittedAnalysis.getRemoteAnalysisId());
+		List<AnalysisSubmission> submittedAnalyses = analysisSubmissionRepository
+				.findByAnalysisState(AnalysisState.SUBMITTING);
+		assertEquals(1, submittedAnalyses.size());
+		assertEquals(analysisId, submittedAnalyses.get(0).getRemoteAnalysisId());
 	}
-
+	
 	/**
-	 * Tests getting an analysis by its state and failing.
+	 * Tests getting multiple analyses by a state and succeeding.
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testFindByAnalysisStateFail() {
+	public void testFindByAnalysisStateMultiple() {
 		analysisSubmissionRepository.save(analysisSubmission);
-		AnalysisSubmission submittedAnalysis = analysisSubmissionRepository
-				.findOneByAnalysisState(AnalysisState.RUNNING);
-		assertNull(submittedAnalysis);
+		analysisSubmissionRepository.save(analysisSubmission2);
+		List<AnalysisSubmission> submittedAnalyses = analysisSubmissionRepository
+				.findByAnalysisState(AnalysisState.SUBMITTING);
+		assertEquals(2, submittedAnalyses.size());
+		assertEquals(analysisId, submittedAnalyses.get(0).getRemoteAnalysisId());
+	}
+
+	/**
+	 * Tests finding no analyses by the given state.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFindByAnalysisStateNone() {
+		analysisSubmissionRepository.save(analysisSubmission);
+		List<AnalysisSubmission> submittedAnalyses = analysisSubmissionRepository
+				.findByAnalysisState(AnalysisState.RUNNING);
+		assertEquals(Collections.EMPTY_LIST, submittedAnalyses);
 	}
 }

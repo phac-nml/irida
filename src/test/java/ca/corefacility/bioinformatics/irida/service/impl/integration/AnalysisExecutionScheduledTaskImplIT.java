@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -102,7 +102,9 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
 	private Path sequenceFilePath;
+	private Path sequenceFilePath2;
 	private Path referenceFilePath;
+	private Path referenceFilePath2;
 
 	/**
 	 * Sets up variables for testing.
@@ -135,9 +137,17 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		Files.delete(sequenceFilePath);
 		Files.copy(sequenceFilePathReal, sequenceFilePath);
 
+		sequenceFilePath2 = Files.createTempFile("testData1", ".fastq");
+		Files.delete(sequenceFilePath2);
+		Files.copy(sequenceFilePathReal, sequenceFilePath2);
+
 		referenceFilePath = Files.createTempFile("testReference", ".fasta");
 		Files.delete(referenceFilePath);
 		Files.copy(referenceFilePathReal, referenceFilePath);
+		
+		referenceFilePath2 = Files.createTempFile("testReference", ".fasta");
+		Files.delete(referenceFilePath2);
+		Files.copy(referenceFilePathReal, referenceFilePath2);
 	}
 
 	/**
@@ -153,8 +163,8 @@ public class AnalysisExecutionScheduledTaskImplIT {
 				.getCurrentWorkflow();
 
 		AnalysisSubmissionPhylogenomics analysisSubmission = analysisExecutionGalaxyITService
-				.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath,
-						remoteWorkflowUnsaved);
+				.setupSubmissionInDatabase(1L, sequenceFilePath,
+						referenceFilePath, remoteWorkflowUnsaved);
 		assertEquals(AnalysisState.NEW, analysisSubmission.getAnalysisState());
 
 		analysisExecutionScheduledTask.executeAnalyses();
@@ -184,6 +194,55 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	}
 
 	/**
+	 * Tests out successfully handling only a single submission when multiple
+	 * submissions exist.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testHandleSingleSubmission() throws Exception {
+		RemoteWorkflowPhylogenomics remoteWorkflow = remoteWorkflowServicePhylogenomics
+				.getCurrentWorkflow();
+
+		AnalysisSubmissionPhylogenomics analysisSubmission = analysisExecutionGalaxyITService
+				.setupSubmissionInDatabase(1L, sequenceFilePath,
+						referenceFilePath, remoteWorkflow);
+
+		AnalysisSubmissionPhylogenomics analysisSubmission2 = analysisExecutionGalaxyITService
+				.setupSubmissionInDatabaseNoWorkflowSave(2L, sequenceFilePath2,
+						referenceFilePath2, remoteWorkflow);
+
+		assertEquals(AnalysisState.NEW, analysisSubmission.getAnalysisState());
+		assertEquals(AnalysisState.NEW, analysisSubmission2.getAnalysisState());
+
+		analysisExecutionScheduledTask.executeAnalyses();
+		AnalysisSubmissionPhylogenomics executedSubmission1 = analysisSubmissionRepository
+				.getByType(analysisSubmission.getId(),
+						AnalysisSubmissionPhylogenomics.class);
+
+		AnalysisSubmissionPhylogenomics executedSubmission2 = analysisSubmissionRepository
+				.getByType(analysisSubmission2.getId(),
+						AnalysisSubmissionPhylogenomics.class);
+
+		// I do not know the order the analyses will be executed
+		if (AnalysisState.NEW.equals(executedSubmission1.getAnalysisState())) {
+			assertEquals(AnalysisState.RUNNING,
+					executedSubmission2.getAnalysisState());
+		} else if (AnalysisState.NEW.equals(executedSubmission2
+				.getAnalysisState())) {
+			assertEquals(AnalysisState.RUNNING,
+					executedSubmission1.getAnalysisState());
+		} else {
+			fail("One submission should be in state " + AnalysisState.NEW
+					+ " the other in " + AnalysisState.RUNNING
+					+ "but they are in "
+					+ executedSubmission1.getAnalysisState() + " "
+					+ executedSubmission2.getAnalysisState());
+		}
+	}
+
+	/**
 	 * Tests out successfully changing an analysis to error after an error
 	 * during execution
 	 */
@@ -194,8 +253,8 @@ public class AnalysisExecutionScheduledTaskImplIT {
 				.getCurrentWorkflow();
 
 		AnalysisSubmissionPhylogenomics analysisSubmission = analysisExecutionGalaxyITService
-				.setupSubmissionInDatabase(sequenceFilePath, referenceFilePath,
-						remoteWorkflowUnsaved);
+				.setupSubmissionInDatabase(1L, sequenceFilePath,
+						referenceFilePath, remoteWorkflowUnsaved);
 
 		analysisExecutionScheduledTask.executeAnalyses();
 

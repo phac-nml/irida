@@ -1,34 +1,47 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
 	<system_role description="A basic user in the system" name="ROLE_USER" />
-	
+
 	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
 		projectDescription="description" remoteURL="somewhere" />
-				
+
 	<sample id="1" createdDate="2013-07-18 14:20:19.0" description="description1"
 		sequencerSampleId="sample1" sampleName="sample1" />
-		
+
+	<sample id="2" createdDate="2013-07-18 14:20:19.0" description="description2"
+		sequencerSampleId="sample2" sampleName="sample2" />
+
 	<project_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		project_id="1" sample_id="1" />
 
-	<sequencing_run id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
-		description="info"/>
+	<project_sample id="2" createdDate="2013-07-18 14:20:19.0"
+		project_id="1" sample_id="2" />
 
-	<miseq_run id="1" application="a" assay="a" chemistry="a" experimentName="a" investigatorName="a"
-		projectName="a" workflow="a"/>
+	<sequencing_run id="1" createdDate="2013-07-18 14:20:19.0"
+		modifiedDate="2013-07-18 14:20:19.0" description="info" />
 
-	<remote_workflow workflowId="1" workflowChecksum="1" createdDate="2013-07-18 14:20:19.0"
-		modifiedDate="2013-07-18 14:20:19.0"/>
+	<miseq_run id="1" application="a" assay="a" chemistry="a"
+		experimentName="a" investigatorName="a" projectName="a" workflow="a" />
 
-	<remote_workflow_phylogenomics workflowId="1" inputReferenceFileLabel="input_reference"
+	<remote_workflow workflowId="1" workflowChecksum="1"
+		createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0" />
+
+	<remote_workflow_phylogenomics
+		workflowId="1" inputReferenceFileLabel="input_reference"
 		inputSequenceFilesLabel="input_sequences" outputPhylogeneticTreeName="tree.txt"
-		outputSnpTableName="table.tsv" outputSnpMatrixName="matrix.tsv"/>
-		
-	<reference_file id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
-		filePath="/tmp/file.fasta" fileRevisionNumber="1"/>
+		outputSnpTableName="table.tsv" outputSnpMatrixName="matrix.tsv" />
 
-	<sequence_file id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
-		filePath="/tmp/file.fastq" fileRevisionNumber="1" sequencingRun_id="1"/>
+	<reference_file id="1" createdDate="2013-07-18 14:20:19.0"
+		modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file.fasta"
+		fileRevisionNumber="1" />
+
+	<sequence_file id="1" createdDate="2013-07-18 14:20:19.0"
+		modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file.fastq"
+		fileRevisionNumber="1" sequencingRun_id="1" />
+
+	<sequence_file id="2" createdDate="2013-07-18 14:20:19.0"
+		modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file.fastq2"
+		fileRevisionNumber="1" sequencingRun_id="1" />
 
 	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
 		email="aaron@nowhere.com" firstName="Aaron" lastName="Petkau"

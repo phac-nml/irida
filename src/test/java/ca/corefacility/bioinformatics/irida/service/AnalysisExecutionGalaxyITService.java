@@ -88,22 +88,27 @@ public class AnalysisExecutionGalaxyITService {
 	}
 
 	/**
-	 * Sets up an AnalysisSubmission and saves all dependencies in database.
+	 * Sets up an AnalysisSubmission and saves all dependencies (except the
+	 * workflow) in database.
 	 * 
+	 * @param sampleId
+	 *            The id of the sample to associate with the given sequence
+	 *            file.
 	 * @param sequenceFilePath
 	 *            The path to an input sequence file for this test.
 	 * @param referenceFilePath
 	 *            The path to an input reference file for this test.
 	 * @param remoteWorkflow
-	 *            A remote workflow to execute for this test.
+	 *            A remote workflow to execute for this test. This is assumed to
+	 *            already exist in the database.
 	 * @return An AnalysisSubmissionPhylogenomics which has been saved to the
 	 *         database.
 	 */
-	public AnalysisSubmissionPhylogenomics setupSubmissionInDatabase(
-			Path sequenceFilePath, Path referenceFilePath,
+	public AnalysisSubmissionPhylogenomics setupSubmissionInDatabaseNoWorkflowSave(
+			long sampleId, Path sequenceFilePath, Path referenceFilePath,
 			RemoteWorkflowPhylogenomics remoteWorkflow) {
 
-		Sample sample = sampleService.read(1L);
+		Sample sample = sampleService.read(sampleId);
 		Join<Sample, SequenceFile> sampleSeqFile = seqeunceFileService
 				.createSequenceFileInSample(new SequenceFile(sequenceFilePath),
 						sample);
@@ -115,15 +120,38 @@ public class AnalysisExecutionGalaxyITService {
 		ReferenceFile referenceFile = referenceFileRepository
 				.save(new ReferenceFile(referenceFilePath));
 
-		RemoteWorkflowPhylogenomics remoteWorkflowSaved = remoteWorkflowRepository
-				.save(remoteWorkflow);
-
 		AnalysisSubmission submission = analysisSubmissionService
 				.create(new AnalysisSubmissionPhylogenomics(sequenceFiles,
-						referenceFile, remoteWorkflowSaved));
+						referenceFile, remoteWorkflow));
 
 		return analysisSubmissionRepository.getByType(submission.getId(),
 				AnalysisSubmissionPhylogenomics.class);
+	}
+
+	/**
+	 * Sets up an AnalysisSubmission and saves all dependencies in database.
+	 * 
+	 * @param sampleId
+	 *            The id of the sample to associate with the given sequence
+	 *            file.
+	 * @param sequenceFilePath
+	 *            The path to an input sequence file for this test.
+	 * @param referenceFilePath
+	 *            The path to an input reference file for this test.
+	 * @param remoteWorkflow
+	 *            A remote workflow to execute for this test.
+	 * @return An AnalysisSubmissionPhylogenomics which has been saved to the
+	 *         database.
+	 */
+	public AnalysisSubmissionPhylogenomics setupSubmissionInDatabase(
+			long sampleId, Path sequenceFilePath, Path referenceFilePath,
+			RemoteWorkflowPhylogenomics remoteWorkflow) {
+
+		RemoteWorkflowPhylogenomics remoteWorkflowSaved = remoteWorkflowRepository
+				.save(remoteWorkflow);
+
+		return setupSubmissionInDatabaseNoWorkflowSave(sampleId,
+				sequenceFilePath, referenceFilePath, remoteWorkflowSaved);
 	}
 
 	/**

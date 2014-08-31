@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,10 +76,12 @@ public class AnalysisExecutionScheduledTaskImpl implements
 
 		logger.debug("Looking for analyses with state " + AnalysisState.NEW);
 
-		AnalysisSubmission analysisSubmission = analysisSubmissionRepository
-				.findOneByAnalysisState(AnalysisState.NEW);
+		List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
+				.findByAnalysisState(AnalysisState.NEW);
 
-		if (analysisSubmission != null) {
+		if (analysisSubmissions.size() > 0) {
+			AnalysisSubmission analysisSubmission = analysisSubmissions.get(0);
+			
 			setStateForSubmission(analysisSubmission, AnalysisState.PREPARING);
 
 			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
@@ -118,10 +121,12 @@ public class AnalysisExecutionScheduledTaskImpl implements
 
 		logger.debug("Looking for analyses with state " + AnalysisState.RUNNING);
 
-		AnalysisSubmission analysisSubmission = analysisSubmissionRepository
-				.findOneByAnalysisState(AnalysisState.RUNNING);
+		List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
+				.findByAnalysisState(AnalysisState.RUNNING);
 
-		if (analysisSubmission != null) {
+		if (analysisSubmissions.size() > 0) {
+			AnalysisSubmission analysisSubmission = analysisSubmissions.get(0);
+			
 			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
 					.getByType(analysisSubmission.getId(),
 							AnalysisSubmissionPhylogenomics.class);
