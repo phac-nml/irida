@@ -10,11 +10,14 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
+import com.github.jmchilton.blend4j.galaxy.RolesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
@@ -81,7 +84,7 @@ public class AnalysisExecutionServiceTestConfig {
 	public WorkspaceServicePhylogenomics workspaceServicePhylogenomics() {
 		return new WorkspaceServicePhylogenomics(
 				galaxyHistoriesService(), galaxyWorkflowService(),
-				sampleSequenceFileJoinRepository);
+				sampleSequenceFileJoinRepository, galaxyLibraryBuilder());
 	}
 
 	@Lazy
@@ -93,6 +96,20 @@ public class AnalysisExecutionServiceTestConfig {
 				.getToolsClient();
 		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
 		return new GalaxyHistoriesService(historiesClient, toolsClient, librariesClient);
+	}
+	
+	@Lazy
+	@Bean
+	public GalaxyLibraryBuilder galaxyLibraryBuilder() {
+		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
+		return new GalaxyLibraryBuilder(librariesClient, galaxyRoleSearch(), localGalaxy.getGalaxyURL());
+	}
+	
+	@Lazy
+	@Bean
+	public GalaxyRoleSearch galaxyRoleSearch() {
+		RolesClient rolesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getRolesClient();
+		return new GalaxyRoleSearch(rolesClient, localGalaxy.getGalaxyURL());
 	}
 
 	@Lazy

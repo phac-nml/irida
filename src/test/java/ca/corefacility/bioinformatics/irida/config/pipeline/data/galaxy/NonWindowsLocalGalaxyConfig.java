@@ -8,6 +8,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -398,7 +399,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		galaxyData.getUsers().add(user2);
 		galaxyData.getUsers().add(workflowUser);
 
-		galaxyProperties.setAdminUser(adminUser.getUsername());
+		galaxyProperties.setAdminUsers(Arrays.asList(adminUser.getUsername(), workflowUser.getUsername()));
 	}
 
 	/**

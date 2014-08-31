@@ -33,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkfl
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
@@ -52,6 +53,7 @@ public class WorkspaceServicePhylogenomicsTest {
 
 	@Mock private GalaxyHistoriesService galaxyHistoriesService;
 	@Mock private GalaxyWorkflowService galaxyWorkflowService;
+	@Mock private GalaxyLibraryBuilder libraryBuilder;
 	@Mock private SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository;
 	@Mock private List<Dataset> sequenceDatasets;
 	@Mock private Dataset refDataset;
@@ -156,7 +158,8 @@ public class WorkspaceServicePhylogenomicsTest {
 		
 		workflowPreparation = 
 				new WorkspaceServicePhylogenomics(
-						galaxyHistoriesService, galaxyWorkflowService, sampleSequenceFileJoinRepository);
+						galaxyHistoriesService, galaxyWorkflowService, sampleSequenceFileJoinRepository,
+						libraryBuilder);
 	}
 	
 	private Path createTempFile(String prefix, String suffix) throws IOException {
