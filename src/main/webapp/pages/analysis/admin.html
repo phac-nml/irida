@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="templates/wet-boew/wet-layout">
+<head>
+    <title th:text="#{analysis.page.admin.title}">THIS IS SOMETHING
+        WRONG</title>
+    <link href="/resources/wet-theme/css/wet-boew.min.css"/>
+    <link href="/resources/wet-theme/css/theme.min.css"/>
+    <th:block layout:fragment="css">
+        <style>
+            .ng-cloak {
+                display: none !important;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div class="container" layout:fragment="content">
+    <div class="row">
+        <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
+    </div>
+    <div class="row">
+        <main class="col-md-12 ng-cloak" role="main"
+              property="mainContentOfPage" ng-app="analysis">
+            <h1>HEY I'M A GLOBAL ANALYSIS PAGE</h1>
+
+            <div class="row" ng-controller="AnalysisTableCtrl">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <button class="btn btn-info" ng-click="filter.isCollapsed = !filter.isCollapsed">Filter
+                            Analysis
+                        </button>
+                        <div class="form-group">
+                            <select class="form-control" name="count" id="count" ng-model="filterCriteria.count"
+                                    ng-change="filterResult()">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            <label for="count">Select Page Size</label>
+                        </div>
+                    </div>
+                    <table class="table table-striped">
+                        <thead>
+                        <th class="col-md-1">
+                            <sort-by onsort="onSort" sortdir="filterCriteria.sortDir" sortedby="filterCriteria.sortedBy"
+                                     sortValue="id">Id
+                            </sort-by>
+                            <div collapse="filter.isCollapsed">
+                                <input class="form-control input-full" type="text"/>
+                            </div>
+                        </th>
+                        <th class="col-md-7">
+                            <sort-by onsort="onSort" sortdir="filterCriteria.sortDir" sortedby="filterCriteria.sortedBy"
+                                     sortValue="type">Type
+                            </sort-by>
+                            <div collapse="filter.isCollapsed">
+                                <select class="input-full form-control" ng-change="filterResult()"
+                                        ng-model="filterCriteria.type"
+                                        ng-options="type.name for type in types">
+                                    <option value="" th:text="#{analysis.select.all}"></option>
+                                </select>
+                            </div>
+                        </th>
+                        <th class="col-md-4">
+                            <sort-by onsort="onSort" sortdir="filterCriteria.sortDir" sortedby="filterCriteria.sortedBy"
+                                     sortValue="createdDate">Created
+                            </sort-by>
+                            <div class="row" collapse="filter.isCollapsed">
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <input type="text" disabled="disabled" class="form-control" placeholder="min"
+                                               datepicker-popup="{{datepicker.format}}"
+                                               ng-model="filterCriteria.minDate"
+                                               is-open="datepicker.min.opened"
+                                               min-date="minDate" max-date="{{datepicker.maxDate}}"
+                                               datepicker-options="dateOptions" ng-change="filterResult()"
+                                               ng-required="false" close-text="Close"/>
+                                  <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default"
+                                            ng-click="datepicker.min.open($event)"><i
+                                            class="glyphicon glyphicon-calendar"></i></button>
+                                  </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <input type="text" disabled="disabled" class="form-control" placeholder="max"
+                                               datepicker-popup="{{datepicker.format}}"
+                                               ng-model="filterCriteria.maxDate"
+                                               is-open="datepicker.max.opened"
+                                               min-date="minDate" max-date="{{datepicker.maxDate}}"
+                                               datepicker-options="dateOptions" ng-change="filterResult()"
+                                               ng-required="false" close-text="Close"/>
+                                  <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default"
+                                            ng-click="datepicker.max.open($event)"><i
+                                            class="glyphicon glyphicon-calendar"></i>
+                                    </button>
+                                  </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </th>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="a in analysis">
+                            <td>{{a.id}}</td>
+                            <td>{{a.type}}</td>
+                            <td colspan="2">{{a.createdDate}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div ng-show="paging.totalAnalysis == 0">
+                        <h3>No analysis has been completed yet</h3>
+                    </div>
+                    <div ng-show="paging.totalAnalysis > 0" class="text-center">
+                        <pagination num-pages="paging.totalPages" total-items="paging.totalAnalysis"
+                                    ng-model="filterCriteria.page" first-text="{{paging.firstText}}"
+                                    rotate="true"
+                                    last-text="{{paging.lastText}}"
+                                    next-text="{{paging.nextText}}" previous-text="{{paging.previousText}}"
+                                    max-size="5" class="" boundary-links="true"></pagination>
+                    </div>
+                    <script type="text/ng-template" id="sort-by.html">
+                        <a class="clickable" ng-click="sort(sortValue)">
+                            <span ng-transclude=""></span>
+                            <span class="pull-right" ng-show="sortedby == sortvalue">
+                                <i class="fa fa-fw"
+                                   ng-class="{true: 'fa-sort-asc', false: 'fa-sort-desc'}[sortdir == 'asc']"></i>
+                            </span>
+                            <span class="pull-right" ng-show="sortedby != sortvalue">
+                                <i class="fa fa-sort fa-fw"></i>
+                            </span>
+                        </a>
+                    </script>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<th:block layout:fragment="scripts" th:inline="javascript">
+
+    <script th:src="@{'/resources/bower_components/underscore/underscore-min.js'}"
+            src="/resources/bower_components/underscore/underscore-min.js"></script>
+    <script th:src="@{'/resources/bower_components/angular/angular.min.js'}"
+            src="/resources/bower_components/angular/angular.min.js"></script>
+    <script th:src="@{'/resources/bower_components/restangular/dist/restangular.min.js'}"
+            src="/resources/bower_components/restangular/dist/restangular.min.js"></script>
+    <script th:src="@{'/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js'}"
+            src="/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+    <script>
+    /*<![CDATA[*/
+        var app = angular.module('analysis', ['restangular', 'ui.bootstrap'])
+                .config(function (RestangularProvider) {
+                    var url = /*[[@{'/analysis/ajax'}]]*/ '/analysis/ajax';
+                    RestangularProvider.setBaseUrl(url);
+                })
+                .factory('api', function (Restangular) {
+                    return {
+                        types   : function () {
+                            return Restangular.all('types').customGET();
+                        },
+                        analysis: {
+                            search: function search(query) {
+                                return Restangular.all('all').customGET("", query);
+                            }
+                        }
+                    }
+                });
+
+        app.directive('sortBy', function () {
+            'use strict';
+            return {
+                templateUrl: 'sort-by.html',
+                restrict   : 'E',
+                transclude : true,
+                replace    : true,
+                scope      : {
+                    sortdir  : '=',
+                    sortedby : '=',
+                    sortvalue: '@',
+                    onsort   : '='
+                },
+                link       : function (scope, elementts, attrs) {
+                    scope.sort = function () {
+                        if (scope.sortedby == scope.sortvalue) {
+                            scope.sortdir = scope.sortdir == 'asc' ? 'desc' : 'asc';
+                        }
+                        else {
+                            scope.sortedby = scope.sortvalue;
+                            scope.sortdir = 'asc'
+                        }
+                        scope.onsort(scope.sortedby, scope.sortdir);
+                    }
+                }
+            };
+        });
+
+        app.directive('onBlurChange', function ($parse) {
+            'use strict';
+            return function (scope, element, attr) {
+                'use strict';
+                var fn = $parse(attr['onBlurChange']);
+                var hasChanged = false;
+                element.on('change', function (event) {
+                    hasChanged = true;
+                });
+                element.on('blur', function () {
+                    if (hasChanged) {
+                        scope.$apply(function () {
+                            fn(scope, {$event: event});
+                        });
+                        hasChanged = false;
+                    }
+                });
+            }
+        });
+
+        app.directive('onEnterBlur', function () {
+            return function (scope, element, attrs) {
+                "use strict";
+                element.bind("keydown keypress", function (event) {
+                    if (event.which == 13) {
+                        element.blur();
+                        event.preventDefault();
+                    }
+                })
+            }
+        });
+
+        app.controller('AnalysisTableCtrl', function ($scope, api) {
+            'use strict';
+            $scope.filter = {
+                isCollapsed: true
+            };
+
+            $scope.datepicker = {
+                min    : {
+                    open: function open($event) {
+                        $event.preventDefault();
+                        $event.stopPropagation();
+                        $scope.datepicker.min.opened = true;
+                    }
+
+                },
+                max    : {
+                    open: function open($event) {
+                        $event.preventDefault();
+                        $event.stopPropagation();
+                        $scope.datepicker.max.opened = true;
+                    }
+
+                },
+                format : /*[[#{datepicker.short}]]*/ 'dd-MMMM-yyyy',
+                maxDate: new Date() // Max date should always be today!
+            };
+
+            $scope.analysisTotal = 300;
+            $scope.paging = {
+                totalAnalysis: 556,
+                totalPages   : 10,
+                firstText    : /*[[#{paging.first-text}]]*/ 'First',
+                lastText     : /*[[#{paging.last-text}]]*/ 'Last',
+                nextText     : /*[[#{paging.next-text}]]*/ 'Next',
+                previousText : /*[[#{paging.previous-text}]]*/ 'Previous'
+            };
+
+            api.types().then(function(types) {
+                $scope.types = types;
+            });
+            $scope.selectedTypes = [];
+
+            $scope.filterCriteria = {
+                page    : 1,
+                sortDir : 'asc',
+                sortedBy: 'createdDate',
+                count   : 10
+            };
+
+            $scope.$watch('filterCriteria.page', function () {
+                $scope.fetchResult();
+            });
+
+            $scope.fetchResult = function () {
+                return api.analysis.search($scope.filterCriteria).then(function (data) {
+                    $scope.analysis = data.analysis;
+                    $scope.paging.totalAnalysis = data.totalAnalysis;
+                    $scope.paging.totalPages = data.totalPages;
+                }, function () {
+                    $scope.analysis = [];
+                });
+            };
+
+            $scope.selectPage = function (page) {
+                $scope.filterCriteria.page = page;
+                $scope.fetchResult();
+            };
+
+            $scope.filterResult = function () {
+                $scope.filterCriteria.page = 1;
+                $scope.fetchResult().then(function () {
+                    $scope.filterCriteria.page = 1;
+                });
+            };
+
+            $scope.onSort = function (sortedBy, sortDir) {
+                $scope.filterCriteria.sortDir = sortDir;
+                $scope.filterCriteria.sortedBy = sortedBy;
+                $scope.filterCriteria.page = 1;
+                $scope.fetchResult().then(function () {
+                    $scope.filterCriteria.page = 1;
+                })
+            };
+        });
+        /*]]>*/
+    </script>
+</th:block>
+</body>
+</html>
