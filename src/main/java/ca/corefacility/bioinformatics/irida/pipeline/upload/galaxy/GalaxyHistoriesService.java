@@ -264,6 +264,9 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 				throw new UploadException("Could not upload " + file + " to library " + library.getId() +
 						" upload object is null");
 			} else {
+				logger.debug("Uploaded file " + file + " to library " + library.getName() + " and got library id " +
+						uploadObject.getId() + " and url " + uploadObject.getUrl());
+				
 				// dataset from library upload
 				HistoryDataset historyDataset = new HistoryDataset();
 				historyDataset.setSource(Source.LIBRARY);
@@ -276,6 +279,8 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 							" to history " + history.getId() +
 							" historyDetails is null");
 				} else {
+					logger.debug("Transfered library dataset " + uploadObject.getId() + " to history " +
+							history.getId() + " dataset id " + historyDetails.getId());
 					return historyDetails.getId();
 				}
 			}
