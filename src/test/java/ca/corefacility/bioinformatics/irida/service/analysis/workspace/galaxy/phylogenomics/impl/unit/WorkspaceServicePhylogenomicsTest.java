@@ -10,8 +10,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Before;
@@ -86,6 +88,8 @@ public class WorkspaceServicePhylogenomicsTest {
 	private static final String MATRIX_LABEL = "snp_matrix";
 	private static final String TABLE_LABEL = "snp_table";
 	
+	private Map<Path,String> datasetsMap;
+	
 	private SequenceFile sFileA;
 	private SequenceFile sFileB;
 	private SequenceFile sFileC;
@@ -126,6 +130,11 @@ public class WorkspaceServicePhylogenomicsTest {
 		sampleAJoin = new SampleSequenceFileJoin(sampleA, sFileA);
 		sampleBJoin = new SampleSequenceFileJoin(sampleB, sFileB);
 		sampleCJoin = new SampleSequenceFileJoin(sampleC, sFileC);
+		
+		datasetsMap = new HashMap<>();
+		datasetsMap.put(sFileA.getFile(), "1");
+		datasetsMap.put(sFileB.getFile(), "2");
+		datasetsMap.put(sFileC.getFile(), "3");
 		
 		sampleAJoinWithB = new SampleSequenceFileJoin(sampleA, sFileB);
 		
@@ -208,12 +217,8 @@ public class WorkspaceServicePhylogenomicsTest {
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 		
-		when(galaxyHistoriesService.fileToLibraryToHistory(sFileA.getFile(), InputFileType.FASTQ_SANGER,
-				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenReturn(datasetA.getId());
-		when(galaxyHistoriesService.fileToLibraryToHistory(sFileB.getFile(), InputFileType.FASTQ_SANGER,
-				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenReturn(datasetB.getId());
-		when(galaxyHistoriesService.fileToLibraryToHistory(sFileC.getFile(), InputFileType.FASTQ_SANGER,
-				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenReturn(datasetC.getId());
+		when(galaxyHistoriesService.filesToLibraryToHistory(datasetsMap.keySet(), InputFileType.FASTQ_SANGER,
+				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenReturn(datasetsMap);
 		
 		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileA))
 				.thenReturn(sampleAJoin);
@@ -248,14 +253,8 @@ public class WorkspaceServicePhylogenomicsTest {
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 		
-		when(galaxyHistoriesService.fileToLibraryToHistory(sFileB.getFile(), InputFileType.FASTQ_SANGER,
-				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenReturn(datasetB.getId());
-		when(galaxyHistoriesService.fileToLibraryToHistory(sFileA.getFile(), InputFileType.FASTQ_SANGER,
+		when(galaxyHistoriesService.filesToLibraryToHistory(datasetsMap.keySet(), InputFileType.FASTQ_SANGER,
 				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenThrow(new UploadException());
-		when(galaxyHistoriesService.fileToLibraryToHistory(sFileB.getFile(), InputFileType.FASTQ_SANGER,
-				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenReturn(datasetB.getId());
-		when(galaxyHistoriesService.fileToLibraryToHistory(sFileC.getFile(), InputFileType.FASTQ_SANGER,
-				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenReturn(datasetC.getId());
 
 		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileA))
 				.thenReturn(sampleAJoin);
@@ -277,12 +276,8 @@ public class WorkspaceServicePhylogenomicsTest {
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 		
-		when(galaxyHistoriesService.fileToLibraryToHistory(sFileA.getFile(), InputFileType.FASTQ_SANGER,
-				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenReturn(datasetA.getId());
-		when(galaxyHistoriesService.fileToLibraryToHistory(sFileB.getFile(), InputFileType.FASTQ_SANGER,
-				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenReturn(datasetB.getId());
-		when(galaxyHistoriesService.fileToLibraryToHistory(sFileC.getFile(), InputFileType.FASTQ_SANGER,
-				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenReturn(datasetC.getId());
+		when(galaxyHistoriesService.filesToLibraryToHistory(datasetsMap.keySet(), InputFileType.FASTQ_SANGER,
+				workflowHistory, workflowLibrary, DataStorage.LOCAL)).thenReturn(datasetsMap);
 
 		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileA))
 				.thenReturn(sampleAJoin);

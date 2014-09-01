@@ -3,9 +3,11 @@ package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.p
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -109,26 +111,39 @@ public class WorkspaceServicePhylogenomics
 		description.setCollectionType(DatasetCollectionType.LIST.toString());
 		description.setName(COLLECTION_NAME);
 		
-		Set<Sample> samples = new HashSet<>();
+		Map<Path,Sample> samplesMap = new HashMap<>();
 		for (Join<Sample, SequenceFile> sampleSequenceJoin : sampleSequenceFiles) {
 			SequenceFile sequenceFile = sampleSequenceJoin.getObject();
 			Sample sample = sampleSequenceJoin.getSubject();
 			
-			if (samples.contains(sample)) {
+			if (samplesMap.containsValue(sample)) {
 				throw new WorkflowPreprationException("Sequence file: " + sequenceFile.getFile() + " belongs to sample " +
 						sample + " but there is another sequence file with this sample");
 			} else {
-				samples.add(sample);
-				
-				String sequenceDatasetId = galaxyHistoriesService.fileToLibraryToHistory(sequenceFile.getFile(),
-						InputFileType.FASTQ_SANGER, workflowHistory, workflowLibrary, DataStorage.LOCAL);
-				
-				HistoryDatasetElement datasetElement = new HistoryDatasetElement();
-				datasetElement.setId(sequenceDatasetId);
-				datasetElement.setName(sample.getSampleName());
-				
-				description.addDatasetElement(datasetElement);
+				samplesMap.put(sequenceFile.getFile(),sample);
 			}
+		}
+		
+		// upload files to library and then to a history
+		Set<Path> pathsToUpload = samplesMap.keySet();
+		Map<Path, String> pathHistoryDatasetId = 
+				galaxyHistoriesService.filesToLibraryToHistory(pathsToUpload,
+				InputFileType.FASTQ_SANGER, workflowHistory, workflowLibrary, DataStorage.LOCAL);
+		
+		for (Path sequenceFilePath : samplesMap.keySet()) {
+			if (!pathHistoryDatasetId.containsKey(sequenceFilePath)) {
+				throw new UploadException("Error, no corresponding history item found for " +
+						sequenceFilePath);
+			}
+			
+			Sample sample = samplesMap.get(sequenceFilePath);
+			String datasetHistoryId = pathHistoryDatasetId.get(sequenceFilePath);
+									
+			HistoryDatasetElement datasetElement = new HistoryDatasetElement();
+			datasetElement.setId(datasetHistoryId);
+			datasetElement.setName(sample.getSampleName());
+			
+			description.addDatasetElement(datasetElement);
 		}
 		
 		return galaxyHistoriesService.constructCollection(description, workflowHistory);
