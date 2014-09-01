@@ -7,6 +7,7 @@ import static com.google.common.base.Preconditions.checkState;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -222,6 +223,108 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 		}
 	}
 	
+	/**
+	 * Uploads a list of files to a given history through the given library.
+	 * @param paths  The list of paths to the files to upload.
+	 * @param fileType The file type of the file to upload.
+	 * @param history  The history to upload the file into.
+	 * @param library  The library to initially upload the file into.
+	 * @param dataStorage  The type of DataStorage strategy to use.
+	 * @return An @{link Map} of files and ids for each dataset object in this history.
+	 * @throws UploadException  If there was an issue uploading the file to Galaxy.
+	 * @throws InterruptedException If there was an issue when waiting for a dataset to upload.
+	 * @throws GalaxyDatasetException  If there was an issue finding the corresponding Dataset for the file
+	 * 	in the history.
+	 */
+	public Map<Path, String> filesToLibraryToHistory(List<Path> paths, InputFileType fileType, History history, Library library,
+			DataStorage dataStorage) throws UploadException {
+		checkNotNull(paths, "paths is null");
+		
+		Map<Path, String> datasetLibraryIdsMap = new HashMap<>();
+		Map<Path, String> datasetIdsMap = new HashMap<>();
+		
+		try {
+			// upload all files to library first
+			for (Path path : paths) {
+				if (datasetLibraryIdsMap.containsKey(path)) {
+					throw new UploadException("Could not upload list of paths, duplicate path " + path);
+				} else {
+					String datasetLibraryId = fileToLibrary(path, fileType, library, dataStorage);
+					datasetLibraryIdsMap.put(path, datasetLibraryId);
+				}
+			}
+			
+			// wait for uploads to finish
+			for (Path path : paths) {
+				String datasetLibraryId = datasetLibraryIdsMap.get(path);
+				
+				// wait for completion of upload
+				LibraryDataset libraryDataset = librariesClient.showDataset(library.getId(), datasetLibraryId);
+				while(!"ok".equals(libraryDataset.getState())) {
+					logger.debug("Waiting for library dataset " + libraryDataset.getId() +
+							" to be finished processing, in state " + libraryDataset.getState());					
+					try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						throw new UploadException("Thread interuppted when waiting for library upload to complete for file " +
+								path);
+					}
+					
+					libraryDataset = librariesClient.showDataset(library.getId(), datasetLibraryId);
+				}
+				
+				// move dataset to library
+				HistoryDetails historyDetails = libraryDatasetToHistory(datasetLibraryId, history);
+				logger.debug("Transfered library dataset " + datasetLibraryId + " to history " +
+						history.getId() + " dataset id " + historyDetails.getId());
+				datasetIdsMap.put(path, historyDetails.getId());
+			}
+		} catch (RuntimeException e) {
+			throw new UploadException(e);
+		}
+		
+		return datasetIdsMap;
+	}
+	
+	/**
+	 * Uploads the given file to a library with the given information.
+	 * @param path
+	 * @param fileType
+	 * @param library
+	 * @param dataStorage
+	 * @return
+	 * @throws UploadException
+	 */
+	public String fileToLibrary(Path path, InputFileType fileType,
+			Library library, DataStorage dataStorage) throws UploadException {
+		checkNotNull(path, "path is null");
+		checkNotNull(fileType, "fileType is null");
+		checkNotNull(library, "library is null");
+		checkNotNull(library.getId(), "library id is null");
+		checkState(path.toFile().exists(), "path " + path + " does not exist");
+		
+		File file = path.toFile();
+		
+		try {
+			LibraryContent rootContent = librariesClient.getRootFolder(library
+					.getId());
+			FilesystemPathsLibraryUpload upload = new FilesystemPathsLibraryUpload();
+			upload.setFolderId(rootContent.getId());
+	
+			upload.setContent(file.getAbsolutePath());
+			upload.setName(file.getName());
+			upload.setLinkData(DataStorage.LOCAL.equals(dataStorage));
+			upload.setFileType(fileType.toString());
+	
+			GalaxyObject uploadObject = 
+					librariesClient.uploadFilesystemPaths(library.getId(), upload);
+			
+			return uploadObject.getId();
+		} catch (RuntimeException e) {
+			throw new UploadException(e);
+		} 
+	}
+
 	/**
 	 * Uploads a file to a given history through the given library.
 	 * @param path  The path to the file to upload.
