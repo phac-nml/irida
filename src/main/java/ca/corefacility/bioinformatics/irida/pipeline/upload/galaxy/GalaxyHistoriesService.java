@@ -79,6 +79,22 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	private static final String COLLECTION_NAME = "collection";
 	
 	/**
+	 * Polling time in milliseconds to poll a Galaxy library 
+	 * to check if datasets have been properly uploaded.
+	 */
+	private static final int LIBRARY_POLLING_TIME = 5*1000;
+	
+	/**
+	 * Timeout in milliseconds to stop polling a Galaxy library.
+	 */
+	private static final int LIBRARY_TIMEOUT = 5*60*1000;
+	
+	/**
+	 * State a library dataset should be in on proper upload.
+	 */
+	private static final String LIBRARY_OK_STATE = "ok";
+	
+	/**
 	 * Builds a new GalaxyHistory object for working with Galaxy Histories.
 	 * @param historiesClient  The HistoriesClient for interacting with Galaxy histories.
 	 * @param toolsClient  The ToolsClient for interacting with tools in Galaxy.
@@ -366,12 +382,23 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 						uploadObject.getId() + " and url " + uploadObject.getUrl());
 				
 				LibraryDataset libraryDataset = librariesClient.showDataset(library.getId(), uploadObject.getId());
-				while(!"ok".equals(libraryDataset.getState())) {
-					logger.debug("Waiting for library dataset " + libraryDataset.getId() +
-							" to be finished processing, in state " + libraryDataset.getState());					
-					Thread.sleep(5000);
-					
-					libraryDataset = librariesClient.showDataset(library.getId(), uploadObject.getId());
+				long startTime = System.currentTimeMillis();
+				while(!LIBRARY_OK_STATE.equals(libraryDataset.getState())) {
+					long timeDifference = System.currentTimeMillis()
+							- startTime;
+					if (timeDifference > LIBRARY_TIMEOUT) {
+						throw new UploadException("Error: timeout ("
+								+ timeDifference + "ms > " + LIBRARY_TIMEOUT
+								+ ") when polling Galaxy data library "
+								+ library.getId() + " for dataset "
+								+ libraryDataset.getId());
+					} else {		
+						logger.debug("Waiting for library dataset " + libraryDataset.getId() +
+								" to be finished processing, in state " + libraryDataset.getState());					
+						Thread.sleep(LIBRARY_POLLING_TIME);
+						
+						libraryDataset = librariesClient.showDataset(library.getId(), uploadObject.getId());
+					}
 				}
 				
 				// dataset from library upload
