@@ -46,6 +46,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset.Source;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
+import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
@@ -267,6 +268,15 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 				logger.debug("Uploaded file " + file + " to library " + library.getName() + " and got library id " +
 						uploadObject.getId() + " and url " + uploadObject.getUrl());
 				
+				LibraryDataset libraryDataset = librariesClient.showDataset(library.getId(), uploadObject.getId());
+				while(!"ok".equals(libraryDataset.getState())) {
+					logger.debug("Waiting for library dataset " + libraryDataset.getId() +
+							" to be finished processing, in state " + libraryDataset.getState());					
+					Thread.sleep(5000);
+					
+					libraryDataset = librariesClient.showDataset(library.getId(), uploadObject.getId());
+				}
+				
 				// dataset from library upload
 				HistoryDataset historyDataset = new HistoryDataset();
 				historyDataset.setSource(Source.LIBRARY);
@@ -285,6 +295,8 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 				}
 			}
 		} catch (RuntimeException e) {
+			throw new UploadException(e);
+		} catch (InterruptedException e) {
 			throw new UploadException(e);
 		}
 	}
