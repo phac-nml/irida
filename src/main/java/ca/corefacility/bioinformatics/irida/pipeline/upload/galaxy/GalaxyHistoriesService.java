@@ -248,57 +248,56 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	
 	/**
 	 * Uploads a set of files to a given history through the given library.
-	 * @param paths  The set of paths to upload.
-	 * @param fileType The file type of the file to upload.
-	 * @param history  The history to upload the file into.
-	 * @param library  The library to initially upload the file into.
-	 * @param dataStorage  The type of DataStorage strategy to use.
-	 * @return An @{link Map} of paths and ids for each dataset object in this history.
-	 * @throws UploadException  If there was an issue uploading the file to Galaxy.
+	 * 
+	 * @param paths
+	 *            The set of paths to upload.
+	 * @param fileType
+	 *            The file type of the file to upload.
+	 * @param history
+	 *            The history to upload the file into.
+	 * @param library
+	 *            The library to initially upload the file into.
+	 * @param dataStorage
+	 *            The type of DataStorage strategy to use.
+	 * @return An @{link Map} of paths and ids for each dataset object in this
+	 *         history.
+	 * @throws UploadException
+	 *             If there was an issue uploading the file to Galaxy.
 	 */
-	public Map<Path, String> filesToLibraryToHistory(Set<Path> paths, InputFileType fileType, History history, Library library,
+	public Map<Path, String> filesToLibraryToHistory(Set<Path> paths,
+			InputFileType fileType, History history, Library library,
 			DataStorage dataStorage) throws UploadException {
 		checkNotNull(paths, "paths is null");
-		
-		Map<Path, String> datasetLibraryIdsMap = new HashMap<>();
+
 		Map<Path, String> datasetIdsMap = new HashMap<>();
-		
+
+		Map<Path, String> datasetLibraryIdsMap = librariesService
+				.filesToLibraryWait(paths, fileType, library, dataStorage);
+
+		if (datasetLibraryIdsMap.size() != paths.size()) {
+			throw new UploadException(
+					"Error: datasets uploaded to a Galaxy library are not the same size ("
+							+ datasetLibraryIdsMap.size()
+							+ ") as the paths to upload (" + paths.size() + ")");
+		}
+
 		try {
-			// upload all files to library first
-			for (Path path : paths) {
-				String datasetLibraryId = librariesService.fileToLibrary(path, fileType, library, dataStorage);
-				datasetLibraryIdsMap.put(path, datasetLibraryId);
-			}
-			
-			// wait for uploads to finish
-			for (Path path : paths) {
+			for (Path path : datasetLibraryIdsMap.keySet()) {
 				String datasetLibraryId = datasetLibraryIdsMap.get(path);
-				
-				// wait for completion of upload
-				LibraryDataset libraryDataset = librariesClient.showDataset(library.getId(), datasetLibraryId);
-				while(!"ok".equals(libraryDataset.getState())) {
-					logger.debug("Waiting for library dataset " + libraryDataset.getId() +
-							" to be finished processing, in state " + libraryDataset.getState());					
-					try {
-						Thread.sleep(5000);
-					} catch (InterruptedException e) {
-						throw new UploadException("Thread interuppted when waiting for library upload to complete for file " +
-								path);
-					}
-					
-					libraryDataset = librariesClient.showDataset(library.getId(), datasetLibraryId);
-				}
-				
-				// move dataset to library
-				HistoryDetails historyDetails = libraryDatasetToHistory(datasetLibraryId, history);
-				logger.debug("Transfered library dataset " + datasetLibraryId + " to history " +
-						history.getId() + " dataset id " + historyDetails.getId());
+
+				HistoryDetails historyDetails = libraryDatasetToHistory(
+						datasetLibraryId, history);
+
+				logger.debug("Transfered library dataset " + datasetLibraryId
+						+ " to history " + history.getId() + " dataset id "
+						+ historyDetails.getId());
+
 				datasetIdsMap.put(path, historyDetails.getId());
 			}
 		} catch (RuntimeException e) {
 			throw new UploadException(e);
 		}
-		
+
 		return datasetIdsMap;
 	}
 
