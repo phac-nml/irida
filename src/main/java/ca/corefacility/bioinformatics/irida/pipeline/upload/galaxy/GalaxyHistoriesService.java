@@ -71,6 +71,8 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	private LibrariesClient librariesClient;
 	private ToolsClient toolsClient;
 	
+	private GalaxyLibrariesService librariesService;
+	
 	private static final String FORWARD_PAIR_NAME = "forward";
 	private static final String REVERSE_PAIR_NAME = "reverse";
 	
@@ -99,16 +101,20 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	 * @param historiesClient  The HistoriesClient for interacting with Galaxy histories.
 	 * @param toolsClient  The ToolsClient for interacting with tools in Galaxy.
 	 * @param librariesClient  The LibrariesClient for interacting with libraries in Galaxy.
+	 * @param librariesService  A service for dealing with Galaxy libraries.
 	 */
 	public GalaxyHistoriesService(HistoriesClient historiesClient,
-			ToolsClient toolsClient, LibrariesClient librariesClient) {
+			ToolsClient toolsClient, LibrariesClient librariesClient,
+			GalaxyLibrariesService librariesService) {
 		checkNotNull(historiesClient, "historiesClient is null");
 		checkNotNull(toolsClient, "toolsClient is null");
 		checkNotNull(librariesClient, "librariesClient is null");
+		checkNotNull(librariesService, "librariesService is null");
 		
 		this.historiesClient = historiesClient;
 		this.toolsClient = toolsClient;
 		this.librariesClient = librariesClient;
+		this.librariesService = librariesService;
 	}
 	
 	/**
@@ -260,7 +266,7 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 		try {
 			// upload all files to library first
 			for (Path path : paths) {
-				String datasetLibraryId = fileToLibrary(path, fileType, library, dataStorage);
+				String datasetLibraryId = librariesService.fileToLibrary(path, fileType, library, dataStorage);
 				datasetLibraryIdsMap.put(path, datasetLibraryId);
 			}
 			
@@ -294,45 +300,6 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 		}
 		
 		return datasetIdsMap;
-	}
-	
-	/**
-	 * Uploads the given file to a library with the given information.
-	 * @param path
-	 * @param fileType
-	 * @param library
-	 * @param dataStorage
-	 * @return
-	 * @throws UploadException
-	 */
-	public String fileToLibrary(Path path, InputFileType fileType,
-			Library library, DataStorage dataStorage) throws UploadException {
-		checkNotNull(path, "path is null");
-		checkNotNull(fileType, "fileType is null");
-		checkNotNull(library, "library is null");
-		checkNotNull(library.getId(), "library id is null");
-		checkState(path.toFile().exists(), "path " + path + " does not exist");
-		
-		File file = path.toFile();
-		
-		try {
-			LibraryContent rootContent = librariesClient.getRootFolder(library
-					.getId());
-			FilesystemPathsLibraryUpload upload = new FilesystemPathsLibraryUpload();
-			upload.setFolderId(rootContent.getId());
-	
-			upload.setContent(file.getAbsolutePath());
-			upload.setName(file.getName());
-			upload.setLinkData(DataStorage.LOCAL.equals(dataStorage));
-			upload.setFileType(fileType.toString());
-	
-			GalaxyObject uploadObject = 
-					librariesClient.uploadFilesystemPaths(library.getId(), upload);
-			
-			return uploadObject.getId();
-		} catch (RuntimeException e) {
-			throw new UploadException(e);
-		} 
 	}
 
 	/**

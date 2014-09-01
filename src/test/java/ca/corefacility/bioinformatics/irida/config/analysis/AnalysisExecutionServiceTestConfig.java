@@ -16,6 +16,7 @@ import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
@@ -95,7 +96,14 @@ public class AnalysisExecutionServiceTestConfig {
 		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser()
 				.getToolsClient();
 		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
-		return new GalaxyHistoriesService(historiesClient, toolsClient, librariesClient);
+		return new GalaxyHistoriesService(historiesClient, toolsClient, librariesClient, galaxyLibrariesService());
+	}
+	
+	@Lazy
+	@Bean
+	public GalaxyLibrariesService galaxyLibrariesService() {
+		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
+		return new GalaxyLibrariesService(librariesClient);
 	}
 	
 	@Lazy

@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.manager.galaxy.ExecutionManagerGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
@@ -130,7 +131,16 @@ public class AnalysisExecutionServiceConfig {
 	 */
 	@Lazy @Bean
 	public GalaxyHistoriesService galaxyHistoriesService() {
-		return new GalaxyHistoriesService(historiesClient(), toolsClient(), librariesClient());
+		return new GalaxyHistoriesService(historiesClient(), toolsClient(), librariesClient(),
+				galaxyLibrariesService());
+	}
+	
+	/**
+	 * @return  A GalaxyHistoriesService for interacting with Galaxy histories.
+	 */
+	@Lazy @Bean
+	public GalaxyLibrariesService galaxyLibrariesService() {
+		return new GalaxyLibrariesService(librariesClient());
 	}
 	
 	/**

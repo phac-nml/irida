@@ -34,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
@@ -64,6 +65,7 @@ public class GalaxyHistoriesServiceTest {
 	@Mock private UniformInterfaceException uniformInterfaceException;
 	@Mock private ClientResponse invalidResponse;
 	@Mock private ClientResponse okayResponse;
+	@Mock private GalaxyLibrariesService galaxyLibrariesService;
 	
 	private GalaxyHistoriesService galaxyHistory;
 	
@@ -102,7 +104,8 @@ public class GalaxyHistoriesServiceTest {
 		when(invalidResponse.getClientResponseStatus()).thenReturn(
 				ClientResponse.Status.FORBIDDEN);
 		
-		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, librariesClient);
+		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient,
+				librariesClient, galaxyLibrariesService);
 		
 		dataFile = Paths.get(this.getClass().getResource("testData1.fastq").toURI());
 		dataFile2 = Paths.get(this.getClass().getResource("testData2.fastq").toURI());

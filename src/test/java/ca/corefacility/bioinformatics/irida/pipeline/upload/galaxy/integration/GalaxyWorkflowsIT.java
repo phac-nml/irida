@@ -41,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -122,7 +123,9 @@ public class GalaxyWorkflowsIT {
 		workflowsClient = galaxyAdminInstance.getWorkflowsClient();
 		historiesClient = galaxyAdminInstance.getHistoriesClient();
 		librariesClient = galaxyAdminInstance.getLibrariesClient();
-		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, librariesClient);
+		
+		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient);
+		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, librariesClient, galaxyLibrariesService);
 		galaxyWorkflowService 
 			= new GalaxyWorkflowService(historiesClient, workflowsClient,
 					new StandardPasswordEncoder());
