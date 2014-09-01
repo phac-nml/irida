@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -224,19 +225,16 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	}
 	
 	/**
-	 * Uploads a list of files to a given history through the given library.
-	 * @param paths  The list of paths to the files to upload.
+	 * Uploads a set of files to a given history through the given library.
+	 * @param paths  The set of paths to upload.
 	 * @param fileType The file type of the file to upload.
 	 * @param history  The history to upload the file into.
 	 * @param library  The library to initially upload the file into.
 	 * @param dataStorage  The type of DataStorage strategy to use.
-	 * @return An @{link Map} of files and ids for each dataset object in this history.
+	 * @return An @{link Map} of paths and ids for each dataset object in this history.
 	 * @throws UploadException  If there was an issue uploading the file to Galaxy.
-	 * @throws InterruptedException If there was an issue when waiting for a dataset to upload.
-	 * @throws GalaxyDatasetException  If there was an issue finding the corresponding Dataset for the file
-	 * 	in the history.
 	 */
-	public Map<Path, String> filesToLibraryToHistory(List<Path> paths, InputFileType fileType, History history, Library library,
+	public Map<Path, String> filesToLibraryToHistory(Set<Path> paths, InputFileType fileType, History history, Library library,
 			DataStorage dataStorage) throws UploadException {
 		checkNotNull(paths, "paths is null");
 		
@@ -246,12 +244,8 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 		try {
 			// upload all files to library first
 			for (Path path : paths) {
-				if (datasetLibraryIdsMap.containsKey(path)) {
-					throw new UploadException("Could not upload list of paths, duplicate path " + path);
-				} else {
-					String datasetLibraryId = fileToLibrary(path, fileType, library, dataStorage);
-					datasetLibraryIdsMap.put(path, datasetLibraryId);
-				}
+				String datasetLibraryId = fileToLibrary(path, fileType, library, dataStorage);
+				datasetLibraryIdsMap.put(path, datasetLibraryId);
 			}
 			
 			// wait for uploads to finish

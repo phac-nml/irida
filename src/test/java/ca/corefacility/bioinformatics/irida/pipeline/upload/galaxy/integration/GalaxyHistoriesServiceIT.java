@@ -41,6 +41,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDe
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.google.common.collect.Sets;
 import com.sun.jersey.api.client.ClientResponse;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
@@ -461,21 +462,21 @@ public class GalaxyHistoriesServiceIT {
 	public void testFilesToLibraryToHistorySuccess()
 			throws UploadException, GalaxyDatasetException {
 		History history = galaxyHistory.newHistoryForWorkflow();
-		String filename = dataFile.toFile().getName();
 		Library library = buildEmptyLibrary("testFilesToLibraryToHistorySuccess");
-		Map<Path,String> datasetsMap = galaxyHistory.filesToLibraryToHistory(Arrays.asList(dataFile),
+		Map<Path,String> datasetsMap = galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFile, dataFile2),
 				FILE_TYPE, history, library, DataStorage.LOCAL);
 		assertNotNull(datasetsMap);
-		assertEquals(1, datasetsMap.size());
-		String datasetId = datasetsMap.get(dataFile);
+		assertEquals(2, datasetsMap.size());
+		String datasetId1 = datasetsMap.get(dataFile);
+		String datasetId2 = datasetsMap.get(dataFile2);
 		
-		Dataset actualDataset = localGalaxy.getGalaxyInstanceAdmin()
-				.getHistoriesClient().showDataset(history.getId(), datasetId);
-		assertNotNull(actualDataset);
+		Dataset actualDataset1 = localGalaxy.getGalaxyInstanceAdmin()
+				.getHistoriesClient().showDataset(history.getId(), datasetId1);
+		assertNotNull(actualDataset1);
 
-		String dataId = Util.getIdForFileInHistory(filename, history.getId(),
-				localGalaxy.getGalaxyInstanceAdmin());
-		assertEquals(dataId, actualDataset.getId());
+		Dataset actualDataset2 = localGalaxy.getGalaxyInstanceAdmin()
+				.getHistoriesClient().showDataset(history.getId(), datasetId2);
+		assertNotNull(actualDataset2);
 	}
 	
 	/**
@@ -490,7 +491,7 @@ public class GalaxyHistoriesServiceIT {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		Library library = buildEmptyLibrary("testFilesToLibraryToHistoryFail");
 		library.setId("invalid");
-		galaxyHistory.filesToLibraryToHistory(Arrays.asList(dataFile),
+		galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFile),
 				FILE_TYPE, history, library, DataStorage.LOCAL);
 	}
 	
