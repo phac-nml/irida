@@ -6,6 +6,8 @@ import javax.transaction.Transactional;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -60,4 +62,20 @@ public class AnalysisServiceImpl extends CRUDServiceImpl<Long, Analysis> impleme
 		return analysisRepository.findAnalysesForSequenceFile(file, analysisType);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Page<Analysis> list(int page, int size, Direction order, String... sortProperty)
+			throws IllegalArgumentException {
+		return super.list(page, size, order, sortProperty);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Page<Analysis> list(int page, int size, Direction order) throws IllegalArgumentException {
+		return super.list(page, size, order);
+	}
 }
