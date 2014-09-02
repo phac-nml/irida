@@ -52,7 +52,7 @@
                                 <input class="form-control input-full" type="text"/>
                             </div>
                         </th>
-                        <th class="col-md-7">
+                        <th class="col-md-5">
                             <sort-by onsort="onSort" sortdir="filterCriteria.sortDir" sortedby="filterCriteria.sortedBy"
                                      sortValue="type">Type
                             </sort-by>
@@ -63,6 +63,11 @@
                                     <option value="" th:text="#{analysis.select.all}"></option>
                                 </select>
                             </div>
+                        </th>
+                        <th class="col-md-2">
+                            <sort-by onsort="onSort" sortdir="filterCriteria.sortDir" sortedby="filterCriteria.sortedBy"
+                                     sortValue="state">State
+                            </sort-by>
                         </th>
                         <th class="col-md-4">
                             <sort-by onsort="onSort" sortdir="filterCriteria.sortDir" sortedby="filterCriteria.sortedBy"
@@ -109,7 +114,8 @@
                         <tr ng-repeat="a in analysis">
                             <td>{{a.id}}</td>
                             <td>{{a.type}}</td>
-                            <td colspan="2">{{a.createdDate}}</td>
+                            <td></td>
+                            <td>{{a.createdDate}}</td>
                         </tr>
                         </tbody>
                     </table>
