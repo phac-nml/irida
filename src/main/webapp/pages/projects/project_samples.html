@@ -5,6 +5,12 @@
 <head>
     <title th:text="#{project.samples.title}">THIS IS SOMETHING
         WRONG</title>
+    <link href="/resources/wet-theme/css/wet-boew.min.css"/>
+    <link href="/resources/wet-theme/css/theme.min.css"/>
+	<th:block layout:fragment="css">
+		<link rel="stylesheet" th:href="@{/resources/bower_components/magnific-popup/dist/magnific-popup.css}"
+			  href="/resources/bower_components/magnific-popup/dist/magnific-popup.css"/>
+	</th:block>
 </head>
 <body>
 <div class="container" layout:fragment="content">
@@ -23,25 +29,31 @@
             </div>
             <div class="row mrgn-bttm-md">
                 <div class="col-md-12">
-                    <div class="btn-toolbar" role="toolbar">
+                    <div class="btn-toolbar mrgn-bttm-md" role="toolbar" th:inline="text">
                         <div class="btn-group">
-                            <button id="deleteBtn" class="btn btn-default btn-sm btn-action" disabled="true"
-                                    th:text="#{project.samples.delete}">__Delete_Samples__
+                            <button id="deleteBtn" class="btn btn-default btn-sm btn-action" disabled="true">
+                                <span class="fa fa-trash-o fa-fw"></span>&nbsp;[[#{project.samples.delete}]]
                             </button>
                         </div>
 						<div class="btn-group">
-                            <button id="copyBtn" class="btn btn-default btn-sm btn-action" disabled="true"
-                                    th:text="#{project.samples.copy}">__Copy Samples__
+                            <button id="copyBtn" class="btn btn-default btn-sm btn-action" disabled="true">
+                                <span class="fa fa-copy fa-fw"></span>&nbsp;[[#{project.samples.copy}]]
                             </button>
                         </div>
                         <div th:if="${isOwner} or ${isAdmin}" class="btn-group">
-                            <button id="moveBtn" class="btn btn-default btn-sm btn-action" disabled="true"
-                                        th:text="#{project.samples.move}">__Move Samples__
+                            <button id="moveBtn" class="btn btn-default btn-sm btn-action" disabled="true">
+                                <span class="fa fa-truck fa-fw"></span>&nbsp;[[#{project.samples.move}]]
                             </button>
                         </div>
 						<div class="btn-group">
-                            <button id="combineBtn" class="btn btn-default btn-sm btn-action2" disabled="true"
-                                    th:text="#{project.samples.combine}">__Combine_Samples__
+                            <button id="combineBtn" class="btn btn-default btn-sm btn-action2" disabled="true">
+                                <span class="fa fa-compress fa-fw"></span>&nbsp;[[#{project.samples.combine}]]
+                            </button>
+                        </div>
+                        <div class="btn-group">
+                            <button id="runPipelineBtn" aria-controls="runPipelineModal"
+                               class="btn btn-primary btn-sm btn-action3" role="button" disabled="true">
+                                <span class="fa fa-rocket fa-fw"></span>&nbsp;[[#{project.samples.run-pipeline}]]
                             </button>
                         </div>
                     </div>
@@ -67,8 +79,26 @@
         </main>
         <aside th:replace="projects/project_base :: sidebar"></aside>
     </div>
-    
-    
+
+    <section id="runPipelineModal" class="white-popup form-popup mfp-hide" th:inline="text">
+        <header class="modal-header">
+            <h2 class="modal-title" th:text="#{project.samples.run-modal.title}">__Select_Pipeline__</h2>
+        </header>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="pipeline" th:text="#{samples.pipeline-select}">Select a Pipeline</label>
+                <input id="pipeline" name="pipeline" class="form-control input-full"/>
+            </div>
+            <div class="form-group">
+                <label for="reference" th:text="#{samples.pipeline-reference}">Select a Reference File</label>
+                <input id="reference" name="reference" class="form-control input-full"/>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="launchBtn" class="btn btn-primary btn-sm"><span class="fa fa-rocket fa-fw"></span>&nbsp;[[#{project.samples.run-pipeline}]]
+            </button>
+        </div>
+    </section>
     <script type="text/html" id="copySamplesSection">
 			<h2 id="copyTitle">_Copy/Move Samples_</h2>
 
@@ -592,6 +622,7 @@ $(document).ready(function () {
     var $deleteBtn = $("#deleteBtn"),
             $btnAction = $(".btn-action"),
 			$btnAction2 = $(".btn-action2"),
+			$btnAction3 = $(".btn-action3"),
             $combineBtn = $("#combineBtn"),
             $copyBtn = $("#copyBtn"),
             $moveBtn = $("#moveBtn"),
@@ -721,18 +752,23 @@ $(document).ready(function () {
 
     function setSelectAllState() {
         var state = DT.getSelectAllState();
+        $btnAction.prop('disabled', true);
+        $btnAction2.prop('disabled', true);
+        $btnAction3.prop('disabled', true);
         if (state == "indeterminate") {
             $selectAll.prop('indeterminate', true);
-            $btnAction.removeAttr('disabled');
+            $btnAction.prop('disabled', false);
         } else {
             $selectAll.prop('indeterminate', false).prop('checked', state);
             $btnAction.prop('disabled', !state);
         }
+
         if (DT.selectedRowIds.length > 1) {
             $btnAction2.prop('disabled', false);
         }
-        else {
-            $btnAction2.prop('disabled', true);
+
+        if(DT.selectedRowIds.length > 2) {
+            $btnAction3.prop('disabled', false);
         }
     }
 
@@ -742,6 +778,7 @@ $(document).ready(function () {
         $samplesTable.find('input[type="checkbox"]').prop("indeterminate", false).prop('checked', allSelected);
         $btnAction.prop('disabled', !allSelected);
         $btnAction2.prop('disabled', !allSelected);
+        $btnAction3.prop('disabled', !allSelected);
         DT.updateAllSelected(allSelected);
     });
 
@@ -759,6 +796,73 @@ $(document).ready(function () {
 	
 	$moveBtn.on('click', function(){
     	DT.copySelectedSamples(true);
+    });
+
+    var runPipelineModal = $("#runPipelineBtn").magnificPopup({
+        items: {
+            src: $('#runPipelineModal'),
+            type: 'inline'
+        },
+        closeBtnInside: true,
+        callbacks: {
+            beforeOpen: function () {
+                var result = [];
+                $.each(DT.selectedRowIds, function (i, v) {
+                    result.push({id: v, omit: DT.allRowIds[v].omit});
+                });
+                // Ajax call to get applicable pipelines.
+                $.ajax({
+                    url: /*@{/pipelines/ajax/list.json}*/ '/pipelines/ajax/list.json',
+                    type: 'post',
+                    contentType: "application/json",
+                    data: JSON.stringify(result)
+                }).done(function(data){
+                    $("#pipeline").select2({
+                        data: data,
+                        initSelection: function(element, callback) {
+                            callback(data[0]);
+                            $(element).val(data[0].id);
+                        }
+                    });
+                });
+
+                // Ajax call to get applicable pipelines.
+                $.ajax({
+                    url: /*[[@{/projects/ajax/{projectId}/referenceFiles(projectId=${project.getId()})}]]*/ '/projects/ajax/1/referenceFiles',
+                    success: function(data){
+                        $("#reference").select2({
+                            data: data,
+                            initSelection: function(element, callback) {
+                                callback(data[0]);
+                                $(element).val(data[0].id);
+                            }
+                        });
+                    }
+                });
+
+
+            }
+        }
+    });
+
+    $('#launchBtn').on('click', function () {
+        'use strict';
+        var pId = $("#pipeline").val(),
+            rId = $("#reference").val();
+
+        $.ajax({
+            'url'     : /*@{'/pipelines/ajax/start.json'}*/ '/pipelines/ajax/start.json',
+            'type'    : 'post',
+            'data'    : 'pId=' + pId + '&rId=' + rId,
+            'success' : function(data) {
+                console.log(data);
+                runPipelineModal.close();
+            },
+            'error': function (xhr,status,error) {
+                // TODO: (14-08-28 - Josh) Need to determine what errors will occur. Reference file?
+                console.log(error);
+            }
+        });
     });
 
     DT.getAllSampleIds();

@@ -46,7 +46,6 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectSamplesPageIT {
 
-	public static final String GOOD_SAMPLE_NAME = "GoodSampleName";
 	private WebDriver driver;
 	private ProjectSamplesPage page;
 
@@ -230,5 +229,15 @@ public class ProjectSamplesPageIT {
 		page.hideFilesView();
 		page.showFilesView();
 		assertTrue("Should have files 1 and 2 selected", page.ensureCorrectFilesSelected(new int[] { 1, 2 }));
+	}
+
+	@Test
+	public void testRunPipeline() {
+		page.goToPage();
+		page.clickFirstThreeCheckboxes();
+		page.clickRunPipelineButton();
+		assertTrue("Modal dialogue should be open.", page.isSelectPipelineModalOpen());
+		page.clickOffSelectPipelineModal();
+		assertTrue("Modal dialogue should be open.", page.isSelectPipelineModalClosed());
 	}
 }

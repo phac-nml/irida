@@ -16,10 +16,6 @@
 
 table.dataTable {
   > thead {
-    .sortable:hover {
-      background-color: $color-info;
-      @include transition(background-color ease-in .25s);
-    }
     i {
       float: right;
       margin: 0 5px;
