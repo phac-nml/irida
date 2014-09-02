@@ -14,6 +14,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -107,7 +110,7 @@ public class AnalysisServiceImplIT {
 		SequenceFile sf = sequenceFileService.read(1L);
 		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(sf),
 				EXECUTION_MANAGER_ID);
-		
+
 		Path treePath = Files.createTempFile(null, null);
 		Path tablePath = Files.createTempFile(null, null);
 		Path matrixPath = Files.createTempFile(null, null);
@@ -119,16 +122,35 @@ public class AnalysisServiceImplIT {
 		pipeline.setPhylogeneticTree(tree);
 		pipeline.setSnpMatrix(matrix);
 		pipeline.setSnpTable(table);
-		
-		analysisService.create(pipeline);
+
+		Analysis created = analysisService.create(pipeline);
 
 		Set<Analysis> analyses = analysisService.getAnalysesForSequenceFile(sf);
-		
+
 		assertNotNull("Analyses should not be null.", analyses);
-		assertEquals("sequence file should have 1 analysis.", 1, analyses.size());
-		Analysis saved = analyses.iterator().next();
+		Analysis saved = null;
+		for (Analysis a : analyses) {
+			if (a.getId().equals(created.getId())) {
+				saved = a;
+				break;
+			}
+		}
 		assertEquals("analysis in set should be what we just persisted.", pipeline, saved);
 	}
-	
 
+	@Test
+	@WithMockUser(username = "user", roles = "USER")
+	public void testListAnalysesAsUser() {
+		SecurityContextHolder.getContext();
+		Page<Analysis> analyses = analysisService.list(1, 1, Direction.DESC);
+		assertEquals("number of analyses should be 1.", 1, analyses.getTotalElements());
+	}
+
+	@Test
+	@WithMockUser(username = "user", roles = "USER")
+	public void testListAnalysesAsUserWithSort() {
+		SecurityContextHolder.getContext();
+		Page<Analysis> analyses = analysisService.list(1, 1, Direction.DESC, "executionManagerAnalysisId");
+		assertEquals("number of analyses should be 1.", 1, analyses.getTotalElements());
+	}
 }
