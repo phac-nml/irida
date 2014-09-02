@@ -7,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
@@ -38,7 +36,6 @@ public class AnalysisExecutionScheduledTaskImpl implements
 	private AnalysisSubmissionService analysisSubmissionService;
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
-	private Authentication authentication;
 
 	/**
 	 * Builds a new AnalysisExecutionScheduledTaskImpl with the given service
@@ -50,76 +47,60 @@ public class AnalysisExecutionScheduledTaskImpl implements
 	 *            A repository for analysis submissions.
 	 * @param analysisExecutionServicePhylogenomics
 	 *            A service for executing analyses.
-	 * @param authentication
-	 *            An authentication object for authenticating each of the
-	 *            scheduled tasks.
 	 */
 	@Autowired
 	public AnalysisExecutionScheduledTaskImpl(
 			AnalysisSubmissionService analysisSubmissionService,
 			AnalysisSubmissionRepository analysisSubmissionRepository,
-			AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics,
-			Authentication authentication) {
+			AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.analysisExecutionServicePhylogenomics = analysisExecutionServicePhylogenomics;
-		this.authentication = authentication;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Scheduled(initialDelay = 5000, fixedRate = 15000)
 	public void executeAnalyses() {
-		Authentication oldAuthentication = SecurityContextHolder.getContext()
-				.getAuthentication();
-		try {
-			SecurityContextHolder.getContext()
-					.setAuthentication(authentication);
+		logger.debug("Looking for analyses with state " + AnalysisState.NEW);
 
-			logger.debug("Looking for analyses with state " + AnalysisState.NEW);
+		List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
+				.findByAnalysisState(AnalysisState.NEW);
 
-			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-					.findByAnalysisState(AnalysisState.NEW);
+		if (analysisSubmissions.size() > 0) {
+			AnalysisSubmission analysisSubmission = analysisSubmissions
+					.get(0);
 
-			if (analysisSubmissions.size() > 0) {
-				AnalysisSubmission analysisSubmission = analysisSubmissions
-						.get(0);
+			setStateForSubmission(analysisSubmission,
+					AnalysisState.PREPARING);
 
-				setStateForSubmission(analysisSubmission,
-						AnalysisState.PREPARING);
+			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
+					.getByType(analysisSubmission.getId(),
+							AnalysisSubmissionPhylogenomics.class);
 
-				AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
-						.getByType(analysisSubmission.getId(),
-								AnalysisSubmissionPhylogenomics.class);
+			try {
+				AnalysisSubmissionPhylogenomics preparedSubmission = analysisExecutionServicePhylogenomics
+						.prepareSubmission(analysisSubmissionPhylogenomics);
 
-				try {
-					AnalysisSubmissionPhylogenomics preparedSubmission = analysisExecutionServicePhylogenomics
-							.prepareSubmission(analysisSubmissionPhylogenomics);
+				setStateForSubmission(preparedSubmission,
+						AnalysisState.SUBMITTING);
 
-					setStateForSubmission(preparedSubmission,
-							AnalysisState.SUBMITTING);
+				analysisExecutionServicePhylogenomics
+						.executeAnalysis(preparedSubmission);
 
-					analysisExecutionServicePhylogenomics
-							.executeAnalysis(preparedSubmission);
-
-					setStateForSubmission(preparedSubmission,
-							AnalysisState.RUNNING);
-				} catch (ExecutionManagerException e) {
-					logger.error("Could not execute analysis "
-							+ analysisSubmissionPhylogenomics, e);
-					setStateForSubmission(analysisSubmissionPhylogenomics,
-							AnalysisState.ERROR);
-				} catch (Exception e) {
-					logger.error("Error for analysis", e);
-					setStateForSubmission(analysisSubmissionPhylogenomics,
-							AnalysisState.ERROR);
-				}
+				setStateForSubmission(preparedSubmission,
+						AnalysisState.RUNNING);
+			} catch (ExecutionManagerException e) {
+				logger.error("Could not execute analysis "
+						+ analysisSubmissionPhylogenomics, e);
+				setStateForSubmission(analysisSubmissionPhylogenomics,
+						AnalysisState.ERROR);
+			} catch (Exception e) {
+				logger.error("Error for analysis", e);
+				setStateForSubmission(analysisSubmissionPhylogenomics,
+						AnalysisState.ERROR);
 			}
-		} finally {
-			SecurityContextHolder.getContext().setAuthentication(
-					oldAuthentication);
 		}
 	}
 
@@ -129,51 +110,41 @@ public class AnalysisExecutionScheduledTaskImpl implements
 	@Override
 	@Scheduled(initialDelay = 1000, fixedRate = 15000)
 	public void transferAnalysesResults() {
-		Authentication oldAuthentication = SecurityContextHolder.getContext()
-				.getAuthentication();
-		try {
-			SecurityContextHolder.getContext()
-					.setAuthentication(authentication);
+		logger.debug("Looking for analyses with state "
+				+ AnalysisState.RUNNING);
 
-			logger.debug("Looking for analyses with state "
-					+ AnalysisState.RUNNING);
+		List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
+				.findByAnalysisState(AnalysisState.RUNNING);
 
-			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-					.findByAnalysisState(AnalysisState.RUNNING);
+		if (analysisSubmissions.size() > 0) {
+			AnalysisSubmission analysisSubmission = analysisSubmissions
+					.get(0);
 
-			if (analysisSubmissions.size() > 0) {
-				AnalysisSubmission analysisSubmission = analysisSubmissions
-						.get(0);
+			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
+					.getByType(analysisSubmission.getId(),
+							AnalysisSubmissionPhylogenomics.class);
+			try {
+				WorkflowStatus workflowStatus = analysisExecutionServicePhylogenomics
+						.getWorkflowStatus(analysisSubmissionPhylogenomics);
 
-				AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
-						.getByType(analysisSubmission.getId(),
-								AnalysisSubmissionPhylogenomics.class);
-				try {
-					WorkflowStatus workflowStatus = analysisExecutionServicePhylogenomics
-							.getWorkflowStatus(analysisSubmissionPhylogenomics);
+				handleWorkflowStatus(workflowStatus,
+						analysisSubmissionPhylogenomics);
 
-					handleWorkflowStatus(workflowStatus,
-							analysisSubmissionPhylogenomics);
-
-				} catch (ExecutionManagerException e) {
-					logger.error("Could not get status for analysis "
-							+ analysisSubmissionPhylogenomics, e);
-					setStateForSubmission(analysisSubmissionPhylogenomics,
-							AnalysisState.ERROR);
-				} catch (IOException e) {
-					logger.error("Could not transfer results for analysis "
-							+ analysisSubmissionPhylogenomics, e);
-					setStateForSubmission(analysisSubmissionPhylogenomics,
-							AnalysisState.ERROR);
-				} catch (Exception e) {
-					logger.error("Error for analysis", e);
-					setStateForSubmission(analysisSubmissionPhylogenomics,
-							AnalysisState.ERROR);
-				}
+			} catch (ExecutionManagerException e) {
+				logger.error("Could not get status for analysis "
+						+ analysisSubmissionPhylogenomics, e);
+				setStateForSubmission(analysisSubmissionPhylogenomics,
+						AnalysisState.ERROR);
+			} catch (IOException e) {
+				logger.error("Could not transfer results for analysis "
+						+ analysisSubmissionPhylogenomics, e);
+				setStateForSubmission(analysisSubmissionPhylogenomics,
+						AnalysisState.ERROR);
+			} catch (Exception e) {
+				logger.error("Error for analysis", e);
+				setStateForSubmission(analysisSubmissionPhylogenomics,
+						AnalysisState.ERROR);
 			}
-		} finally {
-			SecurityContextHolder.getContext().setAuthentication(
-					oldAuthentication);
 		}
 	}
 
