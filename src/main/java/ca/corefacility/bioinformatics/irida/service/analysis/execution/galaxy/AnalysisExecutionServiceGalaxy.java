@@ -99,10 +99,8 @@ public abstract class AnalysisExecutionServiceGalaxy
 		String analysisId = workspaceService.prepareAnalysisWorkspace(analysisSubmission);
 		logger.trace("Created Galaxy history for analysis " + " id=" + analysisId + ", " + analysisSubmission);
 		
-		analysisSubmissionService.update(analysisSubmission.getId(),
+		return (S) analysisSubmissionService.update(analysisSubmission.getId(),
 				ImmutableMap.of("remoteAnalysisId", analysisId));
-		
-		return (S)analysisSubmissionService.read(analysisSubmission.getId());
 	}
 
 	/**
