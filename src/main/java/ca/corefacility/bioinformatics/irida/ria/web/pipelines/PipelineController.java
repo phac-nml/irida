@@ -11,7 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -65,6 +67,7 @@ public class PipelineController extends BaseController {
 	private SequenceFileService sequenceFileService;
 	private RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics;
 	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
+	private MessageSource messageSource;
 
 	/*
 	 * COMPONENTS
@@ -75,12 +78,13 @@ public class PipelineController extends BaseController {
 	public PipelineController(SampleService sampleService, SequenceFileService sequenceFileService,
 			ReferenceFileService referenceFileService,
 			RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics,
-			AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics) {
+			AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics, MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
 		this.referenceFileService = referenceFileService;
 		this.remoteWorkflowServicePhylogenomics = remoteWorkflowServicePhylogenomics;
 		this.analysisExecutionServicePhylogenomics = analysisExecutionServicePhylogenomics;
+		this.messageSource = messageSource;
 
 		this.pipelineSubmission = new PipelineSubmission();
 	}
@@ -148,7 +152,8 @@ public class PipelineController extends BaseController {
 		} catch (ExecutionManagerException e) {
 			logger.error("Error starting pipeline (id = " + pId + ") [" + e.getMessage() + "]");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			result.add(ImmutableMap.of("error", e.getMessage()));
+			result.add(ImmutableMap.of("error", messageSource.getMessage("pipelines.start.failure", null,
+					LocaleContextHolder.getLocale())));
 		}
 		return result;
 	}
