@@ -86,11 +86,11 @@
         </header>
         <div class="modal-body">
             <div class="form-group">
-                <label for="pipeline">Select a Pipeline</label>
+                <label for="pipeline" th:text="#{samples.pipeline-select}">Select a Pipeline</label>
                 <input id="pipeline" name="pipeline" class="form-control input-full"/>
             </div>
             <div class="form-group">
-                <label for="reference">Select a Reference File</label>
+                <label for="reference" th:text="#{samples.pipeline-reference}">Select a Reference File</label>
                 <input id="reference" name="reference" class="form-control input-full"/>
             </div>
         </div>
