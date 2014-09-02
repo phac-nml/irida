@@ -108,7 +108,6 @@ public class AnalysisExecutionScheduledTaskImpl implements
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Scheduled(initialDelay = 1000, fixedRate = 15000)
 	public void transferAnalysesResults() {
 		logger.debug("Looking for analyses with state "
 				+ AnalysisState.RUNNING);
