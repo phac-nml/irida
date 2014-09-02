@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
+import java.net.MalformedURLException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,8 +8,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -70,6 +74,7 @@ public class RemoteAPIController extends BaseController {
 	private final RemoteAPIService remoteAPIService;
 	private final UserService userService;
 	private final ProjectRemoteService projectRemoteService;
+	private final OltuAuthorizationController authController;
 	private final MessageSource messageSource;
 
 	// Map storing the message names for the
@@ -80,10 +85,12 @@ public class RemoteAPIController extends BaseController {
 
 	@Autowired
 	public RemoteAPIController(RemoteAPIService remoteAPIService, UserService userService,
-			ProjectRemoteService projectRemoteService, MessageSource messageSource) {
+			ProjectRemoteService projectRemoteService, OltuAuthorizationController authController,
+			MessageSource messageSource) {
 		this.remoteAPIService = remoteAPIService;
 		this.userService = userService;
 		this.projectRemoteService = projectRemoteService;
+		this.authController = authController;
 		this.messageSource = messageSource;
 	}
 
@@ -254,12 +261,25 @@ public class RemoteAPIController extends BaseController {
 		return map;
 	}
 
+	/**
+	 * Get the connection status view name
+	 * 
+	 * @return The name of the connection status view
+	 */
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping("/status")
 	public String getConnectionStatusPage() {
 		return STATUS_PAGE;
 	}
 
+	/**
+	 * Check the currently logged in user's OAuth2 connection status to a given
+	 * API
+	 * 
+	 * @param apiId
+	 *            The ID of the api
+	 * @return "valid" or "invalid_token" message
+	 */
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping("/status/{apiId}")
 	@ResponseBody
@@ -283,4 +303,26 @@ public class RemoteAPIController extends BaseController {
 
 		return "redirect:/remote_api/status";
 	}
+
+	/**
+	 * Handle an {@link IridaOAuthException} by launching an authentication flow
+	 * 
+	 * @param request
+	 *            The incoming request method
+	 * @param ex
+	 *            The thrown exception
+	 * @return A redirect to the {@link OltuAuthorizationController}'s
+	 *         authentication
+	 * @throws OAuthSystemException
+	 * @throws MalformedURLException
+	 */
+	@ExceptionHandler(IridaOAuthException.class)
+	public String handleOAuthException(HttpServletRequest request, IridaOAuthException ex) throws OAuthSystemException,
+			MalformedURLException {
+		logger.debug("Caught IridaOAuthException.  Beginning OAuth2 authentication token flow.");
+		String requestURI = request.getRequestURI();
+
+		return authController.authenticate(ex.getRemoteAPI(), requestURI);
+	}
+
 }

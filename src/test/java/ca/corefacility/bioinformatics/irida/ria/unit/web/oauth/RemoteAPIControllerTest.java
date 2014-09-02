@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
+import ca.corefacility.bioinformatics.irida.ria.web.oauth.OltuAuthorizationController;
 import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
@@ -45,6 +46,7 @@ public class RemoteAPIControllerTest {
 	private RemoteAPIService remoteAPIService;
 	private UserService userService;
 	private ProjectRemoteService projectRemoteService;
+	private OltuAuthorizationController authController;
 	private MessageSource messageSource;
 
 	private static final String USER_NAME = "testme";
@@ -57,7 +59,7 @@ public class RemoteAPIControllerTest {
 		messageSource = mock(MessageSource.class);
 		userService = mock(UserService.class);
 		projectRemoteService = mock(ProjectRemoteService.class);
-		remoteAPIController = new RemoteAPIController(remoteAPIService, userService, projectRemoteService,
+		remoteAPIController = new RemoteAPIController(remoteAPIService, userService, projectRemoteService,authController,
 				messageSource);
 		locale = LocaleContextHolder.getLocale();
 
