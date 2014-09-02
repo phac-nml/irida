@@ -24,9 +24,9 @@ public enum AnalysisState {
 	PREPARING("PREPARING"),
 
 	/**
-	 * Occurs when an analysis is first submitted.
+	 * Occurs when an analysis is first submitting.
 	 */
-	SUBMITTING("SUBMITTED"),
+	SUBMITTING("SUBMITTING"),
 
 	/**
 	 * An analysis that is running in the execution manager.

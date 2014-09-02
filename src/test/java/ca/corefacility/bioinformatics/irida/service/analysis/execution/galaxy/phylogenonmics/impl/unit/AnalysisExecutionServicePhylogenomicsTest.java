@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -64,6 +65,8 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	private static final String TREE_LABEL = "tree";
 	private static final String MATRIX_LABEL = "snp_matrix";
 	private static final String TABLE_LABEL = "snp_table";
+	
+	private Map<String,Object> analysisIdMap;
 
 	/**
 	 * Setup variables for tests.
@@ -88,7 +91,9 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		
 		analysisId = "1";
 		workflowInputsGalaxy = new WorkflowInputsGalaxy(workflowInputs);
-		preparedWorkflow = new PreparedWorkflowGalaxy(analysisId, workflowInputsGalaxy);		
+		preparedWorkflow = new PreparedWorkflowGalaxy(analysisId, workflowInputsGalaxy);
+		
+		analysisIdMap = ImmutableMap.of("remoteAnalysisId", ANALYSIS_ID);
 	}
 	
 	/**
@@ -97,6 +102,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test
 	public void testPrepareSubmissionSuccess() throws ExecutionManagerException {
+		
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
 		when(analysisSubmission.getId()).thenReturn(INTERNAL_ANALYSIS_ID);
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.PREPARING);
@@ -105,7 +111,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		when(analysisSubmitted.getId()).thenReturn(INTERNAL_ANALYSIS_ID);
 		when(analysisSubmitted.getAnalysisState()).thenReturn(AnalysisState.PREPARING);
 		
-		when(analysisSubmissionService.read(INTERNAL_ANALYSIS_ID)).thenReturn(analysisSubmitted);
+		when(analysisSubmissionService.update(INTERNAL_ANALYSIS_ID, analysisIdMap)).thenReturn(analysisSubmitted);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
 		when(workspaceServicePhylogenomics.prepareAnalysisWorkspace(analysisSubmission)).
@@ -119,7 +125,6 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		verify(galaxyWorkflowService).validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID);
 		verify(workspaceServicePhylogenomics).prepareAnalysisWorkspace(analysisSubmission);
 		verify(analysisSubmissionService).update(INTERNAL_ANALYSIS_ID, ImmutableMap.of("remoteAnalysisId", ANALYSIS_ID));
-		verify(analysisSubmissionService).read(INTERNAL_ANALYSIS_ID);
 	}
 	
 	/**
