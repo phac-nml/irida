@@ -4,11 +4,16 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.validation.ConstraintViolationException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -19,6 +24,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
+import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
 import com.google.common.base.Joiner;
@@ -42,7 +49,8 @@ import com.google.common.collect.Lists;
 @Controller
 @RequestMapping(value = "/clients")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
-public class ClientsController {
+public class ClientsController extends BaseController {
+	private static final Logger logger = LoggerFactory.getLogger(ClientsController.class);
 
 	public static final String CLIENTS_PAGE = "clients/list";
 	public static final String CLIENT_DETAILS_PAGE = "clients/client_details";
@@ -90,10 +98,12 @@ public class ClientsController {
 	public String read(@PathVariable Long clientId, Model model, Locale locale) {
 		IridaClientDetails client = clientDetailsService.read(clientId);
 
-		String grants = getAuthorizedGrantTypesString(client);
+		String grants = StringUtils.collectionToDelimitedString(client.getAuthorizedGrantTypes(), ", ");
+		String scopes = StringUtils.collectionToDelimitedString(client.getScope(), ",");
 		model.addAttribute("client", client);
 
 		model.addAttribute("grants", grants);
+		model.addAttribute("scopes", scopes);
 		return CLIENT_DETAILS_PAGE;
 	}
 
@@ -135,8 +145,21 @@ public class ClientsController {
 	 *         creation page in case of an error.
 	 */
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public String postCreateClient(IridaClientDetails client, Model model, Locale locale) {
+	public String postCreateClient(@ModelAttribute IridaClientDetails client,
+			@RequestParam(required = false, defaultValue = "") String scope_read,
+			@RequestParam(required = false, defaultValue = "") String scope_write, Model model, Locale locale) {
 		client.setClientSecret(generateClientSecret());
+
+		Set<String> scopes = new HashSet<>();
+		if (scope_write.equals("write")) {
+			scopes.add("write");
+		}
+
+		if (scope_read.equals("read")) {
+			scopes.add("read");
+		}
+
+		client.setScope(scopes);
 
 		Map<String, String> errors = new HashMap<>();
 		String responsePage = null;
@@ -147,13 +170,24 @@ public class ClientsController {
 			if (ex.getMessage().contains(IridaClientDetails.CLIENT_ID_CONSTRAINT_NAME)) {
 				errors.put("clientId", messageSource.getMessage("client.add.clientId.exists", null, locale));
 			}
+		} catch (ConstraintViolationException ex) {
+			errors.putAll(getErrorsFromViolationException(ex));
 		}
 
 		if (!errors.isEmpty()) {
 			model.addAttribute("errors", errors);
 
+			logger.debug("Client Details couldn't be created.");
+
 			model.addAttribute("given_clientId", client.getClientId());
 			model.addAttribute("given_tokenValidity", client.getAccessTokenValiditySeconds());
+			if (scope_write.equals("write")) {
+				model.addAttribute("given_scope_write", scope_write);
+			}
+
+			if (scope_read.equals("read")) {
+				model.addAttribute("given_scope_read", scope_read);
+			}
 
 			responsePage = getAddClientPage(model);
 		}
@@ -219,7 +253,7 @@ public class ClientsController {
 		List<List<String>> clientsData = new ArrayList<>();
 		for (IridaClientDetails client : search) {
 
-			String grants = getAuthorizedGrantTypesString(client);
+			String grants = StringUtils.collectionToDelimitedString(client.getAuthorizedGrantTypes(), ", ");
 
 			List<String> row = new ArrayList<>();
 			row.add(client.getId().toString());
@@ -237,19 +271,6 @@ public class ClientsController {
 
 		map.put(DataTable.RESPONSE_PARAM_DATA, clientsData);
 		return map;
-	}
-
-	/**
-	 * Get a string representation of the authorized grant types
-	 * 
-	 * @param clientDetails
-	 *            The client details object to get grants from
-	 * @return A joined string separated by commas of the grant types
-	 */
-	private String getAuthorizedGrantTypesString(IridaClientDetails clientDetails) {
-		Set<String> authorizedGrantTypes = clientDetails.getAuthorizedGrantTypes();
-
-		return StringUtils.collectionToDelimitedString(authorizedGrantTypes, ", ");
 	}
 
 	/**

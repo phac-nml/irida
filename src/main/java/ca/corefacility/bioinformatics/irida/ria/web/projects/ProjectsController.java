@@ -720,6 +720,21 @@ public class ProjectsController {
 		return result;
 	}
 
+	@RequestMapping(value = "/ajax/{projectId}/referenceFiles")
+	public @ResponseBody List<Map<String, String>> getProjectReferenceFiles(@PathVariable Long projectId) {
+		Project project = projectService.read(projectId);
+		List<Join<Project, ReferenceFile>> projectFileJoin = referenceFileService.getReferenceFilesForProject(project);
+		List<Map<String, String>> response = new ArrayList<>();
+		for (Join<Project, ReferenceFile> join : projectFileJoin) {
+			ReferenceFile file = join.getObject();
+			Map<String, String> map = new HashMap<>();
+			map.put("id", file.getId().toString());
+			map.put("text", file.getLabel());
+			response.add(map);
+		}
+		return response;
+	}
+
 	/**
 	 * Changes a {@link ConstraintViolationException} to a usable map of strings
 	 * for displaing in the UI.
