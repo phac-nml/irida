@@ -76,8 +76,8 @@ public class OltuAuthorizationController {
 		// build the authorization path
 		URI serviceAuthLocation = UriBuilder.fromUri(serviceURI).path("oauth").path("authorize").build();
 
-		logger.debug("Service: " + remoteAPI);
-		logger.debug("redirect: " + redirect);
+		logger.debug("Authenticating for service: " + remoteAPI);
+		logger.debug("Redirect after authentication: " + redirect);
 
 		// build a redirect URI to redirect to after auth flow is completed
 		String tokenRedirect = buildRedirectURI(remoteAPI.getId(), redirect);
@@ -89,7 +89,7 @@ public class OltuAuthorizationController {
 				.setResponseType(ResponseType.CODE.toString()).setScope("read").buildQueryMessage();
 
 		String locURI = request.getLocationUri();
-		logger.debug("authorization request location:" + locURI);
+		logger.trace("Authorization request location: " + locURI);
 
 		return "redirect:" + locURI;
 	}
@@ -123,7 +123,7 @@ public class OltuAuthorizationController {
 		// Get the OAuth2 auth code
 		OAuthAuthzResponse oar = OAuthAuthzResponse.oauthCodeAuthzResponse(request);
 		String code = oar.getCode();
-		logger.debug("got code " + code);
+		logger.trace("Received auth code: " + code);
 
 		// Read the RemoteAPI from the RemoteAPIService and get the base URI
 		RemoteAPI remoteAPI = remoteAPIService.read(apiId);
@@ -131,7 +131,7 @@ public class OltuAuthorizationController {
 
 		// Build the token location for this service
 		URI serviceTokenLocation = UriBuilder.fromUri(serviceURI).path("oauth").path("token").build();
-		logger.debug("token loc " + serviceTokenLocation);
+		logger.debug("Remote token location: " + serviceTokenLocation);
 
 		// Build the redirect URI to request a token from
 		String tokenRedirect = buildRedirectURI(apiId, redirect);
@@ -149,13 +149,14 @@ public class OltuAuthorizationController {
 		OAuthJSONAccessTokenResponse accessTokenResponse = client.accessToken(tokenRequest,
 				OAuthJSONAccessTokenResponse.class);
 		String accessToken = accessTokenResponse.getAccessToken();
-		String refreshToken = accessTokenResponse.getRefreshToken();
-		logger.debug("refresh token is: " + refreshToken);
+
+		// TODO: Handle Refresh Tokens
+		// String refreshToken = accessTokenResponse.getRefreshToken();
 
 		// check the token expiry
 		Long expiresIn = accessTokenResponse.getExpiresIn();
-		logger.debug("Token expires in " + expiresIn);
 		Date expiry = new Date(currentTime + (expiresIn * ONE_SECOND_IN_MS));
+		logger.debug("Token expiry: " + expiry);
 
 		// create the OAuth2 token and store it
 		RemoteAPIToken token = new RemoteAPIToken(accessToken, remoteAPI, expiry);
