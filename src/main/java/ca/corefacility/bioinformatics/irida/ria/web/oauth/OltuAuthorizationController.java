@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.oltu.oauth2.client.OAuthClient;
-import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
 import org.apache.oltu.oauth2.client.response.OAuthAuthzResponse;
 import org.apache.oltu.oauth2.client.response.OAuthJSONAccessTokenResponse;
@@ -44,17 +43,20 @@ public class OltuAuthorizationController {
 	private static final long ONE_SECOND_IN_MS = 1000;
 
 	@Value("${server.base.url}")
-	private String server_base;
+	private String serverBase;
 
 	public static final String TOKEN_ENDPOINT = "/authorization/token";
 
-	private RemoteAPITokenService tokenService;
-	private RemoteAPIService remoteAPIService;
+	private final RemoteAPITokenService tokenService;
+	private final RemoteAPIService remoteAPIService;
+	private final OAuthClient oauthClient;
 
 	@Autowired
-	public OltuAuthorizationController(RemoteAPITokenService tokenService, RemoteAPIService remoteAPIService) {
+	public OltuAuthorizationController(RemoteAPITokenService tokenService, RemoteAPIService remoteAPIService,
+			OAuthClient oauthClient) {
 		this.tokenService = tokenService;
 		this.remoteAPIService = remoteAPIService;
+		this.oauthClient = oauthClient;
 	}
 
 	/**
@@ -113,7 +115,7 @@ public class OltuAuthorizationController {
 	 * @throws URISyntaxException
 	 */
 	@RequestMapping(TOKEN_ENDPOINT)
-	public String getToken(HttpServletRequest request, HttpServletResponse response, @RequestParam("apiId") Long apiId,
+	public String getTokenFromAuthCode(HttpServletRequest request, HttpServletResponse response, @RequestParam("apiId") Long apiId,
 			@RequestParam("redirect") String redirect) throws IOException, OAuthSystemException, OAuthProblemException,
 			URISyntaxException {
 
@@ -143,11 +145,9 @@ public class OltuAuthorizationController {
 				.buildBodyMessage();
 
 		// execute the request
-		OAuthClient client = new OAuthClient(new URLConnectionClient());
+		OAuthJSONAccessTokenResponse accessTokenResponse = oauthClient.accessToken(tokenRequest);
 
 		// read the response for the access token
-		OAuthJSONAccessTokenResponse accessTokenResponse = client.accessToken(tokenRequest,
-				OAuthJSONAccessTokenResponse.class);
 		String accessToken = accessTokenResponse.getAccessToken();
 
 		// TODO: Handle Refresh Tokens
@@ -178,8 +178,17 @@ public class OltuAuthorizationController {
 	 */
 	private String buildRedirectURI(Long apiId, String redirectPage) {
 
-		URI build = UriBuilder.fromUri(server_base + TOKEN_ENDPOINT).queryParam("apiId", apiId)
+		URI build = UriBuilder.fromUri(serverBase + TOKEN_ENDPOINT).queryParam("apiId", apiId)
 				.queryParam("redirect", redirectPage).build();
 		return build.toString();
+	}
+
+	/**
+	 * Set the base URL of this server
+	 * 
+	 * @param serverBase
+	 */
+	public void setServerBase(String serverBase) {
+		this.serverBase = serverBase;
 	}
 }
