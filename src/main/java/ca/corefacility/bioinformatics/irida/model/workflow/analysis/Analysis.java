@@ -108,7 +108,7 @@ public abstract class Analysis implements IridaThing {
 
 		return false;
 	}
-	
+
 	public Set<SequenceFile> getInputSequenceFiles() {
 		return inputFiles;
 	}

@@ -145,12 +145,6 @@ public abstract class AnalysisExecutionServiceGalaxy
 		logger.debug("Getting results for " + submittedAnalysis);
 		A analysisResults = workspaceService.getAnalysisResults(submittedAnalysis);
 		
-		// TODO this statement is magic.  It is needed for everything to work properly, otherwise
-		// I get a SQL constraint exception even though this statement does nothing.
-		// Or, it could be eclipse messing up with database tests.  Needs to be checked later.
-		analysisSubmissionService.setStateForAnalysisSubmission(submittedAnalysis.getId(),
-				submittedAnalysis.getAnalysisState());
-		
 		logger.trace("Saving results for " +  submittedAnalysis);
 		A savedAnalysis = (A) analysisService.create(analysisResults);
 		analysisSubmissionService.update(submittedAnalysis.getId(),

@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.L
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflowRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
@@ -65,6 +66,9 @@ public class AnalysisExecutionServiceTestConfig {
 
 	@Autowired
 	private SampleService sampleService;
+	
+	@Autowired
+	private SequenceFileRepository sequenceFileRepository;
 
 	@Lazy
 	@Bean
@@ -80,7 +84,7 @@ public class AnalysisExecutionServiceTestConfig {
 	public WorkspaceServicePhylogenomics workspaceServicePhylogenomics() {
 		return new WorkspaceServicePhylogenomics(
 				galaxyHistoriesService(), galaxyWorkflowService(),
-				sampleSequenceFileJoinRepository);
+				sampleSequenceFileJoinRepository, sequenceFileRepository);
 	}
 
 	@Lazy
