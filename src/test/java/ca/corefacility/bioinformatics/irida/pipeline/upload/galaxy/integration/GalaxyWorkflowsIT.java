@@ -125,7 +125,7 @@ public class GalaxyWorkflowsIT {
 		librariesClient = galaxyAdminInstance.getLibrariesClient();
 		
 		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient);
-		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, librariesClient, galaxyLibrariesService);
+		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService);
 		galaxyWorkflowService 
 			= new GalaxyWorkflowService(historiesClient, workflowsClient,
 					new StandardPasswordEncoder());

@@ -37,7 +37,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistori
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
-import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient.FileUploadRequest;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
@@ -61,7 +60,6 @@ public class GalaxyHistoriesServiceTest {
 	@Mock private HistoriesClient historiesClient;
 	@Mock private HistoryDetails historyDetails;
 	@Mock private ToolsClient toolsClient;
-	@Mock private LibrariesClient librariesClient;
 	@Mock private UniformInterfaceException uniformInterfaceException;
 	@Mock private ClientResponse invalidResponse;
 	@Mock private ClientResponse okayResponse;
@@ -105,7 +103,7 @@ public class GalaxyHistoriesServiceTest {
 				ClientResponse.Status.FORBIDDEN);
 		
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient,
-				librariesClient, galaxyLibrariesService);
+				galaxyLibrariesService);
 		
 		dataFile = Paths.get(this.getClass().getResource("testData1.fastq").toURI());
 		dataFile2 = Paths.get(this.getClass().getResource("testData2.fastq").toURI());

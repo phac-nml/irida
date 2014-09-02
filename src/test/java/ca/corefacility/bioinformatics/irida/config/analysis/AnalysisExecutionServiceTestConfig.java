@@ -95,8 +95,7 @@ public class AnalysisExecutionServiceTestConfig {
 				.getGalaxyInstanceWorkflowUser().getHistoriesClient();
 		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser()
 				.getToolsClient();
-		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
-		return new GalaxyHistoriesService(historiesClient, toolsClient, librariesClient, galaxyLibrariesService());
+		return new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService());
 	}
 	
 	@Lazy

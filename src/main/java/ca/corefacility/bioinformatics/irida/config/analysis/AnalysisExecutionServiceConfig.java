@@ -131,7 +131,7 @@ public class AnalysisExecutionServiceConfig {
 	 */
 	@Lazy @Bean
 	public GalaxyHistoriesService galaxyHistoriesService() {
-		return new GalaxyHistoriesService(historiesClient(), toolsClient(), librariesClient(),
+		return new GalaxyHistoriesService(historiesClient(), toolsClient(),
 				galaxyLibrariesService());
 	}
 	

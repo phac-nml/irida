@@ -35,20 +35,15 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.ExecutionManagerSear
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
-import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient.FileUploadRequest;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
-import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
-import com.github.jmchilton.blend4j.galaxy.beans.GalaxyObject;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset.Source;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
-import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
-import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
@@ -68,7 +63,6 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 			.getLogger(GalaxyHistoriesService.class);
 
 	private HistoriesClient historiesClient;
-	private LibrariesClient librariesClient;
 	private ToolsClient toolsClient;
 	
 	private GalaxyLibrariesService librariesService;
@@ -81,39 +75,19 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	private static final String COLLECTION_NAME = "collection";
 	
 	/**
-	 * Polling time in milliseconds to poll a Galaxy library 
-	 * to check if datasets have been properly uploaded.
-	 */
-	private static final int LIBRARY_POLLING_TIME = 5*1000;
-	
-	/**
-	 * Timeout in milliseconds to stop polling a Galaxy library.
-	 */
-	private static final int LIBRARY_TIMEOUT = 5*60*1000;
-	
-	/**
-	 * State a library dataset should be in on proper upload.
-	 */
-	private static final String LIBRARY_OK_STATE = "ok";
-	
-	/**
 	 * Builds a new GalaxyHistory object for working with Galaxy Histories.
 	 * @param historiesClient  The HistoriesClient for interacting with Galaxy histories.
 	 * @param toolsClient  The ToolsClient for interacting with tools in Galaxy.
-	 * @param librariesClient  The LibrariesClient for interacting with libraries in Galaxy.
 	 * @param librariesService  A service for dealing with Galaxy libraries.
 	 */
 	public GalaxyHistoriesService(HistoriesClient historiesClient,
-			ToolsClient toolsClient, LibrariesClient librariesClient,
-			GalaxyLibrariesService librariesService) {
+			ToolsClient toolsClient, GalaxyLibrariesService librariesService) {
 		checkNotNull(historiesClient, "historiesClient is null");
 		checkNotNull(toolsClient, "toolsClient is null");
-		checkNotNull(librariesClient, "librariesClient is null");
 		checkNotNull(librariesService, "librariesService is null");
 		
 		this.historiesClient = historiesClient;
 		this.toolsClient = toolsClient;
-		this.librariesClient = librariesClient;
 		this.librariesService = librariesService;
 	}
 	
@@ -299,96 +273,6 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 		}
 
 		return datasetIdsMap;
-	}
-
-	/**
-	 * Uploads a file to a given history through the given library.
-	 * @param path  The path to the file to upload.
-	 * @param fileType The file type of the file to upload.
-	 * @param history  The history to upload the file into.
-	 * @param library  The library to initially upload the file into.
-	 * @param dataStorage  The type of DataStorage strategy to use.
-	 * @return An id for a dataset object in this history.
-	 * @throws UploadException  If there was an issue uploading the file to Galaxy.
-	 * @throws GalaxyDatasetException  If there was an issue finding the corresponding Dataset for the file
-	 * 	in the history.
-	 */
-	public String fileToLibraryToHistory(Path path, InputFileType fileType, History history, Library library,
-			DataStorage dataStorage) throws UploadException, GalaxyDatasetException {
-		checkNotNull(path, "path is null");
-		checkNotNull(fileType, "fileType is null");
-		checkNotNull(history, "history is null");
-		checkNotNull(history.getId(), "history id is null");
-		checkNotNull(library, "library is null");
-		checkNotNull(library.getId(), "library id is null");
-		checkState(path.toFile().exists(), "path " + path + " does not exist");
-		
-		File file = path.toFile();
-		
-		try {
-			// to library
-			LibraryContent rootContent = librariesClient.getRootFolder(library
-					.getId());
-			FilesystemPathsLibraryUpload upload = new FilesystemPathsLibraryUpload();
-			upload.setFolderId(rootContent.getId());
-	
-			upload.setContent(file.getAbsolutePath());
-			upload.setName(file.getName());
-			upload.setLinkData(DataStorage.LOCAL.equals(dataStorage));
-			upload.setFileType(fileType.toString());
-	
-			GalaxyObject uploadObject = 
-					librariesClient.uploadFilesystemPaths(library.getId(), upload);
-			
-			if (uploadObject == null) {
-				throw new UploadException("Could not upload " + file + " to library " + library.getId() +
-						" upload object is null");
-			} else {
-				logger.debug("Uploaded file " + file + " to library " + library.getName() + " and got library id " +
-						uploadObject.getId() + " and url " + uploadObject.getUrl());
-				
-				LibraryDataset libraryDataset = librariesClient.showDataset(library.getId(), uploadObject.getId());
-				long startTime = System.currentTimeMillis();
-				while(!LIBRARY_OK_STATE.equals(libraryDataset.getState())) {
-					long timeDifference = System.currentTimeMillis()
-							- startTime;
-					if (timeDifference > LIBRARY_TIMEOUT) {
-						throw new UploadException("Error: timeout ("
-								+ timeDifference + "ms > " + LIBRARY_TIMEOUT
-								+ ") when polling Galaxy data library "
-								+ library.getId() + " for dataset "
-								+ libraryDataset.getId());
-					} else {		
-						logger.debug("Waiting for library dataset " + libraryDataset.getId() +
-								" to be finished processing, in state " + libraryDataset.getState());					
-						Thread.sleep(LIBRARY_POLLING_TIME);
-						
-						libraryDataset = librariesClient.showDataset(library.getId(), uploadObject.getId());
-					}
-				}
-				
-				// dataset from library upload
-				HistoryDataset historyDataset = new HistoryDataset();
-				historyDataset.setSource(Source.LIBRARY);
-				historyDataset.setContent(uploadObject.getId());
-				HistoryDetails historyDetails = historiesClient.createHistoryDataset(
-						history.getId(), historyDataset);
-		
-				if (historyDetails == null) {
-					throw new UploadException("Could not transfer " + file + " from library " + library.getId() + 
-							" to history " + history.getId() +
-							" historyDetails is null");
-				} else {
-					logger.debug("Transfered library dataset " + uploadObject.getId() + " to history " +
-							history.getId() + " dataset id " + historyDetails.getId());
-					return historyDetails.getId();
-				}
-			}
-		} catch (RuntimeException e) {
-			throw new UploadException(e);
-		} catch (InterruptedException e) {
-			throw new UploadException(e);
-		}
 	}
 	
 	/**
