@@ -9,14 +9,22 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.format.Formatter;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import ca.corefacility.bioinformatics.irida.service.AnalysisService;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 
 /**
  * Controller for Analysis.
@@ -40,14 +48,21 @@ public class AnalysisController {
 	private static final String URI_AJAX_LIST_ALL_ANALYSIS = "/ajax/all";
 	private static final String URI_AJAX_LIST_ALL_ANALYSIS_TYPES = "/ajax/types";
 
+	private Formatter<Date> dateFormatter;
+	private MessageSource messageSource;
+
 	/*
 	 * SERVICES
 	 */
-	private AnalysisService analysisService;
+	private AnalysisSubmissionService analysisSubmissionService;
 
 	@Autowired
-	public AnalysisController(AnalysisService analysisService) {
-		this.analysisService = analysisService;
+	public AnalysisController(AnalysisSubmissionService analysisSubmissionService, MessageSource messageSource) {
+		this.analysisSubmissionService = analysisSubmissionService;
+		this.messageSource = messageSource;
+
+		dateFormatter = new DateFormatter(
+				messageSource.getMessage("locale.date.long", null, LocaleContextHolder.getLocale()));
 	}
 
 	// ************************************************************************************************
@@ -81,33 +96,37 @@ public class AnalysisController {
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date maxDate) {
 		Map<String, Object> result = new HashMap<>();
 
-		int page = Integer.parseInt(params.get("page"));
-		int count = Integer.parseInt(params.get("count"));
-		String sortedBy = params.get("sortedBy");
-		String sortDir = params.get("sortDir");
+		int page = Integer.parseInt(params.get("page")) - 1;
+		int size = Integer.parseInt(params.get("count"));
+		String sortProperty = params.get("sortedBy");
+		Sort.Direction order = params.get("sortDir").equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
 
 		// Check to see if there is a filter on the type.
-		String filterType = "";
-		if (params.containsKey("type")) {
-			filterType = params.get("type");
-		}
+//		String filterType = "";
+//		if (params.containsKey("type")) {
+//			filterType = params.get("type");
+//		}
 
 		// Check to see if there are date filters
 		// TODO: (14-08-31 - Josh) What to do with these filters?
 
 		// TODO: (14-08-29 - Josh) Get paged analysis
-
-		List<Map<String, String>> analysis = new ArrayList<>();
-		//		int count = Integer.parseInt(params.get("count"));
-		for (int i = 0; i < count; i++) {
+		Page<AnalysisSubmission> analysisPage = analysisSubmissionService.list(page, size, order, sortProperty);
+		List<Map<String, String>> analysisList = new ArrayList<>();
+		for (AnalysisSubmission analysisSubmission : analysisPage.getContent()) {
+			Analysis analysis = analysisSubmission.getAnalysis();
 			Map<String, String> map = new HashMap<>();
-			map.put("type", "Whole Genome Phylogenomics Pipeline " + i);
-			map.put("createdDate", new Date().toString());
-			analysis.add(map);
+			map.put("id", analysisSubmission.getId().toString());
+			map.put("type", analysis.getExecutionManagerAnalysisId());
+			map.put("status", analysisSubmission.getAnalysisState().toString());
+			map.put("createdDate", dateFormatter.print(analysisSubmission.getCreatedDate(),
+					LocaleContextHolder.getLocale()));
+			analysisList.add(map);
 		}
-		result.put("analysis", analysis);
-		result.put("totalAnalysis", Math.floor(Math.random() * 100));
-		result.put("totalPages", Math.floor(Math.random() * 10));
+
+		result.put("analysis", analysisList);
+		result.put("totalAnalysis", analysisPage.getTotalElements());
+		result.put("totalPages", analysisPage.getTotalPages());
 		return result;
 	}
 }

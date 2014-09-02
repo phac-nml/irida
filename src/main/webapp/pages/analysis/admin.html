@@ -46,32 +46,35 @@
                         <thead>
                         <th class="col-md-1">
                             <sort-by onsort="onSort" sortdir="filterCriteria.sortDir" sortedby="filterCriteria.sortedBy"
-                                     sortValue="id">Id
+                                     sortValue="id" th:text="#{'analysis.table.id'}">Id
                             </sort-by>
-                            <div collapse="filter.isCollapsed">
-                                <input class="form-control input-full" type="text"/>
-                            </div>
                         </th>
                         <th class="col-md-5">
                             <sort-by onsort="onSort" sortdir="filterCriteria.sortDir" sortedby="filterCriteria.sortedBy"
-                                     sortValue="type">Type
+                                     sortValue="executionManagerAnalysisId" th:text="#{'analysis.table.type'}">Type
                             </sort-by>
                             <div collapse="filter.isCollapsed">
                                 <select class="input-full form-control" ng-change="filterResult()"
                                         ng-model="filterCriteria.type"
                                         ng-options="type.name for type in types">
-                                    <option value="" th:text="#{analysis.select.all}"></option>
+                                    <option value="" th:text="#{analysis.select.all}">All</option>
                                 </select>
                             </div>
                         </th>
                         <th class="col-md-2">
                             <sort-by onsort="onSort" sortdir="filterCriteria.sortDir" sortedby="filterCriteria.sortedBy"
-                                     sortValue="state">State
+                                     sortValue="state" th:text="#{'analysis.table.state'}">State
                             </sort-by>
+                            <div collapse="filter.isCollapsed">
+                                <select name="" id="" class="input-full form-control" ng-model="filterCriteria.state"
+                                        ng-options="state.text for state in filter.states">
+                                    <option value="" th:text="#{analysis.select.all}">All</option>
+                                </select>
+                            </div>
                         </th>
                         <th class="col-md-4">
                             <sort-by onsort="onSort" sortdir="filterCriteria.sortDir" sortedby="filterCriteria.sortedBy"
-                                     sortValue="createdDate">Created
+                                     sortValue="createdDate" th:text="#{'analysis.table.date'}">Created
                             </sort-by>
                             <div class="row" collapse="filter.isCollapsed">
                                 <div class="col-md-6">
@@ -114,7 +117,9 @@
                         <tr ng-repeat="a in analysis">
                             <td>{{a.id}}</td>
                             <td>{{a.type}}</td>
-                            <td></td>
+                            <td>
+                                <div class="label label-success">Completed</div>
+                            </td>
                             <td>{{a.createdDate}}</td>
                         </tr>
                         </tbody>
@@ -123,12 +128,12 @@
                         <h3>No analysis has been completed yet</h3>
                     </div>
                     <div ng-show="paging.totalAnalysis > 0" class="text-center">
-                        <pagination num-pages="paging.totalPages" total-items="paging.totalAnalysis"
+                        <pagination items-per-page="{{filterCriteria.count}}" total-items="paging.totalAnalysis"
                                     ng-model="filterCriteria.page" first-text="{{paging.firstText}}"
                                     rotate="true"
                                     last-text="{{paging.lastText}}"
                                     next-text="{{paging.nextText}}" previous-text="{{paging.previousText}}"
-                                    max-size="5" class="" boundary-links="true"></pagination>
+                                    max-size="5" boundary-links="true"></pagination>
                     </div>
                     <script type="text/ng-template" id="sort-by.html">
                         <a class="clickable" ng-click="sort(sortValue)">
@@ -177,8 +182,8 @@
                     }
                 });
 
-        app.directive('sortBy', function () {
-            'use strict';
+    app.directive('sortBy', function () {
+        'use strict';
             return {
                 templateUrl: 'sort-by.html',
                 restrict   : 'E',
@@ -190,7 +195,7 @@
                     sortvalue: '@',
                     onsort   : '='
                 },
-                link       : function (scope, elementts, attrs) {
+                link: function (scope, elements, attrs) {
                     scope.sort = function () {
                         if (scope.sortedby == scope.sortvalue) {
                             scope.sortdir = scope.sortdir == 'asc' ? 'desc' : 'asc';
@@ -240,7 +245,29 @@
         app.controller('AnalysisTableCtrl', function ($scope, api) {
             'use strict';
             $scope.filter = {
-                isCollapsed: true
+                isCollapsed: true,
+                states     : [
+                    {
+                        value: 'SUBMITTED',
+                        text: /*[[#{analysis.state.submitted}]]*/ 'submitted'
+                    },
+                    {
+                        value: 'RUNNING',
+                        text: /*[[#{analysis.state.running}]]*/'running'
+                    },
+                    {
+                        value: 'FINISHED_RUNNING',
+                        text: /*[[#{analysis.state.finished}]]*/ 'finished running'
+                    },
+                    {
+                        value: 'COMPLETED',
+                        text: /*[[#{analysis.state.completed}]]*/ 'completed'
+                    },
+                    {
+                        value: 'ERROR',
+                        text: /*[[#{analysis.state.error}]]*/'error'
+                    }
+                ]
             };
 
             $scope.datepicker = {
@@ -264,10 +291,9 @@
                 maxDate: new Date() // Max date should always be today!
             };
 
-            $scope.analysisTotal = 300;
             $scope.paging = {
-                totalAnalysis: 556,
-                totalPages   : 10,
+                totalAnalysis: 0,
+                totalPages   : 0,
                 firstText    : /*[[#{paging.first-text}]]*/ 'First',
                 lastText     : /*[[#{paging.last-text}]]*/ 'Last',
                 nextText     : /*[[#{paging.next-text}]]*/ 'Next',
