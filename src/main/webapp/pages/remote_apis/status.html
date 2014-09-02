@@ -18,6 +18,7 @@
                     <th id="name-header">[[#{remoteapi.name}]]<i class="glyphicon"></i></th>
                     <th id="created-header">[[#{iridaThing.timestamp}]]<i class="glyphicon"></i></th>
                     <th id="status-header">[[#{remoteapi.status}]]</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody id="remoteapi-table-body"></tbody>
@@ -51,9 +52,19 @@
                     {
                     	"render": function (data, type, row) {
                     		var id = "status-" + row.id;
-                    		var connectUrlBase = /*[[@{/remote_api/connect/}]]*/ "/remote_api/connect";
                     		var span = "<div data-api-id='"+row.id+"' class='connection-status' id="+ id + ">Waiting for response...</div>";
                     		return span;
+                    	}
+                    },
+                    {
+                    	render: function(data, type, row){
+                    		var connectUrlBase = /*[[@{/remote_api/connect/}]]*/ "/remote_api/connect";
+                    		var id="connect-button-"+row.id;
+                    		
+                    		var connectText = /*[[#{remoteapi.status.connect.button}]]*/ 'Connect';
+
+                    		var button = "<a href='"+connectUrlBase + row.id+"' id='"+ id +"' class='btn btn-default btn-xs hidden'>"+connectText+"</a>";
+							return button;
                     	}
                     }
                 ],
@@ -73,9 +84,7 @@
         	var invalidTokenText = /*[[#{remoteapi.status.invalid}]]*/ "Expired Token";
         	var validTokenText = /*[[#{remoteapi.status.valid}]]*/ "Valid Token";
         	var errorText = /*[[#{remoteapi.status.error}]]*/ "Connection Error";
-        	
-        	var connectUrlBase = /*[[@{/remote_api/connect/}]]*/ "/remote_api/connect";
-        	
+        	        	
         	
         	var span = document.createElement("span");
         	
@@ -84,26 +93,23 @@
         		type: "POST",
         		success: function(data, textStatus, jqXHR){
         			if(data == "valid"){
-        				span.className="badge alert-success";
+        				span.className="label label-success";
         				span.innerHTML = validTokenText;
         				div.html(span);
         			}
         			else if(data == "invalid_token" || data == "inactive"){
-        				span.className="badge alert-warning";
+        				span.className="label label-warning";
         				span.innerHTML = invalidTokenText;
         				
-        				var button = document.createElement("a");
-        				button.className="btn btn-default";
-        				button.href=connectUrlBase + apiId;
-        				button.innerHTML="Connect";
+        				// display the connect button
+        				var buttonId = "#connect-button-" + apiId;
+        				$(buttonId).removeClass("hidden");
         				
-        				div.html("");
-        				div.append(span);
-        				div.append(button);
+        				div.html(span);
         			}
         		},
         		error: function(data, textStatus, jqXHR){
-        			span.className="badge alert-danger";
+        			span.className="label label-danger";
         			span.innerHTML = errorText;
         			div.html(span);
         		}
