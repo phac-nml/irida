@@ -38,4 +38,13 @@ public class WorkflowStatus {
 	public float getPercentComplete() {
 		return percentComplete;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return "WorkflowStatus [state=" + state + ", percentComplete="
+				+ percentComplete + "]";
+	}
 }

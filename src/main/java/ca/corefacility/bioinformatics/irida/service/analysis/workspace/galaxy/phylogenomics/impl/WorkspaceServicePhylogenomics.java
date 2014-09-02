@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phy
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
@@ -51,6 +52,8 @@ public class WorkspaceServicePhylogenomics
 	
 	private SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository;
 	
+	private SequenceFileRepository sequenceFileRepository;
+	
 	/**
 	 * Builds a new WorkspaceServicePhylogenomics with the given information.
 	 * @param galaxyHistoriesService  A GalaxyHistoriesService for interacting with Galaxy Histories.
@@ -59,10 +62,11 @@ public class WorkspaceServicePhylogenomics
 	 */
 	public WorkspaceServicePhylogenomics(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService,
-			SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository) {
+			SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository, SequenceFileRepository sequenceFileRepository) {
 		super(galaxyHistoriesService);
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.sampleSequenceFileJoinRepository = sampleSequenceFileJoinRepository;
+		this.sequenceFileRepository = sequenceFileRepository;
 	}
 	
 	/**
@@ -200,9 +204,15 @@ public class WorkspaceServicePhylogenomics
 		RemoteWorkflowPhylogenomics remoteWorkflow = analysisSubmission
 				.getRemoteWorkflow();
 		String analysisId = analysisSubmission.getRemoteAnalysisId();
-
+		
+		// 
+		Set<SequenceFile> inputFiles = new HashSet<>();
+		for (SequenceFile sf : analysisSubmission.getInputFiles()) {
+			inputFiles.add(sequenceFileRepository.findOne(sf.getId()));
+		}
+		
 		AnalysisPhylogenomicsPipeline results = new AnalysisPhylogenomicsPipeline(
-				analysisSubmission.getInputFiles(), analysisId);
+				inputFiles, analysisId);
 
 		Dataset treeOutput = galaxyHistoriesService.getDatasetForFileInHistory(
 				remoteWorkflow.getOutputPhylogeneticTreeName(),

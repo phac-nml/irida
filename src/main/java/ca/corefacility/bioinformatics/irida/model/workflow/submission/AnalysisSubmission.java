@@ -78,6 +78,7 @@ public class AnalysisSubmission implements IridaThing {
 
 	protected AnalysisSubmission() {
 		this.createdDate = new Date();
+		this.analysisState = AnalysisState.NEW;
 	}
 
 	/**
@@ -180,5 +181,16 @@ public class AnalysisSubmission implements IridaThing {
 	 */
 	public void setAnalysis(Analysis analysis) {
 		this.analysis = analysis;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return "AnalysisSubmission [id=" + id + ", remoteAnalysisId="
+				+ remoteAnalysisId + ", createdDate=" + createdDate
+				+ ", modifiedDate=" + modifiedDate + ", analysisState="
+				+ analysisState + ", analysis=" + analysis + "]";
 	}
 }
