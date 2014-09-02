@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -13,10 +14,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -35,13 +36,11 @@ import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsL
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServiceTestConfig;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -94,9 +93,6 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
 
 	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
 	private AuthenticationProvider authenticationProvider;
 
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
@@ -115,16 +111,10 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@Before
 	public void setup() throws URISyntaxException, IOException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
-
-		User user = userRepository.loadUserByUsername("aaron");
-		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-				user, "password1");
-		Authentication authentication = authenticationProvider
-				.authenticate(token);
-
+		
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(
 				analysisSubmissionService, analysisSubmissionRepository,
-				analysisExecutionServicePhylogenomics, authentication);
+				analysisExecutionServicePhylogenomics);
 
 		Path sequenceFilePathReal = Paths
 				.get(AnalysisExecutionGalaxyITService.class.getResource(
@@ -279,18 +269,17 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	 * Tests out an invalid authentication object for the schduler. during
 	 * execution
 	 */
-	@Test(expected = BadCredentialsException.class)
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testInvalidAuthentication() {
-		User user = userRepository.loadUserByUsername("aaron");
-		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-				user, "bad");
-		Authentication authentication = authenticationProvider
-				.authenticate(token);
+		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = remoteWorkflowServicePhylogenomics
+				.getCurrentWorkflow();
 
-		AnalysisExecutionScheduledTask analysisExecutionScheduledTaskInvalidCredentials = new AnalysisExecutionScheduledTaskImpl(
-				analysisSubmissionService, analysisSubmissionRepository,
-				analysisExecutionServicePhylogenomics, authentication);
-
-		analysisExecutionScheduledTaskInvalidCredentials.executeAnalyses();
+		analysisExecutionGalaxyITService
+				.setupSubmissionInDatabase(1L, sequenceFilePath,
+						referenceFilePath, remoteWorkflowUnsaved);
+		
+		SecurityContextHolder.clearContext();
+		analysisExecutionScheduledTask.executeAnalyses();
 	}
 }
