@@ -10,12 +10,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.net.MalformedURLException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
@@ -59,8 +63,9 @@ public class RemoteAPIControllerTest {
 		messageSource = mock(MessageSource.class);
 		userService = mock(UserService.class);
 		projectRemoteService = mock(ProjectRemoteService.class);
-		remoteAPIController = new RemoteAPIController(remoteAPIService, userService, projectRemoteService,authController,
-				messageSource);
+		authController = mock(OltuAuthorizationController.class);
+		remoteAPIController = new RemoteAPIController(remoteAPIService, userService, projectRemoteService,
+				authController, messageSource);
 		locale = LocaleContextHolder.getLocale();
 
 	}
@@ -223,5 +228,30 @@ public class RemoteAPIControllerTest {
 		when(projectRemoteService.list(client)).thenReturn(new ArrayList<>());
 		String connectToAPI = remoteAPIController.connectToAPI(apiId);
 		assertEquals("redirect:/remote_api/status", connectToAPI);
+	}
+
+	@Test
+	public void testRead() {
+		Long apiId = 1l;
+		ExtendedModelMap model = new ExtendedModelMap();
+
+		remoteAPIController.read(apiId, model);
+
+		verify(remoteAPIService).read(apiId);
+
+		assertTrue(model.containsAttribute("remoteApi"));
+	}
+
+	@Test
+	public void testHandleOAuthException() throws MalformedURLException, OAuthSystemException {
+		HttpServletRequest request = mock(HttpServletRequest.class);
+		String redirect = "http://request";
+		when(request.getRequestURI()).thenReturn(redirect);
+
+		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
+		IridaOAuthException ex = new IridaOAuthException("msg", client);
+
+		remoteAPIController.handleOAuthException(request, ex);
+		verify(authController).authenticate(client, redirect);
 	}
 }
