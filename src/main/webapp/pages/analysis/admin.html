@@ -8,6 +8,8 @@
 	<link href="/resources/wet-theme/css/wet-boew.min.css"/>
 	<link href="/resources/wet-theme/css/theme.min.css"/>
 	<th:block layout:fragment="css">
+		<link rel="stylesheet" th:href="@{/resources/bower_components/angular-busy/angular-busy.css}"
+			  href="/resources/bower_components/angular-busy/angular-busy.css"/>
 		<style>
 			.ng-cloak {
 				display: none !important;
@@ -50,7 +52,7 @@
 							<th class="col-md-6">
 								<sort-by onsort="onSort" sortdir="filterCriteria.sortDir"
 										 sortedby="filterCriteria.sortedBy"
-										 sortValue="executionManagerAnalysisId" th:text="#{'analysis.table.name'}">Name
+										 sortValue="name" th:text="#{'analysis.table.name'}">Name
 								</sort-by>
 							</th>
 							<th class="col-md-2">
@@ -128,7 +130,7 @@
 							</td>
 						</tr>
 						</thead>
-						<tbody>
+						<tbody cg-busy="promise">
 						<tr ng-repeat="a in analysis">
 							<td>{{a.name}}</td>
 							<td>
@@ -179,6 +181,8 @@
 		src="/resources/bower_components/restangular/dist/restangular.min.js"></script>
 <script th:src="@{'/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js'}"
 		src="/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+<script th:src="@{/resources/bower_components/angular-busy/angular-busy.js}"
+		src="/resources/bower_components/angular-busy/angular-busy.js"></script>
 <script>
 	/*<![CDATA[*/
 	var states = {
@@ -212,10 +216,17 @@
 		}
 	};
 
-	var app = angular.module('analysis', ['restangular', 'ui.bootstrap'])
+	var app = angular.module('analysis', ['cgBusy', 'restangular', 'ui.bootstrap'])
 			.config(function (RestangularProvider) {
 				var url = /*[[@{'/analysis/ajax'}]]*/ '/analysis/ajax';
 				RestangularProvider.setBaseUrl(url);
+			})
+			.value('cgBusyDefaults',{
+				message: /*[[#{analysis.table.filtering}]]*/ 'Loading Stuff',
+				backdrop: false,
+				templateUrl: /*[[@{/resources/bower_components/angular-busy/angular-busy.html}]]*/ 'my_custom_template.html',
+				delay: 300,
+				minDuration: 700
 			})
 			.factory('api', function (Restangular) {
 				return {
@@ -352,7 +363,9 @@
 		});
 
 		$scope.fetchResult = function () {
-			return api.analysis.search($scope.filterCriteria).then(function (data) {
+			$scope.promise = api.analysis.search($scope.filterCriteria);
+
+			return $scope.promise.then(function (data) {
 				$scope.analysis = data.analysis;
 				$scope.paging.totalAnalysis = data.totalAnalysis;
 				$scope.paging.totalPages = data.totalPages;

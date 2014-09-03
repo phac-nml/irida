@@ -101,7 +101,7 @@ public class AnalysisController {
 			throws IOException {
 		Map<String, Object> result = new HashMap<>();
 
-		int page = Integer.parseInt(params.get("page")) - 1;
+		int page = Integer.parseInt(params.get("page")) - 1;  // -1 because paging starts at 0, UI at 1
 		int size = Integer.parseInt(params.get("count"));
 		String sortProperty = params.get("sortedBy");
 		Sort.Direction order = params.get("sortDir").equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
