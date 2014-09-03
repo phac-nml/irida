@@ -93,6 +93,13 @@
                 <label for="reference" th:text="#{samples.pipeline-reference}">Select a Reference File</label>
                 <input id="reference" name="reference" class="form-control input-full"/>
             </div>
+            <div class="form-group">
+                <label for="name" th:text="#{project.samples.run-modal.name}">Name for Pipeline</label>
+                <input type="text" id="name" name="name" class="form-control input-full" required="required" th:placeholder="#{form.required}"/>
+				<section id="name-error" class="alert alert-danger hidden">
+					<p th:text="#{pipelines.state.name-missing}">Pipeline name is required.</p>
+				</section>
+            </div>
         </div>
         <div class="modal-footer">
             <button id="launchBtn" class="btn btn-primary btn-sm"><span class="fa fa-rocket fa-fw"></span>&nbsp;[[#{project.samples.run-pipeline}]]
@@ -806,6 +813,11 @@ $(document).ready(function () {
         closeBtnInside: true,
         callbacks: {
             beforeOpen: function () {
+				var nameError = $("#name-error");
+				if(!nameError.hasClass('hidden')) {
+					nameError.addClass('hidden');
+				}
+
                 var result = [];
                 $.each(DT.selectedRowIds, function (i, v) {
                     result.push({id: v, omit: DT.allRowIds[v].omit});
@@ -817,6 +829,7 @@ $(document).ready(function () {
                     contentType: "application/json",
                     data: JSON.stringify(result)
                 }).done(function(data){
+					var label = /*[[' - analysis] ' + ${project.getName()}]]*/ 'project-analysis-';
                     $("#pipeline").select2({
                         data: data,
                         initSelection: function(element, callback) {
@@ -848,21 +861,27 @@ $(document).ready(function () {
     $('#launchBtn').on('click', function () {
         'use strict';
         var pId = $("#pipeline").val(),
-            rId = $("#reference").val();
+            rId = $("#reference").val(),
+            name = $("#name").val(),
+				$nameError = $("#name-error");
 
-        $.ajax({
-            'url'     : /*@{'/pipelines/ajax/start.json'}*/ '/pipelines/ajax/start.json',
-            'type'    : 'post',
-            'data'    : 'pId=' + pId + '&rId=' + rId,
-            'success' : function(data) {
-                console.log(data);
-                runPipelineModal.close();
-            },
-            'error': function (xhr,status,error) {
-                // TODO: (14-08-28 - Josh) Need to determine what errors will occur. Reference file?
-                console.log(error);
-            }
-        });
+		if(name.length>0) {
+			$.ajax({
+				'url'    : /*@{'/pipelines/ajax/start.json'}*/ '/pipelines/ajax/start.json',
+				'type'   : 'post',
+				'data'   : 'pId=' + pId + '&rId=' + rId + '&name=' + name,
+				'success': function (data) {
+					console.log(data);
+					runPipelineModal.close();
+				},
+				'error'  : function (xhr, status, error) {
+					// TODO: (14-08-28 - Josh) Need to determine what errors will occur. Reference file?
+					console.log(error);
+				}
+			});
+		} else {
+			$nameError.removeClass('hidden');
+		}
     });
 
     DT.getAllSampleIds();
