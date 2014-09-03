@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.ph
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -145,11 +146,15 @@ public class PipelineController extends BaseController {
 	@RequestMapping(value = URI_AJAX_START_PIPELINE, produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)
 	public @ResponseBody List<Map<String, String>> ajaxStartNewPipelines(@RequestParam Long pId,
-			@RequestParam Long rId, HttpServletResponse response) {
+			@RequestParam Long rId, @RequestParam(required = false) String name, HttpServletResponse response) {
 		pipelineSubmission.setReferenceFile(referenceFileService.read(rId));
+		if (Strings.isNullOrEmpty(name)) {
+			// TODO: (14-09-02 - Josh) This needs be be found from the repository based on the ID.
+			name = "Whole Genome Phylogenomcis Pipeline";
+		}
 		List<Map<String, String>> result = new ArrayList<>();
 		try {
-			startPipeline(pId);
+			startPipeline(pId, name);
 			result.add(ImmutableMap.of("success", "success"));
 		} catch (ExecutionManagerException e) {
 			logger.error("Error starting pipeline (id = " + pId + ") [" + e.getMessage() + "]");
@@ -164,10 +169,10 @@ public class PipelineController extends BaseController {
 	// RUNNING PIPELINE INTERNAL METHODS
 	// ************************************************************************************************
 
-	private void startPipeline(Long pipelineId) throws ExecutionManagerException {
+	private void startPipeline(Long pipelineId, String name) throws ExecutionManagerException {
 		// TODO: (14-08-28 - Josh) pipelineId needs to be passed b/c front end does not need to know the details.
 		RemoteWorkflowPhylogenomics workflow = remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
-		AnalysisSubmissionPhylogenomics asp = new AnalysisSubmissionPhylogenomics(pipelineSubmission.getSequenceFiles(),
+		AnalysisSubmissionPhylogenomics asp = new AnalysisSubmissionPhylogenomics(name, pipelineSubmission.getSequenceFiles(),
 				pipelineSubmission.getReferenceFile(),
 				workflow);
 		analysisExecutionServicePhylogenomics.executeAnalysis(asp);
