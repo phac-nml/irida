@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -107,13 +106,11 @@ public class AnalysisController {
 		String sortProperty = params.get("sortedBy");
 		Sort.Direction order = params.get("sortDir").equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
 
-		// Check to see if there is a filter on the type.
-//		String filterType = "";
-//		if (params.containsKey("type")) {
-//			filterType = params.get("type");
-//		}
-		List<Map<String, String>> analysisList = new ArrayList<>();
-		Page<AnalysisSubmission> analysisPage;
+		// Check to see if there is a filter on the name.
+		String name = "";
+		if (params.containsKey("name")) {
+			name = params.get("name");
+		}
 
 		// Let's see if we need to filter the state
 		AnalysisState state = null;
@@ -124,14 +121,15 @@ public class AnalysisController {
 		}
 
 		specification = AnalysisSubmissionSpecification
-				.searchAnalysis(state, minDate, maxDate);
-		analysisPage = analysisSubmissionService.search(specification, page, size, order, sortProperty);
+				.searchAnalysis(name, state, minDate, maxDate);
+		Page<AnalysisSubmission> analysisPage = analysisSubmissionService
+				.search(specification, page, size, order, sortProperty);
 
+		List<Map<String, String>> analysisList = new ArrayList<>();
 		for (AnalysisSubmission analysisSubmission : analysisPage.getContent()) {
-			Analysis analysis = analysisSubmission.getAnalysis();
 			Map<String, String> map = new HashMap<>();
 			map.put("id", analysisSubmission.getId().toString());
-			map.put("type", analysis.getExecutionManagerAnalysisId());
+			map.put("name", analysisSubmission.getName());
 			map.put("status", analysisSubmission.getAnalysisState().toString());
 			map.put("createdDate", analysisSubmission.getCreatedDate().toString());
 			map.put("createdDateString", dateFormatter.print(analysisSubmission.getCreatedDate(),

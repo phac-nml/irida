@@ -71,9 +71,9 @@
 								<div collapse="filter.isCollapsed">
 									<div class="input-group">
 										<input type="text" class="form-control input-full"
-											   ng-model="filterCriteria.name" ng-change="filterResult()"/>
+											   ng-model="filterCriteria.name" ng-change="filterNameResult()"/>
 										<span class="input-group-btn">
-											<button class="btn btn-default" ng-click="filterCriteria.name = ''" th:text="#{form.btn.clear}"></button>
+											<button class="btn btn-default" ng-click="filterCriteria.name = ''; filterResult()" th:text="#{form.btn.clear}"></button>
 										</span>
 									</div>
 								</div>
@@ -130,7 +130,7 @@
 						</thead>
 						<tbody>
 						<tr ng-repeat="a in analysis">
-							<td>{{a.type}}</td>
+							<td>{{a.name}}</td>
 							<td>
 								<div class="label {{a.status | stateToClass}}">
 									{{a.status | stateToText}}
@@ -182,25 +182,33 @@
 <script>
 	/*<![CDATA[*/
 	var states = {
-		'ERROR'           : {
-			class: 'danger',
-			text : /*[[#{analysis.state.error}]]*/'error',
-		},
-		'COMPLETED'       : {
-			class: 'success',
-			text : /*[[#{analysis.state.completed}]]*/ 'completed'
-		},
-		'FINISHED_RUNNING': {
+		'NEW': {
 			class: 'info',
-			text : /*[[#{analysis.state.finished}]]*/ 'finished running'
+			text: /*[[#{analysis.state.new}]]*/'new'
+		},
+		'PREPARING'       : {
+			class: 'info',
+			text : /*[[#{analysis.state.preparing}]]*/ 'preparing'
+		},
+		'SUBMITTING'       : {
+			class: 'info',
+			text : /*[[#{analysis.state.submitted}]]*/ 'submitted'
 		},
 		'RUNNING'         : {
 			class: 'primary',
 			text : /*[[#{analysis.state.running}]]*/'running'
 		},
-		'SUBMITTED'       : {
+		'FINISHED_RUNNING': {
 			class: 'default',
-			text : /*[[#{analysis.state.submitted}]]*/ 'submitted'
+			text : /*[[#{analysis.state.finished}]]*/ 'finished running'
+		},
+		'COMPLETED'       : {
+			class: 'success',
+			text : /*[[#{analysis.state.completed}]]*/ 'completed'
+		},
+		'ERROR'           : {
+			class: 'danger',
+			text : /*[[#{analysis.state.error}]]*/'error'
 		}
 	};
 
@@ -291,7 +299,7 @@
 		}
 	});
 
-	app.controller('AnalysisTableCtrl', function ($scope, api) {
+	app.controller('AnalysisTableCtrl', function ($scope, $timeout, api) {
 		'use strict';
 		$scope.filter = {
 			isCollapsed: true,
@@ -363,6 +371,14 @@
 			$scope.fetchResult().then(function () {
 				$scope.filterCriteria.page = 1;
 			});
+		};
+
+		var timeout;
+		$scope.filterNameResult = function () {
+			if(timeout)$timeout.cancel(timeout);
+			timeout = $timeout(function () {
+				$scope.filterResult();
+			}, 350);
 		};
 
 		$scope.onSort = function (sortedBy, sortDir) {
