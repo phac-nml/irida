@@ -46,9 +46,9 @@ public abstract class AnalysisSubmissionGalaxy<R extends RemoteWorkflowGalaxy>
 	 * @param inputFiles  A set of SequenceFiles to use for the analysis.
 	 * @param remoteWorkflow  A RemoteWorkflowGalaxy implementation for this analysis.
 	 */
-	public AnalysisSubmissionGalaxy(Set<SequenceFile> inputFiles,
+	public AnalysisSubmissionGalaxy(String name, Set<SequenceFile> inputFiles,
 			R remoteWorkflow) {
-		super(inputFiles);
+		super(name, inputFiles);
 		
 		this.remoteWorkflow = remoteWorkflow;
 	}
@@ -67,5 +67,14 @@ public abstract class AnalysisSubmissionGalaxy<R extends RemoteWorkflowGalaxy>
 	 */
 	public void setRemoteWorkflow(R remoteWorkflow) {
 		this.remoteWorkflow = remoteWorkflow;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return "AnalysisSubmissionGalaxy [remoteWorkflow=" + remoteWorkflow
+				+ ", toString()=" + super.toString() + "]";
 	}
 }

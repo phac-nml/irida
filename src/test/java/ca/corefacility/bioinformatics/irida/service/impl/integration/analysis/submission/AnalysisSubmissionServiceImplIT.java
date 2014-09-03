@@ -55,7 +55,7 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testGetStateForAnalysisSubmissionSuccess() {
 		AnalysisState state = analysisSubmissionService
 				.getStateForAnalysisSubmission(1l);
-		assertEquals(AnalysisState.SUBMITTED, state);
+		assertEquals(AnalysisState.SUBMITTING, state);
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSetStateForAnalysisSubmissionSuccess() {
 		AnalysisSubmission submission = analysisSubmissionService.read(1l);
-		assertEquals(AnalysisState.SUBMITTED, submission.getAnalysisState());
+		assertEquals(AnalysisState.SUBMITTING, submission.getAnalysisState());
 
 		analysisSubmissionService.setStateForAnalysisSubmission(1l,
 				AnalysisState.RUNNING);

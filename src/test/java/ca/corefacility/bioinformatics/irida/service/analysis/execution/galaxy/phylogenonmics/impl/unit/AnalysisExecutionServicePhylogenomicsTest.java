@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.ph
 
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Tests out an execution service for phylogenomics analyses.
@@ -45,6 +47,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Mock private GalaxyHistoriesService galaxyHistoriesService;
 	@Mock private GalaxyWorkflowService galaxyWorkflowService;
 	@Mock private AnalysisSubmissionPhylogenomics analysisSubmission;
+	@Mock private AnalysisSubmissionPhylogenomics analysisSubmitted;
 	@Mock private WorkspaceServicePhylogenomics workspaceServicePhylogenomics;
 	@Mock private WorkflowInputs workflowInputs;
 	@Mock private WorkflowOutputs workflowOutputs;
@@ -62,6 +65,8 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	private static final String TREE_LABEL = "tree";
 	private static final String MATRIX_LABEL = "snp_matrix";
 	private static final String TABLE_LABEL = "snp_table";
+	
+	private Map<String,Object> analysisIdMap;
 
 	/**
 	 * Setup variables for tests.
@@ -86,7 +91,9 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		
 		analysisId = "1";
 		workflowInputsGalaxy = new WorkflowInputsGalaxy(workflowInputs);
-		preparedWorkflow = new PreparedWorkflowGalaxy(analysisId, workflowInputsGalaxy);		
+		preparedWorkflow = new PreparedWorkflowGalaxy(analysisId, workflowInputsGalaxy);
+		
+		analysisIdMap = ImmutableMap.of("remoteAnalysisId", ANALYSIS_ID);
 	}
 	
 	/**
@@ -95,8 +102,16 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test
 	public void testPrepareSubmissionSuccess() throws ExecutionManagerException {
+		
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
-		when(analysisSubmission.getAnalysisState()).thenReturn(null);
+		when(analysisSubmission.getId()).thenReturn(INTERNAL_ANALYSIS_ID);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.PREPARING);
+		
+		when(analysisSubmitted.getRemoteAnalysisId()).thenReturn(ANALYSIS_ID);
+		when(analysisSubmitted.getId()).thenReturn(INTERNAL_ANALYSIS_ID);
+		when(analysisSubmitted.getAnalysisState()).thenReturn(AnalysisState.PREPARING);
+		
+		when(analysisSubmissionService.update(INTERNAL_ANALYSIS_ID, analysisIdMap)).thenReturn(analysisSubmitted);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
 		when(workspaceServicePhylogenomics.prepareAnalysisWorkspace(analysisSubmission)).
@@ -105,11 +120,11 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		AnalysisSubmissionPhylogenomics returnedSubmission = 
 				workflowManagement.prepareSubmission(analysisSubmission);
 		
-		assertEquals("analysisSubmission not equal to returned submission", analysisSubmission, returnedSubmission);
+		assertEquals("analysisSubmission not equal to returned submission", analysisSubmitted, returnedSubmission);
 		
 		verify(galaxyWorkflowService).validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID);
 		verify(workspaceServicePhylogenomics).prepareAnalysisWorkspace(analysisSubmission);
-		verify(analysisSubmissionService).create(analysisSubmission);
+		verify(analysisSubmissionService).update(INTERNAL_ANALYSIS_ID, ImmutableMap.of("remoteAnalysisId", ANALYSIS_ID));
 	}
 	
 	/**
@@ -119,7 +134,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Test(expected=WorkflowChecksumInvalidException.class)
 	public void testPrepareSubmissionFailInvalidWorkflow() throws ExecutionManagerException {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
-		when(analysisSubmission.getAnalysisState()).thenReturn(null);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.PREPARING);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenThrow(new WorkflowChecksumInvalidException());
 		
@@ -133,7 +148,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Test(expected=ExecutionManagerException.class)
 	public void testPrepareSubmissionFailWorkspace() throws ExecutionManagerException {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
-		when(analysisSubmission.getAnalysisState()).thenReturn(null);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.PREPARING);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
 		when(workspaceServicePhylogenomics.prepareAnalysisWorkspace(analysisSubmission)).
@@ -148,7 +163,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test
 	public void testExecuteAnalysisSuccess() throws ExecutionManagerException {
-		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.SUBMITTED);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.SUBMITTING);
 		when(workspaceServicePhylogenomics.prepareAnalysisFiles(analysisSubmission)).
 			thenReturn(preparedWorkflow);
 		when(analysisSubmission.getId()).thenReturn(INTERNAL_ANALYSIS_ID);
@@ -181,7 +196,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test(expected=ExecutionManagerException.class)
 	public void testExecuteAnalysisFailPrepareWorkflow() throws ExecutionManagerException {
-		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.SUBMITTED);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.SUBMITTING);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
 		when(workspaceServicePhylogenomics.prepareAnalysisFiles(analysisSubmission)).
@@ -196,7 +211,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	 */
 	@Test(expected=WorkflowException.class)
 	public void testExecuteAnalysisFail() throws ExecutionManagerException {
-		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.SUBMITTED);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.SUBMITTING);
 		when(galaxyWorkflowService.validateWorkflowByChecksum(WORKFLOW_CHECKSUM, WORKFLOW_ID)).
 			thenReturn(true);
 		when(workspaceServicePhylogenomics.prepareAnalysisFiles(analysisSubmission)).
@@ -245,7 +260,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		
 		when(analysisSubmission.getId()).thenReturn(id);
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(remoteAnalysisId);
-		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.FINISHED_RUNNING);
 		when(analysisSubmissionService.exists(id)).thenReturn(true);
 		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).thenReturn(analysisResults);
 		when(analysisService.create(analysisResults)).thenReturn(analysisResults);
@@ -268,7 +283,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		
 		when(analysisSubmission.getId()).thenReturn(id);
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(remoteAnalysisId);
-		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.FINISHED_RUNNING);
 		when(analysisSubmissionService.exists(id)).thenReturn(true);
 		
 		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).
@@ -285,7 +300,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 	@Test(expected=NullPointerException.class)
 	public void testGetAnalysisResultsFailNotSubmittedNullId() throws ExecutionManagerException, IOException {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(null);
-		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.FINISHED_RUNNING);
 		
 		workflowManagement.transferAnalysisResults(analysisSubmission);
 	}
@@ -301,7 +316,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		String remoteAnalysisId = "invalid";
 		
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(remoteAnalysisId);
-		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.FINISHED_RUNNING);
 		when(analysisSubmissionService.exists(id)).thenReturn(false);
 		
 		workflowManagement.transferAnalysisResults(analysisSubmission);
