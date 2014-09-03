@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -56,6 +57,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.util.SequenceFileUtilities;
 
 import com.google.common.collect.Lists;
 
@@ -73,6 +75,7 @@ public class ProjectServiceImplTest {
 	private RelatedProjectRepository relatedProjectRepository;
 	private ReferenceFileRepository referenceFileRepository;
 	private ProjectReferenceFileJoinRepository prfjRepository;
+	private SequenceFileUtilities sequenceFileUtilities;
 	private Validator validator;
 
 	@Before
@@ -86,8 +89,10 @@ public class ProjectServiceImplTest {
 		relatedProjectRepository = mock(RelatedProjectRepository.class);
 		referenceFileRepository = mock(ReferenceFileRepository.class);
 		prfjRepository = mock(ProjectReferenceFileJoinRepository.class);
+		sequenceFileUtilities = mock(SequenceFileUtilities.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
-				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository, validator);
+				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository,
+				sequenceFileUtilities, validator);
 	}
 
 	@Test
@@ -362,13 +367,16 @@ public class ProjectServiceImplTest {
 	@Test
 	public void testAddReferenceFileToProject() throws IOException {
 		Project p = new Project();
-		ReferenceFile f = new ReferenceFile(Files.createTempFile(null, null));
+		Path createTempFile = Files.createTempFile(null, null);
+		ReferenceFile f = new ReferenceFile(createTempFile);
 
 		when(referenceFileRepository.save(f)).thenReturn(f);
+		when(sequenceFileUtilities.getSequenceFileLength(createTempFile)).thenReturn(1000l);
 
 		projectService.addReferenceFileToProject(p, f);
 
 		verify(referenceFileRepository).save(f);
+		verify(sequenceFileUtilities).getSequenceFileLength(createTempFile);
 		verify(prfjRepository).save(new ProjectReferenceFileJoin(p, f));
 	}
 }
