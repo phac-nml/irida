@@ -93,6 +93,10 @@
                 <label for="reference" th:text="#{samples.pipeline-reference}">Select a Reference File</label>
                 <input id="reference" name="reference" class="form-control input-full"/>
             </div>
+            <div class="form-group">
+                <label for="name" th:text="#{samples.pipeline-name}">Name for Pipeline</label>
+                <input type="text" id="name" name="name" class="form-control input-full" required="requred"/>
+            </div>
         </div>
         <div class="modal-footer">
             <button id="launchBtn" class="btn btn-primary btn-sm"><span class="fa fa-rocket fa-fw"></span>&nbsp;[[#{project.samples.run-pipeline}]]
@@ -848,12 +852,13 @@ $(document).ready(function () {
     $('#launchBtn').on('click', function () {
         'use strict';
         var pId = $("#pipeline").val(),
-            rId = $("#reference").val();
+            rId = $("#reference").val(),
+            name = $("#name").val();
 
         $.ajax({
             'url'     : /*@{'/pipelines/ajax/start.json'}*/ '/pipelines/ajax/start.json',
             'type'    : 'post',
-            'data'    : 'pId=' + pId + '&rId=' + rId,
+            'data'    : 'pId=' + pId + '&rId=' + rId + '&name=' + name,
             'success' : function(data) {
                 console.log(data);
                 runPipelineModal.close();
