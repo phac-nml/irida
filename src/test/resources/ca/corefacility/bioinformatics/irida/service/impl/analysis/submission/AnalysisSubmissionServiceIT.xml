@@ -33,7 +33,7 @@
 		modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file.fastq"
 		fileRevisionNumber="1" sequencingRun_id="1" />
 
-	<analysis_submission id="1" remoteAnalysisId="1"
+	<analysis_submission id="1" name="my analysis" remoteAnalysisId="1"
 		analysisState="SUBMITTING" createdDate="2013-07-18 14:20:19.0" />
 
 	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
