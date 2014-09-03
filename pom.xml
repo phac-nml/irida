@@ -397,6 +397,7 @@
 							<!--
 							<excludes>
 			                    <exclude>/ca/corefacility/bioinformatics/irida/**/galaxy/**</exclude>
+					    <exclude>/ca/corefacility/bioinformatics/irida/repositories/analysis/submission/AnalysisSubmissionRepositoryIT.java</exclude>
                     		</excludes>
 							-->
 							<argLine>${failsafeArgLine}</argLine>
