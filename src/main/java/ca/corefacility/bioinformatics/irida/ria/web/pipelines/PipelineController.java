@@ -22,6 +22,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -35,10 +39,6 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Controller for pipeline related views
@@ -146,7 +146,7 @@ public class PipelineController extends BaseController {
 	@RequestMapping(value = URI_AJAX_START_PIPELINE, produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)
 	public @ResponseBody List<Map<String, String>> ajaxStartNewPipelines(@RequestParam Long pId,
-			@RequestParam Long rId, @RequestParam(required = false) String name, HttpServletResponse response) {
+			@RequestParam Long rId, @RequestParam String name, HttpServletResponse response) {
 		pipelineSubmission.setReferenceFile(referenceFileService.read(rId));
 		if (Strings.isNullOrEmpty(name)) {
 			// TODO: (14-09-02 - Josh) This needs be be found from the repository based on the ID.
