@@ -68,6 +68,8 @@ public class AnalysisSubmissionRepositoryIT {
 	private AnalysisSubmissionPhylogenomics analysisSubmission2;
 	private static final String analysisId = "10";
 	private static final String analysisId2 = "11";
+	private final String analysisName = "analysis 1";
+	private final String analysisName2 = "analysis 2";
 
 	/**
 	 * Sets up objects for test.
@@ -90,12 +92,12 @@ public class AnalysisSubmissionRepositoryIT {
 				.getByType("1", RemoteWorkflowPhylogenomics.class);
 		assertNotNull(remoteWorkflow);
 
-		analysisSubmission = new AnalysisSubmissionPhylogenomics(sequenceFiles,
+		analysisSubmission = new AnalysisSubmissionPhylogenomics(analysisName, sequenceFiles,
 				referenceFile, remoteWorkflow);
 		analysisSubmission.setRemoteAnalysisId(analysisId);
 		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTING);
 		
-		analysisSubmission2 = new AnalysisSubmissionPhylogenomics(sequenceFiles2,
+		analysisSubmission2 = new AnalysisSubmissionPhylogenomics(analysisName2, sequenceFiles2,
 				referenceFile, remoteWorkflow);
 		analysisSubmission2.setRemoteAnalysisId(analysisId2);
 		analysisSubmission2.setAnalysisState(AnalysisState.SUBMITTING);

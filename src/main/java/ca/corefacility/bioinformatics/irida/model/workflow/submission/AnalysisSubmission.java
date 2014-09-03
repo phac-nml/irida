@@ -21,6 +21,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
@@ -50,6 +51,10 @@ public class AnalysisSubmission implements IridaThing {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	Long id;
+
+	@NotNull
+	@Size(min = 3)
+	private String name;
 
 	private String remoteAnalysisId;
 
@@ -87,8 +92,9 @@ public class AnalysisSubmission implements IridaThing {
 	 * @param inputFiles
 	 *            The set of input files to perform an analysis on.
 	 */
-	public AnalysisSubmission(Set<SequenceFile> inputFiles) {
+	public AnalysisSubmission(String name, Set<SequenceFile> inputFiles) {
 		this();
+		this.name = name;
 		this.inputFiles = inputFiles;
 	}
 
@@ -156,7 +162,7 @@ public class AnalysisSubmission implements IridaThing {
 
 	@Override
 	public String getLabel() {
-		return "AnalysisSubmission[ id=" + id + " ]";
+		return name;
 	}
 
 	@Override
@@ -188,9 +194,23 @@ public class AnalysisSubmission implements IridaThing {
 	 */
 	@Override
 	public String toString() {
-		return "AnalysisSubmission [id=" + id + ", remoteAnalysisId="
-				+ remoteAnalysisId + ", createdDate=" + createdDate
-				+ ", modifiedDate=" + modifiedDate + ", analysisState="
-				+ analysisState + ", analysis=" + analysis + "]";
+		return "AnalysisSubmission [id=" + id + ", remoteAnalysisId=" + remoteAnalysisId + ", createdDate="
+				+ createdDate + ", modifiedDate=" + modifiedDate + ", analysisState=" + analysisState + ", analysis="
+				+ analysis + "]";
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name
+	 *            the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 }

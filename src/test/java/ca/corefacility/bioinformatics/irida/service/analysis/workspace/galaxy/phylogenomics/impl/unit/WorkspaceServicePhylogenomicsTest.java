@@ -160,7 +160,7 @@ public class WorkspaceServicePhylogenomicsTest {
 				workflowChecksum, SEQUENCE_FILE_LABEL, REFERENCE_FILE_LABEL,
 				TREE_LABEL, MATRIX_LABEL, TABLE_LABEL);
 		
-		submission = new AnalysisSubmissionPhylogenomics(
+		submission = new AnalysisSubmissionPhylogenomics("my analysis",
 			inputFiles, referenceFile, remoteWorkflow);
 		
 		workflowHistory = new History();

@@ -74,7 +74,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				analysisSubmissionService, analysisSubmissionRepository,
 				analysisExecutionServicePhylogenomics);
 
-		analysisSubmission = new AnalysisSubmissionPhylogenomics(sequenceFiles,
+		analysisSubmission = new AnalysisSubmissionPhylogenomics("my analysis", sequenceFiles,
 				referenceFile, remoteWorkflow);
 		analysisSubmission.setId(INTERNAL_ID);
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);

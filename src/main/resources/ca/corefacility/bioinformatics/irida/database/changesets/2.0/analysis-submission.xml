@@ -83,6 +83,9 @@
 			<column name="id" type="bigint(20)" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
+			<column name="name" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
 			<column name="remoteAnalysisId" type="VARCHAR(255)" />
 			<column name="analysisState" type="VARCHAR(255)">
 				<constraints nullable="false" />
@@ -101,6 +104,7 @@
 			<column name="id" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
+			<column name="name" type="VARCHAR(255)" />
 			<column name="remoteAnalysisId" type="VARCHAR(255)" />
 			<column name="REV" type="INT(11)">
 				<constraints primaryKey="true" nullable="false"
