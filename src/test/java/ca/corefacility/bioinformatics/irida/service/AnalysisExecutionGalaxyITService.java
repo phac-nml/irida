@@ -121,7 +121,7 @@ public class AnalysisExecutionGalaxyITService {
 				.save(new ReferenceFile(referenceFilePath));
 
 		AnalysisSubmission submission = analysisSubmissionService
-				.create(new AnalysisSubmissionPhylogenomics(sequenceFiles,
+				.create(new AnalysisSubmissionPhylogenomics("my analysis", sequenceFiles,
 						referenceFile, remoteWorkflow));
 
 		return analysisSubmissionRepository.getByType(submission.getId(),

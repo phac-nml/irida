@@ -41,11 +41,11 @@ public class AnalysisSubmissionPhylogenomics
 	 * @param referenceFile  The reference file to submit.
 	 * @param remoteWorkflow  The remote workflow to submit.
 	 */
-	public AnalysisSubmissionPhylogenomics(
+	public AnalysisSubmissionPhylogenomics(String name,
 			Set<SequenceFile> inputFiles,
 			ReferenceFile referenceFile,
 			RemoteWorkflowPhylogenomics remoteWorkflow) {
-		super(inputFiles, remoteWorkflow);
+		super(name, inputFiles, remoteWorkflow);
 		this.referenceFile = referenceFile;
 	}
 
