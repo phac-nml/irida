@@ -47,7 +47,7 @@
                          analysis_id="1"/>
     <analysis_submission id="3" analysisState="SUBMITTING" createdDate="2013-10-06 10:01:02"
                          name="My Submitted Submission" analysis_id="1"/>
-    <analysis_submission id="4" analysisState="RUNNING" createdDate="2013-11-06 10:01:02" name="My Running Submission"
+    <analysis_submission id="4" analysisState="COMPLETED" createdDate="2013-11-06 10:01:02" name="My Running Submission"
                          analysis_id="1"/>
     <analysis_submission id="5" analysisState="FINISHED_RUNNING" createdDate="2013-12-06 10:01:02"
                          name="My Finished Running Submission" analysis_id="1"/>

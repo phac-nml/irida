@@ -70,7 +70,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test(expected = EntityNotFoundException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetStateForAnalysisSubmissionFail() {
-		analysisSubmissionService.getStateForAnalysisSubmission(2l);
+		analysisSubmissionService.getStateForAnalysisSubmission(20l);
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test(expected = EntityNotFoundException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSetStateForAnalysisSubmissionFailing() {
-		analysisSubmissionService.setStateForAnalysisSubmission(2l,
+		analysisSubmissionService.setStateForAnalysisSubmission(20l,
 				AnalysisState.RUNNING);
 	}
 
@@ -130,7 +130,7 @@ public class AnalysisSubmissionServiceImplIT {
 		AnalysisState state = AnalysisState.COMPLETED;
 		specification = AnalysisSubmissionSpecification.searchAnalysis(name, state, minDate, maxDate);
 		paged = analysisSubmissionService.search(specification, 0, 10, Sort.Direction.ASC, "createdDate");
-		assertEquals(1, paged.getContent().size());
+		assertEquals(2, paged.getContent().size());
 
 	}
 }
