@@ -1,11 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.Formatter;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.datetime.DateFormatter;
@@ -22,8 +25,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 
 /**
@@ -93,7 +98,8 @@ public class AnalysisController {
 	@RequestMapping(value = URI_AJAX_LIST_ALL_ANALYSIS, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> getAjaxListAllAnalysis(@RequestParam Map<String, String> params,
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date minDate,
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date maxDate) {
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date maxDate)
+			throws IOException {
 		Map<String, Object> result = new HashMap<>();
 
 		int page = Integer.parseInt(params.get("page")) - 1;
@@ -106,20 +112,29 @@ public class AnalysisController {
 //		if (params.containsKey("type")) {
 //			filterType = params.get("type");
 //		}
-
-		// Check to see if there are date filters
-		// TODO: (14-08-31 - Josh) What to do with these filters?
-
-		// TODO: (14-08-29 - Josh) Get paged analysis
-		Page<AnalysisSubmission> analysisPage = analysisSubmissionService.list(page, size, order, sortProperty);
 		List<Map<String, String>> analysisList = new ArrayList<>();
+		Page<AnalysisSubmission> analysisPage;
+
+		// Let's see if we need to filter the state
+		AnalysisState state = null;
+		Specification<AnalysisSubmission> specification;
+		if (params.containsKey("state")) {
+			StateFilter stateFilter = new ObjectMapper().readValue(params.get("state"), StateFilter.class);
+			state = stateFilter.getState();
+		}
+
+		specification = AnalysisSubmissionSpecification
+				.searchAnalysis(state, minDate, maxDate);
+		analysisPage = analysisSubmissionService.search(specification, page, size, order, sortProperty);
+
 		for (AnalysisSubmission analysisSubmission : analysisPage.getContent()) {
 			Analysis analysis = analysisSubmission.getAnalysis();
 			Map<String, String> map = new HashMap<>();
 			map.put("id", analysisSubmission.getId().toString());
 			map.put("type", analysis.getExecutionManagerAnalysisId());
 			map.put("status", analysisSubmission.getAnalysisState().toString());
-			map.put("createdDate", dateFormatter.print(analysisSubmission.getCreatedDate(),
+			map.put("createdDate", analysisSubmission.getCreatedDate().toString());
+			map.put("createdDateString", dateFormatter.print(analysisSubmission.getCreatedDate(),
 					LocaleContextHolder.getLocale()));
 			analysisList.add(map);
 		}
