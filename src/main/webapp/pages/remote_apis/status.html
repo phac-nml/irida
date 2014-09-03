@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="templates/wet-boew/wet-layout">
 <head>
-    <title th:text="#{clients.title}">_Clients_</title>
+    <title th:text="#{remoteapi.status.title}">_Clients_</title>
 </head>
 <body>
 <div class="container" layout:fragment="content">
@@ -11,7 +11,7 @@
         <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">_MENU_</div>
         <div class="col-md-12">
             <main role="main" property="mainContentOfPage">
-                <h1 th:text="#{remoteapi.title}">_Clients_</h1>
+                <h1 th:text="#{remoteapi.status.title}">_Clients_</h1>
                 <table id="remoteapiTable" class="table table-striped table-hover">
                 <thead>
                 <tr th:inline="text">
@@ -50,6 +50,7 @@
                     	"data": "createdDate"
                     },
                     {
+                    	"sortable": false,
                     	"render": function (data, type, row) {
                     		var id = "status-" + row.id;
                     		var span = "<div data-api-id='"+row.id+"' class='connection-status' id="+ id + ">Waiting for response...</div>";
@@ -57,6 +58,7 @@
                     	}
                     },
                     {
+                    	"sortable": false,
                     	render: function(data, type, row){
                     		var connectUrlBase = /*[[@{/remote_api/connect/}]]*/ "/remote_api/connect";
                     		var id="connect-button-"+row.id;
