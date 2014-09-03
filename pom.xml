@@ -394,12 +394,12 @@
 						</goals>
 						<configuration>
 							<!-- Uncomment below to disable Galaxy integration tests -->
-                            <!--
+							<!-- 
 							<excludes>
-			                    <exclude>/ca/corefacility/bioinformatics/irida/**/galaxy/**</exclude>
-                                <exclude>ca/corefacility/bioinformatics/irida/service/impl/integration/AnalysisExecutionScheduledTaskImplIT.java</exclude>
-                    		</excludes>
-                            -->
+								<exclude>/ca/corefacility/bioinformatics/irida/**/galaxy/**</exclude>
+								<exclude>ca/corefacility/bioinformatics/irida/service/impl/integration/AnalysisExecutionScheduledTaskImplIT.java</exclude>
+							</excludes>
+							 -->
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
 								<test.galaxy.repository.url>${test.galaxy.repository.url}</test.galaxy.repository.url>
