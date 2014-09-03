@@ -44,7 +44,7 @@ public class SequenceFileUtilities {
 				totalLength += length;
 			}
 		} catch (Throwable e) {
-			logger.error("Cannot calculate reference file length");
+			logger.error("Cannot calculate reference file length " + file);
 			throw new IllegalArgumentException("Cannot parse reference file " + file, e);
 		}
 		return totalLength;
