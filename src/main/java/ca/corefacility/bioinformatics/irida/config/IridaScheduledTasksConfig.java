@@ -37,7 +37,7 @@ import com.google.common.collect.Lists;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-@Profile({ "dev", "prod", "it" })
+@Profile({ "dev", "prod" })
 @Configuration
 @EnableScheduling
 public class IridaScheduledTasksConfig implements SchedulingConfigurer {
