@@ -21,7 +21,8 @@
     "DataTables": "1.10.2",
     "angular-bootstrap": "0.11.0",
     "angular-busy": "4.1.0",
-    "restangular": "1.4.0"
+    "restangular": "1.4.0",
+    "underscore": "1.7.0"
   },
   "devDependencies": {}
 }
