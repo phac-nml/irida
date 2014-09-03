@@ -40,6 +40,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistori
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
 
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
@@ -62,6 +63,8 @@ public class WorkspaceServicePhylogenomicsTest {
 	@Mock private SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository;
 	@Mock private List<Dataset> sequenceDatasets;
 	@Mock private Dataset refDataset;
+	
+	@Mock private SequenceFileRepository sequenceFileRepository;
 	
 	private WorkspaceServicePhylogenomics
 		workflowPreparation;
@@ -174,8 +177,7 @@ public class WorkspaceServicePhylogenomicsTest {
 		
 		workflowPreparation = 
 				new WorkspaceServicePhylogenomics(
-						galaxyHistoriesService, galaxyWorkflowService, sampleSequenceFileJoinRepository,
-						libraryBuilder);
+						galaxyHistoriesService, galaxyWorkflowService, sampleSequenceFileJoinRepository, sequenceFileRepository, libraryBuilder);
 	}
 	
 	private Path createTempFile(String prefix, String suffix) throws IOException {

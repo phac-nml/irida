@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistori
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
@@ -57,6 +59,7 @@ public class WorkspaceServicePhylogenomics
 	private GalaxyWorkflowService galaxyWorkflowService;
 	
 	private SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository;
+	private SequenceFileRepository sequenceFileRepository;
 	private GalaxyLibraryBuilder libraryBuilder;
 	
 	/**
@@ -68,11 +71,11 @@ public class WorkspaceServicePhylogenomics
 	 */
 	public WorkspaceServicePhylogenomics(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService,
-			SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository,
-			GalaxyLibraryBuilder libraryBuilder) {
+			SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository, SequenceFileRepository sequenceFileRepository, GalaxyLibraryBuilder libraryBuilder) {
 		super(galaxyHistoriesService);
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.sampleSequenceFileJoinRepository = sampleSequenceFileJoinRepository;
+		this.sequenceFileRepository = sequenceFileRepository;
 		this.libraryBuilder = libraryBuilder;
 	}
 	
@@ -229,9 +232,14 @@ public class WorkspaceServicePhylogenomics
 		RemoteWorkflowPhylogenomics remoteWorkflow = analysisSubmission
 				.getRemoteWorkflow();
 		String analysisId = analysisSubmission.getRemoteAnalysisId();
-
+		
+		Set<SequenceFile> inputFiles = new HashSet<>();
+		for (SequenceFile sf : analysisSubmission.getInputFiles()) {
+			inputFiles.add(sequenceFileRepository.findOne(sf.getId()));
+		}
+		
 		AnalysisPhylogenomicsPipeline results = new AnalysisPhylogenomicsPipeline(
-				analysisSubmission.getInputFiles(), analysisId);
+				inputFiles, analysisId);
 
 		Dataset treeOutput = galaxyHistoriesService.getDatasetForFileInHistory(
 				remoteWorkflow.getOutputPhylogeneticTreeName(),
