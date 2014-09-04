@@ -65,12 +65,13 @@ public class AnalysisControllerTest {
 		when(analysisSubmissionServiceMock
 				.search(any(Specification.class), eq(0), eq(10), eq(Sort.Direction.DESC), eq("createdDate"))).thenReturn(analysisSubmissionPage);
 		Map<String, Object> map = analysisController.getAjaxListAllAnalysis(pageParam, countParam, sortedByParam, sortDirParam, null, null, null, null);
+
 		assertTrue(map.containsKey("analysis"));
 		assertTrue(map.containsKey("totalAnalysis"));
 		assertTrue(map.containsKey("totalPages"));
 
 		// Make sure all the analysis were added.
-		List<Object> analysis = (List)map.get("analysis");
+		List<Object> analysis = (List<Object>) map.get("analysis");
 		assertTrue(analysisList.size() == analysis.size());
 		for (int i = 0; i < analysis.size(); i++) {
 			Object o = analysis.get(i);
@@ -86,6 +87,6 @@ public class AnalysisControllerTest {
 		assertEquals("the correct number of pages", 1, map.get("totalPages"));
 
 		// Make sure that the total is correctly set.
-		assertEquals("total is correctly set.", (long)analysisList.size(), map.get("totalAnalysis"));
+		assertEquals("total is correctly set.", (long) analysisList.size(), map.get("totalAnalysis"));
 	}
 }
