@@ -50,10 +50,8 @@ public class AnalysisController {
 	// URI's
 	private static final String URI_PAGE_ADMIN = "/admin";
 	private static final String URI_AJAX_LIST_ALL_ANALYSIS = "/ajax/all";
-	private static final String URI_AJAX_LIST_ALL_ANALYSIS_TYPES = "/ajax/types";
 
 	private Formatter<Date> dateFormatter;
-	private MessageSource messageSource;
 
 	/*
 	 * SERVICES
@@ -63,8 +61,6 @@ public class AnalysisController {
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
-		this.messageSource = messageSource;
-
 		dateFormatter = new DateFormatter(
 				messageSource.getMessage("locale.date.long", null, LocaleContextHolder.getLocale()));
 	}
@@ -86,8 +82,10 @@ public class AnalysisController {
 
 	@RequestMapping(value = URI_AJAX_LIST_ALL_ANALYSIS, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> getAjaxListAllAnalysis(@RequestParam Map<String, String> params,
-			@RequestParam(value = "minDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date minDateFilter,
-			@RequestParam(value = "maxDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date maxDateFilter)
+			@RequestParam(value = "minDate", required = false) @DateTimeFormat(
+					iso = DateTimeFormat.ISO.DATE_TIME) Date minDateFilter,
+			@RequestParam(value = "maxDate", required = false) @DateTimeFormat(
+					iso = DateTimeFormat.ISO.DATE_TIME) Date maxDateFilter)
 			throws IOException {
 		Map<String, Object> result = new HashMap<>();
 
