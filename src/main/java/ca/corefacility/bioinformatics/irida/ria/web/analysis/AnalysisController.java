@@ -75,6 +75,7 @@ public class AnalysisController {
 
 	@RequestMapping(URI_PAGE_ADMIN)
 	public String getPageAdminAnalysis() {
+		logger.debug("Showing the Analysis Admin Page");
 		// TODO: (14-08-29 - Josh) Once individuals can own an analysis this needs to be only admin.
 		return PAGE_ADMIN_ANALYSIS;
 	}
