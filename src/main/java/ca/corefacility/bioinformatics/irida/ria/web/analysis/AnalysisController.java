@@ -83,21 +83,10 @@ public class AnalysisController {
 	// AJAX
 	// ************************************************************************************************
 
-	@RequestMapping(value = URI_AJAX_LIST_ALL_ANALYSIS_TYPES, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Map<String, Object>> getAjaxListAllAnalysisTypes() {
-		List<Map<String, Object>> result = new ArrayList<>();
-		// TODO: (14-08-31 - Josh) Get this dynamically once flushed out by Aaron
-		Map<String, Object> map = new HashMap<>();
-		map.put("id", 1L);
-		map.put("name", "Whole Genome Phylogenomics Pipeline");
-		result.add(map);
-		return result;
-	}
-
 	@RequestMapping(value = URI_AJAX_LIST_ALL_ANALYSIS, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> getAjaxListAllAnalysis(@RequestParam Map<String, String> params,
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date minDate,
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date maxDate)
+			@RequestParam(value = "minDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date minDateFilter,
+			@RequestParam(value = "maxDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date maxDateFilter)
 			throws IOException {
 		Map<String, Object> result = new HashMap<>();
 
@@ -107,21 +96,21 @@ public class AnalysisController {
 		Sort.Direction order = params.get("sortDir").equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
 
 		// Check to see if there is a filter on the name.
-		String name = "";
+		String nameFilter = "";
 		if (params.containsKey("name")) {
-			name = params.get("name");
+			nameFilter = params.get("name");
 		}
 
 		// Let's see if we need to filter the state
-		AnalysisState state = null;
+		AnalysisState stateFilter = null;
 		Specification<AnalysisSubmission> specification;
 		if (params.containsKey("state")) {
-			StateFilter stateFilter = new ObjectMapper().readValue(params.get("state"), StateFilter.class);
-			state = stateFilter.getState();
+			StateFilter filter = new ObjectMapper().readValue(params.get("state"), StateFilter.class);
+			stateFilter = filter.getState();
 		}
 
 		specification = AnalysisSubmissionSpecification
-				.searchAnalysis(name, state, minDate, maxDate);
+				.searchAnalysis(nameFilter, stateFilter, minDateFilter, maxDateFilter);
 		Page<AnalysisSubmission> analysisPage = analysisSubmissionService
 				.search(specification, page, size, order, sortProperty);
 

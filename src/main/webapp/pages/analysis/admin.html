@@ -39,7 +39,7 @@
                         </button>
                         <div class="form-group">
                             <select class="form-control" name="count" id="count" ng-model="table.filterCriteria.count"
-                                    ng-change="filterResult()">
+                                    ng-change="table.filterResult()">
                                 <option value="10">10</option>
                                 <option value="25">25</option>
                                 <option value="50">50</option>
@@ -131,8 +131,7 @@
                             </td>
                             <td>
                                 <div collapse="table.filter.isCollapsed" class="text-right">
-                                    <button type="button" class="btn btn-default"><span
-                                            class="fa fa-close fa-fw" ng-click="table.clearFilter()"></span></button>
+                                    <button type="button" class="btn btn-default" th:text="#{form.btn.clear}" ng-click="table.clearFilter()">Clear</button>
                                 </div>
                             </td>
                         </tr>
@@ -391,6 +390,7 @@ app.controller('AnalysisTableCtrl', function ($scope, api) {
 
     table.clearFilter = function () {
         table.filterCriteria = _.clone(defaultCriteria);
+        table.filterResult();
         table.filter.isCollapsed = true;
     };
 
@@ -407,10 +407,12 @@ app.controller('AnalysisTableCtrl', function ($scope, api) {
         table.fetchResult();
     });
 
-    $scope.$watch("table.filterCriteria.name", _.debounce(function () {
-        table.filterResult().then(function () {
-            table.filterCriteria.page = 1;
-        });
+    $scope.$watch("table.filterCriteria.name", _.debounce(function (n, o) {
+        if (n != o) {
+            table.fetchResult().then(function () {
+                table.filterCriteria.page = 1;
+            });
+        }
     }, 500));
 });
 /*]]>*/
