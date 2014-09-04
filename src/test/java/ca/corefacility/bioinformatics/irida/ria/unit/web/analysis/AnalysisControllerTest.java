@@ -78,7 +78,7 @@ public class AnalysisControllerTest {
 		assertTrue(map.containsKey("totalPages"));
 
 		// Make sure all the analysis were added.
-		List analysis = (List)map.get("analysis");
+		List<Object> analysis = (List)map.get("analysis");
 		assertTrue(analysisList.size() == analysis.size());
 		for (int i = 0; i < analysis.size(); i++) {
 			Object o = analysis.get(i);
