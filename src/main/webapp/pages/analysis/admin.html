@@ -120,7 +120,7 @@
                                                    datepicker-options="dateOptions" ng-change="table.filterResult()"
                                                    ng-required="false" close-text="{{table.datepicker.closeText}}"/>
                                   <span class="input-group-btn">
-                                    <button id="clearFilterBtn" type="button" class="btn btn-default"
+                                    <button type="button" class="btn btn-default"
                                             ng-click="table.datepicker.max.open($event)"><span
                                             class="fa fa-calendar-o fa-fw"></span>
                                     </button>
@@ -131,7 +131,7 @@
                             </td>
                             <td>
                                 <div collapse="table.filter.isCollapsed" class="text-right">
-                                    <button type="button" class="btn btn-default" th:text="#{form.btn.clear}" ng-click="table.clearFilter()">Clear</button>
+                                    <button id="clearFilterBtn" type="button" class="btn btn-default" th:text="#{form.btn.clear}" ng-click="table.clearFilter()">Clear</button>
                                 </div>
                             </td>
                         </tr>
@@ -193,6 +193,10 @@
         src="/resources/bower_components/angular-busy/angular-busy.js"></script>
 <script>
 /*<![CDATA[*/
+
+<!--/*-->
+
+<!--*/-->
 var states = {
     'NEW'             : {
         class: 'info',
