@@ -57,28 +57,24 @@ public class AnalysisControllerTest {
 		String pageParam = "1";
 		String sortDirParam = "desc";
 		String sortedByParam = "createdDate";
-		Map<String, String> params = ImmutableMap.of(
-				"count", countParam,
-				"page", pageParam,
-				"sortDir", sortDirParam,
-				"sortedBy", sortedByParam
-		);
-
+		Map<String, String> params = ImmutableMap.of("count", countParam, "page", pageParam, "sortDir", sortDirParam,
+				"sortedBy", sortedByParam);
 
 		AnalysisSubmission analysisSubmission1 = TestDataFactory.constrctAnalysisSubmission();
 		AnalysisSubmission analysisSubmission2 = TestDataFactory.constrctAnalysisSubmission();
 		ImmutableList<AnalysisSubmission> analysisList = ImmutableList.of(analysisSubmission1, analysisSubmission2);
 		Page<AnalysisSubmission> analysisSubmissionPage = new PageImpl<>(analysisList);
 
-		when(analysisSubmissionServiceMock
-				.search(any(Specification.class), eq(0), eq(10), eq(Sort.Direction.DESC), eq("createdDate"))).thenReturn(analysisSubmissionPage);
+		when(
+				analysisSubmissionServiceMock.search(any(Specification.class), eq(0), eq(10), eq(Sort.Direction.DESC),
+						eq("createdDate"))).thenReturn(analysisSubmissionPage);
 		Map<String, Object> map = analysisController.getAjaxListAllAnalysis(params, null, null);
 		assertTrue(map.containsKey("analysis"));
 		assertTrue(map.containsKey("totalAnalysis"));
 		assertTrue(map.containsKey("totalPages"));
 
 		// Make sure all the analysis were added.
-		List<Object> analysis = (List)map.get("analysis");
+		List<Object> analysis = (List<Object>) map.get("analysis");
 		assertTrue(analysisList.size() == analysis.size());
 		for (int i = 0; i < analysis.size(); i++) {
 			Object o = analysis.get(i);
@@ -94,6 +90,6 @@ public class AnalysisControllerTest {
 		assertEquals("the correct number of pages", 1, map.get("totalPages"));
 
 		// Make sure that the total is correctly set.
-		assertEquals("total is correctly set.", (long)analysisList.size(), map.get("totalAnalysis"));
+		assertEquals("total is correctly set.", (long) analysisList.size(), map.get("totalAnalysis"));
 	}
 }

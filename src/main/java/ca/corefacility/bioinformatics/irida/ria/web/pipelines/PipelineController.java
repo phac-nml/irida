@@ -112,7 +112,7 @@ public class PipelineController extends BaseController {
 		for (Map<String, Object> map : json) {
 			Long id = Long.parseLong((String) map.get(JSON_KEY_SAMPLE_ID));
 			@SuppressWarnings("unchecked")
-			Set<String> omit = ImmutableSet.copyOf((List) map.get(JSON_KEY_SAMPLE_OMIT_FILES_LIST));
+			Set<String> omit = ImmutableSet.copyOf((List<String>) map.get(JSON_KEY_SAMPLE_OMIT_FILES_LIST));
 
 			Sample sample = sampleService.read(id);
 			List<Join<Sample, SequenceFile>> fileList = sequenceFileService.getSequenceFilesForSample(sample);
