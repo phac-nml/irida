@@ -1,11 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -26,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Created by josh on 14-09-04.
@@ -53,17 +52,10 @@ public class AnalysisControllerTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testGetAjaxListAllAnalysis() throws IOException {
-		String countParam = "10";
-		String pageParam = "1";
+		int countParam = 10;
+		int pageParam = 1;
 		String sortDirParam = "desc";
 		String sortedByParam = "createdDate";
-		Map<String, String> params = ImmutableMap.of(
-				"count", countParam,
-				"page", pageParam,
-				"sortDir", sortDirParam,
-				"sortedBy", sortedByParam
-		);
-
 
 		AnalysisSubmission analysisSubmission1 = TestDataFactory.constrctAnalysisSubmission();
 		AnalysisSubmission analysisSubmission2 = TestDataFactory.constrctAnalysisSubmission();
@@ -72,7 +64,7 @@ public class AnalysisControllerTest {
 
 		when(analysisSubmissionServiceMock
 				.search(any(Specification.class), eq(0), eq(10), eq(Sort.Direction.DESC), eq("createdDate"))).thenReturn(analysisSubmissionPage);
-		Map<String, Object> map = analysisController.getAjaxListAllAnalysis(params, null, null);
+		Map<String, Object> map = analysisController.getAjaxListAllAnalysis(pageParam, countParam, sortedByParam, sortDirParam, null, null, null, null);
 		assertTrue(map.containsKey("analysis"));
 		assertTrue(map.containsKey("totalAnalysis"));
 		assertTrue(map.containsKey("totalPages"));

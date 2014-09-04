@@ -30,6 +30,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 
+import com.google.common.base.Strings;
+
 /**
  * Controller for Analysis.
  *
@@ -69,6 +71,10 @@ public class AnalysisController {
 	// PAGES
 	// ************************************************************************************************
 
+	/**
+	 * Mapping for the
+	 * @return
+	 */
 	@RequestMapping(URI_PAGE_ADMIN)
 	public String getPageAdminAnalysis() {
 		logger.debug("Showing the Analysis Admin Page");
@@ -81,7 +87,13 @@ public class AnalysisController {
 	// ************************************************************************************************
 
 	@RequestMapping(value = URI_AJAX_LIST_ALL_ANALYSIS, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Object> getAjaxListAllAnalysis(@RequestParam Map<String, String> params,
+	public @ResponseBody Map<String, Object> getAjaxListAllAnalysis(
+			@RequestParam Integer page,
+			@RequestParam Integer count,
+			@RequestParam String sortedBy,
+			@RequestParam String sortDir,
+			@RequestParam(required = false) String state,
+			@RequestParam(value = "name", required = false) String nameFilter,
 			@RequestParam(value = "minDate", required = false) @DateTimeFormat(
 					iso = DateTimeFormat.ISO.DATE_TIME) Date minDateFilter,
 			@RequestParam(value = "maxDate", required = false) @DateTimeFormat(
@@ -89,29 +101,21 @@ public class AnalysisController {
 			throws IOException {
 		Map<String, Object> result = new HashMap<>();
 
-		int page = Integer.parseInt(params.get("page")) - 1;  // -1 because paging starts at 0, UI at 1
-		int size = Integer.parseInt(params.get("count"));
-		String sortProperty = params.get("sortedBy");
-		Sort.Direction order = params.get("sortDir").equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-
-		// Check to see if there is a filter on the name.
-		String nameFilter = "";
-		if (params.containsKey("name")) {
-			nameFilter = params.get("name");
-		}
+		// -1 because paging starts at 0, UI at 1
+		page -= 1;
+		Sort.Direction order = sortDir.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
 
 		// Let's see if we need to filter the state
 		AnalysisState stateFilter = null;
-		Specification<AnalysisSubmission> specification;
-		if (params.containsKey("state")) {
-			StateFilter filter = new ObjectMapper().readValue(params.get("state"), StateFilter.class);
+		if (!Strings.isNullOrEmpty(state)) {
+			StateFilter filter = new ObjectMapper().readValue(state, StateFilter.class);
 			stateFilter = filter.getState();
 		}
 
-		specification = AnalysisSubmissionSpecification
+		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
 				.searchAnalysis(nameFilter, stateFilter, minDateFilter, maxDateFilter);
 		Page<AnalysisSubmission> analysisPage = analysisSubmissionService
-				.search(specification, page, size, order, sortProperty);
+				.search(specification, page, count, order, sortedBy);
 
 		List<Map<String, String>> analysisList = new ArrayList<>();
 		for (AnalysisSubmission analysisSubmission : analysisPage.getContent()) {
