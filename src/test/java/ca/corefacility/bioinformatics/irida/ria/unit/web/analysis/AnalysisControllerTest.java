@@ -51,6 +51,7 @@ public class AnalysisControllerTest {
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void testGetAjaxListAllAnalysis() throws IOException {
 		String countParam = "10";
 		String pageParam = "1";
