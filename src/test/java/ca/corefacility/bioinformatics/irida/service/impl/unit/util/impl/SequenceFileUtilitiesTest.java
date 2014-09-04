@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.impl.unit.util;
+package ca.corefacility.bioinformatics.irida.service.impl.unit.util.impl;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,13 +12,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.service.util.SequenceFileUtilities;
+import ca.corefacility.bioinformatics.irida.service.util.impl.BioJavaSequenceFileUtilitiesImpl;
 
 public class SequenceFileUtilitiesTest {
 	private SequenceFileUtilities sequenceFileUtilities;
 
 	@Before
 	public void setUp() {
-		sequenceFileUtilities = new SequenceFileUtilities();
+		sequenceFileUtilities = new BioJavaSequenceFileUtilitiesImpl();
 	}
 
 	@Test
