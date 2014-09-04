@@ -72,12 +72,13 @@ public class AnalysisController {
 	// ************************************************************************************************
 
 	/**
-	 * Mapping for the
-	 * @return
+	 * Get the Analysis Admin Page
+	 *
+	 * @return uri for the analysis admin page
 	 */
 	@RequestMapping(URI_PAGE_ADMIN)
 	public String getPageAdminAnalysis() {
-		logger.debug("Showing the Analysis Admin Page");
+		logger.trace("Showing the Analysis Admin Page");
 		// TODO: (14-08-29 - Josh) Once individuals can own an analysis this needs to be only admin.
 		return PAGE_ADMIN_ANALYSIS;
 	}
@@ -86,6 +87,20 @@ public class AnalysisController {
 	// AJAX
 	// ************************************************************************************************
 
+	/**
+	 * Get a list of analysis by page and filter
+	 *
+	 * @param page          Current page being displayed
+	 * @param count         Number of analysis per page
+	 * @param sortedBy      field to sort by
+	 * @param sortDir       direction to sort by
+	 * @param state         AnalysisSubmission state
+	 * @param nameFilter    text to filter the name by
+	 * @param minDateFilter date to filter out anything previous
+	 * @param maxDateFilter date to filter out anything after
+	 * @return JSON object with analysis, total pages, and total analysis
+	 * @throws IOException
+	 */
 	@RequestMapping(value = URI_AJAX_LIST_ALL_ANALYSIS, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> getAjaxListAllAnalysis(
 			@RequestParam Integer page,
@@ -101,8 +116,6 @@ public class AnalysisController {
 			throws IOException {
 		Map<String, Object> result = new HashMap<>();
 
-		// -1 because paging starts at 0, UI at 1
-		page -= 1;
 		Sort.Direction order = sortDir.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
 
 		// Let's see if we need to filter the state
