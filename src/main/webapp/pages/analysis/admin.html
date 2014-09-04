@@ -1,409 +1,419 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorator="templates/wet-boew/wet-layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="templates/wet-boew/wet-layout">
 <head>
-	<title th:text="#{analysis.page.admin.title}">THIS IS SOMETHING
-		WRONG</title>
-	<link href="/resources/wet-theme/css/wet-boew.min.css"/>
-	<link href="/resources/wet-theme/css/theme.min.css"/>
-	<th:block layout:fragment="css">
-		<link rel="stylesheet" th:href="@{/resources/bower_components/angular-busy/angular-busy.css}"
-			  href="/resources/bower_components/angular-busy/angular-busy.css"/>
-		<style>
-			.ng-cloak {
-				display: none !important;
-			}
-		</style>
-	</th:block>
+    <title th:text="#{analysis.page.admin.title}">THIS IS SOMETHING
+        WRONG</title>
+    <link href="/resources/wet-theme/css/wet-boew.min.css"/>
+    <link href="/resources/wet-theme/css/theme.min.css"/>
+    <link href="/resources/bower_components/Font-Awesome/css/font-awesome.min.css"/>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/resources/bower_components/angular-busy/angular-busy.css}"
+              href="/resources/bower_components/angular-busy/angular-busy.css"/>
+        <style>
+            .ng-cloak {
+                display: none !important;
+            }
+        </style>
+    </th:block>
 </head>
 <body>
 <div class="container" layout:fragment="content">
-	<div class="row">
-		<div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
-	</div>
-	<div class="row">
-		<main class="col-md-12 ng-cloak" role="main"
-			  property="mainContentOfPage" ng-app="analysis">
-			<h1 th:text="#{analysis.page.admin.title}">HEY I'M A GLOBAL ANALYSIS PAGE</h1>
+    <div class="row">
+        <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
+    </div>
+    <div class="row">
+        <main class="col-md-12 ng-cloak" role="main"
+              property="mainContentOfPage" ng-app="analysis">
+            <h1 th:text="#{analysis.page.admin.title}">HEY I'M A GLOBAL ANALYSIS PAGE</h1>
 
-			<div class="row" ng-controller="AnalysisTableCtrl">
-				<div class="col-md-12">
-					<div class="form-inline">
-						<button class="btn btn-info" ng-click="filter.isCollapsed = !filter.isCollapsed"
-								th:inline="text">
-							<span class="fa fa-filter fa-fw"></span>
-							[[#{analysis.btn.filter}]]
-						</button>
-						<div class="form-group">
-							<select class="form-control" name="count" id="count" ng-model="filterCriteria.count"
-									ng-change="filterResult()">
-								<option value="10">10</option>
-								<option value="25">25</option>
-								<option value="50">50</option>
-								<option value="100">100</option>
-							</select>
-							<label for="count" th:text="#{global.tables.select-page-size}">Select Page Size</label>
-						</div>
-					</div>
-					<table class="table table-striped">
-						<thead>
-						<tr>
-							<th class="col-md-6">
-								<sort-by onsort="onSort" sortdir="filterCriteria.sortDir"
-										 sortedby="filterCriteria.sortedBy"
-										 sortValue="name" th:text="#{'analysis.table.name'}">Name
-								</sort-by>
-							</th>
-							<th class="col-md-2">
-								<sort-by onsort="onSort" sortdir="filterCriteria.sortDir"
-										 sortedby="filterCriteria.sortedBy"
-										 sortValue="analysisState" th:text="#{'analysis.table.state'}">State
-								</sort-by>
-							</th>
-							<th class="col-md-4">
-								<sort-by onsort="onSort" sortdir="filterCriteria.sortDir"
-										 sortedby="filterCriteria.sortedBy"
-										 sortValue="createdDate" th:text="#{'analysis.table.date'}">Created
-								</sort-by>
-							</th>
-						</tr>
-						<tr>
-							<td>
-								<div collapse="filter.isCollapsed">
-									<div class="input-group">
-										<input type="text" class="form-control input-full"
-											   ng-model="filterCriteria.name" ng-change="filterNameResult()"/>
-										<span class="input-group-btn">
-											<button class="btn btn-default" ng-click="filterCriteria.name = ''; filterResult()" th:text="#{form.btn.clear}"></button>
-										</span>
-									</div>
-								</div>
-							</td>
-							<td>
-								<div collapse="filter.isCollapsed">
-									<select class="input-full form-control" ng-model="filterCriteria.state"
-											ng-change="filterResult()"
-											ng-options="state.text for state in filter.states">
-										<option value="" th:text="#{analysis.select.all}">All</option>
-									</select>
-								</div>
-							</td>
-							<td>
-								<div class="row" collapse="filter.isCollapsed">
-									<div class="col-md-6">
-										<div class="input-group">
-											<input type="text" disabled="disabled" class="form-control"
-												   placeholder="min"
-												   datepicker-popup="{{datepicker.format}}"
-												   ng-model="filterCriteria.minDate"
-												   is-open="datepicker.min.opened"
-												   min-date="minDate" max-date="{{datepicker.maxDate}}"
-												   datepicker-options="dateOptions" ng-change="filterResult()"
-												   ng-required="false" close-text="Close"/>
+            <div class="row" ng-controller="AnalysisTableCtrl as table">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <button id="filterBtn" class="btn btn-info"
+                                ng-click="table.filter.isCollapsed = !table.filter.isCollapsed"
+                                th:inline="text">
+                            <span class="fa fa-filter fa-fw"></span>
+                            [[#{analysis.btn.filter}]]
+                        </button>
+                        <div class="form-group">
+                            <select class="form-control" name="count" id="count" ng-model="table.filterCriteria.count"
+                                    ng-change="filterResult()">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            <label for="count" th:text="#{global.tables.select-page-size}">Select Page Size</label>
+                        </div>
+                    </div>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th class="col-md-5">
+                                <sort-by onsort="table.onSort" sortdir="table.filterCriteria.sortDir"
+                                         sortedby="table.filterCriteria.sortedBy"
+                                         sortValue="name" th:text="#{'analysis.table.name'}">Name
+                                </sort-by>
+                            </th>
+                            <th class="col-md-2">
+                                <sort-by onsort="table.onSort" sortdir="table.filterCriteria.sortDir"
+                                         sortedby="table.filterCriteria.sortedBy"
+                                         sortValue="analysisState" th:text="#{'analysis.table.state'}">State
+                                </sort-by>
+                            </th>
+                            <th class="col-md-4">
+                                <sort-by onsort="table.onSort" sortdir="table.filterCriteria.sortDir"
+                                         sortedby="table.filterCriteria.sortedBy"
+                                         sortValue="createdDate" th:text="#{'analysis.table.date'}">Created
+                                </sort-by>
+                            </th>
+                            <th class="col-md-1"></th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div collapse="table.filter.isCollapsed">
+                                    <input name="name-filter" type="text" class="form-control input-full"
+                                           ng-model="table.filterCriteria.name"/>
+                                </div>
+                            </td>
+                            <td>
+                                <div collapse="table.filter.isCollapsed">
+                                    <select name="state-filter" class="input-full form-control"
+                                            ng-model="table.filterCriteria.state"
+                                            ng-change="table.filterResult()"
+                                            ng-options="state.text for state in table.filter.states">
+                                        <option value="" th:text="#{analysis.select.all}">All</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row" collapse="table.filter.isCollapsed">
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            <input type="text" disabled="disabled" class="form-control"
+                                                   th:placeholder="#{form.placeholder.date.min}"
+                                                   placeholder="min"
+                                                   datepicker-popup="{{table.datepicker.format}}"
+                                                   ng-model="table.filterCriteria.minDate"
+                                                   is-open="table.datepicker.min.opened"
+                                                   min-date="minDate" max-date="table.datepicker.maxDate"
+                                                   datepicker-options="dateOptions" ng-change="table.filterResult()"
+                                                   ng-required="false" close-text="{{table.datepicker.closeText}}"/>
                                   <span class="input-group-btn">
                                     <button type="button" class="btn btn-default"
-											ng-click="datepicker.min.open($event)"><i
-											class="glyphicon glyphicon-calendar"></i></button>
+                                            ng-click="table.datepicker.min.open($event)"><span
+                                            class="fa fa-calendar-o fa-fw"></span></button>
                                   </span>
-										</div>
-									</div>
-									<div class="col-md-6">
-										<div class="input-group">
-											<input type="text" disabled="disabled" class="form-control"
-												   placeholder="max"
-												   datepicker-popup="{{datepicker.format}}"
-												   ng-model="filterCriteria.maxDate"
-												   is-open="datepicker.max.opened"
-												   min-date="minDate" max-date="{{datepicker.maxDate}}"
-												   datepicker-options="dateOptions" ng-change="filterResult()"
-												   ng-required="false" close-text="Close"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            <input type="text" disabled="disabled" class="form-control"
+                                                   th:placeholder="#{form.placeholder.date.max}"
+                                                   placeholder="max"
+                                                   datepicker-popup="{{table.datepicker.format}}"
+                                                   ng-model="table.filterCriteria.maxDate"
+                                                   is-open="table.datepicker.max.opened"
+                                                   max-date="table.datepicker.maxDate"
+                                                   datepicker-options="dateOptions" ng-change="table.filterResult()"
+                                                   ng-required="false" close-text="{{table.datepicker.closeText}}"/>
                                   <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default"
-											ng-click="datepicker.max.open($event)"><i
-											class="glyphicon glyphicon-calendar"></i>
-									</button>
+                                    <button id="clearFilterBtn" type="button" class="btn btn-default"
+                                            ng-click="table.datepicker.max.open($event)"><span
+                                            class="fa fa-calendar-o fa-fw"></span>
+                                    </button>
                                   </span>
-										</div>
-									</div>
-								</div>
-							</td>
-						</tr>
-						</thead>
-						<tbody cg-busy="promise">
-						<tr ng-repeat="a in analysis">
-							<td>{{a.name}}</td>
-							<td>
-								<div class="label {{a.status | stateToClass}}">
-									{{a.status | stateToText}}
-								</div>
-							</td>
-							<td>{{a.createdDateString}}</td>
-						</tr>
-						</tbody>
-					</table>
-					<div ng-show="paging.totalAnalysis == 0">
-						<h3>No analysis has been completed yet</h3>
-					</div>
-					<div class="text-center">
-						<pagination ng-hide="paging.totalPages &lt; 2" items-per-page="{{filterCriteria.count}}"
-									total-items="paging.totalAnalysis"
-									ng-model="filterCriteria.page" first-text="{{paging.firstText}}"
-									rotate="true"
-									last-text="{{paging.lastText}}"
-									next-text="{{paging.nextText}}" previous-text="{{paging.previousText}}"
-									max-size="5" boundary-links="true"></pagination>
-					</div>
-					<script type="text/ng-template" id="sort-by.html">
-						<a class="clickable" ng-click="sort(sortValue)">
-							<span ng-transclude=""></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div collapse="table.filter.isCollapsed" class="text-right">
+                                    <button type="button" class="btn btn-default"><span
+                                            class="fa fa-close fa-fw" ng-click="table.clearFilter()"></span></button>
+                                </div>
+                            </td>
+                        </tr>
+                        </thead>
+                        <tbody cg-busy="filterPromise">
+                        <tr class="analysis-row" ng-repeat="a in table.analysis">
+                            <td>{{a.name}}</td>
+                            <td>
+                                <div class="label {{a.status | stateToClass}}">
+                                    {{a.status | stateToText}}
+                                </div>
+                            </td>
+                            <td>{{a.createdDateString}}</td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div ng-show="paging.totalAnalysis == 0">
+                        <h3>No analysis has been completed yet</h3>
+                    </div>
+                    <div class="text-center">
+                        <pagination ng-hide="table.paging.totalPages &lt; 2"
+                                    items-per-page="{{table.filterCriteria.count}}"
+                                    total-items="table.paging.totalAnalysis"
+                                    ng-model="table.filterCriteria.page" first-text="{{table.paging.firstText}}"
+                                    rotate="true"
+                                    last-text="{{table.paging.lastText}}"
+                                    next-text="{{table.paging.nextText}}" previous-text="{{table.paging.previousText}}"
+                                    max-size="5" boundary-links="true"></pagination>
+                    </div>
+                    <script type="text/ng-template" id="sort-by.html">
+                        <a class="clickable" ng-click="sort(sortValue)">
+                            <span ng-transclude=""></span>
                             <span class="pull-right" ng-show="sortedby == sortvalue">
                                 <i class="fa fa-fw"
-								   ng-class="{true: 'fa-sort-asc', false: 'fa-sort-desc'}[sortdir == 'asc']"></i>
+                                   ng-class="{true: 'fa-sort-asc', false: 'fa-sort-desc'}[sortdir == 'asc']"></i>
                             </span>
                             <span class="pull-right" ng-show="sortedby != sortvalue">
                                 <i class="fa fa-sort fa-fw"></i>
                             </span>
-						</a>
-					</script>
-				</div>
-			</div>
-		</main>
-	</div>
+                        </a>
+                    </script>
+                </div>
+            </div>
+        </main>
+    </div>
 </div>
 <th:block layout:fragment="scripts" th:inline="javascript">
 
-<script th:src="@{'/resources/bower_components/underscore/underscore-min.js'}"
-		src="/resources/bower_components/underscore/underscore-min.js"></script>
+<script th:src="@{'/resources/bower_components/lodash/dist/lodash.underscore.min.js'}"
+        src="/resources/bower_components/lodash/dist/lodash.underscore.min.js"></script>
 <script th:src="@{'/resources/bower_components/angular/angular.min.js'}"
-		src="/resources/bower_components/angular/angular.min.js"></script>
+        src="/resources/bower_components/angular/angular.min.js"></script>
 <script th:src="@{'/resources/bower_components/restangular/dist/restangular.min.js'}"
-		src="/resources/bower_components/restangular/dist/restangular.min.js"></script>
+        src="/resources/bower_components/restangular/dist/restangular.min.js"></script>
 <script th:src="@{'/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js'}"
-		src="/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+        src="/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
 <script th:src="@{/resources/bower_components/angular-busy/angular-busy.js}"
-		src="/resources/bower_components/angular-busy/angular-busy.js"></script>
+        src="/resources/bower_components/angular-busy/angular-busy.js"></script>
 <script>
-	/*<![CDATA[*/
-	var states = {
-		'NEW': {
-			class: 'info',
-			text: /*[[#{analysis.state.new}]]*/'new'
-		},
-		'PREPARING'       : {
-			class: 'info',
-			text : /*[[#{analysis.state.preparing}]]*/ 'preparing'
-		},
-		'SUBMITTING'       : {
-			class: 'info',
-			text : /*[[#{analysis.state.submitted}]]*/ 'submitted'
-		},
-		'RUNNING'         : {
-			class: 'primary',
-			text : /*[[#{analysis.state.running}]]*/'running'
-		},
-		'FINISHED_RUNNING': {
-			class: 'default',
-			text : /*[[#{analysis.state.finished}]]*/ 'finished running'
-		},
-		'COMPLETED'       : {
-			class: 'success',
-			text : /*[[#{analysis.state.completed}]]*/ 'completed'
-		},
-		'ERROR'           : {
-			class: 'danger',
-			text : /*[[#{analysis.state.error}]]*/'error'
-		}
-	};
+/*<![CDATA[*/
+var states = {
+    'NEW'             : {
+        class: 'info',
+        text : /*[[#{analysis.state.new}]]*/'new'
+    },
+    'PREPARING'       : {
+        class: 'info',
+        text : /*[[#{analysis.state.preparing}]]*/ 'preparing'
+    },
+    'SUBMITTING'      : {
+        class: 'info',
+        text : /*[[#{analysis.state.submitted}]]*/ 'submitted'
+    },
+    'RUNNING'         : {
+        class: 'primary',
+        text : /*[[#{analysis.state.running}]]*/'running'
+    },
+    'FINISHED_RUNNING': {
+        class: 'default',
+        text : /*[[#{analysis.state.finished}]]*/ 'finished running'
+    },
+    'COMPLETED'       : {
+        class: 'success',
+        text : /*[[#{analysis.state.completed}]]*/ 'completed'
+    },
+    'ERROR'           : {
+        class: 'danger',
+        text : /*[[#{analysis.state.error}]]*/'error'
+    }
+};
 
-	var app = angular.module('analysis', ['cgBusy', 'restangular', 'ui.bootstrap'])
-			.config(function (RestangularProvider) {
-				var url = /*[[@{'/analysis/ajax'}]]*/ '/analysis/ajax';
-				RestangularProvider.setBaseUrl(url);
-			})
-			.value('cgBusyDefaults',{
-				message: /*[[#{analysis.table.filtering}]]*/ 'Loading Stuff',
-				backdrop: false,
-				templateUrl: /*[[@{/resources/bower_components/angular-busy/angular-busy.html}]]*/ 'my_custom_template.html',
-				delay: 300,
-				minDuration: 700
-			})
-			.factory('api', function (Restangular) {
-				return {
-					analysis: {
-						search: function search(query) {
-							return Restangular.all('all').customGET("", query);
-						}
-					}
-				}
-			});
+var app = angular.module('analysis', ['cgBusy', 'restangular', 'ui.bootstrap'])
+        .config(function (RestangularProvider) {
+            var url = /*[[@{'/analysis/ajax'}]]*/ '/analysis/ajax';
+            RestangularProvider.setBaseUrl(url);
+        })
+        .value('cgBusyDefaults', {
+            message    : /*[[#{analysis.table.filtering}]]*/ 'Loading Stuff',
+            backdrop   : false,
+            templateUrl: /*[[@{/resources/bower_components/angular-busy/angular-busy.html}]]*/ 'my_custom_template.html',
+            delay      : 300,
+            minDuration: 700
+        })
+        .factory('api', function (Restangular) {
+            return {
+                analysis: {
+                    search: function search(query) {
+                        return Restangular.all('all').customGET("", query);
+                    }
+                }
+            }
+        });
 
-	app.filter('stateToClass', function () {
-		'use strict';
-		return function (state) {
-			return 'label-' + states[state]['class'];
-		}
-	}).filter('stateToText', function () {
-		"use strict";
-		return function (state) {
-			return states[state]['text'];
-		}
-	});
+app.filter('stateToClass', function () {
+    'use strict';
+    return function (state) {
+        return 'label-' + states[state]['class'];
+    }
+}).filter('stateToText', function () {
+    "use strict";
+    return function (state) {
+        return states[state]['text'];
+    }
+});
 
-	app.directive('sortBy', function () {
-		'use strict';
-		return {
-			templateUrl: 'sort-by.html',
-			restrict   : 'E',
-			transclude : true,
-			replace    : true,
-			scope      : {
-				sortdir  : '=',
-				sortedby : '=',
-				sortvalue: '@',
-				onsort   : '='
-			},
-			link       : function (scope, elements, attrs) {
-				scope.sort = function () {
-					if(scope.sortedby == scope.sortvalue) {
-						scope.sortdir = scope.sortdir == 'asc' ? 'desc' : 'asc';
-					}
-					else {
-						scope.sortedby = scope.sortvalue;
-						scope.sortdir = 'asc'
-					}
-					scope.onsort(scope.sortedby, scope.sortdir);
-				}
-			}
-		};
-	});
+app.directive('sortBy', function () {
+    'use strict';
+    return {
+        templateUrl: 'sort-by.html',
+        restrict   : 'E',
+        transclude : true,
+        replace    : true,
+        scope      : {
+            sortdir  : '=',
+            sortedby : '=',
+            sortvalue: '@',
+            onsort   : '='
+        },
+        link       : function (scope, elements, attrs) {
+            scope.sort = function () {
+                if (scope.sortedby == scope.sortvalue) {
+                    scope.sortdir = scope.sortdir == 'asc' ? 'desc' : 'asc';
+                }
+                else {
+                    scope.sortedby = scope.sortvalue;
+                    scope.sortdir = 'asc'
+                }
+                scope.onsort(scope.sortedby, scope.sortdir);
+            }
+        }
+    };
+});
 
-	app.directive('onBlurChange', function ($parse) {
-		'use strict';
-		return function (scope, element, attr) {
-			'use strict';
-			var fn = $parse(attr['onBlurChange']);
-			var hasChanged = false;
-			element.on('change', function (event) {
-				hasChanged = true;
-			});
-			element.on('blur', function () {
-				if(hasChanged) {
-					scope.$apply(function () {
-						fn(scope, {$event: event});
-					});
-					hasChanged = false;
-				}
-			});
-		}
-	});
+app.directive('onBlurChange', function ($parse) {
+    'use strict';
+    return function (scope, element, attr) {
+        'use strict';
+        var fn = $parse(attr['onBlurChange']);
+        var hasChanged = false;
+        element.on('change', function (event) {
+            hasChanged = true;
+        });
+        element.on('blur', function () {
+            if (hasChanged) {
+                scope.$apply(function () {
+                    fn(scope, {$event: event});
+                });
+                hasChanged = false;
+            }
+        });
+    }
+});
 
-	app.directive('onEnterBlur', function () {
-		return function (scope, element, attrs) {
-			"use strict";
-			element.bind("keydown keypress", function (event) {
-				if(event.which == 13) {
-					element.blur();
-					event.preventDefault();
-				}
-			})
-		}
-	});
+app.directive('onEnterBlur', function () {
+    return function (scope, element, attrs) {
+        "use strict";
+        element.bind("keydown keypress", function (event) {
+            if (event.which == 13) {
+                element.blur();
+                event.preventDefault();
+            }
+        })
+    }
+});
 
-	app.controller('AnalysisTableCtrl', function ($scope, $timeout, api) {
-		'use strict';
-		$scope.filter = {
-			isCollapsed: true,
-			states     : _.map(states, function (v, k) {
-				return {text: v.text, value: k};
-			})
-		};
+app.controller('AnalysisTableCtrl', function ($scope, api) {
+    'use strict';
+    var table = this;
 
-		$scope.datepicker = {
-			min    : {
-				open: function open($event) {
-					$event.preventDefault();
-					$event.stopPropagation();
-					$scope.datepicker.min.opened = true;
-				}
+    table.filter = {
+        isCollapsed: true,
+        states     : _.map(states, function (v, k) {
+            return {text: v.text, value: k};
+        })
+    };
 
-			},
-			max    : {
-				open: function open($event) {
-					$event.preventDefault();
-					$event.stopPropagation();
-					$scope.datepicker.max.opened = true;
-				}
+    table.datepicker = {
+        min    : {
+            open: function open($event) {
+                $event.preventDefault();
+                $event.stopPropagation();
+                table.datepicker.min.opened = true;
+            }
 
-			},
-			format : /*[[#{datepicker.short}]]*/ 'dd-MMMM-yyyy',
-			maxDate: new Date() // Max date should always be today!
-		};
+        },
+        max    : {
+            open: function open($event) {
+                $event.preventDefault();
+                $event.stopPropagation();
+                table.datepicker.max.opened = true;
+            }
 
-		$scope.paging = {
-			totalAnalysis: 0,
-			totalPages   : 0,
-			firstText    : /*[[#{paging.first-text}]]*/ 'First',
-			lastText     : /*[[#{paging.last-text}]]*/ 'Last',
-			nextText     : /*[[#{paging.next-text}]]*/ 'Next',
-			previousText : /*[[#{paging.previous-text}]]*/ 'Previous'
-		};
+        },
+        closeText: /*[[#{form.btn.close}]]*/ 'Close',
+        format : /*[[#{datepicker.short}]]*/ 'dd-MMMM-yyyy',
+        maxDate: new Date() // Max date should always be today!
+    };
 
-		$scope.selectedTypes = [];
+    table.paging = {
+        page         : 1,
+        totalAnalysis: 0,
+        totalPages   : 0,
+        firstText    : /*[[#{paging.first-text}]]*/ 'First',
+        lastText     : /*[[#{paging.last-text}]]*/ 'Last',
+        nextText     : /*[[#{paging.next-text}]]*/ 'Next',
+        previousText : /*[[#{paging.previous-text}]]*/ 'Previous'
+    };
 
-		$scope.filterCriteria = {
-			page    : 1,
-			sortDir : 'desc',
-			sortedBy: 'createdDate',
-			count   : 10
-		};
+    var defaultCriteria = {
+        page    : 1,
+        sortDir : 'desc',
+        sortedBy: 'createdDate',
+        count   : 10
+    };
+    table.filterCriteria = _.clone(defaultCriteria);
 
-		$scope.$watch('filterCriteria.page', function () {
-			$scope.fetchResult();
-		});
+    table.fetchResult = function () {
+        table.filterPromise = api.analysis.search(table.filterCriteria);
 
-		$scope.fetchResult = function () {
-			$scope.promise = api.analysis.search($scope.filterCriteria);
+        return table.filterPromise.then(function (data) {
+            table.analysis = data.analysis;
+            table.paging.totalAnalysis = data.totalAnalysis;
+            table.paging.totalPages = data.totalPages;
+        }, function () {
+            table.analysis = [];
+        });
+    };
 
-			return $scope.promise.then(function (data) {
-				$scope.analysis = data.analysis;
-				$scope.paging.totalAnalysis = data.totalAnalysis;
-				$scope.paging.totalPages = data.totalPages;
-			}, function () {
-				$scope.analysis = [];
-			});
-		};
+    table.filterResult = function () {
+        table.filterCriteria.page = 1;
+        table.fetchResult().then(function () {
+            table.filterCriteria.page = 1;
+        });
+    };
 
-		$scope.selectPage = function (page) {
-			$scope.filterCriteria.page = page;
-			$scope.fetchResult();
-		};
+    table.clearFilter = function () {
+        table.filterCriteria = _.clone(defaultCriteria);
+        table.filter.isCollapsed = true;
+    };
 
-		$scope.filterResult = function () {
-			$scope.filterCriteria.page = 1;
-			$scope.fetchResult().then(function () {
-				$scope.filterCriteria.page = 1;
-			});
-		};
+    table.onSort = function (sortedBy, sortDir) {
+        table.filterCriteria.sortedBy = sortedBy;
+        table.filterCriteria.sortDir = sortDir;
+        table.filterCriteria.page = 1;
+        table.fetchResult().then(function () {
+            table.filterCriteria.page = 1;
+        });
+    };
 
-		var timeout;
-		$scope.filterNameResult = function () {
-			if(timeout)$timeout.cancel(timeout);
-			timeout = $timeout(function () {
-				$scope.filterResult();
-			}, 350);
-		};
+    $scope.$watch('table.filterCriteria.page', function () {
+        table.fetchResult();
+    });
 
-		$scope.onSort = function (sortedBy, sortDir) {
-			$scope.filterCriteria.sortDir = sortDir;
-			$scope.filterCriteria.sortedBy = sortedBy;
-			$scope.filterCriteria.page = 1;
-			$scope.fetchResult().then(function () {
-				$scope.filterCriteria.page = 1;
-			})
-		};
-	});
-	/*]]>*/
+    $scope.$watch("table.filterCriteria.name", _.debounce(function () {
+        table.filterResult().then(function () {
+            table.filterCriteria.page = 1;
+        });
+    }, 500));
+});
+/*]]>*/
 </script>
 </th:block>
 </body>
