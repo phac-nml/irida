@@ -62,14 +62,14 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final RelatedProjectRepository relatedProjectRepository;
 	private final ReferenceFileRepository referenceFileRepository;
 	private final ProjectReferenceFileJoinRepository prfjRepository;
-	private final SequenceFileUtilities sequenceFileUtilties;
+	private final SequenceFileUtilities sequenceFileUtilities;
 
 	@Autowired
 	public ProjectServiceImpl(ProjectRepository projectRepository, SampleRepository sampleRepository,
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
 			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository,
-			SequenceFileUtilities sequenceFileUtilties, Validator validator) {
+			SequenceFileUtilities sequenceFileUtilities, Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.sampleRepository = sampleRepository;
 		this.userRepository = userRepository;
@@ -78,7 +78,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.relatedProjectRepository = relatedProjectRepository;
 		this.referenceFileRepository = referenceFileRepository;
 		this.prfjRepository = prfjRepository;
-		this.sequenceFileUtilties = sequenceFileUtilties;
+		this.sequenceFileUtilities = sequenceFileUtilities;
 	}
 
 	@Override
@@ -306,7 +306,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	public Join<Project, ReferenceFile> addReferenceFileToProject(Project project, ReferenceFile referenceFile) {
 		// calculate the file length
-		Long referenceFileLength = sequenceFileUtilties.countSequenceFileLengthInBases(referenceFile.getFile());
+		Long referenceFileLength = sequenceFileUtilities.countSequenceFileLengthInBases(referenceFile.getFile());
 		referenceFile.setFileLength(referenceFileLength);
 
 		referenceFile = referenceFileRepository.save(referenceFile);
