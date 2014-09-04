@@ -40,12 +40,11 @@ public class AnalysisControllerTest {
 	 * SERVICES
 	 */
 	private AnalysisSubmissionService analysisSubmissionServiceMock;
-	private MessageSource messageSourceMock;
 
 	@Before
 	public void init() {
 		analysisSubmissionServiceMock = mock(AnalysisSubmissionService.class);
-		messageSourceMock = mock(MessageSource.class);
+		MessageSource messageSourceMock = mock(MessageSource.class);
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, messageSourceMock);
 	}
 
@@ -53,7 +52,7 @@ public class AnalysisControllerTest {
 	@SuppressWarnings("unchecked")
 	public void testGetAjaxListAllAnalysis() throws IOException {
 		int countParam = 10;
-		int pageParam = 1;
+		int pageParam = 0;
 		String sortDirParam = "desc";
 		String sortedByParam = "createdDate";
 
