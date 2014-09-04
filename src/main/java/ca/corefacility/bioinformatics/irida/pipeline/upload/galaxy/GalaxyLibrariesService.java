@@ -156,7 +156,7 @@ public class GalaxyLibrariesService {
 								+ library.getId() + " for dataset "
 								+ libraryDataset.getId());
 					} else {
-						logger.debug("Waiting for library dataset "
+						logger.trace("Waiting for library dataset "
 								+ libraryDataset.getId()
 								+ " to be finished processing, in state "
 								+ libraryDataset.getState());
