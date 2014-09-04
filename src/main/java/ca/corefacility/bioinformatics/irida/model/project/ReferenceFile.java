@@ -60,18 +60,20 @@ public class ReferenceFile implements VersionedFileFields<Long>, IridaThing {
 	private ProjectReferenceFileJoin project;
 
 	private Long fileRevisionNumber; // the filesystem file revision number
-	
+
+	private Long fileLength;
+
 	public int hashCode() {
 		return file.hashCode();
 	}
-	
+
 	public boolean equals(Object o) {
 		if (o == this) {
 			return true;
 		} else if (o instanceof ReferenceFile) {
 			return Objects.equals(file, ((ReferenceFile) o).file);
 		}
-		
+
 		return false;
 	}
 
@@ -117,11 +119,20 @@ public class ReferenceFile implements VersionedFileFields<Long>, IridaThing {
 	public Date getCreatedDate() {
 		return this.createdDate;
 	}
+
 	public void incrementFileRevisionNumber() {
 		this.fileRevisionNumber++;
 	}
 
 	public Long getFileRevisionNumber() {
 		return fileRevisionNumber;
+	}
+
+	public Long getFileLength() {
+		return fileLength;
+	}
+
+	public void setFileLength(Long fileLength) {
+		this.fileLength = fileLength;
 	}
 }

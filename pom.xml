@@ -359,6 +359,13 @@
 			</exclusions>
 		</dependency>
 
+		<!-- BioJava -->
+		<dependency>
+			<groupId>org.biojava</groupId>
+			<artifactId>biojava3-core</artifactId>
+			<version>${biojava.version}</version>
+		</dependency>
+
 		<!-- This dependency is brought in by hibernate and jena with conflicting 
 			versions. Solution was to exclude it from both of their imports and import 
 			it explicitly. -->
@@ -561,6 +568,7 @@
 		<apache.jena.version>1.1.0</apache.jena.version>
 		<xml.apis.version>1.4.01</xml.apis.version>
 		<liquibase.version>3.2.2</liquibase.version>
+		<biojava.version>3.0</biojava.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.17</maven.failsafe.plugin.version>
