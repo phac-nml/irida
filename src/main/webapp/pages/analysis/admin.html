@@ -131,7 +131,9 @@
                             </td>
                             <td>
                                 <div collapse="table.filter.isCollapsed" class="text-right">
-                                    <button id="clearFilterBtn" type="button" class="btn btn-default" th:text="#{form.btn.clear}" ng-click="table.clearFilter()">Clear</button>
+                                    <button id="clearFilterBtn" type="button" class="btn btn-default"
+                                            th:text="#{form.btn.clear}" ng-click="table.clearFilter()">Clear
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -195,7 +197,8 @@
 /*<![CDATA[*/
 
 <!--/*-->
-
+// These are the for submission states
+// "class" is the css class for displaying the label (e.g. 'info' will be converted to 'label-info')
 <!--*/-->
 var states = {
     'NEW'             : {
@@ -229,10 +232,20 @@ var states = {
 };
 
 var app = angular.module('analysis', ['cgBusy', 'restangular', 'ui.bootstrap'])
+    /*[- */
+    // Restangular (https://github.com/mgonto/restangular) is an AngularJS service that simplifies
+    // common GET, POST, DELETE, and UPDATE requests with a minimum of client code. It's a perfect
+    // fit for any WebApp that consumes data from a RESTful API.
+    // Here we are setting the base url for all requests on this page.
+    /* -]*/
         .config(function (RestangularProvider) {
             var url = /*[[@{'/analysis/ajax'}]]*/ '/analysis/ajax';
             RestangularProvider.setBaseUrl(url);
         })
+    /*[- */
+    // cgBusyDefaults (https://github.com/cgross/angular-busy) show busy/loading indicators on any
+    // $http or $resource request, or on any promise
+    /* -]*/
         .value('cgBusyDefaults', {
             message    : /*[[#{analysis.table.filtering}]]*/ 'Loading Stuff',
             backdrop   : false,
@@ -249,7 +262,10 @@ var app = angular.module('analysis', ['cgBusy', 'restangular', 'ui.bootstrap'])
                 }
             }
         });
-
+/*[- */
+// Filters are used on ng-models.  The value of the model is passed throug the filter before being
+// displayed.  (e.g. {{'NEW' | stateToClass}} returns 'label-info'
+/* -]*/
 app.filter('stateToClass', function () {
     'use strict';
     return function (state) {
@@ -262,6 +278,10 @@ app.filter('stateToClass', function () {
     }
 });
 
+/*[- */
+// Directive for sorting columns in the table.  This is responsible for adding the the direction arrows,
+// And triggering the sort event for the server.
+/* -]*/
 app.directive('sortBy', function () {
     'use strict';
     return {
@@ -290,42 +310,15 @@ app.directive('sortBy', function () {
     };
 });
 
-app.directive('onBlurChange', function ($parse) {
-    'use strict';
-    return function (scope, element, attr) {
-        'use strict';
-        var fn = $parse(attr['onBlurChange']);
-        var hasChanged = false;
-        element.on('change', function (event) {
-            hasChanged = true;
-        });
-        element.on('blur', function () {
-            if (hasChanged) {
-                scope.$apply(function () {
-                    fn(scope, {$event: event});
-                });
-                hasChanged = false;
-            }
-        });
-    }
-});
-
-app.directive('onEnterBlur', function () {
-    return function (scope, element, attrs) {
-        "use strict";
-        element.bind("keydown keypress", function (event) {
-            if (event.which == 13) {
-                element.blur();
-                event.preventDefault();
-            }
-        })
-    }
-});
-
 app.controller('AnalysisTableCtrl', function ($scope, api) {
     'use strict';
     var table = this;
 
+    /*[- */
+    // filter: used to control the filter section of the page.
+    //  - isCollapsed = whether the filter is open on the screen (initially closed)
+    //  - states = populates the states select.
+    /* -]*/
     table.filter = {
         isCollapsed: true,
         states     : _.map(states, function (v, k) {
@@ -333,6 +326,11 @@ app.controller('AnalysisTableCtrl', function ($scope, api) {
         })
     };
 
+    /*[- */
+    // datepicker: used to handle information for the date pickers in the filter
+    //  - min = minimum date to show results for
+    //  - max = maximum date to show results for
+    /* -]*/
     table.datepicker = {
         min    : {
             open: function open($event) {
@@ -340,7 +338,6 @@ app.controller('AnalysisTableCtrl', function ($scope, api) {
                 $event.stopPropagation();
                 table.datepicker.min.opened = true;
             }
-
         },
         max    : {
             open: function open($event) {
@@ -348,13 +345,18 @@ app.controller('AnalysisTableCtrl', function ($scope, api) {
                 $event.stopPropagation();
                 table.datepicker.max.opened = true;
             }
-
         },
         closeText: /*[[#{form.btn.close}]]*/ 'Close',
         format : /*[[#{datepicker.short}]]*/ 'dd-MMMM-yyyy',
         maxDate: new Date() // Max date should always be today!
     };
 
+    /*[- */
+    // paging: handle all things to do with the paging of the table.
+    //  - page = the current page being displayed.
+    //  - totalAnalysis = the total number of analysis available in the system
+    //  - totalPages = the total number of pages (totalAnalysis / num per page)
+    /* -]*/
     table.paging = {
         page         : 1,
         totalAnalysis: 0,
@@ -365,14 +367,25 @@ app.controller('AnalysisTableCtrl', function ($scope, api) {
         previousText : /*[[#{paging.previous-text}]]*/ 'Previous'
     };
 
+    /*[- */
+    // defaultCriteria: these are the defaults for creating the table
+    /* -]*/
     var defaultCriteria = {
         page    : 1,
         sortDir : 'desc',
         sortedBy: 'createdDate',
         count   : 10
     };
+    /*[- */
+    // filterCriteria: this is passed to the server on each page request.
+    //  - initially a copy of the defaultCriteria
+    /* -]*/
     table.filterCriteria = _.clone(defaultCriteria);
 
+    /*[- */
+    // This uses Restangular to call the server with the filterCriteria.
+    // When the ajax call is complete the table is recreated.
+    /* -]*/
     table.fetchResult = function () {
         table.filterPromise = api.analysis.search(table.filterCriteria);
 
@@ -385,6 +398,10 @@ app.controller('AnalysisTableCtrl', function ($scope, api) {
         });
     };
 
+    /*[- */
+    // filterResult
+    //  - Called when filtering data.
+    /* -]*/
     table.filterResult = function () {
         table.filterCriteria.page = 1;
         table.fetchResult().then(function () {
@@ -392,12 +409,20 @@ app.controller('AnalysisTableCtrl', function ($scope, api) {
         });
     };
 
+    /*[- */
+    // clearFilter
+    //  Clears all the filters and closes the filter area.
+    /* -]*/
     table.clearFilter = function () {
         table.filterCriteria = _.clone(defaultCriteria);
         table.filterResult();
         table.filter.isCollapsed = true;
     };
 
+    /*[- */
+    // onSort
+    //
+    /* -]*/
     table.onSort = function (sortedBy, sortDir) {
         table.filterCriteria.sortedBy = sortedBy;
         table.filterCriteria.sortDir = sortDir;
@@ -407,10 +432,22 @@ app.controller('AnalysisTableCtrl', function ($scope, api) {
         });
     };
 
+    /*[- */
+    // Watches watch for a change in the first parameter then call second parameter when they change
+    /* -]*/
+
+    /*[- */
+    // This watch occurs when a different page is select.  Triggers a server call with the new page.
+    /* -]*/
     $scope.$watch('table.filterCriteria.page', function () {
         table.fetchResult();
     });
 
+    /*[- */
+    // This watch occurs when the name is filtered.
+    //  'debounce' whats for the given time before calling.  This allows the user to enter
+    //  multiple characters without triggering for each one.
+    /* -]*/
     $scope.$watch("table.filterCriteria.name", _.debounce(function (n, o) {
         if (n != o) {
             table.fetchResult().then(function () {
