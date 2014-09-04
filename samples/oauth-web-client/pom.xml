@@ -13,7 +13,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-		<irida.api.version>1.5.0-SNAPSHOT</irida.api.version>
+		<irida.api.version>2.0.0-SNAPSHOT</irida.api.version>
 		<spring.version>4.0.3.RELEASE</spring.version>
 		<cglib.version>2.2.2</cglib.version>
 		<slf4j.version>1.7.5</slf4j.version>

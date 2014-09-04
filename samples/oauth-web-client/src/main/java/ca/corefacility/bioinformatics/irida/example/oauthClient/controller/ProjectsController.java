@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRepository;
-import ca.corefacility.bioinformatics.irida.repositories.remote.model.RemoteProject;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import ca.corefacility.bioinformatics.irida.service.remote.model.RemoteProject;
 
 @Controller
 @Scope("session")
@@ -22,12 +22,12 @@ public class ProjectsController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
 	// the repository we're communicating with
-	private ProjectRemoteRepository repo;
+	private ProjectRemoteService repo;
 	// a service to read information about remote apis
 	private RemoteAPIService apiService;
 
 	@Autowired
-	public ProjectsController(ProjectRemoteRepository repo, RemoteAPIService apiRepo) {
+	public ProjectsController(ProjectRemoteService repo, RemoteAPIService apiRepo) {
 		this.repo = repo;
 		this.apiService = apiRepo;
 	}
