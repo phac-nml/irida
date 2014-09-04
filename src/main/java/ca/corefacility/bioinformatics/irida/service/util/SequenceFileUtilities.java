@@ -17,5 +17,5 @@ public interface SequenceFileUtilities {
 	 *            The reference file object to calculate
 	 * @return The number of bases in the file
 	 */
-	public Long getSequenceFileLength(Path file);
+	public Long countSequenceFileLengthInBases(Path file);
 }

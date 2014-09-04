@@ -306,7 +306,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	public Join<Project, ReferenceFile> addReferenceFileToProject(Project project, ReferenceFile referenceFile) {
 		// calculate the file length
-		Long referenceFileLength = sequenceFileUtilties.getSequenceFileLength(referenceFile.getFile());
+		Long referenceFileLength = sequenceFileUtilties.countSequenceFileLengthInBases(referenceFile.getFile());
 		referenceFile.setFileLength(referenceFileLength);
 
 		referenceFile = referenceFileRepository.save(referenceFile);

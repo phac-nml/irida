@@ -26,7 +26,7 @@ public class SequenceFileUtilitiesTest {
 	public void testGetSequenceFileLength() throws URISyntaxException {
 		Path file = Paths.get(getClass().getResource(
 				"/ca/corefacility/bioinformatics/irida/service/testReference.fasta").toURI());
-		Long sequenceFileLength = sequenceFileUtilities.getSequenceFileLength(file);
+		Long sequenceFileLength = sequenceFileUtilities.countSequenceFileLengthInBases(file);
 		assertEquals(new Long(4), sequenceFileLength);
 	}
 
@@ -34,7 +34,7 @@ public class SequenceFileUtilitiesTest {
 	public void testGetSequenceFileLengthBadFile() throws URISyntaxException, IOException {
 		Path file = Files.createTempFile("seqfile", ".fasta");
 		file.toFile().deleteOnExit();
-		Long sequenceFileLength = sequenceFileUtilities.getSequenceFileLength(file);
+		Long sequenceFileLength = sequenceFileUtilities.countSequenceFileLengthInBases(file);
 		assertEquals(new Long(4), sequenceFileLength);
 	}
 }

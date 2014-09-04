@@ -30,7 +30,7 @@ public class BioJavaSequenceFileUtilitiesImpl implements SequenceFileUtilities {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Long getSequenceFileLength(Path file) {
+	public Long countSequenceFileLengthInBases(Path file) {
 		Long totalLength = 0l;
 
 		logger.trace("Calculating length for file: " + file);
