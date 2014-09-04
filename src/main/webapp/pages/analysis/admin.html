@@ -151,14 +151,11 @@
                         </tr>
                         </tbody>
                     </table>
-                    <div ng-show="paging.totalAnalysis == 0">
-                        <h3>No analysis has been completed yet</h3>
-                    </div>
                     <div class="text-center">
                         <pagination ng-hide="table.paging.totalPages &lt; 2"
-                                    items-per-page="{{table.filterCriteria.count}}"
+                                    items-per-page="table.filterCriteria.count"
                                     total-items="table.paging.totalAnalysis"
-                                    ng-model="table.filterCriteria.page" first-text="{{table.paging.firstText}}"
+                                    ng-model="table.paging.page" first-text="{{table.paging.firstText}}"
                                     rotate="true"
                                     last-text="{{table.paging.lastText}}"
                                     next-text="{{table.paging.nextText}}" previous-text="{{table.paging.previousText}}"
@@ -359,8 +356,8 @@ app.controller('AnalysisTableCtrl', function ($scope, api) {
     /* -]*/
     table.paging = {
         page         : 1,
-        totalAnalysis: 0,
-        totalPages   : 0,
+        totalAnalysis: 1,
+        totalPages   : 1,
         firstText    : /*[[#{paging.first-text}]]*/ 'First',
         lastText     : /*[[#{paging.last-text}]]*/ 'Last',
         nextText     : /*[[#{paging.next-text}]]*/ 'Next',
@@ -371,7 +368,7 @@ app.controller('AnalysisTableCtrl', function ($scope, api) {
     // defaultCriteria: these are the defaults for creating the table
     /* -]*/
     var defaultCriteria = {
-        page    : 1,
+        page    : 0,
         sortDir : 'desc',
         sortedBy: 'createdDate',
         count   : 10
@@ -403,9 +400,9 @@ app.controller('AnalysisTableCtrl', function ($scope, api) {
     //  - Called when filtering data.
     /* -]*/
     table.filterResult = function () {
-        table.filterCriteria.page = 1;
+        table.filterCriteria.page = 0;
         table.fetchResult().then(function () {
-            table.filterCriteria.page = 1;
+            table.paging.page = 1;
         });
     };
 
@@ -428,7 +425,7 @@ app.controller('AnalysisTableCtrl', function ($scope, api) {
         table.filterCriteria.sortDir = sortDir;
         table.filterCriteria.page = 1;
         table.fetchResult().then(function () {
-            table.filterCriteria.page = 1;
+            table.filterCriteria.page = 0;
         });
     };
 
@@ -439,7 +436,8 @@ app.controller('AnalysisTableCtrl', function ($scope, api) {
     /*[- */
     // This watch occurs when a different page is select.  Triggers a server call with the new page.
     /* -]*/
-    $scope.$watch('table.filterCriteria.page', function () {
+    $scope.$watch('table.paging.page', function () {
+        table.filterCriteria.page = table.paging.page - 1;
         table.fetchResult();
     });
 
@@ -451,7 +449,7 @@ app.controller('AnalysisTableCtrl', function ($scope, api) {
     $scope.$watch("table.filterCriteria.name", _.debounce(function (n, o) {
         if (n != o) {
             table.fetchResult().then(function () {
-                table.filterCriteria.page = 1;
+                table.paging.page = 1;
             });
         }
     }, 500));
