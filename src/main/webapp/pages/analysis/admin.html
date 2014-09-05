@@ -155,11 +155,10 @@
                         <pagination ng-hide="table.paging.totalPages &lt; 2"
                                     items-per-page="table.filterCriteria.count"
                                     total-items="table.paging.totalAnalysis"
-                                    ng-model="table.paging.page" first-text="{{table.paging.firstText}}"
-                                    rotate="true"
-                                    last-text="{{table.paging.lastText}}"
-                                    next-text="{{table.paging.nextText}}" previous-text="{{table.paging.previousText}}"
-                                    max-size="5" boundary-links="true"></pagination>
+                                    ng-model="table.paging.page" first-text="&laquo;"
+                                    last-text="&raquo;"
+                                    next-text="&rsaquo;" previous-text="&lsaquo;"
+                                    boundary-links="true"></pagination>
                     </div>
                     <script type="text/ng-template" id="sort-by.html">
                         <a class="clickable" ng-click="sort(sortValue)">
@@ -357,11 +356,7 @@ app.controller('AnalysisTableCtrl', function ($scope, api) {
     table.paging = {
         page         : 1,
         totalAnalysis: 1,
-        totalPages   : 1,
-        firstText    : /*[[#{paging.first-text}]]*/ 'First',
-        lastText     : /*[[#{paging.last-text}]]*/ 'Last',
-        nextText     : /*[[#{paging.next-text}]]*/ 'Next',
-        previousText : /*[[#{paging.previous-text}]]*/ 'Previous'
+        totalPages   : 1
     };
 
     /*[- */
