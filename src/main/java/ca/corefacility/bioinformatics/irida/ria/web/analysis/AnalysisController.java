@@ -145,7 +145,7 @@ public class AnalysisController {
 			map.put("id", analysisSubmission.getId().toString());
 			map.put("name", analysisSubmission.getName());
 			map.put("status", analysisSubmission.getAnalysisState().toString());
-			map.put("createdDate", analysisSubmission.getCreatedDate().getTime() + "");
+			map.put("createdDate", String.valueOf(analysisSubmission.getCreatedDate().getTime()));
 			analysisList.add(map);
 		}
 
