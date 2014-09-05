@@ -29,7 +29,7 @@
 	
 	<sec:http pattern="/oauth/authorize" authentication-manager-ref="authenticationManager" access-denied-page="/login"
 		disable-url-rewriting="true">
-		<sec:intercept-url pattern="/oauth/authorize" access="ROLE_USER"/>
+		<sec:intercept-url pattern="/oauth/authorize" access="IS_AUTHENTICATED_FULLY"/>
 		<sec:form-login authentication-failure-url="/login"
 			default-target-url="/success" login-page="/login"
 			login-processing-url="/login.do" />
