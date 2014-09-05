@@ -89,39 +89,45 @@
                                 </div>
                             </td>
                             <td>
-                                <div class="row" collapse="table.filter.isCollapsed">
-                                    <div class="col-md-6">
-                                        <div class="input-group">
-                                            <input type="text" disabled="disabled" class="form-control"
-                                                   th:placeholder="#{form.placeholder.date.min}"
-                                                   th:attr="datepicker-popup=#{datepicker.short}"
-                                                   ng-model="table.filterCriteria.minDate"
-                                                   is-open="table.datepicker.min.opened"
-                                                   min-date="minDate" max-date="table.datepicker.maxDate"
-                                                   datepicker-options="dateOptions" ng-change="table.filterResult()"/>
+                                <div collapse="table.filter.isCollapsed">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="input-group">
+                                                <input type="text" disabled="disabled" class="form-control"
+                                                       th:placeholder="#{form.placeholder.date.min}"
+                                                       th:attr="datepicker-popup=#{datepicker.short}"
+                                                       ng-model="table.filterCriteria.minDate"
+                                                       is-open="table.datepicker.min.opened"
+                                                       min-date="minDate" max-date="table.datepicker.maxDate"
+                                                       datepicker-options="dateOptions"
+                                                       ng-change="table.filterResult()"/>
                                   <span class="input-group-btn">
                                     <button type="button" class="btn btn-default"
                                             ng-click="table.datepicker.min.open($event)"><span
                                             class="fa fa-calendar-o fa-fw"></span></button>
                                   </span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="input-group">
-                                            <input type="text" disabled="disabled" class="form-control"
-                                                   th:placeholder="#{form.placeholder.date.max}"
-                                                   placeholder="max"
-                                                   datepicker-popup="{{table.datepicker.format}}"
-                                                   ng-model="table.filterCriteria.maxDate"
-                                                   is-open="table.datepicker.max.opened"
-                                                   max-date="table.datepicker.maxDate"
-                                                   datepicker-options="dateOptions" ng-change="table.filterResult()"/>
+                                    <div class="row mrgn-tp-sm">
+                                        <div class="col-md-12">
+                                            <div class="input-group">
+                                                <input type="text" disabled="disabled" class="form-control"
+                                                       th:placeholder="#{form.placeholder.date.max}"
+                                                       placeholder="max"
+                                                       datepicker-popup="{{table.datepicker.format}}"
+                                                       ng-model="table.filterCriteria.maxDate"
+                                                       is-open="table.datepicker.max.opened"
+                                                       max-date="table.datepicker.maxDate"
+                                                       datepicker-options="dateOptions"
+                                                       ng-change="table.filterResult()"/>
                                   <span class="input-group-btn">
                                     <button type="button" class="btn btn-default"
                                             ng-click="table.datepicker.max.open($event)"><span
                                             class="fa fa-calendar-o fa-fw"></span>
                                     </button>
                                   </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -144,11 +150,13 @@
                                 </div>
                             </td>
                             <td th:inline="text">
-                                <span class="fa fa-calendar-o fa-fw"></span> {{a.createdDate | date:'[[#{datepicker.short}]]'}}&nbsp;&nbsp;
+                                <span class="fa fa-calendar-o fa-fw"></span> {{a.createdDate |
+                                date:'[[#{datepicker.short}]]'}}&nbsp;&nbsp;
                                 <span class="fa fa-clock-o fa-fw"></span> {{a.createdDate | date:'shortTime'}}
                             </td>
                             <td class="text-right">
-                                <button ng-show="a.status == 'COMPLETED'" class="btn btn-default btn-xs" th:attr="tooltip=#{form.download}"
+                                <button ng-show="a.status == 'COMPLETED'" class="btn btn-default btn-xs"
+                                        th:attr="tooltip=#{form.download}"
                                         ng-click="table.downloadFile(a)">
                                     <span class="fa fa-download fa-fw"></span>
                                 </button>
