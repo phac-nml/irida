@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.utilities;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Set;
@@ -30,6 +31,10 @@ public class ZipFileDownloader {
 		try (ZipOutputStream outputStream = new ZipOutputStream(response.getOutputStream())) {
 
 			for (AnalysisOutputFile file : files) {
+				if (!Files.exists(file.getFile())) {
+					response.setStatus(404);
+					throw new FileNotFoundException();
+				}
 				// 1) Build a folder/file name
 				StringBuilder zipEntryName = new StringBuilder(fileName);
 				zipEntryName.append("/").append(file.getFile().getFileName().toString());
