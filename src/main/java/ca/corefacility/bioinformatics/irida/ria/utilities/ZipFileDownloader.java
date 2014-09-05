@@ -52,7 +52,7 @@ public class ZipFileDownloader {
 			outputStream.finish();
 
 			// Set the response headers
-			response.setHeader( "Content-Disposition", "attachment;filename=" + fileName = ".zip");
+			response.setHeader( "Content-Disposition", "attachment;filename=" + fileName + ".zip");
 			//for zip file
 			response.setContentType("application/zip");
 		} catch (IOException e) {
