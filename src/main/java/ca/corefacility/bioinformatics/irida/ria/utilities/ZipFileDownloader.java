@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.utilities;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Set;
@@ -28,9 +29,12 @@ public class ZipFileDownloader {
 		logger.debug("Creating zipped file response. [" + fileName + "]");
 
 		try (ZipOutputStream outputStream = new ZipOutputStream(response.getOutputStream())) {
-			outputStream.setLevel(Deflater.BEST_SPEED);
 
 			for (AnalysisOutputFile file : files) {
+				if (!Files.exists(file.getFile())) {
+					response.setStatus(404);
+					throw new FileNotFoundException();
+				}
 				// 1) Build a folder/file name
 				StringBuilder zipEntryName = new StringBuilder(fileName);
 				zipEntryName.append("/").append(file.getFile().getFileName().toString());
@@ -48,7 +52,7 @@ public class ZipFileDownloader {
 			outputStream.finish();
 
 			// Set the response headers
-			response.setHeader( "Content-Disposition", "attachment;filename=" + fileName );
+			response.setHeader( "Content-Disposition", "attachment;filename=" + fileName + ".zip");
 			//for zip file
 			response.setContentType("application/zip");
 		} catch (IOException e) {
