@@ -22,10 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -39,6 +35,10 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Controller for pipeline related views
@@ -57,6 +57,8 @@ public class PipelineController extends BaseController {
 	// URI's
 	public static final String URI_LIST_PIPELINES = "/ajax/list.json";
 	public static final String URI_AJAX_START_PIPELINE = "/ajax/start.json";
+
+	// JSON KEYS
 	public static final String JSON_KEY_SAMPLE_ID = "id";
 	public static final String JSON_KEY_SAMPLE_OMIT_FILES_LIST = "omit";
 
@@ -107,9 +109,10 @@ public class PipelineController extends BaseController {
 		// of sample id's are passed to the server.  If the user opens the sample files view, they can
 		// deselect specific files.  These are added to an omit files list.
 		ArrayList<Long> fileIds = new ArrayList<>();
-		for (Map map : json) {
+		for (Map<String, Object> map : json) {
 			Long id = Long.parseLong((String) map.get(JSON_KEY_SAMPLE_ID));
-			Set omit = ImmutableSet.copyOf((List) map.get(JSON_KEY_SAMPLE_OMIT_FILES_LIST));
+			@SuppressWarnings("unchecked")
+			Set<String> omit = ImmutableSet.copyOf((List<String>) map.get(JSON_KEY_SAMPLE_OMIT_FILES_LIST));
 
 			Sample sample = sampleService.read(id);
 			List<Join<Sample, SequenceFile>> fileList = sequenceFileService.getSequenceFilesForSample(sample);

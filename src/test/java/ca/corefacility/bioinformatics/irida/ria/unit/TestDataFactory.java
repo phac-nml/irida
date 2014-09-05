@@ -2,10 +2,14 @@ package ca.corefacility.bioinformatics.irida.ria.unit;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
  * Generates test data for unit tests.
@@ -45,5 +49,15 @@ public class TestDataFactory {
 	public static ReferenceFile constructReferenceFile() {
 		Path path = Paths.get("/tmp/sequence-files/fake-file" + Math.random() + ".fast");
 		return new ReferenceFile(path);
+	}
+
+	public static AnalysisSubmission constrctAnalysisSubmission() {
+		Set<SequenceFile> files = new HashSet<>();
+		files.add(constructSequenceFile());
+		Long id = (long)Math.floor(Math.random());
+		AnalysisSubmission analysisSubmission = new AnalysisSubmission("submission-" + id, files);
+		analysisSubmission.setId(id);
+		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
+		return analysisSubmission;
 	}
 }
