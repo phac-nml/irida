@@ -8,6 +8,13 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +42,8 @@ public class GalaxyLibrariesService {
 			.getLogger(GalaxyLibrariesService.class);
 
 	private LibrariesClient librariesClient;
+	
+	private final ExecutorService executor = Executors.newFixedThreadPool(1);
 
 	/**
 	 * Polling time in milliseconds to poll a Galaxy library to check if
@@ -59,7 +68,7 @@ public class GalaxyLibrariesService {
 	 *            The LibrariesClient used to interact with Galaxy libraries.
 	 */
 	public GalaxyLibrariesService(LibrariesClient librariesClient) {
-		this.librariesClient = librariesClient;
+		this.librariesClient = librariesClient;		
 	}
 
 	/**
@@ -139,37 +148,34 @@ public class GalaxyLibrariesService {
 				datasetLibraryIdsMap.put(path, datasetLibraryId);
 			}
 
-			// wait for uploads to finish
-			for (Path path : paths) {
-				String datasetLibraryId = datasetLibraryIdsMap.get(path);
-
-				LibraryDataset libraryDataset = librariesClient.showDataset(
-						library.getId(), datasetLibraryId);
-				long startTime = System.currentTimeMillis();
-				while (!LIBRARY_OK_STATE.equals(libraryDataset.getState())) {
-					long timeDifference = System.currentTimeMillis()
-							- startTime;
-					if (timeDifference > LIBRARY_TIMEOUT) {
-						throw new UploadException("Error: timeout ("
-								+ timeDifference + "ms > " + LIBRARY_TIMEOUT
-								+ ") when polling Galaxy data library "
-								+ library.getId() + " for dataset "
-								+ libraryDataset.getId());
-					} else {
-						logger.trace("Waiting for library dataset "
-								+ libraryDataset.getId()
-								+ " to be finished processing, in state "
-								+ libraryDataset.getState());
-						Thread.sleep(LIBRARY_POLLING_TIME);
-
-						libraryDataset = librariesClient.showDataset(
+			Future<Void> waitForLibraries = executor.submit(new Callable<Void>(){
+				@Override
+				public Void call() throws Exception {
+					// wait for uploads to finish
+					for (Path path : paths) {
+						String datasetLibraryId = datasetLibraryIdsMap.get(path);
+						LibraryDataset libraryDataset = librariesClient.showDataset(
 								library.getId(), datasetLibraryId);
+						while (!LIBRARY_OK_STATE.equals(libraryDataset.getState())) {
+							logger.trace("Waiting for library dataset "
+									+ libraryDataset.getId()
+									+ " to be finished processing, in state "
+									+ libraryDataset.getState());
+							Thread.sleep(LIBRARY_POLLING_TIME);
+	
+							libraryDataset = librariesClient.showDataset(
+									library.getId(), datasetLibraryId);
+						}
 					}
+					
+					return null;
 				}
-			}
+			});
+			
+			waitForLibraries.get(LIBRARY_TIMEOUT, TimeUnit.MILLISECONDS);
 		} catch (RuntimeException e) {
 			throw new UploadException(e);
-		} catch (InterruptedException e) {
+		} catch (ExecutionException | InterruptedException | TimeoutException e) {
 			throw new UploadException(e);
 		}
 
