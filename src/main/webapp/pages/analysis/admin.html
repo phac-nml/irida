@@ -94,13 +94,11 @@
                                         <div class="input-group">
                                             <input type="text" disabled="disabled" class="form-control"
                                                    th:placeholder="#{form.placeholder.date.min}"
-                                                   placeholder="min"
-                                                   datepicker-popup="{{table.datepicker.format}}"
+                                                   th:attr="datepicker-popup=#{datepicker.short}"
                                                    ng-model="table.filterCriteria.minDate"
                                                    is-open="table.datepicker.min.opened"
                                                    min-date="minDate" max-date="table.datepicker.maxDate"
-                                                   datepicker-options="dateOptions" ng-change="table.filterResult()"
-                                                   ng-required="false" close-text="{{table.datepicker.closeText}}"/>
+                                                   datepicker-options="dateOptions" ng-change="table.filterResult()"/>
                                   <span class="input-group-btn">
                                     <button type="button" class="btn btn-default"
                                             ng-click="table.datepicker.min.open($event)"><span
@@ -117,8 +115,7 @@
                                                    ng-model="table.filterCriteria.maxDate"
                                                    is-open="table.datepicker.max.opened"
                                                    max-date="table.datepicker.maxDate"
-                                                   datepicker-options="dateOptions" ng-change="table.filterResult()"
-                                                   ng-required="false" close-text="{{table.datepicker.closeText}}"/>
+                                                   datepicker-options="dateOptions" ng-change="table.filterResult()"/>
                                   <span class="input-group-btn">
                                     <button type="button" class="btn btn-default"
                                             ng-click="table.datepicker.max.open($event)"><span
@@ -146,11 +143,20 @@
                                     {{a.status | stateToText}}
                                 </div>
                             </td>
-                            <td>{{a.createdDateString}}</td>
-                            <td></td>
+                            <td th:inline="text">
+                                <span class="fa fa-calendar-o fa-fw"></span> {{a.createdDate | date:'[[#{datepicker.short}]]'}}&nbsp;&nbsp;
+                                <span class="fa fa-clock-o fa-fw"></span> {{a.createdDate | date:'shortTime'}}
+                            </td>
+                            <td class="text-right">
+                                <button ng-show="a.status == 'COMPLETED'" class="btn btn-default btn-xs" th:attr="tooltip=#{form.download}"
+                                        ng-click="table.downloadFile(a)">
+                                    <span class="fa fa-download fa-fw"></span>
+                                </button>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
+                    <iframe ng-src="{{table.iframeSRC}}" style="display:none;"></iframe>
                     <div class="text-center">
                         <pagination ng-hide="table.paging.totalPages &lt; 2"
                                     items-per-page="table.filterCriteria.count"
@@ -192,38 +198,38 @@
 <script>
 /*<![CDATA[*/
 
-<!--/*-->
+/*[- */
 // These are the for submission states
 // "class" is the css class for displaying the label (e.g. 'info' will be converted to 'label-info')
-<!--*/-->
+/* -]*/
 var states = {
-    'NEW'             : {
+    'NEW': {
         class: 'info',
-        text : /*[[#{analysis.state.new}]]*/'new'
+        text: /*[[#{analysis.state.new}]]*/'new'
     },
-    'PREPARING'       : {
+    'PREPARING': {
         class: 'info',
-        text : /*[[#{analysis.state.preparing}]]*/ 'preparing'
+        text: /*[[#{analysis.state.preparing}]]*/ 'preparing'
     },
-    'SUBMITTING'      : {
+    'SUBMITTING': {
         class: 'info',
-        text : /*[[#{analysis.state.submitted}]]*/ 'submitted'
+        text: /*[[#{analysis.state.submitted}]]*/ 'submitted'
     },
-    'RUNNING'         : {
+    'RUNNING': {
         class: 'primary',
-        text : /*[[#{analysis.state.running}]]*/'running'
+        text: /*[[#{analysis.state.running}]]*/'running'
     },
     'FINISHED_RUNNING': {
         class: 'default',
-        text : /*[[#{analysis.state.finished}]]*/ 'finished running'
+        text: /*[[#{analysis.state.finished}]]*/ 'finished running'
     },
-    'COMPLETED'       : {
+    'COMPLETED': {
         class: 'success',
-        text : /*[[#{analysis.state.completed}]]*/ 'completed'
+        text: /*[[#{analysis.state.completed}]]*/ 'completed'
     },
-    'ERROR'           : {
+    'ERROR': {
         class: 'danger',
-        text : /*[[#{analysis.state.error}]]*/'error'
+        text: /*[[#{analysis.state.error}]]*/'error'
     }
 };
 
@@ -243,10 +249,10 @@ var app = angular.module('analysis', ['cgBusy', 'restangular', 'ui.bootstrap'])
     // $http or $resource request, or on any promise
     /* -]*/
         .value('cgBusyDefaults', {
-            message    : /*[[#{analysis.table.filtering}]]*/ 'Loading Stuff',
-            backdrop   : false,
+            message: /*[[#{analysis.table.filtering}]]*/ 'Loading Stuff',
+            backdrop: false,
             templateUrl: /*[[@{/resources/bower_components/angular-busy/angular-busy.html}]]*/ 'my_custom_template.html',
-            delay      : 300,
+            delay: 300,
             minDuration: 700
         })
         .factory('api', function (Restangular) {
@@ -282,16 +288,16 @@ app.directive('sortBy', function () {
     'use strict';
     return {
         templateUrl: 'sort-by.html',
-        restrict   : 'E',
-        transclude : true,
-        replace    : true,
-        scope      : {
-            sortdir  : '=',
-            sortedby : '=',
+        restrict: 'E',
+        transclude: true,
+        replace: true,
+        scope: {
+            sortdir: '=',
+            sortedby: '=',
             sortvalue: '@',
-            onsort   : '='
+            onsort: '='
         },
-        link       : function (scope, elements, attrs) {
+        link: function (scope, elements, attrs) {
             scope.sort = function () {
                 if (scope.sortedby == scope.sortvalue) {
                     scope.sortdir = scope.sortdir == 'asc' ? 'desc' : 'asc';
@@ -306,7 +312,7 @@ app.directive('sortBy', function () {
     };
 });
 
-app.controller('AnalysisTableCtrl', function ($scope, api) {
+app.controller('AnalysisTableCtrl', function ($scope, $sce, api) {
     'use strict';
     var table = this;
 
@@ -317,7 +323,7 @@ app.controller('AnalysisTableCtrl', function ($scope, api) {
     /* -]*/
     table.filter = {
         isCollapsed: true,
-        states     : _.map(states, function (v, k) {
+        states: _.map(states, function (v, k) {
             return {text: v.text, value: k};
         })
     };
@@ -328,22 +334,20 @@ app.controller('AnalysisTableCtrl', function ($scope, api) {
     //  - max = maximum date to show results for
     /* -]*/
     table.datepicker = {
-        min    : {
+        min: {
             open: function open($event) {
                 $event.preventDefault();
                 $event.stopPropagation();
                 table.datepicker.min.opened = true;
             }
         },
-        max    : {
+        max: {
             open: function open($event) {
                 $event.preventDefault();
                 $event.stopPropagation();
                 table.datepicker.max.opened = true;
             }
         },
-        closeText: /*[[#{form.btn.close}]]*/ 'Close',
-        format : /*[[#{datepicker.short}]]*/ 'dd-MMMM-yyyy',
         maxDate: new Date() // Max date should always be today!
     };
 
@@ -354,19 +358,19 @@ app.controller('AnalysisTableCtrl', function ($scope, api) {
     //  - totalPages = the total number of pages (totalAnalysis / num per page)
     /* -]*/
     table.paging = {
-        page         : 1,
+        page: 1,
         totalAnalysis: 1,
-        totalPages   : 1
+        totalPages: 1
     };
 
     /*[- */
     // defaultCriteria: these are the defaults for creating the table
     /* -]*/
     var defaultCriteria = {
-        page    : 0,
-        sortDir : 'desc',
+        page: 0,
+        sortDir: 'desc',
         sortedBy: 'createdDate',
-        count   : 10
+        count: 10
     };
     /*[- */
     // filterCriteria: this is passed to the server on each page request.
@@ -422,6 +426,12 @@ app.controller('AnalysisTableCtrl', function ($scope, api) {
         table.fetchResult().then(function () {
             table.filterCriteria.page = 0;
         });
+    };
+
+    table.downloadFile = function (analysis) {
+        'use strict';
+        var src = /*[[@{/analysis/ajax/download/}]]*/ '/analysis/ajax/download/';
+        table.iframeSRC = $sce.trustAsResourceUrl(src + analysis.id);
     };
 
     /*[- */

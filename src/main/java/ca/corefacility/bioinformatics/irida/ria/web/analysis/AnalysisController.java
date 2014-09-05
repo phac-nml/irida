@@ -6,28 +6,32 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.format.Formatter;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
+import ca.corefacility.bioinformatics.irida.ria.utilities.ZipFileDownloader;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 
 import com.google.common.base.Strings;
@@ -52,8 +56,7 @@ public class AnalysisController {
 	// URI's
 	private static final String URI_PAGE_ADMIN = "/admin";
 	private static final String URI_AJAX_LIST_ALL_ANALYSIS = "/ajax/all";
-
-	private Formatter<Date> dateFormatter;
+	private static final String URI_AJAX_DOWNLOAD = "/ajax/download/{analysisSubmissionId}";
 
 	/*
 	 * SERVICES
@@ -63,8 +66,6 @@ public class AnalysisController {
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
-		dateFormatter = new DateFormatter(
-				messageSource.getMessage("locale.date.long", null, LocaleContextHolder.getLocale()));
 	}
 
 	// ************************************************************************************************
@@ -90,14 +91,22 @@ public class AnalysisController {
 	/**
 	 * Get a list of analysis by page and filter
 	 *
-	 * @param page          Current page being displayed
-	 * @param count         Number of analysis per page
-	 * @param sortedBy      field to sort by
-	 * @param sortDir       direction to sort by
-	 * @param state         AnalysisSubmission state
-	 * @param nameFilter    text to filter the name by
-	 * @param minDateFilter date to filter out anything previous
-	 * @param maxDateFilter date to filter out anything after
+	 * @param page
+	 * 		Current page being displayed
+	 * @param count
+	 * 		Number of analysis per page
+	 * @param sortedBy
+	 * 		field to sort by
+	 * @param sortDir
+	 * 		direction to sort by
+	 * @param state
+	 * 		AnalysisSubmission state
+	 * @param nameFilter
+	 * 		text to filter the name by
+	 * @param minDateFilter
+	 * 		date to filter out anything previous
+	 * @param maxDateFilter
+	 * 		date to filter out anything after
 	 * @return JSON object with analysis, total pages, and total analysis
 	 * @throws IOException
 	 */
@@ -136,9 +145,7 @@ public class AnalysisController {
 			map.put("id", analysisSubmission.getId().toString());
 			map.put("name", analysisSubmission.getName());
 			map.put("status", analysisSubmission.getAnalysisState().toString());
-			map.put("createdDate", analysisSubmission.getCreatedDate().toString());
-			map.put("createdDateString", dateFormatter.print(analysisSubmission.getCreatedDate(),
-					LocaleContextHolder.getLocale()));
+			map.put("createdDate", analysisSubmission.getCreatedDate().getTime() + "");
 			analysisList.add(map);
 		}
 
@@ -147,4 +154,22 @@ public class AnalysisController {
 		result.put("totalPages", analysisPage.getTotalPages());
 		return result;
 	}
+
+	/**
+	 * Download all output files from an {@link AnalysisSubmission}
+	 *
+	 * @param analysisSubmissionId
+	 * 		Id for a {@link AnalysisSubmission}
+	 * @param response
+	 * 		{@link HttpServletResponse}
+	 * @throws IOException
+	 */
+	@RequestMapping(value = URI_AJAX_DOWNLOAD, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void getAjaxDownloadAnalysisSubmission(@PathVariable Long analysisSubmissionId, HttpServletResponse response) throws IOException {
+		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(analysisSubmissionId);
+		Analysis analysis = analysisSubmission.getAnalysis();
+		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
+		ZipFileDownloader.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
+	}
+
 }
