@@ -38,6 +38,11 @@
                         <li><a href="#" th:text="#{nav.main.viewpipelines}">View Running Pipelines</a></li>
                     </ul>
                 </li>
+                <li><a href="#analysis" class="item" th:text="#{nav.main.analysis}">Analysis</a>
+                    <ul class="sm list-unstyled">
+                        <li><a th:href="@{/analysis/admin}" href="/analysis/admin" th:text="#{nav.main.analysis-admin}">List All Analysis</a></li>
+                    </ul>
+                </li>
                 <li class="pull-right">
                     <ul class="list-inline menu">
                         <li sec:authorize="hasRole('ROLE_ADMIN')"><a href="#admin" class="item" th:text="#{nav.main.admin}">_Admin_</a>

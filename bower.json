@@ -14,11 +14,15 @@
     "jquery": "2.1.1",
     "noty": "~2.2.5",
     "mustache": "0.8.2",
-    "font-awesome-css": "4.0.3",
     "jquery-file-upload": "9.7.0",
     "magnific-popup": "0.9.9",
     "bootstrap": "3.2.0",
-    "DataTables": "1.10.2"
+    "DataTables": "1.10.2",
+    "angular-bootstrap": "0.11.0",
+    "angular-busy": "4.1.0",
+    "restangular": "1.4.0",
+    "Font-Awesome": "4.2.0",
+    "lodash": "2.4.1"
   },
   "devDependencies": {}
 }

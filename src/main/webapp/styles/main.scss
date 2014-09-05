@@ -16,4 +16,10 @@
 @import "pages/project";
 @import "pages/sequenceFile";
 
-#map { width:100%; height:200px; }
+.clickable {
+  display: block;
+  cursor: pointer;
+  span {
+    display: inline-block;
+  }
+}
