@@ -28,7 +28,6 @@ public class ZipFileDownloader {
 		logger.debug("Creating zipped file response. [" + fileName + "]");
 
 		try (ZipOutputStream outputStream = new ZipOutputStream(response.getOutputStream())) {
-			outputStream.setLevel(Deflater.BEST_SPEED);
 
 			for (AnalysisOutputFile file : files) {
 				// 1) Build a folder/file name
