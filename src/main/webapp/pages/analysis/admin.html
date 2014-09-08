@@ -183,7 +183,6 @@
     </tr>
     </tbody>
 </table>
-<iframe ng-src="{{table.iframeSRC}}" style="display:none;"></iframe>
 <div class="text-center">
     <pagination ng-hide="table.paging.totalPages &lt; 2"
                 items-per-page="table.filterCriteria.count"
@@ -220,13 +219,13 @@
         <h3 class="modal-title">{{analysis.name}}</h3>
     </div>
     <div class="modal-body" cg-busy="loadingTree">
-        <div class="btn-toolbar pull-right">
-            <div class="btn-group btn-xs">
+        <div class="btn-toolbar btn-xs pull-right">
+            <div class="btn-group">
                 <button class="btn btn-default" th:attr="tooltip=#{form.save.image}" ng-click="save()">
                     <span class="fa fa-fw fa-save"></span>
                     <span class="sr-only" th:text="#{form.save.image}">Save Image</span>
                 </button>
-                <a class="btn btn-default" ng-href="{{table.url}}/download/{{a.id}}" href="#"
+                <a class="btn btn-default" ng-href="{{url}}download/{{analysis.id}}" href="#"
                    th:attr="tooltip=#{form.download-files}">
                     <span class="fa fa-download fa-fw"></span>
                     <span class="sr-only" th:text="#{form.download-files}">Download Files</span>
@@ -516,10 +515,6 @@ app.controller('AnalysisTableCtrl', function ($scope, $sce, api, baseUrl) {
         });
     };
 
-    table.downloadFile = function (analysis) {
-        downloadAnalysis(analysis);
-    };
-
     /*[- */
     // Watches watch for a change in the first parameter then call second parameter when they change
     /* -]*/
@@ -546,34 +541,11 @@ app.controller('AnalysisTableCtrl', function ($scope, $sce, api, baseUrl) {
     }, 500));
 });
 
-app.directive('downloadAnalysis', function ($sce) {
-    'use strict';
-    return {
-        templateUrl: 'download-analysis.html',
-        restrict: 'E',
-        replace: true,
-        scope: {
-            analysisId: '='
-        },
-        link: function (scope, elements, attra) {
-            scope.download = function () {
-                var src = /*[[@{/analysis/ajax/download/}]]*/ '/analysis/ajax/download/';
-                table.iframeSRC = $sce.trustAsResourceUrl(src + scope.analysisId);
-            }
-        }
-    }
-});
-
-function downloadAnalysis(analysis) {
-    'use strict';
-    var src = /*[[@{/analysis/ajax/download/}]]*/ '/analysis/ajax/download/';
-    table.iframeSRC = $sce.trustAsResourceUrl(src + analysis.id);
-}
-
-function PhyloSVGCtrl($scope, $modalInstance, $log, api, analysis) {
+function PhyloSVGCtrl($scope, $modalInstance, $log, api, baseUrl, analysis) {
     'use strict';
     var phylo;
 
+    $scope.url = baseUrl;
     $scope.analysis = analysis;
     $scope.close = function () {
         $modalInstance.close();
@@ -595,13 +567,11 @@ function PhyloSVGCtrl($scope, $modalInstance, $log, api, analysis) {
         a.click();
     };
 
-    $scope.download = function () {
-        downloadAnalysis(analysis);
-    };
 
     $modalInstance.result.then(function () {
         // This is called when the modal is closes
         $log.info("Hey I am here now.");
+        phylo.clear();
     }, function () {
         // Called when modal is dismissed.
         $log.info('Modal dismissed at: ' + new Date());
