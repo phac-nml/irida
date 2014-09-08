@@ -412,6 +412,7 @@
 								<test.galaxy.repository.url>${test.galaxy.repository.url}</test.galaxy.repository.url>
 								<test.galaxy.branch>${test.galaxy.branch}</test.galaxy.branch>
 								<test.galaxy.revision>${test.galaxy.revision}</test.galaxy.revision>
+								<test.galaxy.database>${test.galaxy.database}</test.galaxy.database>
 							</systemPropertyVariables>
 						</configuration>
 					</execution>
@@ -600,5 +601,9 @@
 		<!-- Galaxy Testing Revision: either 'latest' or a revision from the branch 
 			in the defined repository -->
 		<test.galaxy.revision>7e4d21621ce12e13ebbdf9fd3259df58c3ef124c</test.galaxy.revision>
+
+		<!-- URL to a pre-populated SQLite database for Galaxy -->
+		<!-- Set to 'local' to use the local version stored in irida-api, or set this to a URL -->
+		<test.galaxy.database>local</test.galaxy.database>
 	</properties>
 </project>

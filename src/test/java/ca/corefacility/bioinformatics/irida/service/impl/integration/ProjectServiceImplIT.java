@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -398,9 +399,17 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testAddReferenceFileToProject() throws IOException, URISyntaxException {
 		ReferenceFile f = new ReferenceFile();
+
 		Path referenceFilePath = Paths.get(getClass().getResource(
 				"/ca/corefacility/bioinformatics/irida/service/testReference.fasta").toURI());
+
+		Path createTempFile = Files.createTempFile("testReference", ".fasta");
+		Files.delete(createTempFile);
+		referenceFilePath = Files.copy(referenceFilePath, createTempFile);
+		referenceFilePath.toFile().deleteOnExit();
+
 		f.setFile(referenceFilePath);
+
 		Project p = projectService.read(1L);
 
 		Join<Project, ReferenceFile> pr = projectService.addReferenceFileToProject(p, f);
