@@ -29,174 +29,174 @@
 <h1 th:text="#{analysis.page.admin.title}">HEY I'M A GLOBAL ANALYSIS PAGE</h1>
 
 <div class="row" ng-controller="AnalysisTableCtrl as table">
-    <div class="col-md-12">
-        <div class="form-inline">
-            <button id="filterBtn" class="btn btn-info"
-                    ng-click="table.filter.isCollapsed = !table.filter.isCollapsed"
-                    th:inline="text">
-                <span class="fa fa-filter fa-fw"></span>
-                [[#{analysis.btn.filter}]]
-            </button>
-            <div class="form-group">
-                <select class="form-control" name="count" id="count" ng-model="table.filterCriteria.count"
-                        ng-change="table.filterResult()">
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                </select>
-                <label for="count" th:text="#{global.tables.select-page-size}">Select Page Size</label>
+<div class="col-md-12">
+<div class="form-inline">
+    <button id="filterBtn" class="btn btn-info"
+            ng-click="table.filter.isCollapsed = !table.filter.isCollapsed"
+            th:inline="text">
+        <span class="fa fa-filter fa-fw"></span>
+        [[#{analysis.btn.filter}]]
+    </button>
+    <div class="form-group">
+        <select class="form-control" name="count" id="count" ng-model="table.filterCriteria.count"
+                ng-change="table.filterResult()">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+        <label for="count" th:text="#{global.tables.select-page-size}">Select Page Size</label>
+    </div>
+</div>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th class="col-md-2">
+            <sort-by onsort="table.onSort" sortdir="table.filterCriteria.sortDir"
+                     sortedby="table.filterCriteria.sortedBy"
+                     sortValue="name" th:text="#{'analysis.table.name'}">Name
+            </sort-by>
+        </th>
+        <th class="col-md-4">
+            Analysis Type
+        </th>
+        <th class="col-md-2">
+            <sort-by onsort="table.onSort" sortdir="table.filterCriteria.sortDir"
+                     sortedby="table.filterCriteria.sortedBy"
+                     sortValue="analysisState" th:text="#{'analysis.table.state'}">State
+            </sort-by>
+        </th>
+        <th class="col-md-3">
+            <sort-by onsort="table.onSort" sortdir="table.filterCriteria.sortDir"
+                     sortedby="table.filterCriteria.sortedBy"
+                     sortValue="createdDate" th:text="#{'analysis.table.date'}">Created
+            </sort-by>
+        </th>
+        <th class="col-md-1"></th>
+    </tr>
+    <tr>
+        <td>
+            <div collapse="table.filter.isCollapsed">
+                <input name="name-filter" type="text" class="form-control input-full"
+                       ng-model="table.filterCriteria.name"/>
             </div>
-        </div>
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th class="col-md-2">
-                    <sort-by onsort="table.onSort" sortdir="table.filterCriteria.sortDir"
-                             sortedby="table.filterCriteria.sortedBy"
-                             sortValue="name" th:text="#{'analysis.table.name'}">Name
-                    </sort-by>
-                </th>
-                <th class="col-md-4">
-                    Analysis Type
-                </th>
-                <th class="col-md-2">
-                    <sort-by onsort="table.onSort" sortdir="table.filterCriteria.sortDir"
-                             sortedby="table.filterCriteria.sortedBy"
-                             sortValue="analysisState" th:text="#{'analysis.table.state'}">State
-                    </sort-by>
-                </th>
-                <th class="col-md-3">
-                    <sort-by onsort="table.onSort" sortdir="table.filterCriteria.sortDir"
-                             sortedby="table.filterCriteria.sortedBy"
-                             sortValue="createdDate" th:text="#{'analysis.table.date'}">Created
-                    </sort-by>
-                </th>
-                <th class="col-md-1"></th>
-            </tr>
-            <tr>
-                <td>
-                    <div collapse="table.filter.isCollapsed">
-                        <input name="name-filter" type="text" class="form-control input-full"
-                               ng-model="table.filterCriteria.name"/>
-                    </div>
-                </td>
-                <td>
-                    <div collapse="table.filter.isCollapsed">
-                        <p>Nothing HERE!</p>
-                    </div>
-                </td>
-                <td>
-                    <div collapse="table.filter.isCollapsed">
-                        <select name="state-filter" class="input-full form-control"
-                                ng-model="table.filterCriteria.state"
-                                ng-change="table.filterResult()"
-                                ng-options="state.text for state in table.filter.states">
-                            <option value="" th:text="#{analysis.select.all}">All</option>
-                        </select>
-                    </div>
-                </td>
-                <td>
-                    <div collapse="table.filter.isCollapsed">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="input-group">
-                                    <input type="text" disabled="disabled" class="form-control"
-                                           th:placeholder="#{form.placeholder.date.min}"
-                                           th:attr="datepicker-popup=#{datepicker.short}"
-                                           ng-model="table.filterCriteria.minDate"
-                                           is-open="table.datepicker.min.opened"
-                                           min-date="minDate" max-date="table.datepicker.maxDate"
-                                           datepicker-options="dateOptions"
-                                           ng-change="table.filterResult()"/>
+        </td>
+        <td>
+            <div collapse="table.filter.isCollapsed">
+                <p>Nothing HERE!</p>
+            </div>
+        </td>
+        <td>
+            <div collapse="table.filter.isCollapsed">
+                <select name="state-filter" class="input-full form-control"
+                        ng-model="table.filterCriteria.state"
+                        ng-change="table.filterResult()"
+                        ng-options="state.text for state in table.filter.states">
+                    <option value="" th:text="#{analysis.select.all}">All</option>
+                </select>
+            </div>
+        </td>
+        <td>
+            <div collapse="table.filter.isCollapsed">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="input-group">
+                            <input type="text" disabled="disabled" class="form-control"
+                                   th:placeholder="#{form.placeholder.date.min}"
+                                   th:attr="datepicker-popup=#{datepicker.short}"
+                                   ng-model="table.filterCriteria.minDate"
+                                   is-open="table.datepicker.min.opened"
+                                   min-date="minDate" max-date="table.datepicker.maxDate"
+                                   datepicker-options="dateOptions"
+                                   ng-change="table.filterResult()"/>
                                   <span class="input-group-btn">
                                     <button type="button" class="btn btn-default"
                                             ng-click="table.datepicker.min.open($event)"><span
                                             class="fa fa-calendar-o fa-fw"></span></button>
                                   </span>
-                                </div>
-                            </div>
                         </div>
-                        <div class="row mrgn-tp-sm">
-                            <div class="col-md-12">
-                                <div class="input-group">
-                                    <input type="text" disabled="disabled" class="form-control"
-                                           th:placeholder="#{form.placeholder.date.max}"
-                                           placeholder="max"
-                                           datepicker-popup="{{table.datepicker.format}}"
-                                           ng-model="table.filterCriteria.maxDate"
-                                           is-open="table.datepicker.max.opened"
-                                           max-date="table.datepicker.maxDate"
-                                           datepicker-options="dateOptions"
-                                           ng-change="table.filterResult()"/>
+                    </div>
+                </div>
+                <div class="row mrgn-tp-sm">
+                    <div class="col-md-12">
+                        <div class="input-group">
+                            <input type="text" disabled="disabled" class="form-control"
+                                   th:placeholder="#{form.placeholder.date.max}"
+                                   placeholder="max"
+                                   datepicker-popup="{{table.datepicker.format}}"
+                                   ng-model="table.filterCriteria.maxDate"
+                                   is-open="table.datepicker.max.opened"
+                                   max-date="table.datepicker.maxDate"
+                                   datepicker-options="dateOptions"
+                                   ng-change="table.filterResult()"/>
                                   <span class="input-group-btn">
                                     <button type="button" class="btn btn-default"
                                             ng-click="table.datepicker.max.open($event)"><span
                                             class="fa fa-calendar-o fa-fw"></span>
                                     </button>
                                   </span>
-                                </div>
-                            </div>
                         </div>
                     </div>
-                </td>
-                <td>
-                    <div collapse="table.filter.isCollapsed" class="text-right">
-                        <button id="clearFilterBtn" type="button" class="btn btn-default"
-                                th:text="#{form.btn.clear}" ng-click="table.clearFilter()">Clear
-                        </button>
-                    </div>
-                </td>
-            </tr>
-            </thead>
-            <tbody cg-busy="filterPromise">
-            <tr class="analysis-row" ng-repeat="a in table.analysis">
-                <td>{{a.name}}</td>
-                <td>{{a.type}}</td>
-                <td>
-                    <div class="label {{a.status | stateToClass}}">
-                        {{a.status | stateToText}}
-                    </div>
-                </td>
-                <td th:inline="text">
-                    <span class="fa fa-calendar-o fa-fw"></span> {{a.createdDate |
-                    date:'[[#{datepicker.short}]]'}}&nbsp;&nbsp;
-                    <span class="fa fa-clock-o fa-fw"></span> {{a.createdDate | date:'shortTime'}}
-                </td>
-                <td class="text-right">
-                    <!-- TODO: Make as directive -->
-                    <div class="btn-group" ng-show="a.status == 'COMPLETED'"
-                         ng-controller="FigtreeModalCtrl as figtree">
-                        <button class="btn btn-default btn-xs"
-                                th:attr="tooltip=#{form.preview}"
-                                ng-show="a.typeId =='1'"
-                                ng-click="figtree.open(a)"><span
-                                class="fa fa-eye fa-fw"></span>
-                        </button>
-                        <button class="btn btn-default btn-xs"
-                                th:attr="tooltip=#{form.download}"
-                                ng-click="table.downloadFile(a)">
-                            <span class="fa fa-download fa-fw"></span>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <iframe ng-src="{{table.iframeSRC}}" style="display:none;"></iframe>
-        <div class="text-center">
-            <pagination ng-hide="table.paging.totalPages &lt; 2"
-                        items-per-page="table.filterCriteria.count"
-                        total-items="table.paging.totalAnalysis"
-                        ng-model="table.paging.page" first-text="&laquo;"
-                        last-text="&raquo;"
-                        next-text="&rsaquo;" previous-text="&lsaquo;"
-                        boundary-links="true"></pagination>
-        </div>
-        <div id="phyloCanvas"></div>
-        <script type="text/ng-template" id="sort-by.html">
-            <a class="clickable" ng-click="sort(sortValue)">
-                <span ng-transclude=""></span>
+                </div>
+            </div>
+        </td>
+        <td>
+            <div collapse="table.filter.isCollapsed" class="text-right">
+                <button id="clearFilterBtn" type="button" class="btn btn-default"
+                        th:text="#{form.btn.clear}" ng-click="table.clearFilter()">Clear
+                </button>
+            </div>
+        </td>
+    </tr>
+    </thead>
+    <tbody cg-busy="filterPromise">
+    <tr class="analysis-row" ng-repeat="a in table.analysis">
+        <td>{{a.name}}</td>
+        <td>{{a.type}}</td>
+        <td>
+            <div class="label {{a.status | stateToClass}}">
+                {{a.status | stateToText}}
+            </div>
+        </td>
+        <td th:inline="text">
+            <span class="fa fa-calendar-o fa-fw"></span> {{a.createdDate |
+            date:'[[#{datepicker.short}]]'}}&nbsp;&nbsp;
+            <span class="fa fa-clock-o fa-fw"></span> {{a.createdDate | date:'shortTime'}}
+        </td>
+        <td class="text-right">
+            <!-- TODO: Make as directive -->
+            <div class="btn-group" ng-show="a.status == 'COMPLETED'"
+                 ng-controller="FigtreeModalCtrl as figtree">
+                <button class="btn btn-default btn-xs"
+                        th:attr="tooltip=#{form.preview}"
+                        ng-show="a.typeId =='1'"
+                        ng-click="figtree.open(a)"><span
+                        class="fa fa-eye fa-fw"></span>
+                </button>
+                <a class="btn btn-default btn-xs" ng-href="{{table.url}}/download/{{a.id}}" href="#"
+                   th:attr="tooltip=#{form.download-files}">
+                    <span class="fa fa-download fa-fw"></span>
+                    <span class="sr-only" th:text="#{form.download-files}">Download Files</span>
+                </a>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<iframe ng-src="{{table.iframeSRC}}" style="display:none;"></iframe>
+<div class="text-center">
+    <pagination ng-hide="table.paging.totalPages &lt; 2"
+                items-per-page="table.filterCriteria.count"
+                total-items="table.paging.totalAnalysis"
+                ng-model="table.paging.page" first-text="&laquo;"
+                last-text="&raquo;"
+                next-text="&rsaquo;" previous-text="&lsaquo;"
+                boundary-links="true"></pagination>
+</div>
+<div id="phyloCanvas"></div>
+<script type="text/ng-template" id="sort-by.html">
+    <a class="clickable" ng-click="sort(sortValue)">
+        <span ng-transclude=""></span>
                             <span class="pull-right" ng-show="sortedby == sortvalue">
                                 <i class="fa fa-fw"
                                    ng-class="{true: 'fa-sort-asc', false: 'fa-sort-desc'}[sortdir == 'asc']"></i>
@@ -204,23 +204,39 @@
                             <span class="pull-right" ng-show="sortedby != sortvalue">
                                 <i class="fa fa-sort fa-fw"></i>
                             </span>
-            </a>
-        </script>
-        <script type="text/ng-template" id="figtreeModal.html">
-            <div class="modal-header">
-                <button type="button" class="close" ng-click="close()"><span
-                        aria-hidden="true">&times;</span><span
-                        class="sr-only">Close</span></button>
-                <h3 class="modal-title">{{analysis.name}}</h3>
-            </div>
-            <div class="modal-body" cg-busy="loadingTree">
-                <div id="phyloSVG"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" ng-click="close()">Close</button>
-            </div>
-        </script>
+    </a>
+</script>
+<script type="text/ng-template" id="download-analysis.html">
+    <button class="btn btn-default" th:attr="tooltip=#{form.download-files}" ng-click="download()">
+        <span class="fa fa-fw fa-download"></span>
+        <span class="sr-only" th:text="#{form.download-files}">Download Files</span>
+    </button>
+</script>
+<script type="text/ng-template" id="figtreeModal.html">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="close()"><span
+                aria-hidden="true">&times;</span><span
+                class="sr-only" th:text="#{form.btn.close}">Close</span></button>
+        <h3 class="modal-title">{{analysis.name}}</h3>
     </div>
+    <div class="modal-body" cg-busy="loadingTree">
+        <div class="btn-toolbar pull-right">
+            <div class="btn-group btn-xs">
+                <button class="btn btn-default" th:attr="tooltip=#{form.save.image}" ng-click="save()">
+                    <span class="fa fa-fw fa-save"></span>
+                    <span class="sr-only" th:text="#{form.save.image}">Save Image</span>
+                </button>
+                <a class="btn btn-default" ng-href="{{table.url}}/download/{{a.id}}" href="#"
+                   th:attr="tooltip=#{form.download-files}">
+                    <span class="fa fa-download fa-fw"></span>
+                    <span class="sr-only" th:text="#{form.download-files}">Download Files</span>
+                </a>
+            </div>
+        </div>
+        <div id="phyloSVG"></div>
+    </div>
+</script>
+</div>
 </div>
 </main>
 </div>
@@ -301,6 +317,9 @@ var app = angular.module('analysis', ['cgBusy', 'restangular', 'ui.bootstrap'])
             delay: 300,
             minDuration: 700
         })
+        .value('baseUrl',
+        /*[[@{/analysis/ajax/}]]*/ '/analysis/ajax'
+)
         .factory('api', function (Restangular) {
             return {
                 analysis: {
@@ -369,7 +388,7 @@ app.controller('FigtreeModalCtrl', function ($scope, $modal, $log) {
         var modalInstance = $modal.open({
             // TODO: (14-09-05 - Josh) Load this via ajax when called then cache.
             templateUrl: 'figtreeModal.html',
-            controller: ModalInstanceCtrl,
+            controller: PhyloSVGCtrl,
             size: 'lg',
             resolve: {
                 analysis: function () {
@@ -377,20 +396,13 @@ app.controller('FigtreeModalCtrl', function ($scope, $modal, $log) {
                 }
             }
         });
-
-        modalInstance.result.then(function () {
-            // This is called when the modal is closes
-            $log.info("Hey I am here Nwo");
-        }, function () {
-            // Called when modal is dismissed.
-            $log.info('Modal dismissed at: ' + new Date());
-        });
     }
 });
 
-app.controller('AnalysisTableCtrl', function ($scope, $sce, api) {
+app.controller('AnalysisTableCtrl', function ($scope, $sce, api, baseUrl) {
     'use strict';
     var table = this;
+    table.url = baseUrl;
 
     /*[- */
     // filter: used to control the filter section of the page.
@@ -505,9 +517,7 @@ app.controller('AnalysisTableCtrl', function ($scope, $sce, api) {
     };
 
     table.downloadFile = function (analysis) {
-        'use strict';
-        var src = /*[[@{/analysis/ajax/download/}]]*/ '/analysis/ajax/download/';
-        table.iframeSRC = $sce.trustAsResourceUrl(src + analysis.id);
+        downloadAnalysis(analysis);
     };
 
     /*[- */
@@ -536,8 +546,33 @@ app.controller('AnalysisTableCtrl', function ($scope, $sce, api) {
     }, 500));
 });
 
-var ModalInstanceCtrl = function ($scope, $modalInstance, api, analysis) {
+app.directive('downloadAnalysis', function ($sce) {
+    'use strict';
+    return {
+        templateUrl: 'download-analysis.html',
+        restrict: 'E',
+        replace: true,
+        scope: {
+            analysisId: '='
+        },
+        link: function (scope, elements, attra) {
+            scope.download = function () {
+                var src = /*[[@{/analysis/ajax/download/}]]*/ '/analysis/ajax/download/';
+                table.iframeSRC = $sce.trustAsResourceUrl(src + scope.analysisId);
+            }
+        }
+    }
+});
 
+function downloadAnalysis(analysis) {
+    'use strict';
+    var src = /*[[@{/analysis/ajax/download/}]]*/ '/analysis/ajax/download/';
+    table.iframeSRC = $sce.trustAsResourceUrl(src + analysis.id);
+}
+
+function PhyloSVGCtrl($scope, $modalInstance, $log, api, analysis) {
+    'use strict';
+    var phylo;
 
     $scope.analysis = analysis;
     $scope.close = function () {
@@ -548,12 +583,31 @@ var ModalInstanceCtrl = function ($scope, $modalInstance, api, analysis) {
         $scope.loadingTree = api.figtree({'analysisId': analysis.id});
 
         return $scope.loadingTree.then(function (treeData) {
-            phylocanvas = new Smits.PhyloCanvas({'newick': treeData.data}, 'phyloSVG', 850, 600, 'circular');
+            phylo = new Smits.PhyloCanvas({'newick': treeData.data}, 'phyloSVG', 850, 600, 'circular');
         });
-
     });
 
-};
+    $scope.save = function () {
+        var svgSource = phylo.getSvgSource();
+        var a = document.createElement('a');
+        a.download = analysis.name + ".svg";
+        a.href = "data:image/svg+xml," + svgSource;
+        a.click();
+    };
+
+    $scope.download = function () {
+        downloadAnalysis(analysis);
+    };
+
+    $modalInstance.result.then(function () {
+        // This is called when the modal is closes
+        $log.info("Hey I am here now.");
+    }, function () {
+        // Called when modal is dismissed.
+        $log.info('Modal dismissed at: ' + new Date());
+    });
+}
+;
 /*]]>*/
 </script>
 </th:block>
