@@ -23,7 +23,7 @@
     "restangular": "1.4.0",
     "Font-Awesome": "4.2.0",
     "lodash": "2.4.1",
-    "raphael": "1.4.3"
+    "raphael": "2.1.2"
   },
   "devDependencies": {}
 }

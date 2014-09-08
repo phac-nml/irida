@@ -555,7 +555,7 @@ function PhyloSVGCtrl($scope, $modalInstance, $log, api, baseUrl, analysis) {
         $scope.loadingTree = api.figtree({'analysisId': analysis.id});
 
         return $scope.loadingTree.then(function (treeData) {
-            phylo = new Smits.PhyloCanvas({'newick': treeData.data}, 'phyloSVG', 850, 600, 'circular');
+            phylo = new Smits.PhyloCanvas({'newick': treeData.data}, 'phyloSVG', 850, 700, 'circular');
         });
     });
 
