@@ -69,6 +69,11 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	private final static String GALAXY_DATABASE_PROPERTY = "test.galaxy.database";
 	
 	/**
+	 * The system property value if we want to use a local pre-configured database for Galaxy.
+	 */
+	private final static String GALAXY_USE_LOCAL_DATABASE = "local";
+	
+	/**
 	 * Boolean to determine of Galaxy was successfully built the very first time.
 	 */
 	private boolean galaxyFailedToBuild = false;
@@ -77,6 +82,12 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	 * Exception on failure to build Galaxy for the first time.
 	 */
 	private Exception galaxyBuildException = null;
+
+	/**
+	 * URL to a local database file.
+	 */
+	private static final URL LOCAL_DATABASE_URL = NonWindowsLocalGalaxyConfig.class
+			.getResource("db_gx_rev_0120.sqlite");
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(NonWindowsLocalGalaxyConfig.class);
@@ -275,11 +286,16 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	 * @throws MalformedURLException 
 	 */
 	private Optional<URL> getGalaxyDatabaseURL(String systemProperty) throws MalformedURLException {
+		
 		String databaseURLString = System.getProperty(systemProperty);
 		Optional<URL> databaseURL = Optional.absent();
 		
 		if (databaseURLString != null && !"".equals(databaseURLString)) {
-			databaseURL = Optional.of(new URL(databaseURLString));
+			if (GALAXY_USE_LOCAL_DATABASE.equals(databaseURLString)) {
+				databaseURL = Optional.of(LOCAL_DATABASE_URL);
+			} else {
+				databaseURL = Optional.of(new URL(databaseURLString));
+			}
 		}
 		
 		return databaseURL;
