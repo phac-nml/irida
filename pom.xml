@@ -603,6 +603,7 @@
 		<test.galaxy.revision>7e4d21621ce12e13ebbdf9fd3259df58c3ef124c</test.galaxy.revision>
 
 		<!-- URL to a pre-populated SQLite database for Galaxy -->
-		<test.galaxy.database>https://github.com/jmchilton/galaxy-downloads/blob/033c43d5affe94cd2bffce88f80872820b88e9b0/db_gx_rev_0120.sqlite?raw=true</test.galaxy.database>
+		<!-- Set to 'local' to use the local version stored in irida-api, or set this to a URL -->
+		<test.galaxy.database>local</test.galaxy.database>
 	</properties>
 </project>
