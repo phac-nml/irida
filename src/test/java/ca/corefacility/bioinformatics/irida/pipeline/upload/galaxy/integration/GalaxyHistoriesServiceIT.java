@@ -40,6 +40,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDe
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.google.common.collect.Sets;
 import com.sun.jersey.api.client.ClientResponse;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
@@ -58,7 +59,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryExc
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryContentSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
@@ -104,7 +107,11 @@ public class GalaxyHistoriesServiceIT {
 		galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceAdmin();
 		HistoriesClient historiesClient = galaxyInstanceAdmin.getHistoriesClient();
 		ToolsClient toolsClient = galaxyInstanceAdmin.getToolsClient();
-		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient);
+		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
+		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient);
+		
+		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient,
+				galaxyLibrariesService);
 	}
 	
 	/**
@@ -382,6 +389,92 @@ public class GalaxyHistoriesServiceIT {
 	public void testFileToHistoryInvalidType() throws UploadException, GalaxyDatasetException {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		galaxyHistory.fileToHistory(dataFile, INVALID_FILE_TYPE, history);
+	}
+	
+	/**
+	 * Tests successful upload of a file to a Galaxy history through a Library.
+	 * 
+	 * @throws UploadException
+	 * @throws GalaxyDatasetException
+	 */
+	@Test
+	public void testFilesToLibraryToHistorySuccess()
+			throws UploadException, GalaxyDatasetException {
+		History history = galaxyHistory.newHistoryForWorkflow();
+		Library library = buildEmptyLibrary("testFilesToLibraryToHistorySuccess");
+		Map<Path,String> datasetsMap = galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFile, dataFile2),
+				FILE_TYPE, history, library, DataStorage.LOCAL);
+		assertNotNull(datasetsMap);
+		assertEquals(2, datasetsMap.size());
+		String datasetId1 = datasetsMap.get(dataFile);
+		String datasetId2 = datasetsMap.get(dataFile2);
+		
+		Dataset actualDataset1 = localGalaxy.getGalaxyInstanceAdmin()
+				.getHistoriesClient().showDataset(history.getId(), datasetId1);
+		assertNotNull(actualDataset1);
+
+		Dataset actualDataset2 = localGalaxy.getGalaxyInstanceAdmin()
+				.getHistoriesClient().showDataset(history.getId(), datasetId2);
+		assertNotNull(actualDataset2);
+	}
+	
+	/**
+	 * Tests successful upload of a file to a Galaxy history through a Library (where files are remote files).
+	 * 
+	 * @throws UploadException
+	 * @throws GalaxyDatasetException
+	 */
+	@Test
+	public void testFilesToLibraryToHistoryRemoteSuccess()
+			throws UploadException, GalaxyDatasetException {
+		History history = galaxyHistory.newHistoryForWorkflow();
+		Library library = buildEmptyLibrary("testFilesToLibraryToHistorySuccess");
+		Map<Path,String> datasetsMap = galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFile, dataFile2),
+				FILE_TYPE, history, library, DataStorage.REMOTE);
+		assertNotNull(datasetsMap);
+		assertEquals(2, datasetsMap.size());
+		String datasetId1 = datasetsMap.get(dataFile);
+		String datasetId2 = datasetsMap.get(dataFile2);
+		
+		Dataset actualDataset1 = localGalaxy.getGalaxyInstanceAdmin()
+				.getHistoriesClient().showDataset(history.getId(), datasetId1);
+		assertNotNull(actualDataset1);
+
+		Dataset actualDataset2 = localGalaxy.getGalaxyInstanceAdmin()
+				.getHistoriesClient().showDataset(history.getId(), datasetId2);
+		assertNotNull(actualDataset2);
+	}
+	
+	/**
+	 * Tests failure to upload a list of files to a Galaxy history through a Library (no library).
+	 * 
+	 * @throws UploadException
+	 * @throws GalaxyDatasetException
+	 */
+	@Test(expected = UploadException.class)
+	public void testFilesToLibraryToHistoryFailNoLibrary()
+			throws UploadException, GalaxyDatasetException {
+		History history = galaxyHistory.newHistoryForWorkflow();
+		Library library = buildEmptyLibrary("testFilesToLibraryToHistoryFail");
+		library.setId("invalid");
+		galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFile),
+				FILE_TYPE, history, library, DataStorage.LOCAL);
+	}
+	
+	/**
+	 * Tests failure to upload a list of files to a Galaxy history through a Library (no history).
+	 * 
+	 * @throws UploadException
+	 * @throws GalaxyDatasetException
+	 */
+	@Test(expected = UploadException.class)
+	public void testFilesToLibraryToHistoryFailNoHistory()
+			throws UploadException, GalaxyDatasetException {
+		History history = galaxyHistory.newHistoryForWorkflow();
+		history.setId("invalid");
+		Library library = buildEmptyLibrary("testFilesToLibraryToHistoryFail");
+		galaxyHistory.filesToLibraryToHistory(Sets.newHashSet(dataFile),
+				FILE_TYPE, history, library, DataStorage.LOCAL);
 	}
 	
 	/**

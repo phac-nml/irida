@@ -10,6 +10,9 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.manager.galaxy.ExecutionManagerGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
@@ -21,6 +24,8 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.ph
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
+import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
+import com.github.jmchilton.blend4j.galaxy.RolesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 
@@ -66,7 +71,7 @@ public class AnalysisExecutionServiceConfig {
 	@Lazy @Bean
 	public WorkspaceServicePhylogenomics workspaceService() {
 		return new WorkspaceServicePhylogenomics(galaxyHistoriesService(), galaxyWorkflowService(),
-				sampleSequenceFileJoinRepository, sequenceFileRepository);
+				sampleSequenceFileJoinRepository, sequenceFileRepository, galaxyLibraryBuilder());
 	}
 
 	/**
@@ -75,6 +80,30 @@ public class AnalysisExecutionServiceConfig {
 	@Lazy @Bean
 	public GalaxyWorkflowService galaxyWorkflowService() {
 		return new GalaxyWorkflowService(historiesClient(), workflowsClient(), workflowChecksumEncoder());
+	}
+	
+	/**
+	 * @return A GalaxyLibraryBuilder for building libraries.
+	 */
+	@Lazy @Bean
+	public GalaxyLibraryBuilder galaxyLibraryBuilder() {
+		return new GalaxyLibraryBuilder(librariesClient(), galaxyRoleSearch(), executionManager.getLocation());
+	}
+	
+	/**
+	 * @return A GalaxyRoleSearch for searching through Galaxy roles.
+	 */
+	@Lazy @Bean
+	public GalaxyRoleSearch galaxyRoleSearch() {
+		return new GalaxyRoleSearch(rolesClient(), executionManager.getLocation());
+	}
+	
+	/**
+	 * @return A RolesClient for dealing with roles in Galaxy.
+	 */
+	@Lazy @Bean
+	public RolesClient rolesClient() {
+		return galaxyInstance().getRolesClient();
 	}
 
 	/**
@@ -92,13 +121,30 @@ public class AnalysisExecutionServiceConfig {
 	public WorkflowsClient workflowsClient() {
 		return galaxyInstance().getWorkflowsClient();
 	}
+	
+	/**
+	 * @return  A LibrariesClient for interacting with Galaxy.
+	 */
+	@Lazy @Bean
+	public LibrariesClient librariesClient() {
+		return galaxyInstance().getLibrariesClient();
+	}
 
 	/**
 	 * @return  A GalaxyHistoriesService for interacting with Galaxy histories.
 	 */
 	@Lazy @Bean
 	public GalaxyHistoriesService galaxyHistoriesService() {
-		return new GalaxyHistoriesService(historiesClient(), toolsClient());
+		return new GalaxyHistoriesService(historiesClient(), toolsClient(),
+				galaxyLibrariesService());
+	}
+	
+	/**
+	 * @return  A GalaxyHistoriesService for interacting with Galaxy histories.
+	 */
+	@Lazy @Bean
+	public GalaxyLibrariesService galaxyLibrariesService() {
+		return new GalaxyLibrariesService(librariesClient());
 	}
 	
 	/**
