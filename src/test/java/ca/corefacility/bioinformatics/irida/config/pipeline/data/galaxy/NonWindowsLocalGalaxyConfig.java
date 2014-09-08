@@ -26,6 +26,7 @@ import com.github.jmchilton.galaxybootstrap.DownloadProperties;
 import com.github.jmchilton.galaxybootstrap.GalaxyData;
 import com.github.jmchilton.galaxybootstrap.GalaxyProperties;
 import com.github.jmchilton.galaxybootstrap.GalaxyData.User;
+import com.google.common.base.Optional;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
@@ -61,6 +62,11 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	 * The system property name to set the revision of the Galaxy repository to use.
 	 */
 	private final static String GALAXY_REVISION_PROPERTY = "test.galaxy.revision";
+	
+	/**
+	 * The system property name to set a URL to a pre-populated database SQLite file.
+	 */
+	private final static String GALAXY_DATABASE_PROPERTY = "test.galaxy.database";
 	
 	/**
 	 * Boolean to determine of Galaxy was successfully built the very first time.
@@ -142,6 +148,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 				URL repositoryURL = getGalaxyRepositoryURL(GALAXY_URL_PROPERTY);
 				String branchName = getGalaxyRepositoryBranch(GALAXY_BRANCH_PROPERTY);
 				String revisionHash = getGalaxyRevision(GALAXY_REVISION_PROPERTY);
+				Optional<URL> databaseURL = getGalaxyDatabaseURL(GALAXY_DATABASE_PROPERTY);
 		
 				String randomPassword = UUID.randomUUID().toString();
 		
@@ -166,7 +173,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 				BootStrapper bootStrapper = downloadGalaxy(localGalaxy, repositoryURL, branchName, revisionHash);
 				localGalaxy.setBootStrapper(bootStrapper);
 		
-				GalaxyProperties galaxyProperties = setupGalaxyProperties(localGalaxy,revisionHash);
+				GalaxyProperties galaxyProperties = setupGalaxyProperties(localGalaxy,revisionHash,databaseURL);
 				localGalaxy.setGalaxyProperties(galaxyProperties);
 		
 				buildGalaxyUsers(galaxyData, localGalaxy);
@@ -262,6 +269,23 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	}
 	
 	/**
+	 * Gets the URL to a Galaxy database to pre-populate the database.
+	 * @param systemProperty  The system property storing the URL.
+	 * @return  A URL to a Galaxy pre-populated database file.
+	 * @throws MalformedURLException 
+	 */
+	private Optional<URL> getGalaxyDatabaseURL(String systemProperty) throws MalformedURLException {
+		String databaseURLString = System.getProperty(systemProperty);
+		Optional<URL> databaseURL = Optional.absent();
+		
+		if (databaseURLString != null && !"".equals(databaseURLString)) {
+			databaseURL = Optional.of(new URL(databaseURLString));
+		}
+		
+		return databaseURL;
+	}
+	
+	/**
 	 * Gets the branch within a Galaxy repository to download and test against.
 	 * @param systemProperty  The system property storing the branch name.
 	 * @return A branch name within a Galaxy repository.
@@ -330,19 +354,24 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	/**
 	 * Does some custom configuration for Galaxy to work with the tests.
 	 * @param localGalaxy  The object describing the local running instance of Galaxy.
-	 * @param revisionHash  The mercurial revision hash of the Galaxy version to download. 
+	 * @param revisionHash  The mercurial revision hash of the Galaxy version to download.
+	 * @param databaseURL An (optional) URL to a pre-populated database for Galaxy.
 	 * @return  A GalaxyProperties object defining properties of the running instance of Galaxy.
 	 * @throws MalformedURLException  If there was an issue constructing the Galaxy URL.
 	 */
-	private GalaxyProperties setupGalaxyProperties(LocalGalaxy localGalaxy, String revisionHash)
+	private GalaxyProperties setupGalaxyProperties(LocalGalaxy localGalaxy, String revisionHash, Optional<URL> databaseURL)
 			throws MalformedURLException {
 		GalaxyProperties galaxyProperties = new GalaxyProperties()
 				.assignFreePort().configureNestedShedTools();
 		
-		// only pre-populate if latest Galaxy
-		// speeds up database construction, but database wouldn't be valid for previous versions of Galaxy
 		if (DownloadProperties.LATEST_REVISION.equals(revisionHash)) {
 			galaxyProperties.prepopulateSqliteDatabase();
+			logger.debug("Using latest revision of Galaxy.  Pre-populating with database found within Galaxy bootstrap");
+		} else if (databaseURL.isPresent()) {
+			galaxyProperties.prepopulateSqliteDatabase(databaseURL.get());
+			logger.debug("Database located at " + databaseURL.get() + " has been set to use for Galaxy");
+		} else {
+			logger.debug("No pre-populated Galaxy database set, will proceed through all database migration steps");
 		}
 		
 		galaxyProperties.setAppProperty("allow_library_path_paste", "true");
