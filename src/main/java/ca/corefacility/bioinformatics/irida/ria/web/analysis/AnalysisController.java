@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,12 +30,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.ZipFileDownloader;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 
 import com.google.common.base.Strings;
+import liquibase.util.StringUtils;
 
 /**
  * Controller for Analysis.
@@ -56,6 +60,7 @@ public class AnalysisController {
 	// URI's
 	private static final String URI_PAGE_ADMIN = "/admin";
 	private static final String URI_AJAX_LIST_ALL_ANALYSIS = "/ajax/all";
+	private static final String URI_AJAX_FIGTREE = "/ajax/figtree";
 	private static final String URI_AJAX_DOWNLOAD = "/ajax/download/{analysisSubmissionId}";
 
 	/*
@@ -144,6 +149,8 @@ public class AnalysisController {
 			Map<String, String> map = new HashMap<>();
 			map.put("id", analysisSubmission.getId().toString());
 			map.put("name", analysisSubmission.getName());
+			map.put("type", "Whole Genome Phylogenomics Pipeline"); // TODO: (14-09-05 - Josh) How to actual get this?
+			map.put("typeId", "1");
 			map.put("status", analysisSubmission.getAnalysisState().toString());
 			map.put("createdDate", String.valueOf(analysisSubmission.getCreatedDate().getTime()));
 			analysisList.add(map);
@@ -172,4 +179,15 @@ public class AnalysisController {
 		ZipFileDownloader.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
 	}
 
+	@RequestMapping(value = URI_AJAX_FIGTREE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Object> getAjaxFigtree(@RequestParam Long analysisId) throws IOException {
+		logger.debug("Getting FigTree data for analysis [" + analysisId + "]");
+		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(analysisId);
+		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) analysisSubmission.getAnalysis();
+		AnalysisOutputFile file = analysis.getPhylogeneticTree();
+		List<String> lines = Files.readAllLines(file.getFile());
+		Map<String, Object> response = new HashMap<>();
+		response.put("data", lines.get(0));
+		return response;
+	}
 }

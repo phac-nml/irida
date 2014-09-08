@@ -23,3 +23,19 @@
     display: inline-block;
   }
 }
+
+
+.modal-content {
+  background-color: $color-grey-lighter;
+  border: 1px solid $color-grey;
+}
+
+.modal-header {
+  background-color: $color-primary;
+  color: $color-grey-lighter;
+}
+
+.modal-footer {
+  margin-top: 0;
+  padding: 20px;
+}
