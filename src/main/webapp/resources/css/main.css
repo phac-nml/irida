@@ -316,3 +316,28 @@ main.col-md-9 h1 {
 .clickable span {
   display: inline-block;
 }
+
+/* line 28, ../../styles/main.scss */
+.modal-content {
+  background-color: #eeeeee;
+  border: 1px solid #555555;
+}
+
+/* line 33, ../../styles/main.scss */
+.modal-header {
+  background-color: #2572b4;
+}
+/* line 35, ../../styles/main.scss */
+.modal-header h2 {
+  color: #ffffff;
+}
+/* line 38, ../../styles/main.scss */
+.modal-header small {
+  color: #eeeeee;
+}
+
+/* line 43, ../../styles/main.scss */
+.modal-footer {
+  margin-top: 0;
+  padding: 20px;
+}
