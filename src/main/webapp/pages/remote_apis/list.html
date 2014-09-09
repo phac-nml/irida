@@ -27,10 +27,13 @@
             </main>
         </div>
     </div>
-    <script type="x-tmpl-mustache" id="api-name-template">
-    	<a id="name-template" sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/remote_api/{{apiId}}}">{{name}}</a>
-    	<span id="name-template" sec:authorize="!hasRole('ROLE_ADMIN')">{{name}}</span>
+    <script sec:authorize="hasRole('ROLE_ADMIN')" type="x-tmpl-mustache" id="api-name-template">
+    	<a class="api-name" th:href="@{/remote_api/{{apiId}}}">{{name}}</a>
 	</script>
+    <script sec:authorize="!hasRole('ROLE_ADMIN')" type="x-tmpl-mustache" id="api-name-template">
+    	<span class="api-name">{{name}}</span>
+    </script>
+	
 </div>
 <div layout:fragment="scripts">
     <script th:src="@{/resources/wet-theme/js/deps/jquery.dataTables.min.js}"
