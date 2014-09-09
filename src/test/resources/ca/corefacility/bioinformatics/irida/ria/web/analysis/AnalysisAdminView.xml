@@ -62,4 +62,20 @@
                          name="My Completed Running Submission" analysis_id="1"/>
     <analysis_submission id="7" analysisState="ERROR" createdDate="2014-02-06 10:01:02" name="My Really Bad Mistake!"
                          analysis_id="1"/>
+
+    <analysis_submission_galaxy id="1" remote_workflow_id="1"/>
+    <analysis_submission_galaxy id="2" remote_workflow_id="1"/>
+    <analysis_submission_galaxy id="3" remote_workflow_id="1"/>
+    <analysis_submission_galaxy id="4" remote_workflow_id="1"/>
+    <analysis_submission_galaxy id="5" remote_workflow_id="1"/>
+    <analysis_submission_galaxy id="6" remote_workflow_id="1"/>
+    <analysis_submission_galaxy id="7" remote_workflow_id="1"/>
+
+    <analysis_submission_phylogenomics id="1" reference_file_id="1"/>
+    <analysis_submission_phylogenomics id="2" reference_file_id="1"/>
+    <analysis_submission_phylogenomics id="3" reference_file_id="1"/>
+    <analysis_submission_phylogenomics id="4" reference_file_id="1"/>
+    <analysis_submission_phylogenomics id="5" reference_file_id="1"/>
+    <analysis_submission_phylogenomics id="6" reference_file_id="1"/>
+    <analysis_submission_phylogenomics id="7" reference_file_id="1"/>
 </dataset>
