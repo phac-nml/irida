@@ -32,8 +32,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.RemoteAPISpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMessage;
 import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
@@ -41,7 +39,6 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -72,7 +69,6 @@ public class RemoteAPIController extends BaseController {
 	private static final String SORT_ASCENDING = "asc";
 
 	private final RemoteAPIService remoteAPIService;
-	private final UserService userService;
 	private final ProjectRemoteService projectRemoteService;
 	private final OltuAuthorizationController authController;
 	private final MessageSource messageSource;
@@ -84,11 +80,9 @@ public class RemoteAPIController extends BaseController {
 					"remoteapi.create.serviceURIConflict"));
 
 	@Autowired
-	public RemoteAPIController(RemoteAPIService remoteAPIService, UserService userService,
-			ProjectRemoteService projectRemoteService, OltuAuthorizationController authController,
-			MessageSource messageSource) {
+	public RemoteAPIController(RemoteAPIService remoteAPIService, ProjectRemoteService projectRemoteService,
+			OltuAuthorizationController authController, MessageSource messageSource) {
 		this.remoteAPIService = remoteAPIService;
-		this.userService = userService;
 		this.projectRemoteService = projectRemoteService;
 		this.authController = authController;
 		this.messageSource = messageSource;
@@ -99,6 +93,7 @@ public class RemoteAPIController extends BaseController {
 	 * 
 	 * @return The view name of the remote apis listing page
 	 */
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping
 	public String list() {
 		return CLIENTS_PAGE;
@@ -221,8 +216,6 @@ public class RemoteAPIController extends BaseController {
 
 		String sortString;
 
-		User principalUser = userService.getUserByUsername(principal.getName());
-
 		try {
 			sortString = SORT_COLUMNS.get(sortColumn);
 		} catch (IndexOutOfBoundsException ex) {
@@ -241,12 +234,6 @@ public class RemoteAPIController extends BaseController {
 			Map<String, String> row = new HashMap<>();
 			row.put("id", api.getId().toString());
 			row.put("name", api.getName());
-
-			// only pass clientId to admin users
-			if (principalUser.getSystemRole().equals(Role.ROLE_ADMIN)) {
-				row.put("clientId", api.getClientId());
-			}
-
 			row.put("createdDate", Formats.DATE.format(api.getCreatedDate()));
 
 			apiData.add(row);
@@ -259,17 +246,6 @@ public class RemoteAPIController extends BaseController {
 
 		map.put(DataTable.RESPONSE_PARAM_DATA, apiData);
 		return map;
-	}
-
-	/**
-	 * Get the connection status view name
-	 * 
-	 * @return The name of the connection status view
-	 */
-	@PreAuthorize("isAuthenticated()")
-	@RequestMapping("/status")
-	public String getConnectionStatusPage() {
-		return STATUS_PAGE;
 	}
 
 	/**
