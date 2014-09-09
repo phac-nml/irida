@@ -3,10 +3,14 @@ package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.p
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
@@ -16,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
@@ -23,7 +28,9 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkfl
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
@@ -31,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.An
 
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
+import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
@@ -51,22 +59,24 @@ public class WorkspaceServicePhylogenomics
 	private GalaxyWorkflowService galaxyWorkflowService;
 	
 	private SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository;
-	
 	private SequenceFileRepository sequenceFileRepository;
+	private GalaxyLibraryBuilder libraryBuilder;
 	
 	/**
 	 * Builds a new WorkspaceServicePhylogenomics with the given information.
 	 * @param galaxyHistoriesService  A GalaxyHistoriesService for interacting with Galaxy Histories.
 	 * @param galaxyWorkflowService  A GalaxyWorkflowService for interacting with Galaxy workflows.
 	 * @param sampleSequenceFileJoinRepository  A repository joining together sequence files and samples.
+	 * @param libraryBuilder An object for building libraries in Galaxy.
 	 */
 	public WorkspaceServicePhylogenomics(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService,
-			SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository, SequenceFileRepository sequenceFileRepository) {
+			SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository, SequenceFileRepository sequenceFileRepository, GalaxyLibraryBuilder libraryBuilder) {
 		super(galaxyHistoriesService);
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.sampleSequenceFileJoinRepository = sampleSequenceFileJoinRepository;
 		this.sequenceFileRepository = sequenceFileRepository;
+		this.libraryBuilder = libraryBuilder;
 	}
 	
 	/**
@@ -93,36 +103,50 @@ public class WorkspaceServicePhylogenomics
 	 * 	than one sequence file shares the same sample.  This will be fixed in a future release.
 	 * @param sampleSequenceFiles  A join between sequence files and samples.
 	 * @param workflowHistory  The history to upload the sequence files into.
+	 * @param workflowLibrary  A temporary library to upload files into.
 	 * @return  A CollectionResponse for the dataset collection constructed from the given files.
 	 * @throws ExecutionManagerException  If there was an error uploading the files.
 	 */
 	private CollectionResponse uploadSequenceFiles(List<Join<Sample, SequenceFile>> sampleSequenceFiles,
-			History workflowHistory) throws ExecutionManagerException {
+			History workflowHistory, Library workflowLibrary) throws ExecutionManagerException {
 		
 		CollectionDescription description = new CollectionDescription();
 		description.setCollectionType(DatasetCollectionType.LIST.toString());
 		description.setName(COLLECTION_NAME);
 		
-		Set<Sample> samples = new HashSet<>();
+		Map<Path,Sample> samplesMap = new HashMap<>();
 		for (Join<Sample, SequenceFile> sampleSequenceJoin : sampleSequenceFiles) {
 			SequenceFile sequenceFile = sampleSequenceJoin.getObject();
 			Sample sample = sampleSequenceJoin.getSubject();
 			
-			if (samples.contains(sample)) {
+			if (samplesMap.containsValue(sample)) {
 				throw new WorkflowPreprationException("Sequence file: " + sequenceFile.getFile() + " belongs to sample " +
 						sample + " but there is another sequence file with this sample");
 			} else {
-				samples.add(sample);
-				
-				Dataset sequenceDataset = galaxyHistoriesService.fileToHistory(sequenceFile.getFile(),
-						InputFileType.FASTQ_SANGER, workflowHistory);
-				
-				HistoryDatasetElement datasetElement = new HistoryDatasetElement();
-				datasetElement.setId(sequenceDataset.getId());
-				datasetElement.setName(sample.getSampleName());
-				
-				description.addDatasetElement(datasetElement);
+				samplesMap.put(sequenceFile.getFile(),sample);
 			}
+		}
+		
+		// upload files to library and then to a history
+		Set<Path> pathsToUpload = samplesMap.keySet();
+		Map<Path, String> pathHistoryDatasetId = 
+				galaxyHistoriesService.filesToLibraryToHistory(pathsToUpload,
+				InputFileType.FASTQ_SANGER, workflowHistory, workflowLibrary, DataStorage.LOCAL);
+		
+		for (Path sequenceFilePath : samplesMap.keySet()) {
+			if (!pathHistoryDatasetId.containsKey(sequenceFilePath)) {
+				throw new UploadException("Error, no corresponding history item found for " +
+						sequenceFilePath);
+			}
+			
+			Sample sample = samplesMap.get(sequenceFilePath);
+			String datasetHistoryId = pathHistoryDatasetId.get(sequenceFilePath);
+									
+			HistoryDatasetElement datasetElement = new HistoryDatasetElement();
+			datasetElement.setId(datasetHistoryId);
+			datasetElement.setName(sample.getSampleName());
+			
+			description.addDatasetElement(datasetElement);
 		}
 		
 		return galaxyHistoriesService.constructCollection(description, workflowHistory);
@@ -152,13 +176,17 @@ public class WorkspaceServicePhylogenomics
 		checkNotNull(analysisSubmission.getInputFiles(), "inputFiles are null");
 		checkNotNull(analysisSubmission.getReferenceFile(), "referenceFile is null");
 		
+		String temporaryLibraryName = AnalysisSubmissionPhylogenomics.class.getSimpleName() + "-" +
+				UUID.randomUUID().toString();
+		
 		History workflowHistory = galaxyHistoriesService.findById(analysisSubmission.getRemoteAnalysisId());
+		Library workflowLibrary = libraryBuilder.buildEmptyLibrary(new GalaxyProjectName(temporaryLibraryName));
 		
 		List<Join<Sample, SequenceFile>> sampleSequenceFiles =
 				getSequenceFileSamples(analysisSubmission.getInputFiles());
 
 		CollectionResponse collectionResponse = 
-				uploadSequenceFiles(sampleSequenceFiles, workflowHistory);
+				uploadSequenceFiles(sampleSequenceFiles, workflowHistory, workflowLibrary);
 
 		Dataset referenceDataset = 
 				uploadReferenceFile(analysisSubmission.getReferenceFile(), workflowHistory);
@@ -205,7 +233,6 @@ public class WorkspaceServicePhylogenomics
 				.getRemoteWorkflow();
 		String analysisId = analysisSubmission.getRemoteAnalysisId();
 		
-		// 
 		Set<SequenceFile> inputFiles = new HashSet<>();
 		for (SequenceFile sf : analysisSubmission.getInputFiles()) {
 			inputFiles.add(sequenceFileRepository.findOne(sf.getId()));

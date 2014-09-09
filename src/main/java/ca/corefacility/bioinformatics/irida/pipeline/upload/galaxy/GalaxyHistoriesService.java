@@ -7,10 +7,12 @@ import static com.google.common.base.Preconditions.checkState;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -30,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.ExecutionManagerSearch;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
@@ -40,6 +43,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset.Source;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
+import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
@@ -61,6 +65,8 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	private HistoriesClient historiesClient;
 	private ToolsClient toolsClient;
 	
+	private GalaxyLibrariesService librariesService;
+	
 	private static final String FORWARD_PAIR_NAME = "forward";
 	private static final String REVERSE_PAIR_NAME = "reverse";
 	
@@ -72,14 +78,17 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	 * Builds a new GalaxyHistory object for working with Galaxy Histories.
 	 * @param historiesClient  The HistoriesClient for interacting with Galaxy histories.
 	 * @param toolsClient  The ToolsClient for interacting with tools in Galaxy.
+	 * @param librariesService  A service for dealing with Galaxy libraries.
 	 */
 	public GalaxyHistoriesService(HistoriesClient historiesClient,
-			ToolsClient toolsClient) {
+			ToolsClient toolsClient, GalaxyLibrariesService librariesService) {
 		checkNotNull(historiesClient, "historiesClient is null");
 		checkNotNull(toolsClient, "toolsClient is null");
+		checkNotNull(librariesService, "librariesService is null");
 		
 		this.historiesClient = historiesClient;
 		this.toolsClient = toolsClient;
+		this.librariesService = librariesService;
 	}
 	
 	/**
@@ -209,6 +218,61 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 		} else {
 			return getDatasetForFileInHistory(file.getName(), history.getId());
 		}
+	}
+	
+	/**
+	 * Uploads a set of files to a given history through the given library.
+	 * 
+	 * @param paths
+	 *            The set of paths to upload.
+	 * @param fileType
+	 *            The file type of the file to upload.
+	 * @param history
+	 *            The history to upload the file into.
+	 * @param library
+	 *            The library to initially upload the file into.
+	 * @param dataStorage
+	 *            The type of DataStorage strategy to use.
+	 * @return An @{link Map} of paths and ids for each dataset object in this
+	 *         history.
+	 * @throws UploadException
+	 *             If there was an issue uploading the file to Galaxy.
+	 */
+	public Map<Path, String> filesToLibraryToHistory(Set<Path> paths,
+			InputFileType fileType, History history, Library library,
+			DataStorage dataStorage) throws UploadException {
+		checkNotNull(paths, "paths is null");
+
+		Map<Path, String> datasetIdsMap = new HashMap<>();
+
+		Map<Path, String> datasetLibraryIdsMap = librariesService
+				.filesToLibraryWait(paths, fileType, library, dataStorage);
+
+		if (datasetLibraryIdsMap.size() != paths.size()) {
+			throw new UploadException(
+					"Error: datasets uploaded to a Galaxy library are not the same size ("
+							+ datasetLibraryIdsMap.size()
+							+ ") as the paths to upload (" + paths.size() + ")");
+		}
+
+		try {
+			for (Path path : datasetLibraryIdsMap.keySet()) {
+				String datasetLibraryId = datasetLibraryIdsMap.get(path);
+
+				HistoryDetails historyDetails = libraryDatasetToHistory(
+						datasetLibraryId, history);
+
+				logger.debug("Transfered library dataset " + datasetLibraryId
+						+ " to history " + history.getId() + " dataset id "
+						+ historyDetails.getId());
+
+				datasetIdsMap.put(path, historyDetails.getId());
+			}
+		} catch (RuntimeException e) {
+			throw new UploadException(e);
+		}
+
+		return datasetIdsMap;
 	}
 	
 	/**

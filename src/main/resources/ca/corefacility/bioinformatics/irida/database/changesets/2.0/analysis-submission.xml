@@ -178,7 +178,7 @@
 					referencedColumnNames="id" referencedTableName="analysis_submission" />
 			</column>
 			<column name="inputFiles_id" type="BIGINT(20)">
-				<constraints unique="true" nullable="false" primaryKey="true"
+				<constraints nullable="false" primaryKey="true"
 					foreignKeyName="FK_INPUT_FILES_ID" referencedColumnNames="id"
 					referencedTableName="sequence_file" />
 			</column>

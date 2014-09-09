@@ -29,11 +29,13 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
+import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServiceTestConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
@@ -41,10 +43,12 @@ import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
+import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
@@ -64,7 +68,9 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
 	IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class,
-	IridaApiTestMultithreadingConfig.class, NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class  })
+	IridaApiTestMultithreadingConfig.class, NonWindowsLocalGalaxyConfig.class,
+	WindowsLocalGalaxyConfig.class, AnalysisExecutionServiceTestConfig.class,
+	RemoteWorkflowServiceTestConfig.class})
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
@@ -85,6 +91,7 @@ public class GalaxyWorkflowsIT {
 	private HistoriesClient historiesClient;
 	private ToolsClient toolsClient;
 	private WorkflowsClient workflowsClient;
+	private LibrariesClient librariesClient;
 	private GalaxyWorkflowService galaxyWorkflowService;
 	private GalaxyHistoriesService galaxyHistory;
 	
@@ -119,7 +126,10 @@ public class GalaxyWorkflowsIT {
 		toolsClient = galaxyAdminInstance.getToolsClient();
 		workflowsClient = galaxyAdminInstance.getWorkflowsClient();
 		historiesClient = galaxyAdminInstance.getHistoriesClient();
-		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient);
+		librariesClient = galaxyAdminInstance.getLibrariesClient();
+		
+		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient);
+		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService);
 		galaxyWorkflowService 
 			= new GalaxyWorkflowService(historiesClient, workflowsClient,
 					new StandardPasswordEncoder());

@@ -72,7 +72,7 @@ To link up the API with a running instance of Galaxy, the following steps need t
         galaxy.execution.url=http://localhost/
 
         # The API key of an account to run workflows in Galaxy.
-        # This does not have to be an administrator account.
+        # This MUST be an administrator account.
         galaxy.execution.apiKey=xxxx
 
         # The email address of an account to run workflows in Galaxy
