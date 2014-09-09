@@ -71,7 +71,8 @@ public abstract class AnalysisWorkspaceServiceGalaxy<R extends RemoteWorkflowGal
 		String datasetId = dataset.getId();
 		String fileName = dataset.getName();
 
-		Path outputFile = Files.createTempFile(fileName, ".dat");
+		Path tempOutputDirectory = Files.createTempDirectory(fileName);
+		Path outputFile = tempOutputDirectory.resolve(fileName);
 		galaxyHistoriesService.downloadDatasetTo(analysisId, datasetId,
 				outputFile);
 		
