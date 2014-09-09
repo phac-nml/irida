@@ -75,76 +75,79 @@
                     <th class="col-md-1"></th>
                 </tr>
                 <tr>
-                    <td>
-                        <div collapse="table.filter.isCollapsed">
-                            <input name="name-filter" type="text" class="form-control input-full"
-                                   ng-model="table.filterCriteria.name"/>
-                        </div>
-                    </td>
-                    <td>
-                        <div collapse="table.filter.isCollapsed">
-                            <p>Nothing HERE!</p>
-                        </div>
-                    </td>
-                    <td>
-                        <div collapse="table.filter.isCollapsed">
-                            <select name="state-filter" class="input-full form-control"
-                                    ng-model="table.filterCriteria.state"
-                                    ng-change="table.filterResult()"
-                                    ng-options="state.text for state in table.filter.states">
-                                <option value="" th:text="#{analysis.select.all}">All</option>
-                            </select>
-                        </div>
-                    </td>
-                    <td>
-                        <div collapse="table.filter.isCollapsed">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="input-group">
-                                        <input type="text" disabled="disabled" class="form-control"
-                                               th:placeholder="#{form.placeholder.date.min}"
-                                               th:attr="datepicker-popup=#{datepicker.short}"
-                                               ng-model="table.filterCriteria.minDate"
-                                               is-open="table.datepicker.min.opened"
-                                               min-date="minDate" max-date="table.datepicker.maxDate"
-                                               datepicker-options="dateOptions"
-                                               ng-change="table.filterResult()"/>
+                    <td colspan="5">
+                        <div class="row" collapse="table.filter.isCollapsed">
+                            <div class="form-group col-md-2">
+                                <label for="name-filter">Filter by Name</label>
+                                <input id="name-filter" name="name-filter" type="text" class="form-control input-full"
+                                       ng-model="table.filterCriteria.name"/>
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label for="type-filter">Filter by Type</label>
+                                <select name="type-filter" id="type-filter" class="form-control input-full">
+                                    <option value="">All</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group col-md-2">
+                                <label for="state-filer">Filter by State</label>
+                                <select id="state-filer" name="state-filter" class="input-full form-control"
+                                        ng-model="table.filterCriteria.state"
+                                        ng-change="table.filterResult()"
+                                        ng-options="state.text for state in table.filter.states">
+                                    <option value="" th:text="#{analysis.select.all}">All</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group col-md-3">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="input-group">
+                                            <input type="text" disabled="disabled" class="form-control"
+                                                   th:placeholder="#{form.placeholder.date.min}"
+                                                   th:attr="datepicker-popup=#{datepicker.short}"
+                                                   ng-model="table.filterCriteria.minDate"
+                                                   is-open="table.datepicker.min.opened"
+                                                   min-date="minDate" max-date="table.datepicker.maxDate"
+                                                   datepicker-options="dateOptions"
+                                                   ng-change="table.filterResult()"/>
                                   <span class="input-group-btn">
                                     <button type="button" class="btn btn-default"
                                             ng-click="table.datepicker.min.open($event)"><span
                                             class="fa fa-calendar-o fa-fw"></span></button>
                                   </span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row mrgn-tp-sm">
-                                <div class="col-md-12">
-                                    <div class="input-group">
-                                        <input type="text" disabled="disabled" class="form-control"
-                                               th:placeholder="#{form.placeholder.date.max}"
-                                               placeholder="max"
-                                               datepicker-popup="{{table.datepicker.format}}"
-                                               ng-model="table.filterCriteria.maxDate"
-                                               is-open="table.datepicker.max.opened"
-                                               max-date="table.datepicker.maxDate"
-                                               datepicker-options="dateOptions"
-                                               ng-change="table.filterResult()"/>
+                                <div class="row mrgn-tp-sm">
+                                    <div class="col-md-12">
+                                        <div class="input-group">
+                                            <input type="text" disabled="disabled" class="form-control"
+                                                   th:placeholder="#{form.placeholder.date.max}"
+                                                   placeholder="max"
+                                                   datepicker-popup="{{table.datepicker.format}}"
+                                                   ng-model="table.filterCriteria.maxDate"
+                                                   is-open="table.datepicker.max.opened"
+                                                   max-date="table.datepicker.maxDate"
+                                                   datepicker-options="dateOptions"
+                                                   ng-change="table.filterResult()"/>
                                   <span class="input-group-btn">
                                     <button type="button" class="btn btn-default"
                                             ng-click="table.datepicker.max.open($event)"><span
                                             class="fa fa-calendar-o fa-fw"></span>
                                     </button>
                                   </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div collapse="table.filter.isCollapsed" class="text-right">
-                            <button id="clearFilterBtn" type="button" class="btn btn-default"
-                                    th:text="#{form.btn.clear}" ng-click="table.clearFilter()">Clear
-                            </button>
+
+                            <div class="text-right">
+                                <button id="clearFilterBtn" type="button" class="btn btn-default"
+                                        th:text="#{form.btn.clear}" ng-click="table.clearFilter()">Clear
+                                </button>
+                            </div>
                         </div>
                     </td>
                 </tr>
@@ -210,7 +213,9 @@
                     <button type="button" class="close" ng-click="close()"><span
                             aria-hidden="true">&times;</span><span
                             class="sr-only" th:text="#{form.btn.close}">Close</span></button>
-                    <h2 class="modal-title">{{analysis.name}} <small>{{analysis.type}}</small></h2>
+                    <h2 class="modal-title">{{analysis.name}}
+                        <small>{{analysis.type}}</small>
+                    </h2>
                 </div>
                 <div class="modal-body" cg-busy="loadingTree">
                     <iframe style="width: 860px; height: 900px; border: none" scrolling="no" seamless="seamless"
