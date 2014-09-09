@@ -61,7 +61,6 @@ public class AnalysisController {
 	private static final String URI_PAGE_ADMIN = "/admin";
 	private static final String URI_PAGE_FIGTREE_PREVIEW = "/preview/figtree/{analysisId}";
 	private static final String URI_AJAX_LIST_ALL_ANALYSIS = "/ajax/all";
-	private static final String URI_AJAX_FIGTREE = "/ajax/figtree";
 	private static final String URI_AJAX_DOWNLOAD = "/ajax/download/{analysisSubmissionId}";
 
 	/*
