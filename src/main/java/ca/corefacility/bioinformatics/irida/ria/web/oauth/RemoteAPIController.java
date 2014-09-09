@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 import java.net.MalformedURLException;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -19,6 +20,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.Formatter;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -34,7 +37,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.repositories.specification.RemoteAPISpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMessage;
-import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
@@ -72,6 +74,7 @@ public class RemoteAPIController extends BaseController {
 	private final ProjectRemoteService projectRemoteService;
 	private final OltuAuthorizationController authController;
 	private final MessageSource messageSource;
+	private final Formatter<Date> dateFormatter;
 
 	// Map storing the message names for the
 	// getErrorsFromDataIntegrityViolationException method
@@ -86,6 +89,7 @@ public class RemoteAPIController extends BaseController {
 		this.projectRemoteService = projectRemoteService;
 		this.authController = authController;
 		this.messageSource = messageSource;
+		this.dateFormatter = new DateFormatter();
 	}
 
 	/**
@@ -212,7 +216,7 @@ public class RemoteAPIController extends BaseController {
 			@RequestParam(DataTable.REQUEST_PARAM_DRAW) Integer draw,
 			@RequestParam(value = DataTable.REQUEST_PARAM_SORT_COLUMN, defaultValue = "0") Integer sortColumn,
 			@RequestParam(value = DataTable.REQUEST_PARAM_SORT_DIRECTION, defaultValue = "asc") String direction,
-			@RequestParam(DataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue, Principal principal) {
+			@RequestParam(DataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue, Principal principal, Locale locale) {
 
 		String sortString;
 
@@ -234,7 +238,7 @@ public class RemoteAPIController extends BaseController {
 			Map<String, String> row = new HashMap<>();
 			row.put("id", api.getId().toString());
 			row.put("name", api.getName());
-			row.put("createdDate", Formats.DATE.format(api.getCreatedDate()));
+			row.put("createdDate", dateFormatter.print(api.getCreatedDate(), locale));
 
 			apiData.add(row);
 		}

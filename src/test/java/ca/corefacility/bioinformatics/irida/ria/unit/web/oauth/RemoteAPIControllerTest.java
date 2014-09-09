@@ -59,8 +59,8 @@ public class RemoteAPIControllerTest {
 		messageSource = mock(MessageSource.class);
 		projectRemoteService = mock(ProjectRemoteService.class);
 		authController = mock(OltuAuthorizationController.class);
-		remoteAPIController = new RemoteAPIController(remoteAPIService, projectRemoteService,
-				authController, messageSource);
+		remoteAPIController = new RemoteAPIController(remoteAPIService, projectRemoteService, authController,
+				messageSource);
 		locale = LocaleContextHolder.getLocale();
 
 	}
@@ -94,7 +94,7 @@ public class RemoteAPIControllerTest {
 						any(String.class))).thenReturn(apiPage);
 
 		Map<String, Object> ajaxAPIList = remoteAPIController.getAjaxAPIList(page, size, draw, sortColumn, direction,
-				searchValue, principal);
+				searchValue, principal, locale);
 
 		verify(remoteAPIService).search(any(Specification.class), eq(page), eq(size), any(Direction.class),
 				any(String.class));
@@ -212,7 +212,7 @@ public class RemoteAPIControllerTest {
 		when(remoteAPIService.read(apiId)).thenReturn(client);
 		when(projectRemoteService.list(client)).thenReturn(new ArrayList<>());
 		String connectToAPI = remoteAPIController.connectToAPI(apiId);
-		assertEquals("redirect:/remote_api/status", connectToAPI);
+		assertEquals("redirect:/remote_api", connectToAPI);
 	}
 
 	@Test
