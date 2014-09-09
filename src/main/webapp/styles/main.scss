@@ -32,7 +32,12 @@
 
 .modal-header {
   background-color: $color-primary;
-  color: $color-grey-lighter;
+  h2 {
+    color: #ffffff;
+  }
+  small {
+    color: $color-grey-lighter;
+  }
 }
 
 .modal-footer {

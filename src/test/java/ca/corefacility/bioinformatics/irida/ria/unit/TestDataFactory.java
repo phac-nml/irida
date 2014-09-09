@@ -23,7 +23,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class TestDataFactory {
-	public static final String FAKE_FILE_PATH = "src/test/resources/files/test_file{id}.fastq";
+	public static final String FAKE_FILE_PATH = "src/test/resources/files/{name}";
 	public static final String FAKE_EXECUTION_MANAGER_ID = "Whole Genome Phyogenomics Pipeline";
 
 	/**
@@ -45,7 +45,7 @@ public class TestDataFactory {
 	 * @return A fake sequence files with a randomly generated path.
 	 */
 	public static SequenceFile constructSequenceFile() {
-		Path path = Paths.get("/tmp/sequence-files/fake-file" + Math.random() + ".fast");
+		Path path = Paths.get("/tmp/sequence-files/fake-file1.fast");
 		return new SequenceFile(path);
 	}
 
@@ -70,18 +70,18 @@ public class TestDataFactory {
 		return analysisSubmission;
 	}
 
-	private static Analysis constructAnalysis() {
+	public static Analysis constructAnalysis() {
 		Set<SequenceFile> files = ImmutableSet.of(
 				constructSequenceFile()
 		);
 		AnalysisPhylogenomicsPipeline analysis = new AnalysisPhylogenomicsPipeline(files, FAKE_EXECUTION_MANAGER_ID);
-		analysis.setPhylogeneticTree(constructAnalysisOutputFile(""));
-		analysis.setSnpMatrix(constructAnalysisOutputFile("_1"));
-		analysis.setSnpTable(constructAnalysisOutputFile("_2"));
+		analysis.setPhylogeneticTree(constructAnalysisOutputFile("snp_tree.tree"));
+		analysis.setSnpMatrix(constructAnalysisOutputFile("test_file_1.fastq"));
+		analysis.setSnpTable(constructAnalysisOutputFile("test_file_2.fastq"));
 		return analysis;
 	}
 
-	private static AnalysisOutputFile constructAnalysisOutputFile(String id) {
-		return new AnalysisOutputFile(Paths.get(FAKE_FILE_PATH.replace("{id}", id)), FAKE_EXECUTION_MANAGER_ID);
+	private static AnalysisOutputFile constructAnalysisOutputFile(String name) {
+		return new AnalysisOutputFile(Paths.get(FAKE_FILE_PATH.replace("{name}", name)), FAKE_EXECUTION_MANAGER_ID);
 	}
 }

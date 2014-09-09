@@ -8,6 +8,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +23,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.ui.Model;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
@@ -47,6 +53,26 @@ public class AnalysisControllerTest {
 		analysisSubmissionServiceMock = mock(AnalysisSubmissionService.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, messageSourceMock);
+	}
+
+	// ************************************************************************************************
+	// PAGE TESTS
+	// ************************************************************************************************
+
+	@Test
+	public void testGetFigtreeAnalysis() throws IOException {
+		Long id = 1L;
+		ExtendedModelMap model = new ExtendedModelMap();
+		AnalysisSubmission analysisSubmission = TestDataFactory.constructAnalysisSubmission();
+
+		when(analysisSubmissionServiceMock.read(id)).thenReturn(analysisSubmission);
+		analysisController.getFigtreeAnalysis(id, model);
+		assertTrue(model.containsAttribute("analysis"));
+		assertTrue(model.containsAttribute("analysisSubmission"));
+		assertTrue(model.containsAttribute("newick"));
+		Path path = Paths.get(TestDataFactory.FAKE_FILE_PATH.replace("{name}", "snp_tree.tree"));
+		List<String> lines = Files.readAllLines(path);
+		assertEquals(lines.get(0), model.get("newick"));
 	}
 
 	// ************************************************************************************************
@@ -102,6 +128,6 @@ public class AnalysisControllerTest {
 		when(analysisSubmissionServiceMock.read(analysisSubmissionId)).thenReturn(TestDataFactory.constructAnalysisSubmission());
 		analysisController.getAjaxDownloadAnalysisSubmission(analysisSubmissionId, response);
 		assertEquals("Has the correct content type", "application/zip", response.getContentType());
-		assertEquals("Has the correct 'Content-Disposition' headers", "attachment;filename=submission-5", response.getHeader("Content-Disposition"));
+		assertEquals("Has the correct 'Content-Disposition' headers", "attachment;filename=submission-5.zip", response.getHeader("Content-Disposition"));
 	}
 }

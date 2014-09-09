@@ -22,6 +22,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,13 +33,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.ZipFileDownloader;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 
 import com.google.common.base.Strings;
-import liquibase.util.StringUtils;
 
 /**
  * Controller for Analysis.
@@ -56,9 +55,11 @@ public class AnalysisController {
 	// PAGES
 	private static final String BASE = "analysis/";
 	public static final String PAGE_ADMIN_ANALYSIS = BASE + "admin";
+	public static final String PAGE_FIGTREE_ANALYSIS_PREVIEW = BASE + "preview/figtree";
 
 	// URI's
 	private static final String URI_PAGE_ADMIN = "/admin";
+	private static final String URI_PAGE_FIGTREE_PREVIEW = "/preview/figtree/{analysisId}";
 	private static final String URI_AJAX_LIST_ALL_ANALYSIS = "/ajax/all";
 	private static final String URI_AJAX_FIGTREE = "/ajax/figtree";
 	private static final String URI_AJAX_DOWNLOAD = "/ajax/download/{analysisSubmissionId}";
@@ -87,6 +88,29 @@ public class AnalysisController {
 		logger.trace("Showing the Analysis Admin Page");
 		// TODO: (14-08-29 - Josh) Once individuals can own an analysis this needs to be only admin.
 		return PAGE_ADMIN_ANALYSIS;
+	}
+
+	/**
+	 * Get the page for previewing a figtree result
+	 *
+	 * @param analysisId
+	 * 		Id for the {@link AnalysisSubmission}
+	 * @param model
+	 * 		{@link Model}
+	 * @return Name of the page
+	 * @throws IOException
+	 */
+	@RequestMapping(URI_PAGE_FIGTREE_PREVIEW)
+	public String getFigtreeAnalysis(@PathVariable Long analysisId, Model model) throws IOException {
+		logger.trace("Getting the preview of the the figtree");
+		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(analysisId);
+		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) analysisSubmission.getAnalysis();
+		AnalysisOutputFile file = analysis.getPhylogeneticTree();
+		List<String> lines = Files.readAllLines(file.getFile());
+		model.addAttribute("analysis", analysis);
+		model.addAttribute("analysisSubmission", analysisSubmission);
+		model.addAttribute("newick", lines.get(0));
+		return PAGE_FIGTREE_ANALYSIS_PREVIEW;
 	}
 
 	// ************************************************************************************************
@@ -177,17 +201,5 @@ public class AnalysisController {
 		Analysis analysis = analysisSubmission.getAnalysis();
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
 		ZipFileDownloader.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
-	}
-
-	@RequestMapping(value = URI_AJAX_FIGTREE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Object> getAjaxFigtree(@RequestParam Long analysisId) throws IOException {
-		logger.debug("Getting FigTree data for analysis [" + analysisId + "]");
-		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(analysisId);
-		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) analysisSubmission.getAnalysis();
-		AnalysisOutputFile file = analysis.getPhylogeneticTree();
-		List<String> lines = Files.readAllLines(file.getFile());
-		Map<String, Object> response = new HashMap<>();
-		response.put("data", lines.get(0));
-		return response;
 	}
 }

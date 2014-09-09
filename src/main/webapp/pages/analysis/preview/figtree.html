@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <meta charset="UTF-8"/>
+    <title></title>
+    <link rel="stylesheet" th:href="@{/resources/bower_components/bootstrap/dist/css/bootstrap.min.css}"
+          href="/resources/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" th:href="@{/resources/bower_components/Font-Awesome/css/font-awesome.min.css}"
+          href="/resources/bower_components/Font-Awesome/css/font-awesome.min.css"/>
+</head>
+<body>
+<div class="btn-toolbar btn-xs pull-right">
+    <div class="btn-group">
+        <button id="saveBtn" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom"
+                th:title="#{form.save.image}">
+            <span class="fa fa-fw fa-save"></span>
+            <span class="sr-only" th:text="#{form.save.image}">Save Image</span>
+        </button>
+        <a class="btn btn-default" th:href="@{/analysis/ajax/download/{id}(id=${analysis.getId()})}" href="#"
+           data-toggle="tooltip" data-placement="bottom" th:title="#{form.download-files}">
+            <span class="fa fa-download fa-fw"></span>
+            <span class="sr-only" th:text="#{form.download-files}">Download Files</span>
+        </a>
+    </div>
+</div>
+<div id="phyloSVG"></div>
+<script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"
+        src="/resources/bower_components/jquery/dist/jquery.min.js"></script>
+<script th:src="@{/resources/bower_components/bootstrap/dist/js/bootstrap.min.js}"
+        src="/resources/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script th:src="@{/resources/bower_components/raphael/raphael-min.js}"
+        src="/resources/bower_components/raphael/raphael-min.js"></script>
+<script th:src="@{/resources/js/jsphylosvg-min.js}" src="/resources/js/jsphylosvg-min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var phylo;
+    $('.btn').tooltip();
+
+    $("#saveBtn").on('click', function() {
+        var name = /*[[${analysisSubmission.name}]]*/ 'unknown-analysis';
+        console.log('clicied');
+        var svgSource = phylo.getSvgSource();
+        var a = document.createElement('a');
+        a.download = name + ".svg";
+        a.href = "data:image/svg+xml," + svgSource;
+        a.click();
+    });
+
+    var newick = /*[[${newick}]]*/ '';
+    phylo = new Smits.PhyloCanvas({'newick': newick}, 'phyloSVG', window.innerWidth, 800, 'circular');
+
+
+    /*]]>*/
+</script>
+</body>
+</html>
