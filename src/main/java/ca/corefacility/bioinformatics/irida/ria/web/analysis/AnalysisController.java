@@ -55,11 +55,11 @@ public class AnalysisController {
 	// PAGES
 	private static final String BASE = "analysis/";
 	public static final String PAGE_ADMIN_ANALYSIS = BASE + "admin";
-	public static final String PAGE_FIGTREE_ANALYSIS_PREVIEW = BASE + "preview/figtree";
+	public static final String PAGE_TREE_ANALYSIS_PREVIEW = BASE + "preview/tree";
 
 	// URI's
 	private static final String URI_PAGE_ADMIN = "/admin";
-	private static final String URI_PAGE_FIGTREE_PREVIEW = "/preview/figtree/{analysisId}";
+	private static final String URI_PAGE_TREE_PREVIEW = "/preview/tree/{analysisId}";
 	private static final String URI_AJAX_LIST_ALL_ANALYSIS = "/ajax/all";
 	private static final String URI_AJAX_DOWNLOAD = "/ajax/download/{analysisSubmissionId}";
 
@@ -90,7 +90,7 @@ public class AnalysisController {
 	}
 
 	/**
-	 * Get the page for previewing a figtree result
+	 * Get the page for previewing a tree result
 	 *
 	 * @param analysisId
 	 * 		Id for the {@link AnalysisSubmission}
@@ -99,9 +99,9 @@ public class AnalysisController {
 	 * @return Name of the page
 	 * @throws IOException
 	 */
-	@RequestMapping(URI_PAGE_FIGTREE_PREVIEW)
-	public String getFigtreeAnalysis(@PathVariable Long analysisId, Model model) throws IOException {
-		logger.trace("Getting the preview of the the figtree");
+	@RequestMapping(URI_PAGE_TREE_PREVIEW)
+	public String getTreeAnalysis(@PathVariable Long analysisId, Model model) throws IOException {
+		logger.trace("Getting the preview of the the tree");
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(analysisId);
 		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) analysisSubmission.getAnalysis();
 		AnalysisOutputFile file = analysis.getPhylogeneticTree();
@@ -109,7 +109,7 @@ public class AnalysisController {
 		model.addAttribute("analysis", analysis);
 		model.addAttribute("analysisSubmission", analysisSubmission);
 		model.addAttribute("newick", lines.get(0));
-		return PAGE_FIGTREE_ANALYSIS_PREVIEW;
+		return PAGE_TREE_ANALYSIS_PREVIEW;
 	}
 
 	// ************************************************************************************************

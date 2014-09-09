@@ -24,9 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ExtendedModelMap;
-import org.springframework.ui.Model;
 
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
@@ -60,13 +58,13 @@ public class AnalysisControllerTest {
 	// ************************************************************************************************
 
 	@Test
-	public void testGetFigtreeAnalysis() throws IOException {
+	public void testGetTreeAnalysis() throws IOException {
 		Long id = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 		AnalysisSubmission analysisSubmission = TestDataFactory.constructAnalysisSubmission();
 
 		when(analysisSubmissionServiceMock.read(id)).thenReturn(analysisSubmission);
-		analysisController.getFigtreeAnalysis(id, model);
+		analysisController.getTreeAnalysis(id, model);
 		assertTrue(model.containsAttribute("analysis"));
 		assertTrue(model.containsAttribute("analysisSubmission"));
 		assertTrue(model.containsAttribute("newick"));

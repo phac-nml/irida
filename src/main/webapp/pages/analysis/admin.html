@@ -166,11 +166,11 @@
                     <td class="text-right">
                         <!-- TODO: Make as directive -->
                         <div class="btn-group" ng-show="a.status == 'COMPLETED'"
-                             ng-controller="FigtreeModalCtrl as figtree">
+                             ng-controller="TreeModalCtrl as tree">
                             <button class="btn btn-default btn-xs"
                                     th:attr="tooltip=#{form.preview}"
                                     ng-show="a.typeId =='1'"
-                                    ng-click="figtree.open(a)"><span
+                                    ng-click="tree.open(a)"><span
                                     class="fa fa-eye fa-fw"></span>
                             </button>
                             <a class="btn btn-default btn-xs" ng-href="{{table.url}}/download/{{a.id}}" href="#"
@@ -205,7 +205,7 @@
                             </span>
                 </a>
             </script>
-            <script type="text/ng-template" id="figtreeModal.html">
+            <script type="text/ng-template" id="treeModal.html">
                 <div class="modal-header">
                     <button type="button" class="close" ng-click="close()"><span
                             aria-hidden="true">&times;</span><span
@@ -355,7 +355,7 @@ app.directive('sortBy', function () {
     };
 });
 
-app.controller('FigtreeModalCtrl', FigtreeModalCtrl);
+app.controller('TreeModalCtrl', TreeModalCtrl);
 
 app.controller('AnalysisTableCtrl', function ($scope, $sce, api, baseUrl) {
     'use strict';
@@ -508,13 +508,13 @@ app.controller('AnalysisTableCtrl', function ($scope, $sce, api, baseUrl) {
 /*[- */
 // Controller for handling the open figtee preview button
 /* -]*/
-function FigtreeModalCtrl($scope, $modal) {
+function TreeModalCtrl($scope, $modal) {
     'use strict';
     var tree = this;
 
     tree.open = function (analysis) {
         $modal.open({
-            templateUrl: 'figtreeModal.html',
+            templateUrl: 'treeModal.html',
             controller: PhyloSVGCtrl,
             size: 'lg',
             resolve: {
@@ -527,13 +527,13 @@ function FigtreeModalCtrl($scope, $modal) {
 }
 
 /*[- */
-// This is the controller for when the figtree preview is open.
-// TODO: when there are more analysis types this will need to be updated to figtree url not standard.
+// This is the controller for when the tree preview is open.
+// TODO: when there are more analysis types this will need to be updated to tree url not standard.
 /* -]*/
 function PhyloSVGCtrl($scope, $modalInstance, baseUrl, analysis) {
     'use strict';
     $scope.analysis = analysis;
-    $scope.iFrameSRC = baseUrl + 'preview/figtree/' + analysis.id;
+    $scope.iFrameSRC = baseUrl + 'preview/tree/' + analysis.id;
     $scope.close = function () {
         $modalInstance.close();
     };
