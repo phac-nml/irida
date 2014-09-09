@@ -473,9 +473,14 @@ app.controller('AnalysisTableCtrl', function ($scope, $sce, api, baseUrl) {
         table.filterPromise = api.analysis.search(table.filterCriteria);
 
         return table.filterPromise.then(function (data) {
-            table.analysis = data.analysis;
-            table.paging.totalAnalysis = data.totalAnalysis;
-            table.paging.totalPages = data.totalPages;
+            if (data.hasOwnProperty('analysis')) {
+                table.analysis = data.analysis;
+                table.paging.totalAnalysis = data.totalAnalysis;
+                table.paging.totalPages = data.totalPages;
+            } else {
+                // Normally will only hit on bad credentials.
+                window.location = window.location;
+            }
         }, function () {
             table.analysis = [];
         });
