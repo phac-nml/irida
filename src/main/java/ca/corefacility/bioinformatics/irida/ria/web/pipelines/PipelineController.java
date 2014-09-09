@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -159,8 +160,8 @@ public class PipelineController extends BaseController {
 		try {
 			startPipeline(pId, name);
 			result.add(ImmutableMap.of("success", "success"));
-		} catch (ConstraintViolationException e) {
-			logger.error("Error starting pipeline (id = " + pId + ") [" + e.getMessage() + "]");
+		} catch (EntityExistsException | ConstraintViolationException e) {
+			logger.error("Error submitting pipeline (id = " + pId + ") [" + e.getMessage() + "]");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			result.add(ImmutableMap.of("error", messageSource.getMessage("pipelines.start.failure", null,
 					LocaleContextHolder.getLocale())));
