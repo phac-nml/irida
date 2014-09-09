@@ -12,6 +12,7 @@
         <div class="col-md-12">
             <main role="main" property="mainContentOfPage">
                 <h1 th:text="#{remoteapi.title}">_Clients_</h1>
+                <p th:text="#{remoteapi.status.description}">_Connect links on this page will redirect you to a remote IRIDA site._</p>
                 <a href="/clients/create" sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/remote_api/create}" th:text="#{remoteapi.add}" class="btn btn-default">_Add Client_</a>
                 <table id="remoteapiTable" class="table table-striped table-hover">
                 <thead>
