@@ -42,7 +42,7 @@ import nz.net.ultraq.thymeleaf.LayoutDialect;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.ria" })
-@Import({ IridaApiServicesConfig.class, WebSecurityConfig.class, WebEmailConfig.class })
+@Import({ IridaApiServicesConfig.class, WebSecurityConfig.class, WebEmailConfig.class, OAuth2Configuration.class })
 public class WebConfigurer extends WebMvcConfigurerAdapter {
 	private static final String SPRING_PROFILE_PRODUCTION = "prod";
 	private static final String TEMPLATE_LOCATION = "/pages/";
@@ -82,13 +82,13 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		source.setBasenames(RESOURCE_LOCATIONS);
 		source.setFallbackToSystemLocale(false);
 		source.setDefaultEncoding(DEFAULT_ENCODING);
-		
+
 		// Set template cache timeout if in production
 		// Don't cache at all if in development
 		if (!env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
 			source.setCacheSeconds(0);
 		}
-				
+
 		return source;
 	}
 
