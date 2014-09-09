@@ -277,7 +277,7 @@ public class RemoteAPIController extends BaseController {
 		RemoteAPI api = remoteAPIService.read(apiId);
 		projectRemoteService.list(api);
 
-		return "redirect:/remote_api/status";
+		return "redirect:/remote_api";
 	}
 
 	/**
