@@ -71,7 +71,8 @@
                     	"sortable": false,
                     	"render": function (data, type, row) {
                     		var id = "status-" + row.id;
-                    		var span = "<div data-api-id='"+row.id+"' class='connection-status' id="+ id + ">Waiting for response...</div>";
+                    		var statusText = /*[[#{remoteapi.status.waiting}]]*/ "Waiting for response...";
+                    		var span = "<div data-api-id='"+row.id+"' class='connection-status' id="+ id + ">"+statusText+"</div>";
                     		return span;
                     	}
                     },
