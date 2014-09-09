@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
@@ -48,6 +49,10 @@ public class AnalysisControllerTest {
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, messageSourceMock);
 	}
 
+	// ************************************************************************************************
+	// AJAX TESTS
+	// ************************************************************************************************
+
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testGetAjaxListAllAnalysis() throws IOException {
@@ -56,8 +61,8 @@ public class AnalysisControllerTest {
 		String sortDirParam = "desc";
 		String sortedByParam = "createdDate";
 
-		AnalysisSubmission analysisSubmission1 = TestDataFactory.constrctAnalysisSubmission();
-		AnalysisSubmission analysisSubmission2 = TestDataFactory.constrctAnalysisSubmission();
+		AnalysisSubmission analysisSubmission1 = TestDataFactory.constructAnalysisSubmission();
+		AnalysisSubmission analysisSubmission2 = TestDataFactory.constructAnalysisSubmission();
 		ImmutableList<AnalysisSubmission> analysisList = ImmutableList.of(analysisSubmission1, analysisSubmission2);
 		Page<AnalysisSubmission> analysisSubmissionPage = new PageImpl<>(analysisList);
 
@@ -87,5 +92,16 @@ public class AnalysisControllerTest {
 
 		// Make sure that the total is correctly set.
 		assertEquals("total is correctly set.", (long) analysisList.size(), map.get("totalAnalysis"));
+	}
+
+	@Test
+	public void TestGetAjaxDownloadAnalysisSubmission() throws IOException {
+		Long analysisSubmissionId = 1L;
+		MockHttpServletResponse response = new MockHttpServletResponse();
+
+		when(analysisSubmissionServiceMock.read(analysisSubmissionId)).thenReturn(TestDataFactory.constructAnalysisSubmission());
+		analysisController.getAjaxDownloadAnalysisSubmission(analysisSubmissionId, response);
+		assertEquals("Has the correct content type", "application/zip", response.getContentType());
+		assertEquals("Has the correct 'Content-Disposition' headers", "attachment;filename=submission-5", response.getHeader("Content-Disposition"));
 	}
 }

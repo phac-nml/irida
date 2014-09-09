@@ -1,0 +1,69 @@
+package ca.corefacility.bioinformatics.irida.ria.utilities;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Set;
+import java.util.zip.Deflater;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+
+/**
+ * Download a zip archive of all output files within an {@link AnalysisSubmission}
+ *
+ * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
+ * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ */
+public class ZipFileDownloader {
+	private static final Logger logger = LoggerFactory.getLogger(ZipFileDownloader.class);
+
+	public static void createAnalysisOutputFileZippedResponse(HttpServletResponse response, String fileName, Set<AnalysisOutputFile> files) throws IOException {
+		logger.debug("Creating zipped file response. [" + fileName + "]");
+
+		try (ZipOutputStream outputStream = new ZipOutputStream(response.getOutputStream())) {
+
+			for (AnalysisOutputFile file : files) {
+				if (!Files.exists(file.getFile())) {
+					response.setStatus(404);
+					throw new FileNotFoundException();
+				}
+				// 1) Build a folder/file name
+				StringBuilder zipEntryName = new StringBuilder(fileName);
+				zipEntryName.append("/").append(file.getFile().getFileName().toString());
+
+				// 2) Tell the zip stream that we are starting a new entry in the archive.
+				outputStream.putNextEntry(new ZipEntry(zipEntryName.toString()));
+
+				// 3) COPY all of thy bytes from the file to the output stream.
+				Files.copy(file.getFile(), outputStream);
+
+				// 4) Close the current entry in the archive in preparation for the next entry.
+				outputStream.closeEntry();
+			}
+			// Tell the output stream that you are finished downloading.
+			outputStream.finish();
+
+			// Set the response headers
+			response.setHeader( "Content-Disposition", "attachment;filename=" + fileName + ".zip");
+			//for zip file
+			response.setContentType("application/zip");
+		} catch (IOException e) {
+			// this generally means that the user has cancelled the download
+			// from their web browser; we can safely ignore this
+			logger.debug("This *probably* means that the user cancelled the download, "
+					+ "but it might be something else, see the stack trace below for more information.", e);
+		} catch (Exception e) {
+			logger.error("Download failed...", e);
+		} finally {
+			response.getOutputStream().close();
+		}
+	}
+}
