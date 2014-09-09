@@ -101,7 +101,7 @@ public class PipelineController extends BaseController {
 
 	/**
 	 * Get a list of pipelines that can be run on the dataset provided
-	 * @return
+	 * @return  A list of pipeline types and names that can be run on the provided dataset.
 	 */
 	@RequestMapping(value = URI_LIST_PIPELINES, method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
@@ -142,10 +142,10 @@ public class PipelineController extends BaseController {
 	/**
 	 * Start a new pipeline based on the pipeline id
 	 *
-	 * @param pId      Id for the pipeline
+	 * @param pId      Id for the type of pipeline
 	 * @param rId      Id for the reference file
 	 * @param response {@link HttpServletResponse}
-	 * @return
+	 * @return  A response defining the status of the pipeline submission (success or failure).
 	 */
 	@RequestMapping(value = URI_AJAX_START_PIPELINE, produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)
