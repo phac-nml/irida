@@ -33,11 +33,13 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.ZipFileDownloader;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for Analysis.
@@ -47,6 +49,10 @@ import com.google.common.base.Strings;
 @Controller
 @RequestMapping("/analysis")
 public class AnalysisController {
+	private static final Map<String, String> ANALYSIS_TYPE_NAMES = ImmutableMap.of("1",
+			"Whole Genome Phylogenomics Pipeline", "2", "Other Analysis Submission");
+	private static final Map<Class<? extends AnalysisSubmission>, String> ANALYSIS_TYPE_IDS = ImmutableMap.of(
+			AnalysisSubmissionPhylogenomics.class, "1", AnalysisSubmission.class, "2");
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
 	/*
 	 * CONSTANTS
@@ -85,7 +91,8 @@ public class AnalysisController {
 	@RequestMapping(URI_PAGE_ADMIN)
 	public String getPageAdminAnalysis() {
 		logger.trace("Showing the Analysis Admin Page");
-		// TODO: (14-08-29 - Josh) Once individuals can own an analysis this needs to be only admin.
+		// TODO: (14-08-29 - Josh) Once individuals can own an analysis this
+		// needs to be only admin.
 		return PAGE_ADMIN_ANALYSIS;
 	}
 
@@ -93,9 +100,9 @@ public class AnalysisController {
 	 * Get the page for previewing a tree result
 	 *
 	 * @param analysisId
-	 * 		Id for the {@link AnalysisSubmission}
+	 *            Id for the {@link AnalysisSubmission}
 	 * @param model
-	 * 		{@link Model}
+	 *            {@link Model}
 	 * @return Name of the page
 	 * @throws IOException
 	 */
@@ -120,21 +127,21 @@ public class AnalysisController {
 	 * Get a list of analysis by page and filter
 	 *
 	 * @param page
-	 * 		Current page being displayed
+	 *            Current page being displayed
 	 * @param count
-	 * 		Number of analysis per page
+	 *            Number of analysis per page
 	 * @param sortedBy
-	 * 		field to sort by
+	 *            field to sort by
 	 * @param sortDir
-	 * 		direction to sort by
+	 *            direction to sort by
 	 * @param state
-	 * 		AnalysisSubmission state
+	 *            AnalysisSubmission state
 	 * @param nameFilter
-	 * 		text to filter the name by
+	 *            text to filter the name by
 	 * @param minDateFilter
-	 * 		date to filter out anything previous
+	 *            date to filter out anything previous
 	 * @param maxDateFilter
-	 * 		date to filter out anything after
+	 *            date to filter out anything after
 	 * @return JSON object with analysis, total pages, and total analysis
 	 * @throws IOException
 	 */
@@ -146,10 +153,8 @@ public class AnalysisController {
 			@RequestParam String sortDir,
 			@RequestParam(required = false) String state,
 			@RequestParam(value = "name", required = false) String nameFilter,
-			@RequestParam(value = "minDate", required = false) @DateTimeFormat(
-					iso = DateTimeFormat.ISO.DATE_TIME) Date minDateFilter,
-			@RequestParam(value = "maxDate", required = false) @DateTimeFormat(
-					iso = DateTimeFormat.ISO.DATE_TIME) Date maxDateFilter)
+			@RequestParam(value = "minDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date minDateFilter,
+			@RequestParam(value = "maxDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date maxDateFilter)
 			throws IOException {
 		Map<String, Object> result = new HashMap<>();
 
@@ -162,18 +167,22 @@ public class AnalysisController {
 			stateFilter = filter.getState();
 		}
 
-		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
-				.searchAnalysis(nameFilter, stateFilter, minDateFilter, maxDateFilter);
-		Page<AnalysisSubmission> analysisPage = analysisSubmissionService
-				.search(specification, page, count, order, sortedBy);
+		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification.searchAnalysis(nameFilter,
+				stateFilter, minDateFilter, maxDateFilter);
+		Page<AnalysisSubmission> analysisPage = analysisSubmissionService.search(specification, page, count, order,
+				sortedBy);
 
 		List<Map<String, String>> analysisList = new ArrayList<>();
 		for (AnalysisSubmission analysisSubmission : analysisPage.getContent()) {
+			String typeId = ANALYSIS_TYPE_IDS.get(analysisSubmission.getClass());
+			String type = ANALYSIS_TYPE_NAMES.get(typeId);
+
 			Map<String, String> map = new HashMap<>();
 			map.put("id", analysisSubmission.getId().toString());
 			map.put("name", analysisSubmission.getName());
-			map.put("type", "Whole Genome Phylogenomics Pipeline"); // TODO: (14-09-05 - Josh) How to actual get this?
-			map.put("typeId", "1");
+			// TODO: (14-09-05- Josh) How to actual get this?
+			map.put("type", type);
+			map.put("typeId", typeId);
 			map.put("status", analysisSubmission.getAnalysisState().toString());
 			map.put("createdDate", String.valueOf(analysisSubmission.getCreatedDate().getTime()));
 			analysisList.add(map);
@@ -189,13 +198,14 @@ public class AnalysisController {
 	 * Download all output files from an {@link AnalysisSubmission}
 	 *
 	 * @param analysisSubmissionId
-	 * 		Id for a {@link AnalysisSubmission}
+	 *            Id for a {@link AnalysisSubmission}
 	 * @param response
-	 * 		{@link HttpServletResponse}
+	 *            {@link HttpServletResponse}
 	 * @throws IOException
 	 */
 	@RequestMapping(value = URI_AJAX_DOWNLOAD, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void getAjaxDownloadAnalysisSubmission(@PathVariable Long analysisSubmissionId, HttpServletResponse response) throws IOException {
+	public void getAjaxDownloadAnalysisSubmission(@PathVariable Long analysisSubmissionId, HttpServletResponse response)
+			throws IOException {
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(analysisSubmissionId);
 		Analysis analysis = analysisSubmission.getAnalysis();
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
