@@ -33,22 +33,18 @@ import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.oauth.OltuAuthorizationController;
 import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.remote.model.RemoteProject;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.Lists;
 
 public class RemoteAPIControllerTest {
 	private RemoteAPIController remoteAPIController;
 	private RemoteAPIService remoteAPIService;
-	private UserService userService;
 	private ProjectRemoteService projectRemoteService;
 	private OltuAuthorizationController authController;
 	private MessageSource messageSource;
@@ -61,10 +57,9 @@ public class RemoteAPIControllerTest {
 	public void setUp() {
 		remoteAPIService = mock(RemoteAPIService.class);
 		messageSource = mock(MessageSource.class);
-		userService = mock(UserService.class);
 		projectRemoteService = mock(ProjectRemoteService.class);
 		authController = mock(OltuAuthorizationController.class);
-		remoteAPIController = new RemoteAPIController(remoteAPIService, userService, projectRemoteService,
+		remoteAPIController = new RemoteAPIController(remoteAPIService, projectRemoteService,
 				authController, messageSource);
 		locale = LocaleContextHolder.getLocale();
 
@@ -92,12 +87,8 @@ public class RemoteAPIControllerTest {
 		RemoteAPI api2 = new RemoteAPI("api name 2", "http://nowhere", "another api", "client2", "secret2");
 		api2.setId(2l);
 
-		User u = new User();
-		u.setSystemRole(Role.ROLE_ADMIN);
-
 		Page<RemoteAPI> apiPage = new PageImpl<>(Lists.newArrayList(api1, api2));
 
-		when(userService.getUserByUsername(USER_NAME)).thenReturn(u);
 		when(
 				remoteAPIService.search(any(Specification.class), eq(page), eq(size), any(Direction.class),
 						any(String.class))).thenReturn(apiPage);
@@ -172,12 +163,6 @@ public class RemoteAPIControllerTest {
 		assertTrue(errors.containsKey("serviceURI"));
 
 		verify(remoteAPIService).create(client);
-	}
-
-	@Test
-	public void testgetConnectionStatusPage() {
-		String connectionStatusPage = remoteAPIController.getConnectionStatusPage();
-		assertEquals(RemoteAPIController.STATUS_PAGE, connectionStatusPage);
 	}
 
 	@Test
