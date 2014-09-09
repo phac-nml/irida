@@ -12,13 +12,15 @@
         <div class="col-md-12">
             <main role="main" property="mainContentOfPage">
                 <h1 th:text="#{remoteapi.title}">_Clients_</h1>
-                <a href="/clients/create" th:href="@{/remote_api/create}" th:text="#{remoteapi.add}" class="btn btn-default">_Add Client_</a>
+                <p th:text="#{remoteapi.status.description}">_Connect links on this page will redirect you to a remote IRIDA site._</p>
+                <a href="/clients/create" sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/remote_api/create}" th:text="#{remoteapi.add}" class="btn btn-default">_Add Client_</a>
                 <table id="remoteapiTable" class="table table-striped table-hover">
                 <thead>
                 <tr th:inline="text">
                     <th id="name-header">[[#{remoteapi.name}]]<i class="glyphicon"></i></th>
-                    <th id="clientid-header">[[#{remoteapi.clientid}]]<i class="glyphicon"></i></th>
                     <th id="created-header">[[#{iridaThing.timestamp}]]<i class="glyphicon"></i></th>
+                    <th id="status-header">[[#{remoteapi.status}]]</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody id="remoteapi-table-body"></tbody>
@@ -26,10 +28,18 @@
             </main>
         </div>
     </div>
+    <script sec:authorize="hasRole('ROLE_ADMIN')" type="x-tmpl-mustache" id="api-name-template">
+    	<a class="api-name" th:href="@{/remote_api/{{apiId}}}">{{name}}</a>
+	</script>
+    <script sec:authorize="!hasRole('ROLE_ADMIN')" type="x-tmpl-mustache" id="api-name-template">
+    	<span class="api-name">{{name}}</span>
+    </script>
+	
 </div>
 <div layout:fragment="scripts">
     <script th:src="@{/resources/wet-theme/js/deps/jquery.dataTables.min.js}"
             src="/resources/wet-theme/js/deps/jquery.dataTables.min.js"></script>
+    <script th:src="@{/resources/bower_components/mustache/mustache.js}" src="/resources/bower_components/mustache/mustache.js"></script>
     <script th:inline="javascript">
         /*<![CDATA[*/
         $(document).ready(function () {
@@ -46,20 +56,87 @@
                     {
                     	"data": "name",
                     	"render": function (data, type, row) {
-	                         var urlbase = /*[[@{/remote_api/}]]*/ '/remote_api/';
-                             return '<a class="remoteApiLink" href="' + urlbase + row.id + '">' + data + '</a>';
+                    		 var template = $('#api-name-template').html();
+	                         var content = Mustache.render(template, {
+	         					apiId: row.id,
+	         					name: data
+	         				 });
+                             return content;
                          }
                     },
                     {
-                    	"data": "clientId"
+                    	"data": "createdDate"
                     },
                     {
-                    	"data": "createdDate"
+                    	"sortable": false,
+                    	"render": function (data, type, row) {
+                    		var id = "status-" + row.id;
+                    		var statusText = /*[[#{remoteapi.status.waiting}]]*/ "Waiting for response...";
+                    		var span = "<div data-api-id='"+row.id+"' class='connection-status' id="+ id + ">"+statusText+"</div>";
+                    		return span;
+                    	}
+                    },
+                    {
+                    	"sortable": false,
+                    	render: function(data, type, row){
+                    		var connectUrlBase = /*[[@{/remote_api/connect/}]]*/ "/remote_api/connect";
+                    		var id="connect-button-"+row.id;
+                    		
+                    		var connectText = /*[[#{remoteapi.status.connect.button}]]*/ 'Connect';
+
+                    		var button = "<a href='"+connectUrlBase + row.id+"' id='"+ id +"' class='btn btn-default btn-xs hidden'>"+connectText+"</a>";
+							return button;
+                    	}
                     }
-                ]
+                    
+                ],
+                drawCallback: function( row, data, dataIndex ) {
+                	$(".connection-status").each(function(){
+                		getApiStatus($(this));
+                	});
+                    
+                }
                 
             });
         });
+        
+        function getApiStatus(div){
+        	var apiId = div.data("api-id");
+        	var urlBase = /*[[@{/remote_api/status/}]]*/ '/remote_api/status/'
+        	var invalidTokenText = /*[[#{remoteapi.status.invalid}]]*/ "Expired Token";
+        	var validTokenText = /*[[#{remoteapi.status.valid}]]*/ "Valid Token";
+        	var errorText = /*[[#{remoteapi.status.error}]]*/ "Connection Error";
+        	        	
+        	
+        	var span = document.createElement("span");
+        	
+        	$.ajax({
+        		url: urlBase + apiId,
+        		type: "POST",
+        		success: function(data, textStatus, jqXHR){
+        			if(data == "valid"){
+        				span.className="label label-success";
+        				span.innerHTML = validTokenText;
+        				div.html(span);
+        			}
+        			else if(data == "invalid_token" || data == "inactive"){
+        				span.className="label label-warning";
+        				span.innerHTML = invalidTokenText;
+        				
+        				// display the connect button
+        				var buttonId = "#connect-button-" + apiId;
+        				$(buttonId).removeClass("hidden");
+        				
+        				div.html(span);
+        			}
+        		},
+        		error: function(data, textStatus, jqXHR){
+        			span.className="label label-danger";
+        			span.innerHTML = errorText;
+        			div.html(span);
+        		}
+        	});
+        }
         /*]]>*/
     </script>
 </div>

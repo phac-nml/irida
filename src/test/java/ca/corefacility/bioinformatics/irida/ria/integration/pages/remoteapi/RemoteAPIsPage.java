@@ -37,10 +37,10 @@ public class RemoteAPIsPage {
 		return element.findElements(By.tagName("tr")).size();
 	}
 
-	public boolean checkRemoteApiExistsInTable(String clientId) {
-		List<WebElement> findElements = driver.findElements(By.className("remoteApiLink"));
+	public boolean checkRemoteApiExistsInTable(String clientName) {
+		List<WebElement> findElements = driver.findElements(By.className("api-name"));
 		for (WebElement ele : findElements) {
-			if (ele.getText().equals(clientId)) {
+			if (ele.getText().equals(clientName)) {
 				return true;
 			}
 		}
