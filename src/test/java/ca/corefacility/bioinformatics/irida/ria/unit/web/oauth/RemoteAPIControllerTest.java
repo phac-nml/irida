@@ -10,10 +10,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.net.MalformedURLException;
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
@@ -25,17 +31,25 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.ExtendedModelMap;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
+import ca.corefacility.bioinformatics.irida.ria.web.oauth.OltuAuthorizationController;
 import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import ca.corefacility.bioinformatics.irida.service.remote.model.RemoteProject;
 
 import com.google.common.collect.Lists;
 
 public class RemoteAPIControllerTest {
 	private RemoteAPIController remoteAPIController;
 	private RemoteAPIService remoteAPIService;
+	private ProjectRemoteService projectRemoteService;
+	private OltuAuthorizationController authController;
 	private MessageSource messageSource;
+
+	private static final String USER_NAME = "testme";
 
 	private Locale locale;
 
@@ -43,7 +57,10 @@ public class RemoteAPIControllerTest {
 	public void setUp() {
 		remoteAPIService = mock(RemoteAPIService.class);
 		messageSource = mock(MessageSource.class);
-		remoteAPIController = new RemoteAPIController(remoteAPIService, messageSource);
+		projectRemoteService = mock(ProjectRemoteService.class);
+		authController = mock(OltuAuthorizationController.class);
+		remoteAPIController = new RemoteAPIController(remoteAPIService, projectRemoteService, authController,
+				messageSource);
 		locale = LocaleContextHolder.getLocale();
 
 	}
@@ -63,6 +80,7 @@ public class RemoteAPIControllerTest {
 		int sortColumn = 0;
 		String direction = "asc";
 		String searchValue = "";
+		Principal principal = () -> USER_NAME;
 
 		RemoteAPI api1 = new RemoteAPI("api name", "http://somewhere", "an api", "client1", "secret1");
 		api1.setId(1l);
@@ -76,7 +94,7 @@ public class RemoteAPIControllerTest {
 						any(String.class))).thenReturn(apiPage);
 
 		Map<String, Object> ajaxAPIList = remoteAPIController.getAjaxAPIList(page, size, draw, sortColumn, direction,
-				searchValue);
+				searchValue, principal, locale);
 
 		verify(remoteAPIService).search(any(Specification.class), eq(page), eq(size), any(Direction.class),
 				any(String.class));
@@ -145,5 +163,80 @@ public class RemoteAPIControllerTest {
 		assertTrue(errors.containsKey("serviceURI"));
 
 		verify(remoteAPIService).create(client);
+	}
+
+	@Test
+	public void testCheckApiStatusActive() {
+		Long apiId = 1l;
+		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
+		ArrayList<RemoteProject> remoteProjects = Lists.newArrayList(new RemoteProject());
+		when(remoteAPIService.read(apiId)).thenReturn(client);
+		when(projectRemoteService.list(client)).thenReturn(remoteProjects);
+		String checkApiStatus = remoteAPIController.checkApiStatus(apiId);
+
+		assertEquals(RemoteAPIController.VALID_OAUTH_CONNECTION, checkApiStatus);
+
+		verify(remoteAPIService).read(apiId);
+		verify(projectRemoteService).list(client);
+	}
+
+	@Test
+	public void testCheckApiStatusInactive() {
+		Long apiId = 1l;
+		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
+
+		when(remoteAPIService.read(apiId)).thenReturn(client);
+		when(projectRemoteService.list(client)).thenThrow(new IridaOAuthException("invalid token", client));
+
+		String checkApiStatus = remoteAPIController.checkApiStatus(apiId);
+
+		assertEquals(RemoteAPIController.INVALID_OAUTH_TOKEN, checkApiStatus);
+
+		verify(remoteAPIService).read(apiId);
+		verify(projectRemoteService).list(client);
+	}
+
+	@Test(expected = IridaOAuthException.class)
+	public void testConnectToAPI() {
+		Long apiId = 1l;
+		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
+		when(remoteAPIService.read(apiId)).thenReturn(client);
+		when(projectRemoteService.list(client)).thenThrow(new IridaOAuthException("invalid token", client));
+		remoteAPIController.connectToAPI(apiId);
+	}
+
+	@Test
+	public void testConnectToAPIActiveToken() {
+		Long apiId = 1l;
+		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
+		when(remoteAPIService.read(apiId)).thenReturn(client);
+		when(projectRemoteService.list(client)).thenReturn(new ArrayList<>());
+		String connectToAPI = remoteAPIController.connectToAPI(apiId);
+		assertEquals("redirect:/remote_api", connectToAPI);
+	}
+
+	@Test
+	public void testRead() {
+		Long apiId = 1l;
+		ExtendedModelMap model = new ExtendedModelMap();
+
+		remoteAPIController.read(apiId, model);
+
+		verify(remoteAPIService).read(apiId);
+
+		assertTrue(model.containsAttribute("remoteApi"));
+	}
+
+	@Test
+	public void testHandleOAuthException() throws MalformedURLException, OAuthSystemException {
+		HttpServletRequest request = mock(HttpServletRequest.class);
+		String redirect = "http://request";
+		when(request.getRequestURI()).thenReturn(redirect);
+
+		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
+		IridaOAuthException ex = new IridaOAuthException("msg", client);
+
+		remoteAPIController.handleOAuthException(request, ex);
+		verify(authController).authenticate(client, redirect);
 	}
 }
