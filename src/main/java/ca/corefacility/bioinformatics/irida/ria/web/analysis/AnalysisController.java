@@ -208,9 +208,4 @@ public class AnalysisController {
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
 		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
 	}
-
-	@RequestMapping("/ajax/download/svg")
-	public void getAjaxDownloadSVG(@RequestParam String svg, @RequestParam String name, HttpServletResponse response) throws IOException {
-		FileUtilities.createSVGDownload(response, svg, name);
-	}
 }

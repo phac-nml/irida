@@ -10,7 +10,6 @@ import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -27,13 +26,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -41,15 +37,12 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -86,7 +79,6 @@ public class ProjectsControllerTest {
 	private ProjectsController controller;
 	private SampleService sampleService;
 	private UserService userService;
-	private SequenceFileService sequenceFileService;
 	private ReferenceFileService referenceFileService;
 	private ProjectControllerUtils projectUtils;
 	private TaxonomyService taxonomyService;
@@ -96,11 +88,10 @@ public class ProjectsControllerTest {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
 		userService = mock(UserService.class);
-		sequenceFileService = mock(SequenceFileService.class);
 		taxonomyService = mock(TaxonomyService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
 		referenceFileService = mock(ReferenceFileService.class);
-		controller = new ProjectsController(projectService, sampleService, userService, sequenceFileService,
+		controller = new ProjectsController(projectService, sampleService, userService,
 				projectUtils, referenceFileService, taxonomyService);
 		user.setId(1L);
 
@@ -114,37 +105,7 @@ public class ProjectsControllerTest {
 		assertEquals(ProjectsController.LIST_PROJECTS_PAGE, page);
 	}
 
-	@Test
-	public void testGetAjaxProjectSamplesMap() {
-		Project project = getProject();
-		Page<ProjectSampleJoin> page = getSamplesForProjectPage(project);
-
-		when(projectService.read(anyLong())).thenReturn(project);
-		when(
-				sampleService.getSamplesForProjectWithName(any(Project.class), anyString(), anyInt(), anyInt(), any(),
-						anyString())).thenReturn(page);
-		when(sequenceFileService.getSequenceFilesForSample(any(Sample.class))).thenReturn(getSequenceFilesForSample());
-
-		Map<String, Object> response = controller.getAjaxProjectSamplesMap(1L, 0, 10, 1, 4, "asc", "");
-
-		// Make sure it has the expected keys:
-		checkAjaxDataTableResponse(response);
-
-		// Check out the samples
-		Object listObject = response.get(DataTable.RESPONSE_PARAM_DATA);
-		assertTrue("Samples list really is a list", listObject instanceof List);
-		@SuppressWarnings("unchecked")
-		List<HashMap<String, Object>> samplesList = (List<HashMap<String, Object>>) listObject;
-
-		assertEquals("Has the correct number of samples", 10, samplesList.size());
-		// Get a token sample data and make sure it is correct
-		HashMap<String, Object> sample = samplesList.get(0);
-		assertTrue("Has a key of 'id'", sample.containsKey("id"));
-		assertTrue("Has a key of 'name'", sample.containsKey("name"));
-		assertTrue("Has a key of 'numFiles'", sample.containsKey("numFiles"));
-		assertTrue("Has a key of 'createdDate'", sample.containsKey("createdDate"));
-		assertEquals("Has the first sample name", "sample0", sample.get("name"));
-	}
+	
 
 	@SuppressWarnings("unchecked")
 	@Test
@@ -280,211 +241,11 @@ public class ProjectsControllerTest {
 		assertEquals("Returns the correct page.", "redirect:/projects/" + PROJECT_ID + "/metadata", page);
 	}
 
-	@Test
-	public void testDeleteProjectSamples() {
-		Project project1 = getProject();
-		Sample sample = new Sample("test");
-		sample.setId(1L);
-		projectService.addSampleToProject(project1, sample);
-		List<Long> idList = new ArrayList<>();
-		idList.add(1L);
-		when(projectService.read(PROJECT_ID)).thenReturn(project1);
-		when(sampleService.read(anyLong())).thenReturn(sample);
-		Map<String, Object> result = controller.deleteProjectSamples(PROJECT_ID, idList);
-		assertTrue("Result contains the word success", result.containsKey("success"));
-		verify(projectService).removeSampleFromProject(project1, sample);
-	}
+	
 
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testAjaxSamplesMerge() {
-		String newName = "FRED";
-		Project project = getProject();
-		Sample sample1 = new Sample("Wilma");
-		sample1.setId(1L);
-		sample1.setSampleName(newName);
-		Sample sample2 = new Sample("Betty");
-		sample2.setId(11L);
-		List<Long> sampleIds = new ArrayList<>();
-		sampleIds.add(1L);
-		sampleIds.add(11L);
+	
 
-		when(sampleService.read(1L)).thenReturn(sample1);
-		when(sampleService.read(11L)).thenReturn(sample2);
-		when(projectService.read(PROJECT_ID)).thenReturn(project);
-		when(sampleService.update(anyLong(), anyMap())).thenReturn(sample1);
-
-		// Call the controller with a new name
-		Map<String, Object> result = controller.ajaxSamplesMerge(PROJECT_ID, sampleIds, 1L, newName);
-
-		// Ensure that the merge was requested
-		verify(sampleService, times(1)).mergeSamples(any(Project.class), any(Sample.class), any());
-
-		// Ensure that the rename was not requested
-		Map<String, Object> updateMap = new HashMap<>();
-		updateMap.put("sampleName", newName);
-		verify(sampleService, times(1)).update(1L, updateMap);
-		assertTrue("Result contains the word success", result.containsKey("success"));
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testGetProjectsAvailableToCopySamplesAsAdmin() {
-		Long projectId = 1l;
-		String term = "";
-		int page = 0;
-		int pagesize = 10;
-		Direction order = Direction.ASC;
-		String property = "name";
-
-		Principal principal = () -> USER_NAME;
-		User puser = new User(USER_NAME, null, null, null, null, null);
-		puser.setSystemRole(Role.ROLE_ADMIN);
-		Page<Project> projects = new PageImpl<>(Lists.newArrayList(new Project("p1"), new Project("p2")));
-
-		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
-		when(projectService.search(any(Specification.class), eq(page), eq(pagesize), eq(order), eq(property)))
-				.thenReturn(projects);
-
-		Map<String, Object> projectsAvailableToCopySamples = controller.getProjectsAvailableToCopySamples(projectId,
-				term, pagesize, page, principal);
-
-		assertTrue(projectsAvailableToCopySamples.containsKey("total"));
-		assertEquals(2l, projectsAvailableToCopySamples.get("total"));
-		assertTrue(projectsAvailableToCopySamples.containsKey("results"));
-
-		verify(userService).getUserByUsername(USER_NAME);
-		verify(projectService).search(any(Specification.class), eq(page), eq(pagesize), eq(order), eq(property));
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testGetProjectsAvailableToCopySamplesAsUser() {
-		Long projectId = 1l;
-		String term = "";
-		int page = 0;
-		int pagesize = 10;
-		Direction order = Direction.ASC;
-
-		Principal principal = () -> USER_NAME;
-		User puser = new User(USER_NAME, null, null, null, null, null);
-		puser.setSystemRole(Role.ROLE_USER);
-		Page<ProjectUserJoin> projects = new PageImpl<>(Lists.newArrayList(new ProjectUserJoin(new Project("p1"),
-				puser, ProjectRole.PROJECT_OWNER), new ProjectUserJoin(new Project("p2"), puser,
-				ProjectRole.PROJECT_OWNER)));
-
-		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
-		when(projectService.searchProjectUsers(any(Specification.class), eq(page), eq(pagesize), eq(order)))
-				.thenReturn(projects);
-
-		Map<String, Object> projectsAvailableToCopySamples = controller.getProjectsAvailableToCopySamples(projectId,
-				term, pagesize, page, principal);
-
-		assertTrue(projectsAvailableToCopySamples.containsKey("total"));
-		assertEquals(2l, projectsAvailableToCopySamples.get("total"));
-		assertTrue(projectsAvailableToCopySamples.containsKey("results"));
-
-		verify(userService).getUserByUsername(USER_NAME);
-		verify(projectService).searchProjectUsers(any(Specification.class), eq(page), eq(pagesize), eq(order));
-	}
-
-	@Test
-	public void testCopySampleToProject() {
-		Long projectId = 1l;
-		List<Long> sampleIds = Lists.newArrayList(2l, 3l);
-		Long newProjectId = 4l;
-		boolean removeFromOriginal = false;
-		Project oldProject = new Project("oldProject");
-		Project newProject = new Project("newProject");
-		Sample s2 = new Sample("s2");
-		Sample s3 = new Sample("s3");
-
-		when(projectService.read(projectId)).thenReturn(oldProject);
-		when(projectService.read(newProjectId)).thenReturn(newProject);
-		when(sampleService.read(2l)).thenReturn(s2);
-		when(sampleService.read(3l)).thenReturn(s3);
-
-		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, sampleIds, newProjectId,
-				removeFromOriginal);
-
-		assertEquals(2, copySampleToProject.get("totalCopied"));
-
-		verify(projectService).read(projectId);
-		verify(projectService).read(newProjectId);
-		for (Long x : sampleIds) {
-			verify(sampleService).read(x);
-		}
-		verify(projectService).addSampleToProject(newProject, s2);
-		verify(projectService).addSampleToProject(newProject, s3);
-		verify(projectService, times(0)).removeSampleFromProject(any(Project.class), any(Sample.class));
-	}
-
-	@Test
-	public void testCopySampleToProjectSampleExists() {
-		Long projectId = 1l;
-		List<Long> sampleIds = Lists.newArrayList(2l, 3l);
-		Long newProjectId = 4l;
-		boolean removeFromOriginal = false;
-		Project oldProject = new Project("oldProject");
-		Project newProject = new Project("newProject");
-		Sample s2 = new Sample("s2");
-		Sample s3 = new Sample("s3");
-
-		when(projectService.read(projectId)).thenReturn(oldProject);
-		when(projectService.read(newProjectId)).thenReturn(newProject);
-		when(sampleService.read(2l)).thenReturn(s2);
-		when(sampleService.read(3l)).thenReturn(s3);
-		when(projectService.addSampleToProject(newProject, s3)).thenThrow(
-				new EntityExistsException("that sample exists in the project"));
-
-		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, sampleIds, newProjectId,
-				removeFromOriginal);
-
-		assertEquals(1, copySampleToProject.get("totalCopied"));
-		assertTrue(copySampleToProject.containsKey("warnings"));
-
-		verify(projectService).read(projectId);
-		verify(projectService).read(newProjectId);
-		for (Long x : sampleIds) {
-			verify(sampleService).read(x);
-		}
-		verify(projectService).addSampleToProject(newProject, s2);
-		verify(projectService).addSampleToProject(newProject, s3);
-		verify(projectService, times(0)).removeSampleFromProject(any(Project.class), any(Sample.class));
-	}
-
-	@Test
-	public void testCopySampleToProjectRemove() {
-		Long projectId = 1l;
-		List<Long> sampleIds = Lists.newArrayList(2l, 3l);
-		Long newProjectId = 4l;
-		boolean removeFromOriginal = true;
-		Project oldProject = new Project("oldProject");
-		Project newProject = new Project("newProject");
-		Sample s2 = new Sample("s2");
-		Sample s3 = new Sample("s3");
-
-		when(projectService.read(projectId)).thenReturn(oldProject);
-		when(projectService.read(newProjectId)).thenReturn(newProject);
-		when(sampleService.read(2l)).thenReturn(s2);
-		when(sampleService.read(3l)).thenReturn(s3);
-
-		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, sampleIds, newProjectId,
-				removeFromOriginal);
-
-		assertEquals(2, copySampleToProject.get("totalCopied"));
-
-		verify(projectService).read(projectId);
-		verify(projectService).read(newProjectId);
-		for (Long x : sampleIds) {
-			verify(sampleService).read(x);
-		}
-
-		verify(projectService).addSampleToProject(newProject, s2);
-		verify(projectService).addSampleToProject(newProject, s3);
-		verify(projectService).removeSampleFromProject(oldProject, s2);
-		verify(projectService).removeSampleFromProject(oldProject, s3);
-	}
+	
 
 	@Test
 	public void testSearchTaxonomy() {
@@ -562,34 +323,7 @@ public class ProjectsControllerTest {
 		return join;
 	}
 
-	private List<Join<Sample, SequenceFile>> getSequenceFilesForSample() {
-		List<Join<Sample, SequenceFile>> list = new ArrayList<>();
-		Sample sample = new Sample("TEST SAMPLE");
-		sample.setId(1L);
-		for (int i = 0; i < 20; i++) {
-			list.add(new SampleSequenceFileJoin(sample, new SequenceFile()));
-		}
-		return list;
-	}
-
-	/**
-	 * Get a page of samples for a project
-	 * 
-	 * @param project
-	 *            The project to use
-	 * @return A Page<ProjectSampleJoin> containing 10 samples
-	 */
-	private Page<ProjectSampleJoin> getSamplesForProjectPage(Project project) {
-		List<ProjectSampleJoin> psjList = new ArrayList<>();
-		for (int i = 0; i < 10; i++) {
-			Sample sample = new Sample("sample" + i);
-			sample.setId(i + 1L);
-			ProjectSampleJoin join = new ProjectSampleJoin(project, sample);
-			psjList.add(join);
-		}
-
-		return new PageImpl<>(psjList);
-	}
+	
 
 	private List<Project> getAdminProjectsList() {
 		List<Project> projects = new ArrayList<>();
