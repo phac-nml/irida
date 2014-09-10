@@ -318,25 +318,38 @@ main.col-md-9 h1 {
 }
 
 /* line 28, ../../styles/main.scss */
+#table-filter {
+  padding: 0;
+}
+/* line 30, ../../styles/main.scss */
+#table-filter > div {
+  padding: 20px;
+}
+/* line 33, ../../styles/main.scss */
+#table-filter .filter-btns > button {
+  margin-top: 33px;
+}
+
+/* line 39, ../../styles/main.scss */
 .modal-content {
   background-color: #eeeeee;
   border: 1px solid #555555;
 }
 
-/* line 33, ../../styles/main.scss */
+/* line 44, ../../styles/main.scss */
 .modal-header {
   background-color: #2572b4;
 }
-/* line 35, ../../styles/main.scss */
+/* line 46, ../../styles/main.scss */
 .modal-header h2 {
   color: #ffffff;
 }
-/* line 38, ../../styles/main.scss */
+/* line 49, ../../styles/main.scss */
 .modal-header small {
   color: #eeeeee;
 }
 
-/* line 43, ../../styles/main.scss */
+/* line 54, ../../styles/main.scss */
 .modal-footer {
   margin-top: 0;
   padding: 20px;

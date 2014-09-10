@@ -75,7 +75,7 @@
                     <th class="col-md-1"></th>
                 </tr>
                 <tr>
-                    <td colspan="5">
+                    <td id="table-filter" colspan="5">
                         <div class="row" collapse="table.filter.isCollapsed">
                             <div class="form-group col-md-2">
                                 <label for="name-filter">Filter by Name</label>
@@ -101,6 +101,7 @@
                             </div>
 
                             <div class="form-group col-md-3">
+                                <label>Filter by Date Range</label>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="input-group">
@@ -143,8 +144,8 @@
                                 </div>
                             </div>
 
-                            <div class="text-right">
-                                <button id="clearFilterBtn" type="button" class="btn btn-default"
+                            <div class="filter-btns col-md-1">
+                                <button id="clearFilterBtn" type="button" class="btn btn-default pull-right"
                                         th:text="#{form.btn.clear}" ng-click="table.clearFilter()">Clear
                                 </button>
                             </div>
