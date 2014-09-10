@@ -51,7 +51,7 @@
                     <table class="table table-striped">
                         <thead>
                         <tr>
-                            <th class="col-md-3">
+                            <th class="col-md-2">
                                 <sort-by onsort="table.onSort" sortdir="table.filterCriteria.sortDir"
                                          sortedby="table.filterCriteria.sortedBy"
                                          sortValue="name" th:text="#{'analysis.table.name'}">Name
@@ -66,7 +66,7 @@
                                          sortValue="analysisState" th:text="#{'analysis.table.state'}">State
                                 </sort-by>
                             </th>
-                            <th class="col-md-2">
+                            <th class="col-md-3">
                                 <sort-by onsort="table.onSort" sortdir="table.filterCriteria.sortDir"
                                          sortedby="table.filterCriteria.sortedBy"
                                          sortValue="createdDate" th:text="#{'analysis.table.date'}">Created
@@ -151,8 +151,7 @@
                                 </div>
                             </td>
                             <td th:inline="text">
-                                <span tooltip-popup-delay="700" tooltip="{{a.createdDate | date:'medium' }}"><span class="fa fa-calendar-o fa-fw"></span> {{a.createdDate |
-                                date:'[[#{datepicker.short}]]'}}</span>
+                                <span class="fa fa-calendar-o fa-fw"></span> {{a.createdDate | date:'medium'}}
                             </td>
                             <td class="text-right">
                                 <!-- TODO: Make as directive -->
