@@ -24,7 +24,18 @@
   }
 }
 
+// Sortable Table
+#table-filter {
+  padding: 0;
+  &>div {
+    padding: 20px;
+  }
+  .filter-btns > button {
+    margin-top: 33px;
+  }
+}
 
+// Modals
 .modal-content {
   background-color: $color-grey-lighter;
   border: 1px solid $color-grey;

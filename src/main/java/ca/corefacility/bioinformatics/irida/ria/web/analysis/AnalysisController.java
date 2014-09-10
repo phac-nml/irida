@@ -83,11 +83,13 @@ public class AnalysisController {
 	 *
 	 * @return uri for the analysis admin page
 	 */
+
 	@RequestMapping("/admin")
-	public String getPageAdminAnalysis() {
+	public String getPageAdminAnalysis(Model model) {
 		logger.trace("Showing the Analysis Admin Page");
 		// TODO: (14-08-29 - Josh) Once individuals can own an analysis this
 		// needs to be only admin.
+		model.addAttribute("types", ANALYSIS_TYPE_NAMES);
 		return PAGE_ADMIN_ANALYSIS;
 	}
 
