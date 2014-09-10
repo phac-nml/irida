@@ -2,9 +2,9 @@ package ca.corefacility.bioinformatics.irida.ria.utilities;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.Set;
-import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -22,9 +22,26 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class ZipFileDownloader {
-	private static final Logger logger = LoggerFactory.getLogger(ZipFileDownloader.class);
+public class FileUtilities {
+	private static final Logger logger = LoggerFactory.getLogger(FileUtilities.class);
+	public static final String CONTENT_DISPOSITION = "Content-Disposition";
+	public static final String ATTACHMENT_FILENAME = "attachment;filename=";
+	public static final String CONTENT_TYPE_APPLICATION_ZIP = "application/zip";
+	public static final String CONTENT_TYPE_TEXT_SVG = "text/svg";
+	public static final String EXTENSION_ZIP = ".zip";
+	public static final String EXTENSION_SVG = ".svg";
 
+	/**
+	 * Utility method for download a zip file containing all output files from an analysis.
+	 *
+	 * @param response
+	 * 		{@link HttpServletResponse}
+	 * @param fileName
+	 * 		Name fo the file to create
+	 * @param files
+	 * 		Set of {@link AnalysisOutputFile}
+	 * @throws IOException
+	 */
 	public static void createAnalysisOutputFileZippedResponse(HttpServletResponse response, String fileName, Set<AnalysisOutputFile> files) throws IOException {
 		logger.debug("Creating zipped file response. [" + fileName + "]");
 
@@ -36,6 +53,7 @@ public class ZipFileDownloader {
 					throw new FileNotFoundException();
 				}
 				// 1) Build a folder/file name
+				fileName = formatName(fileName);
 				StringBuilder zipEntryName = new StringBuilder(fileName);
 				zipEntryName.append("/").append(file.getFile().getFileName().toString());
 
@@ -52,9 +70,9 @@ public class ZipFileDownloader {
 			outputStream.finish();
 
 			// Set the response headers
-			response.setHeader( "Content-Disposition", "attachment;filename=" + fileName + ".zip");
+			response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + fileName + EXTENSION_ZIP);
 			//for zip file
-			response.setContentType("application/zip");
+			response.setContentType(CONTENT_TYPE_APPLICATION_ZIP);
 		} catch (IOException e) {
 			// this generally means that the user has cancelled the download
 			// from their web browser; we can safely ignore this
@@ -65,5 +83,42 @@ public class ZipFileDownloader {
 		} finally {
 			response.getOutputStream().close();
 		}
+	}
+
+	/**
+	 * Utility method to download any SVG Image from a String
+	 *
+	 * @param response
+	 * 		{@link HttpServletResponse}
+	 * @param svg
+	 * 		String containing the svg markup
+	 * @param fileName
+	 * 		String name to name the new file.
+	 * @throws IOException
+	 */
+	public static void createSVGDownload(HttpServletResponse response, String svg, String fileName) throws IOException {
+
+		String headerValue = ATTACHMENT_FILENAME + formatName(fileName) + EXTENSION_SVG;
+
+		try (OutputStream outputStream = response.getOutputStream()) {
+			response.setHeader(CONTENT_DISPOSITION, headerValue);
+			response.setContentType(CONTENT_TYPE_TEXT_SVG);
+			outputStream.write(svg.getBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			response.getOutputStream().close();
+		}
+	}
+
+	/**
+	 * Method to remove unwanted characters from the filename.
+	 *
+	 * @param name
+	 * 		Name of the file
+	 * @return The name with unwanted characters removed.
+	 */
+	private static String formatName(String name) {
+		return name.replace(" ", "_");
 	}
 }

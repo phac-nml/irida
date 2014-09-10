@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,7 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhyl
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
-import ca.corefacility.bioinformatics.irida.ria.utilities.ZipFileDownloader;
+import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 
 import com.google.common.base.Strings;
@@ -63,12 +64,6 @@ public class AnalysisController {
 	public static final String PAGE_ADMIN_ANALYSIS = BASE + "admin";
 	public static final String PAGE_TREE_ANALYSIS_PREVIEW = BASE + "preview/tree";
 
-	// URI's
-	private static final String URI_PAGE_ADMIN = "/admin";
-	private static final String URI_PAGE_TREE_PREVIEW = "/preview/tree/{analysisId}";
-	private static final String URI_AJAX_LIST_ALL_ANALYSIS = "/ajax/all";
-	private static final String URI_AJAX_DOWNLOAD = "/ajax/download/{analysisSubmissionId}";
-
 	/*
 	 * SERVICES
 	 */
@@ -88,7 +83,8 @@ public class AnalysisController {
 	 *
 	 * @return uri for the analysis admin page
 	 */
-	@RequestMapping(URI_PAGE_ADMIN)
+
+	@RequestMapping("/admin")
 	public String getPageAdminAnalysis(Model model) {
 		logger.trace("Showing the Analysis Admin Page");
 		// TODO: (14-08-29 - Josh) Once individuals can own an analysis this
@@ -101,13 +97,13 @@ public class AnalysisController {
 	 * Get the page for previewing a tree result
 	 *
 	 * @param analysisId
-	 *            Id for the {@link AnalysisSubmission}
+	 * 		Id for the {@link AnalysisSubmission}
 	 * @param model
-	 *            {@link Model}
+	 * 		{@link Model}
 	 * @return Name of the page
 	 * @throws IOException
 	 */
-	@RequestMapping(URI_PAGE_TREE_PREVIEW)
+	@RequestMapping("/preview/tree/{analysisId}")
 	public String getTreeAnalysis(@PathVariable Long analysisId, Model model) throws IOException {
 		logger.trace("Getting the preview of the the tree");
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(analysisId);
@@ -128,25 +124,25 @@ public class AnalysisController {
 	 * Get a list of analysis by page and filter
 	 *
 	 * @param page
-	 *            Current page being displayed
+	 * 		Current page being displayed
 	 * @param count
-	 *            Number of analysis per page
+	 * 		Number of analysis per page
 	 * @param sortedBy
-	 *            field to sort by
+	 * 		field to sort by
 	 * @param sortDir
-	 *            direction to sort by
+	 * 		direction to sort by
 	 * @param state
-	 *            AnalysisSubmission state
+	 * 		AnalysisSubmission state
 	 * @param nameFilter
-	 *            text to filter the name by
+	 * 		text to filter the name by
 	 * @param minDateFilter
-	 *            date to filter out anything previous
+	 * 		date to filter out anything previous
 	 * @param maxDateFilter
-	 *            date to filter out anything after
+	 * 		date to filter out anything after
 	 * @return JSON object with analysis, total pages, and total analysis
 	 * @throws IOException
 	 */
-	@RequestMapping(value = URI_AJAX_LIST_ALL_ANALYSIS, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/ajax/all", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> getAjaxListAllAnalysis(
 			@RequestParam Integer page,
 			@RequestParam Integer count,
@@ -199,17 +195,22 @@ public class AnalysisController {
 	 * Download all output files from an {@link AnalysisSubmission}
 	 *
 	 * @param analysisSubmissionId
-	 *            Id for a {@link AnalysisSubmission}
+	 * 		Id for a {@link AnalysisSubmission}
 	 * @param response
-	 *            {@link HttpServletResponse}
+	 * 		{@link HttpServletResponse}
 	 * @throws IOException
 	 */
-	@RequestMapping(value = URI_AJAX_DOWNLOAD, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/ajax/download/{analysisSubmissionId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public void getAjaxDownloadAnalysisSubmission(@PathVariable Long analysisSubmissionId, HttpServletResponse response)
 			throws IOException {
 		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(analysisSubmissionId);
 		Analysis analysis = analysisSubmission.getAnalysis();
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
-		ZipFileDownloader.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
+		FileUtilities.createAnalysisOutputFileZippedResponse(response, analysisSubmission.getName(), files);
+	}
+
+	@RequestMapping("/ajax/download/svg")
+	public void getAjaxDownloadSVG(@RequestParam String svg, @RequestParam String name, HttpServletResponse response) throws IOException {
+		FileUtilities.createSVGDownload(response, svg, name);
 	}
 }
