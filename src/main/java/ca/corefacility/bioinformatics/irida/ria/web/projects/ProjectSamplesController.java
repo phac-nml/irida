@@ -103,6 +103,17 @@ public class ProjectSamplesController {
 		this.fileSizeConverter = new FileSizeConverter();
 	}
 
+	/**
+	 * Get the samples for a given project
+	 * 
+	 * @param model
+	 *            A model for the sample list view
+	 * @param principal
+	 *            The user reading the project
+	 * @param projectId
+	 *            The ID of the project
+	 * @return Name of the project samples list view
+	 */
 	@RequestMapping("/{projectId}/samples")
 	public String getProjectSamplesPage(final Model model, final Principal principal, @PathVariable long projectId) {
 		Project project = projectService.read(projectId);
@@ -115,6 +126,24 @@ public class ProjectSamplesController {
 		return PROJECT_SAMPLES_PAGE;
 	}
 
+	/**
+	 * Get all samples for a project as a paged ajax call
+	 * 
+	 * @param projectId
+	 *            ID of the project
+	 * @param start
+	 *            Start element
+	 * @param length
+	 *            Number of elements in the page
+	 * @param draw
+	 * @param sortColumn
+	 *            Which column to sort on
+	 * @param direction
+	 *            Sort direction
+	 * @param searchValue
+	 *            A search value for the sample name
+	 * @return Map<String,Object> containing a list of the response samples
+	 */
 	@RequestMapping(value = "/ajax/{projectId}/samples", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> getAjaxProjectSamplesMap(
 			@PathVariable Long projectId,
@@ -156,8 +185,15 @@ public class ProjectSamplesController {
 		return response;
 	}
 
+	/**
+	 * Get the ids of all sampes on the given project
+	 * 
+	 * @param projectId
+	 *            the ID of the project
+	 * @return Map<String,List<String>> containing list of the ids
+	 */
 	@RequestMapping(value = "/ajax/{projectId}/samples/getids", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, List<String>> getAllProjectIds(@PathVariable Long projectId) {
+	public @ResponseBody Map<String, List<String>> getAllProjectSampleIds(@PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
 		List<String> sampleIdList = new ArrayList<>();
 		List<Join<Project, Sample>> psj = sampleService.getSamplesForProject(project);
