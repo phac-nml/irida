@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,17 +23,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.ria.components.PipelineSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
@@ -69,7 +71,7 @@ public class PipelineController extends BaseController {
 	private ReferenceFileService referenceFileService;
 	private SequenceFileService sequenceFileService;
 	private RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics;
-	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
+	private AnalysisSubmissionService analysisSubmissionService;
 	private MessageSource messageSource;
 
 	/*
@@ -81,12 +83,13 @@ public class PipelineController extends BaseController {
 	public PipelineController(SampleService sampleService, SequenceFileService sequenceFileService,
 			ReferenceFileService referenceFileService,
 			RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics,
-			AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics, MessageSource messageSource) {
+			AnalysisSubmissionService analysisSubmissionService,
+			MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
 		this.referenceFileService = referenceFileService;
 		this.remoteWorkflowServicePhylogenomics = remoteWorkflowServicePhylogenomics;
-		this.analysisExecutionServicePhylogenomics = analysisExecutionServicePhylogenomics;
+		this.analysisSubmissionService = analysisSubmissionService;
 		this.messageSource = messageSource;
 
 		this.pipelineSubmission = new PipelineSubmission();
@@ -98,7 +101,7 @@ public class PipelineController extends BaseController {
 
 	/**
 	 * Get a list of pipelines that can be run on the dataset provided
-	 * @return
+	 * @return  A list of pipeline types and names that can be run on the provided dataset.
 	 */
 	@RequestMapping(value = URI_LIST_PIPELINES, method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
@@ -139,10 +142,10 @@ public class PipelineController extends BaseController {
 	/**
 	 * Start a new pipeline based on the pipeline id
 	 *
-	 * @param pId      Id for the pipeline
+	 * @param pId      Id for the type of pipeline
 	 * @param rId      Id for the reference file
 	 * @param response {@link HttpServletResponse}
-	 * @return
+	 * @return  A response defining the status of the pipeline submission (success or failure).
 	 */
 	@RequestMapping(value = URI_AJAX_START_PIPELINE, produces = MediaType.APPLICATION_JSON_VALUE,
 			method = RequestMethod.POST)
@@ -157,8 +160,8 @@ public class PipelineController extends BaseController {
 		try {
 			startPipeline(pId, name);
 			result.add(ImmutableMap.of("success", "success"));
-		} catch (ExecutionManagerException e) {
-			logger.error("Error starting pipeline (id = " + pId + ") [" + e.getMessage() + "]");
+		} catch (EntityExistsException | ConstraintViolationException e) {
+			logger.error("Error submitting pipeline (id = " + pId + ") [" + e.getMessage() + "]");
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			result.add(ImmutableMap.of("error", messageSource.getMessage("pipelines.start.failure", null,
 					LocaleContextHolder.getLocale())));
@@ -170,13 +173,15 @@ public class PipelineController extends BaseController {
 	// RUNNING PIPELINE INTERNAL METHODS
 	// ************************************************************************************************
 
-	private void startPipeline(Long pipelineId, String name) throws ExecutionManagerException {
+	private void startPipeline(Long pipelineId, String name) {
 		// TODO: (14-08-28 - Josh) pipelineId needs to be passed b/c front end does not need to know the details.
 		RemoteWorkflowPhylogenomics workflow = remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
 		AnalysisSubmissionPhylogenomics asp = new AnalysisSubmissionPhylogenomics(name, pipelineSubmission.getSequenceFiles(),
 				pipelineSubmission.getReferenceFile(),
 				workflow);
-		analysisExecutionServicePhylogenomics.executeAnalysis(asp);
+		
+		AnalysisSubmission createdSubmission = analysisSubmissionService.create(asp);
+		logger.debug("Successfully submitted analysis: " + createdSubmission);
 
 		// Reset the pipeline submission
 		pipelineSubmission.clear();
