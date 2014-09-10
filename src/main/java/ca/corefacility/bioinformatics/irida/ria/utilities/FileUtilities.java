@@ -105,7 +105,12 @@ public class FileUtilities {
 			response.setContentType(CONTENT_TYPE_TEXT_SVG);
 			outputStream.write(svg.getBytes());
 		} catch (IOException e) {
-			e.printStackTrace();
+			// this generally means that the user has cancelled the download
+			// from their web browser; we can safely ignore this
+			logger.debug("This *probably* means that the user cancelled the download, "
+					+ "but it might be something else, see the stack trace below for more information.", e);
+		} catch (Exception e) {
+			logger.error("Download failed...", e);
 		} finally {
 			response.getOutputStream().close();
 		}
