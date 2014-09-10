@@ -3,8 +3,11 @@ package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.p
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Map;
 
 import org.junit.Before;
@@ -262,7 +265,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		when(analysisSubmission.getRemoteAnalysisId()).thenReturn(remoteAnalysisId);
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.FINISHED_RUNNING);
 		when(analysisSubmissionService.exists(id)).thenReturn(true);
-		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).thenReturn(analysisResults);
+		when(workspaceServicePhylogenomics.getAnalysisResults(eq(analysisSubmission), any(Path.class))).thenReturn(analysisResults);
 		when(analysisService.create(analysisResults)).thenReturn(analysisResults);
 		
 		AnalysisPhylogenomicsPipeline actualResults = workflowManagement.transferAnalysisResults(analysisSubmission);
@@ -286,7 +289,7 @@ public class AnalysisExecutionServicePhylogenomicsTest {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.FINISHED_RUNNING);
 		when(analysisSubmissionService.exists(id)).thenReturn(true);
 		
-		when(workspaceServicePhylogenomics.getAnalysisResults(analysisSubmission)).
+		when(workspaceServicePhylogenomics.getAnalysisResults(eq(analysisSubmission), any(Path.class))).
 			thenThrow(new ExecutionManagerException());
 		
 		workflowManagement.transferAnalysisResults(analysisSubmission);

@@ -300,12 +300,17 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		assertTrue("phylogenetic trees should be equal",
 				com.google.common.io.Files.equal(expectedTree.toFile(),
 						phylogeneticTree.getFile().toFile()));
+		assertEquals(expectedTree.toFile().getName(), phylogeneticTree.getFile().toFile().getName());
+		
 		assertTrue("snp matrices should be correct",
 				com.google.common.io.Files.equal(expectedSnpMatrix.toFile(),
 						snpMatrix.getFile().toFile()));
+		assertEquals(expectedSnpMatrix.toFile().getName(), snpMatrix.getFile().toFile().getName());
+		
 		assertTrue("snpTable should be correct",
 				com.google.common.io.Files.equal(expectedSnpTable.toFile(),
 						snpTable.getFile().toFile()));
+		assertEquals(expectedSnpTable.toFile().getName(), snpTable.getFile().toFile().getName());
 
 		AnalysisSubmissionPhylogenomics finalSubmission = analysisSubmissionRepository
 				.getByType(analysisExecuted.getId(),

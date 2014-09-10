@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -221,13 +222,16 @@ public class WorkspaceServicePhylogenomics
 	 */
 	@Override
 	public AnalysisPhylogenomicsPipeline getAnalysisResults(
-			AnalysisSubmissionPhylogenomics analysisSubmission)
+			AnalysisSubmissionPhylogenomics analysisSubmission, Path outputDirectory)
 			throws ExecutionManagerException, IOException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getRemoteWorkflow(),
 				"remote workflow is null");
 		checkNotNull(analysisSubmission.getInputFiles(),
 				"input sequence files is null");
+		checkNotNull(outputDirectory, "outputDirectory is null");
+		checkArgument(outputDirectory.toFile().exists(),
+				"outputDirectory " + outputDirectory + " does not exist");
 
 		RemoteWorkflowPhylogenomics remoteWorkflow = analysisSubmission
 				.getRemoteWorkflow();
@@ -253,9 +257,9 @@ public class WorkspaceServicePhylogenomics
 				remoteWorkflow.getOutputSnpTableName(),
 				analysisId);
 
-		results.setPhylogeneticTree(buildOutputFile(analysisId, treeOutput));
-		results.setSnpMatrix(buildOutputFile(analysisId, matrixOutput));
-		results.setSnpTable(buildOutputFile(analysisId, tableOutput));
+		results.setPhylogeneticTree(buildOutputFile(analysisId, treeOutput, outputDirectory));
+		results.setSnpMatrix(buildOutputFile(analysisId, matrixOutput, outputDirectory));
+		results.setSnpTable(buildOutputFile(analysisId, tableOutput, outputDirectory));
 
 		return results;
 	}

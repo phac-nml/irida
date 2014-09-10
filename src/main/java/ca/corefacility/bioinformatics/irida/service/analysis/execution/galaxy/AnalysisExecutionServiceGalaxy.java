@@ -4,6 +4,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.transaction.Transactional;
 
@@ -141,12 +143,27 @@ public abstract class AnalysisExecutionServiceGalaxy
 		checkArgument(AnalysisState.FINISHED_RUNNING.equals(submittedAnalysis.getAnalysisState()),
 				" analysis should be " + AnalysisState.FINISHED_RUNNING);
 		verifyAnalysisSubmissionExists(submittedAnalysis);
-				
-		logger.debug("Getting results for " + submittedAnalysis);
-		A analysisResults = workspaceService.getAnalysisResults(submittedAnalysis);
 		
-		logger.trace("Saving results for " +  submittedAnalysis);
-		A savedAnalysis = (A) analysisService.create(analysisResults);
+		A savedAnalysis;
+		Path tempOutputDirectory = null;
+		try {
+			tempOutputDirectory = Files.createTempDirectory("analysis-output");
+			logger.trace("Created temporary directory " + tempOutputDirectory + " for analysis output files");
+			
+			logger.debug("Getting results for " + submittedAnalysis);
+			A analysisResults = workspaceService.getAnalysisResults(submittedAnalysis, tempOutputDirectory);
+			
+			logger.trace("Saving results for " +  submittedAnalysis);
+			savedAnalysis = (A) analysisService.create(analysisResults);
+		} finally {
+			// At this stage any analysis output files should be transfered to the output files repository
+			// So it is safe to delete the temporary output files directory
+			if (tempOutputDirectory != null) {
+				tempOutputDirectory.toFile().delete();
+				logger.trace("Deleted temporary directory " + tempOutputDirectory + " for analysis output files");
+			}
+		}
+		
 		analysisSubmissionService.update(submittedAnalysis.getId(),
 				ImmutableMap.of("analysis", savedAnalysis));
 		
