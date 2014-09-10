@@ -11,11 +11,11 @@
 <body>
 <div class="btn-toolbar btn-xs pull-right">
     <div class="btn-group">
-        <button id="saveBtn" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom"
-                th:title="#{form.save.image}">
+        <a href="#" id="saveBtn" class="btn btn-default" data-toggle="tooltip" data-placement="bottom"
+           th:title="#{form.save.image}">
             <span class="fa fa-fw fa-save"></span>
             <span class="sr-only" th:text="#{form.save.image}">Save Image</span>
-        </button>
+        </a>
         <a class="btn btn-default" th:href="@{/analysis/ajax/download/{id}(id=${analysisSubmission.getId()})}" href="#"
            data-toggle="tooltip" data-placement="bottom" th:title="#{form.download-files}">
             <span class="fa fa-download fa-fw"></span>
@@ -33,21 +33,24 @@
 <script th:src="@{/resources/js/jsphylosvg-min.js}" src="/resources/js/jsphylosvg-min.js"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
-    var phylo;
-    $('.btn').tooltip();
-
-    $("#saveBtn").on('click', function() {
-        var name = /*[[${analysisSubmission.name}]]*/ 'unknown-analysis';
-        console.log('clicied');
-        var svgSource = phylo.getSvgSource();
-        var a = document.createElement('a');
-        a.download = name + ".svg";
-        a.href = "data:image/svg+xml," + svgSource;
-        a.click();
-    });
 
     var newick = /*[[${newick}]]*/ '';
-    phylo = new Smits.PhyloCanvas({'newick': newick}, 'phyloSVG', window.innerWidth, 800, 'circular');
+    var phylo = new Smits.PhyloCanvas({'newick': newick}, 'phyloSVG', window.innerWidth, 800, 'circular');
+    $('.btn').tooltip();
+
+    (function () {
+        /*[- */
+        // There is a bug in safari that prevents this from working.
+        // TODO: find a way to get it to work.  Server option was vetoed.
+        /* -]*/
+        var name = /*[[${analysisSubmission.name + '.svg'}]]*/ 'no_name.svg',
+                svg = $("svg");
+
+        svg.attr({ version: '1.1', xmlns: "http://www.w3.org/2000/svg"});
+        var content = svg.parent().html();
+        var url = "data:image/svg+xml;utf8," + encodeURIComponent(content);
+        $('#saveBtn').attr('href', url).attr('download', name);
+    })();
 
 
     /*]]>*/
