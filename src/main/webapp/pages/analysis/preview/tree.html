@@ -11,11 +11,11 @@
 <body>
 <div class="btn-toolbar btn-xs pull-right">
     <div class="btn-group">
-        <a id="saveBtn" href="#" class="btn btn-default" data-toggle="tooltip" data-placement="bottom"
-                th:title="#{form.save.image}" th:attr="download=${analysisSubmission.name + '.svg'}">
+        <btn id="saveBtn" class="btn btn-default" data-toggle="tooltip" data-placement="bottom"
+             th:title="#{form.save.image}">
             <span class="fa fa-fw fa-save"></span>
             <span class="sr-only" th:text="#{form.save.image}">Save Image</span>
-
+        </btn>
         <a class="btn btn-default" th:href="@{/analysis/ajax/download/{id}(id=${analysisSubmission.getId()})}" href="#"
            data-toggle="tooltip" data-placement="bottom" th:title="#{form.download-files}">
             <span class="fa fa-download fa-fw"></span>
@@ -38,24 +38,22 @@
     var phylo = new Smits.PhyloCanvas({'newick': newick}, 'phyloSVG', window.innerWidth, 800, 'circular');
     $('.btn').tooltip();
 
-    (function() {
-        //get svg element. NOTE: BUG in safari prevents this from downloading (not in webkit)
+    $("#saveBtn").on('click', function () {
+        var svgName = /*[[${analysisSubmission.name}]]*/ 'fred';
         var svg = document.getElementsByTagName("svg");
-        console.log(svg);
         var serializer = new XMLSerializer();
         var source = serializer.serializeToString(svg[0]);
 
-        if(!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)){
-            source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
-        }
-        if(!source.match(/^<svg[^>]+"http\:\/\/www\.w3\.org\/1999\/xlink"/)){
-            source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
-        }
-
         source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
-        var url = "data:image/svg+xml;base64,"+btoa(source);
-        document.getElementById("saveBtn").href = url;
-    })();
+        source = encodeURIComponent(source);
+        var url = /*[[@{/analysis/ajax/download/svg}]]*/ '/ajax/download/svg';
+        url += '?svg=' + source + '&name=' + svgName;
+
+        var a = document.createElement('a');
+        a.href = url;
+        a.setAttribute("download", svgName + ".svg");
+        a.click();
+    });
 
 
     /*]]>*/
