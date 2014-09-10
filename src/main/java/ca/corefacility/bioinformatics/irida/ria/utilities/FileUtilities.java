@@ -86,37 +86,6 @@ public class FileUtilities {
 	}
 
 	/**
-	 * Utility method to download any SVG Image from a String
-	 *
-	 * @param response
-	 * 		{@link HttpServletResponse}
-	 * @param svg
-	 * 		String containing the svg markup
-	 * @param fileName
-	 * 		String name to name the new file.
-	 * @throws IOException
-	 */
-	public static void createSVGDownload(HttpServletResponse response, String svg, String fileName) throws IOException {
-
-		String headerValue = ATTACHMENT_FILENAME + formatName(fileName) + EXTENSION_SVG;
-
-		try (OutputStream outputStream = response.getOutputStream()) {
-			response.setHeader(CONTENT_DISPOSITION, headerValue);
-			response.setContentType(CONTENT_TYPE_TEXT_SVG);
-			outputStream.write(svg.getBytes());
-		} catch (IOException e) {
-			// this generally means that the user has cancelled the download
-			// from their web browser; we can safely ignore this
-			logger.debug("This *probably* means that the user cancelled the download, "
-					+ "but it might be something else, see the stack trace below for more information.", e);
-		} catch (Exception e) {
-			logger.error("Download failed...", e);
-		} finally {
-			response.getOutputStream().close();
-		}
-	}
-
-	/**
 	 * Method to remove unwanted characters from the filename.
 	 *
 	 * @param name

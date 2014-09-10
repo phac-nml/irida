@@ -11,11 +11,11 @@
 <body>
 <div class="btn-toolbar btn-xs pull-right">
     <div class="btn-group">
-        <btn id="saveBtn" class="btn btn-default" data-toggle="tooltip" data-placement="bottom"
-             th:title="#{form.save.image}">
+        <a href="#" id="saveBtn" class="btn btn-default" data-toggle="tooltip" data-placement="bottom"
+           th:title="#{form.save.image}">
             <span class="fa fa-fw fa-save"></span>
             <span class="sr-only" th:text="#{form.save.image}">Save Image</span>
-        </btn>
+        </a>
         <a class="btn btn-default" th:href="@{/analysis/ajax/download/{id}(id=${analysisSubmission.getId()})}" href="#"
            data-toggle="tooltip" data-placement="bottom" th:title="#{form.download-files}">
             <span class="fa fa-download fa-fw"></span>
@@ -38,22 +38,19 @@
     var phylo = new Smits.PhyloCanvas({'newick': newick}, 'phyloSVG', window.innerWidth, 800, 'circular');
     $('.btn').tooltip();
 
-    $("#saveBtn").on('click', function () {
-        var svgName = /*[[${analysisSubmission.name}]]*/ 'fred';
-        var svg = document.getElementsByTagName("svg");
-        var serializer = new XMLSerializer();
-        var source = serializer.serializeToString(svg[0]);
+    (function () {
+        /*[- */
+        // There is a bug in safari that prevents this from working.
+        // TODO: find a way to get it to work.  Server option was vetoed.
+        /* -]*/
+        var name = /*[[${analysisSubmission.name + '.svg'}]]*/ 'no_name.svg',
+                svg = $("svg");
 
-        source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
-        source = encodeURIComponent(source);
-        var url = /*[[@{/analysis/ajax/download/svg}]]*/ '/ajax/download/svg';
-        url += '?svg=' + source + '&name=' + svgName;
-
-        var a = document.createElement('a');
-        a.href = url;
-        a.setAttribute("download", svgName + ".svg");
-        a.click();
-    });
+        svg.attr({ version: '1.1', xmlns: "http://www.w3.org/2000/svg"});
+        var content = svg.parent().html();
+        var url = "data:image/svg+xml;utf8," + encodeURIComponent(content);
+        $('#saveBtn').attr('href', url).attr('download', name);
+    })();
 
 
     /*]]>*/
