@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -136,4 +137,34 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *         <code>mergeInto</code>).
 	 */
 	public Sample mergeSamples(Project p, Sample mergeInto, Sample... toMerge);
+
+	/**
+	 * Given a sample gets the total number of bases in all sequence files in
+	 * this sample.
+	 * 
+	 * @param sample
+	 *            The sample to find the total number of bases.
+	 * @return The total number of bases in all sequence files in this sample.
+	 * @throws SequenceFileAnalysisException
+	 *             If there was an error getting FastQC analyses for a sequence
+	 *             file.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	public long getTotalBasesForSample(Sample sample)
+			throws SequenceFileAnalysisException;
+
+	/**
+	 * Given the length of a reference file, estimate the total coverage for
+	 * this sample.
+	 * 
+	 * @param sample
+	 *            The sample to estimate coverage for.
+	 * 
+	 * @param referenceFileLength
+	 *            The length of the reference file in bases.
+	 * @return The estimate coverage of all sequence data in this sample.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	public double estimateCoverageForSample(Sample sample,
+			long referenceFileLength);
 }
