@@ -22,6 +22,9 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class AnalysisSubmissionSpecification {
+	// For proper filtering need to get to that day at 23:59:59 ((1000*60*60) -1)
+	// Date from date picker comes in at 00:00:00
+	public static final int END_OF_DAY = 86399999;
 	public static Specification<AnalysisSubmission> searchAnalysis(String name, AnalysisState state, Date minDate, Date maxDate) {
 		return new Specification<AnalysisSubmission>() {
 			@Override public Predicate toPredicate(Root<AnalysisSubmission> analysisSubmissionRoot,
@@ -38,9 +41,7 @@ public class AnalysisSubmissionSpecification {
 							analysisSubmissionRoot.<Date>get("createdDate"), minDate));
 				}
 				if (maxDate != null) {
-					// For proper filtering need to get to that day at 23:59:59
-					// Date from date picker comes in at 00:00:00
-					Date tomorrow = new Date(maxDate.getTime() + ((1000 * 60 * 60 * 24) -1));
+					Date tomorrow = new Date(maxDate.getTime() + END_OF_DAY);
 					predicateList.add(criteriaBuilder
 							.lessThanOrEqualTo(analysisSubmissionRoot.<Date>get("createdDate"), tomorrow));
 				}
