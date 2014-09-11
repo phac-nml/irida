@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
@@ -27,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -64,6 +66,11 @@ public class SampleServiceImplIT {
 	private SequenceFileService sequenceFileService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	/**
+	 * Variation in a floating point number to be considered equal.
+	 */
+	private static final double deltaFloatEquality = 0.000001;
 
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
@@ -214,8 +221,87 @@ public class SampleServiceImplIT {
 		assertEquals(1, pageSamplesForProject.getTotalElements());
 	}
 	
+	/**
+	 * Tests getting the total bases for a sample as an admin user.
+	 * @throws SequenceFileAnalysisException
+	 */
+	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void testGetBasesForSample() throws SequenceFileAnalysisException {
+		Long sampleID = 1L;
+		Sample s = sampleService.read(sampleID);
+		
+		long bases = sampleService.getTotalBasesForSample(s);
+		assertEquals(1000, bases);
+	}
 	
-
+	/**
+	 * Tests getting the total bases for a sample as a regular user.
+	 * @throws SequenceFileAnalysisException
+	 */
+	@Test
+	@WithMockUser(username = "fbristow", roles = "USER")
+	public void testGetBasesForSampleAsUser() throws SequenceFileAnalysisException {
+		Long sampleID = 1L;
+		Sample s = sampleService.read(sampleID);
+		
+		long bases = sampleService.getTotalBasesForSample(s);
+		assertEquals(1000, bases);
+	}
+	
+	/**
+	 * Tests failing to get bases for a sample for a user not on the project.
+	 * @throws SequenceFileAnalysisException
+	 */
+	@Test(expected=AccessDeniedException.class)
+	@WithMockUser(username = "dr-evil", roles = "USER")
+	public void testGetBasesForSampleInvalidUser() throws SequenceFileAnalysisException {
+		Sample s = new Sample();
+		s.setId(1L);
+		
+		sampleService.getTotalBasesForSample(s);
+	}
+	
+	/**
+	 * Tests failing to get coverage for a sample for a user not on the project.
+	 * @throws SequenceFileAnalysisException
+	 */
+	@Test(expected=AccessDeniedException.class)
+	@WithMockUser(username = "dr-evil", roles = "USER")
+	public void testEstimateCoverageForSampleInvalidUser() throws SequenceFileAnalysisException {
+		Sample s = new Sample();
+		s.setId(1L);
+		
+		sampleService.estimateCoverageForSample(s, 500L);
+	}
+	
+	/**
+	 * Tests getting the coverage as a regular user.
+	 * @throws SequenceFileAnalysisException
+	 */
+	@Test
+	@WithMockUser(username = "fbristow", roles = "USER")
+	public void testEstimateCoverageForSampleAsUser() throws SequenceFileAnalysisException {
+		Long sampleID = 1L;
+		Sample s = sampleService.read(sampleID);
+		
+		double coverage = sampleService.estimateCoverageForSample(s, 500);
+		assertEquals(2.0, coverage, deltaFloatEquality);
+	}
+	
+	/**
+	 * Tests failing to get the coverage for a sample with no fastqc results.
+	 * @throws SequenceFileAnalysisException
+	 */
+	@Test(expected=SequenceFileAnalysisException.class)
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void testEstimateCoverageForSampleNoFastQC() throws SequenceFileAnalysisException {
+		Long sampleID = 2L;
+		Sample s = sampleService.read(sampleID);
+		
+		sampleService.estimateCoverageForSample(s, 500);
+	}
+	
 	private void assertSampleNotFound(Long id) {
 		try {
 			sampleService.read(id);

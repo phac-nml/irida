@@ -7,6 +7,11 @@
 		password="$2a$10$rgdnCrrAqN11Hz03mcGCg.R9gZehmEcyLC3kUGQJ1fEBlF9ld.4v."
 		phoneNumber="867-5309" username="fbristow" enabled="true" system_role="ROLE_MANAGER"
 		credentialsNonExpired="true" />
+	<user id="2" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+		email="dr@evil.com" firstName="Dr." lastName="Evil"
+		password="$2a$10$rgdnCrrAqN11Hz03mcGCg.R9gZehmEcyLC3kUGQJ1fEBlF9ld.4v."
+		phoneNumber="867-5309" username="dr-evil" enabled="true" system_role="ROLE_MANAGER"
+		credentialsNonExpired="true" />
 
 	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
 		projectDescription="description" remoteURL="somewhere" />
@@ -55,4 +60,11 @@
 	<sequencefile_sample id="3" createdDate="2013-07-18 14:20:19.0"
 		sample_id="3" sequencefile_id="3" />
 
+	<analysis id="1" createdDate="2013-07-18 14:20:19.0"
+		description="FastQC" executionManagerAnalysisId="fastqc" />
+	<analysis_fastqc id="1" duplicationLevelChart="x"
+		encoding="x" fileType="x" filteredSequences="0" gcContent="30"
+		maxLength="250" minLength="10" perBaseQualityScoreChart="x"
+		perSequenceQualityScoreChart="x" totalBases="1000" totalSequences="4" />
+	<analysis_sequence_file analysis_id="1" inputFiles_id="1"/>
 </dataset>
