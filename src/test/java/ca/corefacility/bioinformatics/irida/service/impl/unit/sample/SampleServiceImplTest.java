@@ -50,6 +50,11 @@ public class SampleServiceImplTest {
 	private SampleSequenceFileJoinRepository ssfRepository;
 	private AnalysisRepository analysisRepository;
 	private Validator validator;
+	
+	/**
+	 * Variation in a floating point number to be considered equal.
+	 */
+	private static final double deltaFloatEquality = 0.000001;
 
 	@Before
 	public void setUp() {
@@ -197,6 +202,76 @@ public class SampleServiceImplTest {
 
 		verify(psjRepository).getProjectForSample(s1);
 		verify(psjRepository).getProjectForSample(s2);
+	}
+	
+	/**
+	 * Tests out successfully getting the coverage from a sample with no sequence files.
+	 * @throws SequenceFileAnalysisException 
+	 */
+	@Test
+	public void testGetCoverageForSampleSuccessZero() throws SequenceFileAnalysisException {
+		Sample s1 = new Sample();
+		s1.setId(1l);
+
+		when(ssfRepository.getFilesForSample(s1)).thenReturn(
+				new ArrayList<Join<Sample,SequenceFile>>());
+		
+		double coverage = sampleService.estimateCoverageForSample(s1, 10);
+		assertEquals(0, coverage, deltaFloatEquality);
+	}
+	
+	/**
+	 * Tests out successfully getting the coverage from a sample with a sequence file.
+	 * @throws SequenceFileAnalysisException 
+	 */
+	@Test
+	public void testGetCoverageForSampleSuccess() throws SequenceFileAnalysisException {
+		Sample s1 = new Sample();
+		s1.setId(1l);
+
+		SequenceFile sf1 = new SequenceFile();
+		sf1.setId(2222l);
+
+		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
+
+		AnalysisFastQC analysisFastQC1 = new AnalysisFastQC(
+				Sets.newHashSet(sf1), "id");
+		analysisFastQC1.setTotalBases(1000l);
+
+		when(ssfRepository.getFilesForSample(s1)).thenReturn(
+				Arrays.asList(join));
+		when(
+				analysisRepository.findAnalysesForSequenceFile(sf1,
+						AnalysisFastQC.class)).thenReturn(
+				Sets.newHashSet(analysisFastQC1));
+		
+		double coverage = sampleService.estimateCoverageForSample(s1, 500l);
+		assertEquals(2.0, coverage, deltaFloatEquality);
+	}
+	
+	/**
+	 * Tests out passing an invalid reference length.
+	 * @throws SequenceFileAnalysisException 
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void testGetCoverageForSampleInvalidReferenceLength() throws SequenceFileAnalysisException {
+		sampleService.estimateCoverageForSample(new Sample(), 0l);
+	}
+	
+	/**
+	 * Tests out successfully getting the total bases from a sample with no sequence files.
+	 * @throws SequenceFileAnalysisException 
+	 */
+	@Test
+	public void testGetTotalBasesForSampleSuccessZero() throws SequenceFileAnalysisException {
+		Sample s1 = new Sample();
+		s1.setId(1l);
+
+		when(ssfRepository.getFilesForSample(s1)).thenReturn(
+				new ArrayList<Join<Sample,SequenceFile>>());
+		
+		long actualBases = sampleService.getTotalBasesForSample(s1);
+		assertEquals(0, actualBases);
 	}
 	
 	/**

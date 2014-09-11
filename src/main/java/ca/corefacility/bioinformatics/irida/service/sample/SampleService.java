@@ -163,8 +163,11 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @param referenceFileLength
 	 *            The length of the reference file in bases.
 	 * @return The estimate coverage of all sequence data in this sample.
+	 * @throws SequenceFileAnalysisException
+	 *             If there was an error getting FastQC analyses for a sequence
+	 *             file.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public double estimateCoverageForSample(Sample sample,
-			long referenceFileLength);
+			long referenceFileLength) throws SequenceFileAnalysisException;
 }
