@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="templates/wet-boew/wet-layout">
+<head>
+    <title th:text="#{remoteapi.details.title(${remoteApi.name})}">_REMOTE API PAGE_</title>
+</head>
+<body>
+<div class="container" layout:fragment="content">
+    <div class="row">
+        <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">_MENU_</div>
+    </div>
+     <main class="container" role="main" property="mainContentOfPage">
+            <h1 th:utext="#{remoteapi.status.connected.heading}"></h1>
+            <section th:utext="#{remoteapi.status.connected.message}"></section>
+        </main>
+    
+</div>
+<div layout:fragment="scripts" th:inline="javascript">
+    <script th:inline="javascript">
+    	$(document).ready(function(){
+    		if(window.parent != window){
+    			window.parent.location.reload();
+    		}
+        });
+    	
+    </script>
+</div>
+</body>
+</html>

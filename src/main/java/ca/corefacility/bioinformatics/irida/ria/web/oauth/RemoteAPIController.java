@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
 import java.net.MalformedURLException;
 import java.security.Principal;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,13 +34,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.repositories.specification.RemoteAPISpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMessage;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 
 import com.google.common.collect.ImmutableMap;
@@ -54,7 +58,6 @@ import com.google.common.collect.Lists;
  */
 @Controller
 @RequestMapping("/remote_api")
-@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class RemoteAPIController extends BaseController {
 	private static final Logger logger = LoggerFactory.getLogger(RemoteAPIController.class);
 
@@ -72,9 +75,11 @@ public class RemoteAPIController extends BaseController {
 
 	private final RemoteAPIService remoteAPIService;
 	private final ProjectRemoteService projectRemoteService;
+	private final RemoteAPITokenService tokenService;
 	private final OltuAuthorizationController authController;
 	private final MessageSource messageSource;
 	private final Formatter<Date> dateFormatter;
+	private final Formatter<Date> dateTimeFormatter;
 
 	// Map storing the message names for the
 	// getErrorsFromDataIntegrityViolationException method
@@ -84,12 +89,17 @@ public class RemoteAPIController extends BaseController {
 
 	@Autowired
 	public RemoteAPIController(RemoteAPIService remoteAPIService, ProjectRemoteService projectRemoteService,
-			OltuAuthorizationController authController, MessageSource messageSource) {
+			RemoteAPITokenService tokenService, OltuAuthorizationController authController, MessageSource messageSource) {
 		this.remoteAPIService = remoteAPIService;
 		this.projectRemoteService = projectRemoteService;
+		this.tokenService = tokenService;
 		this.authController = authController;
 		this.messageSource = messageSource;
 		this.dateFormatter = new DateFormatter();
+		DateFormatter dateFormatter2 = new DateFormatter();
+		dateFormatter2.setStylePattern("MS");
+		dateTimeFormatter = dateFormatter2;
+		
 	}
 
 	/**
@@ -97,7 +107,6 @@ public class RemoteAPIController extends BaseController {
 	 * 
 	 * @return The view name of the remote apis listing page
 	 */
-	@PreAuthorize("isAuthenticated()")
 	@RequestMapping
 	public String list() {
 		return CLIENTS_PAGE;
@@ -113,9 +122,17 @@ public class RemoteAPIController extends BaseController {
 	 * @return The name of the remote api details page view
 	 */
 	@RequestMapping("/{apiId}")
-	public String read(@PathVariable Long apiId, Model model) {
+	public String read(@PathVariable Long apiId, Model model, Locale locale) {
 		RemoteAPI remoteApi = remoteAPIService.read(apiId);
 		model.addAttribute("remoteApi", remoteApi);
+
+		try {
+			RemoteAPIToken token = tokenService.getToken(remoteApi);
+			model.addAttribute("tokenExpiry", dateTimeFormatter.print(token.getExpiryDate(), locale));
+		} catch (EntityNotFoundException ex) {
+			logger.trace("No token for service " + remoteApi);
+		}
+
 		return DETAILS_PAGE;
 	}
 
@@ -126,6 +143,7 @@ public class RemoteAPIController extends BaseController {
 	 *            The ID to remove
 	 * @return redirect to the remote apis list
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(value = "/remove", method = RequestMethod.POST)
 	public String removeClient(@RequestParam Long id) {
 		logger.trace("Deleting remote client " + id);
@@ -141,6 +159,7 @@ public class RemoteAPIController extends BaseController {
 	 *            Model for the view
 	 * @return The name of the create client page
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	public String getAddRemoteAPIPage(Model model) {
 		if (!model.containsAttribute("errors")) {
@@ -162,6 +181,7 @@ public class RemoteAPIController extends BaseController {
 	 * @return Redirect to the newly created client page, or back to the
 	 *         creation page in case of an error.
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public String postCreateRemoteAPI(RemoteAPI client, Model model, Locale locale) {
 
@@ -209,7 +229,6 @@ public class RemoteAPIController extends BaseController {
 	 *            The string search value for the table
 	 * @return a Map<String,Object> for the table
 	 */
-	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> getAjaxAPIList(@RequestParam(DataTable.REQUEST_PARAM_START) Integer start,
 			@RequestParam(DataTable.REQUEST_PARAM_LENGTH) Integer length,
@@ -260,7 +279,6 @@ public class RemoteAPIController extends BaseController {
 	 *            The ID of the api
 	 * @return "valid" or "invalid_token" message
 	 */
-	@PreAuthorize("isAuthenticated()")
 	@RequestMapping("/status/{apiId}")
 	@ResponseBody
 	public String checkApiStatus(@PathVariable Long apiId) {
@@ -275,13 +293,12 @@ public class RemoteAPIController extends BaseController {
 		}
 	}
 
-	@PreAuthorize("isAuthenticated()")
 	@RequestMapping("/connect/{apiId}")
 	public String connectToAPI(@PathVariable Long apiId) {
 		RemoteAPI api = remoteAPIService.read(apiId);
 		projectRemoteService.list(api);
-
-		return "redirect:/remote_api";
+		
+		return "remote_apis/parent_reload";
 	}
 
 	/**

@@ -12,7 +12,7 @@
     </div>
     <div class="row mrgn-tp-lg">
     	<!-- User details -->
-    	<div class="col-md-8 col-md-offset-2">
+    	<div class="col-md-6">
             <div class="panel panel-primary">
                 <div class="panel-heading clearfix">
                 	<h3 class="panel-title pull-left" th:text="#{remoteapi.details.title(${remoteApi.name})}">_User Details_</h3>
@@ -33,17 +33,17 @@
                             <span class="pull-right" id="remoteapi-name"
                                 th:text="${remoteApi.name}">_Name_</span>
                         </li>
-                        <li>
+                        <li sec:authorize="hasRole('ROLE_ADMIN')">
                             <i class="glyphicon glyphicon-globe"></i>&nbsp;[[#{remoteapi.serviceurl}]]
                             <span class="pull-right" id="remoteapi-serviceurl"
                                 th:text="${remoteApi.serviceURI}">_URL_</span>
                         </li>
-                    	<li>
+                    	<li sec:authorize="hasRole('ROLE_ADMIN')">
                     		<i class="glyphicon glyphicon-tag"></i>&nbsp;[[#{remoteapi.clientid}]]
                     		<span class="pull-right" id="remoteapi-clientid"
                                 th:text="${remoteApi.clientId}">_Client ID_</span>
                     	</li>
-                        <li>
+                        <li sec:authorize="hasRole('ROLE_ADMIN')">
                             <i class="glyphicon glyphicon-eye-close"></i>&nbsp;[[#{remoteapi.details.secret}]]
                             <span class="pull-right" id="remoteapi-secret"
                                 th:text="${remoteApi.clientSecret}">_Secret_</span>
@@ -52,6 +52,35 @@
                         	<i class="glyphicon glyphicon-calendar"></i>&nbsp;[[#{iridaThing.timestamp}]]
                         	<span class="pull-right" id="remoteapi-created"
                                 th:text="${#calendars.format(remoteApi.createdDate, 'dd MMM yyyy')}">_DATE_CREATED_</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-info">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title pull-left">Connection Status</h3>
+                    <div class="btn-group-xs pull-right">
+                        <button class="oauth-connect-link btn btn-default btn-xs hidden" id="connect-button"
+                            th:attr="data-api-id=${remoteApi.id}"
+                            th:text="#{remoteapi.status.connect.button}">_Connect_</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <ul class="nav nav-pills nav-stacked details" th:inline="text">
+                        <li>
+                            <i class="glyphicon glyphicon-link"></i>&nbsp;[[#{remoteapi.status}]]
+                            <span class="pull-right">
+                                <span id="connection-status"
+                                        th:text="#{remoteapi.status.waiting}">_Connection Status_</span>
+                            </span>
+                            
+                        </li>
+                        <li th:if="${tokenExpiry}">
+                            <i class="glyphicon glyphicon-time"></i>&nbsp;[[#{remoteapi.status.tokenexpiry}]]
+                            <span class="pull-right" id="token-expiry"
+                                    th:text="${tokenExpiry}">_TOKEN_EXPIRY_</span>
                         </li>
                     </ul>
                 </div>
@@ -92,9 +121,14 @@
     			});
 
     		});
+    		
+    		var apiId = /*[[${remoteApi.id}]]*/ 1;
+    		getApiStatus(apiId,"#connection-status","#connect-button");
     	});
     	
+    	
     </script>
+    <script th:replace="remote_apis/remote_api_connect"></script>
 </div>
 </body>
 </html>

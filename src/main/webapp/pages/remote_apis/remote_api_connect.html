@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+    <script th:inline="javascript">
+    $(document).ready(function(){
+    	$(".oauth-connect-link").click(function(){
+    		var that = $(this);
+    		var apiId = that.data("api-id");
+    		
+			var urlBase = /*[[@{/remote_api/connect/}]]*/ "/remoteapi/connect/";
+			var connectUrl = urlBase + apiId;
+			
+			noty({
+				modal: true,
+				layout: "top",
+				template: '<iframe style="width:100%; height:400px" src="'+connectUrl+'"></iframe>',
+				buttons:[
+                    {
+                        addClass: 'btn btn-default btn-sm',
+                        text: /*[[#{form.btn.cancel}]]*/ 'Cancel',
+                        onClick: function ($noty) {
+                            $noty.close();
+                        }
+                    }
+		         ]
+			});
+		});
+    });
+    
+    function getApiStatus(apiId,resultContainerId,connectButtonId){
+    	var urlBase = /*[[@{/remote_api/status/}]]*/ '/remote_api/status/'
+    	var invalidTokenText = /*[[#{remoteapi.status.invalid}]]*/ "Expired Token";
+    	var validTokenText = /*[[#{remoteapi.status.valid}]]*/ "Valid Token";
+    	var errorText = /*[[#{remoteapi.status.error}]]*/ "Connection Error";
+    	        	
+    	var span = document.createElement("span");
+    	var resultContainer = $(resultContainerId);
+    	var connectButton = $(connectButtonId);
+    	
+    	$.ajax({
+    		url: urlBase + apiId,
+    		type: "POST",
+    		success: function(data, textStatus, jqXHR){
+    			if(data == "valid"){
+    				span.className="label label-success";
+    				span.innerHTML = validTokenText;
+    				resultContainer.html(span);
+    			}
+    			else if(data == "invalid_token" || data == "inactive"){
+    				span.className="label label-warning";
+    				span.innerHTML = invalidTokenText;
+    				
+    				// display the connect button
+    				connectButton.removeClass("hidden");
+    				
+    				resultContainer.html(span);
+    			}
+    		},
+    		error: function(data, textStatus, jqXHR){
+    			span.className="label label-danger";
+    			span.innerHTML = errorText;
+    			resultContainer.html(span);
+    		}
+    	});
+    }
+    </script>
