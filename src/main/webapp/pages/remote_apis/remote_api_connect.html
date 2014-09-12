@@ -2,7 +2,7 @@
 
     <script th:inline="javascript">
     $(document).ready(function(){
-    	$(".oauth-connect-link").click(function(){
+    	$(".oauth-connect-link").on("click",function(){
     		var that = $(this);
     		var apiId = that.data("api-id");
     		
@@ -12,7 +12,7 @@
 			noty({
 				modal: true,
 				layout: "top",
-				template: '<iframe style="width:100%; height:400px" src="'+connectUrl+'"></iframe>',
+				template: '<iframe scrolling="no" style="width:100%; height:400px" src="'+connectUrl+'"></iframe>',
 				buttons:[
                     {
                         addClass: 'btn btn-default btn-sm',
