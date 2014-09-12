@@ -158,8 +158,12 @@ public abstract class AnalysisExecutionServiceGalaxy
 		} finally {
 			// At this stage any analysis output files should be transfered to the output files repository
 			// So it is safe to delete the temporary output files directory
-			if (tempOutputDirectory != null) {
-				tempOutputDirectory.toFile().delete();
+			if (tempOutputDirectory == null) {
+				logger.error("Temporary directory for saving analysis output files is null.");
+			} else if (!isEmptyDirectory(tempOutputDirectory)) {
+				logger.error("Temporary directory " + tempOutputDirectory + " is not empty. Not deleting.");
+			} else {
+				Files.delete(tempOutputDirectory);
 				logger.trace("Deleted temporary directory " + tempOutputDirectory + " for analysis output files");
 			}
 		}
@@ -168,6 +172,15 @@ public abstract class AnalysisExecutionServiceGalaxy
 				ImmutableMap.of("analysis", savedAnalysis));
 		
 		return savedAnalysis;
+	}
+	
+	/**
+	 * Determines if the given Path is an empty directory.
+	 * @param directory  The directory to check.
+	 * @return  True if the given path is an empty directory, false otherwise.
+	 */
+	private boolean isEmptyDirectory(Path directory) {
+		return Files.isDirectory(directory) && directory.toFile().list().length == 0;
 	}
 
 	/**
