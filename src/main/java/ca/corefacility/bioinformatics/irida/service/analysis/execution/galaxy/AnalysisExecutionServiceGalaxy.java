@@ -4,6 +4,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.transaction.Transactional;
 
@@ -141,16 +143,44 @@ public abstract class AnalysisExecutionServiceGalaxy
 		checkArgument(AnalysisState.FINISHED_RUNNING.equals(submittedAnalysis.getAnalysisState()),
 				" analysis should be " + AnalysisState.FINISHED_RUNNING);
 		verifyAnalysisSubmissionExists(submittedAnalysis);
-				
-		logger.debug("Getting results for " + submittedAnalysis);
-		A analysisResults = workspaceService.getAnalysisResults(submittedAnalysis);
 		
-		logger.trace("Saving results for " +  submittedAnalysis);
-		A savedAnalysis = (A) analysisService.create(analysisResults);
+		A savedAnalysis;
+		Path tempOutputDirectory = null;
+		try {
+			tempOutputDirectory = Files.createTempDirectory("analysis-output");
+			logger.trace("Created temporary directory " + tempOutputDirectory + " for analysis output files");
+			
+			logger.debug("Getting results for " + submittedAnalysis);
+			A analysisResults = workspaceService.getAnalysisResults(submittedAnalysis, tempOutputDirectory);
+			
+			logger.trace("Saving results for " +  submittedAnalysis);
+			savedAnalysis = (A) analysisService.create(analysisResults);
+		} finally {
+			// At this stage any analysis output files should be transfered to the output files repository
+			// So it is safe to delete the temporary output files directory
+			if (tempOutputDirectory == null) {
+				logger.error("Temporary directory for saving analysis output files is null.");
+			} else if (!isEmptyDirectory(tempOutputDirectory)) {
+				logger.error("Temporary directory " + tempOutputDirectory + " is not empty. Not deleting.");
+			} else {
+				Files.delete(tempOutputDirectory);
+				logger.trace("Deleted temporary directory " + tempOutputDirectory + " for analysis output files");
+			}
+		}
+		
 		analysisSubmissionService.update(submittedAnalysis.getId(),
 				ImmutableMap.of("analysis", savedAnalysis));
 		
 		return savedAnalysis;
+	}
+	
+	/**
+	 * Determines if the given Path is an empty directory.
+	 * @param directory  The directory to check.
+	 * @return  True if the given path is an empty directory, false otherwise.
+	 */
+	private boolean isEmptyDirectory(Path directory) {
+		return Files.isDirectory(directory) && directory.toFile().list().length == 0;
 	}
 
 	/**

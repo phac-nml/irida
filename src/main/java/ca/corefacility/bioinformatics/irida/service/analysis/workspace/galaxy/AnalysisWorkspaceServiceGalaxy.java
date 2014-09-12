@@ -1,14 +1,10 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-
-import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
-import com.github.jmchilton.blend4j.galaxy.beans.History;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerDownloadException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
@@ -19,6 +15,9 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflow
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.AnalysisSubmissionGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
+
+import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
+import com.github.jmchilton.blend4j.galaxy.beans.History;
 
 /**
  * A service for performing tasks for analysis in Galaxy.
@@ -62,16 +61,17 @@ public abstract class AnalysisWorkspaceServiceGalaxy<R extends RemoteWorkflowGal
 	 * Builds a new AnalysisOutputFile from the given file in Galaxy.
 	 * @param analysisId  The id of the analysis performed in Galaxy.
 	 * @param dataset  The dataset containing the data for the AnalysisOutputFile.
+	 * @param outputDirectory A directory to download the resulting output files.
 	 * @return  An AnalysisOutputFile storing a local copy of the Galaxy file.
 	 * @throws IOException  If there was an issue creating a local file.
 	 * @throws ExecutionManagerDownloadException  If there was an issue downloading the data from Galaxy.
 	 */
 	protected AnalysisOutputFile buildOutputFile(String analysisId,
-			Dataset dataset) throws IOException, ExecutionManagerDownloadException {
+			Dataset dataset, Path outputDirectory) throws IOException, ExecutionManagerDownloadException {
 		String datasetId = dataset.getId();
 		String fileName = dataset.getName();
 
-		Path outputFile = Files.createTempFile(fileName, ".dat");
+		Path outputFile = outputDirectory.resolve(fileName);
 		galaxyHistoriesService.downloadDatasetTo(analysisId, datasetId,
 				outputFile);
 		
