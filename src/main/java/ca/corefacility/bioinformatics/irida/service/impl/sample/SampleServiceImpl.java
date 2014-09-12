@@ -202,6 +202,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public long getTotalBasesForSample(Sample sample)
 			throws SequenceFileAnalysisException {
 		checkNotNull(sample, "sample is null");
@@ -238,6 +239,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public double estimateCoverageForSample(Sample sample,
 			long referenceFileLength) throws SequenceFileAnalysisException {
 		checkNotNull(sample, "sample is null");
