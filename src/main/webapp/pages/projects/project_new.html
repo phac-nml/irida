@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="${themePath + '_base'}">
+      layout:decorator="${themePath + '_page'}">
 <head>
     <title th:text="#{projects.create.heading}">THIS IS SOMETHING WRONG</title>
 </head>
 <body>
-<div class="container" layout:fragment="content">
+<div class="container" layout:fragment="page">
     <div class="row">
         <div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
             <form th:action="@{/projects/new}" method="post" role="form" novalidate="novalidate">
@@ -60,7 +60,7 @@
         </div>
     </div>
 </div>
-<th:block layout:fragment="scripts" th:inline="javascript">
+<th:block layout:fragment="baseScripts" th:inline="javascript">
     <script>
         $('span.glyphicon-asterisk').qtip({
             content: {
