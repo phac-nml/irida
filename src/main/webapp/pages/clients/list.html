@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="templates/wet-boew/wet-layout">
+      layout:decorator="${themePath + '_page'}">
 <head>
     <title th:text="#{clients.title}">_Clients_</title>
 </head>
 <body>
-<div class="container" layout:fragment="content">
-    <div class="row">
-        <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">_MENU_</div>
+<main layout:fragment="page">
         <div class="col-md-12">
             <main role="main" property="mainContentOfPage">
                 <h1 th:text="#{clients.title}">_Clients_</h1>
@@ -26,9 +24,8 @@
             </table>
             </main>
         </div>
-    </div>
-</div>
-<div layout:fragment="scripts">
+    </main>
+<div layout:fragment="baseScripts">
     <script th:src="@{/resources/wet-theme/js/deps/jquery.dataTables.min.js}"
             src="/resources/wet-theme/js/deps/jquery.dataTables.min.js"></script>
     <script th:inline="javascript">

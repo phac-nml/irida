@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="templates/wet-boew/wet-layout">
+      layout:decorator="clients/_base">
 <head>
     <title th:text="#{client.details.title(${client.clientId})}">_USER PAGE_</title>
 </head>
 <body>
-<div class="container" layout:fragment="content">
-    <div class="row">
-        <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">_MENU_</div>
-    </div>
+<main layout:fragment="main">
     <div class="row mrgn-tp-lg">
     	<!-- User details -->
     	<div class="col-md-8 col-md-offset-2">
@@ -69,11 +66,8 @@
                <input type="hidden" th:value="${client.id}" name="id"/>
            </form>
        </section>
-</div>
-<div layout:fragment="scripts" th:inline="javascript">
-    <script th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}"
-            src="/resources/bower_components/moment/min/moment-with-langs.min.js"></script>
-    <script th:src="@{/resources/js/client.js}" src="/resources/js/client.js"></script>
+</main>
+<th:block layout:fragment="pageScripts" th:inline="javascript">
     <script th:inline="javascript">
     	$(document).ready(function(){
     		var removeUrl = [[@{/clients/remove}]]; 
@@ -106,6 +100,6 @@
     	});
     	
     </script>
-</div>
+</th:block>
 </body>
 </html>
