@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="${themePath + '_page'}">
+      layout:decorator="user/_base">
 <head>
     <title th:text="${user.label}">_USER PAGE_</title>
 </head>
 <body>
-<div layout:fragment="page">
+<main layout:fragment="main">
     <div class="row">
         <div class="col-md-12">
         	<h1 id="wb-cont" property="name" th:text="${user.label}">__USER NAME__</h1>
@@ -129,8 +129,8 @@
         </div>
 	</section>
 
-</div>
-<th:block layout:fragment="baseScripts" th:inline="javascript">
+</main>
+<th:block layout:fragment="pageScripts" th:inline="javascript">
 	<!-- Add the project role icons to the project role names -->
 	<script th:src="@{/resources/wet-theme/js/deps/jquery.magnific-popup.min.js}"
             src="/resources/wet-theme/js/deps/jquery.magnific-popup.min.js"></script>
