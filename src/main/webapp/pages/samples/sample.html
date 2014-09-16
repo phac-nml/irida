@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="samples/base">
+      layout:decorator="samples/_base">
 <head lang="en">
     <meta charset="UTF-8"/>
     <title th:text="#{samples.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
 </head>
 <body>
-<main class="col-md-9 col-md-push-3" role="main" property="mainContentOfPage" layout:fragment="mainContent">
+<main layout:fragment="main">
     <div class="row">
         <div class="col-md-10">
             <h1 role="heading" th:text="#{samples.details.page-title(${sample.getLabel()})}">__TITLE__</h1>
