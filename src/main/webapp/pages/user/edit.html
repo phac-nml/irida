@@ -1,86 +1,108 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorator="templates/wet-boew/wet-layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="user/_base">
 <head>
-<title th:text="${user.label}">_USER PAGE_</title>
+    <title th:text="${user.label}">_USER PAGE_</title>
 </head>
 <body>
-	<div class="container" layout:fragment="content">
-		<div class="row">
-			<div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">_MENU_</div>
-		</div>
+<main layout:fragment="main">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
+            <form role="form" action="/users/1/edit"
+                  th:action="@{/users/{id}/edit(id=${user.id})}" method="post">
+                <section class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title" th:text="#{user.edit.details(${user.label})}">_Edit User Details For
+                            USER_</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label class="control-label" th:text="#{user.firstName}" for="firstName">_First
+                                Name_</label>
 
-		<div class="row">
-			<div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
-				<form role="form" action="/users/1/edit"
-					th:action="@{/users/{id}/edit(id=${user.id})}" method="post">
-					<section class="panel panel-default">
-						<div class="panel-heading">
-							<h3 class="panel-title" th:text="#{user.edit.details(${user.label})}">_Edit User Details For USER_</h3>
-						</div>
-						<div class="panel-body">
-							<div class="form-group">
-								<label class="control-label" th:text="#{user.firstName}" for="firstName">_First Name_</label> 
-								<div th:if="${#maps.containsKey(errors, 'firstName')}" th:text="${errors.firstName}" class="alert alert-warning">_First Name Error_</div>
-								<input type="text" id="firstName" name="firstName" class="form-control input-full"	th:placeholder="${user.firstName}" placeholder="First Name" />
-							</div>
+                            <div th:if="${#maps.containsKey(errors, 'firstName')}" th:text="${errors.firstName}"
+                                 class="alert alert-warning">_First Name Error_
+                            </div>
+                            <input type="text" id="firstName" name="firstName" class="form-control input-full"
+                                   th:placeholder="${user.firstName}" placeholder="First Name"/>
+                        </div>
 
-							<div class="form-group">
-								<label class="control-label" th:text="#{user.lastName}" for="lastName">_Last Name_</label>
-								<div id="lastName-error" th:if="${#maps.containsKey(errors, 'lastName')}" th:text="${errors.lastName}" class="alert alert-warning">_Last Name Error_</div> 
-								<input type="text" id="lastName" name="lastName" class="form-control input-full" th:placeholder="${user.lastName}" placeholder="Last Name" />
-							</div>
+                        <div class="form-group">
+                            <label class="control-label" th:text="#{user.lastName}" for="lastName">_Last Name_</label>
 
-							<div class="form-group">
-								<label th:text="#{users.email}"	for="email">_Email_</label>
-								<div id="email-error" th:if="${#maps.containsKey(errors, 'email')}" th:text="${errors.email}" class="alert alert-warning">_Email Error_</div> 
-								<input type="email" id="email" name="email" class="form-control input-full" th:placeholder="${user.email}"	placeholder="Email" />
-							</div>
-							
-							<div class="form-group">
-								<label th:text="#{user.phone}" for="phoneNumber">_Email_</label>
-								<div id="email-error" th:if="${#maps.containsKey(errors, 'phoneNumber')}" th:text="${errors.phoneNumber}" class="alert alert-warning">_Phone Number Error_</div> 
-								<input type="text" id="phoneNumber" name="phoneNumber" class="form-control input-full" th:placeholder="${user.phoneNumber}" placeholder="Phone Number" />
-							</div>
+                            <div id="lastName-error" th:if="${#maps.containsKey(errors, 'lastName')}"
+                                 th:text="${errors.lastName}" class="alert alert-warning">_Last Name Error_
+                            </div>
+                            <input type="text" id="lastName" name="lastName" class="form-control input-full"
+                                   th:placeholder="${user.lastName}" placeholder="Last Name"/>
+                        </div>
 
-							<div class="form-group" sec:authorize="hasRole('ROLE_ADMIN')">
-								<label class="control-label" th:text="#{users.role}" for="systemRole">_Role_</label>
-								<div id="role-error" th:if="${#maps.containsKey(errors, 'role')}" th:text="${errors.role}" class="alert alert-warning">_Role Error_</div>
-								<select id="systemRole" name="systemRole" class="form-control input-full" >
-									<option value="" selected="selected" th:text="${currentRole}"></option>
-									<option th:each="role : ${allowedRoles}" th:value="${role.key}" th:text="${role.value}">_Role name_</option>
-								</select>
-							</div>
+                        <div class="form-group">
+                            <label th:text="#{users.email}" for="email">_Email_</label>
 
-							<div class="form-group">
-								<label class="control-label" th:text="#{user.password}"	for="password">_Password_</label>
-								<div th:if="${#maps.containsKey(errors, 'password')}" th:text="${errors.password}" class="alert alert-warning">_Password Error_</div>
-								<input type="password" id="password" name="password" class="form-control input-full" placeholder="Password" />
-							</div>
+                            <div id="email-error" th:if="${#maps.containsKey(errors, 'email')}"
+                                 th:text="${errors.email}" class="alert alert-warning">_Email Error_
+                            </div>
+                            <input type="email" id="email" name="email" class="form-control input-full"
+                                   th:placeholder="${user.email}" placeholder="Email"/>
+                        </div>
 
-							<div class="form-group">
-								<label class="control-label" th:text="#{user.confirmPassword}" for="confirmPassword">_Confirm Password_</label> 
-								<input type="password" id="confirmPassword" name="confirmPassword" class="form-control input-full" placeholder="Confirm Password" />
-							</div>
-							
-							<div class="form-group" sec:authorize="hasRole('ROLE_ADMIN')">
-								<label class="control-label" th:text="#{user.enabled}" for="enabled">_Enabled_</label> 
-								<input type="checkbox" name="enabled" th:checked="${user.enabled}"/>
-							</div>
-						</div>
-							<div class="panel-footer text-right">
-                        		<a th:href="${#httpServletRequest.getHeader('referer')}" href="/users" class="btn btn-default" >Cancel</a>
-                        		<button type="submit" class="btn btn-primary submit">Update User</button>
-                    		</div>
-						
-					</section>
-				</form>
-			</div>
-		</div>
-	</div>
+                        <div class="form-group">
+                            <label th:text="#{user.phone}" for="phoneNumber">_Email_</label>
 
+                            <div id="email-error" th:if="${#maps.containsKey(errors, 'phoneNumber')}"
+                                 th:text="${errors.phoneNumber}" class="alert alert-warning">_Phone Number Error_
+                            </div>
+                            <input type="text" id="phoneNumber" name="phoneNumber" class="form-control input-full"
+                                   th:placeholder="${user.phoneNumber}" placeholder="Phone Number"/>
+                        </div>
 
-	<div layout:fragment="scripts" th:inline="javascript"></div>
+                        <div class="form-group" sec:authorize="hasRole('ROLE_ADMIN')">
+                            <label class="control-label" th:text="#{users.role}" for="systemRole">_Role_</label>
+
+                            <div id="role-error" th:if="${#maps.containsKey(errors, 'role')}" th:text="${errors.role}"
+                                 class="alert alert-warning">_Role Error_
+                            </div>
+                            <select id="systemRole" name="systemRole" class="form-control input-full">
+                                <option value="" selected="selected" th:text="${currentRole}"></option>
+                                <option th:each="role : ${allowedRoles}" th:value="${role.key}" th:text="${role.value}">
+                                    _Role name_
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label" th:text="#{user.password}" for="password">_Password_</label>
+
+                            <div th:if="${#maps.containsKey(errors, 'password')}" th:text="${errors.password}"
+                                 class="alert alert-warning">_Password Error_
+                            </div>
+                            <input type="password" id="password" name="password" class="form-control input-full"
+                                   placeholder="Password"/>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label" th:text="#{user.confirmPassword}" for="confirmPassword">_Confirm
+                                Password_</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword"
+                                   class="form-control input-full" placeholder="Confirm Password"/>
+                        </div>
+
+                        <div class="form-group" sec:authorize="hasRole('ROLE_ADMIN')">
+                            <label class="control-label" th:text="#{user.enabled}" for="enabled">_Enabled_</label>
+                            <input type="checkbox" name="enabled" th:checked="${user.enabled}"/>
+                        </div>
+                    </div>
+                    <div class="panel-footer text-right">
+                        <a th:href="${#httpServletRequest.getHeader('referer')}" href="/users" class="btn btn-default">Cancel</a>
+                        <button type="submit" class="btn btn-primary submit">Update User</button>
+                    </div>
+
+                </section>
+            </form>
+        </div>
+    </div>
+</main>
 </body>
 </html>
