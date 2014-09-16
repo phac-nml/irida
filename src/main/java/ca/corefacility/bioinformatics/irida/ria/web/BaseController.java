@@ -7,8 +7,12 @@ import java.util.Map;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMessage;
 
@@ -18,8 +22,11 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMe
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
+@Controller
 public class BaseController {
 	protected static final String MODEL_ERROR_ATTR = "errors";
+	protected static final String WET_BOEW_THEME = "wet";
+	protected @Value("${ui.theme}") String theme;
 
 	/**
 	 * Changes a {@link javax.validation.ConstraintViolationException} to a

@@ -1,118 +1,103 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="templates/wet-boew/wet-layout">
+      layout:decorator="projects/_base">
 <head>
-    <title th:text="#{project.samples.title}">THIS IS SOMETHING
-        WRONG</title>
-    <link href="/resources/wet-theme/css/wet-boew.min.css"/>
-    <link href="/resources/wet-theme/css/theme.min.css"/>
-	<th:block layout:fragment="css">
-		<link rel="stylesheet" th:href="@{/resources/bower_components/magnific-popup/dist/magnific-popup.css}"
-			  href="/resources/bower_components/magnific-popup/dist/magnific-popup.css"/>
-	</th:block>
 </head>
 <body>
-<div class="container" layout:fragment="content">
+<main layout:fragment="main">
     <div class="row">
-        <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
+        <div class="col-md-12">
+            <h1 role="heading"
+                th:text="#{project.samples.h1(${project.label})}">__PAGE_TITLE__</h1>
+        </div>
     </div>
-    <div class="row">
-        <nav th:replace="projects/project_base :: nav"></nav>
-        <main class="col-md-9 col-md-push-3" role="main"
-              property="mainContentOfPage">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1 role="heading"
-                        th:text="#{project.samples.h1(${project.label})}">__PAGE_TITLE__</h1>
+    <div class="row mrgn-bttm-md">
+        <div class="col-md-12">
+            <div class="btn-toolbar mrgn-bttm-md" role="toolbar" th:inline="text">
+                <div class="btn-group">
+                    <button id="deleteBtn" class="btn btn-default btn-sm btn-action" disabled="true">
+                        <span class="fa fa-trash-o fa-fw"></span>&nbsp;[[#{project.samples.delete}]]
+                    </button>
                 </div>
-            </div>
-            <div class="row mrgn-bttm-md">
-                <div class="col-md-12">
-                    <div class="btn-toolbar mrgn-bttm-md" role="toolbar" th:inline="text">
-                        <div class="btn-group">
-                            <button id="deleteBtn" class="btn btn-default btn-sm btn-action" disabled="true">
-                                <span class="fa fa-trash-o fa-fw"></span>&nbsp;[[#{project.samples.delete}]]
-                            </button>
-                        </div>
-						<div class="btn-group">
-                            <button id="copyBtn" class="btn btn-default btn-sm btn-action" disabled="true">
-                                <span class="fa fa-copy fa-fw"></span>&nbsp;[[#{project.samples.copy}]]
-                            </button>
-                        </div>
-                        <div th:if="${isOwner} or ${isAdmin}" class="btn-group">
-                            <button id="moveBtn" class="btn btn-default btn-sm btn-action" disabled="true">
-                                <span class="fa fa-truck fa-fw"></span>&nbsp;[[#{project.samples.move}]]
-                            </button>
-                        </div>
-						<div class="btn-group">
-                            <button id="combineBtn" class="btn btn-default btn-sm btn-action2" disabled="true">
-                                <span class="fa fa-compress fa-fw"></span>&nbsp;[[#{project.samples.combine}]]
-                            </button>
-                        </div>
-                        <div class="btn-group">
-                            <button id="runPipelineBtn" aria-controls="runPipelineModal"
-                               class="btn btn-primary btn-sm btn-action3" role="button" disabled="true">
-                                <span class="fa fa-rocket fa-fw"></span>&nbsp;[[#{project.samples.run-pipeline}]]
-                            </button>
-                        </div>
-                    </div>
+                <div class="btn-group">
+                    <button id="copyBtn" class="btn btn-default btn-sm btn-action" disabled="true">
+                        <span class="fa fa-copy fa-fw"></span>&nbsp;[[#{project.samples.copy}]]
+                    </button>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <table id="samplesTable" class="table table-striped">
-                        <thead>
-                        <tr role="row" th:inline="text">
-                            <th data:tooltip="#{tooltip.selectall-none}"><input type="checkbox" id="selectAll"/></th>
-                            <th class="sortable">[[#{project.samples.table.name}]]<i
-                                    class="glyphicon"></i></th>
-                            <th>[[#{project.samples.table.numFiles}]]</th>
-                            <th class="sortable">[[#{project.samples.table.dateCreated}]]<i
-                                    class="glyphicon"></i></th>
-                        </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                <div th:if="${isOwner} or ${isAdmin}" class="btn-group">
+                    <button id="moveBtn" class="btn btn-default btn-sm btn-action" disabled="true">
+                        <span class="fa fa-truck fa-fw"></span>&nbsp;[[#{project.samples.move}]]
+                    </button>
                 </div>
-            </div>
-        </main>
-        <aside th:replace="projects/project_base :: sidebar"></aside>
-    </div>
-
-    <section id="runPipelineModal" class="white-popup form-popup mfp-hide" th:inline="text">
-        <header class="modal-header">
-            <h2 class="modal-title" th:text="#{project.samples.run-modal.title}">__Select_Pipeline__</h2>
-        </header>
-        <div class="modal-body">
-            <div class="form-group">
-                <label for="pipeline" th:text="#{samples.pipeline-select}">Select a Pipeline</label>
-                <input id="pipeline" name="pipeline" class="form-control input-full"/>
-            </div>
-            <div class="form-group">
-                <label for="reference" th:text="#{samples.pipeline-reference}">Select a Reference File</label>
-                <input id="reference" name="reference" class="form-control input-full"/>
-            </div>
-            <div class="form-group">
-                <label for="name" th:text="#{project.samples.run-modal.name}">Name for Pipeline</label>
-                <input type="text" id="name" name="name" class="form-control input-full" required="required" th:placeholder="#{form.required}"/>
-				<section id="name-error" class="alert alert-danger hidden">
-					<p th:text="#{pipelines.state.name-missing}">Pipeline name is required.</p>
-				</section>
+                <div class="btn-group">
+                    <button id="combineBtn" class="btn btn-default btn-sm btn-action2" disabled="true">
+                        <span class="fa fa-compress fa-fw"></span>&nbsp;[[#{project.samples.combine}]]
+                    </button>
+                </div>
+                <div class="btn-group">
+                    <button id="runPipelineBtn" aria-controls="runPipelineModal"
+                            class="btn btn-primary btn-sm btn-action3" role="button" disabled="true">
+                        <span class="fa fa-rocket fa-fw"></span>&nbsp;[[#{project.samples.run-pipeline}]]
+                    </button>
+                </div>
             </div>
         </div>
-        <div class="modal-footer">
-            <button id="launchBtn" class="btn btn-primary btn-sm"><span class="fa fa-rocket fa-fw"></span>&nbsp;[[#{project.samples.run-pipeline}]]
-            </button>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table id="samplesTable" class="table table-striped">
+                <thead>
+                <tr role="row" th:inline="text">
+                    <th data:tooltip="#{tooltip.selectall-none}"><input type="checkbox" id="selectAll"/></th>
+                    <th class="sortable">[[#{project.samples.table.name}]]<i
+                            class="glyphicon"></i></th>
+                    <th>[[#{project.samples.table.numFiles}]]</th>
+                    <th class="sortable">[[#{project.samples.table.dateCreated}]]<i
+                            class="glyphicon"></i></th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
-    </section>
-    <script type="text/html" id="copySamplesSection">
-			<h2 id="copyTitle">_Copy/Move Samples_</h2>
+    </div>
+</main>
 
-            <input type="text" id="copy-sample-project" name="project" class="form-control input-full" />
-			<span id="copy-samples-error" class="help-block bg-danger"></span>
-    </script>
-    <script type="x-tmpl-mustache" id="files-view-template">
+<th:block layout:fragment="pageScripts" th:inline="javascript">
+<section id="runPipelineModal" class="white-popup form-popup mfp-hide" th:inline="text">
+    <header class="modal-header">
+        <h2 class="modal-title" th:text="#{project.samples.run-modal.title}">__Select_Pipeline__</h2>
+    </header>
+    <div class="modal-body">
+        <div class="form-group">
+            <label for="pipeline" th:text="#{samples.pipeline-select}">Select a Pipeline</label>
+            <input id="pipeline" name="pipeline" class="form-control input-full"/>
+        </div>
+        <div class="form-group">
+            <label for="reference" th:text="#{samples.pipeline-reference}">Select a Reference File</label>
+            <input id="reference" name="reference" class="form-control input-full"/>
+        </div>
+        <div class="form-group">
+            <label for="name" th:text="#{project.samples.run-modal.name}">Name for Pipeline</label>
+            <input type="text" id="name" name="name" class="form-control input-full" required="required"
+                   th:placeholder="#{form.required}"/>
+            <section id="name-error" class="alert alert-danger hidden">
+                <p th:text="#{pipelines.state.name-missing}">Pipeline name is required.</p>
+            </section>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button id="launchBtn" class="btn btn-primary btn-sm"><span class="fa fa-rocket fa-fw"></span>&nbsp;[[#{project.samples.run-pipeline}]]
+        </button>
+    </div>
+</section>
+<script type="text/html" id="copySamplesSection">
+    <h2 id="copyTitle">_Copy/Move Samples_</h2>
+
+    <input type="text" id="copy-sample-project" name="project" class="form-control input-full"/>
+    <span id="copy-samples-error" class="help-block bg-danger"></span>
+</script>
+<script type="x-tmpl-mustache" id="files-view-template">
         <tr id="files-view">
             <td colspan="5">
             <table>
@@ -137,29 +122,27 @@
             </table>
             </td>
 		</tr>
-	</script>
-	<script type="text/html" id="select2-merge">
-            <h2 th:text="#{project.samples.combine-title}">__REMOVED_TITLE__</h2>
-            <p th:text="#{project.samples.combine-warning}"></p>
-            <div class="form-group">
-                <input class="input-full" name="merge-name" type="text" id="select2-merge-input"/>
-                <span id="merge-error" class="hidden help-block bg-danger"></span>
-            </div>
-    </script>
-    <iframe id="invisible" style="display:none;"></iframe>
-</div>
-<th:block layout:fragment="scripts" th:inline="javascript">
-<th:block th:replace="projects/project_base :: scripts"></th:block>
+
+</script>
+<script type="text/html" id="select2-merge">
+    <h2 th:text="#{project.samples.combine-title}">__REMOVED_TITLE__</h2>
+    <p th:text="#{project.samples.combine-warning}"></p>
+    <div class="form-group">
+        <input class="input-full" name="merge-name" type="text" id="select2-merge-input"/>
+        <span id="merge-error" class="hidden help-block bg-danger"></span>
+    </div>
+</script>
+<iframe id="invisible" style="display:none;"></iframe>
 <script th:inline="javascript">
 /*<![CDATA[*/
 /*
-Add functionality to the string object to be able to template out a string.
-e.g. "fred {0}".format("flintstone") --> "fred flintstone"
-*/
+ Add functionality to the string object to be able to template out a string.
+ e.g. "fred {0}".format("flintstone") --> "fred flintstone"
+ */
 if (!String.prototype.format) {
-    String.prototype.format = function() {
+    String.prototype.format = function () {
         var args = arguments;
-        return this.replace(/{(\d+)}/g, function(match, number) {
+        return this.replace(/{(\d+)}/g, function (match, number) {
             return typeof args[number] != 'undefined'
                     ? args[number]
                     : match
@@ -222,47 +205,48 @@ function EditableDataTable() {
             showSuccessModal(msg);
         });
     }
-    
+
     function copySamples(table, noty, newProject, removeFromOriginal) {
         $.ajax({
             url: /*[[@{/projects/ajax/{projectId}/samples/copy(projectId=${project.getId()})}]]*/ '/projects/ajax/1/samples/copy',
-            data: "sampleIds=" + table.selectedRowIds + "&newProjectId=" + newProject +"&removeFromOriginal=" + removeFromOriginal,
+            data: "sampleIds=" + table.selectedRowIds + "&newProjectId=" + newProject + "&removeFromOriginal=" + removeFromOriginal,
             type: "post",
-            success: function(data){
-            	noty.close();
-            	var msg; 
-            	if(removeFromOriginal){
-            		msg = /*[[#{project.samples.move-success}]]*/ 'Samples successfully move';
-            	}
-            	else{
-            		msg = /*[[#{project.samples.copy-success}]]*/ 'Samples successfully copied';
-            	}
-            	var count = data.totalCopied;
-            	if(count > 0){
-                	showSuccessModal(msg.format(count));
-            	}
-                if(data.warnings){
-                	for(warning in data.warnings){
-                		var warnmsg = /*[[#{project.samples.copy.sample-exists}]]*/ 'Sample exists in project';
-                		
-                		showWarningModial(warnmsg.format(data.warnings[warning]));
-                	}
+            success: function (data) {
+                noty.close();
+                var msg;
+                if (removeFromOriginal) {
+                    msg = /*[[#{project.samples.move-success}]]*/ 'Samples successfully move';
+                }
+                else {
+                    msg = /*[[#{project.samples.copy-success}]]*/ 'Samples successfully copied';
+                }
+                var count = data.totalCopied;
+                if (count > 0) {
+                    showSuccessModal(msg.format(count));
+                }
+                if (data.warnings) {
+                    for (warning in data.warnings) {
+                        var warnmsg = /*[[#{project.samples.copy.sample-exists}]]*/ 'Sample exists in project';
+
+                        showWarningModial(warnmsg.format(data.warnings[warning]));
+                    }
                 }
                 table.selectedRowIds = [];
                 table.updateTable();
                 table.getAllSampleIds();
             },
-            error: function(){
-            	console.log(data.error);
+            error: function () {
+                console.log(data.error);
             }
         });
     }
-	function combineSamples(table, noty, nameId, newName) {
+
+    function combineSamples(table, noty, nameId, newName) {
         $.ajax({
             url: /*[[@{/projects/ajax/{projectId}/samples/merge(projectId=${project.getId()})}]]*/ '/projects/ajax/1/samples/merge',
             data: "sampleIds=" + table.selectedRowIds + "&mergeSampleId=" + nameId + "&newName=" + newName,
             type: "post"
-        }).done(function(data) {
+        }).done(function (data) {
             if (data.success) {
                 noty.close();
                 var msg = /*[[#{project.samples.combine-success}]]*/ 'Samples successfully merged samples';
@@ -295,7 +279,7 @@ function EditableDataTable() {
         });
     }
 
-	function showWarningModial(message) {
+    function showWarningModial(message) {
         noty({
             text: message,
             layout: "topCenter",
@@ -315,42 +299,42 @@ function EditableDataTable() {
                 $row = $(row),
                 checkbox = $row.find('.sampleCB'),
                 sampleId = checkbox.val(),
-				indeterminate = checkbox.prop('indeterminate'),
+                indeterminate = checkbox.prop('indeterminate'),
                 selected = checkbox.prop('checked'),
                 url = /*[[@{/samples/ajax/{0}/files}]]*/ '/samples/ajax/1/files';
         $.ajax({
             'url': url.format(sampleId),
             'type': 'post'
         }).done(function (data) {
-			var selectedFiles = {};
+            var selectedFiles = {};
             if (data.length > 0) {
-				// sampleCB not selected
-				if(selected) {
-					$.each(data, function (i, v) {
-						v.checked = true
-					})
-				} else if(indeterminate) {
-					var omitted = that.allRowIds[sampleId].omit;
-					$.each(data, function (i, v) {
-						if(omitted.indexOf(v.id) === -1) {
-							v.checked = true;
-						}
-						else {
-							v.notChecked = true;
-						}
-					});
-				}
-				else {
-					$.each(data, function (i, v) {
-						v.notChecked = true
-					})
-				}
+                // sampleCB not selected
+                if (selected) {
+                    $.each(data, function (i, v) {
+                        v.checked = true
+                    })
+                } else if (indeterminate) {
+                    var omitted = that.allRowIds[sampleId].omit;
+                    $.each(data, function (i, v) {
+                        if (omitted.indexOf(v.id) === -1) {
+                            v.checked = true;
+                        }
+                        else {
+                            v.notChecked = true;
+                        }
+                    });
+                }
+                else {
+                    $.each(data, function (i, v) {
+                        v.notChecked = true
+                    })
+                }
 
                 var template = $('#files-view-template').html();
-				var content = Mustache.render(template, {
-					files: data,
-					sampleId: sampleId
-				});
+                var content = Mustache.render(template, {
+                    files: data,
+                    sampleId: sampleId
+                });
                 $row.addClass('details').after(content);
             } else {
                 var msg = /*[[#{project.samples.files.not-available}]]*/ 'Cannot get file information right now';
@@ -387,10 +371,10 @@ function EditableDataTable() {
         });
         return result;
     };
-    
+
     this._showCopySamplesModial = function (removeFromCurrentProject) {
-    	var that = this;
-    	var div = document.getElementById('copySamplesSection');
+        var that = this;
+        var div = document.getElementById('copySamplesSection');
         var template = div.innerHTML;
         $("#copy-samples-error").hide();
         noty({
@@ -405,14 +389,14 @@ function EditableDataTable() {
                     onClick: function ($noty) {
                         var newProject = $("#copy-sample-project").val();
 
-                        if(newProject){
-                        	copySamples(that, $noty, newProject,removeFromCurrentProject);
+                        if (newProject) {
+                            copySamples(that, $noty, newProject, removeFromCurrentProject);
                         }
-                        else{
-                        	var noProject = /*[[#{project.samples.copy.no-project-selected}]]*/ 'No project selected';
-                        	
-                        	$("#copy-samples-error").html(noProject);
-                        	$("#copy-samples-error").show();
+                        else {
+                            var noProject = /*[[#{project.samples.copy.no-project-selected}]]*/ 'No project selected';
+
+                            $("#copy-samples-error").html(noProject);
+                            $("#copy-samples-error").show();
                         }
                     }
                 },
@@ -425,35 +409,35 @@ function EditableDataTable() {
                 }
             ],
             callback: {
-                onShow: function() {
-                	//get the available projects
-                	$("#copy-sample-project").select2({
-                		ajax: {
-                	        url: /*[[@{/projects/ajax/{id}/samples/available_projects(id=${project.getId()})}]]*/ '/projects/ajax/1/samples/available_projects',
-                	        dataType: 'json',
-                	        data: function (search, page) {
-                	            return {
-                	              term: search, // search term
-                	              page: page - 1, //zero based method
-                	              pageSize: 10,
-                	            };
-                	        },
-                	        results: function (data, page) {
-                	            var results = [];
-                	            
-                	            var more = (page * 10) < data.total;
-                	            
-                	            for(var id in data.results) {
-                	                results.push({
-                	                	"id": id,
-                	                	"text": data.results[id]
-                	                });
-                	            }
-                	            
-                	            return {results:results, more:more};
-                	        }
-                	    },
-                	    dropdownCss: {"z-index": 10000001},
+                onShow: function () {
+                    //get the available projects
+                    $("#copy-sample-project").select2({
+                        ajax: {
+                            url: /*[[@{/projects/ajax/{id}/samples/available_projects(id=${project.getId()})}]]*/ '/projects/ajax/1/samples/available_projects',
+                            dataType: 'json',
+                            data: function (search, page) {
+                                return {
+                                    term: search, // search term
+                                    page: page - 1, //zero based method
+                                    pageSize: 10,
+                                };
+                            },
+                            results: function (data, page) {
+                                var results = [];
+
+                                var more = (page * 10) < data.total;
+
+                                for (var id in data.results) {
+                                    results.push({
+                                        "id": id,
+                                        "text": data.results[id]
+                                    });
+                                }
+
+                                return {results: results, more: more};
+                            }
+                        },
+                        dropdownCss: {"z-index": 10000001},
                         "placeholder": /*[[#{project.samples.copy.select-project}]]*/ "Select a Project"
                     });
                 }
@@ -483,7 +467,7 @@ function EditableDataTable() {
                         onClick: function ($noty) {
                             var mergeSampleId = $("#select2-merge-input").val();
                             var newName = "";
-                            if(that.selectedRowIds.indexOf(mergeSampleId) === -1){
+                            if (that.selectedRowIds.indexOf(mergeSampleId) === -1) {
                                 newName = mergeSampleId;
                                 mergeSampleId = "";
                             }
@@ -500,15 +484,15 @@ function EditableDataTable() {
                     }
                 ],
                 callback: {
-                    onShow: function() {
+                    onShow: function () {
                         $("#select2-merge-input").select2({
                             data: data,
                             dropdownCss: {"z-index": 10000001},
-                            createSearchChoice:function(term, data) {
-                                if ( $(data).filter( function() {
+                            createSearchChoice: function (term, data) {
+                                if ($(data).filter(function () {
                                             return 0 === this.text.localeCompare(term);
-                                        }).length===0) {
-                                    return {id:term, text:term};
+                                        }).length === 0) {
+                                    return {id: term, text: term};
                                 }
                             }
                         });
@@ -555,17 +539,17 @@ EditableDataTable.prototype = {
         if (isAllSelected) {
             $.each(that.allRowIds, function (i, val) {
                 that.selectedRowIds.push(val.id)
-				val.omit = [];
+                val.omit = [];
             });
         }
     },
     checkBoxClickedEvent: function (id, checked) {
-		var index = this.selectedRowIds.indexOf(id);
-		this.allRowIds[id].omit = [];
+        var index = this.selectedRowIds.indexOf(id);
+        this.allRowIds[id].omit = [];
         if (checked) {
-			if(index === -1){
-				this.selectedRowIds.push(id)
-			}
+            if (index === -1) {
+                this.selectedRowIds.push(id)
+            }
         }
         else {
             this.selectedRowIds.splice(index, 1);
@@ -582,21 +566,21 @@ EditableDataTable.prototype = {
         }
     },
     getSelectAllState: function () {
-		var result = "indeterminate";
+        var result = "indeterminate";
         if (this.selectedRowIds.length === 0) {
             return false; // Checkbox unchecked
         } else if (this.selectedRowIds.length === this.totalSamples) {
-			// Need to see if there are any files omitted!
-			result = true;
-			$.each(this.allRowIds, function (i, v) {
-				if(v.omit.length > 0) {
-					result = "indeterminate"
-				}
-			});
+            // Need to see if there are any files omitted!
+            result = true;
+            $.each(this.allRowIds, function (i, v) {
+                if (v.omit.length > 0) {
+                    result = "indeterminate"
+                }
+            });
         }
-		else {
-			result = "indeterminate"
-		}
+        else {
+            result = "indeterminate"
+        }
         return result; // Checkbox indeterminant
     },
     deleteSelectedSamples: function () {
@@ -604,21 +588,21 @@ EditableDataTable.prototype = {
             this._showDeleteSampleModal();
         }
     },
-	combineSelectedSamples: function () {
+    combineSelectedSamples: function () {
         if (this.selectedRowIds.length > 0) {
             this._showCombineSamplesModal();
         }
     },
     copySelectedSamples: function (removeFromCurrentProject) {
         if (this.selectedRowIds.length > 0) {
-        	var title;
-        	if(removeFromCurrentProject){
-        		title = /*[[#{project.samples.move.title}]]*/ "Move Samples";
-        	}
-        	else{
-        		title = /*[[#{project.samples.copy.title}]]*/ "Copy Samples";
-        	}
-        	
+            var title;
+            if (removeFromCurrentProject) {
+                title = /*[[#{project.samples.move.title}]]*/ "Move Samples";
+            }
+            else {
+                title = /*[[#{project.samples.copy.title}]]*/ "Copy Samples";
+            }
+
             this._showCopySamplesModial(removeFromCurrentProject);
             $("#copyTitle").html(title);
         }
@@ -628,8 +612,8 @@ EditableDataTable.prototype = {
 $(document).ready(function () {
     var $deleteBtn = $("#deleteBtn"),
             $btnAction = $(".btn-action"),
-			$btnAction2 = $(".btn-action2"),
-			$btnAction3 = $(".btn-action3"),
+            $btnAction2 = $(".btn-action2"),
+            $btnAction3 = $(".btn-action3"),
             $combineBtn = $("#combineBtn"),
             $copyBtn = $("#copyBtn"),
             $moveBtn = $("#moveBtn"),
@@ -661,8 +645,8 @@ $(document).ready(function () {
                 "render": function (data, type, row) {
                     'use strict';
                     var url = /*[[@{/samples/}]]*/ '/samples/',
-                        template = "<a href='{{url}}{{id}}'>{{name}}</a>";
-                    return Mustache.render(template, {url:url, name:data, id:row.id});
+                            template = "<a href='{{url}}{{id}}'>{{name}}</a>";
+                    return Mustache.render(template, {url: url, name: data, id: row.id});
                 },
                 "class": "name"
             },
@@ -688,7 +672,7 @@ $(document).ready(function () {
                 $(row)
                         .find('.sampleCB')
                         .prop("indeterminate", true)
-						.prop("checked", false);
+                        .prop("checked", false);
             }
         }
     }));
@@ -702,9 +686,9 @@ $(document).ready(function () {
                 id = $cb.val(),
                 checked = $cb.prop('checked');
         DT.checkBoxClickedEvent(id, checked);
-		if($cb.closest('tr').next().attr('id') === 'files-view') {
-			$('#files-view').find('.fileCB').prop('checked', checked);
-		}
+        if ($cb.closest('tr').next().attr('id') === 'files-view') {
+            $('#files-view').find('.fileCB').prop('checked', checked);
+        }
         setSelectAllState();
     }).on('click', '.fileCB', function () {
         var $this = $(this),
@@ -713,16 +697,16 @@ $(document).ready(function () {
                 sampleCB = $("#sample-" + sampleId),
                 $allCBs = $(".fileCB"),
                 $checkedCBs = $(".fileCB:checked");
-        DT.allRowIds[sampleId].omit= [];
-        $.each($allCBs, function(i, val) {
-			var $val = $(val);
-			if($val.prop('checked') === false){
-				DT.allRowIds[sampleId].omit.push($val.data("file-id") + '');
-			}
+        DT.allRowIds[sampleId].omit = [];
+        $.each($allCBs, function (i, val) {
+            var $val = $(val);
+            if ($val.prop('checked') === false) {
+                DT.allRowIds[sampleId].omit.push($val.data("file-id") + '');
+            }
         });
 
 
-		sampleCB.prop('indeterminate', false).prop('checked', false);
+        sampleCB.prop('indeterminate', false).prop('checked', false);
         if ($checkedCBs.size() === 0) {
             sampleCB.prop('checked', false);
             DT.selectedRowIds.splice(DT.selectedRowIds.indexOf(sampleId));
@@ -754,7 +738,7 @@ $(document).ready(function () {
         var id = $(this).data('file-id');
         var iframe = document.getElementById('invisible');
         var src = /*[[@{/sequenceFiles/download/}]]*/ '/sequenceFiles/download/';
-        iframe.src =  src + id;
+        iframe.src = src + id;
     });
 
     function setSelectAllState() {
@@ -774,7 +758,7 @@ $(document).ready(function () {
             $btnAction2.prop('disabled', false);
         }
 
-        if(DT.selectedRowIds.length > 2) {
+        if (DT.selectedRowIds.length > 2) {
             $btnAction3.prop('disabled', false);
         }
     }
@@ -796,13 +780,13 @@ $(document).ready(function () {
     $combineBtn.on('click', function () {
         DT.combineSelectedSamples();
     });
-	
-	$copyBtn.on('click', function(){
-    	DT.copySelectedSamples(false);
+
+    $copyBtn.on('click', function () {
+        DT.copySelectedSamples(false);
     });
-	
-	$moveBtn.on('click', function(){
-    	DT.copySelectedSamples(true);
+
+    $moveBtn.on('click', function () {
+        DT.copySelectedSamples(true);
     });
 
     var runPipelineModal = $("#runPipelineBtn").magnificPopup({
@@ -813,10 +797,10 @@ $(document).ready(function () {
         closeBtnInside: true,
         callbacks: {
             beforeOpen: function () {
-				var nameError = $("#name-error");
-				if(!nameError.hasClass('hidden')) {
-					nameError.addClass('hidden');
-				}
+                var nameError = $("#name-error");
+                if (!nameError.hasClass('hidden')) {
+                    nameError.addClass('hidden');
+                }
 
                 var result = [];
                 $.each(DT.selectedRowIds, function (i, v) {
@@ -828,11 +812,11 @@ $(document).ready(function () {
                     type: 'post',
                     contentType: "application/json",
                     data: JSON.stringify(result)
-                }).done(function(data){
-					var label = /*[[' - analysis] ' + ${project.getName()}]]*/ 'project-analysis-';
+                }).done(function (data) {
+                    var label = /*[[' - analysis] ' + ${project.getName()}]]*/ 'project-analysis-';
                     $("#pipeline").select2({
                         data: data,
-                        initSelection: function(element, callback) {
+                        initSelection: function (element, callback) {
                             callback(data[0]);
                             $(element).val(data[0].id);
                         }
@@ -842,10 +826,10 @@ $(document).ready(function () {
                 // Ajax call to get applicable pipelines.
                 $.ajax({
                     url: /*[[@{/projects/ajax/{projectId}/referenceFiles(projectId=${project.getId()})}]]*/ '/projects/ajax/1/referenceFiles',
-                    success: function(data){
+                    success: function (data) {
                         $("#reference").select2({
                             data: data,
-                            initSelection: function(element, callback) {
+                            initSelection: function (element, callback) {
                                 callback(data[0]);
                                 $(element).val(data[0].id);
                             }
@@ -861,27 +845,27 @@ $(document).ready(function () {
     $('#launchBtn').on('click', function () {
         'use strict';
         var pId = $("#pipeline").val(),
-            rId = $("#reference").val(),
-            name = $("#name").val(),
-				$nameError = $("#name-error");
+                rId = $("#reference").val(),
+                name = $("#name").val(),
+                $nameError = $("#name-error");
 
-		if(name.length>0) {
-			$.ajax({
-				'url'    : /*@{'/pipelines/ajax/start.json'}*/ '/pipelines/ajax/start.json',
-				'type'   : 'post',
-				'data'   : 'pId=' + pId + '&rId=' + rId + '&name=' + name,
-				'success': function (data) {
-					console.log(data);
-					runPipelineModal.close();
-				},
-				'error'  : function (xhr, status, error) {
-					// TODO: (14-08-28 - Josh) Need to determine what errors will occur. Reference file?
-					console.log(error);
-				}
-			});
-		} else {
-			$nameError.removeClass('hidden');
-		}
+        if (name.length > 0) {
+            $.ajax({
+                'url': /*@{'/pipelines/ajax/start.json'}*/ '/pipelines/ajax/start.json',
+                'type': 'post',
+                'data': 'pId=' + pId + '&rId=' + rId + '&name=' + name,
+                'success': function (data) {
+                    console.log(data);
+                    runPipelineModal.close();
+                },
+                'error': function (xhr, status, error) {
+                    // TODO: (14-08-28 - Josh) Need to determine what errors will occur. Reference file?
+                    console.log(error);
+                }
+            });
+        } else {
+            $nameError.removeClass('hidden');
+        }
     });
 
     DT.getAllSampleIds();

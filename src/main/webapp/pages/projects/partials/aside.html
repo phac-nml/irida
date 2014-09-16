@@ -1,0 +1,56 @@
+<aside layout:fragment="aside" th:object="${project}">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <b class="panel-title" th:text="#{project.details}">Project Details</b>
+        </div>
+        <div class="panel-body">
+            <ul class="nav nav-pills nav-stacked details">
+                <li>
+                    <i class="glyphicon glyphicon-barcode"></i>
+                    <em th:text="#{project.id}"></em>
+                    <span th:text="*{id}"></span>
+                </li>
+                <li th:if="${project.organism} != null"><i class="glyphicon glyphicon-leaf"></i><em
+                        th:text="#{project.organism}"></em><span
+                        id="project-organism"><i th:text="*{organism}"></i></span>
+                </li>
+                <li th:if="${owner} != null"><i class="glyphicon glyphicon-tower"></i><em
+                        th:text="#{project.owner}"></em><span
+                        id="project-owner" th:text="${owner.label}">__DATE_CREATED__</span>
+                </li>
+                <li><i class="glyphicon glyphicon-calendar"></i><em th:text="#{project.created}"></em><span
+                        id="project-created" th:text="${#calendars.format(project.createdDate, 'dd MMM yyyy')}">__DATE_CREATED__</span>
+                </li>
+                <li th:if="${project.modifiedDate} != null"><i class="glyphicon glyphicon-calendar"></i><em
+                        th:text="#{project.modified}"></em><span id="project-modified" data:livestamp="*{modifiedDate}"
+                                                                 th:title="${#calendars.format(project.modifiedDate, 'dd MMM yyyy HH:mm')}"></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div layout:fragment="associated-projects">
+        <div th:if="${ #lists.isEmpty( associatedProjects ) }" class="panel panel-default">
+            <div class="panel-heading" th:text="#{project.associated.title}">Associated Projects</div>
+            <div class="panel-body">
+                <p th:text="#{project.associated.none}">This is an area to store similar projects that would be run
+                    together
+                    on
+                    a pipeline.</p>
+            </div>
+        </div>
+
+        <div th:if="${not #lists.isEmpty( associatedProjects ) }" class="list-group" id="associated-projects"
+             th:inline="text">
+            <b class="list-group-item" th:text="#{project.associated.title}"></b>
+            <a th:each="project : ${associatedProjects}"
+               th:class="${project.auth} == 'authorized' ? 'authorized list-group-item' : 'unauthorized list-group-item disabled'"
+               th:href="${project.auth} == 'authorized' ? @{'/projects/' + ${project.id}} : '#'"
+               th:disabled="${project.auth} == 'authorized' ? false : true">
+                <span class="pull-right"><span
+                        th:class="${project.auth} == 'authorized' ? 'glyphicon glyphicon-eye-open' : 'glyphicon glyphicon-lock'"></span></span>
+                <span class="project-name" th:text="${project.name}"></span>
+            </a>
+        </div>
+
+    </div>
+</aside>

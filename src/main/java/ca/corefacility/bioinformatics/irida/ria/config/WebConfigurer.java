@@ -7,6 +7,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -34,6 +35,8 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+
+import com.google.common.collect.ImmutableMap;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 /**
@@ -55,6 +58,10 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 	private static final Logger logger = LoggerFactory.getLogger(WebConfigurer.class);
 	public static final long MAX_UPLOAD_SIZE = 20971520L; // 20MB
 	public static final int MAX_IN_MEMORY_SIZE = 1048576; // 1MB
+
+	protected @Value("${ui.theme}") String theme;
+
+
 	@Autowired
 	private Environment env;
 
@@ -109,12 +116,13 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		resolver.setSuffix(TEMPLATE_SUFFIX);
 		resolver.setTemplateMode(TEMPLATE_MODE);
 
+
 		// Set template cache timeout if in production
 		// Don't cache at all if in development
 		if (env.acceptsProfiles(SPRING_PROFILE_PRODUCTION)) {
 			resolver.setCacheTTLMs(TEMPLATE_CACHE_TTL_MS);
 		} else {
-			resolver.setCacheable(false);
+			resolver.setCacheTTLMs(0L);
 		}
 		return resolver;
 	}
@@ -133,6 +141,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
 		viewResolver.setTemplateEngine(templateEngine());
 		viewResolver.setOrder(1);
+		viewResolver.setStaticVariables(ImmutableMap.of("themePath", "themes/" + theme + "/"));
 		return viewResolver;
 	}
 

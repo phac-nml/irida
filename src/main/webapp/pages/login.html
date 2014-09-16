@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="templates/wet-boew/wet-layout">
+      layout:decorator="${themePath + '_base'}">
 <head>
 <title th:text="#{login.title}">THIS IS SOMETHING WRONG</title>
 </head>
@@ -36,7 +36,6 @@
             	<p><a href="#"  th:href="@{/password_reset/activate}">Activate Account</a></p>
             </div>
         </div>
-            
     </section>
 </main>
 </body>

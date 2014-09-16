@@ -3,13 +3,14 @@
 <html class="no-js lt-ie9" lang="en"><![endif]-->
 <!--[if gt IE 8]><!-->
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" class="no-js"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      class="no-js"
       lang="en">
 <!--<![endif]-->
 <head>
     <meta charset="UTF-8"/>
     <title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA Platform</title>
-    <!-- META DATA -->
+    <!-- META DATA: TODO: What do we really need from here? -->
     <meta content="width=device-width, initial-scale=1" name="viewport"/>
     <meta name="description" content=""/>
     <meta name="dcterms.title"
@@ -64,13 +65,13 @@
 </head>
 <body vocab="http://schema.org/" typeof="WebPage">
 <!-- HEADER -->
-<div th:replace="templates/wet-boew/partials/header :: header">HEADER</div>
+<div th:replace="themes/wet/partials/header :: header">HEADER</div>
 
 <div layout:fragment="content">
 </div>
 
 <!-- FOOTER -->
-<div th:replace="templates/wet-boew/partials/footer :: footer">FOOTER</div>
+<div th:replace="themes/wet/partials/footer :: footer">FOOTER</div>
 
 <!--[if gte IE 9 | !IE ]><!-->
 <script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"
@@ -94,7 +95,10 @@
         src="/resources/wet-theme/js/ie8-wet-boew2.min.js"></script>
 <![endif]-->
 
-<!-- any custom scripts for pages go here.-->
-<th:block layout:fragment="scripts"></th:block>
+<th:block layout:fragment="scripts">
+    <!--/*/
+    Custom page scripts go here
+    /*/-->
+</th:block>
 </body>
 </html>
