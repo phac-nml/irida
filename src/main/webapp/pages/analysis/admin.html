@@ -52,7 +52,7 @@
                                          sortValue="name" th:text="#{'analysis.table.name'}">Name
                                 </sort-by>
                             </th>
-                            <th class="col-md-4">
+                            <th class="col-md-4" th:text="#{analysis.table.type}">
                                 Analysis Type
                             </th>
                             <th class="col-md-2">
@@ -72,15 +72,15 @@
                         <tr>
                             <td id="table-filter" colspan="5">
                                 <div class="row" collapse="table.filter.isCollapsed">
-                                    <div class="form-group col-md-3">
-                                        <label for="name-filter">Filter by Name</label>
+                                    <div class="form-group col-md-2">
+                                        <label for="name-filter" th:text="#{analysis.filter.byName}">Filter by Name</label>
                                         <input id="name-filter" name="name-filter" type="text"
                                                class="form-control input-full"
                                                ng-model="table.filterCriteria.name"/>
                                     </div>
 
                                     <div class="form-group col-md-4">
-                                        <label for="type-filter">Filter by Type</label>
+                                        <label for="type-filter" th:text="#{analysis.filter.byType}">Filter by Type</label>
                                         <select disabled="disabled" name="type-filter" id="type-filter" class="form-control input-full" ng-model="table.filterCriteria.type" ng-change="table.filterResult()">
                                             <option value="" th:text="#{analysis.select.all}">All</option>
                                             <option th:each="type : ${types}" th:value="${type.key}" th:text="${type.value}"></option>
@@ -88,7 +88,7 @@
                                     </div>
 
                                     <div class="form-group col-md-2">
-                                        <label for="state-filer">Filter by State</label>
+                                        <label for="state-filer" th:text="#{analysis.filter.byState}">Filter by State</label>
                                         <select id="state-filer" name="state-filter" class="input-full form-control"
                                                 ng-model="table.filterCriteria.state"
                                                 ng-change="table.filterResult()"
@@ -97,8 +97,8 @@
                                         </select>
                                     </div>
 
-                                    <div class="form-group col-md-2">
-                                        <label>Filter by Date Range</label>
+                                    <div class="form-group col-md-3">
+                                        <label th:text="#{analysis.filter.byDate}">Filter by Date Range</label>
 
                                         <div class="row">
                                             <div class="col-md-12">
