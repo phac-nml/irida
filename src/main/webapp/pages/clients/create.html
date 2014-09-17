@@ -88,7 +88,7 @@
 </main>
 
 
-<div layout:fragment="pageScripts" th:inline="javascript">
+<th:block layout:fragment="pageScripts" th:inline="javascript">
 
     <script type="text/javascript">
         $(document).ready(function () {
@@ -97,6 +97,6 @@
         });
 
     </script>
-</div>
+</th:block>
 </body>
 </html>
