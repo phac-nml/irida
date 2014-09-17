@@ -109,7 +109,6 @@
                                                        ng-model="table.filterCriteria.minDate"
                                                        is-open="table.datepicker.min.opened"
                                                        min-date="minDate" max-date="table.datepicker.maxDate"
-                                                       datepicker-options="dateOptions"
                                                        ng-change="table.filterResult()"/>
                                             </div>
                                             <div class="col-md-12 mrgn-tp-sm">
@@ -117,11 +116,10 @@
                                                        ui-event="{click : 'table.datepicker.max.open($event)'}"
                                                        th:placeholder="#{form.placeholder.date.max}"
                                                        placeholder="max"
-                                                       datepicker-popup="{{table.datepicker.format}}"
+                                                       th:attr="datepicker-popup=#{datepicker.short}"
                                                        ng-model="table.filterCriteria.maxDate"
                                                        is-open="table.datepicker.max.opened"
                                                        max-date="table.datepicker.maxDate"
-                                                       datepicker-options="dateOptions"
                                                        ng-change="table.filterResult()"/>
                                             </div>
                                         </div>
