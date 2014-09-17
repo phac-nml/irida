@@ -59,6 +59,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 	public static final long MAX_UPLOAD_SIZE = 20971520L; // 20MB
 	public static final int MAX_IN_MEMORY_SIZE = 1048576; // 1MB
 
+	// This is set in the resources/configuration.properties file.
 	protected @Value("${ui.theme}") String theme;
 
 
