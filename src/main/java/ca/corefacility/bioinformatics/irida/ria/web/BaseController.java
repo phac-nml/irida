@@ -9,25 +9,25 @@ import javax.validation.ConstraintViolationException;
 
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Controller;
 
 import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMessage;
 
 /**
- * Base class for controllers so that they all can have access to common
- * functionality.
+ * Base class for controllers so that they all can have access to common functionality.
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
+@Controller
 public class BaseController {
 	protected static final String MODEL_ERROR_ATTR = "errors";
 
 	/**
-	 * Changes a {@link javax.validation.ConstraintViolationException} to a
-	 * usable map of strings for displaying in the UI.
+	 * Changes a {@link javax.validation.ConstraintViolationException} to a usable map of strings for displaying in the
+	 * UI.
 	 *
 	 * @param e
-	 *            {@link javax.validation.ConstraintViolationException} for the
-	 *            form submitted.
+	 * 		{@link javax.validation.ConstraintViolationException} for the form submitted.
 	 * @return Map of string {fieldName, error}
 	 */
 	protected Map<String, String> getErrorsFromViolationException(ConstraintViolationException e) {
@@ -41,17 +41,16 @@ public class BaseController {
 	}
 
 	/**
-	 * Converts a DataIntegrityViolationException to a usable map of strings for
-	 * displaying in the UI.
-	 * 
+	 * Converts a DataIntegrityViolationException to a usable map of strings for displaying in the UI.
+	 *
 	 * @param e
-	 *            The exception for the form submitted
+	 * 		The exception for the form submitted
 	 * @param messageNames
-	 *            A map of the error message names
+	 * 		A map of the error message names
 	 * @param messageSource
-	 *            A message source to get the messages from
+	 * 		A message source to get the messages from
 	 * @param locale
-	 *            The locale of the request
+	 * 		The locale of the request
 	 * @return A Map of strings with the property names and error messages
 	 */
 	protected Map<String, String> getErrorsFromDataIntegrityViolationException(DataIntegrityViolationException e,

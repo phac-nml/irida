@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.utilities;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -27,9 +26,7 @@ public class FileUtilities {
 	public static final String CONTENT_DISPOSITION = "Content-Disposition";
 	public static final String ATTACHMENT_FILENAME = "attachment;filename=";
 	public static final String CONTENT_TYPE_APPLICATION_ZIP = "application/zip";
-	public static final String CONTENT_TYPE_TEXT_SVG = "text/svg";
 	public static final String EXTENSION_ZIP = ".zip";
-	public static final String EXTENSION_SVG = ".svg";
 
 	/**
 	 * Utility method for download a zip file containing all output files from an analysis.
@@ -68,6 +65,7 @@ public class FileUtilities {
 			}
 			// Tell the output stream that you are finished downloading.
 			outputStream.finish();
+			outputStream.close();
 
 			// Set the response headers
 			response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + fileName + EXTENSION_ZIP);

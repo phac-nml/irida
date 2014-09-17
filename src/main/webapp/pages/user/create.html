@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorator="templates/wet-boew/wet-layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="user/_base">
 <head>
 <title th:text="#{user.create.details}">_USER PAGE_</title>
 </head>
 <body>
-	<div class="container" layout:fragment="content">
-		<div class="row">
-			<div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">_MENU_</div>
-		</div>
 
+<main layout:fragment="main">
 		<div class="row">
 			<div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
 				<form role="form" action="/users/1/edit"
@@ -96,10 +93,10 @@
 				</form>
 			</div>
 		</div>
-	</div>
+	</main>
 
 
-	<div layout:fragment="scripts" th:inline="javascript">
+	<div layout:fragment="pageScripts" th:inline="javascript">
 		<script type="text/javascript">
 			$(document).ready(function () {
 				var $setPassword = $("#setpassword");

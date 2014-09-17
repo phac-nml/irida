@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="templates/wet-boew/wet-layout">
+      layout:decorator="analysis/_base">
 <head>
     <title th:text="#{analysis.page.admin.title}">THIS IS SOMETHING
         WRONG</title>
@@ -19,13 +19,8 @@
     </th:block>
 </head>
 <body>
-<div class="container" layout:fragment="content">
-    <div class="row">
-        <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
-    </div>
-    <div class="row">
-        <main class="col-md-12 ng-cloak" role="main"
-              property="mainContentOfPage" ng-app="analysis">
+
+<main layout:fragment="main" ng-app="analysis">
             <h1 th:text="#{analysis.page.admin.title}">HEY I'M A GLOBAL ANALYSIS PAGE</h1>
 
             <div class="row" ng-controller="AnalysisTableCtrl as table">
@@ -212,9 +207,7 @@
                 </div>
             </div>
         </main>
-    </div>
-</div>
-<th:block layout:fragment="scripts" th:inline="javascript">
+<th:block layout:fragment="pageScripts" th:inline="javascript">
 
 <script th:src="@{'/resources/bower_components/lodash/dist/lodash.underscore.min.js'}"
         src="/resources/bower_components/lodash/dist/lodash.underscore.min.js"></script>

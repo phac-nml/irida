@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="templates/wet-boew/wet-layout">
+      layout:decorator="clients/_base">
 <head>
     <title th:text="#{clients.title}">_Clients_</title>
 </head>
 <body>
-<div class="container" layout:fragment="content">
-    <div class="row">
-        <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">_MENU_</div>
-        <div class="col-md-12">
-            <main role="main" property="mainContentOfPage">
-                <h1 th:text="#{clients.title}">_Clients_</h1>
-                <a href="/clients/create" th:href="@{/clients/create}" th:text="#{clients.add}" class="btn btn-default">_Add Client_</a>
-                <table id="clientsTable" class="table table-striped table-hover">
+<main layout:fragment="page">
+    <div class="col-md-12">
+        <main role="main" property="mainContentOfPage">
+            <h1 th:text="#{clients.title}">_Clients_</h1>
+            <a href="/clients/create" th:href="@{/clients/create}" th:text="#{clients.add}" class="btn btn-default">_Add
+                Client_</a>
+            <table id="clientsTable" class="table table-striped table-hover">
                 <thead>
                 <tr th:inline="text">
                     <th id="id-header">[[#{iridaThing.id}]]<i class="glyphicon"></i></th>
@@ -24,13 +23,12 @@
                 </thead>
                 <tbody id="client-table-body"></tbody>
             </table>
-            </main>
-        </div>
+        </main>
     </div>
-</div>
-<div layout:fragment="scripts">
-    <script th:src="@{/resources/wet-theme/js/deps/jquery.dataTables.min.js}"
-            src="/resources/wet-theme/js/deps/jquery.dataTables.min.js"></script>
+</main>
+<th:block layout:fragment="pageScripts">
+    <script th:src="@{/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js}"
+            src="/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js"></script>
     <script th:inline="javascript">
         /*<![CDATA[*/
         $(document).ready(function () {
@@ -45,20 +43,22 @@
                 order: [[1, "desc"]],
                 columnDefs: [
                     {
-                    	'className': "clientIdCol",
-                    	'targets': 0
+                        'className': "clientIdCol",
+                        'targets': 0
                     },
                     {
                         'render': function (data, type, row) {
-                            return '<a class="clientLink" href="' + [[@{/clients/}]] + row[0] + '">' + data + '</a>';
+                            return '<a class="clientLink" href="' +
+                                /*[[@{/clients/}]]*/ ''
+                            + row[0] + '">' + data + '</a>';
                         },
-                        'targets':1
+                        'targets': 1
                     }
                 ]
             });
         });
         /*]]>*/
     </script>
-</div>
+</th:block>
 </body>
 </html>
