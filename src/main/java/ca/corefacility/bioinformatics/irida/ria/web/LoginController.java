@@ -18,6 +18,8 @@ import com.google.common.base.Strings;
 @Controller
 public class LoginController extends BaseController {
 	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+	private static final String WET_BOEW_THEME = "wet";
+	private @Value("${ui.theme}") String theme;
 	private static final String SPLASH_PAGE = "themes/wet/splash";
 	private static final String LOGIN_PAGE = "login";
 
@@ -30,11 +32,10 @@ public class LoginController extends BaseController {
 		if (isAuthenticated()) {
 			return "forward:/dashboard";
 		} else {
-			if(theme.equals(WET_BOEW_THEME)){
+			if (theme.equals(WET_BOEW_THEME)) {
 				// Only need the language page for the wet theme.
 				return SPLASH_PAGE;
-			}
-			else {
+			} else {
 				return "forward:/login";
 			}
 
