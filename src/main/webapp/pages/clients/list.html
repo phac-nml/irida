@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="${themePath + '_page'}">
+      layout:decorator="clients/_base">
 <head>
     <title th:text="#{clients.title}">_Clients_</title>
 </head>
@@ -26,9 +26,9 @@
         </main>
     </div>
 </main>
-<div layout:fragment="baseScripts">
-    <script th:src="@{/resources/wet-theme/js/deps/jquery.dataTables.min.js}"
-            src="/resources/wet-theme/js/deps/jquery.dataTables.min.js"></script>
+<th:block layout:fragment="pageScripts">
+    <script th:src="@{/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js}"
+            src="/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js"></script>
     <script th:inline="javascript">
         /*<![CDATA[*/
         $(document).ready(function () {
@@ -59,6 +59,6 @@
         });
         /*]]>*/
     </script>
-</div>
+</th:block>
 </body>
 </html>

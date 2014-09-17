@@ -21,9 +21,4 @@ public class LoginControllerTest {
 		Model model = new ExtendedModelMap();
 		assertEquals("login", controller.showLogin(model, false));
 	}
-
-	@Test
-	public void testShowSplashPage() {
-		assertEquals("splash", controller.showSplash());
-	}
 }

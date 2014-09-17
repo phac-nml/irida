@@ -10,19 +10,23 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.google.common.base.Strings;
+
 /**
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Controller
 public class LoginController extends BaseController {
 	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
-	private static final String SPLASH_PAGE = "splash";
+	private static final String SPLASH_PAGE = "themes/wet/splash";
 	private static final String LOGIN_PAGE = "login";
 
 
 	@RequestMapping(value = "/")
 	public String showSplash() {
-		logger.debug("Displaying splash page");
+		if (Strings.isNullOrEmpty(theme)) {
+			theme = WET_BOEW_THEME;
+		}
 		if (isAuthenticated()) {
 			return "forward:/dashboard";
 		} else {
@@ -31,7 +35,7 @@ public class LoginController extends BaseController {
 				return SPLASH_PAGE;
 			}
 			else {
-				return LOGIN_PAGE;
+				return "forward:/login";
 			}
 
 		}

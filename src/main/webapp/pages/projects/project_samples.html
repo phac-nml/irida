@@ -3,6 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="projects/_base">
 <head>
+    <title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
 </head>
 <body>
 <main layout:fragment="main">

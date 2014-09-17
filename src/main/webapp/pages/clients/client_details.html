@@ -67,11 +67,11 @@
            </form>
        </section>
 </main>
-<th:block layout:fragment="pageScripts" th:inline="javascript">
+<th:block layout:fragment="pageScripts">
     <script th:inline="javascript">
     	$(document).ready(function(){
-    		var removeUrl = [[@{/clients/remove}]]; 
-    		var data = "id=" + [[${client.id}]];
+    		var removeUrl = /*[[@{/clients/remove}]]*/ '/clients/remove';
+    		var data = "id=" + /*[[${client.id}]]*/ '1 ';
     		$("#remove-btn").click(function(){
     			noty({
     				layout: "center",

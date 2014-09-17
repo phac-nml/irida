@@ -44,7 +44,7 @@ public class AnalysisAdminPageIT {
 
 	@Before
 	public void setUp() {
-		driver = BasePage.initializeDriver();
+		driver = BasePage.initializeChromeDriver();
 		adminPage = new AnalysisAdminPage(driver);
 	}
 

@@ -1,17 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="templates/wet-boew/wet-layout">
+      layout:decorator="${themePath + '_base'}">
 <head>
     <title th:text="#{projects.title}">THIS IS SOMETHING WRONG</title>
 </head>
 <body>
-<main layout:fragment="content" class="container main-container" role="main" property="mainContentOfPage">
+<main layout:fragment="main">
     <!-- TODO: (Josh  - 2014-06-24) Customize this based on the error received -->
     <h1>Hello I am a ERROR PAGE</h1>
 </main>
-<div layout:fragment="scripts" th:inline="javascript">
-
-</div>
 </body>
 </html>
