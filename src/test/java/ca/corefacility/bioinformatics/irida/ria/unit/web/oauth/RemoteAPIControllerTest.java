@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 import java.net.MalformedURLException;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -31,8 +32,10 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.ExtendedModelMap;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.oauth.OltuAuthorizationController;
 import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
@@ -215,17 +218,38 @@ public class RemoteAPIControllerTest {
 		when(remoteAPIService.read(apiId)).thenReturn(client);
 		when(projectRemoteService.list(client)).thenReturn(new ArrayList<>());
 		String connectToAPI = remoteAPIController.connectToAPI(apiId);
-		assertEquals("redirect:/remote_api", connectToAPI);
+		assertEquals(RemoteAPIController.PARENT_FRAME_RELOAD_PAGE, connectToAPI);
 	}
 
 	@Test
 	public void testRead() {
 		Long apiId = 1l;
 		ExtendedModelMap model = new ExtendedModelMap();
+		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
+		RemoteAPIToken remoteAPIToken = new RemoteAPIToken("xyz", client, new Date());
+		when(remoteAPIService.read(apiId)).thenReturn(client);
+		when(tokenService.getToken(client)).thenReturn(remoteAPIToken);
 
 		remoteAPIController.read(apiId, model, locale);
 
 		verify(remoteAPIService).read(apiId);
+		verify(tokenService).getToken(client);
+
+		assertTrue(model.containsAttribute("remoteApi"));
+	}
+	
+	@Test
+	public void testReadNoToken() {
+		Long apiId = 1l;
+		ExtendedModelMap model = new ExtendedModelMap();
+		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
+		when(remoteAPIService.read(apiId)).thenReturn(client);
+		when(tokenService.getToken(client)).thenThrow(new EntityNotFoundException("no token"));
+
+		remoteAPIController.read(apiId, model, locale);
+
+		verify(remoteAPIService).read(apiId);
+		verify(tokenService).getToken(client);
 
 		assertTrue(model.containsAttribute("remoteApi"));
 	}

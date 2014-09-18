@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
 import java.net.MalformedURLException;
 import java.security.Principal;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -65,6 +64,7 @@ public class RemoteAPIController extends BaseController {
 	public static final String DETAILS_PAGE = "remote_apis/remote_api_details";
 	public static final String ADD_API_PAGE = "remote_apis/create";
 	public static final String STATUS_PAGE = "remote_apis/status";
+	public static final String PARENT_FRAME_RELOAD_PAGE = "remote_apis/parent_reload";
 
 	public static final String VALID_OAUTH_CONNECTION = "valid";
 	public static final String INVALID_OAUTH_TOKEN = "invalid_token";
@@ -99,7 +99,7 @@ public class RemoteAPIController extends BaseController {
 		DateFormatter dateFormatter2 = new DateFormatter();
 		dateFormatter2.setStylePattern("MS");
 		dateTimeFormatter = dateFormatter2;
-		
+
 	}
 
 	/**
@@ -130,6 +130,8 @@ public class RemoteAPIController extends BaseController {
 			RemoteAPIToken token = tokenService.getToken(remoteApi);
 			model.addAttribute("tokenExpiry", dateTimeFormatter.print(token.getExpiryDate(), locale));
 		} catch (EntityNotFoundException ex) {
+			// Not returning a token here is acceptable. The view will have to
+			// handle a state if the token does not exist
 			logger.trace("No token for service " + remoteApi);
 		}
 
@@ -293,12 +295,22 @@ public class RemoteAPIController extends BaseController {
 		}
 	}
 
+	/**
+	 * Initiate a token request on a remote api if one does not yet exist. Works
+	 * with
+	 * {@link #handleOAuthException(HttpServletRequest, IridaOAuthException)} to
+	 * initiate the request.
+	 * 
+	 * @param apiId
+	 *            the ID of the api to connect to
+	 * @return The name of the PARENT_FRAME_RELOAD_PAGE view
+	 */
 	@RequestMapping("/connect/{apiId}")
 	public String connectToAPI(@PathVariable Long apiId) {
 		RemoteAPI api = remoteAPIService.read(apiId);
 		projectRemoteService.list(api);
-		
-		return "remote_apis/parent_reload";
+
+		return PARENT_FRAME_RELOAD_PAGE;
 	}
 
 	/**
