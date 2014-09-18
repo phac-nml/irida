@@ -35,11 +35,11 @@ public class AnalysisSubmissionSpecification {
 				}
 				if (minDate != null) {
 					predicateList.add(criteriaBuilder.greaterThanOrEqualTo(
-							analysisSubmissionRoot.<Date>get("createdDate"), minDate));
+							analysisSubmissionRoot.get("createdDate"), minDate));
 				}
 				if (maxDate != null) {
 					predicateList.add(criteriaBuilder
-							.lessThanOrEqualTo(analysisSubmissionRoot.<Date>get("createdDate"), maxDate));
+							.lessThanOrEqualTo(analysisSubmissionRoot.get("createdDate"), maxDate));
 				}
 				if (predicateList.size() > 0) {
 					return criteriaBuilder.and(predicateList.toArray(new Predicate[predicateList.size()]));
