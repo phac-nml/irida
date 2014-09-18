@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-    <script type="text/html" id="connection-template">
+    <script th:src="@{/resources/bower_components/mustache/mustache.js}" src="/resources/bower_components/mustache/mustache.js"></script>
+    <script type="x-tmpl-mustache" id="connection-template">
 		<section class="panel panel-default">
 		<div class="panel-heading">
 			<h3 class="panel-title" th:text="#{remoteapi.connect.title}">_Connect to Remote API_</h3>
@@ -7,7 +8,8 @@
 		</section>
 		<div class="panel-body">
 			<p th:text="#{remoteapi.connect.info}">_The content below is from another website_</p>
-			<iframe scrolling="no" style="width:100%; height:400px" src="{{url}}"></iframe>
+			<hr/>
+			<iframe scrolling="no" style="border: none; width:100%; height:400px" src="{{url}}"></iframe>
 		</div>
 	</script>
     
