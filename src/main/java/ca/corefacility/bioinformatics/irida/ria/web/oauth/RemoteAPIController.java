@@ -96,7 +96,11 @@ public class RemoteAPIController extends BaseController {
 		this.authController = authController;
 		this.messageSource = messageSource;
 		this.dateFormatter = new DateFormatter();
+
+		// creating second DateFormatter for date/time displays
 		DateFormatter dateFormatter2 = new DateFormatter();
+		// setting date/time formatter stile to medium date, small time. Will
+		// display full date and basic time info.
 		dateFormatter2.setStylePattern("MS");
 		dateTimeFormatter = dateFormatter2;
 
