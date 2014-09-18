@@ -310,10 +310,11 @@ public class RemoteAPIController extends BaseController {
 	 * @return The name of the PARENT_FRAME_RELOAD_PAGE view
 	 */
 	@RequestMapping("/connect/{apiId}")
-	public String connectToAPI(@PathVariable Long apiId) {
+	public String connectToAPI(@PathVariable Long apiId, Model model) {
 		RemoteAPI api = remoteAPIService.read(apiId);
 		projectRemoteService.list(api);
-
+		model.addAttribute("remoteApi",api);
+		
 		return PARENT_FRAME_RELOAD_PAGE;
 	}
 

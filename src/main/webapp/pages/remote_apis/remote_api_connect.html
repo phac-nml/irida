@@ -14,6 +14,9 @@
 	</script>
     
     <script th:inline="javascript">
+    var connectNoty;
+    var connectSuccess=false;
+    
     $(document).ready(function(){
     	$("body").on("click",".oauth-connect-link",function(){
     		var that = $(this);
@@ -25,7 +28,7 @@
 			var template = $("#connection-template").html();
 			var content = Mustache.render(template, {url: connectUrl});
 			
-			noty({
+			connectNoty = noty({
 				modal: true,
 				layout: "top",
 				template: content,
@@ -37,10 +40,22 @@
                             $noty.close();
                         }
                     }
-		         ]
+		         ],
+		         callback: {
+		        	 afterClose: function(){
+		        		 if(connectSuccess){
+		        			 window.location.reload();
+		        		 }
+		        	 }
+		         }
 			});
 		});
     });
+    
+    function closeNoty(){
+    	connectSuccess = true;
+    	connectNoty.close();
+    }
     
     function getApiStatus(apiId,resultContainerId,connectButtonId){
     	var urlBase = /*[[@{/remote_api/status/}]]*/ '/remote_api/status/';

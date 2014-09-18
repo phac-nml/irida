@@ -205,19 +205,21 @@ public class RemoteAPIControllerTest {
 	@Test(expected = IridaOAuthException.class)
 	public void testConnectToAPI() {
 		Long apiId = 1l;
+		ExtendedModelMap model = new ExtendedModelMap();
 		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
 		when(remoteAPIService.read(apiId)).thenReturn(client);
 		when(projectRemoteService.list(client)).thenThrow(new IridaOAuthException("invalid token", client));
-		remoteAPIController.connectToAPI(apiId);
+		remoteAPIController.connectToAPI(apiId, model);
 	}
 
 	@Test
 	public void testConnectToAPIActiveToken() {
 		Long apiId = 1l;
+		ExtendedModelMap model = new ExtendedModelMap();
 		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
 		when(remoteAPIService.read(apiId)).thenReturn(client);
 		when(projectRemoteService.list(client)).thenReturn(new ArrayList<>());
-		String connectToAPI = remoteAPIController.connectToAPI(apiId);
+		String connectToAPI = remoteAPIController.connectToAPI(apiId, model);
 		assertEquals(RemoteAPIController.PARENT_FRAME_RELOAD_PAGE, connectToAPI);
 	}
 
@@ -237,7 +239,7 @@ public class RemoteAPIControllerTest {
 
 		assertTrue(model.containsAttribute("remoteApi"));
 	}
-	
+
 	@Test
 	public void testReadNoToken() {
 		Long apiId = 1l;

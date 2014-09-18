@@ -27,13 +27,6 @@
 </main>
 
 <th:block layout:fragment="pageScripts">
-    <script sec:authorize="hasRole('ROLE_ADMIN')" type="x-tmpl-mustache" id="api-name-template">
-    	<a class="api-name" th:href="@{/remote_api/{{apiId}}}">{{name}}</a>
-	</script>
-    <script sec:authorize="!hasRole('ROLE_ADMIN')" type="x-tmpl-mustache" id="api-name-template">
-    	<span class="api-name">{{name}}</span>
-    </script>
-	
 
     <script th:src="@{/resources/wet-theme/js/deps/jquery.dataTables.min.js}"
             src="/resources/wet-theme/js/deps/jquery.dataTables.min.js"></script>
@@ -54,12 +47,8 @@
                     {
                     	"data": "name",
                     	"render": function (data, type, row) {
-                    		 var template = $('#api-name-template').html();
-	                         var content = Mustache.render(template, {
-	         					apiId: row.id,
-	         					name: data
-	         				 });
-                             return content;
+                    		var urlbase = /*[[@{/remote_api/}]]*/ '/remote_api/';
+                    		return '<a class="api-name" href="' + urlbase + row.id + '">' + data + '</a>';
                          }
                     },
                     {
