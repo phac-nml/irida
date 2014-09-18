@@ -54,7 +54,8 @@ public class AnalysisAdminPage {
 	}
 
 	public void filterByName(String name) {
-		driver.findElement(By.name("name-filter")).sendKeys(name);
+
+		driver.findElement(By.id("name-filter")).sendKeys(name);
 		waitForAjax();
 	}
 

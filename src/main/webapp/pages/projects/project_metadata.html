@@ -1,109 +1,101 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="templates/wet-boew/wet-layout">
+      layout:decorator="projects/_base">
 <head>
-    <title th:inline="text">[[${project.label}]] - [[#{project.nav.metadata}]]</title>
-    <link rel="stylesheet" href="/resources/wet-theme/css/wet-boew.min.css"/>
-    <link rel="stylesheet" href="/resources/wet-theme/css/theme.min.css"/>
+    <title th:text="${project.label} + ' - ' + #{project.nav.metadata}"></title>
 </head>
 <body>
-<div class="container" layout:fragment="content">
+
+<main layout:fragment="main" th:object="${project}">
     <div class="row">
-        <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
+        <div class="col-md-10">
+            <h1 role="heading" th:text="#{project.metadata.title(${project.label})}"></h1>
+        </div>
+        <div class="col-md-2">
+            <a id="edit-metadata" th:if="${isOwner} or ${isAdmin}" class="btn btn-default btn-sm pull-right"
+               th:href="@{'/projects/' + *{id} + '/metadata/edit'}" th:text="#{form.btn.edit}">__EDIT__</a>
+        </div>
     </div>
-    <div class="row">
-        <nav th:replace="projects/project_base :: nav"></nav>
-        <main class="col-md-9 col-md-push-3" role="main" property="mainContentOfPage" th:object="${project}">
-            <div class="row">
-                <div class="col-md-10">
-                    <h1 role="heading" th:text="#{project.metadata.title(${project.label})}"></h1>
+
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="active"><a id="metaTab" href="#meta" role="tab" data-toggle="tab"
+                              th:text="#{projects.meta.tabs.meta}">__Meta Data__</a></li>
+        <li><a id="refTab" href="#references" role="tab" data-toggle="tab" th:text="#{projects.meta.tabs.ref}">__Reference
+            Files__</a></li>
+    </ul>
+
+    <div class="tab-content mrgn-tp-md">
+        <div class="tab-pane active" id="meta" th:object="${project}">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title" th:text="#{projects.create.form.name}">Project Name</h3>
                 </div>
-                <div class="col-md-2">
-                    <a id="edit-metadata" th:if="${isOwner} or ${isAdmin}" class="btn btn-default btn-sm pull-right"
-                       th:href="@{'/projects/' + *{id} + '/metadata/edit'}" th:text="#{form.btn.edit}">__EDIT__</a>
+                <div class="panel-body" id="name" th:text="*{label}">
                 </div>
             </div>
-
-            <ul class="nav nav-tabs" role="tablist">
-                <li class="active"><a id="metaTab" href="#meta" role="tab" data-toggle="tab" th:text="#{projects.meta.tabs.meta}">__Meta Data__</a></li>
-                <li><a id="refTab" href="#references" role="tab" data-toggle="tab" th:text="#{projects.meta.tabs.ref}">__Reference Files__</a></li>
-            </ul>
-
-            <div class="tab-content mrgn-tp-md">
-                <div class="tab-pane active" id="meta" th:object="${project}">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            <h3 class="panel-title" th:text="#{projects.create.form.name}">Project Name</h3>
-                        </div>
-                        <div class="panel-body" id="name" th:text="*{label}">
-                        </div>
-                    </div>
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            <h3 class="panel-title" th:text="#{projects.create.form.description}">Project
-                                Description</h3>
-                        </div>
-                        <div class="panel-body" id="description" th:text="*{projectDescription}">
-                        </div>
-                    </div>
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            <h3 class="panel-title" th:text="#{projects.create.form.organism}">Project Organism</h3>
-                        </div>
-                        <div class="panel-body" id="organism" th:text="*{organism}">
-
-                        </div>
-                    </div>
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            <h3 class="panel-title" th:text="#{projects.create.form.wiki}">Project Wiki</h3>
-                        </div>
-                        <div class="panel-body">
-                            <a th:href="*{remoteURL}" id="remoteURL" th:text="*{remoteURL}"></a>
-                        </div>
-                    </div>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title" th:text="#{projects.create.form.description}">Project
+                        Description</h3>
                 </div>
-                <div class="tab-pane" id="references">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            <h3 class="panel-title" th:text="#{projects.meta.reference-files}">__Reference Files__</h3>
-                        </div>
-                        <div class="panel-body">
-                            <table id="referenceFiles" class="table">
-                                <thead>
-                                <tr>
-                                    <th th:text="#{projects.meta.reference-file.name}">__Reference File Name__</th>
-                                    <th th:text="#{projects.meta.reference-file.size}">__FILE_SIZE__</th>
-                                    <th th:text="#{projects.meta.reference-file.createdDate}">__Date Added__</th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="file : ${referenceFiles}">
-                                    <td class="refFileName" th:text="${file.label}"></td>
-                                    <td th:text="${file.size}"></td>
-                                    <td th:text="${file.createdDate}"></td>
-                                    <td class="text-right">
-                                        <button data:file-id="${file.id}" class="btn btn-default btn-xs btn-download"
-                                                data:tooltip="#{form.download}"><span
-                                                class="glyphicon glyphicon-download-alt"></span>
-                                        </button>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="panel-body" id="description" th:text="*{projectDescription}">
                 </div>
             </div>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title" th:text="#{projects.create.form.organism}">Project Organism</h3>
+                </div>
+                <div class="panel-body" id="organism" th:text="*{organism}">
+
+                </div>
             </div>
-            <iframe id="invisible" style="display:none;"></iframe>
-        </main>
-        <aside th:replace="projects/project_base :: sidebar"></aside>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title" th:text="#{projects.create.form.wiki}">Project Wiki</h3>
+                </div>
+                <div class="panel-body">
+                    <a th:href="*{remoteURL}" id="remoteURL" th:text="*{remoteURL}"></a>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="references">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title" th:text="#{projects.meta.reference-files}">__Reference Files__</h3>
+                </div>
+                <div class="panel-body">
+                    <table id="referenceFiles" class="table">
+                        <thead>
+                        <tr>
+                            <th th:text="#{projects.meta.reference-file.name}">__Reference File Name__</th>
+                            <th th:text="#{projects.meta.reference-file.size}">__FILE_SIZE__</th>
+                            <th th:text="#{projects.meta.reference-file.createdDate}">__Date Added__</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="file : ${referenceFiles}">
+                            <td class="refFileName" th:text="${file.label}"></td>
+                            <td th:text="${file.size}"></td>
+                            <td th:text="${file.createdDate}"></td>
+                            <td class="text-right">
+                                <button data:file-id="${file.id}" class="btn btn-default btn-xs btn-download"
+                                        data:tooltip="#{form.download}"><span
+                                        class="glyphicon glyphicon-download-alt"></span>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
-<div layout:fragment="scripts" th:inline="javascript">
-    <div th:replace="projects/project_base :: scripts"></div>
+    <iframe id="invisible" style="display:none;"></iframe>
+</main>
+
+<th:block layout:fragment="pageScripts" th:inline="javascript">
     <script>
         $(function () {
             $('[data-tooltip!=""]').qtip({ // Grab all elements with a non-blank data-tooltip attr.
@@ -114,7 +106,7 @@
                     at: 'top center',
                     my: 'bottom center'
                 },
-                style  : {
+                style: {
                     classes: 'qtip-tipsy qtip-shadow'
                 }
             });
@@ -127,6 +119,6 @@
             });
         });
     </script>
-</div>
+</th:block>
 </body>
 </html>

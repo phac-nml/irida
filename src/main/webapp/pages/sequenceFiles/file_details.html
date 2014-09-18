@@ -1,94 +1,85 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="templates/wet-boew/wet-layout">
+      layout:decorator="sequenceFiles/_base">
 <head>
-    <title th:text="${file.label}">THIS IS SOMETHING WRONG</title>
+    <title th:text="${file.label}"></title>
 </head>
 <body>
-<div class="container" layout:fragment="content">
-    <div class="row">
-        <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
-    </div>
-    <div class="row">
-        <nav th:replace="sequenceFiles/file_base :: nav"></nav>
-        <main class="col-md-8 col-md-push-4" role="main" property="mainContentOfPage">
-            <h1 id="wb-cont" role="heading" th:text="${file.getLabel()}"></h1>
 
-            <p class="lead" th:text="${fastQC.description}">...</p>
+<main layout:fragment="main">
+    <h1 id="wb-cont" role="heading" th:text="${file.getLabel()}"></h1>
 
-            <section class="sequenceFile">
-                <h2 th:text="#{sf.quality-charts}">__Quality_Charts__</h2>
+    <p class="lead" th:text="${fastQC.description}">...</p>
 
-                <div class="row">
-                    <div class="col-md-4">
-                        <a class="image-link" th:href="@{/sequenceFiles/img/{id}/perbase(id=${file.getId()})}" href="#"
-                           title="Quality scores across all bases">
-                            <img th:src="@{/sequenceFiles/img/{id}/perbase(id=${file.getId()})}" src=""
-                                 th:alt="#{sf.img.perbase}"
-                                 alt="Quality scores across all bases"/></a>
-                    </div>
-                    <div class="col-md-8">
-                        <h2 th:text="#{sf.img.perbase}"></h2>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <a class="image-link" th:href="@{/sequenceFiles/img/{id}/persequence(id=${file.getId()})}"
-                           href="#"
-                           title="Quality score distribution over all sequences">
-                            <img th:src="@{/sequenceFiles/img/{id}/persequence(id=${file.getId()})}"
-                                 src="/sequenceFile/img/1-persequence"
-                                 th:alt="#{sf.img.persequence}"
-                                 alt="Quality score distribution over all sequences"/></a>
-                    </div>
-                    <div class="col-md-8">
-                        <h2 th:text="#{sf.img.persequence}"></h2>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <a class="image-link" th:href="@{/sequenceFiles/img/{id}/duplicationlevel(id=${file.getId()})}"
-                           href="#" title="Sequence Duplication Level">
-                            <img th:src="@{/sequenceFiles/img/{id}/duplicationlevel(id=${file.getId()})}"
-                                 src="/sequenceFile/img/1-duplicationlevel"
-                                 th:alt="#{sf.img.dublicationlevel}" alt="Sequence Duplication Level"/></a>
-                    </div>
-                    <div class="col-md-8">
-                        <h2 th:text="#{sf.img.dublicationlevel}"></h2>
-                    </div>
-                </div>
-            </section>
-        </main>
-        <aside th:replace="sequenceFiles/file_base :: sidebar"></aside>
-    </div>
-</div>
-<div layout:fragment="scripts" th:inline="javascript">
-    <div th:replace="sequenceFiles/file_base :: scripts"></div>
+    <section class="sequenceFile">
+        <h2 th:text="#{sf.quality-charts}">__Quality_Charts__</h2>
+
+        <div class="row">
+            <div class="col-md-4">
+                <a class="image-link" th:href="@{/sequenceFiles/img/{id}/perbase(id=${file.getId()})}" href="#"
+                   title="Quality scores across all bases">
+                    <img th:src="@{/sequenceFiles/img/{id}/perbase(id=${file.getId()})}" src=""
+                         th:alt="#{sf.img.perbase}"
+                         alt="Quality scores across all bases"/></a>
+            </div>
+            <div class="col-md-8">
+                <h2 th:text="#{sf.img.perbase}"></h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <a class="image-link" th:href="@{/sequenceFiles/img/{id}/persequence(id=${file.getId()})}"
+                   href="#"
+                   title="Quality score distribution over all sequences">
+                    <img th:src="@{/sequenceFiles/img/{id}/persequence(id=${file.getId()})}"
+                         src="/sequenceFile/img/1-persequence"
+                         th:alt="#{sf.img.persequence}"
+                         alt="Quality score distribution over all sequences"/></a>
+            </div>
+            <div class="col-md-8">
+                <h2 th:text="#{sf.img.persequence}"></h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <a class="image-link" th:href="@{/sequenceFiles/img/{id}/duplicationlevel(id=${file.getId()})}"
+                   href="#" title="Sequence Duplication Level">
+                    <img th:src="@{/sequenceFiles/img/{id}/duplicationlevel(id=${file.getId()})}"
+                         src="/sequenceFile/img/1-duplicationlevel"
+                         th:alt="#{sf.img.dublicationlevel}" alt="Sequence Duplication Level"/></a>
+            </div>
+            <div class="col-md-8">
+                <h2 th:text="#{sf.img.dublicationlevel}"></h2>
+            </div>
+        </div>
+    </section>
+</main>
+<th:block layout:fragment="pageScripts" th:inline="javascript">
     <script>
         $(document).ready(function () {
             $('.image-link').magnificPopup({
-                removalDelay  : 300,
-                mainClass     : 'mfp-with-zoom',
-                type          : 'image',
+                removalDelay: 300,
+                mainClass: 'mfp-with-zoom',
+                type: 'image',
                 closeBtnInside: true,
-                image         : {
+                image: {
                     verticalFit: true,
-                    titleSrc   : function (item) {
+                    titleSrc: function (item) {
                         return item.el.attr('title');
                     }
                 },
-                zoom          : {
-                    enabled : true,
+                zoom: {
+                    enabled: true,
                     duration: 300,
-                    easing  : 'ease-in-out',
-                    opener  : function (openerElement) {
+                    easing: 'ease-in-out',
+                    opener: function (openerElement) {
                         return openerElement.is('img') ? openerElement : openerElement.find('img');
                     }
                 }
             });
         });
     </script>
-</div>
+</th:block>
 </body>
 </html>

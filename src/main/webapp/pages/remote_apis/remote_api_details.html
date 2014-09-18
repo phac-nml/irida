@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="templates/wet-boew/wet-layout">
+      layout:decorator="remote_apis/_base">
 <head>
     <title th:text="#{remoteapi.details.title(${remoteApi.name})}">_REMOTE API PAGE_</title>
 </head>
 <body>
-<div class="container" layout:fragment="content">
-    <div class="row">
-        <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">_MENU_</div>
-    </div>
+
+<main layout:fragment="main">
     <div class="row mrgn-tp-lg">
     	<!-- User details -->
     	<div class="col-md-6">
@@ -87,13 +85,13 @@
             </div>
         </div>
        </div>
-       <section>
-           <form id="removeForm" action="/remote_api/remove" th:action="@{/remote_api/remove}" method="POST">
-               <input type="hidden" th:value="${remoteApi.id}" name="id"/>
-           </form>
-       </section>
-</div>
-<div layout:fragment="scripts" th:inline="javascript">
+    <section>
+        <form id="removeForm" action="/remote_api/remove" th:action="@{/remote_api/remove}" method="POST">
+            <input type="hidden" th:value="${remoteApi.id}" name="id"/>
+        </form>
+    </section>
+</main>
+<th:block layout:fragment="scripts" th:inline="javascript">
     <script th:inline="javascript">
     	$(document).ready(function(){
     		$("#remove-btn").click(function(){
@@ -126,9 +124,8 @@
     		getApiStatus(apiId,"#connection-status","#connect-button");
     	});
     	
-    	
     </script>
     <script th:replace="remote_apis/remote_api_connect"></script>
-</div>
+</th:block>
 </body>
 </html>

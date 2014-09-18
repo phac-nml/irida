@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="templates/wet-boew/wet-layout">
+      layout:decorator="user/_base">
 <head>
     <title th:text="${user.label}">_USER PAGE_</title>
 </head>
 <body>
-<div class="container" layout:fragment="content">
-    <div class="row">
-        <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">_MENU_</div>
-    </div>
+<main layout:fragment="main">
     <div class="row">
         <div class="col-md-12">
         	<h1 id="wb-cont" property="name" th:text="${user.label}">__USER NAME__</h1>
@@ -23,10 +20,10 @@
                 	<h3 class="panel-title pull-left" th:text="#{user.details}">_User Details_</h3>
 					<div class="btn-group-xs pull-right">
 						<a href="#password-reset-modial" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')" class="btn btn-default open-popup-link" th:text="#{user.passwordReset}">_Password Reset_</a>
-                		<a id="editUser" class="btn btn-default " th:if="${canEditUser}" th:href="@{/users/{id}/edit(id=${user.id})}" href="/users/1/edit" th:text="#{user.edit}"></a>                	
+                		<a id="editUser" class="btn btn-default " th:if="${canEditUser}" th:href="@{/users/{id}/edit(id=${user.id})}" href="/users/1/edit" th:text="#{user.edit}"></a>
                 	</div>
                 </div>
-                    
+
                 <div class="panel-body">
                     <ul class="nav nav-pills nav-stacked details" th:inline="text">
                     	<li>
@@ -81,7 +78,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- User project table -->
         <div class="col-md-6 ">
             <div class="panel panel-info">
@@ -89,7 +86,7 @@
                 	<h3 class="panel-title pull-left" th:text="#{user.projects.title}">_Projects_</h3>
                 	<span class="pull-right" th:text="#{user.projects.view} + ' (' + ${totalProjects} + ')'">_View All (10)_</span>
                 </div>
-                    
+
                 <div class="panel-body">
                 	<table id="projectsTable" class="table table-striped table-hover">
                 		<thead>
@@ -118,7 +115,7 @@
             </div>
         </div>
     </div>
-    
+
 	<section id="password-reset-modial" class="modal-dialog modal-content overlay-def mfp-hide">
 		<header class="modal-header">
 			<h2 class="modal-title" id="lbx-title" th:text="#{user.passwordReset}">_Reset Password_</h2>
@@ -132,8 +129,8 @@
         </div>
 	</section>
 
-</div>
-<div layout:fragment="scripts" th:inline="javascript">
+</main>
+<th:block layout:fragment="pageScripts" th:inline="javascript">
 	<!-- Add the project role icons to the project role names -->
 	<script th:src="@{/resources/wet-theme/js/deps/jquery.magnific-popup.min.js}"
             src="/resources/wet-theme/js/deps/jquery.magnific-popup.min.js"></script>
@@ -152,12 +149,12 @@
             		iconSpan.addClass(roleClass[rolename]);
             	}
             });
-        	
+
         	//Set modial popup links
             $('.open-popup-link').magnificPopup({
             	  type:'inline'
             });
-        	
+
         	//Confirm password click
         	$("#resetPasswordButton").click(function(){
         		var id = [[${user.id}]];
@@ -166,25 +163,25 @@
         			url:url,
         			success:function(){
         				noty({
-        					text: [[#{user.passwordReset.success}]], 
-        					layout: "topCenter", 
+        					text: [[#{user.passwordReset.success}]],
+        					layout: "topCenter",
         					type: "success",
         					timeout: 5000
         				})
         			},
         			error:function(){
         				noty({
-        					text: [[#{user.passwordReset.error}]], 
-        					layout: "topCenter", 
+        					text: [[#{user.passwordReset.error}]],
+        					layout: "topCenter",
         					type: "error",
         					timeout: false
         				})
         			}
         		});
         	});
-        	
+
         });
     </script>
-</div>
+</th:block>
 </body>
 </html>

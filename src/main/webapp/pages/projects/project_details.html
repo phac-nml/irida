@@ -1,27 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="templates/wet-boew/wet-layout">
+      layout:decorator="projects/_base">
 <head>
-    <title th:text="${project.label}">THIS IS SOMETHING WRONG</title>
+    <title th:text="${project.label} + ' - ' + #{project.nav.details}"></title>
 </head>
 <body>
-<div class="container" layout:fragment="content">
-    <div class="row">
-        <div th:replace="templates/wet-boew/partials/sitemenu :: menu-en">MENU</div>
-    </div>
-    <div class="row">
-        <nav th:replace="projects/project_base :: nav"></nav>
-        <main class="col-md-9 col-md-push-3" role="main" property="mainContentOfPage">
-            <h1 id="wb-cont" role="heading" th:text="${project.label}"></h1>
+<main layout:fragment="main">
+    <h1 id="wb-cont" role="heading" th:text="${project.label}"></h1>
 
-            <h3>This is where the project recent activities will go.</h3>
-        </main>
-        <aside th:replace="projects/project_base :: sidebar"></aside>
-    </div>
-</div>
-<div layout:fragment="scripts" th:inline="javascript">
-    <div th:replace="projects/project_base :: scripts"></div>
-</div>
+    <h3>This is where the project recent activities will go.</h3>
+</main>
 </body>
 </html>
