@@ -1,35 +1,29 @@
 /* line 4, ../../styles/base/_wet-overrides.scss */
 .menu > .pull-right ul {
   position: absolute;
-  right: 0;
-}
+  right: 0; }
 
 /* line 10, ../../styles/base/_wet-overrides.scss */
 .has-error label {
-  color: #d9534f;
-}
+  color: #d9534f; }
 
 /* line 15, ../../styles/base/_wet-overrides.scss */
 label + span.wb-date-wrap {
   display: block;
-  width: 100%;
-}
+  width: 100%; }
 /* line 19, ../../styles/base/_wet-overrides.scss */
 span.wb-date-wrap .input-full {
   width: auto;
-  display: inline-block;
-}
+  display: inline-block; }
 
 /* line 26, ../../styles/base/_wet-overrides.scss */
 label {
-  margin-top: 5px;
-}
+  margin-top: 5px; }
 
 /* line 1, ../../styles/components/_buttons.scss */
 .btn-xs.glyphicon {
   font-size: 10px;
-  padding: 3px 6px;
-}
+  padding: 3px 6px; }
 
 /* line 1, ../../styles/components/_datatables.scss */
 .dataTables_filter input[type='search'] {
@@ -40,86 +34,70 @@ label {
   color: #555;
   padding: 5px;
   font-weight: normal;
-  outline: none;
-}
-/* line 10, ../../styles/components/_datatables.scss */
-.dataTables_filter input[type='search']:focus {
-  background-color: white;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  -moz-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
-  -o-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
-  -webkit-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
-  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
-}
+  outline: none; }
+  /* line 10, ../../styles/components/_datatables.scss */
+  .dataTables_filter input[type='search']:focus {
+    background-color: white;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -moz-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
+    -o-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
+    -webkit-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
+    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out; }
 
 /* line 19, ../../styles/components/_datatables.scss */
 table.dataTable > thead i {
   float: right;
-  margin: 0 5px;
-}
-/* line 22, ../../styles/components/_datatables.scss */
-table.dataTable > thead i:before {
-  content: "\e150";
-}
+  margin: 0 5px; }
+  /* line 22, ../../styles/components/_datatables.scss */
+  table.dataTable > thead i:before {
+    content: "\e150"; }
 /* line 26, ../../styles/components/_datatables.scss */
 table.dataTable > thead th.sorting_asc > i.glyphicon:before {
-  content: "\e155";
-}
+  content: "\e155"; }
 /* line 29, ../../styles/components/_datatables.scss */
 table.dataTable > thead th.sorting_desc > i.glyphicon:before {
-  content: "\e156";
-}
+  content: "\e156"; }
 /* line 35, ../../styles/components/_datatables.scss */
 table.dataTable > tbody tr.has-files td:not(:first-child) {
-  cursor: pointer;
-}
+  cursor: pointer; }
 /* line 40, ../../styles/components/_datatables.scss */
 table.dataTable > tbody tr.odd.details + tr > td, table.dataTable > tbody tr.even.details + tr > td {
   background-color: white;
   border-left: 5px solid #5bc0de;
-  padding: 5px 15px;
-}
+  padding: 5px 15px; }
 /* line 45, ../../styles/components/_datatables.scss */
 table.dataTable > tbody tr.odd.details + tr table, table.dataTable > tbody tr.even.details + tr table {
   background-color: white;
-  width: 100%;
-}
-/* line 48, ../../styles/components/_datatables.scss */
-table.dataTable > tbody tr.odd.details + tr table tr, table.dataTable > tbody tr.even.details + tr table tr {
-  background-color: transparent;
-}
-/* line 52, ../../styles/components/_datatables.scss */
-table.dataTable > tbody tr.odd.details + tr table td.files-check, table.dataTable > tbody tr.even.details + tr table td.files-check {
-  padding: 0 5px;
-}
-/* line 55, ../../styles/components/_datatables.scss */
-table.dataTable > tbody tr.odd.details + tr table td.files-created, table.dataTable > tbody tr.even.details + tr table td.files-created {
-  text-align: right;
-}
+  width: 100%; }
+  /* line 48, ../../styles/components/_datatables.scss */
+  table.dataTable > tbody tr.odd.details + tr table tr, table.dataTable > tbody tr.even.details + tr table tr {
+    background-color: transparent; }
+  /* line 52, ../../styles/components/_datatables.scss */
+  table.dataTable > tbody tr.odd.details + tr table td.files-check, table.dataTable > tbody tr.even.details + tr table td.files-check {
+    padding: 0 5px; }
+  /* line 55, ../../styles/components/_datatables.scss */
+  table.dataTable > tbody tr.odd.details + tr table td.files-created, table.dataTable > tbody tr.even.details + tr table td.files-created {
+    text-align: right; }
 /* line 62, ../../styles/components/_datatables.scss */
 table.dataTable > tbody code {
   color: #333333;
-  background-color: transparent;
-}
+  background-color: transparent; }
 
 /* line 2, ../../styles/components/_forms.scss */
 .input-full {
-  width: 100%;
-}
+  width: 100%; }
 
 /* line 8, ../../styles/components/_forms.scss */
 .form-group .alert {
   padding: 3px 6px;
   font-weight: bold;
-  margin-bottom: 0;
-}
+  margin-bottom: 0; }
 
 /* line 1, ../../styles/components/_magnific-popup.scss */
 .image-link {
   cursor: -webkit-zoom-in;
   cursor: -moz-zoom-in;
-  cursor: zoom-in;
-}
+  cursor: zoom-in; }
 
 /* This block of CSS adds opacity transition to background */
 /* line 8, ../../styles/components/_magnific-popup.scss */
@@ -130,43 +108,36 @@ table.dataTable > tbody code {
   -webkit-transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
   -o-transition: all 0.3s ease-out;
-  transition: all 0.3s ease-out;
-}
+  transition: all 0.3s ease-out; }
 
 /* line 18, ../../styles/components/_magnific-popup.scss */
 .mfp-with-zoom.mfp-ready .mfp-container {
-  opacity: 1;
-}
+  opacity: 1; }
 
 /* line 21, ../../styles/components/_magnific-popup.scss */
 .mfp-with-zoom.mfp-ready.mfp-bg {
-  opacity: 0.8;
-}
+  opacity: 0.8; }
 
 /* line 25, ../../styles/components/_magnific-popup.scss */
 .mfp-with-zoom.mfp-removing .mfp-container,
 .mfp-with-zoom.mfp-removing.mfp-bg {
-  opacity: 0;
-}
+  opacity: 0; }
 
 /* padding-bottom and top for image */
 /* line 31, ../../styles/components/_magnific-popup.scss */
 .mfp-no-margins img.mfp-img {
-  padding: 0;
-}
+  padding: 0; }
 
 /* position of shadow behind the image */
 /* line 35, ../../styles/components/_magnific-popup.scss */
 .mfp-no-margins .mfp-figure:after {
   top: 0;
-  bottom: 0;
-}
+  bottom: 0; }
 
 /* padding for main container */
 /* line 40, ../../styles/components/_magnific-popup.scss */
 .mfp-no-margins .mfp-container {
-  padding: 0;
-}
+  padding: 0; }
 
 /* line 44, ../../styles/components/_magnific-popup.scss */
 .form-popup {
@@ -175,24 +146,20 @@ table.dataTable > tbody code {
   width: auto;
   max-width: 500px;
   margin: 20px auto;
-  border-radius: 4px;
-}
-/* line 51, ../../styles/components/_magnific-popup.scss */
-.form-popup .modal-header {
-  background-color: #2572b4;
-  color: #ffffff;
-  border-radius: 4px 4px 0 0;
-}
-/* line 56, ../../styles/components/_magnific-popup.scss */
-.form-popup .mfp-close {
-  color: #ffffff;
-}
+  border-radius: 4px; }
+  /* line 51, ../../styles/components/_magnific-popup.scss */
+  .form-popup .modal-header {
+    background-color: #2572b4;
+    color: #ffffff;
+    border-radius: 4px 4px 0 0; }
+  /* line 56, ../../styles/components/_magnific-popup.scss */
+  .form-popup .mfp-close {
+    color: #ffffff; }
 
 /* line 1, ../../styles/components/_noty.scss */
 .noty_message h2 {
   margin-top: 5px;
-  font-size: 1.4em;
-}
+  font-size: 1.4em; }
 
 /* line 3, ../../styles/components/_panels.scss */
 aside b.list-group-item {
@@ -200,157 +167,134 @@ aside b.list-group-item {
   color: #31708f;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 18px;
-  font-weight: bold;
-}
+  font-weight: bold; }
 
 /* line 14, ../../styles/components/_panels.scss */
 .panel .details li {
   border-bottom: 1px solid #eeeeee;
-  line-height: 2em;
-}
+  line-height: 2em; }
 /* line 18, ../../styles/components/_panels.scss */
 .panel .details i.glyphicon {
   color: #797979;
-  margin-right: .5em;
-}
+  margin-right: .5em; }
 /* line 22, ../../styles/components/_panels.scss */
 .panel .details em {
-  font-style: normal;
-}
+  font-style: normal; }
 /* line 25, ../../styles/components/_panels.scss */
 .panel .details span {
-  float: right;
-}
+  float: right; }
 
 /* line 1, ../../styles/components/_subnav.scss */
 .navbar-sm {
   border-radius: 0;
   border: none;
   border-bottom: 1px solid #eeeeee;
-  height: 20px;
-}
-/* line 6, ../../styles/components/_subnav.scss */
-.navbar-sm.navbar {
-  min-height: 2.4em;
-}
-/* line 10, ../../styles/components/_subnav.scss */
-.navbar-sm li.active::after {
-  content: '';
-  display: block;
-  border: 6px solid transparent;
-  border-bottom-color: #fff;
-  width: 0;
-  height: 0;
-  margin-left: -6px;
-  position: relative;
-  left: 50%;
-  bottom: 11px;
-}
-/* line 23, ../../styles/components/_subnav.scss */
-.navbar-sm .navbar-nav.nav a {
-  text-decoration: none;
-  line-height: 2.4em;
-  padding: 0 20px;
-}
-/* line 27, ../../styles/components/_subnav.scss */
-.navbar-sm .navbar-nav.nav a .badge {
-  line-height: 1.5em;
-  font-size: 10px;
-  background-color: #eeeeee;
-  color: #a2a2a2;
-  position: relative;
-  top: -2px;
-  right: -3px;
-}
+  height: 20px; }
+  /* line 6, ../../styles/components/_subnav.scss */
+  .navbar-sm.navbar {
+    min-height: 2.4em; }
+  /* line 10, ../../styles/components/_subnav.scss */
+  .navbar-sm li.active::after {
+    content: '';
+    display: block;
+    border: 6px solid transparent;
+    border-bottom-color: #fff;
+    width: 0;
+    height: 0;
+    margin-left: -6px;
+    position: relative;
+    left: 50%;
+    bottom: 11px; }
+  /* line 23, ../../styles/components/_subnav.scss */
+  .navbar-sm .navbar-nav.nav a {
+    text-decoration: none;
+    line-height: 2.4em;
+    padding: 0 20px; }
+    /* line 27, ../../styles/components/_subnav.scss */
+    .navbar-sm .navbar-nav.nav a .badge {
+      line-height: 1.5em;
+      font-size: 10px;
+      background-color: #eeeeee;
+      color: #a2a2a2;
+      position: relative;
+      top: -2px;
+      right: -3px; }
 
 /* line 2, ../../styles/_layout.scss */
 main h1 {
-  margin-top: 15px;
-}
+  margin-top: 15px; }
 /* line 5, ../../styles/_layout.scss */
 main.col-md-9 h1 {
-  margin-top: 0;
-}
+  margin-top: 0; }
 
 /* line 3, ../../styles/pages/_project.scss */
 #associated-projects a.disabled {
   color: #333333;
   border-top: lightgray 1px solid;
   text-decoration: none;
-  cursor: not-allowed;
-}
+  cursor: not-allowed; }
 /* line 9, ../../styles/pages/_project.scss */
 #associated-projects .glyphicon-lock {
-  color: #d9534f;
-}
+  color: #d9534f; }
 /* line 12, ../../styles/pages/_project.scss */
 #associated-projects .glyphicon-eye-open {
-  color: #5cb85c;
-}
+  color: #5cb85c; }
 
 /* line 2, ../../styles/pages/_sequenceFile.scss */
 .sequenceFile main > div {
-  margin-top: 10px;
-}
+  margin-top: 10px; }
 /* line 5, ../../styles/pages/_sequenceFile.scss */
 .sequenceFile .col-md-8 h2 {
   font-size: 18px;
-  margin: 0;
-}
+  margin: 0; }
 /* line 9, ../../styles/pages/_sequenceFile.scss */
 .sequenceFile a img {
   border: 4px solid #d9edf7;
-  border-radius: 4px;
-}
+  border-radius: 4px; }
 /* line 13, ../../styles/pages/_sequenceFile.scss */
 .sequenceFile .col-md-4 img {
-  width: 100%;
-}
+  width: 100%; }
 
-/* line 19, ../../styles/main.scss */
+/* line 1, ../../styles/pages/_remoteApi.scss */
+iframe.remote-api-frame {
+  border: none;
+  width: 100%;
+  height: 400px; }
+
+/* line 20, ../../styles/main.scss */
 .clickable {
   display: block;
-  cursor: pointer;
-}
-/* line 22, ../../styles/main.scss */
-.clickable span {
-  display: inline-block;
-}
+  cursor: pointer; }
+  /* line 23, ../../styles/main.scss */
+  .clickable span {
+    display: inline-block; }
 
-/* line 28, ../../styles/main.scss */
+/* line 29, ../../styles/main.scss */
 #table-filter {
-  padding: 0;
-}
-/* line 30, ../../styles/main.scss */
-#table-filter > div {
-  padding: 20px;
-}
-/* line 33, ../../styles/main.scss */
-#table-filter .filter-btns > button {
-  margin-top: 33px;
-}
+  padding: 0; }
+  /* line 31, ../../styles/main.scss */
+  #table-filter > div {
+    padding: 20px; }
+  /* line 34, ../../styles/main.scss */
+  #table-filter .filter-btns > button {
+    margin-top: 33px; }
 
-/* line 39, ../../styles/main.scss */
+/* line 40, ../../styles/main.scss */
 .modal-content {
   background-color: #eeeeee;
-  border: 1px solid #555555;
-}
+  border: 1px solid #555555; }
 
-/* line 44, ../../styles/main.scss */
+/* line 45, ../../styles/main.scss */
 .modal-header {
-  background-color: #2572b4;
-}
-/* line 46, ../../styles/main.scss */
-.modal-header h2 {
-  color: #ffffff;
-}
-/* line 49, ../../styles/main.scss */
-.modal-header small {
-  color: #eeeeee;
-}
+  background-color: #2572b4; }
+  /* line 47, ../../styles/main.scss */
+  .modal-header h2 {
+    color: #ffffff; }
+  /* line 50, ../../styles/main.scss */
+  .modal-header small {
+    color: #eeeeee; }
 
-/* line 54, ../../styles/main.scss */
+/* line 55, ../../styles/main.scss */
 .modal-footer {
   margin-top: 0;
-  padding: 20px;
-}
+  padding: 20px; }
