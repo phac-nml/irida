@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -60,7 +61,7 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 	@Column(name = "clientSecret")
 	private String clientSecret;
 
-	@OneToMany(mappedBy = "remoteApi")
+	@OneToMany(mappedBy = "remoteApi", cascade = CascadeType.REMOVE)
 	private Collection<RemoteAPIToken> tokens;
 
 	@CreatedDate
