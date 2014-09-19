@@ -63,7 +63,6 @@ public class RemoteAPIController extends BaseController {
 	public static final String CLIENTS_PAGE = "remote_apis/list";
 	public static final String DETAILS_PAGE = "remote_apis/remote_api_details";
 	public static final String ADD_API_PAGE = "remote_apis/create";
-	public static final String STATUS_PAGE = "remote_apis/status";
 	public static final String PARENT_FRAME_RELOAD_PAGE = "remote_apis/parent_reload";
 
 	public static final String VALID_OAUTH_CONNECTION = "valid";
