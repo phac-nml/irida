@@ -59,15 +59,9 @@
     <th:block layout:fragment="pageScripts">
         <script th:inline="javascript">
             $(document).ready(function () {
-            	$(".api-status").each(function(){
-            		var resultDiv = "#"+$(this).attr("id");
-            		var apiId = $(this).data("api-id");
-            		
-            		getMiniApiStatus(apiId,resultDiv);
-            	});
             	
             	//get the remote project names
-            	$(".remote-project-name").each(function(element){
+            	$(".remote-project-nameXX").each(function(element){
         			var that = $(this);
         			var project = that.data("project-id");
         			var api = that.data("api-id");
@@ -106,69 +100,7 @@
             	
             });
             
-            function getMiniApiStatus(apiId,resultContainerId){
-            	var urlBase = /*[[@{/remote_api/status/}]]*/ '/remote_api/status/';
-            	var invalidTokenText = /*[[#{remoteapi.status.invalid}]]*/ "Expired Token";
-            	var validTokenText = /*[[#{remoteapi.status.valid}]]*/ "Valid Token";
-            	var errorText = /*[[#{remoteapi.status.error}]]*/ "Connection Error";
-            	
-            	var qtipText;
-            	var qtipClass;
-            	
-            	var span = document.createElement("i");
-            	var resultContainer = $(resultContainerId);
-            	var connectButton = $("#connect-button-" + apiId);
-            	var projectCount = $("#remote-project-count-" + apiId);
-            	var apiStatusContainer = resultContainer.closest(".api-status-container");
-            	
-            	$.ajax({
-            		url: urlBase + apiId,
-            		type: "POST",
-            		success: function(data, textStatus, jqXHR){
-            			if(data == "valid"){
-            				span.className="fa fa-chevron-down";
-            				qtipText = validTokenText;
-            				qtipClass = "qtip-green";
-            				
-            				projectCount.removeClass("hidden");
-            				
-            				resultContainer.html(span);
-            			}
-            			else if(data == "invalid_token" || data == "inactive"){
-            				span.className="";
-            				qtipText = invalidTokenText;
-            				qtipClass = "qtip-yellow";
-            				// display the connect button
-            				connectButton.removeClass("hidden");
-            				
-            				resultContainer.html(span);
-            			}
-            		},
-            		error: function(data, textStatus, jqXHR){
-            			span.className="glyphicon glyphicon-ban-circle";
-            			qtipText = errorText;
-            			qtipClass = "qtip-red";
-            			resultContainer.html(span);
-            		},
-            		complete: function(){
-            			apiStatusContainer.qtip({
-        		            content: {
-        		                text: qtipText
-        		            },
-        		            position: {
-        		                my: 'left center',
-        		                at: 'right center',
-        		                adjust: {
-        		                    x: -8
-        		                }
-        		            },
-        		            style: {
-        		                classes: qtipClass
-        		            }
-        		        });
-            		}
-            	});
-            }
+            
         </script>
     </th:block>
     

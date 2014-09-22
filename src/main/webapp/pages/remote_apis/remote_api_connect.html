@@ -57,7 +57,7 @@
     	connectNoty.close();
     }
     
-    function getApiStatus(apiId,resultContainerId,connectButtonId){
+    function getApiStatus(apiId,resultContainerId,connectButtonId,successCallback){
     	var urlBase = /*[[@{/remote_api/status/}]]*/ '/remote_api/status/';
     	var invalidTokenText = /*[[#{remoteapi.status.invalid}]]*/ "Expired Token";
     	var validTokenText = /*[[#{remoteapi.status.valid}]]*/ "Valid Token";
@@ -75,6 +75,7 @@
     				span.className="label label-success";
     				span.innerHTML = validTokenText;
     				resultContainer.html(span);
+    				successCallback();
     			}
     			else if(data == "invalid_token" || data == "inactive"){
     				span.className="label label-warning";
