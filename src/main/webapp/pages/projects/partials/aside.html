@@ -50,6 +50,34 @@
                         th:class="${project.auth} == 'authorized' ? 'glyphicon glyphicon-eye-open' : 'glyphicon glyphicon-lock'"></span></span>
                 <span class="project-name" th:text="${project.name}"></span>
             </a>
+            
+            <span th:each="project : ${remoteAssociatedProjects}" class="list-group-item">
+                <a th:text="${project.remoteAPI.name}" href="#">_REMOTE_API_NAME_</a>
+                <i class="fa fa-chevron-right"></i>
+                <span>
+                    <span id="project-X-name" th:id="'project-'+${project.remoteProjectID}+'-name'" 
+                        class="remote-project-name" th:text="#{project.associated.remote.placeholder(${project.remoteProjectID})}"
+                        th:attr="data-project-id=${project.remoteProjectID},data-api-id=${project.remoteAPI.id}" ></span>
+                    <span class="pull-right">
+                        <i id="project-X-icon" th:id="'project-'+${project.remoteProjectID}+'-icon'" class="fa fa-spinner fa-spin"></i>
+                    </span>
+                    
+                </span>
+            </span>
+            <span th:each="api : ${remoteProjectsByApi}" class="list-group-item api-status-container">
+                <i class="glyphicon glyphicon-globe"></i>
+                <span th:text="${api.key.name}"></span>
+                <div class="pull-right">
+                    <span id="api-status-x" th:id="'api-status-'+${api.key.id}" class="api-status" th:attr="data-api-id=${api.key.id}">
+                        <i class="fa fa-spinner fa-spin"></i>
+                    </span>
+                    <button class="oauth-connect-link btn btn-default btn-xs hidden" id="connect-button-x" th:id="'connect-button-' + ${api.key.id}"
+                            th:attr="data-api-id=${api.key.id}"><i class="glyphicon glyphicon-log-in"></i></button>
+                
+                </div>
+                <!-- <span th:each="project : ${api.value}"  class="list-group-item" th:text="${project.remoteProjectID}">
+                </span> -->
+            </span>
         </div>
 
     </div>
