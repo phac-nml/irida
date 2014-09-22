@@ -84,6 +84,7 @@ public class ProjectsController {
 	public static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
 	public static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
+	public static final String ASSOCIATED_PROJECTS_PAGE = PROJECTS_DIR + "associated_projects";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
 	// Services
@@ -196,6 +197,21 @@ public class ProjectsController {
 		}
 
 		return "redirect:/projects/" + project.getId() + "/metadata";
+	}
+	
+	/**
+	 * Get the associated projects for the given project
+	 * @param projectId The ID of the project to get associated projects
+	 * @param model A model for the view
+	 * @return The view name of the assocated projects view
+	 */
+	@RequestMapping("/{projectId}/associated")
+	public String getAssociatedProjectsPage(@PathVariable Long projectId,Model model, Principal principal){
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		return ASSOCIATED_PROJECTS_PAGE;
 	}
 
 	/**
