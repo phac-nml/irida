@@ -51,33 +51,35 @@
                 <span class="project-name" th:text="${project.name}"></span>
             </a>
             
-            <span th:each="project : ${remoteAssociatedProjects}" class="list-group-item">
-                <a th:text="${project.remoteAPI.name}" href="#">_REMOTE_API_NAME_</a>
-                <i class="fa fa-chevron-right"></i>
-                <span>
-                    <span id="project-X-name" th:id="'project-'+${project.remoteProjectID}+'-name'" 
-                        class="remote-project-name" th:text="#{project.associated.remote.placeholder(${project.remoteProjectID})}"
-                        th:attr="data-project-id=${project.remoteProjectID},data-api-id=${project.remoteAPI.id}" ></span>
-                    <span class="pull-right">
-                        <i id="project-X-icon" th:id="'project-'+${project.remoteProjectID}+'-icon'" class="fa fa-spinner fa-spin"></i>
-                    </span>
-                    
-                </span>
-            </span>
-            <span th:each="api : ${remoteProjectsByApi}" class="list-group-item api-status-container">
+            
+            <div th:each="api : ${remoteProjectsByApi}" class="api-project-status-container">
+            <span class="list-group-item api-status-container">
                 <i class="glyphicon glyphicon-globe"></i>
-                <span th:text="${api.key.name}"></span>
+                <a th:text="${api.key.name}" th:href="@{/remote_api/{id}(id=${api.key.id})}"></a>
+                
                 <div class="pull-right">
+                    <span class="badge hidden" th:id="'remote-project-count-' + ${api.key.id}" th:text="${#lists.size(api.value)}"></span>
                     <span id="api-status-x" th:id="'api-status-'+${api.key.id}" class="api-status" th:attr="data-api-id=${api.key.id}">
                         <i class="fa fa-spinner fa-spin"></i>
                     </span>
                     <button class="oauth-connect-link btn btn-default btn-xs hidden" id="connect-button-x" th:id="'connect-button-' + ${api.key.id}"
                             th:attr="data-api-id=${api.key.id}"><i class="glyphicon glyphicon-log-in"></i></button>
-                
                 </div>
-                <!-- <span th:each="project : ${api.value}"  class="list-group-item" th:text="${project.remoteProjectID}">
-                </span> -->
             </span>
+            <div th:each="project : ${api.value}" th:class="'list-group-item api-project-'+${api.key.id}">
+                <i class="glyphicon glyphicon-globe"></i>
+                <span th:text="${project.remoteAPI.name}">_REMOTE_API_NAME_</span>
+                <i class="fa fa-chevron-right"></i>
+                    <span th:each="project : ${api.value}" id="project-X-name" th:id="'project-'+${project.remoteProjectID}+'-name'" 
+                            class="remote-project-name" th:text="#{project.associated.remote.placeholder(${project.remoteProjectID})}"
+                            th:attr="data-project-id=${project.remoteProjectID},data-api-id=${project.remoteAPI.id}" ></span>
+                    <span class="pull-right">
+                        <i id="project-X-icon" th:id="'project-'+${project.remoteProjectID}+'-icon'"></i>
+                    </span>
+                </div>                    
+            <!-- <span th:each="project : ${api.value}" th:class="'remote-project-name list-group-item remote-project-'+${api.key.id}" th:text="${project.remoteProjectID}"></span>
+             -->
+            </div>
         </div>
 
     </div>

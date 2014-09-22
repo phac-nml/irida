@@ -62,13 +62,51 @@
             	$(".api-status").each(function(){
             		var resultDiv = "#"+$(this).attr("id");
             		var apiId = $(this).data("api-id");
-            		var buttonId = "#connect-button-" + apiId;
             		
-            		getMiniApiStatus(apiId,resultDiv,buttonId,true);
+            		getMiniApiStatus(apiId,resultDiv);
             	});
+            	
+            	//get the remote project names
+            	$(".remote-project-name").each(function(element){
+        			var that = $(this);
+        			var project = that.data("project-id");
+        			var api = that.data("api-id");
+        			
+        			var urlbase = /*[[@{/projects/remote}]]*/ "/project/remote";
+        			var url = urlbase + "/api/" + api + "/project/"+project;
+        			
+        			var nameId = "#project-"+project+"-name"
+        			
+        			var icon = $("#project-"+project+"-icon");
+
+        			$.ajax({
+        				url: url,
+        				success: function(data, textStatus, jqXHR){
+        					if(data.name != null){
+        						icon.removeClass();
+        						
+        						var nameSpan = $(nameId);
+        						nameSpan.fadeOut(function(){
+        							nameSpan.text(data.name);
+        							icon.addClass("glyphicon glyphicon-eye-open");
+        						}).fadeIn();
+        					}
+        					else if(data == "forbidden"){
+        						icon.removeClass();
+        						icon.addClass("glyphicon glyphicon-eye-close");
+        					}
+        					
+        					console.log(data);
+        				},
+        				error: function(data, textStatus, jqXHR){
+        					console.log(data);
+        				}
+        			});
+        		});
+            	
             });
             
-            function getMiniApiStatus(apiId,resultContainerId,connectButtonId){
+            function getMiniApiStatus(apiId,resultContainerId){
             	var urlBase = /*[[@{/remote_api/status/}]]*/ '/remote_api/status/';
             	var invalidTokenText = /*[[#{remoteapi.status.invalid}]]*/ "Expired Token";
             	var validTokenText = /*[[#{remoteapi.status.valid}]]*/ "Valid Token";
@@ -79,7 +117,8 @@
             	
             	var span = document.createElement("i");
             	var resultContainer = $(resultContainerId);
-            	var connectButton = $(connectButtonId);
+            	var connectButton = $("#connect-button-" + apiId);
+            	var projectCount = $("#remote-project-count-" + apiId);
             	var apiStatusContainer = resultContainer.closest(".api-status-container");
             	
             	$.ajax({
@@ -87,13 +126,16 @@
             		type: "POST",
             		success: function(data, textStatus, jqXHR){
             			if(data == "valid"){
-            				span.className="glyphicon glyphicon-ok-sign";
+            				span.className="fa fa-chevron-down";
             				qtipText = validTokenText;
             				qtipClass = "qtip-green";
+            				
+            				projectCount.removeClass("hidden");
+            				
             				resultContainer.html(span);
             			}
             			else if(data == "invalid_token" || data == "inactive"){
-            				span.className="glyphicon glyphicon-warning-sign";
+            				span.className="";
             				qtipText = invalidTokenText;
             				qtipClass = "qtip-yellow";
             				// display the connect button

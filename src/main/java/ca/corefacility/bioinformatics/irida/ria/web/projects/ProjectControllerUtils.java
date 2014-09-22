@@ -11,10 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -86,6 +88,12 @@ public class ProjectControllerUtils {
 		User currentUser = userService.getUserByUsername(principal.getName());
 		List<Map<String, String>> associatedProjects = getAssociatedProjects(project, currentUser, isAdmin);
 		model.addAttribute("associatedProjects", associatedProjects);
+
+		List<RemoteRelatedProject> remoteProjectsForProject = projectService.getRemoteProjectsForProject(project);
+		model.addAttribute("remoteAssociatedProjects", remoteProjectsForProject);
+
+		Map<RemoteAPI, List<RemoteRelatedProject>> remoteRelatedProjectsByApi = getRemoteRelatedProjectsByApi(project);
+		model.addAttribute("remoteProjectsByApi", remoteRelatedProjectsByApi);
 	}
 
 	/**
@@ -124,5 +132,22 @@ public class ProjectControllerUtils {
 			projects.add(map);
 		}
 		return projects;
+	}
+
+	private Map<RemoteAPI, List<RemoteRelatedProject>> getRemoteRelatedProjectsByApi(Project currentProject) {
+		List<RemoteRelatedProject> remoteProjectsForProject = projectService
+				.getRemoteProjectsForProject(currentProject);
+		Map<RemoteAPI, List<RemoteRelatedProject>> projectsByApi = new HashMap<>();
+		for (RemoteRelatedProject p : remoteProjectsForProject) {
+			RemoteAPI api = p.getRemoteAPI();
+			if (!projectsByApi.containsKey(api)) {
+				List<RemoteRelatedProject> list = new ArrayList<>();
+				projectsByApi.put(api, list);
+			}
+
+			projectsByApi.get(api).add(p);
+		}
+
+		return projectsByApi;
 	}
 }
