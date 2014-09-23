@@ -19,6 +19,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataEditPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataPage;
@@ -58,10 +59,7 @@ public class ProjectMetadataEditPageIT {
 
     @Before
     public void setUp() {
-        driver = new ChromeDriver();
-        driver.manage().window().setSize(new Dimension(1024, 900));
-        LoginPage loginPage = LoginPage.to(driver);
-        loginPage.doLogin();
+        driver = BasePage.initializeChromeDriver();
         page = new ProjectMetadataEditPage(driver);
     }
 

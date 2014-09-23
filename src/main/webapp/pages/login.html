@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="${themePath + '_base'}">
+      layout:decorator="${themePath + '/_base'}">
 <head>
 <title th:text="#{login.title}">THIS IS SOMETHING WRONG</title>
 </head>
 <body>
-<main layout:fragment="content" class="container main-container" role="main" property="mainContentOfPage">
+<main layout:fragment="content" class="container main-area" role="main" property="mainContentOfPage">
     <h1 class="page-header" th:text="#{login.title}"></h1>
     <section>
         <div class="row">

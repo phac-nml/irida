@@ -142,7 +142,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
 		viewResolver.setTemplateEngine(templateEngine());
 		viewResolver.setOrder(1);
-		viewResolver.setStaticVariables(ImmutableMap.of("themePath", "themes/" + theme + "/"));
+		viewResolver.setStaticVariables(ImmutableMap.of("themePath", "themes/" + theme));
 		return viewResolver;
 	}
 

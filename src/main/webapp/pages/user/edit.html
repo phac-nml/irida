@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="user/_base">
+      layout:decorator="${themePath + '/_page'}">
 <head>
     <title th:text="${user.label}">_USER PAGE_</title>
 </head>
 <body>
-<main layout:fragment="main">
+<main layout:fragment="page">
     <div class="row">
         <div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
             <form role="form" action="/users/1/edit"

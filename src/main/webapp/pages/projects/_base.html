@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="${themePath + '_page'}">
+      layout:decorator="${themePath + '/_page'}">
 <head lang="en">
-    <meta charset="UTF-8"/>
     <title th:text="${project.label}">Project</title>
+    <link rel="stylesheet" th:href="@{/resources/bower_components/qtip2/jquery.qtip.min.css}"
+          href="/resources/bower_components/qtip2/jquery.qtip.min.css"/>
 </head>
 <body>
 
@@ -23,8 +24,6 @@
                     class="badge"
                     th:text="${users}"></span></a>
             </li>
-            <li th:class="${activeNav} == 'analysis' ? 'active'"><a th:href="@{${baseLink} + '/analysis'}">[[#{project.nav.analysis}]]</a>
-            </li>
         </ul>
     </nav>
 
@@ -39,23 +38,16 @@
     </aside>
 </div>
 
-<th:block layout:fragment="baseScripts">
-    <script th:src="@{/resources/bower_components/bootstrap/js/tab.js}"
-            src="/resources/bower_components/bootstrap/js/tab.js"></script>
-    <script th:src="@{/resources/bower_components/select2/select2.min.js}"
-            src="/resources/bower_components/select2/select2.min.js"></script>
-    <script th:src="@{/resources/bower_components/magnific-popup/dist/jquery.magnific-popup.min.js}"
-            src="/resources/bower_components/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
-    <script th:src="@{/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js}"
-            src="/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js"></script>
+<th:block layout:fragment="page-scripts">
     <script th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}"
             src="/resources/bower_components/moment/min/moment-with-langs.min.js"></script>
     <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"
             src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
-	<script th:src="@{/resources/js/project.js}" src="/resources/js/project.js"></script>
-	<script th:src="@{/resources/bower_components/mustache/mustache.js}" src="/resources/bower_components/mustache/mustache.js"></script>
+    <script th:src="@{/resources/bower_components/qtip2/jquery.qtip.min.js}"
+            src="/resources/bower_components/qtip2/jquery.qtip.min.js"></script>
+    <script th:src="@{/resources/js/project.js}" src="/resources/js/project.js"></script>
 
-    <th:block layout:fragment="pageScripts"></th:block>
+    <th:block layout:fragment="scripts"></th:block>
 </th:block>
 </body>
 </html>

@@ -23,7 +23,7 @@ public class ProjectDetailsPage {
 	}
 
 	public String getPageTitle() {
-		WebElement title = driver.findElement(By.id("wb-cont"));
+		WebElement title = driver.findElement(By.tagName("h1"));
 		return title.getText();
 	}
 

@@ -65,7 +65,8 @@ public class ProjectMetadataEditPage {
 	// ************************************************************************************************
 
 	public void clickDeleteReferenceFileButton() {
-		driver.findElement(By.className("btn-danger")).click();
+		pageUtilities.waitForElementVisible(By.className("file-delete-btn"));
+		driver.findElement(By.className("file-delete-btn")).click();
 		pageUtilities.waitForElementVisible(By.className("noty_message"));
 	}
 
@@ -76,6 +77,7 @@ public class ProjectMetadataEditPage {
 	}
 
 	public void clickReferenceFilesTab() {
-		driver.findElement(By.id("refTab")).click();
+		driver.findElement(By.cssSelector("ul.nav-tabs li:nth-child(2) a")).click();
+		pageUtilities.waitForElementVisible(By.className("file-delete-btn"));
 	}
 }

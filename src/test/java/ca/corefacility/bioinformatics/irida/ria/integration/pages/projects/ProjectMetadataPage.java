@@ -49,6 +49,6 @@ public class ProjectMetadataPage {
 	// ACTIONS
 	// ************************************************************************************************
 	public void clickReferenceFilesTab() {
-		driver.findElement(By.id("refTab")).click();
+		driver.findElement(By.cssSelector("ul.nav-tabs li:nth-child(2) a")).click();
 	}
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="${themePath + '_page'}">
+      layout:decorator="${themePath + '/_page'}">
 <head>
     <title th:text="#{projects.title}">_USER LIST TITLE_</title>
 </head>
@@ -28,9 +28,9 @@
         </table>
     </main>
 </div>
-<th:block layout:fragment="baseScripts">
-    <script th:src="@{/resources/wet-theme/js/deps/jquery.dataTables.min.js}"
-            src="/resources/wet-theme/js/deps/jquery.dataTables.min.js"></script>
+<th:block layout:fragment="page-scripts">
+    <script th:src="@{/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js}"
+            src="/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js"></script>
     <script th:src="@{/resources/bower_components/moment/moment.js}"
             src="/resources/bower_components/moment/moment.js"></script>
     <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"

@@ -1,103 +1,97 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="${themePath + '_page'}">
+      layout:decorator="${themePath + '/_page'}">
 <head>
     <title th:text="#{projects.create.heading}">THIS IS SOMETHING WRONG</title>
+
+    <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2.css}"
+          href="/resources/bower_components/select2/select2.css"/>
+    <link rel="stylesheet" th:src="@{/resources/bower_components/select2/select2-bootstrap.css}"
+          href="/resources/bower_components/select2/select2-bootstrap.css"/>
 </head>
 <body>
-<div class="container" layout:fragment="page">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
-            <form th:action="@{/projects/new}" method="post" role="form" novalidate="novalidate">
-                <section class="panel panel-default">
-                    <div class="panel-heading">
-                        <h2 class="panel-title" th:text="#{projects.create.heading}">Create a New Project</h2>
-                    </div>
-                    <div class="panel-body">
-                        <div class="form-group has-feedback">
-                            <label class="control-label" for="name" th:text="#{projects.create.form.name}">Project Name</label>
+<div layout:fragment="page">
+    <div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
+        <form th:action="@{/projects/new}" method="post" role="form" novalidate="novalidate">
+            <section class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title" th:text="#{projects.create.heading}">Create a New Project</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group has-feedback">
+                        <label class="control-label" for="name" th:text="#{projects.create.form.name}">Project
+                            Name</label>
 
-                            <div th:if="${#maps.containsKey(errors, 'name')}" class="alert alert-warning"
-                                 th:text="${errors.name}"></div>
-                            <input class="form-control input-full" type="text" id="name" name="name"
-                                   required="required" th:placeholder="#{projects.create.form.required}" placeholder="Required"/>
-                            <span data-tooltip="Required" data:tooltip="#{projects.create.form.required}"
+                        <div th:if="${#maps.containsKey(errors, 'name')}" class="alert alert-warning"
+                             th:text="${errors.name}"></div>
+                        <input class="form-control input-full" type="text" id="name" name="name"
+                               required="required" th:placeholder="#{projects.create.form.required}"
+                               placeholder="Required"/>
+                            <span data-tooltip="Required" tooltip-placement="right" data:tooltip="#{projects.create.form.required}"
                                   class="glyphicon glyphicon-asterisk form-control-feedback"></span>
-                        </div>
-                        <div class="form-group">
-                            <label for="projectOrganism" th:text="#{projects.create.form.organism}">Project Organism</label>
-
-                            <div th:if="${#maps.containsKey(errors, 'organism')}" class="alert alert-warning"
-                                 th:text="${errors.organism}"></div>
-                            <input type="text" id="projectOrganism" class="organism-select form-control input-full"  name="organism"/> 
-                        </div>
-                        <div class="form-group">
-                            <label for="projectDescription" th:text="#{projects.create.form.description}">Project Description</label>
-
-                            <div th:if="${#maps.containsKey(errors, 'description')}" class="alert alert-warning"
-                                 th:text="${errors.description}"></div>
-                            <textarea class="form-control input-full" name="projectDescription" id="projectDescription"
-                                      rows="3"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="projectWiki" th:text="#{projects.create.form.wiki}">Project Wiki URL</label>
-
-                            <div th:if="${#maps.containsKey(errors, 'remoteURL')}" class="alert alert-warning"
-                                 th:text="${errors.remoteURL}"></div>
-                            <input class="form-control input-full" name="remoteURL" type="url" id="projectWiki"
-                                   placeholder="http://google.com"/>
-                        </div>
                     </div>
-                    <div class="panel-footer text-right">
-                        <a class="btn btn-default" th:href="${#httpServletRequest.getHeader('referer')}" th:text="#{projects.create.form.cancel}">Cancel</a>
-                        <button type="submit" class="btn btn-primary" >
-                            <span th:text="#{projects.create.form.create}">Create Project</span>&nbsp;
-                            <span class="glyphicon glyphicon-chevron-right"></span></button>
+                    <div class="form-group">
+                        <label for="projectOrganism" th:text="#{projects.create.form.organism}">Project Organism</label>
+
+                        <div th:if="${#maps.containsKey(errors, 'organism')}" class="alert alert-warning"
+                             th:text="${errors.organism}"></div>
+                        <input type="text" id="projectOrganism" class="organism-select form-control input-full"
+                               name="organism"/>
                     </div>
-                </section>
-            </form>
-        </div>
+                    <div class="form-group">
+                        <label for="projectDescription" th:text="#{projects.create.form.description}">Project
+                            Description</label>
+
+                        <div th:if="${#maps.containsKey(errors, 'description')}" class="alert alert-warning"
+                             th:text="${errors.description}"></div>
+                        <textarea class="form-control input-full" name="projectDescription" id="projectDescription"
+                                  rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectWiki" th:text="#{projects.create.form.wiki}">Project Wiki URL</label>
+
+                        <div th:if="${#maps.containsKey(errors, 'remoteURL')}" class="alert alert-warning"
+                             th:text="${errors.remoteURL}"></div>
+                        <input class="form-control input-full" name="remoteURL" type="url" id="projectWiki"
+                               placeholder="http://google.com"/>
+                    </div>
+                </div>
+                <div class="panel-footer text-right">
+                    <a class="btn btn-default" th:href="${#httpServletRequest.getHeader('referer')}"
+                       th:text="#{projects.create.form.cancel}">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                        <span th:text="#{projects.create.form.create}">Create Project</span>&nbsp;
+                        <span class="glyphicon glyphicon-chevron-right"></span></button>
+                </div>
+            </section>
+        </form>
     </div>
 </div>
-<th:block layout:fragment="baseScripts" th:inline="javascript">
+<th:block layout:fragment="page-scripts" th:inline="javascript">
+    <script th:src="@{/resources/bower_components/select2/select2.min.js}"
+            src="/resources/bower_components/select2/select2.min.js"></script>
+    <script th:src="@{/resources/bower_components/qtip2/jquery.qtip.min.js}"
+            src="/resources/bower_components/qtip2/jquery.qtip.min.js"></script>
     <script>
-        $('span.glyphicon-asterisk').qtip({
-            content: {
-                text: function () {
-                    return $(this).attr('data-tooltip');
-                }
-            },
-            position: {
-                my: 'left center',
-                at: 'right center',
-                adjust: {
-                    x: -8
-                }
-            },
-            style: {
-                classes: 'qtip-dark qtip-shadow'
-            }
-        });
-
         $(".organism-select").select2({
-        	placeholder: /*[[#{projects.create.form.select-organism}]]*/ "Enter Organism",
-    		minimumInputLength: 2,
-    		ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
-    	        url: /*[[@{/projects/ajax/taxonomy/search}]]*/ '/projects/ajax/taxonomy/search',
-    	        dataType: 'json',
-    	        data: function (term, page) {
-    	            return {
-    	            	searchTerm: term // search term
-    	            };
-    	        },
-    	        results: function (data, page) { // parse the results into the format expected by Select2.
-    	            // since we are using custom formatting functions we do not need to alter remote JSON data
-    	            return {results: data};
-    	        }
-    	    }
-			
-		});
+            placeholder: /*[[#{projects.create.form.select-organism}]]*/ "Enter Organism",
+            minimumInputLength: 2,
+            ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
+                url: /*[[@{/projects/ajax/taxonomy/search}]]*/ '/projects/ajax/taxonomy/search',
+                dataType: 'json',
+                data: function (term, page) {
+                    return {
+                        searchTerm: term // search term
+                    };
+                },
+                results: function (data, page) { // parse the results into the format expected by Select2.
+                    // since we are using custom formatting functions we do not need to alter remote JSON data
+                    return {results: data};
+                }
+            }
+
+        });
     </script>
 </th:block>
 </body>

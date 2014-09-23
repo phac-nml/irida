@@ -1,28 +1,8 @@
 <!DOCTYPE html>
-<!--[if lt IE 9]>
-<html class="no-js lt-ie9" lang="en"><![endif]-->
-<!--[if gt IE 8]><!-->
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      class="no-js"
-      lang="en">
-<!--<![endif]-->
+      layout:decorator="themes/common/page">
 <head>
-    <meta charset="UTF-8"/>
-    <title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA Platform</title>
-    <!-- META DATA: TODO: What do we really need from here? -->
-    <meta content="width=device-width, initial-scale=1" name="viewport"/>
-    <meta name="description" content=""/>
-    <meta name="dcterms.title"
-          content="Language Selection Page - No search, language toggle, site menu or breadcrumb trail - Sélection de la langue page - Pas de recherche, langue bascule, menu du site ou fil d'Ariane - Plate-forme IRIDA"/>
-    <meta name="dcterms.creator" content="French name of the content author / Nom en français de l'auteur du contenu"/>
-    <meta name="dcterms.issued" title="W3CDTF"
-          content="Date published (YYYY-MM-DD) / Date de publication (AAAA-MM-JJ)"/>
-    <meta name="dcterms.modified" title="W3CDTF"
-          content="Date modified (YYYY-MM-DD) / Date de modification (AAAA-MM-JJ)"/>
-    <meta name="dcterms.subject" title="scheme" content="French subject terms / Termes de sujet en français"/>
-    <meta name="dcterms.language" title="ISO639-2" content="eng"/>
-    <!-- END META -->
 
     <!--[if gte IE 9 | !IE ]><!-->
     <link th:href="@{/resources/wet-theme/assets/favicon.ico}" href="/resources/wet-theme/assets/favicon.ico" rel="icon"
@@ -31,22 +11,11 @@
           href="/resources/wet-theme/css/wet-boew.min.css"/>
     <!--<![endif]-->
 
-    <!-- any custom css files for pages go here.-->
-    <th:block layout:fragment="css"></th:block>
-
+    <!-- MAIN SCRIPTS FROM WET PAGES -->
     <link rel="stylesheet" th:href="@{/resources/wet-theme/css/theme.min.css}"
           href="/resources/wet-theme/css/theme.min.css"/>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/qtip2/jquery.qtip.min.css}"
-          href="/resources/bower_components/qtip2/jquery.qtip.min.css"/>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2.css}"
-          href="/resources/bower_components/select2/select2.css"/>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}"
-          href="/resources/bower_components/select2/select2-bootstrap.css"/>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/Font-Awesome/css/font-awesome.min.css}"
-          href="/resources/bower_components/Font-Awesome/css/font-awesome.min.css"/>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/jquery-file-upload/css/jquery.fileupload.css}"
-          href="/resources/bower_components/jquery-file-upload/css/jquery.fileupload.css"/>
     <link rel="stylesheet" th:href="@{/resources/css/main.css}" href="/resources/css/main.css"/>
+    <link rel="stylesheet" th:href="@{/resources/css/themes/wet/main.css}" href="/resources/css/themes/wet/main.css"/>
 
     <!--[if lt IE 9]>
     <link th:href="@{/resources/wet-theme/assets/favicon.ico}" href="/resources/wet-theme/assets/favicon.ico"
@@ -58,45 +27,33 @@
     <script src="/resources/wet-theme/js/ie8-wet-boew.min.js"
             th:src="@{/resources/wet-theme/js/ie8-wet-boew.min.js}"></script>
     <![endif]-->
+    <!-- END MAIN SCRIPTS FROM WET PAGES -->
 
-    <noscript>
-        <link rel="stylesheet" th:href="@{/resources/css/noscript.min.css}" href="/resources/css/noscript.min.css"/>
-    </noscript>
+    <!--/* Page specific css fragments or links are added here when run. */-->
 </head>
-<body vocab="http://schema.org/" typeof="WebPage">
-<!-- HEADER -->
-<div th:replace="themes/wet/partials/header :: header">HEADER</div>
+<body>
 
-<div layout:fragment="content">
+
+<div layout:fragment="main-section">
+    <!-- HEADER -->
+    <div th:replace="themes/wet/partials/header :: header">HEADER</div>
+
+    <div layout:fragment="content">
+    </div>
+
+    <!-- FOOTER -->
+    <div th:replace="themes/wet/partials/footer :: footer">FOOTER</div>
 </div>
 
-<!-- FOOTER -->
-<div th:replace="themes/wet/partials/footer :: footer">FOOTER</div>
 
-<!--[if gte IE 9 | !IE ]><!-->
-<script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"
-        src="/resources/bower_components/jquery/dist/jquery.min.js"></script>
-<script th:src="@{/resources/wet-theme/js/wet-boew.min.js}" src="/resources/wet-theme/js/wet-boew.min.js"></script>
-<!--<![endif]-->
-
-<script th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}"
-        src="/resources/bower_components/moment/min/moment-with-langs.min.js" th:if="${livestamp} !=null"></script>
-<script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"
-        src="/resources/bower_components/livestampjs/livestamp.min.js" th:if="${livestamp} !=null"></script>
-<script th:src="@{/resources/bower_components/select2/select2.min.js}"
-        src="/resources/bower_components/select2/select2.min.js"></script>
-<script th:src="@{/resources/bower_components/qtip2/jquery.qtip.min.js}"
-        src="/resources/bower_components/qtip2/jquery.qtip.min.js"></script>
-<script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}" 
-		src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
-
-<!--[if lt IE 9]>
-<script th:src="@{/resources/wet-theme/js/ie8-wet-boew2.min.js}"
-        src="/resources/wet-theme/js/ie8-wet-boew2.min.js"></script>
-<![endif]-->
-
-<th:block layout:fragment="scripts">
-
+<th:block layout:fragment="theme-scripts">
+    <!--[if gte IE 9 | !IE ]><!-->
+    <script th:src="@{/resources/wet-theme/js/wet-boew.min.js}" src="/resources/wet-theme/js/wet-boew.min.js"></script>
+    <!--<![endif]-->
+    <!--[if lt IE 9]>
+    <script th:src="@{/resources/wet-theme/js/ie8-wet-boew2.min.js}"
+            src="/resources/wet-theme/js/ie8-wet-boew2.min.js"></script>
+    <![endif]-->
 </th:block>
 </body>
 </html>
