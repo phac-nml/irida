@@ -25,6 +25,7 @@ import javax.validation.Validator;
 import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -37,6 +38,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -45,6 +47,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
@@ -381,5 +384,41 @@ public class ProjectServiceImplTest {
 		verify(referenceFileRepository).save(f);
 		verify(sequenceFileUtilities).countSequenceFileLengthInBases(createTempFile);
 		verify(prfjRepository).save(new ProjectReferenceFileJoin(p, f));
+	}
+
+	@Test
+	public void testGetRemoteProjectsForProject() {
+		Project p = new Project();
+		List<RemoteRelatedProject> projects = Lists
+				.newArrayList(new RemoteRelatedProject(), new RemoteRelatedProject());
+		when(rrpRepository.getRelatedProjectsForProject(p)).thenReturn(projects);
+
+		List<RemoteRelatedProject> remoteProjectsForProject = projectService.getRemoteProjectsForProject(p);
+
+		assertEquals(projects, remoteProjectsForProject);
+		verify(rrpRepository).getRelatedProjectsForProject(p);
+	}
+
+	@Test
+	public void testAddRemoteRelatedProject() {
+		Project p = new Project();
+		RemoteAPI api = new RemoteAPI();
+		Long remoteId = 2l;
+
+		projectService.addRemoteRelatedProject(p, api, remoteId);
+
+		ArgumentCaptor<RemoteRelatedProject> captor = ArgumentCaptor.forClass(RemoteRelatedProject.class);
+		verify(rrpRepository).save(captor.capture());
+
+		assertEquals(p, captor.getValue().getLocalProject());
+		assertEquals(api, captor.getValue().getRemoteAPI());
+		assertEquals(remoteId, captor.getValue().getRemoteProjectID());
+	}
+	
+	@Test
+	public void testRemoveRemoteRelatedProject(){
+		RemoteRelatedProject p = new RemoteRelatedProject();
+		projectService.removeRemoteRelatedProject(p);
+		verify(rrpRepository).delete(p);
 	}
 }

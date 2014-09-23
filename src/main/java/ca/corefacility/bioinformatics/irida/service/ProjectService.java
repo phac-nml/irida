@@ -260,4 +260,12 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return The {@link RemoteRelatedProject} join object
 	 */
 	public RemoteRelatedProject addRemoteRelatedProject(Project project, RemoteAPI remoteAPI, Long remoteProjectID);
+
+	/**
+	 * Remote a {@link RemoteRelatedProject}
+	 * 
+	 * @param join
+	 *            The {@link RemoteRelatedProject} to remove
+	 */
+	public void removeRemoteRelatedProject(RemoteRelatedProject join);
 }
