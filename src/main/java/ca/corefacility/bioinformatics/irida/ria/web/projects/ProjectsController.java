@@ -225,9 +225,6 @@ public class ProjectsController {
 		List<Map<String, String>> associatedProjects = getAssociatedProjectsForProject(project, currentUser, isAdmin);
 		model.addAttribute("associatedProjects", associatedProjects);
 
-		List<RemoteRelatedProject> remoteProjectsForProject = projectService.getRemoteProjectsForProject(project);
-		model.addAttribute("remoteAssociatedProjects", remoteProjectsForProject);
-
 		Map<RemoteAPI, List<RemoteRelatedProject>> remoteRelatedProjectsByApi = getRemoteRelatedProjectsByApi(project);
 		model.addAttribute("remoteProjectsByApi", remoteRelatedProjectsByApi);
 		

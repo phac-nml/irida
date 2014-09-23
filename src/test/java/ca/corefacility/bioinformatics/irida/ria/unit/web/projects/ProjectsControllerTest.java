@@ -12,6 +12,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -30,13 +31,16 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
@@ -91,8 +95,8 @@ public class ProjectsControllerTest {
 		taxonomyService = mock(TaxonomyService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
 		referenceFileService = mock(ReferenceFileService.class);
-		controller = new ProjectsController(projectService, sampleService, userService,
-				projectUtils, referenceFileService, taxonomyService);
+		controller = new ProjectsController(projectService, sampleService, userService, projectUtils,
+				referenceFileService, taxonomyService);
 		user.setId(1L);
 
 		mockSidebarInfo();
@@ -104,8 +108,6 @@ public class ProjectsControllerTest {
 		String page = controller.getProjectsPage(model);
 		assertEquals(ProjectsController.LIST_PROJECTS_PAGE, page);
 	}
-
-	
 
 	@SuppressWarnings("unchecked")
 	@Test
@@ -241,12 +243,6 @@ public class ProjectsControllerTest {
 		assertEquals("Returns the correct page.", "redirect:/projects/" + PROJECT_ID + "/metadata", page);
 	}
 
-	
-
-	
-
-	
-
 	@Test
 	public void testSearchTaxonomy() {
 		String searchTerm = "bac";
@@ -274,6 +270,41 @@ public class ProjectsControllerTest {
 			assertTrue(results.contains(element.get("text")));
 		}
 
+	}
+
+	@Test
+	public void testGetAssociatedProjectsPage() {
+		ExtendedModelMap model = new ExtendedModelMap();
+		Principal principal = () -> USER_NAME;
+		Long projectId = 1l;
+		User u = new User();
+		u.setSystemRole(Role.ROLE_ADMIN);
+		Project p = new Project("my project");
+		p.setId(projectId);
+		Project o = new Project("other project");
+		o.setId(2l);
+		List<RelatedProjectJoin> relatedProjects = Lists.newArrayList(new RelatedProjectJoin(p, o));
+
+		RemoteAPI remoteAPI = new RemoteAPI();
+		List<RemoteRelatedProject> remoteRelatedProjects = Lists
+				.newArrayList(new RemoteRelatedProject(p, remoteAPI, 5l));
+
+		when(projectService.read(projectId)).thenReturn(p);
+
+		when(userService.getUserByUsername(USER_NAME)).thenReturn(u);
+		when(projectService.getRelatedProjects(p)).thenReturn(relatedProjects);
+		when(projectService.getRemoteProjectsForProject(p)).thenReturn(remoteRelatedProjects);
+
+		controller.getAssociatedProjectsPage(projectId, model, principal);
+
+		assertTrue(model.containsAttribute("isAdmin"));
+		assertTrue(model.containsAttribute("associatedProjects"));
+		assertTrue(model.containsAttribute("remoteProjectsByApi"));
+
+		verify(projectService).read(projectId);
+		verify(userService, times(2)).getUserByUsername(USER_NAME);
+		verify(projectService).getRelatedProjects(p);
+		verify(projectService).getRemoteProjectsForProject(p);
 	}
 
 	/**
@@ -322,8 +353,6 @@ public class ProjectsControllerTest {
 		}
 		return join;
 	}
-
-	
 
 	private List<Project> getAdminProjectsList() {
 		List<Project> projects = new ArrayList<>();
