@@ -16,7 +16,6 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.remote.model.RemoteProject;
@@ -28,14 +27,11 @@ public class RemoteProjectsController {
 
 	private final ProjectRemoteService projectRemoteService;
 	private final RemoteAPIService remoteAPIService;
-	private final ProjectService projectService;
 
 	@Autowired
-	public RemoteProjectsController(ProjectRemoteService projectRemoteService, RemoteAPIService remoteAPIService,
-			ProjectService projectService) {
+	public RemoteProjectsController(ProjectRemoteService projectRemoteService, RemoteAPIService remoteAPIService) {
 		this.projectRemoteService = projectRemoteService;
 		this.remoteAPIService = remoteAPIService;
-		this.projectService = projectService;
 	}
 
 	@RequestMapping("/ajax/api/{remoteApiId}/project/{projectId}")
