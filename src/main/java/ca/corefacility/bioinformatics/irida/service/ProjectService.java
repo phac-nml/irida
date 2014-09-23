@@ -239,7 +239,25 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public Join<Project, ReferenceFile> addReferenceFileToProject(Project project, ReferenceFile referenceFile);
 
+	/**
+	 * Get the {@link RemoteRelatedProject}s for a {@link Project}
+	 * 
+	 * @param project
+	 *            The project to get related projects for
+	 * @return A List of {@link RemoteRelatedProject}s
+	 */
 	public List<RemoteRelatedProject> getRemoteProjectsForProject(Project project);
 
+	/**
+	 * Add a {@link RemoteRelatedProject} to a {@link Project}
+	 * 
+	 * @param project
+	 *            The project to add to
+	 * @param remoteAPI
+	 *            the {@link RemoteAPI} to link to
+	 * @param remoteProjectID
+	 *            The ID of the {@link Project} on the remote service
+	 * @return The {@link RemoteRelatedProject} join object
+	 */
 	public RemoteRelatedProject addRemoteRelatedProject(Project project, RemoteAPI remoteAPI, Long remoteProjectID);
 }
