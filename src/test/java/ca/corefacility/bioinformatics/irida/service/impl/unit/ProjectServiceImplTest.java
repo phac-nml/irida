@@ -48,6 +48,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.RemoteRelatedProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
@@ -75,6 +76,7 @@ public class ProjectServiceImplTest {
 	private RelatedProjectRepository relatedProjectRepository;
 	private ReferenceFileRepository referenceFileRepository;
 	private ProjectReferenceFileJoinRepository prfjRepository;
+	private RemoteRelatedProjectRepository rrpRepository;
 	private SequenceFileUtilities sequenceFileUtilities;
 	private Validator validator;
 
@@ -90,8 +92,9 @@ public class ProjectServiceImplTest {
 		referenceFileRepository = mock(ReferenceFileRepository.class);
 		prfjRepository = mock(ProjectReferenceFileJoinRepository.class);
 		sequenceFileUtilities = mock(SequenceFileUtilities.class);
+		rrpRepository = mock(RemoteRelatedProjectRepository.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
-				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository,
+				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository, rrpRepository,
 				sequenceFileUtilities, validator);
 	}
 

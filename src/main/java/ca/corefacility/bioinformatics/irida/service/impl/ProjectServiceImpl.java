@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -31,9 +32,11 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.RemoteRelatedProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
@@ -62,6 +65,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final RelatedProjectRepository relatedProjectRepository;
 	private final ReferenceFileRepository referenceFileRepository;
 	private final ProjectReferenceFileJoinRepository prfjRepository;
+	private final RemoteRelatedProjectRepository rrpRepository;
 	private final SequenceFileUtilities sequenceFileUtilities;
 
 	@Autowired
@@ -69,7 +73,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
 			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository,
-			SequenceFileUtilities sequenceFileUtilities, Validator validator) {
+			RemoteRelatedProjectRepository rrpRepository, SequenceFileUtilities sequenceFileUtilities, Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.sampleRepository = sampleRepository;
 		this.userRepository = userRepository;
@@ -78,6 +82,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.relatedProjectRepository = relatedProjectRepository;
 		this.referenceFileRepository = referenceFileRepository;
 		this.prfjRepository = prfjRepository;
+		this.rrpRepository = rrpRepository;
 		this.sequenceFileUtilities = sequenceFileUtilities;
 	}
 
@@ -312,6 +317,16 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		referenceFile = referenceFileRepository.save(referenceFile);
 		ProjectReferenceFileJoin j = new ProjectReferenceFileJoin(project, referenceFile);
 		return prfjRepository.save(j);
+	}
+
+	@Override
+	public List<RemoteRelatedProject> getRemoteProjectsForProject(Project project) {
+		return rrpRepository.getRelatedProjectsForProject(project);
+	}
+
+	public RemoteRelatedProject addRemoteRelatedProject(Project project, RemoteAPI remoteAPI, Long remoteProjectID) {
+		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject(project, remoteAPI, remoteProjectID);
+		return rrpRepository.save(remoteRelatedProject);
 	}
 
 }
