@@ -60,43 +60,7 @@
         <script th:inline="javascript">
             $(document).ready(function () {
             	
-            	//get the remote project names
-            	$(".remote-project-nameXX").each(function(element){
-        			var that = $(this);
-        			var project = that.data("project-id");
-        			var api = that.data("api-id");
-        			
-        			var urlbase = /*[[@{/projects/remote}]]*/ "/project/remote";
-        			var url = urlbase + "/api/" + api + "/project/"+project;
-        			
-        			var nameId = "#project-"+project+"-name"
-        			
-        			var icon = $("#project-"+project+"-icon");
-
-        			$.ajax({
-        				url: url,
-        				success: function(data, textStatus, jqXHR){
-        					if(data.name != null){
-        						icon.removeClass();
-        						
-        						var nameSpan = $(nameId);
-        						nameSpan.fadeOut(function(){
-        							nameSpan.text(data.name);
-        							icon.addClass("glyphicon glyphicon-eye-open");
-        						}).fadeIn();
-        					}
-        					else if(data == "forbidden"){
-        						icon.removeClass();
-        						icon.addClass("glyphicon glyphicon-eye-close");
-        					}
-        					
-        					console.log(data);
-        				},
-        				error: function(data, textStatus, jqXHR){
-        					console.log(data);
-        				}
-        			});
-        		});
+            	
             	
             });
             
