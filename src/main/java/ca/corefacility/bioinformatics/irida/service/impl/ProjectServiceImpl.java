@@ -319,11 +319,18 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		return prfjRepository.save(j);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<RemoteRelatedProject> getRemoteProjectsForProject(Project project) {
 		return rrpRepository.getRelatedProjectsForProject(project);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public RemoteRelatedProject addRemoteRelatedProject(Project project, RemoteAPI remoteAPI, Long remoteProjectID) {
 		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject(project, remoteAPI, remoteProjectID);
 		return rrpRepository.save(remoteRelatedProject);
