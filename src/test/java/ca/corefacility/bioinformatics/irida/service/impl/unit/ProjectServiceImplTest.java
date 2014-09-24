@@ -391,12 +391,12 @@ public class ProjectServiceImplTest {
 		Project p = new Project();
 		List<RemoteRelatedProject> projects = Lists
 				.newArrayList(new RemoteRelatedProject(), new RemoteRelatedProject());
-		when(rrpRepository.getRelatedProjectsForProject(p)).thenReturn(projects);
+		when(rrpRepository.getRemoteRelatedProjectsForProject(p)).thenReturn(projects);
 
 		List<RemoteRelatedProject> remoteProjectsForProject = projectService.getRemoteProjectsForProject(p);
 
 		assertEquals(projects, remoteProjectsForProject);
-		verify(rrpRepository).getRelatedProjectsForProject(p);
+		verify(rrpRepository).getRemoteRelatedProjectsForProject(p);
 	}
 
 	@Test

@@ -16,5 +16,5 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 public interface RemoteRelatedProjectRepository extends IridaJpaRepository<RemoteRelatedProject, Long> {
 
 	@Query("from RemoteRelatedProject p where p.localProject = ?1")
-	public List<RemoteRelatedProject> getRelatedProjectsForProject(Project project);
+	public List<RemoteRelatedProject> getRemoteRelatedProjectsForProject(Project project);
 }

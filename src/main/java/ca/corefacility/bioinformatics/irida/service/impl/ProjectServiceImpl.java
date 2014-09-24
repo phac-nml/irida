@@ -324,7 +324,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	public List<RemoteRelatedProject> getRemoteProjectsForProject(Project project) {
-		return rrpRepository.getRelatedProjectsForProject(project);
+		return rrpRepository.getRemoteRelatedProjectsForProject(project);
 	}
 
 	/**
