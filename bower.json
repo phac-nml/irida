@@ -26,8 +26,8 @@
     "raphael": "2.1.2",
     "bower": "*",
     "angular-ui-utils": "0.1.1",
-    "angular": "1.2.24",
-    "angular-sanitize": "1.2.24"
+    "angular": "1.2.25",
+    "angular-sanitize": "1.2.25"
   },
   "devDependencies": {}
 }
