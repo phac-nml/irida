@@ -4,6 +4,8 @@
       layout:decorator="${themePath + '_page'}">
 <head>
     <title th:text="#{projects.title}">THIS IS SOMETHING WRONG</title>
+    <link rel="stylesheet" th:href="@{/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css}"
+          href="/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css"/>
 </head>
 <body>
 <div layout:fragment="page">
@@ -43,7 +45,7 @@
                     $projectsTable = $('#projectsTable');
 
             $projectsTable.DataTable({
-                dom: "<'top'ilf>rt<'bottom'p><'clear'>",
+                dom: "<'top'lf>rt<'bottom'ip><'clear'>",
                 processing: true,
                 serverSide: true,
                 deferRender: true,

@@ -8,6 +8,10 @@
           href="/resources/bower_components/select2/select2.css"/>
     <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}"
           href="/resources/bower_components/select2/select2-bootstrap.css"/>
+    <link rel="stylesheet" th:src="@{/resources/bower_components/magnific-popup/dist/magnific-popup.css}"
+          href="/resources/bower_components/magnific-popup/dist/magnific-popup.css"/>
+    <link rel="stylesheet" th:href="@{/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css}"
+          href="/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css"/>
 </head>
 <body>
 <main layout:fragment="main">
@@ -15,7 +19,7 @@
         <div class="col-md-12">
             <h1 role="heading" th:text="#{project.members.members(${project.label})}">_Project Members_</h1>
 
-            <div class="btn-toolbar" role="toolbar">
+            <div class="btn-toolbar mrgn-bttm-md" role="toolbar">
                 <div class="btn-group">
                     <a id="add-members-button" class="btn btn-default btn-sm open-popup-link"
                        th:if="${isAdmin} or ${isOwner}" href="#addMembersLink"
@@ -177,7 +181,7 @@ var showRole = true;
 
 $(document).ready(function () {
     var table = $('#usersTable').DataTable({
-        dom: "<'top'ilf>rt<'bottom'p><'clear'>",
+        dom: "<'top'lf>rt<'bottom'ip><'clear'>",
         ajax: /*[[@{/projects/ajax/{id}/members(id=${project.getId()})}]]*/ '/projects/ajax/1/members',
         deferRender: true,
         order: [
@@ -203,7 +207,7 @@ $(document).ready(function () {
                 "data": "object",
                 "render": function (data) {
                     return '<a class="col-names" href="' +
-                    /*[[@{'/users/'}]]*/ ''
+                        /*[[@{'/users/'}]]*/ ''
                     + data.id + '">' + data.label + '</a>';
                 }
             },

@@ -73,8 +73,7 @@ public class ProjectsNewPageIT {
 
 		// Start with just submitting the empty form
 		page.submitForm("", "", "", "");
-		String error = page.getErrors().get(0);
-		assertTrue("Should show a required error.", error.contains("required"));
+		assertTrue("Should show a required error.", page.isErrorNameRequiredDisplayed());
 
 		// Clear the error by adding a name
 		page.setName("Random Name");
@@ -83,8 +82,7 @@ public class ProjectsNewPageIT {
 		// Let's try adding a bad url
 		page.goToPage();
 		page.setRemoteURL("red dog");
-		String urlError = page.getErrors().get(0);
-		assertTrue("Should show url error", urlError.contains("enter a valid URL"));
+		assertTrue("Should have a bad url error", page.isErrorUrlDisplayed());
 
 		// Let add a good url
 		page.setRemoteURL("http://google.com");
@@ -93,6 +91,7 @@ public class ProjectsNewPageIT {
 		// Create the project
 		page.goToPage();
 		page.submitForm("test project name", "", "", "");
+		page.clickSubmit();
 		assertTrue("Redirects to the project metadata page", driver.getCurrentUrl().contains("/metadata"));
 	}
 }
