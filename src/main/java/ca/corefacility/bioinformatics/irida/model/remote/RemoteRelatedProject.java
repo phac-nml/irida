@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -33,7 +34,8 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
  */
 @Entity
 @Audited
-@Table(name = "remote_related_project")
+@Table(name = "remote_related_project", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id",
+		"remote_api_id", "remoteProjectID" }, name = "UK_REMOTE_RELATED_PROJECT"))
 @EntityListeners(AuditingEntityListener.class)
 public class RemoteRelatedProject implements IridaThing {
 
