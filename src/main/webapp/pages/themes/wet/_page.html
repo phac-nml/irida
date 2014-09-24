@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="${themePath + '/_base'}">
+      layout:decorator="${themePath + '_base'}">
 <head></head>
 <body>
 <div class="container" layout:fragment="content">
     <div class="row">
-        <div th:replace="${themePath + '/partials/sitemenu'} :: menu-en">MENU</div>
+        <div th:replace="${themePath + 'partials/sitemenu'} :: menu-en">MENU</div>
     </div>
     <div class="row main-area" layout:fragment="page">
     </div>
