@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<!--[if lt IE 9]>
+<html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      class="no-js"
+      lang="en">
+<!--<![endif]-->
+<head lang="en">
+    <title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA Platform</title>
+    <th:block th:include="themes/common/fragments :: meta"></th:block>
+    <!--[if lte IE 8]>
+    <script>
+        document.createElement('ng-include');
+        document.createElement('ng-pluralize');
+        document.createElement('ng-view');
+
+        // Optionally these for CSS
+        document.createElement('ng:include');
+        document.createElement('ng:pluralize');
+        document.createElement('ng:view');
+    </script>
+    <![endif]-->
+
+    <link rel="stylesheet" th:href="@{/resources/bower_components/Font-Awesome/css/font-awesome.min.css}"
+          href="/resources/bower_components/Font-Awesome/css/font-awesome.min.css"/>
+
+    <style>
+        .ng-cloak {
+            display: none !important;
+        }
+    </style>
+</head>
+<body vocab="http://schema.org/" typeof="WebPage" ng-app="irida">
+
+<th:block layout:fragment="main-section">
+    <!--/* This is where each pages content should be loaded. */-->
+</th:block>
+
+<!--/* Site Wide Scripts */-->
+<script th:src="@{'/resources/bower_components/lodash/dist/lodash.underscore.min.js'}"
+        src="/resources/bower_components/lodash/dist/lodash.underscore.min.js"></script>
+<script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"
+        src="/resources/bower_components/jquery/dist/jquery.min.js"></script>
+<script th:src="@{/resources/bower_components/angular/angular.min.js}"
+        src="/resources/bower_components/angular/angular.min.js"></script>
+<script th:src="@{/resources/bower_components/angular-sanitize/angular-sanitize.min.js}"
+        src="/resources/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+<script th:src="@{'/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js'}"
+        src="/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    window.dependencies = _.union(window.dependencies || [], ['ngSanitize', 'ui.bootstrap']);
+    var app = angular.module('irida', window.dependencies)
+            .value('BASE_URL', /*[[@{/}]]*/ '/');
+    /*]]>*/
+</script>
+
+<th:block layout:fragment="theme-scripts">
+    <!--/* This is where the main for the theme template are loaded. */-->
+</th:block>
+
+<th:block layout:fragment="page-scripts">
+    <!--/* This is where scripts specific for each page should be loaded. */-->
+</th:block>
+</body>
+</html>

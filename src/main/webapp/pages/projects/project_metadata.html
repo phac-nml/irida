@@ -10,7 +10,7 @@
 <main layout:fragment="main" th:object="${project}">
     <div class="row">
         <div class="col-md-10">
-            <h1 role="heading" th:text="#{project.metadata.title(${project.label})}"></h1>
+            <h1 th:text="#{project.metadata.title(${project.label})}"></h1>
         </div>
         <div class="col-md-2">
             <a id="edit-metadata" th:if="${isOwner} or ${isAdmin}" class="btn btn-default btn-sm pull-right"
@@ -18,15 +18,8 @@
         </div>
     </div>
 
-    <ul class="nav nav-tabs" role="tablist">
-        <li class="active"><a id="metaTab" href="#meta" role="tab" data-toggle="tab"
-                              th:text="#{projects.meta.tabs.meta}">__Meta Data__</a></li>
-        <li><a id="refTab" href="#references" role="tab" data-toggle="tab" th:text="#{projects.meta.tabs.ref}">__Reference
-            Files__</a></li>
-    </ul>
-
-    <div class="tab-content mrgn-tp-md">
-        <div class="tab-pane active" id="meta" th:object="${project}">
+    <tabset th:object="${project}">
+        <tab th:attr="heading=#{projects.create.form.name}">
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <h3 class="panel-title" th:text="#{projects.create.form.name}">Project Name</h3>
@@ -58,8 +51,8 @@
                     <a th:href="*{remoteURL}" id="remoteURL" th:text="*{remoteURL}"></a>
                 </div>
             </div>
-        </div>
-        <div class="tab-pane" id="references">
+        </tab>
+        <tab th:attr="heading=#{projects.meta.reference-files}">
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <h3 class="panel-title" th:text="#{projects.meta.reference-files}">__Reference Files__</h3>
@@ -90,27 +83,14 @@
                     </table>
                 </div>
             </div>
-        </div>
-    </div>
+        </tab>
+    </tabset>
     <iframe id="invisible" style="display:none;"></iframe>
 </main>
 
 <th:block layout:fragment="pageScripts" th:inline="javascript">
     <script>
         $(function () {
-            $('[data-tooltip!=""]').qtip({ // Grab all elements with a non-blank data-tooltip attr.
-                content: {
-                    attr: 'data-tooltip' // Tell qTip2 to look inside this attr for its content
-                },
-                position: {
-                    at: 'top center',
-                    my: 'bottom center'
-                },
-                style: {
-                    classes: 'qtip-tipsy qtip-shadow'
-                }
-            });
-
             $(".btn-download").on('click', function () {
                 var id = $(this).data('file-id');
                 var iframe = document.getElementById('invisible');

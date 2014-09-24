@@ -1,38 +1,33 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="${themePath + '_base'}">
+      layout:decorator="${themePath + '_page'}">
 <head>
     <title th:text="#{projects.title}">THIS IS SOMETHING WRONG</title>
 </head>
 <body>
-<div class="container" layout:fragment="content">
-    <div class="row">
-        <div th:replace="${themePath + 'partials/sitemenu'} :: menu-en">MENU</div>
-        <div class="col-md-12">
-            <main role="main" property="mainContentOfPage">
-                <h1 th:text="#{projects.title}">Projects</h1>
-                <table id="projectsTable" class="table table-striped table-hover">
-                    <thead>
-                    <tr role="row" th:inline="text">
-                        <td><input type="checkbox" id="selectAll"/></td>
-                        <th id="project-id">[[#{projects.table.id}]]<i class="glyphicon"></i></th>
-                        <th id="project-name">[[#{projects.table.name}]]<i class="glyphicon"></i></th>
-                        <th id="project-organism">[[#{projects.table.organism}]]<i class="glyphicon"></i></th>
-                        <th>[[#{projects.table.role}]]<i class="glyphicon"></i></th>
-                        <th>[[#{projects.table.samples}]]</th>
-                        <th>[[#{projects.table.members}]]</th>
-                        <th>[[#{projects.table.created}]]<i class="glyphicon"></i></th>
-                        <th>[[#{projects.table.modified}]]<i class="glyphicon"></i></th>
-                    </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </main>
-        </div>
-    </div>
+<div layout:fragment="page">
+    <main class="col-md-12" role="main" property="mainContentOfPage">
+        <h1 th:text="#{projects.title}">Projects</h1>
+        <table id="projectsTable" class="table table-striped table-hover">
+            <thead>
+            <tr role="row" th:inline="text">
+                <td><input type="checkbox" id="selectAll"/></td>
+                <th id="project-id">[[#{projects.table.id}]]<i class="glyphicon"></i></th>
+                <th id="project-name">[[#{projects.table.name}]]<i class="glyphicon"></i></th>
+                <th id="project-organism">[[#{projects.table.organism}]]<i class="glyphicon"></i></th>
+                <th>[[#{projects.table.role}]]<i class="glyphicon"></i></th>
+                <th>[[#{projects.table.samples}]]</th>
+                <th>[[#{projects.table.members}]]</th>
+                <th>[[#{projects.table.created}]]<i class="glyphicon"></i></th>
+                <th>[[#{projects.table.modified}]]<i class="glyphicon"></i></th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </main>
 </div>
-<div layout:fragment="scripts">
+<div layout:fragment="page-scripts">
     <script th:src="@{/resources/wet-theme/js/deps/jquery.dataTables.min.js}"
             src="/resources/wet-theme/js/deps/jquery.dataTables.min.js"></script>
     <script th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}"
@@ -43,9 +38,9 @@
         /*<![CDATA[*/
         $(document).ready(function () {
             var allChecked = false,
-                selected = [],
-                $selectAll = $("#selectAll"),
-                $projectsTable = $('#projectsTable');
+                    selected = [],
+                    $selectAll = $("#selectAll"),
+                    $projectsTable = $('#projectsTable');
 
             $projectsTable.DataTable({
                 dom: "<'top'ilf>rt<'bottom'p><'clear'>",
@@ -119,7 +114,7 @@
                         'render': function (data) {
                             return '<span data-livestamp="' + data + '" title="' + new Date(data) + '">'
                         },
-                        "orderSequence": [ "asc" ]
+                        "orderSequence": ["asc"]
                     }
                 ]
             });

@@ -1,62 +1,45 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="${themePath + '_base'}">
+      layout:decorator="${themePath + '_page'}">
 <head>
     <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
-    <link rel="stylesheet" href="/resources/css/wet-boew.css"/>
-    <link rel="stylesheet" href="/resources/css/theme.min.css"/>
+
 </head>
 <body>
-<div class="container" layout:fragment="content" ng-app="index">
-    <div class="row">
-        <div th:replace="${themePath + 'partials/sitemenu'} :: menu-en">MENU</div>
-        <main class="container" role="main" property="mainContentOfPage">
-            <h1 th:utext="#{dashboard.heading}"></h1>
-            <section th:utext="#{dashboard.body}"></section>
-        </main>
-    </div>
-    <div class="row mrgn-tp-lg mrgn-bttm-lg">
-        <div ng-controller="CarouselCtrl as carousel">
-            <div style="height: 200px">
-                <carousel interval="4000">
-                    <slide ng-repeat="slide in carousel.slides" active="slide.active">
-                        <img ng-src="{{slide.image}}" style="margin:auto;"/>
-                    </slide>
-                </carousel>
+<div class="row" layout:fragment="page">
+    <main class="container" role="main" property="mainContentOfPage">
+        <h1 th:utext="#{dashboard.heading}"></h1>
+        <section th:utext="#{dashboard.body}"></section>
+        <div class="row mrgn-tp-lg mrgn-bttm-lg">
+            <div ng-controller="CarouselCtrl as carousel">
+                <div style="height: 200px">
+                    <carousel interval="4000">
+                        <slide ng-repeat="slide in carousel.slides" active="slide.active">
+                            <img ng-src="{{slide.image}}" style="margin:auto;"/>
+                        </slide>
+                    </carousel>
+                </div>
             </div>
         </div>
-    </div>
+    </main>
 </div>
 
-<th:block layout:fragment="scripts" th:inline="javascript">
-    <script th:src="@{'/resources/bower_components/angular/angular.min.js'}"
-            src="/resources/bower_components/angular/angular.min.js"></script>
-    <script th:src="@{'/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js'}"
-            src="/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
-
+<th:block layout:fragment="page-scripts" th:inline="javascript">
     <script>
         /*<![CDATA[*/
-        var app = angular.module('index', ['ui.bootstrap'])
-                .value('BASE_URL',
-                /*[[@{/resources/img/}]]*/ '/'
-        );
-
         app.controller('CarouselCtrl', CarouselCtrl);
-
         function CarouselCtrl(BASE_URL) {
             'use strict';
             var carousel = this;
 
             carousel.slides = [];
             for (var i = 1; i < 5; i++) {
-                carousel.slides.push({image: BASE_URL + "irida-logos-" + i + ".png"});
+                carousel.slides.push({image: BASE_URL + "resources/img/irida-logos-" + i + ".png"});
             }
-
         }
         /*]]>*/
     </script>
-
 </th:block>
 </body>
 </html>

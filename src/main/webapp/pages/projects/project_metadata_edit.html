@@ -3,7 +3,12 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="projects/_base">
 <head>
-    <title th:text="${project.label} + ' - ' + #{project.nav.metadata}"></title>
+    <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2.css}"
+          href="/resources/bower_components/select2/select2.css"/>
+    <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}"
+          href="/resources/bower_components/select2/select2-bootstrap.css"/>
+    <link rel="stylesheet" th:href="@{/resources/bower_components/jquery-file-upload/css/jquery.fileupload.css}"
+          href="/resources/bower_components/jquery-file-upload/css/jquery.fileupload.css"/>
 </head>
 <body>
 
@@ -13,14 +18,9 @@
             <h1 role="heading" th:text="#{project.metadata.title(*{label})}"></h1>
         </div>
     </div>
-    <ul class="nav nav-tabs" role="tablist">
-        <li class="active"><a id="metaTab" href="#meta" role="tab" data-toggle="tab">Meta Data</a></li>
-        <li><a id="refTab" href="#references" role="tab" data-toggle="tab">Reference Files</a></li>
-    </ul>
 
-
-    <div class="tab-content mrgn-tp-md">
-        <div class="tab-pane active" id="meta">
+    <tabset>
+        <tab th:attr="heading=#{projects.meta.tabs.meta}">
             <form th:action="@{__${#httpServletRequest.requestURI}__}" method="post" role="form"
                   class="panel panel-info" th:object="${project}">
                 <div class="panel-heading">
@@ -72,8 +72,8 @@
                             th:text="#{form.btn.update}"></button>
                 </div>
             </form>
-        </div>
-        <div class="tab-pane" id="references">
+        </tab>
+        <tab id="refTab" th:attr="heading=#{projects.meta.tabs.ref}">
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <h3 class="panel-title" th:text="#{projects.meta.reference-files}">__Reference Files__</h3>
@@ -94,7 +94,7 @@
                             <td th:text="${file.size}"></td>
                             <td th:text="${file.createdDate}"></td>
                             <td class="text-right">
-                                <button data:file-id="${file.id}" class="btn btn-danger btn-xs file-delete-btn"
+                                <button data:file-id="${file.id}" class="btn btn-default btn-xs file-delete-btn"
                                         data:tooltip="#{form.btn.remove}"><span
                                         class="fa fa-trash-o fa-fw"></span>
                                 </button>
@@ -111,10 +111,10 @@
                             </span>
                 </div>
             </div>
-        </div>
-    </div>
+        </tab>
+    </tabset>
 </main>
-<th:block layout:fragment="pageScripts" th:inline="javascript">
+<th:block layout:fragment="scripts" th:inline="javascript">
 
     <script type="text/html" id="row-template">
         <tr>
@@ -134,12 +134,17 @@
         <h2 th:text="#{projects.meta.reference-file.delete-title}">__DELETE_REFERENCE_FILE</h2>
         <p th:text="#{projects.meta.reference-file.delete-msg}"></p>
     </script>
+    <script th:src="@{/resources/bower_components/select2/select2.min.js}"
+            src="/resources/bower_components/select2/select2.min.js"></script>
     <script src="/resources/bower_components/jquery-file-upload/js/vendor/jquery.ui.widget.js"
             th:href="@{/resources/bower_components/jquery-file-upload/js/vendor/jquery.ui.widget.js}"></script>
     <script src="/resources/bower_components/jquery-file-upload/js/jquery.iframe-transport.js"
             th:href="@{/resources/bower_components/jquery-file-upload/js/jquery.iframe-transport.js}"></script>
     <script src="/resources/bower_components/jquery-file-upload/js/jquery.fileupload.js"
             th:href="@{/resources/bower_components/jquery-file-upload/js/jquery.fileupload.js}"></script>
+    <script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
+            src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
+    <script th:src="@{/resources/bower_components/mustache/mustache.js}" src="/resources/bower_components/mustache/mustache.js"></script>
     <script>
         function showErrorModal(msg) {
             noty({
