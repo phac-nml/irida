@@ -56,6 +56,7 @@ public class ProjectMetadataEditPage {
 	}
 
 	public boolean isDeleteReferenceFileWarningMessageDisplayed() {
+		BasePage.waitForTime();
 		pageUtilities.waitForElementVisible(By.className("noty_message"));
 		return driver.findElement(By.cssSelector(".noty_text h2")).getText().contains("Removing Reference");
 	}

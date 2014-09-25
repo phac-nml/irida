@@ -48,7 +48,7 @@ public class ProjectDetailsPage {
 	}
 
 	public List<String> getAssociatedProjects() {
-        List<WebElement> divs = driver.findElements(By.cssSelector("#associated-projects a"));
+        List<WebElement> divs = driver.findElements(By.cssSelector(".associated-projects a"));
         return divs.stream().map(WebElement::getText).collect(Collectors.toList());
     }
 
