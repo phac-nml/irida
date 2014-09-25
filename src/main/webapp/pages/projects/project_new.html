@@ -67,7 +67,7 @@
                         <label class="control-label" for="remoteURL" th:text="#{projects.create.form.wiki}">Project Wiki
                             URL</label>
                         <input class="form-control input-full" name="remoteURL" type="url" id="remoteURL"
-                               placeholder="http://www.google.com" ng-focus="" ng-model="project.remoteURL"/>
+                               placeholder="http://www.google.com" th:placeholder="#{form.placeholder.url}" ng-focus="" ng-model="project.remoteURL"/>
                         <small id="error-url" th:text="#{form.valid.url}"
                                ng-show="new_project.remoteURL.$invalid &amp;&amp; !new_project.remoteURL.$focused">
                             __THIS IS A REQUIRED FIELD__
