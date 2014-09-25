@@ -7,9 +7,13 @@
   margin-bottom: 0; }
 
 /* line 7, ../../../../styles/themes/bootstrap/main.scss */
+.mrgn-rght-sm {
+  margin-right: 5px; }
+
+/* line 10, ../../../../styles/themes/bootstrap/main.scss */
 .mrgn-bttm-md {
   margin-bottom: 10px; }
 
-/* line 10, ../../../../styles/themes/bootstrap/main.scss */
+/* line 13, ../../../../styles/themes/bootstrap/main.scss */
 .mrgn-tp-lg {
   margin-top: 20px; }
