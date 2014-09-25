@@ -10,7 +10,8 @@
 <head lang="en">
     <title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA Platform</title>
     <th:block th:include="themes/common/fragments :: meta"></th:block>
-    <!--[if lte IE 8]>
+
+    <!--[if lte IE 8]
     <script>
         document.createElement('ng-include');
         document.createElement('ng-pluralize');
@@ -20,7 +21,9 @@
         document.createElement('ng:include');
         document.createElement('ng:pluralize');
         document.createElement('ng:view');
+
     </script>
+    <script src="/resources/bower_components/json2/json2.js"></script>
     <![endif]-->
 
     <link rel="stylesheet" th:href="@{/resources/bower_components/Font-Awesome/css/font-awesome.min.css}"
@@ -39,10 +42,15 @@
 </th:block>
 
 <!--/* Site Wide Scripts */-->
-<script th:src="@{'/resources/bower_components/lodash/dist/lodash.underscore.min.js'}"
-        src="/resources/bower_components/lodash/dist/lodash.underscore.min.js"></script>
+<!--[if lt IE 9]>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<![endif]-->
+<!--[if gte IE 9 | !IE ]><!-->
 <script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"
         src="/resources/bower_components/jquery/dist/jquery.min.js"></script>
+<!--<![endif]-->
+<script th:src="@{/resources/bower_components/lodash/dist/lodash.underscore.min.js}"
+        src="/resources/bower_components/lodash/dist/lodash.underscore.min.js"></script>
 <script th:src="@{/resources/bower_components/angular/angular.min.js}"
         src="/resources/bower_components/angular/angular.min.js"></script>
 <script th:src="@{/resources/bower_components/angular-sanitize/angular-sanitize.min.js}"
@@ -52,6 +60,29 @@
 
 <script th:inline="javascript">
     /*<![CDATA[*/
+    // Need for IE8
+    if (!Array.prototype.indexOf)
+    {
+        Array.prototype.indexOf = function(elt /*, from*/)
+        {
+            var len = this.length >>> 0;
+
+            var from = Number(arguments[1]) || 0;
+            from = (from < 0)
+                    ? Math.ceil(from)
+                    : Math.floor(from);
+            if (from < 0)
+                from += len;
+
+            for (; from < len; from++)
+            {
+                if (from in this &&
+                        this[from] === elt)
+                    return from;
+            }
+            return -1;
+        };
+    }
     window.dependencies = _.union(window.dependencies || [], ['ngSanitize', 'ui.bootstrap']);
     var app = angular.module('irida', window.dependencies)
             .value('BASE_URL', /*[[@{/}]]*/ '/')
