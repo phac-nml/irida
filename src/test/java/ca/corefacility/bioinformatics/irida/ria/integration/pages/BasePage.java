@@ -41,7 +41,7 @@ public class BasePage {
 		}
 	}
 
-	public static void waitForAjax() {
+	public static void waitForTime() {
 		try {
 			// There is a 500 ms pause on filtering names.
 			Thread.sleep(700);

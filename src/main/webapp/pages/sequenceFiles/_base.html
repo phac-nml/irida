@@ -8,19 +8,21 @@
 <body>
 <div layout:fragment="page">
     <nav class="navbar navbar-default navbar-sm" role="navigation">
-        <ul class="nav navbar-nav" th:inline="text" th:with="baseLink=${'/sequenceFiles/' + file.getId()}">
-            <li th:class="${activeNav} == 'dashboard' ? 'active'"><a th:href="@{${baseLink}}"><span
-                    class="glyphicon glyphicon-home"></span></a></li>
-            <li th:class="${activeNav} == 'overrepresented' ? 'active'"><a
-                    th:href="@{${baseLink} + '/overrepresented'}">Overrepresented
-                Sequences<span class="badge" th:text="${fastQC.overrepresentedSequences.size()}"></span></a></li>
-        </ul>
-        <div class="navbar-form navbar-right">
-            <div class="form-group">
-                <button id="fileDownload" class="btn btn-default btn-xs mrgn-rght-sm"><span
-                        class="glyphicon glyphicon-download-alt"></span>&nbsp;<span
-                        th:text="#{form.download}">Download</span>
-                </button>
+        <div class="container">
+            <ul class="nav navbar-nav" th:inline="text" th:with="baseLink=${'/sequenceFiles/' + file.getId()}">
+                <li th:class="${activeNav} == 'dashboard' ? 'active'"><a th:href="@{${baseLink}}"><span
+                        class="glyphicon glyphicon-home"></span></a></li>
+                <li th:class="${activeNav} == 'overrepresented' ? 'active'"><a
+                        th:href="@{${baseLink} + '/overrepresented'}">Overrepresented
+                    Sequences<span class="badge" th:text="${fastQC.overrepresentedSequences.size()}"></span></a></li>
+            </ul>
+            <div class="navbar-form navbar-right">
+                <div class="form-group">
+                    <button id="fileDownload" class="btn btn-primary btn-xs mrgn-rght-sm"><span
+                            class="glyphicon glyphicon-download-alt"></span>&nbsp;<span
+                            th:text="#{form.download}">Download</span>
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
@@ -37,7 +39,7 @@
                 <b class="panel-title" th:text="#{sf.sidebar.details}">__FILE_DETAILS__</b>
             </div>
             <div class="panel-body">
-                <ul class="nav nav-pills nav-stacked details">
+                <ul class="nav nav-pills nav-stacked project-details">
                     <li>
                         <i class="glyphicon glyphicon-barcode"></i>
                         <em th:text="#{sf.sidebar.file-id}"></em>
@@ -60,7 +62,7 @@
                 <b class="panel-title" th:text="#{sf.sidebar.sequences}">__SEQUENCE_DETAILS__</b>
             </div>
             <div class="panel-body">
-                <ul class="nav nav-pills nav-stacked details">
+                <ul class="nav nav-pills nav-stacked project-details">
                     <li><em th:text="#{sf.totalSequences}">_TOTAL_SEQUENCES_</em><span id="totalSequences"
                                                                                        class="pull-right"
                                                                                        th:text="*{totalSequences}"></span>

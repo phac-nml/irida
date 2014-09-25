@@ -4,7 +4,7 @@
             <b class="panel-title" th:text="#{project.details}">Project Details</b>
         </div>
         <div class="panel-body">
-            <ul class="nav nav-pills nav-stacked details">
+            <ul class="nav nav-pills nav-stacked project-details">
                 <li>
                     <i class="glyphicon glyphicon-barcode"></i>
                     <em th:text="#{project.id}"></em>
@@ -28,29 +28,30 @@
             </ul>
         </div>
     </div>
-    <div layout:fragment="associated-projects">
-        <div th:if="${ #lists.isEmpty( associatedProjects ) }" class="panel panel-default">
-            <div class="panel-heading" th:text="#{project.associated.title}">Associated Projects</div>
-            <div class="panel-body">
-                <p th:text="#{project.associated.none}">This is an area to store similar projects that would be run
-                    together
-                    on
-                    a pipeline.</p>
-            </div>
+    <div th:if="${ #lists.isEmpty( associatedProjects ) }" class="panel panel-primary">
+        <div class="panel-heading">
+            <b class="panel-title" th:text="#{project.associated.title}">Associated Projects</b>
         </div>
+        <div class="panel-body">
+            <p th:text="#{project.associated.none}">This is an area to store similar projects that would be run
+                together
+                on
+                a pipeline.</p>
+        </div>
+    </div>
 
-        <div th:if="${not #lists.isEmpty( associatedProjects ) }" class="list-group" id="associated-projects"
-             th:inline="text">
-            <b class="list-group-item" th:text="#{project.associated.title}"></b>
+    <div th:if="${not #lists.isEmpty( associatedProjects ) }" class="panel panel-default associated-projects" th:inline="text">
+        <div class="panel-heading">
+            <b class="panel-title" th:text="#{project.associated.title}"></b>
+        </div>
+        <div class="panel-body">
             <a th:each="project : ${associatedProjects}"
                th:class="${project.auth} == 'authorized' ? 'authorized list-group-item' : 'unauthorized list-group-item disabled'"
                th:href="${project.auth} == 'authorized' ? @{'/projects/' + ${project.id}} : '#'"
                th:disabled="${project.auth} == 'authorized' ? false : true">
-                <span class="pull-right"><span
-                        th:class="${project.auth} == 'authorized' ? 'glyphicon glyphicon-eye-open' : 'glyphicon glyphicon-lock'"></span></span>
+                <span class="pull-right"><span class="fa fa-fw"
+                        th:classappend="${project.auth} == 'authorized' ? 'fa-unlock' : 'fa-lock'"></span></span>
                 <span class="project-name" th:text="${project.name}"></span>
-            </a>
-        </div>
-
+            </a></div>
     </div>
 </aside>

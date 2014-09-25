@@ -159,28 +159,27 @@ table.dataTable > tbody code {
   margin-top: 5px;
   font-size: 1.4em; }
 
-/* line 3, ../../styles/components/_panels.scss */
-aside b.list-group-item {
-  background-color: #d9edf7;
-  color: #31708f;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 18px;
-  font-weight: bold; }
-
-/* line 14, ../../styles/components/_panels.scss */
-.panel .details li {
+/* line 2, ../../styles/components/_panels.scss */
+.project-details li {
   border-bottom: 1px solid #eeeeee;
   line-height: 2em; }
-/* line 18, ../../styles/components/_panels.scss */
-.panel .details i.glyphicon {
+/* line 6, ../../styles/components/_panels.scss */
+.project-details i.glyphicon {
   color: #797979;
   margin-right: .5em; }
-/* line 22, ../../styles/components/_panels.scss */
-.panel .details em {
+/* line 10, ../../styles/components/_panels.scss */
+.project-details em {
   font-style: normal; }
-/* line 25, ../../styles/components/_panels.scss */
-.panel .details span {
+/* line 13, ../../styles/components/_panels.scss */
+.project-details span {
   float: right; }
+
+/* line 19, ../../styles/components/_panels.scss */
+.panel.associated-projects div.panel-body {
+  padding: 0 !important; }
+/* line 22, ../../styles/components/_panels.scss */
+.panel.associated-projects .list-group-item {
+  border-radius: 0 !important; }
 
 /* line 1, ../../styles/components/_subnav.scss */
 .navbar-sm {
@@ -224,19 +223,6 @@ main h1 {
 /* line 5, ../../styles/_layout.scss */
 main.col-md-9 h1 {
   margin-top: 0; }
-
-/* line 3, ../../styles/pages/_project.scss */
-#associated-projects a.disabled {
-  color: #333333;
-  border-top: lightgray 1px solid;
-  text-decoration: none;
-  cursor: not-allowed; }
-/* line 9, ../../styles/pages/_project.scss */
-#associated-projects .glyphicon-lock {
-  color: #d9534f; }
-/* line 12, ../../styles/pages/_project.scss */
-#associated-projects .glyphicon-eye-open {
-  color: #5cb85c; }
 
 /* line 2, ../../styles/pages/_sequenceFile.scss */
 .sequenceFile main > div {
