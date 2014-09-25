@@ -22,7 +22,7 @@
                 </div>
                 <div class="panel-body">
                     <div class="form-group" th:classappend="${#maps.containsKey(errors, 'name')} ? 'has-error'"
-                         ng-class="{'has-error' : nameValid()}">
+                         ng-class="{'has-error' : !new_project.name.$focused &amp;&amp; new_project.name.$invalid &amp;&amp; !new_project.name.$pristine}">
                         <label class="control-label" for="name"> <span th:text="#{projects.create.form.name}">__Project_Name__</span>&nbsp;
                             <small tooltip-placement="right" data:tooltip="#{projects.create.form.required}"
                                    class="fa fa-fw fa-asterisk"></small>
@@ -114,9 +114,6 @@
 
         app.controller('TestController', function ($scope) {
             $scope.project = {};
-            $scope.nameValid = function() {
-                return !new_project.name.$focused &amp;&amp; new_project.name.$invalid &amp;&amp; !new_project.name.$pristine;
-            }
         });
     </script>
 </th:block>
