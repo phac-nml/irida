@@ -22,13 +22,13 @@
                 </div>
                 <div class="panel-body">
                     <div class="form-group" th:classappend="${#maps.containsKey(errors, 'name')} ? 'has-error'"
-                         ng-class="{'has-error' : !new_project.name.$focused &amp;&amp; new_project.name.$invalid &amp;&amp; !new_project.name.$pristine}">
+                         ng-class="{'has-error' : nameValid()}">
                         <label class="control-label" for="name"> <span th:text="#{projects.create.form.name}">__Project_Name__</span>&nbsp;
                             <small tooltip-placement="right" data:tooltip="#{projects.create.form.required}"
                                    class="fa fa-fw fa-asterisk"></small>
                         </label>
                         <input class="form-control input-full" type="text" id="name" name="name"
-                               required="required" th:placeholder="#{projects.create.form.required}"
+                               required="required"
                                placeholder="Required" th:placeholder="#{form.required}" ng-minlength='5' ng-model="project.name" ng-focus=""/>
 
                         <div ng-show="new_project.name.$dirty &amp;&amp; !new_project.name.$focused">
@@ -114,6 +114,9 @@
 
         app.controller('TestController', function ($scope) {
             $scope.project = {};
+            $scope.nameValid = function() {
+                return !new_project.name.$focused &amp;&amp; new_project.name.$invalid &amp;&amp; !new_project.name.$pristine;
+            }
         });
     </script>
 </th:block>
