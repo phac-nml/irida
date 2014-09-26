@@ -18,8 +18,8 @@
         </div>
     </div>
 
-    <tabset th:object="${project}">
-        <tab th:attr="heading=#{projects.create.form.name}">
+    <div tabset="" th:object="${project}">
+        <div tab="" th:attr="heading=#{projects.create.form.name}">
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <h3 class="panel-title" th:text="#{projects.create.form.name}">Project Name</h3>
@@ -51,8 +51,8 @@
                     <a th:href="*{remoteURL}" id="remoteURL" th:text="*{remoteURL}"></a>
                 </div>
             </div>
-        </tab>
-        <tab th:attr="heading=#{projects.meta.reference-files}">
+        </div>
+        <div tab="" th:attr="heading=#{projects.meta.reference-files}">
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <h3 class="panel-title" th:text="#{projects.meta.reference-files}">__Reference Files__</h3>
@@ -83,8 +83,8 @@
                     </table>
                 </div>
             </div>
-        </tab>
-    </tabset>
+        </div>
+    </div>
     <iframe id="invisible" style="display:none;"></iframe>
 </main>
 

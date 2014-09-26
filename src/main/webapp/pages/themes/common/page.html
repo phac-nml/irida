@@ -10,7 +10,8 @@
 <head lang="en">
     <title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA Platform</title>
     <th:block th:include="themes/common/fragments :: meta"></th:block>
-    <!--[if lte IE 8]>
+
+    <!--[if lte IE 8]
     <script>
         document.createElement('ng-include');
         document.createElement('ng-pluralize');
@@ -20,7 +21,13 @@
         document.createElement('ng:include');
         document.createElement('ng:pluralize');
         document.createElement('ng:view');
+
+        // Angular Bootstrap
+        document.createElement('tabset');
+        document.createElement('tab');
+
     </script>
+    <script th:src="@{/resources/bower_components/json2/json2.js}" src="/resources/bower_components/json2/json2.js"></script>
     <![endif]-->
 
     <link rel="stylesheet" th:href="@{/resources/bower_components/Font-Awesome/css/font-awesome.min.css}"
@@ -33,16 +40,56 @@
     </style>
 </head>
 <body vocab="http://schema.org/" typeof="WebPage" id="ng-app" ng-app="irida">
-
 <th:block layout:fragment="main-section">
     <!--/* This is where each pages content should be loaded. */-->
 </th:block>
 
 <!--/* Site Wide Scripts */-->
-<script th:src="@{'/resources/bower_components/lodash/dist/lodash.underscore.min.js'}"
-        src="/resources/bower_components/lodash/dist/lodash.underscore.min.js"></script>
+<!--[if lt IE 9]>
+<script th:src="@{/resources/js/vendor/jquery-1.11.1.min.js}" src="/resources/js/vendor/jquery-1.11.1.min.js"></script>
+<script>
+    // Production steps of ECMA-262, Edition 5, 15.4.4.14
+    // Reference: http://es5.github.io/#x15.4.4.14
+    // Copied from: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
+    /*<![CDATA[*/
+    if (!Array.prototype.indexOf) {
+        Array.prototype.indexOf = function (searchElement, fromIndex) {
+            var k;
+            if (this == null) {
+                throw new TypeError('"this" is null or not defined');
+            }
+            var O = Object(this);
+            var len = O.length >>> 0;
+            if (len === 0) {
+                return -1;
+            }
+            var n = +fromIndex || 0;
+            if (Math.abs(n) === Infinity) {
+                n = 0;
+            }
+            if (n >= len) {
+                return -1;
+            }
+            k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
+            while (k < len) {
+                var kValue;
+                if (k in O && O[k] === searchElement) {
+                    return k;
+                }
+                k++;
+            }
+            return -1;
+        };
+    }
+    /*]]>*/
+</script>
+<![endif]-->
+<!--[if gte IE 9 | !IE ]><!-->
 <script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"
         src="/resources/bower_components/jquery/dist/jquery.min.js"></script>
+<!--<![endif]-->
+<script th:src="@{/resources/bower_components/lodash/dist/lodash.underscore.min.js}"
+        src="/resources/bower_components/lodash/dist/lodash.underscore.min.js"></script>
 <script th:src="@{/resources/bower_components/angular/angular.min.js}"
         src="/resources/bower_components/angular/angular.min.js"></script>
 <script th:src="@{/resources/bower_components/angular-sanitize/angular-sanitize.min.js}"

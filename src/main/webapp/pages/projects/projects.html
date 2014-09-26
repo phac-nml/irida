@@ -45,16 +45,16 @@
                     $projectsTable = $('#projectsTable');
 
             $projectsTable.DataTable({
-                dom: "<'top'lf>rt<'bottom'ip><'clear'>",
-                processing: true,
-                serverSide: true,
-                deferRender: true,
-                ajax: {
+                'dom': "<'top'lf>rt<'bottom'ip><'clear'>",
+                'processing': true,
+                'serverSide': true,
+                'deferRender': true,
+                'ajax': {
                     "url": /*[[@{${ajaxURL}}]]*/ '/projects/ajax/list'
                 },
-                stateSave: true,
-                stateDuration: -1,
-                columns: [
+                'stateSave': true,
+                'stateDuration': -1,
+                'columns': [
                     {
                         "data": "id",
                         "render": function (data) {

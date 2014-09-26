@@ -19,8 +19,8 @@
         </div>
     </div>
 
-    <tabset>
-        <tab th:attr="heading=#{projects.meta.tabs.meta}">
+    <div tabset="">
+        <div tab="" th:attr="heading=#{projects.meta.tabs.meta}">
             <form th:action="@{__${#httpServletRequest.requestURI}__}" method="post" role="form"
                   class="panel panel-info" th:object="${project}">
                 <div class="panel-heading">
@@ -72,8 +72,8 @@
                             th:text="#{form.btn.update}"></button>
                 </div>
             </form>
-        </tab>
-        <tab id="refTab" th:attr="heading=#{projects.meta.tabs.ref}">
+        </div>
+        <div tab="" id="refTab" th:attr="heading=#{projects.meta.tabs.ref}">
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <h3 class="panel-title" th:text="#{projects.meta.reference-files}">__Reference Files__</h3>
@@ -111,8 +111,8 @@
                             </span>
                 </div>
             </div>
-        </tab>
-    </tabset>
+        </div>
+    </div>
 </main>
 <th:block layout:fragment="scripts" th:inline="javascript">
 
