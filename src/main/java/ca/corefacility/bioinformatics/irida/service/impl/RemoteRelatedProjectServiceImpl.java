@@ -21,6 +21,7 @@ public class RemoteRelatedProjectServiceImpl extends CRUDServiceImpl<Long, Remot
 	@Autowired
 	public RemoteRelatedProjectServiceImpl(RemoteRelatedProjectRepository repository, Validator validator) {
 		super(repository, validator, RemoteRelatedProject.class);
+		this.repository = repository;
 	}
 
 	/**

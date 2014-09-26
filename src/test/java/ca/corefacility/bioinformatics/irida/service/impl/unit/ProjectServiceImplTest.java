@@ -10,9 +10,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,7 +22,6 @@ import javax.validation.Validator;
 import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -38,20 +34,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
-import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
-import ca.corefacility.bioinformatics.irida.repositories.RemoteRelatedProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
@@ -79,7 +70,6 @@ public class ProjectServiceImplTest {
 	private RelatedProjectRepository relatedProjectRepository;
 	private ReferenceFileRepository referenceFileRepository;
 	private ProjectReferenceFileJoinRepository prfjRepository;
-	private RemoteRelatedProjectRepository rrpRepository;
 	private SequenceFileUtilities sequenceFileUtilities;
 	private Validator validator;
 
@@ -95,9 +85,8 @@ public class ProjectServiceImplTest {
 		referenceFileRepository = mock(ReferenceFileRepository.class);
 		prfjRepository = mock(ProjectReferenceFileJoinRepository.class);
 		sequenceFileUtilities = mock(SequenceFileUtilities.class);
-		rrpRepository = mock(RemoteRelatedProjectRepository.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
-				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository, rrpRepository,
+				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository,
 				sequenceFileUtilities, validator);
 	}
 
@@ -368,57 +357,5 @@ public class ProjectServiceImplTest {
 		Project p = new Project("project");
 		p.setId(new Long(2222));
 		return p;
-	}
-
-	@Test
-	public void testAddReferenceFileToProject() throws IOException {
-		Project p = new Project();
-		Path createTempFile = Files.createTempFile(null, null);
-		ReferenceFile f = new ReferenceFile(createTempFile);
-
-		when(referenceFileRepository.save(f)).thenReturn(f);
-		when(sequenceFileUtilities.countSequenceFileLengthInBases(createTempFile)).thenReturn(1000l);
-
-		projectService.addReferenceFileToProject(p, f);
-
-		verify(referenceFileRepository).save(f);
-		verify(sequenceFileUtilities).countSequenceFileLengthInBases(createTempFile);
-		verify(prfjRepository).save(new ProjectReferenceFileJoin(p, f));
-	}
-
-	@Test
-	public void testGetRemoteProjectsForProject() {
-		Project p = new Project();
-		List<RemoteRelatedProject> projects = Lists
-				.newArrayList(new RemoteRelatedProject(), new RemoteRelatedProject());
-		when(rrpRepository.getRemoteRelatedProjectsForProject(p)).thenReturn(projects);
-
-		List<RemoteRelatedProject> remoteProjectsForProject = projectService.getRemoteProjectsForProject(p);
-
-		assertEquals(projects, remoteProjectsForProject);
-		verify(rrpRepository).getRemoteRelatedProjectsForProject(p);
-	}
-
-	@Test
-	public void testAddRemoteRelatedProject() {
-		Project p = new Project();
-		RemoteAPI api = new RemoteAPI();
-		String remoteURI = "http://somewhere";
-
-		projectService.addRemoteRelatedProject(p, api, remoteURI);
-
-		ArgumentCaptor<RemoteRelatedProject> captor = ArgumentCaptor.forClass(RemoteRelatedProject.class);
-		verify(rrpRepository).save(captor.capture());
-
-		assertEquals(p, captor.getValue().getLocalProject());
-		assertEquals(api, captor.getValue().getRemoteAPI());
-		assertEquals(remoteURI, captor.getValue().getRemoteProjectURI());
-	}
-	
-	@Test
-	public void testRemoveRemoteRelatedProject(){
-		RemoteRelatedProject p = new RemoteRelatedProject();
-		projectService.removeRemoteRelatedProject(p);
-		verify(rrpRepository).delete(p);
 	}
 }
