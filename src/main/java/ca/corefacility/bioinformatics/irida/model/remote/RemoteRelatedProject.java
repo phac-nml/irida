@@ -38,7 +38,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 @Entity
 @Audited
 @Table(name = "remote_related_project", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id",
-		"remote_api_id", "remoteProjectURI" }, name = "UK_REMOTE_RELATED_PROJECT"))
+		"remote_api_id", "remote_project_uri" }, name = "UK_REMOTE_RELATED_PROJECT"))
 @EntityListeners(AuditingEntityListener.class)
 public class RemoteRelatedProject implements IridaThing {
 
