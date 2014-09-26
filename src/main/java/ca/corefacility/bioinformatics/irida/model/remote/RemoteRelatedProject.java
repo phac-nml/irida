@@ -77,6 +77,7 @@ public class RemoteRelatedProject implements IridaThing {
 	}
 
 	public RemoteRelatedProject(Project localProject, RemoteAPI remoteAPI, String remoteProjectURI) {
+		this();
 		this.localProject = localProject;
 		this.remoteAPI = remoteAPI;
 		this.remoteProjectURI = remoteProjectURI;
