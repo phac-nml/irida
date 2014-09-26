@@ -1,5 +1,10 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +52,18 @@ public class RemoteRelatedProjectServiceImplIT {
 	@WithMockUser(username = "tom", roles = "USER")
 	@Test
 	public void testSave() {
+		Project project = projectService.read(1l);
+		RemoteAPI api = apiService.read(1l);
+		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject(project, api, "http://nowhere/projects/2");
+		RemoteRelatedProject created = relatedProjectService.create(remoteRelatedProject);
+		assertNotNull(created.getId());
+	}
+
+	@WithMockUser(username = "tom", roles = "USER")
+	@Test
+	public void testGetRemoteProjectsForProject() {
 		Project read = projectService.read(1l);
-		RemoteAPI read2 = apiService.read(1l);
-		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject(read, read2, "http://nowhere/projects/2");
-		relatedProjectService.create(remoteRelatedProject);
+		List<RemoteRelatedProject> remoteProjectsForProject = relatedProjectService.getRemoteProjectsForProject(read);
+		assertEquals(1, remoteProjectsForProject.size());
 	}
 }
