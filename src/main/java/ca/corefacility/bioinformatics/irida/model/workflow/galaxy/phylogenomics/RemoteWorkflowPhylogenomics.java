@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflow
  */
 @Entity
 @Table(name = "remote_workflow_phylogenomics")
-@Audited
 public class RemoteWorkflowPhylogenomics extends RemoteWorkflowGalaxy {
 
 	@NotNull

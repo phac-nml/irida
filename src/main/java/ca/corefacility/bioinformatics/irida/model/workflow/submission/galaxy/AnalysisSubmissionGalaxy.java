@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -34,8 +35,10 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 public abstract class AnalysisSubmissionGalaxy<R extends RemoteWorkflowGalaxy>
 	extends AnalysisSubmission {
 	
+	// this relationship is not audited as the RemoteWorkflowGalaxy class is not audited
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH, targetEntity=RemoteWorkflow.class)
 	@JoinColumn(name = "remote_workflow_id")
+	@NotAudited
 	private R remoteWorkflow;
 	
 	protected AnalysisSubmissionGalaxy() {
