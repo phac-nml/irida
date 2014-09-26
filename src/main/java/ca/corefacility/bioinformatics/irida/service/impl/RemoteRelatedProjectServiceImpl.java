@@ -12,6 +12,12 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.repositories.RemoteRelatedProjectRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 
+/**
+ * Implementation of service for managing {@link RemoteRelatedProject}s
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Service
 public class RemoteRelatedProjectServiceImpl extends CRUDServiceImpl<Long, RemoteRelatedProject> implements
 		RemoteRelatedProjectService {
