@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -13,10 +10,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.google.common.base.Strings;
 
 /**
- * <p>
- * Page Object to represent the projects-new page used to create a new project.
- * </p>
- * 
+ * <p> Page Object to represent the projects-new page used to create a new project. </p>
+ *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectsNewPage {
