@@ -266,3 +266,7 @@ iframe.remote-api-frame {
   /* line 38, ../../styles/main.scss */
   #table-filter .filter-btns > button {
     margin-top: 33px; }
+
+/* line 43, ../../styles/main.scss */
+.nav, .pagination, .carousel, .panel-title a {
+  cursor: pointer; }

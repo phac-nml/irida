@@ -12,13 +12,13 @@
         <h1 th:utext="#{dashboard.heading}"></h1>
         <section th:utext="#{dashboard.body}"></section>
         <div class="row mrgn-tp-lg mrgn-bttm-lg">
-            <div ng-controller="CarouselCtrl as carousel">
+            <div ng-controller="CarouselCtrl">
                 <div style="height: 200px">
-                    <carousel interval="4000">
-                        <slide ng-repeat="slide in carousel.slides" active="slide.active">
+                    <div carousel="" interval="3000">
+                        <div slide="" ng-repeat="slide in slides" active="slide.active">
                             <img ng-src="{{slide.image}}" style="margin:auto;"/>
-                        </slide>
-                    </carousel>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -27,15 +27,18 @@
 
 <th:block layout:fragment="page-scripts" th:inline="javascript">
     <script>
+
         /*<![CDATA[*/
+        document.createElement("carousel");
+        document.createElement("slide");
         app.controller('CarouselCtrl', CarouselCtrl);
-        function CarouselCtrl(BASE_URL) {
+        function CarouselCtrl($scope, BASE_URL) {
             'use strict';
             var carousel = this;
 
-            carousel.slides = [];
+            $scope.slides = [];
             for (var i = 1; i < 5; i++) {
-                carousel.slides.push({image: BASE_URL + "resources/img/irida-logos-" + i + ".png"});
+                $scope.slides.push({image: BASE_URL + "resources/img/irida-logos-" + i + ".png"});
             }
         }
         /*]]>*/
