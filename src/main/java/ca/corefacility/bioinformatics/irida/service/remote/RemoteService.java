@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.remote;
 
 import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.service.remote.model.resource.RemoteResource;
 
@@ -34,7 +35,14 @@ public interface RemoteService<Type extends RemoteResource> {
 	 * @return A List<Type> of the resources available
 	 */
 	public List<Type> list(String uri, RemoteAPI remoteAPI);
-	
-	public boolean getServiceStatus(RemoteAPI remoteAPI);
+
+	/**
+	 * Get the status of the remote service
+	 * 
+	 * @param remoteAPI
+	 *            The API to check status for
+	 * @return true if the service is active
+	 */
+	public boolean getServiceStatus(RemoteAPI remoteAPI) throws IridaOAuthException;
 
 }
