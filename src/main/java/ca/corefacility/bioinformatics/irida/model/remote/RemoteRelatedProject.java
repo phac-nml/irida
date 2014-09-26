@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -57,15 +58,18 @@ public class RemoteRelatedProject implements IridaThing {
 
 	@NotNull
 	@URL
+	@Column(name = "remote_project_uri")
 	private String remoteProjectURI;
 
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "created_date")
 	private Date createdDate;
 
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "modified_date")
 	private Date modifiedDate;
 
 	public RemoteRelatedProject() {
