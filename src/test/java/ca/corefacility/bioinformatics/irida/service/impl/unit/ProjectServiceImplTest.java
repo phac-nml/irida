@@ -10,6 +10,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +43,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
@@ -357,5 +362,21 @@ public class ProjectServiceImplTest {
 		Project p = new Project("project");
 		p.setId(new Long(2222));
 		return p;
+	}
+
+	@Test
+	public void testAddReferenceFileToProject() throws IOException {
+		Project p = new Project();
+		Path createTempFile = Files.createTempFile(null, null);
+		ReferenceFile f = new ReferenceFile(createTempFile);
+
+		when(referenceFileRepository.save(f)).thenReturn(f);
+		when(sequenceFileUtilities.countSequenceFileLengthInBases(createTempFile)).thenReturn(1000l);
+
+		projectService.addReferenceFileToProject(p, f);
+
+		verify(referenceFileRepository).save(f);
+		verify(sequenceFileUtilities).countSequenceFileLengthInBases(createTempFile);
+		verify(prfjRepository).save(new ProjectReferenceFileJoin(p, f));
 	}
 }
