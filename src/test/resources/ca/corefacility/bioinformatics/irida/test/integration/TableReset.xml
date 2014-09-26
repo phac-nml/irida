@@ -64,7 +64,6 @@
 	<sequence_file_properties_AUD />
 	<sequencefile_sample_AUD />
 	<remote_workflow_AUD />
-	<remote_workflow_phylogenomics_AUD />
 	<analysis_submission_AUD />
 	<analysis_submission_galaxy_AUD />
 	<analysis_submission_phylogenomics_AUD />

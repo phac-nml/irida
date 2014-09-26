@@ -60,23 +60,6 @@
 			</column>
 		</createTable>
 
-		<createTable tableName="remote_workflow_phylogenomics_AUD">
-			<column name="workflowId" type="VARCHAR(255)">
-				<constraints nullable="false" primaryKey="true" />
-			</column>
-			<column name="REV" type="INT(11)">
-				<constraints nullable="false" primaryKey="true" />
-			</column>
-			<column name="inputReferenceFileLabel" type="VARCHAR(255)" />
-			<column name="inputSequenceFilesLabel" type="VARCHAR(255)" />
-			<column name="outputPhylogeneticTreeName" type="VARCHAR(255)" />
-			<column name="outputSnpTableName" type="VARCHAR(255)" />
-			<column name="outputSnpMatrixName" type="VARCHAR(255)" />
-		</createTable>
-		<addForeignKeyConstraint baseColumnNames="workflowId, REV"
-			baseTableName="remote_workflow_phylogenomics_AUD" constraintName="FK_REMOTE_WORKFLOW_PHYLOGENOMICS_REVISION"
-			referencedTableName="remote_workflow_AUD" referencedColumnNames="workflowId, REV" />
-
 		<!-- Analysis Submission Tables -->
 
 		<createTable tableName="analysis_submission">
