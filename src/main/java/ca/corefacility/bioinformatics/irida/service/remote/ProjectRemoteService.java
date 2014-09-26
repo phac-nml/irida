@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.remote;
 
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.service.remote.model.RemoteProject;
 
 /**
@@ -9,5 +10,5 @@ import ca.corefacility.bioinformatics.irida.service.remote.model.RemoteProject;
  *
  */
 public interface ProjectRemoteService extends RemoteService<RemoteProject> {
-
+	public RemoteProject read(RemoteRelatedProject project);
 }

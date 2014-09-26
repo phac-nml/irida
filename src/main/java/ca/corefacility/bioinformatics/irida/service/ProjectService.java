@@ -255,11 +255,11 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *            The project to add to
 	 * @param remoteAPI
 	 *            the {@link RemoteAPI} to link to
-	 * @param remoteProjectID
-	 *            The ID of the {@link Project} on the remote service
+	 * @param remoteProjectURI
+	 *            The URI of the {@link Project} on the remote service
 	 * @return The {@link RemoteRelatedProject} join object
 	 */
-	public RemoteRelatedProject addRemoteRelatedProject(Project project, RemoteAPI remoteAPI, Long remoteProjectID);
+	public RemoteRelatedProject addRemoteRelatedProject(Project project, RemoteAPI remoteAPI, String remoteProjectURI);
 
 	/**
 	 * Remote a {@link RemoteRelatedProject}

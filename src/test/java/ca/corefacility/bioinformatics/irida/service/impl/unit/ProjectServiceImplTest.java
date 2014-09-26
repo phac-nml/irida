@@ -403,16 +403,16 @@ public class ProjectServiceImplTest {
 	public void testAddRemoteRelatedProject() {
 		Project p = new Project();
 		RemoteAPI api = new RemoteAPI();
-		Long remoteId = 2l;
+		String remoteURI = "http://somewhere";
 
-		projectService.addRemoteRelatedProject(p, api, remoteId);
+		projectService.addRemoteRelatedProject(p, api, remoteURI);
 
 		ArgumentCaptor<RemoteRelatedProject> captor = ArgumentCaptor.forClass(RemoteRelatedProject.class);
 		verify(rrpRepository).save(captor.capture());
 
 		assertEquals(p, captor.getValue().getLocalProject());
 		assertEquals(api, captor.getValue().getRemoteAPI());
-		assertEquals(remoteId, captor.getValue().getRemoteProjectID());
+		assertEquals(remoteURI, captor.getValue().getRemoteProjectURI());
 	}
 	
 	@Test

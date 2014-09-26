@@ -1,13 +1,11 @@
 package ca.corefacility.bioinformatics.irida.service.remote.impl;
 
-import java.net.URI;
 import java.util.List;
-
-import javax.ws.rs.core.UriBuilder;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
@@ -29,8 +27,6 @@ import ca.corefacility.bioinformatics.irida.service.remote.resttemplate.OAuthTok
  */
 public abstract class RemoteServiceImpl<Type extends RemoteResource> implements RemoteService<Type> {
 
-	// relative URI to the resource collection
-	private String relativeURI;
 	// service storing api tokens for communication with the remote services
 	private RemoteAPITokenService tokenService;
 
@@ -56,10 +52,9 @@ public abstract class RemoteServiceImpl<Type extends RemoteResource> implements 
 	 *            A {@link ParameterizedTypeReference} for individual resources
 	 *            read by the rest template
 	 */
-	public RemoteServiceImpl(String relativeURI, RemoteAPITokenService tokenService,
+	public RemoteServiceImpl(RemoteAPITokenService tokenService,
 			ParameterizedTypeReference<ListResourceWrapper<Type>> listTypeReference,
 			ParameterizedTypeReference<ResourceWrapper<Type>> objectTypeReference) {
-		this.relativeURI = relativeURI;
 		this.tokenService = tokenService;
 		this.listTypeReference = listTypeReference;
 		this.objectTypeReference = objectTypeReference;
@@ -69,11 +64,10 @@ public abstract class RemoteServiceImpl<Type extends RemoteResource> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Type read(Long id, RemoteAPI remoteAPI) {
-		URI resourceIdURI = UriBuilder.fromUri(getResourceURI(remoteAPI)).path(id.toString()).build();
+	public Type read(String uri, RemoteAPI remoteAPI) {
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
-		ResponseEntity<ResourceWrapper<Type>> exchange = restTemplate.exchange(resourceIdURI, HttpMethod.GET,
-				HttpEntity.EMPTY, objectTypeReference);
+		ResponseEntity<ResourceWrapper<Type>> exchange = restTemplate.exchange(uri, HttpMethod.GET, HttpEntity.EMPTY,
+				objectTypeReference);
 
 		return exchange.getBody().getResource();
 	}
@@ -82,24 +76,23 @@ public abstract class RemoteServiceImpl<Type extends RemoteResource> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Type> list(RemoteAPI remoteAPI) {
+	public List<Type> list(String uri, RemoteAPI remoteAPI) {
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
-		ResponseEntity<ListResourceWrapper<Type>> exchange = restTemplate.exchange(getResourceURI(remoteAPI),
-				HttpMethod.GET, HttpEntity.EMPTY, listTypeReference);
+		ResponseEntity<ListResourceWrapper<Type>> exchange = restTemplate.exchange(uri, HttpMethod.GET,
+				HttpEntity.EMPTY, listTypeReference);
 
 		return exchange.getBody().getResource().getResources();
 	}
 
 	/**
-	 * Get the URI for the resources you're trying to request
-	 * 
-	 * @param remoteAPI
-	 *            the RemoteAPI we're communicating with
-	 * @return the full URI for the resource type you're requesting
+	 * {@inheritDoc}
 	 */
-	private URI getResourceURI(RemoteAPI remoteAPI) {
-		String serviceURI = remoteAPI.getServiceURI();
-		return UriBuilder.fromUri(serviceURI).path(relativeURI).build();
+	@Override
+	public boolean getServiceStatus(RemoteAPI remoteAPI) {
+		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
+		ResponseEntity<String> forEntity = restTemplate.getForEntity(remoteAPI.getServiceURI(), String.class);
+
+		return forEntity.getStatusCode() == HttpStatus.OK;
 	}
 
 }

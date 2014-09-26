@@ -331,8 +331,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	public RemoteRelatedProject addRemoteRelatedProject(Project project, RemoteAPI remoteAPI, Long remoteProjectID) {
-		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject(project, remoteAPI, remoteProjectID);
+	public RemoteRelatedProject addRemoteRelatedProject(Project project, RemoteAPI remoteAPI, String remoteProjectURI) {
+		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject(project, remoteAPI, remoteProjectURI);
 		return rrpRepository.save(remoteRelatedProject);
 	}
 	

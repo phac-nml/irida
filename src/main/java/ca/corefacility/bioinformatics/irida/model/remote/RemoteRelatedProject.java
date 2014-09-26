@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.remote;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -18,6 +19,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -35,7 +37,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 @Entity
 @Audited
 @Table(name = "remote_related_project", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id",
-		"remote_api_id", "remoteProjectID" }, name = "UK_REMOTE_RELATED_PROJECT"))
+		"remote_api_id", "remoteProjectURI" }, name = "UK_REMOTE_RELATED_PROJECT"))
 @EntityListeners(AuditingEntityListener.class)
 public class RemoteRelatedProject implements IridaThing {
 
@@ -54,7 +56,8 @@ public class RemoteRelatedProject implements IridaThing {
 	private RemoteAPI remoteAPI;
 
 	@NotNull
-	private Long remoteProjectID;
+	@URL
+	private String remoteProjectURI;
 
 	@CreatedDate
 	@NotNull
@@ -69,10 +72,10 @@ public class RemoteRelatedProject implements IridaThing {
 		createdDate = new Date();
 	}
 
-	public RemoteRelatedProject(Project localProject, RemoteAPI remoteAPI, Long remoteProjectID) {
+	public RemoteRelatedProject(Project localProject, RemoteAPI remoteAPI, String remoteProjectURI) {
 		this.localProject = localProject;
 		this.remoteAPI = remoteAPI;
-		this.remoteProjectID = remoteProjectID;
+		this.remoteProjectURI = remoteProjectURI;
 	}
 
 	/**
@@ -105,21 +108,6 @@ public class RemoteRelatedProject implements IridaThing {
 		this.remoteAPI = remoteAPI;
 	}
 
-	/**
-	 * @return the remoteProjectID
-	 */
-	public Long getRemoteProjectID() {
-		return remoteProjectID;
-	}
-
-	/**
-	 * @param remoteProjectID
-	 *            the remoteProjectID to set
-	 */
-	public void setRemoteProjectID(Long remoteProjectID) {
-		this.remoteProjectID = remoteProjectID;
-	}
-
 	@Override
 	public Date getCreatedDate() {
 		return createdDate;
@@ -138,7 +126,7 @@ public class RemoteRelatedProject implements IridaThing {
 
 	@Override
 	public String getLabel() {
-		return remoteAPI.getName() + " - " + remoteProjectID.toString();
+		return localProject.getName() + " => " + remoteProjectURI.toString();
 	}
 
 	@Override
@@ -146,4 +134,35 @@ public class RemoteRelatedProject implements IridaThing {
 		return id;
 	}
 
+	/**
+	 * @return the remoteProjectURI
+	 */
+	public String getRemoteProjectURI() {
+		return remoteProjectURI;
+	}
+
+	/**
+	 * @param remoteProjectURI
+	 *            the remoteProjectURI to set
+	 */
+	public void setRemoteProjectURI(String remoteProjectURI) {
+		this.remoteProjectURI = remoteProjectURI;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof RemoteRelatedProject) {
+			RemoteRelatedProject project = (RemoteRelatedProject) other;
+			return Objects.equals(localProject, project.localProject)
+					&& Objects.equals(remoteProjectURI, project.remoteProjectURI)
+					&& Objects.equals(remoteAPI, project.remoteAPI);
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(localProject, remoteProjectURI, remoteAPI);
+	}
 }
