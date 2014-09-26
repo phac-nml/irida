@@ -42,6 +42,7 @@
 	<password_reset />
 	<remote_api />
 	<remote_api_token />
+	<remote_related_project />
 	<project_user />
 	<sequencefile_sample />
 	<project_sample />
@@ -91,4 +92,5 @@
 	<reference_file_AUD />
 	<analysis_phylogenomicspipeline_AUD />
 	<analysis_output_file_AUD />
+	<remote_related_project_AUD />
 </dataset>
