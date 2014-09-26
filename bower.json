@@ -29,7 +29,9 @@
     "angular": "1.2.25",
     "angular-sanitize": "1.2.25",
     "Bootflat": "2.0.4",
-    "json2": "*"
+    "json2": "*",
+    "html5shiv": "3.7.2",
+    "respondJs": "1.4.2"
   },
   "devDependencies": {}
 }
