@@ -68,7 +68,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public ProjectServiceImpl(ProjectRepository projectRepository, SampleRepository sampleRepository,
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
-			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository,
+			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository, 
 			SequenceFileUtilities sequenceFileUtilities, Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.sampleRepository = sampleRepository;

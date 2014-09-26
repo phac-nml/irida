@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.remote.model.RemoteProject;
@@ -20,8 +22,6 @@ import ca.corefacility.bioinformatics.irida.service.remote.resttemplate.OAuthTok
 @Service
 public class ProjectRemoteServiceImpl extends RemoteServiceImpl<RemoteProject> implements ProjectRemoteService {
 
-	public final static String RELATIVE_URI = "projects";
-
 	// the type references for this repo
 	private static ParameterizedTypeReference<ListResourceWrapper<RemoteProject>> listTypeReference = new ParameterizedTypeReference<ListResourceWrapper<RemoteProject>>() {
 	};
@@ -37,6 +37,21 @@ public class ProjectRemoteServiceImpl extends RemoteServiceImpl<RemoteProject> i
 	 */
 	@Autowired
 	public ProjectRemoteServiceImpl(RemoteAPITokenService tokenService) {
-		super(RELATIVE_URI, tokenService, listTypeReference, objectTypeReference);
+		super(tokenService, listTypeReference, objectTypeReference);
+	}
+
+	/**
+	 * Read a {@link RemoteProject} for a given {@link RemoteRelatedProject}
+	 * reference
+	 * 
+	 * @param project
+	 *            The {@link RemoteRelatedProject} to read
+	 * @return a {@link RemoteProject}
+	 */
+	public RemoteProject read(RemoteRelatedProject project) {
+		String remoteProjectURI = project.getRemoteProjectURI();
+		RemoteAPI remoteAPI = project.getRemoteAPI();
+
+		return read(remoteProjectURI, remoteAPI);
 	}
 }
