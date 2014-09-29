@@ -57,6 +57,7 @@
             <div th:each="api : ${remoteProjectsByApi}" class="panel panel-default">
                 <div class="panel-heading clearfix">
                     <h3 class="panel-title pull-left"><a th:text="${api.key.name}" th:href="@{/remote_api/{id}(id=${api.key.id})}"></a></h3>
+                    
                     <div class="pull-right">
                         <span id="api-status-x" th:id="'api-status-'+${api.key.id}" class="api-status" th:attr="data-api-id=${api.key.id}">
                             <i class="fa fa-spinner fa-spin"></i>
@@ -64,26 +65,32 @@
                         
                         <button class="oauth-connect-link btn btn-default btn-xs hidden" id="connect-button-x" th:id="'connect-button-' + ${api.key.id}"
                             th:attr="data-api-id=${api.key.id}" th:text="#{remoteapi.status.connect.button}">_Connect_</button>
-                        <span class="badge" th:id="'remote-project-count-' + ${api.key.id}" th:text="${#lists.size(api.value)}"></span>
+                        
                     </div>
                 </div>
-                <div th:id="'remote-project-view-'+${api.key.id}" class="panel-body hidden">
-                    <table class="table table-striped table-hover">
+                <div  class="panel-body">
+                    <table th:id="'remote-project-view-'+${api.key.id}" class="table table-striped table-hover hidden">
                         <tr>
                             <th class="associated-project-title" th:text="#{project.associated.name}">_Project Name_</th>
                             <th th:text="#{project.associated.access}">_Access_</th>
                         </tr>
-                        <tr th:each="project : ${api.value}">
+                        <tr class="remote-project-row" th:each="project : ${api.value}">
                             <td>
-                                <span th:text="#{project.associated.remote.placeholder(${project.remoteProjectID})}"
+                                <span th:text="#{project.associated.remote.placeholder(${project.getId()})}"
                                     class="remote-project-name"
-                                    th:attr="'data-project-id'=${project.remoteProjectID}, 'data-api-id'=${api.key.id}"></span>
+                                    th:attr="'data-project-id'=${project.getId()}, data-api-id=${api.key.id}"></span>
                             </td>
                             <td>
-                                <span th:id="'remote-project-status-'+${api.key.id} + '-'+${project.remoteProjectID}"></span>
+                                <span th:id="'remote-project-status-'+${project.getId()}"></span>
                             </td>
                         </tr>
                     </table>
+                    
+                    <span class="hidden unauthorized-project-display" th:id="'unauthorized-project-display-' + ${api.key.id}">
+                        <span th:text="#{project.associated.remote.unavailable}">_Unavailable projects: _</span>
+                        <span class="unauthorized-count"></span>
+                        <i class="glyphicon glyphicon-question-sign"></i>
+                    </span>
                 </div>
             </div>
         </div>
@@ -93,6 +100,8 @@
 
 <th:block layout:fragment="pageScripts">
     <script th:inline="javascript">
+    var unauthCount = {}; 
+    
     $(document).ready(function () {
     	//get the API status
     	$(".api-status").each(function(){
@@ -105,22 +114,32 @@
     			//display the projects if the GET is successful
     			$("#remote-project-view-"+apiId).removeClass("hidden");
     		});
+    		
+    		$(".unauthorized-project-display").qtip({
+    	        content: {
+    	            text: /*[[#{project.associated.remote.unavailable.description}]]*/ 'Projects unavailable'
+    	        },
+    	        position: {
+    	            at: 'right center',
+    	            my: 'left, center',
+    	        }
+    	    });
     	});
     	
     	//get the remote project names
     	$(".remote-project-name").each(function(element){
 			var projectNameContainer = $(this);
 			var project = projectNameContainer.data("project-id");
-			var api = projectNameContainer.data("api-id");
+			var apiId = projectNameContainer.data("api-id");
 			
 			var authorizedText = /*#{project.associated.authorized}*/ "Authorized";
 			var unauthorizedText = /*#{project.associated.unauthorized}*/ "Unauthorized";
 			var errorText = /*#{project.associated.error}*/ "Error";
 			
-			var urlbase = /*[[@{/projects/remote/ajax/}]]*/ "/project/remote/ajax/";
-			var url = urlbase + "/api/" + api + "/project/"+project;
+			var urlbase = /*[[@{/projects/remote/ajax/read/}]]*/ "/project/remote/ajax/read/";
+			var url = urlbase + project;
 			
-			var statusContainer = $("#remote-project-status-" + api+"-"+project);
+			var statusContainer = $("#remote-project-status-"+project);
 			
 			$.ajax({
 				url: url,
@@ -133,19 +152,36 @@
 					else if(data == "forbidden"){
 						statusContainer.text(unauthorizedText);
 						statusContainer.addClass("label label-warning");
+						projectNameContainer.closest(".remote-project-row").hide();
+						incrementUnauthCount(apiId);
 					}
 					else if(data == "invalid_token"){
 						statusContainer.text(unauthorizedText);
 						statusContainer.addClass("label label-warning");
+						incrementUnauthCount(apiId);
 					}
 				},
 				error: function(data, textStatus, jqXHR){
 					statusContainer.text(errorText);
 					statusContainer.addClass("label label-danger");
+					incrementUnauthCount(apiId);
 				}
 			});
 		});
+    	
     });
+    
+    function incrementUnauthCount(apiId){
+    	if(!(apiId in unauthCount)){
+    		unauthCount[apiId] = 0;
+    	}
+    	unauthCount[apiId]++;
+    	
+		var unauthorizedContainer = $("#unauthorized-project-display-" + apiId);
+    	
+		unauthorizedContainer.removeClass("hidden");
+		unauthorizedContainer.find(".unauthorized-count").text(unauthCount[apiId]);
+    }
     
     </script>
 </th:block>

@@ -290,7 +290,7 @@ public class RemoteAPIController extends BaseController {
 		RemoteAPI api = remoteAPIService.read(apiId);
 
 		try {
-			projectRemoteService.list(api);
+			projectRemoteService.getServiceStatus(api);
 			return VALID_OAUTH_CONNECTION;
 		} catch (IridaOAuthException ex) {
 			logger.debug("Can't connect to API: " + ex.getMessage());
@@ -311,9 +311,9 @@ public class RemoteAPIController extends BaseController {
 	@RequestMapping("/connect/{apiId}")
 	public String connectToAPI(@PathVariable Long apiId, Model model) {
 		RemoteAPI api = remoteAPIService.read(apiId);
-		projectRemoteService.list(api);
-		model.addAttribute("remoteApi",api);
-		
+		projectRemoteService.getServiceStatus(api);
+		model.addAttribute("remoteApi", api);
+
 		return PARENT_FRAME_RELOAD_PAGE;
 	}
 

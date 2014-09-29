@@ -13,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -28,12 +29,15 @@ public class ProjectControllerUtils {
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final UserService userService;
+	private final RemoteRelatedProjectService remoteRelatedProjectService;
 
 	@Autowired
-	public ProjectControllerUtils(ProjectService projectService, SampleService sampleService, UserService userService) {
+	public ProjectControllerUtils(ProjectService projectService, SampleService sampleService, UserService userService,
+			RemoteRelatedProjectService remoteRelatedProjectService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
+		this.remoteRelatedProjectService = remoteRelatedProjectService;
 	}
 
 	/**
@@ -74,10 +78,10 @@ public class ProjectControllerUtils {
 
 		int userSize = userService.getUsersForProject(project).size();
 		model.addAttribute("users", userSize);
-		
+
 		int relatedCount = projectService.getRelatedProjects(project).size();
-		int remoteRelatedCount = projectService.getRemoteProjectsForProject(project).size();
-		model.addAttribute("related_project_count",relatedCount + remoteRelatedCount);
+		int remoteRelatedCount = remoteRelatedProjectService.getRemoteProjectsForProject(project).size();
+		model.addAttribute("related_project_count", relatedCount + remoteRelatedCount);
 
 		// TODO: (Josh - 14-06-23) Get list of recent activities on project.
 	}

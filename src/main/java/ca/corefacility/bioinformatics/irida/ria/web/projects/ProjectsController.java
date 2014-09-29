@@ -56,6 +56,7 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDat
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
+import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -98,6 +99,7 @@ public class ProjectsController {
 	private final ProjectControllerUtils projectControllerUtils;
 	private final ReferenceFileService referenceFileService;
 	private final TaxonomyService taxonomyService;
+	private final RemoteRelatedProjectService remoteRelatedProjectService;
 
 	/*
 	 * Converters
@@ -108,13 +110,14 @@ public class ProjectsController {
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
 			ProjectControllerUtils projectControllerUtils, ReferenceFileService referenceFileService,
-			TaxonomyService taxonomyService) {
+			TaxonomyService taxonomyService, RemoteRelatedProjectService remoteRelatedProjectService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.referenceFileService = referenceFileService;
 		this.taxonomyService = taxonomyService;
+		this.remoteRelatedProjectService = remoteRelatedProjectService;
 		this.dateFormatter = new DateFormatter();
 		this.fileSizeConverter = new FileSizeConverter();
 	}
@@ -278,7 +281,7 @@ public class ProjectsController {
 	 * @return A Map<RemoteAPI,List<RemoteRelatedProject>> of the relationships
 	 */
 	private Map<RemoteAPI, List<RemoteRelatedProject>> getRemoteRelatedProjectsByApi(Project currentProject) {
-		List<RemoteRelatedProject> remoteProjectsForProject = projectService
+		List<RemoteRelatedProject> remoteProjectsForProject = remoteRelatedProjectService
 				.getRemoteProjectsForProject(currentProject);
 		Map<RemoteAPI, List<RemoteRelatedProject>> projectsByApi = new HashMap<>();
 		for (RemoteRelatedProject p : remoteProjectsForProject) {

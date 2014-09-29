@@ -47,6 +47,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUt
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
+import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -86,6 +87,7 @@ public class ProjectsControllerTest {
 	private ReferenceFileService referenceFileService;
 	private ProjectControllerUtils projectUtils;
 	private TaxonomyService taxonomyService;
+	private RemoteRelatedProjectService remoteRelatedProjectService;
 
 	@Before
 	public void setUp() {
@@ -95,8 +97,9 @@ public class ProjectsControllerTest {
 		taxonomyService = mock(TaxonomyService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
 		referenceFileService = mock(ReferenceFileService.class);
+		remoteRelatedProjectService = mock(RemoteRelatedProjectService.class);
 		controller = new ProjectsController(projectService, sampleService, userService, projectUtils,
-				referenceFileService, taxonomyService);
+				referenceFileService, taxonomyService, remoteRelatedProjectService);
 		user.setId(1L);
 
 		mockSidebarInfo();
@@ -286,14 +289,14 @@ public class ProjectsControllerTest {
 		List<RelatedProjectJoin> relatedProjects = Lists.newArrayList(new RelatedProjectJoin(p, o));
 
 		RemoteAPI remoteAPI = new RemoteAPI();
-		List<RemoteRelatedProject> remoteRelatedProjects = Lists
-				.newArrayList(new RemoteRelatedProject(p, remoteAPI, 5l));
+		List<RemoteRelatedProject> remoteRelatedProjects = Lists.newArrayList(new RemoteRelatedProject(p, remoteAPI,
+				"http://somewhere"));
 
 		when(projectService.read(projectId)).thenReturn(p);
 
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(u);
 		when(projectService.getRelatedProjects(p)).thenReturn(relatedProjects);
-		when(projectService.getRemoteProjectsForProject(p)).thenReturn(remoteRelatedProjects);
+		when(remoteRelatedProjectService.getRemoteProjectsForProject(p)).thenReturn(remoteRelatedProjects);
 
 		controller.getAssociatedProjectsPage(projectId, model, principal);
 
@@ -304,7 +307,7 @@ public class ProjectsControllerTest {
 		verify(projectService).read(projectId);
 		verify(userService, times(2)).getUserByUsername(USER_NAME);
 		verify(projectService).getRelatedProjects(p);
-		verify(projectService).getRemoteProjectsForProject(p);
+		verify(remoteRelatedProjectService).getRemoteProjectsForProject(p);
 	}
 
 	/**
