@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -13,10 +10,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.google.common.base.Strings;
 
 /**
- * <p>
- * Page Object to represent the projects-new page used to create a new project.
- * </p>
- * 
+ * <p> Page Object to represent the projects-new page used to create a new project. </p>
+ *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectsNewPage {
@@ -44,7 +39,10 @@ public class ProjectsNewPage {
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.name("remoteURL")));
 		driver.findElement(By.name("remoteURL")).sendKeys(wiki);
 		driver.findElement(By.name("projectDescription")).sendKeys(description);
-		driver.findElement(By.className("btn-primary")).click();
+	}
+
+	public void clickSubmit() {
+		driver.findElement(By.id("submitBtn")).click();
 	}
 
 	public void setName(String name) {
@@ -53,9 +51,16 @@ public class ProjectsNewPage {
 		nameField.sendKeys(Keys.TAB);
 	}
 
-	public List<String> getErrors() {
-		List<WebElement> elements = driver.findElements(By.cssSelector("section#errors-default a"));
-		return elements.stream().map(WebElement::getText).collect(Collectors.toList());
+	public boolean isErrorNameRequiredDisplayed() {
+		return driver.findElements(By.id("error-name-required")).size() == 1;
+	}
+
+	public boolean isErrorNameServerDisplayed() {
+		return driver.findElements(By.id("error-name-server")).size() == 1;
+	}
+
+	public boolean isErrorUrlDisplayed() {
+		return driver.findElements(By.id("error-url")).size() == 1;
 	}
 
 	public boolean formHasErrors() {

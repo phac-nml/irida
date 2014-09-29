@@ -6,11 +6,14 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by josh on 14-08-06.
  */
 public class BasePage {
+	private static final Logger logger = LoggerFactory.getLogger(BasePage.class);
 	public static final String URL = "http://localhost:8080/";
 
 	public static WebDriver initializeDriver() {
@@ -35,6 +38,15 @@ public class BasePage {
 		if (driver != null) {
 			driver.close();
 			driver.quit();
+		}
+	}
+
+	public static void waitForTime() {
+		try {
+			// There is a 500 ms pause on filtering names.
+			Thread.sleep(700);
+		} catch (InterruptedException e) {
+			logger.error("Cannot sleep the thread.");
 		}
 	}
 }

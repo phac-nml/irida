@@ -4,6 +4,7 @@
       layout:decorator="remote_apis/_base">
 <head>
     <title th:text="#{clients.title}">_Clients_</title>
+    <link rel="stylesheet" href="/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css"/>
 </head>
 <body>
 <main layout:fragment="main">
@@ -12,7 +13,7 @@
     <p th:text="#{remoteapi.status.description}">_Connect links on this page will redirect you to a remote IRIDA
         site._</p>
     <a href="/clients/create" sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/remote_api/create}"
-       th:text="#{remoteapi.add}" class="btn btn-default">_Add Client_</a>
+       th:text="#{remoteapi.add}" class="btn btn-default mrgn-bttm-md">_Add Client_</a>
     <table id="remoteapiTable" class="table table-striped table-hover">
         <thead>
         <tr th:inline="text">
@@ -26,15 +27,17 @@
     </table>
 </main>
 
-<th:block layout:fragment="pageScripts">
+<th:block layout:fragment="scripts">
 
-    <script th:src="@{/resources/wet-theme/js/deps/jquery.dataTables.min.js}"
-            src="/resources/wet-theme/js/deps/jquery.dataTables.min.js"></script>
+    <script th:src="@{/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js}"
+            src="/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js"></script>
+    <script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
+            src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
     <script th:inline="javascript">
         /*<![CDATA[*/
         $(document).ready(function () {
             $('#remoteapiTable').DataTable({
-                dom: "<'top'ilf>rt<'bottom'p><'clear'>",
+                dom: "<'top'lf>rt<'bottom'ip><'clear'>",
                 processing: true,
                 serverSide: true,
                 deferRender: true,
@@ -44,55 +47,55 @@
                 order: [[0, "desc"]],
                 columns: [
                     {
-                    	"data": "name",
-                    	"render": function (data, type, row) {
-                    		var urlbase = /*[[@{/remote_api/}]]*/ '/remote_api/';
-                    		return '<a class="api-name" href="' + urlbase + row.id + '">' + data + '</a>';
-                         }
+                        "data": "name",
+                        "render": function (data, type, row) {
+                            var urlbase = /*[[@{/remote_api/}]]*/ '/remote_api/';
+                            return '<a class="api-name" href="' + urlbase + row.id + '">' + data + '</a>';
+                        }
                     },
                     {
-                    	"data": "createdDate"
+                        "data": "createdDate"
                     },
                     {
-                    	"sortable": false,
-                    	"render": function (data, type, row) {
-                    		var id = "status-" + row.id;
-                    		var statusText = /*[[#{remoteapi.status.waiting}]]*/ "Waiting for response...";
-                    		var span = "<div data-api-id='"+row.id+"' class='connection-status' id="+ id + ">"+statusText+"</div>";
-                    		return span;
-                    	}
+                        "sortable": false,
+                        "render": function (data, type, row) {
+                            var id = "status-" + row.id;
+                            var statusText = /*[[#{remoteapi.status.waiting}]]*/ "Waiting for response...";
+                            var span = "<div data-api-id='" + row.id + "' class='connection-status' id=" + id + ">" + statusText + "</div>";
+                            return span;
+                        }
                     },
                     {
-                    	"sortable": false,
-                    	render: function(data, type, row){
-                    		var connectUrlBase = /*[[@{/remote_api/connect/}]]*/ "/remote_api/connect";
-                    		var id="connect-button-"+row.id;
-                    		
-                    		var connectText = /*[[#{remoteapi.status.connect.button}]]*/ 'Connect';
+                        "sortable": false,
+                        render: function (data, type, row) {
+                            var connectUrlBase = /*[[@{/remote_api/connect/}]]*/ "/remote_api/connect";
+                            var id = "connect-button-" + row.id;
 
-                    		var button = "<button id='"+ id +"' class='oauth-connect-link btn btn-default btn-xs hidden' data-api-id='"+row.id+"'>"+connectText+"</a>";
-							return button;
-                    	}
+                            var connectText = /*[[#{remoteapi.status.connect.button}]]*/ 'Connect';
+
+                            var button = "<button id='" + id + "' class='oauth-connect-link btn btn-default btn-xs hidden' data-api-id='" + row.id + "'>" + connectText + "</a>";
+                            return button;
+                        }
                     }
-                    
+
                 ],
-                drawCallback: function( row, data, dataIndex ) {
-                	$(".connection-status").each(function(){
-                		var resultDiv = "#"+$(this).attr("id");
-                		var apiId = $(this).data("api-id");
-                		var buttonId = "#connect-button-" + apiId;
-                		
-                		getApiStatus(apiId,resultDiv,buttonId);
-                	});
-                    
+                drawCallback: function (row, data, dataIndex) {
+                    $(".connection-status").each(function () {
+                        var resultDiv = "#" + $(this).attr("id");
+                        var apiId = $(this).data("api-id");
+                        var buttonId = "#connect-button-" + apiId;
+
+                        getApiStatus(apiId, resultDiv, buttonId);
+                    });
+
                 }
-                
+
             });
         });
-        
+
         /*]]>*/
     </script>
-	<script th:replace="remote_apis/remote_api_connect"></script>
+    <script th:replace="remote_apis/remote_api_connect"></script>
 </th:block>
 </body>
 </html>

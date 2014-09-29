@@ -56,8 +56,9 @@ public class ProjectMetadataEditPage {
 	}
 
 	public boolean isDeleteReferenceFileWarningMessageDisplayed() {
+		BasePage.waitForTime();
 		pageUtilities.waitForElementVisible(By.className("noty_message"));
-		return driver.findElement(By.cssSelector(".noty_message h2")).getText().contains("Removing Reference");
+		return driver.findElement(By.cssSelector(".noty_text h2")).getText().contains("Removing Reference");
 	}
 
 	// ************************************************************************************************
@@ -65,7 +66,8 @@ public class ProjectMetadataEditPage {
 	// ************************************************************************************************
 
 	public void clickDeleteReferenceFileButton() {
-		driver.findElement(By.className("btn-danger")).click();
+		pageUtilities.waitForElementVisible(By.className("file-delete-btn"));
+		driver.findElement(By.className("file-delete-btn")).click();
 		pageUtilities.waitForElementVisible(By.className("noty_message"));
 	}
 
@@ -76,6 +78,7 @@ public class ProjectMetadataEditPage {
 	}
 
 	public void clickReferenceFilesTab() {
-		driver.findElement(By.id("refTab")).click();
+		driver.findElement(By.cssSelector("ul.nav-tabs li:nth-child(2) a")).click();
+		pageUtilities.waitForElementVisible(By.className("file-delete-btn"));
 	}
 }

@@ -4,100 +4,117 @@
       layout:decorator="${themePath + '_page'}">
 <head>
     <title th:text="#{projects.create.heading}">THIS IS SOMETHING WRONG</title>
+
+    <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2.css}"
+          href="/resources/bower_components/select2/select2.css"/>
+    <link rel="stylesheet" th:src="@{/resources/bower_components/select2/select2-bootstrap.css}"
+          href="/resources/bower_components/select2/select2-bootstrap.css"/>
 </head>
 <body>
-<div class="container" layout:fragment="page">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
-            <form th:action="@{/projects/new}" method="post" role="form" novalidate="novalidate">
-                <section class="panel panel-default">
-                    <div class="panel-heading">
-                        <h2 class="panel-title" th:text="#{projects.create.heading}">Create a New Project</h2>
+<div layout:fragment="page">
+    <div class="col-md-8 col-md-offset-2 mrgn-tp-lg">
+        <form name="new_project" class="ng-cloak" th:action="@{/projects/new}" method="post" role="form"
+              novalidate="novalidate"
+              ng-controller="TestController">
+            <section class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title" th:text="#{projects.create.heading}">Create a New Project</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group" th:classappend="${#maps.containsKey(errors, 'name')} ? 'has-error'"
+                         ng-class="{'has-error' : !new_project.name.$focused &amp;&amp; new_project.name.$invalid &amp;&amp; !new_project.name.$pristine}">
+                        <label class="control-label" for="name"> <span th:text="#{projects.create.form.name}">__Project_Name__</span>&nbsp;
+                            <small tooltip-placement="right" data:tooltip="#{projects.create.form.required}"
+                                   class="fa fa-fw fa-asterisk"></small>
+                        </label>
+                        <input class="form-control input-full" type="text" id="name" name="name"
+                               required="required"
+                               placeholder="Required" th:placeholder="#{form.required}" ng-minlength='5' ng-model="project.name" ng-focus=""/>
+
+                        <div ng-show="new_project.name.$dirty &amp;&amp; !new_project.name.$focused">
+                            <small id="error-name-length" ng-show="new_project.name.$error.minlength"
+                                   th:text="#{form.valid.length(5)}">
+                                _MUST BE 5 CHARACTERS LONG__
+                            </small>
+                            <small id="error-name-required" ng-show="new_project.name.$error.required"
+                                   th:text="#{form.valid.required}">
+                                __THIS IS A REQUIRED FIELD__
+                            </small>
+                        </div>
+                        <small id="error-name-server" th:if="${#maps.containsKey(errors, 'name')}"
+                               th:text="${errors.name}">__SERVER_ERROR__
+                        </small>
                     </div>
-                    <div class="panel-body">
-                        <div class="form-group has-feedback">
-                            <label class="control-label" for="name" th:text="#{projects.create.form.name}">Project Name</label>
-
-                            <div th:if="${#maps.containsKey(errors, 'name')}" class="alert alert-warning"
-                                 th:text="${errors.name}"></div>
-                            <input class="form-control input-full" type="text" id="name" name="name"
-                                   required="required" th:placeholder="#{projects.create.form.required}" placeholder="Required"/>
-                            <span data-tooltip="Required" data:tooltip="#{projects.create.form.required}"
-                                  class="glyphicon glyphicon-asterisk form-control-feedback"></span>
-                        </div>
-                        <div class="form-group">
-                            <label for="projectOrganism" th:text="#{projects.create.form.organism}">Project Organism</label>
-
-                            <div th:if="${#maps.containsKey(errors, 'organism')}" class="alert alert-warning"
-                                 th:text="${errors.organism}"></div>
-                            <input type="text" id="projectOrganism" class="organism-select form-control input-full"  name="organism"/> 
-                        </div>
-                        <div class="form-group">
-                            <label for="projectDescription" th:text="#{projects.create.form.description}">Project Description</label>
-
-                            <div th:if="${#maps.containsKey(errors, 'description')}" class="alert alert-warning"
-                                 th:text="${errors.description}"></div>
-                            <textarea class="form-control input-full" name="projectDescription" id="projectDescription"
-                                      rows="3"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="projectWiki" th:text="#{projects.create.form.wiki}">Project Wiki URL</label>
-
-                            <div th:if="${#maps.containsKey(errors, 'remoteURL')}" class="alert alert-warning"
-                                 th:text="${errors.remoteURL}"></div>
-                            <input class="form-control input-full" name="remoteURL" type="url" id="projectWiki"
-                                   placeholder="http://google.com"/>
-                        </div>
+                    <div class="form-group" th:classappend="${#maps.containsKey(errors, 'organism')} ? 'has-error'">
+                        <label class="control-label" for="projectOrganism" th:text="#{projects.create.form.organism}">Project
+                            Organism</label>
+                        <input type="text" id="projectOrganism" class="organism-select form-control input-full"
+                               name="organism"/>
+                        <small id="error-organism-server" th:if="${#maps.containsKey(errors, 'organism')}"
+                               th:text="${errors.organism}"></small>
                     </div>
-                    <div class="panel-footer text-right">
-                        <a class="btn btn-default" th:href="${#httpServletRequest.getHeader('referer')}" th:text="#{projects.create.form.cancel}">Cancel</a>
-                        <button type="submit" class="btn btn-primary" >
-                            <span th:text="#{projects.create.form.create}">Create Project</span>&nbsp;
-                            <span class="glyphicon glyphicon-chevron-right"></span></button>
+                    <div class="form-group" th:classappend="${#maps.containsKey(errors, 'description')} ? 'has-error'">
+                        <label class="control-label" for="projectDescription"
+                               th:text="#{projects.create.form.description}">Project
+                            Description</label>
+                        <textarea class="form-control input-full" name="projectDescription" id="projectDescription"
+                                  rows="3"></textarea>
+                        <small id="error-desc-server" th:if="${#maps.containsKey(errors, 'description')}"
+                               th:text="${errors.description}"></small>
                     </div>
-                </section>
-            </form>
-        </div>
+                    <div class="form-group" th:classappend="${#maps.containsKey(errors, 'remoteURL')} ? 'has-error'"
+                         ng-class="{'has-error' : !new_project.remoteURL.$focused &amp;&amp; new_project.remoteURL.$invalid &amp;&amp; !new_project.remoteURL.$pristine}">
+                        <label class="control-label" for="remoteURL" th:text="#{projects.create.form.wiki}">Project Wiki
+                            URL</label>
+                        <input class="form-control input-full" name="remoteURL" type="url" id="remoteURL"
+                               placeholder="http://www.google.com" th:placeholder="#{form.placeholder.url}" ng-focus="" ng-model="project.remoteURL"/>
+                        <small id="error-url" th:text="#{form.valid.url}"
+                               ng-show="new_project.remoteURL.$invalid &amp;&amp; !new_project.remoteURL.$focused">
+                            __THIS IS A REQUIRED FIELD__
+                        </small>
+                        <small id="error-url-server" th:if="${#maps.containsKey(errors, 'remoteURL')}"
+                               th:text="${errors.remoteURL}"></small>
+                    </div>
+                </div>
+                <div class="panel-footer text-right">
+                    <a class="btn btn-default" th:href="${#httpServletRequest.getHeader('referer')}"
+                       th:text="#{projects.create.form.cancel}">Cancel</a>
+                    <button id="submitBtn" type="submit" class="btn btn-primary" ng-disabled="new_project.$invalid">
+                        <span th:text="#{projects.create.form.create}">Create Project</span>&nbsp;
+                        <span class="glyphicon glyphicon-chevron-right"></span></button>
+                </div>
+            </section>
+        </form>
     </div>
 </div>
-<th:block layout:fragment="baseScripts" th:inline="javascript">
+<th:block layout:fragment="page-scripts" th:inline="javascript">
+    <script th:src="@{/resources/bower_components/select2/select2.min.js}"
+            src="/resources/bower_components/select2/select2.min.js"></script>
+    <script th:src="@{/resources/bower_components/qtip2/jquery.qtip.min.js}"
+            src="/resources/bower_components/qtip2/jquery.qtip.min.js"></script>
     <script>
-        $('span.glyphicon-asterisk').qtip({
-            content: {
-                text: function () {
-                    return $(this).attr('data-tooltip');
+        $(".organism-select").select2({
+            placeholder: /*[[#{projects.create.form.select-organism}]]*/ "Enter Organism",
+            minimumInputLength: 2,
+            ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
+                url: /*[[@{/projects/ajax/taxonomy/search}]]*/ '/projects/ajax/taxonomy/search',
+                dataType: 'json',
+                data: function (term, page) {
+                    return {
+                        searchTerm: term // search term
+                    };
+                },
+                results: function (data, page) { // parse the results into the format expected by Select2.
+                    // since we are using custom formatting functions we do not need to alter remote JSON data
+                    return {results: data};
                 }
-            },
-            position: {
-                my: 'left center',
-                at: 'right center',
-                adjust: {
-                    x: -8
-                }
-            },
-            style: {
-                classes: 'qtip-dark qtip-shadow'
             }
+
         });
 
-        $(".organism-select").select2({
-        	placeholder: /*[[#{projects.create.form.select-organism}]]*/ "Enter Organism",
-    		minimumInputLength: 2,
-    		ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
-    	        url: /*[[@{/projects/ajax/taxonomy/search}]]*/ '/projects/ajax/taxonomy/search',
-    	        dataType: 'json',
-    	        data: function (term, page) {
-    	            return {
-    	            	searchTerm: term // search term
-    	            };
-    	        },
-    	        results: function (data, page) { // parse the results into the format expected by Select2.
-    	            // since we are using custom formatting functions we do not need to alter remote JSON data
-    	            return {results: data};
-    	        }
-    	    }
-			
-		});
+        app.controller('TestController', function ($scope) {
+            $scope.project = {};
+        });
     </script>
 </th:block>
 </body>

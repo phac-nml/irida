@@ -98,7 +98,12 @@
     </div>
 </main>
 
-<th:block layout:fragment="pageScripts">
+<th:block layout:fragment="page-scripts">
+    <script th:src="@{/resources/bower_components/bootstrap/js/tab.js}"
+            src="/resources/bower_components/bootstrap/js/tab.js"></script>
+    <script th:src="@{/resources/bower_components/qtip2/jquery.qtip.min.js}"
+            src="/resources/bower_components/qtip2/jquery.qtip.min.js"></script>            
+    <script th:replace="remote_apis/remote_api_connect"></script>
     <script th:inline="javascript">
     var unauthCount = {}; 
     

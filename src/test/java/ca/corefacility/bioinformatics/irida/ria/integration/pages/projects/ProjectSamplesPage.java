@@ -113,7 +113,7 @@ public class ProjectSamplesPage {
 	 * @return True if entire column is sorted ascending
 	 */
 	public boolean isSampleNameColumnSortedAsc() {
-		pageUtilities.waitForElementVisible(By.cssSelector("tbody td:nth-child(2)"));
+		BasePage.waitForTime();
 		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(2)")).stream()
 				.map(WebElement::getText).collect(Collectors.toList());
 		return SortUtilities.isStringListSortedAsc(list);
@@ -125,7 +125,7 @@ public class ProjectSamplesPage {
 	 * @return True if entire column is sorted ascending
 	 */
 	public boolean isAddedOnDateColumnSortedAsc() {
-		pageUtilities.waitForElementVisible(By.cssSelector("tbody td:nth-child(4)"));
+		BasePage.waitForTime();
 		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(4)")).stream()
 				.map(WebElement::getText).collect(Collectors.toList());
 		return SortUtilities.isDateSortedAsc(list, DATE_FORMAT);
@@ -312,7 +312,7 @@ public class ProjectSamplesPage {
 	 * that column.
 	 */
 	public void clickSampleNameHeader() {
-		driver.findElement(By.cssSelector("thead th:nth-child(2)")).click();
+		driver.findElement(By.id("sampleNameHeader")).click();
 		waitForAjax();
 	}
 
@@ -321,7 +321,7 @@ public class ProjectSamplesPage {
 	 * sorting by that column.
 	 */
 	public void clickCreatedDateHeader() {
-		driver.findElement(By.cssSelector("thead th:nth-child(4)")).click();
+		driver.findElement(By.id("sampleDateCreatedHeader")).click();
 		waitForAjax();
 	}
 

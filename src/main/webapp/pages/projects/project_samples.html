@@ -4,6 +4,14 @@
       layout:decorator="projects/_base">
 <head>
     <title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
+    <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2.css}"
+          href="/resources/bower_components/select2/select2.css"/>
+    <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}"
+          href="/resources/bower_components/select2/select2-bootstrap.css"/>
+    <link rel="stylesheet" th:src="@{/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css}"
+          href="/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" th:src="@{/resources/bower_components/magnific-popup/dist/magnific-popup.css}"
+          href="/resources/bower_components/magnific-popup/dist/magnific-popup.css"/>
 </head>
 <body>
 <main layout:fragment="main">
@@ -51,11 +59,9 @@
                 <thead>
                 <tr role="row" th:inline="text">
                     <th data:tooltip="#{tooltip.selectall-none}"><input type="checkbox" id="selectAll"/></th>
-                    <th class="sortable">[[#{project.samples.table.name}]]<i
-                            class="glyphicon"></i></th>
-                    <th>[[#{project.samples.table.numFiles}]]</th>
-                    <th class="sortable">[[#{project.samples.table.dateCreated}]]<i
-                            class="glyphicon"></i></th>
+                    <th id="sampleNameHeader" class="sortable">[[#{project.samples.table.name}]]</th>
+                    <th id="sampleNumFilesHeader">[[#{project.samples.table.numFiles}]]</th>
+                    <th id="sampleDateCreatedHeader" class="sortable">[[#{project.samples.table.dateCreated}]]</th>
                 </tr>
                 </thead>
                 <tbody></tbody>
@@ -64,7 +70,18 @@
     </div>
 </main>
 
-<th:block layout:fragment="pageScripts" th:inline="javascript">
+<th:block layout:fragment="scripts" th:inline="javascript">
+<script th:src="@{/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js}"
+        src="/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js"></script>
+<script th:src="@{/resources/bower_components/select2/select2.min.js}"
+        src="/resources/bower_components/select2/select2.min.js"></script>
+<script th:src="@{/resources/bower_components/magnific-popup/dist/jquery.magnific-popup.min.js}"
+        src="/resources/bower_components/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
+<script th:src="@{/resources/bower_components/mustache/mustache.js}"
+        src="/resources/bower_components/mustache/mustache.js"></script>
+<script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
+        src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
+
 <section id="runPipelineModal" class="white-popup form-popup mfp-hide" th:inline="text">
     <header class="modal-header">
         <h2 class="modal-title" th:text="#{project.samples.run-modal.title}">__Select_Pipeline__</h2>
@@ -123,6 +140,8 @@
             </table>
             </td>
 		</tr>
+
+
 
 </script>
 <script type="text/html" id="select2-merge">
@@ -623,7 +642,7 @@ $(document).ready(function () {
             DT = new EditableDataTable();
 
     DT.setDataTable($samplesTable.DataTable({
-        dom: "<'top'ilf>rt<'bottom'p><'clear'>",
+        dom: "<'top'lf>rt<'bottom'ip><'clear'>",
         processing: true,
         serverSide: true,
         deferRender: true,

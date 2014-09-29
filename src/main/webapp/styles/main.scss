@@ -1,12 +1,12 @@
 @import "compass";
 // Helpers
 @import "helpers/variables";
-@import "base/wet-overrides";
 // Components
 @import "components/buttons";
 @import "components/datatables";
 @import "components/forms";
 @import "components/magnific-popup";
+@import "components/modals";
 @import "components/noty";
 @import "components/panels";
 @import "components/subnav";
@@ -25,6 +25,10 @@
   }
 }
 
+.nav-tabs li {
+  cursor: pointer;
+}
+
 // Sortable Table
 #table-filter {
   padding: 0;
@@ -36,23 +40,4 @@
   }
 }
 
-// Modals
-.modal-content {
-  background-color: $color-grey-lighter;
-  border: 1px solid $color-grey;
-}
-
-.modal-header {
-  background-color: $color-primary;
-  h2 {
-    color: #ffffff;
-  }
-  small {
-    color: $color-grey-lighter;
-  }
-}
-
-.modal-footer {
-  margin-top: 0;
-  padding: 20px;
-}
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }

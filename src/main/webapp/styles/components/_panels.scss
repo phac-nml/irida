@@ -1,29 +1,25 @@
-// This mimics a panel by giving a list-group a heading.
-aside {
-  b.list-group-item {
-    background-color: rgba(217, 237, 247, 1.0);
-    color: rgb(49, 112, 143);
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 18px;
-    font-weight: bold;
+.project-details {
+  li {
+    border-bottom: 1px solid $color-grey-lighter;
+    line-height: 2em;
+  }
+  i.glyphicon {
+    color: $color-grey-light;
+    margin-right: .5em;
+  }
+  em {
+    font-style: normal;
+  }
+  span {
+    float: right;
   }
 }
 
-.panel {
-  .details {
-    li {
-      border-bottom: 1px solid $color-grey-lighter;
-      line-height: 2em;
-    }
-    i.glyphicon {
-      color: $color-grey-light;
-      margin-right: .5em;
-    }
-    em {
-      font-style: normal;
-    }
-    span {
-      float: right;
-    }
+.panel.associated-projects {
+  div.panel-body {
+    padding: 0 !important;
+  }
+  .list-group-item {
+    border-radius: 0 !important;
   }
 }

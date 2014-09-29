@@ -1,25 +1,3 @@
-/* line 4, ../../styles/base/_wet-overrides.scss */
-.menu > .pull-right ul {
-  position: absolute;
-  right: 0; }
-
-/* line 10, ../../styles/base/_wet-overrides.scss */
-.has-error label {
-  color: #d9534f; }
-
-/* line 15, ../../styles/base/_wet-overrides.scss */
-label + span.wb-date-wrap {
-  display: block;
-  width: 100%; }
-/* line 19, ../../styles/base/_wet-overrides.scss */
-span.wb-date-wrap .input-full {
-  width: auto;
-  display: inline-block; }
-
-/* line 26, ../../styles/base/_wet-overrides.scss */
-label {
-  margin-top: 5px; }
-
 /* line 1, ../../styles/components/_buttons.scss */
 .btn-xs.glyphicon {
   font-size: 10px;
@@ -156,33 +134,52 @@ table.dataTable > tbody code {
   .form-popup .mfp-close {
     color: #ffffff; }
 
+/* line 1, ../../styles/components/_modals.scss */
+.modal-content {
+  background-color: #eeeeee;
+  border: 1px solid #555555; }
+
+/* line 6, ../../styles/components/_modals.scss */
+.modal-header {
+  background-color: #2572b4; }
+  /* line 8, ../../styles/components/_modals.scss */
+  .modal-header h2 {
+    color: #ffffff; }
+  /* line 11, ../../styles/components/_modals.scss */
+  .modal-header small {
+    color: #eeeeee; }
+
+/* line 16, ../../styles/components/_modals.scss */
+.modal-footer {
+  margin-top: 0;
+  padding: 20px; }
+
 /* line 1, ../../styles/components/_noty.scss */
 .noty_message h2 {
   margin-top: 5px;
   font-size: 1.4em; }
 
-/* line 3, ../../styles/components/_panels.scss */
-aside b.list-group-item {
-  background-color: #d9edf7;
-  color: #31708f;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 18px;
-  font-weight: bold; }
-
-/* line 14, ../../styles/components/_panels.scss */
-.panel .details li {
+/* line 2, ../../styles/components/_panels.scss */
+.project-details li {
   border-bottom: 1px solid #eeeeee;
   line-height: 2em; }
-/* line 18, ../../styles/components/_panels.scss */
-.panel .details i.glyphicon {
+/* line 6, ../../styles/components/_panels.scss */
+.project-details i.glyphicon {
   color: #797979;
   margin-right: .5em; }
-/* line 22, ../../styles/components/_panels.scss */
-.panel .details em {
+/* line 10, ../../styles/components/_panels.scss */
+.project-details em {
   font-style: normal; }
-/* line 25, ../../styles/components/_panels.scss */
-.panel .details span {
+/* line 13, ../../styles/components/_panels.scss */
+.project-details span {
   float: right; }
+
+/* line 19, ../../styles/components/_panels.scss */
+.panel.associated-projects div.panel-body {
+  padding: 0 !important; }
+/* line 22, ../../styles/components/_panels.scss */
+.panel.associated-projects .list-group-item {
+  border-radius: 0 !important; }
 
 /* line 1, ../../styles/components/_subnav.scss */
 .navbar-sm {
@@ -227,19 +224,6 @@ main h1 {
 main.col-md-9 h1 {
   margin-top: 0; }
 
-/* line 3, ../../styles/pages/_project.scss */
-#associated-projects a.disabled {
-  color: #333333;
-  border-top: lightgray 1px solid;
-  text-decoration: none;
-  cursor: not-allowed; }
-/* line 9, ../../styles/pages/_project.scss */
-#associated-projects .glyphicon-lock {
-  color: #d9534f; }
-/* line 12, ../../styles/pages/_project.scss */
-#associated-projects .glyphicon-eye-open {
-  color: #5cb85c; }
-
 /* line 2, ../../styles/pages/_sequenceFile.scss */
 .sequenceFile main > div {
   margin-top: 10px; }
@@ -269,32 +253,20 @@ iframe.remote-api-frame {
   .clickable span {
     display: inline-block; }
 
-/* line 29, ../../styles/main.scss */
+/* line 28, ../../styles/main.scss */
+.nav-tabs li {
+  cursor: pointer; }
+
+/* line 33, ../../styles/main.scss */
 #table-filter {
   padding: 0; }
-  /* line 31, ../../styles/main.scss */
+  /* line 35, ../../styles/main.scss */
   #table-filter > div {
     padding: 20px; }
-  /* line 34, ../../styles/main.scss */
+  /* line 38, ../../styles/main.scss */
   #table-filter .filter-btns > button {
     margin-top: 33px; }
 
-/* line 40, ../../styles/main.scss */
-.modal-content {
-  background-color: #eeeeee;
-  border: 1px solid #555555; }
-
-/* line 45, ../../styles/main.scss */
-.modal-header {
-  background-color: #2572b4; }
-  /* line 47, ../../styles/main.scss */
-  .modal-header h2 {
-    color: #ffffff; }
-  /* line 50, ../../styles/main.scss */
-  .modal-header small {
-    color: #eeeeee; }
-
-/* line 55, ../../styles/main.scss */
-.modal-footer {
-  margin-top: 0;
-  padding: 20px; }
+/* line 43, ../../styles/main.scss */
+.nav, .pagination, .carousel, .panel-title a {
+  cursor: pointer; }

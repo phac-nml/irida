@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-    <script th:src="@{/resources/bower_components/mustache/mustache.js}" src="/resources/bower_components/mustache/mustache.js"></script>
+    <script th:src="@{/resources/bower_components/mustache/mustache.js}" 
+        src="/resources/bower_components/mustache/mustache.js"></script>
+    <script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
+        src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
     <script type="x-tmpl-mustache" id="connection-template">
 		<section class="panel panel-default">
 		<div class="panel-heading">
@@ -31,6 +34,7 @@
 			connectNoty = noty({
 				modal: true,
 				layout: "top",
+                type: 'default',
 				template: content,
 				buttons:[
                     {

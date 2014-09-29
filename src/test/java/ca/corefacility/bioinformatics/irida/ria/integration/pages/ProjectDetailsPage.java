@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -20,7 +23,7 @@ public class ProjectDetailsPage {
 	}
 
 	public String getPageTitle() {
-		WebElement title = driver.findElement(By.id("wb-cont"));
+		WebElement title = driver.findElement(By.tagName("h1"));
 		return title.getText();
 	}
 
