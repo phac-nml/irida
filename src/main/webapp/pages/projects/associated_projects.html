@@ -133,7 +133,6 @@
 			var apiId = projectNameContainer.data("api-id");
 			
 			var authorizedText = /*#{project.associated.authorized}*/ "Authorized";
-			var unauthorizedText = /*#{project.associated.unauthorized}*/ "Unauthorized";
 			var errorText = /*#{project.associated.error}*/ "Error";
 			
 			var urlbase = /*[[@{/projects/remote/ajax/read/}]]*/ "/project/remote/ajax/read/";
@@ -150,14 +149,10 @@
 						statusContainer.addClass("label label-success");
 					}
 					else if(data == "forbidden"){
-						statusContainer.text(unauthorizedText);
-						statusContainer.addClass("label label-warning");
 						projectNameContainer.closest(".remote-project-row").hide();
 						incrementUnauthCount(apiId);
 					}
 					else if(data == "invalid_token"){
-						statusContainer.text(unauthorizedText);
-						statusContainer.addClass("label label-warning");
 						incrementUnauthCount(apiId);
 					}
 				},
@@ -175,6 +170,7 @@
     	if(!(apiId in unauthCount)){
     		unauthCount[apiId] = 0;
     	}
+    	
     	unauthCount[apiId]++;
     	
 		var unauthorizedContainer = $("#unauthorized-project-display-" + apiId);
