@@ -35,6 +35,14 @@ public class RemoteProjectsController {
 		this.remoteRelatedProjectService = remoteRelatedProjectService;
 	}
 
+	/**
+	 * Read a remote project by its internal {@link RemoteRelatedProject} ID
+	 * 
+	 * @param remoteProjectId
+	 *            the internal ID of the {@link RemoteRelatedProject}
+	 * @return A map containing info about the remote projcet read from the
+	 *         remote API
+	 */
 	@RequestMapping("/ajax/read/{remoteProjectId}")
 	@ResponseBody
 	public Map<String, Object> read(@PathVariable Long remoteProjectId) {
@@ -49,12 +57,27 @@ public class RemoteProjectsController {
 		return map;
 	}
 
+	/**
+	 * Handle an {@link IridaOAuthException} and return a status message
+	 * 
+	 * @param ex
+	 *            The {@link IridaOAuthException} thrown
+	 * @return an invalid_token string
+	 */
 	@ExceptionHandler(IridaOAuthException.class)
 	@ResponseBody
-	public String handleOAuthException() {
+	public String handleOAuthException(IridaOAuthException ex) {
 		return "invalid_token";
 	}
 
+	/**
+	 * Handle a {@link HttpClientErrorException} and if the response was HTTP403
+	 * respond with a message rather than throwing an errror
+	 * 
+	 * @param e
+	 *            the thrown HttpClientErrorException
+	 * @return "forbidden" for a 403 error, rethrow the exception otherwise
+	 */
 	@ExceptionHandler(HttpClientErrorException.class)
 	@ResponseBody
 	public String handleForbiddenResponse(HttpClientErrorException e) {
