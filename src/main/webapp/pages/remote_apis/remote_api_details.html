@@ -9,11 +9,11 @@
 
 <main layout:fragment="main">
     <div class="row mrgn-tp-lg">
-    	<!-- User details -->
+    	<h1 th:text="${remoteApi.name}">_Api Name_</h1>
     	<div class="col-md-6">
             <div class="panel panel-primary">
                 <div class="panel-heading clearfix">
-                	<h3 class="panel-title pull-left" th:text="#{remoteapi.details.title(${remoteApi.name})}">_User Details_</h3>
+                	<h3 class="panel-title pull-left" th:text="#{remoteapi.details.title}">_User Details_</h3>
 					<div class="btn-group-xs pull-right">
 				        <div id="remove-btn" class="btn btn-danger" th:text="#{remoteapi.remove.button}">Remove</div>
                 	</div>
