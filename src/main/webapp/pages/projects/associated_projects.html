@@ -14,7 +14,7 @@
         </div>
     </div>
 
-    <div tabset="" class="tab-content mrgn-tp-md">
+    <div tabset="">
         <div tab="" th:attr="heading=#{project.associated.local.tab}">
             <span th:if="${#lists.isEmpty(associatedProjects)}" th:text="#{project.associated.empty}">_No associated projects_</span>
             <div class="panel-body" th:if="! ${#lists.isEmpty(associatedProjects)}" id="associated-projects">
