@@ -137,8 +137,8 @@
 			var project = projectNameContainer.data("project-id");
 			var apiId = projectNameContainer.data("api-id");
 			
-			var authorizedText = /*#{project.associated.authorized}*/ "Authorized";
-			var errorText = /*#{project.associated.error}*/ "Error";
+			var authorizedText = /*[[#{project.associated.authorized}]]*/ "Authorized";
+			var errorText = /*[[#{project.associated.error}]]*/ "Error";
 			
 			var urlbase = /*[[@{/projects/remote/ajax/read/}]]*/ "/project/remote/ajax/read/";
 			var url = urlbase + project;
