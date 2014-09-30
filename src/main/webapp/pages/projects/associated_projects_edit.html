@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="projects/_base">
+<head>
+    <title th:text="#{project.associated.heading(${project.label})}"></title>
+</head>
+<body>
+
+<main layout:fragment="main" th:object="${project}">
+    <div class="row">
+        <div class="col-md-10">
+            <h1 role="heading" th:text="#{project.associated.heading(${project.label})}"></h1>
+        </div>
+    </div>
+
+    <div tabset="">
+        <div tab="" th:attr="heading=#{project.associated.local.tab}">
+            
+        </div>
+        <div tab="" th:attr="heading=#{project.associated.remote.tab}">
+            
+        </div>
+        
+    </div>
+</main>
+
+<th:block layout:fragment="page-scripts">         
+    <script th:replace="remote_apis/remote_api_connect"></script>
+    <script th:inline="javascript">
+    
+    });
+    
+    
+    </script>
+</th:block>
+</body>
+</html>

@@ -81,6 +81,16 @@ public class AssociatedProjectsController {
 		return ASSOCIATED_PROJECTS_PAGE;
 	}
 
+	@RequestMapping("/{projectId}/associated/edit")
+	public String editAssociatedProjectsForProject(@PathVariable Long projectId, Model model, Principal principal) {
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+		
+
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		return EDIT_ASSOCIATED_PROJECTS_PAGE;
+	}
+
 	/**
 	 * Find all projects that have been associated with a project.
 	 *
