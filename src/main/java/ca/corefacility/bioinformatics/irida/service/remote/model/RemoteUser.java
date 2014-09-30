@@ -1,9 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service.remote.model;
 
 import java.util.List;
-import java.util.Map;
 
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.service.remote.model.resource.RESTLink;
 import ca.corefacility.bioinformatics.irida.service.remote.model.resource.RemoteResource;
 
 /**
@@ -12,8 +12,7 @@ import ca.corefacility.bioinformatics.irida.service.remote.model.resource.Remote
  */
 public class RemoteUser extends User implements RemoteResource{
 
-	private static final long serialVersionUID = 9194044903836613576L;
-	private List<Map<String,String>> links;
+	private List<RESTLink> links;
 	
 	@Override
 	public String getIdentifier() {
@@ -26,12 +25,12 @@ public class RemoteUser extends User implements RemoteResource{
 	}
 
 	@Override
-	public List<Map<String, String>> getLinks() {
+	public List<RESTLink> getLinks() {
 		return links;
 	}
 
 	@Override
-	public void setLinks(List<Map<String, String>> links) {
+	public void setLinks(List<RESTLink> links) {
 		this.links = links;
 	}
 	
