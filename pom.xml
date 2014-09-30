@@ -59,6 +59,7 @@
         <commons-fileupload.version>1.3.1</commons-fileupload.version>
         <oltu.version>1.0.0</oltu.version>
         <selenium-chrome-driver.version>2.42.2</selenium-chrome-driver.version>
+        <exec-maven-plugin.version>1.3.2</exec-maven-plugin.version>
     </properties>
 
     <inceptionYear>2014</inceptionYear>
@@ -571,7 +572,26 @@
                     </execution>
                 </executions>
             </plugin>
-
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>${exec-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>exec-bower-install</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<executable>bower</executable>
+							<arguments>
+								<argument>install</argument>
+							</arguments>
+						</configuration>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
         </plugins>
     </build>
 </project>
