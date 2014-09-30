@@ -79,7 +79,9 @@
     				span.className="label label-success";
     				span.innerHTML = validTokenText;
     				resultContainer.html(span);
-    				successCallback();
+    				if(typeof successCallback === 'function'){
+    					successCallback();
+    				}
     			}
     			else if(data == "invalid_token" || data == "inactive"){
     				span.className="label label-warning";
