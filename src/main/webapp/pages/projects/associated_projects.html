@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="projects/_base">
+<head>
+    <title th:text="#{project.associated.heading(${project.label})}"></title>
+</head>
+<body>
+
+<main layout:fragment="main" th:object="${project}">
+    <div class="row">
+        <div class="col-md-10">
+            <h1 role="heading" th:text="#{project.associated.heading(${project.label})}"></h1>
+        </div>
+    </div>
+
+    <div tabset="">
+        <div tab="" th:attr="heading=#{project.associated.local.tab}">
+            <span th:if="${#lists.isEmpty(associatedProjects)}" th:text="#{project.associated.empty}">_No associated projects_</span>
+            <div class="panel-body" th:if="! ${#lists.isEmpty(associatedProjects)}" id="associated-projects">
+                <table class="table table-striped table-hover">
+                    <tr>
+                        <th class="associated-project-title" th:text="#{project.associated.name}">_Project Name_</th>
+                        <th th:text="#{project.associated.access}">_Access_</th>
+                    </tr>
+                    <tr th:each="project : ${associatedProjects}" class="associated-project">
+                        <td>
+                            <a class="project-name authorized" th:if="${project.auth} == 'authorized'" 
+                                th:text="${project.name}" th:href="@{'/projects/' + ${project.id}}">_Project Name_</a>
+                            <span class="project-name unauthorized" th:if="${project.auth} != 'authorized'" 
+                                th:text="${project.name}">_Project Access_</span>
+                        </td>
+                        <td>
+                            <span th:if="${project.auth} == 'authorized'"
+                                th:text="#{project.associated.authorized}"
+                                class="label label-success">_Authorized_</span>
+                            <span th:if="${project.auth} != 'authorized'"
+                                th:text="#{project.associated.unauthorized}"
+                                class="label label-danger">_Unauthorized_</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div tab="" th:attr="heading=#{project.associated.remote.tab}">
+            <span th:if="${#maps.isEmpty(remoteProjectsByApi)}" th:text="#{project.associated.empty}">_No associated projects_</span>            
+            <div th:each="api : ${remoteProjectsByApi}" class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <b class="panel-title pull-left"><a th:text="${api.key.name}" th:href="@{/remote_api/{id}(id=${api.key.id})}"></a></b>
+                    
+                    <div class="pull-right">
+                        <span id="api-status-x" th:id="'api-status-'+${api.key.id}" class="api-status" th:attr="data-api-id=${api.key.id}">
+                            <i class="fa fa-spinner fa-spin"></i>
+                        </span>
+                        
+                        <button class="oauth-connect-link btn btn-default btn-xs hidden" id="connect-button-x" th:id="'connect-button-' + ${api.key.id}"
+                            th:attr="data-api-id=${api.key.id}" th:text="#{remoteapi.status.connect.button}">_Connect_</button>
+                        
+                    </div>
+                </div>
+                <div  class="panel-body">
+                    <table th:id="'remote-project-view-'+${api.key.id}" class="table table-striped table-hover hidden">
+                        <tr>
+                            <th class="associated-project-title" th:text="#{project.associated.name}">_Project Name_</th>
+                            <th th:text="#{project.associated.access}">_Access_</th>
+                        </tr>
+                        <tr class="remote-project-row" th:each="project : ${api.value}">
+                            <td>
+                                <span th:text="#{project.associated.remote.placeholder(${project.getId()})}"
+                                    class="remote-project-name"
+                                    th:attr="'data-project-id'=${project.getId()}, data-api-id=${api.key.id}"></span>
+                            </td>
+                            <td>
+                                <span th:id="'remote-project-status-'+${project.getId()}"></span>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <span class="hidden unauthorized-project-display" th:id="'unauthorized-project-display-' + ${api.key.id}">
+                        <span th:text="#{project.associated.remote.unavailable}">_Unavailable projects: _</span>
+                        <span class="unauthorized-count"></span>
+                        <i class="glyphicon glyphicon-question-sign"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</main>
+
+<th:block layout:fragment="page-scripts">
+    <script th:src="@{/resources/bower_components/qtip2/jquery.qtip.min.js}"
+            src="/resources/bower_components/qtip2/jquery.qtip.min.js"></script>            
+    <script th:replace="remote_apis/remote_api_connect"></script>
+    <script th:inline="javascript">
+    var unauthCount = {}; 
+    
+    $(document).ready(function () {
+    	//get the API status
+    	$(".api-status").each(function(){
+    		var that = $(this);
+    		var resultDiv = "#"+that.attr("id");
+    		var apiId = that.data("api-id");
+    		var connectButtonId = "#connect-button-"+apiId;
+    		
+    		getApiStatus(apiId,resultDiv,connectButtonId, function(){
+    			//display the projects if the GET is successful
+    			$("#remote-project-view-"+apiId).removeClass("hidden");
+    		});
+    		
+    		$(".unauthorized-project-display").qtip({
+    	        content: {
+    	            text: /*[[#{project.associated.remote.unavailable.description}]]*/ 'Projects unavailable'
+    	        },
+    	        position: {
+    	            at: 'right center',
+    	            my: 'left, center',
+    	        }
+    	    });
+    	});
+    	
+    	//get the remote project names
+    	$(".remote-project-name").each(function(element){
+			var projectNameContainer = $(this);
+			var project = projectNameContainer.data("project-id");
+			var apiId = projectNameContainer.data("api-id");
+			
+			var authorizedText = /*[[#{project.associated.authorized}]]*/ "Authorized";
+			var errorText = /*[[#{project.associated.error}]]*/ "Error";
+			
+			var urlbase = /*[[@{/projects/remote/ajax/read/}]]*/ "/project/remote/ajax/read/";
+			var url = urlbase + project;
+			
+			var statusContainer = $("#remote-project-status-"+project);
+			
+			$.ajax({
+				url: url,
+				success: function(data, textStatus, jqXHR){
+					if(data.name != null){						
+						projectNameContainer.text(data.name);
+						statusContainer.text(authorizedText);
+						statusContainer.addClass("label label-success");
+					}
+					else if(data == "forbidden"){
+						projectNameContainer.closest(".remote-project-row").hide();
+						incrementUnauthCount(apiId);
+					}
+					else if(data == "invalid_token"){
+						incrementUnauthCount(apiId);
+					}
+				},
+				error: function(data, textStatus, jqXHR){
+					statusContainer.text(errorText);
+					statusContainer.addClass("label label-danger");
+					incrementUnauthCount(apiId);
+				}
+			});
+		});
+    	
+    });
+    
+    function incrementUnauthCount(apiId){
+    	if(!(apiId in unauthCount)){
+    		unauthCount[apiId] = 0;
+    	}
+    	
+    	unauthCount[apiId]++;
+    	
+		var unauthorizedContainer = $("#unauthorized-project-display-" + apiId);
+    	
+		unauthorizedContainer.removeClass("hidden");
+		unauthorizedContainer.find(".unauthorized-count").text(unauthCount[apiId]);
+    }
+    
+    </script>
+</th:block>
+</body>
+</html>

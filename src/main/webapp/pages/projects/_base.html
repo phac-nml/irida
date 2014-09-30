@@ -24,6 +24,10 @@
                     class="badge"
                     th:text="${users}"></span></a>
             </li>
+            <li th:class="${activeNav} == 'associated' ? 'active'"><a th:href="@{${baseLink} + '/associated'}">[[#{project.nav.associated}]]<span
+                    class="badge"
+                    th:text="${related_project_count}"></span></a>
+            </li>
         </ul>
     </nav>
 

@@ -9,18 +9,18 @@
 
 <main layout:fragment="main">
     <div class="row mrgn-tp-lg">
-    	<!-- User details -->
+    	<h1 th:text="${remoteApi.name}">_Api Name_</h1>
     	<div class="col-md-6">
             <div class="panel panel-primary">
                 <div class="panel-heading clearfix">
-                	<h3 class="panel-title pull-left" th:text="#{remoteapi.details.title(${remoteApi.name})}">_User Details_</h3>
+                	<h3 class="panel-title pull-left" th:text="#{remoteapi.details.title}">_User Details_</h3>
 					<div class="btn-group-xs pull-right">
 				        <div id="remove-btn" class="btn btn-danger" th:text="#{remoteapi.remove.button}">Remove</div>
                 	</div>
                 </div>
                     
                 <div class="panel-body">
-                    <ul class="nav nav-pills nav-stacked details" th:inline="text">
+                    <ul class="nav nav-pills nav-stacked project-details" th:inline="text">
                     	<li>
                     		<i class="glyphicon glyphicon-barcode"></i>&nbsp;[[#{iridaThing.id}]]
                     		<span class="pull-right" id="remoteapi-id"
@@ -66,7 +66,7 @@
                     </div>
                 </div>
                 <div class="panel-body">
-                    <ul class="nav nav-pills nav-stacked details" th:inline="text">
+                    <ul class="nav nav-pills nav-stacked project-details" th:inline="text">
                         <li>
                             <i class="glyphicon glyphicon-link"></i>&nbsp;[[#{remoteapi.status}]]
                             <span class="pull-right">

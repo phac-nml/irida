@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-    <script th:src="@{/resources/bower_components/mustache/mustache.js}" src="/resources/bower_components/mustache/mustache.js"></script>
+    <script th:src="@{/resources/bower_components/mustache/mustache.js}" 
+        src="/resources/bower_components/mustache/mustache.js"></script>
+    <script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
+        src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
     <script type="x-tmpl-mustache" id="connection-template">
 		<section class="panel panel-default">
 		<div class="panel-heading">
@@ -58,7 +61,7 @@
     	connectNoty.close();
     }
     
-    function getApiStatus(apiId,resultContainerId,connectButtonId){
+    function getApiStatus(apiId,resultContainerId,connectButtonId,successCallback){
     	var urlBase = /*[[@{/remote_api/status/}]]*/ '/remote_api/status/';
     	var invalidTokenText = /*[[#{remoteapi.status.invalid}]]*/ "Expired Token";
     	var validTokenText = /*[[#{remoteapi.status.valid}]]*/ "Valid Token";
@@ -76,6 +79,9 @@
     				span.className="label label-success";
     				span.innerHTML = validTokenText;
     				resultContainer.html(span);
+    				if(typeof successCallback === 'function'){
+    					successCallback();
+    				}
     			}
     			else if(data == "invalid_token" || data == "inactive"){
     				span.className="label label-warning";

@@ -312,8 +312,8 @@ public class RemoteAPIController extends BaseController {
 	public String connectToAPI(@PathVariable Long apiId, Model model) {
 		RemoteAPI api = remoteAPIService.read(apiId);
 		projectRemoteService.getServiceStatus(api);
-		model.addAttribute("remoteApi",api);
-		
+		model.addAttribute("remoteApi", api);
+
 		return PARENT_FRAME_RELOAD_PAGE;
 	}
 
