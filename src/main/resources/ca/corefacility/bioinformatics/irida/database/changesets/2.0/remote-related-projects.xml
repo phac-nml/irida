@@ -46,7 +46,7 @@
 			<column name="modified_date" type="datetime" />
 		</createTable>
 
-		<addUniqueConstraint columnNames="project_id,remote_api_id,remote_project_uriI"
+		<addUniqueConstraint columnNames="project_id,remote_api_id,remote_project_uri"
 			tableName="remote_related_project" constraintName="UK_REMOTE_RELATED_PROJECT" />
 
 	</changeSet>
