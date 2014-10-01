@@ -226,9 +226,11 @@ public class SampleServiceImplIT {
 		assertEquals(pageSize, pageSamplesForProject.getNumberOfElements());
 		assertEquals(3, pageSamplesForProject.getTotalElements());
 
-		pageSamplesForProject = sampleService.getSamplesForProjectWithName(project, "2", 0, pageSize, Direction.ASC,
+		pageSamplesForProject = sampleService.searchProjectSamples(
+				ProjectSampleJoinSpecification.searchSampleWithNameInProject("2", project), 0, pageSize, Direction.ASC,
 				"createdDate");
 		assertEquals(1, pageSamplesForProject.getTotalElements());
+
 	}
 
 	private void assertSampleNotFound(Long id) {
