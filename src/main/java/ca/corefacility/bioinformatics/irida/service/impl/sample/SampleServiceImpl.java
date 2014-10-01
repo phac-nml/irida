@@ -185,6 +185,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				new PageRequest(page, size, order, sortProperties));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Page<ProjectSampleJoin> searchProjectSamples(Specification<ProjectSampleJoin> specification, int page,
 			int size, Direction order, String... sortProperties) {
