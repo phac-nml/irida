@@ -6,6 +6,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.ConstraintViolationException;
 
@@ -96,23 +97,17 @@ public class GalaxyUploadService {
 	 *            The samples to upload.
 	 * @return A list of GalaxySamples.
 	 */
-//	private List<UploadSample> getSamplesFor(Map<Long, Item> selectedSamples) {
-//
-//		List<UploadSample> galaxySamples = new LinkedList<UploadSample>();
-//
-//		for (Long id : selectedSamples.keySet()) {
-//			Item i = selectedSamples.get(id);
-//			Long sampleId = (Long) i
-//					.getItemProperty(SamplesContainer.SAMPLE_ID).getValue();
-//			Sample sample = sampleService.read(sampleId);
-//
-//			UploadSample galaxySample = convertToGalaxySample(sample);
-//
-//			galaxySamples.add(galaxySample);
-//		}
-//
-//		return galaxySamples;
-//	}
+	private List<UploadSample> getSamplesFor(Set<Sample> selectedSamples) {
+
+		List<UploadSample> galaxySamples = new LinkedList<UploadSample>();
+
+		for (Sample sample : selectedSamples) {
+			UploadSample galaxySample = convertToGalaxySample(sample);
+			galaxySamples.add(galaxySample);
+		}
+
+		return galaxySamples;
+	}
 
 	/**
 	 * Converts the passed Sample object to an UploadSample.
@@ -158,11 +153,10 @@ public class GalaxyUploadService {
 	 * @throws ConstraintViolationException
 	 *             If the upload information fails to match the constraints.
 	 */
-	public UploadWorker buildUploadWorkerAllSamples(Long projectId,
+	public UploadWorker buildUploadWorkerAllSamples(long projectId,
 			GalaxyProjectName galaxyLibraryName,
 			GalaxyAccountEmail galaxyUserEmail) throws ConstraintViolationException {
 
-		checkNotNull(projectId, "projectId is null");
 		checkNotNull(galaxyLibraryName, "galaxyLibraryName is null");
 		checkNotNull(galaxyUserEmail, "galaxyUserEmail is null");
 
@@ -172,12 +166,11 @@ public class GalaxyUploadService {
 
 		List<UploadSample> galaxySamples = getSamplesFor(projectId);
 
-		return buildUploadWorker(projectId, galaxySamples, galaxyLibraryName,
+		return buildUploadWorker(galaxySamples, galaxyLibraryName,
 				galaxyUserEmail);
 	}
 
-	private UploadWorker buildUploadWorker(long projectId,
-			List<UploadSample> galaxySamples,
+	private UploadWorker buildUploadWorker(List<UploadSample> galaxySamples,
 			GalaxyProjectName galaxyLibraryName,
 			GalaxyAccountEmail galaxyUserEmail) throws ConstraintViolationException {
 
@@ -188,8 +181,6 @@ public class GalaxyUploadService {
 	/**
 	 * Builds an UploadWorker used to upload the selected samples into Galaxy from this project.
 	 *
-	 * @param projectId
-	 *            The id of the project to upload samples from.
 	 * @param selectedSamples
 	 *            The samples to upload.
 	 * @param galaxyLibraryName
@@ -200,20 +191,19 @@ public class GalaxyUploadService {
 	 * @throws ConstraintViolationException
 	 *             If the upload information fails to match the constraints.
 	 */
-//	public UploadWorker buildUploadWorkerSelectedSamples(long projectId,
-//			Map<Long, Item> selectedSamples,
-//			GalaxyProjectName galaxyLibraryName,
-//			GalaxyAccountEmail galaxyUserEmail) throws ConstraintViolationException {
-//
-//		checkNotNull(selectedSamples, "selectedSamples is null");
-//		checkNotNull(galaxyLibraryName, "galaxyLibraryName is null");
-//		checkNotNull(galaxyUserEmail, "galaxyUserEmail is null");
-//
-//		List<UploadSample> galaxySamples = getSamplesFor(selectedSamples);
-//
-//		return buildUploadWorker(projectId, galaxySamples, galaxyLibraryName,
-//				galaxyUserEmail);
-//	}
+	public UploadWorker buildUploadWorkerSelectedSamples(Set<Sample> selectedSamples,
+			GalaxyProjectName galaxyLibraryName,
+			GalaxyAccountEmail galaxyUserEmail) throws ConstraintViolationException {
+
+		checkNotNull(selectedSamples, "selectedSamples is null");
+		checkNotNull(galaxyLibraryName, "galaxyLibraryName is null");
+		checkNotNull(galaxyUserEmail, "galaxyUserEmail is null");
+
+		List<UploadSample> galaxySamples = getSamplesFor(selectedSamples);
+
+		return buildUploadWorker(galaxySamples, galaxyLibraryName,
+				galaxyUserEmail);
+	}
 
 	/**
 	 * Check if this Galaxy controller is attached to a running instance of

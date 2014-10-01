@@ -21,7 +21,6 @@ import org.springframework.core.env.Environment;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerConfigurationException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.manager.galaxy.ExecutionManagerGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyConnector;
@@ -85,7 +84,7 @@ public class ExecutionManagerConfig {
 	 * @return  A new GalaxyUploader object.
 	 */
 	@Bean
-	public Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader() {
+	public GalaxyUploader galaxyUploader() {
 		GalaxyUploader galaxyUploader = new GalaxyUploader();
 
 		try {
