@@ -8,7 +8,7 @@
     <link rel="stylesheet" th:href="@{/resources/bower_components/angular-busy/angular-busy.css}"
           href="/resources/bower_components/angular-busy/angular-busy.css"/>
     <script>
-        window.dependencies = ['cgBusy', 'restangular'];
+        window.dependencies = ['cgBusy'];
     </script>
 </head>
 <body>
@@ -208,8 +208,6 @@
 
 <script th:src="@{/resources/bower_components/angular-ui-utils/ui-utils.min.js}"
         src="/resources/bower_components/angular-ui-utils/ui-utils.min.js"></script>
-<script th:src="@{'/resources/bower_components/restangular/dist/restangular.min.js'}"
-        src="/resources/bower_components/restangular/dist/restangular.min.js"></script>
 <script th:src="@{/resources/bower_components/angular-busy/angular-busy.js}"
         src="/resources/bower_components/angular-busy/angular-busy.js"></script>
 
@@ -254,21 +252,11 @@ var states = {
         'text': /*[[#{analysis.state.error}]]*/'error'
     }
 };
-
-app.config(function (RestangularProvider) {
-    /*[- */
-    // Restangular (https://github.com/mgonto/restangular) is an AngularJS service that simplifies
-    // common GET, POST, DELETE, and UPDATE requests with a minimum of client code. It's a perfect
-    // fit for any WebApp that consumes data from a RESTful API.
-    // Here we are setting the base url for all requests on this page.
-    /* -]*/
-    RestangularProvider.setBaseUrl(/*[[@{'/analysis/ajax'}]]*/ '/analysis/ajax');
-})
     /*[- */
     // cgBusyDefaults (https://github.com/cgross/angular-busy) show busy/loading indicators on any
     // $http or $resource request, or on any promise
     /* -]*/
-        .value('cgBusyDefaults', {
+        app.value('cgBusyDefaults', {
             message: /*[[#{analysis.filtering}]]*/ 'Loading Stuff',
             backdrop: false,
             templateUrl: /*[[@{/resources/bower_components/angular-busy/angular-busy.html}]]*/ 'my_custom_template.html',
@@ -278,15 +266,34 @@ app.config(function (RestangularProvider) {
         .value('baseUrl',
         /*[[@{/analysis/}]]*/ '/analysis'
 )
-        .factory('api', function (Restangular) {
-            return {
-                analysis: {
-                    search: function search(query) {
-                        return Restangular.all('all').customGET("", query);
-                    }
-                }
-            }
-        });
+        /*[- */
+        // This creates an object to handle the actual queries to the server.
+        /* -]*/
+        .provider('api', function () {
+			'use strict';
+			this.$get = ['$resource', function($resource) {
+				return $resource(/*[[@{'/analysis/ajax/all'}]]*/ '/analysis/ajax/all', {}, {
+					query: {method:'GET', isArray:false}
+				});
+			}]
+        })
+        /*[- */
+	        // This object is what is called to make the server call.  It returns a promise that will be fulfilled.
+        /* -]*/
+		.factory('AnalysisService', function($q, api) {
+			'use strict';
+			function AnalysisService() {
+				var self = this;
+				self.getAnalysis = function(params) {
+					var deferred = $q.defer();
+					api.query(params, function(data) {
+						deferred.resolve(data);
+					});
+					return deferred.promise;
+				}
+			}
+			return new AnalysisService();
+		});
 /*[- */
 // Filters are used on ng-models.  The value of the model is passed throug the filter before being
 // displayed.  (e.g. {{'NEW' | stateToClass}} returns 'label-info'
@@ -337,7 +344,7 @@ app.directive('sortBy', function () {
 
 app.controller('TreeModalCtrl', TreeModalCtrl);
 
-app.controller('AnalysisTableCtrl', function ($scope, $sce, api, baseUrl) {
+app.controller('AnalysisTableCtrl', function ($scope, $sce, AnalysisService, baseUrl) {
     'use strict';
     var url = baseUrl + "ajax";
 
@@ -410,7 +417,7 @@ app.controller('AnalysisTableCtrl', function ($scope, $sce, api, baseUrl) {
     // When the ajax call is complete the table is recreated.
     /* -]*/
     $scope.fetchResult = function () {
-        $scope.filterPromise = api.analysis.search($scope.filterCriteria);
+        $scope.filterPromise = AnalysisService.getAnalysis($scope.filterCriteria);
 
         return $scope.filterPromise.then(function (data) {
             if (data.hasOwnProperty('analysis')) {

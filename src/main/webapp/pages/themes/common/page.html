@@ -8,50 +8,50 @@
       lang="en">
 <!--<![endif]-->
 <head lang="en">
-    <title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA Platform</title>
-    <th:block th:include="themes/common/fragments :: meta"></th:block>
+	<title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA Platform</title>
+	<th:block th:include="themes/common/fragments :: meta"></th:block>
 
-    <!--[if lte IE 8]
-    <script>
-        document.createElement('ng-include');
-        document.createElement('ng-pluralize');
-        document.createElement('ng-view');
+	<!--[if lte IE 8]
+	<script>
+		document.createElement('ng-include');
+		document.createElement('ng-pluralize');
+		document.createElement('ng-view');
 
-        // Optionally these for CSS
-        document.createElement('ng:include');
-        document.createElement('ng:pluralize');
-        document.createElement('ng:view');
+		// Optionally these for CSS
+		document.createElement('ng:include');
+		document.createElement('ng:pluralize');
+		document.createElement('ng:view');
 
-        // Angular Bootstrap
-        document.createElement('tabset');
-        document.createElement('tab');
+		// Angular Bootstrap
+		document.createElement('tabset');
+		document.createElement('tab');
 
-    </script>
-    <script th:src="@{/resources/bower_components/json2/json2.js}" src="/resources/bower_components/json2/json2.js"></script>
-    <![endif]-->
+	</script>
+	<script th:src="@{/resources/bower_components/json2/json2.js}" src="/resources/bower_components/json2/json2.js"></script>
+	<![endif]-->
 
-    <link rel="stylesheet" th:href="@{/resources/bower_components/Font-Awesome/css/font-awesome.min.css}"
-          href="/resources/bower_components/Font-Awesome/css/font-awesome.min.css"/>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/Font-Awesome/css/font-awesome.min.css}"
+	      href="/resources/bower_components/Font-Awesome/css/font-awesome.min.css"/>
 
-    <style>
-        .ng-cloak {
-            display: none !important;
-        }
-    </style>
+	<style>
+		.ng-cloak {
+			display: none !important;
+		}
+	</style>
 </head>
 <body vocab="http://schema.org/" typeof="WebPage" id="ng-app" ng-app="irida">
 <th:block layout:fragment="main-section">
-    <!--/* This is where each pages content should be loaded. */-->
+	<!--/* This is where each pages content should be loaded. */-->
 </th:block>
 
 <!--/* Site Wide Scripts */-->
 <!--[if lt IE 9]>
 <script th:src="@{/resources/js/vendor/jquery-1.11.1.min.js}" src="/resources/js/vendor/jquery-1.11.1.min.js"></script>
 <script>
-    // Production steps of ECMA-262, Edition 5, 15.4.4.14
-    // Reference: http://es5.github.io/#x15.4.4.14
-    // Copied from: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
-    /*<![CDATA[*/
+	// Production steps of ECMA-262, Edition 5, 15.4.4.14
+	// Reference: http://es5.github.io/#x15.4.4.14
+	// Copied from: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
+	/*<![CDATA[*/
     if (!Array.prototype.indexOf) {
         Array.prototype.indexOf = function (searchElement, fromIndex) {
             var k;
@@ -92,47 +92,49 @@
         src="/resources/bower_components/lodash/dist/lodash.underscore.min.js"></script>
 <script th:src="@{/resources/bower_components/angular/angular.min.js}"
         src="/resources/bower_components/angular/angular.min.js"></script>
+<script th:src="@{/resources/bower_components/angular-resource/angular-resource.min.js}"
+        src="/resources/bower_components/angular-resource/angular-resource.min.js"></script>
 <script th:src="@{/resources/bower_components/angular-sanitize/angular-sanitize.min.js}"
         src="/resources/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
 <script th:src="@{'/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js'}"
         src="/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
 
 <script th:inline="javascript">
-    /*<![CDATA[*/
-    window.dependencies = _.union(window.dependencies || [], ['ngSanitize', 'ui.bootstrap']);
-    var app = angular.module('irida', window.dependencies)
-            .value('BASE_URL', /*[[@{/}]]*/ '/')
-            .directive('ngFocus', [function () {
-                var FOCUS_CLASS = "ng-focused";
-                return {
-                    restrict: 'A',
-                    require: 'ngModel',
-                    link: function (scope, element, attrs, ctrl) {
-                        ctrl.$focused = false;
-                        element.bind('focus', function (evt) {
-                            element.addClass(FOCUS_CLASS);
-                            scope.$apply(function () {
-                                ctrl.$focused = true;
-                            });
-                        }).bind('blur', function (evt) {
-                            element.removeClass(FOCUS_CLASS);
-                            scope.$apply(function () {
-                                ctrl.$focused = false;
-                            });
-                        });
-                    }
-                }
-            }]);
-    ;
-    /*]]>*/
+	/*<![CDATA[*/
+	window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ui.bootstrap']);
+	var app = angular.module('irida', window.dependencies)
+			.value('BASE_URL', /*[[@{/}]]*/ '/')
+			.directive('ngFocus', [function () {
+				var FOCUS_CLASS = "ng-focused";
+				return {
+					restrict: 'A',
+					require : 'ngModel',
+					link    : function (scope, element, attrs, ctrl) {
+						ctrl.$focused = false;
+						element.bind('focus', function (evt) {
+							element.addClass(FOCUS_CLASS);
+							scope.$apply(function () {
+								ctrl.$focused = true;
+							});
+						}).bind('blur', function (evt) {
+							element.removeClass(FOCUS_CLASS);
+							scope.$apply(function () {
+								ctrl.$focused = false;
+							});
+						});
+					}
+				}
+			}]);
+	;
+	/*]]>*/
 </script>
 
 <th:block layout:fragment="theme-scripts">
-    <!--/* This is where the main for the theme template are loaded. */-->
+	<!--/* This is where the main for the theme template are loaded. */-->
 </th:block>
 
 <th:block layout:fragment="page-scripts">
-    <!--/* This is where scripts specific for each page should be loaded. */-->
+	<!--/* This is where scripts specific for each page should be loaded. */-->
 </th:block>
 </body>
 </html>
