@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -182,5 +183,18 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		}
 		return psjRepository.findAll(ProjectSampleJoinSpecification.searchSampleWithNameInProject(name, project),
 				new PageRequest(page, size, order, sortProperties));
+	}
+
+	@Override
+	public Page<ProjectSampleJoin> searchProjectSamples(Specification<ProjectSampleJoin> specification, int page,
+			int size, Direction order, String... sortProperties) {
+		// if the sort properties are null, empty, or are an empty string, use
+		// CREATED_DATE
+		if (sortProperties == null || sortProperties.length == 0
+				|| (sortProperties.length == 1 && sortProperties[0].equals(""))) {
+			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
+		}
+
+		return psjRepository.findAll(specification, new PageRequest(page, size, order, sortProperties));
 	}
 }
