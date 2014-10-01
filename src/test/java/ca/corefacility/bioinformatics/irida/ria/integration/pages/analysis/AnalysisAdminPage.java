@@ -49,8 +49,9 @@ public class AnalysisAdminPage {
 	// ************************************************************************************************
 
 	public void clickShowFilterButton() {
+		BasePage.waitForTime();
 		driver.findElement(By.id("filterBtn")).click();
-		pageUtilities.waitForElementVisible(By.cssSelector("thead tr:nth-child(2)"));
+		pageUtilities.waitForElementVisible(By.id("table-filter"));
 	}
 
 	public void filterByName(String name) {
