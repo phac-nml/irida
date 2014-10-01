@@ -16,7 +16,56 @@
 
     <div tabset="">
         <div tab="" th:attr="heading=#{project.associated.local.tab}">
-            
+            <div ng-controller="AnalysisTableCtrl">
+                <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            <sort-by onsort="onSort" sortdir="filterCriteria.sortDir"
+                                     sortedby="filterCriteria.sortedBy"
+                                     sortValue="id" th:text="#{'iridaThing.id'}">Name
+                            </sort-by>
+                        </th>
+                        <th>
+                             <sort-by onsort="onSort" sortdir="filterCriteria.sortDir"
+                                     sortedby="filterCriteria.sortedBy"
+                                     sortValue="name" th:text="#{'projects.table.name'}">Name
+                            </sort-by>
+                        </th>
+                        <th>
+                            <sort-by onsort="onSort" sortdir="filterCriteria.sortDir"
+                                     sortedby="filterCriteria.sortedBy"
+                                     sortValue="organism" th:text="#{'projects.table.organism'}">State
+                            </sort-by>
+                        </th>
+                        <th>
+                            <sort-by onsort="onSort" sortdir="filterCriteria.sortDir"
+                                     sortedby="filterCriteria.sortedBy"
+                                     sortValue="createdDate" th:text="#{'analysis.table.date'}">Created
+                            </sort-by>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody cg-busy="filterPromise">
+                    <tr class="associated-project-row" ng-repeat="a in associated">
+                        <td>{{a.id}}</td>
+                        <td>{{a.name}}</td>
+                        <td>{{a.organism}}</td>
+                        <td>{{a.createdDate}}</td>
+                    </tr>
+                </tbody>
+                    
+                </table>
+                <div class="text-center">
+                    <pagination ng-hide="paging.totalPages &lt; 2"
+                        items-per-page="filterCriteria.count"
+                        total-items="paging.totalAssociated"
+                        ng-model="paging.page" first-text="&laquo;"
+                        last-text="&raquo;"
+                        next-text="&rsaquo;" previous-text="&lsaquo;"
+                        boundary-links="true"></pagination>
+                </div>
+            </div>
         </div>
         <div tab="" th:attr="heading=#{project.associated.remote.tab}">
             
@@ -25,13 +74,99 @@
     </div>
 </main>
 
-<th:block layout:fragment="page-scripts">         
+<th:block layout:fragment="page-scripts">
     <script th:replace="remote_apis/remote_api_connect"></script>
     <script th:inline="javascript">
+
+app.provider('Associated', function () {
+	'use strict';
+	this.$get = ['$resource', function ($resource) {
+		return $resource(/*[[@{/projects/{projectId}/associated/ajax/available(projectId=${project.id})}]]*/ '#', {}, {
+			query: {method: 'GET', isArray: false}
+		});
+	}];
+});
+
+app.factory('AssociatedService', function ($q, Associated) {
+	'use strict';
+	function AssociatedService() {
+		var self = this;
+		self.getAssociated = function (params) {
+			var deferred = $q.defer();
+
+			Associated.query(params, function (data) {
+				self.associated = data;
+				deferred.resolve(data);
+			});
+			return deferred.promise;
+		}
+	}
+
+	return new AssociatedService();
+});
     
+
+app.controller('AnalysisTableCtrl', function ($rootScope, $scope, $log, AssociatedService) {
+    'use strict';
+    
+    /*[- */
+    // paging: handle all things to do with the paging of the 
+    //  - page = the current page being displayed.
+    //  - totalAnalysis = the total number of analysis available in the system
+    //  - totalPages = the total number of pages (totalAnalysis / num per page)
+    /* -]*/
+    $scope.paging = {
+        page: 1,
+        totalAssociated: 1,
+        totalPages: 1
+    };
+
+    /*[- */
+    // defaultCriteria: these are the defaults for creating the table
+    /* -]*/
+    var defaultCriteria = {
+        page: 0,
+        sortDir: 'asc',
+        sortedBy: 'id',
+        count: 10
+    };
+    
+    /*[- */
+    // filterCriteria: this is passed to the server on each page request.
+    //  - initially a copy of the defaultCriteria
+    /* -]*/
+    $scope.filterCriteria = _.clone(defaultCriteria);
+    
+    /*[- */
+    // This uses Restangular to call the server with the filterCriteria.
+    // When the ajax call is complete the table is recreated.
+    /* -]*/
+    $scope.fetchResult = function () {
+        $scope.filterPromise = AssociatedService.getAssociated($scope.filterCriteria);
+
+        return $scope.filterPromise.then(function (data) {
+            if (data.hasOwnProperty('associated')) {
+                $scope.associated = data.associated;
+                $scope.paging.totalAssociated = data.totalAssociated;
+                $scope.paging.totalPages = data.totalPages;
+            } else {
+                // Normally will only hit on bad credentials.
+                window.location = window.location;
+            }
+        }, function () {
+            $scope.associated = [];
+        });
+    };
+    
+    /*[- */
+    // This watch occurs when a different page is select.  Triggers a server call with the new page.
+    /* -]*/
+    $scope.$watch('paging.page', function () {
+        $scope.filterCriteria.page = $scope.paging.page - 1;
+        $scope.fetchResult();
     });
-    
-    
+   
+});
     </script>
 </th:block>
 </body>
