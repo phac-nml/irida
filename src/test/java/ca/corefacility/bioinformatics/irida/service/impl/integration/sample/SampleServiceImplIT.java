@@ -30,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -208,13 +209,29 @@ public class SampleServiceImplIT {
 				pageSize, Direction.ASC, "createdDate");
 		assertEquals(pageSize, pageSamplesForProject.getNumberOfElements());
 		assertEquals(3, pageSamplesForProject.getTotalElements());
-		
-		pageSamplesForProject = sampleService.getSamplesForProjectWithName(project, "2", 0,
-				pageSize, Direction.ASC, "createdDate");
+
+		pageSamplesForProject = sampleService.getSamplesForProjectWithName(project, "2", 0, pageSize, Direction.ASC,
+				"createdDate");
 		assertEquals(1, pageSamplesForProject.getTotalElements());
 	}
-	
-	
+
+	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void testSearchProjectSamples() {
+		int pageSize = 2;
+		Project project = projectService.read(1l);
+		Page<ProjectSampleJoin> pageSamplesForProject = sampleService.searchProjectSamples(
+				ProjectSampleJoinSpecification.searchSampleWithNameInProject("", project), 0, pageSize, Direction.ASC,
+				"createdDate");
+		assertEquals(pageSize, pageSamplesForProject.getNumberOfElements());
+		assertEquals(3, pageSamplesForProject.getTotalElements());
+
+		pageSamplesForProject = sampleService.searchProjectSamples(
+				ProjectSampleJoinSpecification.searchSampleWithNameInProject("2", project), 0, pageSize, Direction.ASC,
+				"createdDate");
+		assertEquals(1, pageSamplesForProject.getTotalElements());
+
+	}
 
 	private void assertSampleNotFound(Long id) {
 		try {
