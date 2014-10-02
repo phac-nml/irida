@@ -120,7 +120,7 @@ public class AssociatedProjectsController {
 			@RequestParam Integer count,
 			@RequestParam String sortedBy,
 			@RequestParam String sortDir,
-			@RequestParam(value="search", required=false, defaultValue="") String projectName) {
+			@RequestParam(value="name", required=false, defaultValue="") String projectName) {
 		//Project project = projectService.read(projectId);
 		
 		User loggedInUser = userService.getUserByUsername(principal.getName());

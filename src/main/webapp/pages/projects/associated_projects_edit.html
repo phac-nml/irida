@@ -20,6 +20,24 @@
     <div tabset="">
         <div tab="" th:attr="heading=#{project.associated.local.tab}">
             <div ng-controller="AnalysisTableCtrl">
+                <div class="form-inline">
+                    <button id="filterBtn" class="btn btn-info"
+                            ng-click="filter.isCollapsed = !filter.isCollapsed"
+                            th:inline="text">
+                        <span class="fa fa-filter fa-fw"></span>
+                        [[#{analysis.btn.filter}]]
+                    </button>
+                    <div class="form-group">
+                        <select class="form-control" name="count" id="count" ng-model="filterCriteria.count"
+                                ng-change="filterResult()">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <label for="count" th:text="#{global.tables.select-page-size}">Select Page Size</label>
+                    </div>
+                </div>
                 <table class="table table-striped">
                 <thead>
                     <tr>
@@ -39,6 +57,18 @@
                                      sortedby="filterCriteria.sortedBy"
                                      sortValue="createdDate" th:text="#{'analysis.table.date'}">Created
                         </th>
+                    </tr>
+                    <tr>
+                        <td id="table-filter" colspan="5">
+                            <div class="row" collapse="filter.isCollapsed">
+                                <div class="form-group col-md-2">
+                                    <label for="name-filter" th:text="#{analysis.filter.byName}">Filter by Name</label>
+                                    <input id="name-filter" name="name-filter" type="text"
+                                           class="form-control input-full"
+                                           ng-model="filterCriteria.name"/>
+                                </div>
+                            </div>
+                        </td>
                     </tr>
                 </thead>
                 <tbody cg-busy="filterPromise">
@@ -128,6 +158,15 @@ app.controller('AnalysisTableCtrl', function ($rootScope, $scope, $log, Associat
     };
     
     /*[- */
+	// filter: used to control the filter section of the page.
+	//  - isCollapsed = whether the filter is open on the screen (initially closed)
+	//  - states = populates the states select.
+	/* -]*/
+	$scope.filter = {
+		isCollapsed: true
+	};
+    
+    /*[- */
     // filterCriteria: this is passed to the server on each page request.
     //  - initially a copy of the defaultCriteria
     /* -]*/
@@ -154,6 +193,17 @@ app.controller('AnalysisTableCtrl', function ($rootScope, $scope, $log, Associat
         });
     };
     
+	/*[- */
+	// filterResult
+	//  - Called when filtering data.
+	/* -]*/
+	$scope.filterResult = function () {
+		$scope.filterCriteria.page = 0;
+		$scope.fetchResult().then(function () {
+			$scope.paging.page = 1;
+		});
+	};
+    
     /*[- */
     // This watch occurs when a different page is select.  Triggers a server call with the new page.
     /* -]*/
@@ -174,6 +224,19 @@ app.controller('AnalysisTableCtrl', function ($rootScope, $scope, $log, Associat
             $scope.filterCriteria.page = 0;
         });
     };
+    
+	/*[- */
+	// This watch occurs when the name is filtered.
+	//  'debounce' whats for the given time before calling.  This allows the user to enter
+	//  multiple characters without triggering for each one.
+	/* -]*/
+	$scope.$watch("filterCriteria.name", _.debounce(function (n, o) {
+		if (n != o) {
+			$scope.fetchResult().then(function () {
+				$scope.paging.page = 1;
+			});
+		}
+	}, 500));
    
 });
     </script>
