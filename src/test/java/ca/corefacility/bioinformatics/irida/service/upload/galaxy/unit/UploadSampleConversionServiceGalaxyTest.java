@@ -5,11 +5,14 @@ import static org.junit.Assert.*;
 
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -55,6 +58,22 @@ public class UploadSampleConversionServiceGalaxyTest {
 		UploadSample uploadSample1 
 			= uploadSampleConversionService.convertToUploadSample(sample1);
 		
+		assertEquals(sampleName, uploadSample1.getSampleName().getName());
+		assertEquals(1, uploadSample1.getSampleFiles().size());
+		assertEquals(path1, uploadSample1.getSampleFiles().get(0));
+	}
+	
+	/**
+	 * Tests conversion of a set of samples to a set of upload samples successfully.
+	 */
+	@Test
+	public void testConvertToUploadSamplesSuccess() {
+		Set<UploadSample> uploadSamples 
+			= uploadSampleConversionService.convertToUploadSamples(Sets.newHashSet(sample1));
+		
+		assertEquals(1, uploadSamples.size());
+		
+		UploadSample uploadSample1 = uploadSamples.iterator().next();
 		assertEquals(sampleName, uploadSample1.getSampleName().getName());
 		assertEquals(1, uploadSample1.getSampleFiles().size());
 		assertEquals(path1, uploadSample1.getSampleFiles().get(0));

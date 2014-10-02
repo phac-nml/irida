@@ -1,8 +1,10 @@
 package ca.corefacility.bioinformatics.irida.service.upload.galaxy;
 
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -63,5 +65,25 @@ public class UploadSampleConversionServiceGalaxy {
 				sampleFiles);
 
 		return galaxySample;
+	}
+	
+
+	/**
+	 * Converts a set of samples to UploadSamples to be uploaded to Galaxy.
+	 *
+	 * @param samples
+	 *            The samples to upload.
+	 * @return A set of UploadSamples.
+	 */
+	public Set<UploadSample> convertToUploadSamples(Set<Sample> samples) {
+
+		Set<UploadSample> galaxySamples = new HashSet<>();
+
+		for (Sample sample : samples) {
+			UploadSample galaxySample = convertToUploadSample(sample);
+			galaxySamples.add(galaxySample);
+		}
+
+		return galaxySamples;
 	}
 }
