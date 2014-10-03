@@ -57,6 +57,7 @@
                                      sortedby="filterCriteria.sortedBy"
                                      sortValue="createdDate" th:text="#{'analysis.table.date'}">Created
                         </th>
+                        <th></th>
                     </tr>
                     <tr>
                         <td id="table-filter" colspan="5">
@@ -72,11 +73,18 @@
                     </tr>
                 </thead>
                 <tbody cg-busy="filterPromise">
-                    <tr class="associated-project-row" ng-repeat="a in associated">
-                        <td>{{a.id}}</td>
-                        <td>{{a.name}}</td>
-                        <td>{{a.organism}}</td>
-                        <td>{{a.createdDate}}</td>
+                    <tr class="associated-project-row" ng-repeat="project in associated">
+                        <td>{{project.id}}</td>
+                        <td>{{project.name}}</td>
+                        <td>{{project.organism}}</td>
+                        <td>{{project.createdDate}}</td>
+                        <td ng-controller="ButtonsCtrl">
+                            <button type="button" class="btn btn-xs pull-right" ng-class="buttonClass"
+                                ng-model="associatedValue" ng-click="updateAssociated(project.id)" 
+                                ng-init="init(project.associated)" th:text="#{project.associated.edit.button}">
+                                _Associated_
+                            </button>
+                        </td>
                     </tr>
                 </tbody>
                     
@@ -93,10 +101,10 @@
             </div>
         </div>
         <div tab="" th:attr="heading=#{project.associated.remote.tab}">
-            
+            To be continuted...
         </div>
         
-    </div>
+    </div>  
 </main>
 
 <th:block layout:fragment="page-scripts">
@@ -108,7 +116,8 @@
 app.provider('Associated', function () {
 	'use strict';
 	this.$get = ['$resource', function ($resource) {
-		return $resource(/*[[@{/projects/{projectId}/associated/ajax/available(projectId=${project.id})}]]*/ '#', {}, {
+		var url = /*[[@{/projects/{projectId}/associated/ajax/available(projectId=${project.id})}]]*/ '#';
+		return $resource(url, {}, {
 			query: {method: 'GET', isArray: false}
 		});
 	}];
@@ -126,6 +135,10 @@ app.factory('AssociatedService', function ($q, Associated) {
 				deferred.resolve(data);
 			});
 			return deferred.promise;
+		}
+		
+		self.updateAssociatedStatus = function(newStatus){
+			
 		}
 	}
 
@@ -238,6 +251,43 @@ app.controller('AnalysisTableCtrl', function ($rootScope, $scope, $log, Associat
 		}
 	}, 500));
    
+});
+
+app.controller('ButtonsCtrl', function ($scope) {
+	  $scope.associatedValue = "associated";
+	  $scope.buttonClass="btn-default";
+	  
+	  $scope.updateAssociated = function(projectId){
+		  if($scope.associatedValue == 0){
+			  $scope.associatedValue = "associated";
+		  }
+		  else{
+			  $scope.associatedValue = 0;
+		  }
+		 
+		 $scope.setButtonColour();
+	  };
+	  
+	  $scope.init = function(initialValue){
+		  if(initialValue){
+			  $scope.associatedValue = "associated";
+		  }
+		  else{
+			  $scope.associatedValue = 0;
+		  }
+		  
+		  $scope.setButtonColour();
+	  }
+	  
+	  $scope.setButtonColour = function(){
+		  if($scope.associatedValue=="associated"){
+				 $scope.buttonClass="btn-success"	 
+		 }
+		 else{
+			 $scope.buttonClass="btn-default"
+		 }
+	  }
+
 });
     </script>
 </th:block>

@@ -13,15 +13,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.common.collect.ImmutableMap;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -54,9 +59,6 @@ public class AssociatedProjectsController {
 
 	private final Formatter<Date> dateFormatter;
 
-	private Map<Integer, String> SORT_COLUMNS = ImmutableMap
-			.of(1, "id", 2, "name", 3, "organism", 4, "createdDate");
-
 	@Autowired
 	public AssociatedProjectsController(RemoteRelatedProjectService remoteRelatedProjectService,
 			ProjectService projectService, ProjectControllerUtils projectControllerUtils, UserService userService) {
@@ -77,7 +79,7 @@ public class AssociatedProjectsController {
 	 *            A model for the view
 	 * @return The view name of the assocated projects view
 	 */
-	@RequestMapping("/{projectId}/associated")
+	@RequestMapping(value = "/{projectId}/associated", method = RequestMethod.GET)
 	public String getAssociatedProjectsPage(@PathVariable Long projectId, Model model, Principal principal) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
@@ -113,19 +115,16 @@ public class AssociatedProjectsController {
 
 	@RequestMapping("/{projectId}/associated/ajax/available")
 	@ResponseBody
-	public Map<String, Object> getPotentialAssociatedProjects(
-			@PathVariable Long projectId,
-			final Principal principal,
-			@RequestParam Integer page,
-			@RequestParam Integer count,
-			@RequestParam String sortedBy,
+	public Map<String, Object> getPotentialAssociatedProjects(@PathVariable Long projectId, final Principal principal,
+			@RequestParam Integer page, @RequestParam Integer count, @RequestParam String sortedBy,
 			@RequestParam String sortDir,
-			@RequestParam(value="name", required=false, defaultValue="") String projectName) {
-		//Project project = projectService.read(projectId);
-		
+			@RequestParam(value = "name", required = false, defaultValue = "") String projectName) {
+		Project project = projectService.read(projectId);
+
 		User loggedInUser = userService.getUserByUsername(principal.getName());
 		Sort.Direction sortDirection = sortDir.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-		
+
+		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(project);
 
 		boolean isAdmin = loggedInUser.getSystemRole().equals(Role.ROLE_ADMIN);
 		List<Project> projects;
@@ -133,20 +132,23 @@ public class AssociatedProjectsController {
 		int totalPages;
 		if (isAdmin) {
 			String sortString = sortedBy;
-			Page<Project> search = projectService.search(ProjectSpecification.searchProjectName(projectName), page, count, sortDirection, sortString);
+			Page<Project> search = projectService.search(ProjectSpecification.searchProjectName(projectName), page,
+					count, sortDirection, sortString);
 			totalElements = search.getTotalElements();
 			totalPages = search.getTotalPages();
 			projects = search.getContent();
 		} else {
 			String sortString = "project." + sortedBy;
-			Page<ProjectUserJoin> searchProjectUsers = projectService.searchProjectUsers(ProjectUserJoinSpecification.searchProjectNameWithUser(projectName, loggedInUser), page, count, sortDirection, sortString);
+			Page<ProjectUserJoin> searchProjectUsers = projectService.searchProjectUsers(
+					ProjectUserJoinSpecification.searchProjectNameWithUser(projectName, loggedInUser), page, count,
+					sortDirection, sortString);
 			totalElements = searchProjectUsers.getTotalElements();
 			totalPages = searchProjectUsers.getTotalPages();
 			projects = new ArrayList<>();
 			searchProjectUsers.forEach((puj) -> projects.add(puj.getSubject()));
 		}
-		
-		Map<String, Object> map = getProjectsDataMap(projects);
+
+		Map<String, Object> map = getProjectsDataMap(projects, relatedProjectJoins);
 		map.put("totalAssociated", totalElements);
 		map.put("totalPages", totalPages);
 
@@ -233,27 +235,37 @@ public class AssociatedProjectsController {
 	 * @return Map containing the information to put into the
 	 *         {@link ProjectsDataTable}
 	 */
-	private Map<String, Object> getProjectsDataMap(Iterable<Project> projectList) {
+	private Map<String, Object> getProjectsDataMap(Iterable<Project> projectList,
+			List<RelatedProjectJoin> relatedProjectJoins) {
 		Map<String, Object> map = new HashMap<>();
+
+		Map<Project, Boolean> related = new HashMap<>();
+
+		relatedProjectJoins.forEach((p) -> related.put(p.getObject(), true));
 
 		// Create the format required by DataTable
 		List<Map<String, String>> projectsData = new ArrayList<>();
-		for (Project p : projectList) {
-			Map<String, String> convertProjectToMap = convertProjectToMap(p);
-			projectsData.add(convertProjectToMap);
+		for (Project project : projectList) {
+			Map<String, String> projectMap = new HashMap<>();
+			projectMap.put("id", project.getId().toString());
+			projectMap.put("name", project.getName());
+			projectMap.put("organism", project.getOrganism());
+			projectMap.put("createdDate",
+					dateFormatter.print(project.getCreatedDate(), LocaleContextHolder.getLocale()));
+
+			if (related.containsKey(project)) {
+				projectMap.put("associated", "associated");
+			}
+
+			projectsData.add(projectMap);
 		}
 		map.put("associated", projectsData);
 		return map;
 	}
-
-	private Map<String, String> convertProjectToMap(Project project) {
-		Map<String, String> projectMap = new HashMap<>();
-
-		projectMap.put("id", project.getId().toString());
-		projectMap.put("name", project.getName());
-		projectMap.put("organism", project.getOrganism());
-		projectMap.put("createdDate", dateFormatter.print(project.getCreatedDate(), LocaleContextHolder.getLocale()));
-
-		return projectMap;
+	
+	@ExceptionHandler(EntityExistsException.class)
+	public ResponseEntity<String> handleEntityExistsException(EntityExistsException ex){
+		return new ResponseEntity<>("This relationship already exists", HttpStatus.CONFLICT);
 	}
+
 }
