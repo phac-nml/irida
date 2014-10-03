@@ -19,22 +19,27 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequ
 
 /**
  * Used to convert IRIDA Samples to those that can be uploaded into Galaxy.
+ * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class UploadSampleConversionServiceGalaxy {
-	
+
 	private SampleSequenceFileJoinRepository ssfjRepository;
-	
+
 	/**
-	 * Builds a new GalaxySampleConversionService for convering samples to those that can be uploaded to Galaxy.
-	 * @param ssfjRepository  The repository for joining sequence files and samples.
+	 * Builds a new GalaxySampleConversionService for convering samples to those
+	 * that can be uploaded to Galaxy.
+	 * 
+	 * @param ssfjRepository
+	 *            The repository for joining sequence files and samples.
 	 */
 	@Autowired
-	public UploadSampleConversionServiceGalaxy(SampleSequenceFileJoinRepository ssfjRepository) {
+	public UploadSampleConversionServiceGalaxy(
+			SampleSequenceFileJoinRepository ssfjRepository) {
 		this.ssfjRepository = ssfjRepository;
 	}
-	
+
 	/**
 	 * Converts the passed {@link Sample} object to an {@link UploadSample}.
 	 *
@@ -51,8 +56,8 @@ public class UploadSampleConversionServiceGalaxy {
 
 		String sampleName = sample.getSampleName();
 
-		List<Join<Sample, SequenceFile>> sequenceFileJoins = ssfjRepository.
-				getFilesForSample(sample);
+		List<Join<Sample, SequenceFile>> sequenceFileJoins = ssfjRepository
+				.getFilesForSample(sample);
 		for (Join<Sample, SequenceFile> sequenceJoin : sequenceFileJoins) {
 			SequenceFile sequenceFileObject = sequenceJoin.getObject();
 
@@ -66,7 +71,6 @@ public class UploadSampleConversionServiceGalaxy {
 
 		return galaxySample;
 	}
-	
 
 	/**
 	 * Converts a set of samples to UploadSamples to be uploaded to Galaxy.
