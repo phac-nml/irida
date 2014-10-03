@@ -110,6 +110,8 @@
 <th:block layout:fragment="page-scripts">
     <script th:src="@{/resources/js/directives/datatables/irida-datatable-min.js}"
         src="/resources/js/directives/datatables/irida-datatable-min.js"></script>
+    <script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
+        src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
     <script th:replace="remote_apis/remote_api_connect"></script>
     <script th:inline="javascript">
 
@@ -137,8 +139,35 @@ app.factory('AssociatedService', function ($q, Associated) {
 			return deferred.promise;
 		}
 		
-		self.updateAssociatedStatus = function(newStatus){
+		self.updateAssociatedStatus = function(newStatus, projectId){
+			var url = /*[[@{/projects/{projectId}/associated(projectId=${project.id})}]]*/ "#";
+			var data;
 			
+			var deferred = $q.defer();
+			
+			var method;
+			if(newStatus == "associated"){
+				method = "POST";
+				data = "associatedProjectId="+projectId;
+			}
+			else{
+				method = "DELETE";
+				url = url+ "/" + projectId;
+			}
+			
+			$.ajax({
+				url: url,
+				data: data,
+				type: method,
+				success: function(data, textStatus, jqXHR){
+					deferred.resolve("success");
+				},
+				error: function(jqXHR, textStatus, errorThrown){
+					deferred.resolve(errorThrown)
+				}
+			});
+			
+			return deferred.promise;
 		}
 	}
 
@@ -253,19 +282,55 @@ app.controller('AnalysisTableCtrl', function ($rootScope, $scope, $log, Associat
    
 });
 
-app.controller('ButtonsCtrl', function ($scope) {
+app.controller('ButtonsCtrl', function ($scope, AssociatedService) {
 	  $scope.associatedValue = "associated";
 	  $scope.buttonClass="btn-default";
 	  
 	  $scope.updateAssociated = function(projectId){
+		  var updatedValue;
+		  var responseMessage;
 		  if($scope.associatedValue == 0){
-			  $scope.associatedValue = "associated";
+			  updatedValue = "associated";
+			  responseMessage = "Associated project added.";
 		  }
 		  else{
-			  $scope.associatedValue = 0;
+			  updatedValue = 0;
+			  responseMessage = "Associated project removed.";
 		  }
-		 
-		 $scope.setButtonColour();
+		  
+		  var response = AssociatedService.updateAssociatedStatus(updatedValue,projectId);
+		  
+		  //on response, set the button colour if the response was valid
+		  response.then(function(data){
+			  if(data == "success"){
+			  	$scope.associatedValue = updatedValue;
+			  	$scope.setButtonColour();
+			  	
+			  	noty({
+			  		layout: "topCenter",
+			  		type: "alert",
+			  		text: responseMessage,
+			  		timeout: 3000
+			  	});
+			  }
+			  else if(data == "Conflict"){
+			  	var text = "Cannot add associated project as it appears to already be associated.";
+		  		noty({
+    		  		layout: "topCenter",
+    		  		type: "error",
+    		  		text: text
+    		  	});
+			  }
+			  else{
+			  	var text = "An error occurred while changing associated project status.";
+                noty({
+                	layout: "topCenter",
+                	type: "error",
+                	text: text
+                });
+			  }
+		  });
+		  
 	  };
 	  
 	  $scope.init = function(initialValue){

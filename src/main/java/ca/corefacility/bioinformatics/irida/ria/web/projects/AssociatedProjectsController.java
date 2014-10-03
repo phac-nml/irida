@@ -103,6 +103,30 @@ public class AssociatedProjectsController {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		return ASSOCIATED_PROJECTS_PAGE;
 	}
+	
+
+	@RequestMapping(value = "/{projectId}/associated", method = RequestMethod.POST)
+	@ResponseBody
+	public String addAssociatedProject(@PathVariable Long projectId, @RequestParam Long associatedProjectId) {
+		Project project = projectService.read(projectId);
+		Project associatedProject = projectService.read(associatedProjectId);
+		
+		projectService.addRelatedProject(project, associatedProject);
+		
+		return "success";
+	}
+	
+	@RequestMapping(value = "/{projectId}/associated/{associatedProjectId}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public String removeAssociatedProject(@PathVariable Long projectId, @PathVariable Long associatedProjectId) {
+		Project project = projectService.read(projectId);
+		Project associatedProject = projectService.read(associatedProjectId);
+		
+		projectService.removeRelatedProject(project, associatedProject);
+		
+		return "success";
+	}
+
 
 	@RequestMapping("/{projectId}/associated/edit")
 	public String editAssociatedProjectsForProject(@PathVariable Long projectId, Model model, Principal principal) {
@@ -265,7 +289,7 @@ public class AssociatedProjectsController {
 	
 	@ExceptionHandler(EntityExistsException.class)
 	public ResponseEntity<String> handleEntityExistsException(EntityExistsException ex){
-		return new ResponseEntity<>("This relationship already exists", HttpStatus.CONFLICT);
+		return new ResponseEntity<>("This relationship already exists.", HttpStatus.CONFLICT);
 	}
 
 }
