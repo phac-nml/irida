@@ -213,6 +213,9 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project.subject, 'isProjectOwner')")
 	public void removeRelatedProject(RelatedProjectJoin relatedProject);
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#subject,'isProjectOwner')")
+	public void removeRelatedProject(Project subject, Project relatedProject);
 
 	/**
 	 * Get the projects that a given sample is on
