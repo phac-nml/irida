@@ -25,7 +25,7 @@
                             ng-click="filter.isCollapsed = !filter.isCollapsed"
                             th:inline="text">
                         <span class="fa fa-filter fa-fw"></span>
-                        [[#{analysis.btn.filter}]]
+                        [[#{project.associated.filter}]]
                     </button>
                     <div class="form-group">
                         <select class="form-control" name="count" id="count" ng-model="filterCriteria.count"
@@ -74,12 +74,12 @@
                 </thead>
                 <tbody cg-busy="filterPromise">
                     <tr class="associated-project-row" ng-repeat="project in associated">
-                        <td>{{project.id}}</td>
-                        <td>{{project.name}}</td>
+                        <td class="project-id">{{project.id}}</td>
+                        <td class="project-name">{{project.name}}</td>
                         <td>{{project.organism}}</td>
                         <td>{{project.createdDate}}</td>
                         <td ng-controller="ButtonsCtrl">
-                            <button type="button" class="btn btn-xs pull-right" ng-class="buttonClass"
+                            <button type="button" class="btn btn-xs pull-right associated-toggle-button" ng-class="buttonClass"
                                 ng-model="associatedValue" ng-click="updateAssociated(project.id)" 
                                 ng-init="init(project.associated)" th:text="#{project.associated.edit.button}">
                                 _Associated_
@@ -308,7 +308,7 @@ app.controller('ButtonsCtrl', function ($scope, AssociatedService) {
 			  	
 			  	noty({
 			  		layout: "topCenter",
-			  		type: "alert",
+			  		type: "success",
 			  		text: responseMessage,
 			  		timeout: 3000
 			  	});
