@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
+import static org.springframework.data.jpa.domain.Specifications.where;
+
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,10 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,8 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.google.common.collect.ImmutableMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
@@ -37,7 +39,6 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsAdminDataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
@@ -103,37 +104,38 @@ public class AssociatedProjectsController {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		return ASSOCIATED_PROJECTS_PAGE;
 	}
-	
 
 	@RequestMapping(value = "/{projectId}/associated", method = RequestMethod.POST)
 	@ResponseBody
 	public String addAssociatedProject(@PathVariable Long projectId, @RequestParam Long associatedProjectId) {
 		Project project = projectService.read(projectId);
 		Project associatedProject = projectService.read(associatedProjectId);
-		
+
 		projectService.addRelatedProject(project, associatedProject);
-		
+
 		return "success";
 	}
-	
+
 	@RequestMapping(value = "/{projectId}/associated/{associatedProjectId}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public String removeAssociatedProject(@PathVariable Long projectId, @PathVariable Long associatedProjectId) {
 		Project project = projectService.read(projectId);
 		Project associatedProject = projectService.read(associatedProjectId);
-		
+
 		projectService.removeRelatedProject(project, associatedProject);
-		
+
 		return "success";
 	}
 
-
 	@RequestMapping("/{projectId}/associated/edit")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId, 'isProjectOwner')")
 	public String editAssociatedProjectsForProject(@PathVariable Long projectId, Model model, Principal principal) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ASSOCIATED_PROJECTS);
+
 		return EDIT_ASSOCIATED_PROJECTS_PAGE;
 	}
 
@@ -156,15 +158,20 @@ public class AssociatedProjectsController {
 		int totalPages;
 		if (isAdmin) {
 			String sortString = sortedBy;
-			Page<Project> search = projectService.search(ProjectSpecification.searchProjectName(projectName), page,
-					count, sortDirection, sortString);
+
+			Specification<Project> specification = where(ProjectSpecification.searchProjectName(projectName)).and(
+					ProjectSpecification.excludeProject(project));
+			Page<Project> search = projectService.search(specification, page, count, sortDirection, sortString);
 			totalElements = search.getTotalElements();
 			totalPages = search.getTotalPages();
 			projects = search.getContent();
 		} else {
 			String sortString = "project." + sortedBy;
-			Page<ProjectUserJoin> searchProjectUsers = projectService.searchProjectUsers(
-					ProjectUserJoinSpecification.searchProjectNameWithUser(projectName, loggedInUser), page, count,
+			Specification<ProjectUserJoin> specification = where(
+					ProjectUserJoinSpecification.searchProjectNameWithUser(projectName, loggedInUser)).and(
+					ProjectUserJoinSpecification.excludeProject(project));
+
+			Page<ProjectUserJoin> searchProjectUsers = projectService.searchProjectUsers(specification, page, count,
 					sortDirection, sortString);
 			totalElements = searchProjectUsers.getTotalElements();
 			totalPages = searchProjectUsers.getTotalPages();
@@ -286,9 +293,9 @@ public class AssociatedProjectsController {
 		map.put("associated", projectsData);
 		return map;
 	}
-	
+
 	@ExceptionHandler(EntityExistsException.class)
-	public ResponseEntity<String> handleEntityExistsException(EntityExistsException ex){
+	public ResponseEntity<String> handleEntityExistsException(EntityExistsException ex) {
 		return new ResponseEntity<>("This relationship already exists.", HttpStatus.CONFLICT);
 	}
 

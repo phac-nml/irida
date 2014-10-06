@@ -118,7 +118,7 @@
 app.provider('Associated', function () {
 	'use strict';
 	this.$get = ['$resource', function ($resource) {
-		var url = /*[[@{/projects/{projectId}/associated/ajax/available(projectId=${project.id})}]]*/ '#';
+		var url = /*[[@{/projects/{id}/associated/ajax/available(id=${project.getId()})}]]*/ '#';
 		return $resource(url, {}, {
 			query: {method: 'GET', isArray: false}
 		});
@@ -140,7 +140,7 @@ app.factory('AssociatedService', function ($q, Associated) {
 		}
 		
 		self.updateAssociatedStatus = function(newStatus, projectId){
-			var url = /*[[@{/projects/{projectId}/associated(projectId=${project.id})}]]*/ "#";
+			var url = /*[[@{/projects/{id}/associated(id=${project.getId()})}]]*/ "#";
 			var data;
 			
 			var deferred = $q.defer();
