@@ -3,8 +3,6 @@ package ca.corefacility.bioinformatics.irida.service.upload.galaxy;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URL;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.validation.ConstraintViolationException;
@@ -14,8 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
@@ -32,9 +28,6 @@ public class GalaxyUploadService {
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyUploadService.class);
 
-	private ProjectService projectService;
-	private SampleService sampleService;
-
 	private UploadSampleConversionServiceGalaxy uploadSampleConversionService;
 
 	private GalaxyUploader galaxyUploader;
@@ -44,10 +37,6 @@ public class GalaxyUploadService {
 	 * 
 	 * @param galaxyUploader
 	 *            The GalaxyUploader to use to connect to an instance of Galaxy.
-	 * @param projectService
-	 *            The ProjectService for access to project information.
-	 * @param sampleService
-	 *            The SampleService for access to samples.
 	 * @param uploadSampleConversionService
 	 *            The service for constructing objects to upload to Galaxy.
 	 */
@@ -56,9 +45,6 @@ public class GalaxyUploadService {
 			ProjectService projectService, SampleService sampleService,
 			UploadSampleConversionServiceGalaxy uploadSampleConversionService) {
 		this.galaxyUploader = galaxyUploader;
-
-		this.projectService = projectService;
-		this.sampleService = sampleService;
 		this.uploadSampleConversionService = uploadSampleConversionService;
 	}
 
@@ -69,31 +55,6 @@ public class GalaxyUploadService {
 	 */
 	public URL getUrl() {
 		return galaxyUploader.getUrl();
-	}
-
-	/**
-	 * Get the samples for a specific project, identified by its project id.
-	 *
-	 * @param projectId
-	 *            The project ID
-	 * @return A list of GalaxySamples.
-	 */
-	private Set<UploadSample> getSamplesFor(Long projectId) {
-
-		Set<UploadSample> galaxySamples = new HashSet<>();
-
-		Project project = projectService.read(projectId);
-		List<Join<Project, Sample>> sampleList = sampleService
-				.getSamplesForProject(project);
-		for (Join<Project, Sample> js : sampleList) {
-			Sample sample = js.getObject();
-
-			UploadSample galaxySample = uploadSampleConversionService
-					.convertToUploadSample(sample);
-			galaxySamples.add(galaxySample);
-		}
-
-		return galaxySamples;
 	}
 
 	/**
@@ -122,7 +83,8 @@ public class GalaxyUploadService {
 				+ ", galaxy email=" + galaxyUserEmail + ", library name="
 				+ galaxyLibraryName + " to Galaxy " + getUrl());
 
-		Set<UploadSample> galaxySamples = getSamplesFor(projectId);
+		Set<UploadSample> galaxySamples = uploadSampleConversionService
+				.getUploadSamplesForProject(projectId);
 
 		return buildUploadWorker(galaxySamples, galaxyLibraryName,
 				galaxyUserEmail);
