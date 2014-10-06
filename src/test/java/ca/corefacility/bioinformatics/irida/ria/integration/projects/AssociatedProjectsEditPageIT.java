@@ -6,12 +6,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ActiveProfiles;
@@ -48,7 +49,7 @@ public class AssociatedProjectsEditPageIT {
 
 	@Before
 	public void setUp() {
-		driver = new ChromeDriver();
+		driver = new PhantomJSDriver();
 		driver.manage().window().setSize(new Dimension(1024, 900));
 		LoginPage loginPage = LoginPage.to(driver);
 		loginPage.doLogin();
@@ -56,7 +57,7 @@ public class AssociatedProjectsEditPageIT {
 		page = new AssociatedProjectEditPage(driver);
 	}
 
-	// @After
+	@After
 	public void destroy() {
 		if (driver != null) {
 			driver.close();

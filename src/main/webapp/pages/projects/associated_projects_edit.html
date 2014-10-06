@@ -43,19 +43,19 @@
                     <tr>
                         <th sort-by="" onsort="onSort" sortdir="filterCriteria.sortDir"
                                      sortedby="filterCriteria.sortedBy"
-                                     sortValue="id" th:text="#{'iridaThing.id'}">Name
+                                     sortValue="id" th:text="#{'iridaThing.id'}">_ID_
                         </th>
                         <th sort-by="" onsort="onSort" sortdir="filterCriteria.sortDir"
                                      sortedby="filterCriteria.sortedBy"
-                                     sortValue="name" th:text="#{'projects.table.name'}">Name
+                                     sortValue="name" th:text="#{'projects.table.name'}">_Name_
                         </th>
                         <th sort-by="" onsort="onSort" sortdir="filterCriteria.sortDir"
                                      sortedby="filterCriteria.sortedBy"
-                                     sortValue="organism" th:text="#{'projects.table.organism'}">State
+                                     sortValue="organism" th:text="#{'projects.table.organism'}">_State_
                         </th>
                         <th sort-by="" onsort="onSort" sortdir="filterCriteria.sortDir"
                                      sortedby="filterCriteria.sortedBy"
-                                     sortValue="createdDate" th:text="#{'analysis.table.date'}">Created
+                                     sortValue="createdDate" th:text="#{'analysis.table.date'}">_Created_
                         </th>
                         <th></th>
                     </tr>
@@ -63,7 +63,7 @@
                         <td id="table-filter" colspan="5">
                             <div class="row" collapse="filter.isCollapsed">
                                 <div class="form-group col-md-2">
-                                    <label for="name-filter" th:text="#{analysis.filter.byName}">Filter by Name</label>
+                                    <label for="name-filter" th:text="#{analysis.filter.byName}">_Filter by Name_</label>
                                     <input id="name-filter" name="name-filter" type="text"
                                            class="form-control input-full"
                                            ng-model="filterCriteria.name"/>
@@ -291,11 +291,11 @@ app.controller('ButtonsCtrl', function ($scope, AssociatedService) {
 		  var responseMessage;
 		  if($scope.associatedValue == 0){
 			  updatedValue = "associated";
-			  responseMessage = "Associated project added.";
+			  responseMessage = /*[[#{project.associated.added}]]*/ "Associated project added.";
 		  }
 		  else{
 			  updatedValue = 0;
-			  responseMessage = "Associated project removed.";
+			  responseMessage = /*[[#{project.associated.removed}]]*/ "Associated project removed.";
 		  }
 		  
 		  var response = AssociatedService.updateAssociatedStatus(updatedValue,projectId);
@@ -314,7 +314,7 @@ app.controller('ButtonsCtrl', function ($scope, AssociatedService) {
 			  	});
 			  }
 			  else if(data == "Conflict"){
-			  	var text = "Cannot add associated project as it appears to already be associated.";
+			  	var text = /*[[#{project.associated.conflict}]]*/ "Cannot add associated project as it appears to already be associated.";
 		  		noty({
     		  		layout: "topCenter",
     		  		type: "error",
@@ -322,7 +322,7 @@ app.controller('ButtonsCtrl', function ($scope, AssociatedService) {
     		  	});
 			  }
 			  else{
-			  	var text = "An error occurred while changing associated project status.";
+			  	var text = /*[[#{project.associated.error}]]*/ "An error occurred while changing associated project status.";
                 noty({
                 	layout: "topCenter",
                 	type: "error",
