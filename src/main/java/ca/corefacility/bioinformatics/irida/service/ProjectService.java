@@ -213,7 +213,16 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project.subject, 'isProjectOwner')")
 	public void removeRelatedProject(RelatedProjectJoin relatedProject);
-	
+
+	/**
+	 * Remove a {@link RelatedProjectJoin} for the given project and related
+	 * project
+	 * 
+	 * @param subject
+	 *            the owning project
+	 * @param relatedProject
+	 *            The related project
+	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#subject,'isProjectOwner')")
 	public void removeRelatedProject(Project subject, Project relatedProject);
 
