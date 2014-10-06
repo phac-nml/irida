@@ -194,4 +194,46 @@ public class AssociatedProjectControllerTest {
 		verify(projectService).searchProjectUsers(any(Specification.class), eq(page), eq(count), any(Direction.class),
 				eq("project." + sortedBy));
 	}
+
+	@Test
+	public void testAddAssociatedProject() {
+		Long projectId = 1l;
+		Long associatedProjectId = 2l;
+		Project p1 = new Project();
+		Project p2 = new Project();
+
+		when(projectService.read(projectId)).thenReturn(p1);
+		when(projectService.read(associatedProjectId)).thenReturn(p2);
+
+		controller.addAssociatedProject(projectId, associatedProjectId);
+
+		verify(projectService).addRelatedProject(p1, p2);
+	}
+
+	@Test
+	public void testRemoveAssociatedProject() {
+		Long projectId = 1l;
+		Long associatedProjectId = 2l;
+		Project p1 = new Project();
+		Project p2 = new Project();
+
+		when(projectService.read(projectId)).thenReturn(p1);
+		when(projectService.read(associatedProjectId)).thenReturn(p2);
+
+		controller.removeAssociatedProject(projectId, associatedProjectId);
+
+		verify(projectService).removeRelatedProject(p1, p2);
+	}
+
+	@Test
+	public void testEditAssociatedProjectsForProject() {
+		Long projectId = 1l;
+		ExtendedModelMap model = new ExtendedModelMap();
+		Principal principal = () -> USER_NAME;
+
+		String editAssociatedProjectsForProject = controller.editAssociatedProjectsForProject(projectId, model,
+				principal);
+
+		assertEquals(AssociatedProjectsController.EDIT_ASSOCIATED_PROJECTS_PAGE, editAssociatedProjectsForProject);
+	}
 }
