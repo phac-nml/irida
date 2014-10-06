@@ -139,7 +139,27 @@ public class AssociatedProjectsController {
 		return EDIT_ASSOCIATED_PROJECTS_PAGE;
 	}
 
+	/**
+	 * Get {@link Project}s that could be associated with this project
+	 * 
+	 * @param projectId
+	 *            The current project ID
+	 * @param principal
+	 *            The logged in user
+	 * @param page
+	 *            The page to request
+	 * @param count
+	 *            The number of elements in the page
+	 * @param sortedBy
+	 *            The property to sort by
+	 * @param sortDir
+	 *            The direction to sort in
+	 * @param projectName
+	 *            The project name to search for
+	 * @return A Map<String,Object> of elements for a datatable
+	 */
 	@RequestMapping("/{projectId}/associated/ajax/available")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId, 'isProjectOwner')")
 	@ResponseBody
 	public Map<String, Object> getPotentialAssociatedProjects(@PathVariable Long projectId, final Principal principal,
 			@RequestParam Integer page, @RequestParam Integer count, @RequestParam String sortedBy,
@@ -147,34 +167,44 @@ public class AssociatedProjectsController {
 			@RequestParam(value = "name", required = false, defaultValue = "") String projectName) {
 		Project project = projectService.read(projectId);
 
-		User loggedInUser = userService.getUserByUsername(principal.getName());
 		Sort.Direction sortDirection = sortDir.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
 
 		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(project);
 
+		// check if the logged in user is an Admin
+		User loggedInUser = userService.getUserByUsername(principal.getName());
 		boolean isAdmin = loggedInUser.getSystemRole().equals(Role.ROLE_ADMIN);
+
 		List<Project> projects;
 		long totalElements;
 		int totalPages;
-		if (isAdmin) {
-			String sortString = sortedBy;
 
+		// if they're an admin or project manager we have to call different
+		// methods
+		if (isAdmin) {
+			// get projects with the given name except the current project
 			Specification<Project> specification = where(ProjectSpecification.searchProjectName(projectName)).and(
 					ProjectSpecification.excludeProject(project));
-			Page<Project> search = projectService.search(specification, page, count, sortDirection, sortString);
+			Page<Project> search = projectService.search(specification, page, count, sortDirection, sortedBy);
+
 			totalElements = search.getTotalElements();
 			totalPages = search.getTotalPages();
 			projects = search.getContent();
 		} else {
+			// need to append project. to the sort string for ProjectUserJoins
 			String sortString = "project." + sortedBy;
+
+			// get projects with the given name except the current project
 			Specification<ProjectUserJoin> specification = where(
 					ProjectUserJoinSpecification.searchProjectNameWithUser(projectName, loggedInUser)).and(
 					ProjectUserJoinSpecification.excludeProject(project));
-
 			Page<ProjectUserJoin> searchProjectUsers = projectService.searchProjectUsers(specification, page, count,
 					sortDirection, sortString);
+
 			totalElements = searchProjectUsers.getTotalElements();
 			totalPages = searchProjectUsers.getTotalPages();
+
+			// transform the ProjectUserJoin page to a Project list
 			projects = new ArrayList<>();
 			searchProjectUsers.forEach((puj) -> projects.add(puj.getSubject()));
 		}
