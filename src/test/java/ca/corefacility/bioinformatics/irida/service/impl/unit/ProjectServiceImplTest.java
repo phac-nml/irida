@@ -357,6 +357,27 @@ public class ProjectServiceImplTest {
 
 		verify(psjRepository).getProjectForSample(sample);
 	}
+	
+	@Test
+	public void testRemoveRelatedProject() {
+		RelatedProjectJoin join = new RelatedProjectJoin();
+		projectService.removeRelatedProject(join);
+		verify(relatedProjectRepository).delete(join);
+	}
+
+	@Test
+	public void testRemoveRelatedProject2ProjectArgs() {
+		Project x = new Project("projectx");
+		Project y = new Project("projecty");
+
+		RelatedProjectJoin join = new RelatedProjectJoin(x, y);
+		when(relatedProjectRepository.getRelatedProjectJoin(x, y)).thenReturn(join);
+
+		projectService.removeRelatedProject(x, y);
+
+		verify(relatedProjectRepository).getRelatedProjectJoin(x, y);
+		verify(relatedProjectRepository).delete(join);
+	}
 
 	private Project project() {
 		Project p = new Project("project");
