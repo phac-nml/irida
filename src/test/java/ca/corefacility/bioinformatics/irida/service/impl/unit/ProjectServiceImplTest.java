@@ -25,7 +25,6 @@ import javax.validation.Validator;
 import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
