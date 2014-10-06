@@ -10,7 +10,7 @@ import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
@@ -18,18 +18,22 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEma
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.upload.UploadService;
 
 import com.google.common.collect.Lists;
 
-@Component
-public class GalaxyUploadService {
+/**
+ * Defines an upload service to upload genomic sequence data into a Galaxy instance.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
+@Service
+public class GalaxyUploadService implements
+		UploadService<GalaxyProjectName, GalaxyAccountEmail> {
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyUploadService.class);
 
 	private UploadSampleConversionServiceGalaxy uploadSampleConversionService;
-
 	private GalaxyUploader galaxyUploader;
 
 	/**
@@ -42,52 +46,38 @@ public class GalaxyUploadService {
 	 */
 	@Autowired
 	public GalaxyUploadService(GalaxyUploader galaxyUploader,
-			ProjectService projectService, SampleService sampleService,
 			UploadSampleConversionServiceGalaxy uploadSampleConversionService) {
 		this.galaxyUploader = galaxyUploader;
 		this.uploadSampleConversionService = uploadSampleConversionService;
 	}
 
 	/**
-	 * Gets the URL of the connected Galaxy instance.
-	 * 
-	 * @return The URL of the connected Galaxy instance.
+	 * {@inheritDoc}
 	 */
+	@Override
 	public URL getUrl() {
 		return galaxyUploader.getUrl();
 	}
 
 	/**
-	 * Builds an UploadWorker used to upload all samples into Galaxy from this
-	 * project.
-	 *
-	 * @param projectId
-	 *            The project id to upload samples to.
-	 * @param galaxyLibraryName
-	 *            The library name to upload to.
-	 * @param galaxyUserEmail
-	 *            The Galaxy user account email to own the library.
-	 * @return An UploadWorker to be used for uploading files into Galaxy.
-	 * @throws ConstraintViolationException
-	 *             If the upload information fails to match the constraints.
+	 * {@inheritDoc}
 	 */
+	@Override
 	public UploadWorker buildUploadWorkerAllSamples(long projectId,
-			GalaxyProjectName galaxyLibraryName,
-			GalaxyAccountEmail galaxyUserEmail)
+			GalaxyProjectName projectName, GalaxyAccountEmail accountName)
 			throws ConstraintViolationException {
 
-		checkNotNull(galaxyLibraryName, "galaxyLibraryName is null");
-		checkNotNull(galaxyUserEmail, "galaxyUserEmail is null");
+		checkNotNull(projectName, "galaxyLibraryName is null");
+		checkNotNull(accountName, "galaxyUserEmail is null");
 
 		logger.debug("Uploading all samples for project id=" + projectId
-				+ ", galaxy email=" + galaxyUserEmail + ", library name="
-				+ galaxyLibraryName + " to Galaxy " + getUrl());
+				+ ", galaxy email=" + accountName + ", library name="
+				+ projectName + " to Galaxy " + getUrl());
 
 		Set<UploadSample> galaxySamples = uploadSampleConversionService
 				.getUploadSamplesForProject(projectId);
 
-		return buildUploadWorker(galaxySamples, galaxyLibraryName,
-				galaxyUserEmail);
+		return buildUploadWorker(galaxySamples, projectName, accountName);
 	}
 
 	private UploadWorker buildUploadWorker(Set<UploadSample> galaxySamples,
@@ -100,53 +90,35 @@ public class GalaxyUploadService {
 	}
 
 	/**
-	 * Builds an UploadWorker used to upload the selected samples into Galaxy
-	 * from this project.
-	 *
-	 * @param selectedSamples
-	 *            The samples to upload.
-	 * @param galaxyLibraryName
-	 *            The library name in Galaxy to create.
-	 * @param galaxyUserEmail
-	 *            The user email in Galaxy who will own the data library.
-	 * @return An UploadWorker for uploading files into Galaxy.
-	 * @throws ConstraintViolationException
-	 *             If the upload information fails to match the constraints.
+	 * {@inheritDoc}
 	 */
+	@Override
 	public UploadWorker buildUploadWorkerSelectedSamples(
-			Set<Sample> selectedSamples, GalaxyProjectName galaxyLibraryName,
-			GalaxyAccountEmail galaxyUserEmail)
-			throws ConstraintViolationException {
+			Set<Sample> selectedSamples, GalaxyProjectName projectName,
+			GalaxyAccountEmail accountName) throws ConstraintViolationException {
 
 		checkNotNull(selectedSamples, "selectedSamples is null");
-		checkNotNull(galaxyLibraryName, "galaxyLibraryName is null");
-		checkNotNull(galaxyUserEmail, "galaxyUserEmail is null");
+		checkNotNull(projectName, "galaxyLibraryName is null");
+		checkNotNull(accountName, "galaxyUserEmail is null");
 
 		Set<UploadSample> galaxySamples = uploadSampleConversionService
 				.convertToUploadSamples(selectedSamples);
 
-		return buildUploadWorker(galaxySamples, galaxyLibraryName,
-				galaxyUserEmail);
+		return buildUploadWorker(galaxySamples, projectName, accountName);
 	}
 
 	/**
-	 * Check if this Galaxy controller is attached to a running instance of
-	 * Galaxy.
-	 * 
-	 * @return True if the Galaxy controller is attached to a running instance
-	 *         of Galaxy, false otherwise.
+	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isConfigured() {
 		return galaxyUploader.isDataLocationAttached();
 	}
 
 	/**
-	 * Check if this Galaxy controller is connected to a running instance of
-	 * Galaxy.
-	 * 
-	 * @return True if the Galaxy controller is connected to a running instance
-	 *         of Galaxy, false otherwise.
+	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isConnected() {
 		return galaxyUploader.isDataLocationConnected();
 	}

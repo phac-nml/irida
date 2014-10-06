@@ -8,7 +8,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 
 /**
- * Used to convert IRIDA Samples to those that can be uploaded into Galaxy.
+ * Used to convert IRIDA Samples to those that can be uploaded into a remote site.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *

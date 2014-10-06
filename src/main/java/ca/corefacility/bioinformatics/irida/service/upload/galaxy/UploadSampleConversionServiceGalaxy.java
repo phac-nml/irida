@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -27,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.service.upload.UploadSampleConversio
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
+@Service
 public class UploadSampleConversionServiceGalaxy implements
 		UploadSampleConversionService {
 
