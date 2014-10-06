@@ -12,6 +12,8 @@ import ca.corefacility.bioinformatics.irida.service.remote.model.resource.Remote
  */
 public class RemoteUser extends User implements RemoteResource{
 
+	private static final long serialVersionUID = 7992520725123634969L;
+	
 	private List<RESTLink> links;
 	
 	@Override
