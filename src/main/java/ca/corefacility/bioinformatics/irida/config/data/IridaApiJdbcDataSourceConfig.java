@@ -49,7 +49,7 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 	public SpringLiquibase springLiquibase(final DataSource dataSource) {
 		final SpringLiquibase springLiquibase = new SpringLiquibase();
 		springLiquibase.setDataSource(dataSource);
-		springLiquibase.setChangeLog("classpath:/ca/corefacility/bioinformatics/irida/database/all-changes.xml");
+		springLiquibase.setChangeLog("classpath:ca/corefacility/bioinformatics/irida/database/all-changes.xml");
 
 		// confirm that hibernate isn't also scheduled to execute
 		final String importFiles = environment.getProperty(HIBERNATE_IMPORT_FILES);
@@ -72,6 +72,7 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 		}
 
 		springLiquibase.setShouldRun(liquibaseShouldRun);
+		springLiquibase.setIgnoreClasspathPrefix(true);
 
 		return springLiquibase;
 	}
