@@ -324,6 +324,12 @@ public class AssociatedProjectsController {
 		return map;
 	}
 
+	/**
+	 * Handle entity exists exceptions for creating {@link RelatedProjectJoin}s
+	 * 
+	 * @param ex
+	 * @return
+	 */
 	@ExceptionHandler(EntityExistsException.class)
 	public ResponseEntity<String> handleEntityExistsException(EntityExistsException ex) {
 		return new ResponseEntity<>("This relationship already exists.", HttpStatus.CONFLICT);
