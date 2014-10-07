@@ -252,11 +252,14 @@
 
 	app.controller('ButtonsCtrl', function ($scope, AssociatedService) {
 		$scope.updateAssociated = function (project) {
+			var titleElem = angular.element(".navbar-sm li.active span"),
+					titleVal = parseInt(titleElem.html());
 			if (project.associated) {
 				AssociatedService.removeAssociatedStatus({associatedProjectId: project.id}).then(function (data) {
 					if (data.result === 'success') {
 						delete project.associated;
 						notySuccess(/*[[#{project.associated.removed}]]*/ "Associated project removed.");
+						titleElem.html(--titleVal);
 					}
 					else
 						notyError();
@@ -267,6 +270,7 @@
 					if (data.result === 'success') {
 						project.associated = 'associated';
 						notySuccess(/*[[#{project.associated.added}]]*/ "Associated project added.");
+						titleElem.html(++titleVal);
 					}
 					else notyError();
 				});
