@@ -304,7 +304,7 @@ app.controller('ButtonsCtrl', function ($scope, AssociatedService) {
 		  response.then(function(data){
 			  if(data == "success"){
 			  	$scope.associatedValue = updatedValue;
-			  	$scope.setButtonColour();
+			  	setButtonColour();
 			  	
 			  	noty({
 			  		layout: "topCenter",
@@ -341,10 +341,10 @@ app.controller('ButtonsCtrl', function ($scope, AssociatedService) {
 			  $scope.associatedValue = 0;
 		  }
 		  
-		  $scope.setButtonColour();
+		  setButtonColour();
 	  };
 	  
-	  $scope.setButtonColour = function(){
+	  function setButtonColour(){
 		  if($scope.associatedValue=="associated"){
 				 $scope.buttonClass="btn-success"	 
 		 }
