@@ -17,14 +17,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -109,9 +107,18 @@ public class AssociatedProjectsController {
 		return ASSOCIATED_PROJECTS_PAGE;
 	}
 
+	/**
+	 * Add an associated project to a project
+	 * 
+	 * @param projectId
+	 *            The subject project id
+	 * @param associatedProjectId
+	 *            The associated project id
+	 * @return "success" if the request was successful
+	 */
 	@RequestMapping(value = "/{projectId}/associated", method = RequestMethod.POST)
 	@ResponseBody
-	public  Map<String, String> addAssociatedProject(@PathVariable Long projectId, @RequestParam Long associatedProjectId) {
+	public Map<String, String> addAssociatedProject(@PathVariable Long projectId, @RequestParam Long associatedProjectId) {
 		Project project = projectService.read(projectId);
 		Project associatedProject = projectService.read(associatedProjectId);
 
@@ -120,9 +127,19 @@ public class AssociatedProjectsController {
 		return ImmutableMap.of("result", "success");
 	}
 
+	/**
+	 * Delete an associated project to a project
+	 * 
+	 * @param projectId
+	 *            The subject project id
+	 * @param associatedProjectId
+	 *            The associated project id
+	 * @return "success" if the request was successful
+	 */
 	@RequestMapping(value = "/{projectId}/associated", method = RequestMethod.DELETE)
 	@ResponseBody
-	public Map<String, String> removeAssociatedProject(@PathVariable Long projectId, @RequestParam Long associatedProjectId) {
+	public Map<String, String> removeAssociatedProject(@PathVariable Long projectId,
+			@RequestParam Long associatedProjectId) {
 		Project project = projectService.read(projectId);
 		Project associatedProject = projectService.read(associatedProjectId);
 
