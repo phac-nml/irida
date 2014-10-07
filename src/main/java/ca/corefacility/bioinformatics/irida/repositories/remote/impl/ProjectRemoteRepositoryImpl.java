@@ -11,7 +11,7 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRep
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
 /**
- * Remote service for retrieving {@link RemoteProject}s
+ * Remote repository for retrieving {@link RemoteProject}s
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
