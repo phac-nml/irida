@@ -15,6 +15,8 @@
         <div class="col-md-10">
             <h1 role="heading" th:text="#{project.associated.heading(${project.label})}"></h1>
         </div>
+        <a class="btn btn-sm btn-default pull-right" href="/projects/1/associated"
+            th:href="@{/projects/{pid}/associated(pid=${project.getId()})}" th:text="#{form.btn.done}">_Done_</a>
     </div>
 
     <div tabset="">
