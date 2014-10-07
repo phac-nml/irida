@@ -4,11 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Repository;
 
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
+import ca.corefacility.bioinformatics.irida.model.remote.resource.ListResourceWrapper;
+import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrapper;
 import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
-import ca.corefacility.bioinformatics.irida.service.remote.model.RemoteProject;
-import ca.corefacility.bioinformatics.irida.service.remote.model.resource.ListResourceWrapper;
-import ca.corefacility.bioinformatics.irida.service.remote.model.resource.ResourceWrapper;
 
 /**
  * Remote service for retrieving {@link RemoteProject}s

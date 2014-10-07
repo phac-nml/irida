@@ -4,7 +4,7 @@ import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.service.remote.model.resource.RemoteResource;
+import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 
 /**
  * Service for communicating with a remote IRIDA instance

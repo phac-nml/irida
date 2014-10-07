@@ -3,9 +3,9 @@ package ca.corefacility.bioinformatics.irida.service.remote.impl;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.RemoteService;
-import ca.corefacility.bioinformatics.irida.service.remote.model.resource.RemoteResource;
 
 /**
  * Remote service to request from remote IRIDA instances using OAuth2

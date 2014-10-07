@@ -1,10 +1,10 @@
-package ca.corefacility.bioinformatics.irida.service.remote.model;
+package ca.corefacility.bioinformatics.irida.model.remote;
 
 import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLink;
+import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.service.remote.model.resource.RESTLink;
-import ca.corefacility.bioinformatics.irida.service.remote.model.resource.RemoteResource;
 
 /**
  * A user read from a remote irida API

@@ -9,11 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.remote.resource.ListResourceWrapper;
+import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
+import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrapper;
 import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
-import ca.corefacility.bioinformatics.irida.service.remote.model.resource.ListResourceWrapper;
-import ca.corefacility.bioinformatics.irida.service.remote.model.resource.RemoteResource;
-import ca.corefacility.bioinformatics.irida.service.remote.model.resource.ResourceWrapper;
 import ca.corefacility.bioinformatics.irida.service.remote.resttemplate.OAuthTokenRestTemplate;
 
 /**
