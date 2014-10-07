@@ -110,207 +110,186 @@
 </main>
 
 <th:block layout:fragment="page-scripts">
-<script th:src="@{/resources/bower_components/restangular/src/restangular.js}"
-        src="/resources/bower_components/restangular/src/restangular.js"></script>
 <script th:src="@{/resources/js/directives/datatables/irida-datatable-min.js}"
         src="/resources/js/directives/datatables/irida-datatable-min.js"></script>
 <script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
         src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
 <script th:replace="remote_apis/remote_api_connect"></script>
 <script th:inline="javascript">
-
-app.provider('Associated', function () {
-	'use strict';
-	this.$get = ['$resource', function ($resource) {
-		var url = /*[[@{/projects/{id}/associated/ajax/available(id=${project.getId()})}]]*/ '#';
-		return $resource(url, {}, {
-			query: {method: 'GET', isArray: false}
-		});
-	}];
-});
-app.config(function(RestangularProvider){
-	RestangularProvider.setBaseUrl(/*[[@{/projects/{id}/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/');
-});
-
-app.provider('AssociatedProjects', function () {
-	this.$get = ['$resource', function ($resource) {
-		return $resource(/*[[@{/projects/{id}/associated(id=${project.getId()})}]]*/ '/projects/1/associated/', {}, {
-			remove: {method: 'DELETE'},
-			create: {method: 'POST'}
-		});
-	}];
-});
-
-app.factory('AssociatedService', function ($q, Associated, Restangular) {
-	'use strict';
-	var base = Restangular.all("");
-	function AssociatedService() {
-		var self = this;
-		self.getAssociated = function (params) {
-			return base.customGET("ajax/available", params);
-		};
-
-		self.removeAssociatedStatus = function (params) {
-			return base.remove(params);
-		};
-
-		self.addAssociatedProject = function (params) {
-			return base.customPOST($.param(params), undefined, undefined, {'Content-Type': "application/x-www-form-urlencoded; charset=UTF-8"});
-		};
-	}
-
-	return new AssociatedService();
-});
-
-app.controller('AnalysisTableCtrl', function ($rootScope, $scope, $log, AssociatedService) {
-	'use strict';
-
-	/*[- */
-	// paging: handle all things to do with the paging of the
-	//  - page = the current page being displayed.
-	//  - totalAnalysis = the total number of analysis available in the system
-	//  - totalPages = the total number of pages (totalAnalysis / num per page)
-	/* -]*/
-	$scope.paging = {
-		page           : 1,
-		totalAssociated: 1,
-		totalPages     : 1
-	};
-
-	/*[- */
-	// defaultCriteria: these are the defaults for creating the table
-	/* -]*/
-	var defaultCriteria = {
-		page    : 0,
-		sortDir : 'asc',
-		sortedBy: 'id',
-		count   : 10
-	};
-
-	/*[- */
-	// filter: used to control the filter section of the page.
-	//  - isCollapsed = whether the filter is open on the screen (initially closed)
-	//  - states = populates the states select.
-	/* -]*/
-	$scope.filter = {
-		isCollapsed: true
-	};
-
-	/*[- */
-	// filterCriteria: this is passed to the server on each page request.
-	//  - initially a copy of the defaultCriteria
-	/* -]*/
-	$scope.filterCriteria = _.clone(defaultCriteria);
-
-	/*[- */
-	// This uses Restangular to call the server with the filterCriteria.
-	// When the ajax call is complete the table is recreated.
-	/* -]*/
-	$scope.fetchResult = function () {
-		$scope.filterPromise = AssociatedService.getAssociated($scope.filterCriteria);
-
-		return $scope.filterPromise.then(function (data) {
-			if (data.hasOwnProperty('associated')) {
-				$scope.associated = data.associated;
-				$scope.paging.totalAssociated = data.totalAssociated;
-				$scope.paging.totalPages = data.totalPages;
-			} else {
-				// Normally will only hit on bad credentials.
-				window.location = window.location;
-			}
-		}, function () {
-			$scope.associated = [];
-		});
-	};
-
-	/*[- */
-	// filterResult
-	//  - Called when filtering data.
-	/* -]*/
-	$scope.filterResult = function () {
-		$scope.filterCriteria.page = 0;
-		$scope.fetchResult().then(function () {
-			$scope.paging.page = 1;
-		});
-	};
-
-	/*[- */
-	// This watch occurs when a different page is select.  Triggers a server call with the new page.
-	/* -]*/
-	$scope.$watch('paging.page', function () {
-		$scope.filterCriteria.page = $scope.paging.page - 1;
-		$scope.fetchResult();
+	app.config(function (RestangularProvider) {
+		RestangularProvider.setBaseUrl(/*[[@{/projects/{id}/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/');
 	});
 
-	/*[- */
-	// onSort
-	//
-	/* -]*/
-	$scope.onSort = function (sortedBy, sortDir) {
-		$scope.filterCriteria.sortedBy = sortedBy;
-		$scope.filterCriteria.sortDir = sortDir;
-		$scope.filterCriteria.page = 1;
-		$scope.fetchResult().then(function () {
-			$scope.filterCriteria.page = 0;
-		});
-	};
+	app.factory('AssociatedService', function (Restangular) {
+		'use strict';
+		var base = Restangular.all("");
 
-	/*[- */
-	// This watch occurs when the name is filtered.
-	//  'debounce' whats for the given time before calling.  This allows the user to enter
-	//  multiple characters without triggering for each one.
-	/* -]*/
-	$scope.$watch("filterCriteria.name", _.debounce(function (n, o) {
-		if (n != o) {
+		function AssociatedService() {
+			var self = this;
+			self.getAssociated = function (params) {
+				return base.customGET("ajax/available", params);
+			};
+
+			self.removeAssociatedStatus = function (params) {
+				return base.remove(params);
+			};
+
+			self.addAssociatedProject = function (params) {
+				return base.customPOST($.param(params));
+			};
+		}
+
+		return new AssociatedService();
+	});
+
+	app.controller('AnalysisTableCtrl', function ($rootScope, $scope, $log, AssociatedService) {
+		'use strict';
+
+		/*[- */
+		// paging: handle all things to do with the paging of the
+		//  - page = the current page being displayed.
+		//  - totalAnalysis = the total number of analysis available in the system
+		//  - totalPages = the total number of pages (totalAnalysis / num per page)
+		/* -]*/
+		$scope.paging = {
+			page           : 1,
+			totalAssociated: 1,
+			totalPages     : 1
+		};
+
+		/*[- */
+		// defaultCriteria: these are the defaults for creating the table
+		/* -]*/
+		var defaultCriteria = {
+			page    : 0,
+			sortDir : 'asc',
+			sortedBy: 'id',
+			count   : 10
+		};
+
+		/*[- */
+		// filter: used to control the filter section of the page.
+		//  - isCollapsed = whether the filter is open on the screen (initially closed)
+		//  - states = populates the states select.
+		/* -]*/
+		$scope.filter = {
+			isCollapsed: true
+		};
+
+		/*[- */
+		// filterCriteria: this is passed to the server on each page request.
+		//  - initially a copy of the defaultCriteria
+		/* -]*/
+		$scope.filterCriteria = _.clone(defaultCriteria);
+
+		/*[- */
+		// This uses Restangular to call the server with the filterCriteria.
+		// When the ajax call is complete the table is recreated.
+		/* -]*/
+		$scope.fetchResult = function () {
+			$scope.filterPromise = AssociatedService.getAssociated($scope.filterCriteria);
+
+			return $scope.filterPromise.then(function (data) {
+				if (data.hasOwnProperty('associated')) {
+					$scope.associated = data.associated;
+					$scope.paging.totalAssociated = data.totalAssociated;
+					$scope.paging.totalPages = data.totalPages;
+				} else {
+					// Normally will only hit on bad credentials.
+					window.location = window.location;
+				}
+			}, function () {
+				$scope.associated = [];
+			});
+		};
+
+		/*[- */
+		// filterResult
+		//  - Called when filtering data.
+		/* -]*/
+		$scope.filterResult = function () {
+			$scope.filterCriteria.page = 0;
 			$scope.fetchResult().then(function () {
 				$scope.paging.page = 1;
 			});
-		}
-	}, 500));
+		};
 
-});
+		/*[- */
+		// This watch occurs when a different page is select.  Triggers a server call with the new page.
+		/* -]*/
+		$scope.$watch('paging.page', function () {
+			$scope.filterCriteria.page = $scope.paging.page - 1;
+			$scope.fetchResult();
+		});
 
-app.controller('ButtonsCtrl', function ($scope, AssociatedService) {
-	$scope.updateAssociated = function (project) {
-		if (project.associated) {
-			AssociatedService.removeAssociatedStatus({associatedProjectId: project.id}).then(function (data) {
-				if (data.result === 'success') {
-					delete project.associated;
-					notySuccess(/*[[#{project.associated.removed}]]*/ "Associated project removed.");
-				}
-				else
-					notyError();
+		/*[- */
+		// onSort
+		//
+		/* -]*/
+		$scope.onSort = function (sortedBy, sortDir) {
+			$scope.filterCriteria.sortedBy = sortedBy;
+			$scope.filterCriteria.sortDir = sortDir;
+			$scope.filterCriteria.page = 1;
+			$scope.fetchResult().then(function () {
+				$scope.filterCriteria.page = 0;
+			});
+		};
+
+		/*[- */
+		// This watch occurs when the name is filtered.
+		//  'debounce' whats for the given time before calling.  This allows the user to enter
+		//  multiple characters without triggering for each one.
+		/* -]*/
+		$scope.$watch("filterCriteria.name", _.debounce(function (n, o) {
+			if (n != o) {
+				$scope.fetchResult().then(function () {
+					$scope.paging.page = 1;
+				});
+			}
+		}, 500));
+
+	});
+
+	app.controller('ButtonsCtrl', function ($scope, AssociatedService) {
+		$scope.updateAssociated = function (project) {
+			if (project.associated) {
+				AssociatedService.removeAssociatedStatus({associatedProjectId: project.id}).then(function (data) {
+					if (data.result === 'success') {
+						delete project.associated;
+						notySuccess(/*[[#{project.associated.removed}]]*/ "Associated project removed.");
+					}
+					else
+						notyError();
+				});
+			}
+			else {
+				AssociatedService.addAssociatedProject({associatedProjectId: project.id}).then(function (data) {
+					if (data.result === 'success') {
+						project.associated = 'associated';
+						notySuccess(/*[[#{project.associated.added}]]*/ "Associated project added.");
+					}
+					else notyError();
+				});
+			}
+		};
+
+		function notySuccess(msg) {
+			noty({
+				layout : "topCenter",
+				type   : "success",
+				text   : msg,
+				timeout: 3000
 			});
 		}
-		else {
-			AssociatedService.addAssociatedProject({associatedProjectId: project.id}).then(function (data) {
-				console.log(data.result);
-				if (data.result === 'success') {
-					project.associated = 'associated';
-					notySuccess(/*[[#{project.associated.added}]]*/ "Associated project added.");
-				}
-				else notyError();
+
+		function notyError() {
+			noty({
+				layout: "topCenter",
+				type  : "error",
+				text  : /*[[#{project.associated.error}]]*/ "An error occurred while changing associated project status."
 			});
 		}
-	};
-
-	function notySuccess(msg) {
-		noty({
-			layout : "topCenter",
-			type   : "success",
-			text   : msg,
-			timeout: 3000
-		});
-	}
-
-	function notyError() {
-		noty({
-			layout: "topCenter",
-			type  : "error",
-			text  : /*[[#{project.associated.error}]]*/ "An error occurred while changing associated project status."
-		});
-	}
-});
+	});
 </script>
 </th:block>
 </body>
