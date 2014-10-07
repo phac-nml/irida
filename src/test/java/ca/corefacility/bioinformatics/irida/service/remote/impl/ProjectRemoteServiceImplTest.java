@@ -10,16 +10,18 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRepository;
+import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteIRIDARootRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 
 public class ProjectRemoteServiceImplTest {
 	ProjectRemoteService service;
 	ProjectRemoteRepository repository;
+	RemoteIRIDARootRepository rootRepository;
 
 	@Before
 	public void setUp() {
 		repository = mock(ProjectRemoteRepository.class);
-		service = new ProjectRemoteServiceImpl(repository);
+		service = new ProjectRemoteServiceImpl(repository,rootRepository);
 	}
 
 	@Test
