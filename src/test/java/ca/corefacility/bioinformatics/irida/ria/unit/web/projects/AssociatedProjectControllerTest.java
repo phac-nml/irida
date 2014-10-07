@@ -210,7 +210,7 @@ public class AssociatedProjectControllerTest {
 		when(projectService.read(associatedProjectId)).thenReturn(p2);
 
 		Map<String, Long> requestBody = ImmutableMap.of("associatedProjectId", associatedProjectId);
-		controller.addAssociatedProject(projectId, requestBody);
+		controller.addAssociatedProject(projectId, associatedProjectId);
 
 		verify(projectService).addRelatedProject(p1, p2);
 	}

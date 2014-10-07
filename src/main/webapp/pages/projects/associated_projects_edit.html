@@ -5,7 +5,7 @@
 <head>
 	<title th:text="#{project.associated.heading(${project.label})}"></title>
 	<script>
-		window.dependencies = ['irida.datatables'];
+		window.dependencies = ['irida.datatables', 'restangular'];
 	</script>
 </head>
 <body>
@@ -83,7 +83,8 @@
 						<td>{{project.createdDate}}</td>
 						<td ng-controller="ButtonsCtrl">
 							<button type="button" class="btn btn-xs pull-right" ng-click="updateAssociated(project)"
-							        ng-class="{'btn-success': project.associated}" th:text="#{project.associated.edit.button}">Hello
+							        ng-class="{'btn-success': project.associated}"
+							        th:text="#{project.associated.edit.button}">Hello
 							</button>
 						</td>
 					</tr>
@@ -109,6 +110,8 @@
 </main>
 
 <th:block layout:fragment="page-scripts">
+<script th:src="@{/resources/bower_components/restangular/src/restangular.js}"
+        src="/resources/bower_components/restangular/src/restangular.js"></script>
 <script th:src="@{/resources/js/directives/datatables/irida-datatable-min.js}"
         src="/resources/js/directives/datatables/irida-datatable-min.js"></script>
 <script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
@@ -125,6 +128,9 @@ app.provider('Associated', function () {
 		});
 	}];
 });
+app.config(function(RestangularProvider){
+	RestangularProvider.setBaseUrl(/*[[@{/projects/{id}/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/');
+});
 
 app.provider('AssociatedProjects', function () {
 	this.$get = ['$resource', function ($resource) {
@@ -135,33 +141,21 @@ app.provider('AssociatedProjects', function () {
 	}];
 });
 
-app.factory('AssociatedService', function ($q, Associated, AssociatedProjects) {
+app.factory('AssociatedService', function ($q, Associated, Restangular) {
 	'use strict';
+	var base = Restangular.all("");
 	function AssociatedService() {
 		var self = this;
 		self.getAssociated = function (params) {
-			var deferred = $q.defer();
-
-			Associated.query(params, function (data) {
-				deferred.resolve(data);
-			});
-			return deferred.promise;
+			return base.customGET("ajax/available", params);
 		};
 
 		self.removeAssociatedStatus = function (params) {
-			var deferred = $q.defer();
-			AssociatedProjects.remove(params, function (data) {
-				deferred.resolve(data);
-			});
-			return deferred.promise;
+			return base.remove(params);
 		};
 
 		self.addAssociatedProject = function (params) {
-			var deferred = $q.defer();
-			AssociatedProjects.create(params, function (data) {
-				deferred.resolve(data);
-			});
-			return deferred.promise;
+			return base.customPOST($.param(params), undefined, undefined, {'Content-Type': "application/x-www-form-urlencoded; charset=UTF-8"});
 		};
 	}
 

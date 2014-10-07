@@ -109,11 +109,11 @@ public class AssociatedProjectsController {
 		return ASSOCIATED_PROJECTS_PAGE;
 	}
 
-	@RequestMapping(value = "/{projectId}/associated", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/{projectId}/associated", method = RequestMethod.POST)
 	@ResponseBody
-	public  Map<String, String> addAssociatedProject(@PathVariable Long projectId, @RequestBody Map<String, Long> postRequestBody) {
+	public  Map<String, String> addAssociatedProject(@PathVariable Long projectId, @RequestParam Long associatedProjectId) {
 		Project project = projectService.read(projectId);
-		Project associatedProject = projectService.read(postRequestBody.get("associatedProjectId"));
+		Project associatedProject = projectService.read(associatedProjectId);
 
 		projectService.addRelatedProject(project, associatedProject);
 
