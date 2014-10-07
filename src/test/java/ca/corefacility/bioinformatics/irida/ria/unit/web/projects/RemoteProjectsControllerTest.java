@@ -10,11 +10,11 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.RemoteProjectsController;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
-import ca.corefacility.bioinformatics.irida.service.remote.model.RemoteProject;
 
 public class RemoteProjectsControllerTest {
 	RemoteProjectsController controller;
