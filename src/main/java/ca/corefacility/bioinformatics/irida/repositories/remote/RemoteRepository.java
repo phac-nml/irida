@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.remote;
+package ca.corefacility.bioinformatics.irida.repositories.remote;
 
 import java.util.List;
 
@@ -6,16 +6,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 
-/**
- * Service for communicating with a remote IRIDA instance
- * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
- *
- * @param <Type>
- *            The type of object this repository will store
- */
-public interface RemoteService<Type extends RemoteResource> {
-
+public interface RemoteRepository<Type extends RemoteResource> {
 	/**
 	 * Read an individual resource
 	 * 
@@ -44,5 +35,4 @@ public interface RemoteService<Type extends RemoteResource> {
 	 * @return true if the service is active
 	 */
 	public boolean getServiceStatus(RemoteAPI remoteAPI) throws IridaOAuthException;
-
 }

@@ -1,10 +1,10 @@
-package ca.corefacility.bioinformatics.irida.service.remote.model;
+package ca.corefacility.bioinformatics.irida.model.remote;
 
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.service.remote.model.resource.RESTLink;
-import ca.corefacility.bioinformatics.irida.service.remote.model.resource.RemoteResource;
+import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLink;
+import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 
 /**
  * A project read from a remote Irida instance
