@@ -13,12 +13,15 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
@@ -35,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 public class AssociatedProjectControllerTest {
@@ -205,6 +209,7 @@ public class AssociatedProjectControllerTest {
 		when(projectService.read(projectId)).thenReturn(p1);
 		when(projectService.read(associatedProjectId)).thenReturn(p2);
 
+		Map<String, Long> requestBody = ImmutableMap.of("associatedProjectId", associatedProjectId);
 		controller.addAssociatedProject(projectId, associatedProjectId);
 
 		verify(projectService).addRelatedProject(p1, p2);

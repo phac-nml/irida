@@ -98,10 +98,12 @@
         src="/resources/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
 <script th:src="@{'/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js'}"
         src="/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+<script th:src="@{/resources/bower_components/restangular/src/restangular.js}"
+        src="/resources/bower_components/restangular/src/restangular.js"></script>
 
 <script th:inline="javascript">
 	/*<![CDATA[*/
-	window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ui.bootstrap']);
+	window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ui.bootstrap', 'restangular']);
 	var app = angular.module('irida', window.dependencies)
 			.value('BASE_URL', /*[[@{/}]]*/ '/')
 			.directive('ngFocus', [function () {
@@ -124,8 +126,9 @@
 						});
 					}
 				}
-			}]);
-	;
+			}]).config(function ($httpProvider) {
+				$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+			});
 	/*]]>*/
 </script>
 
