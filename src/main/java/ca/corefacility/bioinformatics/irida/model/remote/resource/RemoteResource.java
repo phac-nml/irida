@@ -36,4 +36,14 @@ public interface RemoteResource {
 	 */
 	public void setLinks(List<RESTLink> links);
 
+	public default String getHrefForRel(String rel) {
+		List<RESTLink> links = getLinks();
+		for (RESTLink link : links) {
+			if (link.getRel().equals(rel)) {
+				return link.getHref();
+			}
+		}
+		throw new IllegalArgumentException("Given rel [" + rel + "] does not exist");
+	}
+
 }
