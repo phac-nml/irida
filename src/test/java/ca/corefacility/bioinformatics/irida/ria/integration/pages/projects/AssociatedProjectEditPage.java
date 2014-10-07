@@ -70,7 +70,7 @@ public class AssociatedProjectEditPage {
 			throw new IllegalArgumentException("No row with given project ID");
 		}
 
-		foundRow.findElement(By.className("associated-toggle-button")).click();
+		foundRow.findElement(By.cssSelector("button")).click();
 		waitForAjax();
 	}
 

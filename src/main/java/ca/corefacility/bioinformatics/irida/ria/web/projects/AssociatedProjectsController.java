@@ -17,12 +17,14 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,6 +45,8 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDat
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.collect.ImmutableMap;
 
 @Controller
 @RequestMapping("/projects")
@@ -105,26 +109,26 @@ public class AssociatedProjectsController {
 		return ASSOCIATED_PROJECTS_PAGE;
 	}
 
-	@RequestMapping(value = "/{projectId}/associated", method = RequestMethod.POST)
+	@RequestMapping(value = "/{projectId}/associated", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public String addAssociatedProject(@PathVariable Long projectId, @RequestParam Long associatedProjectId) {
+	public  Map<String, String> addAssociatedProject(@PathVariable Long projectId, @RequestBody Map<String, Long> postRequestBody) {
 		Project project = projectService.read(projectId);
-		Project associatedProject = projectService.read(associatedProjectId);
+		Project associatedProject = projectService.read(postRequestBody.get("associatedProjectId"));
 
 		projectService.addRelatedProject(project, associatedProject);
 
-		return "success";
+		return ImmutableMap.of("result", "success");
 	}
 
-	@RequestMapping(value = "/{projectId}/associated/{associatedProjectId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{projectId}/associated", method = RequestMethod.DELETE)
 	@ResponseBody
-	public String removeAssociatedProject(@PathVariable Long projectId, @PathVariable Long associatedProjectId) {
+	public Map<String, String> removeAssociatedProject(@PathVariable Long projectId, @RequestParam Long associatedProjectId) {
 		Project project = projectService.read(projectId);
 		Project associatedProject = projectService.read(associatedProjectId);
 
 		projectService.removeRelatedProject(project, associatedProject);
 
-		return "success";
+		return ImmutableMap.of("result", "success");
 	}
 
 	@RequestMapping("/{projectId}/associated/edit")

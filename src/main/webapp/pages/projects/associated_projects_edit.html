@@ -3,119 +3,118 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="projects/_base">
 <head>
-    <title th:text="#{project.associated.heading(${project.label})}"></title>
-    <script>
-        window.dependencies = ['irida.datatables'];
-    </script>
+	<title th:text="#{project.associated.heading(${project.label})}"></title>
+	<script>
+		window.dependencies = ['irida.datatables'];
+	</script>
 </head>
 <body>
 
 <main layout:fragment="main" th:object="${project}">
-    <div class="row">
-        <div class="col-md-10">
-            <h1 role="heading" th:text="#{project.associated.heading(${project.label})}"></h1>
-        </div>
-        <a class="btn btn-sm btn-default pull-right" href="/projects/1/associated"
-            th:href="@{/projects/{pid}/associated(pid=${project.getId()})}" th:text="#{form.btn.done}">_Done_</a>
-    </div>
+	<div class="row">
+		<div class="col-md-10">
+			<h1 role="heading" th:text="#{project.associated.heading(${project.label})}"></h1>
+		</div>
+		<a class="btn btn-sm btn-default pull-right" href="/projects/1/associated"
+		   th:href="@{/projects/{pid}/associated(pid=${project.getId()})}" th:text="#{form.btn.done}">_Done_</a>
+	</div>
 
-    <div tabset="">
-        <div tab="" th:attr="heading=#{project.associated.local.tab}">
-            <div ng-controller="AnalysisTableCtrl">
-                <div class="form-inline">
-                    <button id="filterBtn" class="btn btn-info"
-                            ng-click="filter.isCollapsed = !filter.isCollapsed"
-                            th:inline="text">
-                        <span class="fa fa-filter fa-fw"></span>
-                        [[#{project.associated.filter}]]
-                    </button>
-                    <div class="form-group">
-                        <select class="form-control" name="count" id="count" ng-model="filterCriteria.count"
-                                ng-change="filterResult()">
-                            <option value="10">10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select>
-                        <label for="count" th:text="#{global.tables.select-page-size}">Select Page Size</label>
-                    </div>
-                </div>
-                <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th sort-by="" onsort="onSort" sortdir="filterCriteria.sortDir"
-                                     sortedby="filterCriteria.sortedBy"
-                                     sortValue="id" th:text="#{'iridaThing.id'}">_ID_
-                        </th>
-                        <th sort-by="" onsort="onSort" sortdir="filterCriteria.sortDir"
-                                     sortedby="filterCriteria.sortedBy"
-                                     sortValue="name" th:text="#{'projects.table.name'}">_Name_
-                        </th>
-                        <th sort-by="" onsort="onSort" sortdir="filterCriteria.sortDir"
-                                     sortedby="filterCriteria.sortedBy"
-                                     sortValue="organism" th:text="#{'projects.table.organism'}">_State_
-                        </th>
-                        <th sort-by="" onsort="onSort" sortdir="filterCriteria.sortDir"
-                                     sortedby="filterCriteria.sortedBy"
-                                     sortValue="createdDate" th:text="#{'analysis.table.date'}">_Created_
-                        </th>
-                        <th></th>
-                    </tr>
-                    <tr>
-                        <td id="table-filter" colspan="5">
-                            <div class="row" collapse="filter.isCollapsed">
-                                <div class="form-group col-md-2">
-                                    <label for="name-filter" th:text="#{analysis.filter.byName}">_Filter by Name_</label>
-                                    <input id="name-filter" name="name-filter" type="text"
-                                           class="form-control input-full"
-                                           ng-model="filterCriteria.name"/>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                </thead>
-                <tbody cg-busy="filterPromise">
-                    <tr class="associated-project-row" ng-repeat="project in associated">
-                        <td class="project-id">{{project.id}}</td>
-                        <td class="project-name">{{project.name}}</td>
-                        <td>{{project.organism}}</td>
-                        <td>{{project.createdDate}}</td>
-                        <td ng-controller="ButtonsCtrl">
-                            <button type="button" class="btn btn-xs pull-right associated-toggle-button" ng-class="buttonClass"
-                                ng-model="associatedValue" ng-click="updateAssociated(project.id)" 
-                                ng-init="init(project.associated)" th:text="#{project.associated.edit.button}">
-                                _Associated_
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-                    
-                </table>
-                <div class="text-center">
-                    <pagination ng-hide="paging.totalPages &lt; 2"
-                        items-per-page="filterCriteria.count"
-                        total-items="paging.totalAssociated"
-                        ng-model="paging.page" first-text="&laquo;"
-                        last-text="&raquo;"
-                        next-text="&rsaquo;" previous-text="&lsaquo;"
-                        boundary-links="true"></pagination>
-                </div>
-            </div>
-        </div>
-        <div tab="" th:attr="heading=#{project.associated.remote.tab}">
-            To be continuted...
-        </div>
-        
-    </div>  
+	<div tabset="">
+		<div tab="" th:attr="heading=#{project.associated.local.tab}">
+			<div ng-controller="AnalysisTableCtrl">
+				<div class="form-inline">
+					<button id="filterBtn" class="btn btn-info"
+					        ng-click="filter.isCollapsed = !filter.isCollapsed"
+					        th:inline="text">
+						<span class="fa fa-filter fa-fw"></span>
+						[[#{project.associated.filter}]]
+					</button>
+					<div class="form-group">
+						<select class="form-control" name="count" id="count" ng-model="filterCriteria.count"
+						        ng-change="filterResult()">
+							<option value="10">10</option>
+							<option value="25">25</option>
+							<option value="50">50</option>
+							<option value="100">100</option>
+						</select>
+						<label for="count" th:text="#{global.tables.select-page-size}">Select Page Size</label>
+					</div>
+				</div>
+				<table class="table table-striped">
+					<thead>
+					<tr>
+						<th sort-by="" onsort="onSort" sortdir="filterCriteria.sortDir"
+						    sortedby="filterCriteria.sortedBy"
+						    sortValue="id" th:text="#{'iridaThing.id'}">_ID_
+						</th>
+						<th sort-by="" onsort="onSort" sortdir="filterCriteria.sortDir"
+						    sortedby="filterCriteria.sortedBy"
+						    sortValue="name" th:text="#{'projects.table.name'}">_Name_
+						</th>
+						<th sort-by="" onsort="onSort" sortdir="filterCriteria.sortDir"
+						    sortedby="filterCriteria.sortedBy"
+						    sortValue="organism" th:text="#{'projects.table.organism'}">_State_
+						</th>
+						<th sort-by="" onsort="onSort" sortdir="filterCriteria.sortDir"
+						    sortedby="filterCriteria.sortedBy"
+						    sortValue="createdDate" th:text="#{'analysis.table.date'}">_Created_
+						</th>
+						<th></th>
+					</tr>
+					<tr>
+						<td id="table-filter" colspan="5">
+							<div class="row" collapse="filter.isCollapsed">
+								<div class="form-group col-md-2">
+									<label for="name-filter" th:text="#{analysis.filter.byName}">_Filter by
+										Name_</label>
+									<input id="name-filter" name="name-filter" type="text"
+									       class="form-control input-full"
+									       ng-model="filterCriteria.name"/>
+								</div>
+							</div>
+						</td>
+					</tr>
+					</thead>
+					<tbody cg-busy="filterPromise">
+					<tr class="associated-project-row" ng-repeat="project in associated">
+						<td class="project-id">{{project.id}}</td>
+						<td class="project-name">{{project.name}}</td>
+						<td>{{project.organism}}</td>
+						<td>{{project.createdDate}}</td>
+						<td ng-controller="ButtonsCtrl">
+							<button type="button" class="btn btn-xs pull-right" ng-click="updateAssociated(project)"
+							        ng-class="{'btn-success': project.associated}" th:text="#{project.associated.edit.button}">Hello
+							</button>
+						</td>
+					</tr>
+					</tbody>
+
+				</table>
+				<div class="text-center">
+					<pagination ng-hide="paging.totalPages &lt; 2"
+					            items-per-page="filterCriteria.count"
+					            total-items="paging.totalAssociated"
+					            ng-model="paging.page" first-text="&laquo;"
+					            last-text="&raquo;"
+					            next-text="&rsaquo;" previous-text="&lsaquo;"
+					            boundary-links="true"></pagination>
+				</div>
+			</div>
+		</div>
+		<div tab="" th:attr="heading=#{project.associated.remote.tab}">
+			To be continuted...
+		</div>
+
+	</div>
 </main>
 
 <th:block layout:fragment="page-scripts">
-    <script th:src="@{/resources/js/directives/datatables/irida-datatable-min.js}"
+<script th:src="@{/resources/js/directives/datatables/irida-datatable-min.js}"
         src="/resources/js/directives/datatables/irida-datatable-min.js"></script>
-    <script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
+<script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
         src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
-    <script th:replace="remote_apis/remote_api_connect"></script>
-    <script th:inline="javascript">
+<script th:replace="remote_apis/remote_api_connect"></script>
+<script th:inline="javascript">
 
 app.provider('Associated', function () {
 	'use strict';
@@ -127,7 +126,16 @@ app.provider('Associated', function () {
 	}];
 });
 
-app.factory('AssociatedService', function ($q, Associated) {
+app.provider('AssociatedProjects', function () {
+	this.$get = ['$resource', function ($resource) {
+		return $resource(/*[[@{/projects/{id}/associated(id=${project.getId()})}]]*/ '/projects/1/associated/', {}, {
+			remove: {method: 'DELETE'},
+			create: {method: 'POST'}
+		});
+	}];
+});
+
+app.factory('AssociatedService', function ($q, Associated, AssociatedProjects) {
 	'use strict';
 	function AssociatedService() {
 		var self = this;
@@ -135,73 +143,57 @@ app.factory('AssociatedService', function ($q, Associated) {
 			var deferred = $q.defer();
 
 			Associated.query(params, function (data) {
-				self.associated = data;
 				deferred.resolve(data);
 			});
 			return deferred.promise;
 		};
-		
-		self.updateAssociatedStatus = function(newStatus, projectId){
-			var url = /*[[@{/projects/{id}/associated(id=${project.getId()})}]]*/ "#";
-			var data;
-			
+
+		self.removeAssociatedStatus = function (params) {
 			var deferred = $q.defer();
-			
-			var method;
-			if(newStatus == "associated"){
-				method = "POST";
-				data = "associatedProjectId="+projectId;
-			}
-			else{
-				method = "DELETE";
-				url = url+ "/" + projectId;
-			}
-			
-			$.ajax({
-				url: url,
-				data: data,
-				type: method,
-				success: function(data, textStatus, jqXHR){
-					deferred.resolve("success");
-				},
-				error: function(jqXHR, textStatus, errorThrown){
-					deferred.resolve(errorThrown)
-				}
+			AssociatedProjects.remove(params, function (data) {
+				deferred.resolve(data);
 			});
-			
+			return deferred.promise;
+		};
+
+		self.addAssociatedProject = function (params) {
+			var deferred = $q.defer();
+			AssociatedProjects.create(params, function (data) {
+				deferred.resolve(data);
+			});
 			return deferred.promise;
 		};
 	}
 
 	return new AssociatedService();
-}); 
+});
 
 app.controller('AnalysisTableCtrl', function ($rootScope, $scope, $log, AssociatedService) {
-    'use strict';
-    
-    /*[- */
-    // paging: handle all things to do with the paging of the 
-    //  - page = the current page being displayed.
-    //  - totalAnalysis = the total number of analysis available in the system
-    //  - totalPages = the total number of pages (totalAnalysis / num per page)
-    /* -]*/
-    $scope.paging = {
-        page: 1,
-        totalAssociated: 1,
-        totalPages: 1
-    };
+	'use strict';
 
-    /*[- */
-    // defaultCriteria: these are the defaults for creating the table
-    /* -]*/
-    var defaultCriteria = {
-        page: 0,
-        sortDir: 'asc',
-        sortedBy: 'id',
-        count: 10
-    };
-    
-    /*[- */
+	/*[- */
+	// paging: handle all things to do with the paging of the
+	//  - page = the current page being displayed.
+	//  - totalAnalysis = the total number of analysis available in the system
+	//  - totalPages = the total number of pages (totalAnalysis / num per page)
+	/* -]*/
+	$scope.paging = {
+		page           : 1,
+		totalAssociated: 1,
+		totalPages     : 1
+	};
+
+	/*[- */
+	// defaultCriteria: these are the defaults for creating the table
+	/* -]*/
+	var defaultCriteria = {
+		page    : 0,
+		sortDir : 'asc',
+		sortedBy: 'id',
+		count   : 10
+	};
+
+	/*[- */
 	// filter: used to control the filter section of the page.
 	//  - isCollapsed = whether the filter is open on the screen (initially closed)
 	//  - states = populates the states select.
@@ -209,34 +201,34 @@ app.controller('AnalysisTableCtrl', function ($rootScope, $scope, $log, Associat
 	$scope.filter = {
 		isCollapsed: true
 	};
-    
-    /*[- */
-    // filterCriteria: this is passed to the server on each page request.
-    //  - initially a copy of the defaultCriteria
-    /* -]*/
-    $scope.filterCriteria = _.clone(defaultCriteria);
-    
-    /*[- */
-    // This uses Restangular to call the server with the filterCriteria.
-    // When the ajax call is complete the table is recreated.
-    /* -]*/
-    $scope.fetchResult = function () {
-        $scope.filterPromise = AssociatedService.getAssociated($scope.filterCriteria);
 
-        return $scope.filterPromise.then(function (data) {
-            if (data.hasOwnProperty('associated')) {
-                $scope.associated = data.associated;
-                $scope.paging.totalAssociated = data.totalAssociated;
-                $scope.paging.totalPages = data.totalPages;
-            } else {
-                // Normally will only hit on bad credentials.
-                window.location = window.location;
-            }
-        }, function () {
-            $scope.associated = [];
-        });
-    };
-    
+	/*[- */
+	// filterCriteria: this is passed to the server on each page request.
+	//  - initially a copy of the defaultCriteria
+	/* -]*/
+	$scope.filterCriteria = _.clone(defaultCriteria);
+
+	/*[- */
+	// This uses Restangular to call the server with the filterCriteria.
+	// When the ajax call is complete the table is recreated.
+	/* -]*/
+	$scope.fetchResult = function () {
+		$scope.filterPromise = AssociatedService.getAssociated($scope.filterCriteria);
+
+		return $scope.filterPromise.then(function (data) {
+			if (data.hasOwnProperty('associated')) {
+				$scope.associated = data.associated;
+				$scope.paging.totalAssociated = data.totalAssociated;
+				$scope.paging.totalPages = data.totalPages;
+			} else {
+				// Normally will only hit on bad credentials.
+				window.location = window.location;
+			}
+		}, function () {
+			$scope.associated = [];
+		});
+	};
+
 	/*[- */
 	// filterResult
 	//  - Called when filtering data.
@@ -247,28 +239,28 @@ app.controller('AnalysisTableCtrl', function ($rootScope, $scope, $log, Associat
 			$scope.paging.page = 1;
 		});
 	};
-    
-    /*[- */
-    // This watch occurs when a different page is select.  Triggers a server call with the new page.
-    /* -]*/
-    $scope.$watch('paging.page', function () {
-        $scope.filterCriteria.page = $scope.paging.page - 1;
-        $scope.fetchResult();
-    });
-    
-    /*[- */
-    // onSort
-    //
-    /* -]*/
-    $scope.onSort = function (sortedBy, sortDir) {
-        $scope.filterCriteria.sortedBy = sortedBy;
-        $scope.filterCriteria.sortDir = sortDir;
-        $scope.filterCriteria.page = 1;
-        $scope.fetchResult().then(function () {
-            $scope.filterCriteria.page = 0;
-        });
-    };
-    
+
+	/*[- */
+	// This watch occurs when a different page is select.  Triggers a server call with the new page.
+	/* -]*/
+	$scope.$watch('paging.page', function () {
+		$scope.filterCriteria.page = $scope.paging.page - 1;
+		$scope.fetchResult();
+	});
+
+	/*[- */
+	// onSort
+	//
+	/* -]*/
+	$scope.onSort = function (sortedBy, sortDir) {
+		$scope.filterCriteria.sortedBy = sortedBy;
+		$scope.filterCriteria.sortDir = sortDir;
+		$scope.filterCriteria.page = 1;
+		$scope.fetchResult().then(function () {
+			$scope.filterCriteria.page = 0;
+		});
+	};
+
 	/*[- */
 	// This watch occurs when the name is filtered.
 	//  'debounce' whats for the given time before calling.  This allows the user to enter
@@ -281,82 +273,51 @@ app.controller('AnalysisTableCtrl', function ($rootScope, $scope, $log, Associat
 			});
 		}
 	}, 500));
-   
+
 });
 
 app.controller('ButtonsCtrl', function ($scope, AssociatedService) {
-	  $scope.associatedValue = "associated";
-	  $scope.buttonClass="btn-default";
-	  
-	  $scope.updateAssociated = function(projectId){
-		  var updatedValue;
-		  var responseMessage;
-		  if($scope.associatedValue == 0){
-			  updatedValue = "associated";
-			  responseMessage = /*[[#{project.associated.added}]]*/ "Associated project added.";
-		  }
-		  else{
-			  updatedValue = 0;
-			  responseMessage = /*[[#{project.associated.removed}]]*/ "Associated project removed.";
-		  }
-		  
-		  var response = AssociatedService.updateAssociatedStatus(updatedValue,projectId);
-		  
-		  //on response, set the button colour if the response was valid
-		  response.then(function(data){
-			  if(data == "success"){
-			  	$scope.associatedValue = updatedValue;
-			  	setButtonColour();
-			  	
-			  	noty({
-			  		layout: "topCenter",
-			  		type: "success",
-			  		text: responseMessage,
-			  		timeout: 3000
-			  	});
-			  }
-			  else if(data == "Conflict"){
-			  	var text = /*[[#{project.associated.conflict}]]*/ "Cannot add associated project as it appears to already be associated.";
-		  		noty({
-    		  		layout: "topCenter",
-    		  		type: "error",
-    		  		text: text
-    		  	});
-			  }
-			  else{
-			  	var text = /*[[#{project.associated.error}]]*/ "An error occurred while changing associated project status.";
-                noty({
-                	layout: "topCenter",
-                	type: "error",
-                	text: text
-                });
-			  }
-		  });
-		  
-	  };
-	  
-	  $scope.init = function(initialValue){
-		  if(initialValue){
-			  $scope.associatedValue = "associated";
-		  }
-		  else{
-			  $scope.associatedValue = 0;
-		  }
-		  
-		  setButtonColour();
-	  };
-	  
-	  function setButtonColour(){
-		  if($scope.associatedValue=="associated"){
-				 $scope.buttonClass="btn-success"	 
-		 }
-		 else{
-			 $scope.buttonClass="btn-default"
-		 }
-	  };
+	$scope.updateAssociated = function (project) {
+		if (project.associated) {
+			AssociatedService.removeAssociatedStatus({associatedProjectId: project.id}).then(function (data) {
+				if (data.result === 'success') {
+					delete project.associated;
+					notySuccess(/*[[#{project.associated.removed}]]*/ "Associated project removed.");
+				}
+				else
+					notyError();
+			});
+		}
+		else {
+			AssociatedService.addAssociatedProject({associatedProjectId: project.id}).then(function (data) {
+				console.log(data.result);
+				if (data.result === 'success') {
+					project.associated = 'associated';
+					notySuccess(/*[[#{project.associated.added}]]*/ "Associated project added.");
+				}
+				else notyError();
+			});
+		}
+	};
 
+	function notySuccess(msg) {
+		noty({
+			layout : "topCenter",
+			type   : "success",
+			text   : msg,
+			timeout: 3000
+		});
+	}
+
+	function notyError() {
+		noty({
+			layout: "topCenter",
+			type  : "error",
+			text  : /*[[#{project.associated.error}]]*/ "An error occurred while changing associated project status."
+		});
+	}
 });
-    </script>
+</script>
 </th:block>
 </body>
 </html>
