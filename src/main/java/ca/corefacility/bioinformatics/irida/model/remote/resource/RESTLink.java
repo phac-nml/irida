@@ -9,6 +9,10 @@ package ca.corefacility.bioinformatics.irida.model.remote.resource;
 public class RESTLink {
 	private String rel;
 	private String href;
+	
+	public RESTLink(){
+		
+	}
 
 	public RESTLink(String rel, String href) {
 		this.rel = rel;
