@@ -37,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUt
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
@@ -51,6 +52,7 @@ public class AssociatedProjectControllerTest {
 	private ProjectControllerUtils projectUtils;
 	private RemoteRelatedProjectService remoteRelatedProjectService;
 	private RemoteAPIService apiService;
+	private ProjectRemoteService projectRemoteService;
 
 	@Before
 	public void setUp() {
@@ -59,7 +61,7 @@ public class AssociatedProjectControllerTest {
 		projectUtils = mock(ProjectControllerUtils.class);
 		remoteRelatedProjectService = mock(RemoteRelatedProjectService.class);
 		controller = new AssociatedProjectsController(remoteRelatedProjectService, projectService, projectUtils,
-				userService, apiService);
+				userService, apiService, projectRemoteService);
 	}
 
 	@Test

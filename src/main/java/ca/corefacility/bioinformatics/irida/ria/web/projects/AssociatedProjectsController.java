@@ -34,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -43,6 +44,7 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDat
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
@@ -61,19 +63,21 @@ public class AssociatedProjectsController {
 	private final ProjectControllerUtils projectControllerUtils;
 	private final RemoteAPIService apiService;
 	private final UserService userService;
+	private final ProjectRemoteService projectRemoteService;
 
 	private final Formatter<Date> dateFormatter;
 
 	@Autowired
 	public AssociatedProjectsController(RemoteRelatedProjectService remoteRelatedProjectService,
 			ProjectService projectService, ProjectControllerUtils projectControllerUtils, UserService userService,
-			RemoteAPIService apiService) {
+			RemoteAPIService apiService, ProjectRemoteService projectRemoteService) {
 
 		this.remoteRelatedProjectService = remoteRelatedProjectService;
 		this.projectService = projectService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.userService = userService;
 		this.apiService = apiService;
+		this.projectRemoteService = projectRemoteService;
 		dateFormatter = new DateFormatter();
 	}
 
@@ -242,6 +246,17 @@ public class AssociatedProjectsController {
 		map.put("totalPages", totalPages);
 
 		return map;
+	}
+
+	@RequestMapping("/{projectId}/associated/remote/{apiId}/available")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId, 'isProjectOwner')")
+	@ResponseBody
+	public List<RemoteProject> getPotentialRemoteAssociatedProjectsForApi(@PathVariable Long projectId, @PathVariable Long apiId) {
+
+		RemoteAPI read = apiService.read(apiId);
+		List<RemoteProject> listProjectsForAPI = projectRemoteService.listProjectsForAPI(read);
+		
+		return listProjectsForAPI;
 	}
 
 	/**

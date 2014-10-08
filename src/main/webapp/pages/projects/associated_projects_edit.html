@@ -115,12 +115,31 @@
                             <i class="fa fa-spinner fa-spin"></i>
                         </span>
                         
-                        <button class="oauth-connect-link btn btn-default btn-sm hidden" id="connect-button"
+                        <button class="oauth-connect-link btn btn-default hidden" id="connect-button"
                             th:text="#{remoteapi.status.connect.button}">_Connect_</button>
                     </div>
                 </div>
                 <div class="panel-body">
-                    Panel content
+                    <table class="table table-striped">
+					<thead>
+    					<tr>
+    						<th th:text="#{'iridaThing.id'}">_ID_</th>
+    						<th th:text="#{'projects.table.name'}">_Name_</th>
+    						<th th:text="#{'projects.table.organism'}">_State_</th>
+    						<th></th>
+    					</tr>
+					</thead>
+					<tbody cg-busy="filterPromise">
+					<tr class="associated-project-row" ng-repeat="project in remoteAssociated">
+						<td class="project-id">{{project.id}}</td>
+						<td class="project-name">{{project.name}}</td>
+						<td>{{project.organism}}</td>
+						<td>
+						</td>
+					</tr>
+					</tbody>
+
+				</table>
                 </div>
             </div>
 		</div>
@@ -147,6 +166,10 @@
 			var self = this;
 			self.getAssociated = function (params) {
 				return base.customGET("ajax/available", params);
+			};
+			
+			self.getRemoteAssociated = function (apiId) {
+				return base.customGET("remote/"+apiId+"/available");
 			};
 
 			self.removeAssociatedStatus = function (params) {
@@ -268,6 +291,12 @@
 		}, 500));
 
 	});
+	
+	app.controller('RemoteAssociatedTableCtrl', function ($scope, AssociatedService) {
+		'use strict';
+		
+		
+	});
 
 	app.controller('ButtonsCtrl', function ($scope, AssociatedService) {
 		'use strict';
@@ -315,7 +344,7 @@
 		}
 	});
 	
-	app.controller('RemoteAnalysisCtrl', function($scope){
+	app.controller('RemoteAnalysisCtrl', function($scope, AssociatedService){
 		'use strict';
 		$scope.apiSelection=1;
 		var connectButton =	$("#connect-button");
@@ -326,8 +355,21 @@
 		
 		$scope.initApiStatus = function(apiSelection){
 			connectButton.data("api-id",apiSelection);
-			getApiStatus(apiSelection,"#api-status","#connect-button");
-		}
+			getApiStatus(apiSelection,"#api-status","#connect-button",function(){
+				$scope.fetchResult();
+			});
+		};
+		
+		$scope.fetchResult = function () {
+			$scope.remoteAssociated = [];
+			$scope.filterPromise = AssociatedService.getRemoteAssociated($scope.apiSelection);
+
+			return $scope.filterPromise.then(function (data) {
+					$scope.remoteAssociated = data;
+			}, function () {
+				$scope.remoteAssociated = [];
+			});
+		};
 	});
 </script>
 </th:block>
