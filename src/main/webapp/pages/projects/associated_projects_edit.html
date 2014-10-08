@@ -354,6 +354,7 @@
 		};
 		
 		$scope.initApiStatus = function(apiSelection){
+			$scope.remoteAssociated = [];
 			connectButton.data("api-id",apiSelection);
 			getApiStatus(apiSelection,"#api-status","#connect-button",function(){
 				$scope.fetchResult();
@@ -361,7 +362,6 @@
 		};
 		
 		$scope.fetchResult = function () {
-			$scope.remoteAssociated = [];
 			$scope.filterPromise = AssociatedService.getRemoteAssociated($scope.apiSelection);
 
 			return $scope.filterPromise.then(function (data) {
