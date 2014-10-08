@@ -305,6 +305,11 @@ public class ProjectServiceImplIT {
 		for (int i = 0; i < reversed.size(); i++) {
 			assertEquals(forward.get(i), reversed.get(i));
 		}
+		
+		Project excludeProject = projectService.read(2l);
+		Page<ProjectUserJoin> search = projectService.searchProjectUsers(
+				ProjectUserJoinSpecification.excludeProject(excludeProject), 0, 10, Direction.DESC);
+		assertFalse(search.getContent().contains(excludeProject));
 	}
 
 	@Test
@@ -326,6 +331,11 @@ public class ProjectServiceImplIT {
 		for (int i = 0; i < reversed.size(); i++) {
 			assertEquals(forward.get(i), reversed.get(i));
 		}
+		
+		Project excludeProject = projectService.read(5l);
+		Page<Project> search = projectService.search(ProjectSpecification.excludeProject(excludeProject), 0, 10,
+				Direction.DESC);
+		assertFalse(search.getContent().contains(excludeProject));
 	}
 
 	@Test

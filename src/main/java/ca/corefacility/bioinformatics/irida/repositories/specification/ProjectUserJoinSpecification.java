@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.specification;
 
+import java.util.ArrayList;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -9,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
@@ -52,8 +55,28 @@ public class ProjectUserJoinSpecification {
 		return new Specification<ProjectUserJoin>() {
 			@Override
 			public Predicate toPredicate(Root<ProjectUserJoin> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-				return cb.and(cb.equal(root.get("projectRole"), projectRole),
-						cb.equal(root.get("user"), user));
+				return cb.and(cb.equal(root.get("projectRole"), projectRole), cb.equal(root.get("user"), user));
+			}
+		};
+	}
+
+	/**
+	 * Exclude the given projects from the results
+	 * 
+	 * @param projects
+	 *            The projects to exclude
+	 * @return A specification instructing to exclude the given projects
+	 */
+	public static Specification<ProjectUserJoin> excludeProject(Project... projects) {
+		return new Specification<ProjectUserJoin>() {
+			@Override
+			public Predicate toPredicate(Root<ProjectUserJoin> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				ArrayList<Predicate> predicates = new ArrayList<>();
+				for (Project p : projects) {
+					predicates.add(cb.notEqual(root.get("project"), p));
+				}
+
+				return cb.and(predicates.toArray(new Predicate[predicates.size()]));
 			}
 		};
 	}

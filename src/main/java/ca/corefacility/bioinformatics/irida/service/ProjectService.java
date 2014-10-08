@@ -215,6 +215,18 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	public void removeRelatedProject(RelatedProjectJoin relatedProject);
 
 	/**
+	 * Remove a {@link RelatedProjectJoin} for the given project and related
+	 * project
+	 * 
+	 * @param subject
+	 *            the owning project
+	 * @param relatedProject
+	 *            The related project
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#subject,'isProjectOwner')")
+	public void removeRelatedProject(Project subject, Project relatedProject);
+
+	/**
 	 * Get the projects that a given sample is on
 	 * 
 	 * @param sample
