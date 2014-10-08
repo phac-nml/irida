@@ -41,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSp
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -58,18 +59,21 @@ public class AssociatedProjectsController {
 	private final RemoteRelatedProjectService remoteRelatedProjectService;
 	private final ProjectService projectService;
 	private final ProjectControllerUtils projectControllerUtils;
+	private final RemoteAPIService apiService;
 	private final UserService userService;
 
 	private final Formatter<Date> dateFormatter;
 
 	@Autowired
 	public AssociatedProjectsController(RemoteRelatedProjectService remoteRelatedProjectService,
-			ProjectService projectService, ProjectControllerUtils projectControllerUtils, UserService userService) {
+			ProjectService projectService, ProjectControllerUtils projectControllerUtils, UserService userService,
+			RemoteAPIService apiService) {
 
 		this.remoteRelatedProjectService = remoteRelatedProjectService;
 		this.projectService = projectService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.userService = userService;
+		this.apiService = apiService;
 		dateFormatter = new DateFormatter();
 	}
 
@@ -153,6 +157,9 @@ public class AssociatedProjectsController {
 	public String editAssociatedProjectsForProject(@PathVariable Long projectId, Model model, Principal principal) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
+
+		Iterable<RemoteAPI> remoteApis = apiService.findAll();
+		model.addAttribute("apis", remoteApis);
 
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ASSOCIATED_PROJECTS);

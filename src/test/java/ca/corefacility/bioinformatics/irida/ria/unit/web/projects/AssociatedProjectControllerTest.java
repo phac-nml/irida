@@ -35,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.AssociatedProjectsController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -49,6 +50,7 @@ public class AssociatedProjectControllerTest {
 	private UserService userService;
 	private ProjectControllerUtils projectUtils;
 	private RemoteRelatedProjectService remoteRelatedProjectService;
+	private RemoteAPIService apiService;
 
 	@Before
 	public void setUp() {
@@ -57,7 +59,7 @@ public class AssociatedProjectControllerTest {
 		projectUtils = mock(ProjectControllerUtils.class);
 		remoteRelatedProjectService = mock(RemoteRelatedProjectService.class);
 		controller = new AssociatedProjectsController(remoteRelatedProjectService, projectService, projectUtils,
-				userService);
+				userService, apiService);
 	}
 
 	@Test

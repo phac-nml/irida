@@ -21,7 +21,7 @@
 
 	<div tabset="">
 		<div tab="" th:attr="heading=#{project.associated.local.tab}">
-			<div ng-controller="AnalysisTableCtrl">
+			<div ng-controller="AssociatedTableCtrl">
 				<div class="form-inline">
 					<button id="filterBtn" class="btn btn-info"
 					        ng-click="filter.isCollapsed = !filter.isCollapsed"
@@ -103,7 +103,26 @@
 			</div>
 		</div>
 		<div tab="" th:attr="heading=#{project.associated.remote.tab}">
-			To be continuted...
+			<div class="panel panel-default" ng-controller="RemoteAnalysisCtrl">
+                <div class="panel-heading clearfix">
+                    <div class="input-group pull-left">
+                        <select class="form-control" ng-model="apiSelection" ng-change="changeApi(apiSelection)" ng-init="initApiStatus(apiSelection)">
+                            <option th:each="api : ${apis}" th:text="${api.name}" th:value="${api.id}"></option>
+                        </select>
+                    </div>
+                    <div class="pull-right">
+                        <span id="api-status" class="api-status">
+                            <i class="fa fa-spinner fa-spin"></i>
+                        </span>
+                        
+                        <button class="oauth-connect-link btn btn-default btn-sm hidden" id="connect-button"
+                            th:text="#{remoteapi.status.connect.button}">_Connect_</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    Panel content
+                </div>
+            </div>
 		</div>
 
 	</div>
@@ -142,7 +161,7 @@
 		return new AssociatedService();
 	});
 
-	app.controller('AnalysisTableCtrl', function ($rootScope, $scope, $log, AssociatedService) {
+	app.controller('AssociatedTableCtrl', function ($rootScope, $scope, $log, AssociatedService) {
 		'use strict';
 
 		/*[- */
@@ -251,6 +270,7 @@
 	});
 
 	app.controller('ButtonsCtrl', function ($scope, AssociatedService) {
+		'use strict';
 		$scope.updateAssociated = function (project) {
 			var titleElem = angular.element(".navbar-sm li.active span"),
 					titleVal = parseInt(titleElem.html());
@@ -292,6 +312,21 @@
 				type  : "error",
 				text  : /*[[#{project.associated.error}]]*/ "An error occurred while changing associated project status."
 			});
+		}
+	});
+	
+	app.controller('RemoteAnalysisCtrl', function($scope){
+		'use strict';
+		$scope.apiSelection=1;
+		var connectButton =	$("#connect-button");
+		$scope.changeApi = function(apiSelection){
+			connectButton.addClass("hidden");
+			$scope.initApiStatus(apiSelection);
+		};
+		
+		$scope.initApiStatus = function(apiSelection){
+			connectButton.data("api-id",apiSelection);
+			getApiStatus(apiSelection,"#api-status","#connect-button");
 		}
 	});
 </script>
