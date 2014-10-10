@@ -136,10 +136,12 @@
 						<td class="project-name">{{project.name}}</td>
 						<td>{{project.organism}}</td>
                         <td>{{project.createdDate}}</td>
-						<td><button type="button" class="btn btn-xs pull-right"
+						<td>
+                            <button type="button" class="btn btn-xs pull-right" ng-click="updateAssociated(project)"
 							        ng-class="{'btn-success': project.associated}"
 							        th:text="#{project.associated.edit.button}">Hello
-							</button></td>
+							</button>
+                        </td>
 					</tr>
 					</tbody>
 
@@ -182,6 +184,14 @@
 
 			self.addAssociatedProject = function (params) {
 				return base.customPOST($.param(params));
+			};
+			
+			self.addRemoteAssociatedProject = function (params) {
+				return base.customPOST($.param(params), "remote/");
+			};
+			
+			self.removeRemoteAssociatedStatus = function (remoteProjectId) {
+				return base.customDELETE("remote/"+remoteProjectId);
 			};
 		}
 
@@ -330,22 +340,6 @@
 			}
 		};
 
-		function notySuccess(msg) {
-			noty({
-				layout : "topCenter",
-				type   : "success",
-				text   : msg,
-				timeout: 3000
-			});
-		}
-
-		function notyError() {
-			noty({
-				layout: "topCenter",
-				type  : "error",
-				text  : /*[[#{project.associated.error}]]*/ "An error occurred while changing associated project status."
-			});
-		}
 	});
 	
 	app.controller('RemoteAnalysisCtrl', function($scope, AssociatedService){
@@ -374,7 +368,50 @@
 				$scope.remoteAssociated = [];
 			});
 		};
+		
+		$scope.updateAssociated = function (project) {
+			var titleElem = angular.element(".navbar-sm li.active span"),
+					titleVal = parseInt(titleElem.html());
+			if (project.associated) {
+				AssociatedService.removeRemoteAssociatedStatus(project.remoteId).then(function (data) {
+					if (data.result === 'success') {
+						delete project.associated;
+						notySuccess(/*[[#{project.associated.removed}]]*/ "Associated project removed.");
+						titleElem.html(--titleVal);
+					}
+					else
+						notyError();
+				});
+			}
+			else {
+				AssociatedService.addRemoteAssociatedProject({associatedProjectId: project.remoteId, apiId: $scope.apiSelection}).then(function (data) {
+					if (data.result === 'success') {
+						project.associated = 'associated';
+						notySuccess(/*[[#{project.associated.added}]]*/ "Associated project added.");
+						titleElem.html(++titleVal);
+					}
+					else notyError();
+				});
+			}
+		};
 	});
+	
+	function notySuccess(msg) {
+		noty({
+			layout : "topCenter",
+			type   : "success",
+			text   : msg,
+			timeout: 3000
+		});
+	}
+
+	function notyError() {
+		noty({
+			layout: "topCenter",
+			type  : "error",
+			text  : /*[[#{project.associated.error}]]*/ "An error occurred while changing associated project status."
+		});
+	}
 </script>
 </th:block>
 </body>
