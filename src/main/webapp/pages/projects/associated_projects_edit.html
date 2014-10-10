@@ -126,6 +126,7 @@
     						<th th:text="#{'iridaThing.id'}">_ID_</th>
     						<th th:text="#{'projects.table.name'}">_Name_</th>
     						<th th:text="#{'projects.table.organism'}">_State_</th>
+                            <th th:text="#{'analysis.table.date'}">_Created_</th>
     						<th></th>
     					</tr>
 					</thead>
@@ -134,8 +135,11 @@
 						<td class="project-id">{{project.id}}</td>
 						<td class="project-name">{{project.name}}</td>
 						<td>{{project.organism}}</td>
-						<td>
-						</td>
+                        <td>{{project.createdDate}}</td>
+						<td><button type="button" class="btn btn-xs pull-right"
+							        ng-class="{'btn-success': project.associated}"
+							        th:text="#{project.associated.edit.button}">Hello
+							</button></td>
 					</tr>
 					</tbody>
 
