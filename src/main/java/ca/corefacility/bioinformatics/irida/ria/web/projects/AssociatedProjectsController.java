@@ -276,13 +276,17 @@ public class AssociatedProjectsController {
 	}
 
 	/**
-	 * Add a remote associated project to a project
+	 * Add a {@link RemoteRelatedProject} to the current {@link Project}
 	 * 
 	 * @param projectId
-	 *            The subject project id
+	 *            The ID of the owning project
 	 * @param associatedProjectId
-	 *            The associated project id
-	 * @return "success" if the request was successful
+	 *            The Cache ID of the {@link RemoteProject}
+	 * @param apiId
+	 *            The ID of the api this project resides on
+	 * @param remoteProjectCache
+	 *            The cache object storing {@link RemoteProject} responses
+	 * @return
 	 */
 	@RequestMapping(value = "/{projectId}/associated/remote", method = RequestMethod.POST)
 	@ResponseBody
@@ -304,13 +308,15 @@ public class AssociatedProjectsController {
 	}
 
 	/**
-	 * Delete an associated project to a project
+	 * Delete a remote associated project from a project
 	 * 
 	 * @param projectId
-	 *            The subject project id
+	 *            The ID of the project to remove the association from
 	 * @param associatedProjectId
-	 *            The associated project id
-	 * @return "success" if the request was successful
+	 *            The cache identifier for the remote element
+	 * @param remoteProjectCache
+	 *            The cache object storing the {@link RemoteProject}s
+	 * @return
 	 */
 	@RequestMapping(value = "/{projectId}/associated/remote/{associatedProjectId}", method = RequestMethod.DELETE)
 	@ResponseBody
@@ -327,6 +333,19 @@ public class AssociatedProjectsController {
 		return ImmutableMap.of("result", "success");
 	}
 
+	/**
+	 * Get a list of the {@link RemoteProject} parameters
+	 * 
+	 * @param projects
+	 *            A list of the {@link RemoteProject}s to display
+	 * @param associatedProjects
+	 *            The {@link RemoteRelatedProject}s associated with the current
+	 *            project
+	 * @param remoteProjectCache
+	 *            A {@link RemoteObjectCache} giving identifiers for the
+	 *            {@link RemoteProject}s
+	 * @return
+	 */
 	private List<Map<String, String>> getRemoteAssociatedProjectsMap(List<RemoteProject> projects,
 			List<RemoteRelatedProject> associatedProjects, RemoteObjectCache<RemoteProject> remoteProjectCache) {
 		List<Map<String, String>> list = new ArrayList<>();
