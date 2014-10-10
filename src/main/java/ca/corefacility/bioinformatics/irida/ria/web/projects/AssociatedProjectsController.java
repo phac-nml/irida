@@ -251,12 +251,42 @@ public class AssociatedProjectsController {
 	@RequestMapping("/{projectId}/associated/remote/{apiId}/available")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId, 'isProjectOwner')")
 	@ResponseBody
-	public List<RemoteProject> getPotentialRemoteAssociatedProjectsForApi(@PathVariable Long projectId, @PathVariable Long apiId) {
+	public List<Map<String, String>> getPotentialRemoteAssociatedProjectsForApi(@PathVariable Long projectId,
+			@PathVariable Long apiId) {
 
+		Project project = projectService.read(projectId);
 		RemoteAPI read = apiService.read(apiId);
 		List<RemoteProject> listProjectsForAPI = projectRemoteService.listProjectsForAPI(read);
-		
-		return listProjectsForAPI;
+		List<RemoteRelatedProject> remoteProjectsForProject = remoteRelatedProjectService
+				.getRemoteProjectsForProject(project);
+
+		return getRemoteAssociatedProjectsMap(listProjectsForAPI, remoteProjectsForProject);
+	}
+
+	private List<Map<String, String>> getRemoteAssociatedProjectsMap(List<RemoteProject> projects,
+			List<RemoteRelatedProject> associatedProjects) {
+		List<Map<String, String>> list = new ArrayList<>();
+
+		Map<String, Boolean> remoteUrls = new HashMap<>();
+		for (RemoteRelatedProject remote : associatedProjects) {
+			String remoteProjectURI = remote.getRemoteProjectURI();
+			remoteUrls.put(remoteProjectURI, true);
+		}
+
+		for (RemoteProject project : projects) {
+			Map<String, String> pmap = new HashMap<>();
+			pmap.put("id", project.getId().toString());
+			pmap.put("name", project.getName());
+			pmap.put("organism", project.getOrganism());
+			pmap.put("createdDate", dateFormatter.print(project.getCreatedDate(), LocaleContextHolder.getLocale()));
+			if (remoteUrls.containsKey(project.getHrefForRel("self"))) {
+				pmap.put("associated", "associated");
+			}
+
+			list.add(pmap);
+		}
+
+		return list;
 	}
 
 	/**
