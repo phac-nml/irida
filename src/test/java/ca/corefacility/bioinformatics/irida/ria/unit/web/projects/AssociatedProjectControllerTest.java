@@ -328,4 +328,28 @@ public class AssociatedProjectControllerTest {
 		assertEquals(project, value.getLocalProject());
 		assertEquals(projectLink, value.getRemoteProjectURI());
 	}
+
+	@Test
+	public void testRemoveRemoteAssociatedProject() {
+		Long projectId = 1l;
+		RemoteObjectCache<RemoteProject> remoteProjectCache = new RemoteObjectCache<>();
+		Project project = new Project();
+
+		String projectLink = "http://somewhere/projects/1";
+		RESTLinks links = new RESTLinks(ImmutableMap.of("self", projectLink));
+		RemoteProject rp1 = new RemoteProject();
+		rp1.setId(3l);
+		rp1.setLinks(links);
+
+		RemoteRelatedProject rrp = new RemoteRelatedProject();
+
+		when(projectService.read(projectId)).thenReturn(project);
+		when(remoteRelatedProjectService.getRemoteRelatedProjectForProjectAndURI(project, projectLink)).thenReturn(rrp);
+
+		Integer associatedProjectId = remoteProjectCache.getIdForResource(rp1);
+
+		controller.removeRemoteAssociatedProject(projectId, associatedProjectId, remoteProjectCache);
+
+		verify(remoteRelatedProjectService).delete(rrp.getId());
+	}
 }
