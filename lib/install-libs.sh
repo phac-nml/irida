@@ -5,4 +5,4 @@ mvn --settings maven-central-secure-settings.xml install:install-file -Dfile=sam
 mvn --settings maven-central-secure-settings.xml install:install-file -Dfile=fastqc-0.10.1.jar -Dsources=fastqc-0.10.1-src.jar -DpomFile=fastqc-0.10.1.pom -DcreateChecksum=true
 
 # Git commit 1167ef08bbf7359d781e910ce8253fc36295f291
-mvn --settings maven-central-secure-settings.xml install:install-file -Dfile=blend4j-0.2.0-SNAPSHOT.jar -DpomFile=blend4j-0.2.0-SNAPSHOT.pom -DcreateChecksum=true
+mvn --settings maven-central-secure-settings.xml install:install-file -Dfile=blend4j-0.2.0-SNAPSHOT.jar -Dversion=0.2.0-SNAPSHOT-1167ef08bbf7359d781e910ce8253fc36295f291 -DpomFile=blend4j-0.2.0-SNAPSHOT.pom -DcreateChecksum=true
