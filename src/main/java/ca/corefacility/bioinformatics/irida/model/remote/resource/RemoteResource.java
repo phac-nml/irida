@@ -9,6 +9,7 @@ import java.util.List;
  */
 public interface RemoteResource {
 	public static final String SELF_REL = "self";
+
 	/**
 	 * Get the numeric identifier for this resource
 	 * 
@@ -37,6 +38,13 @@ public interface RemoteResource {
 	 */
 	public void setLinks(List<RESTLink> links);
 
+	/**
+	 * Get the HREF for a given rel
+	 * 
+	 * @param rel
+	 *            The rel to get an href from the links collection
+	 * @return an href
+	 */
 	public default String getHrefForRel(String rel) {
 		List<RESTLink> links = getLinks();
 		for (RESTLink link : links) {
