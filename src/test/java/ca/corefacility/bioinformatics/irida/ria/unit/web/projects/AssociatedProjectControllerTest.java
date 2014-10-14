@@ -2,18 +2,16 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
@@ -59,6 +56,8 @@ public class AssociatedProjectControllerTest {
 		projectService = mock(ProjectService.class);
 		userService = mock(UserService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
+		apiService = mock(RemoteAPIService.class);
+		projectRemoteService = mock(ProjectRemoteService.class);
 		remoteRelatedProjectService = mock(RemoteRelatedProjectService.class);
 		controller = new AssociatedProjectsController(remoteRelatedProjectService, projectService, projectUtils,
 				userService, apiService, projectRemoteService);
@@ -213,7 +212,7 @@ public class AssociatedProjectControllerTest {
 		when(projectService.read(projectId)).thenReturn(p1);
 		when(projectService.read(associatedProjectId)).thenReturn(p2);
 
-		Map<String, Long> requestBody = ImmutableMap.of("associatedProjectId", associatedProjectId);
+		ImmutableMap.of("associatedProjectId", associatedProjectId);
 		controller.addAssociatedProject(projectId, associatedProjectId);
 
 		verify(projectService).addRelatedProject(p1, p2);
@@ -240,8 +239,11 @@ public class AssociatedProjectControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		Principal principal = () -> USER_NAME;
 
+		when(apiService.findAll()).thenReturn(Lists.newArrayList(new RemoteAPI()));
 		String editAssociatedProjectsForProject = controller.editAssociatedProjectsForProject(projectId, model,
 				principal);
+
+		verify(apiService).findAll();
 
 		assertEquals(AssociatedProjectsController.EDIT_ASSOCIATED_PROJECTS_PAGE, editAssociatedProjectsForProject);
 	}
