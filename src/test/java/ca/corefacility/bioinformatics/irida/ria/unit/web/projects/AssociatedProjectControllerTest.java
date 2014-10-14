@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
@@ -26,9 +27,12 @@ import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
+import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLinks;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.utilities.RemoteObjectCache;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.AssociatedProjectsController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -246,5 +250,82 @@ public class AssociatedProjectControllerTest {
 		verify(apiService).findAll();
 
 		assertEquals(AssociatedProjectsController.EDIT_ASSOCIATED_PROJECTS_PAGE, editAssociatedProjectsForProject);
+	}
+
+	@Test
+	public void testGetPotentialRemoteAssociatedProjectsForApi() {
+		Long projectId = 1l;
+		Long apiId = 2l;
+		RemoteObjectCache<RemoteProject> remoteProjectCache = new RemoteObjectCache<>();
+		Project project = new Project();
+		RemoteAPI api = new RemoteAPI();
+
+		when(projectService.read(projectId)).thenReturn(project);
+		when(apiService.read(apiId)).thenReturn(api);
+
+		RESTLinks links = new RESTLinks(ImmutableMap.of("self", "http://somewhere"));
+		RemoteProject rp1 = new RemoteProject();
+		rp1.setId(3l);
+		rp1.setLinks(links);
+
+		String selfRel2 = "http://somewhere-else";
+		RESTLinks links2 = new RESTLinks(ImmutableMap.of("self", selfRel2));
+		RemoteProject rp2 = new RemoteProject();
+		rp2.setId(4l);
+		rp2.setLinks(links2);
+
+		RemoteRelatedProject rrp = new RemoteRelatedProject(project, api, selfRel2);
+
+		when(projectRemoteService.listProjectsForAPI(api)).thenReturn(Lists.newArrayList(rp1, rp2));
+		when(remoteRelatedProjectService.getRemoteProjectsForProject(project)).thenReturn(Lists.newArrayList(rrp));
+
+		List<Map<String, String>> potentialRemoteAssociatedProjectsForApi = controller
+				.getPotentialRemoteAssociatedProjectsForApi(projectId, apiId, remoteProjectCache);
+		assertEquals(2, potentialRemoteAssociatedProjectsForApi.size());
+
+		int associatedCount = 0;
+		for (Map<String, String> map : potentialRemoteAssociatedProjectsForApi) {
+			if (map.containsKey("associated")) {
+				associatedCount++;
+			}
+		}
+		assertEquals("1 associated project should be found", 1, associatedCount);
+
+		verify(projectRemoteService).listProjectsForAPI(api);
+		verify(remoteRelatedProjectService).getRemoteProjectsForProject(project);
+	}
+
+	@Test
+	public void testAddRemoteAssociatedProject() {
+		Long projectId = 1l;
+		Long apiId = 2l;
+		RemoteObjectCache<RemoteProject> remoteProjectCache = new RemoteObjectCache<>();
+
+		String projectLink = "http://somewhere/projects/1";
+		RESTLinks links = new RESTLinks(ImmutableMap.of("self", projectLink));
+		RemoteProject rp1 = new RemoteProject();
+		rp1.setId(3l);
+		rp1.setLinks(links);
+
+		Integer associatedProjectId = remoteProjectCache.getIdForResource(rp1);
+
+		Project project = new Project();
+		RemoteAPI api = new RemoteAPI();
+
+		when(projectService.read(projectId)).thenReturn(project);
+		when(apiService.read(apiId)).thenReturn(api);
+
+		Map<String, String> addRemoteAssociatedProject = controller.addRemoteAssociatedProject(projectId,
+				associatedProjectId, apiId, remoteProjectCache);
+
+		assertEquals("success", addRemoteAssociatedProject.get("result"));
+
+		ArgumentCaptor<RemoteRelatedProject> argumentCaptor = ArgumentCaptor.forClass(RemoteRelatedProject.class);
+		verify(remoteRelatedProjectService).create(argumentCaptor.capture());
+
+		RemoteRelatedProject value = argumentCaptor.getValue();
+		assertEquals(api, value.getRemoteAPI());
+		assertEquals(project, value.getLocalProject());
+		assertEquals(projectLink, value.getRemoteProjectURI());
 	}
 }
