@@ -57,7 +57,7 @@
 						</th>
 						<th sort-by="" onsort="onSort" sortdir="filterCriteria.sortDir"
 						    sortedby="filterCriteria.sortedBy"
-						    sortValue="createdDate" th:text="#{'analysis.table.date'}">_Created_
+						    sortValue="createdDate" th:text="#{'project.created'}">_Created_
 						</th>
 						<th></th>
 					</tr>
@@ -65,7 +65,7 @@
 						<td id="table-filter" colspan="5">
 							<div class="row" collapse="filter.isCollapsed">
 								<div class="form-group col-md-3">
-									<label for="name-filter" th:text="#{analysis.filter.byName}">_Filter by
+									<label for="name-filter" th:text="#{project.associated.filterByName}">_Filter by
 										Name_</label>
 									<input id="name-filter" name="name-filter" type="text"
 									       class="form-control input-full"
@@ -81,7 +81,7 @@
 						<td class="project-name">{{project.name}}</td>
 						<td>{{project.organism}}</td>
 						<td>{{project.createdDate}}</td>
-						<td ng-controller="ButtonsCtrl">
+						<td>
 							<button type="button" class="btn btn-xs pull-right" ng-click="updateAssociated(project)"
 							        ng-class="{'btn-success': project.associated}"
 							        th:text="#{project.associated.edit.button}">Hello
@@ -103,7 +103,7 @@
 			</div>
 		</div>
 		<div tab="" th:attr="heading=#{project.associated.remote.tab}">
-			<div class="panel panel-default" ng-controller="RemoteAnalysisCtrl">
+			<div class="panel panel-default" ng-controller="RemoteAssociatedCtrl">
                 <div class="panel-heading clearfix">
                     <div class="input-group pull-left">
                         <select class="form-control" ng-model="apiSelection" ng-change="changeApi(apiSelection)" ng-init="initApiStatus(apiSelection)">
@@ -126,7 +126,7 @@
     						<th th:text="#{'iridaThing.id'}">_ID_</th>
     						<th th:text="#{'projects.table.name'}">_Name_</th>
     						<th th:text="#{'projects.table.organism'}">_State_</th>
-                            <th th:text="#{'analysis.table.date'}">_Created_</th>
+                            <th th:text="#{'project.created'}">_Created_</th>
     						<th></th>
     					</tr>
 					</thead>
@@ -204,8 +204,8 @@
 		/*[- */
 		// paging: handle all things to do with the paging of the
 		//  - page = the current page being displayed.
-		//  - totalAnalysis = the total number of analysis available in the system
-		//  - totalPages = the total number of pages (totalAnalysis / num per page)
+		//  - totalAssociated = the total number of assocaited projects for this project
+		//  - totalPages = the total number of pages (totalAssociated / num per page)
 		/* -]*/
 		$scope.paging = {
 			page           : 1,
@@ -303,17 +303,7 @@
 				});
 			}
 		}, 500));
-
-	});
-	
-	app.controller('RemoteAssociatedTableCtrl', function ($scope, AssociatedService) {
-		'use strict';
 		
-		
-	});
-
-	app.controller('ButtonsCtrl', function ($scope, AssociatedService) {
-		'use strict';
 		$scope.updateAssociated = function (project) {
 			var titleElem = angular.element(".navbar-sm li.active span"),
 					titleVal = parseInt(titleElem.html());
@@ -342,7 +332,7 @@
 
 	});
 	
-	app.controller('RemoteAnalysisCtrl', function($scope, AssociatedService){
+	app.controller('RemoteAssociatedCtrl', function($scope, AssociatedService){
 		'use strict';
 		$scope.apiSelection=1;
 		var connectButton =	$("#connect-button");
