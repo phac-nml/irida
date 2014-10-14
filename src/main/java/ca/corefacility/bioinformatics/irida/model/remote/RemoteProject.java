@@ -1,10 +1,9 @@
 package ca.corefacility.bioinformatics.irida.model.remote;
 
-import java.util.List;
 import java.util.Objects;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLink;
+import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLinks;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 
 /**
@@ -13,7 +12,7 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class RemoteProject extends Project implements RemoteResource {
-	private List<RESTLink> links;
+	private RESTLinks links;
 
 	public String getIdentifier() {
 		return this.getId().toString();
@@ -23,11 +22,11 @@ public class RemoteProject extends Project implements RemoteResource {
 		this.setId(Long.parseLong(identifier));
 	}
 
-	public List<RESTLink> getLinks() {
+	public RESTLinks getLinks() {
 		return links;
 	}
 
-	public void setLinks(List<RESTLink> links) {
+	public void setLinks(RESTLinks links) {
 		this.links = links;
 	}
 

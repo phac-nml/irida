@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.utils.model;
 
-import java.util.List;
-
-import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLink;
+import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLinks;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteRepository;
 
@@ -13,7 +11,7 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteRepository
  *
  */
 public class RemoteIdentifiableTestEntity extends IdentifiableTestEntity implements RemoteResource {
-	private List<RESTLink> links;
+	private RESTLinks links;
 
 	@Override
 	public String getIdentifier() {
@@ -26,12 +24,12 @@ public class RemoteIdentifiableTestEntity extends IdentifiableTestEntity impleme
 	}
 
 	@Override
-	public List<RESTLink> getLinks() {
+	public RESTLinks getLinks() {
 		return links;
 	}
 
 	@Override
-	public void setLinks(List<RESTLink> links) {
+	public void setLinks(RESTLinks links) {
 		this.links = links;
 	}
 

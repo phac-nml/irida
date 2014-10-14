@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.remote.resource;
 
-import java.util.List;
 
 /**
  * Methods that must be implemented by resources read from a remote Irida API
@@ -29,14 +28,14 @@ public interface RemoteResource {
 	 * 
 	 * @return
 	 */
-	public List<RESTLink> getLinks();
+	public RESTLinks getLinks();
 
 	/**
 	 * Set the objects this resource links to
 	 * 
 	 * @param links
 	 */
-	public void setLinks(List<RESTLink> links);
+	public void setLinks(RESTLinks links);
 
 	/**
 	 * Get the HREF for a given rel
@@ -46,13 +45,7 @@ public interface RemoteResource {
 	 * @return an href
 	 */
 	public default String getHrefForRel(String rel) {
-		List<RESTLink> links = getLinks();
-		for (RESTLink link : links) {
-			if (link.getRel().equals(rel)) {
-				return link.getHref();
-			}
-		}
-		throw new IllegalArgumentException("Given rel [" + rel + "] does not exist");
+		return getLinks().getHrefForRel(rel);
 	}
 
 }
