@@ -297,9 +297,6 @@ public class AssociatedProjectsController {
 		RemoteAPI remoteAPI = apiService.read(apiId);
 		RemoteProject readResource = remoteProjectCache.readResource(associatedProjectId);
 
-		for (RESTLink link : readResource.getLinks()) {
-			System.out.println(link);
-		}
 		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject(project, remoteAPI,
 				readResource.getHrefForRel("self"));
 		remoteRelatedProjectService.create(remoteRelatedProject);
