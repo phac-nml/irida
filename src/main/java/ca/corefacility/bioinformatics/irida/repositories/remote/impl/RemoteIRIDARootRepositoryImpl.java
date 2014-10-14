@@ -11,6 +11,12 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrappe
 import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteIRIDARootRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
+/**
+ * Implementation of {@link RemoteIRIDARootRepository}
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Repository
 public class RemoteIRIDARootRepositoryImpl extends RemoteRepositoryImpl<RemoteIRIDARoot> implements
 		RemoteIRIDARootRepository {
@@ -25,6 +31,9 @@ public class RemoteIRIDARootRepositoryImpl extends RemoteRepositoryImpl<RemoteIR
 		super(tokenService, listTypeReference, objectTypeReference);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public RemoteIRIDARoot read(RemoteAPI api) {
 		return read(api.getServiceURI(), api);
 	}

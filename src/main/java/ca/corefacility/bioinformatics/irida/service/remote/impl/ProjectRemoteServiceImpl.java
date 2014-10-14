@@ -53,6 +53,9 @@ public class ProjectRemoteServiceImpl extends RemoteServiceImpl<RemoteProject> i
 		return super.read(remoteProjectURI, remoteAPI);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public List<RemoteProject> listProjectsForAPI(RemoteAPI api) {
 		RemoteIRIDARoot read = rootRepository.read(api);
 		String projectsHref = read.getHrefForRel(PROJECTS_REL);
