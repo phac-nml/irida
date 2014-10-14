@@ -8,6 +8,7 @@ import java.util.List;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public interface RemoteResource {
+	public static final String SELF_REL = "self";
 	/**
 	 * Get the numeric identifier for this resource
 	 * 
