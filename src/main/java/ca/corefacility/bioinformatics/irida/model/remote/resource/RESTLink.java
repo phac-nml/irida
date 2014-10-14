@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.remote.resource;
 
+import java.util.Objects;
+
 /**
  * Link object for elements retrieved from an IRIDA REST API
  * 
@@ -9,9 +11,9 @@ package ca.corefacility.bioinformatics.irida.model.remote.resource;
 public class RESTLink {
 	private String rel;
 	private String href;
-	
-	public RESTLink(){
-		
+
+	public RESTLink() {
+
 	}
 
 	public RESTLink(String rel, String href) {
@@ -47,6 +49,26 @@ public class RESTLink {
 	 */
 	public void setHref(String href) {
 		this.href = href;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(rel, href);
+	}
+
+	@Override
+	public String toString() {
+		return "RESTLink[ " + rel + " => " + href + " ]";
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof RESTLink) {
+			RESTLink other = (RESTLink) obj;
+			return Objects.equals(rel, other.rel) && Objects.equals(href, other.href);
+		}
+		return false;
+
 	}
 
 }
