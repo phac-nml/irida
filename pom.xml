@@ -470,8 +470,8 @@
 		<hibernate.validator.version>5.1.0.Final</hibernate.validator.version>
 		<javax.el-api.version>2.2</javax.el-api.version>
 		<el-ri.version>1.0</el-ri.version>
-		<com.github.jmchilton.blend4j.version>0.1-alpha-7</com.github.jmchilton.blend4j.version>
-		<com.github.jmchilton.galaxybootstrap.version>0.3.0-rc4-SNAPSHOT</com.github.jmchilton.galaxybootstrap.version>
+		<com.github.jmchilton.blend4j.version>0.2.0-SNAPSHOT</com.github.jmchilton.blend4j.version>
+		<com.github.jmchilton.galaxybootstrap.version>0.5.0</com.github.jmchilton.galaxybootstrap.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.17</maven.failsafe.plugin.version>
@@ -495,6 +495,6 @@
 		<liquibase.config.changeLogFile>src/main/resources/ca/corefacility/bioinformatics/irida/database/all-changes.xml</liquibase.config.changeLogFile>
 
 		<!-- Galaxy Testing Revision: either 'latest' or a revision from https://bitbucket.org/galaxy/galaxy-dist -->
-		<test.galaxy.revision>26f58e05aa1068761660681583821e21e6cbf7ab</test.galaxy.revision>
+		<test.galaxy.revision>ff30da7a2873416a332b7700eb15e26a1bf3c46e</test.galaxy.revision>
 	</properties>
 </project>
