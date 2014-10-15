@@ -166,6 +166,17 @@ public class AssociatedProjectsController {
 		return ImmutableMap.of("result", "success");
 	}
 
+	/**
+	 * Get the edit associated projects page
+	 * 
+	 * @param projectId
+	 *            The ID of the current project
+	 * @param model
+	 *            Model object to be passed to the view
+	 * @param principal
+	 *            The logged in user
+	 * @return The name of the edit associated projects view
+	 */
 	@RequestMapping("/{projectId}/associated/edit")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId, 'isProjectOwner')")
 	public String editAssociatedProjectsForProject(@PathVariable Long projectId, Model model, Principal principal) {
@@ -258,6 +269,19 @@ public class AssociatedProjectsController {
 		return map;
 	}
 
+	/**
+	 * Get the remote projects that could potentially be associated with this
+	 * project
+	 * 
+	 * @param projectId
+	 *            The current {@link Project} ID
+	 * @param apiId
+	 *            The ID of the {@link RemoteAPI} to get projects for
+	 * @param remoteProjectCache
+	 *            the session's {@link RemoteObjectCache} storing the response
+	 *            {@link RemoteProject} ids
+	 * @return A List of Maps of the project properties
+	 */
 	@RequestMapping("/{projectId}/associated/remote/{apiId}/available")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId, 'isProjectOwner')")
 	@ResponseBody
