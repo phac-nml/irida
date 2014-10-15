@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.remote.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,9 @@ import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
  */
 @Service
 public class ProjectRemoteServiceImpl extends RemoteServiceImpl<RemoteProject> implements ProjectRemoteService {
+	// TODO: Get this information from the ProjectsController in the REST API
+	// project when it is merged into this project. Issue #86
+	public static final String PROJECTS_BOOKMARK = "/projects";
 
 	/**
 	 * Create a new {@link ProjectRemoteServiceImpl} that communicates with the
@@ -43,5 +48,14 @@ public class ProjectRemoteServiceImpl extends RemoteServiceImpl<RemoteProject> i
 		RemoteAPI remoteAPI = project.getRemoteAPI();
 
 		return super.read(remoteProjectURI, remoteAPI);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<RemoteProject> listProjectsForAPI(RemoteAPI api) {
+		String projectsHref = api.getServiceURI() + PROJECTS_BOOKMARK;
+
+		return list(projectsHref, api);
 	}
 }

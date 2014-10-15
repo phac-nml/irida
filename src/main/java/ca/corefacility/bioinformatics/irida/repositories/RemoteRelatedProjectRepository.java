@@ -24,4 +24,17 @@ public interface RemoteRelatedProjectRepository extends IridaJpaRepository<Remot
 	 */
 	@Query("from RemoteRelatedProject p where p.localProject = ?1")
 	public List<RemoteRelatedProject> getRemoteRelatedProjectsForProject(Project project);
+
+	/**
+	 * Get the {@link RemoteRelatedProject} object joining a given
+	 * {@link Project} and remote uri
+	 * 
+	 * @param project
+	 *            The local {@link Project}
+	 * @param remoteProjectURI
+	 *            The URI to the remote project
+	 * @return A {@link RemoteRelatedProject} object for this relationship
+	 */
+	@Query("from RemoteRelatedProject p where p.localProject = ?1 AND p.remoteProjectURI = ?2")
+	public RemoteRelatedProject getRemoteRelatedProjectForProjectAndURI(Project project, String remoteProjectURI);
 }

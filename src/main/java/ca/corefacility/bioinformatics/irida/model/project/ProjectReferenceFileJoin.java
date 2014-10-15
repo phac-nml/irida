@@ -91,6 +91,10 @@ public class ProjectReferenceFileJoin implements Join<Project, ReferenceFile> {
 		return id;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	@Override
 	public Project getSubject() {
 		return this.project;
@@ -123,7 +127,7 @@ public class ProjectReferenceFileJoin implements Join<Project, ReferenceFile> {
 
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
-		
+
 	}
 
 	@Override

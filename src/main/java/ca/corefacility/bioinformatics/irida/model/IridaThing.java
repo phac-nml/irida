@@ -23,4 +23,12 @@ public interface IridaThing extends Timestamped {
 	 */
 	public Long getId();
 
+	/**
+	 * Set the numerical identifier for this object
+	 * 
+	 * @param id
+	 *            The ID to set
+	 */
+	public void setId(Long id);
+
 }

@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.repositories.RemoteRelatedProjectRepository;
@@ -42,5 +43,27 @@ public class RemoteRelatedProjectServiceTest {
 
 		assertEquals(projects, remoteProjectsForProject);
 		verify(repository).getRemoteRelatedProjectsForProject(p);
+	}
+
+	@Test
+	public void testGetRemoteRelatedProjectForProjectAndURI() {
+		Project project = new Project();
+		String remoteProjectURI = "http://somewhere/projects/1";
+		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject();
+		when(repository.getRemoteRelatedProjectForProjectAndURI(project, remoteProjectURI)).thenReturn(
+				remoteRelatedProject);
+
+		RemoteRelatedProject remoteRelatedProjectForProjectAndURI = service.getRemoteRelatedProjectForProjectAndURI(
+				project, remoteProjectURI);
+		assertEquals(remoteRelatedProject, remoteRelatedProjectForProjectAndURI);
+		verify(repository).getRemoteRelatedProjectForProjectAndURI(project, remoteProjectURI);
+	}
+
+	@Test(expected = EntityNotFoundException.class)
+	public void testGetRemoteRelatedProjectForProjectAndURINotExist() {
+		Project project = new Project();
+		String remoteProjectURI = "http://somewhere/projects/1";
+		when(repository.getRemoteRelatedProjectForProjectAndURI(project, remoteProjectURI)).thenReturn(null);
+		service.getRemoteRelatedProjectForProjectAndURI(project, remoteProjectURI);
 	}
 }

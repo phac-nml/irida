@@ -82,6 +82,10 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 		return this.id;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	@Override
 	public Project getSubject() {
 		return project;
