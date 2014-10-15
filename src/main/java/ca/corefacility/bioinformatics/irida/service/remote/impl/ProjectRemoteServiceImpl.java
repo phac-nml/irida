@@ -19,6 +19,8 @@ import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
  */
 @Service
 public class ProjectRemoteServiceImpl extends RemoteServiceImpl<RemoteProject> implements ProjectRemoteService {
+	// TODO: Get this information from the ProjectsController in the REST API
+	// project when it is merged into this project. Issue #86
 	public static final String PROJECTS_BOOKMARK = "/projects";
 
 	/**
