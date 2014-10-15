@@ -1,12 +1,17 @@
 package ca.corefacility.bioinformatics.irida.service.upload.galaxy.integration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import javax.validation.ConstraintViolationException;
 
 import org.junit.Assume;
 import org.junit.Before;
@@ -30,6 +35,10 @@ import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServiceTestConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
@@ -40,12 +49,14 @@ import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionGalaxyITService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.upload.galaxy.GalaxyUploadService;
 import ca.corefacility.bioinformatics.irida.service.upload.galaxy.UploadSampleConversionServiceGalaxy;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.Sets;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
@@ -72,6 +83,9 @@ public class GalaxyUploadServiceIT {
 	private Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader;
 
 	@Autowired
+	private SampleService sampleService;
+
+	@Autowired
 	private ProjectRepository projectRepository;
 
 	@Autowired
@@ -83,7 +97,12 @@ public class GalaxyUploadServiceIT {
 	private GalaxyUploadService galaxyUploadService;
 
 	private Path sequenceFilePath;
+	private static final GalaxyProjectName invalidProjectName = new GalaxyProjectName(
+			"  __Project__.&'");
+	private static final GalaxyAccountEmail invalidAccountName = new GalaxyAccountEmail(
+			"x");
 	private GalaxyProjectName projectName;
+	private GalaxyAccountEmail fakeAccountName;
 	private GalaxyAccountEmail accountName;
 
 	/**
@@ -111,6 +130,7 @@ public class GalaxyUploadServiceIT {
 
 		projectName = new GalaxyProjectName("Name");
 		accountName = localGalaxy.getUser1Name();
+		fakeAccountName = localGalaxy.getNonExistentGalaxyUserName();
 	}
 
 	/**
@@ -132,5 +152,145 @@ public class GalaxyUploadServiceIT {
 
 		assertNotNull(uploadResult.getDataLocation());
 		assertEquals(projectName, uploadResult.getLocationName());
+	}
+
+	/**
+	 * Tests failing to upload samples to Galaxy (invalid project id).
+	 */
+	@Test(expected = EntityNotFoundException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testUploadAllSamplesFailProjectIdInvalid() {
+		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePath);
+
+		galaxyUploadService.buildUploadWorkerAllSamples(2L, invalidProjectName,
+				accountName);
+	}
+
+	/**
+	 * Tests failing to upload samples to Galaxy (invalid project name).
+	 */
+	@Test(expected = ConstraintViolationException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testUploadAllSamplesFailProjectInvalid() {
+		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePath);
+
+		galaxyUploadService.buildUploadWorkerAllSamples(1L, invalidProjectName,
+				accountName);
+	}
+
+	/**
+	 * Tests failing to upload samples to Galaxy (invalid account name).
+	 */
+	@Test(expected = ConstraintViolationException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testUploadAllSamplesFailAccountInvalid() {
+		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePath);
+
+		galaxyUploadService.buildUploadWorkerAllSamples(1L, projectName,
+				invalidAccountName);
+	}
+
+	/**
+	 * Tests failing to upload samples to Galaxy (non-existent account).
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testUploadAllSamplesFailNoAccount() {
+		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePath);
+
+		UploadWorker uploadWorker = galaxyUploadService
+				.buildUploadWorkerAllSamples(1L, projectName, fakeAccountName);
+
+		uploadWorker.run();
+
+		assertTrue(uploadWorker.exceptionOccured());
+		assertEquals(GalaxyUserNotFoundException.class,
+				uploadWorker.getUploadException().getClass());
+	}
+
+	/**
+	 * Tests successfully uploading a set of samples to Galaxy.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testUploadSelectedSamplesSuccess() {
+		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePath);
+
+		Project project = projectRepository.findOne(1L);
+		Sample sample = sampleService.getSampleForProject(project, 1L);
+
+		UploadWorker uploadWorker = galaxyUploadService
+				.buildUploadWorkerSelectedSamples(Sets.newHashSet(sample),
+						projectName, accountName);
+
+		uploadWorker.run();
+
+		assertFalse(uploadWorker.exceptionOccured());
+		UploadResult uploadResult = uploadWorker.getUploadResult();
+
+		assertNotNull(uploadResult.getDataLocation());
+		assertEquals(projectName, uploadResult.getLocationName());
+	}
+
+	/**
+	 * Tests failing to upload a set of samples to Galaxy (invalid project
+	 * name).
+	 */
+	@Test(expected = ConstraintViolationException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testUploadSelectedSamplesFailProjectInvalid() {
+		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePath);
+
+		Project project = projectRepository.findOne(1L);
+		Sample sample = sampleService.getSampleForProject(project, 1L);
+
+		galaxyUploadService.buildUploadWorkerSelectedSamples(
+				Sets.newHashSet(sample), invalidProjectName, accountName);
+	}
+
+	/**
+	 * Tests failing to upload a set of samples to Galaxy (invalid account
+	 * name).
+	 */
+	@Test(expected = ConstraintViolationException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testUploadSelectedSamplesFailAccountInvalid() {
+		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePath);
+
+		Project project = projectRepository.findOne(1L);
+		Sample sample = sampleService.getSampleForProject(project, 1L);
+
+		galaxyUploadService.buildUploadWorkerSelectedSamples(
+				Sets.newHashSet(sample), projectName, invalidAccountName);
+	}
+
+	/**
+	 * Tests failing to upload samples to Galaxy (non-existent account).
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testUploadSelectedSamplesFailNoAccount() {
+		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePath);
+
+		Project project = projectRepository.findOne(1L);
+		Sample sample = sampleService.getSampleForProject(project, 1L);
+
+		UploadWorker uploadWorker = galaxyUploadService
+				.buildUploadWorkerSelectedSamples(Sets.newHashSet(sample),
+						projectName, fakeAccountName);
+
+		uploadWorker.run();
+
+		assertTrue(uploadWorker.exceptionOccured());
+		assertEquals(GalaxyUserNotFoundException.class,
+				uploadWorker.getUploadException().getClass());
 	}
 }
