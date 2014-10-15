@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.remote.model.resource;
+package ca.corefacility.bioinformatics.irida.model.remote.resource;
 
 /**
  * Object wrapping a list of returned resources from a remote IRIDA API. This

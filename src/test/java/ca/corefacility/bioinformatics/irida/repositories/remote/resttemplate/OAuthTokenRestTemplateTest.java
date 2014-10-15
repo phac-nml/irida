@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.remote.resttemplate;
+package ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -21,8 +21,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
+import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
-import ca.corefacility.bioinformatics.irida.service.remote.resttemplate.OAuthTokenRestTemplate;
 
 /**
  * Unit tests for OAuthTokenRestTemplate

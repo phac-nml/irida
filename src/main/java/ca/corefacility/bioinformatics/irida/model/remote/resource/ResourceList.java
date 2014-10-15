@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.remote.model.resource;
+package ca.corefacility.bioinformatics.irida.model.remote.resource;
 
 import java.util.List;
 import java.util.Map;
