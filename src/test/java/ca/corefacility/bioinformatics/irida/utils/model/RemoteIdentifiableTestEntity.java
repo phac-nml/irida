@@ -14,16 +14,6 @@ public class RemoteIdentifiableTestEntity extends IdentifiableTestEntity impleme
 	private RESTLinks links;
 
 	@Override
-	public String getIdentifier() {
-		return this.getId().toString();
-	}
-
-	@Override
-	public void setIdentifier(String identifier) {
-		this.setId(Long.parseLong(identifier));
-	}
-
-	@Override
 	public RESTLinks getLinks() {
 		return links;
 	}

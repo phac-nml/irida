@@ -80,6 +80,10 @@ public class RelatedProjectJoin implements Join<Project, Project> {
 		return id;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	@Override
 	public Date getModifiedDate() {
 		return modifiedDate;

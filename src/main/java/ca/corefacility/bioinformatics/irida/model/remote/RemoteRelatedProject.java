@@ -138,7 +138,11 @@ public class RemoteRelatedProject implements IridaThing {
 	public Long getId() {
 		return id;
 	}
-
+	
+	public void setId(Long id){
+		this.id = id;
+	}
+	
 	/**
 	 * @return the remoteProjectURI
 	 */
