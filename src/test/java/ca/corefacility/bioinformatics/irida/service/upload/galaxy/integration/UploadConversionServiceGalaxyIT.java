@@ -38,7 +38,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
-import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionGalaxyITService;
+import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.upload.galaxy.UploadSampleConversionServiceGalaxy;
 
@@ -58,12 +58,12 @@ import com.google.common.collect.Sets;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExcecutionListener.class })
-@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/upload/galaxy/integration/GalaxyUploadServiceIT.xml")
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/upload/galaxy/integration/UploadIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class UploadConversionServiceGalaxyIT {
 
 	@Autowired
-	private AnalysisExecutionGalaxyITService analysisExecutionGalaxyITService;
+	private DatabaseSetupGalaxyITService analysisExecutionGalaxyITService;
 
 	@Autowired
 	private SampleService sampleService;
@@ -97,7 +97,7 @@ public class UploadConversionServiceGalaxyIT {
 				projectRepository, psjRepository, ssfjRepository);
 
 		Path sequenceFilePathReal1 = Paths
-				.get(AnalysisExecutionGalaxyITService.class.getResource(
+				.get(DatabaseSetupGalaxyITService.class.getResource(
 						"testData1.fastq").toURI());
 
 		sequenceFilePath1 = Files.createTempFile("testData1", ".fastq");
@@ -105,7 +105,7 @@ public class UploadConversionServiceGalaxyIT {
 		Files.copy(sequenceFilePathReal1, sequenceFilePath1);
 
 		Path sequenceFilePathReal2 = Paths
-				.get(AnalysisExecutionGalaxyITService.class.getResource(
+				.get(DatabaseSetupGalaxyITService.class.getResource(
 						"testData2.fastq").toURI());
 
 		sequenceFilePath2 = Files.createTempFile("testData2", ".fastq");

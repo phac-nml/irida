@@ -48,7 +48,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.L
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
-import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionGalaxyITService;
+import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.upload.galaxy.GalaxyUploadService;
 import ca.corefacility.bioinformatics.irida.service.upload.galaxy.UploadSampleConversionServiceGalaxy;
@@ -69,12 +69,12 @@ import com.google.common.collect.Sets;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExcecutionListener.class })
-@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/upload/galaxy/integration/GalaxyUploadServiceIT.xml")
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/upload/galaxy/integration/UploadIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class GalaxyUploadServiceIT {
 
 	@Autowired
-	private AnalysisExecutionGalaxyITService analysisExecutionGalaxyITService;
+	private DatabaseSetupGalaxyITService analysisExecutionGalaxyITService;
 
 	@Autowired
 	private LocalGalaxy localGalaxy;
@@ -121,7 +121,7 @@ public class GalaxyUploadServiceIT {
 				sampleConversionService);
 
 		Path sequenceFilePathReal = Paths
-				.get(AnalysisExecutionGalaxyITService.class.getResource(
+				.get(DatabaseSetupGalaxyITService.class.getResource(
 						"testData1.fastq").toURI());
 
 		sequenceFilePath = Files.createTempFile("testData1", ".fastq");

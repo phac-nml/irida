@@ -29,14 +29,14 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.ph
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
- * Stores common code for integration tests that attempt to run analyses in
- * Galaxy. This includes code for setup of sequence files in a database and
+ * Stores common code for integration tests that require special database setup code.
+ * This includes code for setup of sequence files in a database and
  * waiting for submission to complete in Galaxy.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class AnalysisExecutionGalaxyITService {
+public class DatabaseSetupGalaxyITService {
 
 	@Autowired
 	private RemoteWorkflowRepository remoteWorkflowRepository;
@@ -71,7 +71,7 @@ public class AnalysisExecutionGalaxyITService {
 	 * @param analysisSubmissionService
 	 * @param analysisSubmissionRepsitory
 	 */
-	public AnalysisExecutionGalaxyITService(
+	public DatabaseSetupGalaxyITService(
 			RemoteWorkflowRepository remoteWorkflowRepository,
 			ReferenceFileRepository referenceFileRepository,
 			SequenceFileService seqeunceFileService,

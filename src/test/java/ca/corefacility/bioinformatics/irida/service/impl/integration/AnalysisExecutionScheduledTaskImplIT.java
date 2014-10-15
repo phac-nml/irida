@@ -40,7 +40,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionGalaxyITService;
+import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
@@ -77,7 +77,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	private LocalGalaxy localGalaxy;
 
 	@Autowired
-	private AnalysisExecutionGalaxyITService analysisExecutionGalaxyITService;
+	private DatabaseSetupGalaxyITService analysisExecutionGalaxyITService;
 
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
@@ -116,10 +116,10 @@ public class AnalysisExecutionScheduledTaskImplIT {
 				analysisExecutionServicePhylogenomics);
 
 		Path sequenceFilePathReal = Paths
-				.get(AnalysisExecutionGalaxyITService.class.getResource(
+				.get(DatabaseSetupGalaxyITService.class.getResource(
 						"testData1.fastq").toURI());
 		Path referenceFilePathReal = Paths
-				.get(AnalysisExecutionGalaxyITService.class.getResource(
+				.get(DatabaseSetupGalaxyITService.class.getResource(
 						"testReference.fasta").toURI());
 
 		sequenceFilePath = Files.createTempFile("testData1", ".fastq");
