@@ -14,14 +14,6 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource
 public class RemoteProject extends Project implements RemoteResource {
 	private RESTLinks links;
 
-	public String getIdentifier() {
-		return this.getId().toString();
-	}
-
-	public void setIdentifier(String identifier) {
-		this.setId(Long.parseLong(identifier));
-	}
-
 	public RESTLinks getLinks() {
 		return links;
 	}

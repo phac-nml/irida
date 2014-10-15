@@ -15,16 +15,6 @@ public class RemoteUser extends User implements RemoteResource{
 	private RESTLinks links;
 	
 	@Override
-	public String getIdentifier() {
-		return this.getId().toString();
-	}
-
-	@Override
-	public void setIdentifier(String identifier) {
-		this.setId(Long.parseLong(identifier));
-	}
-
-	@Override
 	public RESTLinks getLinks() {
 		return links;
 	}

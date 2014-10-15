@@ -1,27 +1,30 @@
 package ca.corefacility.bioinformatics.irida.model.remote.resource;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
 
 /**
  * Methods that must be implemented by resources read from a remote Irida API
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public interface RemoteResource {
+public interface RemoteResource extends IridaThing {
 	public static final String SELF_REL = "self";
 
 	/**
-	 * Get the numeric identifier for this resource
-	 * 
-	 * @return
+	 * {@inheritDoc}
 	 */
-	public String getIdentifier();
+	// Overridden here to add the JsonProperty annotation
+	@JsonProperty("identifier")
+	public Long getId();
 
 	/**
-	 * Set the numeric identifier for this resource
-	 * 
-	 * @param identifier
+	 * {@inheritDoc}
 	 */
-	public void setIdentifier(String identifier);
+	// Overridden here to add the JsonProperty annotation
+	@JsonProperty("identifier")
+	public void setId(Long id);
 
 	/**
 	 * Get the objects this resource links to
