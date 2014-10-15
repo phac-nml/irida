@@ -5,7 +5,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,7 +110,7 @@ public class AnalysisExecutionGalaxyITService {
 			long sampleId, Path sequenceFilePath, Path referenceFilePath,
 			RemoteWorkflowPhylogenomics remoteWorkflow) {
 
-		SequenceFile sequenceFile = setupSampleSequenceFileInDatabase(sampleId, sequenceFilePath);
+		SequenceFile sequenceFile = setupSampleSequenceFileInDatabase(sampleId, sequenceFilePath).get(0);
 
 		Set<SequenceFile> sequenceFiles = new HashSet<>();
 		sequenceFiles.add(sequenceFile);
@@ -125,18 +127,23 @@ public class AnalysisExecutionGalaxyITService {
 	}
 	
 	/**
-	 * Attaches the given sequence file path to a particular sample id.
+	 * Attaches the given sequence file paths to a particular sample id.
 	 * @param sampleId  The id of the sample to attach a sequence file to.
-	 * @param sequenceFilePath  The path of the sequence file to attach.
-	 * @return  A SequenceFile object with the given sequence file path attached and saved in the database.
+	 * @param sequenceFilePaths  A path of the sequence file to attach.
+	 * @return  A List of SequenceFile objects with the given sequence file path attached and saved in the database.
 	 */
-	public SequenceFile setupSampleSequenceFileInDatabase(long sampleId, Path sequenceFilePath) {
+	public List<SequenceFile> setupSampleSequenceFileInDatabase(long sampleId, Path... sequenceFilePaths) {
 		Sample sample = sampleService.read(sampleId);
-		Join<Sample, SequenceFile> sampleSeqFile = seqeunceFileService
-				.createSequenceFileInSample(new SequenceFile(sequenceFilePath),
-						sample);
-		SequenceFile sequenceFile = sampleSeqFile.getObject();
-		return sequenceFile;
+		List<SequenceFile> returnedSequenceFiles = new ArrayList<>();
+		
+		for (Path sequenceFilePath : sequenceFilePaths) {
+			Join<Sample, SequenceFile> sampleSeqFile = seqeunceFileService
+					.createSequenceFileInSample(new SequenceFile(sequenceFilePath),
+							sample);
+			SequenceFile sequenceFile = sampleSeqFile.getObject();
+			returnedSequenceFiles.add(sequenceFile);
+		}
+		return returnedSequenceFiles;
 	}
 
 	/**
