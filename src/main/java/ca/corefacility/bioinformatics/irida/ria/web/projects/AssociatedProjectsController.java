@@ -354,7 +354,7 @@ public class AssociatedProjectsController {
 
 		for (RemoteProject project : projects) {
 			Map<String, String> pmap = new HashMap<>();
-			Integer remoteId = remoteProjectCache.getIdForResource(project);
+			Integer remoteId = remoteProjectCache.addResource(project);
 
 			pmap.put("id", project.getId().toString());
 			pmap.put("remoteId", remoteId.toString());

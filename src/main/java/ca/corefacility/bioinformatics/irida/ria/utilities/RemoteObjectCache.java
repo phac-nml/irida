@@ -14,15 +14,15 @@ public class RemoteObjectCache<Type extends RemoteResource> {
 
 	public RemoteObjectCache() {
 		cache = new HashMap<>();
-		logger.debug("RemoteCache initialized");
+		logger.trace("RemoteCache initialized");
 	}
 
 	public Type readResource(Integer id) {
-		logger.debug("Reading id " + id);
+		logger.trace("Reading id " + id);
 		return cache.get(id);
 	}
 
-	public Integer getIdForResource(Type resource) {
+	public Integer addResource(Type resource) {
 		logger.trace("Cache size is " + cache.size());
 		int hashCode = resource.hashCode();
 		if (!cache.containsKey(hashCode)) {

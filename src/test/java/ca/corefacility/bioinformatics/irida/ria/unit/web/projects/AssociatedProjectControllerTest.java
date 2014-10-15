@@ -307,7 +307,7 @@ public class AssociatedProjectControllerTest {
 		rp1.setId(3l);
 		rp1.setLinks(links);
 
-		Integer associatedProjectId = remoteProjectCache.getIdForResource(rp1);
+		Integer associatedProjectId = remoteProjectCache.addResource(rp1);
 
 		Project project = new Project();
 		RemoteAPI api = new RemoteAPI();
@@ -346,7 +346,7 @@ public class AssociatedProjectControllerTest {
 		when(projectService.read(projectId)).thenReturn(project);
 		when(remoteRelatedProjectService.getRemoteRelatedProjectForProjectAndURI(project, projectLink)).thenReturn(rrp);
 
-		Integer associatedProjectId = remoteProjectCache.getIdForResource(rp1);
+		Integer associatedProjectId = remoteProjectCache.addResource(rp1);
 
 		controller.removeRemoteAssociatedProject(projectId, associatedProjectId, remoteProjectCache);
 
