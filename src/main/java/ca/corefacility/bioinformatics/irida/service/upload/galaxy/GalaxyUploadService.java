@@ -17,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.service.upload.UploadService;
 
 import com.google.common.collect.Lists;
@@ -34,7 +34,7 @@ public class GalaxyUploadService implements
 			.getLogger(GalaxyUploadService.class);
 
 	private UploadSampleConversionServiceGalaxy uploadSampleConversionService;
-	private GalaxyUploader galaxyUploader;
+	private Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader;
 
 	/**
 	 * Builds a new GalaxyUploadService with the given information.
@@ -45,7 +45,7 @@ public class GalaxyUploadService implements
 	 *            The service for constructing objects to upload to Galaxy.
 	 */
 	@Autowired
-	public GalaxyUploadService(GalaxyUploader galaxyUploader,
+	public GalaxyUploadService(Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader,
 			UploadSampleConversionServiceGalaxy uploadSampleConversionService) {
 		this.galaxyUploader = galaxyUploader;
 		this.uploadSampleConversionService = uploadSampleConversionService;

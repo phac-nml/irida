@@ -108,11 +108,7 @@ public class AnalysisExecutionGalaxyITService {
 			long sampleId, Path sequenceFilePath, Path referenceFilePath,
 			RemoteWorkflowPhylogenomics remoteWorkflow) {
 
-		Sample sample = sampleService.read(sampleId);
-		Join<Sample, SequenceFile> sampleSeqFile = seqeunceFileService
-				.createSequenceFileInSample(new SequenceFile(sequenceFilePath),
-						sample);
-		SequenceFile sequenceFile = sampleSeqFile.getObject();
+		SequenceFile sequenceFile = setupSampleSequenceFileInDatabase(sampleId, sequenceFilePath);
 
 		Set<SequenceFile> sequenceFiles = new HashSet<>();
 		sequenceFiles.add(sequenceFile);
@@ -126,6 +122,21 @@ public class AnalysisExecutionGalaxyITService {
 
 		return analysisSubmissionRepository.getByType(submission.getId(),
 				AnalysisSubmissionPhylogenomics.class);
+	}
+	
+	/**
+	 * Attaches the given sequence file path to a particular sample id.
+	 * @param sampleId  The id of the sample to attach a sequence file to.
+	 * @param sequenceFilePath  The path of the sequence file to attach.
+	 * @return  A SequenceFile object with the given sequence file path attached and saved in the database.
+	 */
+	public SequenceFile setupSampleSequenceFileInDatabase(long sampleId, Path sequenceFilePath) {
+		Sample sample = sampleService.read(sampleId);
+		Join<Sample, SequenceFile> sampleSeqFile = seqeunceFileService
+				.createSequenceFileInSample(new SequenceFile(sequenceFilePath),
+						sample);
+		SequenceFile sequenceFile = sampleSeqFile.getObject();
+		return sequenceFile;
 	}
 
 	/**
