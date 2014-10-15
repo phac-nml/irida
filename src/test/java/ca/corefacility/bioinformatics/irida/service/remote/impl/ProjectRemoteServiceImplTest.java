@@ -33,4 +33,16 @@ public class ProjectRemoteServiceImplTest {
 
 		verify(repository).read(remoteProjectURI, remoteAPI);
 	}
+
+	@Test
+	public void testListProjectsForAPI() {
+		RemoteAPI api = new RemoteAPI();
+		api.setServiceURI("http://somewhere/");
+		String serviceURI = "http://somewhere/";
+		String projecsRel = serviceURI + ProjectRemoteServiceImpl.PROJECTS_BOOKMARK;
+
+		service.listProjectsForAPI(api);
+
+		verify(repository).list(projecsRel, api);
+	}
 }

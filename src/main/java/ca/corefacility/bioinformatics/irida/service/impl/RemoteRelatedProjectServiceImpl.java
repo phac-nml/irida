@@ -7,6 +7,7 @@ import javax.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.repositories.RemoteRelatedProjectRepository;
@@ -36,6 +37,19 @@ public class RemoteRelatedProjectServiceImpl extends CRUDServiceImpl<Long, Remot
 	@Override
 	public List<RemoteRelatedProject> getRemoteProjectsForProject(Project project) {
 		return repository.getRemoteRelatedProjectsForProject(project);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public RemoteRelatedProject getRemoteRelatedProjectForProjectAndURI(Project project, String remoteProjectURI) {
+		RemoteRelatedProject remoteRelatedProjectForProjectAndURI = repository.getRemoteRelatedProjectForProjectAndURI(
+				project, remoteProjectURI);
+		if (remoteRelatedProjectForProjectAndURI == null) {
+			throw new EntityNotFoundException("No RemoteRelatedProject exists for this project and URI");
+		}
+		return remoteRelatedProjectForProjectAndURI;
 	}
 
 }

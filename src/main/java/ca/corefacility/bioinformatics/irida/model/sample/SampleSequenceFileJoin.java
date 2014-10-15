@@ -65,6 +65,10 @@ public class SampleSequenceFileJoin implements Join<Sample, SequenceFile> {
 		return id;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof SampleSequenceFileJoin) {
