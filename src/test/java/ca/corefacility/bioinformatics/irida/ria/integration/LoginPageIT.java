@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration;
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.PasswordResetPage;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -40,6 +41,9 @@ import static org.junit.Assert.assertTrue;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/LoginPageIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class LoginPageIT {
+
+	private static final String EXPIRED_USERNAME = "expiredGuy";
+	private static final String EXPIRED_PASSWORD = "Password1";
 
 	private LoginPage loginPage;
 	private WebDriver driver;
@@ -83,9 +87,22 @@ public class LoginPageIT {
 
 	@Test
 	public void testExpiredCredentialsLogin() throws Exception {
-		loginPage.login("expiredGuy", "Password1");
+		loginPage.login(EXPIRED_USERNAME, EXPIRED_PASSWORD);
 		String expectedPage = "http://localhost:8080/password_reset/.+";
 		assertTrue("The 'expiredGuy' user should be sent to a password reset page.",
 				driver.getCurrentUrl().matches(expectedPage));
+	}
+
+	@Test
+	public void testLoginWithChangedCredentials() {
+		String newPassword = "aGoodP@ssW0rD";
+		loginPage.login(EXPIRED_USERNAME, EXPIRED_PASSWORD);
+		PasswordResetPage passwordResetPage = new PasswordResetPage(driver);
+		passwordResetPage.enterPassword(newPassword, newPassword);
+		assertTrue(passwordResetPage.checkSuccess());
+		loginPage = LoginPage.to(driver);
+		loginPage.login(EXPIRED_USERNAME, newPassword);
+		assertEquals("The user is logged in and redirected.", "http://localhost:8080/dashboard",
+				driver.getCurrentUrl());
 	}
 }
