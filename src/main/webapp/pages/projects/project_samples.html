@@ -871,7 +871,7 @@ $(document).ready(function () {
 
         if (name.length > 0) {
             $.ajax({
-                'url': /*@{'/pipelines/ajax/start.json'}*/ '/pipelines/ajax/start.json',
+                'url': /*[[@{'/pipelines/ajax/start.json'}]]*/ '/pipelines/ajax/start.json',
                 'type': 'post',
                 'data': 'pId=' + pId + '&rId=' + rId + '&name=' + name,
                 'success': function (data) {
