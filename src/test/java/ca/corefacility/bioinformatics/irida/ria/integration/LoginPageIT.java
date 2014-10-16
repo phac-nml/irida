@@ -84,7 +84,7 @@ public class LoginPageIT {
 	@Test
 	public void testExpiredCredentialsLogin() throws Exception {
 		loginPage.login("expiredGuy", "Password1");
-		String expectedPage = "http://localhost:8080/password_reset/.*";
+		String expectedPage = "http://localhost:8080/password_reset/.+";
 		assertTrue("The 'expiredGuy' user should be sent to a password reset page.",
 				driver.getCurrentUrl().matches(expectedPage));
 	}

@@ -34,7 +34,6 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 /**
