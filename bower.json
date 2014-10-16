@@ -34,5 +34,8 @@
     "respondJs": "1.4.2",
     "angular-resource": "1.2.25"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "resolutions": {
+    "angular": "1.2.26"
+  }
 }
