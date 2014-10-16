@@ -52,20 +52,22 @@ public class UserDetailsPageIT {
 	public void destroy() {
 		if (driver != null) {
 			driver.close();
-            driver.quit();
+			driver.quit();
 		}
 	}
 
 	@Test
 	public void testGetUserId() {
-		String currentUserId = usersPage.getCurrentUserId();
+		usersPage.getCurrentUser();
+		String currentUserId = usersPage.getUserId();
 		assertEquals(String.valueOf(1l), currentUserId);
 	}
 
 	@Test
 	public void testGetOtherUserId() {
 		Long id = 2l;
-		String otherUserId = usersPage.getOtherUserId(id);
+		usersPage.getOtherUser(id);
+		String otherUserId = usersPage.getUserId();
 		assertEquals(String.valueOf(id), otherUserId);
 	}
 
@@ -74,10 +76,11 @@ public class UserDetailsPageIT {
 		assertTrue("Should see button for user 1", usersPage.canGetEditLink(1l));
 		assertFalse("Should not see button for user 2", usersPage.canGetEditLink(2l));
 	}
-	
+
 	@Test
-	public void testGetUserProjects(){
-		List<String> userProjectIds = usersPage.getUserProjectIds(1l);
+	public void testGetUserProjects() {
+		usersPage.getOtherUser(1l);
+		List<String> userProjectIds = usersPage.getUserProjectIds();
 		assertTrue(userProjectIds.contains("1"));
 		assertTrue(userProjectIds.contains("2"));
 	}
