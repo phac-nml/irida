@@ -3,9 +3,11 @@ package ca.corefacility.bioinformatics.irida.ria.integration;
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +22,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * <p>
@@ -51,7 +54,7 @@ public class LoginPageIT {
 	public void destroy() {
 		if (driver != null) {
 			driver.close();
-            driver.quit();
+			driver.quit();
 		}
 	}
 
@@ -76,5 +79,13 @@ public class LoginPageIT {
 		loginPage.doLogin();
 		assertEquals("The 'test' user is logged in and redirected.", "http://localhost:8080/dashboard",
 				driver.getCurrentUrl());
+	}
+
+	@Test
+	public void testExpiredCredentialsLogin() throws Exception {
+		loginPage.login("expiredGuy", "Password1");
+		String expectedPage = "http://localhost:8080/password_reset/.*";
+		assertTrue("The 'expiredGuy' user should be sent to a password reset page.",
+				driver.getCurrentUrl().matches(expectedPage));
 	}
 }

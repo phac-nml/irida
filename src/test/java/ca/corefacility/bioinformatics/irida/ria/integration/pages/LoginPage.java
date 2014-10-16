@@ -51,7 +51,7 @@ public class LoginPage {
 		login(GOOD_USERNAME, GOOD_PASSWORD);
 	}
 
-	private void login(String username, String password) {
+	public void login(String username, String password) {
 		this.username.sendKeys(username);
 		this.password.sendKeys(password);
 		this.submit.click();
