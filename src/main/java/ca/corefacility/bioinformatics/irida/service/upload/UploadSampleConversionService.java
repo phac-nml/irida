@@ -41,5 +41,5 @@ public interface UploadSampleConversionService {
 	 *            The project ID
 	 * @return A set of UploadSamples.
 	 */
-	public Set<UploadSample> getUploadSamplesForProject(long projectId);
+	public Set<UploadSample> getUploadSamplesForProject(Long projectId);
 }

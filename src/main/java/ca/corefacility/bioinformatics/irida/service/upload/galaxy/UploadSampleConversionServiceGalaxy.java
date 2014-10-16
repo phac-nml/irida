@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.upload.galaxy;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -87,7 +89,8 @@ public class UploadSampleConversionServiceGalaxy implements
 	 * @{inheritDoc}
 	 */
 	@Override
-	public Set<UploadSample> getUploadSamplesForProject(long projectId) {
+	public Set<UploadSample> getUploadSamplesForProject(Long projectId) {
+		checkNotNull(projectId, "projectId is null");
 
 		Set<UploadSample> galaxySamples = new HashSet<>();
 
