@@ -21,6 +21,7 @@
 			</column>
 			<column name="fileRevisionNumber" type="bigint(20)" />
 			<column name="modifiedDate" type="datetime" />
+			<column name="fileLength" type="bigint(20)" />
 		</createTable>
 
 		<createTable tableName="reference_file_AUD">
@@ -36,6 +37,7 @@
 			<column name="filePath" type="varchar(255)" />
 			<column name="fileRevisionNumber" type="bigint(20)" />
 			<column name="modifiedDate" type="datetime" />
+			<column name="fileLength" type="bigint(20)" />
 		</createTable>
 
 		<createTable tableName="project_referencefile">
