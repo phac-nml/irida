@@ -58,7 +58,7 @@ public class PasswordResetControllerTest {
 
 		when(passwordResetService.read(resetId)).thenReturn(passwordReset);
 
-		String resetPage = controller.getResetPage(resetId, model);
+		String resetPage = controller.getResetPage(resetId, null, model);
 		assertEquals(PasswordResetController.PASSWORD_RESET_PAGE, resetPage);
 		assertTrue(model.containsKey("errors"));
 		assertTrue(model.containsKey("passwordReset"));

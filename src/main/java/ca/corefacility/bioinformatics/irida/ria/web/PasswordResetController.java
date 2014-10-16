@@ -34,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -78,7 +79,8 @@ public class PasswordResetController {
 	 * @return The string name of the page
 	 */
 	@RequestMapping(value = "/{resetId}", method = RequestMethod.GET)
-	public String getResetPage(@PathVariable String resetId, Model model) {
+	public String getResetPage(@PathVariable String resetId,
+			@RequestParam(required = false, defaultValue = "") String expired, Model model) {
 		setAuthentication();
 
 		PasswordReset passwordReset = passwordResetService.read(resetId);
@@ -86,6 +88,10 @@ public class PasswordResetController {
 
 		model.addAttribute("user", user);
 		model.addAttribute("passwordReset", passwordReset);
+		if (!Strings.isNullOrEmpty(expired)) {
+			model.addAttribute("expired", true);
+		}
+
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<>());
 		}
@@ -144,7 +150,7 @@ public class PasswordResetController {
 
 		if (!errors.isEmpty()) {
 			model.addAttribute("errors", errors);
-			return getResetPage(resetId, model);
+			return getResetPage(resetId, null, model);
 		} else {
 			passwordResetService.delete(resetId);
 			SecurityContextHolder.clearContext();
