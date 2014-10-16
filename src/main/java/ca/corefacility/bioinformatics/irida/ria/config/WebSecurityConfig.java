@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.ria.security.CredentialsExpriredAuth
  * Customizes Spring Security configuration.
  * 
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Configuration
 @EnableWebSecurity
@@ -23,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.ria.security.CredentialsExpriredAuth
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	CredentialsExpriredAuthenticationFailureHandler authFailureManager;
+	CredentialsExpriredAuthenticationFailureHandler authFailureHandler;
 	
 	@Override
 	public void configure(WebSecurity web) throws Exception {
@@ -32,6 +33,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+		authFailureHandler.setDefaultFailureUrl("/login?error=true");
 		// @formatter:off
 		http
 
@@ -44,14 +46,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.headers()
 			.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
 		.and()
-		.formLogin().defaultSuccessUrl("/dashboard").loginPage("/login").failureHandler(authFailureManager).permitAll()
+		.formLogin().defaultSuccessUrl("/dashboard").loginPage("/login").failureHandler(authFailureHandler).permitAll()
 		.and()
 		.logout().logoutSuccessUrl("/login").logoutUrl("/logout").permitAll()
 		.and()
 		.authorizeRequests().regexMatchers("/login((\\?lang=[a-z]{2}|#.*))?").permitAll()
 			.antMatchers("/").permitAll()
 			.antMatchers("/license").permitAll()
-			.antMatchers("/expired").permitAll()
 			.antMatchers("/resources/**").permitAll()
 			.antMatchers("/password_reset/**").permitAll()
 			.antMatchers("/**").fullyAuthenticated();
