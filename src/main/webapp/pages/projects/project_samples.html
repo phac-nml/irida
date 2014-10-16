@@ -828,7 +828,7 @@ $(document).ready(function () {
                 });
                 // Ajax call to get applicable pipelines.
                 $.ajax({
-                    url: /*@{/pipelines/ajax/list.json}*/ '/pipelines/ajax/list.json',
+                    url: /*[[@{/pipelines/ajax/list.json}]]*/ '/pipelines/ajax/list.json',
                     type: 'post',
                     contentType: "application/json",
                     data: JSON.stringify(result)
