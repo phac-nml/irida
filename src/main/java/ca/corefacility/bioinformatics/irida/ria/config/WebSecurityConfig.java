@@ -50,7 +50,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.and()
 		.logout().logoutSuccessUrl("/login").logoutUrl("/logout").permitAll()
 		.and()
-		.authorizeRequests().regexMatchers("/login((\\?lang=[a-z]{2}|#.*))?").permitAll()
+		.authorizeRequests().regexMatchers("/login((\\?lang=[a-z]{2}|#.*)|(\\?error=true))?").permitAll()
 			.antMatchers("/").permitAll()
 			.antMatchers("/license").permitAll()
 			.antMatchers("/resources/**").permitAll()
