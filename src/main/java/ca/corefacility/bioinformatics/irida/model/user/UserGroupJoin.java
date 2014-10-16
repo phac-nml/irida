@@ -83,6 +83,10 @@ public class UserGroupJoin implements Join<User, Group> {
 		return this.id;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	@Override
 	public User getSubject() {
 		return user;

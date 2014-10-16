@@ -79,6 +79,10 @@ public class Group implements IridaThing {
 		return this.id;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	@Override
 	public Date getModifiedDate() {
 		return this.modifiedDate;

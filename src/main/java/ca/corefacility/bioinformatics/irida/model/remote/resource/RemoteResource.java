@@ -1,39 +1,54 @@
 package ca.corefacility.bioinformatics.irida.model.remote.resource;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
 
 /**
  * Methods that must be implemented by resources read from a remote Irida API
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public interface RemoteResource {
-	/**
-	 * Get the numeric identifier for this resource
-	 * 
-	 * @return
-	 */
-	public String getIdentifier();
+public interface RemoteResource extends IridaThing {
+	public static final String SELF_REL = "self";
 
 	/**
-	 * Set the numeric identifier for this resource
-	 * 
-	 * @param identifier
+	 * {@inheritDoc}
 	 */
-	public void setIdentifier(String identifier);
+	// Overridden here to add the JsonProperty annotation
+	@JsonProperty("identifier")
+	public Long getId();
+
+	/**
+	 * {@inheritDoc}
+	 */
+	// Overridden here to add the JsonProperty annotation
+	@JsonProperty("identifier")
+	public void setId(Long id);
 
 	/**
 	 * Get the objects this resource links to
 	 * 
 	 * @return
 	 */
-	public List<RESTLink> getLinks();
+	public RESTLinks getLinks();
 
 	/**
 	 * Set the objects this resource links to
 	 * 
 	 * @param links
 	 */
-	public void setLinks(List<RESTLink> links);
+	public void setLinks(RESTLinks links);
+
+	/**
+	 * Get the HREF for a given rel
+	 * 
+	 * @param rel
+	 *            The rel to get an href from the links collection
+	 * @return an href
+	 */
+	public default String getHrefForRel(String rel) {
+		return getLinks().getHrefForRel(rel);
+	}
 
 }
