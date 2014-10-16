@@ -44,7 +44,7 @@ public class CredentialsExpiredAuthenticationFailureHandlerTest {
 		String username = "tom";
 		User user = new User();
 		PasswordReset reset = new PasswordReset(user);
-		String expectedRedirect = "/password_reset/" + reset.getId() + "?expired=expired";
+		String expectedRedirect = "/password_reset/" + reset.getId() + "?expired=true";
 
 		AuthenticationException exception = new CredentialsExpiredException("Credentials expired");
 

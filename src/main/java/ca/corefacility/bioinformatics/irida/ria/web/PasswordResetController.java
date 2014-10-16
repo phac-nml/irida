@@ -80,7 +80,7 @@ public class PasswordResetController {
 	 */
 	@RequestMapping(value = "/{resetId}", method = RequestMethod.GET)
 	public String getResetPage(@PathVariable String resetId,
-			@RequestParam(required = false, defaultValue = "") String expired, Model model) {
+			@RequestParam(required = false, defaultValue = "false") boolean expired, Model model) {
 		setAuthentication();
 
 		PasswordReset passwordReset = passwordResetService.read(resetId);
@@ -88,7 +88,7 @@ public class PasswordResetController {
 
 		model.addAttribute("user", user);
 		model.addAttribute("passwordReset", passwordReset);
-		if (!Strings.isNullOrEmpty(expired)) {
+		if (expired) {
 			model.addAttribute("expired", true);
 		}
 
@@ -150,7 +150,7 @@ public class PasswordResetController {
 
 		if (!errors.isEmpty()) {
 			model.addAttribute("errors", errors);
-			return getResetPage(resetId, null, model);
+			return getResetPage(resetId, false, model);
 		} else {
 			passwordResetService.delete(resetId);
 			SecurityContextHolder.clearContext();

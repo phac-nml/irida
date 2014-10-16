@@ -70,7 +70,7 @@ public class CredentialsExpriredAuthenticationFailureHandler extends SimpleUrlAu
 
 			// redirect the user to the password reset page
 			String resetId = create.getId();
-			response.sendRedirect("/password_reset/" + resetId + "?expired=expired");
+			response.sendRedirect("/password_reset/" + resetId + "?expired=true");
 
 		} else {
 			super.onAuthenticationFailure(request, response, exception);
