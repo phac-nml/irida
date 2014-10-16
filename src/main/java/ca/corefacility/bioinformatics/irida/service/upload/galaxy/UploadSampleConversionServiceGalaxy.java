@@ -28,7 +28,7 @@ import ca.corefacility.bioinformatics.irida.service.upload.UploadSampleConversio
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-@Service
+//@Service
 public class UploadSampleConversionServiceGalaxy implements
 		UploadSampleConversionService {
 
