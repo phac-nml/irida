@@ -27,7 +27,7 @@ import com.google.common.collect.Lists;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-//@Service
+@Service
 public class GalaxyUploadService implements
 		UploadService<GalaxyProjectName, GalaxyAccountEmail> {
 	private static final Logger logger = LoggerFactory
