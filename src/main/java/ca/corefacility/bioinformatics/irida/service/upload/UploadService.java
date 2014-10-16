@@ -5,6 +5,8 @@ import java.util.Set;
 
 import javax.validation.ConstraintViolationException;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
@@ -32,6 +34,7 @@ public interface UploadService<ProjectName extends UploadProjectName, AccountNam
 	 * @throws ConstraintViolationException
 	 *             If the upload information fails to match the constraints.
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId, 'canReadProject')")
 	public UploadWorker buildUploadWorkerAllSamples(long projectId,
 			ProjectName projectName, AccountName accountName)
 			throws ConstraintViolationException;
@@ -50,6 +53,7 @@ public interface UploadService<ProjectName extends UploadProjectName, AccountNam
 	 * @throws ConstraintViolationException
 	 *             If the upload information fails to match the constraints.
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#selectedSamples, 'canReadSample')")
 	public UploadWorker buildUploadWorkerSelectedSamples(
 			Set<Sample> selectedSamples, ProjectName projectName,
 			AccountName accountName) throws ConstraintViolationException;
