@@ -54,6 +54,7 @@ public class AssociatedProjectControllerTest {
 	private RemoteRelatedProjectService remoteRelatedProjectService;
 	private RemoteAPIService apiService;
 	private ProjectRemoteService projectRemoteService;
+	private RemoteObjectCache<RemoteProject> remoteProjectCache;
 
 	@Before
 	public void setUp() {
@@ -63,8 +64,9 @@ public class AssociatedProjectControllerTest {
 		apiService = mock(RemoteAPIService.class);
 		projectRemoteService = mock(ProjectRemoteService.class);
 		remoteRelatedProjectService = mock(RemoteRelatedProjectService.class);
+		remoteProjectCache = new RemoteObjectCache<>();
 		controller = new AssociatedProjectsController(remoteRelatedProjectService, projectService, projectUtils,
-				userService, apiService, projectRemoteService);
+				userService, apiService, projectRemoteService, remoteProjectCache);
 	}
 
 	@Test
@@ -256,7 +258,6 @@ public class AssociatedProjectControllerTest {
 	public void testGetPotentialRemoteAssociatedProjectsForApi() {
 		Long projectId = 1l;
 		Long apiId = 2l;
-		RemoteObjectCache<RemoteProject> remoteProjectCache = new RemoteObjectCache<>();
 		Project project = new Project();
 		RemoteAPI api = new RemoteAPI();
 
@@ -280,7 +281,7 @@ public class AssociatedProjectControllerTest {
 		when(remoteRelatedProjectService.getRemoteProjectsForProject(project)).thenReturn(Lists.newArrayList(rrp));
 
 		List<Map<String, String>> potentialRemoteAssociatedProjectsForApi = controller
-				.getPotentialRemoteAssociatedProjectsForApi(projectId, apiId, remoteProjectCache);
+				.getPotentialRemoteAssociatedProjectsForApi(projectId, apiId);
 		assertEquals(2, potentialRemoteAssociatedProjectsForApi.size());
 
 		int associatedCount = 0;
@@ -299,7 +300,6 @@ public class AssociatedProjectControllerTest {
 	public void testAddRemoteAssociatedProject() {
 		Long projectId = 1l;
 		Long apiId = 2l;
-		RemoteObjectCache<RemoteProject> remoteProjectCache = new RemoteObjectCache<>();
 
 		String projectLink = "http://somewhere/projects/1";
 		RESTLinks links = new RESTLinks(ImmutableMap.of("self", projectLink));
@@ -316,7 +316,7 @@ public class AssociatedProjectControllerTest {
 		when(apiService.read(apiId)).thenReturn(api);
 
 		Map<String, String> addRemoteAssociatedProject = controller.addRemoteAssociatedProject(projectId,
-				associatedProjectId, apiId, remoteProjectCache);
+				associatedProjectId, apiId);
 
 		assertEquals("success", addRemoteAssociatedProject.get("result"));
 
@@ -332,7 +332,6 @@ public class AssociatedProjectControllerTest {
 	@Test
 	public void testRemoveRemoteAssociatedProject() {
 		Long projectId = 1l;
-		RemoteObjectCache<RemoteProject> remoteProjectCache = new RemoteObjectCache<>();
 		Project project = new Project();
 
 		String projectLink = "http://somewhere/projects/1";
@@ -348,7 +347,7 @@ public class AssociatedProjectControllerTest {
 
 		Integer associatedProjectId = remoteProjectCache.addResource(rp1);
 
-		controller.removeRemoteAssociatedProject(projectId, associatedProjectId, remoteProjectCache);
+		controller.removeRemoteAssociatedProject(projectId, associatedProjectId);
 
 		verify(remoteRelatedProjectService).delete(rrp.getId());
 	}
