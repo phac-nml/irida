@@ -85,4 +85,11 @@ public class UserDetailsPageIT {
 		assertTrue(userProjectIds.contains("2"));
 	}
 
+	@Test
+	public void testResetUserPassword() {
+		usersPage.getOtherUser(1l);
+		usersPage.sendPasswordReset();
+		assertTrue(usersPage.notySuccessDisplayed());
+	}
+
 }

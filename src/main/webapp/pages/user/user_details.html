@@ -23,7 +23,7 @@
 
                         <div class="btn-group-xs pull-right">
                             <a href="#password-reset-modial" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')"
-                               class="btn btn-default open-popup-link" th:text="#{user.passwordReset}">_Password
+                               class="btn btn-default password-reset-link" th:text="#{user.passwordReset}">_Password
                                 Reset_</a>
                             <a id="editUser" class="btn btn-default " th:if="${canEditUser}"
                                th:href="@{/users/{id}/edit(id=${user.id})}" href="/users/1/edit"
@@ -169,7 +169,7 @@
             });
 
             //Set modial popup links
-            $('.open-popup-link').magnificPopup({
+            $('.password-reset-link').magnificPopup({
                 type: 'inline'
             });
 
