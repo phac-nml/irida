@@ -32,6 +32,7 @@ public interface UploadSampleConversionService {
 	 *            The samples to upload.
 	 * @return A set of UploadSamples.
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#samples, 'canReadSample')")
 	public Set<UploadSample> convertToUploadSamples(Set<Sample> samples);
 	
 	/**
@@ -41,6 +42,7 @@ public interface UploadSampleConversionService {
 	 *            The samples to upload.
 	 * @return A set of UploadSamples.
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#samples, 'canReadSample')")
 	public Set<UploadSample> convertToUploadSamples(Sample... samples);
 
 	/**
@@ -50,5 +52,6 @@ public interface UploadSampleConversionService {
 	 *            The project ID
 	 * @return A set of UploadSamples.
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId, 'canReadProject')")
 	public Set<UploadSample> getUploadSamplesForProject(Long projectId);
 }

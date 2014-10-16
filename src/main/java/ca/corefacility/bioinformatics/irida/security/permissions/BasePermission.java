@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.security.permissions;
 
+import java.util.Collection;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.repository.CrudRepository;
@@ -97,7 +99,24 @@ public abstract class BasePermission<DomainObjectType> {
 		} else if (domainObjectType.isAssignableFrom(targetDomainObject.getClass())) {
 			// reflection replacement for instanceof
 			domainObject = (DomainObjectType) targetDomainObject;
-		} else {
+		} else if (targetDomainObject instanceof Collection<?>) {
+			Collection<?> domainObjects = (Collection<?>)targetDomainObject;
+			
+			boolean permitted = true;
+			for (Object domainObjectObject : domainObjects) {
+				if (domainObjectType.isAssignableFrom(domainObjectObject.getClass())) {
+					DomainObjectType domainObject2 = (DomainObjectType)domainObjectObject;
+					
+					permitted &= customPermissionAllowed(authentication, domainObject2);
+				} else {
+					throw new IllegalArgumentException("Parameter to " + getClass().getName() + " is not a valid Collection, must be of type"
+							+ "Collection<" + domainObjectType.getName() + ">.");
+				}
+			}
+
+			return permitted;
+		}
+		else {
 			throw new IllegalArgumentException("Parameter to " + getClass().getName() + " must be of type Long or "
 					+ domainObjectType.getName() + ".");
 		}
