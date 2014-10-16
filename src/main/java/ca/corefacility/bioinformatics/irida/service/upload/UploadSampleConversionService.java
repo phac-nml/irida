@@ -33,6 +33,15 @@ public interface UploadSampleConversionService {
 	 * @return A set of UploadSamples.
 	 */
 	public Set<UploadSample> convertToUploadSamples(Set<Sample> samples);
+	
+	/**
+	 * Converts a list of samples to UploadSamples to be uploaded to Galaxy.
+	 *
+	 * @param samples
+	 *            The samples to upload.
+	 * @return A set of UploadSamples.
+	 */
+	public Set<UploadSample> convertToUploadSamples(Sample... samples);
 
 	/**
 	 * Get the samples for a specific project, identified by its project id.

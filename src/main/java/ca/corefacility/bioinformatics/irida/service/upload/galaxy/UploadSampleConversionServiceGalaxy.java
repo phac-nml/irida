@@ -11,6 +11,8 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Sets;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -126,5 +128,10 @@ public class UploadSampleConversionServiceGalaxy implements
 		}
 
 		return galaxySamples;
+	}
+	
+	@Override
+	public Set<UploadSample> convertToUploadSamples(Sample... samples) {
+		return convertToUploadSamples(Sets.newHashSet(samples));
 	}
 }
