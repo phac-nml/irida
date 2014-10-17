@@ -104,6 +104,21 @@
 		</div>
 		<div tab="" th:attr="heading=#{project.associated.remote.tab}">
 			<div class="panel panel-default" ng-controller="RemoteAssociatedCtrl">
+                 <button id="filterBtn" class="btn btn-info"
+                        ng-click="filter.isCollapsed = !filter.isCollapsed"
+                        th:inline="text">
+                    <span class="fa fa-filter fa-fw"></span>
+                    [[#{project.associated.filter}]]
+                </button>
+                <div class="row" collapse="filter.isCollapsed">
+                    <div class="form-group col-md-3">
+                        <label for="name-filter" th:text="#{table.filter.name}">_Filter by
+                            Name_</label>
+                        <input id="name-filter" name="name-filter" type="text"
+                               class="form-control input-full"
+                               ng-model="filterCriteria.name"/>
+                    </div>
+                </div>
                 <div class="panel-heading clearfix">
                     <div class="input-group pull-left">
                         <select class="form-control" ng-model="apiSelection" ng-change="changeApi(apiSelection)" ng-init="initApiStatus(apiSelection)">
@@ -131,7 +146,7 @@
     					</tr>
 					</thead>
 					<tbody cg-busy="filterPromise">
-					<tr class="associated-project-row" ng-repeat="project in remoteAssociated">
+					<tr class="associated-project-row" ng-repeat="project in remoteAssociated | filter:filterCriteria">
 						<td class="project-id">{{project.id}}</td>
 						<td class="project-name">{{project.name}}</td>
 						<td>{{project.organism}}</td>
@@ -335,6 +350,11 @@
 	app.controller('RemoteAssociatedCtrl', function($scope, AssociatedService){
 		'use strict';
 		$scope.apiSelection=1;
+		
+		$scope.filter = {
+			isCollapsed: true
+		};
+		
 		var connectButton =	$("#connect-button");
 		$scope.changeApi = function(apiSelection){
 			connectButton.addClass("hidden");
