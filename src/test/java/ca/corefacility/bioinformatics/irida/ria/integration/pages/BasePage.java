@@ -40,6 +40,10 @@ public class BasePage {
 			driver.quit();
 		}
 	}
+	
+	public static void logout(WebDriver driver){
+		driver.get(URL+"/logout");
+	}
 
 	public static void waitForTime() {
 		try {

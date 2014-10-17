@@ -19,6 +19,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.PasswordResetPage;
 
@@ -88,7 +89,8 @@ public class PasswordResetPageIT {
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password, password);
 		assertTrue(passwordResetPage.checkSuccess());
-
+		
+		BasePage.logout(driver);
 		// try new password
 		loginPage = LoginPage.to(driver);
 		loginPage.login(RESET_USER, password);

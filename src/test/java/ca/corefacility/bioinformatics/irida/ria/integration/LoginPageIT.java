@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.PasswordResetPage;
 
@@ -100,6 +101,8 @@ public class LoginPageIT {
 		PasswordResetPage passwordResetPage = new PasswordResetPage(driver);
 		passwordResetPage.enterPassword(newPassword, newPassword);
 		assertTrue(passwordResetPage.checkSuccess());
+		
+		BasePage.logout(driver);
 		loginPage = LoginPage.to(driver);
 		loginPage.login(EXPIRED_USERNAME, newPassword);
 		assertEquals("The user is logged in and redirected.", "http://localhost:8080/dashboard",

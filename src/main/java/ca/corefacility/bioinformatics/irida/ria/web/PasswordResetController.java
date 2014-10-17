@@ -129,7 +129,8 @@ public class PasswordResetController {
 		}
 
 		if (errors.isEmpty()) {
-			// Set the user's authentication to update the password
+			// Set the user's authentication to update the password and log them
+			// in
 			Authentication token = new UsernamePasswordAuthenticationToken(user, password, ImmutableList.of(user
 					.getSystemRole()));
 			SecurityContextHolder.getContext().setAuthentication(token);
@@ -152,7 +153,6 @@ public class PasswordResetController {
 			return getResetPage(resetId, false, model);
 		} else {
 			passwordResetService.delete(resetId);
-			SecurityContextHolder.clearContext();
 			String email = Base64.getEncoder().encodeToString(user.getEmail().getBytes());
 			return SUCCESS_REDIRECT + email;
 		}
@@ -172,10 +172,11 @@ public class PasswordResetController {
 		byte[] decode = Base64.getDecoder().decode(encodedEmail);
 		String email = new String(decode);
 		logger.debug("Password reset submitted for " + email);
-		setAuthentication();
+
+		// Authentication should not need to be set at this point, as the user
+		// will be logged in
 		User user = userService.loadUserByEmail(email);
 		model.addAttribute("user", user);
-		SecurityContextHolder.clearContext();
 		return PASSWORD_RESET_SUCCESS;
 	}
 
