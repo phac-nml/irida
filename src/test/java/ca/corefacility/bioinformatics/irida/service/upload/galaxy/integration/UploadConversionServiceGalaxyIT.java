@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -25,6 +26,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.config.IridaApiServicesTestConfig;
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
@@ -36,8 +38,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.upload.galaxy.UploadSampleConversionServiceGalaxy;
@@ -49,7 +49,8 @@ import com.google.common.collect.Sets;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
-		IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class,
+		IridaApiServicesConfig.class, IridaApiServicesTestConfig.class,
+		IridaApiTestDataSourceConfig.class,
 		IridaApiTestMultithreadingConfig.class,
 		NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class,
 		AnalysisExecutionServiceTestConfig.class,
@@ -71,16 +72,11 @@ public class UploadConversionServiceGalaxyIT {
 	@Autowired
 	private ProjectRepository projectRepository;
 
-	@Autowired
-	private ProjectSampleJoinRepository psjRepository;
-
-	@Autowired
-	private SampleSequenceFileJoinRepository ssfjRepository;
-
 	private Path sequenceFilePath1;
 	private Path sequenceFilePath2;
 	private Path sequenceFilePath2b;
 
+	@Autowired
 	private UploadSampleConversionServiceGalaxy sampleConversionService;
 
 	/**
@@ -92,9 +88,6 @@ public class UploadConversionServiceGalaxyIT {
 	@Before
 	public void setup() throws URISyntaxException, IOException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
-
-		sampleConversionService = new UploadSampleConversionServiceGalaxy(
-				projectRepository, psjRepository, ssfjRepository);
 
 		Path sequenceFilePathReal1 = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource(
@@ -142,7 +135,7 @@ public class UploadConversionServiceGalaxyIT {
 	 * Tests successfully converting a single sample to an upload sample.
 	 */
 	@Test
-	@WithMockUser(username = "aaron", roles = "ADMIN")
+	@WithMockUser(username = "aaron", roles = "USER")
 	public void testConvertSampleSetSuccess() {
 		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
 				sequenceFilePath1, sequenceFilePath2);
@@ -158,5 +151,35 @@ public class UploadConversionServiceGalaxyIT {
 				.convertToUploadSamples(Sets.newHashSet(sample1, sample2));
 
 		assertEquals(2, uploadSamples.size());
+	}
+
+	/**
+	 * Tests successfully converting a single sample (permissions).
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testConvertSampleSetSuccessPermissions() {
+		Sample sample1 = new Sample("Sample1");
+		sample1.setId(1L);
+		Sample sample2 = new Sample("Sample2");
+		sample2.setId(2L);
+
+		sampleConversionService.convertToUploadSamples(Sets.newHashSet(sample1,
+				sample2));
+	}
+
+	/**
+	 * Tests failing to converting a single sample due to permissions
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "dr-evil", roles = "USER")
+	public void testConvertSampleSetFailPermissions() {
+		Sample sample1 = new Sample("Sample1");
+		sample1.setId(1L);
+		Sample sample2 = new Sample("Sample2");
+		sample2.setId(2L);
+
+		sampleConversionService.convertToUploadSamples(Sets.newHashSet(sample1,
+				sample2));
 	}
 }

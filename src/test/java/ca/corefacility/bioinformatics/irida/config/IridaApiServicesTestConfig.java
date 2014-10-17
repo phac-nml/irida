@@ -21,5 +21,4 @@ import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServic
 		AnalysisExecutionServiceTestConfig.class })
 @Profile("test")
 public class IridaApiServicesTestConfig {
-
 }

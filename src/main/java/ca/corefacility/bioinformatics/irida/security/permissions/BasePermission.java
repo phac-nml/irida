@@ -115,8 +115,7 @@ public abstract class BasePermission<DomainObjectType> {
 			}
 
 			return permitted;
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException("Parameter to " + getClass().getName() + " must be of type Long or "
 					+ domainObjectType.getName() + ".");
 		}

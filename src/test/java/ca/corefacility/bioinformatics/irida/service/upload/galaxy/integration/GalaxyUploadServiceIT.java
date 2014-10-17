@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -28,13 +29,10 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceTestConfig;
+import ca.corefacility.bioinformatics.irida.config.IridaApiServicesTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
-import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
-import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServiceTestConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -43,15 +41,11 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.upload.galaxy.GalaxyUploadService;
-import ca.corefacility.bioinformatics.irida.service.upload.galaxy.UploadSampleConversionServiceGalaxy;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -60,11 +54,9 @@ import com.google.common.collect.Sets;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
-		IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class,
-		IridaApiTestMultithreadingConfig.class,
-		NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class,
-		AnalysisExecutionServiceTestConfig.class,
-		RemoteWorkflowServiceTestConfig.class })
+		IridaApiServicesConfig.class, IridaApiServicesTestConfig.class,
+		IridaApiTestDataSourceConfig.class,
+		IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class,
@@ -80,20 +72,12 @@ public class GalaxyUploadServiceIT {
 	private LocalGalaxy localGalaxy;
 
 	@Autowired
-	private Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader;
-
-	@Autowired
 	private SampleService sampleService;
 
 	@Autowired
 	private ProjectRepository projectRepository;
 
 	@Autowired
-	private ProjectSampleJoinRepository psjRepository;
-
-	@Autowired
-	private SampleSequenceFileJoinRepository ssfjRepository;
-
 	private GalaxyUploadService galaxyUploadService;
 
 	private Path sequenceFilePath;
@@ -114,11 +98,6 @@ public class GalaxyUploadServiceIT {
 	@Before
 	public void setup() throws URISyntaxException, IOException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
-
-		UploadSampleConversionServiceGalaxy sampleConversionService = new UploadSampleConversionServiceGalaxy(
-				projectRepository, psjRepository, ssfjRepository);
-		galaxyUploadService = new GalaxyUploadService(galaxyUploader,
-				sampleConversionService);
 
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource(
@@ -152,6 +131,19 @@ public class GalaxyUploadServiceIT {
 
 		assertNotNull(uploadResult.getDataLocation());
 		assertEquals(projectName, uploadResult.getLocationName());
+	}
+
+	/**
+	 * Tests failing to upload a sample due to permissions.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testUploadAllSamplesFailPermission() {
+		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePath);
+
+		galaxyUploadService.buildUploadWorkerAllSamples(1L, projectName,
+				accountName);
 	}
 
 	/**
@@ -208,8 +200,8 @@ public class GalaxyUploadServiceIT {
 		uploadWorker.run();
 
 		assertTrue(uploadWorker.exceptionOccured());
-		assertEquals(GalaxyUserNotFoundException.class,
-				uploadWorker.getUploadException().getClass());
+		assertEquals(GalaxyUserNotFoundException.class, uploadWorker
+				.getUploadException().getClass());
 	}
 
 	/**
@@ -235,6 +227,32 @@ public class GalaxyUploadServiceIT {
 
 		assertNotNull(uploadResult.getDataLocation());
 		assertEquals(projectName, uploadResult.getLocationName());
+	}
+
+	/**
+	 * Tests success in permissions for regular user.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testUploadSelectedSamplesSuccessPermissions() {
+		Sample sample = new Sample("Sample");
+		sample.setId(1L);
+
+		galaxyUploadService.buildUploadWorkerSelectedSamples(
+				Sets.newHashSet(sample), projectName, accountName);
+	}
+
+	/**
+	 * Tests failing to upload a set of samples to Galaxy due to permissions.
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "dr-evil", roles = "USER")
+	public void testUploadSelectedSamplesFailPermissions() {
+		Sample sample = new Sample("Sample");
+		sample.setId(1L);
+
+		galaxyUploadService.buildUploadWorkerSelectedSamples(
+				Sets.newHashSet(sample), projectName, accountName);
 	}
 
 	/**
@@ -290,7 +308,7 @@ public class GalaxyUploadServiceIT {
 		uploadWorker.run();
 
 		assertTrue(uploadWorker.exceptionOccured());
-		assertEquals(GalaxyUserNotFoundException.class,
-				uploadWorker.getUploadException().getClass());
+		assertEquals(GalaxyUserNotFoundException.class, uploadWorker
+				.getUploadException().getClass());
 	}
 }
