@@ -69,8 +69,9 @@ public class CredentialsExpriredAuthenticationFailureHandler extends SimpleUrlAu
 			SecurityContextHolder.clearContext();
 
 			// redirect the user to the password reset page
+			String contextPath = request.getContextPath();
 			String resetId = create.getId();
-			response.sendRedirect("/password_reset/" + resetId + "?expired=true");
+			response.sendRedirect(contextPath + "/password_reset/" + resetId + "?expired=true");
 
 		} else {
 			super.onAuthenticationFailure(request, response, exception);
