@@ -58,7 +58,7 @@ public class PasswordResetControllerTest {
 
 		when(passwordResetService.read(resetId)).thenReturn(passwordReset);
 
-		String resetPage = controller.getResetPage(resetId, model);
+		String resetPage = controller.getResetPage(resetId, false, model);
 		assertEquals(PasswordResetController.PASSWORD_RESET_PAGE, resetPage);
 		assertTrue(model.containsKey("errors"));
 		assertTrue(model.containsKey("passwordReset"));
@@ -84,8 +84,8 @@ public class PasswordResetControllerTest {
 
 		assertEquals(PasswordResetController.SUCCESS_REDIRECT + Base64.getEncoder().encodeToString(email.getBytes()),
 				sendNewPassword);
-		assertEquals("User should not be logged in after resetting password", null, SecurityContextHolder.getContext()
-				.getAuthentication());
+		assertEquals("User should not be logged in after resetting password", username, SecurityContextHolder.getContext()
+				.getAuthentication().getName());
 
 		verify(passwordResetService).read(resetId);
 		verify(userService).changePassword(user.getId(), password);

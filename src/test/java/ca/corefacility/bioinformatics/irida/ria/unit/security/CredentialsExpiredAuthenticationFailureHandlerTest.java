@@ -1,0 +1,81 @@
+package ca.corefacility.bioinformatics.irida.ria.unit.security;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.springframework.security.authentication.CredentialsExpiredException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.AuthenticationException;
+
+import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.security.CredentialsExpriredAuthenticationFailureHandler;
+import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+public class CredentialsExpiredAuthenticationFailureHandlerTest {
+	private CredentialsExpriredAuthenticationFailureHandler handler;
+	private PasswordResetService resetService;
+	private UserService userService;
+
+	@Before
+	public void setUp() {
+		resetService = mock(PasswordResetService.class);
+		userService = mock(UserService.class);
+		handler = new CredentialsExpriredAuthenticationFailureHandler(resetService, userService);
+
+	}
+
+	@Test
+	public void testOnAuthenticationFailure() throws IOException, ServletException {
+		String username = "tom";
+		User user = new User();
+		PasswordReset reset = new PasswordReset(user);
+		String expectedRedirect = "/password_reset/" + reset.getId() + "?expired=true";
+
+		AuthenticationException exception = new CredentialsExpiredException("Credentials expired");
+
+		HttpServletRequest request = mock(HttpServletRequest.class);
+		HttpServletResponse response = mock(HttpServletResponse.class);
+
+		when(request.getParameter("username")).thenReturn(username);
+		when(userService.getUserByUsername(username)).thenReturn(user);
+		when(resetService.create(any(PasswordReset.class))).thenReturn(reset);
+
+		handler.onAuthenticationFailure(request, response, exception);
+
+		verify(request).getParameter("username");
+		verify(userService).getUserByUsername(username);
+		verify(resetService).create(any(PasswordReset.class));
+
+		ArgumentCaptor<String> redirectCaptor = ArgumentCaptor.forClass(String.class);
+		verify(response).sendRedirect(redirectCaptor.capture());
+		String redirect = redirectCaptor.getValue();
+		assertEquals(expectedRedirect, redirect);
+	}
+
+	@Test
+	public void testOnAuthenticationFailureWithOtherException() throws IOException, ServletException {
+		HttpServletRequest request = mock(HttpServletRequest.class);
+		HttpServletResponse response = mock(HttpServletResponse.class);
+
+		AuthenticationException exception = new DisabledException("disabled");
+
+		handler.onAuthenticationFailure(request, response, exception);
+		verifyZeroInteractions(userService);
+		verifyZeroInteractions(resetService);
+	}
+}

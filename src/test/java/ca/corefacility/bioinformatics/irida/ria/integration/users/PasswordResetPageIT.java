@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.users;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -18,6 +19,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.PasswordResetPage;
 
@@ -33,6 +35,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/PasswordResetPageIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class PasswordResetPageIT {
+	private static final String RESET_USER = "differentUser";
 
 	private WebDriver driver;
 	private PasswordResetPage passwordResetPage;
@@ -51,7 +54,7 @@ public class PasswordResetPageIT {
 	public void destroy() {
 		if (driver != null) {
 			driver.close();
-            driver.quit();
+			driver.quit();
 		}
 	}
 
@@ -77,5 +80,20 @@ public class PasswordResetPageIT {
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password, password);
 		assertFalse(passwordResetPage.checkSuccess());
+	}
+
+	@Test
+	public void testChangedCredentials() {
+		String password = "Password1";
+		// reset password
+		passwordResetPage.getPasswordReset("XYZ");
+		passwordResetPage.enterPassword(password, password);
+		assertTrue(passwordResetPage.checkSuccess());
+		
+		BasePage.logout(driver);
+		// try new password
+		loginPage = LoginPage.to(driver);
+		loginPage.login(RESET_USER, password);
+		assertEquals("The user is logged in and redirected.", "http://localhost:8080/dashboard", driver.getCurrentUrl());
 	}
 }
