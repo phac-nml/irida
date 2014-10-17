@@ -122,7 +122,7 @@ public class GalaxyUploadServiceIT {
 				sequenceFilePath);
 
 		UploadWorker uploadWorker = galaxyUploadService
-				.buildUploadWorkerAllSamples(1L, projectName, accountName);
+				.performUploadAllSamples(1L, projectName, accountName);
 
 		uploadWorker.run();
 
@@ -142,7 +142,7 @@ public class GalaxyUploadServiceIT {
 		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
 				sequenceFilePath);
 
-		galaxyUploadService.buildUploadWorkerAllSamples(1L, projectName,
+		galaxyUploadService.performUploadAllSamples(1L, projectName,
 				accountName);
 	}
 
@@ -155,7 +155,7 @@ public class GalaxyUploadServiceIT {
 		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
 				sequenceFilePath);
 
-		galaxyUploadService.buildUploadWorkerAllSamples(2L, invalidProjectName,
+		galaxyUploadService.performUploadAllSamples(2L, invalidProjectName,
 				accountName);
 	}
 
@@ -168,7 +168,7 @@ public class GalaxyUploadServiceIT {
 		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
 				sequenceFilePath);
 
-		galaxyUploadService.buildUploadWorkerAllSamples(1L, invalidProjectName,
+		galaxyUploadService.performUploadAllSamples(1L, invalidProjectName,
 				accountName);
 	}
 
@@ -181,7 +181,7 @@ public class GalaxyUploadServiceIT {
 		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
 				sequenceFilePath);
 
-		galaxyUploadService.buildUploadWorkerAllSamples(1L, projectName,
+		galaxyUploadService.performUploadAllSamples(1L, projectName,
 				invalidAccountName);
 	}
 
@@ -195,7 +195,7 @@ public class GalaxyUploadServiceIT {
 				sequenceFilePath);
 
 		UploadWorker uploadWorker = galaxyUploadService
-				.buildUploadWorkerAllSamples(1L, projectName, fakeAccountName);
+				.performUploadAllSamples(1L, projectName, fakeAccountName);
 
 		uploadWorker.run();
 

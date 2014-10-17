@@ -21,7 +21,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
  */
 public interface UploadService<ProjectName extends UploadProjectName, AccountName extends UploaderAccountName> {
 	/**
-	 * Builds an UploadWorker used to upload all samples into Galaxy from this
+	 * Performs the upload for all samples into Galaxy from this
 	 * project.
 	 *
 	 * @param projectId
@@ -30,17 +30,17 @@ public interface UploadService<ProjectName extends UploadProjectName, AccountNam
 	 *            The name of the project to upload into.
 	 * @param accountName
 	 *            The name of the account to upload into.
-	 * @return An UploadWorker to be used for uploading files to a remote site..
+	 * @return An UploadWorker with information on the current progress of the upload.
 	 * @throws ConstraintViolationException
 	 *             If the upload information fails to match the constraints.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId, 'canReadProject')")
-	public UploadWorker buildUploadWorkerAllSamples(long projectId,
+	public UploadWorker performUploadAllSamples(long projectId,
 			ProjectName projectName, AccountName accountName)
 			throws ConstraintViolationException;
 
 	/**
-	 * Builds an UploadWorker used to upload the selected samples into Galaxy
+	 * Performs an upload for the selected samples into Galaxy
 	 * from this project.
 	 *
 	 * @param selectedSamples
@@ -49,12 +49,12 @@ public interface UploadService<ProjectName extends UploadProjectName, AccountNam
 	 *            The name of the project to upload into.
 	 * @param accountName
 	 *            The name of the account to upload into.
-	 * @return An UploadWorker for uploading files into a remote site.
+	 * @return An UploadWorker for with information on the progress of the upload.
 	 * @throws ConstraintViolationException
 	 *             If the upload information fails to match the constraints.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#selectedSamples, 'canReadSample')")
-	public UploadWorker buildUploadWorkerSelectedSamples(
+	public UploadWorker performUploadSelectedSamples(
 			Set<Sample> selectedSamples, ProjectName projectName,
 			AccountName accountName) throws ConstraintViolationException;
 

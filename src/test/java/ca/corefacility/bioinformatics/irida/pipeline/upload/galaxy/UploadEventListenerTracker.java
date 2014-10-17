@@ -6,7 +6,7 @@ import java.util.List;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker.UploadEventListener;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadEventListener;
 
 /**
  * Class which keeps track of events it recieves for testing.

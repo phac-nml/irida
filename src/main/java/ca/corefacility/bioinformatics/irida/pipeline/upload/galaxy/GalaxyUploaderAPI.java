@@ -34,7 +34,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectNam
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.LibraryContentId;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker.UploadEventListener;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadEventListener;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 

@@ -4,6 +4,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URL;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.validation.ConstraintViolationException;
 
@@ -32,6 +34,8 @@ public class GalaxyUploadService implements
 		UploadService<GalaxyProjectName, GalaxyAccountEmail> {
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyUploadService.class);
+	
+	private final ExecutorService executor = Executors.newFixedThreadPool(1);
 
 	private UploadSampleConversionServiceGalaxy uploadSampleConversionService;
 	private Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader;
@@ -63,7 +67,7 @@ public class GalaxyUploadService implements
 	 * {@inheritDoc}
 	 */
 	@Override
-	public UploadWorker buildUploadWorkerAllSamples(long projectId,
+	public UploadWorker performUploadAllSamples(long projectId,
 			GalaxyProjectName projectName, GalaxyAccountEmail accountName)
 			throws ConstraintViolationException {
 
@@ -77,23 +81,27 @@ public class GalaxyUploadService implements
 		Set<UploadSample> galaxySamples = uploadSampleConversionService
 				.getUploadSamplesForProject(projectId);
 
-		return buildUploadWorker(galaxySamples, projectName, accountName);
+		return buildAndRunUploadWorker(galaxySamples, projectName, accountName);
 	}
 
-	private UploadWorker buildUploadWorker(Set<UploadSample> galaxySamples,
+	private UploadWorker buildAndRunUploadWorker(Set<UploadSample> galaxySamples,
 			GalaxyProjectName galaxyLibraryName,
 			GalaxyAccountEmail galaxyUserEmail)
 			throws ConstraintViolationException {
 
-		return galaxyUploader.uploadSamples(Lists.newArrayList(galaxySamples),
+		UploadWorker uploadWorker = galaxyUploader.uploadSamples(Lists.newArrayList(galaxySamples),
 				galaxyLibraryName, galaxyUserEmail);
+		
+		executor.execute(uploadWorker);
+		
+		return uploadWorker;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public UploadWorker buildUploadWorkerSelectedSamples(
+	public UploadWorker performUploadSelectedSamples(
 			Set<Sample> selectedSamples, GalaxyProjectName projectName,
 			GalaxyAccountEmail accountName) throws ConstraintViolationException {
 
@@ -104,7 +112,7 @@ public class GalaxyUploadService implements
 		Set<UploadSample> galaxySamples = uploadSampleConversionService
 				.convertToUploadSamples(selectedSamples);
 
-		return buildUploadWorker(galaxySamples, projectName, accountName);
+		return buildAndRunUploadWorker(galaxySamples, projectName, accountName);
 	}
 
 	/**

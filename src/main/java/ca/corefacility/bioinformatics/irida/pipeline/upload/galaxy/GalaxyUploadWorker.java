@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadEventListener;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
 
 /**
@@ -177,5 +178,11 @@ public class GalaxyUploadWorker implements UploadWorker {
 		checkNotNull(eventListener, "eventListener is null");
 		eventListeners.add(eventListener);
 		galaxyAPI.addUploadEventListener(eventListener);
+	}
+
+	@Override
+	public float getProportionComplete() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
