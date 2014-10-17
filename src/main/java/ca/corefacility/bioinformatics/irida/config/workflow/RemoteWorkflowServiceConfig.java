@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerConfigurationException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.workflow.RemoteWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
@@ -35,12 +34,10 @@ public class RemoteWorkflowServiceConfig {
 
 	private static final Logger logger = LoggerFactory.getLogger(RemoteWorkflowServiceConfig.class);
 
-	private static final String WORKFLOW_ID = "galaxy.execution.workflow.phylogenomics.id";
-
 	private static final String DEFAULT_PHYLOGENOMICS_WORKFLOW_NAME = "SNPhyl Pipeline (imported from API)";
 
-	private static final String SEQUENCE_INPUT_LABEL = "inputSequenceLabel";
-	private static final String REFERENCE_INPUT_LABEL = "inputReferenceLabel";
+	private static final String SEQUENCE_INPUT_LABEL = "sequence_reads";
+	private static final String REFERENCE_INPUT_LABEL = "reference";
 	private static final String DEFAULT_TREE_OUTPUT = "snp_tree.tre";
 	private static final String DEFAULT_MATRIX_OUTPUT = "snp_matrix.tsv";
 	private static final String DEFAULT_SNP_TABLE_OUTPUT = "snp_table.tsv";
@@ -122,40 +119,10 @@ public class RemoteWorkflowServiceConfig {
 	 */
 	@Lazy
 	@Bean
-	public RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics() throws WorkflowException {
-		RemoteWorkflowPhylogenomics remoteWorkflow = null;
-
-		try {
-			String workflowId = getProperty("workflowId", WORKFLOW_ID);
-
-			if (remoteWorkflowRepository.exists(workflowId)) {
-				remoteWorkflow = remoteWorkflowRepository.getByType(workflowId, RemoteWorkflowPhylogenomics.class);
-			}
-		} catch (ExecutionManagerConfigurationException e) {
-			logger.error(e.getMessage());
-		}
-
-		return new RemoteWorkflowServicePhylogenomics(remoteWorkflow);
-	}
-
-	/**
-	 * Gets a properties value given it's name.
-	 * 
-	 * @param propertyType
-	 *            The type of property (used for error messages).
-	 * @param propertyName
-	 *            The name of the property.
-	 * @return The value of the property.
-	 * @throws ExecutionManagerConfigurationException
-	 *             If there was no corresponding string for the given property.
-	 */
-	private String getProperty(String propertyType, String propertyName) throws ExecutionManagerConfigurationException {
-		String propertyValue = environment.getProperty(propertyName);
-
-		if (propertyValue == null) {
-			throw new ExecutionManagerConfigurationException("Missing " + propertyType, propertyName);
-		} else {
-			return propertyValue;
-		}
+	public RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics(
+			final RemoteWorkflowRepository remoteWorkflowRepository, final WorkflowsClient workflowClient,
+			final GalaxyWorkflowService galaxyWorkflowService) throws WorkflowException {
+		return new RemoteWorkflowServicePhylogenomics(remoteWorkflow(remoteWorkflowRepository, workflowClient,
+				galaxyWorkflowService));
 	}
 }
