@@ -8,7 +8,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public interface UploadWorker extends Runnable {
+public interface UploadWorker extends Runnable,UploadEventListener {
 	
 	/**
 	 * Returns the final upload result when the worker is finished running.
@@ -35,8 +35,8 @@ public interface UploadWorker extends Runnable {
 	public boolean exceptionOccured();
 	
 	/**
-	 * Adds a new UploadEventListener to listen for upload events.
-	 * @param eventListener  The UploadEventListener to add.
+	 * True if the upload is finished (or an execption occured), false otherwise.
+	 * @return  True if the upload is finished, or false otherwise.
 	 */
-	public void addUploadEventListener(UploadEventListener eventListener);
+	public boolean isFinished();
 }
