@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.config;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import javax.validation.Validator;
@@ -87,10 +87,10 @@ public class IridaApiServicesConfig {
 	}
 	
 	/**
-	 * @return An ExecutorService for handling uploads to Galaxy.
+	 * @return An Executor for handling uploads to Galaxy.
 	 */
 	@Bean
-	public ExecutorService uploadExecutorService() {
+	public Executor uploadExecutor() {
 		return Executors.newFixedThreadPool(1);
 	}
 }

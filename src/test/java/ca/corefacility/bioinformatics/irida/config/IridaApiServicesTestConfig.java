@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.config;
 
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +31,7 @@ public class IridaApiServicesTestConfig {
 	 * @return An ExecutorService executing code in the same thread for testing purposes.
 	 */
 	@Bean
-	public ExecutorService uploadExecutorService() {
+	public Executor uploadExecutor() {
 		return MoreExecutors.sameThreadExecutor();
 	}
 }

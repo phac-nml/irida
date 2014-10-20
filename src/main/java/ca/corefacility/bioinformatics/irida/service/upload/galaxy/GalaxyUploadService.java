@@ -4,7 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URL;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 
 import javax.validation.ConstraintViolationException;
 
@@ -36,7 +36,7 @@ public class GalaxyUploadService implements
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyUploadService.class);
 
-	private final ExecutorService uploadExecutorService;
+	private final Executor uploadExecutor;
 
 	private UploadSampleConversionServiceGalaxy uploadSampleConversionService;
 	private Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader;
@@ -44,8 +44,8 @@ public class GalaxyUploadService implements
 	/**
 	 * Builds a new GalaxyUploadService with the given information.
 	 * 
-	 * @param uploadExecutorService
-	 *            An {@link ExecutorService} used for executing uploads in
+	 * @param uploadExecutor
+	 *            An {@link Executor} used for executing uploads in
 	 *            different threads.
 	 * 
 	 * @param galaxyUploader
@@ -54,10 +54,10 @@ public class GalaxyUploadService implements
 	 *            The service for constructing objects to upload to Galaxy.
 	 */
 	@Autowired
-	public GalaxyUploadService(ExecutorService uploadExecutorService,
+	public GalaxyUploadService(Executor uploadExecutor,
 			Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader,
 			UploadSampleConversionServiceGalaxy uploadSampleConversionService) {
-		this.uploadExecutorService = uploadExecutorService;
+		this.uploadExecutor = uploadExecutor;
 		this.galaxyUploader = galaxyUploader;
 		this.uploadSampleConversionService = uploadSampleConversionService;
 	}
@@ -101,7 +101,7 @@ public class GalaxyUploadService implements
 				Lists.newArrayList(galaxySamples), galaxyLibraryName,
 				galaxyUserEmail);
 
-		uploadExecutorService.execute(uploadWorker);
+		uploadExecutor.execute(uploadWorker);
 
 		return uploadWorker;
 	}
