@@ -52,6 +52,7 @@ public class CredentialsExpiredAuthenticationFailureHandlerTest {
 		HttpServletResponse response = mock(HttpServletResponse.class);
 
 		when(request.getParameter("username")).thenReturn(username);
+		when(request.getContextPath()).thenReturn("");
 		when(userService.getUserByUsername(username)).thenReturn(user);
 		when(resetService.create(any(PasswordReset.class))).thenReturn(reset);
 
