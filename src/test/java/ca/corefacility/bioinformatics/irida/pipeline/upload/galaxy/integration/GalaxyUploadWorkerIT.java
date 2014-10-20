@@ -28,16 +28,15 @@ import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServiceTestConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploaderAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploadWorker;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.ProgressUpdate;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.UploadEventListenerTracker;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploaderAPI;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 
@@ -61,6 +60,8 @@ public class GalaxyUploadWorkerIT {
 	private LocalGalaxy localGalaxy;
 
 	private List<Path> dataFilesSingle;
+	
+	private float delta = 0.00001f;
 
 	/**
 	 * Sets up files and objects for upload tests.
@@ -81,17 +82,16 @@ public class GalaxyUploadWorkerIT {
 	 * @throws URISyntaxException
 	 * @throws UploadException
 	 * @throws InterruptedException 
+	 * @throws NoSuchValueException 
 	 */
 	@Test
 	public void testUploadSampleSuccess() throws URISyntaxException,
-			UploadException, InterruptedException {
+			UploadException, InterruptedException, NoSuchValueException {
 		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"GalaxyUploadWorkerIT-testUploadSampleSuccess");
 		
 		GalaxyFolderName folderName = new GalaxyFolderName("testData");
 		
-		UploadEventListenerTracker eventListener = new UploadEventListenerTracker();
-
 		UploadSample galaxySample = new GalaxySample(folderName, dataFilesSingle);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
@@ -102,18 +102,39 @@ public class GalaxyUploadWorkerIT {
 		
 		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI,
 				samples, libraryName, localGalaxy.getAdminName());
-		worker.addUploadEventListener(eventListener);
+		assertFalse(worker.isFinished());
+		assertEquals(0.0f, worker.getProportionComplete(), delta);
+		
+		try {
+			worker.getCurrentSample();
+			fail("No " + NoSuchValueException.class.getSimpleName() + " thrown");
+		} catch (NoSuchValueException e) {
+		}
+		
+		try {
+			worker.getSampleName();
+			fail("No " + NoSuchValueException.class.getSimpleName() + " thrown");
+		} catch (NoSuchValueException e) {
+		}
+		
+		try {
+			worker.getTotalSamples();
+			fail("No " + NoSuchValueException.class.getSimpleName() + " thrown");
+		} catch (NoSuchValueException e) {
+		}
+		
 		Thread t = new Thread(worker);
 		t.start();
 		t.join();
 
-		assertEquals(1,eventListener.getResults().size());
-		assertEquals(worker.getUploadResult(), eventListener.getResults().get(0));
-		assertEquals(0,eventListener.getExceptions().size());
+		assertTrue(worker.isFinished());
+		assertNotNull(worker.getUploadResult());
 		assertFalse(worker.exceptionOccured());
 		assertNull(worker.getUploadException());
-		assertEquals(1,eventListener.getProgressUpdates().size());
-		assertEquals(new ProgressUpdate(1,0,folderName),eventListener.getProgressUpdates().get(0));
+		assertEquals(1.0f, worker.getProportionComplete(), delta);
+		assertEquals(1, worker.getTotalSamples());
+		assertEquals(0, worker.getCurrentSample());
+		assertEquals(folderName, worker.getSampleName());
 	}
 	
 	/**
@@ -128,8 +149,6 @@ public class GalaxyUploadWorkerIT {
 		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"GalaxyUploadWorkerIT-testUploadSampleFailure");
 		
-		UploadEventListenerTracker eventListener = new UploadEventListenerTracker();
-
 		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName(
 				"testData"), dataFilesSingle);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
@@ -141,15 +160,15 @@ public class GalaxyUploadWorkerIT {
 		
 		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI,
 				samples, libraryName, localGalaxy.getNonExistentGalaxyAdminName());
-		worker.addUploadEventListener(eventListener);
+		assertEquals(0.0f, worker.getProportionComplete(), delta);
+
 		Thread t = new Thread(worker);
 		t.start();
 		t.join();
 
-		assertEquals(1, eventListener.getExceptions().size());
-		assertEquals(eventListener.getExceptions().get(0),worker.getUploadException());
 		assertTrue(worker.exceptionOccured());
+		assertNotNull(worker.getUploadException());
 		assertNull(worker.getUploadResult());
-		assertEquals(0, eventListener.getResults().size());
+		assertTrue(worker.isFinished());
 	}
 }

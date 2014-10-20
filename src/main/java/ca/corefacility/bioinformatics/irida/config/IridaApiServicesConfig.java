@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.config;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.Executor;
 
 import javax.validation.Validator;
 
@@ -82,5 +83,18 @@ public class IridaApiServicesConfig {
 	public TaxonomyService taxonomyService() throws URISyntaxException {
 		Path path = Paths.get(taxonomyFileLocation.getPath());
 		return new InMemoryTaxonomyService(path);
+	}
+	
+	/**
+	 * @return An Executor for handling uploads to Galaxy.
+	 */
+	@Bean
+	public Executor uploadExecutor() {
+		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+		taskExecutor.setCorePoolSize(4);
+		taskExecutor.setMaxPoolSize(8);
+		taskExecutor.setQueueCapacity(16);
+		taskExecutor.setThreadPriority(Thread.MIN_PRIORITY);
+		return taskExecutor;
 	}
 }

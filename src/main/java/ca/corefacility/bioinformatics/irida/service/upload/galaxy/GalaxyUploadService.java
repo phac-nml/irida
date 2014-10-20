@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URL;
 import java.util.Set;
+import java.util.concurrent.Executor;
 
 import javax.validation.ConstraintViolationException;
 
@@ -23,7 +24,9 @@ import ca.corefacility.bioinformatics.irida.service.upload.UploadService;
 import com.google.common.collect.Lists;
 
 /**
- * Defines an upload service to upload genomic sequence data into a Galaxy instance.
+ * Defines an upload service to upload genomic sequence data into a Galaxy
+ * instance.
+ * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
@@ -33,11 +36,17 @@ public class GalaxyUploadService implements
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyUploadService.class);
 
+	private final Executor uploadExecutor;
+
 	private UploadSampleConversionServiceGalaxy uploadSampleConversionService;
 	private Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader;
 
 	/**
 	 * Builds a new GalaxyUploadService with the given information.
+	 * 
+	 * @param uploadExecutor
+	 *            An {@link Executor} used for executing uploads in
+	 *            different threads.
 	 * 
 	 * @param galaxyUploader
 	 *            The GalaxyUploader to use to connect to an instance of Galaxy.
@@ -45,8 +54,10 @@ public class GalaxyUploadService implements
 	 *            The service for constructing objects to upload to Galaxy.
 	 */
 	@Autowired
-	public GalaxyUploadService(Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader,
+	public GalaxyUploadService(Executor uploadExecutor,
+			Uploader<GalaxyProjectName, GalaxyAccountEmail> galaxyUploader,
 			UploadSampleConversionServiceGalaxy uploadSampleConversionService) {
+		this.uploadExecutor = uploadExecutor;
 		this.galaxyUploader = galaxyUploader;
 		this.uploadSampleConversionService = uploadSampleConversionService;
 	}
@@ -63,7 +74,7 @@ public class GalaxyUploadService implements
 	 * {@inheritDoc}
 	 */
 	@Override
-	public UploadWorker buildUploadWorkerAllSamples(long projectId,
+	public UploadWorker performUploadAllSamples(long projectId,
 			GalaxyProjectName projectName, GalaxyAccountEmail accountName)
 			throws ConstraintViolationException {
 
@@ -77,23 +88,29 @@ public class GalaxyUploadService implements
 		Set<UploadSample> galaxySamples = uploadSampleConversionService
 				.getUploadSamplesForProject(projectId);
 
-		return buildUploadWorker(galaxySamples, projectName, accountName);
+		return buildAndRunUploadWorker(galaxySamples, projectName, accountName);
 	}
 
-	private UploadWorker buildUploadWorker(Set<UploadSample> galaxySamples,
+	private UploadWorker buildAndRunUploadWorker(
+			Set<UploadSample> galaxySamples,
 			GalaxyProjectName galaxyLibraryName,
 			GalaxyAccountEmail galaxyUserEmail)
 			throws ConstraintViolationException {
 
-		return galaxyUploader.uploadSamples(Lists.newArrayList(galaxySamples),
-				galaxyLibraryName, galaxyUserEmail);
+		UploadWorker uploadWorker = galaxyUploader.uploadSamples(
+				Lists.newArrayList(galaxySamples), galaxyLibraryName,
+				galaxyUserEmail);
+
+		uploadExecutor.execute(uploadWorker);
+
+		return uploadWorker;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public UploadWorker buildUploadWorkerSelectedSamples(
+	public UploadWorker performUploadSelectedSamples(
 			Set<Sample> selectedSamples, GalaxyProjectName projectName,
 			GalaxyAccountEmail accountName) throws ConstraintViolationException {
 
@@ -104,7 +121,7 @@ public class GalaxyUploadService implements
 		Set<UploadSample> galaxySamples = uploadSampleConversionService
 				.convertToUploadSamples(selectedSamples);
 
-		return buildUploadWorker(galaxySamples, projectName, accountName);
+		return buildAndRunUploadWorker(galaxySamples, projectName, accountName);
 	}
 
 	/**
