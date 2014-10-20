@@ -144,7 +144,7 @@
 								<button class="btn btn-default btn-xs"
 								        th:attr="tooltip=#{form.preview}"
 								        ng-show="a.typeId =='1'"
-								        ng-click="open(a)"><span
+								        ng-click="tree.open(a)"><span
 										class="fa fa-eye fa-fw"></span>
 								</button>
 								<a class="btn btn-default btn-xs" ng-href="{{url}}/download/{{a.id}}" href="#"
@@ -291,7 +291,7 @@ app.controller('TreeModalCtrl', TreeModalCtrl);
 
 app.controller('AnalysisTableCtrl', function ($scope, $sce, AnalysisService, baseUrl) {
 	'use strict';
-	var url = baseUrl + "ajax";
+	$scope.url = baseUrl + "ajax";
 
 	/*[- */
 	// filter: used to control the filter section of the page.
@@ -441,10 +441,11 @@ app.controller('AnalysisTableCtrl', function ($scope, $sce, AnalysisService, bas
 /*[- */
 // Controller for handling the open figtee preview button
 /* -]*/
-function TreeModalCtrl($scope, $modal) {
+function TreeModalCtrl($modal) {
 	'use strict';
+	var vm = this;
 
-	$scope.open = function (analysis) {
+	vm.open = function (analysis) {
 		$modal.open({
 			templateUrl: 'treeModal.html',
 			controller : PhyloSVGCtrl,
