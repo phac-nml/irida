@@ -2,26 +2,24 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
@@ -29,13 +27,18 @@ import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
+import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLinks;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.utilities.RemoteObjectCache;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.AssociatedProjectsController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
@@ -49,15 +52,21 @@ public class AssociatedProjectControllerTest {
 	private UserService userService;
 	private ProjectControllerUtils projectUtils;
 	private RemoteRelatedProjectService remoteRelatedProjectService;
+	private RemoteAPIService apiService;
+	private ProjectRemoteService projectRemoteService;
+	private RemoteObjectCache<RemoteProject> remoteProjectCache;
 
 	@Before
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		userService = mock(UserService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
+		apiService = mock(RemoteAPIService.class);
+		projectRemoteService = mock(ProjectRemoteService.class);
 		remoteRelatedProjectService = mock(RemoteRelatedProjectService.class);
+		remoteProjectCache = new RemoteObjectCache<>();
 		controller = new AssociatedProjectsController(remoteRelatedProjectService, projectService, projectUtils,
-				userService);
+				userService, apiService, projectRemoteService, remoteProjectCache);
 	}
 
 	@Test
@@ -209,7 +218,7 @@ public class AssociatedProjectControllerTest {
 		when(projectService.read(projectId)).thenReturn(p1);
 		when(projectService.read(associatedProjectId)).thenReturn(p2);
 
-		Map<String, Long> requestBody = ImmutableMap.of("associatedProjectId", associatedProjectId);
+		ImmutableMap.of("associatedProjectId", associatedProjectId);
 		controller.addAssociatedProject(projectId, associatedProjectId);
 
 		verify(projectService).addRelatedProject(p1, p2);
@@ -236,9 +245,110 @@ public class AssociatedProjectControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		Principal principal = () -> USER_NAME;
 
+		when(apiService.findAll()).thenReturn(Lists.newArrayList(new RemoteAPI()));
 		String editAssociatedProjectsForProject = controller.editAssociatedProjectsForProject(projectId, model,
 				principal);
 
+		verify(apiService).findAll();
+
 		assertEquals(AssociatedProjectsController.EDIT_ASSOCIATED_PROJECTS_PAGE, editAssociatedProjectsForProject);
+	}
+
+	@Test
+	public void testGetPotentialRemoteAssociatedProjectsForApi() {
+		Long projectId = 1l;
+		Long apiId = 2l;
+		Project project = new Project();
+		RemoteAPI api = new RemoteAPI();
+
+		when(projectService.read(projectId)).thenReturn(project);
+		when(apiService.read(apiId)).thenReturn(api);
+
+		RESTLinks links = new RESTLinks(ImmutableMap.of("self", "http://somewhere"));
+		RemoteProject rp1 = new RemoteProject();
+		rp1.setId(3l);
+		rp1.setLinks(links);
+
+		String selfRel2 = "http://somewhere-else";
+		RESTLinks links2 = new RESTLinks(ImmutableMap.of("self", selfRel2));
+		RemoteProject rp2 = new RemoteProject();
+		rp2.setId(4l);
+		rp2.setLinks(links2);
+
+		RemoteRelatedProject rrp = new RemoteRelatedProject(project, api, selfRel2);
+
+		when(projectRemoteService.listProjectsForAPI(api)).thenReturn(Lists.newArrayList(rp1, rp2));
+		when(remoteRelatedProjectService.getRemoteProjectsForProject(project)).thenReturn(Lists.newArrayList(rrp));
+
+		List<Map<String, String>> potentialRemoteAssociatedProjectsForApi = controller
+				.getPotentialRemoteAssociatedProjectsForApi(projectId, apiId);
+		assertEquals(2, potentialRemoteAssociatedProjectsForApi.size());
+
+		int associatedCount = 0;
+		for (Map<String, String> map : potentialRemoteAssociatedProjectsForApi) {
+			if (map.containsKey("associated")) {
+				associatedCount++;
+			}
+		}
+		assertEquals("1 associated project should be found", 1, associatedCount);
+
+		verify(projectRemoteService).listProjectsForAPI(api);
+		verify(remoteRelatedProjectService).getRemoteProjectsForProject(project);
+	}
+
+	@Test
+	public void testAddRemoteAssociatedProject() {
+		Long projectId = 1l;
+		Long apiId = 2l;
+
+		String projectLink = "http://somewhere/projects/1";
+		RESTLinks links = new RESTLinks(ImmutableMap.of("self", projectLink));
+		RemoteProject rp1 = new RemoteProject();
+		rp1.setId(3l);
+		rp1.setLinks(links);
+
+		Integer associatedProjectId = remoteProjectCache.addResource(rp1);
+
+		Project project = new Project();
+		RemoteAPI api = new RemoteAPI();
+
+		when(projectService.read(projectId)).thenReturn(project);
+		when(apiService.read(apiId)).thenReturn(api);
+
+		Map<String, String> addRemoteAssociatedProject = controller.addRemoteAssociatedProject(projectId,
+				associatedProjectId, apiId);
+
+		assertEquals("success", addRemoteAssociatedProject.get("result"));
+
+		ArgumentCaptor<RemoteRelatedProject> argumentCaptor = ArgumentCaptor.forClass(RemoteRelatedProject.class);
+		verify(remoteRelatedProjectService).create(argumentCaptor.capture());
+
+		RemoteRelatedProject value = argumentCaptor.getValue();
+		assertEquals(api, value.getRemoteAPI());
+		assertEquals(project, value.getLocalProject());
+		assertEquals(projectLink, value.getRemoteProjectURI());
+	}
+
+	@Test
+	public void testRemoveRemoteAssociatedProject() {
+		Long projectId = 1l;
+		Project project = new Project();
+
+		String projectLink = "http://somewhere/projects/1";
+		RESTLinks links = new RESTLinks(ImmutableMap.of("self", projectLink));
+		RemoteProject rp1 = new RemoteProject();
+		rp1.setId(3l);
+		rp1.setLinks(links);
+
+		RemoteRelatedProject rrp = new RemoteRelatedProject();
+
+		when(projectService.read(projectId)).thenReturn(project);
+		when(remoteRelatedProjectService.getRemoteRelatedProjectForProjectAndURI(project, projectLink)).thenReturn(rrp);
+
+		Integer associatedProjectId = remoteProjectCache.addResource(rp1);
+
+		controller.removeRemoteAssociatedProject(projectId, associatedProjectId);
+
+		verify(remoteRelatedProjectService).delete(rrp.getId());
 	}
 }
