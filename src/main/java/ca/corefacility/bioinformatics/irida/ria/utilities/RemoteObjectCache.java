@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 
 /**
@@ -26,28 +28,60 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class RemoteObjectCache<Type extends RemoteResource> {
 	private static final Logger logger = LoggerFactory.getLogger(RemoteObjectCache.class);
-	private Map<Integer, Type> cache;
+
+	private Map<Integer, CacheObject> objectCache;
 
 	public RemoteObjectCache() {
-		cache = new HashMap<>();
+		objectCache = new HashMap<>();
 		logger.trace("RemoteCache initialized");
 	}
 
-	public Type readResource(Integer id) {
+	public CacheObject readResource(Integer id) {
 		logger.trace("Reading id " + id);
-		return cache.get(id);
+		RemoteObjectCache<Type>.CacheObject cacheObject = objectCache.get(id);
+		if (cacheObject == null) {
+			throw new EntityNotFoundException("Object id " + id + " is not in the cache.");
+		}
+		return cacheObject;
 	}
 
-	public Integer addResource(Type resource) {
-		logger.trace("Cache size is " + cache.size());
+	public Integer addResource(Type resource, RemoteAPI api) {
+		logger.trace("Cache size is " + objectCache.size());
 		int hashCode = resource.hashCode();
-		if (!cache.containsKey(hashCode)) {
+		if (!objectCache.containsKey(hashCode)) {
 			logger.trace(resource + " added to cache");
-			cache.put(hashCode, resource);
+
+			objectCache.put(hashCode, new CacheObject(resource, api));
 		} else {
 			logger.trace(resource + " already in cache");
 		}
 
 		return hashCode;
+	}
+
+	public class CacheObject {
+		private Type resource;
+		private RemoteAPI api;
+
+		public CacheObject(Type object, RemoteAPI api) {
+			this.resource = object;
+			this.api = api;
+		}
+
+		public Type getResource() {
+			return resource;
+		}
+
+		public void setResource(Type resource) {
+			this.resource = resource;
+		}
+
+		public RemoteAPI getAPI() {
+			return api;
+		}
+
+		public void setAPI(RemoteAPI api) {
+			this.api = api;
+		}
 	}
 }

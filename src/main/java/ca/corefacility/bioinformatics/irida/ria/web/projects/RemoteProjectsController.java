@@ -65,8 +65,9 @@ public class RemoteProjectsController {
 
 	@RequestMapping("/{projectCacheId}")
 	public String readRemoteProject(@PathVariable Integer projectCacheId, Model model) {
-		RemoteProject readResource = projectCache.readResource(projectCacheId);
-		model.addAttribute("project", readResource);
+		RemoteObjectCache<RemoteProject>.CacheObject readResource = projectCache.readResource(projectCacheId);
+		model.addAttribute("project", readResource.getResource());
+		model.addAttribute("api", readResource.getAPI());
 
 		return REMOTE_PROJECT_VIEW;
 	}

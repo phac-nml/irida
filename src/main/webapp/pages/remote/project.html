@@ -19,7 +19,7 @@
                         <li>
                             <i class="glyphicon glyphicon-barcode"></i>
                             <em th:text="#{project.id}"></em>
-                            <span th:text="${project.getId()}"></span>
+                            <span th:text="*{id}"></span>
                         </li>
                         <li th:if="${project.organism} != null"><i class="glyphicon glyphicon-leaf"></i><em
                                 th:text="#{project.organism}"></em><span
@@ -37,7 +37,13 @@
             </div>
         </div>
         <div class="col-md-9">
-            <h1 th:text="${project.getName()}"></h1>
+            <div class="clearfix">
+                <h1 th:text="${project.getName()}"></h1>
+                <div class="alert alert-warning" role="alert">
+                    <span>Note: this project exists on a remote IRIDA installation.  <a href="#" th:href="@{/remote_api/{id}(id=${api.getId()})}">View details about the remote installation.</a></span>
+                    
+                </div>
+            </div>
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">_Samples_</h3>

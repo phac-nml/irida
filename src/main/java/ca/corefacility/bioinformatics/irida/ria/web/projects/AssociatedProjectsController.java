@@ -284,12 +284,12 @@ public class AssociatedProjectsController {
 			@PathVariable Long apiId) {
 
 		Project project = projectService.read(projectId);
-		RemoteAPI read = apiService.read(apiId);
-		List<RemoteProject> listProjectsForAPI = projectRemoteService.listProjectsForAPI(read);
+		RemoteAPI api = apiService.read(apiId);
+		List<RemoteProject> listProjectsForAPI = projectRemoteService.listProjectsForAPI(api);
 		List<RemoteRelatedProject> remoteProjectsForProject = remoteRelatedProjectService
 				.getRemoteProjectsForProject(project);
 
-		return getRemoteAssociatedProjectsMap(listProjectsForAPI, remoteProjectsForProject);
+		return getRemoteAssociatedProjectsMap(listProjectsForAPI, remoteProjectsForProject, api);
 	}
 
 	/**
@@ -309,7 +309,8 @@ public class AssociatedProjectsController {
 			@RequestParam Integer associatedProjectId, @RequestParam Long apiId) {
 		Project project = projectService.read(projectId);
 		RemoteAPI remoteAPI = apiService.read(apiId);
-		RemoteProject readResource = remoteProjectCache.readResource(associatedProjectId);
+		RemoteObjectCache<RemoteProject>.CacheObject cacheObject = remoteProjectCache.readResource(associatedProjectId);
+		RemoteProject readResource = cacheObject.getResource();
 
 		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject(project, remoteAPI,
 				readResource.getHrefForRel("self"));
@@ -332,7 +333,8 @@ public class AssociatedProjectsController {
 	public Map<String, String> removeRemoteAssociatedProject(@PathVariable Long projectId,
 			@PathVariable Integer associatedProjectId) {
 		Project project = projectService.read(projectId);
-		RemoteProject readResource = remoteProjectCache.readResource(associatedProjectId);
+		RemoteObjectCache<RemoteProject>.CacheObject cacheObject = remoteProjectCache.readResource(associatedProjectId);
+		RemoteProject readResource = cacheObject.getResource();
 
 		RemoteRelatedProject remoteRelatedProjectForProjectAndURI = remoteRelatedProjectService
 				.getRemoteRelatedProjectForProjectAndURI(project, readResource.getHrefForRel(RemoteResource.SELF_REL));
@@ -352,7 +354,7 @@ public class AssociatedProjectsController {
 	 * @return
 	 */
 	private List<Map<String, String>> getRemoteAssociatedProjectsMap(List<RemoteProject> projects,
-			List<RemoteRelatedProject> associatedProjects) {
+			List<RemoteRelatedProject> associatedProjects, RemoteAPI api) {
 		List<Map<String, String>> list = new ArrayList<>();
 
 		Map<String, Boolean> remoteUrls = new HashMap<>();
@@ -363,7 +365,7 @@ public class AssociatedProjectsController {
 
 		for (RemoteProject project : projects) {
 			Map<String, String> pmap = new HashMap<>();
-			Integer remoteId = remoteProjectCache.addResource(project);
+			Integer remoteId = remoteProjectCache.addResource(project, api);
 
 			pmap.put("id", project.getId().toString());
 			pmap.put("remoteId", remoteId.toString());

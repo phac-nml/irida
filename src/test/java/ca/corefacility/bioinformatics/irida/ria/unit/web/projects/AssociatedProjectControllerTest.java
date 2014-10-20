@@ -307,10 +307,11 @@ public class AssociatedProjectControllerTest {
 		rp1.setId(3l);
 		rp1.setLinks(links);
 
-		Integer associatedProjectId = remoteProjectCache.addResource(rp1);
+		RemoteAPI api = new RemoteAPI();
+
+		Integer associatedProjectId = remoteProjectCache.addResource(rp1, api);
 
 		Project project = new Project();
-		RemoteAPI api = new RemoteAPI();
 
 		when(projectService.read(projectId)).thenReturn(project);
 		when(apiService.read(apiId)).thenReturn(api);
@@ -333,6 +334,7 @@ public class AssociatedProjectControllerTest {
 	public void testRemoveRemoteAssociatedProject() {
 		Long projectId = 1l;
 		Project project = new Project();
+		RemoteAPI api = new RemoteAPI();
 
 		String projectLink = "http://somewhere/projects/1";
 		RESTLinks links = new RESTLinks(ImmutableMap.of("self", projectLink));
@@ -345,7 +347,7 @@ public class AssociatedProjectControllerTest {
 		when(projectService.read(projectId)).thenReturn(project);
 		when(remoteRelatedProjectService.getRemoteRelatedProjectForProjectAndURI(project, projectLink)).thenReturn(rrp);
 
-		Integer associatedProjectId = remoteProjectCache.addResource(rp1);
+		Integer associatedProjectId = remoteProjectCache.addResource(rp1, api);
 
 		controller.removeRemoteAssociatedProject(projectId, associatedProjectId);
 
