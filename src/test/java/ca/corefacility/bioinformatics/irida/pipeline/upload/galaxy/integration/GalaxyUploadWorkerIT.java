@@ -28,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServiceTestConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderName;
@@ -81,10 +82,11 @@ public class GalaxyUploadWorkerIT {
 	 * @throws URISyntaxException
 	 * @throws UploadException
 	 * @throws InterruptedException 
+	 * @throws NoSuchValueException 
 	 */
 	@Test
 	public void testUploadSampleSuccess() throws URISyntaxException,
-			UploadException, InterruptedException {
+			UploadException, InterruptedException, NoSuchValueException {
 		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"GalaxyUploadWorkerIT-testUploadSampleSuccess");
 		
@@ -103,6 +105,24 @@ public class GalaxyUploadWorkerIT {
 		assertFalse(worker.isFinished());
 		assertEquals(0.0f, worker.getProportionComplete(), delta);
 		
+		try {
+			worker.getCurrentSample();
+			fail("No " + NoSuchValueException.class.getSimpleName() + " thrown");
+		} catch (NoSuchValueException e) {
+		}
+		
+		try {
+			worker.getSampleName();
+			fail("No " + NoSuchValueException.class.getSimpleName() + " thrown");
+		} catch (NoSuchValueException e) {
+		}
+		
+		try {
+			worker.getTotalSamples();
+			fail("No " + NoSuchValueException.class.getSimpleName() + " thrown");
+		} catch (NoSuchValueException e) {
+		}
+		
 		Thread t = new Thread(worker);
 		t.start();
 		t.join();
@@ -112,6 +132,9 @@ public class GalaxyUploadWorkerIT {
 		assertFalse(worker.exceptionOccured());
 		assertNull(worker.getUploadException());
 		assertEquals(1.0f, worker.getProportionComplete(), delta);
+		assertEquals(1, worker.getTotalSamples());
+		assertEquals(0, worker.getCurrentSample());
+		assertEquals(folderName, worker.getSampleName());
 	}
 	
 	/**

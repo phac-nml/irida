@@ -10,6 +10,7 @@ import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadConnectionException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
@@ -31,6 +32,10 @@ public class GalaxyUploadWorker implements UploadWorker {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyUploadWorker.class);
+	
+	private static final int NO_TOTAL_SAMPLES = -1;
+	private static final int NO_CURRENT_SAMPLE = -1;
+	private static final UploadFolderName NO_SAMPLE_NAME = null;
 
 	private GalaxyUploaderAPI galaxyAPI;
 
@@ -41,9 +46,9 @@ public class GalaxyUploadWorker implements UploadWorker {
 	private UploadResult uploadResult = null;
 	private UploadException uploadException = null;
 
-	// private int totalSamples = -1;
-	// private int currentSample = -1;
-	// private UploadFolderName sampleName;
+	private int totalSamples = NO_TOTAL_SAMPLES;
+	private int currentSample = NO_CURRENT_SAMPLE;
+	private UploadFolderName sampleName = NO_SAMPLE_NAME;
 	private float proportionComplete = 0.0f;
 	private boolean finished = false;
 
@@ -160,6 +165,42 @@ public class GalaxyUploadWorker implements UploadWorker {
 	public synchronized float getProportionComplete() {
 		return proportionComplete;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int getTotalSamples() throws NoSuchValueException {
+		if (totalSamples == NO_TOTAL_SAMPLES) {
+			throw new NoSuchValueException("No total samples");
+		} else {
+			return totalSamples;
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int getCurrentSample() throws NoSuchValueException {
+		if (currentSample == NO_CURRENT_SAMPLE) {
+			throw new NoSuchValueException("No current sample");
+		} else {
+			return currentSample;
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public UploadFolderName getSampleName() throws NoSuchValueException {
+		if (sampleName == NO_SAMPLE_NAME) {
+			throw new NoSuchValueException("No sample name");
+		} else {
+			return sampleName;
+		}
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -174,6 +215,9 @@ public class GalaxyUploadWorker implements UploadWorker {
 				"currentSample=" + currentSample + " must be in range [0,"
 						+ totalSamples + ").");
 
+		this.totalSamples = totalSamples;
+		this.currentSample = currentSample;
+		this.sampleName = sampleName;
 		this.proportionComplete = (float) currentSample / (float) totalSamples;
 	}
 
