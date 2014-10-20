@@ -26,7 +26,7 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequ
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflowRepository;
-import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionGalaxyITService;
+import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -137,8 +137,8 @@ public class AnalysisExecutionServiceTestConfig {
 
 	@Lazy
 	@Bean
-	public AnalysisExecutionGalaxyITService analysisExecutionGalaxyITService() {
-		return new AnalysisExecutionGalaxyITService(remoteWorkflowRepository,
+	public DatabaseSetupGalaxyITService analysisExecutionGalaxyITService() {
+		return new DatabaseSetupGalaxyITService(remoteWorkflowRepository,
 				referenceFileRepository, seqeunceFileService, sampleService,
 				analysisExecutionServicePhylogenomics(), analysisSubmissionService, analysisSubmissionRepository);
 	}

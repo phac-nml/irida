@@ -27,6 +27,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.config.IridaApiServicesTestConfig;
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
@@ -40,7 +41,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionGalaxyITService;
+import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
@@ -61,7 +62,7 @@ import com.google.common.collect.ImmutableMap;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
 		IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class,
-		IridaApiTestMultithreadingConfig.class,
+		IridaApiServicesTestConfig.class, IridaApiTestMultithreadingConfig.class,
 		NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class,
 		AnalysisExecutionServiceTestConfig.class,
 		RemoteWorkflowServiceTestConfig.class })
@@ -77,7 +78,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	private LocalGalaxy localGalaxy;
 
 	@Autowired
-	private AnalysisExecutionGalaxyITService analysisExecutionGalaxyITService;
+	private DatabaseSetupGalaxyITService analysisExecutionGalaxyITService;
 
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
@@ -116,10 +117,10 @@ public class AnalysisExecutionScheduledTaskImplIT {
 				analysisExecutionServicePhylogenomics);
 
 		Path sequenceFilePathReal = Paths
-				.get(AnalysisExecutionGalaxyITService.class.getResource(
+				.get(DatabaseSetupGalaxyITService.class.getResource(
 						"testData1.fastq").toURI());
 		Path referenceFilePathReal = Paths
-				.get(AnalysisExecutionGalaxyITService.class.getResource(
+				.get(DatabaseSetupGalaxyITService.class.getResource(
 						"testReference.fasta").toURI());
 
 		sequenceFilePath = Files.createTempFile("testData1", ".fastq");
