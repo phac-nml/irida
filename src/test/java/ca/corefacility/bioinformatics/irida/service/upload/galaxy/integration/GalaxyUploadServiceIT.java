@@ -88,6 +88,8 @@ public class GalaxyUploadServiceIT {
 	private GalaxyProjectName projectName;
 	private GalaxyAccountEmail fakeAccountName;
 	private GalaxyAccountEmail accountName;
+	
+	private static final float delta = 0.000001f;
 
 	/**
 	 * Sets up variables for testing.
@@ -123,7 +125,8 @@ public class GalaxyUploadServiceIT {
 
 		UploadWorker uploadWorker = galaxyUploadService
 				.performUploadAllSamples(1L, projectName, accountName);
-
+		
+		assertEquals(1.0f, uploadWorker.getProportionComplete(), delta);
 		assertFalse(uploadWorker.exceptionOccured());
 		UploadResult uploadResult = uploadWorker.getUploadResult();
 
@@ -216,6 +219,7 @@ public class GalaxyUploadServiceIT {
 				.performUploadSelectedSamples(Sets.newHashSet(sample),
 						projectName, accountName);
 
+		assertEquals(1.0f, uploadWorker.getProportionComplete(), delta);
 		assertFalse(uploadWorker.exceptionOccured());
 		UploadResult uploadResult = uploadWorker.getUploadResult();
 
