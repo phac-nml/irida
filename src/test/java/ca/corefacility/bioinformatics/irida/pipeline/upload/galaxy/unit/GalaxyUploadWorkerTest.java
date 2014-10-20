@@ -55,6 +55,8 @@ public class GalaxyUploadWorkerTest {
 	@Mock
 	private GalaxyUploadResult uploadResult;
 	
+	private static float delta = 0.00001f;
+	
 	/**
 	 * Setup objects for test.
 	 * @throws MalformedURLException
@@ -94,6 +96,8 @@ public class GalaxyUploadWorkerTest {
 		when(galaxyAPI.uploadSamples(samples, dataLocation, userName)).thenReturn(uploadResult);
 		
 		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
+		assertEquals(0.0f, worker.getProportionComplete(), delta);
+		
 		worker.run();
 		
 		verify(galaxyAPI).uploadSamples(samples, dataLocation, userName);
@@ -113,11 +117,9 @@ public class GalaxyUploadWorkerTest {
 	@Test
 	public void testUploadSuccess() throws InterruptedException, ConstraintViolationException, LibraryUploadException, CreateLibraryException, ChangeLibraryPermissionsException, NoLibraryFoundException, NoGalaxyContentFoundException, ExecutionManagerObjectNotFoundException {
 		when(galaxyAPI.uploadSamples(samples, dataLocation, userName)).thenReturn(uploadResult);
-				
-		LinkedList<UploadResult> expectedUploadResults = new LinkedList<UploadResult>();
-		expectedUploadResults.add(uploadResult);
 		
 		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
+		assertEquals(0.0f, worker.getProportionComplete(), delta);
 		
 		worker.run();
 		
@@ -147,6 +149,7 @@ public class GalaxyUploadWorkerTest {
 		expectedUploadResults.add(uploadResult);
 		
 		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
+		assertEquals(0.0f, worker.getProportionComplete(), delta);
 		
 		Thread t = new Thread(worker);
 		t.start();
@@ -180,6 +183,7 @@ public class GalaxyUploadWorkerTest {
 		expectedUploadExceptions.add(uploadException);
 		
 		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
+		assertEquals(0.0f, worker.getProportionComplete(), delta);
 		
 		worker.run();
 		
@@ -211,6 +215,7 @@ public class GalaxyUploadWorkerTest {
 		expectedUploadExceptions.add(uploadException);
 		
 		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
+		assertEquals(0.0f, worker.getProportionComplete(), delta);
 		
 		Thread t = new Thread(worker);
 		t.start();
@@ -239,6 +244,7 @@ public class GalaxyUploadWorkerTest {
 				new ClientHandlerException("error connecting"));
 		
 		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI, samples, dataLocation, userName);
+		assertEquals(0.0f, worker.getProportionComplete(), delta);
 		
 		worker.run();
 		

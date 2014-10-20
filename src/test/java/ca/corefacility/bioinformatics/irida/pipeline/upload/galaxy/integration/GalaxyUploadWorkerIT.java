@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -62,6 +59,8 @@ public class GalaxyUploadWorkerIT {
 	private LocalGalaxy localGalaxy;
 
 	private List<Path> dataFilesSingle;
+	
+	private float delta = 0.00001f;
 
 	/**
 	 * Sets up files and objects for upload tests.
@@ -102,6 +101,8 @@ public class GalaxyUploadWorkerIT {
 		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI,
 				samples, libraryName, localGalaxy.getAdminName());
 		assertFalse(worker.isFinished());
+		assertEquals(0.0f, worker.getProportionComplete(), delta);
+		
 		Thread t = new Thread(worker);
 		t.start();
 		t.join();
@@ -110,6 +111,7 @@ public class GalaxyUploadWorkerIT {
 		assertNotNull(worker.getUploadResult());
 		assertFalse(worker.exceptionOccured());
 		assertNull(worker.getUploadException());
+		assertEquals(1.0f, worker.getProportionComplete(), delta);
 	}
 	
 	/**
@@ -135,6 +137,8 @@ public class GalaxyUploadWorkerIT {
 		
 		GalaxyUploadWorker worker = new GalaxyUploadWorker(galaxyAPI,
 				samples, libraryName, localGalaxy.getNonExistentGalaxyAdminName());
+		assertEquals(0.0f, worker.getProportionComplete(), delta);
+
 		Thread t = new Thread(worker);
 		t.start();
 		t.join();
@@ -142,5 +146,6 @@ public class GalaxyUploadWorkerIT {
 		assertTrue(worker.exceptionOccured());
 		assertNotNull(worker.getUploadException());
 		assertNull(worker.getUploadResult());
+		assertTrue(worker.isFinished());
 	}
 }

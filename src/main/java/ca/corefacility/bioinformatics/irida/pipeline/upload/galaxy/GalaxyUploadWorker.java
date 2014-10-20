@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.List;
 
@@ -94,6 +95,7 @@ public class GalaxyUploadWorker implements UploadWorker {
 		}
 
 		finished = true;
+		proportionComplete = 1.0f;
 	}
 
 	/**
@@ -165,6 +167,13 @@ public class GalaxyUploadWorker implements UploadWorker {
 	@Override
 	public synchronized void sampleProgressUpdate(int totalSamples,
 			int currentSample, UploadFolderName sampleName) {
+		checkNotNull(sampleName, "sampleName is null");
+		checkArgument(totalSamples > 0, "totalSamples=" + totalSamples
+				+ " is invalid, must be positive");
+		checkArgument(currentSample >= 0 && currentSample < totalSamples,
+				"currentSample=" + currentSample + " must be in range [0,"
+						+ totalSamples + ").");
+
 		this.proportionComplete = (float) currentSample / (float) totalSamples;
 	}
 
