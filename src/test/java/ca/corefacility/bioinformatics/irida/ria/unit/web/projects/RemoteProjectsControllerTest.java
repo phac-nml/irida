@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
+import ca.corefacility.bioinformatics.irida.ria.utilities.RemoteObjectCache;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.RemoteProjectsController;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
@@ -20,12 +21,13 @@ public class RemoteProjectsControllerTest {
 	RemoteProjectsController controller;
 	ProjectRemoteService projectRemoteService;
 	RemoteRelatedProjectService remoteRelatedProjectService;
+	RemoteObjectCache<RemoteProject> projectCache;
 
 	@Before
 	public void setUp() {
 		projectRemoteService = mock(ProjectRemoteService.class);
 		remoteRelatedProjectService = mock(RemoteRelatedProjectService.class);
-		controller = new RemoteProjectsController(projectRemoteService, remoteRelatedProjectService);
+		controller = new RemoteProjectsController(projectRemoteService, remoteRelatedProjectService, projectCache);
 	}
 
 	@Test

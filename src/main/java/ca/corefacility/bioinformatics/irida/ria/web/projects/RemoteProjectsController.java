@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
+import ca.corefacility.bioinformatics.irida.ria.utilities.RemoteObjectCache;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 
@@ -25,14 +27,18 @@ import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 public class RemoteProjectsController {
 	private static final Logger logger = LoggerFactory.getLogger(RemoteProjectsController.class);
 
+	public static final String REMOTE_PROJECT_VIEW = "remote/project";
+
 	private final ProjectRemoteService projectRemoteService;
 	private final RemoteRelatedProjectService remoteRelatedProjectService;
+	private RemoteObjectCache<RemoteProject> projectCache;
 
 	@Autowired
 	public RemoteProjectsController(ProjectRemoteService projectRemoteService,
-			RemoteRelatedProjectService remoteRelatedProjectService) {
+			RemoteRelatedProjectService remoteRelatedProjectService, RemoteObjectCache<RemoteProject> projectCache) {
 		this.projectRemoteService = projectRemoteService;
 		this.remoteRelatedProjectService = remoteRelatedProjectService;
+		this.projectCache = projectCache;
 	}
 
 	/**
@@ -55,6 +61,14 @@ public class RemoteProjectsController {
 		map.put("name", project.getName());
 
 		return map;
+	}
+
+	@RequestMapping("/{projectCacheId}")
+	public String readRemoteProject(@PathVariable Integer projectCacheId, Model model) {
+		RemoteProject readResource = projectCache.readResource(projectCacheId);
+		model.addAttribute("project", readResource);
+
+		return REMOTE_PROJECT_VIEW;
 	}
 
 	/**

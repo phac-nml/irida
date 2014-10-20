@@ -148,7 +148,9 @@
 					<tbody cg-busy="filterPromise">
 					<tr class="associated-project-row" ng-repeat="project in remoteAssociated | filter:filterCriteria">
 						<td class="project-id">{{project.id}}</td>
-						<td class="project-name">{{project.name}}</td>
+						<td class="project-name">
+                            <a href="#" th:href="@{/projects/remote/} + '{{project.remoteId}}'">{{project.name}}</a>
+                        </td>
 						<td>{{project.organism}}</td>
                         <td>{{project.createdDate}}</td>
 						<td>

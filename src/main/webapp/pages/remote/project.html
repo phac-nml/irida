@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="${themePath + '_page'}">
+<head>
+<title th:text="#{project.remote.page-title(${project.getName()})}">_REMOTE PROJECT_</title>
+</head>
+<body>
+
+<main layout:fragment="page">
+    <div class="row mrgn-tp-lg">
+        <div class="col-md-3">
+            <div class="panel panel-primary" th:object="${project}">
+                <div class="panel-heading">
+                    <b class="panel-title" th:text="#{project.details}">Project Details</b>
+                </div>
+                <div class="panel-body">
+                    <ul class="nav nav-pills nav-stacked project-details">
+                        <li>
+                            <i class="glyphicon glyphicon-barcode"></i>
+                            <em th:text="#{project.id}"></em>
+                            <span th:text="${project.getId()}"></span>
+                        </li>
+                        <li th:if="${project.organism} != null"><i class="glyphicon glyphicon-leaf"></i><em
+                                th:text="#{project.organism}"></em><span
+                                id="project-organism"><i th:text="*{organism}"></i></span>
+                        </li>
+                        <li><i class="glyphicon glyphicon-calendar"></i><em th:text="#{project.created}"></em><span
+                                id="project-created" th:text="${#calendars.format(project.createdDate, 'dd MMM yyyy')}">__DATE_CREATED__</span>
+                        </li>
+                        <li th:if="${project.modifiedDate} != null"><i class="glyphicon glyphicon-calendar"></i><em
+                                th:text="#{project.modified}"></em><span id="project-modified" data:livestamp="*{modifiedDate}"
+                                                                         th:title="${#calendars.format(project.modifiedDate, 'dd MMM yyyy HH:mm')}"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <h1 th:text="${project.getName()}"></h1>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">_Samples_</h3>
+                </div>
+                <div class="panel-body">
+                    Some samples
+                </div>
+            </div>
+        </div>
+    </div>     
+</main>
+
+
+    <th:block layout:fragment="page-scripts" th:inline="javascript">
+        <script type="text/javascript">
+            $(document).ready(function () {
+                
+            });
+            
+        </script>
+    </th:block>
+</body>
+</html>
