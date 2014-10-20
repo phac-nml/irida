@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.users;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -50,7 +50,7 @@ public class CreateUserPageIT {
 	public void destroy() {
 		if (driver != null) {
 			driver.close();
-            driver.quit();
+			driver.quit();
 		}
 	}
 
@@ -76,6 +76,12 @@ public class CreateUserPageIT {
 	public void createNoPasswordMatch() {
 		createPage.createUserWithPassword("tom", "manager@nowhere.com", "Password1", "Different1");
 		assertFalse(createPage.createSuccess());
+	}
+
+	@Test
+	public void testCreateUserWithoutPassword() {
+		createPage.createUserWithoutPassword("tom", "tom@somwehre.com");
+		assertTrue(createPage.createSuccess());
 	}
 
 }

@@ -41,6 +41,24 @@ public class CreateUserPage {
 		driver.findElement(By.className("submit")).click();
 	}
 
+	public void createUserWithoutPassword(String username, String email) {
+		// ensure the password checkbox is checked
+		WebElement setPasswordCheckbox = driver.findElement(By.id("setpassword"));
+		if (!setPasswordCheckbox.isSelected()) {
+			setPasswordCheckbox.click();
+		}
+
+		driver.findElement(By.id("username")).sendKeys(username);
+		driver.findElement(By.id("firstName")).sendKeys("test");
+		driver.findElement(By.id("lastName")).sendKeys("user");
+		driver.findElement(By.id("phoneNumber")).sendKeys("8675309");
+		driver.findElement(By.id("email")).sendKeys(email);
+		Select select = new Select(driver.findElement(By.id("systemRole")));
+		select.selectByIndex(1);
+
+		driver.findElement(By.className("submit")).click();
+	}
+
 	public boolean createSuccess() {
 		return driver.getCurrentUrl().matches(SUCCESS_PAGE);
 	}

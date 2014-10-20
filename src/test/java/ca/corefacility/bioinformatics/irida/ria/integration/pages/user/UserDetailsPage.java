@@ -7,6 +7,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * User details page for selenium testing
@@ -23,14 +25,15 @@ public class UserDetailsPage {
 		this.driver = driver;
 	}
 
-	public String getCurrentUserId() {
+	public void getCurrentUser() {
 		driver.get("http://localhost:8080/users/current");
-		WebElement findElement = driver.findElement(By.id(USER_ID));
-		return findElement.getText();
 	}
 
-	public String getOtherUserId(Long id) {
+	public void getOtherUser(Long id) {
 		driver.get("http://localhost:8080/users/" + id);
+	}
+
+	public String getUserId() {
 		WebElement findElement = driver.findElement(By.id(USER_ID));
 		return findElement.getText();
 	}
@@ -45,13 +48,33 @@ public class UserDetailsPage {
 		}
 	}
 
-	public List<String> getUserProjectIds(Long id) {
-		driver.get("http://localhost:8080/users/" + id);
+	public List<String> getUserProjectIds() {
 		List<WebElement> findElements = driver.findElements(By.className("user-project-id"));
 		List<String> ids = new ArrayList<>();
 		findElements.forEach(ele -> {
 			ids.add(ele.getText());
 		});
 		return ids;
+	}
+
+	public void sendPasswordReset() {
+		WebElement passwordResetLink = driver.findElement(By.className("password-reset-link"));
+		passwordResetLink.click();
+		WebElement confirmButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
+				.id("resetPasswordButton")));
+		confirmButton.click();
+	}
+
+	public boolean notySuccessDisplayed() {
+		boolean present = false;
+		try {
+			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+					.className("noty_type_success")));
+			present = true;
+		} catch (NoSuchElementException e) {
+			present = false;
+		}
+
+		return present;
 	}
 }

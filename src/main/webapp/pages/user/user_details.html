@@ -23,7 +23,7 @@
 
                         <div class="btn-group-xs pull-right">
                             <a href="#password-reset-modial" sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')"
-                               class="btn btn-default open-popup-link" th:text="#{user.passwordReset}">_Password
+                               class="btn btn-default password-reset-link" th:text="#{user.passwordReset}">_Password
                                 Reset_</a>
                             <a id="editUser" class="btn btn-default " th:if="${canEditUser}"
                                th:href="@{/users/{id}/edit(id=${user.id})}" href="/users/1/edit"
@@ -32,7 +32,7 @@
                     </div>
 
                     <div class="panel-body">
-                        <ul class="nav nav-pills nav-stacked details" th:inline="text">
+                        <ul class="nav nav-pills nav-stacked project-details" th:inline="text">
                             <li>
                                 <i class="glyphicon glyphicon-barcode"></i>&nbsp;[[#{users.id}]]
                     		<span class="pull-right" id="user-id"
@@ -150,6 +150,8 @@
     <!-- Add the project role icons to the project role names -->
     <script th:src="@{/resources/bower_components/magnific-popup/dist/jquery.magnific-popup.min.js}"
             src="/resources/bower_components/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
+    <script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"   
+            src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
     <script th:inline="javascript">
         $(document).ready(function () {
             //set up an array of the role names mapping to their icons
@@ -167,7 +169,7 @@
             });
 
             //Set modial popup links
-            $('.open-popup-link').magnificPopup({
+            $('.password-reset-link').magnificPopup({
                 type: 'inline'
             });
 
@@ -200,6 +202,10 @@
                     }
                 });
             });
+            
+            $('.popup-modal-dismiss').click(function (e) {
+        		$.magnificPopup.close();
+        	});
 
         });
     </script>

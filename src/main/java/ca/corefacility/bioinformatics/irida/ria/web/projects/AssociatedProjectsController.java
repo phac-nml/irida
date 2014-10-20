@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -34,20 +35,26 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
+import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
+import ca.corefacility.bioinformatics.irida.ria.utilities.RemoteObjectCache;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
 
 @Controller
 @RequestMapping("/projects")
+@Scope("session")
 public class AssociatedProjectsController {
 	private static final String ACTIVE_NAV = "activeNav";
 	private static final String ACTIVE_NAV_ASSOCIATED_PROJECTS = "associated";
@@ -58,18 +65,27 @@ public class AssociatedProjectsController {
 	private final RemoteRelatedProjectService remoteRelatedProjectService;
 	private final ProjectService projectService;
 	private final ProjectControllerUtils projectControllerUtils;
+	private final RemoteAPIService apiService;
 	private final UserService userService;
+	private final ProjectRemoteService projectRemoteService;
 
 	private final Formatter<Date> dateFormatter;
 
+	private RemoteObjectCache<RemoteProject> remoteProjectCache;
+
 	@Autowired
 	public AssociatedProjectsController(RemoteRelatedProjectService remoteRelatedProjectService,
-			ProjectService projectService, ProjectControllerUtils projectControllerUtils, UserService userService) {
+			ProjectService projectService, ProjectControllerUtils projectControllerUtils, UserService userService,
+			RemoteAPIService apiService, ProjectRemoteService projectRemoteService,
+			RemoteObjectCache<RemoteProject> remoteProjectCache) {
 
 		this.remoteRelatedProjectService = remoteRelatedProjectService;
 		this.projectService = projectService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.userService = userService;
+		this.apiService = apiService;
+		this.projectRemoteService = projectRemoteService;
+		this.remoteProjectCache = remoteProjectCache;
 		dateFormatter = new DateFormatter();
 	}
 
@@ -148,11 +164,25 @@ public class AssociatedProjectsController {
 		return ImmutableMap.of("result", "success");
 	}
 
+	/**
+	 * Get the edit associated projects page
+	 * 
+	 * @param projectId
+	 *            The ID of the current project
+	 * @param model
+	 *            Model object to be passed to the view
+	 * @param principal
+	 *            The logged in user
+	 * @return The name of the edit associated projects view
+	 */
 	@RequestMapping("/{projectId}/associated/edit")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId, 'isProjectOwner')")
 	public String editAssociatedProjectsForProject(@PathVariable Long projectId, Model model, Principal principal) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
+
+		Iterable<RemoteAPI> remoteApis = apiService.findAll();
+		model.addAttribute("apis", remoteApis);
 
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ASSOCIATED_PROJECTS);
@@ -235,6 +265,119 @@ public class AssociatedProjectsController {
 		map.put("totalPages", totalPages);
 
 		return map;
+	}
+
+	/**
+	 * Get the remote projects that could potentially be associated with this
+	 * project
+	 * 
+	 * @param projectId
+	 *            The current {@link Project} ID
+	 * @param apiId
+	 *            The ID of the {@link RemoteAPI} to get projects for
+	 * @return A List of Maps of the project properties
+	 */
+	@RequestMapping("/{projectId}/associated/remote/{apiId}/available")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId, 'isProjectOwner')")
+	@ResponseBody
+	public List<Map<String, String>> getPotentialRemoteAssociatedProjectsForApi(@PathVariable Long projectId,
+			@PathVariable Long apiId) {
+
+		Project project = projectService.read(projectId);
+		RemoteAPI read = apiService.read(apiId);
+		List<RemoteProject> listProjectsForAPI = projectRemoteService.listProjectsForAPI(read);
+		List<RemoteRelatedProject> remoteProjectsForProject = remoteRelatedProjectService
+				.getRemoteProjectsForProject(project);
+
+		return getRemoteAssociatedProjectsMap(listProjectsForAPI, remoteProjectsForProject);
+	}
+
+	/**
+	 * Add a {@link RemoteRelatedProject} to the current {@link Project}
+	 * 
+	 * @param projectId
+	 *            The ID of the owning project
+	 * @param associatedProjectId
+	 *            The Cache ID of the {@link RemoteProject}
+	 * @param apiId
+	 *            The ID of the api this project resides on
+	 * @return
+	 */
+	@RequestMapping(value = "/{projectId}/associated/remote", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, String> addRemoteAssociatedProject(@PathVariable Long projectId,
+			@RequestParam Integer associatedProjectId, @RequestParam Long apiId) {
+		Project project = projectService.read(projectId);
+		RemoteAPI remoteAPI = apiService.read(apiId);
+		RemoteProject readResource = remoteProjectCache.readResource(associatedProjectId);
+
+		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject(project, remoteAPI,
+				readResource.getHrefForRel("self"));
+		remoteRelatedProjectService.create(remoteRelatedProject);
+
+		return ImmutableMap.of("result", "success");
+	}
+
+	/**
+	 * Delete a remote associated project from a project
+	 * 
+	 * @param projectId
+	 *            The ID of the project to remove the association from
+	 * @param associatedProjectId
+	 *            The cache identifier for the remote element
+	 * @return
+	 */
+	@RequestMapping(value = "/{projectId}/associated/remote/{associatedProjectId}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public Map<String, String> removeRemoteAssociatedProject(@PathVariable Long projectId,
+			@PathVariable Integer associatedProjectId) {
+		Project project = projectService.read(projectId);
+		RemoteProject readResource = remoteProjectCache.readResource(associatedProjectId);
+
+		RemoteRelatedProject remoteRelatedProjectForProjectAndURI = remoteRelatedProjectService
+				.getRemoteRelatedProjectForProjectAndURI(project, readResource.getHrefForRel(RemoteResource.SELF_REL));
+		remoteRelatedProjectService.delete(remoteRelatedProjectForProjectAndURI.getId());
+
+		return ImmutableMap.of("result", "success");
+	}
+
+	/**
+	 * Get a list of the {@link RemoteProject} parameters
+	 * 
+	 * @param projects
+	 *            A list of the {@link RemoteProject}s to display
+	 * @param associatedProjects
+	 *            The {@link RemoteRelatedProject}s associated with the current
+	 *            project
+	 * @return
+	 */
+	private List<Map<String, String>> getRemoteAssociatedProjectsMap(List<RemoteProject> projects,
+			List<RemoteRelatedProject> associatedProjects) {
+		List<Map<String, String>> list = new ArrayList<>();
+
+		Map<String, Boolean> remoteUrls = new HashMap<>();
+		for (RemoteRelatedProject remote : associatedProjects) {
+			String remoteProjectURI = remote.getRemoteProjectURI();
+			remoteUrls.put(remoteProjectURI, true);
+		}
+
+		for (RemoteProject project : projects) {
+			Map<String, String> pmap = new HashMap<>();
+			Integer remoteId = remoteProjectCache.addResource(project);
+
+			pmap.put("id", project.getId().toString());
+			pmap.put("remoteId", remoteId.toString());
+			pmap.put("name", project.getName());
+			pmap.put("organism", project.getOrganism());
+			pmap.put("createdDate", dateFormatter.print(project.getCreatedDate(), LocaleContextHolder.getLocale()));
+			if (remoteUrls.containsKey(project.getHrefForRel(RemoteResource.SELF_REL))) {
+				pmap.put("associated", "associated");
+			}
+
+			list.add(pmap);
+		}
+
+		return list;
 	}
 
 	/**
