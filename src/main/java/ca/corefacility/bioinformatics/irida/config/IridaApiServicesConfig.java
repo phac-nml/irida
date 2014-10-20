@@ -91,6 +91,11 @@ public class IridaApiServicesConfig {
 	 */
 	@Bean
 	public Executor uploadExecutor() {
-		return Executors.newFixedThreadPool(1);
+		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+		taskExecutor.setCorePoolSize(4);
+		taskExecutor.setMaxPoolSize(8);
+		taskExecutor.setQueueCapacity(16);
+		taskExecutor.setThreadPriority(Thread.MIN_PRIORITY);
+		return taskExecutor;
 	}
 }
