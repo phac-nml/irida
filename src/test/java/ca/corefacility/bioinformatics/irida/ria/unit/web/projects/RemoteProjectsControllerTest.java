@@ -39,7 +39,7 @@ public class RemoteProjectsControllerTest {
 		when(remoteRelatedProjectService.read(remoteProjectId)).thenReturn(rrp);
 		when(projectRemoteService.read(rrp)).thenReturn(rp);
 
-		Map<String, Object> read = controller.read(remoteProjectId);
+		Map<String, Object> read = controller.readRemoteRelatedProject(remoteProjectId);
 
 		assertTrue(read.containsKey("id"));
 		assertTrue(read.containsKey("name"));

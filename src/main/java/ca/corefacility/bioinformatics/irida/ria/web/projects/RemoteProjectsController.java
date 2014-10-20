@@ -43,9 +43,9 @@ public class RemoteProjectsController {
 	 * @return A map containing info about the remote projcet read from the
 	 *         remote API
 	 */
-	@RequestMapping("/ajax/read/{remoteProjectId}")
+	@RequestMapping("/ajax/related/{remoteProjectId}")
 	@ResponseBody
-	public Map<String, Object> read(@PathVariable Long remoteProjectId) {
+	public Map<String, Object> readRemoteRelatedProject(@PathVariable Long remoteProjectId) {
 		RemoteRelatedProject remoteRelatedProject = remoteRelatedProjectService.read(remoteProjectId);
 		logger.trace("Reading remote project from service " + remoteRelatedProject.getRemoteAPI());
 		Map<String, Object> map = new HashMap<>();
