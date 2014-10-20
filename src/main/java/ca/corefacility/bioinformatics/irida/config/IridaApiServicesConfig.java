@@ -4,7 +4,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import javax.validation.Validator;
 
