@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.utilities;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +33,7 @@ public class RemoteObjectCacheTest {
 
 	@Test
 	public void testReadResource() {
-		RemoteObjectCache<RemoteIdentifiableTestEntity>.CacheObject cacheObject = cache.readResource(entityId);
+		CacheObject<RemoteIdentifiableTestEntity> cacheObject = cache.readResource(entityId);
 		RemoteIdentifiableTestEntity readResource = cacheObject.getResource();
 		assertEquals(entity, readResource);
 		assertEquals(api, cacheObject.getAPI());

@@ -18,6 +18,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
+import ca.corefacility.bioinformatics.irida.ria.utilities.CacheObject;
 import ca.corefacility.bioinformatics.irida.ria.utilities.RemoteObjectCache;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
@@ -68,7 +69,7 @@ public class RemoteProjectsController {
 
 	@RequestMapping("/{projectCacheId}")
 	public String readRemoteProject(@PathVariable Integer projectCacheId, Model model) {
-		RemoteObjectCache<RemoteProject>.CacheObject readResource = projectCache.readResource(projectCacheId);
+		CacheObject<RemoteProject> readResource = projectCache.readResource(projectCacheId);
 		model.addAttribute("project", readResource.getResource());
 		model.addAttribute("api", readResource.getAPI());
 

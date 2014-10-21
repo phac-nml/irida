@@ -29,16 +29,16 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource
 public class RemoteObjectCache<Type extends RemoteResource> {
 	private static final Logger logger = LoggerFactory.getLogger(RemoteObjectCache.class);
 
-	private Map<Integer, CacheObject> objectCache;
+	private Map<Integer, CacheObject<Type>> objectCache;
 
 	public RemoteObjectCache() {
 		objectCache = new HashMap<>();
 		logger.trace("RemoteCache initialized");
 	}
 
-	public CacheObject readResource(Integer id) {
+	public CacheObject<Type> readResource(Integer id) {
 		logger.trace("Reading id " + id);
-		RemoteObjectCache<Type>.CacheObject cacheObject = objectCache.get(id);
+		CacheObject<Type> cacheObject = objectCache.get(id);
 		if (cacheObject == null) {
 			throw new EntityNotFoundException("Object id " + id + " is not in the cache.");
 		}
@@ -51,37 +51,11 @@ public class RemoteObjectCache<Type extends RemoteResource> {
 		if (!objectCache.containsKey(hashCode)) {
 			logger.trace(resource + " added to cache");
 
-			objectCache.put(hashCode, new CacheObject(resource, api));
+			objectCache.put(hashCode, new CacheObject<>(resource, api));
 		} else {
 			logger.trace(resource + " already in cache");
 		}
 
 		return hashCode;
-	}
-
-	public class CacheObject {
-		private Type resource;
-		private RemoteAPI api;
-
-		public CacheObject(Type object, RemoteAPI api) {
-			this.resource = object;
-			this.api = api;
-		}
-
-		public Type getResource() {
-			return resource;
-		}
-
-		public void setResource(Type resource) {
-			this.resource = resource;
-		}
-
-		public RemoteAPI getAPI() {
-			return api;
-		}
-
-		public void setAPI(RemoteAPI api) {
-			this.api = api;
-		}
 	}
 }
