@@ -56,9 +56,12 @@ public class RemoteProjectsController {
 		logger.trace("Reading remote project from service " + remoteRelatedProject.getRemoteAPI());
 		Map<String, Object> map = new HashMap<>();
 		RemoteProject project = projectRemoteService.read(remoteRelatedProject);
+		
+		Integer cacheId = projectCache.addResource(project, remoteRelatedProject.getRemoteAPI());
 
 		map.put("id", project.getId());
 		map.put("name", project.getName());
+		map.put("remoteId", cacheId);
 
 		return map;
 	}

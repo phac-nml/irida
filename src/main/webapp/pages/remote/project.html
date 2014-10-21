@@ -40,16 +40,16 @@
             <div class="clearfix">
                 <h1 th:text="${project.getName()}"></h1>
                 <div class="alert alert-warning" role="alert">
-                    <span>Note: this project exists on a remote IRIDA installation.  <a href="#" th:href="@{/remote_api/{id}(id=${api.getId()})}">View details about the remote installation.</a></span>
-                    
+                    <span th:text="#{project.remote.disclaimer}">_Note: this project exists on the remote IRIDA installation:_</span> 
+                    <a href="#" th:href="@{/remote_api/{id}(id=${api.getId()})}" th:text="${api.name}"></a>
                 </div>
             </div>
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">_Samples_</h3>
+                    <h3 class="panel-title" th:text="#{project.remote.samples}">_Samples_</h3>
                 </div>
                 <div class="panel-body">
-                    Some samples
+                    Samples will go here
                 </div>
             </div>
         </div>
@@ -59,9 +59,6 @@
 
     <th:block layout:fragment="page-scripts" th:inline="javascript">
         <script type="text/javascript">
-            $(document).ready(function () {
-                
-            });
             
         </script>
     </th:block>

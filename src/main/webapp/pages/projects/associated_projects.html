@@ -136,15 +136,21 @@
 			var urlbase = /*[[@{/projects/remote/ajax/related/}]]*/ "/project/remote/ajax/related/";
 			var url = urlbase + project;
 			
-			var statusContainer = $("#remote-project-status-"+project);
+			var projectUrlBase = /*[[@{/projects/remote/}]]*/ "/projects/remote/";
+			
+			var statusContainer = $("#remote-project-status-"+project);			
 			
 			$.ajax({
 				url: url,
 				success: function(data, textStatus, jqXHR){
 					if(data.name != null){						
-						projectNameContainer.text(data.name);
+						//projectNameContainer.text(data.name);
 						statusContainer.text(authorizedText);
 						statusContainer.addClass("label label-success");
+						var href = projectUrlBase+data.remoteId;
+						var link = $("<a>" + data.name + "</a>");
+						link.attr("href",href);
+						projectNameContainer.html(link);
 					}
 					else if(data == "forbidden"){
 						projectNameContainer.closest(".remote-project-row").hide();
