@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.security.permissions;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -39,10 +40,62 @@ public class BasePermissionTest {
 
 		auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 	}
+	
+	/**
+	 * Tests successfully allowing permission for a single object by Long id.
+	 */
+	@Test
+	public void testPermissionLongSuccess() {
+		when(crudRepository.findOne(1L)).thenReturn(new Permittable(1L));
 
+		assertTrue(basePermission.isAllowed(auth, 1L));
+	}
+	
+	/**
+	 * Tests failing to allow permission due to an id not found.
+	 */
 	@Test(expected = EntityNotFoundException.class)
 	public void testEntityNotFound() {
 		basePermission.isAllowed(auth, 1L);
+	}
+	
+	/**
+	 * Tests successfully allowing permission for collection of single long id.
+	 */
+	@Test
+	public void testPermissionSingleCollectionLongSuccess() {
+		when(crudRepository.findOne(1L)).thenReturn(new Permittable(1L));
+		
+		assertTrue(basePermission.isAllowed(auth, Sets.newHashSet(1L)));
+	}
+	
+	/**
+	 * Tests failing to allow permission for collection of single long id.
+	 */
+	@Test(expected = EntityNotFoundException.class)
+	public void testPermissionSingleCollectionLongFail() {
+		basePermission.isAllowed(auth, Sets.newHashSet(1L));
+	}
+	
+	/**
+	 * Tests successfully allowing permission for collection of two long ids.
+	 */
+	@Test
+	public void testPermissionTwoCollectionLongSuccess() {
+		when(crudRepository.findOne(1L)).thenReturn(new Permittable(1L));
+		when(crudRepository.findOne(2L)).thenReturn(new Permittable(2L));
+		
+		assertTrue(basePermission.isAllowed(auth, Sets.newHashSet(1L,2L)));
+	}
+	
+	/**
+	 * Tests failing to allow permission for collection of two long ids (one id exists, one doesn't).
+	 */
+	@Test(expected = EntityNotFoundException.class)
+	public void testPermissionTwoCollectionLongFail() {
+		when(crudRepository.findOne(1L)).thenReturn(new Permittable(1L));
+		
+		assertFalse(basePermission.isAllowed(auth, Sets.newHashSet(1L,2L)));
 	}
 
 	/**
@@ -143,7 +196,7 @@ public class BasePermissionTest {
 				crudRepository);
 
 		basePermission.isAllowed(auth,
-				Sets.newHashSet(1L));
+				Sets.newHashSet("invalid"));
 	}
 	
 	/**
@@ -174,7 +227,7 @@ public class BasePermissionTest {
 		
 		Set mixedSet = new HashSet();
 		mixedSet.add(permittable1);
-		mixedSet.add(1L);
+		mixedSet.add("invalid");
 
 		basePermission.isAllowed(auth, mixedSet);
 	}

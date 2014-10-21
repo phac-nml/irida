@@ -117,7 +117,7 @@ public abstract class BasePermission<DomainObjectType> {
 			boolean permitted = true;
 			for (Object domainObjectObject : domainObjects) {
 				if (domainObjectObject instanceof Long) {
-					domainObject = findDomainObjectByLongId((Long)targetDomainObject);
+					domainObject = findDomainObjectByLongId((Long)domainObjectObject);
 				} else if (domainObjectType.isAssignableFrom(domainObjectObject.getClass())) {
 					domainObject = (DomainObjectType)domainObjectObject;
 				} else {
