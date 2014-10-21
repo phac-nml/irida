@@ -95,7 +95,7 @@ public class BasePermissionTest {
 	public void testPermissionTwoCollectionLongFail() {
 		when(crudRepository.findOne(1L)).thenReturn(new Permittable(1L));
 		
-		assertFalse(basePermission.isAllowed(auth, Sets.newHashSet(1L,2L)));
+		basePermission.isAllowed(auth, Sets.newHashSet(1L,2L));
 	}
 
 	/**
