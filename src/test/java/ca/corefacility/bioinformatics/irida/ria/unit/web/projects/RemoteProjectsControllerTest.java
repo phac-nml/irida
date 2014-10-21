@@ -10,6 +10,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.ria.utilities.RemoteObjectCache;
@@ -23,20 +24,23 @@ public class RemoteProjectsControllerTest {
 	RemoteRelatedProjectService remoteRelatedProjectService;
 	RemoteObjectCache<RemoteProject> projectCache;
 
+	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp() {
 		projectRemoteService = mock(ProjectRemoteService.class);
 		remoteRelatedProjectService = mock(RemoteRelatedProjectService.class);
+		projectCache = mock(RemoteObjectCache.class);
 		controller = new RemoteProjectsController(projectRemoteService, remoteRelatedProjectService, projectCache);
 	}
 
 	@Test
-	public void testRead() {
+	public void testReadRemoteRelatedProject() {
 		Long remoteProjectId = 1l;
 		RemoteRelatedProject rrp = new RemoteRelatedProject();
 		RemoteProject rp = new RemoteProject();
 		rp.setId(2l);
 		rp.setName("project name");
+		rrp.setRemoteAPI(new RemoteAPI());
 
 		when(remoteRelatedProjectService.read(remoteProjectId)).thenReturn(rrp);
 		when(projectRemoteService.read(rrp)).thenReturn(rp);
@@ -47,5 +51,6 @@ public class RemoteProjectsControllerTest {
 		assertTrue(read.containsKey("name"));
 		verify(remoteRelatedProjectService).read(remoteProjectId);
 		verify(projectRemoteService).read(rrp);
+		verify(projectCache).addResource(rp, rrp.getRemoteAPI());
 	}
 }
