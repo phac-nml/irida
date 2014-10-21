@@ -66,6 +66,22 @@ public abstract class BasePermission<DomainObjectType> {
 		this.repository = repository;
 		this.domainObjectType = domainObjectType;
 	}
+	
+	/**
+	 * Given a Long id, find the corresponding DomainObject.
+	 * @param id  The Long id to search for.
+	 * @return  A DomainObject of the particular type corresponding to this id.
+	 * @throws EntityNotFoundException If the DomainObject could not be found.
+	 */
+	private DomainObjectType findDomainObjectByLongId(Long id) {
+		logger.trace("Trying to find domain object by id [" + id + "]");
+		DomainObjectType domainObject = repository.findOne((Long) id);
+		if (domainObject == null) {
+			throw new EntityNotFoundException("Could not find entity with id [" + id + "]");
+		}
+		
+		return domainObject;
+	}
 
 	/**
 	 * Is the authenticated user allowed to perform some action on the target
@@ -91,11 +107,7 @@ public abstract class BasePermission<DomainObjectType> {
 		DomainObjectType domainObject;
 
 		if (targetDomainObject instanceof Long) {
-			logger.trace("Trying to find domain object by id [" + targetDomainObject + "]");
-			domainObject = repository.findOne((Long) targetDomainObject);
-			if (domainObject == null) {
-				throw new EntityNotFoundException("Could not find entity with id [" + targetDomainObject + "]");
-			}
+			domainObject = findDomainObjectByLongId((Long)targetDomainObject);
 		} else if (domainObjectType.isAssignableFrom(targetDomainObject.getClass())) {
 			// reflection replacement for instanceof
 			domainObject = (DomainObjectType) targetDomainObject;
@@ -104,14 +116,16 @@ public abstract class BasePermission<DomainObjectType> {
 			
 			boolean permitted = true;
 			for (Object domainObjectObject : domainObjects) {
-				if (domainObjectType.isAssignableFrom(domainObjectObject.getClass())) {
-					DomainObjectType domainObject2 = (DomainObjectType)domainObjectObject;
-					
-					permitted &= customPermissionAllowed(authentication, domainObject2);
+				if (domainObjectObject instanceof Long) {
+					domainObject = findDomainObjectByLongId((Long)targetDomainObject);
+				} else if (domainObjectType.isAssignableFrom(domainObjectObject.getClass())) {
+					domainObject = (DomainObjectType)domainObjectObject;
 				} else {
 					throw new IllegalArgumentException("Parameter to " + getClass().getName() + " is not a valid Collection, must be of type"
-							+ "Collection<" + domainObjectType.getName() + ">.");
+							+ "Collection<" + domainObjectType.getName() + "or Long>.");
 				}
+				
+				permitted &= customPermissionAllowed(authentication, domainObject);
 			}
 
 			return permitted;
