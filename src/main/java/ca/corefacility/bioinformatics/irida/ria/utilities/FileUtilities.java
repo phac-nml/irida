@@ -63,14 +63,15 @@ public class FileUtilities {
 				// 4) Close the current entry in the archive in preparation for the next entry.
 				outputStream.closeEntry();
 			}
-			// Tell the output stream that you are finished downloading.
-			outputStream.finish();
-			outputStream.close();
 
 			// Set the response headers
 			response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + fileName + EXTENSION_ZIP);
 			//for zip file
 			response.setContentType(CONTENT_TYPE_APPLICATION_ZIP);
+			
+			// Tell the output stream that you are finished downloading.
+			outputStream.finish();
+			outputStream.close();
 		} catch (IOException e) {
 			// this generally means that the user has cancelled the download
 			// from their web browser; we can safely ignore this
