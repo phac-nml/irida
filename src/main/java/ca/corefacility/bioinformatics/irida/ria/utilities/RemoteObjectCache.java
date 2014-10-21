@@ -36,7 +36,16 @@ public class RemoteObjectCache<Type extends RemoteResource> {
 		logger.trace("RemoteCache initialized");
 	}
 
-	public CacheObject<Type> readResource(Integer id) {
+	/**
+	 * Read a resource from the cache with its given id
+	 * 
+	 * @param id
+	 *            the resource id
+	 * @return The {@link CacheObject} if found
+	 * @throws EntityNotFoundException
+	 *             if the object doesn't exist in the cache
+	 */
+	public CacheObject<Type> readResource(Integer id) throws EntityNotFoundException {
 		logger.trace("Reading id " + id);
 		CacheObject<Type> cacheObject = objectCache.get(id);
 		if (cacheObject == null) {
@@ -45,6 +54,15 @@ public class RemoteObjectCache<Type extends RemoteResource> {
 		return cacheObject;
 	}
 
+	/**
+	 * Add a resource to the cache and get an identifier for the object
+	 * 
+	 * @param resource
+	 *            The {@link RemoteResource} to add
+	 * @param api
+	 *            The {@link RemoteAPI} it was read from
+	 * @return the Integer hash value to access the object
+	 */
 	public Integer addResource(Type resource, RemoteAPI api) {
 		logger.trace("Cache size is " + objectCache.size());
 		int hashCode = resource.hashCode();
