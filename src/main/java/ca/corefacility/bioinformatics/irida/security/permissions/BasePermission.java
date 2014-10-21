@@ -68,19 +68,48 @@ public abstract class BasePermission<DomainObjectType> {
 	}
 	
 	/**
-	 * Given a Long id, find the corresponding DomainObject.
-	 * @param id  The Long id to search for.
-	 * @return  A DomainObject of the particular type corresponding to this id.
-	 * @throws EntityNotFoundException If the DomainObject could not be found.
+	 * Evaluates the permission of a single object.
+	 * @param authentication  The Authentication object.
+	 * @param targetDomainObject  The target domain object to evaluate permission (assumes this is not a collection).
+	 * @return  True if permission is allowed on this object, false otherwise.
+	 * @throws EntityNotFoundException  If the object does not exist.
 	 */
-	private DomainObjectType findDomainObjectByLongId(Long id) {
-		logger.trace("Trying to find domain object by id [" + id + "]");
-		DomainObjectType domainObject = repository.findOne((Long) id);
-		if (domainObject == null) {
-			throw new EntityNotFoundException("Could not find entity with id [" + id + "]");
+	@SuppressWarnings("unchecked")
+	private boolean customPermissionAllowedSingleObject(Authentication authentication, Object targetDomainObject) {
+		DomainObjectType domainObject;
+
+		if (targetDomainObject instanceof Long) {
+			Long id = (Long)targetDomainObject;
+			logger.trace("Trying to find domain object by id [" + id + "]");
+			domainObject = repository.findOne((Long) id);
+			if (domainObject == null) {
+				throw new EntityNotFoundException("Could not find entity with id [" + id + "]");
+			}
+		} else if (domainObjectType.isAssignableFrom(targetDomainObject.getClass())) {
+			// reflection replacement for instanceof
+			domainObject = (DomainObjectType) targetDomainObject;
+		} else {
+			throw new IllegalArgumentException("Parameter to " + getClass().getName() + " must be of type Long or "
+					+ domainObjectType.getName() + ".");
 		}
 		
-		return domainObject;
+		return customPermissionAllowed(authentication, domainObject);
+	}
+	
+	/**
+	 * Tests permission for a collection of objects.
+	 * @param authentication  The Authentication object.
+	 * @param targetDomainObjects  The collection of domain objects to check for permission.
+	 * @return  True if permission is allowed for every object in the collection, false otherwise.
+	 * @throws EntityNotFoundException  If one of the objects in the collection does not exist.
+	 */
+	private boolean customPermissionAllowedCollection(Authentication authentication, Collection<?> targetDomainObjects) {
+		boolean permitted = true;
+		for (Object domainObjectInCollection : targetDomainObjects) {
+			permitted &= customPermissionAllowedSingleObject(authentication, domainObjectInCollection);
+		}
+		
+		return permitted;
 	}
 
 	/**
@@ -93,7 +122,6 @@ public abstract class BasePermission<DomainObjectType> {
 	 *            the object the user is requesting to perform an action on.
 	 * @return true if the action is allowed, false otherwise.
 	 */
-	@SuppressWarnings("unchecked")
 	public final boolean isAllowed(Authentication authentication, Object targetDomainObject) {
 		// fast pass for administrators -- administrators are allowed to access
 		// everything.
@@ -101,40 +129,10 @@ public abstract class BasePermission<DomainObjectType> {
 			return true;
 		}
 
-		// load the domain object (if necessary) so that the subclass can
-		// evaluate access
-
-		DomainObjectType domainObject;
-
-		if (targetDomainObject instanceof Long) {
-			domainObject = findDomainObjectByLongId((Long)targetDomainObject);
-		} else if (domainObjectType.isAssignableFrom(targetDomainObject.getClass())) {
-			// reflection replacement for instanceof
-			domainObject = (DomainObjectType) targetDomainObject;
-		} else if (targetDomainObject instanceof Collection<?>) {
-			Collection<?> domainObjects = (Collection<?>)targetDomainObject;
-			
-			boolean permitted = true;
-			for (Object domainObjectObject : domainObjects) {
-				if (domainObjectObject instanceof Long) {
-					domainObject = findDomainObjectByLongId((Long)domainObjectObject);
-				} else if (domainObjectType.isAssignableFrom(domainObjectObject.getClass())) {
-					domainObject = (DomainObjectType)domainObjectObject;
-				} else {
-					throw new IllegalArgumentException("Parameter to " + getClass().getName() + " is not a valid Collection, must be of type"
-							+ "Collection<" + domainObjectType.getName() + "or Long>.");
-				}
-				
-				permitted &= customPermissionAllowed(authentication, domainObject);
-			}
-
-			return permitted;
+		if (targetDomainObject instanceof Collection<?>) {
+			return customPermissionAllowedCollection(authentication, (Collection<?>)targetDomainObject);
 		} else {
-			throw new IllegalArgumentException("Parameter to " + getClass().getName() + " must be of type Long or "
-					+ domainObjectType.getName() + ".");
+			return customPermissionAllowedSingleObject(authentication, targetDomainObject);
 		}
-		
-		// pass off any other logic to the implementing permission class.
-		return customPermissionAllowed(authentication, domainObject);
 	}
 }
