@@ -57,7 +57,7 @@ public class RemoteProjectsController {
 		logger.trace("Reading remote project from service " + remoteRelatedProject.getRemoteAPI());
 		Map<String, Object> map = new HashMap<>();
 		RemoteProject project = projectRemoteService.read(remoteRelatedProject);
-		
+
 		Integer cacheId = projectCache.addResource(project, remoteRelatedProject.getRemoteAPI());
 
 		map.put("id", project.getId());
@@ -67,6 +67,15 @@ public class RemoteProjectsController {
 		return map;
 	}
 
+	/**
+	 * Get the info page about a given {@link RemoteProject}
+	 * 
+	 * @param projectCacheId
+	 *            The {@link RemoteObjectCache} id of the project
+	 * @param model
+	 *            Model for the view
+	 * @return the name of the remote project view page
+	 */
 	@RequestMapping("/{projectCacheId}")
 	public String readRemoteProject(@PathVariable Integer projectCacheId, Model model) {
 		CacheObject<RemoteProject> readResource = projectCache.readResource(projectCacheId);
