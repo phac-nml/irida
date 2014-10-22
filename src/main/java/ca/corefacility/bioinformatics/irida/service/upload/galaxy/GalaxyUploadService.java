@@ -45,8 +45,8 @@ public class GalaxyUploadService implements
 	 * Builds a new GalaxyUploadService with the given information.
 	 * 
 	 * @param uploadExecutor
-	 *            An {@link Executor} used for executing uploads in
-	 *            different threads.
+	 *            An {@link Executor} used for executing uploads in different
+	 *            threads.
 	 * 
 	 * @param galaxyUploader
 	 *            The GalaxyUploader to use to connect to an instance of Galaxy.
@@ -120,6 +120,24 @@ public class GalaxyUploadService implements
 
 		Set<UploadSample> galaxySamples = uploadSampleConversionService
 				.convertToUploadSamples(selectedSamples);
+
+		return buildAndRunUploadWorker(galaxySamples, projectName, accountName);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public UploadWorker performUploadSelectedSequenceFiles(
+			Set<Long> selectedSequenceFileIds, GalaxyProjectName projectName,
+			GalaxyAccountEmail accountName) throws ConstraintViolationException {
+
+		checkNotNull(selectedSequenceFileIds, "selectedSequenceFileIds is null");
+		checkNotNull(projectName, "galaxyLibraryName is null");
+		checkNotNull(accountName, "galaxyUserEmail is null");
+
+		Set<UploadSample> galaxySamples = uploadSampleConversionService
+				.convertSequenceFilesByIdToUploadSamples(selectedSequenceFileIds);
 
 		return buildAndRunUploadWorker(galaxySamples, projectName, accountName);
 	}
