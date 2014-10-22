@@ -69,7 +69,7 @@ public class UploadSampleConversionServiceGalaxy implements
 	}
 
 	/**
-	 * @{inheritDoc
+	 * {@inheritDoc}
 	 */
 	@Override
 	public UploadSample convertToUploadSample(Sample sample) {
@@ -97,7 +97,7 @@ public class UploadSampleConversionServiceGalaxy implements
 	}
 
 	/**
-	 * @{inheritDoc
+	 * {@inheritDoc}
 	 */
 	@Override
 	public Set<UploadSample> getUploadSamplesForProject(Long projectId) {
@@ -124,7 +124,7 @@ public class UploadSampleConversionServiceGalaxy implements
 	}
 
 	/**
-	 * @{inheritDoc
+	 * {@inheritDoc}
 	 */
 	@Override
 	public Set<UploadSample> convertToUploadSamples(Set<Sample> samples) {
