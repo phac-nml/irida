@@ -133,13 +133,30 @@ public class GalaxyUploadService implements
 			GalaxyAccountEmail accountName) throws ConstraintViolationException {
 
 		checkNotNull(selectedSequenceFileIds, "selectedSequenceFileIds is null");
-		checkNotNull(projectName, "galaxyLibraryName is null");
-		checkNotNull(accountName, "galaxyUserEmail is null");
+		checkNotNull(projectName, "projectName is null");
+		checkNotNull(accountName, "accountName is null");
 
 		Set<UploadSample> galaxySamples = uploadSampleConversionService
 				.convertSequenceFilesByIdToUploadSamples(selectedSequenceFileIds);
 
 		return buildAndRunUploadWorker(galaxySamples, projectName, accountName);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public UploadWorker performUploadSelectedSequenceFiles(
+			Set<Long> selectedSequenceFileIds, String projectName,
+			String accountName) throws ConstraintViolationException {
+
+		checkNotNull(selectedSequenceFileIds, "selectedSequenceFileIds is null");
+		checkNotNull(projectName, "projectName is null");
+		checkNotNull(accountName, "accountName is null");
+
+		return performUploadSelectedSequenceFiles(selectedSequenceFileIds,
+				new GalaxyProjectName(projectName), new GalaxyAccountEmail(
+						accountName));
 	}
 
 	/**

@@ -251,6 +251,29 @@ public class GalaxyUploadServiceIT {
 		assertNotNull(uploadResult.getDataLocation());
 		assertEquals(projectName, uploadResult.getLocationName());
 	}
+	
+	/**
+	 * Tests successfully uploading a set of samples to Galaxy by passing strings for information.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testUploadSelectedSequenceFilesStringSuccess() {
+		List<SequenceFile> sequenceFiles = analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePath);
+		
+		SequenceFile sequenceFile = sequenceFiles.get(0);
+
+		UploadWorker uploadWorker = galaxyUploadService
+				.performUploadSelectedSequenceFiles(Sets.newHashSet(sequenceFile.getId()),
+						projectName.getName(), accountName.getName());
+
+		assertEquals(1.0f, uploadWorker.getProportionComplete(), delta);
+		assertFalse(uploadWorker.exceptionOccured());
+		UploadResult uploadResult = uploadWorker.getUploadResult();
+
+		assertNotNull(uploadResult.getDataLocation());
+		assertEquals(projectName, uploadResult.getLocationName());
+	}
 
 	/**
 	 * Tests success in permissions for regular user.

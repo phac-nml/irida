@@ -81,6 +81,25 @@ public interface UploadService<ProjectName extends UploadProjectName, AccountNam
 	public UploadWorker performUploadSelectedSequenceFiles(
 			Set<Long> selectedSequenceFileIds, ProjectName projectName,
 			AccountName accountName) throws ConstraintViolationException;
+	
+	/**
+	 * Performs an upload for the selected sequence files into Galaxy.
+	 * 
+	 * @param selectedSequenceFileIds
+	 *            The ids of the sequence files to upload to Galaxy.
+	 * @param projectName
+	 *            The name of the project to upload into.
+	 * @param accountName
+	 *            The name of the account to upload into.
+	 * @return An UploadWorker for with information on the progress of the
+	 *         upload.
+	 * @throws ConstraintViolationException
+	 *             If the upload information fails to match the constraints.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#selectedSequenceFileIds, 'canReadSequenceFile')")
+	public UploadWorker performUploadSelectedSequenceFiles(
+			Set<Long> selectedSequenceFileIds, String projectName,
+			String accountName) throws ConstraintViolationException;
 
 	/**
 	 * Gets the URL of the connected remote site.
