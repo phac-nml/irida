@@ -44,7 +44,7 @@ public class GalaxySample implements UploadSample {
 		checkNotNull(sampleName, "sampleName is null");
 
 		this.sampleName = sampleName;
-		this.sampleFiles = new LinkedList<>();;
+		this.sampleFiles = new LinkedList<>();
 	}
 
 	/**
