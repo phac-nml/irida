@@ -49,18 +49,34 @@ public interface UploadSampleConversionService {
 	public Set<UploadSample> convertToUploadSamples(Sample... samples);
 
 	/**
-	 * Converts a list of sequence files to {@link UploadSample}s to be uploaded
-	 * to Galaxy.
+	 * Converts a list of {@link SequenceFile}s to {@link UploadSample}s to be
+	 * uploaded to Galaxy.
 	 *
 	 * @param sequenceFiles
 	 *            The sequence files to upload.
 	 * @return A set of {@link UploadSample}s.
-	 * @throws {@link EntityNotFoundException} If information could not be found
-	 *         for the passed sequence files.
+	 * @throws EntityNotFoundException
+	 *             If information could not be found for the passed sequence
+	 *             files.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sequenceFiles, 'canReadSequenceFile')")
 	public Set<UploadSample> convertSequenceFilesToUploadSamples(
 			Set<SequenceFile> sequenceFiles) throws EntityNotFoundException;
+
+	/**
+	 * Converts a list of {@link SequenceFile} by ids to {@link UploadSample}s
+	 * to be uploaded to Galaxy.
+	 *
+	 * @param sequenceFiles
+	 *            The {@link SequenceFile}s to upload.
+	 * @return A set of {@link UploadSample}s.
+	 * @throws EntityNotFoundException
+	 *             If information could not be found for the passed sequence
+	 *             files.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sequenceFiles, 'canReadSequenceFile')")
+	public Set<UploadSample> convertSequenceFilesByIdToUploadSamples(
+			Set<Long> sequenceFileIds) throws EntityNotFoundException;
 
 	/**
 	 * Get the samples for a specific project, identified by its project id.

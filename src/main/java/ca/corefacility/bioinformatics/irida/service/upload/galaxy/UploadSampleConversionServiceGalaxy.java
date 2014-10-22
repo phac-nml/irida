@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.upload.UploadSampleConversionService;
 
 /**
@@ -42,6 +43,7 @@ public class UploadSampleConversionServiceGalaxy implements
 	private ProjectRepository projectRepository;
 	private ProjectSampleJoinRepository psjRepository;
 	private SampleSequenceFileJoinRepository ssfjRepository;
+	private SequenceFileRepository sfRepository;
 
 	/**
 	 * Builds a new GalaxySampleConversionService for convering samples to those
@@ -51,15 +53,19 @@ public class UploadSampleConversionServiceGalaxy implements
 	 *            The repository of all projects.
 	 * @param ssfjRepository
 	 *            The repository for joining sequence files and samples.
+	 * @param sfRepository
+	 *            The repository for accessing sequence files.
 	 */
 	@Autowired
 	public UploadSampleConversionServiceGalaxy(
 			ProjectRepository projectRepository,
 			ProjectSampleJoinRepository psjRepository,
-			SampleSequenceFileJoinRepository ssfjRepository) {
+			SampleSequenceFileJoinRepository ssfjRepository,
+			SequenceFileRepository sfRepository) {
 		this.projectRepository = projectRepository;
 		this.psjRepository = psjRepository;
 		this.ssfjRepository = ssfjRepository;
+		this.sfRepository = sfRepository;
 	}
 
 	/**
@@ -170,5 +176,30 @@ public class UploadSampleConversionServiceGalaxy implements
 		}
 
 		return Sets.newHashSet(samplesMap.values());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<UploadSample> convertSequenceFilesByIdToUploadSamples(
+			Set<Long> sequenceFileIds) throws EntityNotFoundException {
+		checkNotNull(sequenceFileIds, "sequenceFileIds is null");
+
+		Set<SequenceFile> sequenceFiles = new HashSet<>();
+
+		for (Long sequenceFileId : sequenceFileIds) {
+			SequenceFile sequenceFile = sfRepository.findOne(sequenceFileId);
+
+			if (sequenceFile == null) {
+				throw new EntityNotFoundException(
+						"SequenceFile identified by [" + sequenceFileId
+								+ "] not found");
+			} else {
+				sequenceFiles.add(sequenceFile);
+			}
+		}
+
+		return convertSequenceFilesToUploadSamples(sequenceFiles);
 	}
 }

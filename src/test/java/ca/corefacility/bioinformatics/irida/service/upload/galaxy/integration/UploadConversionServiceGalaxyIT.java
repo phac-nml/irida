@@ -237,7 +237,7 @@ public class UploadConversionServiceGalaxyIT {
 	}
 
 	/**
-	 * Tests successfully converting two sequence files in the same sample an
+	 * Tests successfully converting two sequence files in the same sample to an
 	 * upload sample.
 	 */
 	@Test
@@ -266,6 +266,54 @@ public class UploadConversionServiceGalaxyIT {
 				.getName());
 		List<Path> sampleFiles = uploadSample.getSampleFiles();
 		assertEquals(2, sampleFiles.size());
+	}
+	
+	/**
+	 * Tests successfully converting two sequence files by ids in the same sample to an
+	 * upload sample.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testConvertTwoSequenceFilesByIdsSuccess() {
+		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePath1, sequenceFilePath2);
+
+		Project project = projectRepository.findOne(1L);
+		Sample sample = sampleService.getSampleForProject(project, 1L);
+		List<Join<Sample, SequenceFile>> sampleSequenceFiles = sequenceFileService
+				.getSequenceFilesForSample(sample);
+		assertEquals(2, sampleSequenceFiles.size());
+
+		SequenceFile sequenceFile1 = sampleSequenceFiles.get(0).getObject();
+		SequenceFile sequenceFile2 = sampleSequenceFiles.get(1).getObject();
+
+		Set<UploadSample> uploadSamples = sampleConversionService
+				.convertSequenceFilesByIdToUploadSamples(Sets.newHashSet(
+						sequenceFile1.getId(), sequenceFile2.getId()));
+
+		assertEquals(1, uploadSamples.size());
+		UploadSample uploadSample = uploadSamples.iterator().next();
+
+		assertEquals(sample.getSampleName(), uploadSample.getSampleName()
+				.getName());
+		List<Path> sampleFiles = uploadSample.getSampleFiles();
+		assertEquals(2, sampleFiles.size());
+	}
+	
+	/**
+	 * Tests failing to convert two sequence files by ids in the same sample to an
+	 * upload sample due to permissions.
+	 */
+	@Test(expected=AccessDeniedException.class)
+	@WithMockUser(username = "dr-evil", roles = "USER")
+	public void testConvertTwoSequenceFilesByIdsFailPermission() {
+		List<SequenceFile> sequenceFiles = analysisExecutionGalaxyITService
+				.setupSampleSequenceFileInDatabase(1L, sequenceFilePath1);
+
+		SequenceFile sequenceFile = sequenceFiles.get(0);
+
+		sampleConversionService.convertSequenceFilesByIdToUploadSamples(Sets
+				.newHashSet(sequenceFile.getId()));
 	}
 
 	/**
