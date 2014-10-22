@@ -39,4 +39,10 @@ public interface UploadSample {
 	 *            The list of files associated with this sample.
 	 */
 	public void setSampleFiles(List<Path> sampleFiles);
+	
+	/**
+	 * Adds a new {@link Path} to this {@link UploadSample}.
+	 * @param sampleFile  The path to the sample file to add.
+	 */
+	public void addSampleFile(Path sampleFile);
 }

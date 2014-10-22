@@ -14,15 +14,18 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
 
 /**
  * Service for performing uploads of genomic sequence data to a remote site.
+ * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
- * @param <ProjectName>  The name of the project to upload into.
- * @param <AccountName>  The name of the user account to make an owner of a new data location.
+ * @param <ProjectName>
+ *            The name of the project to upload into.
+ * @param <AccountName>
+ *            The name of the user account to make an owner of a new data
+ *            location.
  */
 public interface UploadService<ProjectName extends UploadProjectName, AccountName extends UploaderAccountName> {
 	/**
-	 * Performs the upload for all samples into Galaxy from this
-	 * project.
+	 * Performs the upload for all samples into Galaxy from this project.
 	 *
 	 * @param projectId
 	 *            The project id to upload samples to.
@@ -30,7 +33,8 @@ public interface UploadService<ProjectName extends UploadProjectName, AccountNam
 	 *            The name of the project to upload into.
 	 * @param accountName
 	 *            The name of the account to upload into.
-	 * @return An UploadWorker with information on the current progress of the upload.
+	 * @return An UploadWorker with information on the current progress of the
+	 *         upload.
 	 * @throws ConstraintViolationException
 	 *             If the upload information fails to match the constraints.
 	 */
@@ -40,8 +44,8 @@ public interface UploadService<ProjectName extends UploadProjectName, AccountNam
 			throws ConstraintViolationException;
 
 	/**
-	 * Performs an upload for the selected samples into Galaxy
-	 * from this project.
+	 * Performs an upload for the selected samples into Galaxy from this
+	 * project.
 	 *
 	 * @param selectedSamples
 	 *            The samples to upload.
@@ -49,7 +53,8 @@ public interface UploadService<ProjectName extends UploadProjectName, AccountNam
 	 *            The name of the project to upload into.
 	 * @param accountName
 	 *            The name of the account to upload into.
-	 * @return An UploadWorker for with information on the progress of the upload.
+	 * @return An UploadWorker for with information on the progress of the
+	 *         upload.
 	 * @throws ConstraintViolationException
 	 *             If the upload information fails to match the constraints.
 	 */
@@ -57,6 +62,44 @@ public interface UploadService<ProjectName extends UploadProjectName, AccountNam
 	public UploadWorker performUploadSelectedSamples(
 			Set<Sample> selectedSamples, ProjectName projectName,
 			AccountName accountName) throws ConstraintViolationException;
+
+	/**
+	 * Performs an upload for the selected sequence files into Galaxy.
+	 * 
+	 * @param selectedSequenceFileIds
+	 *            The ids of the sequence files to upload to Galaxy.
+	 * @param projectName
+	 *            The name of the project to upload into.
+	 * @param accountName
+	 *            The name of the account to upload into.
+	 * @return An UploadWorker for with information on the progress of the
+	 *         upload.
+	 * @throws ConstraintViolationException
+	 *             If the upload information fails to match the constraints.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#selectedSequenceFileIds, 'canReadSequenceFile')")
+	public UploadWorker performUploadSelectedSequenceFiles(
+			Set<Long> selectedSequenceFileIds, ProjectName projectName,
+			AccountName accountName) throws ConstraintViolationException;
+	
+	/**
+	 * Performs an upload for the selected sequence files into Galaxy.
+	 * 
+	 * @param selectedSequenceFileIds
+	 *            The ids of the sequence files to upload to Galaxy.
+	 * @param projectName
+	 *            The name of the project to upload into.
+	 * @param accountName
+	 *            The name of the account to upload into.
+	 * @return An UploadWorker for with information on the progress of the
+	 *         upload.
+	 * @throws ConstraintViolationException
+	 *             If the upload information fails to match the constraints.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#selectedSequenceFileIds, 'canReadSequenceFile')")
+	public UploadWorker performUploadSelectedSequenceFiles(
+			Set<Long> selectedSequenceFileIds, String projectName,
+			String accountName) throws ConstraintViolationException;
 
 	/**
 	 * Gets the URL of the connected remote site.

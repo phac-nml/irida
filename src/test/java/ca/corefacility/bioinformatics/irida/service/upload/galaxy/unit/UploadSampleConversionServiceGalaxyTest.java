@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.upload.galaxy.UploadSampleConversionServiceGalaxy;
 
 public class UploadSampleConversionServiceGalaxyTest {
@@ -42,6 +43,8 @@ public class UploadSampleConversionServiceGalaxyTest {
 	@Mock
 	private SampleSequenceFileJoinRepository ssfjRepository;
 	@Mock
+	private SequenceFileRepository sfRepository;
+	@Mock
 	private Path path1;
 	@Mock
 	private Project project;
@@ -56,7 +59,7 @@ public class UploadSampleConversionServiceGalaxyTest {
 		MockitoAnnotations.initMocks(this);
 
 		uploadSampleConversionService = new UploadSampleConversionServiceGalaxy(
-				projectRepository, psjRepository, ssfjRepository);
+				projectRepository, psjRepository, ssfjRepository, sfRepository);
 
 		sample1 = new Sample(sampleName);
 		sf1 = new SequenceFile(path1);

@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import javax.validation.ConstraintViolationException;
 
@@ -35,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
@@ -218,6 +220,52 @@ public class GalaxyUploadServiceIT {
 		UploadWorker uploadWorker = galaxyUploadService
 				.performUploadSelectedSamples(Sets.newHashSet(sample),
 						projectName, accountName);
+
+		assertEquals(1.0f, uploadWorker.getProportionComplete(), delta);
+		assertFalse(uploadWorker.exceptionOccured());
+		UploadResult uploadResult = uploadWorker.getUploadResult();
+
+		assertNotNull(uploadResult.getDataLocation());
+		assertEquals(projectName, uploadResult.getLocationName());
+	}
+	
+	/**
+	 * Tests successfully uploading a set of samples to Galaxy.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testUploadSelectedSequenceFilesSuccess() {
+		List<SequenceFile> sequenceFiles = analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePath);
+		
+		SequenceFile sequenceFile = sequenceFiles.get(0);
+
+		UploadWorker uploadWorker = galaxyUploadService
+				.performUploadSelectedSequenceFiles(Sets.newHashSet(sequenceFile.getId()),
+						projectName, accountName);
+
+		assertEquals(1.0f, uploadWorker.getProportionComplete(), delta);
+		assertFalse(uploadWorker.exceptionOccured());
+		UploadResult uploadResult = uploadWorker.getUploadResult();
+
+		assertNotNull(uploadResult.getDataLocation());
+		assertEquals(projectName, uploadResult.getLocationName());
+	}
+	
+	/**
+	 * Tests successfully uploading a set of samples to Galaxy by passing strings for information.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testUploadSelectedSequenceFilesStringSuccess() {
+		List<SequenceFile> sequenceFiles = analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePath);
+		
+		SequenceFile sequenceFile = sequenceFiles.get(0);
+
+		UploadWorker uploadWorker = galaxyUploadService
+				.performUploadSelectedSequenceFiles(Sets.newHashSet(sequenceFile.getId()),
+						projectName.getName(), accountName.getName());
 
 		assertEquals(1.0f, uploadWorker.getProportionComplete(), delta);
 		assertFalse(uploadWorker.exceptionOccured());
