@@ -14,6 +14,12 @@ import org.springframework.context.annotation.ScopedProxyMode;
 
 import ca.corefacility.bioinformatics.irida.repositories.remote.impl.SampleRemoteRepositoryImpl;
 
+/**
+ * Configuration file for setting up EhCache caching for IRIDA
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Configuration
 @EnableCaching
 public class IridaCachingConfig {
@@ -36,7 +42,7 @@ public class IridaCachingConfig {
 	@Bean
 	@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 	public CacheManager cacheManager() {
-		logger.debug("Initializing cache manager");
+		logger.trace("Initializing cache manager");
 		EhCacheCacheManager ehCacheCacheManager = new EhCacheCacheManager(ehCacheManager());
 		return ehCacheCacheManager;
 	}
