@@ -136,6 +136,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
@@ -376,6 +381,13 @@
 			<version>${xml.apis.version}</version>
 		</dependency>
 
+		<!-- EhCache caching -->
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-core</artifactId>
+			<version>${ehcache.version}</version>
+		</dependency>
+
 		<!-- Galaxy blend4j/testing -->
 		<dependency>
 			<groupId>com.github.jmchilton.blend4j</groupId>
@@ -570,6 +582,7 @@
 		<xml.apis.version>1.4.01</xml.apis.version>
 		<liquibase.version>3.2.2</liquibase.version>
 		<biojava.version>3.0</biojava.version>
+		<ehcache.version>2.6.9</ehcache.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.17</maven.failsafe.plugin.version>
@@ -604,7 +617,8 @@
 		<test.galaxy.revision>7e4d21621ce12e13ebbdf9fd3259df58c3ef124c</test.galaxy.revision>
 
 		<!-- URL to a pre-populated SQLite database for Galaxy -->
-		<!-- Set to 'local' to use the local version stored in irida-api, or set this to a URL -->
+		<!-- Set to 'local' to use the local version stored in irida-api, or set 
+			this to a URL -->
 		<test.galaxy.database>local</test.galaxy.database>
 	</properties>
 </project>
