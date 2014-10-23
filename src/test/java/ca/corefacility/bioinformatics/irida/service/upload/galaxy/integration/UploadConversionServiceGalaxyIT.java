@@ -1,12 +1,13 @@
 package ca.corefacility.bioinformatics.irida.service.upload.galaxy.integration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -34,11 +35,14 @@ import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServiceTestConfig;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.upload.galaxy.UploadSampleConversionServiceGalaxy;
 
@@ -68,6 +72,9 @@ public class UploadConversionServiceGalaxyIT {
 
 	@Autowired
 	private SampleService sampleService;
+
+	@Autowired
+	private SequenceFileService sequenceFileService;
 
 	@Autowired
 	private ProjectRepository projectRepository;
@@ -181,5 +188,199 @@ public class UploadConversionServiceGalaxyIT {
 
 		sampleConversionService.convertToUploadSamples(Sets.newHashSet(sample1,
 				sample2));
+	}
+
+	/**
+	 * Tests successfully converting a single sequence file to an upload sample.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testConvertSingleSequenceFileSuccess() {
+		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePath1);
+
+		Project project = projectRepository.findOne(1L);
+		Sample sample = sampleService.getSampleForProject(project, 1L);
+		List<Join<Sample, SequenceFile>> sampleSequenceFiles = sequenceFileService
+				.getSequenceFilesForSample(sample);
+		assertEquals(1, sampleSequenceFiles.size());
+
+		SequenceFile sequenceFile = sampleSequenceFiles.get(0).getObject();
+
+		Set<UploadSample> uploadSamples = sampleConversionService
+				.convertSequenceFilesToUploadSamples(Sets
+						.newHashSet(sequenceFile));
+
+		assertEquals(1, uploadSamples.size());
+		UploadSample uploadSample = uploadSamples.iterator().next();
+
+		assertEquals(sample.getSampleName(), uploadSample.getSampleName()
+				.getName());
+		List<Path> sampleFiles = uploadSample.getSampleFiles();
+		assertEquals(1, sampleFiles.size());
+	}
+
+	/**
+	 * Tests failing to convert a sequence file to an UploadSample due to
+	 * permission issues.
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "dr-evil", roles = "USER")
+	public void testConvertSingleSequenceFileFailPermissions() {
+		List<SequenceFile> sequenceFiles = analysisExecutionGalaxyITService
+				.setupSampleSequenceFileInDatabase(1L, sequenceFilePath1);
+
+		SequenceFile sequenceFile = sequenceFiles.get(0);
+
+		sampleConversionService.convertSequenceFilesToUploadSamples(Sets
+				.newHashSet(sequenceFile));
+	}
+
+	/**
+	 * Tests successfully converting two sequence files in the same sample to an
+	 * upload sample.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testConvertTwoSequenceFilesSuccess() {
+		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePath1, sequenceFilePath2);
+
+		Project project = projectRepository.findOne(1L);
+		Sample sample = sampleService.getSampleForProject(project, 1L);
+		List<Join<Sample, SequenceFile>> sampleSequenceFiles = sequenceFileService
+				.getSequenceFilesForSample(sample);
+		assertEquals(2, sampleSequenceFiles.size());
+
+		SequenceFile sequenceFile1 = sampleSequenceFiles.get(0).getObject();
+		SequenceFile sequenceFile2 = sampleSequenceFiles.get(1).getObject();
+
+		Set<UploadSample> uploadSamples = sampleConversionService
+				.convertSequenceFilesToUploadSamples(Sets.newHashSet(
+						sequenceFile1, sequenceFile2));
+
+		assertEquals(1, uploadSamples.size());
+		UploadSample uploadSample = uploadSamples.iterator().next();
+
+		assertEquals(sample.getSampleName(), uploadSample.getSampleName()
+				.getName());
+		List<Path> sampleFiles = uploadSample.getSampleFiles();
+		assertEquals(2, sampleFiles.size());
+	}
+	
+	/**
+	 * Tests successfully converting two sequence files by ids in the same sample to an
+	 * upload sample.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testConvertTwoSequenceFilesByIdsSuccess() {
+		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePath1, sequenceFilePath2);
+
+		Project project = projectRepository.findOne(1L);
+		Sample sample = sampleService.getSampleForProject(project, 1L);
+		List<Join<Sample, SequenceFile>> sampleSequenceFiles = sequenceFileService
+				.getSequenceFilesForSample(sample);
+		assertEquals(2, sampleSequenceFiles.size());
+
+		SequenceFile sequenceFile1 = sampleSequenceFiles.get(0).getObject();
+		SequenceFile sequenceFile2 = sampleSequenceFiles.get(1).getObject();
+
+		Set<UploadSample> uploadSamples = sampleConversionService
+				.convertSequenceFilesByIdToUploadSamples(Sets.newHashSet(
+						sequenceFile1.getId(), sequenceFile2.getId()));
+
+		assertEquals(1, uploadSamples.size());
+		UploadSample uploadSample = uploadSamples.iterator().next();
+
+		assertEquals(sample.getSampleName(), uploadSample.getSampleName()
+				.getName());
+		List<Path> sampleFiles = uploadSample.getSampleFiles();
+		assertEquals(2, sampleFiles.size());
+	}
+	
+	/**
+	 * Tests failing to convert two sequence files by ids in the same sample to an
+	 * upload sample due to permissions.
+	 */
+	@Test(expected=AccessDeniedException.class)
+	@WithMockUser(username = "dr-evil", roles = "USER")
+	public void testConvertTwoSequenceFilesByIdsFailPermission() {
+		List<SequenceFile> sequenceFiles = analysisExecutionGalaxyITService
+				.setupSampleSequenceFileInDatabase(1L, sequenceFilePath1);
+
+		SequenceFile sequenceFile = sequenceFiles.get(0);
+
+		sampleConversionService.convertSequenceFilesByIdToUploadSamples(Sets
+				.newHashSet(sequenceFile.getId()));
+	}
+
+	/**
+	 * Tests successfully converting two sequence files in a different sample an
+	 * upload sample.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testConvertTwoSequenceFilesDifferentSampleSuccess() {
+		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePath1);
+		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(2L,
+				sequenceFilePath2);
+
+		Project project = projectRepository.findOne(1L);
+		Sample sample1 = sampleService.getSampleForProject(project, 1L);
+		List<Join<Sample, SequenceFile>> sampleSequenceFiles = sequenceFileService
+				.getSequenceFilesForSample(sample1);
+		assertEquals(1, sampleSequenceFiles.size());
+		SequenceFile sequenceFile1 = sampleSequenceFiles.get(0).getObject();
+
+		Sample sample2 = sampleService.getSampleForProject(project, 2L);
+		sampleSequenceFiles = sequenceFileService
+				.getSequenceFilesForSample(sample2);
+		assertEquals(1, sampleSequenceFiles.size());
+		SequenceFile sequenceFile2 = sampleSequenceFiles.get(0).getObject();
+
+		Set<UploadSample> uploadSamples = sampleConversionService
+				.convertSequenceFilesToUploadSamples(Sets.newHashSet(
+						sequenceFile1, sequenceFile2));
+
+		assertEquals(2, uploadSamples.size());
+		Iterator<UploadSample> uploadSamplesIter = uploadSamples.iterator();
+		UploadSample uploadSample1 = uploadSamplesIter.next();
+		UploadSample uploadSample2 = uploadSamplesIter.next();
+
+		UploadSample uploadSampleA = null, uploadSampleB = null;
+		Sample sampleA = null, sampleB = null;
+		if (sample1.getSampleName().equals(
+				uploadSample1.getSampleName().getName())) {
+			sampleA = sample1;
+			uploadSampleA = uploadSample1;
+		} else if (sample1.getSampleName().equals(
+				uploadSample2.getSampleName().getName())) {
+			sampleA = sample1;
+			uploadSampleA = uploadSample2;
+		} else {
+			fail("Could not match up sample A and uploadSample A");
+		}
+
+		if (sample2.getSampleName().equals(
+				uploadSample2.getSampleName().getName())) {
+			sampleB = sample2;
+			uploadSampleB = uploadSample2;
+		} else if (sample2.getSampleName().equals(
+				uploadSample1.getSampleName().getName())) {
+			sampleB = sample2;
+			uploadSampleB = uploadSample1;
+		} else {
+			fail("Could not match up sample B and uploadSample B");
+		}
+
+		assertEquals(sampleA.getSampleName(), uploadSampleA.getSampleName()
+				.getName());
+		assertEquals(sampleB.getSampleName(), uploadSampleB.getSampleName()
+				.getName());
+		assertEquals(1, uploadSampleA.getSampleFiles().size());
+		assertEquals(1, uploadSampleB.getSampleFiles().size());
 	}
 }

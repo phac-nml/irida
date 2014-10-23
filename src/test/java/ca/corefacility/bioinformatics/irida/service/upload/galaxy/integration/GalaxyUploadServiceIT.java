@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import javax.validation.ConstraintViolationException;
 
@@ -35,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
@@ -88,6 +90,8 @@ public class GalaxyUploadServiceIT {
 	private GalaxyProjectName projectName;
 	private GalaxyAccountEmail fakeAccountName;
 	private GalaxyAccountEmail accountName;
+	
+	private static final float delta = 0.000001f;
 
 	/**
 	 * Sets up variables for testing.
@@ -122,10 +126,9 @@ public class GalaxyUploadServiceIT {
 				sequenceFilePath);
 
 		UploadWorker uploadWorker = galaxyUploadService
-				.buildUploadWorkerAllSamples(1L, projectName, accountName);
-
-		uploadWorker.run();
-
+				.performUploadAllSamples(1L, projectName, accountName);
+		
+		assertEquals(1.0f, uploadWorker.getProportionComplete(), delta);
 		assertFalse(uploadWorker.exceptionOccured());
 		UploadResult uploadResult = uploadWorker.getUploadResult();
 
@@ -142,7 +145,7 @@ public class GalaxyUploadServiceIT {
 		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
 				sequenceFilePath);
 
-		galaxyUploadService.buildUploadWorkerAllSamples(1L, projectName,
+		galaxyUploadService.performUploadAllSamples(1L, projectName,
 				accountName);
 	}
 
@@ -155,7 +158,7 @@ public class GalaxyUploadServiceIT {
 		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
 				sequenceFilePath);
 
-		galaxyUploadService.buildUploadWorkerAllSamples(2L, invalidProjectName,
+		galaxyUploadService.performUploadAllSamples(2L, invalidProjectName,
 				accountName);
 	}
 
@@ -168,7 +171,7 @@ public class GalaxyUploadServiceIT {
 		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
 				sequenceFilePath);
 
-		galaxyUploadService.buildUploadWorkerAllSamples(1L, invalidProjectName,
+		galaxyUploadService.performUploadAllSamples(1L, invalidProjectName,
 				accountName);
 	}
 
@@ -181,7 +184,7 @@ public class GalaxyUploadServiceIT {
 		analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
 				sequenceFilePath);
 
-		galaxyUploadService.buildUploadWorkerAllSamples(1L, projectName,
+		galaxyUploadService.performUploadAllSamples(1L, projectName,
 				invalidAccountName);
 	}
 
@@ -195,10 +198,8 @@ public class GalaxyUploadServiceIT {
 				sequenceFilePath);
 
 		UploadWorker uploadWorker = galaxyUploadService
-				.buildUploadWorkerAllSamples(1L, projectName, fakeAccountName);
-
-		uploadWorker.run();
-
+				.performUploadAllSamples(1L, projectName, fakeAccountName);
+		
 		assertTrue(uploadWorker.exceptionOccured());
 		assertEquals(GalaxyUserNotFoundException.class, uploadWorker
 				.getUploadException().getClass());
@@ -217,11 +218,56 @@ public class GalaxyUploadServiceIT {
 		Sample sample = sampleService.getSampleForProject(project, 1L);
 
 		UploadWorker uploadWorker = galaxyUploadService
-				.buildUploadWorkerSelectedSamples(Sets.newHashSet(sample),
+				.performUploadSelectedSamples(Sets.newHashSet(sample),
 						projectName, accountName);
 
-		uploadWorker.run();
+		assertEquals(1.0f, uploadWorker.getProportionComplete(), delta);
+		assertFalse(uploadWorker.exceptionOccured());
+		UploadResult uploadResult = uploadWorker.getUploadResult();
 
+		assertNotNull(uploadResult.getDataLocation());
+		assertEquals(projectName, uploadResult.getLocationName());
+	}
+	
+	/**
+	 * Tests successfully uploading a set of samples to Galaxy.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testUploadSelectedSequenceFilesSuccess() {
+		List<SequenceFile> sequenceFiles = analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePath);
+		
+		SequenceFile sequenceFile = sequenceFiles.get(0);
+
+		UploadWorker uploadWorker = galaxyUploadService
+				.performUploadSelectedSequenceFiles(Sets.newHashSet(sequenceFile.getId()),
+						projectName, accountName);
+
+		assertEquals(1.0f, uploadWorker.getProportionComplete(), delta);
+		assertFalse(uploadWorker.exceptionOccured());
+		UploadResult uploadResult = uploadWorker.getUploadResult();
+
+		assertNotNull(uploadResult.getDataLocation());
+		assertEquals(projectName, uploadResult.getLocationName());
+	}
+	
+	/**
+	 * Tests successfully uploading a set of samples to Galaxy by passing strings for information.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testUploadSelectedSequenceFilesStringSuccess() {
+		List<SequenceFile> sequenceFiles = analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePath);
+		
+		SequenceFile sequenceFile = sequenceFiles.get(0);
+
+		UploadWorker uploadWorker = galaxyUploadService
+				.performUploadSelectedSequenceFiles(Sets.newHashSet(sequenceFile.getId()),
+						projectName.getName(), accountName.getName());
+
+		assertEquals(1.0f, uploadWorker.getProportionComplete(), delta);
 		assertFalse(uploadWorker.exceptionOccured());
 		UploadResult uploadResult = uploadWorker.getUploadResult();
 
@@ -238,7 +284,7 @@ public class GalaxyUploadServiceIT {
 		Sample sample = new Sample("Sample");
 		sample.setId(1L);
 
-		galaxyUploadService.buildUploadWorkerSelectedSamples(
+		galaxyUploadService.performUploadSelectedSamples(
 				Sets.newHashSet(sample), projectName, accountName);
 	}
 
@@ -251,7 +297,7 @@ public class GalaxyUploadServiceIT {
 		Sample sample = new Sample("Sample");
 		sample.setId(1L);
 
-		galaxyUploadService.buildUploadWorkerSelectedSamples(
+		galaxyUploadService.performUploadSelectedSamples(
 				Sets.newHashSet(sample), projectName, accountName);
 	}
 
@@ -268,7 +314,7 @@ public class GalaxyUploadServiceIT {
 		Project project = projectRepository.findOne(1L);
 		Sample sample = sampleService.getSampleForProject(project, 1L);
 
-		galaxyUploadService.buildUploadWorkerSelectedSamples(
+		galaxyUploadService.performUploadSelectedSamples(
 				Sets.newHashSet(sample), invalidProjectName, accountName);
 	}
 
@@ -285,7 +331,7 @@ public class GalaxyUploadServiceIT {
 		Project project = projectRepository.findOne(1L);
 		Sample sample = sampleService.getSampleForProject(project, 1L);
 
-		galaxyUploadService.buildUploadWorkerSelectedSamples(
+		galaxyUploadService.performUploadSelectedSamples(
 				Sets.newHashSet(sample), projectName, invalidAccountName);
 	}
 
@@ -302,10 +348,8 @@ public class GalaxyUploadServiceIT {
 		Sample sample = sampleService.getSampleForProject(project, 1L);
 
 		UploadWorker uploadWorker = galaxyUploadService
-				.buildUploadWorkerSelectedSamples(Sets.newHashSet(sample),
+				.performUploadSelectedSamples(Sets.newHashSet(sample),
 						projectName, fakeAccountName);
-
-		uploadWorker.run();
 
 		assertTrue(uploadWorker.exceptionOccured());
 		assertEquals(GalaxyUserNotFoundException.class, uploadWorker
