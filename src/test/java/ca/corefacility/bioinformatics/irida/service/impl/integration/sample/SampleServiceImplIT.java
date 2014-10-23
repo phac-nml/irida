@@ -241,6 +241,8 @@ public class SampleServiceImplIT {
 	public void testFilterProjectSamples() {
 		int pageSize = 2;
 		Project project = projectService.read(1l);
+		Date MIN_DATE = new Date(1363634419000L);
+		Date MAX_DATE = new Date(1366312819000L);
 
 		// Check with no filters.
 		Specification<ProjectSampleJoin> specification = ProjectSampleFilterSpecification.searchProjectSamples(project, "", "", null, null);
@@ -259,19 +261,19 @@ public class SampleServiceImplIT {
 		assertEquals(0, page.getTotalElements());
 
 		// Check with a min date filter
-		specification = ProjectSampleFilterSpecification.searchProjectSamples(project, "", "", new Date(1363634419000L), null);
+		specification = ProjectSampleFilterSpecification.searchProjectSamples(project, "", "", MIN_DATE, null);
 		page = sampleService.searchProjectSamples(specification, 0, pageSize, Direction.ASC, "createdDate");
-		assertEquals(3, page.getNumberOfElements());
+		assertEquals(2, page.getSize());
 
 		// Check with max date filter
-		specification = ProjectSampleFilterSpecification.searchProjectSamples(project, "", "", null, new Date(1366312819000L));
+		specification = ProjectSampleFilterSpecification.searchProjectSamples(project, "", "", null, MAX_DATE);
 		page = sampleService.searchProjectSamples(specification, 0, pageSize, Direction.ASC, "createdDate");
-		assertEquals(3, page.getNumberOfElements());
+		assertEquals(2, page.getSize());
 
 		// Check with min and max date filter
-		specification = ProjectSampleFilterSpecification.searchProjectSamples(project, "", "", new Date(1363634419000L), new Date(1366312819000L));
+		specification = ProjectSampleFilterSpecification.searchProjectSamples(project, "", "", MIN_DATE, MAX_DATE);
 		page = sampleService.searchProjectSamples(specification, 0, pageSize, Direction.ASC, "createdDate");
-		assertEquals(1, page.getNumberOfElements());
+		assertEquals(2, page.getSize());
 	}
 
 	private void assertSampleNotFound(Long id) {
