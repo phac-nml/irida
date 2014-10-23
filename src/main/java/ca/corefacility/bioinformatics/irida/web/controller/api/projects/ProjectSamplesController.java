@@ -61,7 +61,10 @@ public class ProjectSamplesController {
 	 * Reference to {@link SampleService}.
 	 */
 	private SampleService sampleService;
-	
+
+	/**
+	 * Reference to {@link SequenceFileService}
+	 */
 	private SequenceFileService sequenceFileService;
 
 	/**
@@ -72,11 +75,12 @@ public class ProjectSamplesController {
 	}
 
 	@Autowired
-	public ProjectSamplesController(ProjectService projectService, SampleService sampleService, SequenceFileService sequenceFileService) {
+	public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
+			SequenceFileService sequenceFileService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
-		
+
 	}
 
 	/**
@@ -196,7 +200,7 @@ public class ProjectSamplesController {
 		// prepare the sample for serializing to the client
 		SampleResource sr = new SampleResource();
 		sr.setResource(s);
-		
+
 		sr = addSequenceFileCount(sr);
 
 		// add a link to: 1) self, 2) sequenceFiles, 3) project
@@ -286,9 +290,17 @@ public class ProjectSamplesController {
 
 		return modelMap;
 	}
-	
-	private SampleResource addSequenceFileCount(SampleResource resource){
-		List<Join<Sample, SequenceFile>> sequenceFilesForSample = sequenceFileService.getSequenceFilesForSample(resource.getResource());
+
+	/**
+	 * Add the number of sequence files to a {@link SampleResource}
+	 * 
+	 * @param resource
+	 *            The {@link SampleResource} to enhance
+	 * @return The enhanced {@link SampleResource}
+	 */
+	private SampleResource addSequenceFileCount(SampleResource resource) {
+		List<Join<Sample, SequenceFile>> sequenceFilesForSample = sequenceFileService
+				.getSequenceFilesForSample(resource.getResource());
 		resource.setSequenceFileCount(sequenceFilesForSample.size());
 		return resource;
 	}
