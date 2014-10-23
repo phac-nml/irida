@@ -19,15 +19,15 @@
 	<project_user id="2" createdDate="2013-07-18 14:20:19.0"
 		projectRole="PROJECT_OWNER" project_id="2" user_id="1" />
 
-	<sample id="1" createdDate="2013-07-18 14:20:19.0" description="description1"
+	<sample id="1" createdDate="2013-01-18 14:20:19.0" description="description1"
 		sequencerSampleId="sample1" sampleName="sample1" />
-	<sample id="2" createdDate="2013-07-18 14:20:19.0" description="description2"
+	<sample id="2" createdDate="2013-02-18 14:20:19.0" description="description2"
 		sequencerSampleId="sample2" sampleName="sample2" />
-	<sample id="3" createdDate="2013-07-18 14:20:19.0" description="description3"
+	<sample id="3" createdDate="2013-03-18 14:20:19.0" description="description3"
 		sequencerSampleId="sample3" sampleName="sample3" />
-	<sample id="4" createdDate="2013-07-18 14:20:19.0" description="description4"
+	<sample id="4" createdDate="2013-04-18 14:20:19.0" description="description4"
 		sequencerSampleId="sample4" sampleName="sample4" />
-	<sample id="5" createdDate="2013-07-18 14:20:19.0" description="description5"
+	<sample id="5" createdDate="2013-05-18 14:20:19.0" description="description5"
 		sequencerSampleId="sample5" sampleName="sample5" />
 
 	<project_sample id="1" createdDate="2013-07-18 14:20:19.0"

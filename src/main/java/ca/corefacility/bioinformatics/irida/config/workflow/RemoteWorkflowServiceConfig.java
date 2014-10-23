@@ -112,6 +112,12 @@ public class RemoteWorkflowServiceConfig {
 		return null;
 	}
 
+	@Bean(name = "remoteWorkflow")
+	@Profile("it")
+	public RemoteWorkflowPhylogenomics testRemoteWorkflow() {
+		return new RemoteWorkflowPhylogenomics("1", "1", "1", "1", "1", "1", "1");
+	}
+
 	/**
 	 * @return A RemoteWorkflowServicePhylogenomics with a correctly implemented
 	 *         workflow.
