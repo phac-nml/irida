@@ -22,10 +22,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -57,7 +59,7 @@ public class ProjectSamplesControllerTest {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
 		sequenceFileService = mock(SequenceFileService.class);
-		controller = new ProjectSamplesController(projectService, sampleService,sequenceFileService);
+		controller = new ProjectSamplesController(projectService, sampleService, sequenceFileService);
 	}
 
 	@Test
@@ -125,18 +127,22 @@ public class ProjectSamplesControllerTest {
 	public void testGetProjectSamples() {
 		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
+		SequenceFile file = new SequenceFile();
 		Join<Project, Sample> r = new ProjectSampleJoin(p, s);
+		SampleSequenceFileJoin sampleSequenceFileJoin = new SampleSequenceFileJoin(s, file);
 
 		@SuppressWarnings("unchecked")
 		List<Join<Project, Sample>> relationships = Lists.newArrayList(r);
 
 		when(sampleService.getSamplesForProject(p)).thenReturn(relationships);
 		when(projectService.read(p.getId())).thenReturn(p);
+		when(sequenceFileService.getSequenceFilesForSample(s)).thenReturn(Lists.newArrayList(sampleSequenceFileJoin));
 
 		ModelMap modelMap = controller.getProjectSamples(p.getId());
 
 		verify(sampleService, times(1)).getSamplesForProject(p);
 		verify(projectService, times(1)).read(p.getId());
+		verify(sequenceFileService).getSequenceFilesForSample(s);
 
 		Object o = modelMap.get(GenericController.RESOURCE_NAME);
 		assertTrue(o instanceof ResourceCollection);
@@ -150,6 +156,7 @@ public class ProjectSamplesControllerTest {
 		assertEquals("http://localhost/projects/" + p.getId() + "/samples", self.getHref());
 		SampleResource resource = samples.iterator().next();
 		assertEquals(s.getSampleName(), resource.getSampleName());
+		assertEquals(1, resource.getSequenceFileCount());
 		List<Link> links = resource.getLinks();
 		Set<String> rels = Sets.newHashSet(Link.REL_SELF, SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES,
 				ProjectSamplesController.REL_PROJECT);
