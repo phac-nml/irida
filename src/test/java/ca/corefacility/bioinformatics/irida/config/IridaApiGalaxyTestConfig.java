@@ -10,25 +10,30 @@ import org.springframework.context.annotation.Profile;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceTestConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
+import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServiceTestConfig;
 
 /**
- * Config name for test services that need to be setup.
+ * Configuration for any integration tests requiring the use of Galaxy. Used to
+ * make sure the configuration is the same for every test requiring Galaxy to
+ * avoid duplicate Galaxy beans being created.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Configuration
-@Import({ NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class,
-		RemoteWorkflowServiceTestConfig.class,
+@Import({ IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class,
+		NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class, RemoteWorkflowServiceTestConfig.class,
 		AnalysisExecutionServiceTestConfig.class })
 @Profile("test")
-public class IridaApiServicesTestConfig {
-	
+public class IridaApiGalaxyTestConfig {
+
 	/**
-	 * @return An ExecutorService executing code in the same thread for testing purposes.
+	 * @return An ExecutorService executing code in the same thread for testing
+	 *         purposes.
 	 */
 	@Bean
 	public Executor uploadExecutor() {
