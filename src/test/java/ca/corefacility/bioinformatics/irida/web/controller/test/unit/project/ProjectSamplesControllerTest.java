@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
@@ -49,12 +50,14 @@ public class ProjectSamplesControllerTest {
 	private ProjectSamplesController controller;
 	private ProjectService projectService;
 	private SampleService sampleService;
+	private SequenceFileService sequenceFileService;
 
 	@Before
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
-		controller = new ProjectSamplesController(projectService, sampleService);
+		sequenceFileService = mock(SequenceFileService.class);
+		controller = new ProjectSamplesController(projectService, sampleService,sequenceFileService);
 	}
 
 	@Test

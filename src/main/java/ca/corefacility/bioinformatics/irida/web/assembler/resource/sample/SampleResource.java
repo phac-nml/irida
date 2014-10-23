@@ -20,6 +20,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @XmlRootElement(name = "sample")
 public class SampleResource extends IdentifiableResource<Sample> {
 
+	private int sequenceFileCount;
+
 	public SampleResource() {
 		super(new Sample());
 	}
@@ -215,9 +217,9 @@ public class SampleResource extends IdentifiableResource<Sample> {
 	}
 
 	public void setHostTaxonomicName(String taxonomicName) {
-        if (resource.getHost() == null) {
-            resource.setHost(new Host());
-        }
+		if (resource.getHost() == null) {
+			resource.setHost(new Host());
+		}
 		resource.getHost().setTaxonomicName(taxonomicName);
 	}
 
@@ -363,5 +365,14 @@ public class SampleResource extends IdentifiableResource<Sample> {
 			resource.setHost(new Host());
 		}
 		resource.getHost().setAge(age);
+	}
+
+	public void setSequenceFileCount(int sequenceFileCount) {
+		this.sequenceFileCount = sequenceFileCount;
+	}
+
+	@XmlElement
+	public int getSequenceFileCount() {
+		return sequenceFileCount;
 	}
 }
