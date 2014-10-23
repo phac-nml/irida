@@ -67,10 +67,6 @@ public class ProjectSamplesController {
 	 */
 	private SequenceFileService sequenceFileService;
 
-	/**
-	 * Reference to {@link SequenceFileService}.
-	 */
-
 	protected ProjectSamplesController() {
 	}
 
