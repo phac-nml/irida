@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Strings;
+
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSample;
@@ -41,16 +43,18 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<RemoteSample> imp
 	public Page<RemoteSample> searchSamplesForProject(RemoteProject project, RemoteAPI api, String search, int page,
 			int size) {
 		List<RemoteSample> samplesForProject = getSamplesForProject(project, api);
-		List<RemoteSample> filtered = samplesForProject.stream()
-				.filter(s -> s.getSampleName().toLowerCase().contains(search.toLowerCase()))
-				.collect(Collectors.toList());
+		if (!Strings.isNullOrEmpty(search)) {
+			samplesForProject = samplesForProject.stream()
+					.filter(s -> s.getSampleName().toLowerCase().contains(search.toLowerCase()))
+					.collect(Collectors.toList());
+		}
 
 		int from = Math.max(0, page * size);
-		int to = Math.min(filtered.size(), (page + 1) * size);
+		int to = Math.min(samplesForProject.size(), (page + 1) * size);
 
-		List<RemoteSample> paged = filtered.subList(from, to);
+		List<RemoteSample> paged = samplesForProject.subList(from, to);
 
-		return new PageImpl<>(paged, null, filtered.size());
+		return new PageImpl<>(paged, null, samplesForProject.size());
 	}
 
 }
