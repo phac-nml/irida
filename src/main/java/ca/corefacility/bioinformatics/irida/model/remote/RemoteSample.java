@@ -8,9 +8,16 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLinks;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
+/**
+ * Sample read from an IRIDA REST API
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RemoteSample extends Sample implements RemoteResource {
-	RESTLinks links;
+	private RESTLinks links;
+	private int sequenceFileCount;
 
 	@Override
 	public RESTLinks getLinks() {
@@ -25,5 +32,13 @@ public class RemoteSample extends Sample implements RemoteResource {
 	@Override
 	public int hashCode() {
 		return Objects.hash(super.hashCode(), links);
+	}
+
+	public int getSequenceFileCount() {
+		return sequenceFileCount;
+	}
+
+	public void setSequenceFileCount(int sequenceFileCount) {
+		this.sequenceFileCount = sequenceFileCount;
 	}
 }
