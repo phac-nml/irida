@@ -4,6 +4,7 @@ import net.sf.ehcache.config.CacheConfiguration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
@@ -24,7 +25,12 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.impl.SampleRemot
 @EnableCaching
 public class IridaCachingConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaCachingConfig.class);
-	private static final int CACHE_SIZE = 1000;
+
+	@Value("${remote.sample.cache_size}")
+	private Integer sampleCacheSize;
+
+	@Value("${remote.sample.cache_expiry}")
+	private Integer sampleCacheExpiry;
 
 	/**
 	 * Create the EhCache manager
@@ -37,8 +43,8 @@ public class IridaCachingConfig {
 
 		// remote samples cache
 		CacheConfiguration cacheConfiguration = new CacheConfiguration(SampleRemoteRepositoryImpl.SAMPLES_CACHE_NAME,
-				CACHE_SIZE);
-		cacheConfiguration.setTimeToIdleSeconds(SampleRemoteRepositoryImpl.SAMPLES_CACHE_EXPIRY);
+				sampleCacheSize);
+		cacheConfiguration.setTimeToIdleSeconds(sampleCacheExpiry);
 		config.addCache(cacheConfiguration);
 
 		return net.sf.ehcache.CacheManager.create(config);

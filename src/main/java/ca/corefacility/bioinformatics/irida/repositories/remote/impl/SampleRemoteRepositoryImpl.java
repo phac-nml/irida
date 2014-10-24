@@ -25,7 +25,6 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 @Repository
 public class SampleRemoteRepositoryImpl extends RemoteRepositoryImpl<RemoteSample> implements SampleRemoteRepository {
 	public static final String SAMPLES_CACHE_NAME = "remoteSamplesCache";
-	public static final int SAMPLES_CACHE_EXPIRY = 60;
 	private static final Logger logger = LoggerFactory.getLogger(SampleRemoteRepositoryImpl.class);
 
 	private static final ParameterizedTypeReference<ListResourceWrapper<RemoteSample>> listTypeReference = new ParameterizedTypeReference<ListResourceWrapper<RemoteSample>>() {
