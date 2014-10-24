@@ -384,7 +384,7 @@
 		<!-- EhCache caching -->
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache-core</artifactId>
+			<artifactId>ehcache</artifactId>
 			<version>${ehcache.version}</version>
 		</dependency>
 
@@ -582,7 +582,7 @@
 		<xml.apis.version>1.4.01</xml.apis.version>
 		<liquibase.version>3.2.2</liquibase.version>
 		<biojava.version>3.0</biojava.version>
-		<ehcache.version>2.6.9</ehcache.version>
+		<ehcache.version>2.9.0</ehcache.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.17</maven.failsafe.plugin.version>
