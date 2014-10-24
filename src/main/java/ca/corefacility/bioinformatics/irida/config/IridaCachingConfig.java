@@ -24,21 +24,31 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.impl.SampleRemot
 @EnableCaching
 public class IridaCachingConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaCachingConfig.class);
+	private static final int CACHE_SIZE = 1000;
 
+	/**
+	 * Create the EhCache manager
+	 * 
+	 * @return
+	 */
 	@Bean
 	public net.sf.ehcache.CacheManager ehCacheManager() {
 		net.sf.ehcache.config.Configuration config = new net.sf.ehcache.config.Configuration();
 
 		// remote samples cache
 		CacheConfiguration cacheConfiguration = new CacheConfiguration(SampleRemoteRepositoryImpl.SAMPLES_CACHE_NAME,
-				1000);
+				CACHE_SIZE);
 		cacheConfiguration.setTimeToIdleSeconds(SampleRemoteRepositoryImpl.SAMPLES_CACHE_EXPIRY);
 		config.addCache(cacheConfiguration);
 
-		net.sf.ehcache.CacheManager cacheManager = net.sf.ehcache.CacheManager.create(config);
-		return cacheManager;
+		return net.sf.ehcache.CacheManager.create(config);
 	}
 
+	/**
+	 * Create the Spring cache manager
+	 * 
+	 * @return
+	 */
 	@Bean
 	@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 	public CacheManager cacheManager() {
