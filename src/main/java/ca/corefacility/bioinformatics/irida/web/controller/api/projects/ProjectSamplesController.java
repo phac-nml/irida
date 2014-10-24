@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -62,16 +63,20 @@ public class ProjectSamplesController {
 	private SampleService sampleService;
 
 	/**
-	 * Reference to {@link SequenceFileService}.
+	 * Reference to {@link SequenceFileService}
 	 */
+	private SequenceFileService sequenceFileService;
 
 	protected ProjectSamplesController() {
 	}
 
 	@Autowired
-	public ProjectSamplesController(ProjectService projectService, SampleService sampleService) {
+	public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
+			SequenceFileService sequenceFileService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
+		this.sequenceFileService = sequenceFileService;
+
 	}
 
 	/**
@@ -131,6 +136,7 @@ public class ProjectSamplesController {
 			Sample sample = r.getObject();
 			SampleResource sr = new SampleResource();
 			sr.setResource(sample);
+			sr.setSequenceFileCount(getSequenceFileCountForSampleResource(sr));
 			sr.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sample.getId()))
 					.withSelfRel());
 			sr.add(linkTo(
@@ -190,6 +196,8 @@ public class ProjectSamplesController {
 		// prepare the sample for serializing to the client
 		SampleResource sr = new SampleResource();
 		sr.setResource(s);
+
+		sr.setSequenceFileCount(getSequenceFileCountForSampleResource(sr));
 
 		// add a link to: 1) self, 2) sequenceFiles, 3) project
 		sr.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel());
@@ -277,5 +285,18 @@ public class ProjectSamplesController {
 		modelMap.addAttribute(GenericController.RESOURCE_NAME, resource);
 
 		return modelMap;
+	}
+
+	/**
+	 * Get the number of sequence files to a {@link SampleResource}
+	 * 
+	 * @param resource
+	 *            The {@link SampleResource} to enhance
+	 * @return The number of sequence files in the sample
+	 */
+	private int getSequenceFileCountForSampleResource(SampleResource resource) {
+		List<Join<Sample, SequenceFile>> sequenceFilesForSample = sequenceFileService
+				.getSequenceFilesForSample(resource.getResource());
+		return sequenceFilesForSample.size();
 	}
 }
