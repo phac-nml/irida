@@ -11,18 +11,23 @@ import org.springframework.stereotype.Service;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSample;
-import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SampleRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 
+/**
+ * Implementation of {@link SampleRemoteService} using
+ * {@link SampleRemoteRepository}
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Service
 public class SampleRemoteServiceImpl extends RemoteServiceImpl<RemoteSample> implements SampleRemoteService {
 	public static final String PROJECT_SAMPLES_REL = "project/samples";
 	public static final String SAMPLES_CACHE_NAME = "samplesForProject";
 
 	@Autowired
-	public SampleRemoteServiceImpl(SampleRemoteRepository sampleRemoteRepository,
-			ProjectRemoteRepository projectRemoteRepository) {
+	public SampleRemoteServiceImpl(SampleRemoteRepository sampleRemoteRepository) {
 		super(sampleRemoteRepository);
 	}
 
