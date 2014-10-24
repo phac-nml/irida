@@ -87,6 +87,7 @@
 
 		<!-- JavaEE web API version -->
 		<javax.servlet-api.version>3.1.0</javax.servlet-api.version>
+		<javax.el-api.version>3.0.0</javax.el-api.version>
 
 		<!-- REST-assured -->
 		<rest.assured.version>2.3.2</rest.assured.version>
@@ -265,6 +266,14 @@
 			<version>${javax.servlet-api.version}</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>javax.el-api</artifactId>
+			<version>${javax.el-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
 
 		<dependency>
 			<groupId>commons-fileupload</groupId>
