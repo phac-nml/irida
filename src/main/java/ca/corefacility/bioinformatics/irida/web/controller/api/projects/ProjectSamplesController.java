@@ -136,7 +136,7 @@ public class ProjectSamplesController {
 			Sample sample = r.getObject();
 			SampleResource sr = new SampleResource();
 			sr.setResource(sample);
-			sr = addSequenceFileCount(sr);
+			sr.setSequenceFileCount(getSequenceFileCountForSampleResource(sr));
 			sr.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sample.getId()))
 					.withSelfRel());
 			sr.add(linkTo(
@@ -197,7 +197,7 @@ public class ProjectSamplesController {
 		SampleResource sr = new SampleResource();
 		sr.setResource(s);
 
-		sr = addSequenceFileCount(sr);
+		sr.setSequenceFileCount(getSequenceFileCountForSampleResource(sr));
 
 		// add a link to: 1) self, 2) sequenceFiles, 3) project
 		sr.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel());
@@ -288,16 +288,15 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Add the number of sequence files to a {@link SampleResource}
+	 * Get the number of sequence files to a {@link SampleResource}
 	 * 
 	 * @param resource
 	 *            The {@link SampleResource} to enhance
-	 * @return The enhanced {@link SampleResource}
+	 * @return The number of sequence files in the sample
 	 */
-	private SampleResource addSequenceFileCount(SampleResource resource) {
+	private int getSequenceFileCountForSampleResource(SampleResource resource) {
 		List<Join<Sample, SequenceFile>> sequenceFilesForSample = sequenceFileService
 				.getSequenceFilesForSample(resource.getResource());
-		resource.setSequenceFileCount(sequenceFilesForSample.size());
-		return resource;
+		return sequenceFilesForSample.size();
 	}
 }
