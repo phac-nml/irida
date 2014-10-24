@@ -14,11 +14,17 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrappe
 import ca.corefacility.bioinformatics.irida.repositories.remote.SampleRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
+/**
+ * An implementation of {@link SampleRemoteRepository}
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Repository
 public class SampleRemoteRepositoryImpl extends RemoteRepositoryImpl<RemoteSample> implements SampleRemoteRepository {
 	public static final String SAMPLES_CACHE_NAME = "remoteSamplesCache";
 	public static final int SAMPLES_CACHE_EXPIRY = 60;
-	
+
 	private static final ParameterizedTypeReference<ListResourceWrapper<RemoteSample>> listTypeReference = new ParameterizedTypeReference<ListResourceWrapper<RemoteSample>>() {
 	};
 	private static final ParameterizedTypeReference<ResourceWrapper<RemoteSample>> objectTypeReference = new ParameterizedTypeReference<ResourceWrapper<RemoteSample>>() {
@@ -29,6 +35,9 @@ public class SampleRemoteRepositoryImpl extends RemoteRepositoryImpl<RemoteSampl
 		super(tokenService, listTypeReference, objectTypeReference);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Cacheable(value = SAMPLES_CACHE_NAME, key = "#uri")
 	@Override
 	public List<RemoteSample> list(String uri, RemoteAPI remoteAPI) {
