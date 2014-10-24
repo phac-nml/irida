@@ -1,23 +1,23 @@
 package ca.corefacility.bioinformatics.irida.service.remote.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSample;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SampleRemoteRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
+
+import com.google.common.collect.Lists;
 
 public class SampleRemoteServiceImplTest {
 	private SampleRemoteService sampleRemoteService;
