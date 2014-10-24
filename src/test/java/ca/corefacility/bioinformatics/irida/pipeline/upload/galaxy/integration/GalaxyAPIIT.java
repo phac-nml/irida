@@ -28,6 +28,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.validation.ConstraintViolationException;
 
@@ -65,12 +72,14 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrary
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrarySearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploaderAPI;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadFileSizeException;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.ProgressUpdate;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.UploadEventListenerTracker;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
+import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
@@ -78,6 +87,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset.Source;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
+import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 
@@ -96,13 +106,18 @@ public class GalaxyAPIIT {
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyAPIIT.class);
 	
+	private final ExecutorService executor = Executors.newFixedThreadPool(1); 
+	
 	@Autowired
 	private LocalGalaxy localGalaxy;
 
 	@Autowired
 	private GalaxyUploaderAPI galaxyAPI;
 	
+	private LibrariesClient librariesClient;
+	
 	private List<Path> dataFilesSingle;
+	private List<Path> dataFilesSingleModified;
 	private List<Path> dataFilesDouble;
 
 	/**
@@ -114,6 +129,8 @@ public class GalaxyAPIIT {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 		galaxyAPI.setDataStorage(Uploader.DataStorage.REMOTE);
 		
+		librariesClient = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient();
+		
 		setupDataFiles();
 	}
 
@@ -124,11 +141,18 @@ public class GalaxyAPIIT {
 	private void setupDataFiles() throws URISyntaxException {
 		Path dataFile1 = Paths.get(GalaxyAPIIT.class.getResource(
 				"testData1.fastq").toURI());
+		
+		// Slightly modified version of dataFile1 to test detection of different files when uploading
+		Path dataFile1Modified = Paths.get(GalaxyAPIIT.class.getResource(
+				"otherfiles/testData1.fastq").toURI());
 		Path dataFile2 = Paths.get(GalaxyAPIIT.class.getResource(
 				"testData2.fastq").toURI());
 
 		dataFilesSingle = new ArrayList<Path>();
 		dataFilesSingle.add(dataFile1);
+		
+		dataFilesSingleModified = new ArrayList<Path>();
+		dataFilesSingleModified.add(dataFile1Modified);
 
 		dataFilesDouble = new ArrayList<Path>();
 		dataFilesDouble.add(dataFile1);
@@ -272,6 +296,38 @@ public class GalaxyAPIIT {
 				" into Galaxy history");
 		
 		return dataset;
+	}
+	
+	/**
+	 * Method for waiting for a library upload to complete.
+	 * @param datasetLibraryId
+	 * @param libraryId
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 * @throws TimeoutException
+	 */
+	private void waitForLibraryUpload(String datasetLibraryId, String libraryId) throws InterruptedException, ExecutionException, TimeoutException {
+		final int libraryPollingTime = 5 * 1000;
+		final int libraryTimeout = 5 * 60 * 1000;
+		final String libraryOkState = "ok";
+
+		Future<Void> waitForLibraries = executor.submit(new Callable<Void>(){
+			@Override
+			public Void call() throws Exception {
+				LibraryDataset libraryDataset = librariesClient.showDataset(
+						libraryId, datasetLibraryId);
+				while (!libraryOkState.equals(libraryDataset.getState())) {
+					Thread.sleep(libraryPollingTime);
+
+					libraryDataset = librariesClient.showDataset(
+							libraryId, datasetLibraryId);
+				}
+				
+				return null;
+			}
+		});
+		
+		waitForLibraries.get(libraryTimeout, TimeUnit.MILLISECONDS);
 	}
 
 	/**
@@ -1242,31 +1298,33 @@ public class GalaxyAPIIT {
 	}
 
 	/**
-	 * Tests uploading a sample where one file already is uploaded in Galaxy.
+	 * Tests uploading a sample where one file already is uploaded in Galaxy and successfully skipping over the file.
 	 * @throws URISyntaxException
 	 * @throws MalformedURLException
 	 * @throws ConstraintViolationException
 	 * @throws UploadException
+	 * @throws TimeoutException 
+	 * @throws ExecutionException 
+	 * @throws InterruptedException 
 	 */
 	@Test
-	public void testUploadSampleOneFileAlreadyExists()
+	public void testUploadSampleOneFileAlreadyExistsSuccessSkip()
 			throws URISyntaxException, MalformedURLException,
-			ConstraintViolationException, UploadException {
+			ConstraintViolationException, UploadException, InterruptedException, ExecutionException, TimeoutException {
 		GalaxyProjectName libraryName = new GalaxyProjectName(
-				"testUploadSampleOneFileAlreadyExists");
+				"testUploadSampleOneFileAlreadyExistsSuccessSkip");
 
 		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName(
 				"testData"), dataFilesSingle);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 
+		// remove trailing '/'
 		String localGalaxyURL = localGalaxy
 				.getGalaxyURL()
 				.toString()
 				.substring(0,
-						localGalaxy.getGalaxyURL().toString().length() - 1); // remove
-																				// trailing
-																				// '/'
+						localGalaxy.getGalaxyURL().toString().length() - 1);
 
 		GalaxyUploadResult actualUploadResult = galaxyAPI.uploadSamples(
 				samples, libraryName, localGalaxy.getAdminName());
@@ -1303,6 +1361,11 @@ public class GalaxyAPIIT {
 		assertEquals("file",
 				contentsMap.get("/illumina_reads/testData/testData1.fastq")
 						.getType());
+		
+		LibraryContent datasetContent = contentsMap.get("/illumina_reads/testData/testData1.fastq");
+		
+		// wait for the original library upload to complete.
+		waitForLibraryUpload(datasetContent.getId(), actualLibrary.getId());
 
 		// now attempt to upload dataFilesDouble with two files, only one file
 		// should upload
@@ -1310,10 +1373,11 @@ public class GalaxyAPIIT {
 				dataFilesDouble);
 		samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
-
-		// make sure both libraries are the same
+		
 		actualUploadResult = galaxyAPI.uploadSamples(samples, libraryName,
 				localGalaxy.getAdminName());
+
+		// make sure both libraries are the same
 		assertNotNull(actualUploadResult);
 		assertEquals(libraryName, actualUploadResult.getLocationName());
 		assertEquals(new URL(localGalaxyURL + "/library"),
@@ -1376,6 +1440,49 @@ public class GalaxyAPIIT {
 				"/illumina_reads");
 		assertEquals("More than one copy of /references was created", 1,
 				countReferencesFolder);
+	}
+	
+	/**
+	 * Tests uploading a sample where one file already is uploaded in Galaxy
+	 * (but incomplete upload) and failing to skip over the file.
+	 * 
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 * @throws TimeoutException
+	 * @throws ExecutionException
+	 * @throws InterruptedException
+	 */
+	@Test(expected = LibraryUploadFileSizeException.class)
+	public void testUploadSampleOneFileAlreadyExistsFailSkip() throws URISyntaxException, MalformedURLException,
+			ConstraintViolationException, UploadException, InterruptedException, ExecutionException, TimeoutException {
+		GalaxyProjectName libraryName = new GalaxyProjectName("testUploadSampleOneFileAlreadyExistsFailSkip");
+
+		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName("testData"), dataFilesSingleModified);
+		List<UploadSample> samples = new ArrayList<UploadSample>();
+		samples.add(galaxySample);
+
+		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
+
+		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
+
+		List<LibraryContent> libraryContents = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
+				.getLibraryContents(actualLibrary.getId());
+		Map<String, LibraryContent> contentsMap = fileToLibraryContentMap(libraryContents);
+		LibraryContent datasetContent = contentsMap.get("/illumina_reads/testData/testData1.fastq");
+
+		// wait for the original library upload to complete.
+		waitForLibraryUpload(datasetContent.getId(), actualLibrary.getId());
+
+		// now attempt to upload dataFilesDouble with two files
+		// this should fail since we are uploading a modified version of
+		// testData1.fastq
+		galaxySample = new GalaxySample(new GalaxyFolderName("testData"), dataFilesDouble);
+		samples = new ArrayList<UploadSample>();
+		samples.add(galaxySample);
+
+		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
 	}
 	
 	/**
