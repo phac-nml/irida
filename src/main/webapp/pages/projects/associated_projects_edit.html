@@ -351,7 +351,9 @@
 	
 	app.controller('RemoteAssociatedCtrl', function($scope, AssociatedService){
 		'use strict';
-		$scope.apiSelection=1;
+		// set initial api selection 
+		$scope.apiSelection = $scope.apis[0].id;
+		
 		
 		$scope.filter = {
 			isCollapsed: true
