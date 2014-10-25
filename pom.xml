@@ -54,11 +54,10 @@
 	</developers>
 
 	<repositories>
-		<repository>
-			<id>repo.springsource.org</id>
-			<name>repo.springsource.org-releases</name>
-			<url>https://repo.springsource.org/libs-milestone-local</url>
-		</repository>
+        <repository>
+            <id>spring-milestones</id>
+            <url>http://repo.springsource.org/libs-milestone/</url>
+        </repository>
 		<!-- Use maven central over HTTPS instead of HTTP -->
 		<repository>
 			<id>central</id>
@@ -546,7 +545,7 @@
 		<guava.version>17.0</guava.version>
 		<spring.version>4.0.6.RELEASE</spring.version>
 		<spring.security.version>4.0.0.M1</spring.security.version>
-		<spring.data.jpa.version>1.7.0.M1</spring.data.jpa.version>
+		<spring.data.jpa.version>1.7.0.RELEASE</spring.data.jpa.version>
 		<spring.security.oauth.version>1.0.5.RELEASE</spring.security.oauth.version>
 		<spring.data.envers.version>0.2.0.RELEASE</spring.data.envers.version>
 		<spring.ws.test.version>2.2.0.RELEASE</spring.ws.test.version>
