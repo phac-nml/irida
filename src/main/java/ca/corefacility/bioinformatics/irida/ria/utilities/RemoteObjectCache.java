@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 
 /**
@@ -26,24 +28,48 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class RemoteObjectCache<Type extends RemoteResource> {
 	private static final Logger logger = LoggerFactory.getLogger(RemoteObjectCache.class);
-	private Map<Integer, Type> cache;
+
+	private Map<Integer, CacheObject<Type>> objectCache;
 
 	public RemoteObjectCache() {
-		cache = new HashMap<>();
+		objectCache = new HashMap<>();
 		logger.trace("RemoteCache initialized");
 	}
 
-	public Type readResource(Integer id) {
+	/**
+	 * Read a resource from the cache with its given id
+	 * 
+	 * @param id
+	 *            the resource id
+	 * @return The {@link CacheObject} if found
+	 * @throws EntityNotFoundException
+	 *             if the object doesn't exist in the cache
+	 */
+	public CacheObject<Type> readResource(Integer id) throws EntityNotFoundException {
 		logger.trace("Reading id " + id);
-		return cache.get(id);
+		CacheObject<Type> cacheObject = objectCache.get(id);
+		if (cacheObject == null) {
+			throw new EntityNotFoundException("Object id " + id + " is not in the cache.");
+		}
+		return cacheObject;
 	}
 
-	public Integer addResource(Type resource) {
-		logger.trace("Cache size is " + cache.size());
+	/**
+	 * Add a resource to the cache and get an identifier for the object
+	 * 
+	 * @param resource
+	 *            The {@link RemoteResource} to add
+	 * @param api
+	 *            The {@link RemoteAPI} it was read from
+	 * @return the Integer hash value to access the object
+	 */
+	public Integer addResource(Type resource, RemoteAPI api) {
+		logger.trace("Cache size is " + objectCache.size());
 		int hashCode = resource.hashCode();
-		if (!cache.containsKey(hashCode)) {
+		if (!objectCache.containsKey(hashCode)) {
 			logger.trace(resource + " added to cache");
-			cache.put(hashCode, resource);
+
+			objectCache.put(hashCode, new CacheObject<>(resource, api));
 		} else {
 			logger.trace(resource + " already in cache");
 		}

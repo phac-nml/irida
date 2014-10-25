@@ -103,7 +103,7 @@
 			</div>
 		</div>
 		<div tab="" th:attr="heading=#{project.associated.remote.tab}">
-			<div class="panel panel-default" ng-controller="RemoteAssociatedCtrl">
+			<div th:unless="${#lists.isEmpty(apis)}" class="panel panel-default" ng-controller="RemoteAssociatedCtrl">
                  <button id="filterBtn" class="btn btn-info"
                         ng-click="filter.isCollapsed = !filter.isCollapsed"
                         th:inline="text">
@@ -122,7 +122,7 @@
                 <div class="panel-heading clearfix">
                     <div class="input-group pull-left">
                         <select class="form-control" ng-model="apiSelection" ng-change="changeApi(apiSelection)" ng-init="initApiStatus(apiSelection)">
-                            <option th:each="api : ${apis}" th:text="${api.name}" th:value="${api.id}"></option>
+                            <option class="api-selection" th:each="api : ${apis}" th:text="${api.name}" th:value="${api.id}"></option>
                         </select>
                     </div>
                     <div class="pull-right">
@@ -148,7 +148,9 @@
 					<tbody cg-busy="filterPromise">
 					<tr class="associated-project-row" ng-repeat="project in remoteAssociated | filter:filterCriteria">
 						<td class="project-id">{{project.id}}</td>
-						<td class="project-name">{{project.name}}</td>
+						<td class="project-name">
+                            <a href="#" th:href="@{/projects/remote/} + '{{project.remoteId}}'">{{project.name}}</a>
+                        </td>
 						<td>{{project.organism}}</td>
                         <td>{{project.createdDate}}</td>
 						<td>
@@ -163,6 +165,7 @@
 				</table>
                 </div>
             </div>
+            <div th:if="${#lists.isEmpty(apis)}" th:text="#{project.associated.remote.no_api}">_No APIs_</div>
 		</div>
 
 	</div>
@@ -349,7 +352,8 @@
 	
 	app.controller('RemoteAssociatedCtrl', function($scope, AssociatedService){
 		'use strict';
-		$scope.apiSelection=1;
+		// set initial api selection 
+		$scope.apiSelection = angular.element(".api-selection")[0].value;
 		
 		$scope.filter = {
 			isCollapsed: true
