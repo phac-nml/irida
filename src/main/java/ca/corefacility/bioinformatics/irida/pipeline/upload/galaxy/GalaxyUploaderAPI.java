@@ -410,11 +410,8 @@ public class GalaxyUploaderAPI {
 							+ " in Galaxy url=" + galaxyInstance.getGalaxyUrl()
 							+ " sizes off by 1 so assuming Galaxy added a trailing newline ... " + " skipping upload");
 				} else {
-					throw new LibraryUploadFileSizeException("File from local path=" + file.getAbsolutePath()
-							+ ", size=" + localFileSize + " already exists on Galaxy path="
-							+ samplePath(rootFolder, sample, file) + ", size=" + galaxyFileSize + " in library name="
-							+ library.getName() + " id=" + library.getId() + " in Galaxy url="
-							+ galaxyInstance.getGalaxyUrl() + " but file sizes are different");
+					throw new LibraryUploadFileSizeException(file, library, sampleFileDataset,
+							galaxyInstance.getGalaxyUrl());
 				}
 			} else {
 				ClientResponse uploadResponse = uploadFile(persistedSampleFolder, file, librariesClient, library);
