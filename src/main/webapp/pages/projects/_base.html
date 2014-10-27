@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<nav class="navbar navbar-default navbar-static-top mrgn-bttm-md" role="navigation" layout:fragment="subnav" ng-init="projectSubnav=true" th:with="baseLink=${'/projects/' + project.getId()}">
+<nav class="navbar navbar-default navbar-static-top subnav mrgn-bttm-md" role="navigation" layout:fragment="subnav" ng-init="projectSubnav=true" th:with="baseLink=${'/projects/' + project.getId()}">
 	<div class="container">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" ng-click="projectSubnav=!projectSubnav"
