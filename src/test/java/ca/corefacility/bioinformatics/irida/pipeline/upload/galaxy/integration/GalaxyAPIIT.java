@@ -1540,6 +1540,53 @@ public class GalaxyAPIIT {
 	}
 	
 	/**
+	 * Tests uploading a sample where one file already is uploaded in Galaxy using the "linking" or "local" mode.
+	 * This is different from the "remote" mode in that no trailing newline should be added to the file uploaded
+	 * in Galaxy, but we should still properly skip re-uploading this file.
+	 * 
+	 * @throws URISyntaxException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 * @throws TimeoutException
+	 * @throws ExecutionException
+	 * @throws InterruptedException
+	 * @throws IOException 
+	 */
+	@Test
+	public void testUploadSampleOneFileAlreadyExistsSuccessLinkSkip() throws URISyntaxException, ConstraintViolationException, UploadException, InterruptedException, ExecutionException, TimeoutException, IOException {
+		galaxyAPI.setDataStorage(Uploader.DataStorage.LOCAL);
+		
+		GalaxyProjectName libraryName = new GalaxyProjectName("testUploadSampleOneFileAlreadyExistsSuccessLinkSkip");
+
+		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName("testData"), dataFilesSingleNewlineTestNoNewline);
+		List<UploadSample> samples = new ArrayList<UploadSample>();
+		samples.add(galaxySample);
+
+		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
+
+		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
+
+		List<LibraryContent> libraryContents = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
+				.getLibraryContents(actualLibrary.getId());
+		Map<String, LibraryContent> contentsMap = fileToLibraryContentMap(libraryContents);
+		LibraryContent datasetContent = contentsMap.get("/illumina_reads/testData/testData1NoNewline.fastq");
+
+		// wait for the original library upload to complete.
+		waitForLibraryUpload(datasetContent.getId(), actualLibrary.getId());
+		
+		LibraryDataset datasetNoNewline = 
+				localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient().showDataset(actualLibrary.getId(), datasetContent.getId());
+				
+		// make sure Galaxy does not add newline to file if it is linked.
+		long fileSize = dataFile1NewlineTestNoNewline.toFile().length();
+		long galaxyFileSize = Long.parseLong(datasetNoNewline.getFileSize());
+		assertEquals(fileSize, galaxyFileSize);
+
+		// now attempt to re-upload the file.  It should properly be skipped
+		assertNotNull(galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
+	}
+	
+	/**
 	 * Tests progress listener when uploading multiple samples to Galaxy.
 	 * @throws URISyntaxException
 	 * @throws MalformedURLException
