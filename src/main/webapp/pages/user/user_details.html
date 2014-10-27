@@ -176,11 +176,7 @@
             //Confirm password click
             $("#resetPasswordButton").click(function () {
                 var id = [[${user.id}]];
-                var url = [[@{
-                    /password_reset/
-                    ajax / create /
-                }
-                ]]
+                var url = /*[[@{/password_reset/ajax/create/}]]*/ '/password_rest/ajax/create/'
                 +id;
                 $.ajax({
                     url: url,
