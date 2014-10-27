@@ -13,3 +13,13 @@
 .mrgn-tp-lg {
   margin-top: 20px;
 }
+
+
+// Update z-index for submenu
+.navbar-nav>li>.dropdown-menu {
+  z-index: 10000;
+}
+
+.navbar.subnav {
+  z-index: 500;
+}
