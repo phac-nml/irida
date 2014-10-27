@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<!--[if lt IE 9]>
-<html class="no-js lt-ie9" lang="en"><![endif]-->
-<!--[if gt IE 8]><!-->
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      class="no-js"
+<!DOCTYPE html><!--[if lt IE 9]>
+<html class="no-js lt-ie9" lang="en"><![endif]--><!--[if gt IE 8]><!-->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" class="no-js"
       lang="en">
 <!--<![endif]-->
 <head lang="en">
@@ -32,6 +28,8 @@
 
 	<link rel="stylesheet" th:href="@{/resources/bower_components/Font-Awesome/css/font-awesome.min.css}"
 	      href="/resources/bower_components/Font-Awesome/css/font-awesome.min.css"/>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/angular-toastr/dist/angular-toastr.min.css}"
+	      href="/resources/bower_components/angular-toastr/dist/angular-toastr.min.css"/>
 
 	<style>
 		.ng-cloak {
@@ -44,8 +42,7 @@
 	<!--/* This is where each pages content should be loaded. */-->
 </th:block>
 
-<!--/* Site Wide Scripts */-->
-<!--[if lt IE 9]>
+<!--/* Site Wide Scripts */--><!--[if lt IE 9]>
 <script th:src="@{/resources/js/vendor/jquery-1.11.1.min.js}" src="/resources/js/vendor/jquery-1.11.1.min.js"></script>
 <script>
 	// Production steps of ECMA-262, Edition 5, 15.4.4.14
@@ -83,8 +80,7 @@
     }
     /*]]>*/
 </script>
-<![endif]-->
-<!--[if gte IE 9 | !IE ]><!-->
+<![endif]--><!--[if gte IE 9 | !IE ]><!-->
 <script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"
         src="/resources/bower_components/jquery/dist/jquery.min.js"></script>
 <!--<![endif]-->
@@ -101,17 +97,22 @@
 <script th:src="@{/resources/bower_components/restangular/src/restangular.js}"
         src="/resources/bower_components/restangular/src/restangular.js"></script>
 
+<script th:src="@{/resources/bower_components/angular-toastr/dist/angular-toastr.min.js}"
+        src="/resources/bower_components/angular-toastr/dist/angular-toastr.min.js"></script>
+<script th:src="@{/resources/js/services/notifications/irida-notifications-min.js}"
+        src="/resources/js/services/notifications/irida-notifications-min.js"></script>
+
 <script th:inline="javascript">
 	/*<![CDATA[*/
-	window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ui.bootstrap', 'restangular']);
+	window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ui.bootstrap', 'restangular', 'irida.notifications']);
 	var app = angular.module('irida', window.dependencies)
 			.value('BASE_URL', /*[[@{/}]]*/ '/')
 			.directive('ngFocus', [function () {
 				var FOCUS_CLASS = "ng-focused";
 				return {
 					restrict: 'A',
-					require : 'ngModel',
-					link    : function (scope, element, attrs, ctrl) {
+					require: 'ngModel',
+					link: function (scope, element, attrs, ctrl) {
 						ctrl.$focused = false;
 						element.bind('focus', function (evt) {
 							element.addClass(FOCUS_CLASS);
