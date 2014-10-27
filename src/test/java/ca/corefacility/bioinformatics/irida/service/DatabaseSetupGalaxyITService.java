@@ -5,8 +5,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,19 +30,20 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phy
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflowRepository;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
- * Stores common code for integration tests that attempt to run analyses in
- * Galaxy. This includes code for setup of sequence files in a database and
+ * Stores common code for integration tests that require special database setup
+ * code. This includes code for setup of sequence files in a database and
  * waiting for submission to complete in Galaxy.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class AnalysisExecutionGalaxyITService {
+public class DatabaseSetupGalaxyITService {
+
+	private final ExecutorService executor = Executors.newFixedThreadPool(1);
 
 	@Autowired
 	private RemoteWorkflowRepository remoteWorkflowRepository;
@@ -69,7 +78,7 @@ public class AnalysisExecutionGalaxyITService {
 	 * @param analysisSubmissionService
 	 * @param analysisSubmissionRepsitory
 	 */
-	public AnalysisExecutionGalaxyITService(
+	public DatabaseSetupGalaxyITService(
 			RemoteWorkflowRepository remoteWorkflowRepository,
 			ReferenceFileRepository referenceFileRepository,
 			SequenceFileService seqeunceFileService,
@@ -108,11 +117,8 @@ public class AnalysisExecutionGalaxyITService {
 			long sampleId, Path sequenceFilePath, Path referenceFilePath,
 			RemoteWorkflowPhylogenomics remoteWorkflow) {
 
-		Sample sample = sampleService.read(sampleId);
-		Join<Sample, SequenceFile> sampleSeqFile = seqeunceFileService
-				.createSequenceFileInSample(new SequenceFile(sequenceFilePath),
-						sample);
-		SequenceFile sequenceFile = sampleSeqFile.getObject();
+		SequenceFile sequenceFile = setupSampleSequenceFileInDatabase(sampleId,
+				sequenceFilePath).get(0);
 
 		Set<SequenceFile> sequenceFiles = new HashSet<>();
 		sequenceFiles.add(sequenceFile);
@@ -121,11 +127,36 @@ public class AnalysisExecutionGalaxyITService {
 				.save(new ReferenceFile(referenceFilePath));
 
 		AnalysisSubmission submission = analysisSubmissionService
-				.create(new AnalysisSubmissionPhylogenomics("my analysis", sequenceFiles,
-						referenceFile, remoteWorkflow));
+				.create(new AnalysisSubmissionPhylogenomics("my analysis",
+						sequenceFiles, referenceFile, remoteWorkflow));
 
 		return analysisSubmissionRepository.getByType(submission.getId(),
 				AnalysisSubmissionPhylogenomics.class);
+	}
+
+	/**
+	 * Attaches the given sequence file paths to a particular sample id.
+	 * 
+	 * @param sampleId
+	 *            The id of the sample to attach a sequence file to.
+	 * @param sequenceFilePaths
+	 *            A path of the sequence file to attach.
+	 * @return A List of SequenceFile objects with the given sequence file path
+	 *         attached and saved in the database.
+	 */
+	public List<SequenceFile> setupSampleSequenceFileInDatabase(long sampleId,
+			Path... sequenceFilePaths) {
+		Sample sample = sampleService.read(sampleId);
+		List<SequenceFile> returnedSequenceFiles = new ArrayList<>();
+
+		for (Path sequenceFilePath : sequenceFilePaths) {
+			Join<Sample, SequenceFile> sampleSeqFile = seqeunceFileService
+					.createSequenceFileInSample(new SequenceFile(
+							sequenceFilePath), sample);
+			SequenceFile sequenceFile = sampleSeqFile.getObject();
+			returnedSequenceFiles.add(sequenceFile);
+		}
+		return returnedSequenceFiles;
 	}
 
 	/**
@@ -165,24 +196,30 @@ public class AnalysisExecutionGalaxyITService {
 			AnalysisSubmissionPhylogenomics analysisSubmission)
 			throws Exception {
 		final int totalSecondsWait = 1 * 60; // 1 minute
+		final int pollingTime = 2000; // 2 seconds
 
-		WorkflowStatus workflowStatus;
+		Future<Void> waitForHistory = executor.submit(new Callable<Void>() {
 
-		long timeBefore = System.currentTimeMillis();
-		do {
-			workflowStatus = analysisExecutionServicePhylogenomics
-					.getWorkflowStatus(analysisSubmission);
+			@Override
+			public Void call() throws Exception {
+				WorkflowStatus workflowStatus;
+				do {
+					workflowStatus = analysisExecutionServicePhylogenomics
+							.getWorkflowStatus(analysisSubmission);
+					Thread.sleep(pollingTime);
+				} while (!WorkflowState.OK.equals(workflowStatus.getState()));
 
-			long timeAfter = System.currentTimeMillis();
-			double deltaSeconds = (timeAfter - timeBefore) / 1000.0;
-			if (deltaSeconds <= totalSecondsWait) {
-				Thread.sleep(2000);
-			} else {
-				throw new Exception("Timeout for submission "
-						+ analysisSubmission.getRemoteAnalysisId() + " "
-						+ deltaSeconds + "s > " + totalSecondsWait + "s");
+				return null;
 			}
-		} while (!WorkflowState.OK.equals(workflowStatus.getState()));
+
+		});
+		try {
+			waitForHistory.get(totalSecondsWait, TimeUnit.SECONDS);
+		} catch (TimeoutException e) {
+			throw new Exception("Timeout > " + totalSecondsWait
+					+ " s when waiting for history for " + analysisSubmission,
+					e);
+		}
 	}
 
 	/**

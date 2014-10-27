@@ -11,6 +11,7 @@ import static org.mockito.Matchers.eq;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Validation;
@@ -33,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleFilterSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.service.impl.sample.SampleServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -227,6 +229,22 @@ public class SampleServiceImplTest {
 		ArgumentCaptor<PageRequest> pageRequest = ArgumentCaptor.forClass(PageRequest.class);
 		verify(psjRepository).findAll(eq(specification), pageRequest.capture());
 		
+		assertNotNull(pageRequest.getValue().getSort().getOrderFor(sortProperties));
+	}
+
+	@Test
+	public void testProjectSampleFilterSpecification() {
+		Project project = new Project();
+		int page = 0;
+		int size = 10;
+		Direction order = Direction.ASC;
+		String sortProperties = "createdDate";
+		Specification<ProjectSampleJoin> specification = ProjectSampleFilterSpecification.searchProjectSamples(project, "", "", null, null);
+		sampleService.searchProjectSamples(specification, page, size, order, sortProperties);
+
+		ArgumentCaptor<PageRequest> pageRequest = ArgumentCaptor.forClass(PageRequest.class);
+		verify(psjRepository).findAll(eq(specification), pageRequest.capture());
+
 		assertNotNull(pageRequest.getValue().getSort().getOrderFor(sortProperties));
 	}
 

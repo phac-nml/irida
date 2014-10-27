@@ -24,6 +24,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -40,7 +41,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.Ana
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
-		IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class,
+		IridaApiNoGalaxyTestConfig.class, IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class,
 		IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,

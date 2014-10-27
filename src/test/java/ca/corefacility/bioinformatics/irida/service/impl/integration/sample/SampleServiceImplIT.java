@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.util.Date;
 import java.util.Map;
 
 import javax.validation.ConstraintViolationException;
@@ -13,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
@@ -24,12 +26,14 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleFilterSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -42,17 +46,16 @@ import com.google.common.collect.ImmutableMap;
 
 /**
  * Integration tests for the sample service.
- * 
+ *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
- * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
-		IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
+		IridaApiNoGalaxyTestConfig.class, IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExcecutionListener.class })
+@TestExecutionListeners({DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
+		WithSecurityContextTestExcecutionListener.class})
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SampleServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SampleServiceImplIT {
@@ -100,8 +103,8 @@ public class SampleServiceImplIT {
 	}
 
 	/**
-	 * Sample merging should be rejected when samples are attempted to be joined
-	 * where they do not share the same project.
+	 * Sample merging should be rejected when samples are attempted to be joined where they do not share the same
+	 * project.
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
@@ -231,6 +234,46 @@ public class SampleServiceImplIT {
 				"createdDate");
 		assertEquals(1, pageSamplesForProject.getTotalElements());
 
+	}
+
+	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void testFilterProjectSamples() {
+		int pageSize = 2;
+		Project project = projectService.read(1l);
+		Date MIN_DATE = new Date(1363634419000L);
+		Date MAX_DATE = new Date(1366312819000L);
+
+		// Check with no filters.
+		Specification<ProjectSampleJoin> specification = ProjectSampleFilterSpecification.searchProjectSamples(project, "", "", null, null);
+		Page<ProjectSampleJoin> page = sampleService.searchProjectSamples(specification, 0, pageSize, Direction.ASC, "createdDate");
+		assertEquals(pageSize, page.getNumberOfElements());
+		assertEquals(3, page.getTotalElements());
+
+		// Check with a name filter
+		specification = ProjectSampleFilterSpecification.searchProjectSamples(project, "2", "", null, null);
+		page = sampleService.searchProjectSamples(specification, 0, pageSize, Direction.ASC, "createdDate");
+		assertEquals(1, page.getTotalElements());
+
+		// Check with a name that does not exist
+		specification = ProjectSampleFilterSpecification.searchProjectSamples(project, "FRED_PENNER", "", null, null);
+		page = sampleService.searchProjectSamples(specification, 0, pageSize, Direction.ASC, "createdDate");
+		assertEquals(0, page.getTotalElements());
+
+		// Check with a min date filter
+		specification = ProjectSampleFilterSpecification.searchProjectSamples(project, "", "", MIN_DATE, null);
+		page = sampleService.searchProjectSamples(specification, 0, pageSize, Direction.ASC, "createdDate");
+		assertEquals(2, page.getSize());
+
+		// Check with max date filter
+		specification = ProjectSampleFilterSpecification.searchProjectSamples(project, "", "", null, MAX_DATE);
+		page = sampleService.searchProjectSamples(specification, 0, pageSize, Direction.ASC, "createdDate");
+		assertEquals(2, page.getSize());
+
+		// Check with min and max date filter
+		specification = ProjectSampleFilterSpecification.searchProjectSamples(project, "", "", MIN_DATE, MAX_DATE);
+		page = sampleService.searchProjectSamples(specification, 0, pageSize, Direction.ASC, "createdDate");
+		assertEquals(2, page.getSize());
 	}
 
 	private void assertSampleNotFound(Long id) {
