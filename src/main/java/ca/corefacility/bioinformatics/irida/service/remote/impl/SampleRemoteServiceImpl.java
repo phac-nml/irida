@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Strings;
@@ -53,8 +54,7 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<RemoteSample> imp
 		int to = Math.min(samplesForProject.size(), (page + 1) * size);
 
 		List<RemoteSample> paged = samplesForProject.subList(from, to);
-
-		return new PageImpl<>(paged, null, samplesForProject.size());
+		return new PageImpl<>(paged, new PageRequest(page, size), samplesForProject.size());
 	}
 
 }
