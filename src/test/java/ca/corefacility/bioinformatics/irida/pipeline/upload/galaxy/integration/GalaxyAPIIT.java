@@ -118,7 +118,10 @@ public class GalaxyAPIIT {
 	
 	private List<Path> dataFilesSingle;
 	private List<Path> dataFilesSingleModified;
+	private List<Path> dataFilesSingleNewlineTestNoNewline;
 	private List<Path> dataFilesDouble;
+	
+	private Path dataFile1NewlineTestNoNewline;
 
 	/**
 	 * Sets up variables and files for Galaxy API tests.
@@ -141,10 +144,13 @@ public class GalaxyAPIIT {
 	private void setupDataFiles() throws URISyntaxException {
 		Path dataFile1 = Paths.get(GalaxyAPIIT.class.getResource(
 				"testData1.fastq").toURI());
+		dataFile1NewlineTestNoNewline = Paths.get(GalaxyAPIIT.class.getResource(
+				"testData1NoNewline.fastq").toURI());
 		
 		// Slightly modified version of dataFile1 to test detection of different files when uploading
 		Path dataFile1Modified = Paths.get(GalaxyAPIIT.class.getResource(
-				"otherfiles/testData1.fastq").toURI());
+				"modifiedTestData/testData1.fastq").toURI());
+		
 		Path dataFile2 = Paths.get(GalaxyAPIIT.class.getResource(
 				"testData2.fastq").toURI());
 
@@ -153,6 +159,9 @@ public class GalaxyAPIIT {
 		
 		dataFilesSingleModified = new ArrayList<Path>();
 		dataFilesSingleModified.add(dataFile1Modified);
+		
+		dataFilesSingleNewlineTestNoNewline = new ArrayList<Path>();
+		dataFilesSingleNewlineTestNoNewline.add(dataFile1NewlineTestNoNewline);
 
 		dataFilesDouble = new ArrayList<Path>();
 		dataFilesDouble.add(dataFile1);
@@ -1483,6 +1492,51 @@ public class GalaxyAPIIT {
 		samples.add(galaxySample);
 
 		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
+	}
+	
+	/**
+	 * Tests uploading a sample where one file already is uploaded in Galaxy
+	 * but did not have a trailing newline and Galaxy added a trailing newline (which Galaxy likes to do but changes file size)
+	 * and I successfully detect this addition and skip re-uploading the file.
+	 * 
+	 * @throws URISyntaxException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 * @throws TimeoutException
+	 * @throws ExecutionException
+	 * @throws InterruptedException
+	 * @throws IOException 
+	 */
+	@Test
+	public void testUploadSampleOneFileAlreadyExistsSuccessTrailingnewlineSkip() throws URISyntaxException, ConstraintViolationException, UploadException, InterruptedException, ExecutionException, TimeoutException, IOException {
+		GalaxyProjectName libraryName = new GalaxyProjectName("testUploadSampleOneFileAlreadyExistsSuccessTrailingnewlineSkip");
+
+		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName("testData"), dataFilesSingleNewlineTestNoNewline);
+		List<UploadSample> samples = new ArrayList<UploadSample>();
+		samples.add(galaxySample);
+
+		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
+
+		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
+
+		List<LibraryContent> libraryContents = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
+				.getLibraryContents(actualLibrary.getId());
+		Map<String, LibraryContent> contentsMap = fileToLibraryContentMap(libraryContents);
+		LibraryContent datasetContent = contentsMap.get("/illumina_reads/testData/testData1NoNewline.fastq");
+
+		// wait for the original library upload to complete.
+		waitForLibraryUpload(datasetContent.getId(), actualLibrary.getId());
+		
+		LibraryDataset datasetNoNewline = 
+				localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient().showDataset(actualLibrary.getId(), datasetContent.getId());
+				
+		// make sure Galaxy still does add a newline at the end.  Increase file size by 1.
+		long fileSize = dataFile1NewlineTestNoNewline.toFile().length();
+		long galaxyFileSize = Long.parseLong(datasetNoNewline.getFileSize());
+		assertEquals(fileSize + 1, galaxyFileSize);
+
+		// now attempt to re-upload the file.  It should properly be skipped even though the sizes are off by one
+		assertNotNull(galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
 	}
 	
 	/**
