@@ -56,7 +56,7 @@
 	<repositories>
         <repository>
             <id>spring-milestones</id>
-            <url>http://repo.springsource.org/libs-milestone/</url>
+            <url>https://repo.springsource.org/libs-milestone/</url>
         </repository>
 		<!-- Use maven central over HTTPS instead of HTTP -->
 		<repository>
