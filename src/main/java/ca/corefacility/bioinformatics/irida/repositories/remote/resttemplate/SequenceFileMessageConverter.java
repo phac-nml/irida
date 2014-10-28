@@ -42,10 +42,10 @@ public class SequenceFileMessageConverter implements HttpMessageConverter<Path> 
 	 */
 	@Override
 	public boolean canRead(Class<?> clazz, MediaType mediaType) {
-		logger.debug("Testing converter for class " + clazz.getName() + " and mediatype " + mediaType);
+		logger.trace("Testing converter for class " + clazz.getName() + " and mediatype " + mediaType);
 		if (mediaType != null && mediaType.getType().equals(MEDIA_TYPE) && mediaType.getSubtype().equals(MEDIA_SUBTYPE)
 				&& clazz.equals(Path.class)) {
-			logger.debug("Conversion accepted");
+			logger.trace("SequenceFileMessageConverter can read this message");
 			return true;
 		}
 
@@ -68,7 +68,7 @@ public class SequenceFileMessageConverter implements HttpMessageConverter<Path> 
 			HttpMessageNotReadableException {
 		logger.debug("Converting  response to " + clazz);
 		InputStream inputStream = inputMessage.getBody();
-		Path tempFile = Files.createTempFile(tempDirectory, "outfile", ".fastq");
+		Path tempFile = Files.createTempFile(tempDirectory, "remote-file", ".fastq");
 		try (OutputStream outputStream = Files.newOutputStream(tempFile)) {
 			IOUtils.copy(inputStream, outputStream);
 		}
@@ -79,7 +79,7 @@ public class SequenceFileMessageConverter implements HttpMessageConverter<Path> 
 	@Override
 	public void write(Path t, MediaType contentType, HttpOutputMessage outputMessage) throws IOException,
 			HttpMessageNotWritableException {
-		throw new UnsupportedOperationException("FastqMessageConverter cannot be used for writing");
+		throw new HttpMessageNotWritableException("SequenceFileMessageConverter cannot be used for writing");
 
 	}
 
