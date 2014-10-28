@@ -36,7 +36,7 @@ public class UserDetailsPageIT {
 
 	@Before
 	public void setup() {
-		driver = BasePage.initializeChromeDriver();
+		driver = BasePage.initializeDriver();
 		usersPage = new UserDetailsPage(driver);
 	}
 
