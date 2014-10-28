@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLinks;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
+import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
 
 /**
  * {@link SequenceFile} object pulled from a remote IRIDA installation
@@ -40,6 +41,11 @@ public class RemoteSequenceFile extends SequenceFile implements RemoteResource {
 		return Objects.hash(super.hashCode(), links);
 	}
 
+	/**
+	 * Unsupported operation for {@link RemoteSequenceFile}. To get the sequence
+	 * file for a {@link RemoteSequenceFile}, call
+	 * {@link SequenceFileRemoteRepository#downloadRemoteSequenceFile(RemoteSequenceFile, ca.corefacility.bioinformatics.irida.model.RemoteAPI)}
+	 */
 	@JsonIgnore
 	@Override
 	public void setFile(Path file) {
@@ -47,6 +53,11 @@ public class RemoteSequenceFile extends SequenceFile implements RemoteResource {
 				"File cannot be set for RemoteSequenceFile.  This class encodes file metadata only.");
 	}
 
+	/**
+	 * Unsupported operation for {@link RemoteSequenceFile}. To get the sequence
+	 * file for a {@link RemoteSequenceFile}, call
+	 * {@link SequenceFileRemoteRepository#downloadRemoteSequenceFile(RemoteSequenceFile, ca.corefacility.bioinformatics.irida.model.RemoteAPI)}
+	 */
 	@JsonIgnore
 	@Override
 	public Path getFile() {
