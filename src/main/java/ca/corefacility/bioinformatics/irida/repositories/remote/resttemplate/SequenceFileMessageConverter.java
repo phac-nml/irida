@@ -20,8 +20,8 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import com.google.common.collect.Lists;
 
 /**
- * Message converter for converting sequence file types to a Java Path temporary
- * file
+ * Message converter for converting application/fastq HTTP responses to a Java
+ * Path temporary file
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
