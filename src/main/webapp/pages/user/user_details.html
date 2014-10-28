@@ -7,6 +7,7 @@
 </head>
 <body>
 <main layout:fragment="page">
+	<input id="userId" type="hidden" th:value="${user.id}"/>
 	<div class="col-md-12">
 		<div class="row">
 			<div class="col-md-12">
@@ -147,7 +148,7 @@
 		var pwd = angular.module('PasswordRest', []);
 
 		pwd.service('ResetService', ['Restangular', 'notifications', function (Restangular, notifications) {
-			var base = Restangular.all(/*[['password_reset/ajax/create/' + ${user.getId()}]]*/ '/password_rest/ajax/create/'),
+			var base = Restangular.all('password_reset/ajax/create/' + angular.element("#userId").val()),
 					svc = this;
 
 			svc.resetPassword = function () {
