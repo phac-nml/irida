@@ -1,5 +1,39 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
+import java.security.Principal;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -16,33 +50,14 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import java.security.Principal;
-import java.security.SecureRandom;
-import java.util.*;
 
 /**
  * Controller for all {@link User} related views
- * 
+ *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
@@ -86,7 +101,7 @@ public class UsersController {
 	/**
 	 * Request for the page to display a list of all projects available to the
 	 * currently logged in user.
-	 * 
+	 *
 	 * @return The name of the page.
 	 */
 	@RequestMapping
@@ -96,13 +111,10 @@ public class UsersController {
 
 	/**
 	 * Request for a specific user details page.
-	 * 
-	 * @param userId
-	 *            The id for the user to show details for.
-	 * @param model
-	 *            Spring model to populate the html page
-	 * @param principal
-	 *            the currently logged in user
+	 *
+	 * @param userId    The id for the user to show details for.
+	 * @param model     Spring model to populate the html page
+	 * @param principal the currently logged in user
 	 * @return The name of the user/details page
 	 */
 
@@ -156,11 +168,9 @@ public class UsersController {
 
 	/**
 	 * Get the currently logged in user's page
-	 * 
-	 * @param model
-	 *            The model to pass on
-	 * @param principal
-	 *            The currently logged in user
+	 *
+	 * @param model     The model to pass on
+	 * @param principal The currently logged in user
 	 * @return getUserSpecificPage for the currently logged in user
 	 */
 	@RequestMapping("/current")
@@ -172,23 +182,15 @@ public class UsersController {
 
 	/**
 	 * Submit a user edit
-	 * 
-	 * @param userId
-	 *            The id of the user to edit (required)
-	 * @param firstName
-	 *            The firstname to update
-	 * @param lastName
-	 *            the lastname to update
-	 * @param email
-	 *            the email to update
-	 * @param systemRole
-	 *            the role to update
-	 * @param password
-	 *            the password to update
-	 * @param confirmPassword
-	 *            password confirmation
-	 * @param model
-	 *            The model to work on
+	 *
+	 * @param userId          The id of the user to edit (required)
+	 * @param firstName       The firstname to update
+	 * @param lastName        the lastname to update
+	 * @param email           the email to update
+	 * @param systemRole      the role to update
+	 * @param password        the password to update
+	 * @param confirmPassword password confirmation
+	 * @param model           The model to work on
 	 * @return The name of the user view
 	 */
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
@@ -266,11 +268,9 @@ public class UsersController {
 
 	/**
 	 * Get the user edit page
-	 * 
-	 * @param userId
-	 *            The ID of the user to get
-	 * @param model
-	 *            The model for the returned view
+	 *
+	 * @param userId The ID of the user to get
+	 * @param model  The model for the returned view
 	 * @return The user edit view
 	 */
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.GET)
@@ -332,19 +332,13 @@ public class UsersController {
 
 	/**
 	 * Create a new user object
-	 * 
-	 * @param user
-	 *            User to create as a motel attribute
-	 * @param systemRole
-	 *            The system role to give to the user
-	 * @param confirmPassword
-	 *            Password confirmation
-	 * @param requireActivation
-	 *            Checkbox whether the user account needs to be activated
-	 * @param model
-	 *            Model for the view
-	 * @param principal
-	 *            The user creating the object
+	 *
+	 * @param user              User to create as a motel attribute
+	 * @param systemRole        The system role to give to the user
+	 * @param confirmPassword   Password confirmation
+	 * @param requireActivation Checkbox whether the user account needs to be activated
+	 * @param model             Model for the view
+	 * @param principal         The user creating the object
 	 * @return A redirect to the user details view
 	 */
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
@@ -419,20 +413,14 @@ public class UsersController {
 
 	/**
 	 * Get the listing of users
-	 * 
-	 * @param principal
-	 *            The logged in user
-	 * @param start
-	 *            The start page
-	 * @param length
-	 *            The length of a page
+	 *
+	 * @param principal   The logged in user
+	 * @param start       The start page
+	 * @param length      The length of a page
 	 * @param draw
-	 * @param sortColumn
-	 *            The column to sort on
-	 * @param direction
-	 *            The direction to sort
-	 * @param searchValue
-	 *            The value to search with
+	 * @param sortColumn  The column to sort on
+	 * @param direction   The direction to sort
+	 * @param searchValue The value to search with
 	 * @return A Model Map<String,Object> containing the users to list
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -489,11 +477,9 @@ public class UsersController {
 
 	/**
 	 * Handle exceptions for the create and update pages
-	 * 
-	 * @param ex
-	 *            an exception to handle
-	 * @param locale
-	 *            The locale to work with
+	 *
+	 * @param ex     an exception to handle
+	 * @param locale The locale to work with
 	 * @return A Map<String,String> of errors to render
 	 */
 	private Map<String, String> handleCreateUpdateException(Exception ex, Locale locale) {
@@ -524,9 +510,8 @@ public class UsersController {
 
 	/**
 	 * Handle {@link AccessDeniedException} and {@link EntityNotFoundException}
-	 * 
-	 * @param e
-	 *            THe exception to handle
+	 *
+	 * @param e THe exception to handle
 	 * @return An error page
 	 */
 	@ExceptionHandler({ AccessDeniedException.class, EntityNotFoundException.class })
@@ -537,11 +522,9 @@ public class UsersController {
 
 	/**
 	 * Check if the logged in user is allowed to edit the given user.
-	 * 
-	 * @param principal
-	 *            The currently logged in principal
-	 * @param user
-	 *            The user to edit
+	 *
+	 * @param principal The currently logged in principal
+	 * @param user      The user to edit
 	 * @return boolean if the principal can edit the user
 	 */
 	private boolean canEditUser(Principal principal, User user) {
@@ -555,9 +538,8 @@ public class UsersController {
 
 	/**
 	 * Check if the logged in user is an Admin
-	 * 
-	 * @param principal
-	 *            The logged in user to check
+	 *
+	 * @param principal The logged in user to check
 	 * @return if the user is an admin
 	 */
 	private boolean isAdmin(Principal principal) {
@@ -568,7 +550,7 @@ public class UsersController {
 
 	/**
 	 * Generate a temporary password for a user
-	 * 
+	 *
 	 * @return A temporary password
 	 */
 	private static String generatePassword() {

@@ -1,5 +1,22 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
+import java.security.Principal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.context.MessageSource;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.ui.ExtendedModelMap;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -14,29 +31,22 @@ import ca.corefacility.bioinformatics.irida.ria.web.UsersController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import com.google.common.collect.Lists;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.context.MessageSource;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.ui.ExtendedModelMap;
 
-import java.security.Principal;
-import java.util.*;
+import com.google.common.collect.Lists;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link }
- * 
+ *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class UsersControllerTest {
@@ -133,7 +143,7 @@ public class UsersControllerTest {
 		assertEquals(user, model.get("user"));
 		assertEquals(roleString, model.get("systemRole"));
 		assertEquals(true, model.get("canEditUser"));
-		assertEquals(joins.size(), ((List)model.get("projects")).size());
+		assertEquals(joins.size(), ((List) model.get("projects")).size());
 
 		verify(userService).read(userId);
 		verify(userService).getUserByUsername(USER_NAME);
