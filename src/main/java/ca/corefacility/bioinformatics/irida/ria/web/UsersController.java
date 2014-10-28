@@ -112,9 +112,13 @@ public class UsersController {
 	/**
 	 * Request for a specific user details page.
 	 *
-	 * @param userId    The id for the user to show details for.
-	 * @param model     Spring model to populate the html page
-	 * @param principal the currently logged in user
+	 * @param userId
+	 * 		The id for the user to show details for.
+	 * @param model
+	 * 		Spring model to populate the html page
+	 * @param principal
+	 * 		the currently logged in user
+	 *
 	 * @return The name of the user/details page
 	 */
 
@@ -169,8 +173,11 @@ public class UsersController {
 	/**
 	 * Get the currently logged in user's page
 	 *
-	 * @param model     The model to pass on
-	 * @param principal The currently logged in user
+	 * @param model
+	 * 		The model to pass on
+	 * @param principal
+	 * 		The currently logged in user
+	 *
 	 * @return getUserSpecificPage for the currently logged in user
 	 */
 	@RequestMapping("/current")
@@ -183,14 +190,23 @@ public class UsersController {
 	/**
 	 * Submit a user edit
 	 *
-	 * @param userId          The id of the user to edit (required)
-	 * @param firstName       The firstname to update
-	 * @param lastName        the lastname to update
-	 * @param email           the email to update
-	 * @param systemRole      the role to update
-	 * @param password        the password to update
-	 * @param confirmPassword password confirmation
-	 * @param model           The model to work on
+	 * @param userId
+	 * 		The id of the user to edit (required)
+	 * @param firstName
+	 * 		The firstname to update
+	 * @param lastName
+	 * 		the lastname to update
+	 * @param email
+	 * 		the email to update
+	 * @param systemRole
+	 * 		the role to update
+	 * @param password
+	 * 		the password to update
+	 * @param confirmPassword
+	 * 		password confirmation
+	 * @param model
+	 * 		The model to work on
+	 *
 	 * @return The name of the user view
 	 */
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
@@ -269,8 +285,11 @@ public class UsersController {
 	/**
 	 * Get the user edit page
 	 *
-	 * @param userId The ID of the user to get
-	 * @param model  The model for the returned view
+	 * @param userId
+	 * 		The ID of the user to get
+	 * @param model
+	 * 		The model for the returned view
+	 *
 	 * @return The user edit view
 	 */
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.GET)
@@ -333,12 +352,19 @@ public class UsersController {
 	/**
 	 * Create a new user object
 	 *
-	 * @param user              User to create as a motel attribute
-	 * @param systemRole        The system role to give to the user
-	 * @param confirmPassword   Password confirmation
-	 * @param requireActivation Checkbox whether the user account needs to be activated
-	 * @param model             Model for the view
-	 * @param principal         The user creating the object
+	 * @param user
+	 * 		User to create as a motel attribute
+	 * @param systemRole
+	 * 		The system role to give to the user
+	 * @param confirmPassword
+	 * 		Password confirmation
+	 * @param requireActivation
+	 * 		Checkbox whether the user account needs to be activated
+	 * @param model
+	 * 		Model for the view
+	 * @param principal
+	 * 		The user creating the object
+	 *
 	 * @return A redirect to the user details view
 	 */
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
@@ -414,13 +440,20 @@ public class UsersController {
 	/**
 	 * Get the listing of users
 	 *
-	 * @param principal   The logged in user
-	 * @param start       The start page
-	 * @param length      The length of a page
+	 * @param principal
+	 * 		The logged in user
+	 * @param start
+	 * 		The start page
+	 * @param length
+	 * 		The length of a page
 	 * @param draw
-	 * @param sortColumn  The column to sort on
-	 * @param direction   The direction to sort
-	 * @param searchValue The value to search with
+	 * @param sortColumn
+	 * 		The column to sort on
+	 * @param direction
+	 * 		The direction to sort
+	 * @param searchValue
+	 * 		The value to search with
+	 *
 	 * @return A Model Map<String,Object> containing the users to list
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -478,8 +511,11 @@ public class UsersController {
 	/**
 	 * Handle exceptions for the create and update pages
 	 *
-	 * @param ex     an exception to handle
-	 * @param locale The locale to work with
+	 * @param ex
+	 * 		an exception to handle
+	 * @param locale
+	 * 		The locale to work with
+	 *
 	 * @return A Map<String,String> of errors to render
 	 */
 	private Map<String, String> handleCreateUpdateException(Exception ex, Locale locale) {
@@ -511,7 +547,9 @@ public class UsersController {
 	/**
 	 * Handle {@link AccessDeniedException} and {@link EntityNotFoundException}
 	 *
-	 * @param e THe exception to handle
+	 * @param e
+	 * 		THe exception to handle
+	 *
 	 * @return An error page
 	 */
 	@ExceptionHandler({ AccessDeniedException.class, EntityNotFoundException.class })
@@ -523,8 +561,11 @@ public class UsersController {
 	/**
 	 * Check if the logged in user is allowed to edit the given user.
 	 *
-	 * @param principal The currently logged in principal
-	 * @param user      The user to edit
+	 * @param principal
+	 * 		The currently logged in principal
+	 * @param user
+	 * 		The user to edit
+	 *
 	 * @return boolean if the principal can edit the user
 	 */
 	private boolean canEditUser(Principal principal, User user) {
@@ -539,7 +580,9 @@ public class UsersController {
 	/**
 	 * Check if the logged in user is an Admin
 	 *
-	 * @param principal The logged in user to check
+	 * @param principal
+	 * 		The logged in user to check
+	 *
 	 * @return if the user is an admin
 	 */
 	private boolean isAdmin(Principal principal) {
