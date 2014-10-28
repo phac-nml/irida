@@ -85,7 +85,7 @@ public class UserDetailsPageIT {
 	public void testResetUserPassword() {
 		usersPage.getOtherUser(1l);
 		usersPage.sendPasswordReset();
-		assertTrue(usersPage.notySuccessDisplayed());
+		assertTrue(usersPage.checkSuccessNotification());
 	}
 
 }

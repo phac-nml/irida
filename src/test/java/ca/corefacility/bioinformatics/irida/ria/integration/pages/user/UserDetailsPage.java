@@ -64,7 +64,7 @@ public class UserDetailsPage {
 		confirmButton.click();
 	}
 
-	public boolean notySuccessDisplayed() {
+	public boolean checkSuccessNotification() {
 		boolean present = false;
 		try {
 			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
