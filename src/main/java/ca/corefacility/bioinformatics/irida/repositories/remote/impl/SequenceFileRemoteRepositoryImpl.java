@@ -42,7 +42,9 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Remot
 	private static final ParameterizedTypeReference<ResourceWrapper<RemoteSequenceFile>> objectTypeReference = new ParameterizedTypeReference<ResourceWrapper<RemoteSequenceFile>>() {
 	};
 
+	// OAuth2 token storage service for making requests
 	private final RemoteAPITokenService tokenService;
+	// temporary directory for storing downloaded files
 	private final Path tempDirectory;
 
 	/**
