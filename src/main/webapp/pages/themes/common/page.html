@@ -112,6 +112,9 @@
 	window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.utils', 'restangular', 'irida.notifications']);
 	var app = angular.module('irida', window.dependencies)
 			.value('BASE_URL', /*[[@{/}]]*/ '/')
+			.config(function(RestangularProvider) {
+				RestangularProvider.setBaseUrl(/*[[@{/}]]*/ "/");
+			})
 			.directive('ngFocus', [function () {
 				var FOCUS_CLASS = "ng-focused";
 				return {
