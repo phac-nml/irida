@@ -7,6 +7,7 @@
 </head>
 <body>
 <main layout:fragment="main">
+	<input id="projectId" type="hidden" th:value="${project.getId()}"/>
 	<div class="row">
 		<div class="col-md-12">
 			<h1 role="heading" th:text="#{project.samples.h1(${project.label})}">__PAGE_TITLE__</h1>
@@ -44,13 +45,14 @@
 		SamplesApp.service('SamplesService', ['Restangular', function (R) {
 			"use strict";
 			var svc = this,
+					id = angular.element("#projectId").val(),
 					_filter = {
 						page: 0,
 						sortDir: 'desc',
 						sortedBy: 'createdDate',
 						count: 10
 					},
-					base = R.all(/*[['projects/' + ${project.getId()} + '/ajax/samples']]*/);
+					base = R.all('projects/' + id + '/ajax/samples');
 
 			svc.filter = _.clone(_filter);
 			svc.samples = [];
