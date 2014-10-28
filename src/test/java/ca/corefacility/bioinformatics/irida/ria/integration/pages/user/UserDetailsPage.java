@@ -1,14 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.user;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User details page for selenium testing
@@ -69,7 +69,7 @@ public class UserDetailsPage {
 		boolean present = false;
 		try {
 			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
-					.className("noty_type_success")));
+					.className("toast-success")));
 			present = true;
 		} catch (NoSuchElementException e) {
 			present = false;
