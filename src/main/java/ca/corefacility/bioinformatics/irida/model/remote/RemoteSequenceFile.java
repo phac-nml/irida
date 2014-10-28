@@ -43,13 +43,15 @@ public class RemoteSequenceFile extends SequenceFile implements RemoteResource {
 	@JsonIgnore
 	@Override
 	public void setFile(Path file) {
-		super.setFile(file);
+		throw new UnsupportedOperationException(
+				"File cannot be set for RemoteSequenceFile.  This class encodes file metadata only.");
 	}
 
 	@JsonIgnore
 	@Override
 	public Path getFile() {
-		return super.getFile();
+		throw new UnsupportedOperationException(
+				"File cannot be read from RemoteSequenceFile.  This class encodes file metadata only.");
 	}
 
 	public String getFileName() {
