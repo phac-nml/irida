@@ -12,11 +12,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.security.core.token.TokenService;
 import org.springframework.stereotype.Repository;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ListResourceWrapper;
+import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrapper;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
@@ -42,6 +44,14 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Remot
 
 	private final Path tempDirectory;
 
+	/**
+	 * Create a new SequenceFileRemoteRepositoryImpl
+	 * 
+	 * @param tokenService
+	 *            The {@link TokenService} storing OAuth2 tokens
+	 * @param tempDirectory
+	 *            The temporary directory to store downloaded files
+	 */
 	@Autowired
 	public SequenceFileRemoteRepositoryImpl(RemoteAPITokenService tokenService,
 			@Qualifier("remoteFilesTempDirectory") Path tempDirectory) {
@@ -49,8 +59,14 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Remot
 		this.tempDirectory = tempDirectory;
 	}
 
-	public void downloadFile(String url, RemoteAPI api) {
-		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(getTokenService(), api);
+	/**
+	 * {@inheritDoc}
+	 */
+	public Path downloadRemoteSequenceFile(RemoteSequenceFile sequenceFile, RemoteAPI remoteAPI) {
+		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(getTokenService(), remoteAPI);
+
+		// get the resource's URI
+		String uri = sequenceFile.getHrefForRel(RemoteResource.SELF_REL);
 
 		// add the sequence file message converter
 		List<HttpMessageConverter<?>> converters = restTemplate.getMessageConverters();
@@ -62,8 +78,9 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Remot
 		requestHeaders.setAccept(Lists.newArrayList(new MediaType("application", "fastq")));
 		HttpEntity<Path> requestEntity = new HttpEntity<Path>(requestHeaders);
 
-		ResponseEntity<Path> exchange = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Path.class);
-		System.out.println(exchange);
+		// get the file
+		ResponseEntity<Path> exchange = restTemplate.exchange(uri, HttpMethod.GET, requestEntity, Path.class);
+		return exchange.getBody();
 	}
 
 }
