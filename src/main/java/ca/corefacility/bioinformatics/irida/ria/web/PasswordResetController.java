@@ -1,14 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.utilities.EmailController;
+import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,21 +20,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.utilities.EmailController;
-import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.ImmutableList;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.util.*;
 
 /**
  * Controller for handling password reset flow
@@ -269,9 +259,10 @@ public class PasswordResetController {
 	@RequestMapping("/ajax/create/{userId}")
 	@ResponseBody
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public void adminNewPasswordReset(@PathVariable Long userId) {
+	public Map<String, Object> adminNewPasswordReset(@PathVariable Long userId) {
 		User user = userService.read(userId);
-		createNewPasswordReset(user);
+//		createNewPasswordReset(user);
+		return ImmutableMap.of("success", true, "message", "Add A GREAT SUCCESS MESSAGE HERE.");
 	}
 
 	/**

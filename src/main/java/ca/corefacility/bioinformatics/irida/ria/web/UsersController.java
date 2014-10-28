@@ -1,41 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
-import java.security.Principal;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -49,10 +16,29 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.security.Principal;
+import java.security.SecureRandom;
+import java.util.*;
 
 /**
  * Controller for all {@link User} related views
@@ -148,17 +134,21 @@ public class UsersController {
 		}
 
 		// add the projects to the model list
-		List<String> projectRoles = new ArrayList<>();
+		List<Map<String, Object>> projects = new ArrayList<>();
 		for (Join<Project, User> join : projectsForUser) {
 			ProjectUserJoin pujoin = (ProjectUserJoin) join;
+			Project project = join.getSubject();
+			Map<String, Object> map = new HashMap<>();
+			map.put("id", project.getId());
+			map.put("name", project.getName());
+			map.put("isManager", pujoin.getProjectRole().equals(ProjectRole.PROJECT_OWNER) ? true : false);
 
 			String proleMessageName = "projectRole." + pujoin.getProjectRole().toString();
-			String projectRole = messageSource.getMessage(proleMessageName, null, locale);
-
-			projectRoles.add(projectRole);
+			map.put("role", messageSource.getMessage(proleMessageName, null, locale));
+			map.put("date", pujoin.getCreatedDate());
+			projects.add(map);
 		}
-		model.addAttribute("projects", projectsForUser);
-		model.addAttribute("projectRoles", projectRoles);
+		model.addAttribute("projects", projects);
 		model.addAttribute("totalProjects", totalProjects);
 
 		return SPECIFIC_USER_PAGE;

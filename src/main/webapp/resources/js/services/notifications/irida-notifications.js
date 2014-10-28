@@ -1,24 +1,17 @@
 /* jshint undef: true, unused: true */
 /* global angular, _ */
 
-angular.module('irida.notifications', ['toastr'])
-    .service('notifications', ['toastr', function (toastr) {
+angular.module('irida.notifications', ['toaster'])
+    .service('notifications', ['toaster', function (toaster) {
         "use strict";
         var svc = this,
-            types = ['success', 'info', 'error', 'warning'],
             opts = {
                 type: 'success',
                 title: null,
-                msg: null,
-                template: null,
-                time: 3000,
-                posn: 'toast-top-right'
+                msg: null
             };
-        svc.show = function (o, options) {
-            options = options || {};
+        svc.show = function (o) {
             o = _.extend(_.clone(opts), o);
-            if(_.contains(types, o.type)) {
-                toastr[o.type](o.msg, o.title, options);
-            }
+            toaster.pop(o.type, o.title, o.msg);
         };
     }]);

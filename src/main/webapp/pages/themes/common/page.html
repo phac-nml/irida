@@ -28,8 +28,8 @@
 
 	<link rel="stylesheet" th:href="@{/resources/bower_components/Font-Awesome/css/font-awesome.min.css}"
 	      href="/resources/bower_components/Font-Awesome/css/font-awesome.min.css"/>
-	<link rel="stylesheet" th:href="@{/resources/bower_components/angular-toastr/dist/angular-toastr.min.css}"
-	      href="/resources/bower_components/angular-toastr/dist/angular-toastr.min.css"/>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/AngularJS-Toaster/toaster.css}"
+	      href="/resources/bower_components/AngularJS-Toaster/toaster.css"/>
 
 	<style>
 		.ng-cloak {
@@ -38,6 +38,7 @@
 	</style>
 </head>
 <body vocab="http://schema.org/" typeof="WebPage" id="ng-app" ng-app="irida">
+<div toaster-container=""></div>
 <th:block layout:fragment="main-section">
 	<!--/* This is where each pages content should be loaded. */-->
 </th:block>
@@ -88,6 +89,8 @@
         src="/resources/bower_components/lodash/dist/lodash.underscore.min.js"></script>
 <script th:src="@{/resources/bower_components/angular/angular.min.js}"
         src="/resources/bower_components/angular/angular.min.js"></script>
+<script th:src="@{/resources/bower_components/angular-animate/angular-animate.min.js}"
+        src="/resources/bower_components/angular-animate/angular-animate.min.js"></script>
 <script th:src="@{/resources/bower_components/angular-resource/angular-resource.min.js}"
         src="/resources/bower_components/angular-resource/angular-resource.min.js"></script>
 <script th:src="@{/resources/bower_components/angular-sanitize/angular-sanitize.min.js}"
@@ -97,9 +100,9 @@
 <script th:src="@{/resources/bower_components/restangular/src/restangular.js}"
         src="/resources/bower_components/restangular/src/restangular.js"></script>
 
-<script th:src="@{/resources/bower_components/angular-toastr/dist/angular-toastr.min.js}"
-        src="/resources/bower_components/angular-toastr/dist/angular-toastr.min.js"></script>
-<script th:src="@{/resources/js/services/notifications/irida-notifications-min.js}"
+<script th:src="@{/resources/bower_components/AngularJS-Toaster/toaster.js}"
+        src="/resources/bower_components/AngularJS-Toaster/toaster.js"></script>
+<script th:src="@{/resources/js/services/notifications/irida-notifications.js}"
         src="/resources/js/services/notifications/irida-notifications-min.js"></script>
 
 <script th:inline="javascript">
