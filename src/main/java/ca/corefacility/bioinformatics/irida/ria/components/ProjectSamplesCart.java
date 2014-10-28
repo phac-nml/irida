@@ -92,7 +92,7 @@ public class ProjectSamplesCart {
 		}
 		Map<Long, Boolean> files = _cart.get(sampleId);
 		files.put(fileId, false);
-		int count = _getSelectedFileCount(files);
+		int count = files.size();
 
 		// If count is 0 than the sample should not be selected
 		if (count == 0) {
@@ -199,15 +199,5 @@ public class ProjectSamplesCart {
 			fileMap.put(join.getObject().getId(), selected);
 		}
 		return fileMap;
-	}
-
-	private int _getSelectedFileCount(Map<Long, Boolean> files) {
-		int count = 0;
-		for (Long id : files.keySet()) {
-			if (files.get(id)) {
-				count++;
-			}
-		}
-		return count;
 	}
 }
