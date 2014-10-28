@@ -92,7 +92,7 @@
 									<label th:text="#{analysis.filter.byDate}">Filter by Date Range</label>
 
 									<div class="row">
-										<div class="col-md-12">
+										<div class="col-md-12 mrgn-bttm-md">
 											<input type="text" class="form-control input-full"
 											       ui-event="{click : 'datepicker.min.open($event)'}"
 											       th:placeholder="#{form.placeholder.date.min}"
@@ -315,14 +315,14 @@ app.controller('AnalysisTableCtrl', function ($scope, $sce, AnalysisService, bas
 			open: function open($event) {
 				$event.preventDefault();
 				$event.stopPropagation();
-				datepicker.min.opened = true;
+				$scope.datepicker.min.opened = true;
 			}
 		},
 		max    : {
 			open: function open($event) {
 				$event.preventDefault();
 				$event.stopPropagation();
-				datepicker.max.opened = true;
+				$scope.datepicker.max.opened = true;
 			}
 		},
 		maxDate: new Date() // Max date should always be today!

@@ -97,6 +97,8 @@
         src="/resources/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
 <script th:src="@{'/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js'}"
         src="/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+<script th:src="@{/resources/bower_components/angular-ui-utils/ui-utils.min.js}"
+        src="/resources/bower_components/angular-ui-utils/ui-utils.min.js"></script>
 <script th:src="@{/resources/bower_components/restangular/src/restangular.js}"
         src="/resources/bower_components/restangular/src/restangular.js"></script>
 
@@ -107,7 +109,7 @@
 
 <script th:inline="javascript">
 	/*<![CDATA[*/
-	window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ui.bootstrap', 'restangular', 'irida.notifications']);
+	window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.utils', 'restangular', 'irida.notifications']);
 	var app = angular.module('irida', window.dependencies)
 			.value('BASE_URL', /*[[@{/}]]*/ '/')
 			.directive('ngFocus', [function () {
