@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -20,19 +20,30 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import com.google.common.collect.Lists;
 
 /**
+ * Message converter for converting sequence file types to a Java Path temporary
+ * file
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
-public class FastqMessageConverter implements HttpMessageConverter<Path> {
-	private static final Logger logger = LoggerFactory.getLogger(FastqMessageConverter.class);
-	private String type = "application";
-	private String subtype = "fastq";
+public class SequenceFileMessageConverter implements HttpMessageConverter<Path> {
+	private static final Logger logger = LoggerFactory.getLogger(SequenceFileMessageConverter.class);
+	private static final String MEDIA_TYPE = "application";
+	private static final String MEDIA_SUBTYPE = "fastq";
 
+	private final Path tempDirectory;
+
+	public SequenceFileMessageConverter(Path tempDirectory) {
+		this.tempDirectory = tempDirectory;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean canRead(Class<?> clazz, MediaType mediaType) {
-		logger.debug("Testing converter for class " + clazz + " and mediatype " + mediaType);
-		if (mediaType != null && mediaType.getType().equals(type) && mediaType.getSubtype().equals(subtype)
+		logger.debug("Testing converter for class " + clazz.getName() + " and mediatype " + mediaType);
+		if (mediaType != null && mediaType.getType().equals(MEDIA_TYPE) && mediaType.getSubtype().equals(MEDIA_SUBTYPE)
 				&& clazz.equals(Path.class)) {
 			logger.debug("Conversion accepted");
 			return true;
@@ -49,20 +60,20 @@ public class FastqMessageConverter implements HttpMessageConverter<Path> {
 
 	@Override
 	public List<MediaType> getSupportedMediaTypes() {
-		return Lists.newArrayList(new MediaType(type, subtype));
+		return Lists.newArrayList(new MediaType(MEDIA_TYPE, MEDIA_SUBTYPE));
 	}
 
 	@Override
 	public Path read(Class<? extends Path> clazz, HttpInputMessage inputMessage) throws IOException,
 			HttpMessageNotReadableException {
-		logger.debug("Converting  " + inputMessage + " to " + clazz);
+		logger.debug("Converting  response to " + clazz);
 		InputStream inputStream = inputMessage.getBody();
-		Path createTempFile = Files.createTempFile("outfile", ".fastq");
-		try (FileOutputStream outputStream = new FileOutputStream(createTempFile.toFile())) {
+		Path tempFile = Files.createTempFile(tempDirectory, "outfile", ".fastq");
+		try (OutputStream outputStream = Files.newOutputStream(tempFile)) {
 			IOUtils.copy(inputStream, outputStream);
 		}
 
-		return createTempFile;
+		return tempFile;
 	}
 
 	@Override

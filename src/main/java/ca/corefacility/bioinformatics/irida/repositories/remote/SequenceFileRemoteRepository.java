@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.remote;
 
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSequenceFile;
 
 /**
@@ -10,5 +11,5 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteSequenceFile;
  *
  */
 public interface SequenceFileRemoteRepository extends RemoteRepository<RemoteSequenceFile> {
-
+	public void downloadFile(String url, RemoteAPI api);
 }
