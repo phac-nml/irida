@@ -152,7 +152,7 @@
 
 			svc.resetPassword = function () {
 				return base.get("").then(function (data) {
-					notifications.show({type: 'info', msg: data.message, title: null});
+					notifications.show({type: 'success', msg: data.message, title: data.title});
 					return data;
 				});
 			}

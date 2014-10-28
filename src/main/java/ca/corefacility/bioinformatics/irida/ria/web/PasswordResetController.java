@@ -259,10 +259,15 @@ public class PasswordResetController {
 	@RequestMapping("/ajax/create/{userId}")
 	@ResponseBody
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public Map<String, Object> adminNewPasswordReset(@PathVariable Long userId) {
+	public Map<String, Object> adminNewPasswordReset(@PathVariable Long userId, Locale locale) {
 		User user = userService.read(userId);
-//		createNewPasswordReset(user);
-		return ImmutableMap.of("success", true, "message", "Add A GREAT SUCCESS MESSAGE HERE.");
+		createNewPasswordReset(user);
+		return ImmutableMap.of(
+				"success", true,
+				"message", messageSource
+				.getMessage("password.reset.success-message", new Object[] { user.getFirstName() }, locale),
+				"title", messageSource.getMessage("password.reset.success-title", null, locale)
+		);
 	}
 
 	/**
