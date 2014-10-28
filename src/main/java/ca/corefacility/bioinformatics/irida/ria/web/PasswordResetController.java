@@ -1,14 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.utilities.EmailController;
-import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,17 +19,27 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import java.util.*;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.utilities.EmailController;
+import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for handling password reset flow
- * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping(value = "/password_reset")
@@ -60,11 +69,9 @@ public class PasswordResetController {
 
 	/**
 	 * Get the password reset page
-	 * 
-	 * @param resetId
-	 *            The ID of the {@link PasswordReset}
-	 * @param model
-	 *            A model for the page
+	 *
+	 * @param resetId The ID of the {@link PasswordReset}
+	 * @param model   A model for the page
 	 * @return The string name of the page
 	 */
 	@RequestMapping(value = "/{resetId}", method = RequestMethod.GET)
@@ -90,19 +97,14 @@ public class PasswordResetController {
 
 	/**
 	 * Send the new password for a given password reset
-	 * 
-	 * @param resetId
-	 *            The ID of the {@link PasswordReset}
-	 * @param password
-	 *            The new password to set
-	 * @param confirmPassword
-	 *            Confirm the new password
-	 * @param model
-	 *            A model for the given page
-	 * @param locale
-	 *            The locale of the request
+	 *
+	 * @param resetId         The ID of the {@link PasswordReset}
+	 * @param password        The new password to set
+	 * @param confirmPassword Confirm the new password
+	 * @param model           A model for the given page
+	 * @param locale          The locale of the request
 	 * @return The string name of the success view, or on failure the
-	 *         getResetPage view
+	 * getResetPage view
 	 */
 	@RequestMapping(value = "/{resetId}", method = RequestMethod.POST)
 	public String sendNewPassword(@PathVariable String resetId, @RequestParam String password,
@@ -150,11 +152,9 @@ public class PasswordResetController {
 
 	/**
 	 * Success page for a password reset
-	 * 
-	 * @param encodedEmail
-	 *            A base64 encoded email address
-	 * @param model
-	 *            Model for the view
+	 *
+	 * @param encodedEmail A base64 encoded email address
+	 * @param model        Model for the view
 	 * @return The password reset success view name
 	 */
 	@RequestMapping("/success/{encodedEmail}")
@@ -172,9 +172,8 @@ public class PasswordResetController {
 
 	/**
 	 * Get the reset password page
-	 * 
-	 * @param model
-	 *            Model for this view
+	 *
+	 * @param model Model for this view
 	 * @return The view name for the email entry page
 	 */
 	@RequestMapping(method = RequestMethod.GET)
@@ -184,11 +183,9 @@ public class PasswordResetController {
 
 	/**
 	 * Create a password reset for the given email address
-	 * 
-	 * @param email
-	 *            The email address to create a password reset for
-	 * @param model
-	 *            Model for the view
+	 *
+	 * @param email The email address to create a password reset for
+	 * @param model Model for the view
 	 * @return Reset created page if the email exists in the system
 	 */
 	@RequestMapping(method = RequestMethod.POST)
@@ -215,11 +212,9 @@ public class PasswordResetController {
 
 	/**
 	 * Success page for creating a password reset
-	 * 
-	 * @param encodedEmail
-	 *            Base64 encoded email of the user
-	 * @param model
-	 *            Model for the request
+	 *
+	 * @param encodedEmail Base64 encoded email of the user
+	 * @param model        Model for the request
 	 * @return View name for the reset created page
 	 */
 	@RequestMapping("/created/{encodedEmail}")
@@ -235,9 +230,8 @@ public class PasswordResetController {
 
 	/**
 	 * Return the activation view
-	 * 
-	 * @param model
-	 *            Model for the view
+	 *
+	 * @param model Model for the view
 	 * @return Name of the activation view
 	 */
 	@RequestMapping(value = "/activate", method = RequestMethod.GET)
@@ -252,9 +246,8 @@ public class PasswordResetController {
 
 	/**
 	 * Create a new {@link PasswordReset} for the given {@link User}
-	 * 
-	 * @param userId
-	 *            The ID of the {@link User}
+	 *
+	 * @param userId The ID of the {@link User}
 	 */
 	@RequestMapping("/ajax/create/{userId}")
 	@ResponseBody
@@ -265,7 +258,7 @@ public class PasswordResetController {
 		return ImmutableMap.of(
 				"success", true,
 				"message", messageSource
-				.getMessage("password.reset.success-message", new Object[] { user.getFirstName() }, locale),
+						.getMessage("password.reset.success-message", new Object[] { user.getFirstName() }, locale),
 				"title", messageSource.getMessage("password.reset.success-title", null, locale)
 		);
 	}
@@ -273,9 +266,8 @@ public class PasswordResetController {
 	/**
 	 * Create a new password reset for a given {@link User} and send a reset
 	 * email
-	 * 
-	 * @param user
-	 *            The user to create the reset for
+	 *
+	 * @param user The user to create the reset for
 	 */
 	private void createNewPasswordReset(User user) {
 		PasswordReset passwordReset = new PasswordReset(user);
