@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import static org.springframework.data.jpa.domain.Specifications.where;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.Formatter;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -32,6 +36,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -40,19 +45,18 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleFilterSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
-import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectSamplesDataTable;
+import ca.corefacility.bioinformatics.irida.ria.components.ProjectSamplesCart;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 
 @Controller
 @RequestMapping(value = "/projects")
@@ -83,6 +87,9 @@ public class ProjectSamplesController {
 	private final SequenceFileService sequenceFileService;
 	private final ProjectControllerUtils projectControllerUtils;
 
+	// Components
+	private ProjectSamplesCart cart;
+
 	/*
 	 * Converters
 	 */
@@ -92,8 +99,7 @@ public class ProjectSamplesController {
 	@Autowired
 	public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
 			UserService userService, SequenceFileService sequenceFileService,
-			ProjectControllerUtils projectControllerUtils, ReferenceFileService referenceFileService,
-			TaxonomyService taxonomyService) {
+			ProjectControllerUtils projectControllerUtils, ProjectSamplesCart cart) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
@@ -101,6 +107,7 @@ public class ProjectSamplesController {
 		this.projectControllerUtils = projectControllerUtils;
 		this.dateFormatter = new DateFormatter();
 		this.fileSizeConverter = new FileSizeConverter();
+		this.cart = cart;
 	}
 
 	/**
@@ -127,62 +134,68 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Get all samples for a project as a paged ajax call
-	 * 
+	 * Get a paged list of samples.
+	 *
 	 * @param projectId
-	 *            ID of the project
-	 * @param start
-	 *            Start element
-	 * @param length
-	 *            Number of elements in the page
-	 * @param draw
-	 * @param sortColumn
-	 *            Which column to sort on
-	 * @param direction
-	 *            Sort direction
-	 * @param searchValue
-	 *            A search value for the sample name
-	 * @return Map<String,Object> containing a list of the response samples
+	 * 		Id for the project the samples are in.
+	 * @param count
+	 * 		The size of the list to return.
+	 * @param page
+	 * 		The page number currently viewed.
+	 * @param sortDir
+	 * 		The direction to sort the samples.
+	 * @param sortedBy
+	 * 		The column to sort the samples on.
+	 * @param name
+	 * 		Not required.  An expression to filter the name by.
+	 * @param organism
+	 * 		Not required. An expression to filter the organism by.
+	 * @param minDate
+	 * 		Not required.  The minimum date to filter by.
+	 * @param maxDate
+	 * 		Not required.  The maximum date to filter by.
+	 * @return A map containing a list of pages samples.
 	 */
-	@RequestMapping(value = "/ajax/{projectId}/samples", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Object> getAjaxProjectSamplesMap(
-			@PathVariable Long projectId,
-			@RequestParam(ProjectSamplesDataTable.REQUEST_PARAM_START) Integer start,
-			@RequestParam(ProjectSamplesDataTable.REQUEST_PARAM_LENGTH) Integer length,
-			@RequestParam(ProjectSamplesDataTable.REQUEST_PARAM_DRAW) Integer draw,
-			@RequestParam(value = ProjectSamplesDataTable.REQUEST_PARAM_SORT_COLUMN, defaultValue = ProjectSamplesDataTable.SORT_DEFAULT_COLUMN) Integer sortColumn,
-			@RequestParam(value = ProjectSamplesDataTable.REQUEST_PARAM_SORT_DIRECTION, defaultValue = ProjectSamplesDataTable.SORT_DEFAULT_DIRECTION) String direction,
-			@RequestParam(ProjectSamplesDataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue) {
-		Map<String, Object> response = new HashMap<>();
-		Sort.Direction sortDirection = ProjectSamplesDataTable.getSortDirection(direction);
-		String sortString = ProjectSamplesDataTable.getSortStringFromColumnID(sortColumn);
+	@RequestMapping(value = "/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+	public @ResponseBody Map<String, Object> getProjectSamples(@PathVariable Long projectId,
+			@RequestParam Integer count,
+			@RequestParam Integer page,
+			@RequestParam String sortDir,
+			@RequestParam String sortedBy,
+			@RequestParam(required = false) String name,
+			@RequestParam(required = false) String organism,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date minDate,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date maxDate) {
+		Map<String, String> sortLookUp = ImmutableMap.of(
+				"name", "sample.sampleName",
+				"organism", "sample.organism",
+				"added", "createdDate"
+		);
+		sortedBy = sortLookUp.containsKey(sortedBy) ? sortLookUp.get(sortedBy) : sortedBy;
+		Project project = projectService.read(projectId);
+		Sort.Direction direction = sortDir.equals("desc") ? Direction.DESC : Direction.ASC;
 
-		int pageNum = ProjectSamplesDataTable.getPageNumber(start, length);
-		try {
-			Project project = projectService.read(projectId);
-			Page<ProjectSampleJoin> page = sampleService.getSamplesForProjectWithName(project, searchValue, pageNum,
-					length, sortDirection, sortString);
-			List<Map<String, String>> samplesList = new ArrayList<>();
-			for (Join<Project, Sample> join : page.getContent()) {
-				Map<String, String> sMap = new HashMap<>();
-				Sample s = join.getObject();
-				sMap.put(ProjectSamplesDataTable.ID, s.getId().toString());
-				sMap.put(ProjectSamplesDataTable.NAME, s.getSampleName());
-				sMap.put(ProjectSamplesDataTable.NUM_FILES,
-						String.valueOf(sequenceFileService.getSequenceFilesForSample(s).size()));
-				sMap.put(ProjectSamplesDataTable.CREATED_DATE, Formats.DATE.format(join.getTimestamp()));
-				samplesList.add(sMap);
+		Specification<ProjectSampleJoin> specification = ProjectSampleFilterSpecification
+				.searchProjectSamples(project, name, organism, minDate, maxDate);
+		Page<ProjectSampleJoin> projectSampleJoinPage = sampleService.searchProjectSamples(specification, page, count, direction, sortedBy);
+
+		List<Map<String, Object>> samples = new ArrayList<>();
+		int selectedCount = 0;
+		for (Join<Project, Sample> join : projectSampleJoinPage.getContent()) {
+			Sample sample = join.getObject();
+			Map<String, Object> map = _generateUISample(sample);
+			map.put("createdDate", String.valueOf(join.getCreatedDate().getTime()));
+			if (map.get("selected").equals(true)) {
+				selectedCount++;
 			}
-			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_DATA, samplesList);
-			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_DRAW, draw);
-			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_RECORDS_FILTERED, page.getTotalElements());
-			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_RECORDS_TOTAL, page.getTotalElements());
-			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_SORT_COLUMN, sortColumn);
-			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_SORT_DIRECTION, sortDirection);
-		} catch (Exception e) {
-			logger.error("Error retrieving project sample information :" + e.getLocalizedMessage());
+			samples.add(map);
 		}
-		return response;
+
+		Map<String, Object> result = new HashMap<>();
+		result.put("selectCount", selectedCount);
+		result.put("samples", samples);
+		result.put("totalSamples", projectSampleJoinPage.getTotalElements());
+		return result;
 	}
 
 	/**
@@ -336,26 +349,6 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * For a list of sample ids, this function will generate a map of {id, name}
-	 *
-	 * @param sampleIds
-	 *            A list of sample ids.
-	 * @return A list of map of {id, name}
-	 */
-	@RequestMapping(value = "/ajax/getNamesFromIds", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Map<String, String>> ajaxGetSampleNamesFromIds(@RequestParam List<Long> sampleIds) {
-		List<Map<String, String>> resultList = new ArrayList<>();
-		for (Long id : sampleIds) {
-			Map<String, String> results = new HashMap<>();
-			Sample sample = sampleService.read(id);
-			results.put("id", id.toString());
-			results.put("text", sample.getSampleName());
-			resultList.add(results);
-		}
-		return resultList;
-	}
-
-	/**
 	 * Merges a list of samples into either the first sample in the list with a
 	 * new name if provided, or into the selected sample based on the id.
 	 *
@@ -425,5 +418,51 @@ public class ProjectSamplesController {
 			errors.put(field, message);
 		}
 		return errors;
+	}
+
+	/**
+	 * Private method the create a sample which can be consumed by the UI.
+	 *
+	 * @param sample
+	 * 		A {@link Sample}
+	 * @return
+	 */
+	private Map<String, Object> _generateUISample(Sample sample) {
+		Map<String, Object> map = new HashMap<>();
+		boolean sampleSelected = cart.isSampleSelected(sample.getId());
+		map.put("selected", sampleSelected);
+		map.put("id", sample.getId().toString());
+		map.put("name", sample.getSampleName());
+		map.put("organism", sample.getOrganism());
+
+		List<Join<Sample, SequenceFile>> fileJoin = sequenceFileService.getSequenceFilesForSample(sample);
+		List<Map<String, Object>> files = new ArrayList<>();
+		int selectCount = 0;
+		for (Join<Sample, SequenceFile> join1 : fileJoin) {
+			SequenceFile f = join1.getObject();
+			Map<String, Object> m = new HashMap<>();
+			m.put("id", f.getId());
+			boolean selected = f.getId() != null && cart.isFileSelected(sample.getId(), f.getId());
+			if (selected) selectCount++;
+			m.put("selected", selected);
+			m.put("name", f.getLabel());
+			Long realSize = 0L;
+			Path path = f.getFile();
+			if (Files.exists(path)) {
+				try {
+					realSize = Files.size(path);
+				} catch (IOException e) {
+					logger.error(e.getMessage());
+					realSize = 0L;
+				}
+			}
+			String size = fileSizeConverter.convert(realSize);
+			m.put("size", size);
+			m.put("added", join1.getTimestamp().getTime());
+			files.add(m);
+		}
+		map.put("files", files);
+		map.put("indeterminate", sampleSelected && files.size() != 0 && selectCount != files.size());
+		return map;
 	}
 }

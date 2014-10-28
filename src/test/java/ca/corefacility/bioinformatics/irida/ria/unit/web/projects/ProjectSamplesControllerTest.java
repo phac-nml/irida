@@ -39,13 +39,12 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.components.ProjectSamplesCart;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -74,9 +73,8 @@ public class ProjectSamplesControllerTest {
 	private SampleService sampleService;
 	private UserService userService;
 	private SequenceFileService sequenceFileService;
-	private ReferenceFileService referenceFileService;
 	private ProjectControllerUtils projectUtils;
-	private TaxonomyService taxonomyService;
+	private ProjectSamplesCart cart;
 
 	@Before
 	public void setUp() {
@@ -84,12 +82,11 @@ public class ProjectSamplesControllerTest {
 		sampleService = mock(SampleService.class);
 		userService = mock(UserService.class);
 		sequenceFileService = mock(SequenceFileService.class);
-		taxonomyService = mock(TaxonomyService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
-		referenceFileService = mock(ReferenceFileService.class);
+		cart = mock(ProjectSamplesCart.class);
 
 		controller = new ProjectSamplesController(projectService, sampleService, userService, sequenceFileService,
-				projectUtils, referenceFileService, taxonomyService);
+				projectUtils, cart);
 		user.setId(1L);
 
 		mockSidebarInfo();
@@ -372,7 +369,7 @@ public class ProjectSamplesControllerTest {
 						anyString())).thenReturn(page);
 		when(sequenceFileService.getSequenceFilesForSample(any(Sample.class))).thenReturn(getSequenceFilesForSample());
 
-		Map<String, Object> response = controller.getAjaxProjectSamplesMap(1L, 0, 10, 1, 4, "asc", "");
+		Map<String, Object> response = controller.getProjectSamples(1L, 0, 10, "asc", "dateCreated", null, null, null, null);
 
 		// Make sure it has the expected keys:
 		checkAjaxDataTableResponse(response);
