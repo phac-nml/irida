@@ -42,6 +42,7 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Remot
 	private static final ParameterizedTypeReference<ResourceWrapper<RemoteSequenceFile>> objectTypeReference = new ParameterizedTypeReference<ResourceWrapper<RemoteSequenceFile>>() {
 	};
 
+	private final RemoteAPITokenService tokenService;
 	private final Path tempDirectory;
 
 	/**
@@ -57,13 +58,14 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Remot
 			@Qualifier("remoteFilesTempDirectory") Path tempDirectory) {
 		super(tokenService, listTypeReference, objectTypeReference);
 		this.tempDirectory = tempDirectory;
+		this.tokenService = tokenService;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public Path downloadRemoteSequenceFile(RemoteSequenceFile sequenceFile, RemoteAPI remoteAPI) {
-		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(getTokenService(), remoteAPI);
+		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
 
 		// get the resource's URI
 		String uri = sequenceFile.getHrefForRel(RemoteResource.SELF_REL);

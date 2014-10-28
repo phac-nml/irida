@@ -62,15 +62,6 @@ public abstract class RemoteRepositoryImpl<Type extends RemoteResource> implemen
 	}
 
 	/**
-	 * Get the repository's {@link RemoteAPITokenService}
-	 * 
-	 * @return
-	 */
-	protected RemoteAPITokenService getTokenService() {
-		return tokenService;
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@Override
