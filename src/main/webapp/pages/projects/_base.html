@@ -1,57 +1,63 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="${themePath + '_page'}">
 <head lang="en">
-    <title th:text="${project.label}">Project</title>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/qtip2/jquery.qtip.min.css}"
-          href="/resources/bower_components/qtip2/jquery.qtip.min.css"/>
+	<title th:text="${project.label}">Project</title>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/qtip2/jquery.qtip.min.css}"
+	      href="/resources/bower_components/qtip2/jquery.qtip.min.css"/>
 </head>
 <body>
 
+<nav class="navbar navbar-default navbar-static-top subnav mrgn-bttm-md" role="navigation" layout:fragment="subnav" ng-init="projectSubnav=true" th:with="baseLink=${'/projects/' + project.getId()}">
+	<div class="container">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" ng-click="projectSubnav=!projectSubnav"
+			        data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" th:classappend="${activeNav} == 'dashboard' ? 'active'" th:href="@{${baseLink}}" href="#"><span
+					class="glyphicon glyphicon-home"></span></a>
+		</div>
+		<div class="collapse navbar-collapse"  collapse="projectSubnav">
+			<ul class="nav navbar-nav" th:inline="text">
+				<li th:class="${activeNav} == 'metadata' ? 'active'"><a th:href="@{${baseLink} + '/metadata'}">[[#{project.nav.metadata}]]</a>
+				</li>
+				<li th:class="${activeNav} == 'samples' ? 'active'"><a th:href="@{${baseLink} + '/samples'}">[[#{project.nav.samples}]]&nbsp;<span
+						class="badge badge-default" th:text="${samples}"></span> </a></li>
+				<li th:class="${activeNav} == 'members' ? 'active'"><a th:href="@{${baseLink} + '/members'}">[[#{project.nav.members}]]&nbsp;<span
+						class="badge badge-default" th:text="${users}"></span></a>
+				</li>
+				<li th:class="${activeNav} == 'associated' ? 'active'"><a th:href="@{${baseLink} + '/associated'}">[[#{project.nav.associated}]]&nbsp;<span
+						class="badge badge-default" th:text="${related_project_count}"></span></a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</nav>
 <div layout:fragment="page">
-    <nav class="navbar navbar-default navbar-sm" role="navigation" th:fragment="nav">
-        <ul class="nav navbar-nav" th:inline="text" th:with="baseLink=${'/projects/' + project.getId()}">
-            <li th:class="${activeNav} == 'dashboard' ? 'active'"><a th:href="@{${baseLink}}"><span
-                    class="glyphicon glyphicon-home"></span></a></li>
-            <li th:class="${activeNav} == 'metadata' ? 'active'"><a th:href="@{${baseLink} + '/metadata'}">[[#{project.nav.metadata}]]</a>
-            </li>
-            <li th:class="${activeNav} == 'samples' ? 'active'"><a th:href="@{${baseLink} + '/samples'}">[[#{project.nav.samples}]]<span
-                    class="badge"
-                    th:text="${samples}"></span>
-            </a></li>
-            <li th:class="${activeNav} == 'members' ? 'active'"><a th:href="@{${baseLink} + '/members'}">[[#{project.nav.members}]]<span
-                    class="badge"
-                    th:text="${users}"></span></a>
-            </li>
-            <li th:class="${activeNav} == 'associated' ? 'active'"><a th:href="@{${baseLink} + '/associated'}">[[#{project.nav.associated}]]<span
-                    class="badge"
-                    th:text="${related_project_count}"></span></a>
-            </li>
-        </ul>
-    </nav>
 
-    <main class="col-md-9 col-md-push-3" layout:fragment="main">
-        <!--/*/
-        This is where the main content of every project page will go.
-        /*/-->
-    </main>
+	<main class="col-md-9 col-md-push-3" layout:fragment="main">
+		<!--/*/
+		This is where the main content of every project page will go.
+		/*/-->
+	</main>
 
-    <aside class="col-md-3 col-md-pull-9" th:include="projects/partials/aside :: aside">
+	<aside class="col-md-3 col-md-pull-9" th:include="projects/partials/aside :: aside">
 
-    </aside>
+	</aside>
 </div>
 
 <th:block layout:fragment="page-scripts">
-    <script th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}"
-            src="/resources/bower_components/moment/min/moment-with-langs.min.js"></script>
-    <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"
-            src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
-    <script th:src="@{/resources/bower_components/qtip2/jquery.qtip.min.js}"
-            src="/resources/bower_components/qtip2/jquery.qtip.min.js"></script>
-    <script th:src="@{/resources/js/project.js}" src="/resources/js/project.js"></script>
+	<script th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}"
+	        src="/resources/bower_components/moment/min/moment-with-langs.min.js"></script>
+	<script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"
+	        src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
+	<script th:src="@{/resources/bower_components/qtip2/jquery.qtip.min.js}"
+	        src="/resources/bower_components/qtip2/jquery.qtip.min.js"></script>
+	<script th:src="@{/resources/js/project.js}" src="/resources/js/project.js"></script>
 
-    <th:block layout:fragment="scripts"></th:block>
+	<th:block layout:fragment="scripts"></th:block>
 </th:block>
 </body>
 </html>
