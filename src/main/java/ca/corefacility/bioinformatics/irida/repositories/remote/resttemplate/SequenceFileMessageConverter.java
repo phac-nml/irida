@@ -28,8 +28,8 @@ import com.google.common.collect.Lists;
  */
 public class SequenceFileMessageConverter implements HttpMessageConverter<Path> {
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileMessageConverter.class);
-	private static final String MEDIA_TYPE = "application";
-	private static final String MEDIA_SUBTYPE = "fastq";
+	public static final String MEDIA_TYPE = "application";
+	public static final String MEDIA_SUBTYPE = "fastq";
 
 	private final Path tempDirectory;
 
@@ -80,7 +80,6 @@ public class SequenceFileMessageConverter implements HttpMessageConverter<Path> 
 	public void write(Path t, MediaType contentType, HttpOutputMessage outputMessage) throws IOException,
 			HttpMessageNotWritableException {
 		throw new HttpMessageNotWritableException("SequenceFileMessageConverter cannot be used for writing");
-
 	}
 
 }
