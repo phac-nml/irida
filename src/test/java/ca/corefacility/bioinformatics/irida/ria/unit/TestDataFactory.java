@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
@@ -25,6 +26,7 @@ import com.google.common.collect.ImmutableSet;
 public class TestDataFactory {
 	public static final String FAKE_FILE_PATH = "src/test/resources/files/{name}";
 	public static final String FAKE_EXECUTION_MANAGER_ID = "Whole Genome Phyogenomics Pipeline";
+	public static final long USER_ID = 1L;
 
 	/**
 	 * Construct a simple {@link ca.corefacility.bioinformatics.irida.model.sample.Sample}.
@@ -79,6 +81,11 @@ public class TestDataFactory {
 		analysis.setSnpMatrix(constructAnalysisOutputFile("test_file_1.fastq"));
 		analysis.setSnpTable(constructAnalysisOutputFile("test_file_2.fastq"));
 		return analysis;
+	}
+
+	public static User constructUser() {
+		User user = new User(USER_ID, "test", "test@me.com", "pass1234", "mr", "test", "123-4567");
+		return user;
 	}
 
 	private static AnalysisOutputFile constructAnalysisOutputFile(String name) {

@@ -1,0 +1,1 @@
+angular.module("irida.notifications",["toastr"]).service("notifications",["toastr",function(t){"use strict";var i=this,n=["success","info","error","warning"],s={type:"success",title:null,msg:null,template:null,time:3e3,posn:"toast-top-right"};i.show=function(i,e){e=e||{},i=_.extend(_.clone(s),i),_.contains(n,i.type)&&t[i.type](i.msg,i.title,e)}}]);

@@ -12,9 +12,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * User details page for selenium testing
- * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class UserDetailsPage {
 	public static String EDIT_USER_LINK = "editUser";
@@ -65,11 +64,11 @@ public class UserDetailsPage {
 		confirmButton.click();
 	}
 
-	public boolean notySuccessDisplayed() {
+	public boolean checkSuccessNotification() {
 		boolean present = false;
 		try {
 			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
-					.className("noty_type_success")));
+					.className("toast-success")));
 			present = true;
 		} catch (NoSuchElementException e) {
 			present = false;

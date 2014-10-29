@@ -46,7 +46,7 @@ import com.google.common.collect.Lists;
 
 /**
  * Unit test for {@link }
- * 
+ *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class UsersControllerTest {
@@ -143,7 +143,7 @@ public class UsersControllerTest {
 		assertEquals(user, model.get("user"));
 		assertEquals(roleString, model.get("systemRole"));
 		assertEquals(true, model.get("canEditUser"));
-		assertEquals(joins, model.get("projects"));
+		assertEquals(joins.size(), ((List) model.get("projects")).size());
 
 		verify(userService).read(userId);
 		verify(userService).getUserByUsername(USER_NAME);

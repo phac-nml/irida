@@ -32,7 +32,8 @@
     "json2": "*",
     "html5shiv": "3.7.2",
     "respondJs": "1.4.2",
-    "angular-resource": "1.2.25"
+    "angular-resource": "1.2.25",
+    "AngularJS-Toaster": "0.4.8"
   },
   "devDependencies": {},
   "resolutions": {
