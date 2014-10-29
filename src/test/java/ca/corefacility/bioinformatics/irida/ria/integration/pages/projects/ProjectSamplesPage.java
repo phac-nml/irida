@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilit
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectSamplesPage {
-	public static final String DATE_FORMAT = "dd MMM YYYY";
 	private static final String URL = BasePage.URL + "/projects/1/samples";
 	private PageUtilities pageUtilities;
 	private WebDriver driver;
@@ -57,20 +56,24 @@ public class ProjectSamplesPage {
 
 	public void clickPreviousPageButton() {
 		driver.findElements(By.cssSelector(".pagination li>a")).get(1).click();
+		BasePage.waitForTime();
 	}
 
 	public void clickFirstPageButton() {
 		driver.findElements(By.cssSelector(".pagination li>a")).get(0).click();
+		BasePage.waitForTime();
 	}
 
 	public void clickNextPageButton() {
 		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li>a"));
 		links.get(links.size() - 2).click();
+		BasePage.waitForTime();
 	}
 
 	public void clickLastPageButton() {
 		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li>a"));
 		links.get(links.size()-1).click();
+		BasePage.waitForTime();
 	}
 
 	public boolean isPreviousButtonEnabled() {
