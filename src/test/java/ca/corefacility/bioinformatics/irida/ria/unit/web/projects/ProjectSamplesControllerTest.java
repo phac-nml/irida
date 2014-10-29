@@ -41,7 +41,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleFilterSpecification;
 import ca.corefacility.bioinformatics.irida.ria.components.ProjectSamplesCart;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -49,24 +48,15 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public class ProjectSamplesControllerTest {
 	public static final String PROJECT_ORGANISM = "E. coli";
-	// DATATABLES position for project information
-	// private static final int PROJECT_NAME_TABLE_LOCATION = 1;
-	// private static final int PROJECT_NUM_SAMPLES_TABLE_LOCATION = 4;
-	// private static final int PROJECT_NUM_USERS_TABLE_LOCATION = 5;
-	// private static final long NUM_TOTAL_ELEMENTS = 100L;
 	private static final String USER_NAME = "testme";
 	private static final User user = new User(USER_NAME, null, null, null, null, null);
 	private static final String PROJECT_NAME = "test_project";
 	private static final Long PROJECT_ID = 1L;
 	private static final Long PROJECT_MODIFIED_DATE = 1403723706L;
-	private static final ImmutableList<String> REQUIRED_DATATABLE_RESPONSE_PARAMS = ImmutableList.of(
-			DataTable.RESPONSE_PARAM_DATA, DataTable.RESPONSE_PARAM_DRAW, DataTable.RESPONSE_PARAM_RECORDS_FILTERED,
-			DataTable.RESPONSE_PARAM_RECORDS_FILTERED, DataTable.RESPONSE_PARAM_SORT_COLUMN);
 	private static Project project = null;
 	// Services
 	private ProjectService projectService;
@@ -142,15 +132,6 @@ public class ProjectSamplesControllerTest {
 		}
 
 		return new PageImpl<>(psjList);
-	}
-
-	/**
-	 * Check the response for DataTable calls
-	 */
-	private void checkAjaxDataTableResponse(Map<String, Object> response) {
-		for (String param : REQUIRED_DATATABLE_RESPONSE_PARAMS) {
-			assertTrue("Response has the key '" + param + "'", response.containsKey(param));
-		}
 	}
 
 	@Test
@@ -395,5 +376,4 @@ public class ProjectSamplesControllerTest {
 		assertTrue("Has a key of 'createdDate'", sample.containsKey("createdDate"));
 		assertEquals("Has the first sample name", "sample0", sample.get("name"));
 	}
-
 }
