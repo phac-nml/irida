@@ -26,9 +26,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
- * <p>
- * Integration test to ensure that the Project Details Page.
- * </p>
+ * <p> Integration test to ensure that the Project Details Page. </p>
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
@@ -101,7 +99,7 @@ public class ProjectSamplesPageIT {
 		page.clickNextPageButton();
 		assertEquals(2, page.getGetSelectedPageNumber());
 		page.clickNextPageButton();
-		assertEquals(3 , page.getGetSelectedPageNumber());
+		assertEquals(3, page.getGetSelectedPageNumber());
 
 		// First and List page buttons
 		page.clickFirstPageButton();
@@ -111,5 +109,19 @@ public class ProjectSamplesPageIT {
 		assertEquals(3, page.getGetSelectedPageNumber());
 		assertFalse(page.isLastButtonEnabled());
 		assertTrue(page.isFirstButtonEnabled());
+		assertEquals(5, page.getNumberOfSamplesDisplayed());
+	}
+
+	@Test
+	public void testSelectSamples() {
+		page.goTo();
+
+		assertEquals(0, page.getNumberOfSamplesSelected());
+		page.selectSampleByRow(0);
+		page.selectSampleByRow(1);
+		page.selectSampleByRow(2);
+		assertEquals(3, page.getNumberOfSamplesSelected());
+		page.selectSampleByRow(1);
+		assertEquals(2, page.getNumberOfSamplesSelected());
 	}
 }

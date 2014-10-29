@@ -10,9 +10,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
 
 /**
- * <p>
- * Page Object to represent the project samples page.
- * </p>
+ * <p> Page Object to represent the project samples page. </p>
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
@@ -72,7 +70,7 @@ public class ProjectSamplesPage {
 
 	public void clickLastPageButton() {
 		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li>a"));
-		links.get(links.size()-1).click();
+		links.get(links.size() - 1).click();
 		BasePage.waitForTime();
 	}
 
@@ -91,6 +89,15 @@ public class ProjectSamplesPage {
 
 	public boolean isLastButtonEnabled() {
 		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li"));
-		return !links.get(links.size()-1).getAttribute("class").contains("disabled");
+		return !links.get(links.size() - 1).getAttribute("class").contains("disabled");
+	}
+
+	public int getNumberOfSamplesSelected() {
+		return driver.findElements(By.cssSelector(".sample-select:checked")).size();
+	}
+
+	public void selectSampleByRow(int row) {
+		List<WebElement> inputs = driver.findElements(By.className("sample-select"));
+		inputs.get(row).click();
 	}
 }

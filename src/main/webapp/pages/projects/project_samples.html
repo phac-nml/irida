@@ -28,7 +28,7 @@
 				</thead>
 				<tbody>
 				<tr class="sample-row" ng-repeat="sample in table.samples">
-					<td><input type="checkbox" ng-checked="sample.selected" ng-click="table.addSample(sample)"/></td>
+					<td><input class="sample-select" type="checkbox" ng-checked="sample.selected" ng-click="table.addSample(sample)"/></td>
 					<td ng-bind="sample.name"></td>
 					<td ng-bind="sample.organism"></td>
 					<td ng-bind="sample.createdDate | date:'medium'"></td>
