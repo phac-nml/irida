@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
@@ -58,7 +59,57 @@ public class ProjectSamplesPageIT {
 	public void testInitialPageSetUp() {
 		page.goTo();
 		assertTrue(page.getTitle().contains("Samples"));
-		assertEquals(5, page.getNumberOfSamplesDisplayed());
+		assertEquals(10, page.getNumberOfSamplesDisplayed());
+	}
 
+	@Test
+	public void testPaging() {
+		page.goTo();
+
+		// Initial setup
+		assertFalse(page.isFirstButtonEnabled());
+		assertFalse(page.isPreviousButtonEnabled());
+		assertTrue(page.isNextButtonEnabled());
+		assertTrue(page.isLastButtonEnabled());
+		assertEquals(1, page.getGetSelectedPageNumber());
+
+		// Second Page
+		page.selectPage(2);
+		assertEquals(2, page.getGetSelectedPageNumber());
+		assertTrue(page.isFirstButtonEnabled());
+		assertTrue(page.isPreviousButtonEnabled());
+		assertTrue(page.isNextButtonEnabled());
+		assertTrue(page.isLastButtonEnabled());
+		assertEquals(10, page.getNumberOfSamplesDisplayed());
+
+		// Third Page (1 element)
+		page.selectPage(3);
+		assertTrue(page.isFirstButtonEnabled());
+		assertTrue(page.isPreviousButtonEnabled());
+		assertFalse(page.isNextButtonEnabled());
+		assertFalse(page.isLastButtonEnabled());
+		assertEquals(3, page.getGetSelectedPageNumber());
+		assertEquals(1, page.getNumberOfSamplesDisplayed());
+
+		// Previous Button
+		page.clickPreviousPageButton();
+		assertEquals(2, page.getGetSelectedPageNumber());
+		page.clickPreviousPageButton();
+		assertEquals(1, page.getGetSelectedPageNumber());
+
+		// Next Button
+		page.clickNextPageButton();
+		assertEquals(2, page.getGetSelectedPageNumber());
+		page.clickNextPageButton();
+		assertEquals(3 , page.getGetSelectedPageNumber());
+
+		// First and List page buttons
+		page.clickFirstPageButton();
+		assertEquals(1, page.getGetSelectedPageNumber());
+		assertFalse(page.isFirstButtonEnabled());
+		page.clickLastPageButton();
+		assertEquals(3, page.getGetSelectedPageNumber());
+		assertFalse(page.isLastButtonEnabled());
+		assertTrue(page.isFirstButtonEnabled());
 	}
 }

@@ -8,6 +8,7 @@
 <body>
 <main layout:fragment="main">
 	<input id="projectId" type="hidden" th:value="${project.getId()}"/>
+
 	<div class="row">
 		<div class="col-md-12">
 			<h1 role="heading" th:text="#{project.samples.h1(${project.label})}">__PAGE_TITLE__</h1>
@@ -32,6 +33,14 @@
 					<td ng-bind="sample.files.length"></td>
 				</tr>
 				</tbody>
+				<tfoot>
+				<tr>
+					<td colspan="4" class="text-center">
+						<div pagination="" ng-controller="PagingCtrl as paging" ng-model="paging.page" items-per-page="paging.count"
+						     total-items="paging.total" ng-change="paging.update()"></div>
+					</td>
+				</tr>
+				</tfoot>
 			</table>
 		</div>
 	</div>
@@ -42,7 +51,7 @@
 		/*<![CDATA[*/
 		var SamplesApp = angular.module('Samples', []);
 
-		SamplesApp.service('SamplesService', ['Restangular', function (R) {
+		SamplesApp.service('SamplesService', ['$rootScope', 'Restangular', function ($rootScope, R) {
 			"use strict";
 			var svc = this,
 					id = angular.element("#projectId").val(),
@@ -59,10 +68,27 @@
 
 			svc.getSamples = function (f) {
 				_.extend(svc.filter, f || {});
-				base.customGET("", svc.filter).then(function(data) {
+				base.customGET("", svc.filter).then(function (data) {
 					angular.copy(data.samples, svc.samples);
+					$rootScope.$broadcast('PAGING_UPDATE', {total: data.totalSamples});
 				});
 			};
+		}]);
+
+		SamplesApp.controller('PagingCtrl', ['$scope', 'SamplesService', function ($scope, SamplesService) {
+			"use strict";
+			var vm = this;
+			vm.count = 10;
+			vm.total = 0;
+			vm.page = 1;
+
+			vm.update = function () {
+				SamplesService.getSamples({page: vm.page - 1, count: vm.count})
+			};
+
+			$scope.$on('PAGING_UPDATE', function (e, args) {
+				vm.total = args.total;
+			});
 		}]);
 
 		SamplesApp.controller('SamplesTableCtrl', ['SamplesService', function (SamplesService) {

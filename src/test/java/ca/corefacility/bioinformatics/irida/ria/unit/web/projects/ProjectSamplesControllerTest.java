@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
@@ -39,7 +38,9 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleFilterSpecification;
 import ca.corefacility.bioinformatics.irida.ria.components.ProjectSamplesCart;
+import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesController;
@@ -359,25 +360,30 @@ public class ProjectSamplesControllerTest {
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void testGetAjaxProjectSamplesMap() {
-		Project project = getProject();
+		Project project = TestDataFactory.constructProject();
+		Sample testSample = TestDataFactory.constructSample();
 		Page<ProjectSampleJoin> page = getSamplesForProjectPage(project);
 
 		when(projectService.read(anyLong())).thenReturn(project);
-		when(
-				sampleService.getSamplesForProjectWithName(any(Project.class), anyString(), anyInt(), anyInt(), any(),
-						anyString())).thenReturn(page);
+		Specification<ProjectSampleJoin> specification = ProjectSampleFilterSpecification
+				.searchProjectSamples(any(Project.class), any(String.class), any(String.class), any(Date.class),
+						any(Date.class));
+		when(sampleService.searchProjectSamples(specification, 10, 0, Direction.ASC, "dateCreated")).thenReturn(page);
 		when(sequenceFileService.getSequenceFilesForSample(any(Sample.class))).thenReturn(getSequenceFilesForSample());
+		when(sequenceFileService.getSequenceFilesForSample(any(Sample.class))).thenReturn(
+				TestDataFactory.generateSequenceFilesForSample(testSample));
 
 		Map<String, Object> response = controller.getProjectSamples(1L, 0, 10, "asc", "dateCreated", null, null, null, null);
 
 		// Make sure it has the expected keys:
-		checkAjaxDataTableResponse(response);
+		assertTrue("Has a list of samples", response.containsKey("samples"));
+		assertTrue("Has the total number of samples", response.containsKey("totalSamples"));
 
 		// Check out the samples
-		Object listObject = response.get(DataTable.RESPONSE_PARAM_DATA);
+		Object listObject = response.get("samples");
 		assertTrue("Samples list really is a list", listObject instanceof List);
-		@SuppressWarnings("unchecked")
 		List<HashMap<String, Object>> samplesList = (List<HashMap<String, Object>>) listObject;
 
 		assertEquals("Has the correct number of samples", 10, samplesList.size());
@@ -385,7 +391,7 @@ public class ProjectSamplesControllerTest {
 		HashMap<String, Object> sample = samplesList.get(0);
 		assertTrue("Has a key of 'id'", sample.containsKey("id"));
 		assertTrue("Has a key of 'name'", sample.containsKey("name"));
-		assertTrue("Has a key of 'numFiles'", sample.containsKey("numFiles"));
+		assertTrue("Has a key of 'numFiles'", sample.containsKey("files"));
 		assertTrue("Has a key of 'createdDate'", sample.containsKey("createdDate"));
 		assertEquals("Has the first sample name", "sample0", sample.get("name"));
 	}

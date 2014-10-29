@@ -1,7 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
@@ -42,4 +45,49 @@ public class ProjectSamplesPage {
 		return driver.findElements(By.className("sample-row")).size();
 	}
 
+	public int getGetSelectedPageNumber() {
+		return Integer.parseInt(driver.findElement(By.cssSelector(".pagination li.active")).getText());
+	}
+
+	public void selectPage(int pageNum) {
+		pageNum += 1; // 0 == First Button, 1 == Previous Button
+		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li"));
+		links.get(pageNum).findElement(By.tagName("a")).click();
+	}
+
+	public void clickPreviousPageButton() {
+		driver.findElements(By.cssSelector(".pagination li>a")).get(1).click();
+	}
+
+	public void clickFirstPageButton() {
+		driver.findElements(By.cssSelector(".pagination li>a")).get(0).click();
+	}
+
+	public void clickNextPageButton() {
+		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li>a"));
+		links.get(links.size() - 2).click();
+	}
+
+	public void clickLastPageButton() {
+		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li>a"));
+		links.get(links.size()-1).click();
+	}
+
+	public boolean isPreviousButtonEnabled() {
+		return !driver.findElements(By.cssSelector(".pagination li")).get(1).getAttribute("class").contains("disabled");
+	}
+
+	public boolean isFirstButtonEnabled() {
+		return !driver.findElements(By.cssSelector(".pagination li")).get(0).getAttribute("class").contains("disabled");
+	}
+
+	public boolean isNextButtonEnabled() {
+		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li"));
+		return !links.get(links.size() - 2).getAttribute("class").contains("disabled");
+	}
+
+	public boolean isLastButtonEnabled() {
+		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li"));
+		return !links.get(links.size()-1).getAttribute("class").contains("disabled");
+	}
 }
