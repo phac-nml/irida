@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -11,6 +12,8 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Base64;
+import java.util.Locale;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +25,7 @@ import org.springframework.ui.ExtendedModelMap;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.utilities.EmailController;
 import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
@@ -149,5 +153,20 @@ public class PasswordResetControllerTest {
 
 		verify(userService).loadUserByEmail(email);
 		verifyZeroInteractions(emailController);
+	}
+
+	@Test
+	public void testAdminNewPasswordReset() {
+		User user = TestDataFactory.constructUser();
+		when(userService.read(TestDataFactory.USER_ID)).thenReturn(user);
+		when(messageSource
+				.getMessage(anyString(), any(), any(Locale.class)))
+				.thenReturn("Anything can work here");
+		Map<String, Object> result = controller.adminNewPasswordReset(TestDataFactory.USER_ID, Locale.US);
+		assertTrue(result.containsKey("message"));
+		assertTrue(result.containsKey("title"));
+		assertTrue(result.containsKey("success"));
+		verify(userService).read(TestDataFactory.USER_ID);
+		verify(emailController).sendPasswordResetLinkEmail(any(User.class), any(PasswordReset.class));
 	}
 }
