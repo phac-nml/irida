@@ -112,13 +112,14 @@ public class ProjectSamplesController {
 
 	/**
 	 * Get the samples for a given project
-	 * 
+	 *
 	 * @param model
-	 *            A model for the sample list view
+	 * 		A model for the sample list view
 	 * @param principal
-	 *            The user reading the project
+	 * 		The user reading the project
 	 * @param projectId
-	 *            The ID of the project
+	 * 		The ID of the project
+	 *
 	 * @return Name of the project samples list view
 	 */
 	@RequestMapping("/{projectId}/samples")
@@ -154,6 +155,7 @@ public class ProjectSamplesController {
 	 * 		Not required.  The minimum date to filter by.
 	 * @param maxDate
 	 * 		Not required.  The maximum date to filter by.
+	 *
 	 * @return A map containing a list of pages samples.
 	 */
 	@RequestMapping(value = "/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
@@ -179,13 +181,14 @@ public class ProjectSamplesController {
 
 		Specification<ProjectSampleJoin> specification = ProjectSampleFilterSpecification
 				.searchProjectSamples(project, name, organism, minDate, maxDate);
-		Page<ProjectSampleJoin> projectSampleJoinPage = sampleService.searchProjectSamples(specification, page, count, direction, sortedBy);
+		Page<ProjectSampleJoin> projectSampleJoinPage = sampleService
+				.searchProjectSamples(specification, page, count, direction, sortedBy);
 
 		List<Map<String, Object>> samples = new ArrayList<>();
 		int selectedCount = 0;
 		for (Join<Project, Sample> join : projectSampleJoinPage.getContent()) {
 			Sample sample = join.getObject();
-			Map<String, Object> map = _generateUISample(sample);
+			Map<String, Object> map = _generateUISample(projectId, sample);
 			map.put("createdDate", String.valueOf(join.getCreatedDate().getTime()));
 			if (map.get("selected").equals(true)) {
 				selectedCount++;
@@ -201,41 +204,22 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Get the ids of all sampes on the given project
-	 * 
-	 * @param projectId
-	 *            the ID of the project
-	 * @return Map<String,List<String>> containing list of the ids
-	 */
-	@RequestMapping(value = "/ajax/{projectId}/samples/getids", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, List<String>> getAllProjectSampleIds(@PathVariable Long projectId) {
-		Project project = projectService.read(projectId);
-		List<String> sampleIdList = new ArrayList<>();
-		List<Join<Project, Sample>> psj = sampleService.getSamplesForProject(project);
-		for (Join<Project, Sample> join : psj) {
-			sampleIdList.add(join.getObject().getId().toString());
-		}
-		Map<String, List<String>> result = new HashMap<>();
-		result.put("ids", sampleIdList);
-		return result;
-	}
-
-	/**
 	 * Search for projects available for a user to copy samples to. If the user
 	 * is an admin it will show all projects.
 	 *
 	 * @param projectId
-	 *            The current project id
+	 * 		The current project id
 	 * @param term
-	 *            A search term
+	 * 		A search term
 	 * @param pageSize
-	 *            The size of the page requests
+	 * 		The size of the page requests
 	 * @param page
-	 *            The page number (0 based)
+	 * 		The page number (0 based)
 	 * @param principal
-	 *            The logged in user.
+	 * 		The logged in user.
+	 *
 	 * @return a Map<String,Object> containing: total: total number of elements
-	 *         results: A Map<Long,String> of project IDs and project names.
+	 * results: A Map<Long,String> of project IDs and project names.
 	 */
 	@RequestMapping(value = "/ajax/{projectId}/samples/available_projects")
 	@ResponseBody
@@ -273,14 +257,15 @@ public class ProjectSamplesController {
 	 * Copy or move samples from one project to another
 	 *
 	 * @param projectId
-	 *            The original project id
+	 * 		The original project id
 	 * @param sampleIds
-	 *            The sample ids to move
+	 * 		The sample ids to move
 	 * @param newProjectId
-	 *            The new project id
+	 * 		The new project id
 	 * @param removeFromOriginal
-	 *            true/false whether to remove the samples from the original
-	 *            project
+	 * 		true/false whether to remove the samples from the original
+	 * 		project
+	 *
 	 * @return A list of warnings
 	 */
 	@RequestMapping(value = "/ajax/{projectId}/samples/copy")
@@ -327,9 +312,10 @@ public class ProjectSamplesController {
 	 * Remove a list of samples from a a Project.
 	 *
 	 * @param projectId
-	 *            Id of the project to remove the samples from
+	 * 		Id of the project to remove the samples from
 	 * @param sampleIds
-	 *            An array of samples to remove from a project
+	 * 		An array of samples to remove from a project
+	 *
 	 * @return Map containing either success or errors.
 	 */
 	@RequestMapping(value = "/ajax/{projectId}/samples/delete", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
@@ -355,13 +341,14 @@ public class ProjectSamplesController {
 	 * new name if provided, or into the selected sample based on the id.
 	 *
 	 * @param projectId
-	 *            The id for the project the samples belong to.
+	 * 		The id for the project the samples belong to.
 	 * @param sampleIds
-	 *            A list of sample ids for samples to merge.
+	 * 		A list of sample ids for samples to merge.
 	 * @param mergeSampleId
-	 *            (Optional) The id of the sample to merge the other into.
+	 * 		(Optional) The id of the sample to merge the other into.
 	 * @param newName
-	 *            (Optional) The new name for the final sample.
+	 * 		(Optional) The new name for the final sample.
+	 *
 	 * @return
 	 */
 	@RequestMapping(value = "/ajax/{projectId}/samples/merge", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -405,11 +392,28 @@ public class ProjectSamplesController {
 	}
 
 	/**
+	 * Add a sample to the project sample cart
+	 *
+	 * @param sampleId
+	 * 		Sample id to add to cart.
+	 * @return The updated count for the number of samples in the project and the updated sample.
+	 */
+	@RequestMapping(value = "/{projectId}/ajax/samples/cart/add/sample", method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> addSampleToCart(@PathVariable Long projectId, @RequestParam Long sampleId) {
+		int count = this.cart.addSampleToCart(projectId, sampleId);
+		Map<String, Object> response = new HashMap<>();
+		response.put("count", count);
+		response.put("sample", _generateUISample(projectId, sampleService.read(sampleId)));
+		return response;
+	}
+
+	/**
 	 * Changes a {@link ConstraintViolationException} to a usable map of strings
 	 * for displaing in the UI.
 	 *
 	 * @param e
-	 *            {@link ConstraintViolationException} for the form submitted.
+	 * 		{@link ConstraintViolationException} for the form submitted.
+	 *
 	 * @return Map of string {fieldName, error}
 	 */
 	private Map<String, String> getErrorsFromViolationException(ConstraintViolationException e) {
@@ -427,11 +431,12 @@ public class ProjectSamplesController {
 	 *
 	 * @param sample
 	 * 		A {@link Sample}
+	 *
 	 * @return
 	 */
-	private Map<String, Object> _generateUISample(Sample sample) {
+	private Map<String, Object> _generateUISample(Long projectId, Sample sample) {
 		Map<String, Object> map = new HashMap<>();
-		boolean sampleSelected = cart.isSampleSelected(sample.getId());
+		boolean sampleSelected = cart.isSampleInCart(projectId, sample.getId());
 		map.put("selected", sampleSelected);
 		map.put("id", sample.getId().toString());
 		map.put("name", sample.getSampleName());
@@ -444,8 +449,9 @@ public class ProjectSamplesController {
 			SequenceFile f = join1.getObject();
 			Map<String, Object> m = new HashMap<>();
 			m.put("id", f.getId());
-			boolean selected = f.getId() != null && cart.isFileSelected(sample.getId(), f.getId());
-			if (selected) selectCount++;
+			boolean selected = f.getId() != null && cart.isFileInCart(projectId, sample.getId(), f.getId());
+			if (selected)
+				selectCount++;
 			m.put("selected", selected);
 			m.put("name", f.getLabel());
 			Long realSize = 0L;

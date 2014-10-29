@@ -18,6 +18,7 @@
 			<table id="samplesTable" class="table">
 				<thead>
 				<tr>
+					<th></th>
 					<th th:text="#{project.samples.table.name}">__NAME__</th>
 					<th th:text="#{project.samples.table.organism}">__NAME__</th>
 					<th th:text="#{project.samples.table.created}">__NAME__</th>
@@ -26,6 +27,7 @@
 				</thead>
 				<tbody>
 				<tr class="sample-row" ng-repeat="sample in table.samples">
+					<td><input type="checkbox" ng-checked="sample.selected" ng-click="table.addSample(sample)"/></td>
 					<td ng-bind="sample.name"></td>
 					<td ng-bind="sample.organism"></td>
 					<td ng-bind="sample.createdDate | date:'medium'"></td>
@@ -63,6 +65,10 @@
 					angular.copy(data.samples, svc.samples);
 				});
 			};
+
+			svc.addSample = function (s) {
+				return base.customPOST({sampleId: s.id}, 'cart/add/sample');
+			};
 		}]);
 
 		SamplesApp.controller('SamplesTableCtrl', ['SamplesService', function (SamplesService) {
@@ -70,6 +76,10 @@
 			var vm = this;
 
 			vm.samples = SamplesService.samples;
+
+			vm.addSample = function(s) {
+				SamplesService.addSample(s);
+			};
 
 			SamplesService.getSamples({});
 		}]);

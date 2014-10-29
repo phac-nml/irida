@@ -1,19 +1,21 @@
 package ca.corefacility.bioinformatics.irida.ria.components;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -22,9 +24,11 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Component
+@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ProjectSamplesCart {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectSamplesCart.class);
-	private Map<Long, Map<Long, Boolean>> _cart;
+	// project.id >> sample.id >> file.id
+	private Map<Long, Map<Long, Map<Long, Boolean>>> _cart;
 
 	/*
 	 * SERVICES
@@ -33,175 +37,119 @@ public class ProjectSamplesCart {
 	private SequenceFileService sequenceFileService;
 
 	@Autowired
-	public ProjectSamplesCart(SampleService sampleService, SequenceFileService sequenceFileService) {
+	public ProjectSamplesCart(SampleService sampleService,
+			SequenceFileService sequenceFileService) {
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
 		_cart = new HashMap<>();
 	}
 
 	/**
-	 * Clear the cart.
-	 */
-	public void empty() {
-		_cart.clear();
-	}
-
-	/**
-	 * Add a sample id to the cart. Should not be able to add the sample id twice.  If the same one is added, all the
-	 * files are checked to make sure they are selected as well.
+	 * Add a specific sample to the cart within a project.
 	 *
+	 * @param projectId
+	 * 		the id for a {@link Project}
 	 * @param sampleId
-	 * 		The id for the sample to add.
-	 * @return The number of samples in the cart.
+	 * 		the id for a {@link Sample}
+	 *
+	 * @return The number of samples selected in the project.
 	 */
-	public int addSampleToCart(Long sampleId) {
-		if (_cart.containsKey(sampleId)) {
-			Map<Long, Boolean> files = _cart.get(sampleId);
-			for (Long key : files.keySet()) {
-				files.put(key, true);
-			}
-		} else {
-			_cart.put(sampleId, _generateFileMap(sampleId, true));
+	public int addSampleToCart(Long projectId, Long sampleId) {
+		if (!_cart.containsKey(projectId)) {
+			_cart.put(projectId, new HashMap<>());
 		}
-		return _cart.size();
+
+		// Get the project specific samples map
+		Map<Long, Map<Long, Boolean>> samplesMap = _cart.get(projectId);
+
+		if (samplesMap.containsKey(sampleId)) {
+			selectAllFilesInSample(samplesMap.get(sampleId));
+		} else {
+			samplesMap.put(sampleId, generateFileMap(sampleId));
+		}
+		return samplesMap.size();
 	}
 
 	/**
-	 * Remove a sample id from the cart.
+	 * Remove a specific sample to the cart within a project.
 	 *
+	 * @param projectId
+	 * 		the id for a {@link Project}
 	 * @param sampleId
-	 * 		Id to remove
-	 * @return The number of samples in the cart.
-	 */
-	public int removeSampleFromCart(Long sampleId) {
-		_cart.remove(sampleId);
-		return _cart.size();
-	}
-
-	/**
-	 * Mark a sequence file as inactive.
+	 * 		the id for a {@link Sample}
 	 *
-	 * @param sampleId
-	 * 		Id for the sample that contains the sequence file.
-	 * @param fileId
-	 * 		Id for the file.
-	 * @return The number of files that are active.
+	 * @return The number of samples selected in the project.
 	 */
-	public int markSequenceFileAsInactive(Long sampleId, Long fileId) {
-		// To omit a file, the sample should already be in the cart.
-		// Or it really doesn't matter.
-		if (!_cart.containsKey(sampleId)) {
-			logger.error("Trying to inactivate file in a non-selected sample with id ", sampleId);
+	public int removeSampleFromCart(Long projectId, Long sampleId) {
+		if (!_cart.containsKey(projectId)) {
+			logger.error("Trying to remove a sample from a project not selected");
 			return 0;
 		}
-		Map<Long, Boolean> files = _cart.get(sampleId);
-		files.put(fileId, false);
-		int count = files.size();
 
-		// If count is 0 than the sample should not be selected
-		if (count == 0) {
-			_cart.remove(sampleId);
-		}
-		return count;
+		// Get the project specific samples map
+		Map<Long, Map<Long, Boolean>> samplesMap = _cart.get(projectId);
+		samplesMap.remove(sampleId);
+		return samplesMap.size();
 	}
 
 	/**
-	 * Mark a file as active. File must have been previously inactivated or sample was not selected.
+	 * Determine if a sample is in the cart for a project.
 	 *
+	 * @param projectId
+	 * 		the id for a {@link Project}
 	 * @param sampleId
-	 * 		Id for the sample that contains the file.
-	 * @param fileId
-	 * 		Id for the file.
-	 * @return The number of files that are active.x
-	 */
-	public int markSequenceFileAsActive(Long sampleId, Long fileId) {
-		// Check to see if the sample is in the cart yet.
-		if (!_cart.containsKey(sampleId)) {
-			_cart.put(sampleId, _generateFileMap(sampleId, false));
-		}
-		int count = 0;
-		Map<Long, Boolean> files = _cart.get(sampleId);
-		for (Long id : files.keySet()) {
-			if (id.equals(fileId)) {
-				count++;
-				files.put(id, true);
-			} else if (files.get(id).equals(true)) {
-				count++;
-			}
-		}
-		return count;
-	}
-
-	/**
-	 * Get a list of the files selected for a given file.
+	 * 		the id for a {@link Sample}
 	 *
-	 * @param sampleId
-	 * 		Id for the sample.
-	 * @return List of file ids
+	 * @return True if the sample is in the cart.
 	 */
-	public List<Long> getSelectedFilesForSample(Long sampleId) {
-		if (!_cart.containsKey(sampleId)) {
-			return new ArrayList<>(0);
-		} else {
-			List<Long> selected = new ArrayList<>();
-			Map<Long, Boolean> files = _cart.get(sampleId);
-			selected.addAll(files.keySet().stream().filter(id -> files.get(id)).collect(Collectors.toList()));
-			return selected;
-		}
-	}
-
-	/**
-	 * Determine if a sample is in the cart.
-	 *
-	 * @param sampleId
-	 * 		Id for the sample to check.
-	 * @return True if sample in the cart.
-	 */
-	public boolean isSampleSelected(long sampleId) {
-		return _cart.containsKey(sampleId);
-	}
-
-	/**
-	 * Determine if a file is in the cart.
-	 *
-	 * @param sampleId
-	 * 		Id for the sample that the file should be in.
-	 * @param fileId
-	 * 		Id for the file.
-	 * @return True if the file is in the cart.
-	 */
-	public boolean isFileSelected(long sampleId, long fileId) {
-		if (!_cart.containsKey(sampleId)) {
+	public boolean isSampleInCart(Long projectId, Long sampleId) {
+		if (!_cart.containsKey(projectId)) {
 			return false;
-		} else {
-			return _cart.get(sampleId).get(fileId);
 		}
+		Map<Long, Map<Long, Boolean>> samplesMap = _cart.get(projectId);
+		return samplesMap.containsKey(sampleId);
 	}
 
 	/**
-	 * Get a list of all sample ids in the cart.
+	 * Determine if a file in a sample if a project is in the cart
 	 *
-	 * @return List of sample ids.
+	 * @param projectId
+	 * 		the id for a {@link Project}
+	 * @param sampleId
+	 * 		the id for a {@link Sample}
+	 *
+	 * @return True if the file is active
 	 */
-	public Set<Long> getSelectedSampleIds() {
-		return _cart.keySet();
+	public boolean isFileInCart(Long projectId, Long sampleId, Long fileId) {
+		return true;
 	}
 
 	/**
-	 * Get the number of samples in the cart.
+	 * Get a list of all the samples in the caret
 	 *
-	 * @return The number of samples in the cart.
+	 * @param projectId
+	 * 		the id for a {@link Project}
+	 *
+	 * @return List of all samples in the cart for the project.
 	 */
-	public int getSelectedCount() {
-		return _cart.size();
+	public Set<Long> getSelectedSamples(Long projectId) {
+		if (_cart.containsKey(projectId)) {
+			return _cart.get(projectId).keySet();
+		}
+		return new HashSet<>();
 	}
 
-	private Map<Long, Boolean> _generateFileMap(Long sampleId, boolean selected) {
-		Sample sample = sampleService.read(sampleId);
-		Map<Long, Boolean> fileMap = new HashMap<>();
-		for (Join<Sample, SequenceFile> join : sequenceFileService.getSequenceFilesForSample(sample)) {
-			fileMap.put(join.getObject().getId(), selected);
+	private Map<Long, Boolean> generateFileMap(Long sampleId) {
+		Map<Long, Boolean> result = new HashMap<>();
+		List<Join<Sample, SequenceFile>> list = sequenceFileService
+				.getSequenceFilesForSample(sampleService.read(sampleId));
+		for (Join<Sample, SequenceFile> join : list) {
+			result.put(join.getObject().getId(), true);
 		}
-		return fileMap;
+		return result;
+	}
+
+	private void selectAllFilesInSample(Map<Long, Boolean> map) {
+		map.keySet().forEach(id -> map.put(id, true));
 	}
 }
