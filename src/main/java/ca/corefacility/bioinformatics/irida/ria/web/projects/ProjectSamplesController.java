@@ -166,6 +166,8 @@ public class ProjectSamplesController {
 			@RequestParam(required = false) String organism,
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date minDate,
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date maxDate) {
+		// Since the UI does not know about the structure of the database on Joins this map
+		// is used to convert what the UI has with the actual name required for the specification to work.
 		Map<String, String> sortLookUp = ImmutableMap.of(
 				"name", "sample.sampleName",
 				"organism", "sample.organism",

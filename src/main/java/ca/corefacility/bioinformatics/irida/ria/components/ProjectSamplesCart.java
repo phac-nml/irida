@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
  */
 @Component
 public class ProjectSamplesCart {
+	private static final Logger logger = LoggerFactory.getLogger(ProjectSamplesCart.class);
 	private Map<Long, Map<Long, Boolean>> _cart;
 
 	/*
@@ -88,6 +91,7 @@ public class ProjectSamplesCart {
 		// To omit a file, the sample should already be in the cart.
 		// Or it really doesn't matter.
 		if (!_cart.containsKey(sampleId)) {
+			logger.error("Trying to inactivate file in a non-selected sample with id ", sampleId);
 			return 0;
 		}
 		Map<Long, Boolean> files = _cart.get(sampleId);
