@@ -1,7 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
@@ -42,4 +45,12 @@ public class ProjectSamplesPage {
 		return driver.findElements(By.className("sample-row")).size();
 	}
 
+	public int getNumberOfSamplesSelected() {
+		return driver.findElements(By.cssSelector(".sample-select:checked")).size();
+	}
+
+	public void selectSampleByRow(int row) {
+		List<WebElement> inputs = driver.findElements(By.className("sample-select"));
+		inputs.get(row).click();
+	}
 }

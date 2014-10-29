@@ -59,6 +59,18 @@ public class ProjectSamplesPageIT {
 		page.goTo();
 		assertTrue(page.getTitle().contains("Samples"));
 		assertEquals(5, page.getNumberOfSamplesDisplayed());
+	}
 
+	@Test
+	public void testSelectSamples() {
+		page.goTo();
+
+		assertEquals(0, page.getNumberOfSamplesSelected());
+		page.selectSampleByRow(0);
+		page.selectSampleByRow(1);
+		page.selectSampleByRow(2);
+		assertEquals(3, page.getNumberOfSamplesSelected());
+		page.selectSampleByRow(1);
+		assertEquals(2, page.getNumberOfSamplesSelected());
 	}
 }
