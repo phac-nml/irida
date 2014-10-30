@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.remote.impl;
 
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,6 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAu
 import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.SequenceFileMessageConverter;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
-import com.google.common.collect.Lists;
-
 /**
  * Implementation of {@link SequenceFileRemoteRepository} using
  * {@link OAuthTokenRestTemplate} for making requests
@@ -48,6 +47,8 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Remot
 	// temporary directory for storing downloaded files
 	private final Path tempDirectory;
 
+	public static final MediaType DEFAULT_DOWNLOAD_MEDIA_TYPE = new MediaType("application", "fastq");
+
 	/**
 	 * Create a new SequenceFileRemoteRepositoryImpl
 	 * 
@@ -64,10 +65,9 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Remot
 		this.tokenService = tokenService;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public Path downloadRemoteSequenceFile(RemoteSequenceFile sequenceFile, RemoteAPI remoteAPI) {
+	
+	public Path downloadRemoteSequenceFile(RemoteSequenceFile sequenceFile, RemoteAPI remoteAPI,
+			MediaType... mediaTypes) {
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
 
 		// get the resource's URI
@@ -80,12 +80,20 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Remot
 
 		// add the application/fastq accept header
 		HttpHeaders requestHeaders = new HttpHeaders();
-		requestHeaders.setAccept(Lists.newArrayList(new MediaType("application", "fastq")));
+		requestHeaders.setAccept(Arrays.asList(mediaTypes));
 		HttpEntity<Path> requestEntity = new HttpEntity<Path>(requestHeaders);
 
 		// get the file
 		ResponseEntity<Path> exchange = restTemplate.exchange(uri, HttpMethod.GET, requestEntity, Path.class);
 		return exchange.getBody();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Path downloadRemoteSequenceFile(RemoteSequenceFile sequenceFile, RemoteAPI remoteAPI) {
+		return downloadRemoteSequenceFile(sequenceFile, remoteAPI, DEFAULT_DOWNLOAD_MEDIA_TYPE);
 	}
 
 }
