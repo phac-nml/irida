@@ -9,8 +9,11 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -18,6 +21,7 @@ import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -55,7 +59,6 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
 @Controller
@@ -86,6 +89,7 @@ public class ProjectSamplesController {
 	private final UserService userService;
 	private final SequenceFileService sequenceFileService;
 	private final ProjectControllerUtils projectControllerUtils;
+	private MessageSource messageSource;
 
 	// Components
 	private ProjectSamplesCart cart;
@@ -99,7 +103,7 @@ public class ProjectSamplesController {
 	@Autowired
 	public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
 			UserService userService, SequenceFileService sequenceFileService,
-			ProjectControllerUtils projectControllerUtils, ProjectSamplesCart cart) {
+			ProjectControllerUtils projectControllerUtils, ProjectSamplesCart cart, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
@@ -107,6 +111,7 @@ public class ProjectSamplesController {
 		this.projectControllerUtils = projectControllerUtils;
 		this.dateFormatter = new DateFormatter();
 		this.fileSizeConverter = new FileSizeConverter();
+		this.messageSource = messageSource;
 		this.cart = cart;
 	}
 
@@ -350,43 +355,54 @@ public class ProjectSamplesController {
 	 *
 	 * @return
 	 */
-	@RequestMapping(value = "/ajax/{projectId}/samples/merge", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Object> ajaxSamplesMerge(@PathVariable Long projectId,
-			@RequestParam List<Long> sampleIds, @RequestParam(required = false) Long mergeSampleId,
-			@RequestParam(required = false) String newName) {
+	@RequestMapping(value = "/{projectId}/ajax/samples/merge", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Object> ajaxSamplesMerge(@PathVariable Long projectId, @RequestParam(required = false) Long mergeSampleId,
+			@RequestParam(required = false) String newName, Locale locale) {
 		Map<String, Object> result = new HashMap<>();
+		Set<Long> sampleIds = cart.getSelectedSampleIds(projectId);
+		int samplesMergeCount = sampleIds.size();
 		Project project = projectService.read(projectId);
-		Sample mergeIntoSample = null;
-		// Determine if it is a new name or and existing sample
-		try {
-			if (sampleIds.contains(mergeSampleId)) {
-				mergeIntoSample = sampleService.read(mergeSampleId);
-				sampleIds.remove(mergeSampleId);
-			} else {
-				mergeIntoSample = sampleService.read(sampleIds.remove(0));
-			}
-		} catch (EntityNotFoundException e) {
-			result.put("error", e.getLocalizedMessage());
-
+		// Determine which sample to merge into
+		Sample mergeIntoSample;
+		// 1. Existing Sample
+		if (mergeSampleId != null) {
+			mergeIntoSample = sampleService.read(mergeSampleId);
+			sampleIds.remove(mergeSampleId);
 		}
-		// Rename if a new name is given
-		if (!Strings.isNullOrEmpty(newName)) {
-			Map<String, Object> updateMap = new HashMap<>();
-			updateMap.put("sampleName", newName);
+		// 2. New Sample
+		else {
+			Long id = sampleIds.iterator().next();
+			sampleIds.remove(id);
+			mergeIntoSample = sampleService.read(id);
 			try {
-				mergeIntoSample = sampleService.update(mergeIntoSample.getId(), updateMap);
+				sampleService.update(id, ImmutableMap.of("sampleName", newName));
 			} catch (ConstraintViolationException e) {
-				result.put("error", getErrorsFromViolationException(e));
+				logger.error(e.getLocalizedMessage());
+				result.put("result", "error");
+				result.put("warnings", getErrorsFromViolationException(e));
+				return result;
 			}
 		}
-		if (!result.containsKey("error")) {
-			Sample[] mergeSamples = new Sample[sampleIds.size()];
-			for (int i = 0; i < sampleIds.size(); i++) {
-				mergeSamples[i] = sampleService.read(sampleIds.get(i));
-			}
-			sampleService.mergeSamples(project, mergeIntoSample, mergeSamples);
-			result.put("success", mergeIntoSample.getSampleName());
+
+		// Create an update map
+		Sample[] mergeSamples = new Sample[sampleIds.size()];
+		int count = 0;
+		Iterator<Long> iterator = sampleIds.iterator();
+		while (iterator.hasNext()) {
+			mergeSamples[count++] = sampleService.read(iterator.next());
 		}
+
+		// Merge the samples
+		sampleService.mergeSamples(project, mergeIntoSample, mergeSamples);
+
+		result.put("result", "success");
+		result.put("message", messageSource.getMessage("project.samples.combine-success", new Object[]{
+				samplesMergeCount,
+				mergeIntoSample.getSampleName()
+		}, locale));
+
+		// Need to reset the cart
+		cart.emptyProjectCart(projectId);
 		return result;
 	}
 

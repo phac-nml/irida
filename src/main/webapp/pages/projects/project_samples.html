@@ -16,6 +16,14 @@
 			<h1 role="heading" th:text="#{project.samples.h1(${project.label})}">__PAGE_TITLE__</h1>
 		</div>
 	</div>
+	<div class="row" ng-controller="SubNavCtrl as subnav">
+		<div class="col-md-12 mrgn-bttm-md">
+			<div class="btn-toolbar">
+					<button class="btn btn-default btn-sm" ng-click="subnav.merge()"
+					        th:utext="#{project.samples.nav.merge}" data:tooltip="#{project.samples.nav.merge-tooltip}" tooltip-placement="bottom">__MERGE__</button>
+			</div>
+		</div>
+	</div>
 	<div class="row" cg-busy="cgPromise">
 		<div class="col-md-12" ng-controller="SamplesTableCtrl as table">
 			<table id="samplesTable" class="table">
@@ -86,6 +94,7 @@
 					delay: 250
 				})
 				.service('SamplesService', ['$rootScope', 'Restangular', SamplesService])
+				.controller('SubNavCtrl', ['$scope', 'SamplesService', SubNavCtrl])
 				.controller('PagingCtrl', ['$scope', 'SamplesService', PagingCtrl])
 				.controller('SamplesTableCtrl', ['SamplesService', SamplesTableCtrl]);
 
@@ -133,6 +142,10 @@
 				t.then(function (data) {
 					updateSample(data.sample);
 				});
+			};
+
+			svc.merge = function() {
+				return base.post('merge');
 			};
 
 			function addSample(s) {
@@ -198,6 +211,15 @@
 			};
 
 			SamplesService.getSamples({});
+		}
+
+		function SubNavCtrl($scope, SamplesService) {
+			"use strict";
+			var vm = this;
+
+			vm.merge = function () {
+				SamplesService.merge();
+			};
 		}
 		/*]]>*/
 	</script>
