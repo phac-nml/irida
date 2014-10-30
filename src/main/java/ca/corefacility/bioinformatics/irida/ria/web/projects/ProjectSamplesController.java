@@ -408,6 +408,22 @@ public class ProjectSamplesController {
 	}
 
 	/**
+	 * Remove a sample from the project sample cart.
+	 *
+	 * @param sampleId
+	 * 		Id for the sample to remove.
+	 * @return The updated count for the number of samples in the project and the updated sample.
+	 */
+	@RequestMapping(value = "/{projectId}/ajax/samples/cart/remove/sample", method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> removeSampleFromCart(@PathVariable Long projectId, @RequestParam Long sampleId) {
+		int count = this.cart.removeSampleFromCart(projectId, sampleId);
+		Map<String, Object> response = new HashMap<>();
+		response.put("count", count);
+		response.put("sample", _generateUISample(projectId, sampleService.read(sampleId)));
+		return response;
+	}
+
+	/**
 	 * Changes a {@link ConstraintViolationException} to a usable map of strings
 	 * for displaing in the UI.
 	 *

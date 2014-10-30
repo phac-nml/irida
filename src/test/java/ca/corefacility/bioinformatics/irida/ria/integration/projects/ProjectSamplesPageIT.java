@@ -123,5 +123,9 @@ public class ProjectSamplesPageIT {
 		assertEquals(3, page.getNumberOfSamplesSelected());
 		page.selectSampleByRow(1);
 		assertEquals(2, page.getNumberOfSamplesSelected());
+
+		// If I go back to the page I expect them to be there
+		page.goTo();
+		assertEquals(2, page.getNumberOfSamplesSelected());
 	}
 }
