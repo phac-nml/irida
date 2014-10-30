@@ -52,9 +52,17 @@
 <th:block layout:fragment="scripts" th:inline="javascript">
 	<script th:inline="javascript">
 		/*<![CDATA[*/
-		var SamplesApp = angular.module('Samples', []);
+		angular.module('Samples', [])
+			.service('SamplesService', ['$rootScope', 'Restangular', SamplesService])
+			.controller('PagingCtrl', ['$scope', 'SamplesService', PagingCtrl])
+			.controller('SamplesTableCtrl', ['SamplesService', SamplesTableCtrl]);
 
-		SamplesApp.service('SamplesService', ['$rootScope', 'Restangular', function ($rootScope, R) {
+		/*[- */
+		// Responsible for all server calls for samples
+		// @param $rootScope The root scope for the page.
+		// @param R Restangular
+		/* -]*/
+		function SamplesService($rootScope, R) {
 			"use strict";
 			var svc = this,
 					id = angular.element("#projectId").val(),
@@ -88,9 +96,14 @@
 			function removeSample(s) {
 				return base.customPOST({sampleId: s.id}, 'cart/remove/sample');
 			}
-		}]);
+		}
 
-		SamplesApp.controller('PagingCtrl', ['$scope', 'SamplesService', function ($scope, SamplesService) {
+		/*[- */
+		// Handles everything to do with paging for the Samples Table
+		// @param $scope Scope the controller is responsible for
+		// @param SamplesService Server handler for samples.
+		/* -]*/
+		function PagingCtrl($scope, SamplesService) {
 			"use strict";
 			var vm = this;
 			vm.count = 10;
@@ -104,9 +117,13 @@
 			$scope.$on('PAGING_UPDATE', function (e, args) {
 				vm.total = args.total;
 			});
-		}]);
+		}
 
-		SamplesApp.controller('SamplesTableCtrl', ['SamplesService', function (SamplesService) {
+		/*[- */
+		// Responsible for all samples within the table
+		// @param SamplesService Server handler for samples.
+		/* -]*/
+		function SamplesTableCtrl(SamplesService) {
 			"use strict";
 			var vm = this;
 
@@ -115,9 +132,8 @@
 			vm.updateSample = function (s) {
 				SamplesService.updateSample(s);
 			};
-
 			SamplesService.getSamples({});
-		}]);
+		}
 		/*]]>*/
 	</script>
 </th:block>
