@@ -3,6 +3,8 @@
       layout:decorator="projects/_base">
 <head>
 	<title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/angular-busy/angular-busy.css}"
+	      href="/resources/bower_components/angular-busy/angular-busy.css"/>
 	<script>window.dependencies = ['Samples'];</script>
 </head>
 <body>
@@ -14,7 +16,7 @@
 			<h1 role="heading" th:text="#{project.samples.h1(${project.label})}">__PAGE_TITLE__</h1>
 		</div>
 	</div>
-	<div class="row">
+	<div class="row" cg-busy="cgPromise">
 		<div class="col-md-12" ng-controller="SamplesTableCtrl as table">
 			<table id="samplesTable" class="table">
 				<thead>
@@ -27,13 +29,32 @@
 				</tr>
 				</thead>
 				<tbody>
-				<tr class="sample-row" ng-class="{'selected': sample.selected}" ng-repeat="sample in table.samples">
-					<td><input class="sample-select" type="checkbox" ng-model="sample.selected"
-					           ng-change="table.updateSample(sample)"/></td>
+				<tr class="sample-row" ng-class="{'selected': sample.selected}" ng-repeat-start="sample in table.samples">
+					<td>
+						<input ui-indeterminate="sample.indeterminate" class="sample-select" type="checkbox" ng-model="sample.selected"
+						       ng-change="table.updateSample(sample)"/></td>
 					<td ng-bind="sample.name"></td>
 					<td ng-bind="sample.organism"></td>
-					<td ng-bind="sample.createdDate | date:'medium'"></td>
-					<td ng-bind="sample.files.length"></td>
+					<td ng-bind="sample.created | date:'medium'"></td>
+					<td ng-if="sample.files.length==0" ng-bind="sample.files.length"></td>
+					<td ng-if="sample.files.length>0">
+						<button class="view-files btn btn-default btn-xs" aria-controls="details-row"
+						        ng-init="table.open[sample.id] = table.open[sample.id] === undefined ? true : table.open[sample.id]"
+						        ng-click="table.open[sample.id] = !table.open[sample.id]">{{sample.files.length}}&nbsp;<span
+								class="caret"></span></button>
+					</td>
+				</tr>
+				<tr class="details-row" ng-repeat-end="" ng-if="sample.files.length>0">
+					<td colspan="5">
+						<div collapse="table.open[sample.id]">
+							<ul class="list-group">
+								<li class="file-item list-group-item" ng-class="{'selected': f.selected}" ng-repeat="f in sample.files">
+									<input class="file-select" type="checkbox" ng-model="f.selected" ng-change="table.updateFile(sample, f)"/>
+									<a class="btn btn-default btn-xs" href="#" th:attr="ng-href=@{'/sequenceFiles/{{f.id}}'}">{{f.name}}</a>
+								</li>
+							</ul>
+						</div>
+					</td>
 				</tr>
 				</tbody>
 				<tfoot>
@@ -50,12 +71,27 @@
 </main>
 
 <th:block layout:fragment="scripts" th:inline="javascript">
+	<script th:src="@{/resources/bower_components/angular-busy/angular-busy.js}"
+	        src="/resources/bower_components/angular-busy/angular-busy.js"></script>
+	<script th:src="@{/resources/js/directives/datatables/irida-datatable.js}"
+	        src="/resources/js/directives/datatables/irida-datatable.js"></script>
 	<script th:inline="javascript">
 		/*<![CDATA[*/
-		angular.module('Samples', [])
-			.service('SamplesService', ['$rootScope', 'Restangular', SamplesService])
-			.controller('PagingCtrl', ['$scope', 'SamplesService', PagingCtrl])
-			.controller('SamplesTableCtrl', ['SamplesService', SamplesTableCtrl]);
+		angular.module('Samples', ['cgBusy'])
+				.run(['$rootScope', setRootVariable])
+				.value('cgBusyDefaults', {
+					message: /*[[#{cg.table.samples}]]*/ 'Loading Stuff',
+					backdrop: true,
+					templateUrl: /*[[@{/resources/bower_components/angular-busy/angular-busy.html}]]*/ 'my_custom_template.html',
+					delay: 250
+				})
+				.service('SamplesService', ['$rootScope', 'Restangular', SamplesService])
+				.controller('PagingCtrl', ['$scope', 'SamplesService', PagingCtrl])
+				.controller('SamplesTableCtrl', ['SamplesService', SamplesTableCtrl]);
+
+		function setRootVariable($rootScope) {
+			$rootScope.cgPromise = null;
+		}
 
 		/*[- */
 		// Responsible for all server calls for samples
@@ -79,14 +115,24 @@
 
 			svc.getSamples = function (f) {
 				_.extend(svc.filter, f || {});
-				base.customGET("", svc.filter).then(function (data) {
+				$rootScope.cgPromise = base.customGET("", svc.filter).then(function (data) {
 					angular.copy(data.samples, svc.samples);
 					$rootScope.$broadcast('PAGING_UPDATE', {total: data.totalSamples});
 				});
 			};
 
 			svc.updateSample = function (s) {
-				s.selected ? addSample(s) : removeSample(s);
+				var t = s.selected ? addSample(s) : removeSample(s);
+				t.then(function (data) {
+					updateSample(data.sample);
+				});
+			};
+
+			svc.updateFile = function (s, f) {
+				var t = f.selected ? addFile(s, f) : removeFile(s, f);
+				t.then(function (data) {
+					updateSample(data.sample);
+				});
 			};
 
 			function addSample(s) {
@@ -95,6 +141,19 @@
 
 			function removeSample(s) {
 				return base.customPOST({sampleId: s.id}, 'cart/remove/sample');
+			}
+
+			function addFile(s, f) {
+				return base.customPOST({sampleId: s.id, fileId: f.id}, 'cart/add/file')
+			}
+
+			function removeFile(s, f) {
+				return base.customPOST({sampleId: s.id, fileId: f.id}, 'cart/remove/file')
+			}
+
+			function updateSample(s) {
+				var i = _.findKey(svc.samples, {id: s.id});
+				svc.samples[i] = s;
 			}
 		}
 
@@ -126,12 +185,18 @@
 		function SamplesTableCtrl(SamplesService) {
 			"use strict";
 			var vm = this;
+			vm.open = [];
 
 			vm.samples = SamplesService.samples;
 
 			vm.updateSample = function (s) {
 				SamplesService.updateSample(s);
 			};
+
+			vm.updateFile = function (s, f) {
+				SamplesService.updateFile(s, f);
+			};
+
 			SamplesService.getSamples({});
 		}
 		/*]]>*/

@@ -189,7 +189,6 @@ public class ProjectSamplesController {
 		for (Join<Project, Sample> join : projectSampleJoinPage.getContent()) {
 			Sample sample = join.getObject();
 			Map<String, Object> map = _generateUISample(projectId, sample);
-			map.put("createdDate", String.valueOf(join.getCreatedDate().getTime()));
 			if (map.get("selected").equals(true)) {
 				selectedCount++;
 			}
@@ -424,6 +423,42 @@ public class ProjectSamplesController {
 	}
 
 	/**
+	 * Add a file to a sample (only within the cart)
+	 *
+	 * @param sampleId
+	 * 		Id for the sample that the file is within
+	 * @param fileId
+	 * 		Id for the file to omit
+	 * @return The updated count for the number of samples in the project and the updated sample.
+	 */
+	@RequestMapping(value = "/{projectId}/ajax/samples/cart/add/file", method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> addFileToCart(@PathVariable Long projectId, @RequestParam Long sampleId, @RequestParam Long fileId) {
+		int count = this.cart.addFileToCart(projectId, sampleId, fileId);
+		Map<String, Object> response = new HashMap<>();
+		response.put("count", count);
+		response.put("sample", _generateUISample(projectId, sampleService.read(sampleId)));
+		return response;
+	}
+
+	/**
+	 * Restore an removed file back to a sample
+	 *
+	 * @param sampleId
+	 * 		Id for the sample that the file belong within
+	 * @param fileId
+	 * 		Id for the file to omit
+	 * @return The updated count for the number of samples in the project and the updated sample.
+	 */
+	@RequestMapping(value = "/{projectId}/ajax/samples/cart/remove/file", method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> removeFileFromCart(@PathVariable Long projectId, @RequestParam Long sampleId, @RequestParam Long fileId) {
+		int count = this.cart.removeFileFromCart(projectId, sampleId, fileId);
+		Map<String, Object> response = new HashMap<>();
+		response.put("count", count);
+		response.put("sample", _generateUISample(projectId, sampleService.read(sampleId)));
+		return response;
+	}
+
+	/**
 	 * Changes a {@link ConstraintViolationException} to a usable map of strings
 	 * for displaing in the UI.
 	 *
@@ -457,6 +492,7 @@ public class ProjectSamplesController {
 		map.put("id", sample.getId().toString());
 		map.put("name", sample.getSampleName());
 		map.put("organism", sample.getOrganism());
+		map.put("created", sample.getCreatedDate());
 
 		List<Join<Sample, SequenceFile>> fileJoin = sequenceFileService.getSequenceFilesForSample(sample);
 		List<Map<String, Object>> files = new ArrayList<>();
@@ -482,7 +518,6 @@ public class ProjectSamplesController {
 			}
 			String size = fileSizeConverter.convert(realSize);
 			m.put("size", size);
-			m.put("added", join1.getTimestamp().getTime());
 			files.add(m);
 		}
 		map.put("files", files);

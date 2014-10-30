@@ -177,6 +177,23 @@ public class ProjectSamplesPageIT {
 		assertEquals(0, page.getNumberOfSamplesSelected());
 	}
 
+	@Test
+	public void testFileSelection() {
+		page.goTo();
+		page.clickLastPageButton();
+		assertFalse(page.isRowSelected(0));
+		page.openFilesView(0);
+		assertEquals(3, page.getNumberOfFiles());
+		assertFalse(page.isFileSelected(0));
+		page.selectFile(0);
+		assertTrue(page.isFileSelected(0));
+		assertTrue(page.isSampleIndeterminate(0));
+		page.selectFile(1);
+		assertTrue(page.isSampleIndeterminate(0));
+		page.selectFile(2);
+		assertTrue(page.isRowSelected(0));
+	}
+
 	private void jumpAroundLists() {
 		page.clickFirstPageButton();
 		page.clickLastPageButton();
