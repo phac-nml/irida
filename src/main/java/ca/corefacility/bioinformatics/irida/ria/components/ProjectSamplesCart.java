@@ -56,6 +56,7 @@ public class ProjectSamplesCart {
 	 */
 	public int addSampleToCart(Long projectId, Long sampleId) {
 		if (!_cart.containsKey(projectId)) {
+			logger.info("Creating a new cart for project [" + projectId + "]");
 			_cart.put(projectId, new HashMap<>());
 		}
 
