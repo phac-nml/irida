@@ -28,8 +28,8 @@ import com.google.common.collect.Lists;
  */
 public class SequenceFileMessageConverter implements HttpMessageConverter<Path> {
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFileMessageConverter.class);
-	public static final String MEDIA_TYPE = "application";
-	public static final String MEDIA_SUBTYPE = "fastq";
+
+	public static final MediaType MEDIA_TYPE = new MediaType("application","fastq");
 
 	private final Path tempDirectory;
 
@@ -43,7 +43,7 @@ public class SequenceFileMessageConverter implements HttpMessageConverter<Path> 
 	@Override
 	public boolean canRead(Class<?> clazz, MediaType mediaType) {
 		logger.trace("Testing converter for class " + clazz.getName() + " and mediatype " + mediaType);
-		if (mediaType != null && mediaType.getType().equals(MEDIA_TYPE) && mediaType.getSubtype().equals(MEDIA_SUBTYPE)
+		if (mediaType != null && MEDIA_TYPE.includes(mediaType)
 				&& clazz.equals(Path.class)) {
 			logger.trace("SequenceFileMessageConverter can read this message");
 			return true;
@@ -60,7 +60,7 @@ public class SequenceFileMessageConverter implements HttpMessageConverter<Path> 
 
 	@Override
 	public List<MediaType> getSupportedMediaTypes() {
-		return Lists.newArrayList(new MediaType(MEDIA_TYPE, MEDIA_SUBTYPE));
+		return Lists.newArrayList(MEDIA_TYPE);
 	}
 
 	@Override
