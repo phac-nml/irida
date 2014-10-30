@@ -13,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteSequenceFile;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
-public interface SequenceFilesRemoteService extends RemoteService<RemoteSequenceFile> {
+public interface SequenceFileRemoteService extends RemoteService<RemoteSequenceFile> {
 
 	/**
 	 * Get the list of sequence files in a {@link RemoteSample}

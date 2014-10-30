@@ -9,22 +9,22 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSample;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
-import ca.corefacility.bioinformatics.irida.service.remote.SequenceFilesRemoteService;
+import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
 
 /**
- * Implementation of {@link SequenceFilesRemoteService} using a
+ * Implementation of {@link SequenceFileRemoteService} using a
  * {@link SequenceFileRemoteRepository}
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Service
-public class SequenceFilesRemoteServiceImpl extends RemoteServiceImpl<RemoteSequenceFile> implements
-		SequenceFilesRemoteService {
+public class SequenceFileRemoteServiceImpl extends RemoteServiceImpl<RemoteSequenceFile> implements
+		SequenceFileRemoteService {
 	public static final String SAMPLE_SEQUENCE_FILES_REL = "sample/sequenceFiles";
 	private final SequenceFileRemoteRepository repository;
 
-	public SequenceFilesRemoteServiceImpl(SequenceFileRemoteRepository repository) {
+	public SequenceFileRemoteServiceImpl(SequenceFileRemoteRepository repository) {
 		super(repository);
 		this.repository = repository;
 	}
