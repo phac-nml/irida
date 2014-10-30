@@ -391,7 +391,7 @@ public class ProjectSamplesControllerTest {
 		assertTrue("Has a key of 'id'", sample.containsKey("id"));
 		assertTrue("Has a key of 'name'", sample.containsKey("name"));
 		assertTrue("Has a key of 'numFiles'", sample.containsKey("files"));
-		assertTrue("Has a key of 'createdDate'", sample.containsKey("createdDate"));
+		assertTrue("Has a key of 'created'", sample.containsKey("created"));
 		assertEquals("Has the first sample name", "sample0", sample.get("name"));
 	}
 

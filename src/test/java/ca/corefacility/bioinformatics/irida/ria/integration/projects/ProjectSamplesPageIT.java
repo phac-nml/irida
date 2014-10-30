@@ -50,7 +50,7 @@ public class ProjectSamplesPageIT {
 
 	@Before
 	public void setUp() {
-		driver = BasePage.initializeChromeDriver();
+		driver = BasePage.initializeDriver();
 		this.page = new ProjectSamplesPage(driver);
 	}
 
