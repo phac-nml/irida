@@ -27,7 +27,8 @@
 				</thead>
 				<tbody>
 				<tr class="sample-row" ng-repeat="sample in table.samples">
-					<td><input class="sample-select" type="checkbox" ng-checked="sample.selected" ng-click="table.addSample(sample)"/></td>
+					<td><input class="sample-select" type="checkbox" ng-model="sample.selected"
+					           ng-change="table.updateSample(sample)"/></td>
 					<td ng-bind="sample.name"></td>
 					<td ng-bind="sample.organism"></td>
 					<td ng-bind="sample.createdDate | date:'medium'"></td>
@@ -66,9 +67,17 @@
 				});
 			};
 
-			svc.addSample = function (s) {
-				return base.customPOST({sampleId: s.id}, 'cart/add/sample');
+			svc.updateSample = function (s) {
+				s.selected ? addSample(s) : removeSample(s);
 			};
+
+			function addSample(s) {
+				return base.customPOST({sampleId: s.id}, 'cart/add/sample');
+			}
+
+			function removeSample(s) {
+				return base.customPOST({sampleId: s.id}, 'cart/remove/sample');
+			}
 		}]);
 
 		SamplesApp.controller('SamplesTableCtrl', ['SamplesService', function (SamplesService) {
@@ -77,8 +86,8 @@
 
 			vm.samples = SamplesService.samples;
 
-			vm.addSample = function(s) {
-				SamplesService.addSample(s);
+			vm.updateSample = function (s) {
+				SamplesService.updateSample(s);
 			};
 
 			SamplesService.getSamples({});
