@@ -168,6 +168,24 @@ public class ProjectSamplesControllerTest {
 	}
 
 	@Test
+	public void testAddSampleToCart() {
+		Sample sample = TestDataFactory.constructSample();
+		when(sampleService.read(anyLong())).thenReturn(sample);
+		Map<String, Object> response = controller.addSampleToCart(1L, sample.getId());
+		assertTrue(response.containsKey("count"));
+		assertTrue(response.containsKey("sample"));
+	}
+
+	@Test
+	public void testRemoveSampleFromCart() {
+		Sample sample = TestDataFactory.constructSample();
+		when(sampleService.read(anyLong())).thenReturn(sample);
+		Map<String, Object> response = controller.removeSampleFromCart(1L, sample.getId());
+		assertTrue(response.containsKey("count"));
+		assertTrue(response.containsKey("sample"));
+	}
+
+	@Test
 	public void testCopySampleToProject() {
 		Long projectId = 1l;
 		List<Long> sampleIds = Lists.newArrayList(2l, 3l);
