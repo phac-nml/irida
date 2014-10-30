@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.remote.impl;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
@@ -24,6 +25,7 @@ public class SequenceFileRemoteServiceImpl extends RemoteServiceImpl<RemoteSeque
 	public static final String SAMPLE_SEQUENCE_FILES_REL = "sample/sequenceFiles";
 	private final SequenceFileRemoteRepository repository;
 
+	@Autowired
 	public SequenceFileRemoteServiceImpl(SequenceFileRemoteRepository repository) {
 		super(repository);
 		this.repository = repository;
