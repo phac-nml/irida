@@ -44,12 +44,60 @@
             sequencerSampleId="sample4" sampleName="sample4" />
     <sample id="5" createdDate="2013-07-18 14:20:19.0" description="description5"
             sequencerSampleId="sample5" sampleName="sample5" />
+    <sample id="6" createdDate="2013-07-18 14:20:19.0" description="description5"
+            sequencerSampleId="sample5" sampleName="sample5" />
+    <sample id="7" createdDate="2013-07-18 14:20:19.0" description="description5"
+            sequencerSampleId="sample5" sampleName="sample5" />
+    <sample id="8" createdDate="2013-07-18 14:20:19.0" description="description5"
+            sequencerSampleId="sample5" sampleName="sample5" />
+    <sample id="9" createdDate="2013-07-18 14:20:19.0" description="description5"
+            sequencerSampleId="sample5" sampleName="sample5" />
+    <sample id="10" createdDate="2013-07-18 14:20:19.0" description="description5"
+            sequencerSampleId="sample5" sampleName="sample5" />
+    <sample id="11" createdDate="2013-07-18 14:20:19.0" description="description5"
+            sequencerSampleId="sample5" sampleName="sample5" />
+    <sample id="12" createdDate="2013-07-18 14:20:19.0" description="description5"
+            sequencerSampleId="sample5" sampleName="sample5" />
+    <sample id="13" createdDate="2013-07-18 14:20:19.0" description="description5"
+            sequencerSampleId="sample5" sampleName="sample5" />
+    <sample id="14" createdDate="2013-07-18 14:20:19.0" description="description5"
+            sequencerSampleId="sample5" sampleName="sample5" />
+    <sample id="15" createdDate="2013-07-18 14:20:19.0" description="description5"
+            sequencerSampleId="sample5" sampleName="sample5" />
+    <sample id="16" createdDate="2013-07-18 14:20:19.0" description="description5"
+            sequencerSampleId="sample5" sampleName="sample5" />
+    <sample id="17" createdDate="2013-07-18 14:20:19.0" description="description5"
+            sequencerSampleId="sample5" sampleName="sample5" />
+    <sample id="18" createdDate="2013-07-18 14:20:19.0" description="description5"
+            sequencerSampleId="sample5" sampleName="sample5" />
+    <sample id="19" createdDate="2013-07-18 14:20:19.0" description="description5"
+            sequencerSampleId="sample5" sampleName="sample5" />
+    <sample id="20" createdDate="2013-07-18 14:20:19.0" description="description5"
+            sequencerSampleId="sample5" sampleName="sample5" />
+    <sample id="21" createdDate="2013-07-18 14:20:19.0" description="description5"
+            sequencerSampleId="sample5" sampleName="sample5" />
 
-    <project_sample id="1" project_id="1" sample_id="1" createdDate="2013-07-10 14:20:19.0" />
-    <project_sample id="2" project_id="1" sample_id="2" createdDate="2013-07-12 14:20:19.0" />
-    <project_sample id="3" project_id="1" sample_id="3" createdDate="2013-07-14 14:20:19.0" />
-    <project_sample id="4" project_id="1" sample_id="4" createdDate="2013-07-16 14:20:19.0" />
-    <project_sample id="5" project_id="1" sample_id="5" createdDate="2013-07-18 14:20:19.0" />
+    <project_sample id="1" project_id="1" sample_id="1" createdDate="2013-07-10 14:21:19.0" />
+    <project_sample id="2" project_id="1" sample_id="2" createdDate="2013-07-12 14:22:19.0" />
+    <project_sample id="3" project_id="1" sample_id="3" createdDate="2013-07-14 14:23:19.0" />
+    <project_sample id="4" project_id="1" sample_id="4" createdDate="2013-07-16 14:24:19.0" />
+    <project_sample id="5" project_id="1" sample_id="5" createdDate="2013-07-18 14:25:19.0" />
+    <project_sample id="6" project_id="1" sample_id="6" createdDate="2013-07-18 14:26:19.0" />
+    <project_sample id="7" project_id="1" sample_id="7" createdDate="2013-07-18 14:27:19.0" />
+    <project_sample id="8" project_id="1" sample_id="8" createdDate="2013-07-18 14:28:19.0" />
+    <project_sample id="9" project_id="1" sample_id="9" createdDate="2013-07-18 14:29:19.0" />
+    <project_sample id="10" project_id="1" sample_id="10" createdDate="2013-07-18 14:31:19.0" />
+    <project_sample id="11" project_id="1" sample_id="11" createdDate="2013-07-18 14:32:19.0" />
+    <project_sample id="12" project_id="1" sample_id="12" createdDate="2013-07-18 14:33:19.0" />
+    <project_sample id="13" project_id="1" sample_id="13" createdDate="2013-07-18 14:34:19.0" />
+    <project_sample id="14" project_id="1" sample_id="14" createdDate="2013-07-18 14:35:19.0" />
+    <project_sample id="15" project_id="1" sample_id="15" createdDate="2013-07-18 14:36:19.0" />
+    <project_sample id="16" project_id="1" sample_id="16" createdDate="2013-07-18 14:37:19.0" />
+    <project_sample id="17" project_id="1" sample_id="17" createdDate="2013-07-18 14:38:19.0" />
+    <project_sample id="18" project_id="1" sample_id="18" createdDate="2013-07-18 14:39:19.0" />
+    <project_sample id="19" project_id="1" sample_id="19" createdDate="2013-07-18 14:40:19.0" />
+    <project_sample id="20" project_id="1" sample_id="20" createdDate="2013-07-18 14:41:19.0" />
+    <project_sample id="21" project_id="1" sample_id="21" createdDate="2013-07-18 14:42:19.0" />
 
 
     <sequence_file id="1" createdDate="2013-07-18 14:20:19.0"

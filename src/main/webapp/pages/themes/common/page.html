@@ -113,8 +113,16 @@
 	var app = angular.module('irida', window.dependencies)
 			.value('BASE_URL', /*[[@{/}]]*/ '/')
 		// This configures the base url globally for all restangular calls.
-			.config(function(RestangularProvider) {
+			.config(function (RestangularProvider) {
 				RestangularProvider.setBaseUrl(/*[[@{/}]]*/ "/");
+			})
+			.run(function (paginationConfig) {
+				paginationConfig.firstText = /*[[#{table.first}]]*/ 'First';
+				paginationConfig.previousText = /*[[#{table.previous}]]*/ 'Previous';
+				paginationConfig.nextText = /*[[#{table.next}]]*/ 'Next';
+				paginationConfig.lastText = /*[[#{table.last}]]*/ 'Last';
+				paginationConfig.boundaryLinks = true;
+				paginationConfig.directionLinks = true;
 			})
 			.directive('ngFocus', [function () {
 				var FOCUS_CLASS = "ng-focused";

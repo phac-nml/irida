@@ -61,6 +61,10 @@ table.dataTable > tbody code {
   color: #333333;
   background-color: transparent; }
 
+/* line 1, ../../styles/components/_tables.scss */
+.selected {
+  background-color: #daf1f8; }
+
 /* line 2, ../../styles/components/_forms.scss */
 .input-full {
   width: 100%; }

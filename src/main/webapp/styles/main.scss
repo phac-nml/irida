@@ -3,7 +3,8 @@
 @import "helpers/variables";
 // Components
 @import "components/buttons";
-@import "components/datatables";
+@import "components/datatables"; // TODO: remove this once datatables are officially gone
+@import "components/tables";
 @import "components/forms";
 @import "components/magnific-popup";
 @import "components/modals";
@@ -13,7 +14,6 @@
 // Layout
 @import "layout";
 // Pages
-@import "pages/project";
 @import "pages/sequenceFile";
 @import "pages/remoteApi";
 
