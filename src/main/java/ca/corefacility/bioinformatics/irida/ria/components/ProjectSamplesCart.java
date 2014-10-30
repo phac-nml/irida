@@ -65,7 +65,7 @@ public class ProjectSamplesCart {
 		if (samplesMap.containsKey(sampleId)) {
 			selectAllFilesInSample(samplesMap.get(sampleId));
 		} else {
-			samplesMap.put(sampleId, generateFileMap(sampleId));
+			samplesMap.put(sampleId, generateFileMap(sampleId, true));
 		}
 		return samplesMap.size();
 	}
@@ -121,7 +121,14 @@ public class ProjectSamplesCart {
 	 * @return True if the file is active
 	 */
 	public boolean isFileInCart(Long projectId, Long sampleId, Long fileId) {
-		return false;
+		if (!_cart.containsKey(projectId)) {
+			return false;
+		}
+		Map<Long, Map<Long, Boolean>> sampleMap = _cart.get(projectId);
+		if (!sampleMap.containsKey(sampleId)) {
+			return false;
+		}
+		return sampleMap.get(sampleId).get(fileId);
 	}
 
 	/**
@@ -139,17 +146,61 @@ public class ProjectSamplesCart {
 		return new HashSet<>();
 	}
 
-	private Map<Long, Boolean> generateFileMap(Long sampleId) {
+	private Map<Long, Boolean> generateFileMap(Long sampleId, boolean inCart) {
 		Map<Long, Boolean> result = new HashMap<>();
 		List<Join<Sample, SequenceFile>> list = sequenceFileService
 				.getSequenceFilesForSample(sampleService.read(sampleId));
 		for (Join<Sample, SequenceFile> join : list) {
-			result.put(join.getObject().getId(), true);
+			result.put(join.getObject().getId(), inCart);
 		}
 		return result;
 	}
 
 	private void selectAllFilesInSample(Map<Long, Boolean> map) {
 		map.keySet().forEach(id -> map.put(id, true));
+	}
+
+	public int addFileToCart(Long projectId, Long sampleId, Long fileId) {
+		Map<Long, Map<Long, Boolean>> projectMap = _cart.get(projectId);
+		if (projectMap == null) {
+			logger.info("Creating a new cart for project [" + projectId + "]");
+			projectMap = new HashMap<>();
+			_cart.put(projectId, projectMap);
+		}
+		Map<Long, Boolean> sampleMap = projectMap.get(sampleId);
+		if (sampleMap == null) {
+			logger.info("Add sample [" + sampleId + "] to cart for project [" + projectId + "]");
+			sampleMap = generateFileMap(sampleId, false);
+			projectMap.put(sampleId, sampleMap);
+		}
+		sampleMap.put(fileId, true);
+		return projectMap.size();
+	}
+
+	public int removeFileFromCart(Long projectId, Long sampleId, Long fileId) {
+		boolean error = false;
+		Map<Long, Map<Long, Boolean>> projectMap = _cart.get(projectId);
+		if (projectMap == null) {
+			error = true;
+		} else {
+			Map<Long, Boolean> sampleMap = projectMap.get(sampleId);
+			if (sampleMap == null) {
+				error = true;
+			}
+			else {
+				sampleMap.put(fileId, false);
+				// Check to make sure this sample should still be in the cart
+				if(!sampleMap.containsValue(true)) {
+					projectMap.remove(sampleId);
+				}
+			}
+		}
+		if (error) {
+			logger.error("Trying to remove a file from project [" + projectId + "] that is not in the cart");
+			return 0;
+		}
+		else {
+			return projectMap.size();
+		}
 	}
 }

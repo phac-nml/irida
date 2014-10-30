@@ -30,14 +30,15 @@
 				</thead>
 				<tbody>
 				<tr class="sample-row" ng-class="{'selected': sample.selected}" ng-repeat-start="sample in table.samples">
-					<td><input class="sample-select" type="checkbox" ng-model="sample.selected"
-					           ng-change="table.updateSample(sample)"/></td>
+					<td>
+						<input ui-indeterminate="sample.indeterminate" class="sample-select" type="checkbox" ng-model="sample.selected"
+						       ng-change="table.updateSample(sample)"/></td>
 					<td ng-bind="sample.name"></td>
 					<td ng-bind="sample.organism"></td>
 					<td ng-bind="sample.created | date:'medium'"></td>
 					<td ng-if="sample.files.length==0" ng-bind="sample.files.length"></td>
 					<td ng-if="sample.files.length>0">
-						<button class="btn btn-default btn-xs" aria-controls="details-row"
+						<button class="view-files btn btn-default btn-xs" aria-controls="details-row"
 						        ng-init="table.open[sample.id] = table.open[sample.id] === undefined ? true : table.open[sample.id]"
 						        ng-click="table.open[sample.id] = !table.open[sample.id]">{{sample.files.length}}&nbsp;<span
 								class="caret"></span></button>
@@ -47,10 +48,9 @@
 					<td colspan="5">
 						<div collapse="table.open[sample.id]">
 							<ul class="list-group">
-								<li class="list-group-item" ng-class="{'selected': f.selected}" ng-repeat="f in sample.files">
-									<input type="checkbox" ng-model="f.selected"/> <a class="btn btn-default btn-xs"
-									                                                  href="#"
-									                                                  th:attr="ng-href=@{'/sequenceFiles/{{f.id}}'}">{{f.name}}</a>
+								<li class="file-item list-group-item" ng-class="{'selected': f.selected}" ng-repeat="f in sample.files">
+									<input class="file-select" type="checkbox" ng-model="f.selected" ng-change="table.updateFile(sample, f)"/>
+									<a class="btn btn-default btn-xs" href="#" th:attr="ng-href=@{'/sequenceFiles/{{f.id}}'}">{{f.name}}</a>
 								</li>
 							</ul>
 						</div>
@@ -80,10 +80,10 @@
 		angular.module('Samples', ['cgBusy'])
 				.run(['$rootScope', setRootVariable])
 				.value('cgBusyDefaults', {
-					message    : /*[[#{cg.table.samples}]]*/ 'Loading Stuff',
-					backdrop   : true,
+					message: /*[[#{cg.table.samples}]]*/ 'Loading Stuff',
+					backdrop: true,
 					templateUrl: /*[[@{/resources/bower_components/angular-busy/angular-busy.html}]]*/ 'my_custom_template.html',
-					delay      : 250
+					delay: 250
 				})
 				.service('SamplesService', ['$rootScope', 'Restangular', SamplesService])
 				.controller('PagingCtrl', ['$scope', 'SamplesService', PagingCtrl])
@@ -128,12 +128,27 @@
 				});
 			};
 
+			svc.updateFile = function (s, f) {
+				var t = f.selected ? addFile(s, f) : removeFile(s, f);
+				t.then(function (data) {
+					updateSample(data.sample);
+				});
+			};
+
 			function addSample(s) {
 				return base.customPOST({sampleId: s.id}, 'cart/add/sample');
 			}
 
 			function removeSample(s) {
 				return base.customPOST({sampleId: s.id}, 'cart/remove/sample');
+			}
+
+			function addFile(s, f) {
+				return base.customPOST({sampleId: s.id, fileId: f.id}, 'cart/add/file')
+			}
+
+			function removeFile(s, f) {
+				return base.customPOST({sampleId: s.id, fileId: f.id}, 'cart/remove/file')
 			}
 
 			function updateSample(s) {
@@ -179,7 +194,7 @@
 			};
 
 			vm.updateFile = function (s, f) {
-
+				SamplesService.updateFile(s, f);
 			};
 
 			SamplesService.getSamples({});

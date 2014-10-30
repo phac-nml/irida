@@ -394,4 +394,22 @@ public class ProjectSamplesControllerTest {
 		assertTrue("Has a key of 'createdDate'", sample.containsKey("createdDate"));
 		assertEquals("Has the first sample name", "sample0", sample.get("name"));
 	}
+
+	@Test
+	public void testAddFileToCart() {
+		Sample sample = TestDataFactory.constructSample();
+		when(sampleService.read(anyLong())).thenReturn(sample);
+		Map<String, Object> response = controller.addFileToCart(1L, sample.getId(), 1L);
+		assertTrue(response.containsKey("count"));
+		assertTrue(response.containsKey("sample"));
+	}
+
+	@Test
+	public void testRemoveFileFromCart() {
+		Sample sample = TestDataFactory.constructSample();
+		when(sampleService.read(anyLong())).thenReturn(sample);
+		Map<String, Object> response = controller.removeFileFromCart(1L, sample.getId(), 1L);
+		assertTrue(response.containsKey("count"));
+		assertTrue(response.containsKey("sample"));
+	}
 }

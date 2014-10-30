@@ -105,4 +105,36 @@ public class ProjectSamplesPage {
 		List<WebElement> rows = driver.findElements(By.className("sample-row"));
 		return rows.get(row).getAttribute("class").contains("selected");
 	}
+
+	public void openFilesView(int row) {
+		WebElement sampleRow = driver.findElements(By.className("sample-row")).get(row);
+		sampleRow.findElement(By.className("view-files")).click();
+		pageUtilities.waitForElementVisible(By.className("details-row"));
+	}
+
+	public int getNumberOfFiles() {
+		return driver.findElements(By.className("file-item")).size();
+	}
+
+	public void selectFile(int fileNum) {
+		pageUtilities.waitForElementVisible(By.className("file-select"));
+		List<WebElement> files = driver.findElements(By.className("file-select"));
+		files.get(fileNum).click();
+		BasePage.waitForTime();
+	}
+
+	public boolean isFileSelected(int fileNum) {
+		List<WebElement> files = driver.findElements(By.className("file-item"));
+		return files.get(fileNum).getAttribute("class").contains("selected");
+	}
+
+	public boolean isSampleIndeterminate(int row) {
+		try {
+			List<WebElement> inputs = driver.findElements(By.className("sample-select"));
+			inputs.get(row).getAttribute("indeterminate");
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
 }
