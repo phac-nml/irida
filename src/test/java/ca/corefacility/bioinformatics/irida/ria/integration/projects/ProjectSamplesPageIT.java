@@ -117,7 +117,7 @@ public class ProjectSamplesPageIT {
 		assertEquals(3, page.getGetSelectedPageNumber());
 		assertFalse(page.isLastButtonEnabled());
 		assertTrue(page.isFirstButtonEnabled());
-		assertEquals(5, page.getNumberOfSamplesDisplayed());
+		assertEquals(1, page.getNumberOfSamplesDisplayed());
 	}
 
 	@Test
