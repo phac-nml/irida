@@ -121,7 +121,7 @@ public class ProjectSamplesCart {
 	 * @return True if the file is active
 	 */
 	public boolean isFileInCart(Long projectId, Long sampleId, Long fileId) {
-		return true;
+		return false;
 	}
 
 	/**

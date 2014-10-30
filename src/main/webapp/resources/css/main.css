@@ -65,6 +65,24 @@ table.dataTable > tbody code {
 .selected {
   background-color: #daf1f8; }
 
+/* line 5, ../../styles/components/_tables.scss */
+.details-row {
+  padding: 0;
+  margin: 0;
+  background-color: #333333;
+  border: none !important; }
+
+/* line 12, ../../styles/components/_tables.scss */
+.details-row td {
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important; }
+
+/* line 18, ../../styles/components/_tables.scss */
+.details-row .list-group {
+  margin: 0;
+  padding: 6px; }
+
 /* line 2, ../../styles/components/_forms.scss */
 .input-full {
   width: 100%; }

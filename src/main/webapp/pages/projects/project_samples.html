@@ -27,13 +27,32 @@
 				</tr>
 				</thead>
 				<tbody>
-				<tr class="sample-row" ng-class="{'selected': sample.selected}" ng-repeat="sample in table.samples">
+				<tr class="sample-row" ng-class="{'selected': sample.selected}" ng-repeat-start="sample in table.samples">
 					<td><input class="sample-select" type="checkbox" ng-model="sample.selected"
 					           ng-change="table.updateSample(sample)"/></td>
 					<td ng-bind="sample.name"></td>
 					<td ng-bind="sample.organism"></td>
 					<td ng-bind="sample.createdDate | date:'medium'"></td>
-					<td ng-bind="sample.files.length"></td>
+					<td ng-if="sample.files.length==0" ng-bind="sample.files.length"></td>
+					<td ng-if="sample.files.length>0">
+						<button class="btn btn-default btn-xs" aria-controls="details-row"
+						        ng-init="table.open[sample.id] = table.open[sample.id] === undefined ? true : table.open[sample.id]"
+						        ng-click="table.open[sample.id] = !table.open[sample.id]">{{sample.files.length}}&nbsp;<span
+								class="caret"></span></button>
+					</td>
+				</tr>
+				<tr class="details-row" ng-repeat-end="" ng-if="sample.files.length>0">
+					<td colspan="5">
+						<div collapse="table.open[sample.id]">
+							<ul class="list-group">
+								<li class="list-group-item" ng-class="{'selected': f.selected}" ng-repeat="f in sample.files">
+									<input type="checkbox" ng-model="f.selected"/> <a class="btn btn-default btn-xs"
+									                                                  href="#"
+									                                                  th:attr="ng-href=@{'/sequenceFiles/{{f.id}}'}">{{f.name}}</a>
+								</li>
+							</ul>
+						</div>
+					</td>
 				</tr>
 				</tbody>
 				<tfoot>
@@ -53,9 +72,9 @@
 	<script th:inline="javascript">
 		/*<![CDATA[*/
 		angular.module('Samples', [])
-			.service('SamplesService', ['$rootScope', 'Restangular', SamplesService])
-			.controller('PagingCtrl', ['$scope', 'SamplesService', PagingCtrl])
-			.controller('SamplesTableCtrl', ['SamplesService', SamplesTableCtrl]);
+				.service('SamplesService', ['$rootScope', 'Restangular', SamplesService])
+				.controller('PagingCtrl', ['$scope', 'SamplesService', PagingCtrl])
+				.controller('SamplesTableCtrl', ['SamplesService', SamplesTableCtrl]);
 
 		/*[- */
 		// Responsible for all server calls for samples
@@ -86,7 +105,11 @@
 			};
 
 			svc.updateSample = function (s) {
-				s.selected ? addSample(s) : removeSample(s);
+				var promise = s.selected ? addSample(s) : removeSample(s);
+				promise.then(function(data) {
+					console.log(data);
+					updateSample(data.sample);
+				});
 			};
 
 			function addSample(s) {
@@ -95,6 +118,11 @@
 
 			function removeSample(s) {
 				return base.customPOST({sampleId: s.id}, 'cart/remove/sample');
+			}
+
+			function updateSample(s) {
+				var i = _.findKey(svc.samples, {id: s.id});
+				svc.samples[i] = s;
 			}
 		}
 
@@ -126,12 +154,18 @@
 		function SamplesTableCtrl(SamplesService) {
 			"use strict";
 			var vm = this;
+			vm.open = [];
 
 			vm.samples = SamplesService.samples;
 
 			vm.updateSample = function (s) {
 				SamplesService.updateSample(s);
 			};
+
+			vm.updateFile = function(s, f) {
+
+			};
+
 			SamplesService.getSamples({});
 		}
 		/*]]>*/
