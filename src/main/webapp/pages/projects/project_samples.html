@@ -27,7 +27,7 @@
 				</tr>
 				</thead>
 				<tbody>
-				<tr class="sample-row" ng-repeat="sample in table.samples">
+				<tr class="sample-row" ng-class="{'selected': sample.selected}" ng-repeat="sample in table.samples">
 					<td><input class="sample-select" type="checkbox" ng-model="sample.selected"
 					           ng-change="table.updateSample(sample)"/></td>
 					<td ng-bind="sample.name"></td>

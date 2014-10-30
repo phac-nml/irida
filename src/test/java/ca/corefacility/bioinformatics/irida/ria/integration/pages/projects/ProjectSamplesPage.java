@@ -100,4 +100,9 @@ public class ProjectSamplesPage {
 		List<WebElement> inputs = driver.findElements(By.className("sample-select"));
 		inputs.get(row).click();
 	}
+
+	public boolean isRowSelected(int row) {
+		List<WebElement> rows = driver.findElements(By.className("sample-row"));
+		return rows.get(row).getAttribute("class").contains("selected");
+	}
 }
