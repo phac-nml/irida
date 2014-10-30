@@ -201,11 +201,11 @@
 			};
 
 			self.addAssociatedProject = function (params) {
-				return base.customPOST($.param(params));
+				return base.customPOST(params);
 			};
 			
 			self.addRemoteAssociatedProject = function (params) {
-				return base.customPOST($.param(params), "remote/");
+				return base.customPOST(params, "remote/");
 			};
 			
 			self.removeRemoteAssociatedStatus = function (remoteProjectId) {
