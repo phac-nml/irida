@@ -189,7 +189,6 @@ public class ProjectSamplesController {
 		for (Join<Project, Sample> join : projectSampleJoinPage.getContent()) {
 			Sample sample = join.getObject();
 			Map<String, Object> map = _generateUISample(projectId, sample);
-			map.put("createdDate", String.valueOf(join.getCreatedDate().getTime()));
 			if (map.get("selected").equals(true)) {
 				selectedCount++;
 			}
@@ -457,6 +456,7 @@ public class ProjectSamplesController {
 		map.put("id", sample.getId().toString());
 		map.put("name", sample.getSampleName());
 		map.put("organism", sample.getOrganism());
+		map.put("created", sample.getCreatedDate());
 
 		List<Join<Sample, SequenceFile>> fileJoin = sequenceFileService.getSequenceFilesForSample(sample);
 		List<Map<String, Object>> files = new ArrayList<>();
@@ -482,7 +482,6 @@ public class ProjectSamplesController {
 			}
 			String size = fileSizeConverter.convert(realSize);
 			m.put("size", size);
-			m.put("added", join1.getTimestamp().getTime());
 			files.add(m);
 		}
 		map.put("files", files);
