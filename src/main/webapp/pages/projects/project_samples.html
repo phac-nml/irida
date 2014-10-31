@@ -32,7 +32,7 @@
 			<span class="badge badge-info pull-right" id="selected-count" ng-bind="subnav.count"></span>
 		</div>
 	</div>
-	<div class="row" th:attr="cg-busy=#{cg-busy.base(#{cg-busy.samples.table}, @{/resources/bower_components/angular-busy/angular-busy.html})}">
+	<div class="row" data:cg-busy="'{promise: cgPromise,templateUrl:\'' + @{/resources/bower_components/angular-busy/angular-busy.html} + '\', delay: 250, backdrop:true, message: \'' + #{cg-busy.samples.table} +  '\'}'">
 		<div class="col-md-12" ng-controller="SamplesTableCtrl as table">
 			<table id="samplesTable" class="table">
 				<thead>
