@@ -1,7 +1,7 @@
 <div id="merge-samples-modal" class="form">
 	<div class="modal-header">
 		<h3 class="modal-title">
-			<span th:text="#{project.samples.modal.merge.title}">__COMBINE_SAMPLES__</span>
+			<span th:utext="#{project.samples.modal.merge.title}">__COMBINE_SAMPLES__</span>
 		</h3>
 	</div>
 	<div class="modal-body">
@@ -41,7 +41,7 @@
 	<div class="modal-footer">
 		<button class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="mergeCtrl.close()"></button>
 		<button id="confirmMergeBtn" class="btn btn-primary" ng-disabled="mergeCtrl.error.format || mergeCtrl.error.length"
-		        th:utext="#{project.samples.modal.merge.complete}" ng-click="mergeCtrl.merge()">Complete Merge
+		        th:text="#{project.samples.modal.merge.complete}" ng-click="mergeCtrl.merge()">Complete Merge
 		</button>
 	</div>
 </div>
