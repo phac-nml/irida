@@ -141,19 +141,6 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Responsible for getting template fragments for the samples page. This is usually used for modal windows.
-	 *
-	 * @param name
-	 * 		name of the template
-	 *
-	 * @return String path to the template
-	 */
-	@RequestMapping("/templates/{name}")
-	public String getAngularTemplate(@PathVariable String name) {
-		return PROJECT_TEMPLATE_DIR + name;
-	}
-
-	/**
 	 * Get a paged list of samples.
 	 *
 	 * @param projectId
