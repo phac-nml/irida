@@ -17,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteSequenceFile;
 public interface SequenceFileRemoteRepository extends RemoteRepository<RemoteSequenceFile> {
 	/**
 	 * Get a local copy of a {@link RemoteSequenceFile} with a default MediaType
+	 * of application/fastq
 	 * 
 	 * @param sequenceFile
 	 *            The {@link RemoteSequenceFile} to get sequence data for
