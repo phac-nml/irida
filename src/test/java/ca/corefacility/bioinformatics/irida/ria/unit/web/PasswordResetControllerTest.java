@@ -15,6 +15,7 @@ import java.util.Base64;
 import java.util.Locale;
 import java.util.Map;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
@@ -51,6 +52,11 @@ public class PasswordResetControllerTest {
 		messageSource = mock(MessageSource.class);
 
 		controller = new PasswordResetController(userService, passwordResetService, emailController, messageSource);
+	}
+	
+	@After
+	public void cleanup() {
+		SecurityContextHolder.clearContext();
 	}
 
 	@Test
