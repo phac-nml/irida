@@ -18,10 +18,12 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
@@ -64,6 +66,7 @@ public class ProjectSamplesControllerTest {
 	private SampleService sampleService;
 	private UserService userService;
 	private SequenceFileService sequenceFileService;
+	private MessageSource messageSource;
 	private ProjectControllerUtils projectUtils;
 	private ProjectSamplesCart cart;
 
@@ -74,10 +77,11 @@ public class ProjectSamplesControllerTest {
 		userService = mock(UserService.class);
 		sequenceFileService = mock(SequenceFileService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
+		messageSource = mock(MessageSource.class);
 		cart = mock(ProjectSamplesCart.class);
 
 		controller = new ProjectSamplesController(projectService, sampleService, userService, sequenceFileService,
-				projectUtils, cart);
+				projectUtils, cart, messageSource);
 		user.setId(1L);
 
 		mockSidebarInfo();
@@ -285,7 +289,7 @@ public class ProjectSamplesControllerTest {
 		when(sampleService.update(anyLong(), anyMap())).thenReturn(sample1);
 
 		// Call the controller with a new name
-		Map<String, Object> result = controller.ajaxSamplesMerge(PROJECT_ID, sampleIds, 1L, newName);
+		Map<String, Object> result = controller.ajaxSamplesMerge(PROJECT_ID, sample1.getId(), newName, Locale.US);
 
 		// Ensure that the merge was requested
 		verify(sampleService, times(1)).mergeSamples(any(Project.class), any(Sample.class), any());

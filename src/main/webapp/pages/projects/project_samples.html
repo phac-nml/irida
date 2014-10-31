@@ -94,9 +94,10 @@
 					delay: 250
 				})
 				.service('SamplesService', ['$rootScope', 'Restangular', SamplesService])
-				.controller('SubNavCtrl', ['$scope', 'SamplesService', SubNavCtrl])
+				.controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
 				.controller('PagingCtrl', ['$scope', 'SamplesService', PagingCtrl])
-				.controller('SamplesTableCtrl', ['SamplesService', SamplesTableCtrl]);
+				.controller('SamplesTableCtrl', ['SamplesService', SamplesTableCtrl])
+				.controller('MergeCtrl', ['$modalInstance', MergeCtrl]);
 
 		function setRootVariable($rootScope) {
 			$rootScope.cgPromise = null;
@@ -144,8 +145,8 @@
 				});
 			};
 
-			svc.merge = function() {
-				return base.post('merge');
+			svc.merge = function(params) {
+				return base.customPOST(params, 'merge');
 			};
 
 			function addSample(s) {
@@ -213,13 +214,30 @@
 			SamplesService.getSamples({});
 		}
 
-		function SubNavCtrl($scope, SamplesService) {
+		function SubNavCtrl($scope, $modal, BASE_URL, SamplesService) {
 			"use strict";
 			var vm = this;
 
 			vm.merge = function () {
-				SamplesService.merge();
+				$modal.open({
+					templateUrl: BASE_URL + 'projects/templates/merge',
+					controller: 'MergeCtrl as mergeCtrl',
+					resolve: {
+						samples: function () {
+							return [];
+						}
+					}
+				});
 			};
+		}
+
+		function MergeCtrl($modalInstance) {
+			"use strict";
+			var vm = this;
+
+			vm.close = function() {
+				$modalInstance.close();
+			}
 		}
 		/*]]>*/
 	</script>

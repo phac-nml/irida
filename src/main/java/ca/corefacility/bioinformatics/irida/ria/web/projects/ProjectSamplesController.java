@@ -74,6 +74,7 @@ public class ProjectSamplesController {
 
 	// Page Names
 	private static final String PROJECTS_DIR = "projects/";
+	public static final String PROJECT_TEMPLATE_DIR = PROJECTS_DIR + "templates/";
 	public static final String LIST_PROJECTS_PAGE = PROJECTS_DIR + "projects";
 	public static final String PROJECT_MEMBERS_PAGE = PROJECTS_DIR + "project_members";
 	public static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
@@ -137,6 +138,18 @@ public class ProjectSamplesController {
 
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_SAMPLES);
 		return PROJECT_SAMPLES_PAGE;
+	}
+
+	/**
+	 * Responsible for getting template fragments for the samples page. This is usually used for modal windows.
+	 *
+	 * @param name
+	 * 		name of the template
+	 * @return String path to the template
+	 */
+	@RequestMapping("/templates/{name}")
+	public String getAngularTemplate(@PathVariable String name) {
+		return PROJECT_TEMPLATE_DIR + name;
 	}
 
 	/**
@@ -355,7 +368,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return
 	 */
-	@RequestMapping(value = "/{projectId}/ajax/samples/merge", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/{projectId}/ajax/samples/merge", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> ajaxSamplesMerge(@PathVariable Long projectId, @RequestParam(required = false) Long mergeSampleId,
 			@RequestParam(required = false) String newName, Locale locale) {
 		Map<String, Object> result = new HashMap<>();
@@ -387,9 +400,8 @@ public class ProjectSamplesController {
 		// Create an update map
 		Sample[] mergeSamples = new Sample[sampleIds.size()];
 		int count = 0;
-		Iterator<Long> iterator = sampleIds.iterator();
-		while (iterator.hasNext()) {
-			mergeSamples[count++] = sampleService.read(iterator.next());
+		for (Long sampleId : sampleIds) {
+			mergeSamples[count++] = sampleService.read(sampleId);
 		}
 
 		// Merge the samples
