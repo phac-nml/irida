@@ -5,6 +5,8 @@
 	<title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
 	<link rel="stylesheet" th:href="@{/resources/bower_components/angular-busy/angular-busy.css}"
 	      href="/resources/bower_components/angular-busy/angular-busy.css"/>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/angular-ui-select/dist/select.min.css}" href="/resources/bower_components/angular-ui-select/dist/select.min.css"/>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2.css}" href="/resources/bower_components/select2/select2.css"/>
 	<script>window.dependencies = ['Samples'];</script>
 </head>
 <body>
@@ -17,14 +19,20 @@
 		</div>
 	</div>
 	<div class="row" ng-controller="SubNavCtrl as subnav">
-		<div class="col-md-12 mrgn-bttm-md">
+		<div class="col-md-9 mrgn-bttm-md">
 			<div class="btn-toolbar">
-					<button class="btn btn-default btn-sm" ng-click="subnav.merge()"
-					        th:utext="#{project.samples.nav.merge}" data:tooltip="#{project.samples.nav.merge-tooltip}" tooltip-placement="bottom">__MERGE__</button>
+				<button class="btn btn-default btn-sm" ng-click="subnav.merge()" ng-disabled="subnav.count&lt;2"
+				        th:utext="#{project.samples.nav.merge}" data:tooltip="#{project.samples.nav.merge-tooltip}" tooltip-placement="bottom">
+					__MERGE__
+				</button>
 			</div>
 		</div>
+		<div class="well well-sm col-md-3">
+			<strong th:text="#{project.samples.table.select-count}"></strong>
+			<span class="badge badge-info pull-right" id="selected-count" ng-bind="subnav.count"></span>
+		</div>
 	</div>
-	<div class="row" cg-busy="cgPromise">
+	<div class="row" th:attr="cg-busy=#{cg-busy.base(#{cg-busy.samples.table}, @{/resources/bower_components/angular-busy/angular-busy.html})}">
 		<div class="col-md-12" ng-controller="SamplesTableCtrl as table">
 			<table id="samplesTable" class="table">
 				<thead>
@@ -81,166 +89,10 @@
 <th:block layout:fragment="scripts" th:inline="javascript">
 	<script th:src="@{/resources/bower_components/angular-busy/angular-busy.js}"
 	        src="/resources/bower_components/angular-busy/angular-busy.js"></script>
+	<script th:src="@{/resources/bower_components/angular-ui-select/dist/select.min.js}" src="/resources/bower_components/angular-ui-select/dist/select.min.js"></script>
 	<script th:src="@{/resources/js/directives/datatables/irida-datatable.js}"
 	        src="/resources/js/directives/datatables/irida-datatable.js"></script>
-	<script th:inline="javascript">
-		/*<![CDATA[*/
-		angular.module('Samples', ['cgBusy'])
-				.run(['$rootScope', setRootVariable])
-				.value('cgBusyDefaults', {
-					message: /*[[#{cg.table.samples}]]*/ 'Loading Stuff',
-					backdrop: true,
-					templateUrl: /*[[@{/resources/bower_components/angular-busy/angular-busy.html}]]*/ 'my_custom_template.html',
-					delay: 250
-				})
-				.service('SamplesService', ['$rootScope', 'Restangular', SamplesService])
-				.controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
-				.controller('PagingCtrl', ['$scope', 'SamplesService', PagingCtrl])
-				.controller('SamplesTableCtrl', ['SamplesService', SamplesTableCtrl])
-				.controller('MergeCtrl', ['$modalInstance', MergeCtrl]);
-
-		function setRootVariable($rootScope) {
-			$rootScope.cgPromise = null;
-		}
-
-		/*[- */
-		// Responsible for all server calls for samples
-		// @param $rootScope The root scope for the page.
-		// @param R Restangular
-		/* -]*/
-		function SamplesService($rootScope, R) {
-			"use strict";
-			var svc = this,
-					id = angular.element("#projectId").val(),
-					_filter = {
-						page: 0,
-						sortDir: 'desc',
-						sortedBy: 'createdDate',
-						count: 10
-					},
-					base = R.all('projects/' + id + '/ajax/samples');
-
-			svc.filter = _.clone(_filter);
-			svc.samples = [];
-
-			svc.getSamples = function (f) {
-				_.extend(svc.filter, f || {});
-				$rootScope.cgPromise = base.customGET("", svc.filter).then(function (data) {
-					angular.copy(data.samples, svc.samples);
-					$rootScope.$broadcast('PAGING_UPDATE', {total: data.totalSamples});
-				});
-			};
-
-			svc.updateSample = function (s) {
-				var t = s.selected ? addSample(s) : removeSample(s);
-				t.then(function (data) {
-					updateSample(data.sample);
-				});
-			};
-
-			svc.updateFile = function (s, f) {
-				var t = f.selected ? addFile(s, f) : removeFile(s, f);
-				t.then(function (data) {
-					updateSample(data.sample);
-				});
-			};
-
-			svc.merge = function(params) {
-				return base.customPOST(params, 'merge');
-			};
-
-			function addSample(s) {
-				return base.customPOST({sampleId: s.id}, 'cart/add/sample');
-			}
-
-			function removeSample(s) {
-				return base.customPOST({sampleId: s.id}, 'cart/remove/sample');
-			}
-
-			function addFile(s, f) {
-				return base.customPOST({sampleId: s.id, fileId: f.id}, 'cart/add/file')
-			}
-
-			function removeFile(s, f) {
-				return base.customPOST({sampleId: s.id, fileId: f.id}, 'cart/remove/file')
-			}
-
-			function updateSample(s) {
-				var i = _.findKey(svc.samples, {id: s.id});
-				svc.samples[i] = s;
-			}
-		}
-
-		/*[- */
-		// Handles everything to do with paging for the Samples Table
-		// @param $scope Scope the controller is responsible for
-		// @param SamplesService Server handler for samples.
-		/* -]*/
-		function PagingCtrl($scope, SamplesService) {
-			"use strict";
-			var vm = this;
-			vm.count = 10;
-			vm.total = 0;
-			vm.page = 1;
-
-			vm.update = function () {
-				SamplesService.getSamples({page: vm.page - 1, count: vm.count})
-			};
-
-			$scope.$on('PAGING_UPDATE', function (e, args) {
-				vm.total = args.total;
-			});
-		}
-
-		/*[- */
-		// Responsible for all samples within the table
-		// @param SamplesService Server handler for samples.
-		/* -]*/
-		function SamplesTableCtrl(SamplesService) {
-			"use strict";
-			var vm = this;
-			vm.open = [];
-
-			vm.samples = SamplesService.samples;
-
-			vm.updateSample = function (s) {
-				SamplesService.updateSample(s);
-			};
-
-			vm.updateFile = function (s, f) {
-				SamplesService.updateFile(s, f);
-			};
-
-			SamplesService.getSamples({});
-		}
-
-		function SubNavCtrl($scope, $modal, BASE_URL, SamplesService) {
-			"use strict";
-			var vm = this;
-
-			vm.merge = function () {
-				$modal.open({
-					templateUrl: BASE_URL + 'projects/templates/merge',
-					controller: 'MergeCtrl as mergeCtrl',
-					resolve: {
-						samples: function () {
-							return [];
-						}
-					}
-				});
-			};
-		}
-
-		function MergeCtrl($modalInstance) {
-			"use strict";
-			var vm = this;
-
-			vm.close = function() {
-				$modalInstance.close();
-			}
-		}
-		/*]]>*/
-	</script>
+	<script th:src="@{/resources/js/pages/projects/samples.js}" src="/resources/js/pages/projects/samples.js"></script>
 </th:block>
 </body>
 </html>

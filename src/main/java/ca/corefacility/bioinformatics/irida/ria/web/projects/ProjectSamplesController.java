@@ -59,6 +59,7 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
 @Controller
@@ -217,6 +218,7 @@ public class ProjectSamplesController {
 		result.put("selectCount", selectedCount);
 		result.put("samples", samples);
 		result.put("totalSamples", projectSampleJoinPage.getTotalElements());
+		result.put("count", cart.getSelectedSamples(projectId).size());
 		return result;
 	}
 
@@ -369,26 +371,19 @@ public class ProjectSamplesController {
 	 * @return
 	 */
 	@RequestMapping(value = "/{projectId}/ajax/samples/merge", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Object> ajaxSamplesMerge(@PathVariable Long projectId, @RequestParam(required = false) Long mergeSampleId,
-			@RequestParam(required = false) String newName, Locale locale) {
+	public @ResponseBody Map<String, Object> ajaxSamplesMerge(@PathVariable Long projectId, @RequestParam Long mergeSampleId,
+			@RequestParam String newName, Locale locale) {
 		Map<String, Object> result = new HashMap<>();
 		Set<Long> sampleIds = cart.getSelectedSampleIds(projectId);
 		int samplesMergeCount = sampleIds.size();
 		Project project = projectService.read(projectId);
 		// Determine which sample to merge into
-		Sample mergeIntoSample;
-		// 1. Existing Sample
-		if (mergeSampleId != null) {
-			mergeIntoSample = sampleService.read(mergeSampleId);
-			sampleIds.remove(mergeSampleId);
-		}
-		// 2. New Sample
-		else {
-			Long id = sampleIds.iterator().next();
-			sampleIds.remove(id);
-			mergeIntoSample = sampleService.read(id);
+		Sample mergeIntoSample = sampleService.read(mergeSampleId);
+		sampleIds.remove(mergeSampleId);
+
+		if (!Strings.isNullOrEmpty(newName)) {
 			try {
-				sampleService.update(id, ImmutableMap.of("sampleName", newName));
+			sampleService.update(mergeSampleId, ImmutableMap.of("sampleName", newName));
 			} catch (ConstraintViolationException e) {
 				logger.error(e.getLocalizedMessage());
 				result.put("result", "error");
@@ -484,6 +479,23 @@ public class ProjectSamplesController {
 		response.put("count", count);
 		response.put("sample", _generateUISample(projectId, sampleService.read(sampleId)));
 		return response;
+	}
+
+	/**
+	 * Get a Map of Sample names and ids that are contained within the cart
+	 *
+	 * @return Map of sample names and ids
+	 */
+	@RequestMapping(value = "/{projectId}/ajax/samples/cart/names", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Object> getSelectedSampleNamesAndIds(@PathVariable Long projectId) {
+		List<Map<String, Object>> sampleList = new ArrayList<>();
+		for (Long sampleId : cart.getSelectedSampleIds(projectId)) {
+			Map<String, Object> map = new HashMap<>();
+			map.put("id", sampleId);
+			map.put("name", sampleService.read(sampleId).getSampleName());
+			sampleList.add(map);
+		}
+		return ImmutableMap.of("samples", sampleList);
 	}
 
 	/**
