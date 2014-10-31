@@ -31,6 +31,8 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	private @Value("${output.file.base.directory}") String outputFileBaseDirectory;
 
+	private @Value("${remote.file.temporary.directory}") String remoteFilesTempDirectory;
+
 	private static final Set<Path> BASE_DIRECTORIES = new HashSet<>();
 
 	@Autowired
@@ -59,6 +61,12 @@ public class IridaApiFilesystemRepositoryConfig {
 	}
 
 	@Profile("prod")
+	@Bean(name = "remoteFilesTempDirectory")
+	public Path remoteFilesTempDirectoryProd() {
+		return getExistingPathOrThrow(remoteFilesTempDirectory);
+	}
+
+	@Profile("prod")
 	@Bean(name = "outputFileBaseDirectory")
 	public Path outputFileBaseDirectoryProd() {
 		return getExistingPathOrThrow(outputFileBaseDirectory);
@@ -80,6 +88,12 @@ public class IridaApiFilesystemRepositoryConfig {
 	@Bean(name = "outputFileBaseDirectory")
 	public Path outputFileBaseDirectory() throws IOException {
 		return configureDirectory(outputFileBaseDirectory, "output-file-dev");
+	}
+
+	@Profile({ "dev", "it", "test" })
+	@Bean(name = "remoteFilesTempDirectory")
+	public Path remoteFilesTempDirectory() throws IOException {
+		return configureDirectory(remoteFilesTempDirectory, "remote-temp-file-dev");
 	}
 
 	private Path getExistingPathOrThrow(String directory) {
