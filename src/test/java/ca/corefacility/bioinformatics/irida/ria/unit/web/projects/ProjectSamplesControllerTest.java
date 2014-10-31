@@ -17,9 +17,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -273,7 +275,7 @@ public class ProjectSamplesControllerTest {
 	@Test
 	public void testAjaxSamplesMerge() {
 		String newName = "FRED";
-		Project project = getProject();
+		Project project = TestDataFactory.constructProject();
 		Sample sample1 = new Sample("Wilma");
 		sample1.setId(1L);
 		sample1.setSampleName(newName);
@@ -283,13 +285,17 @@ public class ProjectSamplesControllerTest {
 		sampleIds.add(1L);
 		sampleIds.add(11L);
 
+		Set<Long> ids = new HashSet<>();
+		ids.add(1L);
+		ids.add(11L);
+		when(cart.getSelectedSampleIds(project.getId())).thenReturn(ids);
 		when(sampleService.read(1L)).thenReturn(sample1);
 		when(sampleService.read(11L)).thenReturn(sample2);
-		when(projectService.read(PROJECT_ID)).thenReturn(project);
+		when(projectService.read(TestDataFactory.PROJECT_ID)).thenReturn(project);
 		when(sampleService.update(anyLong(), anyMap())).thenReturn(sample1);
 
 		// Call the controller with a new name
-		Map<String, Object> result = controller.ajaxSamplesMerge(PROJECT_ID, sample1.getId(), newName, Locale.US);
+		Map<String, Object> result = controller.ajaxSamplesMerge(TestDataFactory.PROJECT_ID, 1L, newName, Locale.US);
 
 		// Ensure that the merge was requested
 		verify(sampleService, times(1)).mergeSamples(any(Project.class), any(Sample.class), any());
@@ -298,7 +304,7 @@ public class ProjectSamplesControllerTest {
 		Map<String, Object> updateMap = new HashMap<>();
 		updateMap.put("sampleName", newName);
 		verify(sampleService, times(1)).update(1L, updateMap);
-		assertTrue("Result contains the word success", result.containsKey("success"));
+		assertEquals("Result is success", result.get("result"), "success");
 	}
 
 	@SuppressWarnings("unchecked")

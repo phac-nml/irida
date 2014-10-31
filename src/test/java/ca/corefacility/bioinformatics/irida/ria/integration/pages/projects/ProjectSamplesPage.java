@@ -99,6 +99,7 @@ public class ProjectSamplesPage {
 	public void selectSampleByRow(int row) {
 		List<WebElement> inputs = driver.findElements(By.className("sample-select"));
 		inputs.get(row).click();
+		BasePage.waitForTime();
 	}
 
 	public boolean isRowSelected(int row) {
@@ -136,5 +137,37 @@ public class ProjectSamplesPage {
 			return false;
 		}
 		return true;
+	}
+
+	public boolean isBtnEnabled(String id) {
+		return driver.findElement(By.id(id)).isEnabled();
+	}
+
+	public void clickBtn(String id) {
+		driver.findElement(By.id(id)).click();
+		BasePage.waitForTime();
+	}
+	public boolean isItemVisible(String id) {
+		return driver.findElement(By.id(id)).isDisplayed();
+	}
+
+	public boolean checkSuccessNotification() {
+		return pageUtilities.checkSuccessNotification();
+	}
+
+	public int getTotalSelectedSamplesCount() {
+		return Integer.parseInt(driver.findElement(By.id("selected-count")).getText());
+	}
+
+	public void enterNewMergeSampleName (String name) {
+		WebElement input = driver.findElement(By.id("newName"));
+		input.clear();
+		input.sendKeys(name);
+		BasePage.waitForTime();
+	}
+
+	public String getSampleNameByRow(int row) {
+		List<WebElement> rows = driver.findElements(By.className("sample-row"));
+		return rows.get(row).findElement(By.className("sample-name")).getText();
 	}
 }

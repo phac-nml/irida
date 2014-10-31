@@ -21,7 +21,7 @@
 	<div class="row" ng-controller="SubNavCtrl as subnav">
 		<div class="col-md-9 mrgn-bttm-md">
 			<div class="btn-toolbar">
-				<button class="btn btn-default btn-sm" ng-click="subnav.merge()" ng-disabled="subnav.count&lt;2"
+				<button id="mergeBtn" class="btn btn-default btn-sm" ng-click="subnav.merge()" ng-disabled="subnav.count&lt;2"
 				        th:utext="#{project.samples.nav.merge}" data:tooltip="#{project.samples.nav.merge-tooltip}" tooltip-placement="bottom">
 					__MERGE__
 				</button>
@@ -49,7 +49,7 @@
 					<td>
 						<input ui-indeterminate="sample.indeterminate" class="sample-select" type="checkbox" ng-model="sample.selected"
 						       ng-change="table.updateSample(sample)"/></td>
-					<td ng-bind="sample.name"></td>
+					<td class="sample-name" ng-bind="sample.name"></td>
 					<td ng-bind="sample.organism"></td>
 					<td ng-bind="sample.created | date:'medium'"></td>
 					<td ng-if="sample.files.length==0" ng-bind="sample.files.length"></td>

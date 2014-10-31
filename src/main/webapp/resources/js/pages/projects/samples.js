@@ -58,8 +58,11 @@ function SamplesService($rootScope, R, notifications) {
         return base.customPOST(params, 'merge').then(function (data) {
             if (data.result === 'success') {
                 svc.getSamples({});
+                notifications.show({type: data.result, msg: data.message});
             }
-            notifications.show({type: data.result, msg: data.message});
+            else {
+
+            }
         });
     };
 
@@ -165,7 +168,7 @@ function MergeCtrl($scope, $modalInstance, SamplesService, samples) {
     vm.samples = samples;
     vm.selected = samples[0];
     vm.name = "";
-    vm.hasError = false;
+    vm.error = {};
 
     vm.close = function () {
         $modalInstance.close();
@@ -181,7 +184,9 @@ function MergeCtrl($scope, $modalInstance, SamplesService, samples) {
         return vm.name;
     }, _.debounce(function (n, o) {
         if (n !== o) {
-            vm.hasError = n.length < 5 && n.length > 0;
+            vm.error.length = n.length < 5 && n.length > 0;
+            vm.error.format = n.indexOf(" ") !== -1;
+            console.log(n.indexOf(' ') !== -1);
         }
         $scope.$apply();
     }, 300));

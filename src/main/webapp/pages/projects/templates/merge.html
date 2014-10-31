@@ -14,7 +14,7 @@
 		<div class="alert alert-warning">
 			<h4 th:utext="#{alert.warning.title}">Warning!</h4>
 
-			<p>All samples will be merged into a single sample. Currently only the metadata from the sample selected will
+			<p th:text="#{project.samples.modal.merge.warning}">All samples will be merged into a single sample. Currently only the metadata from the sample selected will
 				retain its metadata.</p>
 		</div>
 
@@ -33,13 +33,14 @@
 		</div>
 		<div class="form-group">
 			<label th:text="#{project.samples.modal.merge.name-label}"></label>
-			<input class="form-control" type="text" placeholder="{{mergeCtrl.selected.name}}" ng-model="mergeCtrl.name"/>
-			<div ng-hide="mergeCtrl.hasError!=true" class="alert alert-danger" th:text="#{project.samples.modal.error}">Name must be at least 5 characters long.</div>
+			<input id="newName" class="form-control" type="text" placeholder="{{mergeCtrl.selected.name}}" ng-model="mergeCtrl.name"/>
+			<div id="merge-length-error" ng-hide="mergeCtrl.error.length!==true" class="alert alert-danger" th:text="#{project.samples.modal.error-length}">Name must be at least 5 characters long.</div>
+			<div id="merge-format-error" ng-hide="mergeCtrl.error.format!==true" class="alert alert-danger" th:text="#{project.samples.modal.error-format}">Name must be at least 5 characters long.</div>
 		</div>
 	</div>
 	<div class="modal-footer">
 		<button class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="mergeCtrl.close()"></button>
-		<button id="confirmMergeBtn" class="btn btn-primary" ng-disabled="mergeCtrl.hasError"
+		<button id="confirmMergeBtn" class="btn btn-primary" ng-disabled="mergeCtrl.error.format || mergeCtrl.error.length"
 		        th:utext="#{project.samples.modal.merge.complete}" ng-click="mergeCtrl.merge()">Complete Merge
 		</button>
 	</div>

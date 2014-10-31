@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.utilities;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -56,5 +57,18 @@ public class PageUtilities {
 
 	public void waitForElementToBeClickable(By locator){
 		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(ExpectedConditions.elementToBeClickable(locator));
+	}
+
+	public boolean checkSuccessNotification() {
+		boolean present = false;
+		try {
+			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
+					.className("toast-success")));
+			present = true;
+		} catch (NoSuchElementException e) {
+			present = false;
+		}
+
+		return present;
 	}
 }

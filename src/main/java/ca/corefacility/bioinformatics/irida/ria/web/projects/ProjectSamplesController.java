@@ -383,7 +383,7 @@ public class ProjectSamplesController {
 
 		if (!Strings.isNullOrEmpty(newName)) {
 			try {
-			sampleService.update(mergeSampleId, ImmutableMap.of("sampleName", newName));
+			mergeIntoSample = sampleService.update(mergeSampleId, ImmutableMap.of("sampleName", newName));
 			} catch (ConstraintViolationException e) {
 				logger.error(e.getLocalizedMessage());
 				result.put("result", "error");
