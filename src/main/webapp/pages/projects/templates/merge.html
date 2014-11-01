@@ -6,7 +6,8 @@
 	</div>
 	<div class="modal-body">
 		<h4>
-			<span th:utext="#{project.samples.modal.merge.intro}">You are about to merge 4 samples.</span>
+			<span class="fa fa-fw fa-exclamation-circle"></span>&nbsp;
+			<span th:text="#{project.samples.modal.merge.intro}">You are about to merge 4 samples.</span>
 		</h4>
 		<ul>
 			<li ng-repeat="s in mergeCtrl.samples">{{s.name}}</li>
