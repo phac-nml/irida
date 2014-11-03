@@ -1,11 +1,21 @@
 package ca.corefacility.bioinformatics.irida.model.snapshot;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.Table;
 
 import ca.corefacility.bioinformatics.irida.model.project.IridaProject;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
 
+@Entity
+@Table(name = "project_snapshot")
 public class ProjectSnapshot implements IridaProject {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long snapshotId;
 
 	private Long id;
 
@@ -18,7 +28,8 @@ public class ProjectSnapshot implements IridaProject {
 
 	private String organism;
 
-	public ProjectSnapshot(Project project) {
+	public ProjectSnapshot(IridaProject project) {
+		this.id = project.getId();
 		this.name = project.getName();
 		this.projectDescription = project.getProjectDescription();
 		this.remoteURL = project.getRemoteURL();
