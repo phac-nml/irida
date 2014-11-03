@@ -39,18 +39,8 @@ public class ProjectSnapshot implements IridaProject {
 	}
 
 	@Override
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	@Override
 	public String getProjectDescription() {
 		return projectDescription;
-	}
-
-	@Override
-	public void setProjectDescription(String projectDescription) {
-		this.projectDescription = projectDescription;
 	}
 
 	@Override
@@ -59,19 +49,8 @@ public class ProjectSnapshot implements IridaProject {
 	}
 
 	@Override
-	public void setRemoteURL(String remoteURL) {
-		this.remoteURL = remoteURL;
-	}
-
-	@Override
 	public String getOrganism() {
 		return organism;
-	}
-
-	@Override
-	public void setOrganism(String organism) {
-		this.organism = organism;
-
 	}
 
 }
