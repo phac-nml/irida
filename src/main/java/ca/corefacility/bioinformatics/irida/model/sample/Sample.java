@@ -52,7 +52,7 @@ import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmissionOneO
 @Table(name = "sample")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class Sample implements IridaThing, Comparable<Sample> {
+public class Sample implements IridaThing, IridaSample, Comparable<Sample> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
