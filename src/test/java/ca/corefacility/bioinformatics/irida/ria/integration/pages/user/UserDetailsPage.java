@@ -10,6 +10,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
+
 /**
  * User details page for selenium testing
  *
@@ -19,9 +21,11 @@ public class UserDetailsPage {
 	public static String EDIT_USER_LINK = "editUser";
 	public static String USER_ID = "user-id";
 	private WebDriver driver;
+	private PageUtilities pageUtilities;
 
 	public UserDetailsPage(WebDriver driver) {
 		this.driver = driver;
+		this.pageUtilities = new PageUtilities(driver);
 	}
 
 	public void getCurrentUser() {
@@ -65,15 +69,6 @@ public class UserDetailsPage {
 	}
 
 	public boolean checkSuccessNotification() {
-		boolean present = false;
-		try {
-			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
-					.className("toast-success")));
-			present = true;
-		} catch (NoSuchElementException e) {
-			present = false;
-		}
-
-		return present;
+		return pageUtilities.checkSuccessNotification();
 	}
 }

@@ -213,6 +213,35 @@ public class ProjectSamplesCart {
 		}
 	}
 
+	/**
+	 * Get all the ids for the selected samples within a project
+	 *
+	 * @param projectId
+	 * 		Id for a {@link Project}
+	 *
+	 * @return The ids for selected {@link Sample}
+	 */
+	public Set<Long> getSelectedSampleIds(Long projectId) {
+		Map<Long, Map<Long, Boolean>> projectMap = _cart.get(projectId);
+		Set<Long> result;
+		if (projectMap == null) {
+			result = new HashSet<>();
+		} else {
+			result = projectMap.keySet();
+		}
+		return result;
+	}
+
+	/**
+	 * Remove a project from the cart
+	 *
+	 * @param projectId
+	 * 		Id for a {@link Project}
+	 */
+	public void emptyProjectCart(Long projectId) {
+		_cart.remove(projectId);
+	}
+
 	private Map<Long, Boolean> generateFileMap(Long sampleId, boolean inCart) {
 		Map<Long, Boolean> result = new HashMap<>();
 		List<Join<Sample, SequenceFile>> list = sequenceFileService

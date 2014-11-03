@@ -194,6 +194,92 @@ public class ProjectSamplesPageIT {
 		assertTrue(page.isRowSelected(0));
 	}
 
+	@Test
+	public void testSelectedSampleCount() {
+		page.goTo();
+		assertEquals(0, page.getTotalSelectedSamplesCount());
+		page.selectSampleByRow(0);
+		page.selectSampleByRow(1);
+		assertEquals(2, page.getTotalSelectedSamplesCount());
+		page.clickNextPageButton();
+		assertEquals(2, page.getTotalSelectedSamplesCount());
+		page.selectSampleByRow(5);
+		assertEquals(3, page.getTotalSelectedSamplesCount());
+		page.clickLastPageButton();
+		assertEquals(3, page.getTotalSelectedSamplesCount());
+		page.selectSampleByRow(0);
+		assertEquals(4, page.getTotalSelectedSamplesCount());
+		page.selectSampleByRow(0);
+		assertEquals(3, page.getTotalSelectedSamplesCount());
+		page.clickFirstPageButton();
+		assertEquals(3, page.getTotalSelectedSamplesCount());
+		page.selectSampleByRow(0);
+		page.selectSampleByRow(1);
+		assertEquals(1, page.getTotalSelectedSamplesCount());
+		page.clickLastPageButton();
+		assertEquals(1, page.getTotalSelectedSamplesCount());
+
+		// What about when a file is selected.
+		page.openFilesView(0);
+		page.selectFile(1);
+		assertEquals(2, page.getTotalSelectedSamplesCount());
+		page.selectFile(1);
+		assertEquals(1, page.getTotalSelectedSamplesCount());
+
+	}
+
+	@Test
+	public void testDefaultMerge() {
+		page.goTo();
+		assertEquals(0, page.getTotalSelectedSamplesCount());
+		assertFalse(page.isBtnEnabled("mergeBtn"));
+		page.selectSampleByRow(0);
+		page.selectSampleByRow(1);
+		assertEquals(2, page.getTotalSelectedSamplesCount());
+		assertTrue(page.isBtnEnabled("mergeBtn"));
+		page.clickBtn("mergeBtn");
+		assertTrue(page.isItemVisible("merge-samples-modal"));
+		page.clickBtn("confirmMergeBtn");
+		assertTrue(page.checkSuccessNotification());
+		assertEquals(0, page.getTotalSelectedSamplesCount());
+	}
+
+	@Test
+	public void testRenameMerge() {
+		page.goTo();
+		assertEquals(0, page.getTotalSelectedSamplesCount());
+		assertFalse(page.isBtnEnabled("mergeBtn"));
+		page.selectSampleByRow(0);
+		page.selectSampleByRow(1);
+		assertEquals(2, page.getTotalSelectedSamplesCount());
+		page.clickBtn("mergeBtn");
+		assertTrue(page.isItemVisible("merge-samples-modal"));
+
+		// Try entering a name that is too short
+		assertTrue(page.isBtnEnabled("confirmMergeBtn"));
+		page.enterNewMergeSampleName("HI");
+		assertTrue(page.isItemVisible("merge-length-error"));
+		assertFalse(page.isBtnEnabled("confirmMergeBtn"));
+
+		// Try entering a name with spaces
+		page.enterNewMergeSampleName("HIBOB I AM WRONG");
+		assertTrue(page.isItemVisible("merge-format-error"));
+		assertFalse(page.isBtnEnabled("confirmMergeBtn"));
+
+		// Try to enter a proper name name
+		String oriName = page.getSampleNameByRow(0);
+		String newLongName = "LONGERNAME";
+		page.enterNewMergeSampleName(newLongName);
+		assertFalse(page.isItemVisible("merge-length-error"));
+		assertFalse(page.isItemVisible("merge-format-error"));
+		assertTrue(page.isBtnEnabled("confirmMergeBtn"));
+		page.clickBtn("confirmMergeBtn");
+		assertTrue(page.checkSuccessNotification());
+		String updatedName = page.getSampleNameByRow(0);
+		assertFalse(oriName.equals(updatedName));
+		assertTrue(updatedName.equals(newLongName));
+	}
+
 	private void jumpAroundLists() {
 		page.clickFirstPageButton();
 		page.clickLastPageButton();
