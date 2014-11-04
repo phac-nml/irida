@@ -26,9 +26,6 @@ import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.xml.MarshallingView;
-import org.thymeleaf.spring4.SpringTemplateEngine;
-import org.thymeleaf.spring4.view.ThymeleafViewResolver;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.IridaScheduledTasksConfig;
@@ -54,11 +51,6 @@ import com.google.common.collect.ImmutableMap;
 public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 
 	private static final long TEN_GIGABYTES = 10737418240l;
-	
-	private static final String TEMPLATE_MODE = "HTML5";
-	private static final String TEMPLATE_PREFIX = "/WEB-INF/pages/";
-	private static final String TEMPLATE_SUFFIX = ".html";
-	private static final int TEMPLATE_ORDER = 1;
 
 	@Bean
 	public MultipartResolver multipartResolver() {
@@ -70,7 +62,7 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 	@Bean
 	public ViewResolver viewResolver(ContentNegotiationManager contentNegotiationManager) {
 		ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
-		resolver.setViewResolvers(Arrays.asList(thymeleafViewResolver(),internalResourceViewResolver()));
+		resolver.setViewResolvers(Arrays.asList(internalResourceViewResolver()));
 		resolver.setDefaultViews(defaultViews());
 		resolver.setContentNegotiationManager(contentNegotiationManager);
 
@@ -81,46 +73,6 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 		InternalResourceViewResolver internalResourceViewResolver = new InternalResourceViewResolver();
 		
 		return internalResourceViewResolver;
-	}
-	
-	/**
-	 * Create a new {@link ServletContextTemplateResolver} and set defaults.
-	 * 
-	 * @return {@link ServletContextTemplateResolver}
-	 */
-	@Bean
-	public ServletContextTemplateResolver templateResolver() {
-		ServletContextTemplateResolver resolver = new ServletContextTemplateResolver();
-		resolver.setPrefix(TEMPLATE_PREFIX);
-		resolver.setSuffix(TEMPLATE_SUFFIX);
-		resolver.setTemplateMode(TEMPLATE_MODE);
-		resolver.setOrder(TEMPLATE_ORDER);
-		resolver.setCacheable(false);
-
-		return resolver;
-	}
-
-	/**
-	 * Thymeleaf needs a template engine, get a {@link SpringTemplateEngine}
-	 * 
-	 * @return {@link SpringTemplateEngine}
-	 */
-	@Bean
-	public SpringTemplateEngine templateEngine() {
-		SpringTemplateEngine engine = new SpringTemplateEngine();
-		engine.setTemplateResolver(templateResolver());
-		return engine;
-	}
-
-	/**
-	 * Create the {@link ThymeleafViewResolver}
-	 * 
-	 * @return {@link ViewResolver}
-	 */
-	private ViewResolver thymeleafViewResolver() {
-		ThymeleafViewResolver resolver = new ThymeleafViewResolver();
-		resolver.setTemplateEngine(templateEngine());
-		return resolver;
 	}
 
 	private List<View> defaultViews() {
