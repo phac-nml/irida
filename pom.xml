@@ -3,21 +3,21 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>ca.corefacility.bioinformatics</groupId>
-	<artifactId>irida-api</artifactId>
-	<packaging>jar</packaging>
-	<version>2.0.0-SNAPSHOT</version>
-	<name>irida-api</name>
-	<url>http://gitlab.corefacility.ca/irida/irida-api</url>
+	<artifactId>irida</artifactId>
+	<packaging>war</packaging>
+	<version>1.0.0-SNAPSHOT</version>
+	<name>irida</name>
+	<url>http://www.irida.ca</url>
 
 	<issueManagement>
 		<system>GitLab</system>
-		<url>http://gitlab.corefacility.ca/irida/irida-api/issues</url>
+		<url>http://irida.corefacility.ca/gitlab/irida/irida/issues</url>
 	</issueManagement>
 
 	<scm>
-		<connection>scm:git:http://gitlab.corefacility.ca/irida/irida-api.git</connection>
-		<developerConnection>scm:git:ssh://git@gitlab.corefacility.ca/irida/irida-api.git</developerConnection>
-		<url>http://gitlab.corefacility.ca/irida/irida-api</url>
+		<connection>scm:git:http://irida.corefacility.ca/gitlab/irida/irida.git</connection>
+		<developerConnection>scm:git:ssh://git@irida.corefacility.ca/gitlab/irida/irida.git</developerConnection>
+		<url>http://irida.corefacility.ca/gitlab/irida/irida</url>
 	</scm>
 
 	<inceptionYear>2013</inceptionYear>
@@ -52,7 +52,6 @@
 			<organizationUrl>http://www.phac-aspc.gc.ca/</organizationUrl>
 		</developer>
 	</developers>
-
 	<repositories>
 		<!-- Use maven central over HTTPS instead of HTTP -->
 		<repository>
@@ -80,34 +79,7 @@
 	</pluginRepositories>
 
 	<dependencies>
-		<!-- JUnit -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit-dep</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- logging -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-
-		<!-- Google Guava -->
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>${guava.version}</version>
-		</dependency>
-
-		<!-- Spring -->
+		<!-- Spring Core Framework -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
@@ -130,6 +102,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
@@ -138,52 +115,8 @@
 			<artifactId>spring-context-support</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
-			<version>${spring.version}</version>
-			<type>jar</type>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
-			<type>jar</type>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-jpa</artifactId>
-			<version>${spring.data.jpa.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aspects</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-envers</artifactId>
-			<version>${spring.data.envers.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.ws</groupId>
-			<artifactId>spring-ws-test</artifactId>
-			<version>${spring.ws.test.version}</version>
-			<scope>test</scope>
-		</dependency>
 
-		<!-- Spring Security -->
+		<!-- Security -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
@@ -195,56 +128,32 @@
 			<version>${spring.security.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.security.oauth</groupId>
-			<artifactId>spring-security-oauth2</artifactId>
-			<version>${spring.security.oauth.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.codehaus.jackson</groupId>
-					<artifactId>jackson-mapper-asl</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
-			<version>${spring.security.version}</version>
-			<scope>test</scope>
+			<groupId>javax.annotation</groupId>
+			<artifactId>jsr250-api</artifactId>
+			<version>${jsr250.api.version}</version>
 		</dependency>
 
-		<!-- Validation API -->
+		<!-- Database -->
 		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>${hibernate.validator.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.jboss.logging</groupId>
-					<artifactId>jboss-logging</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>javax.el</groupId>
-			<artifactId>el-api</artifactId>
-			<version>${javax.el-api.version}</version>
-			<scope>provided</scope>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.el</groupId>
-			<artifactId>el-ri</artifactId>
-			<version>${el-ri.version}</version>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<version>${spring.data.jpa.version}</version>
 		</dependency>
-
-		<!-- mockito -->
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>${mockito.version}</version>
-			<scope>test</scope>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-envers</artifactId>
+			<version>${spring.data.envers.version}</version>
 		</dependency>
-
-		<!-- database -->
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
@@ -278,69 +187,18 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>${h2.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.annotation</groupId>
-			<artifactId>jsr250-api</artifactId>
-			<version>${jsr250.api.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.springtestdbunit</groupId>
-			<artifactId>spring-test-dbunit</artifactId>
-			<version>${spring.test.dbunit.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.dbunit</groupId>
-			<artifactId>dbunit</artifactId>
-			<version>${dbunit.version}</version>
-			<type>jar</type>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-dbcp2</artifactId>
 			<version>${commons.dbcp.version}</version>
 			<type>jar</type>
 		</dependency>
-
 		<dependency>
-			<groupId>commons-cli</groupId>
-			<artifactId>commons-cli</artifactId>
-			<version>${commons.cli.version}</version>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+			<version>${ehcache.version}</version>
 		</dependency>
 
-		<!-- fastqc -->
-		<dependency>
-			<groupId>uk.ac.babraham</groupId>
-			<artifactId>fastqc</artifactId>
-			<version>${fastqc.version}</version>
-		</dependency>
-
-		<!-- aspectj -->
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjrt</artifactId>
-			<version>${aspectj.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjweaver</artifactId>
-			<version>${aspectj.version}</version>
-		</dependency>
-
-		<!-- Apache Jena -->
+		<!-- RDF Database -->
 		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-tdb</artifactId>
@@ -364,13 +222,6 @@
 			</exclusions>
 		</dependency>
 
-		<!-- BioJava -->
-		<dependency>
-			<groupId>org.biojava</groupId>
-			<artifactId>biojava3-core</artifactId>
-			<version>${biojava.version}</version>
-		</dependency>
-
 		<!-- This dependency is brought in by hibernate and jena with conflicting 
 			versions. Solution was to exclude it from both of their imports and import 
 			it explicitly. -->
@@ -380,14 +231,200 @@
 			<version>${xml.apis.version}</version>
 		</dependency>
 
-		<!-- EhCache caching -->
+		<!-- Web -->
 		<dependency>
-			<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache</artifactId>
-			<version>${ehcache.version}</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
+			<version>${spring.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-lang</groupId>
+					<artifactId>commons-lang</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.hateoas</groupId>
+			<artifactId>spring-hateoas</artifactId>
+			<version>${spring.hateoas.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${spring.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security.oauth</groupId>
+			<artifactId>spring-security-oauth2</artifactId>
+			<version>${spring.security.oauth.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.codehaus.jackson</groupId>
+					<artifactId>jackson-mapper-asl</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>${commons.fileupload.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.thymeleaf</groupId>
+			<artifactId>thymeleaf-spring4</artifactId>
+			<version>${thymeleaf.version}</version>
 		</dependency>
 
-		<!-- Galaxy blend4j/testing -->
+		<!-- Servlet -->
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>javax.el-api</artifactId>
+			<version>${javax.el-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${javax.servlet-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Testing -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.ws</groupId>
+			<artifactId>spring-ws-test</artifactId>
+			<version>${spring.ws.test.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<version>${spring.security.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${h2.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.jayway.restassured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>${rest.assured.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.springtestdbunit</groupId>
+			<artifactId>spring-test-dbunit</artifactId>
+			<version>${spring.test.dbunit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.dbunit</groupId>
+			<artifactId>dbunit</artifactId>
+			<version>${dbunit.version}</version>
+			<type>jar</type>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- Logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+
+		<!-- Utilities -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-cli</groupId>
+			<artifactId>commons-cli</artifactId>
+			<version>${commons.cli.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>uk.ac.babraham</groupId>
+			<artifactId>fastqc</artifactId>
+			<version>${fastqc.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>${aspectj.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>${aspectj.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.biojava</groupId>
+			<artifactId>biojava3-core</artifactId>
+			<version>${biojava.version}</version>
+		</dependency>
+
+		<!-- Validation API -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate.validator.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jboss.logging</groupId>
+					<artifactId>jboss-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- Galaxy -->
 		<dependency>
 			<groupId>com.github.jmchilton.blend4j</groupId>
 			<artifactId>blend4j</artifactId>
@@ -399,12 +436,31 @@
 			<version>${com.github.jmchilton.galaxybootstrap.version}</version>
 		</dependency>
 	</dependencies>
+
 	<build>
-		<finalName>irida-api</finalName>
+		<finalName>irida</finalName>
 		<plugins>
+			<!-- maven surefire plugin (unit testing) -->
 			<plugin>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>${maven.failsafe.plugin.version}</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<includes>
+						<include>**/test/integration/**/*Test.java</include>
+					</includes>
+					<properties>
+						<property>
+							<name>listener</name>
+							<value>
+								ca.corefacility.bioinformatics.irida.web.controller.test.listeners.IntegrationTestListener
+							</value>
+						</property>
+					</properties>
+					<systemPropertyVariables>
+						<spring.profiles.active>it</spring.profiles.active>
+					</systemPropertyVariables>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
@@ -413,12 +469,9 @@
 						</goals>
 						<configuration>
 							<!-- Uncomment below to disable Galaxy integration tests -->
-							<!-- 
-							<excludes>
-								<exclude>/ca/corefacility/bioinformatics/irida/**/galaxy/**</exclude>
-								<exclude>ca/corefacility/bioinformatics/irida/service/impl/integration/AnalysisExecutionScheduledTaskImplIT.java</exclude>
-							</excludes>
-							 -->
+							<!-- <excludes> <exclude>/ca/corefacility/bioinformatics/irida/**/galaxy/**</exclude> 
+								<exclude>ca/corefacility/bioinformatics/irida/service/impl/integration/AnalysisExecutionScheduledTaskImplIT.java</exclude> 
+								</excludes> -->
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
 								<test.galaxy.repository.url>${test.galaxy.repository.url}</test.galaxy.repository.url>
@@ -434,13 +487,33 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven.surefire.plugin.version}</version>
 				<configuration>
+					<includes>
+						<include>**/test/unit/**/*Test.java</include>
+					</includes>
+					<properties>
+						<property>
+							<name>listener</name>
+							<value>
+								ca.corefacility.bioinformatics.irida.web.controller.test.listeners.UnitTestListener
+							</value>
+						</property>
+					</properties>
 					<argLine>${surefireArgLine}</argLine>
 				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
+
+			<!-- Maven compiler plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven.compiler.plugin.version}</version>
+				<version>${plugin.maven.compiler.version}</version>
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
@@ -532,14 +605,52 @@
 					<changeLogFile>${liquibase.config.changeLogFile}</changeLogFile>
 				</configuration>
 			</plugin>
+
+			<!-- Maven WAR plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>${maven.jar.plugin.version}</version>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>${plugin.maven.war.version}</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+
+			<!-- Jetty plugin -->
+			<plugin>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>${jetty.version}</version>
+				<configuration>
+					<scanIntervalSeconds>1</scanIntervalSeconds>
+					<stopPort>8995</stopPort>
+					<stopKey>STOP</stopKey>
+				</configuration>
 				<executions>
 					<execution>
+						<id>start-jetty</id>
+						<phase>pre-integration-test</phase>
 						<goals>
-							<goal>test-jar</goal>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<scanIntervalSeconds>0</scanIntervalSeconds>
+							<daemon>true</daemon>
+							<systemProperties>
+								<systemProperty>
+									<!-- Setting spring profile for integration tests to "it". Also 
+										done in failsafe plugin -->
+									<name>spring.profiles.active</name>
+									<value>it</value>
+								</systemProperty>
+							</systemProperties>
+						</configuration>
+					</execution>
+					<execution>
+						<id>stop-jetty</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -572,7 +683,6 @@
 		<fastqc.version>0.10.1-nml-custom</fastqc.version>
 		<aspectj.version>1.8.1</aspectj.version>
 		<hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
-		<javax.el-api.version>2.2</javax.el-api.version>
 		<el-ri.version>1.0</el-ri.version>
 		<com.github.jmchilton.galaxybootstrap.version>0.3.0</com.github.jmchilton.galaxybootstrap.version>
 		<com.github.jmchilton.blend4j.version>0.2.0-SNAPSHOT</com.github.jmchilton.blend4j.version>
@@ -582,6 +692,13 @@
 		<liquibase.version>3.2.2</liquibase.version>
 		<biojava.version>3.0</biojava.version>
 		<ehcache.version>2.9.0</ehcache.version>
+		<jackson.version>2.4.3</jackson.version>
+		<rest.assured.version>2.3.4</rest.assured.version>
+		<commons.fileupload.version>1.3.1</commons.fileupload.version>
+		<javax.el-api.version>3.0.0</javax.el-api.version>
+		<javax.servlet-api.version>3.1.0</javax.servlet-api.version>
+		<spring.hateoas.version>0.16.0.RELEASE</spring.hateoas.version>
+		<thymeleaf.version>2.1.3.RELEASE</thymeleaf.version>
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.17</maven.failsafe.plugin.version>
@@ -619,5 +736,6 @@
 		<!-- Set to 'local' to use the local version stored in irida-api, or set 
 			this to a URL -->
 		<test.galaxy.database>local</test.galaxy.database>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 </project>

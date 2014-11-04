@@ -113,3 +113,7 @@ Installing the API project *without* executing tests:
 
     mvn clean install -DskipTests
 
+IRIDA Web
+---------
+`irida-web` is the REST API interface for IRIDA.
+
