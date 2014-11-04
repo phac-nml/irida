@@ -1,6 +1,0 @@
-#!/bin/bash
-
-pushd ../irida-api
-mvn clean install
-popd
-mvn jetty:run
