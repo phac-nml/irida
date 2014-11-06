@@ -39,7 +39,6 @@ public class PasswordResetPageIT {
 
 	private WebDriver driver;
 	private PasswordResetPage passwordResetPage;
-	LoginPage loginPage;
 
 	@Before
 	public void setup() {
@@ -92,8 +91,7 @@ public class PasswordResetPageIT {
 		
 		BasePage.logout(driver);
 		// try new password
-		loginPage = LoginPage.to(driver);
-		loginPage.login(RESET_USER, password);
+		LoginPage.login(driver, RESET_USER, password);
 		assertEquals("The user is logged in and redirected.", "http://localhost:8080/dashboard", driver.getCurrentUrl());
 	}
 }

@@ -35,13 +35,11 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 public class CreateUserPageIT {
 	private WebDriver driver;
 	private CreateUserPage createPage;
-	LoginPage loginPage;
 
 	@Before
 	public void setup() {
 		driver = new PhantomJSDriver();
-		loginPage = LoginPage.to(driver);
-		loginPage.doLogin();
+		LoginPage.login(driver, LoginPage.ADMIN_USERNAME, LoginPage.GOOD_PASSWORD);
 
 		createPage = new CreateUserPage(driver);
 	}

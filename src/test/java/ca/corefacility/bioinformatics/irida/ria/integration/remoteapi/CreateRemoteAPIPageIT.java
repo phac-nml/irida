@@ -47,8 +47,7 @@ public class CreateRemoteAPIPageIT {
 	public void setup() {
 		driver = new PhantomJSDriver();
 		driver.manage().window().setSize(new Dimension(1024, 900));
-		LoginPage loginPage = LoginPage.to(driver);
-		loginPage.doLogin();
+		LoginPage.login(driver, LoginPage.ADMIN_USERNAME, LoginPage.GOOD_PASSWORD);
 
 		page = new CreateRemoteAPIPage(driver);
 	}

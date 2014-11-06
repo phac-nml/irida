@@ -27,9 +27,8 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
  * IT for the client details page
- * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
@@ -49,8 +48,7 @@ public class ClientDetailsPageIT {
 	public void setup() {
 		driver = new PhantomJSDriver();
 		driver.manage().window().setSize(new Dimension(1024, 900));
-		LoginPage loginPage = LoginPage.to(driver);
-		loginPage.doLogin();
+		LoginPage.login(driver, LoginPage.ADMIN_USERNAME, LoginPage.GOOD_PASSWORD);
 
 		page = new ClientDetailsPage(driver, id);
 	}

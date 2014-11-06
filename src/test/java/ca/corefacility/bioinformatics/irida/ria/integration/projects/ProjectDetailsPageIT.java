@@ -61,8 +61,7 @@ public class ProjectDetailsPageIT {
 	public void setUp() {
 		driver = new PhantomJSDriver();
 		driver.manage().window().setSize(new Dimension(1024, 900));
-		LoginPage loginPage = LoginPage.to(driver);
-		loginPage.doLogin();
+		LoginPage.login(driver, LoginPage.ADMIN_USERNAME, LoginPage.GOOD_PASSWORD);
 
 		detailsPage = new ProjectDetailsPage(driver, PROJECT_ID);
 	}

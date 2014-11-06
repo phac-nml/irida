@@ -20,8 +20,7 @@ public class BasePage {
 		WebDriver driver = new PhantomJSDriver();
 		driver.manage().window().setSize(new Dimension(1024, 900));
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-		LoginPage loginPage = LoginPage.to(driver);
-		loginPage.doLogin();
+		LoginPage.login(driver, LoginPage.ADMIN_USERNAME, LoginPage.GOOD_PASSWORD);
 		return driver;
 	}
 
@@ -29,8 +28,7 @@ public class BasePage {
 		WebDriver driver = new ChromeDriver();
 		driver.manage().window().setSize(new Dimension(1024, 900));
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-		LoginPage loginPage = LoginPage.to(driver);
-		loginPage.doLogin();
+		LoginPage.login(driver, LoginPage.ADMIN_USERNAME, LoginPage.GOOD_PASSWORD);
 		return driver;
 	}
 
