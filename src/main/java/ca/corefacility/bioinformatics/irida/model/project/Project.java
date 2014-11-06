@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -45,7 +44,6 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectN
 @Table(name = "project")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-@Embeddable
 public class Project implements IridaThing, IridaProject, Comparable<Project> {
 
 	@Id
