@@ -9,7 +9,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
-import ca.corefacility.bioinformatics.irida.model.project.IridaProject;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaProject;
 
 @Entity
 @Table(name = "project_snapshot")

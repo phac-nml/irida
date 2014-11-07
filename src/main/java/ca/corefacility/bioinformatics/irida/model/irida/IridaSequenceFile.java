@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model;
+package ca.corefacility.bioinformatics.irida.model.irida;
 
 import java.nio.file.Path;
 import java.util.Map;

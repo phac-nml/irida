@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model.project;
+package ca.corefacility.bioinformatics.irida.model.irida;
 
 public interface IridaProject {
 

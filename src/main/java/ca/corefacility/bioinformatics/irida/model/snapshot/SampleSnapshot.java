@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
-import ca.corefacility.bioinformatics.irida.model.sample.IridaSample;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSample;
 
 @Entity
 @Table(name = "sample_snapshot")
