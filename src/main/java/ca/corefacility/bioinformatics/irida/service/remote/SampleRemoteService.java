@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSample;
 
@@ -20,19 +19,15 @@ public interface SampleRemoteService extends RemoteService<RemoteSample> {
 	 * 
 	 * @param project
 	 *            The {@link RemoteProject} to get samples from
-	 * @param api
-	 *            The {@link RemoteAPI} the project exists on
 	 * @return A List of {@link RemoteSample}s
 	 */
-	public List<RemoteSample> getSamplesForProject(RemoteProject project, RemoteAPI api);
+	public List<RemoteSample> getSamplesForProject(RemoteProject project);
 
 	/**
 	 * Search the {@link RemoteSample}s that exist in a {@link RemoteProject}
 	 * 
 	 * @param project
 	 *            The {@link RemoteProject} the samples are in
-	 * @param api
-	 *            the {@link RemoteAPI} the project and samples are on
 	 * @param search
 	 *            The search term
 	 * @param page
@@ -41,6 +36,5 @@ public interface SampleRemoteService extends RemoteService<RemoteSample> {
 	 *            The page size
 	 * @return A Page of {@link RemoteSample}s
 	 */
-	public Page<RemoteSample> searchSamplesForProject(RemoteProject project, RemoteAPI api, String search, int page,
-			int size);
+	public Page<RemoteSample> searchSamplesForProject(RemoteProject project, String search, int page, int size);
 }
