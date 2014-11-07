@@ -4,15 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.concurrent.TimeUnit;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -22,7 +18,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.drivers.IridaChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 
@@ -31,9 +27,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
- * <p>
- * Integration test to ensure that the Project Details Page.
- * </p>
+ * <p> Integration test to ensure that the Project Details Page. </p>
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
@@ -51,16 +45,14 @@ public class ProjectSamplesPageIT {
 
 	@Before
 	public void setUp() {
-		driver = new ChromeDriver();
-		driver.manage().window().setSize(new Dimension(1024, 900));
-		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+		driver = new IridaChromeDriver();
 		LoginPage.loginAsAdmin(driver);
 		this.page = new ProjectSamplesPage(driver);
 	}
 
 	@After
 	public void destroy() {
-		BasePage.destroyDriver(driver);
+		driver.quit();
 	}
 
 	@Test
@@ -118,49 +110,49 @@ public class ProjectSamplesPageIT {
 		assertTrue("Shows the no samples message", page.isTableEmptyRowShown());
 	}
 
-    @Test
-    public void testMergeProjectSamples() {
-        page.goToPage();
-        int origCount = page.getDisplayedSampleCount();
-        assertEquals("Starts with the correct number of samples", 5, origCount);
-        assertFalse("Combine samples modal should not be open.", page.isCombineSamplesModalOpen());
-        page.clickFirstThreeCheckboxes();
-        page.clickCombineSamples();
-        assertTrue("Combine samples modal should be open", page.isCombineSamplesModalOpen());
-        page.selectTheMergedSampleName("sample5");
-        assertEquals("Now only has 3 samples since 3 were merged", 3, page.getDisplayedSampleCount());
-        assertEquals("Sample has the correct name", "sample5", page.getSampleNameForRow(1));
-    }
+	@Test
+	public void testMergeProjectSamples() {
+		page.goToPage();
+		int origCount = page.getDisplayedSampleCount();
+		assertEquals("Starts with the correct number of samples", 5, origCount);
+		assertFalse("Combine samples modal should not be open.", page.isCombineSamplesModalOpen());
+		page.clickFirstThreeCheckboxes();
+		page.clickCombineSamples();
+		assertTrue("Combine samples modal should be open", page.isCombineSamplesModalOpen());
+		page.selectTheMergedSampleName("sample5");
+		assertEquals("Now only has 3 samples since 3 were merged", 3, page.getDisplayedSampleCount());
+		assertEquals("Sample has the correct name", "sample5", page.getSampleNameForRow(1));
+	}
 
-    @Test
-    public void testMergeProjectSamplesNewName() {
-        String newName = "FredPenner";
-        page.goToPage();
-        int origCount = page.getDisplayedSampleCount();
-        assertEquals("Starts with the correct number of samples", 5, origCount);
-        assertFalse("Combine samples modal should not be open.", page.isCombineSamplesModalOpen());
-        page.clickFirstThreeCheckboxes();
-        page.clickCombineSamples();
-        assertTrue("Combine samples modal should be open", page.isCombineSamplesModalOpen());
-        page.selectTheMergedSampleName(newName);
-        assertEquals("Now only has 3 samples since 3 were merged", 3, page.getDisplayedSampleCount());
-        assertEquals("Sample has the correct name", newName, page.getSampleNameForRow(1));
-    }
+	@Test
+	public void testMergeProjectSamplesNewName() {
+		String newName = "FredPenner";
+		page.goToPage();
+		int origCount = page.getDisplayedSampleCount();
+		assertEquals("Starts with the correct number of samples", 5, origCount);
+		assertFalse("Combine samples modal should not be open.", page.isCombineSamplesModalOpen());
+		page.clickFirstThreeCheckboxes();
+		page.clickCombineSamples();
+		assertTrue("Combine samples modal should be open", page.isCombineSamplesModalOpen());
+		page.selectTheMergedSampleName(newName);
+		assertEquals("Now only has 3 samples since 3 were merged", 3, page.getDisplayedSampleCount());
+		assertEquals("Sample has the correct name", newName, page.getSampleNameForRow(1));
+	}
 
-    @Test
-    public void testMergeProjectSamplesBadName() {
-        String newName = "Fred Penner";
-        page.goToPage();
-        int origCount = page.getDisplayedSampleCount();
-        assertEquals("Starts with the correct number of samples", 5, origCount);
-        assertFalse("Combine samples modal should not be open.", page.isCombineSamplesModalOpen());
-        page.clickFirstThreeCheckboxes();
-        page.clickCombineSamples();
-        assertTrue("Combine samples modal should be open", page.isCombineSamplesModalOpen());
-        page.selectTheMergedSampleName(newName);
-	    // TODO: This is the test that causes phantomjs to fail
-        assertTrue("Displays merge error", page.isSampleMergeErrorDisplayed());
-    }
+	@Test
+	public void testMergeProjectSamplesBadName() {
+		String newName = "Fred Penner";
+		page.goToPage();
+		int origCount = page.getDisplayedSampleCount();
+		assertEquals("Starts with the correct number of samples", 5, origCount);
+		assertFalse("Combine samples modal should not be open.", page.isCombineSamplesModalOpen());
+		page.clickFirstThreeCheckboxes();
+		page.clickCombineSamples();
+		assertTrue("Combine samples modal should be open", page.isCombineSamplesModalOpen());
+		page.selectTheMergedSampleName(newName);
+		// TODO: This is the test that causes phantomjs to fail
+		assertTrue("Displays merge error", page.isSampleMergeErrorDisplayed());
+	}
 
 	@Test
 	public void testDisplaySampleFiles() {
@@ -170,16 +162,16 @@ public class ProjectSamplesPageIT {
 		assertEquals("There should be three files displayed", 3, page.getDisplayedFilesCount());
 	}
 
-    @Test
-    public void testCopySamples(){
-    	page.goToPage();
-    	page.clickFirstThreeCheckboxes();
-    	page.copySamples("2");
-    	assertTrue(page.successMessageShown());
-    }
+	@Test
+	public void testCopySamples() {
+		page.goToPage();
+		page.clickFirstThreeCheckboxes();
+		page.copySamples("2");
+		assertTrue(page.successMessageShown());
+	}
 
 	@Test
-	public void testTriStateCheckboxes(){
+	public void testTriStateCheckboxes() {
 		page.goToPage();
 		page.showFilesView();
 		page.clickOnFileCheckBox(0);

@@ -18,7 +18,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.drivers.IridaPhantomJSDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.SampleDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.SampleEditPage;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesController;
@@ -28,9 +29,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
- * <p>
- * Integration test to ensure that the Sample Details Page.
- * </p>
+ * <p> Integration test to ensure that the Sample Details Page. </p>
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
@@ -48,7 +47,8 @@ public class SampleEditPageIT {
 
 	@Before
 	public void setUp() {
-		driver = BasePage.initializeDriver();
+		driver = new IridaPhantomJSDriver();
+		LoginPage.loginAsAdmin(driver);
 		page = new SampleEditPage(driver);
 		detailsPage = new SampleDetailsPage(driver);
 		page.goToPage();
@@ -56,7 +56,7 @@ public class SampleEditPageIT {
 
 	@After
 	public void destroy() {
-		BasePage.destroyDriver(driver);
+		driver.quit();
 	}
 
 	@Test

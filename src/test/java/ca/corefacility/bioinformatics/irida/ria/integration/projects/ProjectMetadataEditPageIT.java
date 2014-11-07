@@ -17,7 +17,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.drivers.IridaPhantomJSDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataEditPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataPage;
 
@@ -56,16 +57,14 @@ public class ProjectMetadataEditPageIT {
 
 	@Before
 	public void setUp() {
-		driver = BasePage.initializeChromeDriver();
+		driver = new IridaPhantomJSDriver();
+		LoginPage.loginAsAdmin(driver);
 		page = new ProjectMetadataEditPage(driver);
 	}
 
 	@After
 	public void destroy() {
-		if (driver != null) {
-			driver.close();
-			driver.quit();
-		}
+		driver.quit();
 	}
 
 	@Test
