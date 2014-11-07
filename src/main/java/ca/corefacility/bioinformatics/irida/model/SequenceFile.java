@@ -47,7 +47,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 @Table(name = "sequence_file")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class SequenceFile implements IridaThing, Comparable<SequenceFile>, VersionedFileFields<Long> {
+public class SequenceFile implements IridaThing, Comparable<SequenceFile>, VersionedFileFields<Long>, IridaSequenceFile {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
