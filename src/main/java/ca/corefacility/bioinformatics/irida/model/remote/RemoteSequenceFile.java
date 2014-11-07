@@ -6,6 +6,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLinks;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
@@ -20,6 +21,8 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemo
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RemoteSequenceFile extends SequenceFile implements RemoteResource {
 	private RESTLinks links;
+	private RemoteAPI remoteAPI;
+	
 	private String fileName;
 
 	/**
@@ -71,5 +74,13 @@ public class RemoteSequenceFile extends SequenceFile implements RemoteResource {
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+	}
+	
+	public RemoteAPI getRemoteAPI() {
+		return remoteAPI;
+	}
+	
+	public void setRemoteAPI(RemoteAPI remoteAPI) {
+		this.remoteAPI = remoteAPI;
 	}
 }
