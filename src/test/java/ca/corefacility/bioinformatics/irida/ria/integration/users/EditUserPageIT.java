@@ -39,7 +39,7 @@ public class EditUserPageIT {
 	@Before
 	public void setup() {
 		driver = new PhantomJSDriver();
-		LoginPage.login(driver, LoginPage.ADMIN_USERNAME, LoginPage.GOOD_PASSWORD);
+		LoginPage.loginAsAdmin(driver);
 
 		editPage = new EditUserPage(driver);
 	}

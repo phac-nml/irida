@@ -58,7 +58,7 @@ public class SequenceFileIT {
 	public void setUp() {
 		this.driver = new PhantomJSDriver();
 		driver.manage().window().setSize(new Dimension(1024, 900));
-		LoginPage.login(driver, LoginPage.ADMIN_USERNAME, LoginPage.GOOD_PASSWORD);
+		LoginPage.loginAsAdmin(driver);
 		page = new SequenceFilePages(driver);
 	}
 
