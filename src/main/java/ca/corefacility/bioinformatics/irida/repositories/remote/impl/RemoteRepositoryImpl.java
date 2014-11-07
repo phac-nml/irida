@@ -70,7 +70,9 @@ public abstract class RemoteRepositoryImpl<Type extends RemoteResource> implemen
 		ResponseEntity<ResourceWrapper<Type>> exchange = restTemplate.exchange(uri, HttpMethod.GET, HttpEntity.EMPTY,
 				objectTypeReference);
 
-		return exchange.getBody().getResource();
+		Type resource = exchange.getBody().getResource();
+		resource.setRemoteAPI(remoteAPI);
+		return resource;
 	}
 
 	/**
@@ -82,7 +84,11 @@ public abstract class RemoteRepositoryImpl<Type extends RemoteResource> implemen
 		ResponseEntity<ListResourceWrapper<Type>> exchange = restTemplate.exchange(uri, HttpMethod.GET,
 				HttpEntity.EMPTY, listTypeReference);
 
-		return exchange.getBody().getResource().getResources();
+		List<Type> resources = exchange.getBody().getResource().getResources();
+		for (Type r : resources) {
+			r.setRemoteAPI(remoteAPI);
+		}
+		return resources;
 	}
 
 	/**

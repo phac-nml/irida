@@ -63,6 +63,7 @@ import com.github.jmchilton.blend4j.galaxy.UsersClient;
 import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
+import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.github.jmchilton.blend4j.galaxy.beans.User;
@@ -697,6 +698,11 @@ public class GalaxyAPITest {
 				+ dataFile1.getFileName());
 		fileContent.setId(fileId);
 		libraryMap.put(fileContent.getName(), fileContent);
+		
+		// setup sample file in response to LibrariesClient.showDataset
+		LibraryDataset uploadedDataset  = new LibraryDataset();
+		uploadedDataset.setFileSize(Long.toString(dataFile1.toFile().length()));
+		when(librariesClient.showDataset(libraryId, fileId)).thenReturn(uploadedDataset);
 
 		setupUploadSampleToLibrary(samples, sampleFolders, false);
 
@@ -754,6 +760,11 @@ public class GalaxyAPITest {
 				+ dataFile1.getFileName());
 		fileContent.setId(fileId);
 		libraryMap.put(fileContent.getName(), fileContent);
+		
+		// setup sample file in response to LibrariesClient.showDataset
+		LibraryDataset uploadedDataset  = new LibraryDataset();
+		uploadedDataset.setFileSize(Long.toString(dataFile1.toFile().length()));
+		when(librariesClient.showDataset(libraryId, fileId)).thenReturn(uploadedDataset);
 
 		setupUploadSampleToLibrary(samples, sampleFolders, false);
 

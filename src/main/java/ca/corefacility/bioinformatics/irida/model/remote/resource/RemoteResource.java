@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.model.remote.resource;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 
 /**
  * Methods that must be implemented by resources read from a remote Irida API
@@ -39,6 +40,20 @@ public interface RemoteResource extends IridaThing {
 	 * @param links
 	 */
 	public void setLinks(RESTLinks links);
+
+	/**
+	 * Set the {@link RemoteAPI} this resource was read from
+	 * 
+	 * @param api
+	 */
+	public void setRemoteAPI(RemoteAPI api);
+
+	/**
+	 * Get the {@link RemoteAPI} this resource was read from
+	 * 
+	 * @return
+	 */
+	public RemoteAPI getRemoteAPI();
 
 	/**
 	 * Get the HREF for a given rel

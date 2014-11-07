@@ -65,7 +65,10 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Remot
 		this.tokenService = tokenService;
 	}
 
-	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Path downloadRemoteSequenceFile(RemoteSequenceFile sequenceFile, RemoteAPI remoteAPI,
 			MediaType... mediaTypes) {
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
