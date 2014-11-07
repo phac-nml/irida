@@ -44,10 +44,12 @@ public class RemoteSample extends Sample implements RemoteResource {
 		this.sequenceFileCount = sequenceFileCount;
 	}
 
+	@Override
 	public RemoteAPI getRemoteAPI() {
 		return remoteAPI;
 	}
 
+	@Override
 	public void setRemoteAPI(RemoteAPI remoteAPI) {
 		this.remoteAPI = remoteAPI;
 	}

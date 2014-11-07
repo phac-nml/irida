@@ -7,15 +7,16 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
  * A user read from a remote irida API
+ * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class RemoteUser extends User implements RemoteResource{
+public class RemoteUser extends User implements RemoteResource {
 
 	private static final long serialVersionUID = 7992520725123634969L;
-	
+
 	private RESTLinks links;
 	private RemoteAPI remoteAPI;
-	
+
 	@Override
 	public RESTLinks getLinks() {
 		return links;
@@ -25,13 +26,15 @@ public class RemoteUser extends User implements RemoteResource{
 	public void setLinks(RESTLinks links) {
 		this.links = links;
 	}
-	
+
+	@Override
 	public RemoteAPI getRemoteAPI() {
 		return remoteAPI;
 	}
-	
+
+	@Override
 	public void setRemoteAPI(RemoteAPI remoteAPI) {
 		this.remoteAPI = remoteAPI;
 	}
-	
+
 }

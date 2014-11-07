@@ -76,10 +76,12 @@ public class RemoteSequenceFile extends SequenceFile implements RemoteResource {
 		this.fileName = fileName;
 	}
 	
+	@Override
 	public RemoteAPI getRemoteAPI() {
 		return remoteAPI;
 	}
 	
+	@Override
 	public void setRemoteAPI(RemoteAPI remoteAPI) {
 		this.remoteAPI = remoteAPI;
 	}

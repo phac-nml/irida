@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource
  */
 public class RemoteProject extends Project implements RemoteResource {
 	private RESTLinks links;
-	
+
 	private RemoteAPI remoteAPI;
 
 	public RESTLinks getLinks() {
@@ -29,11 +29,13 @@ public class RemoteProject extends Project implements RemoteResource {
 	public int hashCode() {
 		return Objects.hash(super.hashCode(), links);
 	}
-	
+
+	@Override
 	public RemoteAPI getRemoteAPI() {
 		return remoteAPI;
 	}
 
+	@Override
 	public void setRemoteAPI(RemoteAPI remoteAPI) {
 		this.remoteAPI = remoteAPI;
 	}
