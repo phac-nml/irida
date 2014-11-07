@@ -42,6 +42,7 @@ public class AnalysisAdminPageIT {
 
 	@Before
 	public void setUp() {
+		// TODO (14-11-07 - josh): Find out why PhantomJS fails here.
 		driver = new IridaChromeDriver();
 		LoginPage.loginAsAdmin(driver);
 		adminPage = new AnalysisAdminPage(driver);

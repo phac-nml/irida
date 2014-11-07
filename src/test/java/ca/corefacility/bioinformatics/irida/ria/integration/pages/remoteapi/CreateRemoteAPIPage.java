@@ -32,7 +32,7 @@ public class CreateRemoteAPIPage extends AbstractPage {
 	}
 
 	public boolean checkSuccess() {
-		if (driver.getCurrentUrl().matches(SUCCESS_PAGE)) {
+		if (driver.getCurrentUrl().matches(BASE_URL + SUCCESS_PAGE)) {
 			return true;
 		} else {
 			return false;

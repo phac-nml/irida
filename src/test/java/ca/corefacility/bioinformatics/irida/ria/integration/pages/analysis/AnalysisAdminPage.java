@@ -5,8 +5,6 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
@@ -16,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class AnalysisAdminPage extends AbstractPage {
-	private static final Logger logger = LoggerFactory.getLogger(AnalysisAdminPage.class);
 	public static final String RELATIVE_URL = "analysis/admin";
 
 	public AnalysisAdminPage(WebDriver driver) {
@@ -38,15 +35,14 @@ public class AnalysisAdminPage extends AbstractPage {
 	// ************************************************************************************************
 
 	public void clickShowFilterButton() {
-		waitForTime(100);
+		waitForTime(700);
 		driver.findElement(By.id("filterBtn")).click();
 		waitForElementVisible(By.id("table-filter"));
 	}
 
 	public void filterByName(String name) {
-
 		driver.findElement(By.id("name-filter")).sendKeys(name);
-		waitForAjax();
+		waitForTime(700);
 	}
 
 	public void selectStateFilter(String state) {
@@ -55,7 +51,7 @@ public class AnalysisAdminPage extends AbstractPage {
 		for (WebElement option : options) {
 			if (option.getText().equals(state)) {
 				option.click();
-				waitForAjax();
+				waitForTime(700);
 				break;
 			}
 		}
@@ -63,19 +59,6 @@ public class AnalysisAdminPage extends AbstractPage {
 
 	public void clickClearFilterButton() {
 		driver.findElement(By.id("clearFilterBtn")).click();
-		waitForAjax();
-	}
-
-	// ************************************************************************************************
-	// UTILITY METHODS
-	// ************************************************************************************************
-
-	private void waitForAjax() {
-		try {
-			// There is a 500 ms pause on filtering names.
-			Thread.sleep(700);
-		} catch (InterruptedException e) {
-			logger.error("Cannot sleep the thread.");
-		}
+		waitForTime(700);
 	}
 }
