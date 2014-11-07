@@ -14,9 +14,11 @@ import org.springframework.data.domain.Page;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSample;
+import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLinks;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SampleRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 public class SampleRemoteServiceImplTest {
@@ -31,26 +33,32 @@ public class SampleRemoteServiceImplTest {
 
 	@Test
 	public void testGetSamplesForProject() {
-		RemoteProject project = mock(RemoteProject.class);
-		RemoteAPI api = new RemoteAPI();
 		String samplesHref = "http://somewhere/projects/5/samples";
-		List<RemoteSample> samples = Lists.newArrayList(new RemoteSample());
+		RemoteProject project = new RemoteProject();
+		project.setLinks(new RESTLinks(ImmutableMap.of(SampleRemoteServiceImpl.PROJECT_SAMPLES_REL, samplesHref)));
+		RemoteAPI api = new RemoteAPI();
+		project.setRemoteAPI(api);
 
-		when(project.getHrefForRel(SampleRemoteServiceImpl.PROJECT_SAMPLES_REL)).thenReturn(samplesHref);
+		RemoteSample remoteSample = new RemoteSample();
+		remoteSample.setRemoteAPI(api);
+		List<RemoteSample> samples = Lists.newArrayList(remoteSample);
+
 		when(sampleRemoteRepository.list(samplesHref, api)).thenReturn(samples);
 
-		List<RemoteSample> samplesForProject = sampleRemoteService.getSamplesForProject(project, api);
+		List<RemoteSample> samplesForProject = sampleRemoteService.getSamplesForProject(project);
 
-		verify(project).getHrefForRel(SampleRemoteServiceImpl.PROJECT_SAMPLES_REL);
 		verify(sampleRemoteRepository).list(samplesHref, api);
 		assertEquals(samples, samplesForProject);
 	}
 
 	@Test
 	public void testSearchSamplesForProject() {
-		RemoteProject project = mock(RemoteProject.class);
-		RemoteAPI api = new RemoteAPI();
 		String samplesHref = "http://somewhere/projects/5/samples";
+		RemoteProject project = new RemoteProject();
+		project.setLinks(new RESTLinks(ImmutableMap.of(SampleRemoteServiceImpl.PROJECT_SAMPLES_REL, samplesHref)));
+		RemoteAPI api = new RemoteAPI();
+		project.setRemoteAPI(api);
+
 		String searchString = "1";
 		int page = 0;
 		int size = 10;
@@ -62,13 +70,11 @@ public class SampleRemoteServiceImplTest {
 
 		List<RemoteSample> samples = Lists.newArrayList(sample1, sample2);
 
-		when(project.getHrefForRel(SampleRemoteServiceImpl.PROJECT_SAMPLES_REL)).thenReturn(samplesHref);
 		when(sampleRemoteRepository.list(samplesHref, api)).thenReturn(samples);
 
-		Page<RemoteSample> searchSamplesForProject = sampleRemoteService.searchSamplesForProject(project, api,
-				searchString, page, size);
+		Page<RemoteSample> searchSamplesForProject = sampleRemoteService.searchSamplesForProject(project, searchString,
+				page, size);
 
-		verify(project).getHrefForRel(SampleRemoteServiceImpl.PROJECT_SAMPLES_REL);
 		verify(sampleRemoteRepository).list(samplesHref, api);
 		assertEquals(1, searchSamplesForProject.getNumberOfElements());
 		RemoteSample next = searchSamplesForProject.iterator().next();
@@ -77,9 +83,12 @@ public class SampleRemoteServiceImplTest {
 
 	@Test
 	public void testSearchSamplesForProjectPaging() {
-		RemoteProject project = mock(RemoteProject.class);
-		RemoteAPI api = new RemoteAPI();
 		String samplesHref = "http://somewhere/projects/5/samples";
+		RemoteProject project = new RemoteProject();
+		project.setLinks(new RESTLinks(ImmutableMap.of(SampleRemoteServiceImpl.PROJECT_SAMPLES_REL, samplesHref)));
+		RemoteAPI api = new RemoteAPI();
+		project.setRemoteAPI(api);
+
 		String searchString = "";
 		int page = 0;
 		int size = 2;
@@ -94,13 +103,11 @@ public class SampleRemoteServiceImplTest {
 
 		List<RemoteSample> samples = Lists.newArrayList(sample1, sample2, sample3, sample4);
 
-		when(project.getHrefForRel(SampleRemoteServiceImpl.PROJECT_SAMPLES_REL)).thenReturn(samplesHref);
 		when(sampleRemoteRepository.list(samplesHref, api)).thenReturn(samples);
 
-		Page<RemoteSample> searchSamplesForProject = sampleRemoteService.searchSamplesForProject(project, api,
-				searchString, page, size);
+		Page<RemoteSample> searchSamplesForProject = sampleRemoteService.searchSamplesForProject(project, searchString,
+				page, size);
 
-		verify(project).getHrefForRel(SampleRemoteServiceImpl.PROJECT_SAMPLES_REL);
 		verify(sampleRemoteRepository).list(samplesHref, api);
 		assertEquals(2, searchSamplesForProject.getNumberOfElements());
 		assertEquals(4, searchSamplesForProject.getTotalElements());
