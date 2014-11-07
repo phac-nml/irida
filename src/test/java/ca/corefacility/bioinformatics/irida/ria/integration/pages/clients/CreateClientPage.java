@@ -6,18 +6,17 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
-public class CreateClientPage {
-	private WebDriver driver;
+public class CreateClientPage extends AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(CreateClientPage.class);
 
-	private final String CREATE_PAGE = BasePage.URL + "clients/create";
-	public static String SUCCESS_PAGE = BasePage.URL + "clients/\\d+";
+	private final String CREATE_PAGE = "clients/create";
+	public static String SUCCESS_PAGE = "clients/\\d+";
 
 	public CreateClientPage(WebDriver driver) {
-		this.driver = driver;
-		driver.get(CREATE_PAGE);
+		super(driver);
+		get(driver, CREATE_PAGE);
 	}
 
 	public void createClientWithDetails(String id, String grant, boolean scope_read, boolean scope_write) {

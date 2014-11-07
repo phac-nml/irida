@@ -95,7 +95,7 @@ public class ProjectMetadataEditPageIT {
 	public void errorsIfBadProjectInformation() {
 		page.gotoPage();
 		page.updateProject(GOOD_PROJECT_NAME, GOOD_PROJECT_ORGANISM, GOOD_PROJECT_DESCRIPTION, BAD_PROJECT_URL);
-		assertEquals("Remains on the same page", driver.getCurrentUrl(), ProjectMetadataEditPage.URL);
+		assertTrue("Remains on the same page", driver.getCurrentUrl().contains(page.RELATIVE_URL));
 	}
 
 	@Test

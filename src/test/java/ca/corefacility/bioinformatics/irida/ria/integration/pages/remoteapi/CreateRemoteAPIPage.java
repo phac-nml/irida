@@ -6,18 +6,17 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
-public class CreateRemoteAPIPage {
-	private WebDriver driver;
+public class CreateRemoteAPIPage extends AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(CreateRemoteAPIPage.class);
 
-	private final String CREATE_PAGE = BasePage.URL + "remote_api/create";
-	public static String SUCCESS_PAGE = BasePage.URL + "remote_api/\\d+";
+	private final String CREATE_PAGE = "remote_api/create";
+	public static String SUCCESS_PAGE = "remote_api/\\d+";
 
 	public CreateRemoteAPIPage(WebDriver driver) {
-		this.driver = driver;
-		driver.get(CREATE_PAGE);
+		super(driver);
+		get(driver, CREATE_PAGE);
 	}
 
 	public void createRemoteAPIWithDetails(String name, String serviceURI, String clientID, String clientSecret) {

@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.samples;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 /**
  * <p>
@@ -12,17 +12,15 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
-public class SampleFilesPage {
-	public static final String URL = BasePage.URL + "samples/{id}/files";
-	private WebDriver driver;
+public class SampleFilesPage extends AbstractPage {
+	public static final String RELATIVE_URL = "samples/{id}/files";
 
 	public SampleFilesPage(WebDriver driver) {
-		this.driver = driver;
+		super(driver);
 	}
 
 	public void gotoPage(Long id) {
-		String url = URL.replace("{id}", id.toString());
-		driver.get(url);
+		get(driver, RELATIVE_URL.replace("{id}", id.toString()));
 	}
 
 	public String getPageTitle() {

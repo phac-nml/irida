@@ -3,36 +3,33 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.samples;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 /**
- * <p>
- * Page Object to represent the sample details page.
- * </p>
+ * <p> Page Object to represent the sample details page. </p>
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
-public class SampleDetailsPage {
-	public static final String URL = BasePage.URL + "samples/";
-	private WebDriver driver;
+public class SampleDetailsPage extends AbstractPage {
+	public static final String RELATIVE_URL = "samples/";
 
 	public SampleDetailsPage(WebDriver driver) {
-		this.driver = driver;
+		super(driver);
 	}
 
 	public void gotoPage(Long sampleId) {
-		driver.get(URL + sampleId);
+		get(driver, RELATIVE_URL + sampleId);
 	}
 
 	public Long getSampleId() {
 		return Long.parseLong(driver.findElement(By.id("sb-id")).getText());
 	}
 
-	public String getPageTitle(){
+	public String getPageTitle() {
 		return driver.findElement(By.tagName("h1")).getText();
 	}
 
-	public String getCreatedDate(){
+	public String getCreatedDate() {
 		return driver.findElement(By.id("sb-created")).getText();
 	}
 

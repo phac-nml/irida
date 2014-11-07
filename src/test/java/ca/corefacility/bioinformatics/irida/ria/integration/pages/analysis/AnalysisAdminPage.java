@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
 
 /**
  * <p> Page Object to represent the Analysis Admin page. </p>
@@ -39,9 +38,9 @@ public class AnalysisAdminPage extends AbstractPage {
 	// ************************************************************************************************
 
 	public void clickShowFilterButton() {
-		BasePage.waitForTime();
+		waitForTime(100);
 		driver.findElement(By.id("filterBtn")).click();
-//		pageUtilities.waitForElementVisible(By.id("table-filter"));
+		waitForElementVisible(By.id("table-filter"));
 	}
 
 	public void filterByName(String name) {
