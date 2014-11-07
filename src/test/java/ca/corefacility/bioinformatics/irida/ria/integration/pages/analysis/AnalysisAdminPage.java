@@ -3,36 +3,26 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis;
 import java.util.List;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
 
 /**
- * <p>
- * Page Object to represent the Analysis Admin page.
- * </p>
+ * <p> Page Object to represent the Analysis Admin page. </p>
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
-public class AnalysisAdminPage {
+public class AnalysisAdminPage extends AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisAdminPage.class);
-	public static final String URL = BasePage.URL + "/analysis/admin";
-	private WebDriver driver;
-	private PageUtilities pageUtilities;
+	public static final String RELATIVE_URL = "analysis/admin";
 
-	public AnalysisAdminPage(WebDriver driver){
-		this.driver = driver;
-		this.pageUtilities = new PageUtilities(driver);
-	}
-
-	public void goToPage() throws NoSuchElementException {
-		driver.get(URL);
-		waitForAjax();
+	public AnalysisAdminPage(WebDriver driver) {
+		super(driver);
+		get(driver, RELATIVE_URL);
 	}
 
 	// ************************************************************************************************
@@ -51,7 +41,7 @@ public class AnalysisAdminPage {
 	public void clickShowFilterButton() {
 		BasePage.waitForTime();
 		driver.findElement(By.id("filterBtn")).click();
-		pageUtilities.waitForElementVisible(By.id("table-filter"));
+//		pageUtilities.waitForElementVisible(By.id("table-filter"));
 	}
 
 	public void filterByName(String name) {

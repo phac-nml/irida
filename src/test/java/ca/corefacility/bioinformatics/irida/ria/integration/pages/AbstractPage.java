@@ -29,7 +29,7 @@ public class AbstractPage {
 		return errors.getText();
 	}
 
-	static void get(WebDriver driver, String relativeUrl) {
+	protected static void get(WebDriver driver, String relativeUrl) {
 		String url = BASE_URL + relativeUrl;
 		driver.get(url);
 	}

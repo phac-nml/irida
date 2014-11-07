@@ -54,7 +54,6 @@ public class AnalysisAdminPageIT {
 
 	@Test
 	public void testPageSetup() {
-		adminPage.goToPage();
 		assertEquals(8, adminPage.getTableRowCount());
 
 		adminPage.clickShowFilterButton();

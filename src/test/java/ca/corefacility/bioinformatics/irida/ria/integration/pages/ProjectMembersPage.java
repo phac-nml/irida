@@ -25,15 +25,13 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class ProjectMembersPage {
-	public static final String URL = BasePage.URL + "projects/1/members";
-	private WebDriver driver;
+public class ProjectMembersPage extends AbstractPage {
+	public static final String RELATIVE_URL = "projects/1/members";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectMembersPage.class);
 
 	public ProjectMembersPage(WebDriver driver) {
-		this.driver = driver;
-		driver.get(URL);
-		waitForAjax();
+		super(driver);
+		get(driver, RELATIVE_URL);
 	}
 
 	public String getTitle() {
