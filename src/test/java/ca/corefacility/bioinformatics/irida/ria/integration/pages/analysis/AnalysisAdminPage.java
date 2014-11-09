@@ -19,6 +19,7 @@ public class AnalysisAdminPage extends AbstractPage {
 	public AnalysisAdminPage(WebDriver driver) {
 		super(driver);
 		get(driver, RELATIVE_URL);
+		waitForTime(700);
 	}
 
 	// ************************************************************************************************
