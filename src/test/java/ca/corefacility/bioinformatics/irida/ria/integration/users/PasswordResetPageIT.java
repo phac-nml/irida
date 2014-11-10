@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -18,9 +19,9 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.drivers.IridaPhantomJSDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.PasswordResetPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -41,7 +42,7 @@ public class PasswordResetPageIT {
 
 	@Before
 	public void setup() {
-		driver = new IridaPhantomJSDriver();
+		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
 		// Don't do login here! should be able to go through this without
 		// logging in
 
@@ -87,10 +88,11 @@ public class PasswordResetPageIT {
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password, password);
 		assertTrue(passwordResetPage.checkSuccess());
-		
+
 		passwordResetPage.logout(driver);
 		// try new password
 		LoginPage.login(driver, RESET_USER, password);
-		assertEquals("The user is logged in and redirected.", "http://localhost:8080/dashboard", driver.getCurrentUrl());
+		assertEquals("The user is logged in and redirected.", "http://localhost:8080/dashboard",
+				driver.getCurrentUrl());
 	}
 }

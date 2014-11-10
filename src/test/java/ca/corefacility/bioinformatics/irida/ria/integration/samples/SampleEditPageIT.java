@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -18,10 +19,10 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.drivers.IridaPhantomJSDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.SampleDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.SampleEditPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesController;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -47,7 +48,7 @@ public class SampleEditPageIT {
 
 	@Before
 	public void setUp() {
-		driver = new IridaPhantomJSDriver();
+		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
 		LoginPage.loginAsAdmin(driver);
 		page = new SampleEditPage(driver);
 		detailsPage = new SampleDetailsPage(driver);
