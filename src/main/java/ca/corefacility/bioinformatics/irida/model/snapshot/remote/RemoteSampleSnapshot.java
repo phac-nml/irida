@@ -1,9 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.snapshot.remote;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
 
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSample;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLinks;

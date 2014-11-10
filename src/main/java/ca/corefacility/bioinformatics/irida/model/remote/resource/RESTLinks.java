@@ -5,10 +5,6 @@ import java.util.Map;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 import ca.corefacility.bioinformatics.irida.repositories.remote.util.RESTLinksDeserializer;
 
