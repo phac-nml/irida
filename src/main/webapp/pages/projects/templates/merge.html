@@ -7,14 +7,16 @@
 	</div>
 	<div class="modal-body">
 		<h4>
-			<span class="fa fa-fw fa-exclamation-circle"></span>&nbsp;
 			<span th:text="#{project.samples.modal.merge.intro}">You are about to merge 4 samples.</span>
 		</h4>
 		<ul>
 			<li ng-repeat="s in mergeCtrl.samples">{{s.name}}</li>
 		</ul>
 		<div class="alert alert-warning">
-			<h4 th:utext="#{alert.warning.title}">Warning!</h4>
+			<h4>
+				<span class="fa fa-fw fa-exclamation-circle"></span>
+				<span th:utext="#{alert.warning.title}">Warning!</span>
+			</h4>
 
 			<p th:text="#{project.samples.modal.merge.warning}">All samples will be merged into a single sample. Currently only the metadata from the sample selected will
 				retain its metadata.</p>
