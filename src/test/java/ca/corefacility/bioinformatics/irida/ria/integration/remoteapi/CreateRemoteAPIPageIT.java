@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -17,9 +18,9 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.drivers.IridaPhantomJSDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.CreateRemoteAPIPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -27,9 +28,8 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
  * IT for the client details page
- * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
@@ -44,7 +44,7 @@ public class CreateRemoteAPIPageIT {
 
 	@Before
 	public void setup() {
-		driver = new IridaPhantomJSDriver();
+		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
 		LoginPage.loginAsAdmin(driver);
 
 		page = new CreateRemoteAPIPage(driver);
