@@ -3,6 +3,12 @@ package ca.corefacility.bioinformatics.irida.model.remote.resource;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 import ca.corefacility.bioinformatics.irida.repositories.remote.util.RESTLinksDeserializer;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -14,7 +20,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  *
  */
 @JsonDeserialize(using = RESTLinksDeserializer.class)
+@Entity
 public class RESTLinks {
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long restLinksId;
+
+	@ElementCollection
 	private Map<String, String> links;
 
 	public RESTLinks() {

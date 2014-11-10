@@ -8,6 +8,11 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
@@ -18,7 +23,13 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 
 @Entity
 @Table(name = "sequence_file_snapshot")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class SequenceFileSnapshot implements IridaSequenceFile {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long snapshotId;
+	
 	@Column(name = "filePath", unique = true)
 	@NotNull(message = "{sequencefile.file.notnull}")
 	private Path file;
@@ -31,6 +42,11 @@ public class SequenceFileSnapshot implements IridaSequenceFile {
 	@CollectionTable(name = "snapshot_sequence_file_properties", joinColumns = @JoinColumn(name = "sequence_file_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
 			"sequence_file_id", "property_key" }, name = "UK_SNAPSHOT_SEQUENCE_FILE_PROPERTY_KEY"))
 	private Map<String, String> optionalProperties;
+
+	public SequenceFileSnapshot(IridaSequenceFile sequenceFile) {
+		this.file = sequenceFile.getFile();
+		this.optionalProperties = sequenceFile.getOptionalProperties();
+	}
 
 	public SequenceFileSnapshot(Path file, Map<String, String> optionalProperties) {
 		this.file = file;
