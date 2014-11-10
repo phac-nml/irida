@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
@@ -13,12 +15,13 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSample;
 
 @Entity
 @Table(name = "sample_snapshot")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class SampleSnapshot implements IridaSample {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long snapshotId;
-	
+
 	private Long id;
 
 	private String sequencerSampleId;
