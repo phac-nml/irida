@@ -4,7 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 /**
  * <p>
@@ -13,16 +13,15 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
-public class SampleEditPage {
-	public static final String URL = BasePage.URL + "samples/1/edit";
-	private WebDriver driver;
+public class SampleEditPage extends AbstractPage {
+	public static final String RELATIVE_URL = "samples/1/edit";
 
 	public SampleEditPage(WebDriver driver) {
-		this.driver = driver;
+		super(driver);
 	}
 
 	public void goToPage() {
-		driver.get(URL);
+		get(driver, RELATIVE_URL);
 	}
 
 	// ************************************************************************************************

@@ -12,7 +12,7 @@
         <div class="row">
             <div class="col-md-6">
                 <form name="loginForm" role="form" method="post" th:action="@{/login}" action="/login">
-                    <div th:if="${error}" class="alert alert-danger">
+                    <div th:if="${error}" class="error alert alert-danger">
                         <strong th:text="#{login.error}"></strong>
                     </div>
                     <div class="form-group">
@@ -28,7 +28,7 @@
                                th:placeholder="#{global.password.placeholder}" placeholder="Password"/>
                         <a href="/password_reset" th:href="@{/password_reset}" th:text="#{user.passwordReset}">Reset Password</a>
                     </div>
-                    <button type="submit" class="btn btn-primary" th:text="#{global.btn.submit}">Submit</button>
+                    <button id="submitBtn" type="submit" class="btn btn-primary" th:text="#{global.btn.submit}">Submit</button>
                 </form>
             </div>
             <div class="col-md-6">

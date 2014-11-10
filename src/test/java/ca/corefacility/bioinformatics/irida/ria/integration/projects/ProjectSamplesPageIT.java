@@ -22,7 +22,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.drivers.IridaChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -50,19 +51,21 @@ public class ProjectSamplesPageIT {
 
 	@Before
 	public void setUp() {
-		driver = BasePage.initializeDriver();
+
+		driver = new IridaChromeDriver();
+		LoginPage.loginAsAdmin(driver);
 		this.page = new ProjectSamplesPage(driver);
 	}
 
 	@After
 	public void destroy() {
-		BasePage.destroyDriver(driver);
+		driver.quit();
 	}
 
 	@Test
 	public void testInitialPageSetUp() {
 		logger.info("Testing page set up for: Project Samples");
-		page.goTo();
+		page.goToPage();
 		assertTrue(page.getTitle().contains("Samples"));
 		assertEquals(10, page.getNumberOfSamplesDisplayed());
 	}
@@ -70,7 +73,7 @@ public class ProjectSamplesPageIT {
 	@Test
 	public void testPaging() {
 		logger.info("Testing paging for: Project Samples");
-		page.goTo();
+		page.goToPage();
 
 		// Initial setup
 		assertFalse(page.isFirstButtonEnabled());
@@ -123,7 +126,7 @@ public class ProjectSamplesPageIT {
 	@Test
 	public void testSelectSamples() {
 		logger.info("Testing selecting samples for: Project Samples");
-		page.goTo();
+		page.goToPage();
 
 		assertEquals(0, page.getNumberOfSamplesSelected());
 		page.selectSampleByRow(0);
@@ -134,7 +137,7 @@ public class ProjectSamplesPageIT {
 		assertEquals(2, page.getNumberOfSamplesSelected());
 
 		// If I go back to the page I expect them to be there
-		page.goTo();
+		page.goToPage();
 		assertEquals(2, page.getNumberOfSamplesSelected());
 	}
 
@@ -142,7 +145,7 @@ public class ProjectSamplesPageIT {
 	public void testPagingWithSelectingSamples() {
 		logger.info("Testing paging with selecting samples for: Project Samples");
 		List<Integer> page1 = ImmutableList.of(0, 1, 6);
-		page.goTo();
+		page.goToPage();
 
 		assertEquals(0, page.getNumberOfSamplesSelected());
 		page1.forEach(page::selectSampleByRow);
@@ -179,7 +182,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testFileSelection() {
-		page.goTo();
+		page.goToPage();
 		page.clickLastPageButton();
 		assertFalse(page.isRowSelected(0));
 		page.openFilesView(0);
@@ -196,7 +199,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testSelectedSampleCount() {
-		page.goTo();
+		page.goToPage();
 		assertEquals(0, page.getTotalSelectedSamplesCount());
 		page.selectSampleByRow(0);
 		page.selectSampleByRow(1);
@@ -225,12 +228,11 @@ public class ProjectSamplesPageIT {
 		assertEquals(2, page.getTotalSelectedSamplesCount());
 		page.selectFile(1);
 		assertEquals(1, page.getTotalSelectedSamplesCount());
-
 	}
 
 	@Test
 	public void testDefaultMerge() {
-		page.goTo();
+		page.goToPage();
 		assertEquals(0, page.getTotalSelectedSamplesCount());
 		assertFalse(page.isBtnEnabled("mergeBtn"));
 		page.selectSampleByRow(0);
@@ -246,7 +248,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testRenameMerge() {
-		page.goTo();
+		page.goToPage();
 		assertEquals(0, page.getTotalSelectedSamplesCount());
 		assertFalse(page.isBtnEnabled("mergeBtn"));
 		page.selectSampleByRow(0);

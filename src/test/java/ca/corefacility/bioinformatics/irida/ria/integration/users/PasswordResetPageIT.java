@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -19,7 +18,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.drivers.IridaPhantomJSDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.PasswordResetPage;
 
@@ -39,11 +38,10 @@ public class PasswordResetPageIT {
 
 	private WebDriver driver;
 	private PasswordResetPage passwordResetPage;
-	LoginPage loginPage;
 
 	@Before
 	public void setup() {
-		driver = new PhantomJSDriver();
+		driver = new IridaPhantomJSDriver();
 		// Don't do login here! should be able to go through this without
 		// logging in
 
@@ -90,10 +88,9 @@ public class PasswordResetPageIT {
 		passwordResetPage.enterPassword(password, password);
 		assertTrue(passwordResetPage.checkSuccess());
 		
-		BasePage.logout(driver);
+		passwordResetPage.logout(driver);
 		// try new password
-		loginPage = LoginPage.to(driver);
-		loginPage.login(RESET_USER, password);
+		LoginPage.login(driver, RESET_USER, password);
 		assertEquals("The user is logged in and redirected.", "http://localhost:8080/dashboard", driver.getCurrentUrl());
 	}
 }

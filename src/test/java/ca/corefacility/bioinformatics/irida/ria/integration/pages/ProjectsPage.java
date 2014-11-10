@@ -10,9 +10,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
+
+import com.google.common.base.Strings;
 
 /**
  * <p>
@@ -21,22 +21,22 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
  * 
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
-public class ProjectsPage {
-
-	private WebDriver driver;
+public class ProjectsPage extends AbstractPage {
     private static final Logger logger = LoggerFactory.getLogger(ProjectsPage.class);
+	public static final String RELATIVE_URL = "projects";
+	public static final String ADMIN_URL = RELATIVE_URL + "/all";
 
     public ProjectsPage(WebDriver driver) {
-		this.driver = driver;
-		driver.get("http://localhost:8080/projects");
-		waitForAjax();
+		super(driver);
 	}
 
-    public ProjectsPage(WebDriver driver, String url) {
-        this.driver = driver;
-        driver.get(url);
-        waitForAjax();
-    }
+	public void toUserProjectsPage() {
+		get(driver, RELATIVE_URL);
+	}
+
+	public void toAdminProjectsPage() {
+		get(driver, ADMIN_URL);
+	}
 
 	public int projectsTableSize() {
 		logger.trace("Getting table size");

@@ -17,7 +17,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.drivers.IridaPhantomJSDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataEditPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataPage;
 
@@ -31,9 +32,9 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {IridaApiJdbcDataSourceConfig.class,
-		IridaApiPropertyPlaceholderConfig.class})
-@TestExecutionListeners({DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class})
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
+		IridaApiPropertyPlaceholderConfig.class })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
@@ -56,25 +57,26 @@ public class ProjectMetadataEditPageIT {
 
 	@Before
 	public void setUp() {
-		driver = BasePage.initializeChromeDriver();
+		driver = new IridaPhantomJSDriver();
+		LoginPage.loginAsAdmin(driver);
 		page = new ProjectMetadataEditPage(driver);
 	}
 
 	@After
 	public void destroy() {
-		if (driver != null) {
-			driver.close();
-			driver.quit();
-		}
+		driver.quit();
 	}
 
 	@Test
 	public void pageCreateCorrectly() {
 		page.gotoPage();
 		assertEquals("Contains a placeholder with the project name", PROJECT_NAME, page.getNamePlaceholder());
-		assertEquals("Contains a placeholder with the project organism", PROJECT_ORGANISM, page.getOrganismPlaceholder());
-		assertEquals("Contains a placeholder with the project description", PROJECT_DESCRIPTION, page.getDescriptionPlaceholder());
-		assertEquals("Contains a placeholder with the project remoteURL", PROJECT_REMOTE_URL, page.getRemoteURLPlaceholder());
+		assertEquals("Contains a placeholder with the project organism", PROJECT_ORGANISM,
+				page.getOrganismPlaceholder());
+		assertEquals("Contains a placeholder with the project description", PROJECT_DESCRIPTION,
+				page.getDescriptionPlaceholder());
+		assertEquals("Contains a placeholder with the project remoteURL", PROJECT_REMOTE_URL,
+				page.getRemoteURLPlaceholder());
 		assertEquals("Should display on reference file", 1, page.getReferenceFileCount());
 	}
 
@@ -82,7 +84,8 @@ public class ProjectMetadataEditPageIT {
 	public void canUpdateProjectInformation() {
 		driver.get("http://localhost:8080/projects/" + PROJECT_ID_OWNER + "/metadata/edit");
 		page.updateProject(GOOD_PROJECT_NAME, GOOD_PROJECT_ORGANISM, GOOD_PROJECT_DESCRIPTION, GOOD_PROJECT_REMOTEURL);
-		assertEquals("Redirects to the metadata page", driver.getCurrentUrl(), "http://localhost:8080/projects/" + PROJECT_ID_OWNER + "/metadata");
+		assertEquals("Redirects to the metadata page", driver.getCurrentUrl(),
+				"http://localhost:8080/projects/" + PROJECT_ID_OWNER + "/metadata");
 
 		ProjectMetadataPage metadataPage = new ProjectMetadataPage(driver);
 		driver.get("http://localhost:8080/projects/" + PROJECT_ID_OWNER + "/metadata");
@@ -96,7 +99,7 @@ public class ProjectMetadataEditPageIT {
 	public void errorsIfBadProjectInformation() {
 		page.gotoPage();
 		page.updateProject(GOOD_PROJECT_NAME, GOOD_PROJECT_ORGANISM, GOOD_PROJECT_DESCRIPTION, BAD_PROJECT_URL);
-		assertEquals("Remains on the same page", driver.getCurrentUrl(), ProjectMetadataEditPage.URL);
+		assertTrue("Remains on the same page", driver.getCurrentUrl().contains(page.RELATIVE_URL));
 	}
 
 	@Test

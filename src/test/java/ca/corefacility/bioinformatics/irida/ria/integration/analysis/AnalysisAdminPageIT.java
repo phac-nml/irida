@@ -16,18 +16,16 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.drivers.IridaChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysisAdminPage;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
-
 /**
- * <p>
- * Integration test to ensure that the Project Details Page.
- * </p>
+ * <p> Integration test to ensure that the Project Details Page. </p>
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
@@ -44,18 +42,19 @@ public class AnalysisAdminPageIT {
 
 	@Before
 	public void setUp() {
-		driver = BasePage.initializeChromeDriver();
+		// TODO (14-11-07 - josh): Find out why PhantomJS fails here.
+		driver = new IridaChromeDriver();
+		LoginPage.loginAsAdmin(driver);
 		adminPage = new AnalysisAdminPage(driver);
 	}
 
 	@After
 	public void destroy() {
-		BasePage.destroyDriver(driver);
+		driver.quit();
 	}
 
 	@Test
 	public void testPageSetup() {
-		adminPage.goToPage();
 		assertEquals(8, adminPage.getTableRowCount());
 
 		adminPage.clickShowFilterButton();

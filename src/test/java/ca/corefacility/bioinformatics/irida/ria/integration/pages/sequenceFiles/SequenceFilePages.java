@@ -7,32 +7,30 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 
 /**
  * Created by josh on 14-08-06.
  */
-public class SequenceFilePages {
-	public static final String DASHBOARD_URL = BasePage.URL + "sequenceFiles/1";
-	public static final String OVERREPRESENTED_URL = DASHBOARD_URL + "/overrepresented";
-	private WebDriver driver;
+public class SequenceFilePages extends AbstractPage {
+	public static final String RELATIVE_URL = "sequenceFiles/1";
+	public static final String OVERREPRESENTED_URL = RELATIVE_URL + "/overrepresented";
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFilePages.class);
 
 	public SequenceFilePages(WebDriver driver) {
-		this.driver = driver;
+		super(driver);
 	}
 
 	public void goToDetailsPage() {
 		logger.debug("Going to Sequence File Dashboard Page.");
-		this.driver.get(DASHBOARD_URL);
+		get(driver, RELATIVE_URL);
 		waitForAjax();
 	}
 
 	public void goToOverrepresentedPage() {
 		logger.debug("Going to Sequence File Overrepresented Page.");
-		this.driver.get(OVERREPRESENTED_URL);
-		waitForAjax();
+		get(driver, OVERREPRESENTED_URL);
 	}
 
 	private void waitForAjax() {

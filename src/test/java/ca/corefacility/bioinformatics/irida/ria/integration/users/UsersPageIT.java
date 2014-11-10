@@ -1,19 +1,16 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.users;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.UsersPage;
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -21,16 +18,19 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import java.util.List;
+import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.ria.integration.drivers.IridaPhantomJSDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.UsersPage;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
- * <p>
- * Integration test to ensure that the Projects Page.
- * </p>
- * 
+ * <p> Integration test to ensure that the Projects Page. </p>
+ *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -46,9 +46,8 @@ public class UsersPageIT {
 
 	@Before
 	public void setup() {
-		driver = new PhantomJSDriver();
-		LoginPage loginPage = LoginPage.to(driver);
-		loginPage.doLogin();
+		driver = new IridaPhantomJSDriver();
+		LoginPage.loginAsAdmin(driver);
 
 		usersPage = new UsersPage(driver);
 	}
@@ -57,7 +56,7 @@ public class UsersPageIT {
 	public void destroy() {
 		if (driver != null) {
 			driver.close();
-            driver.quit();
+			driver.quit();
 		}
 	}
 
@@ -79,9 +78,10 @@ public class UsersPageIT {
 
 	/**
 	 * Checks if a List of {@link WebElement} is sorted in ascending order.
-	 * 
+	 *
 	 * @param elements
-	 *            List of {@link WebElement}
+	 * 		List of {@link WebElement}
+	 *
 	 * @return if the list is sorted ascending
 	 */
 
@@ -98,9 +98,10 @@ public class UsersPageIT {
 
 	/**
 	 * Checks if a list of {@link WebElement} is sorted in descending order.
-	 * 
+	 *
 	 * @param elements
-	 *            List of {@link WebElement}
+	 * 		List of {@link WebElement}
+	 *
 	 * @return if the list is sorted ascending
 	 */
 	private boolean checkSortedDescending(List<WebElement> elements) {

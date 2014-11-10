@@ -6,7 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
 
 /**
@@ -14,19 +14,18 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilit
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
-public class ProjectSamplesPage {
-	private static final String URL = BasePage.URL + "/projects/1/samples";
+public class ProjectSamplesPage extends AbstractPage {
+	private static final String RELATIVE_URL = "projects/1/samples";
 	private PageUtilities pageUtilities;
-	private WebDriver driver;
 
 	public ProjectSamplesPage(WebDriver driver) {
-		this.driver = driver;
+		super(driver);
 		this.pageUtilities = new PageUtilities(driver);
 	}
 
-	public void goTo() {
-		driver.get(URL);
-		pageUtilities.waitForElementVisible(By.className("sample-row"));
+	public void goToPage() {
+		get(driver, RELATIVE_URL);
+		pageUtilities.waitForElementPresent(By.cssSelector("#samplesTable tbody"));
 	}
 
 	/**
@@ -54,24 +53,25 @@ public class ProjectSamplesPage {
 
 	public void clickPreviousPageButton() {
 		driver.findElements(By.cssSelector(".pagination li>a")).get(1).click();
-		BasePage.waitForTime();
+		waitForTime(700);
 	}
 
 	public void clickFirstPageButton() {
 		driver.findElements(By.cssSelector(".pagination li>a")).get(0).click();
-		BasePage.waitForTime();
+		waitForTime(700);
 	}
 
 	public void clickNextPageButton() {
 		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li>a"));
 		links.get(links.size() - 2).click();
-		BasePage.waitForTime();
+		waitForTime(700);
 	}
+
 
 	public void clickLastPageButton() {
 		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li>a"));
 		links.get(links.size() - 1).click();
-		BasePage.waitForTime();
+		waitForTime(700);
 	}
 
 	public boolean isPreviousButtonEnabled() {
@@ -99,7 +99,7 @@ public class ProjectSamplesPage {
 	public void selectSampleByRow(int row) {
 		List<WebElement> inputs = driver.findElements(By.className("sample-select"));
 		inputs.get(row).click();
-		BasePage.waitForTime();
+		waitForTime(700);
 	}
 
 	public boolean isRowSelected(int row) {
@@ -121,7 +121,7 @@ public class ProjectSamplesPage {
 		pageUtilities.waitForElementVisible(By.className("file-select"));
 		List<WebElement> files = driver.findElements(By.className("file-select"));
 		files.get(fileNum).click();
-		BasePage.waitForTime();
+		waitForTime(700);
 	}
 
 	public boolean isFileSelected(int fileNum) {
@@ -145,8 +145,9 @@ public class ProjectSamplesPage {
 
 	public void clickBtn(String id) {
 		driver.findElement(By.id(id)).click();
-		BasePage.waitForTime();
+		waitForTime(700);
 	}
+
 	public boolean isItemVisible(String id) {
 		return driver.findElement(By.id(id)).isDisplayed();
 	}
@@ -159,11 +160,11 @@ public class ProjectSamplesPage {
 		return Integer.parseInt(driver.findElement(By.id("selected-count")).getText());
 	}
 
-	public void enterNewMergeSampleName (String name) {
+	public void enterNewMergeSampleName(String name) {
 		WebElement input = driver.findElement(By.id("newName"));
 		input.clear();
 		input.sendKeys(name);
-		BasePage.waitForTime();
+		waitForTime(700);
 	}
 
 	public String getSampleNameByRow(int row) {

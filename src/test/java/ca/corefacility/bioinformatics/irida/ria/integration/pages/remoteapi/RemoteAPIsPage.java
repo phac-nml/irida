@@ -5,30 +5,19 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.ClientsPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
-public class RemoteAPIsPage {
+public class RemoteAPIsPage extends AbstractPage {
 
-	private static final String BASE_URL = BasePage.URL + "/remote_api";
-	private WebDriver driver;
-	private static final Logger logger = LoggerFactory.getLogger(ClientsPage.class);
+	private static final String RELATIVE_URL = "remote_api";
+	private static final Logger logger = LoggerFactory.getLogger(RemoteAPIsPage.class);
 
 	public RemoteAPIsPage(WebDriver driver) {
-		this.driver = driver;
-		driver.get(BASE_URL);
-		waitForAjax();
-	}
-
-	private void waitForAjax() {
-		Wait<WebDriver> wait = new WebDriverWait(driver, 60);
-		wait.until(Ajax.waitForAjax(60000));
+		super(driver);
+		get(driver, RELATIVE_URL);
 	}
 
 	public int remoteApisTableSize() {
