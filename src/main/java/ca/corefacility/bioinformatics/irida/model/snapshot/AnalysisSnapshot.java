@@ -36,9 +36,17 @@ public class AnalysisSnapshot implements IridaThing {
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private List<ProjectSnapshot> projects;
 
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private List<SequenceFileSnapshot> sequenceFiles;
+
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private List<SampleSnapshot> samples;
+
 	public AnalysisSnapshot() {
 		createdDate = new Date();
 		projects = new ArrayList<>();
+		sequenceFiles = new ArrayList<>();
+		samples = new ArrayList<>();
 	}
 
 	public Long getId() {
@@ -77,4 +85,29 @@ public class AnalysisSnapshot implements IridaThing {
 	public void addProject(ProjectSnapshot project) {
 		projects.add(project);
 	}
+
+	public void setSamples(List<SampleSnapshot> samples) {
+		this.samples = samples;
+	}
+
+	public List<SampleSnapshot> getSamples() {
+		return samples;
+	}
+
+	public void addSample(SampleSnapshot sample) {
+		samples.add(sample);
+	}
+
+	public void setSequenceFiles(List<SequenceFileSnapshot> sequenceFiles) {
+		this.sequenceFiles = sequenceFiles;
+	}
+
+	public List<SequenceFileSnapshot> getSequenceFiles() {
+		return sequenceFiles;
+	}
+
+	public void addSequenceFile(SequenceFileSnapshot file) {
+		sequenceFiles.add(file);
+	}
+
 }
