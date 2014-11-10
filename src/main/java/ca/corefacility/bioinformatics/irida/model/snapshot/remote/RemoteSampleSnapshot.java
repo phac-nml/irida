@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.snapshot.remote;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 
@@ -10,7 +12,7 @@ import ca.corefacility.bioinformatics.irida.model.snapshot.SampleSnapshot;
 @Entity
 public class RemoteSampleSnapshot extends SampleSnapshot implements RemoteSnapshot {
 
-	@OneToOne
+	@Embedded
 	private RESTLinks links;
 
 	public RemoteSampleSnapshot(RemoteSample sample) {

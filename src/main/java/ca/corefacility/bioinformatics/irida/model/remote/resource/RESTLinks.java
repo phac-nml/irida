@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.ElementCollection;
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,11 +21,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  *
  */
 @JsonDeserialize(using = RESTLinksDeserializer.class)
-@Entity
+@Embeddable
 public class RESTLinks {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long restLinksId;
 
 	@ElementCollection
 	private Map<String, String> links;
