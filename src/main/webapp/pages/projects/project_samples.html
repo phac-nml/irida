@@ -5,8 +5,8 @@
 	<title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
 	<link rel="stylesheet" th:href="@{/resources/bower_components/angular-busy/angular-busy.css}"
 	      href="/resources/bower_components/angular-busy/angular-busy.css"/>
-	<link rel="stylesheet" th:href="@{/resources/bower_components/angular-ui-select/dist/select.min.css}" href="/resources/bower_components/angular-ui-select/dist/select.min.css"/>
 	<link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2.css}" href="/resources/bower_components/select2/select2.css"/>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}" href="/resources/bower_components/select2/select2-bootstrap.css"/>
 	<script>window.dependencies = ['Samples'];</script>
 </head>
 <body>
@@ -22,6 +22,14 @@
 				<button id="mergeBtn" class="btn btn-default btn-sm" ng-click="subnav.merge()" ng-disabled="subnav.count&lt;2"
 				        th:utext="#{project.samples.nav.merge}" data:tooltip="#{project.samples.nav.merge-tooltip}" tooltip-placement="bottom">
 					__MERGE__
+				</button>
+				<button id="copyBtn" class="btn btn-default btn-sm" ng-disabled="subnav.count&lt;1"
+				        data:tooltip="#{project.samples.nav.copy-tooltip}" tooltip-placement="bottom" ng-click="subnav.openModal('copy')">
+					<span class="fa fa-fw fa-copy"></span> <span th:text="#{project.samples.nav.copy}">_COPY_</span>
+				</button>
+				<button id="moveBtn" class="btn btn-default btn-sm" ng-disabled="subnav.count&lt;1"
+				        data:tooltip="#{project.samples.nav.move-tooltip}" tooltip-placement="bottom" ng-click="subnav.openModal('move')">
+					<span class="fa fa-truck fa-fw"></span> <span th:text="#{project.samples.nav.move}"></span>
 				</button>
 			</div>
 		</div>
@@ -85,6 +93,7 @@
 </main>
 
 <th:block layout:fragment="scripts" th:inline="javascript">
+	<script th:src="@{/resources/bower_components/select2/select2.min.js}" src="/resources/bower_components/select2/select2.min.js"></script>
 	<script th:src="@{/resources/bower_components/angular-busy/angular-busy.js}"
 	        src="/resources/bower_components/angular-busy/angular-busy.js"></script>
 	<script th:src="@{/resources/bower_components/angular-ui-select/dist/select.min.js}" src="/resources/bower_components/angular-ui-select/dist/select.min.js"></script>

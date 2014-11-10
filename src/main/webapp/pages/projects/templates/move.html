@@ -1,0 +1,26 @@
+<div id="move-samples-modal">
+	<div class="modal-header">
+		<h3 class="modal-title">
+			<span class="fa fa-truck fa-fw"></span>
+			<span th:text="#{project.samples.modal.move.title}">__COPY_SAMPLES__</span>
+		</h3>
+	</div>
+	<div class="modal-body">
+		<h4>
+			<span th:text="#{project.samples.modal.move.intro}">The following samples will be copied:</span>
+		</h4>
+		<ul id="samples-list">
+			<li ng-repeat="s in cmCtrl.samples">{{s.name}}</li>
+		</ul>
+		<div class="form-group">
+			<label th:text="#{project.samples.modal.move.select-label}"></label>
+			<input id="projectsSelect" class="form-control" ng-model="cmCtrl.selected" />
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="cmCtrl.close()"></button>
+		<button id="confirm-move-samples" class="btn btn-primary" ng-disabled="cmCtrl.selected==undefined" th:text="#{project.samples.modal.move.complete}" ng-click="cmCtrl.go()">
+			__MOVE_OR_COPY__
+		</button>
+	</div>
+</div>

@@ -156,8 +156,8 @@ public class ProjectSamplesControllerTest {
 		when(sampleService.read(2l)).thenReturn(s2);
 		when(sampleService.read(3l)).thenReturn(s3);
 
-		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, sampleIds, newProjectId,
-				removeFromOriginal);
+		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, newProjectId,
+				removeFromOriginal, Locale.US);
 
 		assertEquals(2, copySampleToProject.get("totalCopied"));
 
@@ -207,8 +207,8 @@ public class ProjectSamplesControllerTest {
 		when(sampleService.read(2l)).thenReturn(s2);
 		when(sampleService.read(3l)).thenReturn(s3);
 
-		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, sampleIds, newProjectId,
-				removeFromOriginal);
+		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, newProjectId,
+				removeFromOriginal, Locale.US);
 
 		assertEquals(2, copySampleToProject.get("totalCopied"));
 
@@ -240,8 +240,8 @@ public class ProjectSamplesControllerTest {
 		when(projectService.addSampleToProject(newProject, s3)).thenThrow(
 				new EntityExistsException("that sample exists in the project"));
 
-		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, sampleIds, newProjectId,
-				removeFromOriginal);
+		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, newProjectId,
+				removeFromOriginal, Locale.US);
 
 		assertEquals(1, copySampleToProject.get("totalCopied"));
 		assertTrue(copySampleToProject.containsKey("warnings"));
@@ -326,8 +326,7 @@ public class ProjectSamplesControllerTest {
 		when(projectService.search(any(Specification.class), eq(page), eq(pagesize), eq(order), eq(property)))
 				.thenReturn(projects);
 
-		Map<String, Object> projectsAvailableToCopySamples = controller.getProjectsAvailableToCopySamples(projectId,
-				term, pagesize, page, principal);
+		Map<String, Object> projectsAvailableToCopySamples = controller.getProjectsAvailableToCopySamples(term, pagesize, page, principal);
 
 		assertTrue(projectsAvailableToCopySamples.containsKey("total"));
 		assertEquals(2l, projectsAvailableToCopySamples.get("total"));
@@ -357,7 +356,7 @@ public class ProjectSamplesControllerTest {
 		when(projectService.searchProjectUsers(any(Specification.class), eq(page), eq(pagesize), eq(order)))
 				.thenReturn(projects);
 
-		Map<String, Object> projectsAvailableToCopySamples = controller.getProjectsAvailableToCopySamples(projectId,
+		Map<String, Object> projectsAvailableToCopySamples = controller.getProjectsAvailableToCopySamples(
 				term, pagesize, page, principal);
 
 		assertTrue(projectsAvailableToCopySamples.containsKey("total"));
