@@ -25,8 +25,14 @@ import ca.corefacility.bioinformatics.irida.repositories.SnapshotRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.SnapshotService;
 
+/**
+ * Implementation of {@link SnapshotService}
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Service
-public class SnapshotServiceImpl extends CRUDServiceImpl<Long, Snapshot> implements SnapshotService{
+public class SnapshotServiceImpl extends CRUDServiceImpl<Long, Snapshot> implements SnapshotService {
 
 	private SequenceFileRemoteRepository sequenceFileRemoteRepository;
 
