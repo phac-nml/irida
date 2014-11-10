@@ -8,7 +8,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.slf4j.Logger;
@@ -24,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderCo
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.AssociatedProjectPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -49,11 +49,8 @@ public class AssociatedProjectsPageIT {
 
 	@Before
 	public void setUp() {
-		driver = new PhantomJSDriver();
-		driver.manage().window().setSize(new Dimension(1024, 900));
-		LoginPage loginPage = LoginPage.to(driver);
-		loginPage.doLogin();
-
+		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+		LoginPage.loginAsAdmin(driver);
 		page = new AssociatedProjectPage(driver);
 	}
 

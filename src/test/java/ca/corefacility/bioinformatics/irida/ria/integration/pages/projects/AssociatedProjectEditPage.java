@@ -12,19 +12,17 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 
-public class AssociatedProjectEditPage {
+public class AssociatedProjectEditPage extends AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(AssociatedProjectEditPage.class);
 
-	private static final String URL = BasePage.URL + "/projects/1/associated/edit";
-	private WebDriver driver;
+	private static final String RELATIVE_URL = "/projects/1/associated/edit";
 
 	public AssociatedProjectEditPage(WebDriver driver) {
-		this.driver = driver;
-		driver.get(URL);
-		waitForAjax();
+		super(driver);
+		get(driver, RELATIVE_URL);
 	}
 
 	public List<String> getProjects() {

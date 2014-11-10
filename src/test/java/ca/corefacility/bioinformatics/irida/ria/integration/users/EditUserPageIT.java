@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderCo
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.EditUserPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -35,13 +36,11 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 public class EditUserPageIT {
 	private WebDriver driver;
 	private EditUserPage editPage;
-	LoginPage loginPage;
 
 	@Before
 	public void setup() {
-		driver = new PhantomJSDriver();
-		loginPage = LoginPage.to(driver);
-		loginPage.doLogin();
+		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+		LoginPage.loginAsAdmin(driver);
 
 		editPage = new EditUserPage(driver);
 	}
@@ -50,27 +49,27 @@ public class EditUserPageIT {
 	public void destroy() {
 		if (driver != null) {
 			driver.close();
-            driver.quit();
+			driver.quit();
 		}
 	}
 
 	@Test
-	public void testUpdateFirstName(){
+	public void testUpdateFirstName() {
 		String newName = "newFirstName";
 		String updateName = editPage.updateFirstName(newName);
 		assertTrue(editPage.updateSuccess());
 		assertTrue(updateName.contains(newName));
 	}
-	
+
 	@Test
-	public void testUpdatePassword(){
+	public void testUpdatePassword() {
 		String newPassword = "paSsW0Rd";
 		editPage.updatePassword(newPassword, newPassword);
 		assertTrue(editPage.updateSuccess());
 	}
-	
+
 	@Test
-	public void testUpdatePasswordFail(){
+	public void testUpdatePasswordFail() {
 		String newPassword = "paSsW0Rd";
 		editPage.updatePassword(newPassword, "notthesame");
 		assertFalse(editPage.updateSuccess());

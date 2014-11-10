@@ -8,9 +8,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ActiveProfiles;
@@ -24,16 +23,15 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderCo
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsNewPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
- * <p>
- * Integration test to ensure that the ProjectsNew Page.
- * </p>
- * 
+ * <p> Integration test to ensure that the ProjectsNew Page. </p>
+ *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -44,16 +42,14 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectsNewPageIT {
-    private static final Logger logger = LoggerFactory.getLogger(ProjectsNewPageIT.class);
+	private static final Logger logger = LoggerFactory.getLogger(ProjectsNewPageIT.class);
 	private WebDriver driver;
 	private ProjectsNewPage page;
 
 	@Before
 	public void setUp() {
-		driver = new ChromeDriver();
-		driver.manage().window().setSize(new Dimension(1024, 900));
-		LoginPage loginPage = LoginPage.to(driver);
-		loginPage.doLogin();
+		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+		LoginPage.loginAsAdmin(driver);
 		page = new ProjectsNewPage(driver);
 	}
 
@@ -67,7 +63,7 @@ public class ProjectsNewPageIT {
 
 	@Test
 	public void testCreateNewProjectForm() {
-        logger.debug("Testing: CreateNewProjectFrom");
+		logger.debug("Testing: CreateNewProjectFrom");
 		page.goToPage();
 		assertEquals("Should have the correct page title", "IRIDA Platform - Create a New Project", driver.getTitle());
 

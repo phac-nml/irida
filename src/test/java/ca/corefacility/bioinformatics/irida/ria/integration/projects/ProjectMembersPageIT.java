@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -20,8 +21,9 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectMembersPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -29,10 +31,8 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
 
 /**
- * <p>
- * Integration test to ensure that the Project Collaborators Page.
- * </p>
- * 
+ * <p> Integration test to ensure that the Project Collaborators Page. </p>
+ *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -50,13 +50,14 @@ public class ProjectMembersPageIT {
 
 	@Before
 	public void setUp() {
-        driver = BasePage.initializeDriver();
+		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+		LoginPage.loginAsAdmin(driver);
 		membersPage = new ProjectMembersPage(driver);
 	}
 
 	@After
 	public void destroy() {
-		BasePage.destroyDriver(driver);
+		driver.quit();
 	}
 
 	@Test
@@ -85,14 +86,14 @@ public class ProjectMembersPageIT {
 		assertTrue(membersPage.notySuccessDisplayed());
 		assertTrue("Role span display should be visible", membersPage.roleSpanDisplayed(userid));
 	}
-	
+
 	@Test
-	public void testAddUserToProject(){
+	public void testAddUserToProject() {
 		String username = "third guy";
 		membersPage.clickAddMember();
 		membersPage.addUserToProject(3l, ProjectRole.PROJECT_USER);
 		assertTrue("Noty success should be displayed", membersPage.notySuccessDisplayed());
-		
+
 		List<String> projectMembersNames = membersPage.getProjectMembersNames();
 		assertTrue(projectMembersNames.contains(username));
 	}

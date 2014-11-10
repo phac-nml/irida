@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderCo
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.CreateUserPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -35,13 +36,11 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 public class CreateUserPageIT {
 	private WebDriver driver;
 	private CreateUserPage createPage;
-	LoginPage loginPage;
 
 	@Before
 	public void setup() {
-		driver = new PhantomJSDriver();
-		loginPage = LoginPage.to(driver);
-		loginPage.doLogin();
+		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+		LoginPage.loginAsAdmin(driver);
 
 		createPage = new CreateUserPage(driver);
 	}

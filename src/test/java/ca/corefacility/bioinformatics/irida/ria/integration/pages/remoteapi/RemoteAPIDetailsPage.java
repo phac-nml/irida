@@ -11,24 +11,22 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 
-public class RemoteAPIDetailsPage {
-	private WebDriver driver;
+public class RemoteAPIDetailsPage extends AbstractPage {
+	public static String REMOTEAPI_LIST = "remote_api";
 
-	public static String REMOTEAPI_LIST = BasePage.URL + "remote_api";
-
-	public static String BASE_URL = BasePage.URL + "/remote_api/";
+	public static String RELATIVE_URL = "remote_api/";
 
 	private static final Logger logger = LoggerFactory.getLogger(RemoteAPIDetailsPage.class);
 
 	private Long clientId;
 
 	public RemoteAPIDetailsPage(WebDriver driver, Long clientId) {
-		this.driver = driver;
-		driver.get(BASE_URL + clientId);
+		super(driver);
 		this.clientId = clientId;
+		get(driver, RELATIVE_URL + clientId);
 	}
 
 	public boolean verifyRemoteAPI(Long id, String apiName) {
@@ -68,7 +66,7 @@ public class RemoteAPIDetailsPage {
 		boolean deleted = false;
 
 		logger.debug("Checking for client existence");
-		if (driver.getCurrentUrl().matches(REMOTEAPI_LIST)) {
+		if (driver.getCurrentUrl().matches(BASE_URL + REMOTEAPI_LIST)) {
 			logger.debug("Succesfully loaded client list page");
 			waitForAjax();
 			logger.debug("Table loaded");

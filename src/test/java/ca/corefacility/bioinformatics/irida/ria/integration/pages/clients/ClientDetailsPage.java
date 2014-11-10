@@ -5,27 +5,23 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 
-public class ClientDetailsPage {
-	private WebDriver driver;
-
-	public static String CLIENT_LIST = BasePage.URL+"clients";
-
+public class ClientDetailsPage extends AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(ClientsPage.class);
+	public static String RELATIVE_URL = "clients";
 
 	private Long clientId;
 
 	public ClientDetailsPage(WebDriver driver, Long clientId) {
-		this.driver = driver;
-		driver.get("http://localhost:8080/clients/" + clientId);
+		super(driver);
+		get(driver, RELATIVE_URL + "/" + clientId);
 		this.clientId = clientId;
 	}
 
@@ -57,8 +53,7 @@ public class ClientDetailsPage {
 
 	public void confirmDelete() {
 		logger.debug("clicking confirm-delete button");
-		WebElement confirmButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.className("confirm-delete")));
+		WebElement confirmButton = waitForElementToBeClickable(driver.findElement(By.className("confirm-delete")));
 		confirmButton.click();
 	}
 
@@ -66,7 +61,7 @@ public class ClientDetailsPage {
 		boolean deleted = false;
 
 		logger.debug("Checking for client existence");
-		if (driver.getCurrentUrl().matches(CLIENT_LIST)) {
+		if (driver.getCurrentUrl().contains(RELATIVE_URL)) {
 			logger.debug("Succesfully loaded client list page");
 			waitForAjax();
 			logger.debug("Table loaded");

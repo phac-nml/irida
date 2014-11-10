@@ -18,8 +18,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.CreatePasswordResetPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -36,11 +36,10 @@ public class CreatePasswordResetPageIT {
 
 	private WebDriver driver;
 	private CreatePasswordResetPage passwordResetPage;
-	LoginPage loginPage;
 
 	@Before
 	public void setup() {
-		driver = new PhantomJSDriver();
+		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
 		// Don't do login here! should be able to go through this without
 		// logging in
 

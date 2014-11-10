@@ -12,7 +12,7 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.SortUtilities;
@@ -26,20 +26,18 @@ import com.google.common.base.Strings;
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
-public class ProjectSamplesPage {
+public class ProjectSamplesPage extends AbstractPage {
 	public static final String DATE_FORMAT = "dd MMM YYYY";
-	private static final String URL = BasePage.URL + "/projects/1/samples";
+	private static final String RELATIVE_URL = "projects/1/samples";
 	private PageUtilities pageUtilities;
-	private WebDriver driver;
 
 	public ProjectSamplesPage(WebDriver driver) {
-		this.driver = driver;
+		super(driver);
 		this.pageUtilities = new PageUtilities(driver);
 	}
 
-	public void goToPage() throws NoSuchElementException {
-		driver.get(URL);
-		waitForAjax();
+	public void goToPage() {
+		get(driver, RELATIVE_URL);
 		pageUtilities.waitForElementPresent(By.cssSelector("#samplesTable tbody"));
 	}
 
@@ -113,7 +111,7 @@ public class ProjectSamplesPage {
 	 * @return True if entire column is sorted ascending
 	 */
 	public boolean isSampleNameColumnSortedAsc() {
-		BasePage.waitForTime();
+		waitForTime(100);
 		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(2)")).stream()
 				.map(WebElement::getText).collect(Collectors.toList());
 		return SortUtilities.isStringListSortedAsc(list);
@@ -125,7 +123,7 @@ public class ProjectSamplesPage {
 	 * @return True if entire column is sorted ascending
 	 */
 	public boolean isAddedOnDateColumnSortedAsc() {
-		BasePage.waitForTime();
+		waitForTime(100);
 		List<String> list = driver.findElements(By.cssSelector("tbody td:nth-child(4)")).stream()
 				.map(WebElement::getText).collect(Collectors.toList());
 		return SortUtilities.isDateSortedAsc(list, DATE_FORMAT);

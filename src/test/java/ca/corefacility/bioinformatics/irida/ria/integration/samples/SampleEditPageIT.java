@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -18,9 +19,10 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.BasePage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.SampleDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.samples.SampleEditPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesController;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -28,9 +30,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
- * <p>
- * Integration test to ensure that the Sample Details Page.
- * </p>
+ * <p> Integration test to ensure that the Sample Details Page. </p>
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
@@ -48,7 +48,8 @@ public class SampleEditPageIT {
 
 	@Before
 	public void setUp() {
-		driver = BasePage.initializeDriver();
+		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+		LoginPage.loginAsAdmin(driver);
 		page = new SampleEditPage(driver);
 		detailsPage = new SampleDetailsPage(driver);
 		page.goToPage();
@@ -56,7 +57,7 @@ public class SampleEditPageIT {
 
 	@After
 	public void destroy() {
-		BasePage.destroyDriver(driver);
+		driver.quit();
 	}
 
 	@Test
@@ -65,7 +66,7 @@ public class SampleEditPageIT {
 		page.setFieldValue(SamplesController.ORGANISM, organismName);
 		page.submitForm();
 		assertTrue("User should be redirected to the details page",
-				driver.getCurrentUrl().contains(SampleDetailsPage.URL));
+				driver.getCurrentUrl().contains(SampleDetailsPage.RELATIVE_URL));
 		assertEquals("Ensure that the organism has been updated", organismName, detailsPage.getOrganismName());
 	}
 
@@ -75,7 +76,7 @@ public class SampleEditPageIT {
 		String goodLatitude = "23.44443";
 		page.setFieldValue(SamplesController.LATITUDE, badLatitude);
 		page.submitForm();
-		assertEquals("Should be redirected to the form", SampleEditPage.URL, driver.getCurrentUrl());
+		assertTrue("Should be redirected to the form", driver.getCurrentUrl().contains(SampleEditPage.RELATIVE_URL));
 		assertTrue("Should have an error field on the latitude",
 				page.isErrorLabelDisplayedForField(SamplesController.LATITUDE));
 		assertFalse("No other field should have an error",
@@ -88,6 +89,6 @@ public class SampleEditPageIT {
 		page.setFieldValue(SamplesController.LATITUDE, goodLatitude);
 		page.submitForm();
 		assertTrue("User should be redirected to the details page",
-				driver.getCurrentUrl().contains(SampleDetailsPage.URL));
+				driver.getCurrentUrl().contains(SampleDetailsPage.RELATIVE_URL));
 	}
 }

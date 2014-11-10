@@ -8,7 +8,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.slf4j.Logger;
@@ -24,16 +23,15 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderCo
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectDetailsPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
- * <p>
- * Integration test to ensure that the Project Details Page.
- * </p>
- * 
+ * <p> Integration test to ensure that the Project Details Page. </p>
+ *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -44,7 +42,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectDetailsPageIT {
-    private static final Logger logger = LoggerFactory.getLogger(ProjectDetailsPageIT.class);
+	private static final Logger logger = LoggerFactory.getLogger(ProjectDetailsPageIT.class);
 	public static final Long PROJECT_ID = 1L;
 	public static final String PROJECT_NAME = "project";
 	public static final String PROJECT_OWNER = "Mr. Manager";
@@ -52,17 +50,13 @@ public class ProjectDetailsPageIT {
 	public static final String PROJECT_ORGANISM = "E. coli";
 	public static final int MODIFIED_DATE_DB_YEAR = 2013;
 
-	
-
 	private WebDriver driver;
 	private ProjectDetailsPage detailsPage;
 
 	@Before
 	public void setUp() {
-		driver = new PhantomJSDriver();
-		driver.manage().window().setSize(new Dimension(1024, 900));
-		LoginPage loginPage = LoginPage.to(driver);
-		loginPage.doLogin();
+		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+		LoginPage.loginAsAdmin(driver);
 
 		detailsPage = new ProjectDetailsPage(driver, PROJECT_ID);
 	}
@@ -71,13 +65,13 @@ public class ProjectDetailsPageIT {
 	public void destroy() {
 		if (driver != null) {
 			driver.close();
-            driver.quit();
+			driver.quit();
 		}
 	}
 
 	@Test
 	public void hasCorrectMetaData() {
-        logger.debug("Testing: hasCorrectMetaDate");
+		logger.debug("Testing: hasCorrectMetaDate");
 		assertEquals("Page should show correct title", PROJECT_NAME, detailsPage.getPageTitle());
 		assertEquals("Should have the organism displayed", PROJECT_ORGANISM, detailsPage.getOrganism());
 		assertEquals("Should have the correct date format for creation date", PROJECT_CREATED_DATE,
@@ -87,9 +81,9 @@ public class ProjectDetailsPageIT {
 	}
 
 	/**
-	 * The modified date for a project is expressed in time since modification.
-	 * This will return the correct format for the displayed date.
-	 * 
+	 * The modified date for a project is expressed in time since modification. This will return the correct format for
+	 * the displayed date.
+	 *
 	 * @return the format for the modified year
 	 */
 	private String getFormattedModifiedDate() {

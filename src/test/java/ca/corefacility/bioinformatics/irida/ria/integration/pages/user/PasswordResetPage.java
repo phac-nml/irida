@@ -4,16 +4,18 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class PasswordResetPage {
-	private final String SUCCESS_PAGE = "http://localhost:8080/password_reset/success/.+";
-	private WebDriver driver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+
+public class PasswordResetPage extends AbstractPage {
+	private final String RELATIVE_URL = "password_reset/";
+	private final String SUCCESS_PAGE = RELATIVE_URL + "success/.+";
 
 	public PasswordResetPage(WebDriver driver) {
-		this.driver = driver;
+		super(driver);
 	}
 
 	public void getPasswordReset(String key) {
-		driver.get("http://localhost:8080/password_reset/" + key);
+		get(driver, RELATIVE_URL + key);
 	}
 
 	public void enterPassword(String password, String confirmPassword) {
@@ -26,6 +28,6 @@ public class PasswordResetPage {
 	}
 
 	public boolean checkSuccess() {
-		return driver.getCurrentUrl().matches(SUCCESS_PAGE);
+		return driver.getCurrentUrl().matches(BASE_URL + SUCCESS_PAGE);
 	}
 }

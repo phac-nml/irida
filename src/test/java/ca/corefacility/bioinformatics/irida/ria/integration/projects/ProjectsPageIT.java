@@ -9,7 +9,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
@@ -20,20 +19,19 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-
 import ca.corefacility.bioinformatics.irida.config.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
+
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
- * <p>
- * Integration test to ensure that the Projects Page.
- * </p>
- * 
+ * <p> Integration test to ensure that the Projects Page. </p>
+ *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -49,19 +47,18 @@ public class ProjectsPageIT {
 
 	@Before
 	public void setup() {
-		driver = new PhantomJSDriver();
-		driver.manage().window().setSize(new Dimension(1024, 900));
-		LoginPage loginPage = LoginPage.to(driver);
-		loginPage.doLogin();
+		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+		LoginPage.loginAsAdmin(driver);
 
 		projectsPage = new ProjectsPage(driver);
+		projectsPage.toUserProjectsPage();
 	}
 
 	@After
 	public void destroy() {
 		if (driver != null) {
 			driver.close();
-            driver.quit();
+			driver.quit();
 		}
 	}
 
@@ -89,9 +86,10 @@ public class ProjectsPageIT {
 
 	/**
 	 * Checks if a List of {@link WebElement} is sorted in ascending order.
-	 * 
+	 *
 	 * @param elements
-	 *            List of {@link WebElement}
+	 * 		List of {@link WebElement}
+	 *
 	 * @return if the list is sorted ascending
 	 */
 	private boolean checkSortedAscending(List<WebElement> elements) {
@@ -107,9 +105,10 @@ public class ProjectsPageIT {
 
 	/**
 	 * Checks if a list of {@link WebElement} is sorted in descending order.
-	 * 
+	 *
 	 * @param elements
-	 *            List of {@link WebElement}
+	 * 		List of {@link WebElement}
+	 *
 	 * @return if the list is sorted ascending
 	 */
 	private boolean checkSortedDescending(List<WebElement> elements) {
