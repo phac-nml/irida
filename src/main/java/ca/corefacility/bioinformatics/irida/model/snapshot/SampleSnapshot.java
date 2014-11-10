@@ -13,6 +13,12 @@ import javax.persistence.Table;
 
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSample;
 
+/**
+ * Snapshot taken of an {@link IridaSample} object
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Entity
 @Table(name = "sample_snapshot")
 @Inheritance(strategy = InheritanceType.JOINED)

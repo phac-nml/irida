@@ -21,15 +21,21 @@ import javax.validation.constraints.NotNull;
 
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 
+/**
+ * Snapshot taken of an {@link IridaSequenceFile} object
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Entity
 @Table(name = "sequence_file_snapshot")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class SequenceFileSnapshot implements IridaSequenceFile {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long snapshotId;
-	
+
 	@Column(name = "filePath", unique = true)
 	@NotNull(message = "{sequencefile.file.notnull}")
 	private Path file;

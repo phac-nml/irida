@@ -20,6 +20,13 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 
+/**
+ * Collection of {@link ProjectSnapshot}s, {@link SampleSnapshot}s, and
+ * {@link SequenceFileSnapshot}s
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Entity
 @Table(name = "snapshot")
 public class Snapshot implements IridaThing {
