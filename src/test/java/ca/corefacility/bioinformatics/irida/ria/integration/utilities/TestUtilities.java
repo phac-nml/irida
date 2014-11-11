@@ -11,6 +11,9 @@ import org.openqa.selenium.WebDriver;
  * Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class TestUtilities {
+
+	public static final int DRIVER_TIMEOUT_IN_SECONDS = 3;
+
 	/**
 	 * Set the defaults for the {@link WebDriver}
 	 *
@@ -21,7 +24,7 @@ public class TestUtilities {
 	 */
 	public static WebDriver setDriverDefaults(WebDriver driver) {
 		driver.manage().window().setSize(new Dimension(1024, 900));
-		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
 		return driver;
 	}
 }

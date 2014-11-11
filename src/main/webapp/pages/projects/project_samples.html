@@ -23,11 +23,11 @@
 				        th:utext="#{project.samples.nav.merge}" data:tooltip="#{project.samples.nav.merge-tooltip}" tooltip-placement="bottom">
 					__MERGE__
 				</button>
-				<button id="copyBtn" class="btn btn-default btn-sm" ng-disabled="subnav.count&lt;1"
+				<button th:if="${isOwner}" id="copyBtn" class="btn btn-default btn-sm" ng-disabled="subnav.count&lt;1"
 				        data:tooltip="#{project.samples.nav.copy-tooltip}" tooltip-placement="bottom" ng-click="subnav.openModal('copy')">
 					<span class="fa fa-fw fa-copy"></span> <span th:text="#{project.samples.nav.copy}">_COPY_</span>
 				</button>
-				<button id="moveBtn" class="btn btn-default btn-sm" ng-disabled="subnav.count&lt;1"
+				<button th:if="${isOwner}" id="moveBtn" class="btn btn-default btn-sm" ng-disabled="subnav.count&lt;1"
 				        data:tooltip="#{project.samples.nav.move-tooltip}" tooltip-placement="bottom" ng-click="subnav.openModal('move')">
 					<span class="fa fa-truck fa-fw"></span> <span th:text="#{project.samples.nav.move}"></span>
 				</button>
