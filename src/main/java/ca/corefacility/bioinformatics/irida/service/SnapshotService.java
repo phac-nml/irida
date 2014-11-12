@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.Collection;
 
+import javax.validation.ConstraintViolationException;
+
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaProject;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSample;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
@@ -14,6 +17,16 @@ import ca.corefacility.bioinformatics.irida.model.snapshot.Snapshot;
  *
  */
 public interface SnapshotService extends CRUDService<Long, Snapshot> {
+
+	/**
+	 * To ensure copies of all of the snapshot objects have been created, use
+	 * {@link SnapshotService#takeSnapshot(Collection, Collection, Collection)}
+	 * instead
+	 */
+	@Override
+	@Deprecated
+	public Snapshot create(Snapshot object) throws EntityExistsException, ConstraintViolationException;
+
 	/**
 	 * Take a snapshot of collections of {@link IridaProject}s,
 	 * {@link IridaSample}s, and {@link IridaSequenceFile}s
