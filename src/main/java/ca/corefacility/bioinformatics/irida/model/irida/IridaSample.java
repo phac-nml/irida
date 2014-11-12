@@ -2,6 +2,16 @@ package ca.corefacility.bioinformatics.irida.model.irida;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import ca.corefacility.bioinformatics.irida.validators.annotations.Latitude;
+import ca.corefacility.bioinformatics.irida.validators.annotations.Longitude;
+import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleName;
+import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmission;
+import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmissionOneOf;
+
 /**
  * Description of what data should be exposed from a Sample in IRIDA. Many of
  * these fields are based on NCBI BioSample. Information can be found at
@@ -23,6 +33,9 @@ public interface IridaSample {
 	 * 
 	 * @return
 	 */
+	@NotNull(message = "{sample.name.notnull}")
+	@Size(min = 3, message = "{sample.name.too.short}")
+	@ValidSampleName
 	public String getSampleName();
 
 	/**
@@ -30,6 +43,9 @@ public interface IridaSample {
 	 * 
 	 * @return
 	 */
+	@NotNull(message = "{sample.external.id.notnull}")
+	@Size(min = 3, message = "{sample.external.id.too.short}")
+	@ValidSampleName
 	public String getSequencerSampleId();
 
 	/**
@@ -44,6 +60,8 @@ public interface IridaSample {
 	 * 
 	 * @return
 	 */
+	@NotNull(message = "{sample.strain.name.notnull}", groups = { NCBISubmission.class, NCBISubmissionOneOf.class })
+	@Size(min = 3, message = "{sample.strain.name.too.short}")
 	public String getStrain();
 
 	/**
@@ -51,6 +69,7 @@ public interface IridaSample {
 	 * 
 	 * @return
 	 */
+	@NotNull(message = "{sample.collection.date.notnull}", groups = NCBISubmission.class)
 	public Date getCollectionDate();
 
 	/**
@@ -58,6 +77,8 @@ public interface IridaSample {
 	 * 
 	 * @return
 	 */
+	@NotNull(message = "{sample.collected.by.notnull}", groups = NCBISubmission.class)
+	@Size(min = 3, message = "{sample.collected.by.too.short}")
 	public String getCollectedBy();
 
 	/**
@@ -65,6 +86,8 @@ public interface IridaSample {
 	 * 
 	 * @return
 	 */
+	@NotNull(message = "{sample.latitude.notnull}", groups = NCBISubmission.class)
+	@Latitude
 	public String getLatitude();
 
 	/**
@@ -72,6 +95,8 @@ public interface IridaSample {
 	 * 
 	 * @return
 	 */
+	@NotNull(message = "{sample.longitude.notnull}", groups = NCBISubmission.class)
+	@Longitude
 	public String getLongitude();
 
 	/**
@@ -79,6 +104,8 @@ public interface IridaSample {
 	 * 
 	 * @return
 	 */
+	@NotNull(message = "{sample.organism.notnull}", groups = NCBISubmission.class)
+	@Size(min = 3, message = "{sample.organism.too.short}")
 	public String getOrganism();
 
 	/**
@@ -87,6 +114,8 @@ public interface IridaSample {
 	 * 
 	 * @return
 	 */
+	@NotNull(message = "{sample.isolate.notnull}", groups = { NCBISubmission.class, NCBISubmissionOneOf.class })
+	@Size(min = 3, message = "{sample.isolate.too.short}")
 	public String getIsolate();
 
 	/**
@@ -95,6 +124,9 @@ public interface IridaSample {
 	 * 
 	 * @return
 	 */
+	@NotNull(message = "{sample.geographic.location.name.notnull}", groups = NCBISubmission.class)
+	@Pattern(regexp = "\\w+(:\\w+(:\\w+)?)?", message = "{sample.geographic.location.name.pattern}")
+	@Size(min = 3, message = "{sample.geographic.location.name.too.short}")
 	public String getGeographicLocationName();
 
 	/**
@@ -103,6 +135,7 @@ public interface IridaSample {
 	 * 
 	 * @return
 	 */
+	@NotNull(message = "{sample.isolation.source.notnull}", groups = NCBISubmission.class)
 	public String getIsolationSource();
 
 	/**
@@ -112,6 +145,8 @@ public interface IridaSample {
 	 * 
 	 * @return
 	 */
+	@NotNull(message = "{sample.culture.collection.notnull}", groups = NCBISubmission.class)
+	@Size(min = 1, message = "{sample.culture.collection.too.short}")
 	public String getCultureCollection();
 
 	/**
