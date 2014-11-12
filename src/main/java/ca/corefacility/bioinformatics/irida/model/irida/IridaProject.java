@@ -1,5 +1,12 @@
 package ca.corefacility.bioinformatics.irida.model.irida;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.URL;
+
+import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectName;
+
 /**
  * Defines what must be exposed by a Project in IRIDA
  * 
@@ -20,6 +27,9 @@ public interface IridaProject {
 	 * 
 	 * @return
 	 */
+	@NotNull(message = "{project.name.notnull}")
+	@Size(min = 5, message = "{project.name.size}")
+	@ValidProjectName
 	public String getName();
 
 	/**
@@ -35,6 +45,7 @@ public interface IridaProject {
 	 * 
 	 * @return
 	 */
+	@URL(message = "{project.remoteURL.url}")
 	public String getRemoteURL();
 
 	/**
