@@ -112,6 +112,8 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
 		registry.addViewController("/projects/templates/merge").setViewName("projects/templates/merge");
+		registry.addViewController("/projects/templates/copy").setViewName("projects/templates/copy");
+		registry.addViewController("/projects/templates/move").setViewName("projects/templates/move");
 	}
 
 	@Bean

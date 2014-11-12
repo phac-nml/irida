@@ -3,8 +3,11 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
@@ -15,7 +18,9 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilit
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectSamplesPage extends AbstractPage {
+	private static final Logger logger = LoggerFactory.getLogger(ProjectSamplesPage.class);
 	private static final String RELATIVE_URL = "projects/1/samples";
+	private static final String ALT_RELATIVE_URL = "projects/id/samples";
 	private PageUtilities pageUtilities;
 
 	public ProjectSamplesPage(WebDriver driver) {
@@ -26,6 +31,10 @@ public class ProjectSamplesPage extends AbstractPage {
 	public void goToPage() {
 		get(driver, RELATIVE_URL);
 		pageUtilities.waitForElementPresent(By.cssSelector("#samplesTable tbody"));
+	}
+
+	public void goToPage(String projectId) {
+		get(driver, ALT_RELATIVE_URL.replace("id", projectId));
 	}
 
 	/**
@@ -49,6 +58,7 @@ public class ProjectSamplesPage extends AbstractPage {
 		pageNum += 1; // 0 == First Button, 1 == Previous Button
 		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li"));
 		links.get(pageNum).findElement(By.tagName("a")).click();
+		waitForTime(700);
 	}
 
 	public void clickPreviousPageButton() {
@@ -66,7 +76,6 @@ public class ProjectSamplesPage extends AbstractPage {
 		links.get(links.size() - 2).click();
 		waitForTime(700);
 	}
-
 
 	public void clickLastPageButton() {
 		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li>a"));
@@ -149,7 +158,12 @@ public class ProjectSamplesPage extends AbstractPage {
 	}
 
 	public boolean isItemVisible(String id) {
-		return driver.findElement(By.id(id)).isDisplayed();
+		try {
+			return driver.findElement(By.id(id)).isDisplayed();
+		} catch (Exception e) {
+			logger.info("No element with id of: " + id);
+			return false;
+		}
 	}
 
 	public boolean checkSuccessNotification() {
@@ -170,5 +184,12 @@ public class ProjectSamplesPage extends AbstractPage {
 	public String getSampleNameByRow(int row) {
 		List<WebElement> rows = driver.findElements(By.className("sample-row"));
 		return rows.get(row).findElement(By.className("sample-name")).getText();
+	}
+
+	public void selectProjectByName(String name, String submitBtn) {
+		WebElement input = openSelect2List(driver);
+		input.sendKeys(name);
+		waitForTime(600);
+		input.sendKeys(Keys.ENTER);
 	}
 }

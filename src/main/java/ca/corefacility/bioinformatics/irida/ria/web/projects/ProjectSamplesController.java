@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
-import static org.springframework.data.jpa.domain.Specifications.where;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.format.Formatter;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.datetime.DateFormatter;
@@ -212,8 +211,6 @@ public class ProjectSamplesController {
 	/**
 	 * Search for projects available for a user to copy samples to. If the user is an admin it will show all projects.
 	 *
-	 * @param projectId
-	 * 		The current project id
 	 * @param term
 	 * 		A search term
 	 * @param pageSize
@@ -226,34 +223,41 @@ public class ProjectSamplesController {
 	 * @return a Map<String,Object> containing: total: total number of elements results: A Map<Long,String> of project
 	 * IDs and project names.
 	 */
-	@RequestMapping(value = "/ajax/{projectId}/samples/available_projects")
+	@RequestMapping(value = "/ajax/samples/available_projects")
 	@ResponseBody
-	public Map<String, Object> getProjectsAvailableToCopySamples(@PathVariable Long projectId,
-			@RequestParam String term, @RequestParam int pageSize, @RequestParam int page, Principal principal) {
+	public Map<String, Object> getProjectsAvailableToCopySamples(@RequestParam String term, @RequestParam int pageSize,
+			@RequestParam int page, Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
 
-		Map<Long, String> vals = new HashMap<>();
+		List<Map<String, String>> projectMap = new ArrayList<>();
 		Map<String, Object> response = new HashMap<>();
 		if (user.getAuthorities().contains(Role.ROLE_ADMIN)) {
 			Page<Project> projects = projectService.search(ProjectSpecification.searchProjectName(term), page,
 					pageSize, Direction.ASC, PROJECT_NAME_PROPERTY);
 			for (Project p : projects) {
-				vals.put(p.getId(), p.getName());
+				Map<String, String> map = new HashMap<>();
+				map.put("id", p.getId().toString());
+				map.put("text", p.getName());
+				projectMap.add(map);
 			}
 			response.put("total", projects.getTotalElements());
 		} else {
 			// search for projects with a given name where the user is an owner
-			Specification<ProjectUserJoin> spec = where(
+			Specification<ProjectUserJoin> spec = Specifications.where(
 					ProjectUserJoinSpecification.searchProjectNameWithUser(term, user)).and(
 					ProjectUserJoinSpecification.getProjectJoinsWithRole(user, ProjectRole.PROJECT_OWNER));
 			Page<ProjectUserJoin> projects = projectService.searchProjectUsers(spec, page, pageSize, Direction.ASC);
-			for (ProjectUserJoin p : projects) {
-				vals.put(p.getSubject().getId(), p.getSubject().getName());
+			for (ProjectUserJoin projectUserJoin : projects) {
+				Project p = projectUserJoin.getSubject();
+				Map<String, String> map = new HashMap<>();
+				map.put("id", p.getId().toString());
+				map.put("text", p.getName());
+				projectMap.add(map);
 			}
 			response.put("total", projects.getTotalElements());
 		}
 
-		response.put("results", vals);
+		response.put("projects", projectMap);
 
 		return response;
 	}
@@ -263,8 +267,6 @@ public class ProjectSamplesController {
 	 *
 	 * @param projectId
 	 * 		The original project id
-	 * @param sampleIds
-	 * 		The sample ids to move
 	 * @param newProjectId
 	 * 		The new project id
 	 * @param removeFromOriginal
@@ -272,43 +274,71 @@ public class ProjectSamplesController {
 	 *
 	 * @return A list of warnings
 	 */
-	@RequestMapping(value = "/ajax/{projectId}/samples/copy")
+	@RequestMapping(value = "/{projectId}/ajax/samples/copy", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> copySampleToProject(@PathVariable Long projectId, @RequestParam List<Long> sampleIds,
-			@RequestParam Long newProjectId, @RequestParam boolean removeFromOriginal) {
+	public Map<String, Object> copySampleToProject(@PathVariable Long projectId,
+			@RequestParam Long newProjectId, @RequestParam boolean removeFromOriginal, Locale locale) {
 		Project originalProject = projectService.read(projectId);
 		Project newProject = projectService.read(newProjectId);
 
 		Map<String, Object> response = new HashMap<>();
 		List<String> warnings = new ArrayList<>();
+		List<String> successNames = new ArrayList<>();
 
-		int totalCopied = 0;
-
-		for (Long sampleId : sampleIds) {
+		for (Long sampleId : cart.getSelectedSampleIds(projectId)) {
 			Sample sample = sampleService.read(sampleId);
 			try {
 				projectService.addSampleToProject(newProject, sample);
 				logger.trace("Copied sample " + sampleId + " to project " + newProjectId);
-				totalCopied++;
-
+				successNames.add(sample.getSampleName());
 			} catch (EntityExistsException ex) {
 				logger.warn("Attempted to add sample " + sampleId + " to project " + newProjectId
-						+ " where it already exists.", ex);
+						+ " where it already exists.");
 
-				warnings.add(sample.getLabel());
+				warnings.add(messageSource.getMessage("project.samples.copy-error-message",
+						new Object[] { sample.getSampleName(), newProject.getName() }, locale));
 			}
 
 			if (removeFromOriginal) {
 				projectService.removeSampleFromProject(originalProject, sample);
 				logger.trace("Removed sample " + sampleId + " from original project " + projectId);
+
 			}
 		}
 
-		if (!warnings.isEmpty()) {
+		if (!warnings.isEmpty() || successNames.size() == 0) {
+			response.put("result", "warning");
 			response.put("warnings", warnings);
+		} else {
+			response.put("result", "success");
 		}
-		response.put("totalCopied", totalCopied);
+		// 1. Only one sample copied
+		// 2. Only one sample moved
+		if (successNames.size() == 1) {
+			if (removeFromOriginal) {
+				response.put("message", messageSource.getMessage("project.samples.move-single-success-message",
+						new Object[] { successNames.get(0), newProject.getName() }, locale));
+			} else {
+				response.put("message", messageSource.getMessage("project.samples.copy-single-success-message",
+						new Object[] { successNames.get(0), newProject.getName() }, locale));
+			}
+		}
+		// 3. Multiple samples copied
+		// 4. Multiple samples moved
+		else if (successNames.size() > 1) {
+			if (removeFromOriginal) {
+				response.put("message", messageSource.getMessage("project.samples.move-multiple-success-message",
+						new Object[] { successNames.size(), newProject.getName() }, locale));
+			} else {
+				response.put("message", messageSource.getMessage("project.samples.copy-multiple-success-message",
+						new Object[] { successNames.size(), newProject.getName() }, locale));
+			}
+		}
 
+		if (removeFromOriginal) {
+			cart.emptyProjectCart(projectId);
+		}
+		response.put("count", cart.getSelectedSampleIds(projectId).size());
 		return response;
 	}
 

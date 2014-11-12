@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
+import java.util.concurrent.TimeUnit;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -8,6 +10,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
 /**
  * Represents the common elements in a page within the application.
@@ -66,5 +70,18 @@ public class AbstractPage {
 		} catch (InterruptedException e) {
 			logger.error("Cannot sleep the thread.");
 		}
+	}
+
+	public WebElement openSelect2List(WebDriver driver) {
+		driver.findElement(By.className("select2-choice")).click();
+		waitForElementVisible(By.className("select2-results"));
+		return driver.findElement(By.cssSelector(".select2-input"));
+	}
+
+	public boolean isElementOnScreen(String id) {
+		driver.manage().timeouts().implicitlyWait(0, TimeUnit.MILLISECONDS);
+		boolean exists = driver.findElements( By.id(id) ).size() != 0;
+		driver.manage().timeouts().implicitlyWait(TestUtilities.DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
+		return exists;
 	}
 }

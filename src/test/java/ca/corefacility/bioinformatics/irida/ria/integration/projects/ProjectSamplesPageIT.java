@@ -53,7 +53,6 @@ public class ProjectSamplesPageIT {
 	@Before
 	public void setUp() {
 		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
-		LoginPage.loginAsAdmin(driver);
 		this.page = new ProjectSamplesPage(driver);
 	}
 
@@ -65,6 +64,7 @@ public class ProjectSamplesPageIT {
 	@Test
 	public void testInitialPageSetUp() {
 		logger.info("Testing page set up for: Project Samples");
+		LoginPage.loginAsAdmin(driver);
 		page.goToPage();
 		assertTrue(page.getTitle().contains("Samples"));
 		assertEquals(10, page.getNumberOfSamplesDisplayed());
@@ -73,6 +73,7 @@ public class ProjectSamplesPageIT {
 	@Test
 	public void testPaging() {
 		logger.info("Testing paging for: Project Samples");
+		LoginPage.loginAsAdmin(driver);
 		page.goToPage();
 
 		// Initial setup
@@ -126,12 +127,11 @@ public class ProjectSamplesPageIT {
 	@Test
 	public void testSelectSamples() {
 		logger.info("Testing selecting samples for: Project Samples");
+		LoginPage.loginAsAdmin(driver);
 		page.goToPage();
 
 		assertEquals(0, page.getNumberOfSamplesSelected());
-		page.selectSampleByRow(0);
-		page.selectSampleByRow(1);
-		page.selectSampleByRow(2);
+		selectFirstThreeSamples();
 		assertEquals(3, page.getNumberOfSamplesSelected());
 		page.selectSampleByRow(1);
 		assertEquals(2, page.getNumberOfSamplesSelected());
@@ -145,6 +145,7 @@ public class ProjectSamplesPageIT {
 	public void testPagingWithSelectingSamples() {
 		logger.info("Testing paging with selecting samples for: Project Samples");
 		List<Integer> page1 = ImmutableList.of(0, 1, 6);
+		LoginPage.loginAsAdmin(driver);
 		page.goToPage();
 
 		assertEquals(0, page.getNumberOfSamplesSelected());
@@ -182,6 +183,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testFileSelection() {
+		LoginPage.loginAsAdmin(driver);
 		page.goToPage();
 		page.clickLastPageButton();
 		assertFalse(page.isRowSelected(0));
@@ -199,6 +201,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testSelectedSampleCount() {
+		LoginPage.loginAsAdmin(driver);
 		page.goToPage();
 		assertEquals(0, page.getTotalSelectedSamplesCount());
 		page.selectSampleByRow(0);
@@ -232,6 +235,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testDefaultMerge() {
+		LoginPage.loginAsAdmin(driver);
 		page.goToPage();
 		assertEquals(0, page.getTotalSelectedSamplesCount());
 		assertFalse(page.isBtnEnabled("mergeBtn"));
@@ -248,6 +252,7 @@ public class ProjectSamplesPageIT {
 
 	@Test
 	public void testRenameMerge() {
+		LoginPage.loginAsAdmin(driver);
 		page.goToPage();
 		assertEquals(0, page.getTotalSelectedSamplesCount());
 		assertFalse(page.isBtnEnabled("mergeBtn"));
@@ -280,6 +285,102 @@ public class ProjectSamplesPageIT {
 		String updatedName = page.getSampleNameByRow(0);
 		assertFalse(oriName.equals(updatedName));
 		assertTrue(updatedName.equals(newLongName));
+	}
+
+	@Test
+	public void testProjectUserCannotCopyOrMoveFilesToAnotherProject() {
+		LoginPage.loginAsUser(driver);
+		page.goToPage();
+		assertFalse(page.isElementOnScreen("copyBtn"));
+		assertFalse(page.isElementOnScreen("moveBtn"));
+	}
+
+	@Test
+	public void testCopySamplesAsManagerToManagedProject() {
+		LoginPage.login(driver, "project1Manager", "Password1");
+		// Make sure the project to copy to is empty to begin with
+		page.goToPage("2");
+		assertEquals(0, page.getNumberOfSamplesDisplayed());
+
+		page.goToPage();
+		assertTrue(page.isElementOnScreen("copyBtn"));
+		assertTrue(page.isElementOnScreen("moveBtn"));
+
+		// Should be able to copy files to a project that they are a manager of.
+		selectFirstThreeSamples();
+		page.clickBtn("copyBtn");
+		assertTrue(page.isItemVisible("copy-samples-modal"));
+		page.selectProjectByName("2", "confirm-copy-samples");
+		assertTrue(page.isBtnEnabled("confirm-copy-samples"));
+		page.clickBtn("confirm-copy-samples");
+		page.checkSuccessNotification();
+
+		// Check to make sure the samples where copied there
+		page.goToPage("2");
+		assertEquals(3, page.getNumberOfSamplesDisplayed());
+	}
+
+	@Test
+	public void testMoveSamplesAsManagerToManagedProject() {
+		LoginPage.login(driver, "project1Manager", "Password1");
+		// Make sure the project to copy to is empty to begin with
+		page.goToPage("2");
+		assertEquals(0, page.getNumberOfSamplesDisplayed());
+		page.goToPage();
+
+		// Should be able to copy files to a project that they are a manager of.
+		selectFirstThreeSamples();
+		page.clickBtn("moveBtn");
+		assertTrue(page.isItemVisible("move-samples-modal"));
+		page.selectProjectByName("2", "confirm-move-samples");
+		assertTrue(page.isBtnEnabled("confirm-move-samples"));
+		page.clickBtn("confirm-move-samples");
+		page.checkSuccessNotification();
+
+		// Check to make sure the samples where copied there
+		page.goToPage("2");
+		assertEquals(3, page.getNumberOfSamplesDisplayed());
+	}
+
+	@Test
+	public void testCopySamplesAsManagerToUnmanagedProject() {
+		LoginPage.login(driver, "project1Manager", "Password1");
+		page.goToPage();
+		assertTrue(page.isElementOnScreen("copyBtn"));
+		assertTrue(page.isElementOnScreen("moveBtn"));
+
+		// Should be able to copy files to a project that they are a manager of.
+		selectFirstThreeSamples();
+		page.clickBtn("copyBtn");
+		assertTrue(page.isItemVisible("copy-samples-modal"));
+		page.selectProjectByName("3", "confirm-copy-samples");
+		assertFalse("Since the project does not exist in the list, they cannot copy files to it.",
+				page.isBtnEnabled("confirm-copy-samples"));
+	}
+
+	@Test
+	public void testAdminCopyFromAnyProjectToAnyProject() {
+		LoginPage.loginAsAdmin(driver);
+		page.goToPage();
+
+		selectFirstThreeSamples();
+		//Admin is not on project5
+		page.clickBtn("copyBtn");
+		assertTrue(page.isItemVisible("copy-samples-modal"));
+		page.selectProjectByName("5", "confirm-copy-samples");
+		assertTrue(page.isBtnEnabled("confirm-copy-samples"));
+		page.clickBtn("confirm-copy-samples");
+		page.checkSuccessNotification();
+
+		// Check to make sure the samples where copied there
+		page.goToPage("5");
+		assertEquals(3, page.getNumberOfSamplesDisplayed());
+	}
+
+	private void selectFirstThreeSamples() {
+		page.selectSampleByRow(0);
+		page.selectSampleByRow(1);
+		page.selectSampleByRow(2);
 	}
 
 	private void jumpAroundLists() {
