@@ -28,6 +28,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSample;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.user.Organization;
 import ca.corefacility.bioinformatics.irida.validators.annotations.Latitude;
@@ -52,7 +53,7 @@ import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmissionOneO
 @Table(name = "sample")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class Sample implements IridaThing, Comparable<Sample> {
+public class Sample implements IridaThing, IridaSample, Comparable<Sample> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
