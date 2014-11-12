@@ -18,10 +18,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.URL;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -33,7 +31,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.model.user.Organization;
-import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectName;
 
 /**
  * A project object.
@@ -51,9 +48,6 @@ public class Project implements IridaThing, IridaProject, Comparable<Project> {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@NotNull(message = "{project.name.notnull}")
-	@Size(min = 5, message = "{project.name.size}")
-	@ValidProjectName
 	private String name;
 
 	@CreatedDate
@@ -68,7 +62,6 @@ public class Project implements IridaThing, IridaProject, Comparable<Project> {
 	@Lob
 	private String projectDescription;
 
-	@URL(message = "{project.remoteURL.url}")
 	private String remoteURL;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")

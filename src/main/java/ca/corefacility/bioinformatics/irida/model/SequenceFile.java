@@ -55,9 +55,8 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	private Long id;
 
 	@Column(name = "filePath", unique = true)
-	@NotNull(message = "{sequencefile.file.notnull}")
 	private Path file;
-	
+
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)

@@ -17,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.validators.Lo
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
-@Target({ ElementType.FIELD, ElementType.ANNOTATION_TYPE })
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(validatedBy = LongitudeValidator.class)
