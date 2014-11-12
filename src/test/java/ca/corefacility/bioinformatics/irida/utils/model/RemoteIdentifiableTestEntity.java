@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.utils.model;
 
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLinks;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteRepository;
@@ -12,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteRepository
  */
 public class RemoteIdentifiableTestEntity extends IdentifiableTestEntity implements RemoteResource {
 	private RESTLinks links;
+	private RemoteAPI remoteAPI;
 
 	@Override
 	public RESTLinks getLinks() {
@@ -23,4 +25,11 @@ public class RemoteIdentifiableTestEntity extends IdentifiableTestEntity impleme
 		this.links = links;
 	}
 
+	public RemoteAPI getRemoteAPI() {
+		return remoteAPI;
+	}
+	
+	public void setRemoteAPI(RemoteAPI remoteAPI) {
+		this.remoteAPI = remoteAPI;
+	}
 }

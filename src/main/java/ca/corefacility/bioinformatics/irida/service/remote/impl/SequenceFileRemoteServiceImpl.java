@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSample;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
@@ -35,16 +34,16 @@ public class SequenceFileRemoteServiceImpl extends RemoteServiceImpl<RemoteSeque
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<RemoteSequenceFile> getSequenceFilesForSample(RemoteSample sample, RemoteAPI api) {
+	public List<RemoteSequenceFile> getSequenceFilesForSample(RemoteSample sample) {
 		String sequenceFilesRel = sample.getHrefForRel(SAMPLE_SEQUENCE_FILES_REL);
-		return list(sequenceFilesRel, api);
+		return list(sequenceFilesRel, sample.getRemoteAPI());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Path downloadSequenceFile(RemoteSequenceFile sequenceFile, RemoteAPI api) {
-		return repository.downloadRemoteSequenceFile(sequenceFile, api);
+	public Path downloadSequenceFile(RemoteSequenceFile sequenceFile) {
+		return repository.downloadRemoteSequenceFile(sequenceFile, sequenceFile.getRemoteAPI());
 	}
 }

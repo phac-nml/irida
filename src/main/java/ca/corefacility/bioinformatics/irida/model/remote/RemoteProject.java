@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.remote;
 
 import java.util.Objects;
 
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLinks;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
@@ -14,6 +15,8 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource
 public class RemoteProject extends Project implements RemoteResource {
 	private RESTLinks links;
 
+	private RemoteAPI remoteAPI;
+
 	public RESTLinks getLinks() {
 		return links;
 	}
@@ -25,5 +28,15 @@ public class RemoteProject extends Project implements RemoteResource {
 	@Override
 	public int hashCode() {
 		return Objects.hash(super.hashCode(), links);
+	}
+
+	@Override
+	public RemoteAPI getRemoteAPI() {
+		return remoteAPI;
+	}
+
+	@Override
+	public void setRemoteAPI(RemoteAPI remoteAPI) {
+		this.remoteAPI = remoteAPI;
 	}
 }
