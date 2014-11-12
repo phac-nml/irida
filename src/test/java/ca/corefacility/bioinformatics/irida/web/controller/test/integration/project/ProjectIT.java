@@ -44,7 +44,7 @@ import com.jayway.restassured.response.Response;
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/project/ProjectIntegrationTest.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class ProjectIntegrationTest {
+public class ProjectIT {
 
 	private static final String PROJECTS = "/projects";
 

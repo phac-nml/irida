@@ -45,7 +45,7 @@ import com.jayway.restassured.response.Response;
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/project/ProjectSamplesIntegrationTest.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class ProjectSamplesIntegrationTest {
+public class ProjectSamplesIT {
 
 	@Test
 	public void testAddSampleToProject() {

@@ -43,7 +43,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/user/UserIntegrationTest.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class UsersIntegrationTest {
+public class UsersIT {
 
 	@Test
 	public void testBadUsernameLogin() {

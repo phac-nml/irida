@@ -42,7 +42,7 @@ import com.jayway.restassured.response.Response;
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/project/ProjectUsersIntegrationTest.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class ProjectUsersIntegrationTest {
+public class ProjectUsersIT {
 	@Test
 	public void testAddExistingUserToProject() {
 		String username = "tom";

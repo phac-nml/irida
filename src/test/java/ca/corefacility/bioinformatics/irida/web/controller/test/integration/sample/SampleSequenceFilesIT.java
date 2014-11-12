@@ -48,7 +48,7 @@ import com.jayway.restassured.response.Response;
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/sample/SampleSequenceFilesIntegrationTest.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class SampleSequenceFilesIntegrationTest {
+public class SampleSequenceFilesIT {
 
 	private static final byte[] FASTQ_FILE_CONTENTS = "@testread\nACGTACGT\n+\n????????".getBytes();
 

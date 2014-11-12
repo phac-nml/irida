@@ -38,7 +38,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/sequencingrun/SequencingRunIntegrationTest.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class SequencingRunIntegrationTest {
+public class SequencingRunIT {
 	
 	//TODO: When more run types are available test that they are represented in listing and reading
 
