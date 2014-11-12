@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.config;
+package ca.corefacility.bioinformatics.irida.config.services;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;

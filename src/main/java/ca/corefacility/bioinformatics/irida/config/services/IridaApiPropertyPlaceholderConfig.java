@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.config;
+package ca.corefacility.bioinformatics.irida.config.services;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.config;
+package ca.corefacility.bioinformatics.irida.config.services;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -20,8 +20,11 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
-import ca.corefacility.bioinformatics.irida.config.manager.ExecutionManagerConfig;
-import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServiceConfig;
+import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
+import ca.corefacility.bioinformatics.irida.config.analysis.RemoteWorkflowServiceConfig;
+import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositoriesConfig;
+import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
+import ca.corefacility.bioinformatics.irida.config.security.IridaOAuth2Config;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;

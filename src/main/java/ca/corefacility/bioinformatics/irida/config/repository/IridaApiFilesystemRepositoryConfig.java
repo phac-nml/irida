@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.config;
+package ca.corefacility.bioinformatics.irida.config.repository;
 
 import java.io.IOException;
 import java.nio.file.Files;

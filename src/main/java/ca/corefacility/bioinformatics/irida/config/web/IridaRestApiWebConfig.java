@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.web.config;
+package ca.corefacility.bioinformatics.irida.config.web;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,8 +27,9 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.xml.MarshallingView;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.config.IridaScheduledTasksConfig;
+import ca.corefacility.bioinformatics.irida.config.security.IridaRestApiSecurityConfig;
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.config.services.IridaScheduledTasksConfig;
 import ca.corefacility.bioinformatics.irida.web.spring.view.FastaView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.FastqView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.GenbankView;

@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.web.config;
+package ca.corefacility.bioinformatics.irida.config.security;
 
 import java.util.ArrayList;
 import java.util.List;

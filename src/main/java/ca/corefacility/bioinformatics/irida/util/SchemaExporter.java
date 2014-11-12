@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 
 /**
  * Export the current hibernate-generated schema (with auditing tables).

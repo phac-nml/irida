@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.config;
+package ca.corefacility.bioinformatics.irida.config.repository;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import ca.corefacility.bioinformatics.irida.config.data.DataConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.UserRevListener;
 
 /**

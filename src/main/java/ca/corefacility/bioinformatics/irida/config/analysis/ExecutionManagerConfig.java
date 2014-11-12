@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.config.manager;
+package ca.corefacility.bioinformatics.irida.config.analysis;
 
 import java.net.MalformedURLException;
 import java.net.URL;

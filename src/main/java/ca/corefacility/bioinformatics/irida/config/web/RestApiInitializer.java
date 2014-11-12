@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.web.config;
+package ca.corefacility.bioinformatics.irida.config.web;
 
 import java.util.EnumSet;
 

@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.config.workflow;
+package ca.corefacility.bioinformatics.irida.config.analysis;
 
 import java.util.Optional;
 

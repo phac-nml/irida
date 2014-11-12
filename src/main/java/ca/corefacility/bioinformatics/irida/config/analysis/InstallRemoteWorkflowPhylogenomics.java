@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.config.workflow;
+package ca.corefacility.bioinformatics.irida.config.analysis;
 
 import java.io.Console;
 import java.util.Optional;
@@ -20,9 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.ThrowableAnalyzer;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
-import ca.corefacility.bioinformatics.irida.config.manager.ExecutionManagerConfig;
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerConfigurationException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.user.User;
