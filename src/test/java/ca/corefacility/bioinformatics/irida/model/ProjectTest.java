@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectName;
 
 public class ProjectTest {
-	private static final String MESSAGES_BASENAME = "ca.corefacility.bioinformatics.irida.validation.ValidationMessages";
+	private static final String MESSAGES_BASENAME = "ValidationMessages";
 	private Validator validator;
 
 	@Before

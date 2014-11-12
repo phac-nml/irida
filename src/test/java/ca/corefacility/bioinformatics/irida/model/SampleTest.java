@@ -21,7 +21,7 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectN
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleName;
 
 public class SampleTest {
-	private static final String MESSAGES_BASENAME = "ca.corefacility.bioinformatics.irida.validation.ValidationMessages";
+	private static final String MESSAGES_BASENAME = "ValidationMessages";
 	private Validator validator;
 
 	@Before
