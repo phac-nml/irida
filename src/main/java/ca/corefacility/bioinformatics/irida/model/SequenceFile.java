@@ -32,6 +32,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
@@ -47,16 +48,15 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 @Table(name = "sequence_file")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class SequenceFile implements IridaThing, Comparable<SequenceFile>, VersionedFileFields<Long> {
+public class SequenceFile implements IridaThing, Comparable<SequenceFile>, VersionedFileFields<Long>, IridaSequenceFile {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
 	@Column(name = "filePath", unique = true)
-	@NotNull(message = "{sequencefile.file.notnull}")
 	private Path file;
-	
+
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
