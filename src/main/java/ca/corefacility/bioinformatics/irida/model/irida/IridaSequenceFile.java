@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.model.irida;
 import java.nio.file.Path;
 import java.util.Map;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Describes fields that must be made available for a Sequence File in IRIDA
  * 
@@ -16,6 +18,7 @@ public interface IridaSequenceFile {
 	 * 
 	 * @return
 	 */
+	@NotNull(message = "{sequencefile.file.notnull}")
 	public Path getFile();
 
 	/**
