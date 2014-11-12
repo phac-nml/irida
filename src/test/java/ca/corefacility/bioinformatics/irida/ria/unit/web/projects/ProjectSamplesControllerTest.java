@@ -52,6 +52,7 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 public class ProjectSamplesControllerTest {
@@ -143,23 +144,25 @@ public class ProjectSamplesControllerTest {
 	@Test
 	public void testCopySampleToProjectRemove() {
 		Long projectId = 1l;
-		List<Long> sampleIds = Lists.newArrayList(2l, 3l);
+		Set<Long> sampleIds = ImmutableSet.of(2l, 3l);
 		Long newProjectId = 4l;
 		boolean removeFromOriginal = true;
 		Project oldProject = new Project("oldProject");
 		Project newProject = new Project("newProject");
 		Sample s2 = new Sample("s2");
 		Sample s3 = new Sample("s3");
+		when(cart.getSelectedSampleIds(projectId)).thenReturn(sampleIds);
 
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
 		when(sampleService.read(2l)).thenReturn(s2);
 		when(sampleService.read(3l)).thenReturn(s3);
 
-		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, newProjectId,
+		Map<String, Object> result = controller.copySampleToProject(projectId, newProjectId,
 				removeFromOriginal, Locale.US);
 
-		assertEquals(2, copySampleToProject.get("totalCopied"));
+		assertTrue(result.containsKey("result"));
+		assertTrue(result.containsKey("message"));
 
 		verify(projectService).read(projectId);
 		verify(projectService).read(newProjectId);
@@ -194,7 +197,7 @@ public class ProjectSamplesControllerTest {
 	@Test
 	public void testCopySampleToProject() {
 		Long projectId = 1l;
-		List<Long> sampleIds = Lists.newArrayList(2l, 3l);
+		Set<Long> sampleIds = ImmutableSet.of(2l, 3l);
 		Long newProjectId = 4l;
 		boolean removeFromOriginal = false;
 		Project oldProject = new Project("oldProject");
@@ -202,15 +205,14 @@ public class ProjectSamplesControllerTest {
 		Sample s2 = new Sample("s2");
 		Sample s3 = new Sample("s3");
 
+		when(cart.getSelectedSampleIds(projectId)).thenReturn(sampleIds);
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
 		when(sampleService.read(2l)).thenReturn(s2);
 		when(sampleService.read(3l)).thenReturn(s3);
 
-		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, newProjectId,
+		controller.copySampleToProject(projectId, newProjectId,
 				removeFromOriginal, Locale.US);
-
-		assertEquals(2, copySampleToProject.get("totalCopied"));
 
 		verify(projectService).read(projectId);
 		verify(projectService).read(newProjectId);
@@ -225,7 +227,7 @@ public class ProjectSamplesControllerTest {
 	@Test
 	public void testCopySampleToProjectSampleExists() {
 		Long projectId = 1l;
-		List<Long> sampleIds = Lists.newArrayList(2l, 3l);
+		Set<Long> sampleIds = ImmutableSet.of(2l, 3l);
 		Long newProjectId = 4l;
 		boolean removeFromOriginal = false;
 		Project oldProject = new Project("oldProject");
@@ -233,6 +235,7 @@ public class ProjectSamplesControllerTest {
 		Sample s2 = new Sample("s2");
 		Sample s3 = new Sample("s3");
 
+		when(cart.getSelectedSampleIds(projectId)).thenReturn(sampleIds);
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
 		when(sampleService.read(2l)).thenReturn(s2);
@@ -243,7 +246,6 @@ public class ProjectSamplesControllerTest {
 		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, newProjectId,
 				removeFromOriginal, Locale.US);
 
-		assertEquals(1, copySampleToProject.get("totalCopied"));
 		assertTrue(copySampleToProject.containsKey("warnings"));
 
 		verify(projectService).read(projectId);
@@ -320,17 +322,18 @@ public class ProjectSamplesControllerTest {
 		Principal principal = () -> USER_NAME;
 		User puser = new User(USER_NAME, null, null, null, null, null);
 		puser.setSystemRole(Role.ROLE_ADMIN);
-		Page<Project> projects = new PageImpl<>(Lists.newArrayList(new Project("p1"), new Project("p2")));
+		Page<Project> projects = new PageImpl<>(Lists.newArrayList(TestDataFactory.constructProject(), TestDataFactory.constructProject()));
 
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
 		when(projectService.search(any(Specification.class), eq(page), eq(pagesize), eq(order), eq(property)))
 				.thenReturn(projects);
 
-		Map<String, Object> projectsAvailableToCopySamples = controller.getProjectsAvailableToCopySamples(term, pagesize, page, principal);
+		Map<String, Object> projectsAvailableToCopySamples = controller.getProjectsAvailableToCopySamples(
+				term, pagesize, page, principal);
 
 		assertTrue(projectsAvailableToCopySamples.containsKey("total"));
 		assertEquals(2l, projectsAvailableToCopySamples.get("total"));
-		assertTrue(projectsAvailableToCopySamples.containsKey("results"));
+		assertTrue(projectsAvailableToCopySamples.containsKey("projects"));
 
 		verify(userService).getUserByUsername(USER_NAME);
 		verify(projectService).search(any(Specification.class), eq(page), eq(pagesize), eq(order), eq(property));
@@ -339,7 +342,6 @@ public class ProjectSamplesControllerTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetProjectsAvailableToCopySamplesAsUser() {
-		Long projectId = 1l;
 		String term = "";
 		int page = 0;
 		int pagesize = 10;
@@ -348,20 +350,20 @@ public class ProjectSamplesControllerTest {
 		Principal principal = () -> USER_NAME;
 		User puser = new User(USER_NAME, null, null, null, null, null);
 		puser.setSystemRole(Role.ROLE_USER);
-		Page<ProjectUserJoin> projects = new PageImpl<>(Lists.newArrayList(new ProjectUserJoin(new Project("p1"),
-				puser, ProjectRole.PROJECT_OWNER), new ProjectUserJoin(new Project("p2"), puser,
+		Page<ProjectUserJoin> projects = new PageImpl<>(Lists.newArrayList(new ProjectUserJoin(TestDataFactory.constructProject(),
+				puser, ProjectRole.PROJECT_OWNER), new ProjectUserJoin(TestDataFactory.constructProject(), puser,
 				ProjectRole.PROJECT_OWNER)));
 
 		when(userService.getUserByUsername(USER_NAME)).thenReturn(puser);
 		when(projectService.searchProjectUsers(any(Specification.class), eq(page), eq(pagesize), eq(order)))
 				.thenReturn(projects);
 
-		Map<String, Object> projectsAvailableToCopySamples = controller.getProjectsAvailableToCopySamples(
-				term, pagesize, page, principal);
+		Map<String, Object> projectsAvailableToCopySamples = controller
+				.getProjectsAvailableToCopySamples(term, pagesize, page, principal);
 
 		assertTrue(projectsAvailableToCopySamples.containsKey("total"));
 		assertEquals(2l, projectsAvailableToCopySamples.get("total"));
-		assertTrue(projectsAvailableToCopySamples.containsKey("results"));
+		assertTrue(projectsAvailableToCopySamples.containsKey("projects"));
 
 		verify(userService).getUserByUsername(USER_NAME);
 		verify(projectService).searchProjectUsers(any(Specification.class), eq(page), eq(pagesize), eq(order));
