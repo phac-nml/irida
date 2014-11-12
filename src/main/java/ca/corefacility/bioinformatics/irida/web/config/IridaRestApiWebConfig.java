@@ -29,7 +29,6 @@ import org.springframework.web.servlet.view.xml.MarshallingView;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.IridaScheduledTasksConfig;
-import ca.corefacility.bioinformatics.irida.web.config.processing.IridaWebMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.web.spring.view.FastaView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.FastqView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.GenbankView;
@@ -45,9 +44,8 @@ import com.google.common.collect.ImmutableMap;
  */
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {"ca.corefacility.bioinformatics.irida.web.controller.api"})
-@Import({ IridaApiServicesConfig.class, IridaRestApiSecurityConfig.class, IridaWebMultithreadingConfig.class,
-	IridaScheduledTasksConfig.class})
+@ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.web.controller.api" })
+@Import({ IridaApiServicesConfig.class, IridaRestApiSecurityConfig.class, IridaScheduledTasksConfig.class })
 public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 
 	private static final long TEN_GIGABYTES = 10737418240l;
@@ -68,10 +66,10 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 
 		return resolver;
 	}
-	
-	public ViewResolver internalResourceViewResolver(){
+
+	public ViewResolver internalResourceViewResolver() {
 		InternalResourceViewResolver internalResourceViewResolver = new InternalResourceViewResolver();
-		
+
 		return internalResourceViewResolver;
 	}
 
@@ -99,12 +97,12 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 		configurer.ignoreAcceptHeader(false).defaultContentType(MediaType.APPLICATION_JSON).favorPathExtension(true)
 				.mediaTypes(mediaTypes);
 	}
-	
+
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/**").addResourceLocations("/resources/");
 	}
-	
+
 	@Bean
 	public MessageSource messageSource() {
 		String[] resources = { "classpath:/i18n/oauth" };
