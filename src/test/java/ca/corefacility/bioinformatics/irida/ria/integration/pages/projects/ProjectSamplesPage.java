@@ -58,6 +58,7 @@ public class ProjectSamplesPage extends AbstractPage {
 		pageNum += 1; // 0 == First Button, 1 == Previous Button
 		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li"));
 		links.get(pageNum).findElement(By.tagName("a")).click();
+		waitForTime(700);
 	}
 
 	public void clickPreviousPageButton() {
