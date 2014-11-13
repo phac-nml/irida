@@ -36,6 +36,8 @@ public class SequenceFileSnapshot implements IridaSequenceFile {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long snapshotId;
 
+	private Long id;
+
 	@Column(name = "filePath", unique = true)
 	@NotNull(message = "{sequencefile.file.notnull}")
 	private Path file;
@@ -45,18 +47,41 @@ public class SequenceFileSnapshot implements IridaSequenceFile {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@MapKeyColumn(name = "property_key", nullable = false)
 	@Column(name = "property_value", nullable = false)
-	@CollectionTable(name = "snapshot_sequence_file_properties", joinColumns = @JoinColumn(name = "sequence_file_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
-			"sequence_file_id", "property_key" }, name = "UK_SNAPSHOT_SEQUENCE_FILE_PROPERTY_KEY"))
+	@CollectionTable(name = "snapshot_sequence_file_properties", joinColumns = @JoinColumn(name = "sequence_file_snapshot_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
+			"sequence_file_snapshot_id", "property_key" }, name = "UK_SNAPSHOT_SEQUENCE_FILE_PROPERTY_KEY"))
 	private Map<String, String> optionalProperties;
 
+	/**
+	 * Construct a {@link SequenceFileSnapshot} from the given
+	 * {@link IridaSequenceFile}
+	 * 
+	 * @param sequenceFile
+	 *            The {@link IridaSequenceFile} to clone
+	 */
 	public SequenceFileSnapshot(IridaSequenceFile sequenceFile) {
+		this.id = sequenceFile.getId();
 		this.file = sequenceFile.getFile();
 		this.optionalProperties = sequenceFile.getOptionalProperties();
 	}
 
-	public SequenceFileSnapshot(Path file, Map<String, String> optionalProperties) {
+	/**
+	 * Construct a {@link SequenceFileSnapshot} from the given
+	 * {@link IridaSequenceFile} and given file path
+	 * 
+	 * @param sequenceFile
+	 *            The {@link IridaSequenceFile} to clone
+	 * @param file
+	 *            The filesystem location of the sequence file
+	 */
+	public SequenceFileSnapshot(IridaSequenceFile sequenceFile, Path file) {
+		this.id = sequenceFile.getId();
 		this.file = file;
-		this.optionalProperties = optionalProperties;
+		this.optionalProperties = sequenceFile.getOptionalProperties();
+	}
+
+	@Override
+	public Long getId() {
+		return id;
 	}
 
 	@Override

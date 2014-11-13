@@ -15,7 +15,7 @@ public class RemoteSequenceFileSnapshot extends SequenceFileSnapshot implements 
 	private RESTLinks links;
 
 	public RemoteSequenceFileSnapshot(RemoteSequenceFile sequenceFile, Path file) {
-		super(file, sequenceFile.getOptionalProperties());
+		super(sequenceFile, file);
 		this.links = sequenceFile.getLinks();
 	}
 
