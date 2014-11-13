@@ -10,6 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -43,12 +45,15 @@ public class Snapshot implements IridaThing {
 	private Date modifiedDate;
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable(name = "snapshot_project_snapshot", joinColumns = @JoinColumn(name = "snapshot_id"), inverseJoinColumns = @JoinColumn(name = "project_snapshot"))
 	private List<ProjectSnapshot> projects;
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable(name = "snapshot_sequence_file_snapshot", joinColumns = @JoinColumn(name = "snapshot_id"), inverseJoinColumns = @JoinColumn(name = "sequence_file_snapshot"))
 	private List<SequenceFileSnapshot> sequenceFiles;
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable(name = "snapshot_sample_snapshot", joinColumns = @JoinColumn(name = "snapshot_id"), inverseJoinColumns = @JoinColumn(name = "sample_snapshot"))
 	private List<SampleSnapshot> samples;
 
 	public Snapshot() {
