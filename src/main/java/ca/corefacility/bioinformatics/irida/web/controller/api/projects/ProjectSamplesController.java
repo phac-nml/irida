@@ -37,81 +37,117 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSeq
 import com.google.common.net.HttpHeaders;
 
 /**
- * Controller for managing relationships between {@link Project} and {@link Sample}.
+ * Controller for managing relationships between {@link Project} and
+ * {@link Sample}.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
 public class ProjectSamplesController {
-    /**
-     * Rel to get to the project that this sample belongs to.
-     */
-    public static final String REL_PROJECT = "sample/project";
-    /**
-     * rel used for accessing the list of samples associated with a project.
-     */
-    public static final String REL_PROJECT_SAMPLES = "project/samples";
-    /**
-     * Reference to {@link ProjectService}.
-     */
-    private ProjectService projectService;
-    /**
-     * Reference to {@link SampleService}.
-     */
-    private SampleService sampleService;
-    /**
-     * Reference to {@link SequenceFileService}.
-     */
+	/**
+	 * Rel to get to the project that this sample belongs to.
+	 */
+	public static final String REL_PROJECT = "sample/project";
+	/**
+	 * rel used for accessing the list of samples associated with a project.
+	 */
+	public static final String REL_PROJECT_SAMPLES = "project/samples";
+	/**
+	 * Reference to {@link ProjectService}.
+	 */
+	private ProjectService projectService;
+	/**
+	 * Reference to {@link SampleService}.
+	 */
+	private SampleService sampleService;
 
-    protected ProjectSamplesController() {
-    }
+	/**
+	 * Reference to {@link SequenceFileService}.
+	 */
 
-    @Autowired
-    public ProjectSamplesController(ProjectService projectService, SampleService sampleService) {
-        this.projectService = projectService;
-        this.sampleService = sampleService;
-    }
+	protected ProjectSamplesController() {
+	}
 
-    /**
-     * Create a new sample resource and create a relationship between the sample and the project.
-     *
-     * @param projectId the identifier of the project that you want to add the sample to.
-     * @param sample    the sample that you want to create.
-     * @return a response indicating that the sample was created and appropriate location information.
-     */
-    @RequestMapping(value = "/projects/{projectId}/samples", method = RequestMethod.POST)
-    public ResponseEntity<String> addSampleToProject(@PathVariable Long projectId, @RequestBody SampleResource sample) {
-        // load the project that we're adding to
-        Project p = projectService.read(projectId);
+	@Autowired
+	public ProjectSamplesController(ProjectService projectService, SampleService sampleService) {
+		this.projectService = projectService;
+		this.sampleService = sampleService;
+	}
 
-        // construct the sample that we're going to create
-        Sample s = sample.getResource();
+	/**
+	 * Copy an existing sample to a project.
+	 * 
+	 * @param projectId
+	 *            the project to copy the sample to.
+	 * @param sampleId
+	 *            the sample ID to copy
+	 * @param sample
+	 *            the actual content of the sample (optional, not actually used
+	 *            for anything yet.)
+	 * @return
+	 */
+	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}", method = RequestMethod.PUT)
+	public ResponseEntity<String> copySampleToProject(final @PathVariable Long projectId,
+			final @PathVariable Long sampleId, final @RequestBody(required = false) SampleResource sample) {
+		final Project p = projectService.read(projectId);
+		final Sample s = sampleService.read(sampleId);
 
-        // add the sample to the project
-        Join<Project, Sample> r = projectService.addSampleToProject(p, s);
+		projectService.addSampleToProject(p, s);
+		final String location = linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId))
+				.withSelfRel().getHref();
+		final MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
+		responseHeaders.add(HttpHeaders.LOCATION, location);
 
-        // construct a link to the sample itself on the samples controller
-        Long sampleId = r.getObject().getId();
-        String location = linkTo(methodOn(ProjectSamplesController.class)
-                .getProjectSample(projectId, sampleId)).withSelfRel().getHref();
+		return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
+	}
 
-        // construct a set of headers to add to the response
-        MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
-        responseHeaders.add(HttpHeaders.LOCATION, location);
+	/**
+	 * Create a new sample resource and create a relationship between the sample
+	 * and the project.
+	 *
+	 * @param projectId
+	 *            the identifier of the project that you want to add the sample
+	 *            to.
+	 * @param sample
+	 *            the sample that you want to create.
+	 * @return a response indicating that the sample was created and appropriate
+	 *         location information.
+	 */
+	@RequestMapping(value = "/projects/{projectId}/samples", method = RequestMethod.POST)
+	public ResponseEntity<String> addSampleToProject(@PathVariable Long projectId, @RequestBody SampleResource sample) {
+		// load the project that we're adding to
+		Project p = projectService.read(projectId);
 
-        // respond to the request
-        return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
-    }
+		// construct the sample that we're going to create
+		Sample s = sample.getResource();
 
-    /**
-     * Get the list of {@link Sample} associated with this {@link Project}.
-     *
-     * @param projectId the identifier of the {@link Project} to get the {@link Sample}s for.
-     * @return the list of {@link Sample}s associated with this {@link Project}.
-     */
-    @RequestMapping(value = "/projects/{projectId}/samples", method = RequestMethod.GET)
-    public ModelMap getProjectSamples(@PathVariable Long projectId) {
-        
+		// add the sample to the project
+		Join<Project, Sample> r = projectService.addSampleToProject(p, s);
+
+		// construct a link to the sample itself on the samples controller
+		Long sampleId = r.getObject().getId();
+		String location = linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId))
+				.withSelfRel().getHref();
+
+		// construct a set of headers to add to the response
+		MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
+		responseHeaders.add(HttpHeaders.LOCATION, location);
+
+		// respond to the request
+		return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
+	}
+
+	/**
+	 * Get the list of {@link Sample} associated with this {@link Project}.
+	 *
+	 * @param projectId
+	 *            the identifier of the {@link Project} to get the
+	 *            {@link Sample}s for.
+	 * @return the list of {@link Sample}s associated with this {@link Project}.
+	 */
+	@RequestMapping(value = "/projects/{projectId}/samples", method = RequestMethod.GET)
+	public ModelMap getProjectSamples(@PathVariable Long projectId) {
+
 		ModelMap modelMap = new ModelMap();
 		Project p = projectService.read(projectId);
 		List<Join<Project, Sample>> relationships = sampleService.getSamplesForProject(p);
@@ -122,131 +158,147 @@ public class ProjectSamplesController {
 			Sample sample = r.getObject();
 			SampleResource sr = new SampleResource();
 			sr.setResource(sample);
-			sr.add(linkTo(methodOn(ProjectSamplesController.class).
-					getProjectSample(projectId, sample.getId())).withSelfRel());
+			sr.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sample.getId()))
+					.withSelfRel());
 			sampleResources.add(sr);
 		}
 
-		sampleResources.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
+		sampleResources
+				.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
 
 		modelMap.addAttribute(GenericController.RESOURCE_NAME, sampleResources);
 
 		return modelMap;
 
+	}
 
-    }
-	
 	@RequestMapping(value = "/projects/{projectId}/samples/bySequencerId/{seqeuncerId}", method = RequestMethod.GET)
-	public ModelAndView getProjectSampleBySequencerId(@PathVariable Long projectId, @PathVariable String seqeuncerId){
-        Project p = projectService.read(projectId);
-        
-        Sample sampleBySampleId = sampleService.getSampleBySequencerSampleId(p, seqeuncerId);
+	public ModelAndView getProjectSampleBySequencerId(@PathVariable Long projectId, @PathVariable String seqeuncerId) {
+		Project p = projectService.read(projectId);
 
-        SampleResource sr = new SampleResource();
-        sr.setResource(sampleBySampleId);
-		
-		Link withSelfRel = linkTo(methodOn(ProjectSamplesController.class).
-									   getProjectSample(projectId, sampleBySampleId.getId())).withSelfRel();
+		Sample sampleBySampleId = sampleService.getSampleBySequencerSampleId(p, seqeuncerId);
+
+		SampleResource sr = new SampleResource();
+		sr.setResource(sampleBySampleId);
+
+		Link withSelfRel = linkTo(
+				methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleBySampleId.getId()))
+				.withSelfRel();
 		String href = withSelfRel.getHref();
-		
+
 		RedirectView redirectView = new RedirectView(href);
 
-        return new ModelAndView(redirectView);
-	}  
+		return new ModelAndView(redirectView);
+	}
 
-    /**
-     * Get the representation of a specific sample that's associated with the project.
-     *
-     * @param projectId the {@link Project} identifier that the {@link Sample} should be associated with.
-     * @param sampleId  the {@link Sample} identifier that we're looking for.
-     * @return a representation of the specific sample.
-     */
-    @RequestMapping(value = "/projects/{projectId}/samples/{sampleId}", method = RequestMethod.GET)
-    public ModelMap getProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
-        ModelMap modelMap = new ModelMap();
-        // load the project
-        Project p = projectService.read(projectId);
-        // get the sample for the project.
-        Sample s = sampleService.getSampleForProject(p, sampleId);
+	/**
+	 * Get the representation of a specific sample that's associated with the
+	 * project.
+	 *
+	 * @param projectId
+	 *            the {@link Project} identifier that the {@link Sample} should
+	 *            be associated with.
+	 * @param sampleId
+	 *            the {@link Sample} identifier that we're looking for.
+	 * @return a representation of the specific sample.
+	 */
+	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}", method = RequestMethod.GET)
+	public ModelMap getProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
+		ModelMap modelMap = new ModelMap();
+		// load the project
+		Project p = projectService.read(projectId);
+		// get the sample for the project.
+		Sample s = sampleService.getSampleForProject(p, sampleId);
 
-        // prepare the sample for serializing to the client
-        SampleResource sr = new SampleResource();
-        sr.setResource(s);
+		// prepare the sample for serializing to the client
+		SampleResource sr = new SampleResource();
+		sr.setResource(s);
 
-        // add a link to: 1) self, 2) sequenceFiles, 3) project
-        sr.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel());
-        sr.add(linkTo(ProjectsController.class).slash(projectId).withRel(REL_PROJECT));
-        sr.add(linkTo(methodOn(SampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
-                .withRel(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
+		// add a link to: 1) self, 2) sequenceFiles, 3) project
+		sr.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel());
+		sr.add(linkTo(ProjectsController.class).slash(projectId).withRel(REL_PROJECT));
+		sr.add(linkTo(methodOn(SampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
+				.withRel(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
 
-        // add the sample resource to the response
-        modelMap.addAttribute(GenericController.RESOURCE_NAME, sr);
+		// add the sample resource to the response
+		modelMap.addAttribute(GenericController.RESOURCE_NAME, sr);
 
-        return modelMap;
-    }
+		return modelMap;
+	}
 
-    /**
-     * Remove a specific {@link Sample} from the collection of {@link Sample}s associated with a {@link Project}.
-     *
-     * @param projectId the {@link Project} identifier.
-     * @param sampleId  the {@link Sample} identifier.
-     * @return a response including links back to the specific {@link Project} and collection of {@link Sample}.
-     */
-    @RequestMapping(value = "/projects/{projectId}/samples/{sampleId}", method = RequestMethod.DELETE)
-    public ModelMap removeSampleFromProject(@PathVariable Long projectId, @PathVariable Long sampleId) {
-        ModelMap modelMap = new ModelMap();
+	/**
+	 * Remove a specific {@link Sample} from the collection of {@link Sample}s
+	 * associated with a {@link Project}.
+	 *
+	 * @param projectId
+	 *            the {@link Project} identifier.
+	 * @param sampleId
+	 *            the {@link Sample} identifier.
+	 * @return a response including links back to the specific {@link Project}
+	 *         and collection of {@link Sample}.
+	 */
+	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}", method = RequestMethod.DELETE)
+	public ModelMap removeSampleFromProject(@PathVariable Long projectId, @PathVariable Long sampleId) {
+		ModelMap modelMap = new ModelMap();
 
-        // load the sample and project
-        Project p = projectService.read(projectId);
-        Sample s = sampleService.read(sampleId);
+		// load the sample and project
+		Project p = projectService.read(projectId);
+		Sample s = sampleService.read(sampleId);
 
-        // remove the relationship.
-        projectService.removeSampleFromProject(p, s);
+		// remove the relationship.
+		projectService.removeSampleFromProject(p, s);
 
-        // respond to the client.
-        RootResource resource = new RootResource();
-        // add links back to the collection of samples and to the project itself.
-        resource.add(linkTo(methodOn(ProjectSamplesController.class)
-                .getProjectSamples(projectId)).withRel(REL_PROJECT_SAMPLES));
-        resource.add(linkTo(ProjectsController.class).slash(projectId).withRel(ProjectsController.REL_PROJECT));
+		// respond to the client.
+		RootResource resource = new RootResource();
+		// add links back to the collection of samples and to the project
+		// itself.
+		resource.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId)).withRel(
+				REL_PROJECT_SAMPLES));
+		resource.add(linkTo(ProjectsController.class).slash(projectId).withRel(ProjectsController.REL_PROJECT));
 
-        // add the links to the response.
-        modelMap.addAttribute(GenericController.RESOURCE_NAME, resource);
+		// add the links to the response.
+		modelMap.addAttribute(GenericController.RESOURCE_NAME, resource);
 
-        return modelMap;
-    }
+		return modelMap;
+	}
 
-    /**
-     * Update a {@link Sample} details.
-     *
-     * @param projectId     the identifier of the {@link Project} that the {@link Sample} belongs to.
-     * @param sampleId      the identifier of the {@link Sample}.
-     * @param updatedFields the updated fields of the {@link Sample}.
-     * @return a response including links to the {@link Project} and {@link Sample}.
-     */
-    @RequestMapping(value = "/projects/{projectId}/samples/{sampleId}", method = RequestMethod.PATCH,
-            consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public ModelMap updateSample(@PathVariable Long projectId, @PathVariable Long sampleId,
-                                 @RequestBody Map<String, Object> updatedFields) {
-        ModelMap modelMap = new ModelMap();
+	/**
+	 * Update a {@link Sample} details.
+	 *
+	 * @param projectId
+	 *            the identifier of the {@link Project} that the {@link Sample}
+	 *            belongs to.
+	 * @param sampleId
+	 *            the identifier of the {@link Sample}.
+	 * @param updatedFields
+	 *            the updated fields of the {@link Sample}.
+	 * @return a response including links to the {@link Project} and
+	 *         {@link Sample}.
+	 */
+	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}", method = RequestMethod.PATCH, consumes = {
+			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+	public ModelMap updateSample(@PathVariable Long projectId, @PathVariable Long sampleId,
+			@RequestBody Map<String, Object> updatedFields) {
+		ModelMap modelMap = new ModelMap();
 
-        // confirm that the project is related to the sample
-        Project p = projectService.read(projectId);
-        sampleService.getSampleForProject(p, sampleId);
+		// confirm that the project is related to the sample
+		Project p = projectService.read(projectId);
+		sampleService.getSampleForProject(p, sampleId);
 
-        // issue an update request
-        sampleService.update(sampleId, updatedFields);
+		// issue an update request
+		sampleService.update(sampleId, updatedFields);
 
-        // respond to the client with a link to self, sequence files collection and project.
-        RootResource resource = new RootResource();
-        resource.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId))
-                .withSelfRel());
-        resource.add(linkTo(methodOn(SampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
-                .withRel(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
-        resource.add(linkTo(ProjectsController.class).slash(projectId).withRel(ProjectsController.REL_PROJECT));
+		// respond to the client with a link to self, sequence files collection
+		// and project.
+		RootResource resource = new RootResource();
+		resource.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId))
+				.withSelfRel());
+		resource.add(linkTo(methodOn(SampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
+				.withRel(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
+		resource.add(linkTo(ProjectsController.class).slash(projectId).withRel(ProjectsController.REL_PROJECT));
 
-        modelMap.addAttribute(GenericController.RESOURCE_NAME, resource);
+		modelMap.addAttribute(GenericController.RESOURCE_NAME, resource);
 
-        return modelMap;
-    }
+		return modelMap;
+	}
 }

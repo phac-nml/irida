@@ -28,10 +28,28 @@ import com.jayway.restassured.response.Response;
 public class ProjectSamplesIntegrationTest {
 
 	@Test
+	public void testCopySampleToProject() {
+		final Map<String, String> sample = new HashMap<>();
+		sample.put("sampleName", "sample_1");
+		sample.put("sequencerSampleId", "sample_1");
+
+		final String projectUri = "/projects/4";
+		final String projectJson = asUser().get(projectUri).asString();
+		final String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
+
+		final Response r = asUser().body(sample).expect().response().statusCode(HttpStatus.CREATED.value()).when()
+				.put(samplesUri + "/5");
+		final String location = r.getHeader(HttpHeaders.LOCATION);
+		assertNotNull("Location should not be null.", location);
+		assertEquals("The project/sample location uses the wrong sample ID.",
+				"http://localhost:8080/projects/4/samples/5", location);
+	}
+
+	@Test
 	public void testAddSampleToProject() {
 		Map<String, String> sample = new HashMap<>();
 		sample.put("sampleName", "sample_1");
-                sample.put("sequencerSampleId", "sample_1");
+		sample.put("sequencerSampleId", "sample_1");
 
 		// load a project
 		String projectUri = "/projects/1";
