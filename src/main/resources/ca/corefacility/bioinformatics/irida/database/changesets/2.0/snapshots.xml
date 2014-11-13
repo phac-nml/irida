@@ -53,5 +53,130 @@
 			<column name="strain" type="varchar(255)" />
 		</createTable>
 
+		<createTable tableName="sequence_file_snapshot">
+			<column name="snapshotId" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="id" type="bigint(20)" />
+			<column name="filePath" type="varchar(255)">
+				<constraints nullable="false"></constraints>
+			</column>
+		</createTable>
+
+		<createTable tableName="snapshot_sequence_file_properties">
+			<column name="sequence_file_snapshot_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"
+					foreignKeyName="FK_SEQUENCE_PROPERTIES_SEQUENCE_FILE_SNAPSHOT"
+					referencedColumnNames="snapshotId" referencedTableName="sequence_file_snapshot" />
+			</column>
+			<column name="property_key" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="property_value" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="RemoteProjectSnapshot">
+			<column name="snapshotId" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_REMOTE_PROJECT_SNAPSHOT_ID" referencedTableName="project_snapshot"
+					referencedColumnNames="snapshotId" />
+			</column>
+		</createTable>
+
+		<createTable tableName="RemoteProjectSnapshot_links">
+			<column name="RemoteProjectSnapshot_snapshotId" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"
+					foreignKeyName="FK_REMOTE_PROJECT_SNAPSHOT_PROPERTIES_ID"
+					referencedColumnNames="snapshotId" referencedTableName="RemoteProjectSnapshot" />
+			</column>
+			<column name="links_KEY" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="links" type="varchar(255)" />
+		</createTable>
+
+		<createTable tableName="RemoteSampleSnapshot">
+			<column name="snapshotId" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_REMOTE_SAMPLE_SNAPSHOT_ID" referencedTableName="sample_snapshot"
+					referencedColumnNames="snapshotId" />
+			</column>
+		</createTable>
+
+		<createTable tableName="RemoteSampleSnapshot_links">
+			<column name="RemoteSampleSnapshot_snapshotId" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"
+					foreignKeyName="FK_REMOTE_SAMPLE_SNAPSHOT_PROPERTIES_ID"
+					referencedColumnNames="snapshotId" referencedTableName="RemoteSampleSnapshot" />
+			</column>
+			<column name="links_KEY" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="links" type="varchar(255)" />
+		</createTable>
+
+		<createTable tableName="RemoteSequenceFileSnapshot">
+			<column name="snapshotId" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_REMOTE_SEQUENCE_FILE_SNAPSHOT_ID"
+					referencedTableName="sequence_file_snapshot" referencedColumnNames="snapshotId" />
+			</column>
+		</createTable>
+
+		<createTable tableName="RemoteSequenceFileSnapshot_links">
+			<column name="RemoteProjectSnapshot_snapshotId" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"
+					foreignKeyName="FK_REMOTE_SEQUENCE_FILE_SNAPSHOT_PROPERTIES_ID"
+					referencedColumnNames="snapshotId" referencedTableName="RemoteSequenceFileSnapshot" />
+			</column>
+			<column name="links_KEY" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="links" type="varchar(255)" />
+		</createTable>
+
+		<createTable tableName="snapshot">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="createdDate" type="datetime" />
+			<column name="modifiedDate" type="datetime" />
+		</createTable>
+
+		<createTable tableName="snapshot_project_snapshot">
+			<column name="snapshot_id" type="bigint(20)">
+				<constraints nullable="false" referencedTableName="snapshot"
+					referencedColumnNames="id" foreignKeyName="FK_SNAPSHOT_PROJECT_SNAPSHOT" />
+			</column>
+			<column name="project_snapshot" type="bigint(20)">
+				<constraints nullable="false" referencedTableName="project_snapshot"
+					referencedColumnNames="snapshotId" foreignKeyName="FK_PROJECT_SNAPSHOT_SNAPSHOT" />
+			</column>
+		</createTable>
+
+		<createTable tableName="snapshot_sample_snapshot">
+			<column name="snapshot_id" type="bigint(20)">
+				<constraints nullable="false" referencedTableName="snapshot"
+					referencedColumnNames="id" foreignKeyName="FK_SNAPSHOT_SAMPLE_SNAPSHOT" />
+			</column>
+			<column name="sample_snapshot" type="bigint(20)">
+				<constraints nullable="false" referencedTableName="sample_snapshot"
+					referencedColumnNames="snapshotId" foreignKeyName="FK_SAMPLE_SNAPSHOT_SNAPSHOT" />
+			</column>
+		</createTable>
+
+		<createTable tableName="snapshot_sequence_file_snapshot">
+			<column name="snapshot_id" type="bigint(20)">
+				<constraints nullable="false" referencedTableName="snapshot"
+					referencedColumnNames="id" foreignKeyName="FK_SNAPSHOT_SEQUENCE_FILE_SNAPSHOT" />
+			</column>
+			<column name="sequence_file_snapshot" type="bigint(20)">
+				<constraints nullable="false" referencedTableName="sample_snapshot"
+					referencedColumnNames="snapshotId" foreignKeyName="FK_SEQUENCE_FILE_SNAPSHOT_SNAPSHOT" />
+			</column>
+		</createTable>
+
 	</changeSet>
 </databaseChangeLog>
