@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="snapshots" author="tom">
+
+		<!-- Add host table for storing more sample properties -->
+		<createTable tableName="project_snapshot">
+			<column name="snapshotId" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="id" type="bigint(20)" />
+			<column name="name" type="varchar(255)">
+				<constraints nullable="false"></constraints>
+			</column>
+			<column name="organism" type="varchar(255)" />
+			<column name="projectDescription" type="longtext" />
+			<column name="remoteURL" type="varchar(255)" />
+		</createTable>
+
+		<createTable tableName="sample_snapshot">
+			<column name="snapshotId" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="description" type="longtext" />
+			<column name="sampleName" type="varchar(255)">
+				<constraints nullable="false"></constraints>
+			</column>
+			<column name="sequencerSampleId" type="varchar(255)">
+				<constraints nullable="false"></constraints>
+			</column>
+			<column name="collectedBy" type="varchar(255)" />
+			<column name="collectionDate" type="datetime" />
+			<column name="cultureCollection" type="varchar(255)" />
+			<column name="genotype" type="longtext" />
+			<column name="geographicLocationName" type="varchar(255)" />
+			<column name="isolate" type="varchar(255)" />
+			<column name="isolationSource" type="longtext" />
+			<column name="latitude" type="varchar(255)" />
+			<column name="longitude" type="varchar(255)" />
+			<column name="organism" type="varchar(255)" />
+			<column name="passageHistory" type="longtext" />
+			<column name="pathotype" type="varchar(255)" />
+			<column name="serotype" type="varchar(255)" />
+			<column name="serovar" type="varchar(255)" />
+			<column name="subgroup" type="varchar(255)" />
+			<column name="subtype" type="varchar(255)" />
+			<column name="host_id" type="bigint(20)" />
+			<column name="specimenVoucher" type="varchar(255)" />
+			<column name="strain" type="varchar(255)" />
+		</createTable>
+
+	</changeSet>
+</databaseChangeLog>
