@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ca.corefacility.bioinformatics.irida</groupId>
 	<artifactId>irida-web</artifactId>
-	<version>1.5.1</version>
+	<version>1.5.2</version>
 	<packaging>war</packaging>
 
 	<name>irida-web</name>
