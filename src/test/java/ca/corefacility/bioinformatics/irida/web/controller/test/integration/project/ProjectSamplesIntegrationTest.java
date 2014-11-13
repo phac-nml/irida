@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.project;
 
-import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asAdmin;
+import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
 import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -12,12 +12,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
+import com.google.common.collect.Lists;
 import com.google.common.net.HttpHeaders;
+import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
 
 /**
@@ -29,16 +32,15 @@ public class ProjectSamplesIntegrationTest {
 
 	@Test
 	public void testCopySampleToProject() {
-		final Map<String, String> sample = new HashMap<>();
-		sample.put("sampleName", "sample_1");
-		sample.put("sequencerSampleId", "sample_1");
+		final List<String> samples = Lists.newArrayList("5");
 
 		final String projectUri = "/projects/4";
 		final String projectJson = asUser().get(projectUri).asString();
 		final String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
 
-		final Response r = asUser().body(sample).expect().response().statusCode(HttpStatus.CREATED.value()).when()
-				.put(samplesUri + "/5");
+		final Response r = asUser().contentType(ContentType.JSON).body(samples)
+				.header("Content-Type", "application/idcollection+json").expect().response()
+				.statusCode(HttpStatus.CREATED.value()).when().post(samplesUri);
 		final String location = r.getHeader(HttpHeaders.LOCATION);
 		assertNotNull("Location should not be null.", location);
 		assertEquals("The project/sample location uses the wrong sample ID.",

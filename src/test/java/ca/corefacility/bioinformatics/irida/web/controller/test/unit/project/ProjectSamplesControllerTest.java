@@ -220,7 +220,8 @@ public class ProjectSamplesControllerTest {
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
 
-		final ResponseEntity<String> response = controller.copySampleToProject(p.getId(), s.getId(), null);
+		final ResponseEntity<String> response = controller
+				.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()));
 
 		verify(projectService).addSampleToProject(p, s);
 
@@ -237,10 +238,10 @@ public class ProjectSamplesControllerTest {
 
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
-		
+
 		when(projectService.addSampleToProject(p, s)).thenThrow(new EntityExistsException("sample already exists!"));
 
-		controller.copySampleToProject(p.getId(), s.getId(), null);
+		controller.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()));
 	}
 
 	private Map<String, String> linksToMap(List<Link> links) {

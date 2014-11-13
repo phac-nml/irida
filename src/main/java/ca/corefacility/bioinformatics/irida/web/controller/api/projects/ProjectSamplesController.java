@@ -81,22 +81,23 @@ public class ProjectSamplesController {
 	 *            the project to copy the sample to.
 	 * @param sampleId
 	 *            the sample ID to copy
-	 * @param sample
-	 *            the actual content of the sample (optional, not actually used
-	 *            for anything yet.)
-	 * @return
+	 * @return the response indicating that the sample was joined to the
+	 *         project.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "application/idcollection+json")
 	public ResponseEntity<String> copySampleToProject(final @PathVariable Long projectId,
-			final @PathVariable Long sampleId, final @RequestBody(required = false) SampleResource sample) {
+			final @RequestBody List<Long> sampleIds) {
 		final Project p = projectService.read(projectId);
-		final Sample s = sampleService.read(sampleId);
-
-		projectService.addSampleToProject(p, s);
-		final String location = linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId))
-				.withSelfRel().getHref();
 		final MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
-		responseHeaders.add(HttpHeaders.LOCATION, location);
+
+		for (final Long sampleId : sampleIds) {
+			final Sample s = sampleService.read(sampleId);
+			projectService.addSampleToProject(p, s);
+			final String location = linkTo(
+					methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel()
+					.getHref();
+			responseHeaders.add(HttpHeaders.LOCATION, location);
+		}
 
 		return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
 	}
@@ -113,7 +114,7 @@ public class ProjectSamplesController {
 	 * @return a response indicating that the sample was created and appropriate
 	 *         location information.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/samples", method = RequestMethod.POST)
+	@RequestMapping(value = "/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "!application/idcollection+json")
 	public ResponseEntity<String> addSampleToProject(@PathVariable Long projectId, @RequestBody SampleResource sample) {
 		// load the project that we're adding to
 		Project p = projectService.read(projectId);
