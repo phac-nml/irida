@@ -79,8 +79,8 @@ public class ProjectSamplesController {
 	 * 
 	 * @param projectId
 	 *            the project to copy the sample to.
-	 * @param sampleId
-	 *            the sample ID to copy
+	 * @param sampleIds
+	 *            the collection of sample IDs to copy.
 	 * @return the response indicating that the sample was joined to the
 	 *         project.
 	 */
