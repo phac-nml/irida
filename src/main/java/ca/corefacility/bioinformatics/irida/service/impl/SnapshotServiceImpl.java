@@ -84,7 +84,7 @@ public class SnapshotServiceImpl extends CRUDServiceImpl<Long, Snapshot> impleme
 
 			return new RemoteSequenceFileSnapshot(rfile, downloadSequenceFile);
 		} else {
-			return new SequenceFileSnapshot(file.getFile(), file.getOptionalProperties());
+			return new SequenceFileSnapshot(file);
 		}
 	}
 
