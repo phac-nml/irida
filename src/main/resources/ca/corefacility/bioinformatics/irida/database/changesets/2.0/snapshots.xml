@@ -7,7 +7,7 @@
 
 	<changeSet id="snapshots" author="tom">
 
-		<!-- Add host table for storing more sample properties -->
+		<!-- Add model snapshot tables -->
 		<createTable tableName="project_snapshot">
 			<column name="snapshotId" type="bigint(20)" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
@@ -63,6 +63,7 @@
 			</column>
 		</createTable>
 
+		<!-- optional properties for sequence file snapshots -->
 		<createTable tableName="snapshot_sequence_file_properties">
 			<column name="sequence_file_snapshot_id" type="bigint(20)">
 				<constraints nullable="false" primaryKey="true"
@@ -77,6 +78,7 @@
 			</column>
 		</createTable>
 
+		<!-- Add remote snapshot objects and links -->
 		<createTable tableName="RemoteProjectSnapshot">
 			<column name="snapshotId" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false"
@@ -137,6 +139,7 @@
 			<column name="links" type="varchar(255)" />
 		</createTable>
 
+		<!-- Add snapshot container class -->
 		<createTable tableName="snapshot">
 			<column name="id" type="bigint(20)" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
@@ -145,6 +148,7 @@
 			<column name="modifiedDate" type="datetime" />
 		</createTable>
 
+		<!-- Add snapshot model list containers -->
 		<createTable tableName="snapshot_project_snapshot">
 			<column name="snapshot_id" type="bigint(20)">
 				<constraints nullable="false" referencedTableName="snapshot"
