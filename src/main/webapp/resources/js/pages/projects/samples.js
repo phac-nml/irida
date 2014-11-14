@@ -1,8 +1,8 @@
 /* jshint undef: true, unused: true */
-/* global angular, _ */
+/* global angular, $, _ */
 
 
-(function () {
+(function (angular, $, _) {
     function setRootVariable($rootScope) {
         $rootScope.cgPromise = null;
     }
@@ -285,7 +285,6 @@
                     var more = (page * 10) < data.total;
 
                     _.forEach(data.projects, function (p) {
-                        console.log($rootScope.projectId, p.id)
                         if ($rootScope.projectId !== parseInt(p.id)) {
                             results.push({
                                 id: p.id,
@@ -309,4 +308,4 @@
         .controller('SamplesTableCtrl', ['SamplesService', SamplesTableCtrl])
         .controller('MergeCtrl', ['$scope', '$modalInstance', 'Select2Service', 'SamplesService', 'samples', MergeCtrl])
         .controller('CopyMoveCtrl', ['$modalInstance', '$rootScope', 'BASE_URL', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl]);
-})();
+})(angular, $, _);
