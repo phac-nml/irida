@@ -28,14 +28,14 @@ module.exports = function (grunt) {
         files  : ['<%= paths.scss %>/**/*.scss'],
         tasks  : ['compass:dev'],
         options: {
-          livereload: true,
+          livereload: true
         }
       },
       jshint: {
         files : ['<%= paths.js %>/**/*.js'],
         tasks: ['newer:jshint'],
         options: {
-          livereload: true,
+          livereload: true
         }
       }
     }
