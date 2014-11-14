@@ -22,6 +22,7 @@
   "dojo": false,
   "predef": [
     "angular",
+    "_",
     "moment"
   ],
   // Development.
