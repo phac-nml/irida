@@ -1,6 +1,3 @@
-/* jshint undef: true, unused: true */
-/* global angular */
-
 angular.module('irida.datatables', [])
   .directive('sortBy', function () {
     'use strict';
@@ -22,7 +19,7 @@ angular.module('irida.datatables', [])
       link      : function (scope) {
         scope.sort = function () {
           if (scope.sortedby === scope.sortvalue) {
-            scope.sortdir = scope.sortdir == 'asc' ? 'desc' : 'asc';
+            scope.sortdir = scope.sortdir === 'asc' ? 'desc' : 'asc';
           }
           else {
             scope.sortedby = scope.sortvalue;

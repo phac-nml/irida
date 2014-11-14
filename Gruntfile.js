@@ -18,7 +18,8 @@ module.exports = function (grunt) {
     },
     jshint : {
       options: {
-        reporter: require('jshint-stylish')
+        reporter: require('jshint-stylish'),
+        'jshintrc' : true
       },
       target : ['<%= paths.js %>/**/*.js', '!<%= paths.js %>/**/*-min.js','!<%= paths.js %>/vendor/**/*.js']
     },
