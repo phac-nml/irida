@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,8 +18,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 
@@ -31,6 +34,8 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
  */
 @Entity
 @Table(name = "snapshot")
+@Audited
+@EntityListeners(AuditingEntityListener.class)
 public class Snapshot implements IridaThing {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
