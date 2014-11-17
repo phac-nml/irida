@@ -219,9 +219,7 @@
 					referencedTableName="Revisions" foreignKeyName="FK_REMOTE_SAMPLE_SNAPSHOT_REVISION" />
 			</column>
 			<column name="snapshotId" type="bigint(20)">
-				<constraints primaryKey="true" nullable="false"
-					foreignKeyName="FK_REMOTE_SAMPLE_SNAPSHOT_ID" referencedTableName="sample_snapshot"
-					referencedColumnNames="snapshotId" />
+				<constraints primaryKey="true" nullable="false" />
 			</column>
 		</createTable>
 
