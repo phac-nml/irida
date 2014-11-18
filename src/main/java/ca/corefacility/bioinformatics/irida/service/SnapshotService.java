@@ -24,8 +24,8 @@ public interface SnapshotService extends CRUDService<Long, Snapshot> {
 	 * instead
 	 */
 	@Override
-	@Deprecated
-	public Snapshot create(Snapshot object) throws EntityExistsException, ConstraintViolationException;
+	public Snapshot create(Snapshot object) throws EntityExistsException, ConstraintViolationException,
+			UnsupportedOperationException;
 
 	/**
 	 * Take a snapshot of collections of {@link IridaProject}s,

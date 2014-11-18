@@ -3,11 +3,13 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 import java.nio.file.Path;
 import java.util.Collection;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaProject;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSample;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
@@ -46,6 +48,22 @@ public class SnapshotServiceImpl extends CRUDServiceImpl<Long, Snapshot> impleme
 		this.sequenceFileRemoteRepository = sequenceFileRemoteRepository;
 	}
 
+	/**
+	 * Throw an {@link UnsupportedOperationException} and instruct developer to
+	 * call
+	 * {@link SnapshotService#takeSnapshot(Collection, Collection, Collection)}
+	 */
+	@Override
+	public Snapshot create(Snapshot object) throws ConstraintViolationException, EntityExistsException,
+			UnsupportedOperationException {
+		throw new UnsupportedOperationException(
+				"Snapshots should be taken with the SnapshotService#takeSnapshot method to ensure local copies of all elements are created.");
+	}
+
+	/**
+	 * {@inheritDoc} TODO: Change this to use an AnalysisSubmission once it is
+	 * fully fleshed out
+	 */
 	public Snapshot takeSnapshot(Collection<? extends IridaProject> projects,
 			Collection<? extends IridaSample> samples, Collection<? extends IridaSequenceFile> sequenceFiles) {
 		Snapshot analysisSnapshot = new Snapshot();
