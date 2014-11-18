@@ -4,6 +4,7 @@ module.exports = function (grunt) {
   var app_path = require('./bower.json').appPath;
   grunt.initConfig({
     paths  : {
+      html: app_path + '/pages',
       scss: app_path + '/styles',
       css : app_path + '/resources/css',
       js  : app_path + '/resources/js'
@@ -18,10 +19,10 @@ module.exports = function (grunt) {
     },
     jshint : {
       options: {
-        reporter: require('jshint-stylish'),
-        'jshintrc' : true
+        reporter  : require('jshint-stylish'),
+        'jshintrc': true
       },
-      target : ['<%= paths.js %>/**/*.js', '!<%= paths.js %>/**/*-min.js','!<%= paths.js %>/vendor/**/*.js']
+      target : ['<%= paths.js %>/**/*.js', '!<%= paths.js %>/**/*-min.js', '!<%= paths.js %>/vendor/**/*.js']
     },
     watch  : {
       compass: {
@@ -31,9 +32,15 @@ module.exports = function (grunt) {
           livereload: true
         }
       },
-      jshint: {
-        files : ['<%= paths.js %>/**/*.js'],
-        tasks: ['newer:jshint'],
+      html   : {
+        files  : ['<%= paths.html %>/**/*.html'],
+        options: {
+          livereload: true
+        }
+      },
+      jshint : {
+        files  : ['<%= paths.js %>/**/*.js'],
+        tasks  : ['newer:jshint'],
         options: {
           livereload: true
         }

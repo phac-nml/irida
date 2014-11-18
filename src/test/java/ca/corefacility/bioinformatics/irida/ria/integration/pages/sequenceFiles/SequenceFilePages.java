@@ -25,7 +25,7 @@ public class SequenceFilePages extends AbstractPage {
 	public void goToDetailsPage() {
 		logger.debug("Going to Sequence File Dashboard Page.");
 		get(driver, RELATIVE_URL);
-		waitForAjax();
+		waitForTime(700);
 	}
 
 	public void goToOverrepresentedPage() {
