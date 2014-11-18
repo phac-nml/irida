@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -33,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJo
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
@@ -64,12 +66,14 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final ProjectReferenceFileJoinRepository prfjRepository;
 	private final SequenceFileUtilities sequenceFileUtilities;
 
+	private final ProjectEventRepository eventRepository;
+
 	@Autowired
 	public ProjectServiceImpl(ProjectRepository projectRepository, SampleRepository sampleRepository,
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
 			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository,
-			SequenceFileUtilities sequenceFileUtilities, Validator validator) {
+			SequenceFileUtilities sequenceFileUtilities, ProjectEventRepository eventRepository, Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.sampleRepository = sampleRepository;
 		this.userRepository = userRepository;
@@ -79,6 +83,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.referenceFileRepository = referenceFileRepository;
 		this.prfjRepository = prfjRepository;
 		this.sequenceFileUtilities = sequenceFileUtilities;
+		this.eventRepository = eventRepository;
 	}
 
 	@Override
@@ -112,6 +117,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role) {
 		try {
 			ProjectUserJoin join = pujRepository.save(new ProjectUserJoin(project, user, role));
+			eventRepository.save(new UserRoleSetProjectEvent(project, user, role));
 			return join;
 		} catch (DataIntegrityViolationException e) {
 			throw new EntityExistsException("The user [" + user.getId() + "] already belongs to project ["
@@ -150,7 +156,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		}
 
 		projectJoinForUser.setProjectRole(projectRole);
-		return pujRepository.save(projectJoinForUser);
+		ProjectUserJoin join = pujRepository.save(projectJoinForUser);
+		eventRepository.save(new UserRoleSetProjectEvent(project, user, projectRole));
+		return join;
 	}
 
 	private boolean allowRoleChange(ProjectUserJoin originalJoin) {
