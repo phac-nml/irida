@@ -1,8 +1,9 @@
 package ca.corefacility.bioinformatics.irida.model.snapshot.remote;
 
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.envers.Audited;
@@ -18,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.snapshot.ProjectSnapshot;
 @EntityListeners(AuditingEntityListener.class)
 public class RemoteProjectSnapshot extends ProjectSnapshot implements RemoteSnapshot {
 
-	@Embedded
+	@OneToOne(fetch = FetchType.EAGER)
 	private RESTLinks links;
 
 	public RemoteProjectSnapshot(RemoteProject project) {

@@ -157,16 +157,69 @@
 			</column>
 		</createTable>
 
+		<!-- Create the RESTLinks tables -->
+		<createTable tableName="rest_links">
+			<column name="id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+		</createTable>
+
+		<createTable tableName="rest_links_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_REST_LINKS_REVISION" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+
+		<createTable tableName="rest_links_links">
+			<column name="link_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"
+					referencedTableName="rest_links" referencedColumnNames="id"
+					foreignKeyName="FK_REST_LINKS_LINKS" />
+			</column>
+			<column name="rel" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="href" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="rest_links_links_AUD">
+			<column name="link_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_REST_LINKS_LINKS_REVISION" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="rel" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="href" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+		</createTable>
+
 		<!-- Add remote snapshot objects and links -->
-		<createTable tableName="RemoteProjectSnapshot">
+		<createTable tableName="remote_project_snapshot">
 			<column name="snapshotId" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false"
 					foreignKeyName="FK_REMOTE_PROJECT_SNAPSHOT_ID" referencedTableName="project_snapshot"
 					referencedColumnNames="snapshotId" />
 			</column>
+			<column name="links_id" type="bigint(20)">
+				<constraints foreignKeyName="FK_REMOTE_PROJECT_SNAPSHOT_LINKS"
+					referencedTableName="rest_links" referencedColumnNames="id" />
+			</column>
 		</createTable>
 
-		<createTable tableName="RemoteProjectSnapshot_AUD">
+		<createTable tableName="remote_project_snapshot_AUD">
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" referencedColumnNames="id"
 					referencedTableName="Revisions" foreignKeyName="FK_REMOTE_PROJECT_SNAPSHOT_REVISION" />
@@ -174,46 +227,22 @@
 			<column name="snapshotId" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
+			<column name="links_id" type="bigint(20)" />
 		</createTable>
 
-		<createTable tableName="RemoteProjectSnapshot_links">
-			<column name="RemoteProjectSnapshot_snapshotId" type="bigint(20)">
-				<constraints nullable="false" primaryKey="true"
-					foreignKeyName="FK_REMOTE_PROJECT_SNAPSHOT_PROPERTIES_ID"
-					referencedColumnNames="snapshotId" referencedTableName="RemoteProjectSnapshot" />
-			</column>
-			<column name="links_KEY" type="varchar(255)">
-				<constraints nullable="false" primaryKey="true" />
-			</column>
-			<column name="links" type="varchar(255)" />
-		</createTable>
-
-		<createTable tableName="RemoteProjectSnapshot_links_AUD">
-			<column name="REV" type="int(11)">
-				<constraints primaryKey="true" referencedColumnNames="id"
-					referencedTableName="Revisions" foreignKeyName="FK_REMOTE_PROJECT_SNAPSHOT_LINKS_REVISION" />
-			</column>
-			<column name="REVTYPE" type="tinyint(4)" />
-			<column name="RemoteProjectSnapshot_snapshotId" type="bigint(20)">
-				<constraints nullable="false" primaryKey="true" />
-			</column>
-			<column name="links_KEY" type="varchar(255)">
-				<constraints nullable="false" primaryKey="true" />
-			</column>
-			<column name="links" type="varchar(255)">
-				<constraints nullable="false" primaryKey="true" />
-			</column>
-		</createTable>
-
-		<createTable tableName="RemoteSampleSnapshot">
+		<createTable tableName="remote_sample_snapshot">
 			<column name="snapshotId" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false"
 					foreignKeyName="FK_REMOTE_SAMPLE_SNAPSHOT_ID" referencedTableName="sample_snapshot"
 					referencedColumnNames="snapshotId" />
 			</column>
+			<column name="links_id" type="bigint(20)">
+				<constraints foreignKeyName="FK_REMOTE_SAMPLE_SNAPSHOT_LINKS"
+					referencedTableName="rest_links" referencedColumnNames="id" />
+			</column>
 		</createTable>
 
-		<createTable tableName="RemoteSampleSnapshot_AUD">
+		<createTable tableName="remote_sample_snapshot_AUD">
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" referencedColumnNames="id"
 					referencedTableName="Revisions" foreignKeyName="FK_REMOTE_SAMPLE_SNAPSHOT_REVISION" />
@@ -221,46 +250,22 @@
 			<column name="snapshotId" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
+			<column name="links_id" type="bigint(20)" />
 		</createTable>
 
-		<createTable tableName="RemoteSampleSnapshot_links">
-			<column name="RemoteSampleSnapshot_snapshotId" type="bigint(20)">
-				<constraints nullable="false" primaryKey="true"
-					foreignKeyName="FK_REMOTE_SAMPLE_SNAPSHOT_PROPERTIES_ID"
-					referencedColumnNames="snapshotId" referencedTableName="RemoteSampleSnapshot" />
-			</column>
-			<column name="links_KEY" type="varchar(255)">
-				<constraints nullable="false" primaryKey="true" />
-			</column>
-			<column name="links" type="varchar(255)" />
-		</createTable>
-
-		<createTable tableName="RemoteSampleSnapshot_links_AUD">
-			<column name="REV" type="int(11)">
-				<constraints primaryKey="true" referencedColumnNames="id"
-					referencedTableName="Revisions" foreignKeyName="FK_REMOTE_SAMPLE_SNAPSHOT_LINKS_REVISION" />
-			</column>
-			<column name="REVTYPE" type="tinyint(4)" />
-			<column name="RemoteSampleSnapshot_snapshotId" type="bigint(20)">
-				<constraints nullable="false" primaryKey="true" />
-			</column>
-			<column name="links_KEY" type="varchar(255)">
-				<constraints nullable="false" primaryKey="true" />
-			</column>
-			<column name="links" type="varchar(255)">
-				<constraints nullable="false" primaryKey="true" />
-			</column>
-		</createTable>
-
-		<createTable tableName="RemoteSequenceFileSnapshot">
+		<createTable tableName="remote_sequence_file_snapshot">
 			<column name="snapshotId" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false"
 					foreignKeyName="FK_REMOTE_SEQUENCE_FILE_SNAPSHOT_ID"
 					referencedTableName="sequence_file_snapshot" referencedColumnNames="snapshotId" />
 			</column>
+			<column name="links_id" type="bigint(20)">
+				<constraints foreignKeyName="FK_REMOTE_SEQUENCE_FILE_SNAPSHOT_LINKS"
+					referencedTableName="rest_links" referencedColumnNames="id" />
+			</column>
 		</createTable>
 
-		<createTable tableName="RemoteSequenceFileSnapshot_AUD">
+		<createTable tableName="remote_sequence_file_snapshot_AUD">
 			<column name="REV" type="int(11)">
 				<constraints primaryKey="true" referencedColumnNames="id"
 					referencedTableName="Revisions" foreignKeyName="FK_REMOTE_SEQUENCE_FILE_SNAPSHOT_REVISION" />
@@ -268,36 +273,7 @@
 			<column name="snapshotId" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-		</createTable>
-
-		<createTable tableName="RemoteSequenceFileSnapshot_links">
-			<column name="RemoteSequenceFileSnapshot_snapshotId" type="bigint(20)">
-				<constraints nullable="false" primaryKey="true"
-					foreignKeyName="FK_REMOTE_SEQUENCE_FILE_SNAPSHOT_PROPERTIES_ID"
-					referencedColumnNames="snapshotId" referencedTableName="RemoteSequenceFileSnapshot" />
-			</column>
-			<column name="links_KEY" type="varchar(255)">
-				<constraints nullable="false" primaryKey="true" />
-			</column>
-			<column name="links" type="varchar(255)" />
-		</createTable>
-
-		<createTable tableName="RemoteSequenceFileSnapshot_links_AUD">
-			<column name="REV" type="int(11)">
-				<constraints primaryKey="true" referencedColumnNames="id"
-					referencedTableName="Revisions"
-					foreignKeyName="FK_REMOTE_SEQUENCE_FILE_SNAPSHOT_LINKS_REVISION" />
-			</column>
-			<column name="REVTYPE" type="tinyint(4)" />
-			<column name="RemoteSequenceFileSnapshot_snapshotId" type="bigint(20)">
-				<constraints nullable="false" primaryKey="true" />
-			</column>
-			<column name="links_KEY" type="varchar(255)">
-				<constraints nullable="false" primaryKey="true" />
-			</column>
-			<column name="links" type="varchar(255)">
-				<constraints nullable="false" primaryKey="true" />
-			</column>
+			<column name="links_id" type="bigint(20)" />
 		</createTable>
 
 		<!-- Add snapshot container class -->
