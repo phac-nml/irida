@@ -26,18 +26,18 @@
     "raphael": "2.1.2",
     "bower": "*",
     "angular-ui-utils": "0.1.1",
-    "angular": "1.3.2",
-    "angular-sanitize": "1.3.2",
+    "angular": "1.3.3",
+    "angular-sanitize": "1.3.3",
     "Bootflat": "2.0.4",
     "json2": "*",
     "html5shiv": "3.7.2",
     "respondJs": "1.4.2",
-    "angular-resource": "1.3.2",
+    "angular-resource": "1.3.3",
     "AngularJS-Toaster": "0.4.8",
     "angular-ui-select": "0.8.3"
   },
   "devDependencies": {},
   "resolutions": {
-    "angular": "1.3.2"
+    "angular": "1.3.3"
   }
 }
