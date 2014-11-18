@@ -23,6 +23,9 @@ public class UserRoleSetProjectEvent extends ProjectEvent {
 	@Enumerated(EnumType.STRING)
 	private ProjectRole role;
 
+	public UserRoleSetProjectEvent() {
+	}
+
 	public UserRoleSetProjectEvent(Project project, User user, ProjectRole role) {
 		super(project);
 		this.user = user;

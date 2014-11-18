@@ -16,6 +16,9 @@ public class SampleAddedProjectEvent extends ProjectEvent {
 	@NotNull
 	private Sample sample;
 
+	public SampleAddedProjectEvent() {
+	}
+
 	public SampleAddedProjectEvent(Project project, Sample sample) {
 		super(project);
 		this.sample = sample;
