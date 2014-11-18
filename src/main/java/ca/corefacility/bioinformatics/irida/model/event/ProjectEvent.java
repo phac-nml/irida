@@ -37,7 +37,7 @@ public abstract class ProjectEvent implements IridaThing {
 	@ManyToOne(cascade = CascadeType.DETACH)
 	private Project project;
 
-	public ProjectEvent() {
+	protected ProjectEvent() {
 		createdDate = new Date();
 	}
 
