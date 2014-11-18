@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -202,7 +203,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		ProjectSampleJoin join = new ProjectSampleJoin(project, sample);
 
 		try {
-			return psjRepository.save(join);
+			join = psjRepository.save(join);
+			eventRepository.save(new SampleAddedProjectEvent(project, sample));
+			return join;
 		} catch (DataIntegrityViolationException e) {
 			throw new EntityExistsException("Sample [" + sample.getId() + "] has already been added to project ["
 					+ project.getId() + "]");
