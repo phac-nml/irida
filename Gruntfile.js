@@ -33,7 +33,7 @@ module.exports = function (grunt) {
         }
       },
       html   : {
-        files :['<%= paths.html %>/**/*.html'],
+        files  : ['<%= paths.html %>/**/*.html'],
         options: {
           livereload: true
         }
