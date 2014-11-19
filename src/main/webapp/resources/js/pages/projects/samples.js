@@ -72,10 +72,12 @@
     };
 
     svc.merge = function (params) {
-      params.sampleIds = _.map(_.filter(svc.samples, 'selected'), 'id');
+      params.sampleIds = getSelectedSampleIds();
       return base.customPOST(params, 'merge').then(function (data) {
         if (data.result === 'success') {
-          svc.getSamples({});
+          svc.getSamples();
+          selected = 0;
+          updateSelectedCount();
           notifications.show({type: data.result, msg: data.message});
         }
       });
@@ -89,8 +91,14 @@
       return copyMoveSamples(projectId, true);
     };
 
+    function getSelectedSampleIds() {
+      return _.map(_.filter(svc.samples, 'selected'), 'id');
+    }
+
     function copyMoveSamples(projectId, move) {
+
       return base.customPOST({
+        sampleIds: getSelectedSampleIds(),
         newProjectId      : projectId,
         removeFromOriginal: move
       }, "copy").then(function (data) {
@@ -102,7 +110,14 @@
           notifications.show({type: 'info', msg: msg});
         });
         if (move) {
-          svc.getSamples({});
+          angular.copy(_.filter(svc.samples, function(s) {
+            if(_.has(s, 'selected')) {
+              return !s.selected;
+            }
+            return true;
+          }), svc.samples);
+          selected = 0;
+          updateSelectedCount();
         }
       });
     }

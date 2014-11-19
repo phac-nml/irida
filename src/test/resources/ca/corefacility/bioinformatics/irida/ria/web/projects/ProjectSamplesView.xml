@@ -43,45 +43,45 @@
 
     <related_project />
 
-    <sample id="1" createdDate="2013-07-18 14:20:19.0" description="description1"
+    <sample id="1" createdDate="2013-07-18 14:00:19.0" description="description1"
             sequencerSampleId="sample1" sampleName="sample1" />
-    <sample id="2" createdDate="2013-07-18 14:20:19.0" description="description2"
+    <sample id="2" createdDate="2013-07-18 14:01:19.0" description="description2"
             sequencerSampleId="sample2" sampleName="sample2" />
-    <sample id="3" createdDate="2013-07-18 14:20:19.0" description="description3"
+    <sample id="3" createdDate="2013-07-18 14:02:19.0" description="description3"
             sequencerSampleId="sample3" sampleName="sample3" />
-    <sample id="4" createdDate="2013-07-18 14:20:19.0" description="description4"
+    <sample id="4" createdDate="2013-07-18 14:03:19.0" description="description4"
             sequencerSampleId="sample4" sampleName="sample4" />
-    <sample id="5" createdDate="2013-07-18 14:20:19.0" description="description5"
+    <sample id="5" createdDate="2013-07-18 14:04:19.0" description="description5"
             sequencerSampleId="sample5" sampleName="sample5" />
-    <sample id="6" createdDate="2013-07-18 14:20:19.0" description="description5"
+    <sample id="6" createdDate="2013-07-18 14:05:19.0" description="description5"
             sequencerSampleId="sample5" sampleName="sample5" />
-    <sample id="7" createdDate="2013-07-18 14:20:19.0" description="description5"
+    <sample id="7" createdDate="2013-07-18 14:06:19.0" description="description5"
             sequencerSampleId="sample5" sampleName="sample5" />
-    <sample id="8" createdDate="2013-07-18 14:20:19.0" description="description5"
+    <sample id="8" createdDate="2013-07-18 14:07:19.0" description="description5"
             sequencerSampleId="sample5" sampleName="sample5" />
-    <sample id="9" createdDate="2013-07-18 14:20:19.0" description="description5"
+    <sample id="9" createdDate="2013-07-18 14:08:19.0" description="description5"
             sequencerSampleId="sample5" sampleName="sample5" />
-    <sample id="10" createdDate="2013-07-18 14:20:19.0" description="description5"
+    <sample id="10" createdDate="2013-07-18 14:09:19.0" description="description5"
             sequencerSampleId="sample5" sampleName="sample5" />
-    <sample id="11" createdDate="2013-07-18 14:20:19.0" description="description5"
+    <sample id="11" createdDate="2013-07-18 14:10:19.0" description="description5"
             sequencerSampleId="sample5" sampleName="sample5" />
-    <sample id="12" createdDate="2013-07-18 14:20:19.0" description="description5"
+    <sample id="12" createdDate="2013-07-18 14:11:19.0" description="description5"
             sequencerSampleId="sample5" sampleName="sample5" />
-    <sample id="13" createdDate="2013-07-18 14:20:19.0" description="description5"
+    <sample id="13" createdDate="2013-07-18 14:12:19.0" description="description5"
             sequencerSampleId="sample5" sampleName="sample5" />
-    <sample id="14" createdDate="2013-07-18 14:20:19.0" description="description5"
+    <sample id="14" createdDate="2013-07-18 14:13:19.0" description="description5"
             sequencerSampleId="sample5" sampleName="sample5" />
-    <sample id="15" createdDate="2013-07-18 14:20:19.0" description="description5"
+    <sample id="15" createdDate="2013-07-18 14:14:19.0" description="description5"
             sequencerSampleId="sample5" sampleName="sample5" />
-    <sample id="16" createdDate="2013-07-18 14:20:19.0" description="description5"
+    <sample id="16" createdDate="2013-07-18 14:15:19.0" description="description5"
             sequencerSampleId="sample5" sampleName="sample5" />
-    <sample id="17" createdDate="2013-07-18 14:20:19.0" description="description5"
+    <sample id="17" createdDate="2013-07-18 14:16:19.0" description="description5"
             sequencerSampleId="sample5" sampleName="sample5" />
-    <sample id="18" createdDate="2013-07-18 14:20:19.0" description="description5"
+    <sample id="18" createdDate="2013-07-18 14:17:19.0" description="description5"
             sequencerSampleId="sample5" sampleName="sample5" />
-    <sample id="19" createdDate="2013-07-18 14:20:19.0" description="description5"
+    <sample id="19" createdDate="2013-07-18 14:18:19.0" description="description5"
             sequencerSampleId="sample5" sampleName="sample5" />
-    <sample id="20" createdDate="2013-07-18 14:20:19.0" description="description5"
+    <sample id="20" createdDate="2013-07-18 14:19:19.0" description="description5"
             sequencerSampleId="sample5" sampleName="sample5" />
     <sample id="21" createdDate="2013-07-18 14:20:19.0" description="description5"
             sequencerSampleId="sample5" sampleName="sample5" />
