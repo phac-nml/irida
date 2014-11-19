@@ -23,15 +23,15 @@
   }
 
 
-  function SamplesTableFilter (filter) {
+  function SamplesTableFilter(filter) {
     "use strict";
     return function (samples) {
-      var begin = filter.page*filter.count;
+      var begin = filter.page * filter.count;
       return samples.slice(begin, begin + filter.count);
     }
   }
 
-  function FilterFactory () {
+  function FilterFactory() {
     "use strict";
     return {
       page    : 0,
@@ -50,15 +50,8 @@
     "use strict";
     var svc = this,
         id = $rootScope.projectId,
-        _filter = {
-          page    : 0,
-          sortDir : 'desc',
-          sortedBy: 'createdDate',
-          count   : 10
-        },
-        base = R.all('projects/' + id + '/ajax/samples');
-
-    svc.filter = _.clone(_filter);
+        base = R.all('projects/' + id + '/ajax/samples'),
+        selected = 0;
     svc.samples = [];
 
     svc.getSamples = function (f) {
@@ -66,31 +59,20 @@
       $rootScope.cgPromise = base.customGET("").then(function (data) {
         angular.copy(data.samples, svc.samples);
         $rootScope.$broadcast('PAGING_UPDATE', {total: data.samples.length});
-        //updateSelectedCount(data.count);
       });
     };
 
     svc.updateSample = function (s) {
-      var t = s.selected ? addSample(s) : removeSample(s);
-      t.then(function (data) {
-        doUIUpdates(data);
-      });
-    };
-
-    svc.updateFile = function (s, f) {
-      var t = f.selected ? addFile(s, f) : removeFile(s, f);
-      t.then(function (data) {
-        doUIUpdates(data);
-      });
+      s.selected ? selected++ : selected--;
+      updateSelectedCount()
     };
 
     svc.getSelectedSampleNames = function () {
-      return base.get("cart/names").then(function (data) {
-        return data.samples;
-      });
+      return _.filter(svc.samples, 'selected');
     };
 
     svc.merge = function (params) {
+      params.sampleIds = _.map(_.filter(svc.samples, 'selected'), 'id');
       return base.customPOST(params, 'merge').then(function (data) {
         if (data.result === 'success') {
           svc.getSamples({});
@@ -106,32 +88,6 @@
     svc.move = function (projectId) {
       return copyMoveSamples(projectId, true);
     };
-
-    function doUIUpdates(data) {
-      updateSample(data.sample);
-      updateSelectedCount(data.count);
-    }
-
-    function addSample(s) {
-      return base.customPOST({sampleId: s.id}, 'cart/add/sample');
-    }
-
-    function removeSample(s) {
-      return base.customPOST({sampleId: s.id}, 'cart/remove/sample');
-    }
-
-    function addFile(s, f) {
-      return base.customPOST({sampleId: s.id, fileId: f.id}, 'cart/add/file');
-    }
-
-    function removeFile(s, f) {
-      return base.customPOST({sampleId: s.id, fileId: f.id}, 'cart/remove/file');
-    }
-
-    function updateSample(s) {
-      var i = _.findKey(svc.samples, {id: s.id});
-      svc.samples[i] = s;
-    }
 
     function copyMoveSamples(projectId, move) {
       return base.customPOST({
@@ -151,8 +107,8 @@
       });
     }
 
-    function updateSelectedCount(count) {
-      $rootScope.$broadcast('COUNT', {count: count});
+    function updateSelectedCount() {
+      $rootScope.$broadcast('COUNT', {count: selected});
     }
   }
 
@@ -170,7 +126,6 @@
 
     vm.update = function () {
       SamplesTableFilter.page = vm.page - 1;
-      //SamplesService.getSamples({page: vm.page - 1, count: vm.count});
     };
 
     $scope.$on('PAGING_UPDATE', function (e, args) {
@@ -195,9 +150,10 @@
     };
 
     vm.updateFile = function (s, f) {
-      SamplesService.updateFile(s, f);
+      //SamplesService.updateFile(s, f);
     };
 
+    // Initial call to get the samples
     SamplesService.getSamples({});
   }
 
@@ -319,7 +275,7 @@
 
   angular.module('Samples', ['ui.select', 'cgBusy'])
     .run(['$rootScope', setRootVariable])
-    .service('FilterFactory', [FilterFactory])
+    .factory('FilterFactory', [FilterFactory])
     .service('Select2Service', ['$timeout', Select2Service])
     .service('SamplesService', ['$rootScope', 'Restangular', 'notifications', SamplesService])
     .filter('SamplesTableFilter', ['FilterFactory', SamplesTableFilter])

@@ -352,9 +352,9 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/{projectId}/ajax/samples/merge", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> ajaxSamplesMerge(@PathVariable Long projectId,
 			@RequestParam Long mergeSampleId,
+			@RequestParam(value = "sampleIds[]") List<Long> sampleIds,
 			@RequestParam String newName, Locale locale) {
 		Map<String, Object> result = new HashMap<>();
-		Set<Long> sampleIds = cart.getSelectedSampleIds(projectId);
 		int samplesMergeCount = sampleIds.size();
 		Project project = projectService.read(projectId);
 		// Determine which sample to merge into

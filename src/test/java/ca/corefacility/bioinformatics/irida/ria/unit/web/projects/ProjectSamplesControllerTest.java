@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -287,17 +286,18 @@ public class ProjectSamplesControllerTest {
 		sampleIds.add(1L);
 		sampleIds.add(11L);
 
-		Set<Long> ids = new HashSet<>();
+		List<Long> ids = new ArrayList<>();
 		ids.add(1L);
 		ids.add(11L);
-		when(cart.getSelectedSampleIds(project.getId())).thenReturn(ids);
+//		when(cart.getSelectedSampleIds(project.getId())).thenReturn(ids);
 		when(sampleService.read(1L)).thenReturn(sample1);
 		when(sampleService.read(11L)).thenReturn(sample2);
 		when(projectService.read(TestDataFactory.PROJECT_ID)).thenReturn(project);
 		when(sampleService.update(anyLong(), anyMap())).thenReturn(sample1);
 
+		// TODO: UPDATE THIS TEST
 		// Call the controller with a new name
-		Map<String, Object> result = controller.ajaxSamplesMerge(TestDataFactory.PROJECT_ID, 1L, newName, Locale.US);
+		Map<String, Object> result = controller.ajaxSamplesMerge(TestDataFactory.PROJECT_ID, 1L, ids, newName, Locale.US);
 
 		// Ensure that the merge was requested
 		verify(sampleService, times(1)).mergeSamples(any(Project.class), any(Sample.class), any());

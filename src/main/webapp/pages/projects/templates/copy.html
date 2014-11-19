@@ -9,7 +9,7 @@
 			<span th:text="#{project.samples.modal.copy.intro}">The following samples will be copied:</span>
 		</h4>
 		<ul id="samples-list">
-			<li ng-repeat="s in cmCtrl.samples">{{s.name}}</li>
+			<li ng-repeat="s in cmCtrl.samples">{{s.sampleName}}</li>
 		</ul>
 		<div class="form-group">
 			<label th:text="#{project.samples.modal.copy.select-label}"></label>

@@ -57,7 +57,7 @@
 						       ng-change="table.updateSample(sample)"/></td>
 					<td class="sample-name">{{::sample.sampleName}}</td>
 					<td>{{::sample.organism}}</td>
-					<td ng-bind="sample.created | date:'medium'"></td>
+					<td>{{::sample.createdDate | date:'short'}}</td>
 					<td ng-if="sample.files.length==0" ng-bind="sample.files.length"></td>
 					<td ng-if="sample.files.length>0">
 						<button class="view-files btn btn-default btn-xs" aria-controls="details-row"
