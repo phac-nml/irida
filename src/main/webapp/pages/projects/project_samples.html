@@ -19,6 +19,18 @@
 	<div class="row" ng-controller="SubNavCtrl as subnav">
 		<div class="col-md-9 mrgn-bttm-md">
 			<div class="btn-toolbar">
+				<div class="btn-group" dropdown="" is-open="subnav.selection.isopen">
+					<button type="button" class="btn btn-default btn-sm dropdown-toggle" dropdown-toggle="">
+						Select&nbsp;<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li><a href="#">Action</a></li>
+						<li><a href="#">Another action</a></li>
+						<li><a href="#">Something else here</a></li>
+						<li class="divider"></li>
+						<li><a href="#">Separated link</a></li>
+					</ul>
+				</div>
 				<button id="mergeBtn" class="btn btn-default btn-sm" ng-click="subnav.merge()" ng-disabled="subnav.count&lt;2"
 				        th:utext="#{project.samples.nav.merge}" data:tooltip="#{project.samples.nav.merge-tooltip}" tooltip-placement="bottom">
 					__MERGE__

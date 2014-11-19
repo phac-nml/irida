@@ -98,7 +98,7 @@
     function copyMoveSamples(projectId, move) {
 
       return base.customPOST({
-        sampleIds: getSelectedSampleIds(),
+        sampleIds         : getSelectedSampleIds(),
         newProjectId      : projectId,
         removeFromOriginal: move
       }, "copy").then(function (data) {
@@ -110,8 +110,8 @@
           notifications.show({type: 'info', msg: msg});
         });
         if (move) {
-          angular.copy(_.filter(svc.samples, function(s) {
-            if(_.has(s, 'selected')) {
+          angular.copy(_.filter(svc.samples, function (s) {
+            if (_.has(s, 'selected')) {
               return !s.selected;
             }
             return true;
@@ -164,10 +164,6 @@
       SamplesService.updateSample(s);
     };
 
-    vm.updateFile = function (s, f) {
-      //SamplesService.updateFile(s, f);
-    };
-
     // Initial call to get the samples
     SamplesService.getSamples({});
   }
@@ -176,6 +172,10 @@
     "use strict";
     var vm = this;
     vm.count = 0;
+
+    vm.selection = {
+      isopen: false
+    };
 
     vm.merge = function () {
       $modal.open({
