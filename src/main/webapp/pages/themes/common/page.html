@@ -85,8 +85,8 @@
 <script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"
         src="/resources/bower_components/jquery/dist/jquery.min.js"></script>
 <!--<![endif]-->
-<script th:src="@{/resources/bower_components/lodash/dist/lodash.underscore.min.js}"
-        src="/resources/bower_components/lodash/dist/lodash.underscore.min.js"></script>
+<script th:src="@{/resources/bower_components/lodash/dist/lodash.min.js}"
+        src="/resources/bower_components/lodash/dist/lodash.min.js"></script>
 <script th:src="@{/resources/bower_components/angular/angular.min.js}"
         src="/resources/bower_components/angular/angular.min.js"></script>
 <script th:src="@{/resources/bower_components/angular-animate/angular-animate.min.js}"
@@ -113,8 +113,16 @@
 	var app = angular.module('irida', window.dependencies)
 			.value('BASE_URL', /*[[@{/}]]*/ '/')
 		// This configures the base url globally for all restangular calls.
-			.config(function(RestangularProvider) {
+			.config(function (RestangularProvider) {
 				RestangularProvider.setBaseUrl(/*[[@{/}]]*/ "/");
+			})
+			.run(function (paginationConfig) {
+				paginationConfig.firstText = /*[[#{table.first}]]*/ 'First';
+				paginationConfig.previousText = /*[[#{table.previous}]]*/ 'Previous';
+				paginationConfig.nextText = /*[[#{table.next}]]*/ 'Next';
+				paginationConfig.lastText = /*[[#{table.last}]]*/ 'Last';
+				paginationConfig.boundaryLinks = true;
+				paginationConfig.directionLinks = true;
 			})
 			.directive('ngFocus', [function () {
 				var FOCUS_CLASS = "ng-focused";
@@ -138,6 +146,14 @@
 				}
 			}]).config(function ($httpProvider) {
 				$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
+				// Make sure that all ajax form data is sent in the correct format.
+				$httpProvider.defaults.transformRequest = function (data) {
+					if (data === undefined) {
+						return data;
+					}
+					return $.param(data);
+				};
 			});
 	/*]]>*/
 </script>

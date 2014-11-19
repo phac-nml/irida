@@ -1,12 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
-import static org.springframework.data.jpa.domain.Specifications.where;
-
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.validation.ConstraintViolation;
@@ -15,10 +14,12 @@ import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
@@ -34,7 +35,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -42,21 +42,21 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
-import ca.corefacility.bioinformatics.irida.ria.utilities.Formats;
-import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectSamplesDataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 
 @Controller
 @RequestMapping(value = "/projects")
 public class ProjectSamplesController {
+	// From configuration.properties
+	private @Value("${ngsarchive.linker.script}") String LINKER_SCRIPT;
+
 	// Sub Navigation Strings
 	private static final String ACTIVE_NAV = "activeNav";
 	private static final String ACTIVE_NAV_SAMPLES = "samples";
@@ -67,6 +67,7 @@ public class ProjectSamplesController {
 
 	// Page Names
 	private static final String PROJECTS_DIR = "projects/";
+	public static final String PROJECT_TEMPLATE_DIR = PROJECTS_DIR + "templates/";
 	public static final String LIST_PROJECTS_PAGE = PROJECTS_DIR + "projects";
 	public static final String PROJECT_MEMBERS_PAGE = PROJECTS_DIR + "project_members";
 	public static final String SPECIFIC_PROJECT_PAGE = PROJECTS_DIR + "project_details";
@@ -82,6 +83,7 @@ public class ProjectSamplesController {
 	private final UserService userService;
 	private final SequenceFileService sequenceFileService;
 	private final ProjectControllerUtils projectControllerUtils;
+	private MessageSource messageSource;
 
 	/*
 	 * Converters
@@ -92,8 +94,7 @@ public class ProjectSamplesController {
 	@Autowired
 	public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
 			UserService userService, SequenceFileService sequenceFileService,
-			ProjectControllerUtils projectControllerUtils, ReferenceFileService referenceFileService,
-			TaxonomyService taxonomyService) {
+			ProjectControllerUtils projectControllerUtils, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
@@ -101,17 +102,19 @@ public class ProjectSamplesController {
 		this.projectControllerUtils = projectControllerUtils;
 		this.dateFormatter = new DateFormatter();
 		this.fileSizeConverter = new FileSizeConverter();
+		this.messageSource = messageSource;
 	}
 
 	/**
 	 * Get the samples for a given project
-	 * 
+	 *
 	 * @param model
-	 *            A model for the sample list view
+	 * 		A model for the sample list view
 	 * @param principal
-	 *            The user reading the project
+	 * 		The user reading the project
 	 * @param projectId
-	 *            The ID of the project
+	 * 		The ID of the project
+	 *
 	 * @return Name of the project samples list view
 	 */
 	@RequestMapping("/{projectId}/samples")
@@ -127,129 +130,90 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Get all samples for a project as a paged ajax call
-	 * 
-	 * @param projectId
-	 *            ID of the project
-	 * @param start
-	 *            Start element
-	 * @param length
-	 *            Number of elements in the page
-	 * @param draw
-	 * @param sortColumn
-	 *            Which column to sort on
-	 * @param direction
-	 *            Sort direction
-	 * @param searchValue
-	 *            A search value for the sample name
-	 * @return Map<String,Object> containing a list of the response samples
+	 * Special method to add the correct linker script name to the modal template
+	 *
+	 * @param model
+	 * 		{@link Model}
+	 *
+	 * @return Location of the modal template
 	 */
-	@RequestMapping(value = "/ajax/{projectId}/samples", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Object> getAjaxProjectSamplesMap(
-			@PathVariable Long projectId,
-			@RequestParam(ProjectSamplesDataTable.REQUEST_PARAM_START) Integer start,
-			@RequestParam(ProjectSamplesDataTable.REQUEST_PARAM_LENGTH) Integer length,
-			@RequestParam(ProjectSamplesDataTable.REQUEST_PARAM_DRAW) Integer draw,
-			@RequestParam(value = ProjectSamplesDataTable.REQUEST_PARAM_SORT_COLUMN, defaultValue = ProjectSamplesDataTable.SORT_DEFAULT_COLUMN) Integer sortColumn,
-			@RequestParam(value = ProjectSamplesDataTable.REQUEST_PARAM_SORT_DIRECTION, defaultValue = ProjectSamplesDataTable.SORT_DEFAULT_DIRECTION) String direction,
-			@RequestParam(ProjectSamplesDataTable.REQUEST_PARAM_SEARCH_VALUE) String searchValue) {
-		Map<String, Object> response = new HashMap<>();
-		Sort.Direction sortDirection = ProjectSamplesDataTable.getSortDirection(direction);
-		String sortString = ProjectSamplesDataTable.getSortStringFromColumnID(sortColumn);
-
-		int pageNum = ProjectSamplesDataTable.getPageNumber(start, length);
-		try {
-			Project project = projectService.read(projectId);
-			Page<ProjectSampleJoin> page = sampleService.getSamplesForProjectWithName(project, searchValue, pageNum,
-					length, sortDirection, sortString);
-			List<Map<String, String>> samplesList = new ArrayList<>();
-			for (Join<Project, Sample> join : page.getContent()) {
-				Map<String, String> sMap = new HashMap<>();
-				Sample s = join.getObject();
-				sMap.put(ProjectSamplesDataTable.ID, s.getId().toString());
-				sMap.put(ProjectSamplesDataTable.NAME, s.getSampleName());
-				sMap.put(ProjectSamplesDataTable.NUM_FILES,
-						String.valueOf(sequenceFileService.getSequenceFilesForSample(s).size()));
-				sMap.put(ProjectSamplesDataTable.CREATED_DATE, Formats.DATE.format(join.getTimestamp()));
-				samplesList.add(sMap);
-			}
-			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_DATA, samplesList);
-			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_DRAW, draw);
-			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_RECORDS_FILTERED, page.getTotalElements());
-			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_RECORDS_TOTAL, page.getTotalElements());
-			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_SORT_COLUMN, sortColumn);
-			response.put(ProjectSamplesDataTable.RESPONSE_PARAM_SORT_DIRECTION, sortDirection);
-		} catch (Exception e) {
-			logger.error("Error retrieving project sample information :" + e.getLocalizedMessage());
-		}
-		return response;
+	@RequestMapping("/samples/linker")
+	public String getLinkerModal(Model model) {
+		model.addAttribute("scriptName", LINKER_SCRIPT);
+		return PROJECT_TEMPLATE_DIR + "linker.tmpl";
 	}
 
 	/**
-	 * Get the ids of all sampes on the given project
-	 * 
+	 * Get a list of all samples within the project
+	 *
 	 * @param projectId
-	 *            the ID of the project
-	 * @return Map<String,List<String>> containing list of the ids
+	 * 		The id for the current {@link Project}
+	 *
+	 * @return A list of {@link Sample} in the current project
 	 */
-	@RequestMapping(value = "/ajax/{projectId}/samples/getids", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, List<String>> getAllProjectSampleIds(@PathVariable Long projectId) {
+	@RequestMapping(value = "/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+	public @ResponseBody Map<String, Object> getProjectSamples(@PathVariable Long projectId) {
+		Map<String, Object> result = new HashMap<>();
 		Project project = projectService.read(projectId);
-		List<String> sampleIdList = new ArrayList<>();
-		List<Join<Project, Sample>> psj = sampleService.getSamplesForProject(project);
-		for (Join<Project, Sample> join : psj) {
-			sampleIdList.add(join.getObject().getId().toString());
+		List<Join<Project, Sample>> joinList = sampleService.getSamplesForProject(project);
+		List<Sample> samples = new ArrayList<>(joinList.size());
+		for (Join<Project, Sample> join : joinList) {
+			samples.add(join.getObject());
 		}
-		Map<String, List<String>> result = new HashMap<>();
-		result.put("ids", sampleIdList);
+		result.put("samples", samples);
 		return result;
 	}
 
 	/**
-	 * Search for projects available for a user to copy samples to. If the user
-	 * is an admin it will show all projects.
+	 * Search for projects available for a user to copy samples to. If the user is an admin it will show all projects.
 	 *
-	 * @param projectId
-	 *            The current project id
 	 * @param term
-	 *            A search term
+	 * 		A search term
 	 * @param pageSize
-	 *            The size of the page requests
+	 * 		The size of the page requests
 	 * @param page
-	 *            The page number (0 based)
+	 * 		The page number (0 based)
 	 * @param principal
-	 *            The logged in user.
-	 * @return a Map<String,Object> containing: total: total number of elements
-	 *         results: A Map<Long,String> of project IDs and project names.
+	 * 		The logged in user.
+	 *
+	 * @return a Map<String,Object> containing: total: total number of elements results: A Map<Long,String> of project
+	 * IDs and project names.
 	 */
-	@RequestMapping(value = "/ajax/{projectId}/samples/available_projects")
+	@RequestMapping(value = "/ajax/samples/available_projects")
 	@ResponseBody
-	public Map<String, Object> getProjectsAvailableToCopySamples(@PathVariable Long projectId,
-			@RequestParam String term, @RequestParam int pageSize, @RequestParam int page, Principal principal) {
+	public Map<String, Object> getProjectsAvailableToCopySamples(@RequestParam String term, @RequestParam int pageSize,
+			@RequestParam int page, Principal principal) {
 		User user = userService.getUserByUsername(principal.getName());
 
-		Map<Long, String> vals = new HashMap<>();
+		List<Map<String, String>> projectMap = new ArrayList<>();
 		Map<String, Object> response = new HashMap<>();
 		if (user.getAuthorities().contains(Role.ROLE_ADMIN)) {
 			Page<Project> projects = projectService.search(ProjectSpecification.searchProjectName(term), page,
 					pageSize, Direction.ASC, PROJECT_NAME_PROPERTY);
 			for (Project p : projects) {
-				vals.put(p.getId(), p.getName());
+				Map<String, String> map = new HashMap<>();
+				map.put("id", p.getId().toString());
+				map.put("text", p.getName());
+				projectMap.add(map);
 			}
 			response.put("total", projects.getTotalElements());
 		} else {
 			// search for projects with a given name where the user is an owner
-			Specification<ProjectUserJoin> spec = where(
+			Specification<ProjectUserJoin> spec = Specifications.where(
 					ProjectUserJoinSpecification.searchProjectNameWithUser(term, user)).and(
 					ProjectUserJoinSpecification.getProjectJoinsWithRole(user, ProjectRole.PROJECT_OWNER));
 			Page<ProjectUserJoin> projects = projectService.searchProjectUsers(spec, page, pageSize, Direction.ASC);
-			for (ProjectUserJoin p : projects) {
-				vals.put(p.getSubject().getId(), p.getSubject().getName());
+			for (ProjectUserJoin projectUserJoin : projects) {
+				Project p = projectUserJoin.getSubject();
+				Map<String, String> map = new HashMap<>();
+				map.put("id", p.getId().toString());
+				map.put("text", p.getName());
+				projectMap.add(map);
 			}
 			response.put("total", projects.getTotalElements());
 		}
 
-		response.put("results", vals);
+		response.put("projects", projectMap);
 
 		return response;
 	}
@@ -258,53 +222,75 @@ public class ProjectSamplesController {
 	 * Copy or move samples from one project to another
 	 *
 	 * @param projectId
-	 *            The original project id
-	 * @param sampleIds
-	 *            The sample ids to move
+	 * 		The original project id
 	 * @param newProjectId
-	 *            The new project id
+	 * 		The new project id
 	 * @param removeFromOriginal
-	 *            true/false whether to remove the samples from the original
-	 *            project
+	 * 		true/false whether to remove the samples from the original project
+	 *
 	 * @return A list of warnings
 	 */
-	@RequestMapping(value = "/ajax/{projectId}/samples/copy")
+	@RequestMapping(value = "/{projectId}/ajax/samples/copy", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> copySampleToProject(@PathVariable Long projectId, @RequestParam List<Long> sampleIds,
-			@RequestParam Long newProjectId, @RequestParam boolean removeFromOriginal) {
+	public Map<String, Object> copySampleToProject(@PathVariable Long projectId,
+			@RequestParam(value = "sampleIds[]") List<Long> sampleIds,
+			@RequestParam Long newProjectId, @RequestParam boolean removeFromOriginal, Locale locale) {
 		Project originalProject = projectService.read(projectId);
 		Project newProject = projectService.read(newProjectId);
 
 		Map<String, Object> response = new HashMap<>();
 		List<String> warnings = new ArrayList<>();
-
-		int totalCopied = 0;
+		List<String> successNames = new ArrayList<>();
 
 		for (Long sampleId : sampleIds) {
 			Sample sample = sampleService.read(sampleId);
 			try {
 				projectService.addSampleToProject(newProject, sample);
 				logger.trace("Copied sample " + sampleId + " to project " + newProjectId);
-				totalCopied++;
-
+				successNames.add(sample.getSampleName());
 			} catch (EntityExistsException ex) {
 				logger.warn("Attempted to add sample " + sampleId + " to project " + newProjectId
-						+ " where it already exists.", ex);
+						+ " where it already exists.");
 
-				warnings.add(sample.getLabel());
+				warnings.add(messageSource.getMessage("project.samples.copy-error-message",
+						new Object[] { sample.getSampleName(), newProject.getName() }, locale));
 			}
 
 			if (removeFromOriginal) {
 				projectService.removeSampleFromProject(originalProject, sample);
 				logger.trace("Removed sample " + sampleId + " from original project " + projectId);
+
 			}
 		}
 
-		if (!warnings.isEmpty()) {
+		if (!warnings.isEmpty() || successNames.size() == 0) {
+			response.put("result", "warning");
 			response.put("warnings", warnings);
+		} else {
+			response.put("result", "success");
 		}
-		response.put("totalCopied", totalCopied);
-
+		// 1. Only one sample copied
+		// 2. Only one sample moved
+		if (successNames.size() == 1) {
+			if (removeFromOriginal) {
+				response.put("message", messageSource.getMessage("project.samples.move-single-success-message",
+						new Object[] { successNames.get(0), newProject.getName() }, locale));
+			} else {
+				response.put("message", messageSource.getMessage("project.samples.copy-single-success-message",
+						new Object[] { successNames.get(0), newProject.getName() }, locale));
+			}
+		}
+		// 3. Multiple samples copied
+		// 4. Multiple samples moved
+		else if (successNames.size() > 1) {
+			if (removeFromOriginal) {
+				response.put("message", messageSource.getMessage("project.samples.move-multiple-success-message",
+						new Object[] { successNames.size(), newProject.getName() }, locale));
+			} else {
+				response.put("message", messageSource.getMessage("project.samples.copy-multiple-success-message",
+						new Object[] { successNames.size(), newProject.getName() }, locale));
+			}
+		}
 		return response;
 	}
 
@@ -312,9 +298,10 @@ public class ProjectSamplesController {
 	 * Remove a list of samples from a a Project.
 	 *
 	 * @param projectId
-	 *            Id of the project to remove the samples from
+	 * 		Id of the project to remove the samples from
 	 * @param sampleIds
-	 *            An array of samples to remove from a project
+	 * 		An array of samples to remove from a project
+	 *
 	 * @return Map containing either success or errors.
 	 */
 	@RequestMapping(value = "/ajax/{projectId}/samples/delete", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
@@ -336,85 +323,69 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * For a list of sample ids, this function will generate a map of {id, name}
-	 *
-	 * @param sampleIds
-	 *            A list of sample ids.
-	 * @return A list of map of {id, name}
-	 */
-	@RequestMapping(value = "/ajax/getNamesFromIds", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Map<String, String>> ajaxGetSampleNamesFromIds(@RequestParam List<Long> sampleIds) {
-		List<Map<String, String>> resultList = new ArrayList<>();
-		for (Long id : sampleIds) {
-			Map<String, String> results = new HashMap<>();
-			Sample sample = sampleService.read(id);
-			results.put("id", id.toString());
-			results.put("text", sample.getSampleName());
-			resultList.add(results);
-		}
-		return resultList;
-	}
-
-	/**
-	 * Merges a list of samples into either the first sample in the list with a
-	 * new name if provided, or into the selected sample based on the id.
+	 * Merges a list of samples into either the first sample in the list with a new name if provided, or into the
+	 * selected sample based on the id.
 	 *
 	 * @param projectId
-	 *            The id for the project the samples belong to.
-	 * @param sampleIds
-	 *            A list of sample ids for samples to merge.
+	 * 		The id for the current {@link Project}
 	 * @param mergeSampleId
-	 *            (Optional) The id of the sample to merge the other into.
+	 * 		An id for a {@link Sample} to merge the other samples into.
+	 * @param sampleIds
+	 * 		A list of ids for {@link Sample} to merge together.
 	 * @param newName
-	 *            (Optional) The new name for the final sample.
+	 * 		An optional new name for the {@link Sample}.
+	 * @param locale
+	 * 		The {@link Locale} of the current user.
+	 *
 	 * @return
 	 */
-	@RequestMapping(value = "/ajax/{projectId}/samples/merge", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/{projectId}/ajax/samples/merge", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> ajaxSamplesMerge(@PathVariable Long projectId,
-			@RequestParam List<Long> sampleIds, @RequestParam(required = false) Long mergeSampleId,
-			@RequestParam(required = false) String newName) {
+			@RequestParam Long mergeSampleId,
+			@RequestParam(value = "sampleIds[]") List<Long> sampleIds,
+			@RequestParam String newName, Locale locale) {
 		Map<String, Object> result = new HashMap<>();
+		int samplesMergeCount = sampleIds.size();
 		Project project = projectService.read(projectId);
-		Sample mergeIntoSample = null;
-		// Determine if it is a new name or and existing sample
-		try {
-			if (sampleIds.contains(mergeSampleId)) {
-				mergeIntoSample = sampleService.read(mergeSampleId);
-				sampleIds.remove(mergeSampleId);
-			} else {
-				mergeIntoSample = sampleService.read(sampleIds.remove(0));
-			}
-		} catch (EntityNotFoundException e) {
-			result.put("error", e.getLocalizedMessage());
+		// Determine which sample to merge into
+		Sample mergeIntoSample = sampleService.read(mergeSampleId);
+		sampleIds.remove(mergeSampleId);
 
-		}
-		// Rename if a new name is given
 		if (!Strings.isNullOrEmpty(newName)) {
-			Map<String, Object> updateMap = new HashMap<>();
-			updateMap.put("sampleName", newName);
 			try {
-				mergeIntoSample = sampleService.update(mergeIntoSample.getId(), updateMap);
+				mergeIntoSample = sampleService.update(mergeSampleId, ImmutableMap.of("sampleName", newName));
 			} catch (ConstraintViolationException e) {
-				result.put("error", getErrorsFromViolationException(e));
+				logger.error(e.getLocalizedMessage());
+				result.put("result", "error");
+				result.put("warnings", getErrorsFromViolationException(e));
+				return result;
 			}
 		}
-		if (!result.containsKey("error")) {
-			Sample[] mergeSamples = new Sample[sampleIds.size()];
-			for (int i = 0; i < sampleIds.size(); i++) {
-				mergeSamples[i] = sampleService.read(sampleIds.get(i));
-			}
-			sampleService.mergeSamples(project, mergeIntoSample, mergeSamples);
-			result.put("success", mergeIntoSample.getSampleName());
+
+		// Create an update map
+		Sample[] mergeSamples = new Sample[sampleIds.size()];
+		int count = 0;
+		for (Long sampleId : sampleIds) {
+			mergeSamples[count++] = sampleService.read(sampleId);
 		}
+
+		// Merge the samples
+		sampleService.mergeSamples(project, mergeIntoSample, mergeSamples);
+
+		result.put("result", "success");
+		result.put("message", messageSource.getMessage("project.samples.combine-success", new Object[] {
+				samplesMergeCount,
+				mergeIntoSample.getSampleName()
+		}, locale));
 		return result;
 	}
 
 	/**
-	 * Changes a {@link ConstraintViolationException} to a usable map of strings
-	 * for displaing in the UI.
+	 * Changes a {@link ConstraintViolationException} to a usable map of strings for displaing in the UI.
 	 *
 	 * @param e
-	 *            {@link ConstraintViolationException} for the form submitted.
+	 * 		{@link ConstraintViolationException} for the form submitted.
+	 *
 	 * @return Map of string {fieldName, error}
 	 */
 	private Map<String, String> getErrorsFromViolationException(ConstraintViolationException e) {

@@ -22,6 +22,7 @@ import org.springframework.web.servlet.config.annotation.DefaultServletHandlerCo
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
@@ -32,10 +33,9 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
-
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 
+import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 import com.google.common.collect.ImmutableMap;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 
@@ -107,6 +107,13 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		// production.
 		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
 		registry.addResourceHandler("/public/**").addResourceLocations("/public/");
+	}
+
+	@Override
+	public void addViewControllers(ViewControllerRegistry registry) {
+		registry.addViewController("/projects/templates/merge").setViewName("projects/templates/merge");
+		registry.addViewController("/projects/templates/copy").setViewName("projects/templates/copy");
+		registry.addViewController("/projects/templates/move").setViewName("projects/templates/move");
 	}
 
 	@Bean

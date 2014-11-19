@@ -2,13 +2,19 @@ package ca.corefacility.bioinformatics.irida.ria.unit;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
@@ -27,6 +33,10 @@ public class TestDataFactory {
 	public static final String FAKE_FILE_PATH = "src/test/resources/files/{name}";
 	public static final String FAKE_EXECUTION_MANAGER_ID = "Whole Genome Phyogenomics Pipeline";
 	public static final long USER_ID = 1L;
+	public static final String PROJECT_NAME = "test_project";
+	public static final String PROJECT_ORGANISM = "E. coli";
+	public static final Long PROJECT_ID = 1L;
+	private static final Long PROJECT_MODIFIED_DATE = 1403723706L;
 
 	/**
 	 * Construct a simple {@link ca.corefacility.bioinformatics.irida.model.sample.Sample}.
@@ -88,7 +98,26 @@ public class TestDataFactory {
 		return user;
 	}
 
+	public static List<Join<Sample, SequenceFile>> generateSequenceFilesForSample(Sample sample) {
+		List<Join<Sample, SequenceFile>> join = new ArrayList<>();
+		for (int i = 0; i < 5; i++) {
+			Path path = Paths.get("/tmp/sequence-files/fake-file" + Math.random() + ".fast");
+			SequenceFile file = new SequenceFile(path);
+			file.setId((long) i);
+			join.add(new SampleSequenceFileJoin(sample, file));
+		}
+		return join;
+	}
+
 	private static AnalysisOutputFile constructAnalysisOutputFile(String name) {
 		return new AnalysisOutputFile(Paths.get(FAKE_FILE_PATH.replace("{name}", name)), FAKE_EXECUTION_MANAGER_ID);
+	}
+
+	public static Project constructProject() {
+		Project project = new Project(PROJECT_NAME);
+		project.setId(PROJECT_ID);
+		project.setOrganism(PROJECT_ORGANISM);
+		project.setModifiedDate(new Date(PROJECT_MODIFIED_DATE));
+		return project;
 	}
 }

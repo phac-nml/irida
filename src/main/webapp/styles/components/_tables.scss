@@ -1,0 +1,21 @@
+.selected {
+  background-color: lighten($color-info, 30%);
+}
+
+.details-row {
+  padding: 0;
+  margin: 0;
+  background-color: $color-grey-dark;
+  border: none !important;
+}
+
+.details-row td {
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+}
+
+.details-row .list-group {
+  margin: 0;
+  padding: 6px;
+}
