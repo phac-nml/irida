@@ -101,6 +101,10 @@ public class ProjectSamplesPage extends AbstractPage {
 		return driver.findElements(By.cssSelector(".sample-select:checked")).size();
 	}
 
+	public int getTotalNumberOfSamplesSelected() {
+		return Integer.parseInt(driver.findElement(By.id("selected-count")).getText());
+	}
+
 	public void selectSampleByRow(int row) {
 		List<WebElement> inputs = driver.findElements(By.className("sample-select"));
 		inputs.get(row).click();
@@ -175,4 +179,5 @@ public class ProjectSamplesPage extends AbstractPage {
 		waitForTime(600);
 		input.sendKeys(Keys.ENTER);
 	}
+
 }
