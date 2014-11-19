@@ -348,6 +348,44 @@ public class ProjectSamplesPageIT {
 		assertEquals(3, page.getNumberOfSamplesDisplayed());
 	}
 
+	@Test
+	public void testMultiSelection() {
+		LoginPage.loginAsAdmin(driver);
+		page.goToPage();
+
+		// Test selecting a page
+		assertEquals(0, page.getTotalNumberOfSamplesSelected());
+		page.clickBtn("selectBtn");
+		page.clickBtn("selectPageBtn");
+		assertEquals(10, page.getTotalNumberOfSamplesSelected());
+
+		// Test clearing the selections
+		page.clickBtn("selectBtn");
+		page.clickBtn("selectNoneBtn");
+		assertEquals(0, page.getTotalNumberOfSamplesSelected());
+
+		// Test select all
+		page.clickBtn("selectBtn");
+		page.clickBtn("selectAllBtn");
+		assertEquals(21, page.getTotalNumberOfSamplesSelected());
+
+		// Test clearing again
+		page.clickBtn("selectBtn");
+		page.clickBtn("selectNoneBtn");
+		assertEquals(0, page.getTotalNumberOfSamplesSelected());
+
+		// Select random samples on one page and then all on the second
+		selectFirstThreeSamples();
+		assertEquals(3, page.getTotalNumberOfSamplesSelected());
+		page.clickNextPageButton();
+		page.clickBtn("selectBtn");
+		page.clickBtn("selectPageBtn");
+		assertEquals(13, page.getTotalNumberOfSamplesSelected());
+		page.clickBtn("selectBtn");
+		page.clickBtn("selectAllBtn");
+		assertEquals(21, page.getTotalNumberOfSamplesSelected());
+	}
+
 	private void selectFirstThreeSamples() {
 		page.selectSampleByRow(0);
 		page.selectSampleByRow(1);

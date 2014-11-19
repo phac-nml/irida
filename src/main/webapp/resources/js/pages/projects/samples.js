@@ -23,11 +23,13 @@
   }
 
 
-  function SamplesTableFilter(filter) {
+  function SamplesTableFilter(filter, SamplesService) {
     "use strict";
     return function (samples) {
       var begin = filter.page * filter.count;
-      return samples.slice(begin, begin + filter.count);
+      var filtered = samples.slice(begin, begin + filter.count);
+      SamplesService.setFilteredSamples(filtered);
+      return filtered;
     }
   }
 
@@ -46,12 +48,13 @@
 // @param $rootScope The root scope for the page.
 // @param R Restangular
   /* -]*/
-  function SamplesService($rootScope, R, notifications) {
+  function SamplesService($rootScope, R, notifications, FilterFactory) {
     "use strict";
     var svc = this,
         id = $rootScope.projectId,
         base = R.all('projects/' + id + '/ajax/samples'),
-        selected = 0;
+        selected = [],
+        filtered = [];
     svc.samples = [];
 
     svc.getSamples = function (f) {
@@ -62,13 +65,22 @@
       });
     };
 
+    svc.setFilteredSamples = function (f) {
+      filtered = f;
+    };
+
     svc.updateSample = function (s) {
-      s.selected ? selected++ : selected--;
+      if (s.selected) {
+        selected.push(s)
+      }
+      else {
+        selected = _.without(selected, s);
+      }
       updateSelectedCount()
     };
 
     svc.getSelectedSampleNames = function () {
-      return _.filter(svc.samples, 'selected');
+      return selected;
     };
 
     svc.merge = function (params) {
@@ -76,7 +88,7 @@
       return base.customPOST(params, 'merge').then(function (data) {
         if (data.result === 'success') {
           svc.getSamples();
-          selected = 0;
+          selected = [];
           updateSelectedCount();
           notifications.show({type: data.result, msg: data.message});
         }
@@ -91,14 +103,40 @@
       return copyMoveSamples(projectId, true);
     };
 
+    svc.selectPage = function () {
+      _.each(filtered, function (s) {
+        if (!s.selected) {
+          s.selected = true;
+          selected.push(s);
+        }
+      });
+      updateSelectedCount();
+    };
+
+    svc.selectAll = function () {
+      _.each(svc.samples, function (s) {
+        s.selected = true;
+      });
+      selected = svc.samples;
+      updateSelectedCount();
+    };
+
+    svc.selectNone = function () {
+      _.each(svc.samples, function (s) {
+        s.selected = false
+      });
+      selected = [];
+      updateSelectedCount();
+    };
+
     function getSelectedSampleIds() {
-      return _.map(_.filter(svc.samples, 'selected'), 'id');
+      return _.map(selected, 'id');
     }
 
     function copyMoveSamples(projectId, move) {
 
       return base.customPOST({
-        sampleIds: getSelectedSampleIds(),
+        sampleIds         : getSelectedSampleIds(),
         newProjectId      : projectId,
         removeFromOriginal: move
       }, "copy").then(function (data) {
@@ -110,8 +148,8 @@
           notifications.show({type: 'info', msg: msg});
         });
         if (move) {
-          angular.copy(_.filter(svc.samples, function(s) {
-            if(_.has(s, 'selected')) {
+          angular.copy(_.filter(svc.samples, function (s) {
+            if (_.has(s, 'selected')) {
               return !s.selected;
             }
             return true;
@@ -123,7 +161,7 @@
     }
 
     function updateSelectedCount() {
-      $rootScope.$broadcast('COUNT', {count: selected});
+      $rootScope.$broadcast('COUNT', {count: selected.length});
     }
   }
 
@@ -164,10 +202,6 @@
       SamplesService.updateSample(s);
     };
 
-    vm.updateFile = function (s, f) {
-      //SamplesService.updateFile(s, f);
-    };
-
     // Initial call to get the samples
     SamplesService.getSamples({});
   }
@@ -176,6 +210,20 @@
     "use strict";
     var vm = this;
     vm.count = 0;
+
+    vm.selection = {
+      isopen    : false,
+      page      : false,
+      selectPage: function selectPage() {
+        SamplesService.selectPage();
+      },
+      selectAll : function selectAll() {
+        SamplesService.selectAll();
+      },
+      selectNone: function selectNone() {
+        SamplesService.selectNone();
+      }
+    };
 
     vm.merge = function () {
       $modal.open({
@@ -292,8 +340,8 @@
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
     .service('Select2Service', ['$timeout', Select2Service])
-    .service('SamplesService', ['$rootScope', 'Restangular', 'notifications', SamplesService])
-    .filter('SamplesTableFilter', ['FilterFactory', SamplesTableFilter])
+    .service('SamplesService', ['$rootScope', 'Restangular', 'notifications', 'FilterFactory', SamplesService])
+    .filter('SamplesTableFilter', ['FilterFactory', 'SamplesService', SamplesTableFilter])
     .controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
     .controller('SamplesTableCtrl', ['SamplesService', 'FilterFactory', SamplesTableCtrl])
