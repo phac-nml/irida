@@ -23,7 +23,7 @@
     "use strict";
     return function (samples) {
       var begin = filter.page * filter.count;
-      var filtered =  samples.slice(begin, begin + filter.count);
+      var filtered = samples.slice(begin, begin + filter.count);
       SamplesService.setFilteredSamples(filtered);
       return filtered;
     }
@@ -50,7 +50,7 @@
         id = $rootScope.projectId,
         base = R.all('projects/' + id + '/ajax/samples'),
         selected = [],
-      filtered = [];
+        filtered = [];
     svc.samples = [];
 
     svc.getSamples = function (f) {
@@ -61,12 +61,12 @@
       });
     };
 
-    svc.setFilteredSamples = function(f) {
+    svc.setFilteredSamples = function (f) {
       filtered = f;
     };
 
     svc.updateSample = function (s) {
-      if(s.selected){
+      if (s.selected) {
         selected.push(s)
       }
       else {
@@ -100,21 +100,27 @@
     };
 
     svc.selectPage = function () {
-      _.each(filtered, function(s) {
-        s.selected = true;
-        selected.push(s);
+      _.each(filtered, function (s) {
+        if (!s.selected) {
+          s.selected = true;
+          selected.push(s);
+        }
       });
       updateSelectedCount();
     };
 
-    svc.selectAll = function() {
-      _.each(svc.samples, function(s) {s.selected=true;});
+    svc.selectAll = function () {
+      _.each(svc.samples, function (s) {
+        s.selected = true;
+      });
       selected = svc.samples;
       updateSelectedCount();
     };
 
-    svc.selectNone = function() {
-      _.each(svc.samples, function(s) {s.selected=false});
+    svc.selectNone = function () {
+      _.each(svc.samples, function (s) {
+        s.selected = false
+      });
       selected = [];
       updateSelectedCount();
     };
