@@ -382,7 +382,19 @@
     };
   }
 
-  angular.module('Samples', ['ui.select', 'cgBusy'])
+  function FilterCtrl (filter) {
+    "use strict";
+    var vm = this;
+    vm.filter = filter;
+
+    vm.sort = function(sortedBy, sortDir) {
+      filter.sortedBy = sortedBy;
+      filter.sortDir = sortDir;
+      filter.page = 0;
+    }
+  }
+
+  angular.module('Samples', ['irida.datatables', 'ui.select', 'cgBusy'])
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
     .service('Select2Service', ['$timeout', Select2Service])
@@ -395,5 +407,6 @@
     .controller('CopyMoveCtrl', ['$modalInstance', '$rootScope', 'BASE_URL', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl])
     .controller('SelectedCountCtrl', ['$scope', SelectedCountCtrl])
     .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
+    .controller('FilterCtrl', ['FilterFactory', FilterCtrl])
   ;
 })(angular, $, _);
