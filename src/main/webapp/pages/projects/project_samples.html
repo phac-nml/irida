@@ -67,7 +67,7 @@
 					<td>
 						<input ui-indeterminate="sample.indeterminate" class="sample-select" type="checkbox" ng-model="sample.selected"
 						       ng-change="table.updateSample(sample)"/></td>
-					<td class="sample-name">{{::sample.sampleName}}</td>
+					<td class="sample-name"><a class="btn btn-default btn-xs" data:ng-href="@{'/samples/{{::sample.id}}'}" href="#">{{::sample.sampleName}}</a></td>
 					<td>{{::sample.organism}}</td>
 					<td>{{::sample.collectedBy}}</td>
 					<td>{{::sample.createdDate | date:'short'}}</td>
