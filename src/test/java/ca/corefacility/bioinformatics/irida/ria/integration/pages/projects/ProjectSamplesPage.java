@@ -180,4 +180,7 @@ public class ProjectSamplesPage extends AbstractPage {
 		input.sendKeys(Keys.ENTER);
 	}
 
+	public String getLinkerScriptText() {
+		return driver.findElement(By.id("linkerCmd")).getText();
+	}
 }

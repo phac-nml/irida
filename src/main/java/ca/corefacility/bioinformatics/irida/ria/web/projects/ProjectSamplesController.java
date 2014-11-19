@@ -14,6 +14,7 @@ import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
@@ -53,6 +54,9 @@ import com.google.common.collect.ImmutableMap;
 @Controller
 @RequestMapping(value = "/projects")
 public class ProjectSamplesController {
+	// From configuration.properties
+	private @Value("${ngsarchive.linker.script}") String LINKER_SCRIPT;
+
 	// Sub Navigation Strings
 	private static final String ACTIVE_NAV = "activeNav";
 	private static final String ACTIVE_NAV_SAMPLES = "samples";
@@ -123,6 +127,20 @@ public class ProjectSamplesController {
 
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_SAMPLES);
 		return PROJECT_SAMPLES_PAGE;
+	}
+
+	/**
+	 * Special method to add the correct linker script name to the modal template
+	 *
+	 * @param model
+	 * 		{@link Model}
+	 *
+	 * @return Location of the modal template
+	 */
+	@RequestMapping("/samples/linker")
+	public String getLinkerModal(Model model) {
+		model.addAttribute("scriptName", LINKER_SCRIPT);
+		return PROJECT_TEMPLATE_DIR + "linker.tmpl";
 	}
 
 	/**
