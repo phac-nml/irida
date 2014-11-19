@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.events;
+package ca.corefacility.bioinformatics.irida.events.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
