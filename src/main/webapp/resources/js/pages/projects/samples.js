@@ -19,11 +19,13 @@
   }
 
 
-  function SamplesTableFilter(filter) {
+  function SamplesTableFilter(filter, SamplesService) {
     "use strict";
     return function (samples) {
       var begin = filter.page * filter.count;
-      return samples.slice(begin, begin + filter.count);
+      var filtered = samples.slice(begin, begin + filter.count);
+      SamplesService.setFilteredSamples(filtered);
+      return filtered;
     }
   }
 
@@ -42,12 +44,13 @@
 // @param $rootScope The root scope for the page.
 // @param R Restangular
   /* -]*/
-  function SamplesService($rootScope, R, notifications, FilterFactory) {
+  function SamplesService($rootScope, R, notifications) {
     "use strict";
     var svc = this,
         id = $rootScope.projectId,
         base = R.all('projects/' + id + '/ajax/samples'),
-        selected = 0;
+        selected = [],
+        filtered = [];
     svc.samples = [];
 
     svc.getSamples = function (f) {
@@ -58,13 +61,22 @@
       });
     };
 
+    svc.setFilteredSamples = function (f) {
+      filtered = f;
+    };
+
     svc.updateSample = function (s) {
-      s.selected ? selected++ : selected--;
+      if (s.selected) {
+        selected.push(s)
+      }
+      else {
+        selected = _.without(selected, s);
+      }
       updateSelectedCount()
     };
 
     svc.getSelectedSampleNames = function () {
-      return _.filter(svc.samples, 'selected');
+      return selected;
     };
 
     svc.getProjectId = function () {
@@ -76,7 +88,7 @@
       return base.customPOST(params, 'merge').then(function (data) {
         if (data.result === 'success') {
           svc.getSamples();
-          selected = 0;
+          selected = [];
           updateSelectedCount();
           notifications.show({type: data.result, msg: data.message});
         }
@@ -92,11 +104,10 @@
     };
 
     svc.selectPage = function () {
-      var begin = FilterFactory.page * FilterFactory.count;
-      _.each(_.sortBy(svc.samples, FilterFactory.sortedBy).slice(begin, begin + FilterFactory.count), function (s) {
+      _.each(filtered, function (s) {
         if (!s.selected) {
           s.selected = true;
-          selected++;
+          selected.push(s);
         }
       });
       updateSelectedCount();
@@ -106,7 +117,7 @@
       _.each(svc.samples, function (s) {
         s.selected = true;
       });
-      selected = svc.samples.length;
+      selected = svc.samples;
       updateSelectedCount();
     };
 
@@ -114,12 +125,12 @@
       _.each(svc.samples, function (s) {
         s.selected = false
       });
-      selected = 0;
+      selected = [];
       updateSelectedCount();
     };
 
     function getSelectedSampleIds() {
-      return _.map(_.filter(svc.samples, 'selected'), 'id');
+      return _.map(selected, 'id');
     }
 
     function copyMoveSamples(projectId, move) {
@@ -150,7 +161,7 @@
     }
 
     function updateSelectedCount() {
-      $rootScope.$broadcast('COUNT', {count: selected});
+      $rootScope.$broadcast('COUNT', {count: selected.length});
     }
   }
 
@@ -375,8 +386,8 @@
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
     .service('Select2Service', ['$timeout', Select2Service])
-    .service('SamplesService', ['$rootScope', 'Restangular', 'notifications', 'FilterFactory', SamplesService])
-    .filter('SamplesTableFilter', ['FilterFactory', SamplesTableFilter])
+    .service('SamplesService', ['$rootScope', 'Restangular', 'notifications', SamplesService])
+    .filter('SamplesTableFilter', ['FilterFactory', 'SamplesService', SamplesTableFilter])
     .controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
     .controller('SamplesTableCtrl', ['SamplesService', 'FilterFactory', SamplesTableCtrl])
