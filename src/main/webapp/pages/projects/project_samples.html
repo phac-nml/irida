@@ -24,29 +24,37 @@
 						<span th:text="#{lists.select-title}">Select</span>&nbsp;<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" role="menu">
-						<li><a id="selectPageBtn" href="#" th:text="#{lists.select-page}" ng-click="subnav.selection.selectPage()">Select Page</a></li>
-						<li><a id="selectAllBtn" href="#" th:text="#{lists.select-all}" ng-click="subnav.selection.selectAll()">Select All</a></li>
+						<li><a id="selectPageBtn" href="#" th:text="#{lists.select-page}" ng-click="subnav.selection.selectPage()">Select
+							Page</a></li>
+						<li><a id="selectAllBtn" href="#" th:text="#{lists.select-all}" ng-click="subnav.selection.selectAll()">Select
+							All</a></li>
 						<li class="divider"></li>
-						<li><a id="selectNoneBtn" href="#" th:text="#{lists.select-none}" ng-click="subnav.selection.selectNone()">Select None</a></li>
+						<li><a id="selectNoneBtn" href="#" th:text="#{lists.select-none}" ng-click="subnav.selection.selectNone()">Select
+							None</a></li>
 					</ul>
 				</div>
-				<button id="mergeBtn" class="btn btn-default btn-sm" ng-click="subnav.merge()" ng-disabled="subnav.count&lt;2"
-				        th:utext="#{project.samples.nav.merge}" data:tooltip="#{project.samples.nav.merge-tooltip}" tooltip-placement="bottom">
-					__MERGE__
-				</button>
-				<button th:if="${isOwner} or ${isAdmin}" id="copyBtn" class="btn btn-default btn-sm" ng-disabled="subnav.count&lt;1"
-				        data:tooltip="#{project.samples.nav.copy-tooltip}" tooltip-placement="bottom" ng-click="subnav.openModal('copy')">
-					<span class="fa fa-fw fa-copy"></span> <span th:text="#{project.samples.nav.copy}">_COPY_</span>
-				</button>
-				<button th:if="${isOwner} or ${isAdmin}" id="moveBtn" class="btn btn-default btn-sm" ng-disabled="subnav.count&lt;1"
-				        data:tooltip="#{project.samples.nav.move-tooltip}" tooltip-placement="bottom" ng-click="subnav.openModal('move')">
-					<span class="fa fa-truck fa-fw"></span> <span th:text="#{project.samples.nav.move}"></span>
-				</button>
+
+				<div class="btn-group" dropdown="" is-open="subnav.samplesOptions.open">
+					<button id="samplesOptionsBtn" class="btn btn-default btn-sm dropdown-toggle" ng-disabled="subnav.count&lt;1">
+						<span>Samples</span>&nbsp;<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li ng-class="{disabled:subnav.count&lt;2}"><a id="mergeBtn" href="#" ng-click="subnav.merge()">
+							<span class="fa fa-fw fa-compress"></span>&nbsp; <span th:text="#{project.samples.nav.merge}">Merge</span>
+						</a>
+						</li>
+						<li th:if="${isOwner} or ${isAdmin}">
+							<a id="copyBtn" href="" ng-click="subnav.openModal('copy')">
+								<span class="fa fa-fw fa-copy"></span>&nbsp;<span th:text="#{project.samples.nav.copy}">_COPY_</span>
+							</a>
+						</li>
+						<li th:if="${isOwner} or ${isAdmin}">
+							<a id="moveBtn" href="#" ng-click="subnav.openModal('move')"><span class="fa fa-truck fa-fw"></span>
+								<span th:text="#{project.samples.nav.move}"></span></a>
+						</li>
+					</ul>
+				</div>
 			</div>
-		</div>
-		<div class="well well-sm col-md-3">
-			<strong th:text="#{project.samples.table.select-count}"></strong>
-			<span class="badge badge-info pull-right" id="selected-count" ng-bind="subnav.count"></span>
 		</div>
 	</div>
 	<div class="row" data:cg-busy="'{promise: cgPromise,templateUrl:\'' + @{/resources/bower_components/angular-busy/angular-busy.html} + '\', delay: 250, backdrop:true, message: \'' + #{cg-busy.samples.table} +  '\'}'">
@@ -66,7 +74,9 @@
 					<td>
 						<input ui-indeterminate="sample.indeterminate" class="sample-select" type="checkbox" ng-model="sample.selected"
 						       ng-change="table.updateSample(sample)"/></td>
-					<td class="sample-name"><a class="btn btn-default btn-xs" data:ng-href="@{'/samples/{{::sample.id}}'}" href="#">{{::sample.sampleName}}</a></td>
+					<td class="sample-name">
+						<a class="btn btn-default btn-xs" data:ng-href="@{'/samples/{{::sample.id}}'}" href="#">{{::sample.sampleName}}</a>
+					</td>
 					<td>{{::sample.organism}}</td>
 					<td>{{::sample.collectedBy}}</td>
 					<td>{{::sample.createdDate | date:'short'}}</td>

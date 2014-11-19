@@ -209,11 +209,12 @@ public class ProjectSamplesPageIT {
 		LoginPage.loginAsAdmin(driver);
 		page.goToPage();
 		assertEquals(0, page.getTotalSelectedSamplesCount());
-		assertFalse(page.isBtnEnabled("mergeBtn"));
+		assertFalse(page.isBtnEnabled("samplesOptionsBtn"));
 		page.selectSampleByRow(0);
 		page.selectSampleByRow(1);
 		assertEquals(2, page.getTotalSelectedSamplesCount());
-		assertTrue(page.isBtnEnabled("mergeBtn"));
+		assertTrue(page.isBtnEnabled("samplesOptionsBtn"));
+		page.clickBtn("samplesOptionsBtn");
 		page.clickBtn("mergeBtn");
 		assertTrue(page.isItemVisible("merge-samples-modal"));
 		page.clickBtn("confirmMergeBtn");
@@ -226,10 +227,11 @@ public class ProjectSamplesPageIT {
 		LoginPage.loginAsAdmin(driver);
 		page.goToPage();
 		assertEquals(0, page.getTotalSelectedSamplesCount());
-		assertFalse(page.isBtnEnabled("mergeBtn"));
+		assertFalse(page.isBtnEnabled("samplesOptionsBtn"));
 		page.selectSampleByRow(0);
 		page.selectSampleByRow(1);
 		assertEquals(2, page.getTotalSelectedSamplesCount());
+		page.clickBtn("samplesOptionsBtn");
 		page.clickBtn("mergeBtn");
 		assertTrue(page.isItemVisible("merge-samples-modal"));
 
@@ -279,6 +281,7 @@ public class ProjectSamplesPageIT {
 
 		// Should be able to copy files to a project that they are a manager of.
 		selectFirstThreeSamples();
+		page.clickBtn("samplesOptionsBtn");
 		page.clickBtn("copyBtn");
 		assertTrue(page.isItemVisible("copy-samples-modal"));
 		page.selectProjectByName("2", "confirm-copy-samples");
@@ -301,6 +304,7 @@ public class ProjectSamplesPageIT {
 
 		// Should be able to copy files to a project that they are a manager of.
 		selectFirstThreeSamples();
+		page.clickBtn("samplesOptionsBtn");
 		page.clickBtn("moveBtn");
 		assertTrue(page.isItemVisible("move-samples-modal"));
 		page.selectProjectByName("2", "confirm-move-samples");
@@ -317,11 +321,11 @@ public class ProjectSamplesPageIT {
 	public void testCopySamplesAsManagerToUnmanagedProject() {
 		LoginPage.login(driver, "project1Manager", "Password1");
 		page.goToPage();
-		assertTrue(page.isElementOnScreen("copyBtn"));
-		assertTrue(page.isElementOnScreen("moveBtn"));
+		assertFalse(page.isBtnEnabled("samplesOptionsBtn"));
 
 		// Should be able to copy files to a project that they are a manager of.
 		selectFirstThreeSamples();
+		page.clickBtn("samplesOptionsBtn");
 		page.clickBtn("copyBtn");
 		assertTrue(page.isItemVisible("copy-samples-modal"));
 		page.selectProjectByName("3", "confirm-copy-samples");
@@ -336,6 +340,7 @@ public class ProjectSamplesPageIT {
 
 		selectFirstThreeSamples();
 		//Admin is not on project5
+		page.clickBtn("samplesOptionsBtn");
 		page.clickBtn("copyBtn");
 		assertTrue(page.isItemVisible("copy-samples-modal"));
 		page.selectProjectByName("5", "confirm-copy-samples");

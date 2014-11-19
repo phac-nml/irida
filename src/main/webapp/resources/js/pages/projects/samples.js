@@ -1,7 +1,3 @@
-/* jshint undef: true, unused: true */
-/* global angular, $, _ */
-
-
 (function (angular, $, _) {
   function setRootVariable($rootScope) {
     $rootScope.cgPromise = null;
@@ -48,7 +44,7 @@
 // @param $rootScope The root scope for the page.
 // @param R Restangular
   /* -]*/
-  function SamplesService($rootScope, R, notifications, FilterFactory) {
+  function SamplesService($rootScope, R, notifications) {
     "use strict";
     var svc = this,
         id = $rootScope.projectId,
@@ -225,16 +221,22 @@
       }
     };
 
+    vm.samplesOptions = {
+      open: false
+    };
+
     vm.merge = function () {
-      $modal.open({
-        templateUrl: BASE_URL + 'projects/templates/merge',
-        controller : 'MergeCtrl as mergeCtrl',
-        resolve    : {
-          samples: function () {
-            return SamplesService.getSelectedSampleNames();
+      if (vm.count > 1) {
+        $modal.open({
+          templateUrl: BASE_URL + 'projects/templates/merge',
+          controller : 'MergeCtrl as mergeCtrl',
+          resolve    : {
+            samples: function () {
+              return SamplesService.getSelectedSampleNames();
+            }
           }
-        }
-      });
+        });
+      }
     };
 
     vm.openModal = function (type) {
@@ -336,15 +338,26 @@
     });
   }
 
+  function SelectedCountCtrl($scope) {
+    "use strict";
+    var vm = this;
+    vm.count = 0;
+
+    $scope.$on('COUNT', function (e, a) {
+      vm.count = a.count;
+    });
+  }
+
   angular.module('Samples', ['ui.select', 'cgBusy'])
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
     .service('Select2Service', ['$timeout', Select2Service])
-    .service('SamplesService', ['$rootScope', 'Restangular', 'notifications', 'FilterFactory', SamplesService])
+    .service('SamplesService', ['$rootScope', 'Restangular', 'notifications', SamplesService])
     .filter('SamplesTableFilter', ['FilterFactory', 'SamplesService', SamplesTableFilter])
     .controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
     .controller('SamplesTableCtrl', ['SamplesService', 'FilterFactory', SamplesTableCtrl])
     .controller('MergeCtrl', ['$scope', '$modalInstance', 'Select2Service', 'SamplesService', 'samples', MergeCtrl])
-    .controller('CopyMoveCtrl', ['$modalInstance', '$rootScope', 'BASE_URL', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl]);
+    .controller('CopyMoveCtrl', ['$modalInstance', '$rootScope', 'BASE_URL', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl])
+    .controller('SelectedCountCtrl', ['$scope', SelectedCountCtrl]);
 })(angular, $, _);
