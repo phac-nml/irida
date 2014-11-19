@@ -51,12 +51,12 @@
 				</tr>
 				</thead>
 				<tbody>
-				<tr class="sample-row" ng-class="{'selected': sample.selected}" ng-repeat-start="sample in table.samples">
+				<tr class="sample-row" ng-class="{'selected': sample.selected}" ng-repeat="sample in table.samples | orderBy: table.filter.sortedBy | SamplesTableFilter">
 					<td>
 						<input ui-indeterminate="sample.indeterminate" class="sample-select" type="checkbox" ng-model="sample.selected"
 						       ng-change="table.updateSample(sample)"/></td>
-					<td class="sample-name" ng-bind="sample.name"></td>
-					<td ng-bind="sample.organism"></td>
+					<td class="sample-name">{{::sample.sampleName}}</td>
+					<td>{{::sample.organism}}</td>
 					<td ng-bind="sample.created | date:'medium'"></td>
 					<td ng-if="sample.files.length==0" ng-bind="sample.files.length"></td>
 					<td ng-if="sample.files.length>0">
@@ -66,18 +66,18 @@
 								class="caret"></span></button>
 					</td>
 				</tr>
-				<tr class="details-row" ng-repeat-end="" ng-if="sample.files.length>0">
-					<td colspan="5">
-						<div collapse="table.open[sample.id]">
-							<ul class="list-group">
-								<li class="file-item list-group-item" ng-class="{'selected': f.selected}" ng-repeat="f in sample.files">
-									<input class="file-select" type="checkbox" ng-model="f.selected" ng-change="table.updateFile(sample, f)"/>
-									<a class="btn btn-default btn-xs" href="#" th:attr="ng-href=@{'/sequenceFiles/{{f.id}}'}">{{f.name}}</a>
-								</li>
-							</ul>
-						</div>
-					</td>
-				</tr>
+				<!--<tr class="details-row" ng-repeat-end="" ng-if="sample.files.length>0">-->
+					<!--<td colspan="5">-->
+						<!--<div collapse="table.open[sample.id]">-->
+							<!--<ul class="list-group">-->
+								<!--<li class="file-item list-group-item" ng-class="{'selected': f.selected}" ng-repeat="f in sample.files">-->
+									<!--<input class="file-select" type="checkbox" ng-model="f.selected" ng-change="table.updateFile(sample, f)"/>-->
+									<!--<a class="btn btn-default btn-xs" href="#" th:attr="ng-href=@{'/sequenceFiles/{{f.id}}'}">{{f.name}}</a>-->
+								<!--</li>-->
+							<!--</ul>-->
+						<!--</div>-->
+					<!--</td>-->
+				<!--</tr>-->
 				</tbody>
 				<tfoot>
 				<tr>

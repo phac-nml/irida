@@ -164,47 +164,15 @@ public class ProjectSamplesController {
 	 * @return A map containing a list of pages samples.
 	 */
 	@RequestMapping(value = "/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-	public @ResponseBody Map<String, Object> getProjectSamples(@PathVariable Long projectId,
-			@RequestParam Integer count,
-			@RequestParam Integer page,
-			@RequestParam String sortDir,
-			@RequestParam String sortedBy,
-			@RequestParam(required = false) String name,
-			@RequestParam(required = false) String organism,
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date minDate,
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date maxDate) {
-		// Since the UI does not know about the structure of the database on Joins this map
-		// is used to convert what the UI has with the actual name required for the specification to work.
-		Map<String, String> sortLookUp = ImmutableMap.of(
-				"name", "sample.sampleName",
-				"organism", "sample.organism",
-				"added", "createdDate"
-		);
-		sortedBy = sortLookUp.containsKey(sortedBy) ? sortLookUp.get(sortedBy) : sortedBy;
-		Project project = projectService.read(projectId);
-		Sort.Direction direction = sortDir.equals("desc") ? Direction.DESC : Direction.ASC;
-
-		Specification<ProjectSampleJoin> specification = ProjectSampleFilterSpecification
-				.searchProjectSamples(project, name, organism, minDate, maxDate);
-		Page<ProjectSampleJoin> projectSampleJoinPage = sampleService
-				.searchProjectSamples(specification, page, count, direction, sortedBy);
-
-		List<Map<String, Object>> samples = new ArrayList<>();
-		int selectedCount = 0;
-		for (Join<Project, Sample> join : projectSampleJoinPage.getContent()) {
-			Sample sample = join.getObject();
-			Map<String, Object> map = _generateUISample(projectId, sample);
-			if (map.get("selected").equals(true)) {
-				selectedCount++;
-			}
-			samples.add(map);
-		}
-
+	public @ResponseBody Map<String, Object> getProjectSamples(@PathVariable Long projectId) {
 		Map<String, Object> result = new HashMap<>();
-		result.put("selectCount", selectedCount);
+		Project project = projectService.read(projectId);
+		List<Join<Project, Sample>> joinList = sampleService.getSamplesForProject(project);
+		List<Sample> samples = new ArrayList<>(joinList.size());
+		for (Join<Project, Sample> join : joinList) {
+			samples.add(join.getObject());
+		}
 		result.put("samples", samples);
-		result.put("totalSamples", projectSampleJoinPage.getTotalElements());
-		result.put("count", cart.getSelectedSamples(projectId).size());
 		return result;
 	}
 

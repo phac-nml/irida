@@ -385,7 +385,7 @@ public class ProjectSamplesControllerTest {
 		when(sequenceFileService.getSequenceFilesForSample(any(Sample.class))).thenReturn(
 				TestDataFactory.generateSequenceFilesForSample(testSample));
 
-		Map<String, Object> response = controller.getProjectSamples(1L, 0, 10, "asc", "dateCreated", null, null, null, null);
+		Map<String, Object> response = controller.getProjectSamples(1L);
 
 		// Make sure it has the expected keys:
 		assertTrue("Has a list of samples", response.containsKey("samples"));
