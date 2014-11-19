@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -20,12 +16,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.format.Formatter;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -38,19 +32,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleFilterSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
-import ca.corefacility.bioinformatics.irida.ria.components.ProjectSamplesCart;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -91,9 +81,6 @@ public class ProjectSamplesController {
 	private final ProjectControllerUtils projectControllerUtils;
 	private MessageSource messageSource;
 
-	// Components
-	private ProjectSamplesCart cart;
-
 	/*
 	 * Converters
 	 */
@@ -103,7 +90,7 @@ public class ProjectSamplesController {
 	@Autowired
 	public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
 			UserService userService, SequenceFileService sequenceFileService,
-			ProjectControllerUtils projectControllerUtils, ProjectSamplesCart cart, MessageSource messageSource) {
+			ProjectControllerUtils projectControllerUtils, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
@@ -112,7 +99,6 @@ public class ProjectSamplesController {
 		this.dateFormatter = new DateFormatter();
 		this.fileSizeConverter = new FileSizeConverter();
 		this.messageSource = messageSource;
-		this.cart = cart;
 	}
 
 	/**
@@ -140,71 +126,23 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Get a paged list of samples.
+	 * Get a list of all samples within the project
 	 *
 	 * @param projectId
-	 * 		Id for the project the samples are in.
-	 * @param count
-	 * 		The size of the list to return.
-	 * @param page
-	 * 		The page number currently viewed.
-	 * @param sortDir
-	 * 		The direction to sort the samples.
-	 * @param sortedBy
-	 * 		The column to sort the samples on.
-	 * @param name
-	 * 		Not required.  An expression to filter the name by.
-	 * @param organism
-	 * 		Not required. An expression to filter the organism by.
-	 * @param minDate
-	 * 		Not required.  The minimum date to filter by.
-	 * @param maxDate
-	 * 		Not required.  The maximum date to filter by.
+	 * 		The id for the current {@link Project}
 	 *
-	 * @return A map containing a list of pages samples.
+	 * @return A list of {@link Sample} in the current project
 	 */
 	@RequestMapping(value = "/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-	public @ResponseBody Map<String, Object> getProjectSamples(@PathVariable Long projectId,
-			@RequestParam Integer count,
-			@RequestParam Integer page,
-			@RequestParam String sortDir,
-			@RequestParam String sortedBy,
-			@RequestParam(required = false) String name,
-			@RequestParam(required = false) String organism,
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date minDate,
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date maxDate) {
-		// Since the UI does not know about the structure of the database on Joins this map
-		// is used to convert what the UI has with the actual name required for the specification to work.
-		Map<String, String> sortLookUp = ImmutableMap.of(
-				"name", "sample.sampleName",
-				"organism", "sample.organism",
-				"added", "createdDate"
-		);
-		sortedBy = sortLookUp.containsKey(sortedBy) ? sortLookUp.get(sortedBy) : sortedBy;
-		Project project = projectService.read(projectId);
-		Sort.Direction direction = sortDir.equals("desc") ? Direction.DESC : Direction.ASC;
-
-		Specification<ProjectSampleJoin> specification = ProjectSampleFilterSpecification
-				.searchProjectSamples(project, name, organism, minDate, maxDate);
-		Page<ProjectSampleJoin> projectSampleJoinPage = sampleService
-				.searchProjectSamples(specification, page, count, direction, sortedBy);
-
-		List<Map<String, Object>> samples = new ArrayList<>();
-		int selectedCount = 0;
-		for (Join<Project, Sample> join : projectSampleJoinPage.getContent()) {
-			Sample sample = join.getObject();
-			Map<String, Object> map = _generateUISample(projectId, sample);
-			if (map.get("selected").equals(true)) {
-				selectedCount++;
-			}
-			samples.add(map);
-		}
-
+	public @ResponseBody Map<String, Object> getProjectSamples(@PathVariable Long projectId) {
 		Map<String, Object> result = new HashMap<>();
-		result.put("selectCount", selectedCount);
+		Project project = projectService.read(projectId);
+		List<Join<Project, Sample>> joinList = sampleService.getSamplesForProject(project);
+		List<Sample> samples = new ArrayList<>(joinList.size());
+		for (Join<Project, Sample> join : joinList) {
+			samples.add(join.getObject());
+		}
 		result.put("samples", samples);
-		result.put("totalSamples", projectSampleJoinPage.getTotalElements());
-		result.put("count", cart.getSelectedSamples(projectId).size());
 		return result;
 	}
 
@@ -277,6 +215,7 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/{projectId}/ajax/samples/copy", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> copySampleToProject(@PathVariable Long projectId,
+			@RequestParam(value = "sampleIds[]") List<Long> sampleIds,
 			@RequestParam Long newProjectId, @RequestParam boolean removeFromOriginal, Locale locale) {
 		Project originalProject = projectService.read(projectId);
 		Project newProject = projectService.read(newProjectId);
@@ -285,7 +224,7 @@ public class ProjectSamplesController {
 		List<String> warnings = new ArrayList<>();
 		List<String> successNames = new ArrayList<>();
 
-		for (Long sampleId : cart.getSelectedSampleIds(projectId)) {
+		for (Long sampleId : sampleIds) {
 			Sample sample = sampleService.read(sampleId);
 			try {
 				projectService.addSampleToProject(newProject, sample);
@@ -334,11 +273,6 @@ public class ProjectSamplesController {
 						new Object[] { successNames.size(), newProject.getName() }, locale));
 			}
 		}
-
-		if (removeFromOriginal) {
-			cart.emptyProjectCart(projectId);
-		}
-		response.put("count", cart.getSelectedSampleIds(projectId).size());
 		return response;
 	}
 
@@ -374,19 +308,25 @@ public class ProjectSamplesController {
 	 * Merges a list of samples into either the first sample in the list with a new name if provided, or into the
 	 * selected sample based on the id.
 	 *
+	 * @param projectId
+	 * 		The id for the current {@link Project}
 	 * @param mergeSampleId
-	 * 		(Optional) The id of the sample to merge the other into.
+	 * 		An id for a {@link Sample} to merge the other samples into.
+	 * @param sampleIds
+	 * 		A list of ids for {@link Sample} to merge together.
 	 * @param newName
-	 * 		(Optional) The new name for the final sample.
+	 * 		An optional new name for the {@link Sample}.
+	 * @param locale
+	 * 		The {@link Locale} of the current user.
 	 *
 	 * @return
 	 */
 	@RequestMapping(value = "/{projectId}/ajax/samples/merge", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> ajaxSamplesMerge(@PathVariable Long projectId,
 			@RequestParam Long mergeSampleId,
+			@RequestParam(value = "sampleIds[]") List<Long> sampleIds,
 			@RequestParam String newName, Locale locale) {
 		Map<String, Object> result = new HashMap<>();
-		Set<Long> sampleIds = cart.getSelectedSampleIds(projectId);
 		int samplesMergeCount = sampleIds.size();
 		Project project = projectService.read(projectId);
 		// Determine which sample to merge into
@@ -419,103 +359,7 @@ public class ProjectSamplesController {
 				samplesMergeCount,
 				mergeIntoSample.getSampleName()
 		}, locale));
-
-		// Need to reset the cart
-		cart.emptyProjectCart(projectId);
 		return result;
-	}
-
-	/**
-	 * Add a sample to the project sample cart
-	 *
-	 * @param sampleId
-	 * 		Sample id to add to cart.
-	 *
-	 * @return The updated count for the number of samples in the project and the updated sample.
-	 */
-	@RequestMapping(value = "/{projectId}/ajax/samples/cart/add/sample", method = RequestMethod.POST)
-	public @ResponseBody Map<String, Object> addSampleToCart(@PathVariable Long projectId,
-			@RequestParam Long sampleId) {
-		int count = this.cart.addSampleToCart(projectId, sampleId);
-		Map<String, Object> response = new HashMap<>();
-		response.put("count", count);
-		response.put("sample", _generateUISample(projectId, sampleService.read(sampleId)));
-		return response;
-	}
-
-	/**
-	 * Remove a sample from the project sample cart.
-	 *
-	 * @param sampleId
-	 * 		Id for the sample to remove.
-	 *
-	 * @return The updated count for the number of samples in the project and the updated sample.
-	 */
-	@RequestMapping(value = "/{projectId}/ajax/samples/cart/remove/sample", method = RequestMethod.POST)
-	public @ResponseBody Map<String, Object> removeSampleFromCart(@PathVariable Long projectId,
-			@RequestParam Long sampleId) {
-		int count = this.cart.removeSampleFromCart(projectId, sampleId);
-		Map<String, Object> response = new HashMap<>();
-		response.put("count", count);
-		response.put("sample", _generateUISample(projectId, sampleService.read(sampleId)));
-		return response;
-	}
-
-	/**
-	 * Add a file to a sample (only within the cart)
-	 *
-	 * @param sampleId
-	 * 		Id for the sample that the file is within
-	 * @param fileId
-	 * 		Id for the file to omit
-	 *
-	 * @return The updated count for the number of samples in the project and the updated sample.
-	 */
-	@RequestMapping(value = "/{projectId}/ajax/samples/cart/add/file", method = RequestMethod.POST)
-	public @ResponseBody Map<String, Object> addFileToCart(@PathVariable Long projectId, @RequestParam Long sampleId,
-			@RequestParam Long fileId) {
-		int count = this.cart.addFileToCart(projectId, sampleId, fileId);
-		Map<String, Object> response = new HashMap<>();
-		response.put("count", count);
-		response.put("sample", _generateUISample(projectId, sampleService.read(sampleId)));
-		return response;
-	}
-
-	/**
-	 * Restore an removed file back to a sample
-	 *
-	 * @param sampleId
-	 * 		Id for the sample that the file belong within
-	 * @param fileId
-	 * 		Id for the file to omit
-	 *
-	 * @return The updated count for the number of samples in the project and the updated sample.
-	 */
-	@RequestMapping(value = "/{projectId}/ajax/samples/cart/remove/file", method = RequestMethod.POST)
-	public @ResponseBody Map<String, Object> removeFileFromCart(@PathVariable Long projectId,
-			@RequestParam Long sampleId, @RequestParam Long fileId) {
-		int count = this.cart.removeFileFromCart(projectId, sampleId, fileId);
-		Map<String, Object> response = new HashMap<>();
-		response.put("count", count);
-		response.put("sample", _generateUISample(projectId, sampleService.read(sampleId)));
-		return response;
-	}
-
-	/**
-	 * Get a Map of Sample names and ids that are contained within the cart
-	 *
-	 * @return Map of sample names and ids
-	 */
-	@RequestMapping(value = "/{projectId}/ajax/samples/cart/names", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Object> getSelectedSampleNamesAndIds(@PathVariable Long projectId) {
-		List<Map<String, Object>> sampleList = new ArrayList<>();
-		for (Long sampleId : cart.getSelectedSampleIds(projectId)) {
-			Map<String, Object> map = new HashMap<>();
-			map.put("id", sampleId);
-			map.put("name", sampleService.read(sampleId).getSampleName());
-			sampleList.add(map);
-		}
-		return ImmutableMap.of("samples", sampleList);
 	}
 
 	/**
@@ -534,53 +378,5 @@ public class ProjectSamplesController {
 			errors.put(field, message);
 		}
 		return errors;
-	}
-
-	/**
-	 * Private method the create a sample which can be consumed by the UI.
-	 *
-	 * @param sample
-	 * 		A {@link Sample}
-	 *
-	 * @return
-	 */
-	private Map<String, Object> _generateUISample(Long projectId, Sample sample) {
-		Map<String, Object> map = new HashMap<>();
-		boolean sampleSelected = cart.isSampleInCart(projectId, sample.getId());
-		map.put("selected", sampleSelected);
-		map.put("id", sample.getId().toString());
-		map.put("name", sample.getSampleName());
-		map.put("organism", sample.getOrganism());
-		map.put("created", sample.getCreatedDate());
-
-		List<Join<Sample, SequenceFile>> fileJoin = sequenceFileService.getSequenceFilesForSample(sample);
-		List<Map<String, Object>> files = new ArrayList<>();
-		int selectCount = 0;
-		for (Join<Sample, SequenceFile> join1 : fileJoin) {
-			SequenceFile f = join1.getObject();
-			Map<String, Object> m = new HashMap<>();
-			m.put("id", f.getId());
-			boolean selected = f.getId() != null && cart.isFileInCart(projectId, sample.getId(), f.getId());
-			if (selected)
-				selectCount++;
-			m.put("selected", selected);
-			m.put("name", f.getLabel());
-			Long realSize = 0L;
-			Path path = f.getFile();
-			if (Files.exists(path)) {
-				try {
-					realSize = Files.size(path);
-				} catch (IOException e) {
-					logger.error(e.getMessage());
-					realSize = 0L;
-				}
-			}
-			String size = fileSizeConverter.convert(realSize);
-			m.put("size", size);
-			files.add(m);
-		}
-		map.put("files", files);
-		map.put("indeterminate", sampleSelected && files.size() != 0 && selectCount != files.size());
-		return map;
 	}
 }

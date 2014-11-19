@@ -135,10 +135,6 @@ public class ProjectSamplesPageIT {
 		assertEquals(3, page.getNumberOfSamplesSelected());
 		page.selectSampleByRow(1);
 		assertEquals(2, page.getNumberOfSamplesSelected());
-
-		// If I go back to the page I expect them to be there
-		page.goToPage();
-		assertEquals(2, page.getNumberOfSamplesSelected());
 	}
 
 	@Test
@@ -182,24 +178,6 @@ public class ProjectSamplesPageIT {
 	}
 
 	@Test
-	public void testFileSelection() {
-		LoginPage.loginAsAdmin(driver);
-		page.goToPage();
-		page.clickLastPageButton();
-		assertFalse(page.isRowSelected(0));
-		page.openFilesView(0);
-		assertEquals(3, page.getNumberOfFiles());
-		assertFalse(page.isFileSelected(0));
-		page.selectFile(0);
-		assertTrue(page.isFileSelected(0));
-		assertTrue(page.isSampleIndeterminate(0));
-		page.selectFile(1);
-		assertTrue(page.isSampleIndeterminate(0));
-		page.selectFile(2);
-		assertTrue(page.isRowSelected(0));
-	}
-
-	@Test
 	public void testSelectedSampleCount() {
 		LoginPage.loginAsAdmin(driver);
 		page.goToPage();
@@ -223,13 +201,6 @@ public class ProjectSamplesPageIT {
 		page.selectSampleByRow(1);
 		assertEquals(1, page.getTotalSelectedSamplesCount());
 		page.clickLastPageButton();
-		assertEquals(1, page.getTotalSelectedSamplesCount());
-
-		// What about when a file is selected.
-		page.openFilesView(0);
-		page.selectFile(1);
-		assertEquals(2, page.getTotalSelectedSamplesCount());
-		page.selectFile(1);
 		assertEquals(1, page.getTotalSelectedSamplesCount());
 	}
 
@@ -269,7 +240,7 @@ public class ProjectSamplesPageIT {
 		assertFalse(page.isBtnEnabled("confirmMergeBtn"));
 
 		// Try entering a name with spaces
-		page.enterNewMergeSampleName("HIBOB I AM WRONG");
+		page.enterNewMergeSampleName("HI BOB I AM WRONG");
 		assertTrue(page.isItemVisible("merge-format-error"));
 		assertFalse(page.isBtnEnabled("confirmMergeBtn"));
 

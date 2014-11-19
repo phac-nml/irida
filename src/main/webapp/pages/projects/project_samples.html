@@ -46,37 +46,19 @@
 					<th></th>
 					<th th:text="#{project.samples.table.name}">__NAME__</th>
 					<th th:text="#{project.samples.table.organism}">__NAME__</th>
+					<th th:text="#{project.samples.table.collectedBy}">Collected By</th>
 					<th th:text="#{project.samples.table.created}">__NAME__</th>
-					<th th:text="#{project.samples.table.files}">__NAME__</th>
 				</tr>
 				</thead>
 				<tbody>
-				<tr class="sample-row" ng-class="{'selected': sample.selected}" ng-repeat-start="sample in table.samples">
+				<tr class="sample-row" ng-class="{'selected': sample.selected}" ng-repeat="sample in table.samples | orderBy: table.filter.sortedBy | SamplesTableFilter">
 					<td>
 						<input ui-indeterminate="sample.indeterminate" class="sample-select" type="checkbox" ng-model="sample.selected"
 						       ng-change="table.updateSample(sample)"/></td>
-					<td class="sample-name" ng-bind="sample.name"></td>
-					<td ng-bind="sample.organism"></td>
-					<td ng-bind="sample.created | date:'medium'"></td>
-					<td ng-if="sample.files.length==0" ng-bind="sample.files.length"></td>
-					<td ng-if="sample.files.length>0">
-						<button class="view-files btn btn-default btn-xs" aria-controls="details-row"
-						        ng-init="table.open[sample.id] = table.open[sample.id] === undefined ? true : table.open[sample.id]"
-						        ng-click="table.open[sample.id] = !table.open[sample.id]">{{sample.files.length}}&nbsp;<span
-								class="caret"></span></button>
-					</td>
-				</tr>
-				<tr class="details-row" ng-repeat-end="" ng-if="sample.files.length>0">
-					<td colspan="5">
-						<div collapse="table.open[sample.id]">
-							<ul class="list-group">
-								<li class="file-item list-group-item" ng-class="{'selected': f.selected}" ng-repeat="f in sample.files">
-									<input class="file-select" type="checkbox" ng-model="f.selected" ng-change="table.updateFile(sample, f)"/>
-									<a class="btn btn-default btn-xs" href="#" th:attr="ng-href=@{'/sequenceFiles/{{f.id}}'}">{{f.name}}</a>
-								</li>
-							</ul>
-						</div>
-					</td>
+					<td class="sample-name"><a class="btn btn-default btn-xs" data:ng-href="@{'/samples/{{::sample.id}}'}" href="#">{{::sample.sampleName}}</a></td>
+					<td>{{::sample.organism}}</td>
+					<td>{{::sample.collectedBy}}</td>
+					<td>{{::sample.createdDate | date:'short'}}</td>
 				</tr>
 				</tbody>
 				<tfoot>

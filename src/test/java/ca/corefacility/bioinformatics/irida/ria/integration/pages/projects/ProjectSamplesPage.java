@@ -58,23 +58,19 @@ public class ProjectSamplesPage extends AbstractPage {
 		pageNum += 1; // 0 == First Button, 1 == Previous Button
 		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li"));
 		links.get(pageNum).findElement(By.tagName("a")).click();
-		waitForTime(700);
 	}
 
 	public void clickPreviousPageButton() {
 		driver.findElements(By.cssSelector(".pagination li>a")).get(1).click();
-		waitForTime(700);
 	}
 
 	public void clickFirstPageButton() {
 		driver.findElements(By.cssSelector(".pagination li>a")).get(0).click();
-		waitForTime(700);
 	}
 
 	public void clickNextPageButton() {
 		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li>a"));
 		links.get(links.size() - 2).click();
-		waitForTime(700);
 	}
 
 	public void clickLastPageButton() {
@@ -108,7 +104,6 @@ public class ProjectSamplesPage extends AbstractPage {
 	public void selectSampleByRow(int row) {
 		List<WebElement> inputs = driver.findElements(By.className("sample-select"));
 		inputs.get(row).click();
-		waitForTime(700);
 	}
 
 	public boolean isRowSelected(int row) {
@@ -124,18 +119,6 @@ public class ProjectSamplesPage extends AbstractPage {
 
 	public int getNumberOfFiles() {
 		return driver.findElements(By.className("file-item")).size();
-	}
-
-	public void selectFile(int fileNum) {
-		pageUtilities.waitForElementVisible(By.className("file-select"));
-		List<WebElement> files = driver.findElements(By.className("file-select"));
-		files.get(fileNum).click();
-		waitForTime(700);
-	}
-
-	public boolean isFileSelected(int fileNum) {
-		List<WebElement> files = driver.findElements(By.className("file-item"));
-		return files.get(fileNum).getAttribute("class").contains("selected");
 	}
 
 	public boolean isSampleIndeterminate(int row) {

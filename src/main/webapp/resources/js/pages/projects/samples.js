@@ -22,6 +22,25 @@
     };
   }
 
+
+  function SamplesTableFilter(filter) {
+    "use strict";
+    return function (samples) {
+      var begin = filter.page * filter.count;
+      return samples.slice(begin, begin + filter.count);
+    }
+  }
+
+  function FilterFactory() {
+    "use strict";
+    return {
+      page    : 0,
+      sortDir : 'desc',
+      sortedBy: 'createdDate',
+      count   : 10
+    }
+  }
+
   /*[- */
 // Responsible for all server calls for samples
 // @param $rootScope The root scope for the page.
@@ -31,50 +50,34 @@
     "use strict";
     var svc = this,
         id = $rootScope.projectId,
-        _filter = {
-          page    : 0,
-          sortDir : 'desc',
-          sortedBy: 'createdDate',
-          count   : 10
-        },
-        base = R.all('projects/' + id + '/ajax/samples');
-
-    svc.filter = _.clone(_filter);
+        base = R.all('projects/' + id + '/ajax/samples'),
+        selected = 0;
     svc.samples = [];
 
     svc.getSamples = function (f) {
       _.extend(svc.filter, f || {});
-      $rootScope.cgPromise = base.customGET("", svc.filter).then(function (data) {
+      $rootScope.cgPromise = base.customGET("").then(function (data) {
         angular.copy(data.samples, svc.samples);
-        $rootScope.$broadcast('PAGING_UPDATE', {total: data.totalSamples});
-        updateSelectedCount(data.count);
+        $rootScope.$broadcast('PAGING_UPDATE', {total: data.samples.length});
       });
     };
 
     svc.updateSample = function (s) {
-      var t = s.selected ? addSample(s) : removeSample(s);
-      t.then(function (data) {
-        doUIUpdates(data);
-      });
-    };
-
-    svc.updateFile = function (s, f) {
-      var t = f.selected ? addFile(s, f) : removeFile(s, f);
-      t.then(function (data) {
-        doUIUpdates(data);
-      });
+      s.selected ? selected++ : selected--;
+      updateSelectedCount()
     };
 
     svc.getSelectedSampleNames = function () {
-      return base.get("cart/names").then(function (data) {
-        return data.samples;
-      });
+      return _.filter(svc.samples, 'selected');
     };
 
     svc.merge = function (params) {
+      params.sampleIds = getSelectedSampleIds();
       return base.customPOST(params, 'merge').then(function (data) {
         if (data.result === 'success') {
-          svc.getSamples({});
+          svc.getSamples();
+          selected = 0;
+          updateSelectedCount();
           notifications.show({type: data.result, msg: data.message});
         }
       });
@@ -88,34 +91,14 @@
       return copyMoveSamples(projectId, true);
     };
 
-    function doUIUpdates(data) {
-      updateSample(data.sample);
-      updateSelectedCount(data.count);
-    }
-
-    function addSample(s) {
-      return base.customPOST({sampleId: s.id}, 'cart/add/sample');
-    }
-
-    function removeSample(s) {
-      return base.customPOST({sampleId: s.id}, 'cart/remove/sample');
-    }
-
-    function addFile(s, f) {
-      return base.customPOST({sampleId: s.id, fileId: f.id}, 'cart/add/file');
-    }
-
-    function removeFile(s, f) {
-      return base.customPOST({sampleId: s.id, fileId: f.id}, 'cart/remove/file');
-    }
-
-    function updateSample(s) {
-      var i = _.findKey(svc.samples, {id: s.id});
-      svc.samples[i] = s;
+    function getSelectedSampleIds() {
+      return _.map(_.filter(svc.samples, 'selected'), 'id');
     }
 
     function copyMoveSamples(projectId, move) {
+
       return base.customPOST({
+        sampleIds: getSelectedSampleIds(),
         newProjectId      : projectId,
         removeFromOriginal: move
       }, "copy").then(function (data) {
@@ -127,13 +110,20 @@
           notifications.show({type: 'info', msg: msg});
         });
         if (move) {
-          svc.getSamples({});
+          angular.copy(_.filter(svc.samples, function(s) {
+            if(_.has(s, 'selected')) {
+              return !s.selected;
+            }
+            return true;
+          }), svc.samples);
+          selected = 0;
+          updateSelectedCount();
         }
       });
     }
 
-    function updateSelectedCount(count) {
-      $rootScope.$broadcast('COUNT', {count: count});
+    function updateSelectedCount() {
+      $rootScope.$broadcast('COUNT', {count: selected});
     }
   }
 
@@ -142,7 +132,7 @@
 // @param $scope Scope the controller is responsible for
 // @param SamplesService Server handler for samples.
   /* -]*/
-  function PagingCtrl($scope, SamplesService) {
+  function PagingCtrl($scope, SamplesTableFilter) {
     "use strict";
     var vm = this;
     vm.count = 10;
@@ -150,7 +140,7 @@
     vm.page = 1;
 
     vm.update = function () {
-      SamplesService.getSamples({page: vm.page - 1, count: vm.count});
+      SamplesTableFilter.page = vm.page - 1;
     };
 
     $scope.$on('PAGING_UPDATE', function (e, args) {
@@ -162,10 +152,11 @@
 // Responsible for all samples within the table
 // @param SamplesService Server handler for samples.
   /* -]*/
-  function SamplesTableCtrl(SamplesService) {
+  function SamplesTableCtrl(SamplesService, FilterFactory) {
     "use strict";
     var vm = this;
     vm.open = [];
+    vm.filter = FilterFactory;
 
     vm.samples = SamplesService.samples;
 
@@ -174,9 +165,10 @@
     };
 
     vm.updateFile = function (s, f) {
-      SamplesService.updateFile(s, f);
+      //SamplesService.updateFile(s, f);
     };
 
+    // Initial call to get the samples
     SamplesService.getSamples({});
   }
 
@@ -298,11 +290,13 @@
 
   angular.module('Samples', ['ui.select', 'cgBusy'])
     .run(['$rootScope', setRootVariable])
+    .factory('FilterFactory', [FilterFactory])
     .service('Select2Service', ['$timeout', Select2Service])
     .service('SamplesService', ['$rootScope', 'Restangular', 'notifications', SamplesService])
+    .filter('SamplesTableFilter', ['FilterFactory', SamplesTableFilter])
     .controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
-    .controller('PagingCtrl', ['$scope', 'SamplesService', PagingCtrl])
-    .controller('SamplesTableCtrl', ['SamplesService', SamplesTableCtrl])
+    .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
+    .controller('SamplesTableCtrl', ['SamplesService', 'FilterFactory', SamplesTableCtrl])
     .controller('MergeCtrl', ['$scope', '$modalInstance', 'Select2Service', 'SamplesService', 'samples', MergeCtrl])
     .controller('CopyMoveCtrl', ['$modalInstance', '$rootScope', 'BASE_URL', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl]);
 })(angular, $, _);

@@ -17,11 +17,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -42,8 +40,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleFilterSpecification;
-import ca.corefacility.bioinformatics.irida.ria.components.ProjectSamplesCart;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesController;
@@ -52,7 +48,7 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 public class ProjectSamplesControllerTest {
@@ -71,7 +67,6 @@ public class ProjectSamplesControllerTest {
 	private SequenceFileService sequenceFileService;
 	private MessageSource messageSource;
 	private ProjectControllerUtils projectUtils;
-	private ProjectSamplesCart cart;
 
 	@Before
 	public void setUp() {
@@ -81,10 +76,9 @@ public class ProjectSamplesControllerTest {
 		sequenceFileService = mock(SequenceFileService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
 		messageSource = mock(MessageSource.class);
-		cart = mock(ProjectSamplesCart.class);
 
 		controller = new ProjectSamplesController(projectService, sampleService, userService, sequenceFileService,
-				projectUtils, cart, messageSource);
+				projectUtils, messageSource);
 		user.setId(1L);
 
 		mockSidebarInfo();
@@ -144,21 +138,20 @@ public class ProjectSamplesControllerTest {
 	@Test
 	public void testCopySampleToProjectRemove() {
 		Long projectId = 1l;
-		Set<Long> sampleIds = ImmutableSet.of(2l, 3l);
+		List<Long> sampleIds = ImmutableList.of(2l, 3l);
 		Long newProjectId = 4l;
 		boolean removeFromOriginal = true;
 		Project oldProject = new Project("oldProject");
 		Project newProject = new Project("newProject");
 		Sample s2 = new Sample("s2");
 		Sample s3 = new Sample("s3");
-		when(cart.getSelectedSampleIds(projectId)).thenReturn(sampleIds);
 
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
 		when(sampleService.read(2l)).thenReturn(s2);
 		when(sampleService.read(3l)).thenReturn(s3);
 
-		Map<String, Object> result = controller.copySampleToProject(projectId, newProjectId,
+		Map<String, Object> result = controller.copySampleToProject(projectId, sampleIds, newProjectId,
 				removeFromOriginal, Locale.US);
 
 		assertTrue(result.containsKey("result"));
@@ -177,27 +170,9 @@ public class ProjectSamplesControllerTest {
 	}
 
 	@Test
-	public void testAddSampleToCart() {
-		Sample sample = TestDataFactory.constructSample();
-		when(sampleService.read(anyLong())).thenReturn(sample);
-		Map<String, Object> response = controller.addSampleToCart(1L, sample.getId());
-		assertTrue(response.containsKey("count"));
-		assertTrue(response.containsKey("sample"));
-	}
-
-	@Test
-	public void testRemoveSampleFromCart() {
-		Sample sample = TestDataFactory.constructSample();
-		when(sampleService.read(anyLong())).thenReturn(sample);
-		Map<String, Object> response = controller.removeSampleFromCart(1L, sample.getId());
-		assertTrue(response.containsKey("count"));
-		assertTrue(response.containsKey("sample"));
-	}
-
-	@Test
 	public void testCopySampleToProject() {
 		Long projectId = 1l;
-		Set<Long> sampleIds = ImmutableSet.of(2l, 3l);
+		List<Long> sampleIds = ImmutableList.of(2l, 3l);
 		Long newProjectId = 4l;
 		boolean removeFromOriginal = false;
 		Project oldProject = new Project("oldProject");
@@ -205,13 +180,12 @@ public class ProjectSamplesControllerTest {
 		Sample s2 = new Sample("s2");
 		Sample s3 = new Sample("s3");
 
-		when(cart.getSelectedSampleIds(projectId)).thenReturn(sampleIds);
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
 		when(sampleService.read(2l)).thenReturn(s2);
 		when(sampleService.read(3l)).thenReturn(s3);
 
-		controller.copySampleToProject(projectId, newProjectId,
+		controller.copySampleToProject(projectId, sampleIds, newProjectId,
 				removeFromOriginal, Locale.US);
 
 		verify(projectService).read(projectId);
@@ -227,7 +201,7 @@ public class ProjectSamplesControllerTest {
 	@Test
 	public void testCopySampleToProjectSampleExists() {
 		Long projectId = 1l;
-		Set<Long> sampleIds = ImmutableSet.of(2l, 3l);
+		List<Long> sampleIds = ImmutableList.of(2l, 3l);
 		Long newProjectId = 4l;
 		boolean removeFromOriginal = false;
 		Project oldProject = new Project("oldProject");
@@ -235,7 +209,6 @@ public class ProjectSamplesControllerTest {
 		Sample s2 = new Sample("s2");
 		Sample s3 = new Sample("s3");
 
-		when(cart.getSelectedSampleIds(projectId)).thenReturn(sampleIds);
 		when(projectService.read(projectId)).thenReturn(oldProject);
 		when(projectService.read(newProjectId)).thenReturn(newProject);
 		when(sampleService.read(2l)).thenReturn(s2);
@@ -243,7 +216,7 @@ public class ProjectSamplesControllerTest {
 		when(projectService.addSampleToProject(newProject, s3)).thenThrow(
 				new EntityExistsException("that sample exists in the project"));
 
-		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, newProjectId,
+		Map<String, Object> copySampleToProject = controller.copySampleToProject(projectId, sampleIds, newProjectId,
 				removeFromOriginal, Locale.US);
 
 		assertTrue(copySampleToProject.containsKey("warnings"));
@@ -287,17 +260,13 @@ public class ProjectSamplesControllerTest {
 		sampleIds.add(1L);
 		sampleIds.add(11L);
 
-		Set<Long> ids = new HashSet<>();
-		ids.add(1L);
-		ids.add(11L);
-		when(cart.getSelectedSampleIds(project.getId())).thenReturn(ids);
 		when(sampleService.read(1L)).thenReturn(sample1);
 		when(sampleService.read(11L)).thenReturn(sample2);
 		when(projectService.read(TestDataFactory.PROJECT_ID)).thenReturn(project);
 		when(sampleService.update(anyLong(), anyMap())).thenReturn(sample1);
 
 		// Call the controller with a new name
-		Map<String, Object> result = controller.ajaxSamplesMerge(TestDataFactory.PROJECT_ID, 1L, newName, Locale.US);
+		Map<String, Object> result = controller.ajaxSamplesMerge(TestDataFactory.PROJECT_ID, 1L, sampleIds, newName, Locale.US);
 
 		// Ensure that the merge was requested
 		verify(sampleService, times(1)).mergeSamples(any(Project.class), any(Sample.class), any());
@@ -373,54 +342,23 @@ public class ProjectSamplesControllerTest {
 	@SuppressWarnings("unchecked")
 	public void testGetAjaxProjectSamplesMap() {
 		Project project = TestDataFactory.constructProject();
-		Sample testSample = TestDataFactory.constructSample();
-		Page<ProjectSampleJoin> page = getSamplesForProjectPage(project);
+		Sample sample = TestDataFactory.constructSample();
 
 		when(projectService.read(anyLong())).thenReturn(project);
-		Specification<ProjectSampleJoin> specification = ProjectSampleFilterSpecification
-				.searchProjectSamples(any(Project.class), any(String.class), any(String.class), any(Date.class),
-						any(Date.class));
-		when(sampleService.searchProjectSamples(specification, 10, 0, Direction.ASC, "dateCreated")).thenReturn(page);
-		when(sequenceFileService.getSequenceFilesForSample(any(Sample.class))).thenReturn(getSequenceFilesForSample());
-		when(sequenceFileService.getSequenceFilesForSample(any(Sample.class))).thenReturn(
-				TestDataFactory.generateSequenceFilesForSample(testSample));
+		when(sampleService.getSamplesForProject(any(Project.class))).thenReturn(ImmutableList.of(
+				new ProjectSampleJoin(project, sample)
+		));
 
-		Map<String, Object> response = controller.getProjectSamples(1L, 0, 10, "asc", "dateCreated", null, null, null, null);
+		Map<String, Object> response = controller.getProjectSamples(1L);
 
 		// Make sure it has the expected keys:
 		assertTrue("Has a list of samples", response.containsKey("samples"));
-		assertTrue("Has the total number of samples", response.containsKey("totalSamples"));
 
 		// Check out the samples
 		Object listObject = response.get("samples");
 		assertTrue("Samples list really is a list", listObject instanceof List);
 		List<HashMap<String, Object>> samplesList = (List<HashMap<String, Object>>) listObject;
 
-		assertEquals("Has the correct number of samples", 10, samplesList.size());
-		// Get a token sample data and make sure it is correct
-		HashMap<String, Object> sample = samplesList.get(0);
-		assertTrue("Has a key of 'id'", sample.containsKey("id"));
-		assertTrue("Has a key of 'name'", sample.containsKey("name"));
-		assertTrue("Has a key of 'numFiles'", sample.containsKey("files"));
-		assertTrue("Has a key of 'created'", sample.containsKey("created"));
-		assertEquals("Has the first sample name", "sample0", sample.get("name"));
-	}
-
-	@Test
-	public void testAddFileToCart() {
-		Sample sample = TestDataFactory.constructSample();
-		when(sampleService.read(anyLong())).thenReturn(sample);
-		Map<String, Object> response = controller.addFileToCart(1L, sample.getId(), 1L);
-		assertTrue(response.containsKey("count"));
-		assertTrue(response.containsKey("sample"));
-	}
-
-	@Test
-	public void testRemoveFileFromCart() {
-		Sample sample = TestDataFactory.constructSample();
-		when(sampleService.read(anyLong())).thenReturn(sample);
-		Map<String, Object> response = controller.removeFileFromCart(1L, sample.getId(), 1L);
-		assertTrue(response.containsKey("count"));
-		assertTrue(response.containsKey("sample"));
+		assertEquals("Has the correct number of samples", 1, samplesList.size());
 	}
 }

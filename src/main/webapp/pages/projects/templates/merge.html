@@ -11,7 +11,7 @@
 			<span th:text="#{project.samples.modal.merge.intro}">You are about to merge 4 samples.</span>
 		</h4>
 		<ul>
-			<li ng-repeat="s in mergeCtrl.samples">{{s.name}}</li>
+			<li ng-repeat="s in mergeCtrl.samples">{{s.sampleName}}</li>
 		</ul>
 		<div class="alert alert-warning">
 			<h4>
@@ -25,7 +25,7 @@
 
 		<div class="form-group">
 			<label for="samplesSelect" th:text="#{project.samples.modal.merge.select-label}"></label>
-			<select class="form-control" name="samplesSelect" id="samplesSelect" ng-model="mergeCtrl.selected" ng-options="s.name for s in mergeCtrl.samples"></select>
+			<select class="form-control" name="samplesSelect" id="samplesSelect" ng-model="mergeCtrl.selected" ng-options="s.sampleName for s in mergeCtrl.samples"></select>
 		</div>
 		<div class="form-group">
 			<label th:text="#{project.samples.modal.merge.name-label}"></label>
