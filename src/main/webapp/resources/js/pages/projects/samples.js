@@ -1,7 +1,3 @@
-/* jshint undef: true, unused: true */
-/* global angular, $, _ */
-
-
 (function (angular, $, _) {
   function setRootVariable($rootScope) {
     $rootScope.cgPromise = null;
@@ -94,7 +90,7 @@
     svc.selectPage = function () {
       var begin = FilterFactory.page * FilterFactory.count;
       _.each(_.sortBy(svc.samples, FilterFactory.sortedBy).slice(begin, begin + FilterFactory.count), function (s) {
-        if(!s.selected) {
+        if (!s.selected) {
           s.selected = true;
           selected++;
         }
@@ -102,14 +98,18 @@
       updateSelectedCount();
     };
 
-    svc.selectAll = function() {
-      _.each(svc.samples, function(s) {s.selected=true;});
+    svc.selectAll = function () {
+      _.each(svc.samples, function (s) {
+        s.selected = true;
+      });
       selected = svc.samples.length;
       updateSelectedCount();
     };
 
-    svc.selectNone = function() {
-      _.each(svc.samples, function(s) {s.selected=false});
+    svc.selectNone = function () {
+      _.each(svc.samples, function (s) {
+        s.selected = false
+      });
       selected = 0;
       updateSelectedCount();
     };
@@ -197,12 +197,12 @@
     vm.count = 0;
 
     vm.selection = {
-      isopen: false,
-      page: false,
-      selectPage: function selectPage () {
+      isopen    : false,
+      page      : false,
+      selectPage: function selectPage() {
         SamplesService.selectPage();
       },
-      selectAll: function selectAll() {
+      selectAll : function selectAll() {
         SamplesService.selectAll();
       },
       selectNone: function selectNone() {
@@ -210,16 +210,22 @@
       }
     };
 
+    vm.samplesOptions = {
+      open: false
+    };
+
     vm.merge = function () {
-      $modal.open({
-        templateUrl: BASE_URL + 'projects/templates/merge',
-        controller : 'MergeCtrl as mergeCtrl',
-        resolve    : {
-          samples: function () {
-            return SamplesService.getSelectedSampleNames();
+      if (vm.count > 1) {
+        $modal.open({
+          templateUrl: BASE_URL + 'projects/templates/merge',
+          controller : 'MergeCtrl as mergeCtrl',
+          resolve    : {
+            samples: function () {
+              return SamplesService.getSelectedSampleNames();
+            }
           }
-        }
-      });
+        });
+      }
     };
 
     vm.openModal = function (type) {
@@ -321,6 +327,16 @@
     });
   }
 
+  function SelectedCountCtrl($scope) {
+    "use strict";
+    var vm = this;
+    vm.count = 0;
+
+    $scope.$on('COUNT', function (e, a) {
+      vm.count = a.count;
+    });
+  }
+
   angular.module('Samples', ['ui.select', 'cgBusy'])
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
@@ -331,5 +347,6 @@
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
     .controller('SamplesTableCtrl', ['SamplesService', 'FilterFactory', SamplesTableCtrl])
     .controller('MergeCtrl', ['$scope', '$modalInstance', 'Select2Service', 'SamplesService', 'samples', MergeCtrl])
-    .controller('CopyMoveCtrl', ['$modalInstance', '$rootScope', 'BASE_URL', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl]);
+    .controller('CopyMoveCtrl', ['$modalInstance', '$rootScope', 'BASE_URL', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl])
+    .controller('SelectedCountCtrl', ['$scope', SelectedCountCtrl]);
 })(angular, $, _);
