@@ -46,7 +46,7 @@
 // @param $rootScope The root scope for the page.
 // @param R Restangular
   /* -]*/
-  function SamplesService($rootScope, R, notifications) {
+  function SamplesService($rootScope, R, notifications, FilterFactory) {
     "use strict";
     var svc = this,
         id = $rootScope.projectId,
@@ -89,6 +89,29 @@
 
     svc.move = function (projectId) {
       return copyMoveSamples(projectId, true);
+    };
+
+    svc.selectPage = function () {
+      var begin = FilterFactory.page * FilterFactory.count;
+      _.each(_.sortBy(svc.samples, FilterFactory.sortedBy).slice(begin, begin + FilterFactory.count), function (s) {
+        if(!s.selected) {
+          s.selected = true;
+          selected++;
+        }
+      });
+      updateSelectedCount();
+    };
+
+    svc.selectAll = function() {
+      _.each(svc.samples, function(s) {s.selected=true;});
+      selected = svc.samples.length;
+      updateSelectedCount();
+    };
+
+    svc.selectNone = function() {
+      _.each(svc.samples, function(s) {s.selected=false});
+      selected = 0;
+      updateSelectedCount();
     };
 
     function getSelectedSampleIds() {
@@ -174,7 +197,17 @@
     vm.count = 0;
 
     vm.selection = {
-      isopen: false
+      isopen: false,
+      page: false,
+      selectPage: function selectPage () {
+        SamplesService.selectPage();
+      },
+      selectAll: function selectAll() {
+        SamplesService.selectAll();
+      },
+      selectNone: function selectNone() {
+        SamplesService.selectNone();
+      }
     };
 
     vm.merge = function () {
@@ -292,7 +325,7 @@
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
     .service('Select2Service', ['$timeout', Select2Service])
-    .service('SamplesService', ['$rootScope', 'Restangular', 'notifications', SamplesService])
+    .service('SamplesService', ['$rootScope', 'Restangular', 'notifications', 'FilterFactory', SamplesService])
     .filter('SamplesTableFilter', ['FilterFactory', SamplesTableFilter])
     .controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])

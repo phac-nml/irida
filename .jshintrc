@@ -55,7 +55,7 @@
   // Tolerate use of `== null`.
   "evil": false,
   // Tolerate use of `eval`.
-  "expr": false,
+  "expr": true,
   // Tolerate `ExpressionStatement` as Programs.
   "forin": false,
   // Tolerate `for in` loops without `hasOwnPrototype`.
