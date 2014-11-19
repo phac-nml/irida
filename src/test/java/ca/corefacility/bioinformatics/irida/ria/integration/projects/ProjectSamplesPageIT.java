@@ -5,6 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.After;
 import org.junit.Before;
@@ -389,6 +391,47 @@ public class ProjectSamplesPageIT {
 		page.clickBtn("selectBtn");
 		page.clickBtn("selectAllBtn");
 		assertEquals(21, page.getTotalNumberOfSamplesSelected());
+	}
+
+	@Test
+	public void testExportLinker() {
+		LoginPage.loginAsAdmin(driver);
+		page.goToPage();
+
+		assertFalse(page.isBtnEnabled("exportOptionsBtn"));
+		page.selectSampleByRow(0);
+		assertTrue(page.isBtnEnabled("exportOptionsBtn"));
+		page.clickBtn("exportOptionsBtn");
+		page.clickBtn("exportLinkerBtn");
+
+		assertTrue(page.isItemVisible("linker-modal"));
+		assertEquals(1, getSampleFlagCount(page.getLinkerScriptText()));
+		page.clickBtn("linkerCloseBtn");
+
+		// Select all samples
+		page.clickBtn("selectBtn");
+		page.clickBtn("selectAllBtn");
+		page.clickBtn("exportOptionsBtn");
+		page.clickBtn("exportLinkerBtn");
+		assertEquals(0, getSampleFlagCount(page.getLinkerScriptText()));
+		page.clickBtn("linkerCloseBtn");
+
+		page.selectSampleByRow(0);
+		int selectedCount = page.getTotalSelectedSamplesCount();
+		page.clickBtn("exportOptionsBtn");
+		page.clickBtn("exportLinkerBtn");
+		String command = page.getLinkerScriptText();
+		assertEquals(selectedCount, getSampleFlagCount(command));
+	}
+
+	private int getSampleFlagCount(String command) {
+		Pattern pattern = Pattern.compile("-s");
+		Matcher matcher = pattern.matcher(command);
+		int count = 0;
+		while (matcher.find()) {
+			count++;
+		}
+		return count;
 	}
 
 	private void selectFirstThreeSamples() {

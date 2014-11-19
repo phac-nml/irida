@@ -67,6 +67,10 @@
       return _.filter(svc.samples, 'selected');
     };
 
+    svc.getProjectId = function () {
+      return id;
+    };
+
     svc.merge = function (params) {
       params.sampleIds = getSelectedSampleIds();
       return base.customPOST(params, 'merge').then(function (data) {
@@ -214,6 +218,24 @@
       open: false
     };
 
+    vm.export = {
+      open  : false,
+      linker: function linker() {
+        $modal.open({
+          templateUrl: BASE_URL + 'projects/samples/linker',
+          controller : 'LinkerCtrl as lCtrl',
+          resolve    : {
+            samples  : function () {
+              return SamplesService.getSelectedSampleNames();
+            },
+            projectId: function () {
+              return SamplesService.getProjectId();
+            }
+          }
+        });
+      }
+    };
+
     vm.merge = function () {
       if (vm.count > 1) {
         $modal.open({
@@ -337,6 +359,18 @@
     });
   }
 
+  function LinkerCtrl ($modalInstance, SamplesService) {
+    "use strict";
+    var vm = this;
+    vm.samples = SamplesService.getSelectedSampleNames();
+    vm.projectId = SamplesService.getProjectId();
+    vm.total = SamplesService.samples.length;
+
+    vm.close = function () {
+      $modalInstance.close();
+    };
+  }
+
   angular.module('Samples', ['ui.select', 'cgBusy'])
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
@@ -348,5 +382,7 @@
     .controller('SamplesTableCtrl', ['SamplesService', 'FilterFactory', SamplesTableCtrl])
     .controller('MergeCtrl', ['$scope', '$modalInstance', 'Select2Service', 'SamplesService', 'samples', MergeCtrl])
     .controller('CopyMoveCtrl', ['$modalInstance', '$rootScope', 'BASE_URL', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl])
-    .controller('SelectedCountCtrl', ['$scope', SelectedCountCtrl]);
+    .controller('SelectedCountCtrl', ['$scope', SelectedCountCtrl])
+    .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
+  ;
 })(angular, $, _);

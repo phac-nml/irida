@@ -19,6 +19,7 @@
 	<div class="row" ng-controller="SubNavCtrl as subnav">
 		<div class="col-md-9 mrgn-bttm-md">
 			<div class="btn-toolbar">
+				<!-- Sample Selection (Page, All, None) -->
 				<div class="btn-group" dropdown="" is-open="subnav.selection.isopen">
 					<button id="selectBtn" type="button" class="btn btn-default btn-sm dropdown-toggle">
 						<span th:text="#{lists.select-title}">Select</span>&nbsp;<span class="caret"></span>
@@ -34,6 +35,7 @@
 					</ul>
 				</div>
 
+				<!-- Samples Options (Copy, Merge, Move)-->
 				<div class="btn-group" dropdown="" is-open="subnav.samplesOptions.open">
 					<button id="samplesOptionsBtn" class="btn btn-default btn-sm dropdown-toggle" ng-disabled="subnav.count&lt;1">
 						<span>Samples</span>&nbsp;<span class="caret"></span>
@@ -54,7 +56,18 @@
 						</li>
 					</ul>
 				</div>
+
+
+				<div class="btn-group" dropdown="" is-open="subnav.export.open">
+					<button id="exportOptionsBtn" class="btn btn-default btn-sm dropdown-toggle" ng-disabled="subnav.count&lt;1">
+						<span th:text="#{project.samples.export.label}">Export</span>&nbsp;<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li><a id="exportLinkerBtn" href="#" ng-click="subnav.export.linker()"><span class="fa fa-fw fa-terminal"></span>&nbsp;<span th:text="#{project.samples.export.linker}">NGS Arvhive Linker</span></a></li>
+					</ul>
+				</div>
 			</div>
+
 		</div>
 	</div>
 	<div class="row" data:cg-busy="'{promise: cgPromise,templateUrl:\'' + @{/resources/bower_components/angular-busy/angular-busy.html} + '\', delay: 250, backdrop:true, message: \'' + #{cg-busy.samples.table} +  '\'}'">
