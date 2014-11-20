@@ -8,7 +8,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,6 +30,7 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowOutput;
+import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowTool;
 
 /**
  * Tests out saving/loading workflow files.
@@ -55,9 +58,10 @@ public class IridaWorkflowTest {
 	 * @throws FileNotFoundException
 	 * @throws JAXBException
 	 * @throws UnsupportedEncodingException
+	 * @throws MalformedURLException 
 	 */
 	@Test
-	public void testLoad() throws FileNotFoundException, JAXBException, UnsupportedEncodingException {
+	public void testLoad() throws FileNotFoundException, JAXBException, UnsupportedEncodingException, MalformedURLException {
 		IridaWorkflow iridaWorkflow = new IridaWorkflow();
 		iridaWorkflow.setName("TestWorkflow");
 		iridaWorkflow.setVersion("1.0");
@@ -69,6 +73,17 @@ public class IridaWorkflowTest {
 		outputs.add(new WorkflowOutput("output1", "output1.txt"));
 		outputs.add(new WorkflowOutput("output2", "output2.txt"));
 		iridaWorkflow.setOutputs(outputs);
+		
+		List<WorkflowTool> tools = new LinkedList<>();
+		WorkflowTool workflowTool = new WorkflowTool();
+		workflowTool.setUrl(new URL("http://toolshed.g2.bx.psu.edu/"));
+		workflowTool.setName("sam_to_bam");
+		workflowTool.setOwner("devteam");
+		workflowTool.setRevision("8176b2575aa1");
+		workflowTool.setVersion("1.1.4");
+		workflowTool.setId("toolshed.g2.bx.psu.edu/repos/devteam/sam_to_bam/sam_to_bam/1.1.4");
+		tools.add(workflowTool);
+		iridaWorkflow.setTools(tools);
 		
 		Source source = new StreamSource(new FileInputStream(workflowXmlPath.toFile()));
 		IridaWorkflow iridaWorkflowFromFile = (IridaWorkflow)jaxb2marshaller.unmarshal(source);
@@ -94,6 +109,17 @@ public class IridaWorkflowTest {
 		outputs.add(new WorkflowOutput("output1", "output1.txt"));
 		outputs.add(new WorkflowOutput("output2", "output2.txt"));
 		workflow.setOutputs(outputs);
+		
+		List<WorkflowTool> tools = new LinkedList<>();
+		WorkflowTool workflowTool = new WorkflowTool();
+		workflowTool.setUrl(new URL("http://toolshed.g2.bx.psu.edu/"));
+		workflowTool.setName("sam_to_bam");
+		workflowTool.setOwner("devteam");
+		workflowTool.setRevision("8176b2575aa1");
+		workflowTool.setVersion("1.1.4");
+		workflowTool.setId("toolshed.g2.bx.psu.edu/repos/devteam/sam_to_bam/sam_to_bam/1.1.4");
+		tools.add(workflowTool);
+		workflow.setTools(tools);
 
 		Path outputFilePath = Files.createTempFile("irida_workflow", "xml");
 		outputFilePath.toFile().deleteOnExit();

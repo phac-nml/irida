@@ -29,6 +29,10 @@ public class IridaWorkflow {
 	@XmlElement(name = "output")
 	private List<WorkflowOutput> outputs;
 
+	@XmlElementWrapper(name = "tools")
+	@XmlElement(name = "tool")
+	private List<WorkflowTool> tools;
+
 	public String getName() {
 		return name;
 	}
@@ -77,9 +81,17 @@ public class IridaWorkflow {
 		this.outputs = outputs;
 	}
 
+	public List<WorkflowTool> getTools() {
+		return tools;
+	}
+
+	public void setTools(List<WorkflowTool> tools) {
+		this.tools = tools;
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, version, author, email, inputs, outputs);
+		return Objects.hash(name, version, author, email, inputs, outputs, tools);
 	}
 
 	@Override
@@ -91,7 +103,8 @@ public class IridaWorkflow {
 
 			return Objects.equals(name, other.name) && Objects.equals(version, other.version)
 					&& Objects.equals(author, other.author) && Objects.equals(email, other.email)
-					&& Objects.equals(inputs, other.inputs) && Objects.equals(outputs, other.outputs);
+					&& Objects.equals(inputs, other.inputs) && Objects.equals(outputs, other.outputs)
+					&& Objects.equals(tools, other.tools);
 		}
 
 		return false;
