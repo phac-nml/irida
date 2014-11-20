@@ -10,9 +10,11 @@ import java.util.Objects;
  */
 public class IridaWorkflow {
 	private IridaWorkflowDescription workflowDescription;
+	private IridaWorkflowStructure workflowStructure;
 
-	public IridaWorkflow(IridaWorkflowDescription workflowDescription) {
+	public IridaWorkflow(IridaWorkflowDescription workflowDescription, IridaWorkflowStructure workflowStructure) {
 		this.workflowDescription = workflowDescription;
+		this.workflowStructure = workflowStructure;
 	}
 
 	public IridaWorkflowDescription getWorkflowDescription() {
@@ -23,9 +25,17 @@ public class IridaWorkflow {
 		this.workflowDescription = workflowDescription;
 	}
 
+	public IridaWorkflowStructure getWorkflowStructure() {
+		return workflowStructure;
+	}
+
+	public void setWorkflowStructure(IridaWorkflowStructure workflowStructure) {
+		this.workflowStructure = workflowStructure;
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(workflowDescription);
+		return Objects.hash(workflowDescription, workflowStructure);
 	}
 
 	@Override
@@ -35,7 +45,8 @@ public class IridaWorkflow {
 		else if (obj instanceof IridaWorkflow) {
 			IridaWorkflow other = (IridaWorkflow) obj;
 
-			return Objects.equals(workflowDescription, other.workflowDescription);
+			return Objects.equals(workflowDescription, other.workflowDescription)
+					&& Objects.equals(workflowStructure, other.workflowStructure);
 		}
 
 		return false;

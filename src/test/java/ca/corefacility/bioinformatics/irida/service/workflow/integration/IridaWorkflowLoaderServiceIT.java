@@ -33,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowOutput;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowTool;
@@ -58,14 +59,21 @@ public class IridaWorkflowLoaderServiceIT {
 	private IridaWorkflowLoaderService workflowLoaderService;
 
 	private Path workflowXmlPath;
+	private Path workflowStructurePath;
 
 	@Before
 	public void setup() throws JAXBException, URISyntaxException, FileNotFoundException {
 		workflowXmlPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("irida_workflow.xml").toURI());
+		workflowStructurePath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("irida_workflow_structure.ga")
+				.toURI());
 	}
 
 	private IridaWorkflow buildTestWorkflow() throws MalformedURLException {
-		return new IridaWorkflow(buildTestDescription());
+		return new IridaWorkflow(buildTestDescription(), buildTestStructure());
+	}
+
+	private IridaWorkflowStructure buildTestStructure() {
+		return new IridaWorkflowStructure(workflowStructurePath);
 	}
 
 	private IridaWorkflowDescription buildTestDescription() throws MalformedURLException {
@@ -120,8 +128,21 @@ public class IridaWorkflowLoaderServiceIT {
 	@Test
 	public void testLoadWorkflow() throws JAXBException, XmlMappingException, IOException {
 		IridaWorkflow iridaWorkflow = buildTestWorkflow();
-		IridaWorkflow iridaWorkflowFromFile = workflowLoaderService.loadIridaWorkflow(workflowXmlPath);
+		IridaWorkflow iridaWorkflowFromFile = workflowLoaderService.loadIridaWorkflow(workflowXmlPath,
+				workflowStructurePath);
 
 		assertEquals(iridaWorkflowFromFile, iridaWorkflow);
+	}
+
+	/**
+	 * Tests loading up the workflow structure from a file.
+	 */
+	@Test
+	public void testLoadWorkflowStructure() {
+		IridaWorkflowStructure iridaWorkflowStructure = buildTestStructure();
+		IridaWorkflowStructure iridaWorkflowStructureFromFile = workflowLoaderService
+				.loadWorkflowStructure(workflowStructurePath);
+
+		assertEquals(iridaWorkflowStructure, iridaWorkflowStructureFromFile);
 	}
 }

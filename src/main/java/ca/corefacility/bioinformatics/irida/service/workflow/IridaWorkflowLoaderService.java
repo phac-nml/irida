@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowStructure;
 
 /**
  * Used to load up IRIDA workflows.
@@ -45,17 +46,21 @@ public class IridaWorkflowLoaderService {
 	 * 
 	 * @param descriptionFile
 	 *            The description file for the workflow.
+	 * @param structureFile
+	 *            The file describing the structure of a workflow.
 	 * @return An IridaWorkflow object for this workflow.
 	 * @throws IOException
 	 *             If there was an issue reading the passed file.
 	 * @throws XmlMappingException
 	 *             If there was an issue parsing the XML document.
 	 */
-	public IridaWorkflow loadIridaWorkflow(Path descriptionFile) throws XmlMappingException, IOException {
+	public IridaWorkflow loadIridaWorkflow(Path descriptionFile, Path structureFile) throws XmlMappingException,
+			IOException {
 		checkNotNull("descriptionFile is null", descriptionFile);
 
 		IridaWorkflowDescription worklowDescription = loadWorkflowDescription(descriptionFile);
-		return new IridaWorkflow(worklowDescription);
+		IridaWorkflowStructure workflowStructure = loadWorkflowStructure(structureFile);
+		return new IridaWorkflow(worklowDescription, workflowStructure);
 	}
 
 	/**
@@ -74,5 +79,17 @@ public class IridaWorkflowLoaderService {
 		checkNotNull("descriptionFile is null", descriptionFile);
 		Source source = new StreamSource(new FileInputStream(descriptionFile.toFile()));
 		return (IridaWorkflowDescription) workflowDescriptionUnmarshaller.unmarshal(source);
+	}
+
+	/**
+	 * Loads up the structure of the workflow given the file.
+	 * 
+	 * @param structureFile
+	 *            The file to load up.
+	 * @return An {@link IridaWorkflowStructure} defining the structure of the
+	 *         workflow.
+	 */
+	public IridaWorkflowStructure loadWorkflowStructure(Path structureFile) {
+		return new IridaWorkflowStructure(structureFile);
 	}
 }
