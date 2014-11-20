@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.event;
 
+import java.util.Objects;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -31,6 +33,16 @@ public class SampleAddedProjectEvent extends ProjectEvent {
 
 	public Sample getSample() {
 		return sample;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof SampleAddedProjectEvent) {
+			SampleAddedProjectEvent p = (SampleAddedProjectEvent) other;
+			return super.equals(other) && Objects.equals(sample, p.sample);
+		}
+
+		return false;
 	}
 
 }

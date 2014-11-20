@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.event;
 
+import java.util.Objects;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -44,5 +46,15 @@ public class UserRoleSetProjectEvent extends ProjectEvent {
 
 	public ProjectRole getRole() {
 		return role;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof UserRoleSetProjectEvent) {
+			UserRoleSetProjectEvent p = (UserRoleSetProjectEvent) other;
+			return super.equals(other) && Objects.equals(user, p.user) && Objects.equals(role, p.role);
+		}
+
+		return false;
 	}
 }

@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.event;
 
+import java.util.Objects;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -22,6 +24,9 @@ public class UserRemovedProjectEvent extends ProjectEvent {
 	@ManyToOne(cascade = CascadeType.DETACH)
 	private User user;
 
+	public UserRemovedProjectEvent() {
+	}
+
 	public UserRemovedProjectEvent(Project project, User user) {
 		super(project);
 		this.user = user;
@@ -34,6 +39,16 @@ public class UserRemovedProjectEvent extends ProjectEvent {
 
 	public User getUser() {
 		return user;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof UserRemovedProjectEvent) {
+			UserRemovedProjectEvent p = (UserRemovedProjectEvent) other;
+			return super.equals(other) && Objects.equals(user, p.user);
+		}
+
+		return false;
 	}
 
 }

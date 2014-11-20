@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ca.corefacility.bioinformatics.irida.events.annotations.AddsSampleToProject;
 import ca.corefacility.bioinformatics.irida.events.annotations.RemovesUserFromProject;
 import ca.corefacility.bioinformatics.irida.events.annotations.SetsProjectUserRole;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -181,6 +182,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
+	@AddsSampleToProject
 	public ProjectSampleJoin addSampleToProject(Project project, Sample sample) {
 		logger.trace("Adding sample to project.");
 		// the sample hasn't been persisted before, persist it before calling

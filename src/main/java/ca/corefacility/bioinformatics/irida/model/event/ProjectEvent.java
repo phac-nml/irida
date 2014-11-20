@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.event;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -73,5 +74,15 @@ public abstract class ProjectEvent implements IridaThing {
 
 	public Project getProject() {
 		return project;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof ProjectEvent) {
+			ProjectEvent p = (ProjectEvent) other;
+			return Objects.equals(project, p.project) && Objects.equals(createdDate, p.createdDate);
+		}
+
+		return false;
 	}
 }
