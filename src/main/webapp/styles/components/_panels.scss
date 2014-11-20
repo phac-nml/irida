@@ -23,3 +23,36 @@
     border-radius: 0 !important;
   }
 }
+
+.sidebar {
+  border: 1px solid $color-grey-lighter;
+  border-radius: 4px;
+}
+
+.sidebar__heading {
+  padding: 10px;
+  h2 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.sidebar__body {
+  position: relative;
+  div {
+    border-top: 1px solid $color-grey-lighter;
+    padding: 4px;
+  }
+}
+
+.sidebar__icon {
+  color: $color-grey-light;
+  width: 15%;
+}
+
+.sidebar__value {
+  position: absolute;
+  right: 8px;
+}

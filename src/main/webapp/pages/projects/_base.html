@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<nav class="navbar navbar-default navbar-static-top subnav mrgn-bttm-md" role="navigation" layout:fragment="subnav" ng-init="projectSubnav=true" th:with="baseLink=${'/projects/' + project.getId()}">
+<nav class="navbar navbar-default navbar-static-top subnav" style="margin-bottom: 0" role="navigation" layout:fragment="subnav" ng-init="projectSubnav=true" th:with="baseLink=${'/projects/' + project.getId()}">
 	<div class="container">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" ng-click="projectSubnav=!projectSubnav"
@@ -32,11 +32,11 @@
 						class="badge badge-default" th:text="${related_project_count}"></span></a>
 				</li>
 			</ul>
-			<p th:if="${activeNav} == 'samples'" class="navbar-text navbar-right" ng-controller="SelectedCountCtrl as countCtrl"><span th:text="#{project.samples.table.select-count}"></span>&nbsp;<span id="selected-count" class="badge badge-default" ng-bind="countCtrl.count">0</span></p>
+			<p th:if="${activeNav} == 'samples'" class="navbar-text navbar-right subnav__highlight" ng-controller="SelectedCountCtrl as countCtrl"><span th:text="#{project.samples.table.select-count}"></span>&nbsp;<span id="selected-count" class="badge" ng-bind="countCtrl.count">0</span></p>
 		</div>
 	</div>
 </nav>
-<div layout:fragment="page">
+<div style="padding-top: 15px" layout:fragment="page">
 
 	<main class="col-md-9 col-md-push-3" layout:fragment="main">
 		<!--/*/

@@ -1,37 +1,8 @@
-.navbar-sm {
-  border-radius: 0;
-  border: none;
-  border-bottom: 1px solid $color-grey-lighter;
-  height: 20px;
-  &.navbar {
-    min-height: 2.4em;
-  }
-  li.active {
-    &::after {
-      content: '';
-      display: block;
-      border: 6px solid transparent;
-      border-bottom-color: #fff;
-      width: 0;
-      height: 0;
-      margin-left: -6px;
-      position: relative;
-      left: 50%;
-      bottom: 11px;
-    }
-  }
-  .navbar-nav.nav a {
-    text-decoration: none;
-    line-height: 2.4em;
-    padding: 0 20px;
-    .badge {
-      line-height: 1.5em;
-      font-size: 10px;
-      background-color: $color-grey-lighter;
-      color: darken($color-grey-lighter, 30);
-      position: relative;
-      top: -2px;
-      right: -3px;
-    }
-  }
+.subnav__highlight {
+  color: white !important;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 5px;
+  background-color: rgba(0, 0, 0, .5);
+  border-top: 1px solid rgba(0, 0, 0, .4);
 }

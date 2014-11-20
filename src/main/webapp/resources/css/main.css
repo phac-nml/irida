@@ -25,32 +25,6 @@
   transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
 }
 
-/* line 1, ../../styles/components/_tables.scss */
-.selected {
-  background-color: #daf1f8;
-}
-
-/* line 5, ../../styles/components/_tables.scss */
-.details-row {
-  padding: 0;
-  margin: 0;
-  background-color: #333333;
-  border: none !important;
-}
-
-/* line 12, ../../styles/components/_tables.scss */
-.details-row td {
-  padding: 0 !important;
-  margin: 0 !important;
-  border: none !important;
-}
-
-/* line 18, ../../styles/components/_tables.scss */
-.details-row .list-group {
-  margin: 0;
-  padding: 6px;
-}
-
 /* line 2, ../../styles/components/_forms.scss */
 .input-full {
   width: 100%;
@@ -61,6 +35,50 @@
   padding: 3px 6px;
   font-weight: bold;
   margin-bottom: 0;
+}
+
+/* line 15, ../../styles/components/_forms.scss */
+.large-checkbox label {
+  position: relative;
+  font-size: 14px;
+  cursor: pointer;
+  color: #555555;
+}
+/* line 20, ../../styles/components/_forms.scss */
+.large-checkbox label:before, .large-checkbox label:after {
+  font-family: FontAwesome;
+  font-weight: 100;
+  font-size: 22px;
+  /*absolutely positioned*/
+  position: absolute;
+  top: -14px;
+  left: 0;
+}
+/* line 30, ../../styles/components/_forms.scss */
+.large-checkbox label:before {
+  content: '\f0c8';
+  /*unchecked*/
+}
+/* line 33, ../../styles/components/_forms.scss */
+.large-checkbox label:after {
+  content: '\f14a';
+  /*checked*/
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0.5;
+}
+/* line 39, ../../styles/components/_forms.scss */
+.large-checkbox input[type="checkbox"] {
+  display: none;
+}
+/* line 42, ../../styles/components/_forms.scss */
+.large-checkbox input[type="checkbox"]:checked + label:after {
+  max-width: 25px;
+  opacity: 1;
+}
+/* line 46, ../../styles/components/_forms.scss */
+.large-checkbox input[type="checkbox"]:checked + label:before {
+  display: none;
 }
 
 /* line 1, ../../styles/components/_magnific-popup.scss */
@@ -137,31 +155,6 @@
   color: #ffffff;
 }
 
-/* line 1, ../../styles/components/_modals.scss */
-.modal-content {
-  background-color: #eeeeee;
-  border: 1px solid #555555;
-}
-
-/* line 6, ../../styles/components/_modals.scss */
-.modal-header {
-  background-color: #2572b4;
-}
-/* line 8, ../../styles/components/_modals.scss */
-.modal-header h2 {
-  color: #ffffff;
-}
-/* line 11, ../../styles/components/_modals.scss */
-.modal-header small {
-  color: #eeeeee;
-}
-
-/* line 16, ../../styles/components/_modals.scss */
-.modal-footer {
-  margin-top: 0;
-  padding: 20px;
-}
-
 /* line 1, ../../styles/components/_noty.scss */
 .noty_message h2 {
   margin-top: 5px;
@@ -196,45 +189,54 @@
   border-radius: 0 !important;
 }
 
+/* line 27, ../../styles/components/_panels.scss */
+.sidebar {
+  border: 1px solid #eeeeee;
+  border-radius: 4px;
+}
+
+/* line 32, ../../styles/components/_panels.scss */
+.sidebar__heading {
+  padding: 10px;
+}
+/* line 34, ../../styles/components/_panels.scss */
+.sidebar__heading h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0;
+  padding: 0;
+}
+
+/* line 42, ../../styles/components/_panels.scss */
+.sidebar__body {
+  position: relative;
+}
+/* line 44, ../../styles/components/_panels.scss */
+.sidebar__body div {
+  border-top: 1px solid #eeeeee;
+  padding: 4px;
+}
+
+/* line 50, ../../styles/components/_panels.scss */
+.sidebar__icon {
+  color: #797979;
+  width: 15%;
+}
+
+/* line 55, ../../styles/components/_panels.scss */
+.sidebar__value {
+  position: absolute;
+  right: 8px;
+}
+
 /* line 1, ../../styles/components/_subnav.scss */
-.navbar-sm {
-  border-radius: 0;
-  border: none;
-  border-bottom: 1px solid #eeeeee;
-  height: 20px;
-}
-/* line 6, ../../styles/components/_subnav.scss */
-.navbar-sm.navbar {
-  min-height: 2.4em;
-}
-/* line 10, ../../styles/components/_subnav.scss */
-.navbar-sm li.active::after {
-  content: '';
-  display: block;
-  border: 6px solid transparent;
-  border-bottom-color: #fff;
-  width: 0;
-  height: 0;
-  margin-left: -6px;
-  position: relative;
-  left: 50%;
-  bottom: 11px;
-}
-/* line 23, ../../styles/components/_subnav.scss */
-.navbar-sm .navbar-nav.nav a {
-  text-decoration: none;
-  line-height: 2.4em;
-  padding: 0 20px;
-}
-/* line 27, ../../styles/components/_subnav.scss */
-.navbar-sm .navbar-nav.nav a .badge {
-  line-height: 1.5em;
-  font-size: 10px;
-  background-color: #eeeeee;
-  color: #a2a2a2;
-  position: relative;
-  top: -2px;
-  right: -3px;
+.subnav__highlight {
+  color: white !important;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 5px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-top: 1px solid rgba(0, 0, 0, 0.4);
 }
 
 /* line 2, ../../styles/_layout.scss */
@@ -272,35 +274,35 @@ iframe.remote-api-frame {
   height: 400px;
 }
 
-/* line 20, ../../styles/main.scss */
+/* line 19, ../../styles/main.scss */
 .clickable {
   display: block;
   cursor: pointer;
 }
-/* line 23, ../../styles/main.scss */
+/* line 22, ../../styles/main.scss */
 .clickable span {
   display: inline-block;
 }
 
-/* line 28, ../../styles/main.scss */
+/* line 27, ../../styles/main.scss */
 .nav-tabs li {
   cursor: pointer;
 }
 
-/* line 33, ../../styles/main.scss */
+/* line 32, ../../styles/main.scss */
 #table-filter {
   padding: 0;
 }
-/* line 35, ../../styles/main.scss */
+/* line 34, ../../styles/main.scss */
 #table-filter > div {
   padding: 20px;
 }
-/* line 38, ../../styles/main.scss */
+/* line 37, ../../styles/main.scss */
 #table-filter .filter-btns > button {
   margin-top: 33px;
 }
 
-/* line 43, ../../styles/main.scss */
+/* line 42, ../../styles/main.scss */
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer;
 }
