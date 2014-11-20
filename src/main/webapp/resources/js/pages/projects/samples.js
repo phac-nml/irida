@@ -33,7 +33,7 @@
     "use strict";
     return {
       page    : 0,
-      sortDir : 'desc',
+      sortDir : false,
       sortedBy: 'createdDate',
       count   : 10
     }
@@ -165,12 +165,44 @@
     }
   }
 
+  function sortBy() {
+    'use strict';
+    return {
+      template  : '<a class="clickable" ng-click="sort(sortValue)">' +
+      '<span ng-transclude=""></span>' +
+      '<span class="pull-right" ng-show="sortedby == sortvalue">' +
+      '<i class="fa fa-fw" ng-class="{true: \'fa-sort-asc\', false: \'fa-sort-desc\'}[sortdir]"></i>' +
+      '</span><span class="pull-right" ng-show="sortedby != sortvalue"><i class="fa fa-sort fa-fw"></i></span></a>',
+      restrict  : 'EA',
+      transclude: true,
+      replace   : false,
+      scope     : {
+        sortdir  : '=',
+        sortedby : '=',
+        sortvalue: '@',
+        onsort   : '='
+      },
+      link      : function (scope) {
+        scope.sort = function () {
+          if (scope.sortedby === scope.sortvalue) {
+            scope.sortdir = !scope.sortdir;
+          }
+          else {
+            scope.sortedby = scope.sortvalue;
+            scope.sortdir = true;
+          }
+          scope.onsort(scope.sortedby, scope.sortdir);
+        };
+      }
+    };
+  }
+
   /*[- */
 // Handles everything to do with paging for the Samples Table
 // @param $scope Scope the controller is responsible for
 // @param SamplesService Server handler for samples.
   /* -]*/
-  function PagingCtrl($scope, SamplesTableFilter) {
+  function PagingCtrl($scope, filter) {
     "use strict";
     var vm = this;
     vm.count = 10;
@@ -178,11 +210,16 @@
     vm.page = 1;
 
     vm.update = function () {
-      SamplesTableFilter.page = vm.page - 1;
+      filter.page = vm.page - 1;
     };
 
     $scope.$on('PAGING_UPDATE', function (e, args) {
       vm.total = args.total;
+    });
+
+    $scope.$on('PAGE_CHANGE', function(e, args) {
+      vm.page = args.page;
+      vm.update();
     });
   }
 
@@ -382,7 +419,7 @@
     };
   }
 
-  function FilterCtrl (filter) {
+  function FilterCtrl ($rootScope, filter) {
     "use strict";
     var vm = this;
     vm.filter = filter;
@@ -390,16 +427,17 @@
     vm.onSort = function(sortedBy, sortDir) {
       vm.filter.sortedBy = sortedBy;
       vm.filter.sortDir = sortDir;
-      vm.filter.page = 0;
+      $rootScope.$broadcast('PAGE_CHANGE', {page: 1});
     }
   }
 
-  angular.module('Samples', ['irida.datatables', 'ui.select', 'cgBusy'])
+  angular.module('Samples', ['cgBusy'])
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
     .service('Select2Service', ['$timeout', Select2Service])
     .service('SamplesService', ['$rootScope', 'Restangular', 'notifications', SamplesService])
     .filter('SamplesTableFilter', ['FilterFactory', 'SamplesService', SamplesTableFilter])
+    .directive('sortBy', [sortBy])
     .controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
     .controller('SamplesTableCtrl', ['SamplesService', 'FilterFactory', SamplesTableCtrl])
@@ -407,6 +445,6 @@
     .controller('CopyMoveCtrl', ['$modalInstance', '$rootScope', 'BASE_URL', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl])
     .controller('SelectedCountCtrl', ['$scope', SelectedCountCtrl])
     .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
-    .controller('FilterCtrl', ['FilterFactory', FilterCtrl])
+    .controller('FilterCtrl', ['$rootScope', 'FilterFactory', FilterCtrl])
   ;
 })(angular, $, _);
