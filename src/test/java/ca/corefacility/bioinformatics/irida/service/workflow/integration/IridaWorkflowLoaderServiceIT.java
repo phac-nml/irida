@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -30,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowOutput;
@@ -62,8 +64,11 @@ public class IridaWorkflowLoaderServiceIT {
 		workflowXmlPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("irida_workflow.xml").toURI());
 	}
 
-	@Test
-	public void testLoad() throws JAXBException, XmlMappingException, IOException {
+	private IridaWorkflow buildTestWorkflow() throws MalformedURLException {
+		return new IridaWorkflow(buildTestDescription());
+	}
+
+	private IridaWorkflowDescription buildTestDescription() throws MalformedURLException {
 		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription();
 		iridaWorkflow.setName("TestWorkflow");
 		iridaWorkflow.setVersion("1.0");
@@ -87,7 +92,35 @@ public class IridaWorkflowLoaderServiceIT {
 		tools.add(workflowTool);
 		iridaWorkflow.setTools(tools);
 
+		return iridaWorkflow;
+	}
+
+	/**
+	 * Tests loading up the workflow description file.
+	 * 
+	 * @throws JAXBException
+	 * @throws XmlMappingException
+	 * @throws IOException
+	 */
+	@Test
+	public void testLoadWorkflowDescription() throws JAXBException, XmlMappingException, IOException {
+		IridaWorkflowDescription iridaWorkflowDescription = buildTestDescription();
 		IridaWorkflowDescription iridaWorkflowFromFile = workflowLoaderService.loadWorkflowDescription(workflowXmlPath);
+
+		assertEquals(iridaWorkflowFromFile, iridaWorkflowDescription);
+	}
+
+	/**
+	 * Tests loading up a workflow from a file.
+	 * 
+	 * @throws JAXBException
+	 * @throws XmlMappingException
+	 * @throws IOException
+	 */
+	@Test
+	public void testLoadWorkflow() throws JAXBException, XmlMappingException, IOException {
+		IridaWorkflow iridaWorkflow = buildTestWorkflow();
+		IridaWorkflow iridaWorkflowFromFile = workflowLoaderService.loadIridaWorkflow(workflowXmlPath);
 
 		assertEquals(iridaWorkflowFromFile, iridaWorkflow);
 	}

@@ -14,10 +14,12 @@ import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.XmlMappingException;
 import org.springframework.stereotype.Service;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowDescription;
 
 /**
  * Used to load up IRIDA workflows.
+ * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
@@ -25,26 +27,52 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowDescript
 public class IridaWorkflowLoaderService {
 
 	private Unmarshaller workflowDescriptionUnmarshaller;
-	
+
 	/**
-	 * Builds a new {@link IridaWorkflowLoaderService} with the given unmarshaller.
-	 * @param workflowDescriptionUnmarshaller  The unmarshaller to use.
+	 * Builds a new {@link IridaWorkflowLoaderService} with the given
+	 * unmarshaller.
+	 * 
+	 * @param workflowDescriptionUnmarshaller
+	 *            The unmarshaller to use.
 	 */
 	@Autowired
 	public IridaWorkflowLoaderService(Unmarshaller workflowDescriptionUnmarshaller) {
 		this.workflowDescriptionUnmarshaller = workflowDescriptionUnmarshaller;
 	}
-	
+
+	/**
+	 * Loads up an {@link IridaWorkflow} from the given information files.
+	 * 
+	 * @param descriptionFile
+	 *            The description file for the workflow.
+	 * @return An IridaWorkflow object for this workflow.
+	 * @throws IOException
+	 *             If there was an issue reading the passed file.
+	 * @throws XmlMappingException
+	 *             If there was an issue parsing the XML document.
+	 */
+	public IridaWorkflow loadIridaWorkflow(Path descriptionFile) throws XmlMappingException, IOException {
+		checkNotNull("descriptionFile is null", descriptionFile);
+
+		IridaWorkflowDescription worklowDescription = loadWorkflowDescription(descriptionFile);
+		return new IridaWorkflow(worklowDescription);
+	}
+
 	/**
 	 * Loads up the workflow description from the given file.
-	 * @param descriptionFile  The file to load up a workflow description.
-	 * @return  An IridaWorkflowDescription object.
-	 * @throws IOException If there was an issue reading the passed file.
-	 * @throws XmlMappingException If there was an issue parsing the XML document.
+	 * 
+	 * @param descriptionFile
+	 *            The file to load up a workflow description.
+	 * @return An IridaWorkflowDescription object.
+	 * @throws IOException
+	 *             If there was an issue reading the passed file.
+	 * @throws XmlMappingException
+	 *             If there was an issue parsing the XML document.
 	 */
-	public IridaWorkflowDescription loadWorkflowDescription(Path descriptionFile) throws XmlMappingException, IOException {
+	public IridaWorkflowDescription loadWorkflowDescription(Path descriptionFile) throws XmlMappingException,
+			IOException {
 		checkNotNull("descriptionFile is null", descriptionFile);
 		Source source = new StreamSource(new FileInputStream(descriptionFile.toFile()));
-		return (IridaWorkflowDescription)workflowDescriptionUnmarshaller.unmarshal(source);
+		return (IridaWorkflowDescription) workflowDescriptionUnmarshaller.unmarshal(source);
 	}
 }
