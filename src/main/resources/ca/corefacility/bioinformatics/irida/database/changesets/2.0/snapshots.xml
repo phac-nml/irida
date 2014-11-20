@@ -9,7 +9,7 @@
 
 		<!-- Add model snapshot tables -->
 		<createTable tableName="project_snapshot">
-			<column name="snapshotId" type="bigint(20)" autoIncrement="true">
+			<column name="snapshot_id" type="bigint(20)" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="id" type="bigint(20)" />
@@ -130,7 +130,7 @@
 			<column name="sequence_file_snapshot_id" type="bigint(20)">
 				<constraints nullable="false" primaryKey="true"
 					foreignKeyName="FK_SEQUENCE_PROPERTIES_SEQUENCE_FILE_SNAPSHOT"
-					referencedColumnNames="snapshotId" referencedTableName="sequence_file_snapshot" />
+					referencedColumnNames="snapshot_id" referencedTableName="sequence_file_snapshot" />
 			</column>
 			<column name="property_key" type="varchar(255)">
 				<constraints nullable="false" primaryKey="true" />
@@ -306,7 +306,7 @@
 			</column>
 			<column name="project_snapshot" type="bigint(20)">
 				<constraints nullable="false" primaryKey="true"
-					referencedTableName="project_snapshot" referencedColumnNames="snapshotId"
+					referencedTableName="project_snapshot" referencedColumnNames="snapshot_id"
 					foreignKeyName="FK_PROJECT_SNAPSHOT_SNAPSHOT" />
 			</column>
 		</createTable>
@@ -332,7 +332,7 @@
 			</column>
 			<column name="sample_snapshot" type="bigint(20)">
 				<constraints nullable="false" primaryKey="true"
-					referencedTableName="sample_snapshot" referencedColumnNames="snapshotId"
+					referencedTableName="sample_snapshot" referencedColumnNames="snapshot_id"
 					foreignKeyName="FK_SAMPLE_SNAPSHOT_SNAPSHOT" />
 			</column>
 		</createTable>
@@ -358,7 +358,7 @@
 			</column>
 			<column name="sequence_file_snapshot" type="bigint(20)">
 				<constraints nullable="false" primaryKey="true"
-					referencedTableName="sample_snapshot" referencedColumnNames="snapshotId"
+					referencedTableName="sample_snapshot" referencedColumnNames="snapshot_id"
 					foreignKeyName="FK_SEQUENCE_FILE_SNAPSHOT_SNAPSHOT" />
 			</column>
 		</createTable>
