@@ -41,12 +41,11 @@ public class ProjectEventAspect {
 	 * Create a {@link UserRoleSetProjectEvent} for a
 	 * {@link SetsProjectUserRole} annotated method
 	 * 
-	 * @param jp
 	 * @param projectUserJoin
 	 *            the {@link ProjectUserJoin} created by the method
 	 */
 	@AfterReturning(value = "@annotation(ca.corefacility.bioinformatics.irida.events.annotations.SetsProjectUserRole)", returning = "projectUserJoin")
-	public void processProjectUserRoleSet(JoinPoint jp, ProjectUserJoin projectUserJoin) {
+	public void processProjectUserRoleSet(ProjectUserJoin projectUserJoin) {
 		logger.debug("Creating UserRoleSetProjectEvent for " + projectUserJoin.getLabel());
 		eventRepository.save(new UserRoleSetProjectEvent(projectUserJoin.getSubject(), projectUserJoin.getObject(),
 				projectUserJoin.getProjectRole()));
@@ -56,12 +55,11 @@ public class ProjectEventAspect {
 	 * Create a {@link SampleAddedProjectEvent} for a method annotated with
 	 * {@link AddsSampleToProject}
 	 * 
-	 * @param jp
 	 * @param projectSampleJoin
 	 *            the {@link ProjectSampleJoin} created by the method
 	 */
 	@AfterReturning(value = "@annotation(ca.corefacility.bioinformatics.irida.events.annotations.AddsSampleToProject)", returning = "projectSampleJoin")
-	public void processSampleAdded(JoinPoint jp, ProjectSampleJoin projectSampleJoin) {
+	public void processSampleAdded(ProjectSampleJoin projectSampleJoin) {
 		logger.debug("Creating SampleAddedProjectEvent for " + projectSampleJoin.getLabel());
 		eventRepository
 				.save(new SampleAddedProjectEvent(projectSampleJoin.getSubject(), projectSampleJoin.getObject()));
@@ -73,6 +71,7 @@ public class ProjectEventAspect {
 	 * {@link Project} and {@link User} argument.
 	 * 
 	 * @param jp
+	 *            JoinPoint from the pointcut
 	 */
 	@AfterReturning(value = "@annotation(ca.corefacility.bioinformatics.irida.events.annotations.RemovesUserFromProject)")
 	public void processUserRemoved(JoinPoint jp) {
