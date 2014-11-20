@@ -163,7 +163,7 @@ public class ProjectSamplesPageIT {
 		jumpAroundLists();
 
 		// Make sure samples are still selected on the first page
-		page.clickFirstPageButton();
+		page.selectPage(1);
 		for (int row : page1) {
 			assertTrue(page.isRowSelected(row));
 		}
@@ -175,7 +175,7 @@ public class ProjectSamplesPageIT {
 
 		jumpAroundLists();
 
-		page.clickFirstPageButton();
+		page.selectPage(1);
 		assertEquals(0, page.getNumberOfSamplesSelected());
 	}
 
@@ -441,10 +441,10 @@ public class ProjectSamplesPageIT {
 	}
 
 	private void jumpAroundLists() {
-		page.clickFirstPageButton();
-		page.clickLastPageButton();
-		page.clickPreviousPageButton();
-		page.clickPreviousPageButton();
-		page.clickNextPageButton();
+		page.selectPage(1);
+		page.selectPage(3);
+		page.selectPage(2);
+		page.selectPage(1);
+		page.selectPage(2);
 	}
 }

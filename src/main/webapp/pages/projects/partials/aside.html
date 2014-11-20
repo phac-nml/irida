@@ -1,31 +1,29 @@
 <aside layout:fragment="aside">
-    <div class="panel panel-primary" th:object="${project}">
-        <div class="panel-heading">
-            <b class="panel-title" th:text="#{project.details}">Project Details</b>
-        </div>
-        <div class="panel-body">
-            <ul class="nav nav-pills nav-stacked project-details">
-                <li>
-                    <i class="glyphicon glyphicon-barcode"></i>
-                    <em th:text="#{project.id}"></em>
-                    <span th:text="*{id}"></span>
-                </li>
-                <li th:if="${project.organism} != null"><i class="glyphicon glyphicon-leaf"></i><em
-                        th:text="#{project.organism}"></em><span
-                        id="project-organism"><i th:text="*{organism}"></i></span>
-                </li>
-                <li th:if="${owner} != null"><i class="glyphicon glyphicon-tower"></i><em
-                        th:text="#{project.owner}"></em><span
-                        id="project-owner" th:text="${owner.label}">__DATE_CREATED__</span>
-                </li>
-                <li><i class="glyphicon glyphicon-calendar"></i><em th:text="#{project.created}"></em><span
-                        id="project-created" th:text="${#calendars.format(project.createdDate, 'dd MMM yyyy')}">__DATE_CREATED__</span>
-                </li>
-                <li th:if="${project.modifiedDate} != null"><i class="glyphicon glyphicon-calendar"></i><em
-                        th:text="#{project.modified}"></em><span id="project-modified" data:livestamp="*{modifiedDate}"
-                                                                 th:title="${#calendars.format(project.modifiedDate, 'dd MMM yyyy HH:mm')}"></span>
-                </li>
-            </ul>
-        </div>
-    </div>
+	<div class="sidebar" th:object="${project}">
+		<div class="sidebar__heading">
+			<h2 th:text="#{project.details}">Project Details</h2>
+		</div>
+		<div class="sidebar__body">
+			<div>
+				<span class="fa fa-fw fa-barcode sidebar__icon"></span> <span th:text="#{project.id}"></span>
+				<span class="sidebar__value" th:text="*{id}"></span>
+			</div>
+			<div th:if="${project.organism} != null">
+				<span class="fa fa-fw fa-leaf sidebar__icon"></span> <span th:text="#{project.organism}"></span>
+				<span class="sidebar__value" id="project-organism"><i th:text="*{organism}"></i></span>
+			</div>
+			<div th:if="${owner} != null">
+				<span class="glyphicon glyphicon-tower"></span> <span th:text="#{project.owner}"></span>
+				<span class="sidebar__value" id="project-owner" th:text="${owner.label}">__DATE_CREATED__</span>
+			</div>
+			<div>
+				<span class="fa fa-fw fa-calendar-o sidebar__icon"></span> <span th:text="#{project.created}"></span>
+				<span class="sidebar__value" id="project-created" th:text="${#calendars.format(project.createdDate, 'dd MMM yyyy')}">__DATE_CREATED__</span>
+			</div>
+			<div th:if="${project.modifiedDate} != null">
+				<span class="fa fa-fw fa-calendar-o sidebar__icon"></span> <span th:text="#{project.modified}"></span>
+				<span class="sidebar__value" id="project-modified" data:livestamp="*{modifiedDate}" th:title="${#calendars.format(project.modifiedDate, 'dd MMM yyyy HH:mm')}"></span>
+			</div>
+		</div>
+	</div>
 </aside>
