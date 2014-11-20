@@ -12,6 +12,11 @@ public class IridaWorkflow {
 	private IridaWorkflowDescription workflowDescription;
 	private IridaWorkflowStructure workflowStructure;
 
+	/**
+	 * Defines a new {@link IridaWorkflow} with the given information.
+	 * @param workflowDescription  A description of the workflow.
+	 * @param workflowStructure  The structure defining this workflow.
+	 */
 	public IridaWorkflow(IridaWorkflowDescription workflowDescription, IridaWorkflowStructure workflowStructure) {
 		this.workflowDescription = workflowDescription;
 		this.workflowStructure = workflowStructure;

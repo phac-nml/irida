@@ -24,6 +24,11 @@ public class WorkflowInput {
 	public WorkflowInput() {
 	}
 
+	/**
+	 * Builds a new {@link WorkflowInput} object with the given information.
+	 * @param sequenceReadsSingle  The label to use for a collection of single-end sequence reads.
+	 * @param reference  The label to use for a reference file.
+	 */
 	public WorkflowInput(String sequenceReadsSingle, String reference) {
 		this.sequenceReadsSingle = sequenceReadsSingle;
 		this.reference = reference;

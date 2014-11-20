@@ -13,6 +13,10 @@ public class IridaWorkflowStructure {
 
 	private Path workflowFile;
 
+	/**
+	 * Builds a new {@link IridaWorkflowStructure} with the given information.
+	 * @param workflowFile  The file defining the structure of this workflow.
+	 */
 	public IridaWorkflowStructure(Path workflowFile) {
 		this.workflowFile = workflowFile;
 	}

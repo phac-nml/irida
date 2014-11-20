@@ -24,6 +24,11 @@ public class WorkflowOutput {
 	public WorkflowOutput() {
 	}
 
+	/**
+	 * Defines a new {@link WorkflowOutput} object for descripting the output files of a workflow.
+	 * @param name  The name of the particular output.
+	 * @param fileName  The file name in Galaxy of the output.
+	 */
 	public WorkflowOutput(String name, String fileName) {
 		this.name = name;
 		this.fileName = fileName;
