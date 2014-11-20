@@ -30,7 +30,7 @@
 
 /* line 6, ../../../../styles/themes/wet/helpers/_wet-overrides.scss */
 .menu {
-  z-index: 10000;
+  z-index: 600;
 }
 /* line 8, ../../../../styles/themes/wet/helpers/_wet-overrides.scss */
 .menu > .pull-right ul {

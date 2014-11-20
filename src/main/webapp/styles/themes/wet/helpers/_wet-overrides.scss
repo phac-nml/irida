@@ -4,7 +4,7 @@
 // This allows for the setting tab to be displayed on the right
 // and still have its dropdown menu appear within the correct area.
 .menu {
-  z-index: 10000;
+  z-index: 600;
   > .pull-right ul {
     position: absolute;
     right: 0;
