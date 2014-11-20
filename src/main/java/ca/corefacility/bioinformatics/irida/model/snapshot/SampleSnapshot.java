@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.snapshot;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
@@ -32,54 +33,77 @@ public class SampleSnapshot implements IridaSample {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "snapshot_id")
 	private Long snapshotId;
 
+	@Column(name = "id")
 	private Long id;
 
+	@Column(name = "sequencer_sample_id")
 	private String sequencerSampleId;
 
+	@Column(name = "sample_name")
 	private String sampleName;
 
 	@Lob
+	@Column(name = "description")
 	private String description;
 
+	@Column(name = "organism")
 	private String organism;
 
+	@Column(name = "isolate")
 	private String isolate;
 
+	@Column(name = "strain")
 	private String strain;
 
+	@Column(name = "collected_by")
 	private String collectedBy;
 
+	@Column(name = "collection_date")
 	private Date collectionDate;
 
+	@Column(name = "geographic_location_name")
 	private String geographicLocationName;
 
 	@Lob
+	@Column(name = "isolation_source")
 	private String isolationSource;
 
+	@Column(name = "latitude")
 	private String latitude;
 
+	@Column(name = "longitude")
 	private String longitude;
 
+	@Column(name = "culture_collectino")
 	private String cultureCollection;
 
 	@Lob
+	@Column(name = "genotype")
 	private String genotype;
 
 	@Lob
+	@Column(name = "passage_history")
 	private String passageHistory;
 
+	@Column(name = "pathotype")
 	private String pathotype;
 
+	@Column(name = "serotype")
 	private String serotype;
 
+	@Column(name = "serovar")
 	private String serovar;
 
+	@Column(name = "specimen_voucher")
 	private String specimenVoucher;
 
+	@Column(name = "subgroup")
 	private String subgroup;
 
+	@Column(name = "subtype")
 	private String subtype;
 
 	public SampleSnapshot(IridaSample sample) {

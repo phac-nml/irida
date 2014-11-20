@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -39,14 +40,17 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 public class Snapshot implements IridaThing {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id")
 	private Long id;
 
 	@CreatedDate
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "created_date")
 	private Date createdDate;
 
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "modified_date")
 	private Date modifiedDate;
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

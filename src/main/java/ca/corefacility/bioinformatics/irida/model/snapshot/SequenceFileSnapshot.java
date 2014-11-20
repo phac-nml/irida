@@ -40,11 +40,13 @@ public class SequenceFileSnapshot implements IridaSequenceFile {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "snapshot_id")
 	private Long snapshotId;
 
+	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "filePath", unique = true)
+	@Column(name = "file_path", unique = true)
 	@NotNull(message = "{sequencefile.file.notnull}")
 	private Path file;
 

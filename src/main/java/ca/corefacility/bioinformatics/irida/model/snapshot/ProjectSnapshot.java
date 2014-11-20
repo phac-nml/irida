@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.snapshot;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
@@ -30,17 +31,23 @@ public class ProjectSnapshot implements IridaProject {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "snapshot_id")
 	private Long snapshotId;
 
+	@Column(name = "id")
 	private Long id;
 
+	@Column(name = "name")
 	private String name;
 
 	@Lob
+	@Column(name = "project_description")
 	private String projectDescription;
 
+	@Column(name = "remote_url")
 	private String remoteURL;
 
+	@Column(name = "organism")
 	private String organism;
 
 	public ProjectSnapshot(IridaProject project) {

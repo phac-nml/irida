@@ -17,8 +17,8 @@
 				<constraints nullable="false"></constraints>
 			</column>
 			<column name="organism" type="varchar(255)" />
-			<column name="projectDescription" type="longtext" />
-			<column name="remoteURL" type="varchar(255)" />
+			<column name="project_description" type="longtext" />
+			<column name="remote_url" type="varchar(255)" />
 		</createTable>
 
 		<createTable tableName="project_snapshot_AUD">
@@ -27,45 +27,45 @@
 					referencedTableName="Revisions" foreignKeyName="FK_PROJECT_SNAPSHOT_REVISION" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
-			<column name="snapshotId" type="bigint(20)">
+			<column name="snapshot_id" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="id" type="bigint(20)" />
 			<column name="name" type="varchar(255)" />
 			<column name="organism" type="varchar(255)" />
-			<column name="projectDescription" type="longtext" />
-			<column name="remoteURL" type="varchar(255)" />
+			<column name="project_description" type="longtext" />
+			<column name="remote_url" type="varchar(255)" />
 		</createTable>
 
 		<createTable tableName="sample_snapshot">
-			<column name="snapshotId" type="bigint(20)" autoIncrement="true">
+			<column name="snapshot_id" type="bigint(20)" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="description" type="longtext" />
-			<column name="sampleName" type="varchar(255)">
+			<column name="sample_name" type="varchar(255)">
 				<constraints nullable="false"></constraints>
 			</column>
-			<column name="sequencerSampleId" type="varchar(255)">
+			<column name="sequencer_sample_id" type="varchar(255)">
 				<constraints nullable="false"></constraints>
 			</column>
-			<column name="collectedBy" type="varchar(255)" />
-			<column name="collectionDate" type="datetime" />
-			<column name="cultureCollection" type="varchar(255)" />
+			<column name="collected_by" type="varchar(255)" />
+			<column name="collection_date" type="datetime" />
+			<column name="culture_collection" type="varchar(255)" />
 			<column name="genotype" type="longtext" />
-			<column name="geographicLocationName" type="varchar(255)" />
+			<column name="geographic_location_name" type="varchar(255)" />
 			<column name="isolate" type="varchar(255)" />
-			<column name="isolationSource" type="longtext" />
+			<column name="isolation_source" type="longtext" />
 			<column name="latitude" type="varchar(255)" />
 			<column name="longitude" type="varchar(255)" />
 			<column name="organism" type="varchar(255)" />
-			<column name="passageHistory" type="longtext" />
+			<column name="passage_history" type="longtext" />
 			<column name="pathotype" type="varchar(255)" />
 			<column name="serotype" type="varchar(255)" />
 			<column name="serovar" type="varchar(255)" />
 			<column name="subgroup" type="varchar(255)" />
 			<column name="subtype" type="varchar(255)" />
 			<column name="host_id" type="bigint(20)" />
-			<column name="specimenVoucher" type="varchar(255)" />
+			<column name="specimen_voucher" type="varchar(255)" />
 			<column name="strain" type="varchar(255)" />
 		</createTable>
 
@@ -75,39 +75,39 @@
 					referencedTableName="Revisions" foreignKeyName="FK_SAMPLE_SNAPSHOT_REVISION" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
-			<column name="snapshotId" type="bigint(20)">
+			<column name="snapshot_id" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="description" type="longtext" />
-			<column name="sampleName" type="varchar(255)" />
-			<column name="sequencerSampleId" type="varchar(255)" />
-			<column name="collectedBy" type="varchar(255)" />
-			<column name="collectionDate" type="datetime" />
-			<column name="cultureCollection" type="varchar(255)" />
+			<column name="sample_name" type="varchar(255)" />
+			<column name="sequencer_sample_id" type="varchar(255)" />
+			<column name="collected_by" type="varchar(255)" />
+			<column name="collection_date" type="datetime" />
+			<column name="culture_collection" type="varchar(255)" />
 			<column name="genotype" type="longtext" />
-			<column name="geographicLocationName" type="varchar(255)" />
+			<column name="geographic_location_name" type="varchar(255)" />
 			<column name="isolate" type="varchar(255)" />
-			<column name="isolationSource" type="longtext" />
+			<column name="isolation_source" type="longtext" />
 			<column name="latitude" type="varchar(255)" />
 			<column name="longitude" type="varchar(255)" />
 			<column name="organism" type="varchar(255)" />
-			<column name="passageHistory" type="longtext" />
+			<column name="passage_history" type="longtext" />
 			<column name="pathotype" type="varchar(255)" />
 			<column name="serotype" type="varchar(255)" />
 			<column name="serovar" type="varchar(255)" />
 			<column name="subgroup" type="varchar(255)" />
 			<column name="subtype" type="varchar(255)" />
 			<column name="host_id" type="bigint(20)" />
-			<column name="specimenVoucher" type="varchar(255)" />
+			<column name="specimen_voucher" type="varchar(255)" />
 			<column name="strain" type="varchar(255)" />
 		</createTable>
 
 		<createTable tableName="sequence_file_snapshot">
-			<column name="snapshotId" type="bigint(20)" autoIncrement="true">
+			<column name="snapshot_id" type="bigint(20)" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="id" type="bigint(20)" />
-			<column name="filePath" type="varchar(255)">
+			<column name="file_path" type="varchar(255)">
 				<constraints nullable="false"></constraints>
 			</column>
 		</createTable>
@@ -118,11 +118,11 @@
 					referencedTableName="Revisions" foreignKeyName="FK_SEQUENCE_FILE_SNAPSHOT_REVISION" />
 			</column>
 			<column name="REVTYPE" type="tinyint(4)" />
-			<column name="snapshotId" type="bigint(20)">
+			<column name="snapshot_id" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="id" type="bigint(20)" />
-			<column name="filePath" type="varchar(255)" />
+			<column name="file_path" type="varchar(255)" />
 		</createTable>
 
 		<!-- optional properties for sequence file snapshots -->
@@ -208,10 +208,10 @@
 
 		<!-- Add remote snapshot objects and links -->
 		<createTable tableName="remote_project_snapshot">
-			<column name="snapshotId" type="bigint(20)">
+			<column name="snapshot_id" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false"
 					foreignKeyName="FK_REMOTE_PROJECT_SNAPSHOT_ID" referencedTableName="project_snapshot"
-					referencedColumnNames="snapshotId" />
+					referencedColumnNames="snapshot_id" />
 			</column>
 			<column name="links_id" type="bigint(20)">
 				<constraints foreignKeyName="FK_REMOTE_PROJECT_SNAPSHOT_LINKS"
@@ -224,17 +224,17 @@
 				<constraints primaryKey="true" referencedColumnNames="id"
 					referencedTableName="Revisions" foreignKeyName="FK_REMOTE_PROJECT_SNAPSHOT_REVISION" />
 			</column>
-			<column name="snapshotId" type="bigint(20)">
+			<column name="snapshot_id" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="links_id" type="bigint(20)" />
 		</createTable>
 
 		<createTable tableName="remote_sample_snapshot">
-			<column name="snapshotId" type="bigint(20)">
+			<column name="snapshot_id" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false"
 					foreignKeyName="FK_REMOTE_SAMPLE_SNAPSHOT_ID" referencedTableName="sample_snapshot"
-					referencedColumnNames="snapshotId" />
+					referencedColumnNames="snapshot_id" />
 			</column>
 			<column name="links_id" type="bigint(20)">
 				<constraints foreignKeyName="FK_REMOTE_SAMPLE_SNAPSHOT_LINKS"
@@ -247,17 +247,17 @@
 				<constraints primaryKey="true" referencedColumnNames="id"
 					referencedTableName="Revisions" foreignKeyName="FK_REMOTE_SAMPLE_SNAPSHOT_REVISION" />
 			</column>
-			<column name="snapshotId" type="bigint(20)">
+			<column name="snapshot_id" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="links_id" type="bigint(20)" />
 		</createTable>
 
 		<createTable tableName="remote_sequence_file_snapshot">
-			<column name="snapshotId" type="bigint(20)">
+			<column name="snapshot_id" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false"
 					foreignKeyName="FK_REMOTE_SEQUENCE_FILE_SNAPSHOT_ID"
-					referencedTableName="sequence_file_snapshot" referencedColumnNames="snapshotId" />
+					referencedTableName="sequence_file_snapshot" referencedColumnNames="snapshot_id" />
 			</column>
 			<column name="links_id" type="bigint(20)">
 				<constraints foreignKeyName="FK_REMOTE_SEQUENCE_FILE_SNAPSHOT_LINKS"
@@ -270,7 +270,7 @@
 				<constraints primaryKey="true" referencedColumnNames="id"
 					referencedTableName="Revisions" foreignKeyName="FK_REMOTE_SEQUENCE_FILE_SNAPSHOT_REVISION" />
 			</column>
-			<column name="snapshotId" type="bigint(20)">
+			<column name="snapshot_id" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="links_id" type="bigint(20)" />
@@ -281,8 +281,8 @@
 			<column name="id" type="bigint(20)" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="createdDate" type="datetime" />
-			<column name="modifiedDate" type="datetime" />
+			<column name="created_date" type="datetime" />
+			<column name="modified_date" type="datetime" />
 		</createTable>
 
 		<createTable tableName="snapshot_AUD">
@@ -294,8 +294,8 @@
 			<column name="id" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="createdDate" type="datetime" />
-			<column name="modifiedDate" type="datetime" />
+			<column name="created_date" type="datetime" />
+			<column name="modified_date" type="datetime" />
 		</createTable>
 
 		<!-- Add snapshot model list containers -->
