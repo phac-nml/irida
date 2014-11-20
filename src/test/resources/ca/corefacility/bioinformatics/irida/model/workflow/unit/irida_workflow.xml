@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+  <name>TestWorkflow</name>
+  <version>1.0</version>
+  <author>Mr. Developer</author>
+  <email>developer@example.com</email>
+  <inputs sequenceReadsSingle="sequence_reads" reference="reference"></inputs>
+  <outputs>
+    <output name="output1" fileName="output1.txt"></output>
+    <output name="output2" fileName="output2.txt"></output>
+  </outputs>
+</iridaWorkflow>

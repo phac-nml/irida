@@ -1,34 +1,66 @@
 package ca.corefacility.bioinformatics.irida.model.workflow;
 
+import java.util.Objects;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+
 /**
- * Defines inputs to a workflow.
+ * Defines the input labels for a workflow.
+ * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class WorkflowInput {
-	private String name;
-	private String label;
-	
-	/**
-	 * Builds a new {@link WorkflowInput} with the given information.
-	 * @param name  The name for this input.
-	 * @param label  The label for this input.
-	 */
-	public WorkflowInput(String name, String label) {
-		this.name = name;
-		this.label = label;
+
+	@XmlAttribute
+	private String sequenceReadsSingle;
+
+	@XmlAttribute
+	private String reference;
+
+	public WorkflowInput() {
 	}
-	
-	public String getName() {
-		return name;
+
+	public WorkflowInput(String sequenceReadsSingle, String reference) {
+		this.sequenceReadsSingle = sequenceReadsSingle;
+		this.reference = reference;
 	}
-	public void setName(String name) {
-		this.name = name;
+
+	public String getSequenceReadsSingle() {
+		return sequenceReadsSingle;
 	}
-	public String getLabel() {
-		return label;
+
+	public void setSequenceReadsSingle(String sequenceReadsSingle) {
+		this.sequenceReadsSingle = sequenceReadsSingle;
 	}
-	public void setLabel(String label) {
-		this.label = label;
+
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(sequenceReadsSingle, reference);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		else if (obj instanceof WorkflowInput) {
+			WorkflowInput other = (WorkflowInput) obj;
+
+			return Objects.equals(sequenceReadsSingle, other.sequenceReadsSingle)
+					&& Objects.equals(reference, other.reference);
+		}
+
+		return false;
 	}
 }

@@ -1,36 +1,65 @@
 package ca.corefacility.bioinformatics.irida.model.workflow;
 
+import java.util.Objects;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+
 /**
- * Defines outputs for a workflow.
+ * Defines the output files and file names for a workflow.
+ * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class WorkflowOutput {
 
+	@XmlAttribute
 	private String name;
-	private String file;
-	
-	/**
-	 * Generates a {@link WorkflowOutput} with the given information.
-	 * @param name The name of the output.
-	 * @param file The file name of the output.
-	 */
-	public WorkflowOutput(String name, String file) {
-		super();
-		this.name = name;
-		this.file = file;
+
+	@XmlAttribute
+	private String fileName;
+
+	public WorkflowOutput() {
 	}
-	
+
+	public WorkflowOutput(String name, String fileName) {
+		this.name = name;
+		this.fileName = fileName;
+	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getFile() {
-		return file;
+
+	public String getFileName() {
+		return fileName;
 	}
-	public void setFile(String file) {
-		this.file = file;
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, fileName);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		else if (obj instanceof WorkflowOutput) {
+			WorkflowOutput other = (WorkflowOutput) obj;
+
+			return Objects.equals(name, other.name) && Objects.equals(fileName, other.fileName);
+		}
+
+		return false;
 	}
 }
