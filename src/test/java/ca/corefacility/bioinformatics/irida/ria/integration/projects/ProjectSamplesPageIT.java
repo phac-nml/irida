@@ -431,6 +431,16 @@ public class ProjectSamplesPageIT {
 
 		// Page should be sorted by creation date first
 		assertTrue(page.isTableSortedAscByCreationDate());
+		page.sortTableByCreatedDate();
+		assertFalse(page.isTableSortedAscByCreationDate());
+		assertTrue(page.isTableSortedDescByCreationDate());
+
+		// Sort by name
+		page.sortTableByName();
+		assertTrue(page.isTableSortedDescBySampleName());
+		page.sortTableByName();
+		assertFalse(page.isTableSortedDescBySampleName());
+		assertTrue(page.isTableSortedAscBySampleName());
 	}
 
 	private int getSampleFlagCount(String command) {

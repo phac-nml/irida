@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -11,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
+
+import com.google.common.collect.Ordering;
 
 /**
  * <p> Page Object to represent the project samples page. </p>
@@ -212,8 +215,32 @@ public class ProjectSamplesPage extends AbstractPage {
 	public void sortTableByName() {
 		driver.findElement(By.id("sortName")).click();
 	}
+	public void sortTableByCreatedDate() { driver.findElement(By.id("sortCreatedDate")).click();}
 
 	public boolean isTableSortedAscByCreationDate() {
-		return false;
+		List<WebElement> elms = driver.findElements(By.className("createdDate"));
+		List<String> dates = elms.stream().map(element -> element.getAttribute("data-date"))
+				.collect(Collectors.toList());
+		return Ordering.natural().isOrdered(dates);
+	}
+
+	public boolean isTableSortedAscBySampleName() {
+		List<WebElement> elms = driver.findElements(By.cssSelector(".sample-name a"));
+		List<String> names = elms.stream().map(WebElement::getText).collect(Collectors.toList());
+		return Ordering.natural().isOrdered(names);
+	}
+
+	public boolean isTableSortedDescByCreationDate() {
+		List<WebElement> elms = driver.findElements(By.className("createdDate"));
+		List<String> dates = elms.stream().map(element -> element.getAttribute("data-date"))
+				.collect(Collectors.toList());
+		return Ordering.natural().reverse().isOrdered(dates);
+	}
+
+	public boolean isTableSortedDescBySampleName() {
+		List<WebElement> elms = driver.findElements(By.className("sample-name"));
+		List<String> names = elms.stream().map(element -> element.getText())
+				.collect(Collectors.toList());
+		return Ordering.natural().reverse().isOrdered(names);
 	}
 }
