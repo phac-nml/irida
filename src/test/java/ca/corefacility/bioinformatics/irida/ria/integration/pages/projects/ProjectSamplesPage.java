@@ -30,7 +30,7 @@ public class ProjectSamplesPage extends AbstractPage {
 
 	public void goToPage() {
 		get(driver, RELATIVE_URL);
-		pageUtilities.waitForElementPresent(By.cssSelector("#samplesTable tbody"));
+		waitForElementVisible(By.cssSelector("#samplesTable tbody"));
 	}
 
 	public void goToPage(String projectId) {
@@ -55,9 +55,19 @@ public class ProjectSamplesPage extends AbstractPage {
 	}
 
 	public void selectPage(int pageNum) {
-		pageNum += 1; // 0 == First Button, 1 == Previous Button
-		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li"));
-		links.get(pageNum).findElement(By.tagName("a")).click();
+		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li a"));
+		// Remove directions links if there are any
+		for (WebElement link : links) {
+			if (link.getText().equals("1")) {
+				break;
+			}
+			else {
+				pageNum++;
+			}
+		}
+		// Since paging has an offset of 1
+		pageNum--;
+		links.get(pageNum).click();
 	}
 
 	public void clickPreviousPageButton() {
@@ -65,7 +75,21 @@ public class ProjectSamplesPage extends AbstractPage {
 	}
 
 	public void clickFirstPageButton() {
-		driver.findElements(By.cssSelector(".pagination li>a")).get(0).click();
+		List<WebElement> links = driver.findElements(By.cssSelector(".pagination li a"));
+		if (links.get(0).getText().equals("First")) {
+			links.get(0).click();
+		}
+		// Remove directions links if there are any
+		else {
+			int count = 0;
+			for (WebElement link : links) {
+				count++;
+				if (link.getText().equals("1")) {
+					break;
+				}
+			}
+			links.get(count).click();
+		}
 	}
 
 	public void clickNextPageButton() {
