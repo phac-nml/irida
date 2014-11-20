@@ -20,6 +20,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ca.corefacility.bioinformatics.irida.events.annotations.RemovesUserFromProject;
+import ca.corefacility.bioinformatics.irida.events.annotations.SetsProjectUserRole;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
@@ -109,6 +111,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
+	@SetsProjectUserRole
 	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role) {
 		try {
 			ProjectUserJoin join = pujRepository.save(new ProjectUserJoin(project, user, role));
@@ -124,6 +127,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
+	@RemovesUserFromProject
 	public void removeUserFromProject(Project project, User user) throws ProjectWithoutOwnerException {
 		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
 		if (!allowRoleChange(projectJoinForUser)) {
@@ -137,6 +141,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
+	@SetsProjectUserRole
 	public Join<Project, User> updateUserProjectRole(Project project, User user, ProjectRole projectRole)
 			throws ProjectWithoutOwnerException {
 		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
