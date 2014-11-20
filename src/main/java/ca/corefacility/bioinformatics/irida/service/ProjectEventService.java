@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -19,16 +19,20 @@ public interface ProjectEventService extends CRUDService<Long, ProjectEvent> {
 	 * 
 	 * @param project
 	 *            The project to get events for
+	 * @param max
+	 *            The maximum number of events to show
 	 * @return A List of {@link ProjectEvent}s
 	 */
-	public List<ProjectEvent> getEventsForProject(Project project);
+	public Page<ProjectEvent> getEventsForProject(Project project, int max);
 
 	/**
 	 * Get the events on all projects for a given user
 	 * 
 	 * @param user
 	 *            The {@link User} to get events for
+	 * @param max
+	 *            The maximum number of events to show
 	 * @return A List of {@link ProjectEvent}s
 	 */
-	public List<ProjectEvent> getEventsForUser(User user);
+	public Page<ProjectEvent> getEventsForUser(User user, int max);
 }

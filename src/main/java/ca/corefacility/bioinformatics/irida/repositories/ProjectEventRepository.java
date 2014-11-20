@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
@@ -24,7 +24,7 @@ public interface ProjectEventRepository extends IridaJpaRepository<ProjectEvent,
 	 * @return A List of {@link ProjectEvent}s
 	 */
 	@Query("FROM ProjectEvent e WHERE e.project=?1")
-	public List<ProjectEvent> getEventsForProject(Project project);
+	public Page<ProjectEvent> getEventsForProject(Project project, Pageable pageable);
 
 	/**
 	 * Get the events on all projects for a given user
@@ -34,5 +34,5 @@ public interface ProjectEventRepository extends IridaJpaRepository<ProjectEvent,
 	 * @return A List of {@link ProjectEvent}s
 	 */
 	@Query("SELECT e FROM ProjectEvent e INNER JOIN e.project as p INNER JOIN p.users as u WHERE u.user=?1")
-	public List<ProjectEvent> getEventsForUser(User user);
+	public Page<ProjectEvent> getEventsForUser(User user, Pageable pageable);
 }

@@ -1,16 +1,13 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.List;
-
-import org.junit.Test;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -72,9 +69,9 @@ public class ProjectEventServiceImplIT {
 
 		projectService.addUserToProject(project, user, ProjectRole.PROJECT_USER);
 
-		List<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project);
+		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, 10);
 
-		assertEquals(1, eventsForProject.size());
+		assertEquals(1, eventsForProject.getTotalElements());
 		ProjectEvent event = eventsForProject.iterator().next();
 
 		assertTrue(event instanceof UserRoleSetProjectEvent);
@@ -91,9 +88,9 @@ public class ProjectEventServiceImplIT {
 
 		projectService.updateUserProjectRole(project, user, ProjectRole.PROJECT_USER);
 
-		List<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project);
+		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, 10);
 
-		assertEquals(1, eventsForProject.size());
+		assertEquals(1, eventsForProject.getTotalElements());
 		ProjectEvent event = eventsForProject.iterator().next();
 
 		assertTrue(event instanceof UserRoleSetProjectEvent);
@@ -110,9 +107,9 @@ public class ProjectEventServiceImplIT {
 
 		projectService.removeUserFromProject(project, user);
 
-		List<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project);
+		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, 10);
 
-		assertEquals(1, eventsForProject.size());
+		assertEquals(1, eventsForProject.getTotalElements());
 		ProjectEvent event = eventsForProject.iterator().next();
 
 		assertTrue(event instanceof UserRemovedProjectEvent);
@@ -130,9 +127,9 @@ public class ProjectEventServiceImplIT {
 
 		projectService.addSampleToProject(project, sample);
 
-		List<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project);
+		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, 10);
 
-		assertEquals(1, eventsForProject.size());
+		assertEquals(1, eventsForProject.getTotalElements());
 		ProjectEvent event = eventsForProject.iterator().next();
 
 		assertTrue(event instanceof SampleAddedProjectEvent);
@@ -155,9 +152,9 @@ public class ProjectEventServiceImplIT {
 			// it's all good
 		}
 
-		List<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project);
+		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, 10);
 
-		assertEquals("No event should be created", 0, eventsForProject.size());
+		assertEquals("No event should be created", 0, eventsForProject.getTotalElements());
 	}
 
 	@WithMockUser(username = "tom", password = "password1", roles = "ADMIN")
@@ -166,11 +163,11 @@ public class ProjectEventServiceImplIT {
 		Project project1 = projectService.read(1l);
 		Project project3 = projectService.read(3l);
 
-		List<ProjectEvent> eventsForProject1 = projectEventService.getEventsForProject(project1);
-		List<ProjectEvent> eventsForProject2 = projectEventService.getEventsForProject(project3);
+		Page<ProjectEvent> eventsForProject1 = projectEventService.getEventsForProject(project1, 10);
+		Page<ProjectEvent> eventsForProject2 = projectEventService.getEventsForProject(project3, 10);
 
-		assertEquals(0l, eventsForProject1.size());
-		assertEquals(1l, eventsForProject2.size());
+		assertEquals(0l, eventsForProject1.getTotalElements());
+		assertEquals(1l, eventsForProject2.getTotalElements());
 
 		ProjectEvent event2 = eventsForProject2.iterator().next();
 
@@ -184,13 +181,13 @@ public class ProjectEventServiceImplIT {
 		User user2 = userService.read(2l);
 		User user3 = userService.read(3l);
 
-		List<ProjectEvent> events1 = projectEventService.getEventsForUser(user1);
-		List<ProjectEvent> events2 = projectEventService.getEventsForUser(user2);
-		List<ProjectEvent> events3 = projectEventService.getEventsForUser(user3);
+		Page<ProjectEvent> events1 = projectEventService.getEventsForUser(user1, 10);
+		Page<ProjectEvent> events2 = projectEventService.getEventsForUser(user2, 10);
+		Page<ProjectEvent> events3 = projectEventService.getEventsForUser(user3, 10);
 
-		assertEquals(1l, events1.size());
-		assertEquals(0l, events2.size());
-		assertEquals(1l, events3.size());
+		assertEquals(1l, events1.getTotalElements());
+		assertEquals(0l, events2.getTotalElements());
+		assertEquals(1l, events3.getTotalElements());
 
 		ProjectEvent event1 = events1.iterator().next();
 		ProjectEvent event3 = events3.iterator().next();
