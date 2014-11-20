@@ -98,7 +98,7 @@ public class ProjectSamplesPage extends AbstractPage {
 	}
 
 	public int getNumberOfSamplesSelected() {
-		return driver.findElements(By.cssSelector(".sample-select:checked")).size();
+		return driver.findElements(By.cssSelector(".large-checkbox input[type=\"checkbox\"]:checked")).size();
 	}
 
 	public int getTotalNumberOfSamplesSelected() {
@@ -106,7 +106,7 @@ public class ProjectSamplesPage extends AbstractPage {
 	}
 
 	public void selectSampleByRow(int row) {
-		List<WebElement> inputs = driver.findElements(By.className("sample-select"));
+		List<WebElement> inputs = driver.findElements(By.className("large-checkbox"));
 		inputs.get(row).click();
 	}
 
