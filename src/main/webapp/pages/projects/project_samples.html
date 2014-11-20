@@ -73,18 +73,22 @@
 	</div>
 	<div class="row" data:cg-busy="'{promise: cgPromise,templateUrl:\'' + @{/resources/bower_components/angular-busy/angular-busy.html} + '\', delay: 250, backdrop:true, message: \'' + #{cg-busy.samples.table} +  '\'}'">
 		<div class="col-md-12" ng-controller="SamplesTableCtrl as table">
-			<table id="samplesTable" class="table">
+			<table id="samplesTable" class="table ng-cloak">
 				<thead>
 				<tr ng-controller="FilterCtrl as fCtrl">
 					<th></th>
-					<th th:text="#{project.samples.table.name}" sort-by="" onsort="fCtrl.onSort" sortdir="fCtrl.filter.sortDir"
-							sortedBy="fCtrl.filter.sortedBy" sortValue="sampleName">__NAME__</th>
-					<th th:text="#{project.samples.table.organism}" sort-by="" onsort="fCtrl.onSort" sortdir="fCtrl.filter.sortDir"
-					    sortedBy="fCtrl.filter.sortedBy" sortValue="organism">__ORGANISM__</th>
-					<th th:text="#{project.samples.table.collectedBy}" sort-by="" onsort="fCtrl.onSort" sortdir="fCtrl.filter.sortDir"
-					    sortedBy="fCtrl.filter.sortedBy" sortValue="collectedBy">Collected By</th>
-					<th th:text="#{project.samples.table.created}" sort-by="" onsort="fCtrl.onSort" sortdir="fCtrl.filter.sortDir"
-					    sortedBy="fCtrl.filter.sortedBy" sortValue="createdDate">__CREATED__</th>
+					<th id="sortName" th:text="#{project.samples.table.name}" sort-by="" onsort="fCtrl.onSort" sortdir="fCtrl.filter.sortDir"
+					    sortedBy="fCtrl.filter.sortedBy" sortValue="sampleName">__NAME__
+					</th>
+					<th id="sortOrganism" th:text="#{project.samples.table.organism}" sort-by="" onsort="fCtrl.onSort" sortdir="fCtrl.filter.sortDir"
+					    sortedBy="fCtrl.filter.sortedBy" sortValue="organism">__ORGANISM__
+					</th>
+					<th id="sortCollectedBy" th:text="#{project.samples.table.collectedBy}" sort-by="" onsort="fCtrl.onSort" sortdir="fCtrl.filter.sortDir"
+					    sortedBy="fCtrl.filter.sortedBy" sortValue="collectedBy">Collected By
+					</th>
+					<th id="sortCreatedDate" th:text="#{project.samples.table.created}" sort-by="" onsort="fCtrl.onSort" sortdir="fCtrl.filter.sortDir"
+					    sortedBy="fCtrl.filter.sortedBy" sortValue="createdDate">__CREATED__
+					</th>
 				</tr>
 				</thead>
 				<tbody>
@@ -100,7 +104,7 @@
 					</td>
 					<td>{{::sample.organism}}</td>
 					<td>{{::sample.collectedBy}}</td>
-					<td><span tooltip="{{sample.createdDate}}">{{::sample.createdDate | date:'mediumDate'}}</span></td>
+					<td title="{{::sample.createdDate | date:'medium'}}"><span>{{::sample.createdDate | date:'mediumDate'}}</span></td>
 				</tr>
 				</tbody>
 				<tfoot>

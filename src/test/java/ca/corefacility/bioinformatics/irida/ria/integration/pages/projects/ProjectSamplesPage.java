@@ -207,4 +207,13 @@ public class ProjectSamplesPage extends AbstractPage {
 	public String getLinkerScriptText() {
 		return driver.findElement(By.id("linkerCmd")).getText();
 	}
+
+	// Table sorting
+	public void sortTableByName() {
+		driver.findElement(By.id("sortName")).click();
+	}
+
+	public boolean isTableSortedAscByCreationDate() {
+		return false;
+	}
 }
