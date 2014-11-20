@@ -74,10 +74,10 @@
 		<div class="col-md-12" ng-controller="SamplesTableCtrl as table">
 			<table id="samplesTable" class="table">
 				<thead>
-				<tr ng-controller="FilterCtrl as filter">
+				<tr ng-controller="FilterCtrl as fCtrl">
 					<th></th>
-					<th th:text="#{project.samples.table.name}" sort-by="" onsort="filter.sort" sortdir="filter.filter.sortDir"
-							sortedBy="filter.filter.sortedBy" sortValue="sampleName">__NAME__</th>
+					<th th:text="#{project.samples.table.name}" sort-by="" onsort="fCtrl.onSort" sortdir="fCtrl.filter.sortDir"
+							sortedBy="fCtrl.filter.sortedBy" sortValue="sampleName">__NAME__</th>
 					<th th:text="#{project.samples.table.organism}">__NAME__</th>
 					<th th:text="#{project.samples.table.collectedBy}">Collected By</th>
 					<th th:text="#{project.samples.table.created}">__NAME__</th>

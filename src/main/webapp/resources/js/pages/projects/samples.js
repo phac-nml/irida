@@ -387,10 +387,10 @@
     var vm = this;
     vm.filter = filter;
 
-    vm.sort = function(sortedBy, sortDir) {
-      filter.sortedBy = sortedBy;
-      filter.sortDir = sortDir;
-      filter.page = 0;
+    vm.onSort = function(sortedBy, sortDir) {
+      vm.filter.sortedBy = sortedBy;
+      vm.filter.sortDir = sortDir;
+      vm.filter.page = 0;
     }
   }
 
