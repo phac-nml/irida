@@ -3,9 +3,16 @@
 // MAIN NAV
 // This allows for the setting tab to be displayed on the right
 // and still have its dropdown menu appear within the correct area.
-.menu > .pull-right ul {
-  position: absolute;
-  right: 0;
+.menu {
+  z-index: 10000;
+  > .pull-right ul {
+    position: absolute;
+    right: 0;
+  }
+}
+
+.subnav {
+  z-index: 500;
 }
 
 .main-area {

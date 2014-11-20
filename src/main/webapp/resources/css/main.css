@@ -155,31 +155,6 @@
   color: #ffffff;
 }
 
-/* line 1, ../../styles/components/_modals.scss */
-.modal-content {
-  background-color: #eeeeee;
-  border: 1px solid #555555;
-}
-
-/* line 6, ../../styles/components/_modals.scss */
-.modal-header {
-  background-color: #2572b4;
-}
-/* line 8, ../../styles/components/_modals.scss */
-.modal-header h2 {
-  color: #ffffff;
-}
-/* line 11, ../../styles/components/_modals.scss */
-.modal-header small {
-  color: #eeeeee;
-}
-
-/* line 16, ../../styles/components/_modals.scss */
-.modal-footer {
-  margin-top: 0;
-  padding: 20px;
-}
-
 /* line 1, ../../styles/components/_noty.scss */
 .noty_message h2 {
   margin-top: 5px;
@@ -299,35 +274,35 @@ iframe.remote-api-frame {
   height: 400px;
 }
 
-/* line 20, ../../styles/main.scss */
+/* line 19, ../../styles/main.scss */
 .clickable {
   display: block;
   cursor: pointer;
 }
-/* line 23, ../../styles/main.scss */
+/* line 22, ../../styles/main.scss */
 .clickable span {
   display: inline-block;
 }
 
-/* line 28, ../../styles/main.scss */
+/* line 27, ../../styles/main.scss */
 .nav-tabs li {
   cursor: pointer;
 }
 
-/* line 33, ../../styles/main.scss */
+/* line 32, ../../styles/main.scss */
 #table-filter {
   padding: 0;
 }
-/* line 35, ../../styles/main.scss */
+/* line 34, ../../styles/main.scss */
 #table-filter > div {
   padding: 20px;
 }
-/* line 38, ../../styles/main.scss */
+/* line 37, ../../styles/main.scss */
 #table-filter .filter-btns > button {
   margin-top: 33px;
 }
 
-/* line 43, ../../styles/main.scss */
+/* line 42, ../../styles/main.scss */
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer;
 }
