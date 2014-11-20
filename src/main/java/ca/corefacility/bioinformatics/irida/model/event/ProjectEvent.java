@@ -21,6 +21,12 @@ import org.springframework.data.annotation.CreatedDate;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 
+/**
+ * Class storing events that happen on a {@link Project}.
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Entity
 @Table(name = "project_event")
 @Inheritance(strategy = InheritanceType.JOINED)

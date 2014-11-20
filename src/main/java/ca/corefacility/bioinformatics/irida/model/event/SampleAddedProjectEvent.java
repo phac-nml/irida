@@ -11,6 +11,12 @@ import javax.validation.constraints.NotNull;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
+/**
+ * Event created when a {@link Sample} is added to a {@link Project}
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Entity
 @Table(name = "project_event_sample_added")
 public class SampleAddedProjectEvent extends ProjectEvent {
