@@ -40,7 +40,7 @@ public class SequenceFileSnapshot implements IridaSequenceFile {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "file_path", unique = true)
+	@Column(name = "file_path")
 	@NotNull(message = "{sequencefile.file.notnull}")
 	private Path file;
 
