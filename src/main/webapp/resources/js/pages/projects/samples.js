@@ -119,10 +119,12 @@
     };
 
     svc.selectAll = function () {
-      _.each(svc.samples, function (s) {
+      _.each(filtered, function (s) {
         s.selected = true;
+        if(!_.contains(selected, s)){
+          selected.push(s);
+        }
       });
-      selected = svc.samples;
       updateSelectedCount();
     };
 
