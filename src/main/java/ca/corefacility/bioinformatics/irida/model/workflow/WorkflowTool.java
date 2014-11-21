@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 
 /**
  * Defines a tool within a workflow.
@@ -14,12 +15,22 @@ import javax.xml.bind.annotation.XmlAccessorType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WorkflowTool {
-
+	@XmlElement(name="name")
 	private String name;
+	
+	@XmlElement(name="id")
 	private String id;
+	
+	@XmlElement(name="version")
 	private String version;
+	
+	@XmlElement(name="owner")
 	private String owner;
+	
+	@XmlElement(name="url")
 	private URL url;
+	
+	@XmlElement(name="revision")
 	private String revision;
 
 	public String getName() {

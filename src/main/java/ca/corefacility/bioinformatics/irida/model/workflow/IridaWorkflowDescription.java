@@ -18,11 +18,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name="iridaWorkflow")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IridaWorkflowDescription {
+	@XmlElement(name="name")
 	private String name;
+	
+	@XmlElement(name="version")
 	private String version;
+	
+	@XmlElement(name="author")
 	private String author;
+	
+	@XmlElement(name="email")
 	private String email;
 
+	@XmlElement(name="inputs")
 	private WorkflowInput inputs;
 
 	@XmlElementWrapper(name = "outputs")

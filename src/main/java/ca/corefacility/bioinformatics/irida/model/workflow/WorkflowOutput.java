@@ -15,10 +15,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WorkflowOutput {
 
-	@XmlAttribute
+	@XmlAttribute(name="name")
 	private String name;
 
-	@XmlAttribute
+	@XmlAttribute(name="fileName")
 	private String fileName;
 
 	public WorkflowOutput() {

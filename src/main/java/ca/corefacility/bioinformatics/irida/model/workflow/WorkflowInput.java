@@ -15,10 +15,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WorkflowInput {
 
-	@XmlAttribute
+	@XmlAttribute(name="sequenceReadsSingle")
 	private String sequenceReadsSingle;
 
-	@XmlAttribute
+	@XmlAttribute(name="reference")
 	private String reference;
 
 	public WorkflowInput() {
