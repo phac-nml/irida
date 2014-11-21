@@ -57,6 +57,7 @@ public class IridaWorkflowLoaderService {
 	public IridaWorkflow loadIridaWorkflow(Path descriptionFile, Path structureFile) throws XmlMappingException,
 			IOException {
 		checkNotNull("descriptionFile is null", descriptionFile);
+		checkNotNull("structureFile is null", structureFile);
 
 		IridaWorkflowDescription worklowDescription = loadWorkflowDescription(descriptionFile);
 		IridaWorkflowStructure workflowStructure = loadWorkflowStructure(structureFile);
@@ -90,6 +91,7 @@ public class IridaWorkflowLoaderService {
 	 *         workflow.
 	 */
 	public IridaWorkflowStructure loadWorkflowStructure(Path structureFile) {
+		checkNotNull("structureFile is null", structureFile);
 		return new IridaWorkflowStructure(structureFile);
 	}
 }
