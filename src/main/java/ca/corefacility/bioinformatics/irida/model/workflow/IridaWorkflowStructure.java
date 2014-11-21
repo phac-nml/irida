@@ -4,7 +4,21 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 /**
- * Defines the structure of a workflow for IRIDA.
+ * Defines the structure of a workflow for IRIDA.  The structure consists of a JSON-formatted file
+ * that has been exported from Galaxy and which defines the set and execution plan for all tools
+ * in the workflow.  An example of this file is given below.
+ * 
+ * <pre>
+ * {
+ *   "a_galaxy_workflow": "true", 
+ *   "annotation": "", 
+ *   "format-version": "0.1", 
+ *   "name": "TestWorkflow1", 
+ *   "steps": {
+ *   ...
+ *   }
+ * }
+ * </pre>
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
