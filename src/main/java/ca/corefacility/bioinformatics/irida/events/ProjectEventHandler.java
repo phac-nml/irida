@@ -75,7 +75,7 @@ public class ProjectEventHandler {
 					"Method annotated with @LaunchesProjectEvent(SampleAddedProjectEvent.class) method must return ProjectSampleJoin");
 		}
 		ProjectSampleJoin join = (ProjectSampleJoin) returnValue;
-		return new SampleAddedProjectEvent(join.getSubject(), join.getObject());
+		return new SampleAddedProjectEvent(join);
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class ProjectEventHandler {
 					"Method annotated with @LaunchesProjectEvent(SampleAddedProjectEvent.class) method must return ProjectSampleJoin");
 		}
 		ProjectUserJoin join = (ProjectUserJoin) returnValue;
-		return new UserRoleSetProjectEvent(join.getSubject(), join.getObject(), join.getProjectRole());
+		return new UserRoleSetProjectEvent(join);
 
 	}
 

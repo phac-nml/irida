@@ -11,6 +11,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
@@ -28,10 +29,10 @@ public class UserRoleSetProjectEvent extends ProjectEvent {
 	public UserRoleSetProjectEvent() {
 	}
 
-	public UserRoleSetProjectEvent(Project project, User user, ProjectRole role) {
-		super(project);
-		this.user = user;
-		this.role = role;
+	public UserRoleSetProjectEvent(ProjectUserJoin join) {
+		super(join.getSubject());
+		this.user = join.getObject();
+		this.role = join.getProjectRole();
 	}
 
 	@Override

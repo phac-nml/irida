@@ -8,6 +8,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
@@ -27,9 +28,9 @@ public class SampleAddedProjectEvent extends ProjectEvent {
 	public SampleAddedProjectEvent() {
 	}
 
-	public SampleAddedProjectEvent(Project project, Sample sample) {
-		super(project);
-		this.sample = sample;
+	public SampleAddedProjectEvent(ProjectSampleJoin join) {
+		super(join.getSubject());
+		this.sample = join.getObject();
 	}
 
 	@Override
