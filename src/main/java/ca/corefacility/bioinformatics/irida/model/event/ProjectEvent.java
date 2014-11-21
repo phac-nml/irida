@@ -29,7 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
  */
 @Entity
 @Table(name = "project_event")
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class ProjectEvent implements IridaThing {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
