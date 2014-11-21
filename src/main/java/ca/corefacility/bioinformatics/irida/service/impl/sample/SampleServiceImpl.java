@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
@@ -237,6 +238,19 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		checkArgument(referenceFileLength > 0, "referenceFileLength (" + referenceFileLength + ") must be positive");
 
 		return getTotalBasesForSample(sample) / (double) referenceFileLength;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public Double estimateCoverageForSample(Sample sample, ReferenceFile referenceFile)
+			throws SequenceFileAnalysisException {
+		checkNotNull(sample, "sample is null");
+		checkNotNull(referenceFile, "referenceFile is null");
+
+		return estimateCoverageForSample(sample, referenceFile.getFileLength());
 	}
 
 	public Page<ProjectSampleJoin> searchProjectSamples(Specification<ProjectSampleJoin> specification, int page,
