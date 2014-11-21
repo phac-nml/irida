@@ -75,3 +75,8 @@ label {
 body {
   background-color: white;
 }
+
+/* line 10, ../../../../styles/themes/wet/main.scss */
+.navbar.subnav {
+  margin-bottom: 0;
+}
