@@ -169,7 +169,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *             file.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
-	public long getTotalBasesForSample(Sample sample)
+	public Long getTotalBasesForSample(Sample sample)
 			throws SequenceFileAnalysisException;
 
 	/**
@@ -187,6 +187,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *             file.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
-	public double estimateCoverageForSample(Sample sample,
+	public Double estimateCoverageForSample(Sample sample,
 			long referenceFileLength) throws SequenceFileAnalysisException;
 }

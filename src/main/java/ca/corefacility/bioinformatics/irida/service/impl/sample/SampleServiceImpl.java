@@ -203,7 +203,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public long getTotalBasesForSample(Sample sample) throws SequenceFileAnalysisException {
+	public Long getTotalBasesForSample(Sample sample) throws SequenceFileAnalysisException {
 		checkNotNull(sample, "sample is null");
 
 		final String fastQCAnalysisName = AnalysisFastQC.class.getSimpleName();
@@ -236,7 +236,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public double estimateCoverageForSample(Sample sample, long referenceFileLength)
+	public Double estimateCoverageForSample(Sample sample, long referenceFileLength)
 			throws SequenceFileAnalysisException {
 		checkNotNull(sample, "sample is null");
 		checkArgument(referenceFileLength > 0, "referenceFileLength (" + referenceFileLength + ") must be positive");
