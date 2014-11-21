@@ -95,16 +95,16 @@
 				<tr class="sample-row" ng-class="{'selected': sample.selected}" ng-repeat="sample in table.samples | orderBy: table.filter.sortedBy : table.filter.sortDir | SamplesTableFilter">
 					<td>
 						<div class="large-checkbox">
-							<input ui-indeterminate="sample.indeterminate" class="sample-select" id="s-{{::sample.id}}" name="s-{{::sample.id}}" type="checkbox" ng-model="sample.selected"
-							       ng-change="table.updateSample(sample)"/> <label for="s-{{::sample.id}}"></label>
+							<input ui-indeterminate="sample.indeterminate" class="sample-select" id="s-{{sample.id}}" name="s-{{sample.id}}" type="checkbox" ng-model="sample.selected"
+							       ng-change="table.updateSample(sample)"/> <label for="s-{{sample.id}}"></label>
 						</div>
 					</td>
 					<td class="sample-name">
-						<a class="btn btn-default btn-xs" data:ng-href="@{'/samples/{{::sample.id}}'}" href="#">{{::sample.sampleName}}</a>
+						<a class="btn btn-default btn-xs" data:ng-href="@{'/samples/{{sample.id}}'}" href="#">{{sample.sampleName}}</a>
 					</td>
-					<td>{{::sample.organism}}</td>
-					<td>{{::sample.collectedBy}}</td>
-					<td class="createdDate" data-date="{{::sample.createdDate}}" tooltip-popup-delay='500' tooltip-placement="left" tooltip="{{::sample.createdDate | date:'medium'}}"><span>{{::sample.createdDate | date:'mediumDate'}}</span></td>
+					<td>{{sample.organism}}</td>
+					<td>{{sample.collectedBy}}</td>
+					<td class="createdDate" data-date="{{sample.createdDate}}" tooltip-popup-delay='500' tooltip-placement="left" tooltip="{{sample.createdDate | date:'medium'}}"><span>{{sample.createdDate | date:'mediumDate'}}</span></td>
 				</tr>
 				</tbody>
 				<tfoot>
