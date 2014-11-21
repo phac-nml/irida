@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -134,7 +135,7 @@ public class GalaxyWorkflowsIT {
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService);
 		galaxyWorkflowService 
 			= new GalaxyWorkflowService(historiesClient, workflowsClient,
-					new StandardPasswordEncoder());		
+					new StandardPasswordEncoder(), StandardCharsets.UTF_8);		
 	}
 	
 	private void checkWorkflowIdValid(String workflowId) throws WorkflowException {

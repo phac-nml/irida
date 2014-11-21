@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
@@ -46,21 +46,26 @@ public class GalaxyWorkflowService {
 	
 	private final PasswordEncoder encoder;
 	
+	private final Charset workflowCharset;
+	
 	/**
 	 * Constructs a new GalaxyWorkflowSubmitter with the given information.
 	 * @param historiesClient  The HistoriesClient used to connect to Galaxy histories.
 	 * @param workflowsClient  The WorkflowsClient used to connect to Galaxy workflows.
 	 * @param encoder  A PasswordEncoder used to encode workflows to generate checksums.
+	 * @param workflowCharset  The {@link Charset} to use for reading in workflows from files.
 	 */
 	public GalaxyWorkflowService(HistoriesClient historiesClient,
-			WorkflowsClient workflowsClient, PasswordEncoder encoder) {
+			WorkflowsClient workflowsClient, PasswordEncoder encoder, Charset workflowCharset) {
 		checkNotNull(historiesClient, "historiesClient is null");
 		checkNotNull(workflowsClient, "workflowsClient is null");
 		checkNotNull(encoder, "encoder is null");
+		checkNotNull(workflowCharset, "workflowCharset is null");
 		
 		this.historiesClient = historiesClient;
 		this.workflowsClient = workflowsClient;
 		this.encoder = encoder;
+		this.workflowCharset = workflowCharset;
 	}
 	
 	/**
@@ -144,7 +149,7 @@ public class GalaxyWorkflowService {
 		checkNotNull(workflowFile, "workflowFile is null");
 		
 		byte[] fileBytes = Files.readAllBytes(workflowFile);
-		String workflowString = new String(fileBytes, StandardCharsets.UTF_8);
+		String workflowString = new String(fileBytes, workflowCharset);
 		
 		try {
 			Workflow workflow = workflowsClient.importWorkflow(workflowString);
