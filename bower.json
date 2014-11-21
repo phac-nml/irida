@@ -39,6 +39,8 @@
   },
   "devDependencies": {},
   "resolutions": {
-    "angular": "1.2.7"
+    "angular": "1.2.7",
+    "angular-animate": "1.2.7",
+    "bootstrap": "3.3.1"
   }
 }
