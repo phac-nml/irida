@@ -252,12 +252,15 @@
       isopen    : false,
       page      : false,
       selectPage: function selectPage() {
+        vm.selection.isopen = false;
         SamplesService.selectPage();
       },
       selectAll : function selectAll() {
+        vm.selection.isopen = false;
         SamplesService.selectAll();
       },
       selectNone: function selectNone() {
+        vm.selection.isopen = false;
         SamplesService.selectNone();
       }
     };
