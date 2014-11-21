@@ -60,6 +60,14 @@ public class ProjectEventHandler {
 		}
 	}
 
+	/**
+	 * Create a {@link SampleAddedProjectEvent}. The method must have returned a
+	 * {@link ProjectSampleJoin}
+	 * 
+	 * @param event
+	 *            The {@link MethodEvent} that this event is being launched from
+	 * @return
+	 */
 	private SampleAddedProjectEvent handleSampleAddedProjectEvent(MethodEvent event) {
 		Object returnValue = event.getReturnValue();
 		if (!(returnValue instanceof ProjectSampleJoin)) {
@@ -70,6 +78,14 @@ public class ProjectEventHandler {
 		return new SampleAddedProjectEvent(join.getSubject(), join.getObject());
 	}
 
+	/**
+	 * Create a {@link UserRemovedProjectEvent}. The method arguments must
+	 * contain a {@link Project} and {@link User}
+	 * 
+	 * @param event
+	 *            The {@link MethodEvent} that this event is being launched from
+	 * @return
+	 */
 	private UserRemovedProjectEvent handleUserRemovedEvent(MethodEvent event) {
 		Object[] args = event.getArgs();
 		User user = null;
@@ -88,6 +104,14 @@ public class ProjectEventHandler {
 		return new UserRemovedProjectEvent(project, user);
 	}
 
+	/**
+	 * Create a {@link UserRoleSetProjectEvent}. The method must have returned a
+	 * {@link ProjectUserJoin}
+	 * 
+	 * @param event
+	 *            The {@link MethodEvent} that this event is being launched from
+	 * @return
+	 */
 	private UserRoleSetProjectEvent handleUserRoleSetProjectEvent(MethodEvent event) {
 		Object returnValue = event.getReturnValue();
 		if (!(returnValue instanceof ProjectUserJoin)) {
