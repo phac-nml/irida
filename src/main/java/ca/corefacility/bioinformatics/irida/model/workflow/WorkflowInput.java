@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 
 /**
  * Defines the input labels for a workflow.
@@ -15,10 +15,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WorkflowInput {
 
-	@XmlAttribute(name="sequenceReadsSingle")
+	@XmlElement(name="sequenceReadsSingle")
 	private String sequenceReadsSingle;
 
-	@XmlAttribute(name="reference")
+	@XmlElement(name="reference")
 	private String reference;
 
 	public WorkflowInput() {
