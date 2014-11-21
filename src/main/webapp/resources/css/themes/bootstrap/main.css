@@ -31,4 +31,5 @@
 /* line 24, ../../../../styles/themes/bootstrap/main.scss */
 .navbar.subnav {
   z-index: 500;
+  margin-bottom: 15px;
 }
