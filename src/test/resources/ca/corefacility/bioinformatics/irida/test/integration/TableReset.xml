@@ -42,12 +42,24 @@
 	<password_reset />
 	<remote_api />
 	<remote_api_token />
+	<remote_related_project />
 	<project_user />
 	<sequencefile_sample />
 	<project_sample />
 	<logicalGroup />
 	<user_group />
 	<project_referencefile />
+
+	<snapshot />
+	<project_snapshot />
+	<sample_snapshot />
+	<sequence_file_snapshot />
+	<snapshot_project_snapshot />
+	<snapshot_sample_snapshot />
+	<snapshot_sequence_file_snapshot />
+	<remote_project_snapshot />
+	<remote_sample_snapshot />
+	<remote_sequence_file_snapshot />
 
 	<!-- All auditing table references *only* refer to the Revisions table, 
 		so they can all be listed in an arbitrary order *after* the Revisions table. -->
@@ -64,7 +76,6 @@
 	<sequence_file_properties_AUD />
 	<sequencefile_sample_AUD />
 	<remote_workflow_AUD />
-	<remote_workflow_phylogenomics_AUD />
 	<analysis_submission_AUD />
 	<analysis_submission_galaxy_AUD />
 	<analysis_submission_phylogenomics_AUD />
@@ -92,4 +103,5 @@
 	<reference_file_AUD />
 	<analysis_phylogenomicspipeline_AUD />
 	<analysis_output_file_AUD />
+	<remote_related_project_AUD />
 </dataset>

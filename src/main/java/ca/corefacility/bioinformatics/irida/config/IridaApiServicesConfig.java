@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.config;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.Executor;
 
 import javax.validation.Validator;
 
@@ -15,6 +16,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.oxm.Unmarshaller;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
@@ -37,10 +40,9 @@ import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService
  * 
  */
 @Configuration
-@Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class,
-		IridaApiRepositoriesConfig.class, ExecutionManagerConfig.class,
-		AnalysisExecutionServiceConfig.class,
-		RemoteWorkflowServiceConfig.class, IridaOAuth2Config.class })
+@Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
+		ExecutionManagerConfig.class, AnalysisExecutionServiceConfig.class, RemoteWorkflowServiceConfig.class,
+		IridaOAuth2Config.class, IridaCachingConfig.class })
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.service")
 public class IridaApiServicesConfig {
 	@Value("${taxonomy.location}")
@@ -82,5 +84,25 @@ public class IridaApiServicesConfig {
 	public TaxonomyService taxonomyService() throws URISyntaxException {
 		Path path = Paths.get(taxonomyFileLocation.getPath());
 		return new InMemoryTaxonomyService(path);
+	}
+	
+	/**
+	 * @return An Executor for handling uploads to Galaxy.
+	 */
+	@Bean
+	public Executor uploadExecutor() {
+		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+		taskExecutor.setCorePoolSize(4);
+		taskExecutor.setMaxPoolSize(8);
+		taskExecutor.setQueueCapacity(16);
+		taskExecutor.setThreadPriority(Thread.MIN_PRIORITY);
+		return taskExecutor;
+	}
+	
+	@Bean
+	public Unmarshaller workflowDescriptionUnmarshaller() {
+		Jaxb2Marshaller jaxb2marshaller = new Jaxb2Marshaller();
+		jaxb2marshaller.setPackagesToScan(new String[] { "ca.corefacility.bioinformatics.irida.model.workflow" });
+		return jaxb2marshaller;
 	}
 }

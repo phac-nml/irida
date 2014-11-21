@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.workflow.PreparedWorkflow;
@@ -37,10 +38,11 @@ public interface AnalysisWorkspaceService<S extends AnalysisSubmission, P extend
 	 * Gets an Analysis object containing the results for this analysis.  This object is not persisted
 	 *  in the database.
 	 * @param analysisSubmission  The submission to get the results for.
+	 * @param outputDirectory A directory to store output files downloaded from this analysis.
 	 * @return  An Analysis object containing the results.
 	 * @throws ExecutionManagerException  If there was an error getting the results.
 	 * @throws IOException  If there was an error when loading the results of an analysis from Galaxy 
 	 *  to a local file.
 	 */
-	public A getAnalysisResults(S analysisSubmission) throws ExecutionManagerException, IOException;
+	public A getAnalysisResults(S analysisSubmission, Path outputDirectory) throws ExecutionManagerException, IOException;
 }

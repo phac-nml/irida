@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectExcep
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadFileSizeException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
@@ -34,7 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectNam
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.LibraryContentId;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker.UploadEventListener;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadEventListener;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 
@@ -44,6 +45,7 @@ import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
+import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
@@ -382,10 +384,35 @@ public class GalaxyUploaderAPI {
 			File file = path.toFile();
 			String sampleFilePath = samplePath(rootFolder, sample, file);
 
+			// if file already exists, check size
 			if (libraryMap.containsKey(sampleFilePath)) {
-				logger.debug("File from local path=" + file.getAbsolutePath() + " alread exists on Galaxy path="
-						+ samplePath(rootFolder, sample, file) + " in library name=" + library.getName() + " id="
-						+ library.getId() + " in Galaxy url=" + galaxyInstance.getGalaxyUrl() + " skipping upload");
+				LibraryContent sampleGalaxyFileContent = libraryMap.get(sampleFilePath);
+				LibraryDataset sampleFileDataset = librariesClient.showDataset(library.getId(),
+						sampleGalaxyFileContent.getId());
+
+				long galaxyFileSize = Long.parseLong(sampleFileDataset.getFileSize());
+				long localFileSize = file.length();
+
+				if (galaxyFileSize == localFileSize) {
+					logger.debug("File from local path=" + file.getAbsolutePath() + ", size=" + localFileSize
+							+ " already exists on Galaxy path=" + samplePath(rootFolder, sample, file) + ", size="
+							+ galaxyFileSize + " in library name=" + library.getName() + " id=" + library.getId()
+							+ " in Galaxy url=" + galaxyInstance.getGalaxyUrl() + " skipping upload");
+				} else if (galaxyFileSize == (localFileSize + 1)) {
+					// It's possible for Galaxy to add an extra trailing newline
+					// at the end of a file if there was no newline before. This
+					// is due to Galaxy attempting to write out datasets with
+					// Unix style newlines. The code for this is in
+					// https://bitbucket.org/galaxy/galaxy-dist/src/7e4d21621ce12e13ebbdf9fd3259df58c3ef124c/lib/galaxy/datatypes/data.py?at=stable#cl-673
+					logger.debug("File from local path=" + file.getAbsolutePath() + ", size=" + localFileSize
+							+ " already exists on Galaxy path=" + samplePath(rootFolder, sample, file) + ", size="
+							+ galaxyFileSize + " in library name=" + library.getName() + " id=" + library.getId()
+							+ " in Galaxy url=" + galaxyInstance.getGalaxyUrl()
+							+ " sizes off by 1 so assuming Galaxy added a trailing newline ... " + " skipping upload");
+				} else {
+					throw new LibraryUploadFileSizeException(file, library, sampleFileDataset,
+							galaxyInstance.getGalaxyUrl());
+				}
 			} else {
 				ClientResponse uploadResponse = uploadFile(persistedSampleFolder, file, librariesClient, library);
 

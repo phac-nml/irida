@@ -6,8 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.envers.Audited;
-
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
 
 /**
@@ -17,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflow
  */
 @Entity
 @Table(name = "remote_workflow_phylogenomics")
-@Audited
 public class RemoteWorkflowPhylogenomics extends RemoteWorkflowGalaxy {
 
 	@NotNull

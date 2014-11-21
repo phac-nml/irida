@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,10 +60,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@link SampleSequenceFileJoin}.
 	 */
 	private SampleSequenceFileJoinRepository ssfRepository;
-	
+
 	/**
-	 * Reference to {@link AnalysisService} for getting {@link AnalysisFastQC} analysis results
-	 * for a sequence file.
+	 * Reference to {@link AnalysisService} for getting {@link AnalysisFastQC}
+	 * analysis results for a sequence file.
 	 */
 	private AnalysisRepository analysisRepository;
 
@@ -191,9 +192,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	public Page<ProjectSampleJoin> getSamplesForProjectWithName(Project project, String name, int page, int size,
 			Direction order, String... sortProperties) {
-		if (sortProperties.length == 0) {
-			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
-		}
+		sortProperties = verifySortProperties(sortProperties);
+
 		return psjRepository.findAll(ProjectSampleJoinSpecification.searchSampleWithNameInProject(name, project),
 				new PageRequest(page, size, order, sortProperties));
 	}
@@ -203,29 +203,25 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public long getTotalBasesForSample(Sample sample)
-			throws SequenceFileAnalysisException {
+	public long getTotalBasesForSample(Sample sample) throws SequenceFileAnalysisException {
 		checkNotNull(sample, "sample is null");
 
 		final String fastQCAnalysisName = AnalysisFastQC.class.getSimpleName();
 
 		long totalBases = 0;
 
-		List<Join<Sample, SequenceFile>> sequenceFiles = ssfRepository
-				.getFilesForSample(sample);
+		List<Join<Sample, SequenceFile>> sequenceFiles = ssfRepository.getFilesForSample(sample);
 		for (Join<Sample, SequenceFile> sequenceFileJoin : sequenceFiles) {
 			SequenceFile sequenceFile = sequenceFileJoin.getObject();
 
-			Set<AnalysisFastQC> sequenceFileFastQCSet = analysisRepository
-					.findAnalysesForSequenceFile(sequenceFile,
-							AnalysisFastQC.class);
+			Set<AnalysisFastQC> sequenceFileFastQCSet = analysisRepository.findAnalysesForSequenceFile(sequenceFile,
+					AnalysisFastQC.class);
 			if (sequenceFileFastQCSet == null || sequenceFileFastQCSet.size() == 0) {
-				throw new SequenceFileAnalysisException("No corresponding "
-						+ fastQCAnalysisName + " analysis for " + sequenceFile);
+				throw new SequenceFileAnalysisException("No corresponding " + fastQCAnalysisName + " analysis for "
+						+ sequenceFile);
 			} else if (sequenceFileFastQCSet.size() > 1) {
-				throw new SequenceFileAnalysisException("Multiple ("
-						+ sequenceFileFastQCSet.size() + ") corresponding "
-						+ fastQCAnalysisName + " analysis for " + sequenceFile);
+				throw new SequenceFileAnalysisException("Multiple (" + sequenceFileFastQCSet.size()
+						+ ") corresponding " + fastQCAnalysisName + " analysis for " + sequenceFile);
 			} else {
 				AnalysisFastQC sequenceFileFastQC = sequenceFileFastQCSet.iterator().next();
 				totalBases += sequenceFileFastQC.getTotalBases();
@@ -240,12 +236,38 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public double estimateCoverageForSample(Sample sample,
-			long referenceFileLength) throws SequenceFileAnalysisException {
+	public double estimateCoverageForSample(Sample sample, long referenceFileLength)
+			throws SequenceFileAnalysisException {
 		checkNotNull(sample, "sample is null");
-		checkArgument(referenceFileLength > 0, "referenceFileLength ("
-				+ referenceFileLength + ") must be positive");
+		checkArgument(referenceFileLength > 0, "referenceFileLength (" + referenceFileLength + ") must be positive");
 
 		return getTotalBasesForSample(sample) / (double) referenceFileLength;
+	}
+
+	public Page<ProjectSampleJoin> searchProjectSamples(Specification<ProjectSampleJoin> specification, int page,
+			int size, Direction order, String... sortProperties) {
+
+		sortProperties = verifySortProperties(sortProperties);
+
+		return psjRepository.findAll(specification, new PageRequest(page, size, order, sortProperties));
+	}
+
+	/**
+	 * Verify that the given sort properties array is not null or empty. If it
+	 * is, give a default sort property.
+	 * 
+	 * @param sortProperties
+	 *            The given sort properites
+	 * @return The corrected sort properties
+	 */
+	private String[] verifySortProperties(String[] sortProperties) {
+		// if the sort properties are null, empty, or are an empty string, use
+		// CREATED_DATE
+		if (sortProperties == null || sortProperties.length == 0
+				|| (sortProperties.length == 1 && sortProperties[0].equals(""))) {
+			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
+		}
+
+		return sortProperties;
 	}
 }

@@ -12,6 +12,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -35,14 +36,14 @@ public class AnalysisSubmissionSpecification {
 				}
 				if (minDate != null) {
 					predicateList.add(criteriaBuilder.greaterThanOrEqualTo(
-							analysisSubmissionRoot.<Date>get("createdDate"), minDate));
+							analysisSubmissionRoot.get("createdDate"), minDate));
 				}
 				if (maxDate != null) {
 					predicateList.add(criteriaBuilder
-							.lessThanOrEqualTo(analysisSubmissionRoot.<Date>get("createdDate"), maxDate));
+							.lessThanOrEqualTo(analysisSubmissionRoot.get("createdDate"), maxDate));
 				}
 				if (predicateList.size() > 0) {
-					return criteriaBuilder.and(predicateList.toArray(new Predicate[predicateList.size()]));
+					return criteriaBuilder.and(Iterables.toArray(predicateList, Predicate.class));
 				} else {
 					return null;
 				}

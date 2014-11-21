@@ -47,7 +47,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectNam
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.LibraryContentId;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker.UploadEventListener;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadEventListener;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploaderAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
@@ -63,6 +63,7 @@ import com.github.jmchilton.blend4j.galaxy.UsersClient;
 import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
+import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.github.jmchilton.blend4j.galaxy.beans.User;
@@ -697,6 +698,11 @@ public class GalaxyAPITest {
 				+ dataFile1.getFileName());
 		fileContent.setId(fileId);
 		libraryMap.put(fileContent.getName(), fileContent);
+		
+		// setup sample file in response to LibrariesClient.showDataset
+		LibraryDataset uploadedDataset  = new LibraryDataset();
+		uploadedDataset.setFileSize(Long.toString(dataFile1.toFile().length()));
+		when(librariesClient.showDataset(libraryId, fileId)).thenReturn(uploadedDataset);
 
 		setupUploadSampleToLibrary(samples, sampleFolders, false);
 
@@ -754,6 +760,11 @@ public class GalaxyAPITest {
 				+ dataFile1.getFileName());
 		fileContent.setId(fileId);
 		libraryMap.put(fileContent.getName(), fileContent);
+		
+		// setup sample file in response to LibrariesClient.showDataset
+		LibraryDataset uploadedDataset  = new LibraryDataset();
+		uploadedDataset.setFileSize(Long.toString(dataFile1.toFile().length()));
+		when(librariesClient.showDataset(libraryId, fileId)).thenReturn(uploadedDataset);
 
 		setupUploadSampleToLibrary(samples, sampleFolders, false);
 

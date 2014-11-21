@@ -1,15 +1,15 @@
 package ca.corefacility.bioinformatics.irida.service.remote.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 
-import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
+import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
+import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
-import ca.corefacility.bioinformatics.irida.service.remote.model.RemoteProject;
-import ca.corefacility.bioinformatics.irida.service.remote.model.resource.ListResourceWrapper;
-import ca.corefacility.bioinformatics.irida.service.remote.model.resource.ResourceWrapper;
-import ca.corefacility.bioinformatics.irida.service.remote.resttemplate.OAuthTokenRestTemplate;
 
 /**
  * Remote service for retrieving {@link RemoteProject}s
@@ -19,24 +19,43 @@ import ca.corefacility.bioinformatics.irida.service.remote.resttemplate.OAuthTok
  */
 @Service
 public class ProjectRemoteServiceImpl extends RemoteServiceImpl<RemoteProject> implements ProjectRemoteService {
-
-	public final static String RELATIVE_URI = "projects";
-
-	// the type references for this repo
-	private static ParameterizedTypeReference<ListResourceWrapper<RemoteProject>> listTypeReference = new ParameterizedTypeReference<ListResourceWrapper<RemoteProject>>() {
-	};
-	private static ParameterizedTypeReference<ResourceWrapper<RemoteProject>> objectTypeReference = new ParameterizedTypeReference<ResourceWrapper<RemoteProject>>() {
-	};
+	// TODO: Get this information from the ProjectsController in the REST API
+	// project when it is merged into this project. Issue #86
+	public static final String PROJECTS_BOOKMARK = "/projects";
 
 	/**
-	 * Create a new {@link ProjectRemoteServiceImpl} with the given rest
-	 * template
+	 * Create a new {@link ProjectRemoteServiceImpl} that communicates with the
+	 * given {@link ProjectRemoteRepository}
 	 * 
-	 * @param restTemplate
-	 *            a {@link OAuthTokenRestTemplate}
+	 * @param repository
+	 *            the {@link ProjectRemoteRepository}
 	 */
 	@Autowired
-	public ProjectRemoteServiceImpl(RemoteAPITokenService tokenService) {
-		super(RELATIVE_URI, tokenService, listTypeReference, objectTypeReference);
+	public ProjectRemoteServiceImpl(ProjectRemoteRepository repository) {
+		super(repository);
+	}
+
+	/**
+	 * Read a {@link RemoteProject} for a given {@link RemoteRelatedProject}
+	 * reference
+	 * 
+	 * @param project
+	 *            The {@link RemoteRelatedProject} to read
+	 * @return a {@link RemoteProject}
+	 */
+	public RemoteProject read(RemoteRelatedProject project) {
+		String remoteProjectURI = project.getRemoteProjectURI();
+		RemoteAPI remoteAPI = project.getRemoteAPI();
+
+		return super.read(remoteProjectURI, remoteAPI);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<RemoteProject> listProjectsForAPI(RemoteAPI api) {
+		String projectsHref = api.getServiceURI() + PROJECTS_BOOKMARK;
+
+		return list(projectsHref, api);
 	}
 }

@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.model.upload.galaxy;
 import static com.google.common.base.Preconditions.*;
 
 import java.nio.file.Path;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,6 +34,17 @@ public class GalaxySample implements UploadSample {
 
 		this.sampleName = sampleName;
 		this.sampleFiles = sampleFiles;
+	}
+	
+	/**
+	 * Builds a new GalaxySample with the given name.
+	 * @param sampleName  The name of the sample.
+	 */
+	public GalaxySample(UploadFolderName sampleName) {
+		checkNotNull(sampleName, "sampleName is null");
+
+		this.sampleName = sampleName;
+		this.sampleFiles = new LinkedList<>();
 	}
 
 	/**
@@ -66,6 +78,19 @@ public class GalaxySample implements UploadSample {
 	public void setSampleFiles(List<Path> sampleFiles) {
 		checkNotNull(sampleFiles, "sampleFiles are null");
 		this.sampleFiles = sampleFiles;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void addSampleFile(Path sampleFile) {
+		checkNotNull(sampleFile, "sampleFile is null");
+		if (sampleFiles == null) {
+			sampleFiles = new LinkedList<>();
+		}
+		
+		sampleFiles.add(sampleFile);
 	}
 
 	/**

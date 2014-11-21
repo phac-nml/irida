@@ -83,6 +83,10 @@ public class Organization implements IridaThing {
 		return id;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public String getCentreName() {
 		return centreName;
 	}

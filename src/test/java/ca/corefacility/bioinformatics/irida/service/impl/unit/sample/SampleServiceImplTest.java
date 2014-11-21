@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.unit.sample;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -19,6 +20,10 @@ import javax.validation.ValidatorFactory;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 
 import com.google.common.collect.Sets;
 
@@ -34,6 +39,8 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisReposi
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleFilterSpecification;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.service.impl.sample.SampleServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -43,14 +50,14 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class SampleServiceImplTest {
-	
+
 	private SampleService sampleService;
 	private SampleRepository sampleRepository;
 	private ProjectSampleJoinRepository psjRepository;
 	private SampleSequenceFileJoinRepository ssfRepository;
 	private AnalysisRepository analysisRepository;
 	private Validator validator;
-	
+
 	/**
 	 * Variation in a floating point number to be considered equal.
 	 */
@@ -64,8 +71,8 @@ public class SampleServiceImplTest {
 		analysisRepository = mock(AnalysisRepository.class);
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
-		sampleService = new SampleServiceImpl(sampleRepository, psjRepository,
-				ssfRepository, analysisRepository, validator);
+		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, ssfRepository, analysisRepository,
+				validator);
 	}
 
 	@Test
@@ -203,26 +210,29 @@ public class SampleServiceImplTest {
 		verify(psjRepository).getProjectForSample(s1);
 		verify(psjRepository).getProjectForSample(s2);
 	}
-	
+
 	/**
-	 * Tests out successfully getting the coverage from a sample with no sequence files.
-	 * @throws SequenceFileAnalysisException 
+	 * Tests out successfully getting the coverage from a sample with no
+	 * sequence files.
+	 * 
+	 * @throws SequenceFileAnalysisException
 	 */
 	@Test
 	public void testGetCoverageForSampleSuccessZero() throws SequenceFileAnalysisException {
 		Sample s1 = new Sample();
 		s1.setId(1l);
 
-		when(ssfRepository.getFilesForSample(s1)).thenReturn(
-				new ArrayList<Join<Sample,SequenceFile>>());
-		
+		when(ssfRepository.getFilesForSample(s1)).thenReturn(new ArrayList<Join<Sample, SequenceFile>>());
+
 		double coverage = sampleService.estimateCoverageForSample(s1, 10);
 		assertEquals(0, coverage, deltaFloatEquality);
 	}
-	
+
 	/**
-	 * Tests out successfully getting the coverage from a sample with a sequence file.
-	 * @throws SequenceFileAnalysisException 
+	 * Tests out successfully getting the coverage from a sample with a sequence
+	 * file.
+	 * 
+	 * @throws SequenceFileAnalysisException
 	 */
 	@Test
 	public void testGetCoverageForSampleSuccess() throws SequenceFileAnalysisException {
@@ -234,49 +244,49 @@ public class SampleServiceImplTest {
 
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
 
-		AnalysisFastQC analysisFastQC1 = new AnalysisFastQC(
-				Sets.newHashSet(sf1), "id");
+		AnalysisFastQC analysisFastQC1 = new AnalysisFastQC(Sets.newHashSet(sf1), "id");
 		analysisFastQC1.setTotalBases(1000l);
 
-		when(ssfRepository.getFilesForSample(s1)).thenReturn(
-				Arrays.asList(join));
-		when(
-				analysisRepository.findAnalysesForSequenceFile(sf1,
-						AnalysisFastQC.class)).thenReturn(
+		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
+		when(analysisRepository.findAnalysesForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(
 				Sets.newHashSet(analysisFastQC1));
-		
+
 		double coverage = sampleService.estimateCoverageForSample(s1, 500l);
 		assertEquals(2.0, coverage, deltaFloatEquality);
 	}
-	
+
 	/**
 	 * Tests out passing an invalid reference length.
-	 * @throws SequenceFileAnalysisException 
+	 * 
+	 * @throws SequenceFileAnalysisException
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testGetCoverageForSampleInvalidReferenceLength() throws SequenceFileAnalysisException {
 		sampleService.estimateCoverageForSample(new Sample(), 0l);
 	}
-	
+
 	/**
-	 * Tests out successfully getting the total bases from a sample with no sequence files.
-	 * @throws SequenceFileAnalysisException 
+	 * Tests out successfully getting the total bases from a sample with no
+	 * sequence files.
+	 * 
+	 * @throws SequenceFileAnalysisException
 	 */
 	@Test
 	public void testGetTotalBasesForSampleSuccessZero() throws SequenceFileAnalysisException {
 		Sample s1 = new Sample();
 		s1.setId(1l);
 
-		when(ssfRepository.getFilesForSample(s1)).thenReturn(
-				new ArrayList<Join<Sample,SequenceFile>>());
-		
+		when(ssfRepository.getFilesForSample(s1)).thenReturn(new ArrayList<Join<Sample, SequenceFile>>());
+
 		long actualBases = sampleService.getTotalBasesForSample(s1);
 		assertEquals(0, actualBases);
 	}
-	
+
 	/**
-	 * Tests out successfully getting the total bases from a sample with one sequence file.
-	 * @throws SequenceFileAnalysisException 
+	 * Tests out successfully getting the total bases from a sample with one
+	 * sequence file.
+	 * 
+	 * @throws SequenceFileAnalysisException
 	 */
 	@Test
 	public void testGetTotalBasesForSampleSuccessOne() throws SequenceFileAnalysisException {
@@ -288,24 +298,22 @@ public class SampleServiceImplTest {
 
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
 
-		AnalysisFastQC analysisFastQC1 = new AnalysisFastQC(
-				Sets.newHashSet(sf1), "id");
+		AnalysisFastQC analysisFastQC1 = new AnalysisFastQC(Sets.newHashSet(sf1), "id");
 		analysisFastQC1.setTotalBases(1000l);
 
-		when(ssfRepository.getFilesForSample(s1)).thenReturn(
-				Arrays.asList(join));
-		when(
-				analysisRepository.findAnalysesForSequenceFile(sf1,
-						AnalysisFastQC.class)).thenReturn(
+		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
+		when(analysisRepository.findAnalysesForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(
 				Sets.newHashSet(analysisFastQC1));
-		
+
 		long actualBases = sampleService.getTotalBasesForSample(s1);
 		assertEquals(1000, actualBases);
 	}
-	
+
 	/**
-	 * Tests out successfully getting the total bases from a sample with two sequence files.
-	 * @throws SequenceFileAnalysisException 
+	 * Tests out successfully getting the total bases from a sample with two
+	 * sequence files.
+	 * 
+	 * @throws SequenceFileAnalysisException
 	 */
 	@Test
 	public void testGetTotalBasesForSampleSuccessTwo() throws SequenceFileAnalysisException {
@@ -320,35 +328,30 @@ public class SampleServiceImplTest {
 		SampleSequenceFileJoin join1 = new SampleSequenceFileJoin(s1, sf1);
 		SampleSequenceFileJoin join2 = new SampleSequenceFileJoin(s1, sf2);
 
-		AnalysisFastQC analysisFastQC1 = new AnalysisFastQC(
-				Sets.newHashSet(sf1), "id");
+		AnalysisFastQC analysisFastQC1 = new AnalysisFastQC(Sets.newHashSet(sf1), "id");
 		analysisFastQC1.setTotalBases(1000l);
-		
-		AnalysisFastQC analysisFastQC2 = new AnalysisFastQC(
-				Sets.newHashSet(sf2), "id2");
+
+		AnalysisFastQC analysisFastQC2 = new AnalysisFastQC(Sets.newHashSet(sf2), "id2");
 		analysisFastQC2.setTotalBases(1000l);
 
-		when(ssfRepository.getFilesForSample(s1)).thenReturn(
-				Arrays.asList(join1, join2));
-		when(
-				analysisRepository.findAnalysesForSequenceFile(sf1,
-						AnalysisFastQC.class)).thenReturn(
+		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join1, join2));
+		when(analysisRepository.findAnalysesForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(
 				Sets.newHashSet(analysisFastQC1));
-		
-		when(
-				analysisRepository.findAnalysesForSequenceFile(sf2,
-						AnalysisFastQC.class)).thenReturn(
+
+		when(analysisRepository.findAnalysesForSequenceFile(sf2, AnalysisFastQC.class)).thenReturn(
 				Sets.newHashSet(analysisFastQC2));
-		
+
 		long actualBases = sampleService.getTotalBasesForSample(s1);
 		assertEquals(2000, actualBases);
 	}
-	
+
 	/**
-	 * Tests out failing to get the total bases from a sample with one sequence file due to missing FastQC
-	 * @throws SequenceFileAnalysisException 
+	 * Tests out failing to get the total bases from a sample with one sequence
+	 * file due to missing FastQC
+	 * 
+	 * @throws SequenceFileAnalysisException
 	 */
-	@Test(expected=SequenceFileAnalysisException.class)
+	@Test(expected = SequenceFileAnalysisException.class)
 	public void testGetTotalBasesForSampleFailNoFastQC() throws SequenceFileAnalysisException {
 		Sample s1 = new Sample();
 		s1.setId(1l);
@@ -358,21 +361,19 @@ public class SampleServiceImplTest {
 
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
 
-		when(ssfRepository.getFilesForSample(s1)).thenReturn(
-				Arrays.asList(join));
-		when(
-				analysisRepository.findAnalysesForSequenceFile(sf1,
-						AnalysisFastQC.class)).thenReturn(
-				Sets.newHashSet());
-		
+		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
+		when(analysisRepository.findAnalysesForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(Sets.newHashSet());
+
 		sampleService.getTotalBasesForSample(s1);
 	}
-	
+
 	/**
-	 * Tests out failing to get the total bases from a sample with one sequence file due to too many FastQC
-	 * @throws SequenceFileAnalysisException 
+	 * Tests out failing to get the total bases from a sample with one sequence
+	 * file due to too many FastQC
+	 * 
+	 * @throws SequenceFileAnalysisException
 	 */
-	@Test(expected=SequenceFileAnalysisException.class)
+	@Test(expected = SequenceFileAnalysisException.class)
 	public void testGetTotalBasesForSampleFailMultipleFastQC() throws SequenceFileAnalysisException {
 		Sample s1 = new Sample();
 		s1.setId(1l);
@@ -381,23 +382,71 @@ public class SampleServiceImplTest {
 		sf1.setId(2222l);
 
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
-		
-		AnalysisFastQC analysisFastQC1 = new AnalysisFastQC(
-				Sets.newHashSet(sf1), "id");
+
+		AnalysisFastQC analysisFastQC1 = new AnalysisFastQC(Sets.newHashSet(sf1), "id");
 		analysisFastQC1.setTotalBases(1000l);
-		
-		AnalysisFastQC analysisFastQC2 = new AnalysisFastQC(
-				Sets.newHashSet(sf1), "id2");
+
+		AnalysisFastQC analysisFastQC2 = new AnalysisFastQC(Sets.newHashSet(sf1), "id2");
 		analysisFastQC2.setTotalBases(1000l);
 
-		when(ssfRepository.getFilesForSample(s1)).thenReturn(
-				Arrays.asList(join));
-		when(
-				analysisRepository.findAnalysesForSequenceFile(sf1,
-						AnalysisFastQC.class)).thenReturn(
+		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
+		when(analysisRepository.findAnalysesForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(
 				Sets.newHashSet(analysisFastQC1, analysisFastQC2));
-		
+
 		sampleService.getTotalBasesForSample(s1);
+	}
+
+	@Test
+	public void testSearchProjectSamples() {
+		Project project = new Project();
+		int page = 0;
+		int size = 1;
+		Direction order = Direction.ASC;
+		String sortProperties = "createdDate";
+		Specification<ProjectSampleJoin> specification = ProjectSampleJoinSpecification.searchSampleWithNameInProject(
+				"", project);
+
+		sampleService.searchProjectSamples(specification, page, size, order, sortProperties);
+
+		ArgumentCaptor<PageRequest> pageRequest = ArgumentCaptor.forClass(PageRequest.class);
+		verify(psjRepository).findAll(eq(specification), pageRequest.capture());
+
+		assertNotNull(pageRequest.getValue().getSort().getOrderFor(sortProperties));
+	}
+
+	@Test
+	public void testSearchProjectSamplesWithoutProperty() {
+		Project project = new Project();
+		int page = 0;
+		int size = 1;
+		Direction order = Direction.ASC;
+		String sortProperties = "createdDate";
+		Specification<ProjectSampleJoin> specification = ProjectSampleJoinSpecification.searchSampleWithNameInProject(
+				"", project);
+
+		sampleService.searchProjectSamples(specification, page, size, order);
+
+		ArgumentCaptor<PageRequest> pageRequest = ArgumentCaptor.forClass(PageRequest.class);
+		verify(psjRepository).findAll(eq(specification), pageRequest.capture());
+
+		assertNotNull(pageRequest.getValue().getSort().getOrderFor(sortProperties));
+	}
+
+	@Test
+	public void testProjectSampleFilterSpecification() {
+		Project project = new Project();
+		int page = 0;
+		int size = 10;
+		Direction order = Direction.ASC;
+		String sortProperties = "createdDate";
+		Specification<ProjectSampleJoin> specification = ProjectSampleFilterSpecification.searchProjectSamples(project,
+				"", "", null, null);
+		sampleService.searchProjectSamples(specification, page, size, order, sortProperties);
+
+		ArgumentCaptor<PageRequest> pageRequest = ArgumentCaptor.forClass(PageRequest.class);
+		verify(psjRepository).findAll(eq(specification), pageRequest.capture());
+
+		assertNotNull(pageRequest.getValue().getSort().getOrderFor(sortProperties));
 	}
 
 	private Sample s(Long id) {
@@ -412,7 +461,7 @@ public class SampleServiceImplTest {
 		try {
 			sf.setFile(Files.createTempFile(null, null));
 		} catch (IOException e) {
-			
+
 		}
 		return sf;
 	}

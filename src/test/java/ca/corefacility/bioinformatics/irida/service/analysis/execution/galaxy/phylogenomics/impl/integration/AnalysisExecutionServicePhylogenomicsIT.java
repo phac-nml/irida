@@ -24,14 +24,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceTestConfig;
+import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
-import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
-import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
-import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServiceTestConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
@@ -45,9 +39,9 @@ import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
@@ -61,11 +55,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
-		IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class,
-		IridaApiTestMultithreadingConfig.class, NonWindowsLocalGalaxyConfig.class,
-		WindowsLocalGalaxyConfig.class, AnalysisExecutionServiceTestConfig.class,
-		RemoteWorkflowServiceTestConfig.class})
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class})
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class, WithSecurityContextTestExcecutionListener.class })
@@ -74,7 +64,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 public class AnalysisExecutionServicePhylogenomicsIT {
 	
 	@Autowired
-	private AnalysisExecutionGalaxyITService analysisExecutionGalaxyITService;
+	private DatabaseSetupGalaxyITService analysisExecutionGalaxyITService;
 	
 	@Autowired
 	private LocalGalaxy localGalaxy;
@@ -119,9 +109,9 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 	public void setup() throws URISyntaxException, IOException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 		
-		Path sequenceFilePathReal = Paths.get(AnalysisExecutionGalaxyITService.class.getResource(
+		Path sequenceFilePathReal = Paths.get(DatabaseSetupGalaxyITService.class.getResource(
 				"testData1.fastq").toURI());		
-		Path referenceFilePathReal = Paths.get(AnalysisExecutionGalaxyITService.class.getResource(
+		Path referenceFilePathReal = Paths.get(DatabaseSetupGalaxyITService.class.getResource(
 				"testReference.fasta").toURI());
 		
 		sequenceFilePath = Files.createTempFile("testData1", ".fastq");
@@ -300,12 +290,17 @@ public class AnalysisExecutionServicePhylogenomicsIT {
 		assertTrue("phylogenetic trees should be equal",
 				com.google.common.io.Files.equal(expectedTree.toFile(),
 						phylogeneticTree.getFile().toFile()));
+		assertEquals(expectedTree.toFile().getName(), phylogeneticTree.getFile().toFile().getName());
+		
 		assertTrue("snp matrices should be correct",
 				com.google.common.io.Files.equal(expectedSnpMatrix.toFile(),
 						snpMatrix.getFile().toFile()));
+		assertEquals(expectedSnpMatrix.toFile().getName(), snpMatrix.getFile().toFile().getName());
+		
 		assertTrue("snpTable should be correct",
 				com.google.common.io.Files.equal(expectedSnpTable.toFile(),
 						snpTable.getFile().toFile()));
+		assertEquals(expectedSnpTable.toFile().getName(), snpTable.getFile().toFile().getName());
 
 		AnalysisSubmissionPhylogenomics finalSubmission = analysisSubmissionRepository
 				.getByType(analysisExecuted.getId(),
