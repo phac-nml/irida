@@ -252,4 +252,8 @@ public class ProjectSamplesPage extends AbstractPage {
 	public int getFilteredSampleCount() {
 		return Integer.parseInt(driver.findElement(By.id("samples-filtered")).getText());
 	}
+
+	public void filterByName(String name) {
+		driver.findElement(By.id("sample-name-filter")).sendKeys();
+	}
 }

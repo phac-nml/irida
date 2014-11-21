@@ -448,7 +448,8 @@ public class ProjectSamplesPageIT {
 		LoginPage.loginAsAdmin(driver);
 		page.goToPage();
 
-		assertEquals(page.getFilteredSampleCount(), page.getTotalSampleCount());
+		page.filterByName("ple1");
+		assertEquals(5, page.getFilteredSampleCount());
 	}
 
 	private int getSampleFlagCount(String command) {
