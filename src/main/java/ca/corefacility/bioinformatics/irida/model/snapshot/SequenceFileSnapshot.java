@@ -7,7 +7,6 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,9 +19,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.envers.Audited;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 
 /**
@@ -34,8 +30,6 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 @Entity
 @Table(name = "sequence_file_snapshot")
 @Inheritance(strategy = InheritanceType.JOINED)
-@Audited
-@EntityListeners(AuditingEntityListener.class)
 public class SequenceFileSnapshot implements IridaSequenceFile {
 
 	@Id

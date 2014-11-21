@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.model.snapshot;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -10,9 +9,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-
-import org.hibernate.envers.Audited;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.irida.IridaProject;
 
@@ -25,8 +21,6 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaProject;
 @Entity
 @Table(name = "project_snapshot")
 @Inheritance(strategy = InheritanceType.JOINED)
-@Audited
-@EntityListeners(AuditingEntityListener.class)
 public class ProjectSnapshot implements IridaProject {
 
 	@Id

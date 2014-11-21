@@ -14,17 +14,19 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
  * Collection of {@link ProjectSnapshot}s, {@link SampleSnapshot}s, and
@@ -35,7 +37,6 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
  */
 @Entity
 @Table(name = "snapshot")
-@Audited
 @EntityListeners(AuditingEntityListener.class)
 public class Snapshot implements IridaThing {
 	@Id
@@ -64,6 +65,11 @@ public class Snapshot implements IridaThing {
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "snapshot_sample_snapshot", joinColumns = @JoinColumn(name = "snapshot_id"), inverseJoinColumns = @JoinColumn(name = "sample_snapshot"))
 	private List<SampleSnapshot> samples;
+
+	@ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
+	@JoinColumn(name = "created_by")
+	@CreatedBy
+	private User createdBy;
 
 	public Snapshot() {
 		createdDate = new Date();
@@ -131,6 +137,14 @@ public class Snapshot implements IridaThing {
 
 	public void addSequenceFile(SequenceFileSnapshot file) {
 		sequenceFiles.add(file);
+	}
+
+	public User getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(User createdBy) {
+		this.createdBy = createdBy;
 	}
 
 }
