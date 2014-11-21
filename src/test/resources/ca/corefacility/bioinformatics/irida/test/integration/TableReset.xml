@@ -51,9 +51,6 @@
 	<project_referencefile />
 
 	<project_event />
-	<project_event_sample_added />
-	<project_event_user_removed />
-	<project_event_user_role_set />
 
 	<!-- All auditing table references *only* refer to the Revisions table, 
 		so they can all be listed in an arbitrary order *after* the Revisions table. -->

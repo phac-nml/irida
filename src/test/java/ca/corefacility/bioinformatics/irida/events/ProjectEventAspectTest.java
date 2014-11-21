@@ -1,95 +1,81 @@
 package ca.corefacility.bioinformatics.irida.events;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import org.aspectj.lang.JoinPoint;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
 
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
+import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
 
 public class ProjectEventAspectTest {
 	private ProjectEventAspect projectEventAspect;
-	private ProjectEventRepository eventRepository;
+	private ProjectEventHandler eventHandler;
 
-	private Project project;
+	private AnnotatedClass annotatedClass;
 
 	@Before
 	public void setup() {
-		eventRepository = mock(ProjectEventRepository.class);
-		projectEventAspect = new ProjectEventAspect(eventRepository);
+		eventHandler = mock(ProjectEventHandler.class);
+		projectEventAspect = new ProjectEventAspect(eventHandler);
+		annotatedClass = new AnnotatedClass();
+		AspectJProxyFactory proxyFactory = new AspectJProxyFactory(annotatedClass);
+		proxyFactory.addAspect(projectEventAspect);
 
-		project = new Project("Test project");
+		annotatedClass = proxyFactory.getProxy();
+
 	}
 
 	@Test
-	public void testProcessProjectUserRoleSet() {
-		User user = new User("tom", null, null, "Some", "guy", null);
-		ProjectUserJoin projectUserJoin = new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER);
+	public void testHandleProjectEvent() {
+		String arg = "test";
+		annotatedClass.returningMethod(arg);
 
-		projectEventAspect.processProjectUserRoleSet(projectUserJoin);
+		ArgumentCaptor<MethodEvent> eventCaptor = ArgumentCaptor.forClass(MethodEvent.class);
+		verify(eventHandler).delegate(eventCaptor.capture());
+		MethodEvent value = eventCaptor.getValue();
 
-		ArgumentCaptor<UserRoleSetProjectEvent> captor = ArgumentCaptor.forClass(UserRoleSetProjectEvent.class);
-		verify(eventRepository).save(captor.capture());
+		assertEquals(TestProjectEvent.class, value.getEventClass());
+		assertEquals(arg, value.getArgs()[0]);
+		assertNotNull(value.getReturnValue());
 
-		UserRoleSetProjectEvent value = captor.getValue();
-		assertEquals(project, value.getProject());
-		assertEquals(user, value.getUser());
 	}
 
 	@Test
-	public void testProcessSampleAdded() {
-		Sample sample = new Sample("test sample");
-		ProjectSampleJoin projectSampleJoin = new ProjectSampleJoin(project, sample);
+	public void testHandleNonReturningProjectEvent() {
+		String arg = "test";
+		annotatedClass.nonReturningMethod(arg);
 
-		projectEventAspect.processSampleAdded(projectSampleJoin);
+		ArgumentCaptor<MethodEvent> eventCaptor = ArgumentCaptor.forClass(MethodEvent.class);
+		verify(eventHandler).delegate(eventCaptor.capture());
+		MethodEvent value = eventCaptor.getValue();
 
-		ArgumentCaptor<SampleAddedProjectEvent> captor = ArgumentCaptor.forClass(SampleAddedProjectEvent.class);
-		verify(eventRepository).save(captor.capture());
+		assertEquals(TestProjectEvent.class, value.getEventClass());
+		assertEquals(arg, value.getArgs()[0]);
 
-		SampleAddedProjectEvent value = captor.getValue();
-		assertEquals(project, value.getProject());
-		assertEquals(sample, value.getSample());
 	}
 
-	@Test
-	public void testProcessUserRemoved() {
-		JoinPoint jp = mock(JoinPoint.class);
-		User user = new User("tom", null, null, "Some", "guy", null);
-		Object[] args = { project, user };
-		when(jp.getArgs()).thenReturn(args);
+	private static class AnnotatedClass {
+		@LaunchesProjectEvent(TestProjectEvent.class)
+		public void nonReturningMethod(String arg1) {
+		}
 
-		projectEventAspect.processUserRemoved(jp);
-
-		ArgumentCaptor<UserRemovedProjectEvent> captor = ArgumentCaptor.forClass(UserRemovedProjectEvent.class);
-		verify(eventRepository).save(captor.capture());
-
-		UserRemovedProjectEvent value = captor.getValue();
-		assertEquals(project, value.getProject());
-		assertEquals(user, value.getUser());
+		@LaunchesProjectEvent(TestProjectEvent.class)
+		public String returningMethod(String arg1) {
+			return "return";
+		}
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testProcessUserRemovedBadArguments() {
-		JoinPoint jp = mock(JoinPoint.class);
-		User user = new User("tom", null, null, "Some", "guy", null);
-		Object[] args = { "Not a project", user };
-		when(jp.getArgs()).thenReturn(args);
+	private static class TestProjectEvent extends ProjectEvent {
 
-		projectEventAspect.processUserRemoved(jp);
-
+		@Override
+		public String getLabel() {
+			return "A wicked event";
+		}
 	}
 }

@@ -6,17 +6,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.events.annotations.AddsSampleToProject;
-import ca.corefacility.bioinformatics.irida.events.annotations.RemovesUserFromProject;
-import ca.corefacility.bioinformatics.irida.events.annotations.SetsProjectUserRole;
-import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
+import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 
 /**
  * Aspect used to create project events for methods annotated with event
@@ -24,72 +14,26 @@ import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
- * @see SetsProjectUserRole
- * @see AddsSampleToProject
- * @see RemovesUserFromProject
+ * @see LaunchesProjectEvent
  */
 @Aspect
 public class ProjectEventAspect {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectEventAspect.class);
-	private ProjectEventRepository eventRepository;
+	private ProjectEventHandler eventHandler;
 
-	public ProjectEventAspect(ProjectEventRepository eventRepository) {
-		this.eventRepository = eventRepository;
+	public ProjectEventAspect(ProjectEventHandler eventListener) {
+		this.eventHandler = eventListener;
 	}
 
-	/**
-	 * Create a {@link UserRoleSetProjectEvent} for a
-	 * {@link SetsProjectUserRole} annotated method
-	 * 
-	 * @param projectUserJoin
-	 *            the {@link ProjectUserJoin} created by the method
-	 */
-	@AfterReturning(value = "@annotation(ca.corefacility.bioinformatics.irida.events.annotations.SetsProjectUserRole)", returning = "projectUserJoin")
-	public void processProjectUserRoleSet(ProjectUserJoin projectUserJoin) {
-		logger.debug("Creating UserRoleSetProjectEvent for " + projectUserJoin.getLabel());
-		eventRepository.save(new UserRoleSetProjectEvent(projectUserJoin.getSubject(), projectUserJoin.getObject(),
-				projectUserJoin.getProjectRole()));
+	@AfterReturning(value = "execution(public (!void) *(..)) &&  @annotation(eventAnnotation)", returning = "returnValue")
+	public void handleProjectEvent(JoinPoint jp, LaunchesProjectEvent eventAnnotation, Object returnValue) {
+		logger.trace("Intercepted method annotated with LaunchesProjectEvent " + jp.toString());
+		eventHandler.delegate(new MethodEvent(eventAnnotation.value(), returnValue, jp.getArgs()));
 	}
 
-	/**
-	 * Create a {@link SampleAddedProjectEvent} for a method annotated with
-	 * {@link AddsSampleToProject}
-	 * 
-	 * @param projectSampleJoin
-	 *            the {@link ProjectSampleJoin} created by the method
-	 */
-	@AfterReturning(value = "@annotation(ca.corefacility.bioinformatics.irida.events.annotations.AddsSampleToProject)", returning = "projectSampleJoin")
-	public void processSampleAdded(ProjectSampleJoin projectSampleJoin) {
-		logger.debug("Creating SampleAddedProjectEvent for " + projectSampleJoin.getLabel());
-		eventRepository
-				.save(new SampleAddedProjectEvent(projectSampleJoin.getSubject(), projectSampleJoin.getObject()));
-	}
-
-	/**
-	 * Create a {@link UserRemovedProjectEvent} for a method annotated with
-	 * {@link RemovesUserFromProject}. Methods annotated with this must have a
-	 * {@link Project} and {@link User} argument.
-	 * 
-	 * @param jp
-	 *            JoinPoint from the pointcut
-	 */
-	@AfterReturning(value = "@annotation(ca.corefacility.bioinformatics.irida.events.annotations.RemovesUserFromProject)")
-	public void processUserRemoved(JoinPoint jp) {
-		Object[] args = jp.getArgs();
-		User user = null;
-		Project project = null;
-		for (Object arg : args) {
-			if (arg instanceof Project) {
-				project = (Project) arg;
-			} else if (arg instanceof User) {
-				user = (User) arg;
-			}
-		}
-		if (user == null || project == null) {
-			throw new IllegalArgumentException(
-					"Project or user cannot be found on method annotated with @RemovesUserFromProject");
-		}
-		logger.debug("Removing user " + user.getLabel() + " from project " + project.getLabel());
-		eventRepository.save(new UserRemovedProjectEvent(project, user));
+	@AfterReturning(value = "execution(public void *(..)) && @annotation(eventAnnotation)")
+	public void handleProjectEventWithoutReturn(JoinPoint jp, LaunchesProjectEvent eventAnnotation) {
+		logger.trace("Intercepted void method annotated with LaunchesProjectEvent " + jp.toString());
+		eventHandler.delegate(new MethodEvent(eventAnnotation.value(), null, jp.getArgs()));
 	}
 }
