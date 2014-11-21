@@ -67,7 +67,7 @@ public class Snapshot implements IridaThing {
 	private List<SampleSnapshot> samples;
 
 	@ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
-	@JoinColumn(name = "created_by")
+	@JoinColumn(name = "created_by", nullable = false)
 	@CreatedBy
 	private User createdBy;
 

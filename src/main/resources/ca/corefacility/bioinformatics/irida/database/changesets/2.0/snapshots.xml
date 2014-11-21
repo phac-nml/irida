@@ -143,6 +143,10 @@
 			</column>
 			<column name="created_date" type="datetime" />
 			<column name="modified_date" type="datetime" />
+			<column name="created_by" type="bigint(20)">
+				<constraints nullable="false" referencedColumnNames="id"
+					referencedTableName="user" foreignKeyName="FK_SNAPSHOT_CREATED_BY"></constraints>
+			</column>
 		</createTable>
 
 		<!-- Add snapshot model list containers -->
