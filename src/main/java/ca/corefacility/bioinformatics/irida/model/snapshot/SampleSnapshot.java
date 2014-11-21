@@ -71,7 +71,7 @@ public class SampleSnapshot implements IridaSample {
 	@Column(name = "longitude")
 	private String longitude;
 
-	@Column(name = "culture_collectino")
+	@Column(name = "culture_collection")
 	private String cultureCollection;
 
 	@Lob
