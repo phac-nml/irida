@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCon
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
@@ -80,6 +81,9 @@ public class GalaxyWorkflowsIT {
 	private Path dataFile4;
 	private Path dataFileNotExists;
 	
+	private Path workflowPath;
+	private Path invalidWorkflowPath;
+	
 	private GalaxyInstance galaxyAdminInstance;
 	private HistoriesClient historiesClient;
 	private ToolsClient toolsClient;
@@ -111,6 +115,11 @@ public class GalaxyWorkflowsIT {
 		dataFile4 = Paths.get(GalaxyWorkflowsIT.class.getResource(
 				"testData4.fastq").toURI());
 		
+		workflowPath = Paths.get(GalaxyWorkflowsIT.class.getResource(
+				"GalaxyWorkflowSingleInput.ga").toURI());
+		invalidWorkflowPath = Paths.get(GalaxyWorkflowsIT.class.getResource(
+				"InvalidGalaxyWorkflowSingleInput.ga").toURI());
+		
 		dataFileNotExists = Files.createTempFile("temp", ".temp");
 		Files.delete(dataFileNotExists);
 		assertFalse(Files.exists(dataFileNotExists));
@@ -125,7 +134,7 @@ public class GalaxyWorkflowsIT {
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService);
 		galaxyWorkflowService 
 			= new GalaxyWorkflowService(historiesClient, workflowsClient,
-					new StandardPasswordEncoder());
+					new StandardPasswordEncoder());		
 	}
 	
 	private void checkWorkflowIdValid(String workflowId) throws WorkflowException {
@@ -193,6 +202,26 @@ public class GalaxyWorkflowsIT {
 		logger.debug("Running workflow in history " + output.getHistoryId());
 		
 		return output;
+	}
+	
+	/**
+	 * Tests out successfully uploading a workflow to Galaxy.
+	 * @throws IOException 
+	 * @throws WorkflowUploadException 
+	 */
+	@Test
+	public void testUploadWorkflowSuccess() throws WorkflowUploadException, IOException {
+		assertNotNull(galaxyWorkflowService.uploadGalaxyWorkflow(workflowPath));
+	}
+	
+	/**
+	 * Tests out failing to upload a workflow to Galaxy.
+	 * @throws IOException 
+	 * @throws WorkflowUploadException 
+	 */
+	@Test(expected=WorkflowUploadException.class)
+	public void testUploadWorkflowFail() throws WorkflowUploadException, IOException {
+		galaxyWorkflowService.uploadGalaxyWorkflow(invalidWorkflowPath);
 	}
 	
 	/**
