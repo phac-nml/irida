@@ -12,9 +12,12 @@ import java.util.List;
 
 import javax.validation.Validator;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -28,8 +31,11 @@ import ca.corefacility.bioinformatics.irida.model.snapshot.SampleSnapshot;
 import ca.corefacility.bioinformatics.irida.model.snapshot.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.snapshot.Snapshot;
 import ca.corefacility.bioinformatics.irida.model.snapshot.remote.RemoteSnapshot;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.SnapshotRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.SnapshotService;
 import ca.corefacility.bioinformatics.irida.service.impl.SnapshotServiceImpl;
 
@@ -39,13 +45,29 @@ public class SnapshotServiceImplTest {
 	private SnapshotService service;
 	private SnapshotRepository snapshotRepository;
 	private SequenceFileRemoteRepository sequenceFileRemoteRepository;
+	private UserRepository userRepository;
 	private Validator validator;
+
+	User user;
 
 	@Before
 	public void setup() {
 		snapshotRepository = mock(SnapshotRepository.class);
 		sequenceFileRemoteRepository = mock(SequenceFileRemoteRepository.class);
-		service = new SnapshotServiceImpl(snapshotRepository, sequenceFileRemoteRepository, validator);
+		userRepository = mock(UserRepository.class);
+		service = new SnapshotServiceImpl(snapshotRepository, sequenceFileRemoteRepository, userRepository, validator);
+
+		user = new User("bob", null, "bob1", null, null, null);
+		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user, user.getPassword(),
+				Lists.newArrayList(Role.ROLE_ADMIN));
+		SecurityContextHolder.getContext().setAuthentication(auth);
+
+		when(userRepository.loadUserByUsername(user.getUsername())).thenReturn(user);
+	}
+
+	@After
+	public void teardown() {
+		SecurityContextHolder.clearContext();
 	}
 
 	@Test
@@ -58,6 +80,7 @@ public class SnapshotServiceImplTest {
 
 		ArgumentCaptor<Snapshot> snapshotCaptor = ArgumentCaptor.forClass(Snapshot.class);
 		verify(snapshotRepository).save(snapshotCaptor.capture());
+		verify(userRepository).loadUserByUsername(user.getUsername());
 		Snapshot snapshot = snapshotCaptor.getValue();
 
 		List<ProjectSnapshot> snapshotProjects = snapshot.getProjects();
@@ -74,6 +97,8 @@ public class SnapshotServiceImplTest {
 		assertEquals(1, snapshotFiles.size());
 		SequenceFileSnapshot fileSnapshot = snapshotFiles.iterator().next();
 		assertEquals(file.getFile(), fileSnapshot.getFile());
+
+		assertEquals(user, snapshot.getCreatedBy());
 	}
 
 	@Test
@@ -94,6 +119,7 @@ public class SnapshotServiceImplTest {
 		verify(sequenceFileRemoteRepository).downloadRemoteSequenceFile(file, api);
 		ArgumentCaptor<Snapshot> snapshotCaptor = ArgumentCaptor.forClass(Snapshot.class);
 		verify(snapshotRepository).save(snapshotCaptor.capture());
+		verify(userRepository).loadUserByUsername(user.getUsername());
 		Snapshot snapshot = snapshotCaptor.getValue();
 
 		List<ProjectSnapshot> snapshotProjects = snapshot.getProjects();
@@ -113,5 +139,8 @@ public class SnapshotServiceImplTest {
 		SequenceFileSnapshot fileSnapshot = snapshotFiles.iterator().next();
 		assertEquals(downloadedFilePath, fileSnapshot.getFile());
 		assertTrue(fileSnapshot instanceof RemoteSnapshot);
+
+		assertEquals(user, snapshot.getCreatedBy());
+
 	}
 }

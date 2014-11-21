@@ -7,6 +7,8 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -23,8 +25,10 @@ import ca.corefacility.bioinformatics.irida.model.snapshot.SequenceFileSnapshot;
 import ca.corefacility.bioinformatics.irida.model.snapshot.remote.RemoteProjectSnapshot;
 import ca.corefacility.bioinformatics.irida.model.snapshot.remote.RemoteSampleSnapshot;
 import ca.corefacility.bioinformatics.irida.model.snapshot.remote.RemoteSequenceFileSnapshot;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.SnapshotRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.SnapshotService;
 
 /**
@@ -36,16 +40,20 @@ import ca.corefacility.bioinformatics.irida.service.SnapshotService;
 @Service
 public class SnapshotServiceImpl extends CRUDServiceImpl<Long, Snapshot> implements SnapshotService {
 
-	private SequenceFileRemoteRepository sequenceFileRemoteRepository;
+	private final SequenceFileRemoteRepository sequenceFileRemoteRepository;
 
-	private SnapshotRepository snapshotRepository;
+	private final SnapshotRepository snapshotRepository;
+
+	private final UserRepository userRepository;
 
 	@Autowired
 	public SnapshotServiceImpl(SnapshotRepository snapshotRepository,
-			SequenceFileRemoteRepository sequenceFileRemoteRepository, Validator validator) {
+			SequenceFileRemoteRepository sequenceFileRemoteRepository, UserRepository userRepository,
+			Validator validator) {
 		super(snapshotRepository, validator, Snapshot.class);
 		this.snapshotRepository = snapshotRepository;
 		this.sequenceFileRemoteRepository = sequenceFileRemoteRepository;
+		this.userRepository = userRepository;
 	}
 
 	/**
@@ -82,6 +90,8 @@ public class SnapshotServiceImpl extends CRUDServiceImpl<Long, Snapshot> impleme
 			SequenceFileSnapshot takeSequenceFileSnapshot = takeSequenceFileSnapshot(f);
 			analysisSnapshot.addSequenceFile(takeSequenceFileSnapshot);
 		}
+
+		analysisSnapshot.setCreatedBy(getLoggedInUser());
 
 		return snapshotRepository.save(analysisSnapshot);
 	}
@@ -134,5 +144,21 @@ public class SnapshotServiceImpl extends CRUDServiceImpl<Long, Snapshot> impleme
 		} else {
 			return new SampleSnapshot(sample);
 		}
+	}
+
+	/**
+	 * Get the currently logged in {@link User} for the snapshot.
+	 * 
+	 * Note: We attempted to use Spring JPA's <code>@CreatedBy</code> annotation
+	 * to fill this in for the snapshot, but it resulted in a massive stack
+	 * trace loop. We decided it was easier to implement this ourselves than to
+	 * track down the library problem.
+	 * 
+	 * @return The currently logged in {@link User} from the
+	 *         SecurityContextHolder
+	 */
+	private User getLoggedInUser() {
+		UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return userRepository.loadUserByUsername(principal.getUsername());
 	}
 }
