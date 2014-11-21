@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config.analysis;
 
+import java.nio.charset.StandardCharsets;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -132,7 +134,7 @@ public class AnalysisExecutionServiceTestConfig {
 				.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
 
 		return new GalaxyWorkflowService(historiesClient, workflowsClient,
-				new StandardPasswordEncoder());
+				new StandardPasswordEncoder(), StandardCharsets.UTF_8);
 	}
 
 	@Lazy

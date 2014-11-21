@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config.analysis;
 
+import java.nio.charset.StandardCharsets;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -79,7 +81,8 @@ public class AnalysisExecutionServiceConfig {
 	 */
 	@Lazy @Bean
 	public GalaxyWorkflowService galaxyWorkflowService() {
-		return new GalaxyWorkflowService(historiesClient(), workflowsClient(), workflowChecksumEncoder());
+		return new GalaxyWorkflowService(historiesClient(), workflowsClient(), workflowChecksumEncoder(),
+				StandardCharsets.UTF_8);
 	}
 	
 	/**

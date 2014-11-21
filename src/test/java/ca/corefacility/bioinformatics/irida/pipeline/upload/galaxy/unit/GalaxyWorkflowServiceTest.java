@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -71,7 +72,7 @@ public class GalaxyWorkflowServiceTest {
 		MockitoAnnotations.initMocks(this);
 		
 		galaxyWorkflowService = new GalaxyWorkflowService(historiesClient, workflowsClient,
-				new StandardPasswordEncoder());
+				new StandardPasswordEncoder(), StandardCharsets.UTF_8);
 		
 		String workflowInputId = "1";
 		WorkflowInputDefinition worklowInput = new WorkflowInputDefinition();
