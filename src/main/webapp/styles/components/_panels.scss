@@ -27,6 +27,8 @@
 .sidebar {
   border: 1px solid $color-grey-lighter;
   border-radius: 4px;
+  margin-bottom: 1em;
+  @include box-shadow(rgba(0, 0, 0, .2) 0 1px 2px); // Mimics bootstrap box-shadow
 }
 
 .sidebar__heading {
@@ -44,6 +46,10 @@
   div {
     border-top: 1px solid $color-grey-lighter;
     padding: 4px;
+  }
+
+  .form-group {
+    padding: 4px 8px;
   }
 }
 

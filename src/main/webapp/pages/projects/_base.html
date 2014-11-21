@@ -44,8 +44,9 @@
 		/*/-->
 	</main>
 
-	<aside class="col-md-3 col-md-pull-9" th:include="projects/partials/aside :: aside">
-
+	<aside class="col-md-3 col-md-pull-9">
+		<section th:include="projects/partials/aside :: aside"></section>
+		<section layout:fragment="filter"></section>
 	</aside>
 </div>
 

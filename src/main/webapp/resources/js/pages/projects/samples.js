@@ -19,7 +19,7 @@
   }
 
 
-  function SamplesTableFilter(filter, SamplesService) {
+  function PagingFilter(filter, SamplesService) {
     "use strict";
     return function (samples) {
       var begin = filter.page * filter.count;
@@ -419,7 +419,7 @@
     };
   }
 
-  function FilterCtrl ($rootScope, filter) {
+  function SortCtrl ($rootScope, filter) {
     "use strict";
     var vm = this;
     vm.filter = filter;
@@ -431,12 +431,18 @@
     }
   }
 
+  function FilterCtrl($rootScope, filter) {
+    "use strict";
+    var vm = this;
+    vm.filter = filter;
+  }
+
   angular.module('Samples', ['cgBusy'])
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
     .service('Select2Service', ['$timeout', Select2Service])
     .service('SamplesService', ['$rootScope', 'Restangular', 'notifications', SamplesService])
-    .filter('SamplesTableFilter', ['FilterFactory', 'SamplesService', SamplesTableFilter])
+    .filter('PagingFilter', ['FilterFactory', 'SamplesService', PagingFilter])
     .directive('sortBy', [sortBy])
     .controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
@@ -445,6 +451,7 @@
     .controller('CopyMoveCtrl', ['$modalInstance', '$rootScope', 'BASE_URL', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl])
     .controller('SelectedCountCtrl', ['$scope', SelectedCountCtrl])
     .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
+    .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
     .controller('FilterCtrl', ['$rootScope', 'FilterFactory', FilterCtrl])
   ;
 })(angular, $, _);
