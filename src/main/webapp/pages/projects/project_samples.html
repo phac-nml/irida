@@ -73,30 +73,38 @@
 	</div>
 	<div class="row" data:cg-busy="'{promise: cgPromise,templateUrl:\'' + @{/resources/bower_components/angular-busy/angular-busy.html} + '\', delay: 250, backdrop:true, message: \'' + #{cg-busy.samples.table} +  '\'}'">
 		<div class="col-md-12" ng-controller="SamplesTableCtrl as table">
-			<table id="samplesTable" class="table">
+			<table id="samplesTable" class="table ng-cloak">
 				<thead>
-				<tr>
+				<tr ng-controller="FilterCtrl as fCtrl">
 					<th></th>
-					<th th:text="#{project.samples.table.name}">__NAME__</th>
-					<th th:text="#{project.samples.table.organism}">__NAME__</th>
-					<th th:text="#{project.samples.table.collectedBy}">Collected By</th>
-					<th th:text="#{project.samples.table.created}">__NAME__</th>
+					<th id="sortName" th:text="#{project.samples.table.name}" sort-by="" onsort="fCtrl.onSort" sortdir="fCtrl.filter.sortDir"
+					    sortedBy="fCtrl.filter.sortedBy" sortValue="sampleName">__NAME__
+					</th>
+					<th id="sortOrganism" th:text="#{project.samples.table.organism}" sort-by="" onsort="fCtrl.onSort" sortdir="fCtrl.filter.sortDir"
+					    sortedBy="fCtrl.filter.sortedBy" sortValue="organism">__ORGANISM__
+					</th>
+					<th id="sortCollectedBy" th:text="#{project.samples.table.collectedBy}" sort-by="" onsort="fCtrl.onSort" sortdir="fCtrl.filter.sortDir"
+					    sortedBy="fCtrl.filter.sortedBy" sortValue="collectedBy">Collected By
+					</th>
+					<th id="sortCreatedDate" th:text="#{project.samples.table.created}" sort-by="" onsort="fCtrl.onSort" sortdir="fCtrl.filter.sortDir"
+					    sortedBy="fCtrl.filter.sortedBy" sortValue="createdDate">__CREATED__
+					</th>
 				</tr>
 				</thead>
 				<tbody>
-				<tr class="sample-row" ng-class="{'selected': sample.selected}" ng-repeat="sample in table.samples | orderBy: table.filter.sortedBy | SamplesTableFilter">
+				<tr class="sample-row" ng-class="{'selected': sample.selected}" ng-repeat="sample in table.samples | orderBy: table.filter.sortedBy : table.filter.sortDir | SamplesTableFilter">
 					<td>
 						<div class="large-checkbox">
-							<input ui-indeterminate="sample.indeterminate" class="sample-select" id="s-{{::sample.id}}" name="s-{{::sample.id}}" type="checkbox" ng-model="sample.selected"
-							       ng-change="table.updateSample(sample)"/> <label for="s-{{::sample.id}}"></label>
+							<input ui-indeterminate="sample.indeterminate" class="sample-select" id="s-{{sample.id}}" name="s-{{sample.id}}" type="checkbox" ng-model="sample.selected"
+							       ng-change="table.updateSample(sample)"/> <label for="s-{{sample.id}}"></label>
 						</div>
 					</td>
 					<td class="sample-name">
-						<a class="btn btn-default btn-xs" data:ng-href="@{'/samples/{{::sample.id}}'}" href="#">{{::sample.sampleName}}</a>
+						<a class="btn btn-default btn-xs" data:ng-href="@{'/samples/{{sample.id}}'}" href="#">{{sample.sampleName}}</a>
 					</td>
-					<td>{{::sample.organism}}</td>
-					<td>{{::sample.collectedBy}}</td>
-					<td>{{::sample.createdDate | date:'short'}}</td>
+					<td>{{sample.organism}}</td>
+					<td>{{sample.collectedBy}}</td>
+					<td class="createdDate" data-date="{{sample.createdDate}}" tooltip-popup-delay='500' tooltip-placement="left" tooltip="{{sample.createdDate | date:'medium'}}"><span>{{sample.createdDate | date:'mediumDate'}}</span></td>
 				</tr>
 				</tbody>
 				<tfoot>
@@ -116,7 +124,6 @@
 	<script th:src="@{/resources/bower_components/select2/select2.min.js}" src="/resources/bower_components/select2/select2.min.js"></script>
 	<script th:src="@{/resources/bower_components/angular-busy/angular-busy.js}"
 	        src="/resources/bower_components/angular-busy/angular-busy.js"></script>
-	<script th:src="@{/resources/bower_components/angular-ui-select/dist/select.min.js}" src="/resources/bower_components/angular-ui-select/dist/select.min.js"></script>
 	<script th:src="@{/resources/js/directives/datatables/irida-datatable.js}"
 	        src="/resources/js/directives/datatables/irida-datatable.js"></script>
 	<script th:src="@{/resources/js/pages/projects/samples.js}" src="/resources/js/pages/projects/samples.js"></script>

@@ -424,6 +424,25 @@ public class ProjectSamplesPageIT {
 		assertEquals(selectedCount, getSampleFlagCount(command));
 	}
 
+	@Test
+	public void testTableSorts() {
+		LoginPage.loginAsAdmin(driver);
+		page.goToPage();
+
+		// Page should be sorted by creation date first
+		assertTrue(page.isTableSortedAscByCreationDate());
+		page.sortTableByCreatedDate();
+		assertFalse(page.isTableSortedAscByCreationDate());
+		assertTrue(page.isTableSortedDescByCreationDate());
+
+		// Sort by name
+		page.sortTableByName();
+		assertTrue(page.isTableSortedDescBySampleName());
+		page.sortTableByName();
+		assertFalse(page.isTableSortedDescBySampleName());
+		assertTrue(page.isTableSortedAscBySampleName());
+	}
+
 	private int getSampleFlagCount(String command) {
 		Pattern pattern = Pattern.compile("-s");
 		Matcher matcher = pattern.matcher(command);
