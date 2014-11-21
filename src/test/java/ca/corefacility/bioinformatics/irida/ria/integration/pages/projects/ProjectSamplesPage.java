@@ -254,6 +254,16 @@ public class ProjectSamplesPage extends AbstractPage {
 	}
 
 	public void filterByName(String name) {
-		driver.findElement(By.id("sample-name-filter")).sendKeys();
+		WebElement input = driver.findElement(By.id("sample-name-filter"));
+		input.clear();
+		input.sendKeys(name);
+		waitForTime(550);
+	}
+
+	public void filterByOrganism(String organism) {
+		WebElement input = driver.findElement(By.id("sample-organism-filter"));
+		input.clear();
+		input.sendKeys(organism);
+		waitForTime(550);
 	}
 }
