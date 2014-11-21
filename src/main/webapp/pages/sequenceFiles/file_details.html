@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="sequenceFiles/_base">
 <head>
-    <title th:text="${file.label}"></title>
+    <title th:text="${file.getLabel()}"></title>
     <link rel="stylesheet" th:href="@{/resources/bower_components/magnific-popup/dist/magnific-popup.css}"
           href="/resources/bower_components/magnific-popup/dist/magnific-popup.css"/>
 </head>

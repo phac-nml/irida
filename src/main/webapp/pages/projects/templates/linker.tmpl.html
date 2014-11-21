@@ -7,7 +7,7 @@
 	</div>
 	<div class="modal-body">
 		<p th:text="#{ngs.linker.details}"></p>
-		<pre id="linkerCmd"><span th:text="${scriptName}"></span> -p {{::lCtrl.projectId}}<span ng-if="lCtrl.samples.length &lt; lCtrl.total" ng-repeat="s in lCtrl.samples"> -s {{::s.id}}</span></pre>
+		<pre id="linkerCmd"><span th:text="${scriptName}"></span> -p {{lCtrl.projectId}}<span ng-if="lCtrl.samples.length &lt; lCtrl.total" ng-repeat="s in lCtrl.samples"> -s {{s.id}}</span></pre>
 	</div>
 	<div class="modal-footer">
 		<button id="linkerCloseBtn" class="btn btn-primary" ng-click="lCtrl.close()" th:text="#{form.btn.close}">Close</button>
