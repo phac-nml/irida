@@ -27,6 +27,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import com.google.common.collect.Sets;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -248,8 +249,8 @@ public class SampleServiceImplTest {
 		analysisFastQC1.setTotalBases(1000l);
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
-		when(analysisRepository.findAnalysesForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(
-				Sets.newHashSet(analysisFastQC1));
+		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(
+				analysisFastQC1);
 
 		double coverage = sampleService.estimateCoverageForSample(s1, 500l);
 		assertEquals(2.0, coverage, deltaFloatEquality);
@@ -302,8 +303,8 @@ public class SampleServiceImplTest {
 		analysisFastQC1.setTotalBases(1000l);
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
-		when(analysisRepository.findAnalysesForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(
-				Sets.newHashSet(analysisFastQC1));
+		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(
+				analysisFastQC1);
 
 		long actualBases = sampleService.getTotalBasesForSample(s1);
 		assertEquals(1000, actualBases);
@@ -335,11 +336,11 @@ public class SampleServiceImplTest {
 		analysisFastQC2.setTotalBases(1000l);
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join1, join2));
-		when(analysisRepository.findAnalysesForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(
-				Sets.newHashSet(analysisFastQC1));
+		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(
+				analysisFastQC1);
 
-		when(analysisRepository.findAnalysesForSequenceFile(sf2, AnalysisFastQC.class)).thenReturn(
-				Sets.newHashSet(analysisFastQC2));
+		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf2, AnalysisFastQC.class)).thenReturn(
+				analysisFastQC2);
 
 		long actualBases = sampleService.getTotalBasesForSample(s1);
 		assertEquals(2000, actualBases);
@@ -362,7 +363,7 @@ public class SampleServiceImplTest {
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
-		when(analysisRepository.findAnalysesForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(Sets.newHashSet());
+		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf1, AnalysisFastQC.class)).thenThrow(new EntityNotFoundException(null));
 
 		sampleService.getTotalBasesForSample(s1);
 	}
@@ -390,8 +391,8 @@ public class SampleServiceImplTest {
 		analysisFastQC2.setTotalBases(1000l);
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
-		when(analysisRepository.findAnalysesForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(
-				Sets.newHashSet(analysisFastQC1, analysisFastQC2));
+		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf1, AnalysisFastQC.class)).thenThrow(
+				new EntityNotFoundException(null));
 
 		sampleService.getTotalBasesForSample(s1);
 	}

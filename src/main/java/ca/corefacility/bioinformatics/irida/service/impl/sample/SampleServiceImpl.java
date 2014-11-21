@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.sample;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.HashSet;
 import java.util.List;
@@ -45,8 +45,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 @Service
 public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements SampleService {
 	
-	private static final String FASTQC_ANALYSIS_NAME = AnalysisFastQC.class.getSimpleName();
-
 	/**
 	 * Reference to {@link SampleRepository} for managing {@link Sample}.
 	 */
@@ -214,17 +212,14 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		for (Join<Sample, SequenceFile> sequenceFileJoin : sequenceFiles) {
 			SequenceFile sequenceFile = sequenceFileJoin.getObject();
 
-			Set<AnalysisFastQC> sequenceFileFastQCSet = analysisRepository.findAnalysesForSequenceFile(sequenceFile,
-					AnalysisFastQC.class);
-			if (sequenceFileFastQCSet == null || sequenceFileFastQCSet.size() == 0) {
-				throw new SequenceFileAnalysisException("No corresponding " + FASTQC_ANALYSIS_NAME + " analysis for "
-						+ sequenceFile);
-			} else if (sequenceFileFastQCSet.size() > 1) {
-				throw new SequenceFileAnalysisException("Multiple (" + sequenceFileFastQCSet.size()
-						+ ") corresponding " + FASTQC_ANALYSIS_NAME + " analysis for " + sequenceFile);
-			} else {
-				AnalysisFastQC sequenceFileFastQC = sequenceFileFastQCSet.iterator().next();
+			try {
+				AnalysisFastQC sequenceFileFastQC = analysisRepository.findMostRecentAnalysisForSequenceFile(
+						sequenceFile, AnalysisFastQC.class);
+
 				totalBases += sequenceFileFastQC.getTotalBases();
+			} catch (EntityNotFoundException e) {
+				throw new SequenceFileAnalysisException("Missing FastQC analysis for SequenceFile ["
+						+ sequenceFile.getId() + "]", e);
 			}
 		}
 
