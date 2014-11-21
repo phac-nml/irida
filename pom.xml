@@ -404,12 +404,6 @@
 			<artifactId>galaxybootstrap</artifactId>
 			<version>${com.github.jmchilton.galaxybootstrap.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.jvnet.jaxb2.maven2</groupId>
-			<artifactId>maven-jaxb2-plugin</artifactId>
-			<version>${org.jvnet.jaxb2.maven2.version}</version>
-			<type>maven-plugin</type>
-		</dependency>
 	</dependencies>
 	<build>
 		<finalName>irida-api</finalName>
@@ -603,7 +597,6 @@
 		<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
 		<maven.liquibase.plugin.version>${liquibase.version}</maven.liquibase.plugin.version>
 		<maven.jar.plugin.version>2.5</maven.jar.plugin.version>
-		<org.jvnet.jaxb2.maven2.version>0.8.0</org.jvnet.jaxb2.maven2.version>
 
 		<!-- project configuration -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
