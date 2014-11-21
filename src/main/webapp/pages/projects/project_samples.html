@@ -17,10 +17,10 @@
 	<div class="sidebar__body" ng-controller="FilterCtrl as samplesFilter">
 		<div class="form-group">
 			<label for="sample-name-filter" th:text="#{project.sample.filter-name}">_Sample Name</label>
-			<input type="text" class="form-control" id="sample-name-filter" ng-model="samplesFilter.filter.name"/>
+			<input type="text" class="form-control" id="sample-name-filter" ng-model="samplesFilter.name"/>
 		</div>
 		<div class="form-group">
-			<label for="sample-organism-filter">_Sample Organism</label> <input type="text" class="form-control" id="sample-organism-filter" ng-model="samplesFilter.filter.organism"/>
+			<label for="sample-organism-filter">_Sample Organism</label> <input type="text" class="form-control" id="sample-organism-filter" ng-model="samplesFilter.organism"/>
 		</div>
 	</div>
 </aside>

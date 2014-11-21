@@ -431,10 +431,16 @@
     }
   }
 
-  function FilterCtrl($rootScope, filter) {
+  function FilterCtrl($scope, filter) {
     "use strict";
     var vm = this;
     vm.filter = filter;
+    vm.name = "";
+
+    $scope.$watch("vm.name", _.debounce(function(n, o) {
+      console.log(n, o)
+      $scope.$apply();
+    }, 500));
   }
 
   angular.module('Samples', ['cgBusy'])
@@ -452,6 +458,6 @@
     .controller('SelectedCountCtrl', ['$scope', SelectedCountCtrl])
     .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
     .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
-    .controller('FilterCtrl', ['$rootScope', 'FilterFactory', FilterCtrl])
+    .controller('FilterCtrl', ['$scope', 'FilterFactory', FilterCtrl])
   ;
 })(angular, $, _);

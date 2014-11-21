@@ -26,12 +26,15 @@
 
 .sidebar {
   border: 1px solid $color-grey-lighter;
+  border-top-color: lighten($color-grey-lighter, 5);
+  border-bottom-color: darken($color-grey-lighter, 20);
   border-radius: 4px;
   margin-bottom: 1em;
   @include box-shadow(rgba(0, 0, 0, .2) 0 1px 2px); // Mimics bootstrap box-shadow
 }
 
 .sidebar__heading {
+  border-bottom: 1px solid lightne($color-grey-lighter, 5);
   padding: 10px;
   h2 {
     font-size: 1.6rem;
@@ -45,9 +48,9 @@
   position: relative;
   div {
     border-top: 1px solid $color-grey-lighter;
+    border-bottom: 1px solid lightne($color-grey-lighter, 5);
     padding: 4px;
   }
-
   .form-group {
     padding: 4px 8px;
   }

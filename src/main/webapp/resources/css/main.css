@@ -192,6 +192,8 @@
 /* line 27, ../../styles/components/_panels.scss */
 .sidebar {
   border: 1px solid #eeeeee;
+  border-top-color: #fbfbfb;
+  border-bottom-color: #bbbbbb;
   border-radius: 4px;
   margin-bottom: 1em;
   -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
@@ -199,11 +201,12 @@
   box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
 }
 
-/* line 34, ../../styles/components/_panels.scss */
+/* line 36, ../../styles/components/_panels.scss */
 .sidebar__heading {
+  border-bottom: 1px solid lightne(#eeeeee, 5);
   padding: 10px;
 }
-/* line 36, ../../styles/components/_panels.scss */
+/* line 39, ../../styles/components/_panels.scss */
 .sidebar__heading h2 {
   font-size: 1.6rem;
   font-weight: 600;
@@ -211,27 +214,28 @@
   padding: 0;
 }
 
-/* line 44, ../../styles/components/_panels.scss */
+/* line 47, ../../styles/components/_panels.scss */
 .sidebar__body {
   position: relative;
 }
-/* line 46, ../../styles/components/_panels.scss */
+/* line 49, ../../styles/components/_panels.scss */
 .sidebar__body div {
   border-top: 1px solid #eeeeee;
+  border-bottom: 1px solid lightne(#eeeeee, 5);
   padding: 4px;
 }
-/* line 51, ../../styles/components/_panels.scss */
+/* line 54, ../../styles/components/_panels.scss */
 .sidebar__body .form-group {
   padding: 4px 8px;
 }
 
-/* line 56, ../../styles/components/_panels.scss */
+/* line 59, ../../styles/components/_panels.scss */
 .sidebar__icon {
   color: #797979;
   width: 15%;
 }
 
-/* line 61, ../../styles/components/_panels.scss */
+/* line 64, ../../styles/components/_panels.scss */
 .sidebar__value {
   position: absolute;
   right: 8px;
