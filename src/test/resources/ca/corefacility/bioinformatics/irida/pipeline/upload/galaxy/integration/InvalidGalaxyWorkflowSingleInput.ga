@@ -1,0 +1,8 @@
+{
+    "a_galaxy_workflow": "true", 
+    "annotation": "", 
+    "format-version": "0.1", 
+    "name": "TestWorkflow1", 
+    "steps": {
+        "0": {
+}
