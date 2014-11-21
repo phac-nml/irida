@@ -10,59 +10,70 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
 /**
- *
+ * Class used to make user information available for both Hibernate Envers and
+ * Spring JPA auditing
+ * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class UserRevListener implements RevisionListener, ApplicationContextAware{
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(UserRevListener.class); 
-    private static ApplicationContext applicationContext;
-    private static UserRepository urepo;
-    private static IridaClientDetailsRepository clientRepo;
+public class UserRevListener implements RevisionListener, ApplicationContextAware, AuditorAware<User> {
+	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(UserRevListener.class);
+	private static ApplicationContext applicationContext;
+	private static UserRepository urepo;
+	private static IridaClientDetailsRepository clientRepo;
 
-    @Override
-    public void newRevision(Object revisionEntity) {
-        UserRevEntity rev = (UserRevEntity) revisionEntity;
-                
-        try{
-            UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            User userByUsername = urepo.loadUserByUsername(principal.getUsername());
-            
-            if(userByUsername != null){
-                rev.setUserId(userByUsername.getId());
-            }
-            else{
-                throw new IllegalStateException("User could not be read by username so revision could not be created");
-            }
-            
-            //Add the client ID if the user is connected via OAuth2
-            setClientId(rev);
-            
-            logger.trace("Revision created by user " + userByUsername.getUsername());
-        }
-        catch(NullPointerException ex){
-            logger.error("No user is set in the session so it cannot be added to the revision.");
-            throw new IllegalStateException("The database cannot be modified if a user is not logged in.");
-        }
-        
-        
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void newRevision(Object revisionEntity) {
+		UserRevEntity rev = (UserRevEntity) revisionEntity;
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        UserRevListener.applicationContext = applicationContext;
-    }
-    
-    public void initialize(){
-        urepo = applicationContext.getBean(UserRepository.class);
-        clientRepo = applicationContext.getBean(IridaClientDetailsRepository.class);
-    }
-    
+		try {
+			User userByUsername = getCurrentAuditor();
+
+			if (userByUsername != null) {
+				rev.setUserId(userByUsername.getId());
+			} else {
+				throw new IllegalStateException("User could not be read by username so revision could not be created");
+			}
+
+			// Add the client ID if the user is connected via OAuth2
+			setClientId(rev);
+
+			logger.trace("Revision created by user " + userByUsername.getUsername());
+		} catch (NullPointerException ex) {
+			logger.error("No user is set in the session so it cannot be added to the revision.");
+			throw new IllegalStateException("The database cannot be modified if a user is not logged in.");
+		}
+
+	}
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		UserRevListener.applicationContext = applicationContext;
+	}
+
+	public void initialize() {
+		urepo = applicationContext.getBean(UserRepository.class);
+		clientRepo = applicationContext.getBean(IridaClientDetailsRepository.class);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public User getCurrentAuditor() {
+		UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return urepo.loadUserByUsername(principal.getUsername());
+	}
+
 	/**
 	 * Add the OAuth2 client ID to the revision listener if the user is
 	 * connecting via OAuth2
@@ -87,5 +98,4 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
 			}
 		}
 	}
-    
 }
