@@ -243,4 +243,13 @@ public class ProjectSamplesPage extends AbstractPage {
 				.collect(Collectors.toList());
 		return Ordering.natural().reverse().isOrdered(names);
 	}
+
+	// Filtering
+	public int getTotalSampleCount() {
+		return Integer.parseInt(driver.findElement(By.id("samples-total")).getText());
+	}
+
+	public int getFilteredSampleCount() {
+		return Integer.parseInt(driver.findElement(By.id("samples-filtered")).getText());
+	}
 }

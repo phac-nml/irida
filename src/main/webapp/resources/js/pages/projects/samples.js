@@ -58,8 +58,12 @@
       _.extend(svc.filter, f || {});
       $rootScope.cgPromise = base.customGET("").then(function (data) {
         angular.copy(data.samples, svc.samples);
-        $rootScope.$broadcast('PAGING_UPDATE', {total: data.samples.length});
+        $rootScope.$broadcast('SAMPLES_INIT', {total: data.samples.length});
       });
+    };
+
+    svc.getNumSamples = function () {
+      return svc.samples.length;
     };
 
     svc.setFilteredSamples = function (f) {
@@ -460,6 +464,14 @@
         $scope.$apply();
       }
     }, 500));
+
+    $scope.$on('SAMPLES_INIT', function (e, args) {
+      vm.total = args.total;
+    });
+
+    $scope.$on('PAGING_UPDATE', function (e, args) {
+      vm.count = args.total;
+    });
   }
 
   angular.module('Samples', ['cgBusy'])

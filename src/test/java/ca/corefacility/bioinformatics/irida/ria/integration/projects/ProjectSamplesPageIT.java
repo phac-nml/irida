@@ -443,6 +443,14 @@ public class ProjectSamplesPageIT {
 		assertTrue(page.isTableSortedAscBySampleName());
 	}
 
+	@Test
+	public void testSampleFilter() {
+		LoginPage.loginAsAdmin(driver);
+		page.goToPage();
+
+		assertEquals(page.getFilteredSampleCount(), page.getTotalSampleCount());
+	}
+
 	private int getSampleFlagCount(String command) {
 		Pattern pattern = Pattern.compile("-s");
 		Matcher matcher = pattern.matcher(command);
