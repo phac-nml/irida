@@ -19,9 +19,10 @@
   }
 
 
-  function PagingFilter(filter, SamplesService) {
+  function PagingFilter($rootScope, filter, SamplesService) {
     "use strict";
     return function (samples) {
+      $rootScope.$broadcast('PAGING_UPDATE', {total: samples.length});
       var begin = filter.page * filter.count;
       var filtered = samples.slice(begin, begin + filter.count);
       SamplesService.setFilteredSamples(filtered);
@@ -437,9 +438,27 @@
     vm.filter = filter;
     vm.name = "";
 
-    $scope.$watch("vm.name", _.debounce(function(n, o) {
-      console.log(n, o)
-      $scope.$apply();
+    $scope.$watch(function() {
+      return vm.name;
+    }, _.debounce(function(n, o) {
+      if (n !== o) {
+        filter.name = vm.name;
+        $scope.$apply();
+      }
+    }, 500));
+
+    $scope.$watch(function() {
+      return vm.organism;
+    }, _.debounce(function(n, o) {
+      if (n !== o) {
+        if (vm.organism.length > 0) {
+          filter.organism = vm.organism;
+        }
+        else {
+          delete filter.organism;
+        }
+        $scope.$apply();
+      }
     }, 500));
   }
 
@@ -448,7 +467,7 @@
     .factory('FilterFactory', [FilterFactory])
     .service('Select2Service', ['$timeout', Select2Service])
     .service('SamplesService', ['$rootScope', 'Restangular', 'notifications', SamplesService])
-    .filter('PagingFilter', ['FilterFactory', 'SamplesService', PagingFilter])
+    .filter('PagingFilter', ['$rootScope', 'FilterFactory', 'SamplesService', PagingFilter])
     .directive('sortBy', [sortBy])
     .controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
