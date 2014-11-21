@@ -221,21 +221,28 @@
 /* line 49, ../../styles/components/_panels.scss */
 .sidebar__body div {
   border-top: 1px solid #eeeeee;
-  border-bottom: 1px solid lightne(#eeeeee, 5);
+  border-bottom: 1px solid #e2e2e2;
   padding: 4px;
 }
 /* line 54, ../../styles/components/_panels.scss */
 .sidebar__body .form-group {
   padding: 4px 8px;
 }
+/* line 57, ../../styles/components/_panels.scss */
+.sidebar__body input[type="text"].form-control {
+  border: 1px solid #e2e2e2;
+  -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px inset;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px inset;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px inset;
+}
 
-/* line 59, ../../styles/components/_panels.scss */
+/* line 63, ../../styles/components/_panels.scss */
 .sidebar__icon {
   color: #797979;
   width: 15%;
 }
 
-/* line 64, ../../styles/components/_panels.scss */
+/* line 68, ../../styles/components/_panels.scss */
 .sidebar__value {
   position: absolute;
   right: 8px;
