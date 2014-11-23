@@ -453,7 +453,7 @@ public class ProjectSamplesPageIT {
 		assertEquals(1, page.getFilteredSampleCount());
 		page.filterByName("5");
 		assertEquals(17, page.getFilteredSampleCount());
-		page.filterByName("");
+		page.filterByName(" ");
 
 		// Filter by organism
 		page.filterByOrganism("coli");

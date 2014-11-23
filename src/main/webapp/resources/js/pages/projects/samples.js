@@ -22,11 +22,11 @@
   function PagingFilter($rootScope, filter, SamplesService) {
     "use strict";
     return function (samples) {
+      // samples have already been sorted and filter based on the side bar.
+      SamplesService.setFilteredSamples(samples);
       $rootScope.$broadcast('PAGING_UPDATE', {total: samples.length});
       var begin = filter.page * filter.count;
-      var filtered = samples.slice(begin, begin + filter.count);
-      SamplesService.setFilteredSamples(filtered);
-      return filtered;
+      return samples.slice(begin, begin + filter.count);
     }
   }
 
@@ -45,7 +45,7 @@
 // @param $rootScope The root scope for the page.
 // @param R Restangular
   /* -]*/
-  function SamplesService($rootScope, R, notifications) {
+  function SamplesService($rootScope, R, notifications, filter) {
     "use strict";
     var svc = this,
         id = $rootScope.projectId,
@@ -109,7 +109,8 @@
     };
 
     svc.selectPage = function () {
-      _.each(filtered, function (s) {
+      var begin = filter.page * filter.count;
+      _.each(filtered.slice(begin, begin + filter.count), function (s) {
         if (!s.selected) {
           s.selected = true;
           selected.push(s);
@@ -483,7 +484,7 @@
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
     .service('Select2Service', ['$timeout', Select2Service])
-    .service('SamplesService', ['$rootScope', 'Restangular', 'notifications', SamplesService])
+    .service('SamplesService', ['$rootScope', 'Restangular', 'notifications', 'FilterFactory', SamplesService])
     .filter('PagingFilter', ['$rootScope', 'FilterFactory', 'SamplesService', PagingFilter])
     .directive('sortBy', [sortBy])
     .controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
