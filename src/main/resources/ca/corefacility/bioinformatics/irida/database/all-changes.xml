@@ -42,4 +42,6 @@
 	<include file="changesets/2.0/samples-collection-date.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/2.0/remote-related-projects.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/2.0/snapshots.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/project-events.xml" relativeToChangelogFile="true"/>
+	
 </databaseChangeLog>
