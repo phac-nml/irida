@@ -243,4 +243,27 @@ public class ProjectSamplesPage extends AbstractPage {
 				.collect(Collectors.toList());
 		return Ordering.natural().reverse().isOrdered(names);
 	}
+
+	// Filtering
+	public int getTotalSampleCount() {
+		return Integer.parseInt(driver.findElement(By.id("samples-total")).getText());
+	}
+
+	public int getFilteredSampleCount() {
+		return Integer.parseInt(driver.findElement(By.id("samples-filtered")).getText());
+	}
+
+	public void filterByName(String name) {
+		WebElement input = driver.findElement(By.id("sample-name-filter"));
+		input.clear();
+		input.sendKeys(name);
+		waitForTime(550);
+	}
+
+	public void filterByOrganism(String organism) {
+		WebElement input = driver.findElement(By.id("sample-organism-filter"));
+		input.clear();
+		input.sendKeys(organism);
+		waitForTime(550);
+	}
 }

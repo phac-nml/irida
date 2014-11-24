@@ -10,6 +10,33 @@
 	<script>window.dependencies = ['Samples'];</script>
 </head>
 <body>
+<aside class="sidebar ng-cloak" layout:fragment="filter" ng-controller="FilterCtrl as sf">
+	<div class="sidebar__heading clearfix">
+		<h2 class="pull-left" th:text="#{project.sample.filter-title}">Samples Filter</h2>
+		<span ng-show="sf.total === 0 || sf.count !== sf.total" class="badge badge-primary pull-right ng-cloak"><span id="samples-filtered" ng-bind="sf.count">0</span> <span th:text="#{grammar.of}"></span> <span id="samples-total" ng-bind="sf.total">0</span></span>
+	</div>
+	<div class="sidebar__body">
+		<div class="form-group">
+			<label for="sample-name-filter" th:text="#{project.sample.filter-name}">_Sample Name</label>
+
+			<div class="input-group">
+				<input type="text" class="form-control" id="sample-name-filter" ng-model="sf.name"/>
+				<span class="input-group-btn">
+					<button class="btn btn-default" ng-click="sf.name=''"><span class="fa fa-fw fa-remove"></span></button>
+				</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="sample-organism-filter" th:text="#{project.sample.filter-organism}">_Sample Organism</label>
+			<div class="input-group">
+				<input type="text" class="form-control" id="sample-organism-filter" ng-model="sf.organism"/>
+				<span class="input-group-btn">
+					<button class="btn btn-default" ng-click="sf.organism=''"><span class="fa fa-fw fa-remove"></span></button>
+				</span>
+			</div>
+		</div>
+	</div>
+</aside>
 <main layout:fragment="main" data:ng-init="${'projectId=' + project.getId()}">
 	<div class="row">
 		<div class="col-md-12">
@@ -75,27 +102,27 @@
 		<div class="col-md-12" ng-controller="SamplesTableCtrl as table">
 			<table id="samplesTable" class="table ng-cloak">
 				<thead>
-				<tr ng-controller="FilterCtrl as fCtrl">
+				<tr ng-controller="SortCtrl as sCtrl">
 					<th></th>
-					<th id="sortName" th:text="#{project.samples.table.name}" sort-by="" onsort="fCtrl.onSort" sortdir="fCtrl.filter.sortDir"
-					    sortedBy="fCtrl.filter.sortedBy" sortValue="sampleName">__NAME__
+					<th id="sortName" th:text="#{project.samples.table.name}" sort-by="" onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
+					    sortedBy="sCtrl.filter.sortedBy" sortValue="sampleName">__NAME__
 					</th>
-					<th id="sortOrganism" th:text="#{project.samples.table.organism}" sort-by="" onsort="fCtrl.onSort" sortdir="fCtrl.filter.sortDir"
-					    sortedBy="fCtrl.filter.sortedBy" sortValue="organism">__ORGANISM__
+					<th id="sortOrganism" th:text="#{project.samples.table.organism}" sort-by="" onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
+					    sortedBy="sCtrl.filter.sortedBy" sortValue="organism">__ORGANISM__
 					</th>
-					<th id="sortCollectedBy" th:text="#{project.samples.table.collectedBy}" sort-by="" onsort="fCtrl.onSort" sortdir="fCtrl.filter.sortDir"
-					    sortedBy="fCtrl.filter.sortedBy" sortValue="collectedBy">Collected By
+					<th id="sortCollectedBy" th:text="#{project.samples.table.collectedBy}" sort-by="" onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
+					    sortedBy="sCtrl.filter.sortedBy" sortValue="collectedBy">Collected By
 					</th>
-					<th id="sortCreatedDate" th:text="#{project.samples.table.created}" sort-by="" onsort="fCtrl.onSort" sortdir="fCtrl.filter.sortDir"
-					    sortedBy="fCtrl.filter.sortedBy" sortValue="createdDate">__CREATED__
+					<th id="sortCreatedDate" th:text="#{project.samples.table.created}" sort-by="" onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
+					    sortedBy="sCtrl.filter.sortedBy" sortValue="createdDate">__CREATED__
 					</th>
 				</tr>
 				</thead>
 				<tbody>
-				<tr class="sample-row" ng-class="{'selected': sample.selected}" ng-repeat="sample in table.samples | orderBy: table.filter.sortedBy : table.filter.sortDir | SamplesTableFilter">
+				<tr class="sample-row" ng-class="{'selected': sample.selected}" ng-repeat="sample in table.samples | filter:{sampleName:table.filter.name, organism:table.filter.organism} | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
 					<td>
 						<div class="large-checkbox">
-							<input ui-indeterminate="sample.indeterminate" class="sample-select" id="s-{{sample.id}}" name="s-{{sample.id}}" type="checkbox" ng-model="sample.selected"
+							<input class="sample-select" id="s-{{sample.id}}" name="s-{{sample.id}}" type="checkbox" ng-model="sample.selected"
 							       ng-change="table.updateSample(sample)"/> <label for="s-{{sample.id}}"></label>
 						</div>
 					</td>
@@ -104,7 +131,8 @@
 					</td>
 					<td>{{sample.organism}}</td>
 					<td>{{sample.collectedBy}}</td>
-					<td class="createdDate" data-date="{{sample.createdDate}}" tooltip-popup-delay='500' tooltip-placement="left" tooltip="{{sample.createdDate | date:'medium'}}"><span>{{sample.createdDate | date:'mediumDate'}}</span></td>
+					<td class="createdDate" data-date="{{sample.createdDate}}" tooltip-popup-delay='500' tooltip-placement="left" tooltip="{{sample.createdDate | date:'medium'}}">
+						<span>{{sample.createdDate | date:'mediumDate'}}</span></td>
 				</tr>
 				</tbody>
 				<tfoot>

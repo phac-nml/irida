@@ -19,13 +19,14 @@
   }
 
 
-  function SamplesTableFilter(filter, SamplesService) {
+  function PagingFilter($rootScope, filter, SamplesService) {
     "use strict";
     return function (samples) {
+      // samples have already been sorted and filter based on the side bar.
+      SamplesService.setFilteredSamples(samples);
+      $rootScope.$broadcast('PAGING_UPDATE', {total: samples.length});
       var begin = filter.page * filter.count;
-      var filtered = samples.slice(begin, begin + filter.count);
-      SamplesService.setFilteredSamples(filtered);
-      return filtered;
+      return samples.slice(begin, begin + filter.count);
     }
   }
 
@@ -44,7 +45,7 @@
 // @param $rootScope The root scope for the page.
 // @param R Restangular
   /* -]*/
-  function SamplesService($rootScope, R, notifications) {
+  function SamplesService($rootScope, R, notifications, filter) {
     "use strict";
     var svc = this,
         id = $rootScope.projectId,
@@ -57,8 +58,12 @@
       _.extend(svc.filter, f || {});
       $rootScope.cgPromise = base.customGET("").then(function (data) {
         angular.copy(data.samples, svc.samples);
-        $rootScope.$broadcast('PAGING_UPDATE', {total: data.samples.length});
+        $rootScope.$broadcast('SAMPLES_INIT', {total: data.samples.length});
       });
+    };
+
+    svc.getNumSamples = function () {
+      return svc.samples.length;
     };
 
     svc.setFilteredSamples = function (f) {
@@ -104,7 +109,8 @@
     };
 
     svc.selectPage = function () {
-      _.each(filtered, function (s) {
+      var begin = filter.page * filter.count;
+      _.each(filtered.slice(begin, begin + filter.count), function (s) {
         if (!s.selected) {
           s.selected = true;
           selected.push(s);
@@ -114,10 +120,12 @@
     };
 
     svc.selectAll = function () {
-      _.each(svc.samples, function (s) {
+      _.each(filtered, function (s) {
         s.selected = true;
+        if(!_.contains(selected, s)){
+          selected.push(s);
+        }
       });
-      selected = svc.samples;
       updateSelectedCount();
     };
 
@@ -422,7 +430,7 @@
     };
   }
 
-  function FilterCtrl ($rootScope, filter) {
+  function SortCtrl ($rootScope, filter) {
     "use strict";
     var vm = this;
     vm.filter = filter;
@@ -434,12 +442,50 @@
     }
   }
 
+  function FilterCtrl($scope, filter) {
+    "use strict";
+    var vm = this;
+    vm.filter = filter;
+    vm.name = "";
+
+    $scope.$watch(function() {
+      return vm.name;
+    }, _.debounce(function(n, o) {
+      if (n !== o) {
+        filter.name = vm.name;
+        $scope.$apply();
+      }
+    }, 500));
+
+    $scope.$watch(function() {
+      return vm.organism;
+    }, _.debounce(function(n, o) {
+      if (n !== o) {
+        if (vm.organism.length > 0) {
+          filter.organism = vm.organism;
+        }
+        else {
+          delete filter.organism;
+        }
+        $scope.$apply();
+      }
+    }, 500));
+
+    $scope.$on('SAMPLES_INIT', function (e, args) {
+      vm.total = args.total;
+    });
+
+    $scope.$on('PAGING_UPDATE', function (e, args) {
+      vm.count = args.total;
+    });
+  }
+
   angular.module('Samples', ['cgBusy'])
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
     .service('Select2Service', ['$timeout', Select2Service])
-    .service('SamplesService', ['$rootScope', 'Restangular', 'notifications', SamplesService])
-    .filter('SamplesTableFilter', ['FilterFactory', 'SamplesService', SamplesTableFilter])
+    .service('SamplesService', ['$rootScope', 'Restangular', 'notifications', 'FilterFactory', SamplesService])
+    .filter('PagingFilter', ['$rootScope', 'FilterFactory', 'SamplesService', PagingFilter])
     .directive('sortBy', [sortBy])
     .controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
@@ -448,6 +494,7 @@
     .controller('CopyMoveCtrl', ['$modalInstance', '$rootScope', 'BASE_URL', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl])
     .controller('SelectedCountCtrl', ['$scope', SelectedCountCtrl])
     .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
-    .controller('FilterCtrl', ['$rootScope', 'FilterFactory', FilterCtrl])
+    .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
+    .controller('FilterCtrl', ['$scope', 'FilterFactory', FilterCtrl])
   ;
 })(angular, $, _);

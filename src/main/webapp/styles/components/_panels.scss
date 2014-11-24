@@ -26,10 +26,15 @@
 
 .sidebar {
   border: 1px solid $color-grey-lighter;
+  border-top-color: lighten($color-grey-lighter, 5);
+  border-bottom-color: darken($color-grey-lighter, 20);
   border-radius: 4px;
+  margin-bottom: 1em;
+  @include box-shadow(rgba(0, 0, 0, .2) 0 1px 2px); // Mimics bootstrap box-shadow
 }
 
 .sidebar__heading {
+  border-bottom: 1px solid $color-grey-lighter;
   padding: 10px;
   h2 {
     font-size: 1.6rem;
@@ -41,9 +46,19 @@
 
 .sidebar__body {
   position: relative;
-  div {
-    border-top: 1px solid $color-grey-lighter;
-    padding: 4px;
+  >div {
+    padding: 6px 4px;
+  }
+  .form-group {
+    padding: 4px 8px;
+  }
+  input[type="text"].form-control {
+    border: 1px solid darken($color-grey-lighter, 5);
+    @include box-shadow(rgba(0, 0, 0, .1) 0 1px 2px inset)
+  }
+  .input-group-btn button {
+    border: 1px solid darken($color-grey-lighter, 5) !important;
+    color: darken($color-grey-lighter, 20);
   }
 }
 
