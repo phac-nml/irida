@@ -28,6 +28,7 @@
 		</div>
 		<div class="form-group">
 			<label for="sample-organism-filter" th:text="#{project.sample.filter-organism}">_Sample Organism</label>
+
 			<div class="input-group">
 				<input type="text" class="form-control" id="sample-organism-filter" ng-model="sf.organism"/>
 				<span class="input-group-btn">
@@ -62,7 +63,7 @@
 					</ul>
 				</div>
 
-				<!-- Samples Options (Copy, Merge, Move)-->
+				<!-- Samples Options (Download, Copy, Merge, Move)-->
 				<div class="btn-group" dropdown="" is-open="subnav.samplesOptions.open">
 					<button id="samplesOptionsBtn" class="btn btn-default btn-sm dropdown-toggle" ng-disabled="subnav.count&lt;1">
 						<span>Samples</span>&nbsp;<span class="caret"></span>
@@ -89,6 +90,11 @@
 						<span th:text="#{project.samples.export.label}">Export</span>&nbsp;<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" role="menu">
+						<li>
+							<a id="exportDownloadBtn" href="#" ng-click="subnav.export.download()">
+								<span class="fa fa-fw fa-download"></span>&nbsp; <span th:text="#{form.download}">_Download</span>
+							</a>
+						</li>
 						<li>
 							<a id="exportLinkerBtn" href="#" ng-click="subnav.export.linker()"><span class="fa fa-fw fa-terminal"></span>&nbsp;<span th:text="#{project.samples.export.linker}">NGS Arvhive Linker</span></a>
 						</li>
