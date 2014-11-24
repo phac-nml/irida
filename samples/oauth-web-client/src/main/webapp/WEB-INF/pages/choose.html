@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+
+<html>
+<body>
+<h1 th:text="#{choose.title}">_Choose a remote service to read from:_</h1>
+<table>
+<tr>
+	<th th:text="#{choose.table.id}">_ID_</th>
+	<th th:text="#{choose.table.description}">_Description_</th>
+</tr>
+    <tr th:each="api : ${apiList}">
+    	<td th:text="${api.id}">_API ID_</td>
+        <td><a th:href="@{/remote/{id}/projects(id=${api.id})}" th:text="${api.description}">_API Description_</a></td>
+    </tr>
+</table>
+</body>
+</html>
