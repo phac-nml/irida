@@ -46,6 +46,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
@@ -59,6 +61,7 @@ import ca.corefacility.bioinformatics.irida.service.upload.galaxy.GalaxyUploadSe
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 public class ProjectSamplesControllerTest {
@@ -400,18 +403,15 @@ public class ProjectSamplesControllerTest {
 	@Test
 	public void testPostUploadSampleToGalaxy() {
 		Sample sample = TestDataFactory.constructSample();
-		List<Join<Sample, SequenceFile>> sampleSequenceFileJoin = TestDataFactory
-				.generateSequenceFilesForSample(sample);
-		Set<Long> fileIds = sampleSequenceFileJoin.stream().map(join -> join.getObject().getId())
-				.collect(Collectors.toSet());
+		Set<Sample> samples = ImmutableSet.of(sample);
 		UploadWorker worker = TestDataFactory.constructUploadWorker();
 		MockHttpServletRequest request = new MockHttpServletRequest();
 
-		when(sampleService.read(sample.getId())).thenReturn(sample);
-		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(sampleSequenceFileJoin);
+		when(sampleService.readMultiple(ImmutableList.of(sample.getId()))).thenReturn(samples);
 		String accountEmail = "test@gmail.com";
 		String accountUsername = "Test";
-		when(galaxyUploadService.performUploadSelectedSequenceFiles(anySet(), anyString(), anyString()))
+		when(galaxyUploadService.performUploadSelectedSamples(anySet(), any(GalaxyProjectName.class), any(
+				GalaxyAccountEmail.class)))
 				.thenReturn(worker);
 
 		Map<String, Object> result = controller

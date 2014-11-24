@@ -7,12 +7,10 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -49,6 +47,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
@@ -493,18 +493,13 @@ public class ProjectSamplesController {
 	public @ResponseBody Map<String, Object> postUploadSampleToGalaxy(@PathVariable Long projectId,
 			@RequestParam String email, @RequestParam String name,
 			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, HttpServletRequest request) {
-		Set<Long> fileIds = new HashSet<>();
-		for (Long id : sampleIds) {
-			List<Join<Sample, SequenceFile>> joins = sequenceFileService
-					.getSequenceFilesForSample(sampleService.read(id));
-			fileIds.addAll(joins.stream().map(sampleSequenceFileJoin -> sampleSequenceFileJoin.getObject().getId())
-					.collect(Collectors.toList()));
-		}
 
-		UploadWorker uploadWorker = galaxyUploadService.performUploadSelectedSequenceFiles(fileIds, name, email);
-		request.getSession().setAttribute("galaxyUploadWorker", uploadWorker);
+		Set<Sample> samples = (Set<Sample>) sampleService.readMultiple(sampleIds);
+		UploadWorker worker = galaxyUploadService.performUploadSelectedSamples(samples, new GalaxyProjectName(name), new GalaxyAccountEmail(email));
+
+		request.getSession().setAttribute("galaxyUploadWorker", worker);
 		// TODO (14-11-24 - josh): This upload worker can be used to create a progress bar
-		return ImmutableMap.of("status", uploadWorker.getProportionComplete());
+		return ImmutableMap.of("status", worker.getProportionComplete());
 	}
 
 	/**
