@@ -56,7 +56,17 @@ public class AnalysisSubmission implements IridaThing {
 	@Size(min = 3)
 	private String name;
 
+	/**
+	 * Defines the remote id for the location where an analysis was run. With
+	 * Galaxy this represents the History id.
+	 */
 	private String remoteAnalysisId;
+
+	/**
+	 * Defines the remote id of the workflow being executed. With Galaxy this
+	 * represents the Workflow id.
+	 */
+	private String remoteWorkflowId;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	private Set<SequenceFile> inputFiles;
@@ -124,6 +134,25 @@ public class AnalysisSubmission implements IridaThing {
 	 */
 	public void setRemoteAnalysisId(String remoteAnalysisId) {
 		this.remoteAnalysisId = remoteAnalysisId;
+	}
+
+	/**
+	 * Gets the remote workflow id.
+	 * 
+	 * @return THe remote workflow id.
+	 */
+	public String getRemoteWorkflowId() {
+		return remoteWorkflowId;
+	}
+
+	/**
+	 * Sets the remote workflow id.
+	 * 
+	 * @param remoteWorkflowId
+	 *            The remote workflow id.
+	 */
+	public void setRemoteWorkflowId(String remoteWorkflowId) {
+		this.remoteWorkflowId = remoteWorkflowId;
 	}
 
 	/**
