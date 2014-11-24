@@ -83,7 +83,7 @@ public class ProjectUsersControllerTest {
         assertTrue(ur.getLink("self").getHref().endsWith(username));
         Link relationship = ur.getLink(GenericController.REL_RELATIONSHIP);
         assertNotNull(relationship);
-        assertEquals("http://localhost/projects/" + p.getId() + "/users/" + username, relationship.getHref());
+        assertEquals("http://localhost/api/projects/" + p.getId() + "/users/" + username, relationship.getHref());
         assertTrue(users.getLink("self").getHref().contains(p.getId().toString()));
     }
 
@@ -112,7 +112,7 @@ public class ProjectUsersControllerTest {
         assertNotNull(locations);
         assertFalse(locations.isEmpty());
         assertEquals(1, locations.size());
-        assertEquals("http://localhost/projects/" + p.getId() + "/users/" + u.getUsername(), locations.iterator().next());
+        assertEquals("http://localhost/api/projects/" + p.getId() + "/users/" + u.getUsername(), locations.iterator().next());
     }
 
     @Test
@@ -135,12 +135,12 @@ public class ProjectUsersControllerTest {
         // confirm that a project link exists
         Link projectLink = r.getLink(ProjectsController.REL_PROJECT);
         assertNotNull(projectLink);
-        assertEquals("http://localhost/projects/" + p.getId(), projectLink.getHref());
+        assertEquals("http://localhost/api/projects/" + p.getId(), projectLink.getHref());
 
         // confirm that a project users link exists
         Link projectUsersLink = r.getLink(ProjectUsersController.REL_PROJECT_USERS);
         assertNotNull(projectUsersLink);
-        assertEquals("http://localhost/projects/" + p.getId() + "/users", projectUsersLink.getHref());
+        assertEquals("http://localhost/api/projects/" + p.getId() + "/users", projectUsersLink.getHref());
     }
 
 }

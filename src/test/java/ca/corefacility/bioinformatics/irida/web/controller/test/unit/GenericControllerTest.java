@@ -99,7 +99,7 @@ public class GenericControllerTest {
 		RootResource rootResource = (RootResource) modelMap.get(GenericController.RESOURCE_NAME);
 		Link l = rootResource.getLink(GenericController.REL_COLLECTION);
 		assertNotNull(l);
-		assertEquals("http://localhost/generic", l.getHref());
+		assertEquals("http://localhost/api/generic", l.getHref());
 	}
 
 	@Test

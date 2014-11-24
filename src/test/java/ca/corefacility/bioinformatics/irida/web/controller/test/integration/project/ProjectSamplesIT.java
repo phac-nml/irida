@@ -67,12 +67,12 @@ public class ProjectSamplesIT {
 		String location = r.getHeader(HttpHeaders.LOCATION);
 
 		assertNotNull(location);
-		assertTrue(location.matches("^http://localhost:8080/projects/[0-9]+/samples/[0-9]+$"));
+		assertTrue(location.matches("^http://localhost:8080/api/projects/[0-9]+/samples/[0-9]+$"));
 	}
 
 	@Test
 	public void testDeleteSampleFromProject() {
-		String projectUri = "http://localhost:8080/projects/4";
+		String projectUri = "http://localhost:8080/api/projects/4";
 
 		// load the project
 		String projectJson = asUser().get(projectUri).asString();
@@ -102,7 +102,7 @@ public class ProjectSamplesIT {
 
 	@Test
 	public void testUpdateProjectSample() {
-		String projectUri = "http://localhost:8080/projects/5";
+		String projectUri = "http://localhost:8080/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
 		Map<String, String> updatedFields = new HashMap<>();
 		String updatedName = "Totally-different-sample-name";

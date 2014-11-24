@@ -91,7 +91,7 @@ public class ProjectSamplesController {
 	 * @return a response indicating that the sample was created and appropriate
 	 *         location information.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/samples", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST)
 	public ResponseEntity<String> addSampleToProject(@PathVariable Long projectId, @RequestBody SampleResource sample) {
 		// load the project that we're adding to
 		Project p = projectService.read(projectId);
@@ -123,7 +123,7 @@ public class ProjectSamplesController {
 	 *            {@link Sample}s for.
 	 * @return the list of {@link Sample}s associated with this {@link Project}.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/samples", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.GET)
 	public ModelMap getProjectSamples(@PathVariable Long projectId) {
 
 		ModelMap modelMap = new ModelMap();
@@ -155,7 +155,7 @@ public class ProjectSamplesController {
 
 	}
 
-	@RequestMapping(value = "/projects/{projectId}/samples/bySequencerId/{seqeuncerId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/projects/{projectId}/samples/bySequencerId/{seqeuncerId}", method = RequestMethod.GET)
 	public ModelAndView getProjectSampleBySequencerId(@PathVariable Long projectId, @PathVariable String seqeuncerId) {
 		Project p = projectService.read(projectId);
 
@@ -185,7 +185,7 @@ public class ProjectSamplesController {
 	 *            the {@link Sample} identifier that we're looking for.
 	 * @return a representation of the specific sample.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}", method = RequestMethod.GET)
 	public ModelMap getProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
 		ModelMap modelMap = new ModelMap();
 		// load the project
@@ -222,7 +222,7 @@ public class ProjectSamplesController {
 	 * @return a response including links back to the specific {@link Project}
 	 *         and collection of {@link Sample}.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}", method = RequestMethod.DELETE)
 	public ModelMap removeSampleFromProject(@PathVariable Long projectId, @PathVariable Long sampleId) {
 		ModelMap modelMap = new ModelMap();
 
@@ -260,7 +260,7 @@ public class ProjectSamplesController {
 	 * @return a response including links to the {@link Project} and
 	 *         {@link Sample}.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}", method = RequestMethod.PATCH, consumes = {
+	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}", method = RequestMethod.PATCH, consumes = {
 			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public ModelMap updateSample(@PathVariable Long projectId, @PathVariable Long sampleId,
 			@RequestBody Map<String, Object> updatedFields) {

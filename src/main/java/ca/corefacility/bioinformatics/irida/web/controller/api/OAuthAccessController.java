@@ -35,7 +35,7 @@ public class OAuthAccessController {
 	 * @param principal The principal user making the auth request
 	 * @return A ModelAndView for the access_confirmation page
 	 */
-	@RequestMapping("/oauth/confirm_access")
+	@RequestMapping("/api/oauth/confirm_access")
 	public ModelAndView getAccessConfirmation(Map<String, Object> model, Principal principal) {
 		//get the authorization request from the model
 		AuthorizationRequest clientAuth = (AuthorizationRequest) model.remove("authorizationRequest");

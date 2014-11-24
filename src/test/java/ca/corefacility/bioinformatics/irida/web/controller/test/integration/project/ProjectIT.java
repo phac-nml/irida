@@ -46,7 +46,7 @@ import com.jayway.restassured.response.Response;
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectIT {
 
-	private static final String PROJECTS = "/projects";
+	private static final String PROJECTS = "/api/projects";
 
 	/**
 	 * If I try to issue a create request for an object with an invalid field
@@ -78,7 +78,7 @@ public class ProjectIT {
 				.post(PROJECTS);
 		String location = r.getHeader(HttpHeaders.LOCATION);
 		assertNotNull(location);
-		assertTrue(location.startsWith("http://localhost:8080/projects/"));
+		assertTrue(location.startsWith("http://localhost:8080/api/projects/"));
 		String responseBody = asUser().get(location).asString();
 		String projectUsersLocation = from(responseBody).get("resource.links.find{it.rel=='project/users'}.href");
 		// confirm that the current user was added to the project.
@@ -109,7 +109,7 @@ public class ProjectIT {
 
 	@Test
 	public void testDeleteProject() {
-		String projectUri = "http://localhost:8080/projects/5";
+		String projectUri = "http://localhost:8080/api/projects/5";
 		asUser().expect().body("resource.links.rel", hasItems("collection")).and()
 				.body("resource.links.href", hasItems("http://localhost:8080/projects")).when().delete(projectUri);
 	}
@@ -122,7 +122,7 @@ public class ProjectIT {
 	 */
 	@Test
 	public void verifyExistenceOfProjectWithHEAD() {
-		String projectUri = "http://localhost:8080/projects/5";
+		String projectUri = "http://localhost:8080/api/projects/5";
 		asUser().expect().statusCode(HttpStatus.OK.value()).when().head(projectUri);
 		asUser().given().header("Accept", MediaType.JSON_UTF_8.toString()).expect().statusCode(HttpStatus.OK.value())
 				.when().head(projectUri);

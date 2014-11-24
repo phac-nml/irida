@@ -36,7 +36,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.Projects
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
-@RequestMapping(value = "/users")
+@RequestMapping(value = "/api/users")
 public class UsersController extends GenericController<User, UserResource> {
 
 	/**
@@ -102,7 +102,7 @@ public class UsersController extends GenericController<User, UserResource> {
 	 *            the username for the desired user.
 	 * @return a model containing the collection of projects for that user.
 	 */
-	@RequestMapping(value = "/{username}/projects", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/{username}/projects", method = RequestMethod.GET)
 	public ModelMap getUserProjects(@PathVariable String username) {
 		logger.debug("Loading projects for user [" + username + "]");
 		ModelMap mav = new ModelMap();
@@ -138,7 +138,7 @@ public class UsersController extends GenericController<User, UserResource> {
 	 * 
 	 * @return a representation of the currently logged in user.
 	 */
-	@RequestMapping(value = "/current", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/current", method = RequestMethod.GET)
 	public ModelMap getCurrentUser() {
 		// get the current user from Spring Security.
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();

@@ -88,7 +88,7 @@ public class ProjectSamplesControllerTest {
 		assertNotNull(locations);
 		assertFalse(locations.isEmpty());
 		assertEquals(1, locations.size());
-		assertEquals("http://localhost/projects/" + projectId + "/samples/" + s.getId(), locations.iterator().next());
+		assertEquals("http://localhost/api/projects/" + projectId + "/samples/" + s.getId(), locations.iterator().next());
 	}
 
 	@Test
@@ -153,7 +153,7 @@ public class ProjectSamplesControllerTest {
 		assertEquals(1, resourceLinks.size());
 		Link self = resourceLinks.iterator().next();
 		assertEquals("self", self.getRel());
-		assertEquals("http://localhost/projects/" + p.getId() + "/samples", self.getHref());
+		assertEquals("http://localhost/api/projects/" + p.getId() + "/samples", self.getHref());
 		SampleResource resource = samples.iterator().next();
 		assertEquals(s.getSampleName(), resource.getSampleName());
 		assertEquals(1, resource.getSequenceFileCount());
@@ -189,7 +189,7 @@ public class ProjectSamplesControllerTest {
 		Link sequenceFilesLink = sr.getLink(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
 		Link projectLink = sr.getLink(ProjectSamplesController.REL_PROJECT);
 
-		String projectLocation = "http://localhost/projects/" + p.getId();
+		String projectLocation = "http://localhost/api/projects/" + p.getId();
 		String sampleLocation = projectLocation + "/samples/" + s.getId();
 
 		assertNotNull(selfLink);
@@ -223,12 +223,12 @@ public class ProjectSamplesControllerTest {
 		RootResource resource = (RootResource) o;
 		Map<String, String> links = linksToMap(resource.getLinks());
 		String self = links.get(Link.REL_SELF);
-		assertEquals("http://localhost/projects/" + p.getId() + "/samples/" + s.getId(), self);
+		assertEquals("http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId(), self);
 		String sequenceFiles = links.get(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
-		assertEquals("http://localhost/projects/" + p.getId() + "/samples/" + s.getId() + "/sequenceFiles",
+		assertEquals("http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId() + "/sequenceFiles",
 				sequenceFiles);
 		String project = links.get(ProjectsController.REL_PROJECT);
-		assertEquals("http://localhost/projects/" + p.getId(), project);
+		assertEquals("http://localhost/api/projects/" + p.getId(), project);
 	}
 
 	private Map<String, String> linksToMap(List<Link> links) {

@@ -27,7 +27,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.Projects
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
-@RequestMapping(value = "/sequencingrun")
+@RequestMapping(value = "/api/sequencingrun")
 public class SequencingRunController extends GenericController<SequencingRun, SequencingRunResource> {
 	private static final Logger logger = LoggerFactory.getLogger(SequencingRunController.class);
 
@@ -50,7 +50,7 @@ public class SequencingRunController extends GenericController<SequencingRun, Se
 
 	}
 
-	@RequestMapping(value = "/miseqrun", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
+	@RequestMapping(value = "/api/miseqrun", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
 	public ResponseEntity<String> createMiseqRun(@RequestBody MiseqRunResource representation) {
 		return create(representation);

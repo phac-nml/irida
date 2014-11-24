@@ -28,7 +28,7 @@ public class ITestAuthUtils {
 	
 	private static final String CLIENT_ID = "testClient";
 	private static final String CLIENT_SECRET = "testClientSecret";
-	private static final String OAUTH_ENDPOINT = "/oauth/token";
+	private static final String OAUTH_ENDPOINT = "/api/oauth/token";
 
 	static {
 		ROLE_TO_USER = new HashMap<>();

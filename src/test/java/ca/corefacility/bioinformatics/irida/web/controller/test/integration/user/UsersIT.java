@@ -47,24 +47,24 @@ public class UsersIT {
 
 	@Test
 	public void testBadUsernameLogin() {
-		asRole(ITestAuthUtils.BAD_USERNAME).expect().statusCode(HttpStatus.SC_UNAUTHORIZED).when().get("/");
+		asRole(ITestAuthUtils.BAD_USERNAME).expect().statusCode(HttpStatus.SC_UNAUTHORIZED).when().get("/api");
 	}
 
 	@Test
 	public void testBadPasswordLogin() {
-		asRole(ITestAuthUtils.BAD_PASSWORD).expect().statusCode(HttpStatus.SC_UNAUTHORIZED).when().get("/");
+		asRole(ITestAuthUtils.BAD_PASSWORD).expect().statusCode(HttpStatus.SC_UNAUTHORIZED).when().get("/api");
 	}
 
 	@Test
 	public void testGetAllUsers() {
 		asAdmin().expect().body("resource.links.rel", hasItems("self")).and()
-				.body("resource.resources.username", hasItem("fbristow")).when().get("/users");
+				.body("resource.resources.username", hasItem("fbristow")).when().get("/api/users");
 	}
 
 	@Test
 	public void testGetCurrentUser() {
 		asUser().expect().body("resource.links.rel", hasItems("self", "user/projects")).and()
-				.body("resource.username", is("fbristow")).when().get("/users/current");
+				.body("resource.username", is("fbristow")).when().get("/api/users/current");
 	}
 
 	@Test
@@ -73,26 +73,26 @@ public class UsersIT {
 		// create a user because the current user doesn't have permission to
 		// create users.
 		asUser().given().body(createUser()).expect().response().statusCode(HttpStatus.SC_FORBIDDEN).when()
-				.post("/users");
+				.post("/api/users");
 	}
 
 	@Test
 	public void testCreateUserAsAdminSucceed() {
 		Map<String, String> user = createUser();
 
-		asAdmin().given().body(user).expect().response().statusCode(HttpStatus.SC_CREATED).when().post("/users");
+		asAdmin().given().body(user).expect().response().statusCode(HttpStatus.SC_CREATED).when().post("/api/users");
 	}
 
 	@Test
 	public void testCreateUserAsManagerSucceed() {
 		Map<String, String> user = createUser();
-		asManager().given().body(user).expect().response().statusCode(HttpStatus.SC_CREATED).when().post("/users");
+		asManager().given().body(user).expect().response().statusCode(HttpStatus.SC_CREATED).when().post("/api/users");
 	}
 
 	@Test
 	public void testUpdateOtherAccountFail() {
 		asUser().given().body(createUser()).expect().response().statusCode(HttpStatus.SC_FORBIDDEN).when()
-				.patch("/users/2");
+				.patch("/api/users/2");
 	}
 
 	@Test
@@ -104,7 +104,7 @@ public class UsersIT {
 		String phoneNumber = "867-5309";
 		user.put("phoneNumber", phoneNumber);
 		asUser().given().body(user).expect().response().statusCode(HttpStatus.SC_OK).when().patch(location);
-		asUser().expect().body("resource.phoneNumber", is(phoneNumber)).when().get("/users/current");
+		asUser().expect().body("resource.phoneNumber", is(phoneNumber)).when().get("/api/users/current");
 	}
 
 	private Map<String, String> createUser() {

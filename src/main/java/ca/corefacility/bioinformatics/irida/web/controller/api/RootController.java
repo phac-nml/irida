@@ -51,7 +51,7 @@ public class RootController {
      *
      * @return a response to the client.
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/")
+    @RequestMapping(method = RequestMethod.GET, value = "/api")
     public ModelMap getLinks() {
         logger.debug("Discovering application");
         RootResource resource = new RootResource();

@@ -54,7 +54,7 @@ public class SampleSequenceFilesIT {
 
 	@Test
 	public void testAddSequenceFileToSample() throws IOException {
-		String sampleUri = "http://localhost:8080/projects/5/samples/1";
+		String sampleUri = "http://localhost:8080/api/projects/5/samples/1";
 		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
 		String sampleBody = response.getBody().asString();
 		String sequenceFileUri = from(sampleBody).getString(
@@ -87,7 +87,7 @@ public class SampleSequenceFilesIT {
 	
 	@Test
 	public void testAddSequenceFileToSampleWithOptionalProperties() throws IOException {
-		String sampleUri = "http://localhost:8080/projects/5/samples/1";
+		String sampleUri = "http://localhost:8080/api/projects/5/samples/1";
 		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
 		String sampleBody = response.getBody().asString();
 		String sequenceFileUri = from(sampleBody).getString(
@@ -122,7 +122,7 @@ public class SampleSequenceFilesIT {
 	@Test
 	public void testAddExistingSequenceFileToSample() throws IOException {
 		// for now, add a sequence file to another sample
-		String sampleUri = "http://localhost:8080/projects/5/samples/1";
+		String sampleUri = "http://localhost:8080/api/projects/5/samples/1";
 		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
 		String projectBody = response.getBody().asString();
 		String sequenceFileUri = from(projectBody).getString(
@@ -151,14 +151,14 @@ public class SampleSequenceFilesIT {
 		location = r.getHeader(HttpHeaders.LOCATION);
 
 		assertNotNull(location);
-		assertTrue(location.matches("http://localhost:8080/projects/[0-9]+/samples/[0-9]+/sequenceFiles/[0-9]+"));
+		assertTrue(location.matches("http://localhost:8080/api/projects/[0-9]+/samples/[0-9]+/sequenceFiles/[0-9]+"));
 
 	}
 
 	@Test
 	public void testRemoveSequenceFileFromSample() throws IOException {
 		// for now, add a sequence file to the sample so that we can remove it
-		String sampleUri = "http://localhost:8080/projects/5/samples/1";
+		String sampleUri = "http://localhost:8080/api/projects/5/samples/1";
 		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
 		String sampleBody = response.getBody().asString();
 		String sequenceFileUri = from(sampleBody).getString(

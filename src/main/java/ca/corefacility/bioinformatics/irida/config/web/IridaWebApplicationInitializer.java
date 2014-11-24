@@ -28,10 +28,20 @@ public class IridaWebApplicationInitializer extends AbstractDispatcherServletIni
 		// do the default setup
 		super.onStartup(servletContext);
 
+		// we're using custom token endpoint url for oauth, so we need to
+		// configure a special filter for oauth so that it is handled before the
+		// regular spring security filter chain, see:
+		// http://projects.spring.io/spring-security-oauth/1.x/docs/oauth2.html#configuring-the-endpoint-urls
+		final DelegatingFilterProxy oauthFilter = new DelegatingFilterProxy("oauth2EndpointUrlFilter");
+		oauthFilter.setContextAttribute("org.springframework.web.servlet.FrameworkServlet.CONTEXT.dispatcher");
+		servletContext.addFilter("oauth2EndpointUrlFilter", oauthFilter).addMappingForUrlPatterns(null, false, "/*");
+
 		// install the spring security filter chain.
-		final DelegatingFilterProxy filter = new DelegatingFilterProxy("springSecurityFilterChain");
-		filter.setContextAttribute("org.springframework.web.servlet.FrameworkServlet.CONTEXT.dispatcher");
-		servletContext.addFilter("springSecurityFilterChain", filter).addMappingForUrlPatterns(null, false, "/*");
+		final DelegatingFilterProxy springSecurityFilterChain = new DelegatingFilterProxy("springSecurityFilterChain");
+		springSecurityFilterChain
+				.setContextAttribute("org.springframework.web.servlet.FrameworkServlet.CONTEXT.dispatcher");
+		servletContext.addFilter("springSecurityFilterChain", springSecurityFilterChain).addMappingForUrlPatterns(null,
+				false, "/*");
 	}
 
 	@Override

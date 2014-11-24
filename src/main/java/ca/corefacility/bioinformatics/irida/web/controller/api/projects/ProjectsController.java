@@ -22,7 +22,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
-@RequestMapping(value = "/projects")
+@RequestMapping(value = "/api/projects")
 public class ProjectsController extends GenericController<Project, ProjectResource> {
 
     /**

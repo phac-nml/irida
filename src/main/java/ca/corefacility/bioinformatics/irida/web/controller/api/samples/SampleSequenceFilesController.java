@@ -104,7 +104,7 @@ public class SampleSequenceFilesController {
 	 * @return the {@link SequenceFile} entities associated with the
 	 *         {@link Sample}.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}/sequenceFiles", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles", method = RequestMethod.GET)
 	public ModelMap getSampleSequenceFiles(@PathVariable Long projectId, @PathVariable Long sampleId) {
 		ModelMap modelMap = new ModelMap();
 		// Use the RelationshipService to get the set of SequenceFile
@@ -148,7 +148,7 @@ public class SampleSequenceFilesController {
 	 *            the content of the {@link SequenceFile}.
 	 * @return a response indicating the success of the submission.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<String> addNewSequenceFileToSample(@PathVariable Long projectId, @PathVariable Long sampleId,
 			@RequestPart("file") MultipartFile file, @RequestPart(value="parameters",required=false) SequenceFileResource fileResource) throws IOException {
 		logger.debug("Adding sequence file to sample " + sampleId + " in project " + projectId);
@@ -238,7 +238,7 @@ public class SampleSequenceFilesController {
 	 *            {@link SequenceFile} identifier.
 	 * @return
 	 */
-	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST, consumes = {
+	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST, consumes = {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	public ResponseEntity<String> addExistingSequenceFileToSample(@PathVariable Long projectId,
 			@PathVariable Long sampleId, @RequestBody Map<String, String> requestBody) {
@@ -290,7 +290,7 @@ public class SampleSequenceFilesController {
 	 *            the identifier of the {@link SequenceFile} to move.
 	 * @return a status indicating the success of the move.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.DELETE)
 	public ModelMap removeSequenceFileFromSample(@PathVariable Long projectId, @PathVariable Long sampleId,
 			@PathVariable Long sequenceFileId) {
 		ModelMap modelMap = new ModelMap();
@@ -330,7 +330,7 @@ public class SampleSequenceFilesController {
 	 *            the identifier of the {@link SequenceFile}.
 	 * @return a representation of the {@link SequenceFile}.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.GET)
 	public ModelMap getSequenceFileForSample(@PathVariable Long projectId, @PathVariable Long sampleId,
 			@PathVariable Long sequenceFileId) {
 		ModelMap modelMap = new ModelMap();
@@ -365,7 +365,7 @@ public class SampleSequenceFilesController {
      * @param updatedFields the updated fields of the {@link Sample}.
      * @return a response including links to the {@link Project} and {@link Sample}.
      */
-    @RequestMapping(value = "/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.PATCH,
+    @RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.PATCH,
             consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ModelMap updateSequenceFile(@PathVariable Long projectId, @PathVariable Long sampleId,
 			@PathVariable Long sequenceFileId, @RequestBody Map<String, Object> updatedFields) {

@@ -78,7 +78,7 @@ public class ProjectUsersController {
 	 *             Should NEVER be thrown in this method, but needs to be
 	 *             listed.
 	 */
-    @RequestMapping(value = "/projects/{projectId}/users", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/projects/{projectId}/users", method = RequestMethod.GET)
     public ModelMap getUsersForProject(@PathVariable Long projectId) throws ProjectWithoutOwnerException {
         ResourceCollection<UserResource> resources = new ResourceCollection<>();
 
@@ -116,7 +116,7 @@ public class ProjectUsersController {
      *                       the user.
      * @return a response indicating that the collection was modified.
      */
-    @RequestMapping(value = "/projects/{projectId}/users", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/projects/{projectId}/users", method = RequestMethod.POST)
     public ResponseEntity<String> addUserToProject(@PathVariable Long projectId,
                                                    @RequestBody Map<String, String> representation) {
         // first, get the project
@@ -148,7 +148,7 @@ public class ProjectUsersController {
      *         the {@link Project}.
      * @throws ProjectWithoutOwnerException if removing this user will leave the project without an owner
      */
-    @RequestMapping(value = "/projects/{projectId}/users/{userId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/api/projects/{projectId}/users/{userId}", method = RequestMethod.DELETE)
     public ModelMap removeUserFromProject(@PathVariable Long projectId, @PathVariable String userId) throws ProjectWithoutOwnerException {
         // Read the project and user from the database
         Project p = projectService.read(projectId);

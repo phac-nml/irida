@@ -50,7 +50,7 @@ public class SequencingRunSequenceFilesController {
      * @param representation the JSON key-value pair that contains the identifier for the sequenceFile
      * @return a response indicating that the collection was modified.
      */
-    @RequestMapping(value = "/sequencingrun/{sequencingrunId}/sequenceFiles", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/sequencingrun/{sequencingrunId}/sequenceFiles", method = RequestMethod.POST)
     public ResponseEntity<String> addSequenceFileToMiseqRun(@PathVariable Long sequencingrunId,
                                                    @RequestBody Map<String, String> representation) {
         

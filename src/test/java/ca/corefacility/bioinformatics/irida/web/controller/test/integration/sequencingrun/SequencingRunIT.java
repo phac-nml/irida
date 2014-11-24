@@ -46,42 +46,42 @@ public class SequencingRunIT {
 	public void testListRuns() {
 		asAdmin().expect().and().body("resource.resources.description", hasItems("run 1", "run 2", "run 3")).and()
 				.body("resource.resources.workflow", hasItems("Test workflow 1", "Test workflow 2", "Test workflow 3"))
-				.and().when().get("/sequencingrun");
+				.and().when().get("/api/sequencingrun");
 	}
 
 	@Test
 	public void testGetRun() {
 		asAdmin().expect().body("resource.links.rel", hasItems("self")).and()
 				.body("resource.description", is("run 2")).and().body("resource.workflow", is("Test workflow 2"))
-				.when().get("/sequencingrun/2");
+				.when().get("/api/sequencingrun/2");
 	}
 
 	@Test
 	public void testCreateRunAsAdminSucceed() {
 		Map<String, String> run = createRun();
 		asAdmin().given().body(run).expect().response().statusCode(HttpStatus.SC_CREATED).when()
-				.post("/sequencingrun/miseqrun");
+				.post("/api/sequencingrun/miseqrun");
 	}
 
 	@Test
 	public void testCreateRunAsUserFail() {
 		Map<String, String> run = createRun();
 		asUser().given().body(run).expect().response().statusCode(HttpStatus.SC_FORBIDDEN).when()
-				.post("/sequencingrun/miseqrun");
+				.post("/api/sequencingrun/miseqrun");
 	}
 
 	@Test
 	public void testCreateRunAsSequencerSucceed() {
 		Map<String, String> run = createRun();
 		asSequencer().given().body(run).expect().response().statusCode(HttpStatus.SC_CREATED).when()
-				.post("/sequencingrun/miseqrun");
+				.post("/api/sequencingrun/miseqrun");
 	}
 
 	@Test
 	public void testPostSequencingRunFail() {
 		Map<String, String> run = createRun();
 		asSequencer().given().body(run).expect().response().statusCode(HttpStatus.SC_BAD_REQUEST).when()
-				.post("/sequencingrun");
+				.post("/api/sequencingrun");
 	}
 
 	private Map<String, String> createRun() {

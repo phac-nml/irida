@@ -46,7 +46,7 @@ public class ProjectUsersIT {
 	@Test
 	public void testAddExistingUserToProject() {
 		String username = "tom";
-		String projectUri = "http://localhost:8080/projects/1";
+		String projectUri = "http://localhost:8080/api/projects/1";
 		Map<String, String> users = new HashMap<>();
 		users.put("userId", username);
 
@@ -71,7 +71,7 @@ public class ProjectUsersIT {
 	@Test
 	public void testRemoveUserFromProject() {
 		String name = "Josh";
-		String projectUri = "http://localhost:8080/projects/2";
+		String projectUri = "http://localhost:8080/api/projects/2";
 
 		// get the project
 		String projectJson = asUser().get(projectUri).asString();

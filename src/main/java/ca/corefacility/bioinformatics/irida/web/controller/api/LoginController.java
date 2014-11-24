@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class LoginController {
-	@RequestMapping("/login")
+	@RequestMapping("/api/login")
 	public String login(){
 		return "login";
 	}
 	
-	@RequestMapping("/success")
+	@RequestMapping("/api/success")
 	@ResponseBody
 	public String success(){
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -96,7 +96,7 @@ public class SampleSequenceFilesControllerTest {
 
 		Link selfCollection = resources.getLink(Link.REL_SELF);
 		Link sample = resources.getLink(SampleSequenceFilesController.REL_SAMPLE);
-		String sampleLocation = "http://localhost/projects/" + p.getId() + "/samples/" + s.getId();
+		String sampleLocation = "http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId();
 		String sequenceFileLocation = sampleLocation + "/sequenceFiles/" + sf.getId();
 
 		assertEquals(sampleLocation + "/sequenceFiles", selfCollection.getHref());
@@ -135,7 +135,7 @@ public class SampleSequenceFilesControllerTest {
 		Link sample = resource.getLink(SampleSequenceFilesController.REL_SAMPLE);
 		Link sequenceFiles = resource.getLink(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
 
-		String projectLocation = "http://localhost/projects/" + p.getId();
+		String projectLocation = "http://localhost/api/projects/" + p.getId();
 		String sampleLocation = projectLocation + "/samples/" + s.getId();
 
 		assertNotNull(sample);
@@ -170,7 +170,7 @@ public class SampleSequenceFilesControllerTest {
 		Link sampleSequenceFiles = sfr.getLink(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
 		Link sample = sfr.getLink(SampleSequenceFilesController.REL_SAMPLE);
 
-		String sampleLocation = "http://localhost/projects/" + p.getId() + "/samples/" + s.getId();
+		String sampleLocation = "http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId();
 		String sequenceFileLocation = sampleLocation + "/sequenceFiles/" + sf.getId();
 
 		assertNotNull(self);
@@ -212,7 +212,7 @@ public class SampleSequenceFilesControllerTest {
 		assertFalse(locations.isEmpty());
 		assertEquals(1, locations.size());
 		assertEquals(
-				"http://localhost/projects/" + p.getId() + "/samples/" + s.getId() + "/sequenceFiles/" + sf.getId(),
+				"http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId() + "/sequenceFiles/" + sf.getId(),
 				locations.iterator().next());
 
 		Files.delete(f);
@@ -249,7 +249,7 @@ public class SampleSequenceFilesControllerTest {
 		// the sequence file location is still the same, but we've added a new
 		// relationship
 		assertEquals(
-				"http://localhost/projects/" + p.getId() + "/samples/" + s.getId() + "/sequenceFiles/" + sf.getId(),
+				"http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId() + "/sequenceFiles/" + sf.getId(),
 				locations.iterator().next());
 	}
 

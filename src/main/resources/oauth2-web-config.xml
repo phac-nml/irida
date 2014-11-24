@@ -9,7 +9,7 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<sec:http pattern="/oauth/token" create-session="stateless"
+	<sec:http pattern="/api/oauth/token" create-session="stateless"
 		authentication-manager-ref="clientAuthenticationManager">
 		<sec:http-basic entry-point-ref="clientAuthenticationEntryPoint" />
 
@@ -26,64 +26,72 @@
 		class="ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousAuthenticationFilter">
 		<constructor-arg value="anonymousTokenAuthProvider" />
 	</bean>
-	
-	<sec:http pattern="/oauth/authorize" authentication-manager-ref="authenticationManager" access-denied-page="/login"
+
+	<sec:http pattern="/api/oauth/authorize"
+		authentication-manager-ref="authenticationManager" access-denied-page="/api/login"
 		disable-url-rewriting="true">
-		<sec:intercept-url pattern="/oauth/authorize" access="IS_AUTHENTICATED_FULLY"/>
-		<sec:form-login authentication-failure-url="/login"
-			default-target-url="/success" login-page="/login"
-			login-processing-url="/login.do" />
-			
-		<sec:custom-filter ref="oauth2ClientFilter" after="EXCEPTION_TRANSLATION_FILTER"/>
+		<sec:intercept-url pattern="/api/oauth/authorize"
+			access="IS_AUTHENTICATED_FULLY" />
+		<sec:form-login authentication-failure-url="/api/login"
+			default-target-url="/api/success" login-page="/api/login"
+			login-processing-url="/api/login.do" />
+
+		<sec:custom-filter ref="oauth2ClientFilter"
+			after="EXCEPTION_TRANSLATION_FILTER" />
 	</sec:http>
-	
-	<sec:http pattern="/login*" authentication-manager-ref="authenticationManager" access-denied-page="/login"
-		disable-url-rewriting="true">
-		<sec:anonymous/>
-		<sec:intercept-url pattern="/login*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		
-		<sec:form-login authentication-failure-url="/login"
-			default-target-url="/success" login-page="/login"
-			login-processing-url="/login.do" />
-		<sec:logout logout-success-url="/login" logout-url="/logout.do" />
-		<sec:custom-filter ref="oauth2ClientFilter" after="EXCEPTION_TRANSLATION_FILTER"/>
+
+	<sec:http pattern="/api/login*" authentication-manager-ref="authenticationManager"
+		access-denied-page="/api/login" disable-url-rewriting="true">
+		<sec:anonymous />
+		<sec:intercept-url pattern="/api/login*"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+
+		<sec:form-login authentication-failure-url="/api/login"
+			default-target-url="/api/success" login-page="/api/login"
+			login-processing-url="/api/login.do" />
+		<sec:logout logout-success-url="/api/login" logout-url="/api/logout.do" />
+		<sec:custom-filter ref="oauth2ClientFilter"
+			after="EXCEPTION_TRANSLATION_FILTER" />
 	</sec:http>
-	
-	<oauth:client id="oauth2ClientFilter"  />
-	
+
+	<oauth:client id="oauth2ClientFilter" />
+
 	<sec:http pattern="/favicon.ico" security="none" />
-	
-	<sec:http pattern="/**" create-session="stateless"
+
+	<sec:http pattern="/api/**" create-session="stateless"
 		entry-point-ref="oauthAuthenticationEntryPoint"
 		access-decision-manager-ref="accessDecisionManager"
 		authentication-manager-ref="clientAuthenticationManager">
 		<sec:anonymous enabled="false" />
 		<!-- Read scope for GET requests -->
-		
-		<sec:intercept-url pattern="/success" access="IS_AUTHENTICATED_FULLY" />
-		<sec:intercept-url pattern="/test" access="IS_AUTHENTICATED_FULLY" />      
-		<sec:intercept-url pattern="/**" method="GET" access="SCOPE_READ" />
+
+		<sec:intercept-url pattern="/api/success" access="IS_AUTHENTICATED_FULLY" />
+		<sec:intercept-url pattern="/api/test" access="IS_AUTHENTICATED_FULLY" />
+		<sec:intercept-url pattern="/api/**" method="GET"
+			access="SCOPE_READ" />
 		<!-- Read and write scope for all other requests -->
-		<sec:intercept-url pattern="/**" access="SCOPE_READ,SCOPE_WRITE" />
-		<sec:custom-filter ref="nmlIridaResourceServer" before="PRE_AUTH_FILTER" />
+		<sec:intercept-url pattern="/api/**" access="SCOPE_READ,SCOPE_WRITE" />
+		<sec:custom-filter ref="nmlIridaResourceServer"
+			before="PRE_AUTH_FILTER" />
 		<sec:access-denied-handler ref="oauthAccessDeniedHandler" />
 	</sec:http>
 
 	<oauth:web-expression-handler id="oauthWebExpressionHandler" />
-		
-	<oauth:resource-server id="nmlIridaResourceServer"
+
+	<oauth:resource-server id="nmlIridaResourceServer"  
 		resource-id="NmlIrida" token-services-ref="tokenServices" />
-		
-	<!--  Use in web project-->
+
+	<!-- Use in web project -->
 	<oauth:authorization-server
-			client-details-service-ref="clientDetails" 
-			token-services-ref="tokenServices">
+		authorization-endpoint-url="/api/oauth/authorize" token-endpoint-url="/api/oauth/token"
+		client-details-service-ref="clientDetails" token-services-ref="tokenServices">
 		<oauth:authorization-code />
-		<oauth:password authentication-manager-ref="authenticationManager"/>
+		<oauth:password authentication-manager-ref="authenticationManager" />
 	</oauth:authorization-server>
-	 
+
 	<sec:authentication-manager id="clientAuthenticationManager">
-		<sec:authentication-provider user-service-ref="clientDetailsUserDetailsService" />
+		<sec:authentication-provider
+			user-service-ref="clientDetailsUserDetailsService" />
 	</sec:authentication-manager>
-		
+
 </beans>
