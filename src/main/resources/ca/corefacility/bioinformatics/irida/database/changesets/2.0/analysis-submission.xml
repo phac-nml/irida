@@ -69,19 +69,19 @@
 			<column name="name" type="VARCHAR(255)">
 				<constraints nullable="false" />
 			</column>
-			<column name="remoteAnalysisId" type="VARCHAR(255)" />
-			<column name="remoteWorkflowId" type="VARCHAR(255)" />
-			<column name="analysisState" type="VARCHAR(255)">
+			<column name="remote_analysis_id" type="VARCHAR(255)" />
+			<column name="remote_workflow_id" type="VARCHAR(255)" />
+			<column name="analysis_state" type="VARCHAR(255)">
 				<constraints nullable="false" />
 			</column>
 			<column name="analysis_id" type="bigint(20)">
 				<constraints foreignKeyName="FK_ANALYSIS_SUBMISSION_ANALYSIS"
 					referencedColumnNames="id" referencedTableName="analysis" />
 			</column>
-			<column name="createdDate" type="datetime">
+			<column name="created_date" type="datetime">
 				<constraints nullable="false" />
 			</column>
-			<column name="modifiedDate" type="datetime" />
+			<column name="modified_date" type="datetime" />
 		</createTable>
 
 		<createTable tableName="analysis_submission_AUD">
@@ -89,18 +89,18 @@
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="name" type="VARCHAR(255)" />
-			<column name="remoteAnalysisId" type="VARCHAR(255)" />
-			<column name="remoteWorkflowId" type="VARCHAR(255)" />
+			<column name="remote_analysis_id" type="VARCHAR(255)" />
+			<column name="remote_workflow_id" type="VARCHAR(255)" />
 			<column name="REV" type="INT(11)">
 				<constraints primaryKey="true" nullable="false"
 					foreignKeyName="FK_ANALYSIS_SUBMISSION_REVISION"
 					referencedColumnNames="id" referencedTableName="Revisions" />
 			</column>
 			<column name="REVTYPE" type="TINYINT(4)" />
-			<column name="analysisState" type="VARCHAR(255)" />
+			<column name="analysis_state" type="VARCHAR(255)" />
 			<column name="analysis_id" type="bigint(20)" />
-			<column name="createdDate" type="datetime" />
-			<column name="modifiedDate" type="datetime" />
+			<column name="created_date" type="datetime" />
+			<column name="modified_date" type="datetime" />
 		</createTable>
 
 		<createTable tableName="analysis_submission_galaxy">
@@ -122,7 +122,6 @@
 			<column name="REV" type="INT(11)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="remote_workflow_id" type="VARCHAR(255)" />
 		</createTable>
 
 		<addForeignKeyConstraint baseColumnNames="id, REV"
@@ -159,12 +158,12 @@
 		<createTable tableName="analysis_submission_sequence_file">
 			<column name="analysis_submission_id" type="bigint(20)">
 				<constraints nullable="false" primaryKey="true"
-					foreignKeyName="FK_ANALYSIS_SUBMISSION_SEQUENCE_FILE_ID"
+					foreignKeyName="FK_ANALYSIS_SUBMISSION_SEQUENCE_FILE_SUBMISSION_ID"
 					referencedColumnNames="id" referencedTableName="analysis_submission" />
 			</column>
-			<column name="inputFiles_id" type="BIGINT(20)">
+			<column name="sequence_file_id" type="BIGINT(20)">
 				<constraints nullable="false" primaryKey="true"
-					foreignKeyName="FK_INPUT_FILES_ID" referencedColumnNames="id"
+					foreignKeyName="FK_ANALYSIS_SUBMISSION_SEQUENCE_FILE_FILE_ID" referencedColumnNames="id"
 					referencedTableName="sequence_file" />
 			</column>
 		</createTable>
@@ -178,7 +177,7 @@
 			<column name="analysis_submission_id" type="bigint(20)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="inputFiles_id" type="BIGINT(20)">
+			<column name="sequence_file_id" type="BIGINT(20)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="REVTYPE" type="TINYINT(4)" />

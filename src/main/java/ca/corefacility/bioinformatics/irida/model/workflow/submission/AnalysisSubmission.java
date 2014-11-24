@@ -15,6 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -50,45 +52,53 @@ public class AnalysisSubmission implements IridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name="id")
 	Long id;
 
 	@NotNull
 	@Size(min = 3)
+	@Column(name="name")
 	private String name;
 
 	/**
 	 * Defines the remote id for the location where an analysis was run. With
 	 * Galaxy this represents the History id.
 	 */
+	@Column(name="remote_analysis_id")
 	private String remoteAnalysisId;
 
 	/**
 	 * Defines the remote id of the workflow being executed. With Galaxy this
 	 * represents the Workflow id.
 	 */
+	@Column(name="remote_workflow_id")
 	private String remoteWorkflowId;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinTable(name = "analysis_submission_sequence_file", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequence_file_id", nullable = false))
 	private Set<SequenceFile> inputFiles;
 
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
+	@Column(name="created_date", nullable = false)
 	private final Date createdDate;
 
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="modified_date")
 	private Date modifiedDate;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
+	@Column(name="analysis_state")
 	private AnalysisState analysisState;
 
 	// Analysis entity for this analysis submission. Cascading everything except
 	// removals
 	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
 			CascadeType.REFRESH })
+	@JoinColumn(name="analysis_id")
 	private Analysis analysis;
 
 	protected AnalysisSubmission() {
