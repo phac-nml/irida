@@ -21,7 +21,7 @@ import javax.validation.constraints.Pattern;
 		@Pattern(regexp = "^[^\\.]*$", message = "{irida.name.invalid.period}"),
 		@Pattern(regexp = "^[^\\s]*$", message = "{irida.name.invalid.space}") })
 @ValidProjectName
-@Target(ElementType.FIELD)
+@Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(validatedBy = {})

@@ -19,8 +19,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
@@ -28,13 +26,10 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSample;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.user.Organization;
-import ca.corefacility.bioinformatics.irida.validators.annotations.Latitude;
-import ca.corefacility.bioinformatics.irida.validators.annotations.Longitude;
-import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleName;
 import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmission;
-import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmissionOneOf;
 
 /**
  * A biological sample. Each sample may correspond to many files.
@@ -52,7 +47,7 @@ import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmissionOneO
 @Table(name = "sample")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class Sample implements IridaThing, Comparable<Sample> {
+public class Sample implements IridaThing, IridaSample, Comparable<Sample> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -73,14 +68,8 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	 * from the perspective of a user; especially since the external identifier
 	 * is provided entirely externally from the system.
 	 */
-	@NotNull(message = "{sample.external.id.notnull}")
-	@Size(min = 3, message = "{sample.external.id.too.short}")
-	@ValidSampleName
 	private String sequencerSampleId;
 
-	@NotNull(message = "{sample.name.notnull}")
-	@Size(min = 3, message = "{sample.name.too.short}")
-	@ValidSampleName
 	private String sampleName;
 
 	@Lob
@@ -90,46 +79,34 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	 * The most descriptive organism name for this sample (to the species, if
 	 * relevant).
 	 */
-	@NotNull(message = "{sample.organism.notnull}", groups = NCBISubmission.class)
-	@Size(min = 3, message = "{sample.organism.too.short}")
 	private String organism;
 
 	/**
 	 * identification or description of the specific individual from which this
 	 * sample was obtained
 	 */
-	@NotNull(message = "{sample.isolate.notnull}", groups = { NCBISubmission.class, NCBISubmissionOneOf.class })
-	@Size(min = 3, message = "{sample.isolate.too.short}")
 	private String isolate;
 
 	/**
 	 * microbial or eukaryotic strain name
 	 */
-	@NotNull(message = "{sample.strain.name.notnull}", groups = { NCBISubmission.class, NCBISubmissionOneOf.class })
-	@Size(min = 3, message = "{sample.strain.name.too.short}")
 	private String strain;
 
 	/**
 	 * Name of the person who collected the sample.
 	 */
-	@NotNull(message = "{sample.collected.by.notnull}", groups = NCBISubmission.class)
-	@Size(min = 3, message = "{sample.collected.by.too.short}")
 	private String collectedBy;
 
 	/**
 	 * Date of sampling
 	 */
 	@Temporal(TemporalType.DATE)
-	@NotNull(message = "{sample.collection.date.notnull}", groups = NCBISubmission.class)
 	private Date collectionDate;
 
 	/**
 	 * Geographical origin of the sample (country derived from
 	 * http://www.insdc.org/documents/country-qualifier-vocabulary).
 	 */
-	@NotNull(message = "{sample.geographic.location.name.notnull}", groups = NCBISubmission.class)
-	@Pattern(regexp = "\\w+(:\\w+(:\\w+)?)?", message = "{sample.geographic.location.name.pattern}")
-	@Size(min = 3, message = "{sample.geographic.location.name.too.short}")
 	private String geographicLocationName;
 
 	@NotNull(message = "{sample.host.notnull}", groups = NCBISubmission.class)
@@ -140,7 +117,6 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	 * Describes the physical, environmental and/or local geographical source of
 	 * the biological sample from which the sample was derived.
 	 */
-	@NotNull(message = "{sample.isolation.source.notnull}", groups = NCBISubmission.class)
 	@Lob
 	private String isolationSource;
 
@@ -148,12 +124,8 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	 * lat_lon is marked as a *mandatory* attribute in NCBI BioSample, but in
 	 * practice many of the fields are shown as "missing".
 	 */
-	@NotNull(message = "{sample.latitude.notnull}", groups = NCBISubmission.class)
-	@Latitude
 	private String latitude;
 
-	@NotNull(message = "{sample.longitude.notnull}", groups = NCBISubmission.class)
-	@Longitude
 	private String longitude;
 
 	/**
@@ -161,8 +133,6 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	 * description for the proper format and list of allowed institutes,
 	 * http://www.insdc.org/controlled-vocabulary-culturecollection-qualifier
 	 */
-	@NotNull(message = "{sample.culture.collection.notnull}", groups = NCBISubmission.class)
-	@Size(min = 1, message = "{sample.culture.collection.too.short}")
 	private String cultureCollection;
 
 	/**

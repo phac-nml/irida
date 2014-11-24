@@ -9,13 +9,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Strings;
-
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSample;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SampleRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
+
+import com.google.common.base.Strings;
 
 /**
  * Implementation of {@link SampleRemoteService} using
@@ -35,15 +34,14 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<RemoteSample> imp
 	}
 
 	@Override
-	public List<RemoteSample> getSamplesForProject(RemoteProject project, RemoteAPI api) {
+	public List<RemoteSample> getSamplesForProject(RemoteProject project) {
 		String samplesHref = project.getHrefForRel(PROJECT_SAMPLES_REL);
-		return list(samplesHref, api);
+		return list(samplesHref, project.getRemoteAPI());
 	}
 
 	@Override
-	public Page<RemoteSample> searchSamplesForProject(RemoteProject project, RemoteAPI api, String search, int page,
-			int size) {
-		List<RemoteSample> samplesForProject = getSamplesForProject(project, api);
+	public Page<RemoteSample> searchSamplesForProject(RemoteProject project, String search, int page, int size) {
+		List<RemoteSample> samplesForProject = getSamplesForProject(project);
 		if (!Strings.isNullOrEmpty(search)) {
 			samplesForProject = samplesForProject.stream()
 					.filter(s -> s.getSampleName().toLowerCase().contains(search.toLowerCase()))
