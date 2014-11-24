@@ -8,10 +8,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
@@ -155,4 +157,55 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *         <code>mergeInto</code>).
 	 */
 	public Sample mergeSamples(Project p, Sample mergeInto, Sample... toMerge);
+
+	/**
+	 * Given a sample gets the total number of bases in all sequence files in
+	 * this sample.
+	 * 
+	 * @param sample
+	 *            The sample to find the total number of bases.
+	 * @return The total number of bases in all sequence files in this sample.
+	 * @throws SequenceFileAnalysisException
+	 *             If there was an error getting FastQC analyses for a sequence
+	 *             file.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	public Long getTotalBasesForSample(Sample sample)
+			throws SequenceFileAnalysisException;
+
+	/**
+	 * Given the length of a reference file, estimate the total coverage for
+	 * this sample.
+	 * 
+	 * @param sample
+	 *            The sample to estimate coverage for.
+	 * 
+	 * @param referenceFileLength
+	 *            The length of the reference file in bases.
+	 * @return The estimate coverage of all sequence data in this sample.
+	 * @throws SequenceFileAnalysisException
+	 *             If there was an error getting FastQC analyses for a sequence
+	 *             file.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	public Double estimateCoverageForSample(Sample sample,
+			long referenceFileLength) throws SequenceFileAnalysisException;
+	
+	/**
+	 * Given a {@link ReferenceFile}, estimate the total coverage for
+	 * this sample.
+	 * 
+	 * @param sample
+	 *            The sample to estimate coverage for.
+	 * 
+	 * @param referenceFile
+	 *            The {@link ReferenceFile} to estimate coverage for.
+	 * @return The estimate coverage of all sequence data in this sample.
+	 * @throws SequenceFileAnalysisException
+	 *             If there was an error getting FastQC analyses for a sequence
+	 *             file.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	public Double estimateCoverageForSample(Sample sample,
+			ReferenceFile referenceFile) throws SequenceFileAnalysisException;
 }

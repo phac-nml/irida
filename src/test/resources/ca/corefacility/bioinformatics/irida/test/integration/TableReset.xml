@@ -50,6 +50,17 @@
 	<user_group />
 	<project_referencefile />
 
+	<snapshot />
+	<project_snapshot />
+	<sample_snapshot />
+	<sequence_file_snapshot />
+	<snapshot_project_snapshot />
+	<snapshot_sample_snapshot />
+	<snapshot_sequence_file_snapshot />
+	<remote_project_snapshot />
+	<remote_sample_snapshot />
+	<remote_sequence_file_snapshot />
+
 	<!-- All auditing table references *only* refer to the Revisions table, 
 		so they can all be listed in an arbitrary order *after* the Revisions table. -->
 	<Revisions />

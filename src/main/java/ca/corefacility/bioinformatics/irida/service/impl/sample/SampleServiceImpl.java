@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.service.impl.sample;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -16,16 +19,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
+import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -37,7 +45,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
  */
 @Service
 public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements SampleService {
-
+	
 	/**
 	 * Reference to {@link SampleRepository} for managing {@link Sample}.
 	 */
@@ -55,6 +63,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	private SampleSequenceFileJoinRepository ssfRepository;
 
 	/**
+	 * Reference to {@link AnalysisService} for getting {@link AnalysisFastQC}
+	 * analysis results for a sequence file.
+	 */
+	private AnalysisRepository analysisRepository;
+
+	/**
 	 * Constructor.
 	 * 
 	 * @param sampleRepository
@@ -64,11 +78,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
-			SampleSequenceFileJoinRepository ssfRepository, Validator validator) {
+			SampleSequenceFileJoinRepository ssfRepository, AnalysisRepository analysisRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
 		this.ssfRepository = ssfRepository;
+		this.analysisRepository = analysisRepository;
 	}
 
 	/**
@@ -188,6 +203,56 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional(readOnly = true)
+	public Long getTotalBasesForSample(Sample sample) throws SequenceFileAnalysisException {
+		checkNotNull(sample, "sample is null");
+
+		long totalBases = 0;
+
+		List<Join<Sample, SequenceFile>> sequenceFiles = ssfRepository.getFilesForSample(sample);
+		for (Join<Sample, SequenceFile> sequenceFileJoin : sequenceFiles) {
+			SequenceFile sequenceFile = sequenceFileJoin.getObject();
+
+			try {
+				AnalysisFastQC sequenceFileFastQC = analysisRepository.findMostRecentAnalysisForSequenceFile(
+						sequenceFile, AnalysisFastQC.class);
+
+				totalBases += sequenceFileFastQC.getTotalBases();
+			} catch (EntityNotFoundException e) {
+				throw new SequenceFileAnalysisException("Missing FastQC analysis for SequenceFile ["
+						+ sequenceFile.getId() + "]", e);
+			}
+		}
+
+		return totalBases;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public Double estimateCoverageForSample(Sample sample, long referenceFileLength)
+			throws SequenceFileAnalysisException {
+		checkNotNull(sample, "sample is null");
+		checkArgument(referenceFileLength > 0, "referenceFileLength (" + referenceFileLength + ") must be positive");
+
+		return getTotalBasesForSample(sample) / (double) referenceFileLength;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public Double estimateCoverageForSample(Sample sample, ReferenceFile referenceFile)
+			throws SequenceFileAnalysisException {
+		checkNotNull(sample, "sample is null");
+		checkNotNull(referenceFile, "referenceFile is null");
+
+		return estimateCoverageForSample(sample, referenceFile.getFileLength());
+	}
+
 	public Page<ProjectSampleJoin> searchProjectSamples(Specification<ProjectSampleJoin> specification, int page,
 			int size, Direction order, String... sortProperties) {
 

@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -30,7 +31,9 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlac
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.Lists;
 import com.google.common.net.HttpHeaders;
+import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
 
 /**
@@ -48,10 +51,27 @@ import com.jayway.restassured.response.Response;
 public class ProjectSamplesIT {
 
 	@Test
+	public void testCopySampleToProject() {
+		final List<String> samples = Lists.newArrayList("1");
+
+		final String projectUri = "/projects/4";
+		final String projectJson = asUser().get(projectUri).asString();
+		final String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
+
+		final Response r = asUser().contentType(ContentType.JSON).body(samples)
+				.header("Content-Type", "application/idcollection+json").expect().response()
+				.statusCode(HttpStatus.CREATED.value()).when().post(samplesUri);
+		final String location = r.getHeader(HttpHeaders.LOCATION);
+		assertNotNull("Location should not be null.", location);
+		assertEquals("The project/sample location uses the wrong sample ID.",
+				"http://localhost:8080/projects/4/samples/1", location);
+	}
+
+	@Test
 	public void testAddSampleToProject() {
 		Map<String, String> sample = new HashMap<>();
 		sample.put("sampleName", "sample_1");
-                sample.put("sequencerSampleId", "sample_1");
+		sample.put("sequencerSampleId", "sample_1");
 
 		// load a project
 		String projectUri = "/projects/1";

@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -229,6 +230,38 @@ public class ProjectSamplesControllerTest {
 				sequenceFiles);
 		String project = links.get(ProjectsController.REL_PROJECT);
 		assertEquals("http://localhost/api/projects/" + p.getId(), project);
+	}
+
+	@Test
+	public void testCopySampleToProject() {
+		final Project p = TestDataFactory.constructProject();
+		final Sample s = TestDataFactory.constructSample();
+
+		when(projectService.read(p.getId())).thenReturn(p);
+		when(sampleService.read(s.getId())).thenReturn(s);
+
+		final ResponseEntity<String> response = controller
+				.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()));
+
+		verify(projectService).addSampleToProject(p, s);
+
+		assertEquals("response should have CREATED status", HttpStatus.CREATED, response.getStatusCode());
+		final String location = response.getHeaders().getFirst(HttpHeaders.LOCATION);
+		assertEquals("location should include sample and project IDs", "http://localhost/projects/" + p.getId()
+				+ "/samples/" + s.getId(), location);
+	}
+
+	@Test(expected = EntityExistsException.class)
+	public void testAlreadyCopiedSampleToProject() {
+		final Project p = TestDataFactory.constructProject();
+		final Sample s = TestDataFactory.constructSample();
+
+		when(projectService.read(p.getId())).thenReturn(p);
+		when(sampleService.read(s.getId())).thenReturn(s);
+
+		when(projectService.addSampleToProject(p, s)).thenThrow(new EntityExistsException("sample already exists!"));
+
+		controller.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()));
 	}
 
 	private Map<String, String> linksToMap(List<Link> links) {

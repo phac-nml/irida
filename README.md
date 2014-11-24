@@ -116,4 +116,3 @@ Installing the API project *without* executing tests:
 IRIDA Web
 ---------
 `irida-web` is the REST API interface for IRIDA.
-

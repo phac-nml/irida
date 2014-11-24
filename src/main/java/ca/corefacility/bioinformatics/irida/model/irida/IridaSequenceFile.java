@@ -14,6 +14,13 @@ import javax.validation.constraints.NotNull;
 public interface IridaSequenceFile {
 
 	/**
+	 * Get the local numerical identifier
+	 * 
+	 * @return
+	 */
+	public Long getId();
+
+	/**
 	 * Get the location on the file system where the sequence file is stored
 	 * 
 	 * @return

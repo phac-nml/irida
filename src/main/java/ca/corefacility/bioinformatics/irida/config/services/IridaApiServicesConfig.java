@@ -16,6 +16,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.oxm.Unmarshaller;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
@@ -98,5 +100,12 @@ public class IridaApiServicesConfig {
 		taskExecutor.setQueueCapacity(16);
 		taskExecutor.setThreadPriority(Thread.MIN_PRIORITY);
 		return taskExecutor;
+	}
+	
+	@Bean
+	public Unmarshaller workflowDescriptionUnmarshaller() {
+		Jaxb2Marshaller jaxb2marshaller = new Jaxb2Marshaller();
+		jaxb2marshaller.setPackagesToScan(new String[] { "ca.corefacility.bioinformatics.irida.model.workflow" });
+		return jaxb2marshaller;
 	}
 }
