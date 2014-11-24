@@ -436,7 +436,7 @@ public class ProjectSamplesController {
 	public void downloadSamples(@PathVariable Long projectId, @RequestParam List<Long> ids,
 			HttpServletResponse response) throws IOException {
 		Project project = projectService.read(projectId);
-		List<Sample> samples = (List)projectService.readMultiple(ids);
+		List<Sample> samples = (List) projectService.readMultiple(ids);
 
 		// Add the appropriate headers
 		response.setContentType("application/zip");
@@ -487,11 +487,12 @@ public class ProjectSamplesController {
 	 * @param request
 	 * 		{@link HttpServletRequest}
 	 *
-	 * @return
+	 * @return A JSON object containing the current completion status (TODO: Include a way to get an updated status.)
 	 */
 	@RequestMapping(value = "/{projectId}/ajax/samples/galaxy/upload", method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> postUploadSampleToGalaxy(@PathVariable Long projectId,
-			@RequestParam String email, @RequestParam String name, @RequestParam(value = "sampleIds[]") List<Long> sampleIds, HttpServletRequest request) {
+			@RequestParam String email, @RequestParam String name,
+			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, HttpServletRequest request) {
 		Set<Long> fileIds = new HashSet<>();
 		for (Long id : sampleIds) {
 			List<Join<Sample, SequenceFile>> joins = sequenceFileService
