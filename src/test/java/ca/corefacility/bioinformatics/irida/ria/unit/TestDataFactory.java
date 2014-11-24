@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -15,11 +17,14 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -119,5 +124,49 @@ public class TestDataFactory {
 		project.setOrganism(PROJECT_ORGANISM);
 		project.setModifiedDate(new Date(PROJECT_MODIFIED_DATE));
 		return project;
+	}
+
+	public static UploadWorker constructUploadWorker() {
+		return new UploadWorker() {
+			@Override public UploadResult getUploadResult() {
+				return null;
+			}
+
+			@Override public UploadException getUploadException() {
+				return null;
+			}
+
+			@Override public float getProportionComplete() {
+				return 33.3f;
+			}
+
+			@Override public boolean exceptionOccured() {
+				return false;
+			}
+
+			@Override public boolean isFinished() {
+				return false;
+			}
+
+			@Override public int getTotalSamples() throws NoSuchValueException {
+				return 0;
+			}
+
+			@Override public int getCurrentSample() throws NoSuchValueException {
+				return 0;
+			}
+
+			@Override public UploadFolderName getSampleName() throws NoSuchValueException {
+				return null;
+			}
+
+			@Override public void run() {
+
+			}
+
+			@Override public void sampleProgressUpdate(int i, int i1, UploadFolderName uploadFolderName) {
+
+			}
+		};
 	}
 }

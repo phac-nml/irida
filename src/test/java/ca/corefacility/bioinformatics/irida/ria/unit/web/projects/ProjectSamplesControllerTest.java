@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anySet;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -20,20 +21,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.remote.server.handler.interactions.touch.Up;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -47,6 +48,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesController;
@@ -57,7 +59,6 @@ import ca.corefacility.bioinformatics.irida.service.upload.galaxy.GalaxyUploadSe
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 public class ProjectSamplesControllerTest {
@@ -399,8 +400,23 @@ public class ProjectSamplesControllerTest {
 	@Test
 	public void testPostUploadSampleToGalaxy() {
 		Sample sample = TestDataFactory.constructSample();
-		Set<Long> fileIds = ImmutableSet.of(1L, 2L, 3L);
+		List<Join<Sample, SequenceFile>> sampleSequenceFileJoin = TestDataFactory
+				.generateSequenceFilesForSample(sample);
+		Set<Long> fileIds = sampleSequenceFileJoin.stream().map(join -> join.getObject().getId())
+				.collect(Collectors.toSet());
+		UploadWorker worker = TestDataFactory.constructUploadWorker();
+		MockHttpServletRequest request = new MockHttpServletRequest();
+
 		when(sampleService.read(sample.getId())).thenReturn(sample);
-		when(galaxyUploadService.performUploadSelectedSequenceFiles(fileIds, "Test", "test@gmail.com")).thenReturn()
+		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(sampleSequenceFileJoin);
+		String accountEmail = "test@gmail.com";
+		String accountUsername = "Test";
+		when(galaxyUploadService.performUploadSelectedSequenceFiles(anySet(), anyString(), anyString()))
+				.thenReturn(worker);
+
+		Map<String, Object> result = controller
+				.postUploadSampleToGalaxy(1L, accountUsername, accountEmail, ImmutableList.of(sample.getId()), request);
+		assertTrue(result.containsKey("status"));
+		assertEquals(33.3f, result.get("status"));
 	}
 }
