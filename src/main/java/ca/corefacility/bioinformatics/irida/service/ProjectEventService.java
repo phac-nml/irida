@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
@@ -36,4 +37,28 @@ public interface ProjectEventService extends CRUDService<Long, ProjectEvent> {
 	 * @return A List of {@link ProjectEvent}s
 	 */
 	public Page<ProjectEvent> getEventsForUser(User user, Pageable pageable);
+
+	/**
+	 * Get the 10 most recent events for a given {@link Project}.
+	 * 
+	 * @param project
+	 *            The {@link Project} to get events for
+	 * @return A page of the (at most) 10 most recent events
+	 * @see ProjectEventService#getEventsForProject(Project, Pageable)
+	 */
+	public default Page<ProjectEvent> getLastTenEventsForProject(Project project) {
+		return getEventsForProject(project, new PageRequest(0, 10));
+	}
+
+	/**
+	 * Get the 10 most recent events for a given {@link User}.
+	 * 
+	 * @param user
+	 *            The {@link User} to get events for
+	 * @return A page of the (at most) 10 most recent events
+	 * @see ProjectEventService#getEventsForUser(User, Pageable)
+	 */
+	public default Page<ProjectEvent> getLastTenEventsForUser(User user) {
+		return getEventsForUser(user, new PageRequest(0, 10));
+	}
 }
