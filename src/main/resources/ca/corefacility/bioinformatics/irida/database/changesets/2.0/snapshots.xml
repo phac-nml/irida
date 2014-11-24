@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="snapshots" author="tom">
+
+		<!-- Add model snapshot tables -->
+		<createTable tableName="project_snapshot">
+			<column name="snapshot_id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="id" type="bigint(20)" />
+			<column name="name" type="varchar(255)">
+				<constraints nullable="false"></constraints>
+			</column>
+			<column name="organism" type="varchar(255)" />
+			<column name="project_description" type="longtext" />
+			<column name="remote_url" type="varchar(255)" />
+		</createTable>
+
+		<createTable tableName="sample_snapshot">
+			<column name="snapshot_id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="description" type="longtext" />
+			<column name="sample_name" type="varchar(255)">
+				<constraints nullable="false"></constraints>
+			</column>
+			<column name="sequencer_sample_id" type="varchar(255)">
+				<constraints nullable="false"></constraints>
+			</column>
+			<column name="collected_by" type="varchar(255)" />
+			<column name="collection_date" type="datetime" />
+			<column name="culture_collection" type="varchar(255)" />
+			<column name="genotype" type="longtext" />
+			<column name="geographic_location_name" type="varchar(255)" />
+			<column name="isolate" type="varchar(255)" />
+			<column name="isolation_source" type="longtext" />
+			<column name="latitude" type="varchar(255)" />
+			<column name="longitude" type="varchar(255)" />
+			<column name="organism" type="varchar(255)" />
+			<column name="passage_history" type="longtext" />
+			<column name="pathotype" type="varchar(255)" />
+			<column name="serotype" type="varchar(255)" />
+			<column name="serovar" type="varchar(255)" />
+			<column name="subgroup" type="varchar(255)" />
+			<column name="subtype" type="varchar(255)" />
+			<column name="host_id" type="bigint(20)" />
+			<column name="specimen_voucher" type="varchar(255)" />
+			<column name="strain" type="varchar(255)" />
+		</createTable>
+
+		<createTable tableName="sequence_file_snapshot">
+			<column name="snapshot_id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="id" type="bigint(20)" />
+			<column name="file_path" type="varchar(255)">
+				<constraints nullable="false"></constraints>
+			</column>
+		</createTable>
+
+		<!-- optional properties for sequence file snapshots -->
+		<createTable tableName="snapshot_sequence_file_properties">
+			<column name="sequence_file_snapshot_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"
+					foreignKeyName="FK_SEQUENCE_PROPERTIES_SEQUENCE_FILE_SNAPSHOT"
+					referencedColumnNames="snapshot_id" referencedTableName="sequence_file_snapshot" />
+			</column>
+			<column name="property_key" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="property_value" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<!-- Create the RESTLinks tables -->
+		<createTable tableName="rest_links">
+			<column name="id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+		</createTable>
+
+		<createTable tableName="rest_links_links">
+			<column name="link_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"
+					referencedTableName="rest_links" referencedColumnNames="id"
+					foreignKeyName="FK_REST_LINKS_LINKS" />
+			</column>
+			<column name="rel" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="href" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<!-- Add remote snapshot objects and links -->
+		<createTable tableName="remote_project_snapshot">
+			<column name="snapshot_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_REMOTE_PROJECT_SNAPSHOT_ID" referencedTableName="project_snapshot"
+					referencedColumnNames="snapshot_id" />
+			</column>
+			<column name="links_id" type="bigint(20)">
+				<constraints foreignKeyName="FK_REMOTE_PROJECT_SNAPSHOT_LINKS"
+					referencedTableName="rest_links" referencedColumnNames="id" />
+			</column>
+		</createTable>
+
+		<createTable tableName="remote_sample_snapshot">
+			<column name="snapshot_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_REMOTE_SAMPLE_SNAPSHOT_ID" referencedTableName="sample_snapshot"
+					referencedColumnNames="snapshot_id" />
+			</column>
+			<column name="links_id" type="bigint(20)">
+				<constraints foreignKeyName="FK_REMOTE_SAMPLE_SNAPSHOT_LINKS"
+					referencedTableName="rest_links" referencedColumnNames="id" />
+			</column>
+		</createTable>
+
+		<createTable tableName="remote_sequence_file_snapshot">
+			<column name="snapshot_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_REMOTE_SEQUENCE_FILE_SNAPSHOT_ID"
+					referencedTableName="sequence_file_snapshot" referencedColumnNames="snapshot_id" />
+			</column>
+			<column name="links_id" type="bigint(20)">
+				<constraints foreignKeyName="FK_REMOTE_SEQUENCE_FILE_SNAPSHOT_LINKS"
+					referencedTableName="rest_links" referencedColumnNames="id" />
+			</column>
+		</createTable>
+
+		<!-- Add snapshot container class -->
+		<createTable tableName="snapshot">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime" />
+			<column name="modified_date" type="datetime" />
+			<column name="created_by" type="bigint(20)">
+				<constraints nullable="false" referencedColumnNames="id"
+					referencedTableName="user" foreignKeyName="FK_SNAPSHOT_CREATED_BY"></constraints>
+			</column>
+		</createTable>
+
+		<!-- Add snapshot model list containers -->
+		<createTable tableName="snapshot_project_snapshot">
+			<column name="snapshot_id" type="bigint(20)">
+				<constraints nullable="false" referencedTableName="snapshot"
+					referencedColumnNames="id" foreignKeyName="FK_SNAPSHOT_PROJECT_SNAPSHOT" />
+			</column>
+			<column name="project_snapshot" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"
+					referencedTableName="project_snapshot" referencedColumnNames="snapshot_id"
+					foreignKeyName="FK_PROJECT_SNAPSHOT_SNAPSHOT" />
+			</column>
+		</createTable>
+
+		<createTable tableName="snapshot_sample_snapshot">
+			<column name="snapshot_id" type="bigint(20)">
+				<constraints nullable="false" referencedTableName="snapshot"
+					referencedColumnNames="id" foreignKeyName="FK_SNAPSHOT_SAMPLE_SNAPSHOT" />
+			</column>
+			<column name="sample_snapshot" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"
+					referencedTableName="sample_snapshot" referencedColumnNames="snapshot_id"
+					foreignKeyName="FK_SAMPLE_SNAPSHOT_SNAPSHOT" />
+			</column>
+		</createTable>
+
+		<createTable tableName="snapshot_sequence_file_snapshot">
+			<column name="snapshot_id" type="bigint(20)">
+				<constraints nullable="false" referencedTableName="snapshot"
+					referencedColumnNames="id" foreignKeyName="FK_SNAPSHOT_SEQUENCE_FILE_SNAPSHOT" />
+			</column>
+			<column name="sequence_file_snapshot" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"
+					referencedTableName="sample_snapshot" referencedColumnNames="snapshot_id"
+					foreignKeyName="FK_SEQUENCE_FILE_SNAPSHOT_SNAPSHOT" />
+			</column>
+		</createTable>
+
+	</changeSet>
+</databaseChangeLog>

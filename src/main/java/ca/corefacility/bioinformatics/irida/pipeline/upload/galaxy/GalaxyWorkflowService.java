@@ -2,8 +2,12 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -15,12 +19,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
+import com.github.jmchilton.blend4j.galaxy.beans.Workflow;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputDefinition;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
@@ -40,21 +46,26 @@ public class GalaxyWorkflowService {
 	
 	private final PasswordEncoder encoder;
 	
+	private final Charset workflowCharset;
+	
 	/**
 	 * Constructs a new GalaxyWorkflowSubmitter with the given information.
 	 * @param historiesClient  The HistoriesClient used to connect to Galaxy histories.
 	 * @param workflowsClient  The WorkflowsClient used to connect to Galaxy workflows.
 	 * @param encoder  A PasswordEncoder used to encode workflows to generate checksums.
+	 * @param workflowCharset  The {@link Charset} to use for reading in workflows from files.
 	 */
 	public GalaxyWorkflowService(HistoriesClient historiesClient,
-			WorkflowsClient workflowsClient, PasswordEncoder encoder) {
+			WorkflowsClient workflowsClient, PasswordEncoder encoder, Charset workflowCharset) {
 		checkNotNull(historiesClient, "historiesClient is null");
 		checkNotNull(workflowsClient, "workflowsClient is null");
 		checkNotNull(encoder, "encoder is null");
+		checkNotNull(workflowCharset, "workflowCharset is null");
 		
 		this.historiesClient = historiesClient;
 		this.workflowsClient = workflowsClient;
 		this.encoder = encoder;
+		this.workflowCharset = workflowCharset;
 	}
 	
 	/**
@@ -124,6 +135,27 @@ public class GalaxyWorkflowService {
 		checkNotNull(workflowId, "workflowId is null");
 		if (!isWorkflowIdValid(workflowId)) {
 			throw new WorkflowException("Workflow with id " + workflowId + " cannot be found");
+		}
+	}
+	
+	/**
+	 * Uploads a workflow definined in the given file to Galaxy.
+	 * @param workflowFile  The file to upload.
+	 * @return  The id of the workflow in Galaxy.
+	 * @throws IOException If there was an issue reading the file.
+	 * @throws WorkflowUploadException If there was an issue uploading the workflow to Galaxy.
+	 */
+	public String uploadGalaxyWorkflow(Path workflowFile) throws IOException, WorkflowUploadException {
+		checkNotNull(workflowFile, "workflowFile is null");
+		
+		byte[] fileBytes = Files.readAllBytes(workflowFile);
+		String workflowString = new String(fileBytes, workflowCharset);
+		
+		try {
+			Workflow workflow = workflowsClient.importWorkflow(workflowString);
+			return workflow.getId();
+		} catch (RuntimeException e) {
+			throw new WorkflowUploadException("Could not upload workflow from " + workflowFile,e);
 		}
 	}
 	
