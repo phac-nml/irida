@@ -45,7 +45,7 @@
 // @param $rootScope The root scope for the page.
 // @param R Restangular
   /* -]*/
-  function SamplesService($rootScope, R, notifications, filter) {
+  function SamplesService($rootScope, BASE_URL, R, notifications, filter) {
     "use strict";
     var svc = this,
         id = $rootScope.projectId,
@@ -122,7 +122,7 @@
     svc.selectAll = function () {
       _.each(filtered, function (s) {
         s.selected = true;
-        if(!_.contains(selected, s)){
+        if (!_.contains(selected, s)) {
           selected.push(s);
         }
       });
@@ -135,6 +135,17 @@
       });
       selected = [];
       updateSelectedCount();
+    };
+
+    svc.downloadFiles = function () {
+      var ids = getSelectedSampleIds();
+      var mapped = _.map(ids, function (id) {
+        return "ids=" + id
+      });
+      var iframe = document.createElement("iframe");
+      iframe.src = BASE_URL + "projects/" + id + "/download/files?" + mapped.join("&");
+      iframe.style.display = "none";
+      document.body.appendChild(iframe);
     };
 
     function getSelectedSampleIds() {
@@ -225,7 +236,7 @@
       vm.total = args.total;
     });
 
-    $scope.$on('PAGE_CHANGE', function(e, args) {
+    $scope.$on('PAGE_CHANGE', function (e, args) {
       vm.page = args.page;
       vm.update();
     });
@@ -279,6 +290,10 @@
 
     vm.export = {
       open  : false,
+      download: function download() {
+        vm.export.open = false;
+        SamplesService.downloadFiles();
+      },
       linker: function linker() {
         $modal.open({
           templateUrl: BASE_URL + 'projects/samples/linker',
@@ -418,7 +433,7 @@
     });
   }
 
-  function LinkerCtrl ($modalInstance, SamplesService) {
+  function LinkerCtrl($modalInstance, SamplesService) {
     "use strict";
     var vm = this;
     vm.samples = SamplesService.getSelectedSampleNames();
@@ -430,12 +445,12 @@
     };
   }
 
-  function SortCtrl ($rootScope, filter) {
+  function SortCtrl($rootScope, filter) {
     "use strict";
     var vm = this;
     vm.filter = filter;
 
-    vm.onSort = function(sortedBy, sortDir) {
+    vm.onSort = function (sortedBy, sortDir) {
       vm.filter.sortedBy = sortedBy;
       vm.filter.sortDir = sortDir;
       $rootScope.$broadcast('PAGE_CHANGE', {page: 1});
@@ -448,18 +463,18 @@
     vm.filter = filter;
     vm.name = "";
 
-    $scope.$watch(function() {
+    $scope.$watch(function () {
       return vm.name;
-    }, _.debounce(function(n, o) {
+    }, _.debounce(function (n, o) {
       if (n !== o) {
         filter.name = vm.name;
         $scope.$apply();
       }
     }, 500));
 
-    $scope.$watch(function() {
+    $scope.$watch(function () {
       return vm.organism;
-    }, _.debounce(function(n, o) {
+    }, _.debounce(function (n, o) {
       if (n !== o) {
         if (vm.organism.length > 0) {
           filter.organism = vm.organism;
@@ -484,7 +499,7 @@
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
     .service('Select2Service', ['$timeout', Select2Service])
-    .service('SamplesService', ['$rootScope', 'Restangular', 'notifications', 'FilterFactory', SamplesService])
+    .service('SamplesService', ['$rootScope', 'BASE_URL', 'Restangular', 'notifications', 'FilterFactory', SamplesService])
     .filter('PagingFilter', ['$rootScope', 'FilterFactory', 'SamplesService', PagingFilter])
     .directive('sortBy', [sortBy])
     .controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])

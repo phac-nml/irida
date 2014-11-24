@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,7 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -33,6 +39,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -378,6 +385,61 @@ public class ProjectSamplesController {
 				mergeIntoSample.getSampleName()
 		}, locale));
 		return result;
+	}
+
+	/**
+	 * Download a set of sequence files from selected samples within a project
+	 *
+	 * @param projectId
+	 * 		Id for a {@link Project}
+	 * @param ids
+	 * 		List of ids ofr {@link Sample} within the project
+	 * @param response
+	 * 		{@link HttpServletResponse}
+	 *
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/{projectId}/download/files")
+	public void downloadSamples(@PathVariable Long projectId, @RequestParam List<Long> ids,
+			HttpServletResponse response) throws IOException {
+		Project project = projectService.read(projectId);
+		List<Sample> samples = (List)projectService.readMultiple(ids);
+
+		// Add the appropriate headers
+		response.setContentType("application/zip");
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + project.getName() + ".zip\"");
+		response.setHeader("Transfer-Encoding", "chunked");
+
+		try (ZipOutputStream outputStream = new ZipOutputStream(response.getOutputStream())) {
+			for (Sample sample : samples) {
+				List<Join<Sample, SequenceFile>> sequenceFilesForSample = sequenceFileService
+						.getSequenceFilesForSample(sample);
+				for (Join<Sample, SequenceFile> join : sequenceFilesForSample) {
+					Path path = join.getObject().getFile();
+					StringBuilder name = new StringBuilder(project.getName());
+					name.append("/").append(sample.getSampleName());
+					name.append("/").append(path.getFileName().toString());
+
+					outputStream.putNextEntry(new ZipEntry(name.toString()));
+
+					Files.copy(path, outputStream);
+
+					outputStream.closeEntry();
+				}
+			}
+			outputStream.finish();
+		} catch (IOException e) {
+			// this generally means that the user has cancelled the download
+			// from their web browser; we can safely ignore this
+			logger.debug("This *probably* means that the user cancelled the download, "
+					+ "but it might be something else, see the stack trace below for more information.", e);
+		} catch (Exception e) {
+			logger.error("Download failed...", e);
+		} finally {
+			// close the response outputStream so that we're not leaking
+			// streams.
+			response.getOutputStream().close();
+		}
 	}
 
 	/**
