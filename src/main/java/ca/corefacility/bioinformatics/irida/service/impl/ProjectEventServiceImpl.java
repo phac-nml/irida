@@ -4,7 +4,7 @@ import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
@@ -34,15 +34,15 @@ public class ProjectEventServiceImpl extends CRUDServiceImpl<Long, ProjectEvent>
 	/**
 	 * {@inheritDoc}
 	 */
-	public Page<ProjectEvent> getEventsForProject(Project project, int max) {
-		return repository.getEventsForProject(project, new PageRequest(0, max));
+	public Page<ProjectEvent> getEventsForProject(Project project, Pageable pageable) {
+		return repository.getEventsForProject(project, pageable);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Page<ProjectEvent> getEventsForUser(User user, int max) {
-		return repository.getEventsForUser(user, new PageRequest(0, max));
+	public Page<ProjectEvent> getEventsForUser(User user, Pageable pageable) {
+		return repository.getEventsForUser(user, pageable);
 	}
 
 }

@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -69,7 +70,7 @@ public class ProjectEventServiceImplIT {
 
 		projectService.addUserToProject(project, user, ProjectRole.PROJECT_USER);
 
-		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, 10);
+		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, new PageRequest(0, 10));
 
 		assertEquals(1, eventsForProject.getTotalElements());
 		ProjectEvent event = eventsForProject.iterator().next();
@@ -88,7 +89,7 @@ public class ProjectEventServiceImplIT {
 
 		projectService.updateUserProjectRole(project, user, ProjectRole.PROJECT_USER);
 
-		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, 10);
+		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, new PageRequest(0, 10));
 
 		assertEquals(1, eventsForProject.getTotalElements());
 		ProjectEvent event = eventsForProject.iterator().next();
@@ -107,7 +108,7 @@ public class ProjectEventServiceImplIT {
 
 		projectService.removeUserFromProject(project, user);
 
-		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, 10);
+		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, new PageRequest(0, 10));
 
 		assertEquals(1, eventsForProject.getTotalElements());
 		ProjectEvent event = eventsForProject.iterator().next();
@@ -127,7 +128,7 @@ public class ProjectEventServiceImplIT {
 
 		projectService.addSampleToProject(project, sample);
 
-		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, 10);
+		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, new PageRequest(0, 10));
 
 		assertEquals(1, eventsForProject.getTotalElements());
 		ProjectEvent event = eventsForProject.iterator().next();
@@ -152,7 +153,7 @@ public class ProjectEventServiceImplIT {
 			// it's all good
 		}
 
-		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, 10);
+		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, new PageRequest(0, 10));
 
 		assertEquals("No event should be created", 0, eventsForProject.getTotalElements());
 	}
@@ -163,8 +164,10 @@ public class ProjectEventServiceImplIT {
 		Project project1 = projectService.read(1l);
 		Project project3 = projectService.read(3l);
 
-		Page<ProjectEvent> eventsForProject1 = projectEventService.getEventsForProject(project1, 10);
-		Page<ProjectEvent> eventsForProject2 = projectEventService.getEventsForProject(project3, 10);
+		Page<ProjectEvent> eventsForProject1 = projectEventService
+				.getEventsForProject(project1, new PageRequest(0, 10));
+		Page<ProjectEvent> eventsForProject2 = projectEventService
+				.getEventsForProject(project3, new PageRequest(0, 10));
 
 		assertEquals(0l, eventsForProject1.getTotalElements());
 		assertEquals(1l, eventsForProject2.getTotalElements());
@@ -181,9 +184,9 @@ public class ProjectEventServiceImplIT {
 		User user2 = userService.read(2l);
 		User user3 = userService.read(3l);
 
-		Page<ProjectEvent> events1 = projectEventService.getEventsForUser(user1, 10);
-		Page<ProjectEvent> events2 = projectEventService.getEventsForUser(user2, 10);
-		Page<ProjectEvent> events3 = projectEventService.getEventsForUser(user3, 10);
+		Page<ProjectEvent> events1 = projectEventService.getEventsForUser(user1, new PageRequest(0, 10));
+		Page<ProjectEvent> events2 = projectEventService.getEventsForUser(user2, new PageRequest(0, 10));
+		Page<ProjectEvent> events3 = projectEventService.getEventsForUser(user3, new PageRequest(0, 10));
 
 		assertEquals(1l, events1.getTotalElements());
 		assertEquals(0l, events2.getTotalElements());

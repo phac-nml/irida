@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -23,7 +24,7 @@ public interface ProjectEventService extends CRUDService<Long, ProjectEvent> {
 	 *            The maximum number of events to show
 	 * @return A List of {@link ProjectEvent}s
 	 */
-	public Page<ProjectEvent> getEventsForProject(Project project, int max);
+	public Page<ProjectEvent> getEventsForProject(Project project, Pageable pageable);
 
 	/**
 	 * Get the events on all projects for a given user
@@ -34,5 +35,5 @@ public interface ProjectEventService extends CRUDService<Long, ProjectEvent> {
 	 *            The maximum number of events to show
 	 * @return A List of {@link ProjectEvent}s
 	 */
-	public Page<ProjectEvent> getEventsForUser(User user, int max);
+	public Page<ProjectEvent> getEventsForUser(User user, Pageable pageable);
 }
