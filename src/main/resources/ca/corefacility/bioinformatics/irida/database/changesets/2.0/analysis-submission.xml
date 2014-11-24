@@ -70,6 +70,7 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="remoteAnalysisId" type="VARCHAR(255)" />
+			<column name="remoteWorkflowId" type="VARCHAR(255)" />
 			<column name="analysisState" type="VARCHAR(255)">
 				<constraints nullable="false" />
 			</column>
@@ -89,6 +90,7 @@
 			</column>
 			<column name="name" type="VARCHAR(255)" />
 			<column name="remoteAnalysisId" type="VARCHAR(255)" />
+			<column name="remoteWorkflowId" type="VARCHAR(255)" />
 			<column name="REV" type="INT(11)">
 				<constraints primaryKey="true" nullable="false"
 					foreignKeyName="FK_ANALYSIS_SUBMISSION_REVISION"

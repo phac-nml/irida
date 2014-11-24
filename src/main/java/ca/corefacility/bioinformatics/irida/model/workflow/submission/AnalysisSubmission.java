@@ -139,7 +139,7 @@ public class AnalysisSubmission implements IridaThing {
 	/**
 	 * Gets the remote workflow id.
 	 * 
-	 * @return THe remote workflow id.
+	 * @return The remote workflow id.
 	 */
 	public String getRemoteWorkflowId() {
 		return remoteWorkflowId;
