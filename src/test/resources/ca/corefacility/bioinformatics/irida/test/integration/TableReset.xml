@@ -50,6 +50,8 @@
 	<user_group />
 	<project_referencefile />
 
+	<project_event />
+
 	<snapshot />
 	<project_snapshot />
 	<sample_snapshot />
