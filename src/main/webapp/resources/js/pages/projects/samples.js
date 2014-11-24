@@ -129,10 +129,6 @@
       updateSelectedCount();
     };
 
-    function getSelectedSampleIds() {
-      return _.map(selected, 'id');
-    };
-
     svc.selectNone = function () {
       _.each(svc.samples, function (s) {
         s.selected = false

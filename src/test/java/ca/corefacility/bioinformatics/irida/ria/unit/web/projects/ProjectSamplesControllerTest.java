@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -12,6 +13,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,6 +33,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -59,6 +65,8 @@ public class ProjectSamplesControllerTest {
 	private static final Long PROJECT_ID = 1L;
 	private static final Long PROJECT_MODIFIED_DATE = 1403723706L;
 	private static Project project = null;
+	public static final String FILE_PATH = "src/test/resources/files/test_file.fastq";
+
 	// Services
 	private ProjectService projectService;
 	private ProjectSamplesController controller;
@@ -360,5 +368,26 @@ public class ProjectSamplesControllerTest {
 		List<HashMap<String, Object>> samplesList = (List<HashMap<String, Object>>) listObject;
 
 		assertEquals("Has the correct number of samples", 1, samplesList.size());
+	}
+
+	@Test
+	public void testDownloadSamples() throws IOException {
+		Project project = TestDataFactory.constructProject();
+		Sample sample = TestDataFactory.constructSample();
+		MockHttpServletResponse response = new MockHttpServletResponse();
+
+		Path path = Paths.get(FILE_PATH);
+		SequenceFile file = new SequenceFile(path);
+		List<Join<Sample, SequenceFile>> filejoin = ImmutableList.of(new SampleSequenceFileJoin(sample, file));
+
+		when(projectService.read(project.getId())).thenReturn(project);
+		when(sampleService.read(sample.getId())).thenReturn(sample);
+		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(filejoin);
+
+		controller.downloadSamples(project.getId(), ImmutableList.of(sample.getId()), response);
+		assertTrue("Response should contain a \"Content-Disposition\" header.",
+				response.containsHeader("Content-Disposition"));
+		assertEquals("Content-Disposition should include the file name", "attachment; filename=\"test_project.zip\"",
+				response.getHeader("Content-Disposition"));
 	}
 }
