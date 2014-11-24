@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -404,7 +403,7 @@ public class ProjectSamplesController {
 	public void downloadSamples(@PathVariable Long projectId, @RequestParam List<Long> ids,
 			HttpServletResponse response) throws IOException {
 		Project project = projectService.read(projectId);
-		List<Sample> samples = ids.stream().map(sampleService::read).collect(Collectors.toList());
+		List<Sample> samples = (List)projectService.readMultiple(ids);
 
 		// Add the appropriate headers
 		response.setContentType("application/zip");
