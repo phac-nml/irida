@@ -491,7 +491,7 @@ public class ProjectSamplesController {
 	 */
 	@RequestMapping(value = "/{projectId}/ajax/samples/galaxy/upload", method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> postUploadSampleToGalaxy(@PathVariable Long projectId,
-			@RequestParam String email, @RequestParam String name, @RequestParam List<Long> sampleIds, HttpServletRequest request) {
+			@RequestParam String email, @RequestParam String name, @RequestParam(value = "sampleIds[]") List<Long> sampleIds, HttpServletRequest request) {
 		Set<Long> fileIds = new HashSet<>();
 		for (Long id : sampleIds) {
 			List<Join<Sample, SequenceFile>> joins = sequenceFileService
@@ -502,6 +502,7 @@ public class ProjectSamplesController {
 
 		UploadWorker uploadWorker = galaxyUploadService.performUploadSelectedSequenceFiles(fileIds, name, email);
 		request.getSession().setAttribute("galaxyUploadWorker", uploadWorker);
+		// TODO (14-11-24 - josh): This upload worker can be used to create a progress bar
 		return ImmutableMap.of("status", uploadWorker.getProportionComplete());
 	}
 

@@ -98,7 +98,8 @@
 						<li th:if="${linkerAvailable}">
 							<a href="#" ng-click="subnav.export.linker()"><span class="fa fa-fw fa-terminal"></span>&nbsp;<span th:text="#{project.samples.export.linker}"></span></a>
 						</li>
-						<li th:if="${galaxyConnected}">
+						<li>
+						<!--<li th:if="${galaxyConnected}">-->
 							<a href="#" ng-click="subnav.export.galaxy()"><span class="fa fa-fw fa-cloud"></span>&nbsp;<span th:text="#{project.samples.export.galaxy}"></span></a>
 						</li>
 						<li th:if="!${galaxyConnected}" class="disabled">

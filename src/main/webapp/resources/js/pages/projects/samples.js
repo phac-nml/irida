@@ -153,7 +153,7 @@
         email: email,
         name: name,
         sampleIds: getSelectedSampleIds()
-      }, 'samples/galaxy/upload');
+      }, 'galaxy/upload');
     };
 
     function getSelectedSampleIds() {
@@ -513,17 +513,12 @@
 
   function GalaxyCtrl($timeout, $modalInstance, SamplesService) {
     "use strict";
-    var vm = this,
-        timer = null;
+    var vm = this;
 
     vm.upload = function () {
-      SamplesService.galaxyUpload(vm.email, vm.name).then(function (data) {
-        // Create a progress bar in the modal to show the status.
-        timer = $timeout(function () {
-          // TODO: Call a galaxy service to check on the status
-          // if complete kill this timer if not update status
-        }, 100);
-      });
+      vm.close();
+      SamplesService.galaxyUpload(vm.email, vm.name);
+      // TODO: Create a progress bar to monitor the status of the upload.
     };
 
     vm.setName = function (name) {
@@ -535,9 +530,6 @@
     };
 
     vm.close = function () {
-      if (timer !== null) {
-        $timeout.cancel(timer);
-      }
       $modalInstance.close();
     };
   }
