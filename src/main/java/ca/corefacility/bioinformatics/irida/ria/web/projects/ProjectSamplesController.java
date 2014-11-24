@@ -436,7 +436,7 @@ public class ProjectSamplesController {
 	public void downloadSamples(@PathVariable Long projectId, @RequestParam List<Long> ids,
 			HttpServletResponse response) throws IOException {
 		Project project = projectService.read(projectId);
-		List<Sample> samples = ids.stream().map(sampleService::read).collect(Collectors.toList());
+		List<Sample> samples = (List)projectService.readMultiple(ids);
 
 		// Add the appropriate headers
 		response.setContentType("application/zip");
