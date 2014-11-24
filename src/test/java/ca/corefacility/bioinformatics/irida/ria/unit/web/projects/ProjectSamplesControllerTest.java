@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -14,7 +13,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
@@ -52,6 +50,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesContr
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.upload.galaxy.GalaxyUploadService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
@@ -74,6 +73,7 @@ public class ProjectSamplesControllerTest {
 	private UserService userService;
 	private SequenceFileService sequenceFileService;
 	private MessageSource messageSource;
+	private GalaxyUploadService galaxyUploadService;
 	private ProjectControllerUtils projectUtils;
 
 	@Before
@@ -84,8 +84,9 @@ public class ProjectSamplesControllerTest {
 		sequenceFileService = mock(SequenceFileService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
 		messageSource = mock(MessageSource.class);
+		galaxyUploadService = mock(GalaxyUploadService.class);
 
-		controller = new ProjectSamplesController(projectService, sampleService, userService, sequenceFileService,
+		controller = new ProjectSamplesController(projectService, sampleService, userService, galaxyUploadService, sequenceFileService,
 				projectUtils, messageSource);
 		user.setId(1L);
 

@@ -148,6 +148,14 @@
       document.body.appendChild(iframe);
     };
 
+    svc.galaxyUpload = function (email, name) {
+      return base.customPOST({
+        email: email,
+        name: name,
+        sampleIds: getSelectedSampleIds()
+      }, 'samples/galaxy/upload');
+    };
+
     function getSelectedSampleIds() {
       return _.map(selected, 'id');
     }
@@ -295,6 +303,7 @@
         SamplesService.downloadFiles();
       },
       linker: function linker() {
+        vm.export.open = false;
         $modal.open({
           templateUrl: BASE_URL + 'projects/samples/linker',
           controller : 'LinkerCtrl as lCtrl',
@@ -306,6 +315,13 @@
               return SamplesService.getProjectId();
             }
           }
+        });
+      },
+      galaxy: function galaxy() {
+        vm.export.open = false;
+        $modal.open({
+          templateUrl: BASE_URL + 'projects/' + SamplesService.getProjectId() + '/samples/galaxy',
+          controller: 'GalaxyCtrl as gCtrl'
         });
       }
     };
@@ -495,6 +511,37 @@
     });
   }
 
+  function GalaxyCtrl($timeout, $modalInstance, SamplesService) {
+    "use strict";
+    var vm = this,
+        timer = null;
+
+    vm.upload = function () {
+      SamplesService.galaxyUpload(vm.email, vm.name).then(function (data) {
+        // Create a progress bar in the modal to show the status.
+        timer = $timeout(function () {
+          // TODO: Call a galaxy service to check on the status
+          // if complete kill this timer if not update status
+        }, 100);
+      });
+    };
+
+    vm.setName = function (name) {
+      vm.name = name;
+    };
+
+    vm.setEmail = function (email) {
+      vm.email = email;
+    };
+
+    vm.close = function () {
+      if (timer !== null) {
+        $timeout.cancel(timer);
+      }
+      $modalInstance.close();
+    };
+  }
+
   angular.module('Samples', ['cgBusy'])
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
@@ -511,5 +558,6 @@
     .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
     .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
     .controller('FilterCtrl', ['$scope', 'FilterFactory', FilterCtrl])
+    .controller('GalaxyCtrl', ['$timeout', '$modalInstance', 'SamplesService', GalaxyCtrl])
   ;
 })(angular, $, _);

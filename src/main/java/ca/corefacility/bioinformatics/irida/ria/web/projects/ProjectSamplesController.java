@@ -7,13 +7,16 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -48,12 +51,14 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.upload.galaxy.GalaxyUploadService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Strings;
@@ -63,6 +68,7 @@ import com.google.common.collect.ImmutableMap;
 @RequestMapping(value = "/projects")
 public class ProjectSamplesController {
 	// From configuration.properties
+	private @Value("${ngsarchive.linker.available}") Boolean LINKER_AVAILABLE;
 	private @Value("${ngsarchive.linker.script}") String LINKER_SCRIPT;
 
 	// Sub Navigation Strings
@@ -89,6 +95,7 @@ public class ProjectSamplesController {
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final UserService userService;
+	private final GalaxyUploadService galaxyUploadService;
 	private final SequenceFileService sequenceFileService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private MessageSource messageSource;
@@ -101,11 +108,12 @@ public class ProjectSamplesController {
 
 	@Autowired
 	public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
-			UserService userService, SequenceFileService sequenceFileService,
+			UserService userService, GalaxyUploadService galaxyUploadService, SequenceFileService sequenceFileService,
 			ProjectControllerUtils projectControllerUtils, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
+		this.galaxyUploadService = galaxyUploadService;
 		this.sequenceFileService = sequenceFileService;
 		this.projectControllerUtils = projectControllerUtils;
 		this.dateFormatter = new DateFormatter();
@@ -133,6 +141,11 @@ public class ProjectSamplesController {
 		// Set up the template information
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
+		// Exporting functionality
+		model.addAttribute("linkerAvailable", LINKER_AVAILABLE);
+		model.addAttribute("galaxyConfigured", galaxyUploadService.isConfigured());
+		model.addAttribute("galaxyConnected", galaxyUploadService.isConnected());
+
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_SAMPLES);
 		return PROJECT_SAMPLES_PAGE;
 	}
@@ -149,6 +162,25 @@ public class ProjectSamplesController {
 	public String getLinkerModal(Model model) {
 		model.addAttribute("scriptName", LINKER_SCRIPT);
 		return PROJECT_TEMPLATE_DIR + "linker.tmpl";
+	}
+
+	/**
+	 * Special method to add Galaxy specific details to the modal template
+	 *
+	 * @param model
+	 * 		{@link Model}
+	 * @param principal
+	 * 		Current User
+	 * @param projectId
+	 * 		Id for the current {@link Project}
+	 *
+	 * @return Location of the modal template
+	 */
+	@RequestMapping("/{projectId}/samples/galaxy")
+	public String getGalaxyModal(Model model, Principal principal, @PathVariable Long projectId) {
+		model.addAttribute("email", userService.getUserByUsername(principal.getName()).getEmail());
+		model.addAttribute("name", projectService.read(projectId).getName() + "-" + principal.getName());
+		return PROJECT_TEMPLATE_DIR + "galaxy.tmpl";
 	}
 
 	/**
@@ -441,6 +473,36 @@ public class ProjectSamplesController {
 			// streams.
 			response.getOutputStream().close();
 		}
+	}
+
+	/**
+	 * Export samples to the local instance of galaxy
+	 *
+	 * @param projectId
+	 * 		Id for the current {@link Project}
+	 * @param email
+	 * 		Email address for the current user
+	 * @param name
+	 * 		Name of the current user
+	 * @param request
+	 * 		{@link HttpServletRequest}
+	 *
+	 * @return
+	 */
+	@RequestMapping(value = "/{projectId}/ajax/samples/galaxy/upload", method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> postUploadSampleToGalaxy(@PathVariable Long projectId,
+			@RequestParam String email, @RequestParam String name, @RequestParam List<Long> sampleIds, HttpServletRequest request) {
+		Set<Long> fileIds = new HashSet<>();
+		for (Long id : sampleIds) {
+			List<Join<Sample, SequenceFile>> joins = sequenceFileService
+					.getSequenceFilesForSample(sampleService.read(id));
+			fileIds.addAll(joins.stream().map(sampleSequenceFileJoin -> sampleSequenceFileJoin.getObject().getId())
+					.collect(Collectors.toList()));
+		}
+
+		UploadWorker uploadWorker = galaxyUploadService.performUploadSelectedSequenceFiles(fileIds, name, email);
+		request.getSession().setAttribute("galaxyUploadWorker", uploadWorker);
+		return ImmutableMap.of("status", uploadWorker.getProportionComplete());
 	}
 
 	/**
