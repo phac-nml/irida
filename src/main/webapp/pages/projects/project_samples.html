@@ -96,7 +96,7 @@
 							</a>
 						</li>
 						<li th:if="${linkerAvailable}">
-							<a href="#" ng-click="subnav.export.linker()"><span class="fa fa-fw fa-terminal"></span>&nbsp;<span th:text="#{project.samples.export.linker}"></span></a>
+							<a id="exportLinkerBtn" href="#" ng-click="subnav.export.linker()"><span class="fa fa-fw fa-terminal"></span>&nbsp;<span th:text="#{project.samples.export.linker}"></span></a>
 						</li>
 						<li>
 						<!--<li th:if="${galaxyConnected}">-->
