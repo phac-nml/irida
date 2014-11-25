@@ -1,9 +1,12 @@
 package ca.corefacility.bioinformatics.irida.service.workflow;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import javax.xml.transform.Source;
@@ -27,6 +30,9 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowStructur
 @Service
 public class IridaWorkflowLoaderService {
 
+	private static final String WORKFLOW_DEFINITION_FILE = "irida_workflow.xml";
+	private static final String WORKFLOW_STRUCTURE_FILE = "irida_workflow_structure.ga";
+
 	private Unmarshaller workflowDescriptionUnmarshaller;
 
 	/**
@@ -39,6 +45,25 @@ public class IridaWorkflowLoaderService {
 	@Autowired
 	public IridaWorkflowLoaderService(Unmarshaller workflowDescriptionUnmarshaller) {
 		this.workflowDescriptionUnmarshaller = workflowDescriptionUnmarshaller;
+	}
+
+	/**
+	 * Loads up an {@link IridaWorkflow} from the given directory.
+	 * 
+	 * @param workflowDirectory
+	 *            The directory containing the workflow files.
+	 * @return An {@link IridaWorkflow} for this workflow.
+	 * @throws XmlMappingException
+	 *             If there was an issue parsing the XML document.
+	 * @throws IOException
+	 *             If there was an issue reading one of the workflow files.
+	 */
+	public IridaWorkflow loadIridaWorkflow(Path workflowDirectory) throws XmlMappingException, IOException {
+		checkNotNull(workflowDirectory, "workflowDirectory is null");
+		checkArgument(Files.isDirectory(workflowDirectory), "workflowDirectory is not a directory");
+
+		return loadIridaWorkflow(workflowDirectory.resolve(WORKFLOW_DEFINITION_FILE),
+				workflowDirectory.resolve(WORKFLOW_STRUCTURE_FILE));
 	}
 
 	/**
@@ -78,6 +103,10 @@ public class IridaWorkflowLoaderService {
 	public IridaWorkflowDescription loadWorkflowDescription(Path descriptionFile) throws XmlMappingException,
 			IOException {
 		checkNotNull("descriptionFile is null", descriptionFile);
+		if (!Files.exists(descriptionFile)) {
+			throw new FileNotFoundException(descriptionFile.toFile().getAbsolutePath());
+		}
+
 		Source source = new StreamSource(new FileInputStream(descriptionFile.toFile()));
 		return (IridaWorkflowDescription) workflowDescriptionUnmarshaller.unmarshal(source);
 	}
@@ -89,9 +118,15 @@ public class IridaWorkflowLoaderService {
 	 *            The file to load up.
 	 * @return An {@link IridaWorkflowStructure} defining the structure of the
 	 *         workflow.
+	 * @throws FileNotFoundException
+	 *             If the structure file could not be found.
 	 */
-	public IridaWorkflowStructure loadWorkflowStructure(Path structureFile) {
+	public IridaWorkflowStructure loadWorkflowStructure(Path structureFile) throws FileNotFoundException {
 		checkNotNull("structureFile is null", structureFile);
+		if (!Files.exists(structureFile)) {
+			throw new FileNotFoundException(structureFile.toFile().getAbsolutePath());
+		}
+
 		return new IridaWorkflowStructure(structureFile);
 	}
 }

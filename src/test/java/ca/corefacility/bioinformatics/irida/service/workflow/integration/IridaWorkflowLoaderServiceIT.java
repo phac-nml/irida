@@ -60,12 +60,21 @@ public class IridaWorkflowLoaderServiceIT {
 
 	private Path workflowXmlPath;
 	private Path workflowStructurePath;
+	private Path workflowDirectoryPath;
+	private Path workflowDirectoryPathNoDefinition;
+	private Path workflowDirectoryPathNoStructure;
 
 	@Before
 	public void setup() throws JAXBException, URISyntaxException, FileNotFoundException {
-		workflowXmlPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("irida_workflow.xml").toURI());
-		workflowStructurePath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("irida_workflow_structure.ga")
+		workflowXmlPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("TestWorkflow/irida_workflow.xml")
 				.toURI());
+		workflowStructurePath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
+				"TestWorkflow/irida_workflow_structure.ga").toURI());
+		workflowDirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("TestWorkflow").toURI());
+		workflowDirectoryPathNoDefinition = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
+				"TestWorkflowNoDefinition").toURI());
+		workflowDirectoryPathNoStructure = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
+				"TestWorkflowNoStructure").toURI());
 	}
 
 	private IridaWorkflow buildTestWorkflow() throws MalformedURLException {
@@ -136,13 +145,54 @@ public class IridaWorkflowLoaderServiceIT {
 
 	/**
 	 * Tests loading up the workflow structure from a file.
+	 * @throws FileNotFoundException 
 	 */
 	@Test
-	public void testLoadWorkflowStructure() {
+	public void testLoadWorkflowStructure() throws FileNotFoundException {
 		IridaWorkflowStructure iridaWorkflowStructure = buildTestStructure();
 		IridaWorkflowStructure iridaWorkflowStructureFromFile = workflowLoaderService
 				.loadWorkflowStructure(workflowStructurePath);
 
 		assertEquals(iridaWorkflowStructure, iridaWorkflowStructureFromFile);
+	}
+
+	/**
+	 * Tests successfully loading up a workflow from a directory.
+	 * 
+	 * @throws JAXBException
+	 * @throws XmlMappingException
+	 * @throws IOException
+	 */
+	@Test
+	public void testLoadWorkflowFromDirectorySuccess() throws JAXBException, XmlMappingException, IOException {
+		IridaWorkflow iridaWorkflow = buildTestWorkflow();
+		IridaWorkflow iridaWorkflowFromFile = workflowLoaderService.loadIridaWorkflow(workflowDirectoryPath);
+
+		assertEquals(iridaWorkflow, iridaWorkflowFromFile);
+	}
+
+	/**
+	 * Tests failing to load up a workflow from a directory (no definition
+	 * file).
+	 * 
+	 * @throws JAXBException
+	 * @throws XmlMappingException
+	 * @throws IOException
+	 */
+	@Test(expected = FileNotFoundException.class)
+	public void testLoadWorkflowFromDirectoryFailNoDefinition() throws JAXBException, XmlMappingException, IOException {
+		workflowLoaderService.loadIridaWorkflow(workflowDirectoryPathNoDefinition);
+	}
+
+	/**
+	 * Tests failing to load up a workflow from a directory (no structure file).
+	 * 
+	 * @throws JAXBException
+	 * @throws XmlMappingException
+	 * @throws IOException
+	 */
+	@Test(expected = FileNotFoundException.class)
+	public void testLoadWorkflowFromDirectoryFailNoStructure() throws JAXBException, XmlMappingException, IOException {
+		workflowLoaderService.loadIridaWorkflow(workflowDirectoryPathNoStructure);
 	}
 }
