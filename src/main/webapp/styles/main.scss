@@ -16,6 +16,13 @@
 @import "pages/sequenceFile";
 @import "pages/remoteApi";
 
+.login__links {
+  a {
+    margin-top: 10px;
+    display: block;
+  }
+}
+
 .clickable {
   display: block;
   cursor: pointer;
