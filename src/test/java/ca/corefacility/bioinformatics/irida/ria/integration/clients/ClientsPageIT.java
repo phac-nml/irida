@@ -60,6 +60,7 @@ public class ClientsPageIT {
 
 	@Test
 	public void testCheckClientsPageNumber() {
+		clientsPage.goTo();
 		int clientsTableSize = clientsPage.clientsTableSize();
 		assertEquals(2, clientsTableSize);
 		assertTrue(clientsPage.checkClientExistsInTable("testClient"));

@@ -69,7 +69,7 @@ public class ProjectMetadataPageIT {
 
 	@Test
 	public void displaysTheProjectMetaData() {
-		driver.get("http://localhost:8080/projects/" + PROJECT_ID_OWNER + "/metadata");
+		page.goTo(PROJECT_ID_OWNER);
 		assertEquals("Displays the correct page title", PAGE_TITLE, driver.getTitle());
 		assertEquals("Displays the correct project name", PROJECT_NAME, page.getDataProjectName());
 		assertEquals("Displays the correct description", PROJECT_DESCRIPTION, page.getDataProjectDescription());
@@ -83,7 +83,7 @@ public class ProjectMetadataPageIT {
 		assertTrue("Contains edit metadata button", page.hasEditButton());
 
 		// Should not have edit button on project that is not owner of.
-		driver.get("http://localhost:8080/projects/" + PROJECT_ID_COLLABORATOR + "/metadata");
+		page.goTo(PROJECT_ID_COLLABORATOR);
 		assertFalse("Should not contain the edit medtadata button if they are only a collaborator",
 				page.hasEditButton());
 	}

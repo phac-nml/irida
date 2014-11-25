@@ -148,6 +148,19 @@
       document.body.appendChild(iframe);
     };
 
+    svc.galaxyUpload = function (email, name) {
+      return base.customPOST({
+        email: email,
+        name: name,
+        sampleIds: getSelectedSampleIds()
+      }, 'galaxy/upload').then(function(data) {
+        if(data.result === 'success') {
+          notifications.show({msg: data.msg});
+        }
+        return data;
+      })
+    };
+
     function getSelectedSampleIds() {
       return _.map(selected, 'id');
     }
@@ -295,6 +308,7 @@
         SamplesService.downloadFiles();
       },
       linker: function linker() {
+        vm.export.open = false;
         $modal.open({
           templateUrl: BASE_URL + 'projects/samples/linker',
           controller : 'LinkerCtrl as lCtrl',
@@ -306,6 +320,13 @@
               return SamplesService.getProjectId();
             }
           }
+        });
+      },
+      galaxy: function galaxy() {
+        vm.export.open = false;
+        $modal.open({
+          templateUrl: BASE_URL + 'projects/' + SamplesService.getProjectId() + '/samples/galaxy',
+          controller: 'GalaxyCtrl as gCtrl'
         });
       }
     };
@@ -495,6 +516,37 @@
     });
   }
 
+  function GalaxyCtrl($timeout, $modalInstance, SamplesService) {
+    "use strict";
+    var vm = this;
+
+    vm.upload = function () {
+      vm.uploading = true;
+      SamplesService.galaxyUpload(vm.email, vm.name).then(function(data) {
+        vm.uploading = false;
+        if(data.result == 'success') {
+          vm.close();
+          // TODO: Create a progress bar to monitor the status of the upload.
+        }
+        else {
+          vm.errors = data.errors;
+        }
+      });
+    };
+
+    vm.setName = function (name) {
+      vm.name = name;
+    };
+
+    vm.setEmail = function (email) {
+      vm.email = email;
+    };
+
+    vm.close = function () {
+      $modalInstance.close();
+    };
+  }
+
   angular.module('Samples', ['cgBusy'])
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
@@ -511,5 +563,6 @@
     .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
     .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
     .controller('FilterCtrl', ['$scope', 'FilterFactory', FilterCtrl])
+    .controller('GalaxyCtrl', ['$timeout', '$modalInstance', 'SamplesService', GalaxyCtrl])
   ;
 })(angular, $, _);

@@ -220,33 +220,35 @@
 }
 /* line 49, ../../styles/components/_panels.scss */
 .sidebar__body > div {
+  border-top: 1px solid #f6f6f6;
   padding: 6px 4px;
 }
-/* line 52, ../../styles/components/_panels.scss */
+/* line 53, ../../styles/components/_panels.scss */
 .sidebar__body .form-group {
   padding: 4px 8px;
 }
-/* line 55, ../../styles/components/_panels.scss */
+/* line 56, ../../styles/components/_panels.scss */
 .sidebar__body input[type="text"].form-control {
   border: 1px solid #e2e2e2;
   -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px inset;
   -webkit-box-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px inset;
   box-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px inset;
 }
-/* line 59, ../../styles/components/_panels.scss */
+/* line 60, ../../styles/components/_panels.scss */
 .sidebar__body .input-group-btn button {
   border: 1px solid #e2e2e2 !important;
   color: #bbbbbb;
 }
 
-/* line 65, ../../styles/components/_panels.scss */
+/* line 66, ../../styles/components/_panels.scss */
 .sidebar__icon {
   color: #797979;
   width: 15%;
 }
 
-/* line 70, ../../styles/components/_panels.scss */
+/* line 71, ../../styles/components/_panels.scss */
 .sidebar__value {
+  color: #222222;
   position: absolute;
   right: 8px;
 }
@@ -296,35 +298,41 @@ iframe.remote-api-frame {
   height: 400px;
 }
 
-/* line 19, ../../styles/main.scss */
+/* line 20, ../../styles/main.scss */
+.login__links a {
+  margin-top: 10px;
+  display: block;
+}
+
+/* line 26, ../../styles/main.scss */
 .clickable {
   display: block;
   cursor: pointer;
 }
-/* line 22, ../../styles/main.scss */
+/* line 29, ../../styles/main.scss */
 .clickable span {
   display: inline-block;
 }
 
-/* line 27, ../../styles/main.scss */
+/* line 34, ../../styles/main.scss */
 .nav-tabs li {
   cursor: pointer;
 }
 
-/* line 32, ../../styles/main.scss */
+/* line 39, ../../styles/main.scss */
 #table-filter {
   padding: 0;
 }
-/* line 34, ../../styles/main.scss */
+/* line 41, ../../styles/main.scss */
 #table-filter > div {
   padding: 20px;
 }
-/* line 37, ../../styles/main.scss */
+/* line 44, ../../styles/main.scss */
 #table-filter .filter-btns > button {
   margin-top: 33px;
 }
 
-/* line 42, ../../styles/main.scss */
+/* line 49, ../../styles/main.scss */
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer;
 }
