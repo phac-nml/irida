@@ -9,7 +9,7 @@
 <main layout:fragment="main">
     <h1 th:text="${project.label}"></h1>
 
-    <h3>Activities</h3>
+    <h3 th:text="#{event.title}">_Recent Activities_</h3>
     <div id="events"></div>
 </main>
 <th:block layout:fragment="scripts" th:inline="javascript">
