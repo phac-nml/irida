@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.validation.ConstraintViolationException;
 
@@ -62,7 +61,6 @@ import ca.corefacility.bioinformatics.irida.service.upload.galaxy.GalaxyUploadSe
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 public class ProjectSamplesControllerTest {
@@ -404,7 +402,7 @@ public class ProjectSamplesControllerTest {
 	@Test
 	public void testPostUploadSampleToGalaxy() {
 		Sample sample = TestDataFactory.constructSample();
-		Set<Sample> samples = ImmutableSet.of(sample);
+		List<Sample> samples = ImmutableList.of(sample);
 		UploadWorker worker = TestDataFactory.constructUploadWorker();
 		MockHttpServletRequest request = new MockHttpServletRequest();
 
@@ -416,15 +414,17 @@ public class ProjectSamplesControllerTest {
 				.thenReturn(worker);
 
 		Map<String, Object> result = controller
-				.postUploadSampleToGalaxy(1L, accountUsername, accountEmail, ImmutableList.of(sample.getId()), request, Locale.US);
-		assertTrue(result.containsKey("status"));
-		assertEquals(33.3f, result.get("status"));
+				.postUploadSampleToGalaxy(1L, accountUsername, accountEmail, ImmutableList.of(sample.getId()), request,
+						Locale.US);
+		assertTrue(result.containsKey("result"));
+		assertEquals("success", result.get("result"));
+		assertTrue(result.containsKey("msg"));
 	}
 
 	@Test
 	public void testUploadSampleToGalaxyExceptions() {
 		Sample sample = TestDataFactory.constructSample();
-		Set<Sample> samples = ImmutableSet.of(sample);
+		List<Sample> samples = ImmutableList.of(sample);
 		MockHttpServletRequest request = new MockHttpServletRequest();
 
 		when(sampleService.readMultiple(ImmutableList.of(sample.getId()))).thenReturn(samples);
@@ -435,6 +435,10 @@ public class ProjectSamplesControllerTest {
 				.thenThrow(new ConstraintViolationException("Some Error", null));
 
 		Map<String, Object> result = controller
-				.postUploadSampleToGalaxy(1L, accountUsername, accountEmail, ImmutableList.of(sample.getId()), request, Locale.US);
+				.postUploadSampleToGalaxy(1L, accountUsername, accountEmail, ImmutableList.of(sample.getId()), request,
+						Locale.US);
+		assertTrue(result.containsKey("result"));
+		assertEquals("errors", result.get("result"));
+
 	}
 }
