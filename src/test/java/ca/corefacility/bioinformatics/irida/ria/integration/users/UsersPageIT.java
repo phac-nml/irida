@@ -63,11 +63,13 @@ public class UsersPageIT {
 
 	@Test
 	public void confirmTablePopulatedByProjects() {
+		usersPage.goTo();
 		assertEquals("Projects table should be populated by 3 projects", 3, usersPage.usersTableSize());
 	}
 
 	@Test
 	public void sortByUserName() {
+		usersPage.goTo();
 		usersPage.clickUsernameHeader();
 		List<WebElement> ascElements = usersPage.getUsernameColumn();
 		assertTrue("Projects page is sorted Ascending", checkSortedAscending(ascElements));

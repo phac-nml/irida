@@ -14,12 +14,11 @@ import com.google.common.base.Strings;
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
-public class ProjectsNewPage {
-	public static final String PROJECT_NEW_URL = "http://localhost:8080/projects/new";
-	private WebDriver driver;
+public class ProjectsNewPage extends AbstractPage {
+	public static final String PROJECT_NEW_URL = BASE_URL + "projects/new";
 
 	public ProjectsNewPage(WebDriver driver) {
-		this.driver = driver;
+		super(driver);
 	}
 
 	public void goToPage() {

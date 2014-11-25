@@ -5,26 +5,21 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
-public class ClientsPage {
-	private WebDriver driver;
+public class ClientsPage extends AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(ClientsPage.class);
 
 	public ClientsPage(WebDriver driver) {
-		this.driver = driver;
-		driver.get("http://localhost:8080/clients");
-		waitForAjax();
+		super(driver);
 	}
 
-	private void waitForAjax() {
-		Wait<WebDriver> wait = new WebDriverWait(driver, 60);
-		wait.until(Ajax.waitForAjax(60000));
+	public void goTo(){
+		get(driver , "clients");
+		waitForTime(400);
 	}
 
 	public int clientsTableSize() {
