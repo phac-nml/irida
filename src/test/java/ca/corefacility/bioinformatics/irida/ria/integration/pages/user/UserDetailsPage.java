@@ -10,6 +10,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
 
 /**
@@ -17,23 +18,22 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilit
  *
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-public class UserDetailsPage {
+public class UserDetailsPage extends AbstractPage {
 	public static String EDIT_USER_LINK = "editUser";
 	public static String USER_ID = "user-id";
-	private WebDriver driver;
 	private PageUtilities pageUtilities;
 
 	public UserDetailsPage(WebDriver driver) {
-		this.driver = driver;
+		super(driver);
 		this.pageUtilities = new PageUtilities(driver);
 	}
 
 	public void getCurrentUser() {
-		driver.get("http://localhost:8080/users/current");
+		get(driver, "users/current");
 	}
 
 	public void getOtherUser(Long id) {
-		driver.get("http://localhost:8080/users/" + id);
+		get(driver, "users/" + id);
 	}
 
 	public String getUserId() {
@@ -42,7 +42,7 @@ public class UserDetailsPage {
 	}
 
 	public boolean canGetEditLink(Long id) {
-		driver.get("http://localhost:8080/users/" + id);
+		get(driver, "users/" + id);
 		try {
 			driver.findElement(By.id(EDIT_USER_LINK));
 			return true;

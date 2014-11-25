@@ -62,8 +62,7 @@ public class LoginPageIT {
 	public void testBadUsername() throws Exception {
 		LoginPage page = LoginPage.to(driver);
 		page.login(LoginPage.BAD_USERNAME, LoginPage.GOOD_PASSWORD);
-		assertEquals("Should update the url with '?error=true'", driver.getCurrentUrl(),
-				"http://localhost:8080/login?error=true");
+		assertTrue("Should update the url with '?error=true'", driver.getCurrentUrl().contains("login?error=true"));
 		assertEquals("Should display error on bad login", page.getErrors(), "Incorrect Email or Password");
 	}
 
@@ -71,25 +70,22 @@ public class LoginPageIT {
 	public void testBadPassword() throws Exception {
 		LoginPage page = LoginPage.to(driver);
 		page.login(LoginPage.USER_USERNAME, LoginPage.BAD_PASSWORD);
-		assertEquals("Should update the url with '?error=true'", driver.getCurrentUrl(),
-				"http://localhost:8080/login?error=true");
+		assertTrue("Should update the url with '?error=true'", driver.getCurrentUrl().contains("login?error=true"));
 		assertEquals("Should display error on bad login", page.getErrors(), "Incorrect Email or Password");
 	}
 
 	@Test
 	public void testGoodLogin() throws Exception {
 		LoginPage.login(driver, LoginPage.ADMIN_USERNAME, LoginPage.GOOD_PASSWORD);
-		assertEquals("The 'test' user is logged in and redirected.", "http://localhost:8080/dashboard",
-				driver.getCurrentUrl());
+		assertTrue("The 'test' user is logged in and redirected.", driver.getCurrentUrl().contains("dashboard"));
 	}
 
 	@Test
 	public void testExpiredCredentialsLogin() throws Exception {
 		LoginPage page = LoginPage.to(driver);
 		page.login(EXPIRED_USERNAME, EXPIRED_PASSWORD);
-		String expectedPage = "http://localhost:8080/password_reset/.+";
 		assertTrue("The 'expiredGuy' user should be sent to a password reset page.",
-				driver.getCurrentUrl().matches(expectedPage));
+				driver.getCurrentUrl().contains("password_reset/"));
 	}
 
 	@Test
@@ -104,7 +100,6 @@ public class LoginPageIT {
 		page.logout(driver);
 		page = LoginPage.to(driver);
 		page.login(EXPIRED_USERNAME, newPassword);
-		assertEquals("The user is logged in and redirected.", "http://localhost:8080/dashboard",
-				driver.getCurrentUrl());
+		assertTrue("The user is logged in and redirected.", driver.getCurrentUrl().contains("dashboard"));
 	}
 }

@@ -3,35 +3,38 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+
 /**
- * <p>
- * Project Metadata Page
- * </p>
+ * <p> Project Metadata Page </p>
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
-public class ProjectMetadataPage {
-    private WebDriver driver;
+public class ProjectMetadataPage extends AbstractPage {
 
-    public ProjectMetadataPage(WebDriver driver) {
-        this.driver = driver;
-    }
+	public ProjectMetadataPage(WebDriver driver) {
+		super(driver);
+	}
 
-    public String getDataProjectName() {
-        return driver.findElement(By.id("name")).getText();
-    }
+	public void goTo(Long projectId) {
+		get(driver, "projects/" + projectId + "/metadata");
+	}
 
-    public String getDataProjectDescription() {
-        return driver.findElement(By.id("description")).getText();
-    }
+	public String getDataProjectName() {
+		return driver.findElement(By.id("name")).getText();
+	}
 
-    public String getDataProjectOrganism() {
-        return driver.findElement(By.id("organism")).getText();
-    }
+	public String getDataProjectDescription() {
+		return driver.findElement(By.id("description")).getText();
+	}
 
-    public String getDataProjectRemoteURL() {
-        return driver.findElement(By.id("remoteURL")).getText();
-    }
+	public String getDataProjectOrganism() {
+		return driver.findElement(By.id("organism")).getText();
+	}
+
+	public String getDataProjectRemoteURL() {
+		return driver.findElement(By.id("remoteURL")).getText();
+	}
 
 	public int getReferenceFileCount() {
 		return driver.findElements(By.cssSelector("#referenceFiles tbody tr")).size();
@@ -41,9 +44,9 @@ public class ProjectMetadataPage {
 		return driver.findElement(By.cssSelector(".refFileName:nth-of-type(1)")).getText();
 	}
 
-    public boolean hasEditButton() {
-        return driver.findElements(By.id("edit-metadata")).size() > 0;
-    }
+	public boolean hasEditButton() {
+		return driver.findElements(By.id("edit-metadata")).size() > 0;
+	}
 
 	// ************************************************************************************************
 	// ACTIONS

@@ -8,14 +8,17 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 
-public class UsersPage {
-	private WebDriver driver;
+public class UsersPage extends AbstractPage {
 
 	public UsersPage(WebDriver driver) {
-		this.driver = driver;
-		driver.get("http://localhost:8080/users");
+		super(driver);
+	}
+
+	public void goTo() {
+		get(driver, "users");
 		waitForAjax();
 	}
 	

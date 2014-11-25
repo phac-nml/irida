@@ -5,21 +5,25 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+
 /**
  * Edit user page for selenium testing
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
-public class CreateUserPage {
+public class CreateUserPage extends AbstractPage {
 
-	public static String CREATE_PAGE = "http://localhost:8080/users/create";
-	public static String SUCCESS_PAGE = "http://localhost:8080/users/\\d+";
-	private WebDriver driver;
+	public static String CREATE_PAGE = "users/create";
+	public static String SUCCESS_PAGE = BASE_URL + "users/\\d+";
 
 	public CreateUserPage(WebDriver driver) {
-		this.driver = driver;
-		driver.get(CREATE_PAGE);
+		super(driver);
+	}
+
+	public void goTo() {
+		get(driver, CREATE_PAGE);
 	}
 
 	public void createUserWithPassword(String username, String email, String password, String confirmPassword) {

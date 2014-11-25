@@ -58,7 +58,7 @@ public class ProjectDetailsPageIT {
 		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
 		LoginPage.loginAsAdmin(driver);
 
-		detailsPage = new ProjectDetailsPage(driver, PROJECT_ID);
+		detailsPage = new ProjectDetailsPage(driver);
 	}
 
 	@After
@@ -71,6 +71,7 @@ public class ProjectDetailsPageIT {
 
 	@Test
 	public void hasCorrectMetaData() {
+		detailsPage.goTo(PROJECT_ID);
 		logger.debug("Testing: hasCorrectMetaDate");
 		assertEquals("Page should show correct title", PROJECT_NAME, detailsPage.getPageTitle());
 		assertEquals("Should have the organism displayed", PROJECT_ORGANISM, detailsPage.getOrganism());
