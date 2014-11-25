@@ -25,32 +25,30 @@
 
 	</main>
 	<aside class="col-md-3 col-md-pull-9 visible-md visible-lg">
-		<div class="panel panel-primary">
-			<div class="panel-heading">
-				<b class="panel-title" th:text="${sample.getLabel()}">__NAME__</b>
+		<div class="sidebar">
+			<div class="sidebar__heading">
+				<h2 th:text="${sample.getLabel()}">__NAME__</h2>
 			</div>
-			<div class="panel-body">
-				<ul class="nav nav-pills nav-stacked details">
-					<li>
-						<i class="glyphicon glyphicon-barcode"></i> <em th:text="#{samples.details.id}">ID</em>
-						<span id="sb-id" th:text="${sample.getId()}"></span>
-					</li>
-					<li>
-						<i class="glyphicon glyphicon-leaf"></i> <em th:text="#{samples.details.organism}">Organism</em>
-                        <span><i
+			<div class="sidebar__body">
+				<div>
+					<span class="fa fa-fw fa-barcode sidebar__icon"></span> <span th:text="#{samples.details.id}">ID</span>
+					<span id="sb-id" class="sidebar__value" th:text="${sample.getId()}"></span>
+				</div>
+				<div>
+					<span class="fa fa-fw fa-leaf sidebar__icon"></span> <span th:text="#{samples.details.organism}">Organism</span>
+                        <span class="sidebar__value"><i
 		                        th:text="${sample.getOrganism()} != null ? ${sample.getOrganism()} : #{organism.unknown}"></i></span>
-					</li>
-					<li>
-						<i class="glyphicon glyphicon-calendar"></i> <em th:text="#{samples.details.created}">Created</em>
-                        <span id="sb-created"
+				</div>
+				<div>
+					<span class="fa fa-fw fa-calendar-o sidebar__icon"></span> <em th:text="#{samples.details.created}">Created</em>
+                        <span id="sb-created" class="sidebar__value"
                               th:text="${#calendars.format(sample.getCreatedDate(), 'dd MMM yyyy')}"></span>
-					</li>
-					<li>
-						<i class="glyphicon glyphicon-calendar"></i> <em th:text="#{samples.details.modified}">Modified</em>
-                        <span id="sb-modified" data:livestamp="${sample.getModifiedDate()}"
+				</div>
+				<div>
+					<span class="fa fa-fw fa-calendar-o sidebar__icon"></span> <span th:text="#{samples.details.modified}">Modified</span>
+                        <span class="sidebar__value" id="sb-modified" data:livestamp="${sample.getModifiedDate()}"
                               th:title="${#calendars.format(sample.getModifiedDate(), 'dd MMM yyyy')}"></span>
-					</li>
-				</ul>
+				</div>
 			</div>
 		</div>
 	</aside>
