@@ -9,7 +9,22 @@
 <main layout:fragment="main">
     <h1 th:text="${project.label}"></h1>
 
-    <h3>This is where the project recent activities will go.</h3>
+    <h3>Activities</h3>
+    <div id="events"></div>
 </main>
+<th:block layout:fragment="scripts" th:inline="javascript">
+    <script>
+        $(function () {
+            var eventUrl = /*[[@{/events/project/{id}(id=${project.getId()})}]]*/ '/events/project/'
+            $.ajax({
+            	method: "GET",
+            	url: eventUrl,
+            	success: function(data, textStatus, jqXHR){
+            		$("#events").html(data);
+            	}
+            })
+        });
+    </script>
+</th:block>
 </body>
 </html>

@@ -1,0 +1,7 @@
+<ul class="list-group">
+    <li class="list-group-item" th:each="event : ${events}">
+        <span th:replace="events/fragments/event :: ${event.name} (${event.event})"></span>
+        <span class="event-date pull-right" th:text="${event.event.createdDate}" th:attr="data-livestamp=${event.event.createdDate}"></span>
+    </li>
+</ul>
+

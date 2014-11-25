@@ -1,0 +1,40 @@
+<span th:fragment="user-role-event (event)">
+    <span class="event-content">
+        <i class="glyphicon glyphicon-user"></i>
+        <a href="/users" 
+            th:href="@{/users/{uid}(uid=${event.user.getId()})}"
+            th:text="${event.user.label}">_USER)</a>
+        <span th:text="#{event.user_added.part1}">_is now a_</span>
+        <span th:text="#{'projectRole.'+${event.role}}">_ROLE_</span>
+        <span th:text="#{event.user_added.part2}">_on project_</span>
+        <a href="/projects" 
+            th:href="@{/projects/{pid}(pid=${event.project.getId()})}"
+            th:text="${event.project.label}">_project_</a>
+    </span>
+</span>
+
+<span th:fragment="user-removed-event (event)">
+    <i class="glyphicon glyphicon-ban-circle"></i>
+    <span class="event-content">
+        <a href="/users" 
+            th:href="@{/users/{uid}(uid=${event.user.getId()})}"
+            th:text="${event.user.label}"></a>
+        <span th:text="#{event.user_removed}">_USER_</span>
+        <a href="/projects" 
+            th:href="@{/projects/{pid}(pid=${event.project.getId()})}"
+            th:text="${event.project.label}"></a>
+    </span>
+</span>
+
+<span th:fragment="sample-added-event (event)">
+    <i class="fa fa-eyedropper"></i>
+    <span class="event-content">
+        <a href="/samples" 
+            th:href="@{/samples/{sid}(sid=${event.sample.getId()})}"
+            th:text="${event.sample.label}">_SAMPLE_</a>
+        <span th:text="#{event.sample_added}">_was added to_</span>
+        <a href="/projects" 
+            th:href="@{/projects/{pid}(pid=${event.project.getId()})}"
+            th:text="${event.project.label}"></a>
+    </span>
+</span>
