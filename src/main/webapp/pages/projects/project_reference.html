@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="projects/_base">
+<head>
+	<title th:text="${project.label} + ' - ' + #{project.nav.referenceFiles}">TITLE</title>
+	<script>window.dependencies = ['References'];</script>
+</head>
+<body>
+<main layout:fragment="main" data:ng-init="${'projectId=' + project.getId()}">
+	<div class="row">
+		<div class="col-md-12">
+			<h1 th:text="#{project.nav.referenceFiles}">Hello</h1>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table" ng-controller="FilesCtrl as table">
+				<thead>
+				<tr>
+					<th>Name</th>
+					<th>File Size</th>
+					<th>Added</th>
+					<th></th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr ng-repeat="file in table.files">
+					<td>{{file.label}}</td>
+					<td>{{file.size}}</td>
+					<td>{{file.createdDate | date:'mediumDate'}}</td>
+					<td>
+						<div class="btn-toolbar pull-right">
+							<button class="btn btn-xs btn-default" ng-click="table.download(file.id)">Download</button>
+							<button class="btn btn-xs btn-default" ng-click="table.deleteFile(file.id)">Delete</button>
+						</div>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</main>
+<th:block layout:fragment="scripts" th:inline="javascript">
+	<script src="/resources/js/pages/projects/reference.js"></script>
+</th:block>
+</body>
+</html>

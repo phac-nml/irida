@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,6 +70,7 @@ public class ProjectsController {
 	private static final String ACTIVE_NAV = "activeNav";
 	private static final String ACTIVE_NAV_DASHBOARD = "dashboard";
 	private static final String ACTIVE_NAV_METADATA = "metadata";
+	private static final String ACTIVE_NAV_REFERENCE = "reference";
 
 	// private static final String ACTIVE_NAV_ANALYSIS = "analysis";
 
@@ -84,6 +83,7 @@ public class ProjectsController {
 	public static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
 	public static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
+	public static final String PROJECT_REFERENCE_FILES_PAGE = PROJECTS_DIR + "project_reference";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
 	// Services
@@ -212,11 +212,7 @@ public class ProjectsController {
 			throws IOException {
 		Project project = projectService.read(projectId);
 
-		// Let's add the reference files
-		List<Map<String, String>> referenceFiles = getReferenceFileData(project);
-
 		model.addAttribute("project", project);
-		model.addAttribute("referenceFiles", referenceFiles);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
 		return PROJECT_METADATA_PAGE;
@@ -233,10 +229,6 @@ public class ProjectsController {
 			}
 			projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
-			// Let's add the reference files
-			List<Map<String, String>> referenceFiles = getReferenceFileData(project);
-
-			model.addAttribute("referenceFiles", referenceFiles);
 			model.addAttribute("project", project);
 			model.addAttribute("maxFileSize", WebConfigurer.MAX_UPLOAD_SIZE);
 			model.addAttribute("maxFileSizeString", fileSizeConverter.convert(WebConfigurer.MAX_UPLOAD_SIZE));
@@ -245,6 +237,16 @@ public class ProjectsController {
 		} else {
 			throw new AccessDeniedException("Do not have permissions to modify this project.");
 		}
+	}
+
+	@RequestMapping(value = "/{projectId}/referenceFiles", method = RequestMethod.GET)
+	public String getProjectReferenceFilesPage(final Model model, final Principal principal, @PathVariable long projectId) {
+		Project project = projectService.read(projectId);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+
+		model.addAttribute("project", project);
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_REFERENCE);
+		return PROJECT_REFERENCE_FILES_PAGE;
 	}
 
 	@RequestMapping(value = "/{projectId}/metadata/edit", method = RequestMethod.POST)
@@ -498,33 +500,6 @@ public class ProjectsController {
 	@ResponseBody
 	public ResponseEntity<String> roleChangeErrorHandler(Exception ex) {
 		return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
-	}
-
-	/**
-	 * Get the information about a projects reference files in a format that can be used by the UI.
-	 *
-	 * @param project {@link Project} Currently viewed project.
-	 * @return List of reference file info.
-	 * @throws IOException
-	 */
-	private List<Map<String, String>> getReferenceFileData(Project project) throws IOException {
-		List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
-		List<Map<String, String>> mapList = new ArrayList<>();
-		for (Join<Project, ReferenceFile> join : joinList) {
-			ReferenceFile file = join.getObject();
-			Map<String, String> map = new HashMap<>();
-			map.put("id", file.getId().toString());
-			map.put("label", file.getLabel());
-			map.put("createdDate", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
-			Path path = file.getFile();
-			long size = 0;
-			if (Files.exists(path)) {
-				size = Files.size(path);
-			}
-			map.put("size", fileSizeConverter.convert(size));
-			mapList.add(map);
-		}
-		return mapList;
 	}
 	
 	/**

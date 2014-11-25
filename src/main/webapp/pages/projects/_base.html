@@ -23,6 +23,9 @@
 			<ul class="nav navbar-nav" th:inline="text">
 				<li th:class="${activeNav} == 'metadata' ? 'active'"><a th:href="@{${baseLink} + '/metadata'}">[[#{project.nav.metadata}]]</a>
 				</li>
+				<li th:class="${activeNav} == 'reference' ? 'active'">
+					<a href="" th:href="@{${baseLink} + '/referenceFiles'}" th:text="#{project.nav.referenceFiles}">_Reference Files</a>
+				</li>
 				<li th:class="${activeNav} == 'samples' ? 'active'"><a th:href="@{${baseLink} + '/samples'}">[[#{project.nav.samples}]]&nbsp;<span
 						class="badge badge-default" th:text="${samples}"></span> </a></li>
 				<li th:class="${activeNav} == 'members' ? 'active'"><a th:href="@{${baseLink} + '/members'}">[[#{project.nav.members}]]&nbsp;<span
