@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import javax.validation.ConstraintViolationException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -418,5 +419,25 @@ public class ProjectSamplesControllerTest {
 				.postUploadSampleToGalaxy(1L, accountUsername, accountEmail, ImmutableList.of(sample.getId()), request);
 		assertTrue(result.containsKey("status"));
 		assertEquals(33.3f, result.get("status"));
+	}
+
+	@Test(expected = ConstraintViolationException.class)
+	public void testUploadSampleToGalaxyExceptions() {
+		Sample sample = TestDataFactory.constructSample();
+		Set<Sample> samples = ImmutableSet.of(sample);
+		UploadWorker worker = TestDataFactory.constructUploadWorker();
+		MockHttpServletRequest request = new MockHttpServletRequest();
+
+		when(sampleService.readMultiple(ImmutableList.of(sample.getId()))).thenReturn(samples);
+		String accountEmail = "jskd sdlid 9 ds d";
+		String accountUsername = null;
+		when(galaxyUploadService.performUploadSelectedSamples(anySet(), any(GalaxyProjectName.class), any(
+				GalaxyAccountEmail.class)))
+				.thenReturn(worker);
+
+		Map<String, Object> result = controller
+				.postUploadSampleToGalaxy(1L, accountUsername, accountEmail, ImmutableList.of(sample.getId()), request);
+		String fred = "FRED";
+
 	}
 }
