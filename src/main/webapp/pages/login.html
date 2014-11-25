@@ -32,8 +32,8 @@
                 </form>
             </div>
             <div class="col-md-6">
-            	<span id="summary" th:text="#{login.summary}">IRIDA Summary</span>
-            	<p><a href="#"  th:href="@{/password_reset/activate}">Activate Account</a></p>
+                <p class="lead" id="summary" th:text="#{login.activation}">IRIDA Summary</p>
+                <p><a class="btn btn-info" href="#"  th:href="@{/password_reset/activate}">Activate Account</a></p>
             </div>
         </div>
     </section>
