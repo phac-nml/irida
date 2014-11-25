@@ -27,6 +27,12 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
 
+/**
+ * Controller for handling {@link ProjectEvent} views
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Controller
 @RequestMapping("/events")
 public class ProjectEventsController {
@@ -55,9 +61,10 @@ public class ProjectEventsController {
 	 * @param projectId
 	 *            The ID of the {@link Project} to get events for
 	 * @param model
-	 *            Model for the view. Will contain "name" which is the name of
-	 *            the view fragment to use, and "event" which is a reference to
-	 *            the event itself
+	 *            Model for the view. Contains a list named "events". This will
+	 *            be a map which will contain "name" which is the name of the
+	 *            view fragment to use, and "event" which is a reference to the
+	 *            event itself
 	 * @return The name of the events view
 	 */
 	@RequestMapping("/project/{projectId}")
@@ -84,9 +91,10 @@ public class ProjectEventsController {
 	 * Get recent {@link ProjectEvent}s for the currently logged in user
 	 * 
 	 * @param model
-	 *            Model for the view. Will contain "name" which is the name of
-	 *            the view fragment to use, and "event" which is a reference to
-	 *            the event itself
+	 *            Model for the view. Contains a list named "events". This will
+	 *            be a map which will contain "name" which is the name of the
+	 *            view fragment to use, and "event" which is a reference to the
+	 *            event itself
 	 * @param principal
 	 *            currently logged in principal
 	 * @return
