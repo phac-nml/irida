@@ -296,35 +296,41 @@ iframe.remote-api-frame {
   height: 400px;
 }
 
-/* line 19, ../../styles/main.scss */
+/* line 20, ../../styles/main.scss */
+.login__links a {
+  margin-top: 10px;
+  display: block;
+}
+
+/* line 26, ../../styles/main.scss */
 .clickable {
   display: block;
   cursor: pointer;
 }
-/* line 22, ../../styles/main.scss */
+/* line 29, ../../styles/main.scss */
 .clickable span {
   display: inline-block;
 }
 
-/* line 27, ../../styles/main.scss */
+/* line 34, ../../styles/main.scss */
 .nav-tabs li {
   cursor: pointer;
 }
 
-/* line 32, ../../styles/main.scss */
+/* line 39, ../../styles/main.scss */
 #table-filter {
   padding: 0;
 }
-/* line 34, ../../styles/main.scss */
+/* line 41, ../../styles/main.scss */
 #table-filter > div {
   padding: 20px;
 }
-/* line 37, ../../styles/main.scss */
+/* line 44, ../../styles/main.scss */
 #table-filter .filter-btns > button {
   margin-top: 33px;
 }
 
-/* line 42, ../../styles/main.scss */
+/* line 49, ../../styles/main.scss */
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer;
 }
