@@ -30,20 +30,36 @@ import com.google.common.collect.ImmutableMap;
 @Controller
 @RequestMapping("/events")
 public class ProjectEventsController {
-	Map<Class<? extends ProjectEvent>, String> fragmentNames = ImmutableMap.of(UserRoleSetProjectEvent.class,
-			"user-role-event", UserRemovedProjectEvent.class, "user-removed-event", SampleAddedProjectEvent.class,
-			"sample-added-event");
+	public static final String EVENTS_VIEW = "events/events";
+
+	public static final Map<Class<? extends ProjectEvent>, String> FRAGMENT_NAMES = ImmutableMap.of(
+			UserRoleSetProjectEvent.class, "user-role-event", UserRemovedProjectEvent.class, "user-removed-event",
+			SampleAddedProjectEvent.class, "sample-added-event");
 	private static final int PAGE_SIZE = 10;
 
-	@Autowired
-	private ProjectEventService eventService;
+	private final ProjectEventService eventService;
+	private final ProjectService projectService;
+	private final UserService userService;
 
 	@Autowired
-	private ProjectService projectService;
+	public ProjectEventsController(ProjectEventService eventService, ProjectService projectService,
+			UserService userService) {
+		this.eventService = eventService;
+		this.projectService = projectService;
+		this.userService = userService;
+	}
 
-	@Autowired
-	private UserService userService;
-
+	/**
+	 * Get recent {@link ProjectEvent}s for the given {@link Project}
+	 * 
+	 * @param projectId
+	 *            The ID of the {@link Project} to get events for
+	 * @param model
+	 *            Model for the view. Will contain "name" which is the name of
+	 *            the view fragment to use, and "event" which is a reference to
+	 *            the event itself
+	 * @return The name of the events view
+	 */
 	@RequestMapping("/project/{projectId}")
 	public String getRecentEventsForProject(@PathVariable Long projectId, Model model) {
 		Project project = projectService.read(projectId);
@@ -54,16 +70,27 @@ public class ProjectEventsController {
 
 		for (ProjectEvent e : lastTenEventsForProject) {
 			Map<String, Object> info = new HashMap<>();
-			info.put("name", fragmentNames.get(e.getClass()));
+			info.put("name", FRAGMENT_NAMES.get(e.getClass()));
 			info.put("event", e);
 			eventInfo.add(info);
 		}
 
 		model.addAttribute("events", eventInfo);
 
-		return "events/events";
+		return EVENTS_VIEW;
 	}
 
+	/**
+	 * Get recent {@link ProjectEvent}s for the currently logged in user
+	 * 
+	 * @param model
+	 *            Model for the view. Will contain "name" which is the name of
+	 *            the view fragment to use, and "event" which is a reference to
+	 *            the event itself
+	 * @param principal
+	 *            currently logged in principal
+	 * @return
+	 */
 	@RequestMapping("/current_user")
 	public String getRecentEventsForUser(Model model, Principal principal) {
 		String userName = principal.getName();
@@ -75,13 +102,13 @@ public class ProjectEventsController {
 
 		for (ProjectEvent e : lastTenEventsForProject) {
 			Map<String, Object> info = new HashMap<>();
-			info.put("name", fragmentNames.get(e.getClass()));
+			info.put("name", FRAGMENT_NAMES.get(e.getClass()));
 			info.put("event", e);
 			eventInfo.add(info);
 		}
 
 		model.addAttribute("events", eventInfo);
 
-		return "events/events";
+		return EVENTS_VIEW;
 	}
 }
