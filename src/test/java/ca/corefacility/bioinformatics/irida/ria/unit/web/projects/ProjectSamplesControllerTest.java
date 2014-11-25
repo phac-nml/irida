@@ -21,16 +21,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
-import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
@@ -428,7 +425,6 @@ public class ProjectSamplesControllerTest {
 	public void testUploadSampleToGalaxyExceptions() {
 		Sample sample = TestDataFactory.constructSample();
 		Set<Sample> samples = ImmutableSet.of(sample);
-		UploadWorker worker = TestDataFactory.constructUploadWorker();
 		MockHttpServletRequest request = new MockHttpServletRequest();
 
 		when(sampleService.readMultiple(ImmutableList.of(sample.getId()))).thenReturn(samples);
