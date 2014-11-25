@@ -71,16 +71,9 @@ public class ProjectEventsController {
 	public String getRecentEventsForProject(@PathVariable Long projectId, Model model) {
 		Project project = projectService.read(projectId);
 
-		Page<ProjectEvent> lastTenEventsForProject = eventService.getEventsForProject(project, new PageRequest(0,
-				PAGE_SIZE, Direction.DESC, "createdDate"));
-		List<Map<String, Object>> eventInfo = new ArrayList<>();
-
-		for (ProjectEvent e : lastTenEventsForProject) {
-			Map<String, Object> info = new HashMap<>();
-			info.put("name", FRAGMENT_NAMES.get(e.getClass()));
-			info.put("event", e);
-			eventInfo.add(info);
-		}
+		Page<ProjectEvent> events = eventService.getEventsForProject(project, new PageRequest(0, PAGE_SIZE,
+				Direction.DESC, "createdDate"));
+		List<Map<String, Object>> eventInfo = buildEventsListFromPage(events);
 
 		model.addAttribute("events", eventInfo);
 
@@ -104,19 +97,34 @@ public class ProjectEventsController {
 		String userName = principal.getName();
 		User user = userService.getUserByUsername(userName);
 
-		Page<ProjectEvent> lastTenEventsForProject = eventService.getEventsForUser(user, new PageRequest(0, PAGE_SIZE,
-				Direction.DESC, "createdDate"));
-		List<Map<String, Object>> eventInfo = new ArrayList<>();
-
-		for (ProjectEvent e : lastTenEventsForProject) {
-			Map<String, Object> info = new HashMap<>();
-			info.put("name", FRAGMENT_NAMES.get(e.getClass()));
-			info.put("event", e);
-			eventInfo.add(info);
-		}
+		Page<ProjectEvent> events = eventService.getEventsForUser(user, new PageRequest(0, PAGE_SIZE, Direction.DESC,
+				"createdDate"));
+		List<Map<String, Object>> eventInfo = buildEventsListFromPage(events);
 
 		model.addAttribute("events", eventInfo);
 
 		return EVENTS_VIEW;
+	}
+
+	/**
+	 * Convert the Page of events to the list expected in the model
+	 * 
+	 * @param events
+	 *            Page of {@link ProjectEvent}s
+	 * @return A List<Map<String,Object>> containing the events and fragment
+	 *         names
+	 */
+	private List<Map<String, Object>> buildEventsListFromPage(Page<ProjectEvent> events) {
+		List<Map<String, Object>> eventInfo = new ArrayList<>();
+		for (ProjectEvent e : events) {
+			if (FRAGMENT_NAMES.containsKey(e.getClass())) {
+				Map<String, Object> info = new HashMap<>();
+				info.put("name", FRAGMENT_NAMES.get(e.getClass()));
+				info.put("event", e);
+				eventInfo.add(info);
+			}
+		}
+
+		return eventInfo;
 	}
 }
