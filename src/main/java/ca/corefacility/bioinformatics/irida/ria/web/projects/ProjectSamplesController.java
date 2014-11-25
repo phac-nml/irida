@@ -7,10 +7,10 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -495,12 +495,13 @@ public class ProjectSamplesController {
 			@RequestParam String email, @RequestParam String name,
 			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, HttpServletRequest request, Locale locale) {
 
-		Set<Sample> samples = (Set<Sample>) sampleService.readMultiple(sampleIds);
+		List<Sample> samples = (List<Sample>) sampleService.readMultiple(sampleIds);
 		UploadWorker worker = null;
 		Map<String, Object> result = new HashMap<>();
 		try {
 			worker = galaxyUploadService
-					.performUploadSelectedSamples(samples, new GalaxyProjectName(name), new GalaxyAccountEmail(email));
+					.performUploadSelectedSamples(new HashSet<>(samples), new GalaxyProjectName(name),
+							new GalaxyAccountEmail(email));
 			String sessionAttr = "gw-" + UUID.randomUUID();
 			request.getSession().setAttribute(sessionAttr, worker);
 			result.put("result", "success");
@@ -508,7 +509,11 @@ public class ProjectSamplesController {
 			result.put("msg", messageSource.getMessage("galaxy.success", new Object[] { samples.size() }, locale));
 		} catch (ConstraintViolationException e) {
 			result.put("result", "errors");
-			result.put("errors", messageSource.getMessage("galaxy.error", new Object[]{}, locale));
+			result.put("errors", messageSource.getMessage("galaxy.error", new Object[] { }, locale));
+		} catch (RuntimeException e) {
+			// This should only occur if there is no instance of Galaxy
+			result.put("result", "errors");
+			result.put("errors", messageSource.getMessage("galaxy.not-configured", new Object[]{}, locale));
 		}
 		return result;
 	}

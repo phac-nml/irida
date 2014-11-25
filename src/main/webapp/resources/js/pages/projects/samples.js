@@ -153,7 +153,12 @@
         email: email,
         name: name,
         sampleIds: getSelectedSampleIds()
-      }, 'galaxy/upload');
+      }, 'galaxy/upload').then(function(data) {
+        if(data.result === 'success') {
+          notifications.show({msg: data.msg});
+        }
+        return data;
+      })
     };
 
     function getSelectedSampleIds() {
@@ -516,9 +521,17 @@
     var vm = this;
 
     vm.upload = function () {
-      vm.close();
-      SamplesService.galaxyUpload(vm.email, vm.name);
-      // TODO: Create a progress bar to monitor the status of the upload.
+      vm.uploading = true;
+      SamplesService.galaxyUpload(vm.email, vm.name).then(function(data) {
+        vm.uploading = false;
+        if(data.result == 'success') {
+          vm.close();
+          // TODO: Create a progress bar to monitor the status of the upload.
+        }
+        else {
+          vm.errors = data.errors;
+        }
+      });
     };
 
     vm.setName = function (name) {
