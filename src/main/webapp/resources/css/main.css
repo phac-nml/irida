@@ -220,33 +220,35 @@
 }
 /* line 49, ../../styles/components/_panels.scss */
 .sidebar__body > div {
+  border-top: 1px solid #f6f6f6;
   padding: 6px 4px;
 }
-/* line 52, ../../styles/components/_panels.scss */
+/* line 53, ../../styles/components/_panels.scss */
 .sidebar__body .form-group {
   padding: 4px 8px;
 }
-/* line 55, ../../styles/components/_panels.scss */
+/* line 56, ../../styles/components/_panels.scss */
 .sidebar__body input[type="text"].form-control {
   border: 1px solid #e2e2e2;
   -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px inset;
   -webkit-box-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px inset;
   box-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px inset;
 }
-/* line 59, ../../styles/components/_panels.scss */
+/* line 60, ../../styles/components/_panels.scss */
 .sidebar__body .input-group-btn button {
   border: 1px solid #e2e2e2 !important;
   color: #bbbbbb;
 }
 
-/* line 65, ../../styles/components/_panels.scss */
+/* line 66, ../../styles/components/_panels.scss */
 .sidebar__icon {
   color: #797979;
   width: 15%;
 }
 
-/* line 70, ../../styles/components/_panels.scss */
+/* line 71, ../../styles/components/_panels.scss */
 .sidebar__value {
+  color: #222222;
   position: absolute;
   right: 8px;
 }
