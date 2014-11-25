@@ -45,4 +45,7 @@
 
     <reference_file id="1" createdDate="2014-08-06 10:01:02" filePath="/tmp/sequence-files/7/2/02-2222_S1_L001_R1_001.fastq" />
     <project_referencefile id="1" createdDate="2014-08-06 10:01:02" project_id="1" referenceFile_id="1"/>
+    
+    <project_event id="1" created_date="2013-07-18 14:20:19.0"
+		project_id="1" role="PROJECT_USER" user_id="3" DTYPE="UserRoleSetProjectEvent" />
 </dataset>
