@@ -4,15 +4,18 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class CreatePasswordResetPage {
-	private final String SUCCESS_PAGE = "http://localhost:8080/password_reset/created/.+";
-	private WebDriver driver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+
+public class CreatePasswordResetPage extends AbstractPage {
+	private final String SUCCESS_PAGE = BASE_URL + "password_reset/created/.+";
 
 	public CreatePasswordResetPage(WebDriver driver) {
-		this.driver = driver;
-		driver.get("http://localhost:8080/password_reset/");
+		super(driver);
 	}
 
+	public void goTo() {
+		get(driver, "password_reset/");
+	}
 
 	public void enterEmail(String email) {
 		WebElement emailElement = driver.findElement(By.id("email"));

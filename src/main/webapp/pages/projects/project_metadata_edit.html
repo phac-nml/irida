@@ -21,7 +21,7 @@
 
     <div tabset="">
         <div tab="" th:attr="heading=#{projects.meta.tabs.meta}">
-            <form th:action="@{__${#httpServletRequest.requestURI}__}" method="post" role="form"
+            <form th:action="@{/projects/{projectId}/metadata/edit(projectId=${project.getId()})}" method="post" role="form"
                   class="panel panel-info" th:object="${project}">
                 <div class="panel-heading">
                     <h3 class="panel-title">Edit Project Metadata</h3>

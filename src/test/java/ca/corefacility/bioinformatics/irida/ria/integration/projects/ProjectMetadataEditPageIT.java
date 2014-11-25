@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
@@ -55,6 +56,7 @@ public class ProjectMetadataEditPageIT {
 
 	private WebDriver driver;
 	private ProjectMetadataEditPage page;
+
 	@Before
 	public void setUp() {
 		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
@@ -69,7 +71,7 @@ public class ProjectMetadataEditPageIT {
 
 	@Test
 	public void pageCreateCorrectly() {
-		page.gotoPage();
+		page.gotoPage(PROJECT_ID_OWNER);
 		assertEquals("Contains a placeholder with the project name", PROJECT_NAME, page.getNamePlaceholder());
 		assertEquals("Contains a placeholder with the project organism", PROJECT_ORGANISM,
 				page.getOrganismPlaceholder());
@@ -82,13 +84,12 @@ public class ProjectMetadataEditPageIT {
 
 	@Test
 	public void canUpdateProjectInformation() {
-		driver.get("http://localhost:8080/projects/" + PROJECT_ID_OWNER + "/metadata/edit");
+		page.gotoPage(PROJECT_ID_OWNER);
 		page.updateProject(GOOD_PROJECT_NAME, GOOD_PROJECT_ORGANISM, GOOD_PROJECT_DESCRIPTION, GOOD_PROJECT_REMOTEURL);
-		assertEquals("Redirects to the metadata page", driver.getCurrentUrl(),
-				"http://localhost:8080/projects/" + PROJECT_ID_OWNER + "/metadata");
+		assertFalse("Redirects to the metadata page", driver.getCurrentUrl().contains("edit"));
 
 		ProjectMetadataPage metadataPage = new ProjectMetadataPage(driver);
-		driver.get("http://localhost:8080/projects/" + PROJECT_ID_OWNER + "/metadata");
+		metadataPage.goTo(PROJECT_ID_OWNER);
 		assertEquals("Updated the project name", GOOD_PROJECT_NAME, metadataPage.getDataProjectName());
 		assertEquals("Updated the organism", GOOD_PROJECT_ORGANISM, metadataPage.getDataProjectOrganism());
 		assertEquals("Updated the description", GOOD_PROJECT_DESCRIPTION, metadataPage.getDataProjectDescription());
@@ -97,14 +98,14 @@ public class ProjectMetadataEditPageIT {
 
 	@Test
 	public void errorsIfBadProjectInformation() {
-		page.gotoPage();
+		page.gotoPage(PROJECT_ID_OWNER);
 		page.updateProject(GOOD_PROJECT_NAME, GOOD_PROJECT_ORGANISM, GOOD_PROJECT_DESCRIPTION, BAD_PROJECT_URL);
-		assertTrue("Remains on the same page", driver.getCurrentUrl().contains(page.RELATIVE_URL));
+		assertTrue("Remains on the same page", driver.getCurrentUrl().contains("edit"));
 	}
 
 	@Test
 	public void testDeleteReferenceFile() {
-		page.gotoPage();
+		page.gotoPage(PROJECT_ID_OWNER);
 		page.clickReferenceFilesTab();
 		assertEquals("Should display on reference file", 1, page.getReferenceFileCount());
 		page.clickDeleteReferenceFileButton();
