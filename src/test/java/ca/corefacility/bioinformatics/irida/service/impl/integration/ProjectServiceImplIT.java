@@ -53,6 +53,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -78,6 +79,8 @@ public class ProjectServiceImplIT {
 	private UserService userService;
 	@Autowired
 	private SampleService sampleService;
+	@Autowired
+	private ReferenceFileService referenceFileService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
@@ -431,6 +434,17 @@ public class ProjectServiceImplIT {
 		ReferenceFile rf = pr.getObject();
 		assertTrue("reference file should be beneath the base directory for reference files.",
 				rf.getFile().startsWith(referenceFileBaseDirectory));
+	}
+
+	@Test
+	public void testRemoveReferenceFileFromProject() {
+		Project p = asRole(Role.ROLE_ADMIN).projectService.read(1L);
+		ReferenceFile f = asRole(Role.ROLE_ADMIN).referenceFileService.read(1L);
+
+		asRole(Role.ROLE_ADMIN).projectService.removeReferenceFileFromProject(p, f);
+
+		Collection<Join<Project, ReferenceFile>> files = asRole(Role.ROLE_ADMIN).referenceFileService.getReferenceFilesForProject(p);
+		assertTrue("No reference files should be assigned to project.", files.isEmpty());
 	}
 
 	private Project p() {
