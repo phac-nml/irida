@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -492,14 +493,24 @@ public class ProjectSamplesController {
 	@RequestMapping(value = "/{projectId}/ajax/samples/galaxy/upload", method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> postUploadSampleToGalaxy(@PathVariable Long projectId,
 			@RequestParam String email, @RequestParam String name,
-			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, HttpServletRequest request) {
+			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, HttpServletRequest request, Locale locale) {
 
 		Set<Sample> samples = (Set<Sample>) sampleService.readMultiple(sampleIds);
-		UploadWorker worker = galaxyUploadService.performUploadSelectedSamples(samples, new GalaxyProjectName(name), new GalaxyAccountEmail(email));
-
-		request.getSession().setAttribute("galaxyUploadWorker", worker);
-		// TODO (14-11-24 - josh): This upload worker can be used to create a progress bar
-		return ImmutableMap.of("status", worker.getProportionComplete());
+		UploadWorker worker = null;
+		Map<String, Object> result = new HashMap<>();
+		try {
+			worker = galaxyUploadService
+					.performUploadSelectedSamples(samples, new GalaxyProjectName(name), new GalaxyAccountEmail(email));
+			String sessionAttr = "gw-" + UUID.randomUUID();
+			request.getSession().setAttribute(sessionAttr, worker);
+			result.put("result", "success");
+			result.put("sessionAttr", sessionAttr);
+			result.put("msg", messageSource.getMessage("galaxy.success", new Object[] { samples.size() }, locale));
+		} catch (ConstraintViolationException e) {
+			result.put("result", "errors");
+			result.put("errors", messageSource.getMessage("galaxy.error", new Object[]{}, locale));
+		}
+		return result;
 	}
 
 	/**

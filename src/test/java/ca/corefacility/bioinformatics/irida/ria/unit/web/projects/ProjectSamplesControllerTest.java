@@ -21,13 +21,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
@@ -416,12 +419,12 @@ public class ProjectSamplesControllerTest {
 				.thenReturn(worker);
 
 		Map<String, Object> result = controller
-				.postUploadSampleToGalaxy(1L, accountUsername, accountEmail, ImmutableList.of(sample.getId()), request);
+				.postUploadSampleToGalaxy(1L, accountUsername, accountEmail, ImmutableList.of(sample.getId()), request, Locale.US);
 		assertTrue(result.containsKey("status"));
 		assertEquals(33.3f, result.get("status"));
 	}
 
-	@Test(expected = ConstraintViolationException.class)
+	@Test
 	public void testUploadSampleToGalaxyExceptions() {
 		Sample sample = TestDataFactory.constructSample();
 		Set<Sample> samples = ImmutableSet.of(sample);
@@ -433,11 +436,9 @@ public class ProjectSamplesControllerTest {
 		String accountUsername = null;
 		when(galaxyUploadService.performUploadSelectedSamples(anySet(), any(GalaxyProjectName.class), any(
 				GalaxyAccountEmail.class)))
-				.thenReturn(worker);
+				.thenThrow(new ConstraintViolationException("Some Error", null));
 
 		Map<String, Object> result = controller
-				.postUploadSampleToGalaxy(1L, accountUsername, accountEmail, ImmutableList.of(sample.getId()), request);
-		String fred = "FRED";
-
+				.postUploadSampleToGalaxy(1L, accountUsername, accountEmail, ImmutableList.of(sample.getId()), request, Locale.US);
 	}
 }
