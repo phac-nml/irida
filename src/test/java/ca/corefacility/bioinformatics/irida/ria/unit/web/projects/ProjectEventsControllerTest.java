@@ -94,4 +94,32 @@ public class ProjectEventsControllerTest {
 		assertEquals(ProjectEventsController.FRAGMENT_NAMES.get(event.getClass()), next.get("name"));
 		assertEquals(event, next.get("event"));
 	}
+
+	@Test
+	public void testUnknownEvent() {
+		Long projectId = 1l;
+		Project project = new Project();
+		ExtendedModelMap model = new ExtendedModelMap();
+		ProjectEvent event = new ProjectEvent() {
+
+			@Override
+			public String getLabel() {
+				return "an unmapped event";
+			}
+		};
+
+		Page<ProjectEvent> page = new PageImpl<>(Lists.newArrayList(event));
+
+		when(projectService.read(projectId)).thenReturn(project);
+		when(eventService.getEventsForProject(eq(project), any(Pageable.class))).thenReturn(page);
+
+		String recentEventsForProject = controller.getRecentEventsForProject(projectId, model);
+
+		assertEquals(ProjectEventsController.EVENTS_VIEW, recentEventsForProject);
+		assertTrue(model.containsAttribute("events"));
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> events = (List<Map<String, Object>>) model.get("events");
+		assertEquals(0, events.size());
+
+	}
 }
