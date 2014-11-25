@@ -55,6 +55,7 @@ public class EditUserPageIT {
 
 	@Test
 	public void testUpdateFirstName() {
+		editPage.goTo();
 		String newName = "newFirstName";
 		String updateName = editPage.updateFirstName(newName);
 		assertTrue(editPage.updateSuccess());
@@ -63,6 +64,7 @@ public class EditUserPageIT {
 
 	@Test
 	public void testUpdatePassword() {
+		editPage.goTo();
 		String newPassword = "paSsW0Rd";
 		editPage.updatePassword(newPassword, newPassword);
 		assertTrue(editPage.updateSuccess());
@@ -70,6 +72,7 @@ public class EditUserPageIT {
 
 	@Test
 	public void testUpdatePasswordFail() {
+		editPage.goTo();
 		String newPassword = "paSsW0Rd";
 		editPage.updatePassword(newPassword, "notthesame");
 		assertFalse(editPage.updateSuccess());

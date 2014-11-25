@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.users;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -92,7 +91,6 @@ public class PasswordResetPageIT {
 		passwordResetPage.logout(driver);
 		// try new password
 		LoginPage.login(driver, RESET_USER, password);
-		assertEquals("The user is logged in and redirected.", "http://localhost:8080/dashboard",
-				driver.getCurrentUrl());
+		assertTrue("The user is logged in and redirected.", driver.getCurrentUrl().contains("dashboard"));
 	}
 }

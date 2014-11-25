@@ -56,6 +56,7 @@ public class CreatePasswordResetPageIT {
 
 	@Test
 	public void testCreateReset() {
+		passwordResetPage.goTo();
 		String email = "differentUser@nowhere.com";
 		passwordResetPage.enterEmail(email);
 		assertTrue(passwordResetPage.checkSuccess());
@@ -63,6 +64,7 @@ public class CreatePasswordResetPageIT {
 
 	@Test
 	public void testCreateResetBadEmail() {
+		passwordResetPage.goTo();
 		String email = "notauser@nowhere.com";
 		passwordResetPage.enterEmail(email);
 		assertFalse(passwordResetPage.checkSuccess());

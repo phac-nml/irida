@@ -11,12 +11,14 @@ import org.openqa.selenium.WebElement;
  * 
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
-public class ProjectDetailsPage {
-    private WebDriver driver;
+public class ProjectDetailsPage extends AbstractPage {
 
-	public ProjectDetailsPage(WebDriver driver, Long projectId) {
-		this.driver = driver;
-		driver.get("http://localhost:8080/projects/" + projectId);
+	public ProjectDetailsPage(WebDriver driver) {
+		super(driver);
+	}
+
+	public void goTo(Long projectId) {
+		get(driver, "projects/" + projectId);
 	}
 
 	public String getPageTitle() {

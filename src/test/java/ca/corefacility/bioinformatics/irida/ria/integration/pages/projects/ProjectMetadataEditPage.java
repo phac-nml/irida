@@ -22,9 +22,10 @@ public class ProjectMetadataEditPage extends AbstractPage {
 		this.pageUtilities = new PageUtilities(driver);
 	}
 
-	public void gotoPage() {
-		get(driver, RELATIVE_URL);
+	public void gotoPage(Long projectId) {
+		get(driver, "projects/" + projectId + "/metadata/edit");
 	}
+
 
 	public String getNamePlaceholder() {
 		return driver.findElement(By.name("name")).getAttribute(ATTR_PLACEHOLDER);
