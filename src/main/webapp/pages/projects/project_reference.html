@@ -15,8 +15,20 @@
 	<div class="ng-cloak row" ng-controller="FilesCtrl as table">
 		<section th:with="owner=(${isOwner} or ${isAdmin})" class="col-md-12 alert alert-info" ng-show="table.files.length===0">
 			<strong th:text="#{referenceFile.no-files.heading}">__No reference files available for this project.</strong>
-			<p id="rf-notice" th:if="${!owner}" class="rf-user" th:text="#{referenceFile.no-files.body-user}">__Ask a project manager to add reference files to this project.</p>
-			<p id="rf-notice" th:if="${owner}" class="rf-owner" th:text="#{referenceFile.no-files.body-owner}">__Click the add button to upload a new reference file to this project.</p>
+
+			<p id="rf-notice" th:if="${!owner}" class="rf-user" th:text="#{referenceFile.no-files.body-user}">__Ask a project
+				manager to add reference files to this project.</p>
+
+			<p id="rf-notice" th:if="${owner}" class="rf-owner" th:text="#{referenceFile.no-files.body-owner}">__Click the add
+				button to upload a new reference file to this project.</p>
+		</section>
+		<section class="row" ng-controller="FileUploadCtrl as upload">
+			<div class="col-md-12">
+				<button class="btn btn-default" ng-file-select="upload.onFileSelect($files)">
+					<span class="fa fa-fw fa-upload"></span>
+					<span th:text="#{referenceFile.upload-btn}"></span>
+				</button>
+			</div>
 		</section>
 		<section id="rf-files" class="col-md-12" ng-show="table.files.length > 0">
 			<table id="files-table" class="table">
@@ -31,17 +43,15 @@
 				<tbody>
 				<tr class="ref-file-row" ng-repeat="file in table.files">
 					<td>{{file.label}}</td>
-					<td>{{file.size}}</td>
+					<td>{{file.size | bytes:2}}</td>
 					<td>{{file.createdDate | date:'mediumDate'}}</td>
 					<td>
 						<div class="btn-toolbar pull-right">
 							<button class="btn btn-xs btn-default" ng-click="table.download(file.id)" data:tooltip="#{form.download}">
-								<span class="fa fa-fw fa-download"></span>
-								<span class="sr-only" th:text="#{form.download}"></span>
+								<span class="fa fa-fw fa-download"></span> <span class="sr-only" th:text="#{form.download}"></span>
 							</button>
 							<button th:if="${isOwner} or ${isAdmin}" class="btn btn-xs btn-default removeBtn" ng-click="table.deleteFile(file)" data:tooltip="#{form.btn.remove}">
-								<span class="fa fa-fw fa-trash"></span>
-								<span class="sr-only" th:text="#{form.btn.remove}"></span>
+								<span class="fa fa-fw fa-trash"></span> <span class="sr-only" th:text="#{form.btn.remove}"></span>
 							</button>
 						</div>
 					</td>
@@ -52,6 +62,7 @@
 	</div>
 </main>
 <th:block layout:fragment="scripts" th:inline="javascript">
+	<script th:src="@{/resources/bower_components/ng-file-upload/angular-file-upload.min.js}" src="/resources/bower_components/ng-file-upload/angular-file-upload.min.js"></script>
 	<script th:src="@{/resources/js/pages/projects/reference.js}" src="/resources/js/pages/projects/reference.js"></script>
 </th:block>
 </body>

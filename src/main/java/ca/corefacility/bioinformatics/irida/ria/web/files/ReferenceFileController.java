@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.stereotype.Controller;
@@ -32,6 +31,8 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for all {@link ReferenceFile} related views
@@ -91,7 +92,7 @@ public class ReferenceFileController {
 	 * @throws IOException
 	 */
 	@RequestMapping("/project/{projectId}/new")
-	public @ResponseBody Map<String, String> createNewReferenceFile(@PathVariable Long projectId,
+	public @ResponseBody Map<String, Object> createNewReferenceFile(@PathVariable Long projectId,
 			@RequestParam("file") MultipartFile file) throws IOException {
 
 		logger.debug("Adding reference file to project " + projectId);
@@ -113,21 +114,21 @@ public class ReferenceFileController {
 		logger.debug("Created reference file in project " + projectId);
 
 		ReferenceFile refFile = projectReferenceFileJoin.getObject();
-		Map<String, String> result = new HashMap<>();
+		Map<String, Object> result = new HashMap<>();
 		Path path = refFile.getFile();
 		long size = 0;
 		if (Files.exists(path)) {
 			size = Files.size(path);
 		}
-		result.put("size", fileSizeConverter.convert(size));
+		result.put("size", size);
 		result.put("id", refFile.getId().toString());
 		result.put("label", refFile.getLabel());
-		result.put("createdDate", dateFormatter.print(refFile.getCreatedDate(), LocaleContextHolder.getLocale()));
+		result.put("createdDate", refFile.getCreatedDate());
 
 		// Clean up temporary files
 		Files.deleteIfExists(target);
 		Files.deleteIfExists(temp);
-		return result;
+		return ImmutableMap.of("result", result);
 	}
 
 	/**

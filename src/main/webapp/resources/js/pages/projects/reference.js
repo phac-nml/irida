@@ -14,10 +14,13 @@
     };
 
     $rootScope.$on('FILE_DELETED', function (e, args) {
-      console.log("deleteing")
       angular.copy(_.filter(svc.files, function (f) {
         return args.id !== f.id;
       }), svc.files);
+    });
+
+    $rootScope.$on('NEW_FILE', function(e, args) {
+      svc.files.push(args.file);
     });
   }
 
@@ -57,6 +60,37 @@
     }
   }
 
+  function FileUploadService($rootScope, $upload, BASE_URL) {
+    "use strict";
+    var svc = this,
+        projectId = $rootScope.projectId;
+
+    svc.uploadFiles = function($files) {
+      // TODO: add a check to see if this file has already been upload and give a warning if it has.
+      _.each($files, function(file) {
+        $upload.upload({
+          url: BASE_URL + "referenceFiles/project/" + projectId + "/new",
+          file: file
+        }).success(function(data) {
+          $rootScope.$broadcast('NEW_FILE', {file: data.result})
+        }).error(function(data) {
+          console.log("error");
+          console.log(data);
+        });
+      });
+    };
+  }
+
+  function bytes() {
+    return function(bytes, precision) {
+      if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) return '-';
+      if (typeof precision === 'undefined') precision = 1;
+      var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'],
+          number = Math.floor(Math.log(bytes) / Math.log(1024));
+      return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) +  ' ' + units[number];
+    };
+  }
+
   function DeleteCtrl($modalInstance, file) {
     "use strict";
     var vm = this;
@@ -87,10 +121,22 @@
     ProjectFileService.getFiles();
   }
 
-  angular.module('References', [])
+  function FileUploadCtrl(FileUploadService) {
+    "use strict";
+    var vm = this;
+
+    vm.onFileSelect = function($files) {
+      FileUploadService.uploadFiles($files);
+    };
+  }
+
+  angular.module('References', ['angularFileUpload'])
     .service('ProjectFileService', ['$rootScope', 'Restangular', ProjectFileService])
     .service('FileService', ['$rootScope', '$modal', 'BASE_URL', 'Restangular', 'notifications', FileService])
+    .service('FileUploadService', ['$rootScope', '$upload', 'BASE_URL', FileUploadService])
+    .filter('bytes', [bytes])
     .controller('FilesCtrl', ['ProjectFileService', 'FileService', FilesCtrl])
     .controller('DeleteCtrl', ['$modalInstance', 'file', DeleteCtrl])
+    .controller('FileUploadCtrl', ['FileUploadService', FileUploadCtrl])
   ;
 })(angular, jQuery, _);
