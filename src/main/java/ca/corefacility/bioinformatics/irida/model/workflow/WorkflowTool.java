@@ -15,70 +15,74 @@ import javax.xml.bind.annotation.XmlElement;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WorkflowTool {
-	@XmlElement(name="name")
+	@XmlElement(name = "name")
 	private String name;
-	
-	@XmlElement(name="id")
+
+	@XmlElement(name = "id")
 	private String id;
-	
-	@XmlElement(name="version")
+
+	@XmlElement(name = "version")
 	private String version;
-	
-	@XmlElement(name="owner")
+
+	@XmlElement(name = "owner")
 	private String owner;
-	
-	@XmlElement(name="url")
+
+	@XmlElement(name = "url")
 	private URL url;
-	
-	@XmlElement(name="revision")
+
+	@XmlElement(name = "revision")
 	private String revision;
+
+	public WorkflowTool() {
+	}
+
+	/**
+	 * Builds a new {@link WorkflowTool} with the given information.
+	 * 
+	 * @param name
+	 *            The name of the tool.
+	 * @param id
+	 *            The id of the tool
+	 * @param version
+	 *            The version of the tool.
+	 * @param owner
+	 *            The owner of the tool.
+	 * @param url
+	 *            The {@link URL} to download the tool from.
+	 * @param revision
+	 *            The revision number of the tool.
+	 */
+	public WorkflowTool(String name, String id, String version, String owner, URL url, String revision) {
+		this.name = name;
+		this.id = id;
+		this.version = version;
+		this.owner = owner;
+		this.url = url;
+		this.revision = revision;
+	}
 
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public String getId() {
 		return id;
 	}
 
-	public void setId(String id) {
-		this.id = id;
-	}
-
 	public String getVersion() {
 		return version;
-	}
-
-	public void setVersion(String version) {
-		this.version = version;
 	}
 
 	public String getOwner() {
 		return owner;
 	}
 
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
-
 	public URL getUrl() {
 		return url;
 	}
 
-	public void setUrl(URL url) {
-		this.url = url;
-	}
-
 	public String getRevision() {
 		return revision;
-	}
-
-	public void setRevision(String revision) {
-		this.revision = revision;
 	}
 
 	@Override

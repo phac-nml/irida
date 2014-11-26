@@ -86,28 +86,18 @@ public class IridaWorkflowLoaderServiceIT {
 	}
 
 	private IridaWorkflowDescription buildTestDescription() throws MalformedURLException {
-		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription();
-		iridaWorkflow.setName("TestWorkflow");
-		iridaWorkflow.setVersion("1.0");
-		iridaWorkflow.setAuthor("Mr. Developer");
-		iridaWorkflow.setEmail("developer@example.com");
-		iridaWorkflow.setInputs(new WorkflowInput("sequence_reads", "reference"));
-
 		List<WorkflowOutput> outputs = new LinkedList<>();
 		outputs.add(new WorkflowOutput("output1", "output1.txt"));
 		outputs.add(new WorkflowOutput("output2", "output2.txt"));
-		iridaWorkflow.setOutputs(outputs);
 
 		List<WorkflowTool> tools = new LinkedList<>();
-		WorkflowTool workflowTool = new WorkflowTool();
-		workflowTool.setUrl(new URL("http://toolshed.g2.bx.psu.edu/"));
-		workflowTool.setName("sam_to_bam");
-		workflowTool.setOwner("devteam");
-		workflowTool.setRevision("8176b2575aa1");
-		workflowTool.setVersion("1.1.4");
-		workflowTool.setId("toolshed.g2.bx.psu.edu/repos/devteam/sam_to_bam/sam_to_bam/1.1.4");
+		WorkflowTool workflowTool = new WorkflowTool("sam_to_bam",
+				"toolshed.g2.bx.psu.edu/repos/devteam/sam_to_bam/sam_to_bam/1.1.4", "1.1.4", "devteam", new URL(
+						"http://toolshed.g2.bx.psu.edu/"), "8176b2575aa1");
 		tools.add(workflowTool);
-		iridaWorkflow.setTools(tools);
+
+		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription("TestWorkflow", "1.0", "Mr. Developer",
+				"developer@example.com", new WorkflowInput("sequence_reads", "reference"), outputs, tools);
 
 		return iridaWorkflow;
 	}
@@ -145,7 +135,8 @@ public class IridaWorkflowLoaderServiceIT {
 
 	/**
 	 * Tests loading up the workflow structure from a file.
-	 * @throws FileNotFoundException 
+	 * 
+	 * @throws FileNotFoundException
 	 */
 	@Test
 	public void testLoadWorkflowStructure() throws FileNotFoundException {
