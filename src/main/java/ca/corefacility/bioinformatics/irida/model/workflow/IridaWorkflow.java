@@ -37,6 +37,14 @@ public class IridaWorkflow {
 	public void setWorkflowStructure(IridaWorkflowStructure workflowStructure) {
 		this.workflowStructure = workflowStructure;
 	}
+	
+	/**
+	 * Gets a unique identifier for this workflow.
+	 * @return An {@link IridaWorkflowIdentifier} for this workflow.
+	 */
+	public IridaWorkflowIdentifier getWorkflowIdentifier() {
+		return new IridaWorkflowIdentifier(workflowDescription.getName(), workflowDescription.getVersion());
+	}
 
 	@Override
 	public int hashCode() {
