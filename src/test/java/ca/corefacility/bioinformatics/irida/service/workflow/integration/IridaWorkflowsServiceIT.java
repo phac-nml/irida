@@ -1,8 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service.workflow.integration;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.net.URISyntaxException;
+import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowIdentifier;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -70,5 +72,16 @@ public class IridaWorkflowsServiceIT {
 	@Test(expected = IridaWorkflowNotFoundException.class)
 	public void testLoadIridaWorkflowFail() throws IridaWorkflowNotFoundException {
 		iridaWorkflowsService.loadIridaWorkflow(invalidWorkflow);
+	}
+	
+	/**
+	 * Tests getting a collection of all installed workflows.
+	 */
+	@Test
+	public void testGetInstalledWorkflows() {
+		Collection<IridaWorkflow> iridaWorkflows = iridaWorkflowsService.getInstalledWorkflows();
+		assertEquals(1, iridaWorkflows.size());
+		IridaWorkflow workflow = iridaWorkflows.iterator().next();
+		assertNotNull(workflow);
 	}
 }

@@ -7,6 +7,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -87,11 +88,11 @@ public class IridaWorkflowsService {
 	}
 
 	/**
-	 * Returns a workflow with the given name.
+	 * Returns a workflow with the given {@link IridaWorkflowIdentifier}.
 	 * 
-	 * @param workflowName
-	 *            The name of the workflow to get.
-	 * @return An IridaWorkflow with the given name.
+	 * @param workflowIdentifier
+	 *            The identifier of the workflow to get.
+	 * @return An IridaWorkflow with the given identifier.
 	 * @throws IridaWorkflowNotFoundException
 	 *             If no workflow with the given identifier was found.
 	 */
@@ -104,5 +105,13 @@ public class IridaWorkflowsService {
 		} else {
 			throw new IridaWorkflowNotFoundException(workflowIdentifier);
 		}
+	}
+	
+	/**
+	 * Gets a Collection of all installed workflows.
+	 * @return  A collection of all installed workflows.
+	 */
+	public Collection<IridaWorkflow> getInstalledWorkflows() {
+		return registeredWorkflows.values();
 	}
 }
