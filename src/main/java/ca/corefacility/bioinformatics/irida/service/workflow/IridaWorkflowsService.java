@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowIdentifier;
 
@@ -32,7 +33,7 @@ public class IridaWorkflowsService {
 	 * Stores registered workflows in the format of { workflowName ->
 	 * IridaWorkflow }
 	 */
-	private Map<String, Path> registeredWorkflows;
+	private Map<IridaWorkflowIdentifier, IridaWorkflow> registeredWorkflows;
 
 	/**
 	 * Builds a new IridaWorkflowService for loading up installed workflows.
@@ -42,11 +43,13 @@ public class IridaWorkflowsService {
 	 * @param iridaWorkflowLoaderService
 	 *            The service used to load up workflows.
 	 * @throws IOException
-	 *             If there was an issue loading workflows.
+	 *             If there was an issue reading a file.
+	 * @throws IridaWorkflowLoadException
+	 *             If there was an issue loading a workflow.
 	 */
 	@Autowired
 	public IridaWorkflowsService(String workflowResourceLocation, IridaWorkflowLoaderService iridaWorkflowLoaderService)
-			throws IOException {
+			throws IOException, IridaWorkflowLoadException {
 		this.iridaWorkflowLoaderService = iridaWorkflowLoaderService;
 		this.workflowResourceLocation = workflowResourceLocation;
 
@@ -55,13 +58,21 @@ public class IridaWorkflowsService {
 		registerWorkflows();
 	}
 
-	private void registerWorkflows() throws IOException {
+	private void registerWorkflows() throws IOException, IridaWorkflowLoadException {
 		Path resourcePath = Paths.get(IridaWorkflowsService.class.getResource(workflowResourceLocation).getFile());
 		DirectoryStream<Path> stream = Files.newDirectoryStream(resourcePath);
 
 		for (Path workflowDirectory : stream) {
 			String name = workflowDirectory.toFile().getName();
-			registeredWorkflows.put(name, workflowDirectory);
+			IridaWorkflowIdentifier workflowIdentifier = new IridaWorkflowIdentifier(name, "test");
+
+			try {
+				IridaWorkflow workflow = iridaWorkflowLoaderService.loadIridaWorkflow(workflowDirectory);
+				registeredWorkflows.put(workflowIdentifier, workflow);
+			} catch (Exception e) {
+				throw new IridaWorkflowLoadException("Could not load workflow " + workflowIdentifier
+						+ " from directory " + workflowDirectory);
+			}
 		}
 	}
 
@@ -71,19 +82,17 @@ public class IridaWorkflowsService {
 	 * @param workflowName
 	 *            The name of the workflow to get.
 	 * @return An IridaWorkflow with the given name.
-	 * @throws IridaWorkflowLoadException
-	 *             If there was an issue loading the workflow.
+	 * @throws IridaWorkflowNotFoundException
+	 *             If no workflow with the given identifier was found.
 	 */
-	public IridaWorkflow loadIridaWorkflow(IridaWorkflowIdentifier workflowIdentifier) throws IridaWorkflowLoadException {
+	public IridaWorkflow loadIridaWorkflow(IridaWorkflowIdentifier workflowIdentifier)
+			throws IridaWorkflowNotFoundException {
 		checkNotNull(workflowIdentifier, "workflowIdentifier is null");
 
-		Path workflowDirectory = registeredWorkflows.get(workflowIdentifier.getWorkflowName());
-
-		try {
-			return iridaWorkflowLoaderService.loadIridaWorkflow(workflowDirectory);
-		} catch (Exception e) {
-			throw new IridaWorkflowLoadException("Could not load workflow " + workflowIdentifier
-					+ " from directory " + workflowDirectory);
+		if (registeredWorkflows.containsKey(workflowIdentifier)) {
+			return registeredWorkflows.get(workflowIdentifier);
+		} else {
+			throw new IridaWorkflowNotFoundException(workflowIdentifier);
 		}
 	}
 }

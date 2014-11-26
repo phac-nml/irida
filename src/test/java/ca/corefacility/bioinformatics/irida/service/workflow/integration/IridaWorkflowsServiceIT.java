@@ -21,7 +21,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsServiceConfig;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowIdentifier;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -45,9 +45,9 @@ public class IridaWorkflowsServiceIT {
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
 
-	private static final IridaWorkflowIdentifier validWorkflow = new IridaWorkflowIdentifier("TestWorkflow", "0.0.1");
+	private static final IridaWorkflowIdentifier validWorkflow = new IridaWorkflowIdentifier("TestWorkflow", "test");
 	private static final IridaWorkflowIdentifier invalidWorkflow = new IridaWorkflowIdentifier("InvalidWorkflow",
-			"0.0.1");
+			"test");
 
 	@Before
 	public void setup() throws URISyntaxException {
@@ -56,20 +56,21 @@ public class IridaWorkflowsServiceIT {
 	/**
 	 * Tests to make sure we can successfully load a workflow.
 	 * 
-	 * @throws IridaWorkflowLoadException
+	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test
-	public void testLoadIridaWorkflowSuccess() throws IridaWorkflowLoadException {
+	public void testLoadIridaWorkflowSuccess() throws IridaWorkflowNotFoundException {
 		assertNotNull(iridaWorkflowsService.loadIridaWorkflow(validWorkflow));
 	}
 
 	/**
 	 * Tests to make sure we fail to load an unknown workflow.
 	 * 
-	 * @throws IridaWorkflowLoadException
+	 * @throws IridaWorkflowNotFoundException
+	 * 
 	 */
-	@Test(expected = IridaWorkflowLoadException.class)
-	public void testLoadIridaWorkflowFail() throws IridaWorkflowLoadException {
+	@Test(expected = IridaWorkflowNotFoundException.class)
+	public void testLoadIridaWorkflowFail() throws IridaWorkflowNotFoundException {
 		iridaWorkflowsService.loadIridaWorkflow(invalidWorkflow);
 	}
 }
