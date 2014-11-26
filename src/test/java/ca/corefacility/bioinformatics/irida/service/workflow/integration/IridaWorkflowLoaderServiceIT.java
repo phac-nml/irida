@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.workflow.integration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -9,8 +10,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
@@ -31,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowStructure;
@@ -63,6 +67,8 @@ public class IridaWorkflowLoaderServiceIT {
 	private Path workflowDirectoryPath;
 	private Path workflowDirectoryPathNoDefinition;
 	private Path workflowDirectoryPathNoStructure;
+	private Path workflowDirectoryPathInvalidVersion;
+	private Path workflowDirectoryPathInvalidName;
 
 	@Before
 	public void setup() throws JAXBException, URISyntaxException, FileNotFoundException {
@@ -75,6 +81,10 @@ public class IridaWorkflowLoaderServiceIT {
 				"TestWorkflowNoDefinition").toURI());
 		workflowDirectoryPathNoStructure = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
 				"TestWorkflowNoStructure").toURI());
+		workflowDirectoryPathInvalidVersion = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
+				"TestWorkflowInvalidVersion").toURI());
+		workflowDirectoryPathInvalidName = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
+				"TestWorkflowInvalidName").toURI());
 	}
 
 	private IridaWorkflow buildTestWorkflow() throws MalformedURLException {
@@ -86,6 +96,10 @@ public class IridaWorkflowLoaderServiceIT {
 	}
 
 	private IridaWorkflowDescription buildTestDescription() throws MalformedURLException {
+		return buildTestDescription("TestWorkflow", "1.0");
+	}
+
+	private IridaWorkflowDescription buildTestDescription(String name, String version) throws MalformedURLException {
 		List<WorkflowOutput> outputs = new LinkedList<>();
 		outputs.add(new WorkflowOutput("output1", "output1.txt"));
 		outputs.add(new WorkflowOutput("output2", "output2.txt"));
@@ -96,7 +110,7 @@ public class IridaWorkflowLoaderServiceIT {
 						"http://toolshed.g2.bx.psu.edu/"), "8176b2575aa1");
 		tools.add(workflowTool);
 
-		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription("TestWorkflow", "1.0", "Mr. Developer",
+		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(name, version, "Mr. Developer",
 				"developer@example.com", new WorkflowInput("sequence_reads", "reference"), outputs, tools);
 
 		return iridaWorkflow;
@@ -148,42 +162,69 @@ public class IridaWorkflowLoaderServiceIT {
 	}
 
 	/**
-	 * Tests successfully loading up a workflow from a directory.
-	 * 
-	 * @throws JAXBException
-	 * @throws XmlMappingException
-	 * @throws IOException
+	 * Tests successfully loading up all versions of a workflow from a
+	 * directory.
 	 */
 	@Test
-	public void testLoadWorkflowFromDirectorySuccess() throws JAXBException, XmlMappingException, IOException {
-		IridaWorkflow iridaWorkflow = buildTestWorkflow();
-		IridaWorkflow iridaWorkflowFromFile = workflowLoaderService.loadIridaWorkflow(workflowDirectoryPath);
+	public void testLoadAllWorkflowVersionsSuccess() throws IOException, IridaWorkflowLoadException {
+		Set<IridaWorkflow> iridaWorkflowsFromFile = workflowLoaderService
+				.loadAllWorkflowVersions(workflowDirectoryPath);
 
-		assertEquals(iridaWorkflow, iridaWorkflowFromFile);
+		assertEquals(2, iridaWorkflowsFromFile.size());
+		Iterator<IridaWorkflow> iter = iridaWorkflowsFromFile.iterator();
+		IridaWorkflow workflowA = iter.next();
+		IridaWorkflow workflowB = iter.next();
+
+		assertEquals("TestWorkflow", workflowA.getWorkflowDescription().getName());
+		assertEquals("TestWorkflow", workflowB.getWorkflowDescription().getName());
+
+		assertTrue("workflows have invalid version numbers",
+				(workflowA.getWorkflowDescription().getVersion().equals("1.0") && workflowB.getWorkflowDescription()
+						.getVersion().equals("2.0"))
+						|| (workflowA.getWorkflowDescription().getVersion().equals("2.0") && workflowB
+								.getWorkflowDescription().getVersion().equals("1.0")));
 	}
 
 	/**
 	 * Tests failing to load up a workflow from a directory (no definition
 	 * file).
 	 * 
-	 * @throws JAXBException
-	 * @throws XmlMappingException
-	 * @throws IOException
+	 * @throws IridaWorkflowLoadException
 	 */
 	@Test(expected = FileNotFoundException.class)
-	public void testLoadWorkflowFromDirectoryFailNoDefinition() throws JAXBException, XmlMappingException, IOException {
-		workflowLoaderService.loadIridaWorkflow(workflowDirectoryPathNoDefinition);
+	public void testLoadWorkflowsFromDirectoryFailNoDefinition() throws IOException, IridaWorkflowLoadException {
+		workflowLoaderService.loadAllWorkflowVersions(workflowDirectoryPathNoDefinition);
 	}
 
 	/**
 	 * Tests failing to load up a workflow from a directory (no structure file).
 	 * 
-	 * @throws JAXBException
-	 * @throws XmlMappingException
-	 * @throws IOException
+	 * @throws IridaWorkflowLoadException
 	 */
 	@Test(expected = FileNotFoundException.class)
-	public void testLoadWorkflowFromDirectoryFailNoStructure() throws JAXBException, XmlMappingException, IOException {
-		workflowLoaderService.loadIridaWorkflow(workflowDirectoryPathNoStructure);
+	public void testLoadWorkflowsFromDirectoryFailNoStructure() throws IOException, IridaWorkflowLoadException {
+		workflowLoaderService.loadAllWorkflowVersions(workflowDirectoryPathNoStructure);
+	}
+
+	/**
+	 * Tests failing to load up a workflow from a directory where the version
+	 * number does not match the directory version.
+	 * 
+	 * @throws IridaWorkflowLoadException
+	 */
+	@Test(expected = IridaWorkflowLoadException.class)
+	public void testLoadWorkflowsFromDirectoryFailInvalidVersion() throws IOException, IridaWorkflowLoadException {
+		workflowLoaderService.loadAllWorkflowVersions(workflowDirectoryPathInvalidVersion);
+	}
+
+	/**
+	 * Tests failing to load up a workflow from a directory where the name does
+	 * not match the directory name.
+	 * 
+	 * @throws IridaWorkflowLoadException
+	 */
+	@Test(expected = IridaWorkflowLoadException.class)
+	public void testLoadWorkflowsFromDirectoryFailInvalidName() throws IOException, IridaWorkflowLoadException {
+		workflowLoaderService.loadAllWorkflowVersions(workflowDirectoryPathInvalidName);
 	}
 }

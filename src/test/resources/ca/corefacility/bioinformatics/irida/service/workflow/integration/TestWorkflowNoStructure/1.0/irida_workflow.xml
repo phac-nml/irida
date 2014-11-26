@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <iridaWorkflow>
-  <name>TestWorkflow</name>
+  <name>TestWorkflowNoStructure</name>
   <version>1.0</version>
   <author>Mr. Developer</author>
   <email>developer@example.com</email>

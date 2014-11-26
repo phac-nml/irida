@@ -36,7 +36,7 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
-		IridaApiNoGalaxyTestConfig.class, IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class})
+		IridaApiNoGalaxyTestConfig.class, IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExcecutionListener.class })
@@ -45,9 +45,11 @@ public class IridaWorkflowsServiceIT {
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
 
-	private static final IridaWorkflowIdentifier validWorkflow = new IridaWorkflowIdentifier("TestWorkflow", "test");
+	private static final IridaWorkflowIdentifier validWorkflow = new IridaWorkflowIdentifier("TestWorkflow", "1.0");
+	private static final IridaWorkflowIdentifier invalidVersionWorkflow = new IridaWorkflowIdentifier("TestWorkflow",
+			"invalid");
 	private static final IridaWorkflowIdentifier invalidWorkflow = new IridaWorkflowIdentifier("InvalidWorkflow",
-			"test");
+			"1.0");
 
 	@Before
 	public void setup() throws URISyntaxException {
@@ -73,7 +75,7 @@ public class IridaWorkflowsServiceIT {
 	public void testLoadIridaWorkflowFail() throws IridaWorkflowNotFoundException {
 		iridaWorkflowsService.loadIridaWorkflow(invalidWorkflow);
 	}
-	
+
 	/**
 	 * Tests getting a collection of all installed workflows.
 	 */
@@ -83,5 +85,17 @@ public class IridaWorkflowsServiceIT {
 		assertEquals(1, iridaWorkflows.size());
 		IridaWorkflow workflow = iridaWorkflows.iterator().next();
 		assertNotNull(workflow);
+		assertEquals(new IridaWorkflowIdentifier("TestWorkflow", "1.0"), workflow.getWorkflowIdentifier());
+	}
+	
+	/**
+	 * Tests to make sure we fail to load a workflow with an unknown version number.
+	 * 
+	 * @throws IridaWorkflowNotFoundException
+	 * 
+	 */
+	@Test(expected = IridaWorkflowNotFoundException.class)
+	public void testLoadIridaWorkflowVersionFail() throws IridaWorkflowNotFoundException {
+		iridaWorkflowsService.loadIridaWorkflow(invalidVersionWorkflow);
 	}
 }

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+  <name>TestWorkflow</name>
+  <version>2.0</version>
+  <author>Mr. Developer</author>
+  <email>developer@example.com</email>
+  <inputs>
+    <sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
+    <reference>reference</reference>
+  </inputs>
+  <outputs>
+    <output name="output1" fileName="output1.txt"></output>
+    <output name="output2" fileName="output2.txt"></output>
+  </outputs>
+  <tools>
+    <tool>
+      <name>sam_to_bam</name>
+      <id>toolshed.g2.bx.psu.edu/repos/devteam/sam_to_bam/sam_to_bam/1.1.4</id>
+      <version>1.1.4</version>
+      <owner>devteam</owner>
+      <url>http://toolshed.g2.bx.psu.edu/</url>
+      <revision>8176b2575aa1</revision>
+    </tool>
+  </tools>
+</iridaWorkflow>

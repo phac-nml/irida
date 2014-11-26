@@ -6,17 +6,23 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.XmlMappingException;
 import org.springframework.stereotype.Service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowStructure;
@@ -29,6 +35,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowStructur
  */
 @Service
 public class IridaWorkflowLoaderService {
+
+	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowLoaderService.class);
 
 	private static final String WORKFLOW_DEFINITION_FILE = "irida_workflow.xml";
 	private static final String WORKFLOW_STRUCTURE_FILE = "irida_workflow_structure.ga";
@@ -48,22 +56,52 @@ public class IridaWorkflowLoaderService {
 	}
 
 	/**
-	 * Loads up an {@link IridaWorkflow} from the given directory.
+	 * Loads up a set of {@link IridaWorkflow}s from the given directory.
 	 * 
 	 * @param workflowDirectory
-	 *            The directory containing the workflow files.
-	 * @return An {@link IridaWorkflow} for this workflow.
+	 *            The directory containing the different workflow versions and
+	 *            files.
+	 * @return A set of {@link IridaWorkflow}s for all versions of this
+	 *         workflow.
 	 * @throws XmlMappingException
 	 *             If there was an issue parsing the XML document.
 	 * @throws IOException
 	 *             If there was an issue reading one of the workflow files.
+	 * @throws IridaWorkflowLoadException
+	 *             If there was an issue when loading up the workflows.
 	 */
-	public IridaWorkflow loadIridaWorkflow(Path workflowDirectory) throws XmlMappingException, IOException {
+	public Set<IridaWorkflow> loadAllWorkflowVersions(Path workflowDirectory) throws XmlMappingException, IOException,
+			IridaWorkflowLoadException {
 		checkNotNull(workflowDirectory, "workflowDirectory is null");
 		checkArgument(Files.isDirectory(workflowDirectory), "workflowDirectory is not a directory");
 
-		return loadIridaWorkflow(workflowDirectory.resolve(WORKFLOW_DEFINITION_FILE),
-				workflowDirectory.resolve(WORKFLOW_STRUCTURE_FILE));
+		Set<IridaWorkflow> workflowVersions = new HashSet<>();
+
+		DirectoryStream<Path> stream = Files.newDirectoryStream(workflowDirectory);
+		String workflowName = workflowDirectory.toFile().getName();
+
+		for (Path versionDirectory : stream) {
+			if (!Files.isDirectory(versionDirectory)) {
+				logger.warn("Workflow version directory " + workflowDirectory + " contains a file " + versionDirectory
+						+ " that is not a proper workflow directory");
+			} else {
+				String workflowVersion = versionDirectory.toFile().getName();
+				IridaWorkflow iridaWorkflow = loadIridaWorkflow(versionDirectory.resolve(WORKFLOW_DEFINITION_FILE),
+						versionDirectory.resolve(WORKFLOW_STRUCTURE_FILE));
+
+				if (!workflowName.equals(iridaWorkflow.getWorkflowDescription().getName())
+						|| !workflowVersion.equals(iridaWorkflow.getWorkflowDescription().getVersion())) {
+					throw new IridaWorkflowLoadException("Workflow directory structure " + versionDirectory
+							+ " does not match name from workflow file: name="
+							+ iridaWorkflow.getWorkflowDescription().getName() + ", version="
+							+ iridaWorkflow.getWorkflowDescription().getVersion());
+				} else {
+					workflowVersions.add(iridaWorkflow);
+				}
+			}
+		}
+
+		return workflowVersions;
 	}
 
 	/**

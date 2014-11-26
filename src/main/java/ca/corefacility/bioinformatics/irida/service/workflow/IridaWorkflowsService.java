@@ -10,7 +10,10 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +31,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  */
 @Service
 public class IridaWorkflowsService {
+	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowsService.class);
+
 	private IridaWorkflowLoaderService iridaWorkflowLoaderService;
 
 	private static final String WORKFLOW_DIR = "workflows";
@@ -74,15 +79,22 @@ public class IridaWorkflowsService {
 		DirectoryStream<Path> stream = Files.newDirectoryStream(resourcePath);
 
 		for (Path workflowDirectory : stream) {
-			String name = workflowDirectory.toFile().getName();
-			IridaWorkflowIdentifier workflowIdentifier = new IridaWorkflowIdentifier(name, "test");
+			if (!Files.isDirectory(workflowDirectory)) {
+				logger.warn("Workflow directory " + resourcePath + " contains a file " + workflowDirectory
+						+ " that is not a proper workflow directory");
+			} else {
 
-			try {
-				IridaWorkflow workflow = iridaWorkflowLoaderService.loadIridaWorkflow(workflowDirectory);
-				registeredWorkflows.put(workflowIdentifier, workflow);
-			} catch (Exception e) {
-				throw new IridaWorkflowLoadException("Could not load workflow " + workflowIdentifier
-						+ " from directory " + workflowDirectory);
+				try {
+					Set<IridaWorkflow> workflowVersions = iridaWorkflowLoaderService
+							.loadAllWorkflowVersions(workflowDirectory);
+
+					for (IridaWorkflow workflow : workflowVersions) {
+						registeredWorkflows.put(workflow.getWorkflowIdentifier(), workflow);
+					}
+				} catch (Exception e) {
+					throw new IridaWorkflowLoadException(
+							"Could not load workflows from directory " + workflowDirectory, e);
+				}
 			}
 		}
 	}
@@ -106,10 +118,11 @@ public class IridaWorkflowsService {
 			throw new IridaWorkflowNotFoundException(workflowIdentifier);
 		}
 	}
-	
+
 	/**
 	 * Gets a Collection of all installed workflows.
-	 * @return  A collection of all installed workflows.
+	 * 
+	 * @return A collection of all installed workflows.
 	 */
 	public Collection<IridaWorkflow> getInstalledWorkflows() {
 		return registeredWorkflows.values();
