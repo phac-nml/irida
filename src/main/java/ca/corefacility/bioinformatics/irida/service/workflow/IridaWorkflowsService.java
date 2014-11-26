@@ -108,7 +108,7 @@ public class IridaWorkflowsService {
 	 * @throws IridaWorkflowNotFoundException
 	 *             If no workflow with the given identifier was found.
 	 */
-	public IridaWorkflow loadIridaWorkflow(IridaWorkflowIdentifier workflowIdentifier)
+	public IridaWorkflow getIridaWorkflow(IridaWorkflowIdentifier workflowIdentifier)
 			throws IridaWorkflowNotFoundException {
 		checkNotNull(workflowIdentifier, "workflowIdentifier is null");
 

@@ -61,8 +61,8 @@ public class IridaWorkflowsServiceIT {
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test
-	public void testLoadIridaWorkflowSuccess() throws IridaWorkflowNotFoundException {
-		assertNotNull(iridaWorkflowsService.loadIridaWorkflow(validWorkflow));
+	public void testGetIridaWorkflowSuccess() throws IridaWorkflowNotFoundException {
+		assertNotNull(iridaWorkflowsService.getIridaWorkflow(validWorkflow));
 	}
 
 	/**
@@ -72,8 +72,8 @@ public class IridaWorkflowsServiceIT {
 	 * 
 	 */
 	@Test(expected = IridaWorkflowNotFoundException.class)
-	public void testLoadIridaWorkflowFail() throws IridaWorkflowNotFoundException {
-		iridaWorkflowsService.loadIridaWorkflow(invalidWorkflow);
+	public void testGetIridaWorkflowFail() throws IridaWorkflowNotFoundException {
+		iridaWorkflowsService.getIridaWorkflow(invalidWorkflow);
 	}
 
 	/**
@@ -96,6 +96,6 @@ public class IridaWorkflowsServiceIT {
 	 */
 	@Test(expected = IridaWorkflowNotFoundException.class)
 	public void testLoadIridaWorkflowVersionFail() throws IridaWorkflowNotFoundException {
-		iridaWorkflowsService.loadIridaWorkflow(invalidVersionWorkflow);
+		iridaWorkflowsService.getIridaWorkflow(invalidVersionWorkflow);
 	}
 }
