@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,10 +36,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
@@ -52,7 +48,6 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsAdm
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -91,7 +86,6 @@ public class ProjectsController {
 	private final SampleService sampleService;
 	private final UserService userService;
 	private final ProjectControllerUtils projectControllerUtils;
-	private final ReferenceFileService referenceFileService;
 	private final TaxonomyService taxonomyService;
 
 	/*
@@ -102,21 +96,18 @@ public class ProjectsController {
 
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
-			ProjectControllerUtils projectControllerUtils, ReferenceFileService referenceFileService,
-			TaxonomyService taxonomyService) {
+			ProjectControllerUtils projectControllerUtils, TaxonomyService taxonomyService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
 		this.projectControllerUtils = projectControllerUtils;
-		this.referenceFileService = referenceFileService;
 		this.taxonomyService = taxonomyService;
 		this.dateFormatter = new DateFormatter();
 		this.fileSizeConverter = new FileSizeConverter();
 	}
 
 	/**
-	 * Request for the page to display a list of all projects available to the
-	 * currently logged in user.
+	 * Request for the page to display a list of all projects available to the currently logged in user.
 	 *
 	 * @return The name of the page.
 	 */
@@ -138,8 +129,11 @@ public class ProjectsController {
 	/**
 	 * Request for a specific project details page.
 	 *
-	 * @param projectId The id for the project to show details for.
-	 * @param model     Spring model to populate the html page.
+	 * @param projectId
+	 * 		The id for the project to show details for.
+	 * @param model
+	 * 		Spring model to populate the html page.
+	 *
 	 * @return The name of the project details page.
 	 */
 	@RequestMapping(value = "/{projectId}")
@@ -155,7 +149,9 @@ public class ProjectsController {
 	/**
 	 * Gets the name of the template for the new project page
 	 *
-	 * @param model {@link Model}
+	 * @param model
+	 * 		{@link Model}
+	 *
 	 * @return The name of the create new project page
 	 */
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
@@ -167,14 +163,19 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Creates a new project and displays a list of users for the user to add to
-	 * the project
+	 * Creates a new project and displays a list of users for the user to add to the project
 	 *
-	 * @param model              {@link Model}
-	 * @param name               String name of the project
-	 * @param organism           Organism name
-	 * @param projectDescription Brief description of the project
-	 * @param remoteURL          URL for the project wiki
+	 * @param model
+	 * 		{@link Model}
+	 * @param name
+	 * 		String name of the project
+	 * @param organism
+	 * 		Organism name
+	 * @param projectDescription
+	 * 		Brief description of the project
+	 * @param remoteURL
+	 * 		URL for the project wiki
+	 *
 	 * @return The name of the add users to project page
 	 */
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
@@ -197,26 +198,22 @@ public class ProjectsController {
 
 		return "redirect:/projects/" + project.getId() + "/metadata";
 	}
-	
-	
 
 	/**
 	 * Returns the name of a page to add users to a *new* project.
 	 *
-	 * @param model     {@link Model}
-	 * @param projectId the id of the project to find the metadata for.
+	 * @param model
+	 * 		{@link Model}
+	 * @param projectId
+	 * 		the id of the project to find the metadata for.
+	 *
 	 * @return The name of the add users to new project page.
 	 */
 	@RequestMapping("/{projectId}/metadata")
 	public String getProjectMetadataPage(final Model model, final Principal principal, @PathVariable long projectId)
 			throws IOException {
 		Project project = projectService.read(projectId);
-
-		// Let's add the reference files
-		List<Map<String, String>> referenceFiles = getReferenceFileData(project);
-
 		model.addAttribute("project", project);
-		model.addAttribute("referenceFiles", referenceFiles);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
 		return PROJECT_METADATA_PAGE;
@@ -227,16 +224,13 @@ public class ProjectsController {
 			@PathVariable long projectId) throws IOException {
 		Project project = projectService.read(projectId);
 		User user = userService.getUserByUsername(principal.getName());
-		if (user.getSystemRole().equals(Role.ROLE_ADMIN) || projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER)) {
+		if (user.getSystemRole().equals(Role.ROLE_ADMIN) || projectService
+				.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER)) {
 			if (!model.containsAttribute("errors")) {
 				model.addAttribute("errors", new HashMap<>());
 			}
 			projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
-			// Let's add the reference files
-			List<Map<String, String>> referenceFiles = getReferenceFileData(project);
-
-			model.addAttribute("referenceFiles", referenceFiles);
 			model.addAttribute("project", project);
 			model.addAttribute("maxFileSize", WebConfigurer.MAX_UPLOAD_SIZE);
 			model.addAttribute("maxFileSizeString", fileSizeConverter.convert(WebConfigurer.MAX_UPLOAD_SIZE));
@@ -278,19 +272,24 @@ public class ProjectsController {
 		return "redirect:/projects/" + projectId + "/metadata";
 	}
 
-	
-
 	/**
-	 * Handles AJAX request for getting a list of projects available to the
-	 * logged in user. Produces JSON.
+	 * Handles AJAX request for getting a list of projects available to the logged in user. Produces JSON.
 	 *
-	 * @param principal   {@link Principal} The currently authenticated users
-	 * @param start       The start position in the list to page.
-	 * @param length      The size of the page to display.
-	 * @param draw        Id for the table to draw, this must be returned.
-	 * @param sortColumn  The id for the column to sort by.
-	 * @param direction   The direction of the sort.
-	 * @param searchValue Any search terms.
+	 * @param principal
+	 * 		{@link Principal} The currently authenticated users
+	 * @param start
+	 * 		The start position in the list to page.
+	 * @param length
+	 * 		The size of the page to display.
+	 * @param draw
+	 * 		Id for the table to draw, this must be returned.
+	 * @param sortColumn
+	 * 		The id for the column to sort by.
+	 * @param direction
+	 * 		The direction of the sort.
+	 * @param searchValue
+	 * 		Any search terms.
+	 *
 	 * @return JSON value of the page data.
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -319,15 +318,21 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Handles AJAX request for getting a list of projects available to the
-	 * admin user. Produces JSON.
+	 * Handles AJAX request for getting a list of projects available to the admin user. Produces JSON.
 	 *
-	 * @param start       The start position in the list to page.
-	 * @param length      The size of the page to display.
-	 * @param draw        Id for the table to draw, this must be returned.
-	 * @param sortColumn  The id for the column to sort by.
-	 * @param direction   The direction of the sort.
-	 * @param searchValue Any search terms.
+	 * @param start
+	 * 		The start position in the list to page.
+	 * @param length
+	 * 		The size of the page to display.
+	 * @param draw
+	 * 		Id for the table to draw, this must be returned.
+	 * @param sortColumn
+	 * 		The id for the column to sort by.
+	 * @param direction
+	 * 		The direction of the sort.
+	 * @param searchValue
+	 * 		Any search terms.
+	 *
 	 * @return JSON value of the page data.
 	 */
 	@RequestMapping(value = "/ajax/list/all", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -376,22 +381,15 @@ public class ProjectsController {
 		return map;
 	}
 
-
-	
-
-	
-	
 	/**
-	 * Search for taxonomy terms. This method will return a map of found
-	 * taxonomy terms and their child nodes.
-	 * 
-	 * Note: If the search term was not included in the results, it will be
-	 * added as an option
-	 * 
+	 * Search for taxonomy terms. This method will return a map of found taxonomy terms and their child nodes.
+	 * <p/>
+	 * Note: If the search term was not included in the results, it will be added as an option
+	 *
 	 * @param searchTerm
-	 *            The term to find taxa for
-	 * @return A List<Map<String,Object>> which will contain a taxonomic tree of
-	 *         matching terms
+	 * 		The term to find taxa for
+	 *
+	 * @return A List<Map<String,Object>> which will contain a taxonomic tree of matching terms
 	 */
 	@RequestMapping("/ajax/taxonomy/search")
 	@ResponseBody
@@ -417,14 +415,18 @@ public class ProjectsController {
 	/**
 	 * Generates a map of project information for the {@link ProjectsDataTable}
 	 *
-	 * @param projectList   a List of {@link ProjectUserJoin} for the current user.
-	 * @param draw          property sent from {@link ProjectsDataTable} as the table to
-	 *                      render information to.
-	 * @param totalElements Total number of elements that could go into the table.
-	 * @param sortColumn    Column to sort by.
-	 * @param sortDirection Direction to sort the column
-	 * @return Map containing the information to put into the
-	 * {@link ProjectsDataTable}
+	 * @param projectList
+	 * 		a List of {@link ProjectUserJoin} for the current user.
+	 * @param draw
+	 * 		property sent from {@link ProjectsDataTable} as the table to render information to.
+	 * @param totalElements
+	 * 		Total number of elements that could go into the table.
+	 * @param sortColumn
+	 * 		Column to sort by.
+	 * @param sortDirection
+	 * 		Direction to sort the column
+	 *
+	 * @return Map containing the information to put into the {@link ProjectsDataTable}
 	 */
 	public Map<String, Object> getProjectsDataMap(List<ProjectUserJoin> projectList, int draw, long totalElements,
 			int sortColumn, Sort.Direction sortDirection) {
@@ -456,32 +458,12 @@ public class ProjectsController {
 		return map;
 	}
 
-
-
-
-
-	
-
-	@RequestMapping(value = "/ajax/{projectId}/referenceFiles")
-	public @ResponseBody List<Map<String, String>> getProjectReferenceFiles(@PathVariable Long projectId) {
-		Project project = projectService.read(projectId);
-		List<Join<Project, ReferenceFile>> projectFileJoin = referenceFileService.getReferenceFilesForProject(project);
-		List<Map<String, String>> response = new ArrayList<>();
-		for (Join<Project, ReferenceFile> join : projectFileJoin) {
-			ReferenceFile file = join.getObject();
-			Map<String, String> map = new HashMap<>();
-			map.put("id", file.getId().toString());
-			map.put("text", file.getLabel());
-			response.add(map);
-		}
-		return response;
-	}
-
 	/**
-	 * Changes a {@link ConstraintViolationException} to a usable map of strings
-	 * for displaing in the UI.
+	 * Changes a {@link ConstraintViolationException} to a usable map of strings for displaing in the UI.
 	 *
-	 * @param e {@link ConstraintViolationException} for the form submitted.
+	 * @param e
+	 * 		{@link ConstraintViolationException} for the form submitted.
+	 *
 	 * @return Map of string {fieldName, error}
 	 */
 	private Map<String, String> getErrorsFromViolationException(ConstraintViolationException e) {
@@ -501,37 +483,11 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Get the information about a projects reference files in a format that can be used by the UI.
-	 *
-	 * @param project {@link Project} Currently viewed project.
-	 * @return List of reference file info.
-	 * @throws IOException
-	 */
-	private List<Map<String, String>> getReferenceFileData(Project project) throws IOException {
-		List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
-		List<Map<String, String>> mapList = new ArrayList<>();
-		for (Join<Project, ReferenceFile> join : joinList) {
-			ReferenceFile file = join.getObject();
-			Map<String, String> map = new HashMap<>();
-			map.put("id", file.getId().toString());
-			map.put("label", file.getLabel());
-			map.put("createdDate", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
-			Path path = file.getFile();
-			long size = 0;
-			if (Files.exists(path)) {
-				size = Files.size(path);
-			}
-			map.put("size", fileSizeConverter.convert(size));
-			mapList.add(map);
-		}
-		return mapList;
-	}
-	
-	/**
 	 * Recursively transform a {@link TreeNode} into a json parsable map object
-	 * 
+	 *
 	 * @param node
-	 *            The node to transform
+	 * 		The node to transform
+	 *
 	 * @return A Map<String,Object> which may contain more children
 	 */
 	private Map<String, Object> transformTreeNode(TreeNode<String> node) {

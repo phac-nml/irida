@@ -79,7 +79,6 @@ public class ProjectsControllerTest {
 	private ProjectsController controller;
 	private SampleService sampleService;
 	private UserService userService;
-	private ReferenceFileService referenceFileService;
 	private ProjectControllerUtils projectUtils;
 	private TaxonomyService taxonomyService;
 
@@ -90,9 +89,7 @@ public class ProjectsControllerTest {
 		userService = mock(UserService.class);
 		taxonomyService = mock(TaxonomyService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
-		referenceFileService = mock(ReferenceFileService.class);
-		controller = new ProjectsController(projectService, sampleService, userService, projectUtils,
-				referenceFileService, taxonomyService);
+		controller = new ProjectsController(projectService, sampleService, userService, projectUtils, taxonomyService);
 		user.setId(1L);
 
 		mockSidebarInfo();
@@ -218,7 +215,6 @@ public class ProjectsControllerTest {
 		String page = controller.getProjectMetadataPage(model, principal, PROJECT_ID);
 		assertEquals("Returns the correct edit page.", "projects/project_metadata", page);
 		assertTrue("Model should contain a project", model.containsAttribute("project"));
-		assertTrue("Model should contain a list of reference files", model.containsAttribute("referenceFiles"));
 	}
 
 	@SuppressWarnings("unchecked")

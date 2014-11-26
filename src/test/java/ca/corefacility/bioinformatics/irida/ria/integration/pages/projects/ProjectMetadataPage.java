@@ -36,22 +36,7 @@ public class ProjectMetadataPage extends AbstractPage {
 		return driver.findElement(By.id("remoteURL")).getText();
 	}
 
-	public int getReferenceFileCount() {
-		return driver.findElements(By.cssSelector("#referenceFiles tbody tr")).size();
-	}
-
-	public String getReferenceFileName() {
-		return driver.findElement(By.cssSelector(".refFileName:nth-of-type(1)")).getText();
-	}
-
 	public boolean hasEditButton() {
 		return driver.findElements(By.id("edit-metadata")).size() > 0;
-	}
-
-	// ************************************************************************************************
-	// ACTIONS
-	// ************************************************************************************************
-	public void clickReferenceFilesTab() {
-		driver.findElement(By.cssSelector("ul.nav-tabs li:nth-child(2) a")).click();
 	}
 }
