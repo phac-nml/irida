@@ -65,6 +65,7 @@ public class IridaWorkflowLoaderServiceIT {
 	private Path workflowXmlPath;
 	private Path workflowStructurePath;
 	private Path workflowDirectoryPath;
+	private Path workflowVersionDirectoryPath;
 	private Path workflowDirectoryPathNoDefinition;
 	private Path workflowDirectoryPathNoStructure;
 	private Path workflowDirectoryPathInvalidVersion;
@@ -72,11 +73,13 @@ public class IridaWorkflowLoaderServiceIT {
 
 	@Before
 	public void setup() throws JAXBException, URISyntaxException, FileNotFoundException {
-		workflowXmlPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("TestWorkflow/irida_workflow.xml")
-				.toURI());
+		workflowXmlPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
+				"TestWorkflow/1.0/irida_workflow.xml").toURI());
 		workflowStructurePath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
-				"TestWorkflow/irida_workflow_structure.ga").toURI());
+				"TestWorkflow/1.0/irida_workflow_structure.ga").toURI());
 		workflowDirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("TestWorkflow").toURI());
+		workflowVersionDirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("TestWorkflow/1.0")
+				.toURI());
 		workflowDirectoryPathNoDefinition = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
 				"TestWorkflowNoDefinition").toURI());
 		workflowDirectoryPathNoStructure = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
@@ -159,6 +162,17 @@ public class IridaWorkflowLoaderServiceIT {
 				.loadWorkflowStructure(workflowStructurePath);
 
 		assertEquals(iridaWorkflowStructure, iridaWorkflowStructureFromFile);
+	}
+
+	/**
+	 * Tests successfully loading up one version of a workflow from a directory.
+	 */
+	@Test
+	public void testLoadWorkflowFromDirectory() throws IOException, IridaWorkflowLoadException {
+		IridaWorkflow iridaWorkflowFromFile = workflowLoaderService
+				.loadIridaWorkflowFromDirectory(workflowVersionDirectoryPath);
+
+		assertEquals(buildTestWorkflow(), iridaWorkflowFromFile);
 	}
 
 	/**

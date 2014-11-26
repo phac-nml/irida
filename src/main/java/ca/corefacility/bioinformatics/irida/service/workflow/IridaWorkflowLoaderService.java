@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.Unmarshaller;
-import org.springframework.oxm.XmlMappingException;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
@@ -63,14 +62,12 @@ public class IridaWorkflowLoaderService {
 	 *            files.
 	 * @return A set of {@link IridaWorkflow}s for all versions of this
 	 *         workflow.
-	 * @throws XmlMappingException
-	 *             If there was an issue parsing the XML document.
 	 * @throws IOException
 	 *             If there was an issue reading one of the workflow files.
 	 * @throws IridaWorkflowLoadException
 	 *             If there was an issue when loading up the workflows.
 	 */
-	public Set<IridaWorkflow> loadAllWorkflowVersions(Path workflowDirectory) throws XmlMappingException, IOException,
+	public Set<IridaWorkflow> loadAllWorkflowVersions(Path workflowDirectory) throws IOException,
 			IridaWorkflowLoadException {
 		checkNotNull(workflowDirectory, "workflowDirectory is null");
 		checkArgument(Files.isDirectory(workflowDirectory), "workflowDirectory is not a directory");
@@ -86,8 +83,7 @@ public class IridaWorkflowLoaderService {
 						+ " that is not a proper workflow directory");
 			} else {
 				String workflowVersion = versionDirectory.toFile().getName();
-				IridaWorkflow iridaWorkflow = loadIridaWorkflow(versionDirectory.resolve(WORKFLOW_DEFINITION_FILE),
-						versionDirectory.resolve(WORKFLOW_STRUCTURE_FILE));
+				IridaWorkflow iridaWorkflow = loadIridaWorkflowFromDirectory(versionDirectory);
 
 				if (!workflowName.equals(iridaWorkflow.getWorkflowDescription().getName())
 						|| !workflowVersion.equals(iridaWorkflow.getWorkflowDescription().getVersion())) {
@@ -105,6 +101,22 @@ public class IridaWorkflowLoaderService {
 	}
 
 	/**
+	 * Loads up a workflow from the given directory.
+	 * 
+	 * @param workflowDirectory
+	 *            The directory containing a single version of a workflow.
+	 * @return An {@link IridaWorkflow} from this directory.
+	 * @throws IOException
+	 *             If there was an error reading one of the files.
+	 */
+	public IridaWorkflow loadIridaWorkflowFromDirectory(Path workflowDirectory) throws IOException {
+		checkNotNull(workflowDirectory, "workflowDirectory is null");
+
+		return loadIridaWorkflow(workflowDirectory.resolve(WORKFLOW_DEFINITION_FILE),
+				workflowDirectory.resolve(WORKFLOW_STRUCTURE_FILE));
+	}
+
+	/**
 	 * Loads up an {@link IridaWorkflow} from the given information files.
 	 * 
 	 * @param descriptionFile
@@ -114,13 +126,10 @@ public class IridaWorkflowLoaderService {
 	 * @return An IridaWorkflow object for this workflow.
 	 * @throws IOException
 	 *             If there was an issue reading the passed file.
-	 * @throws XmlMappingException
-	 *             If there was an issue parsing the XML document.
 	 */
-	public IridaWorkflow loadIridaWorkflow(Path descriptionFile, Path structureFile) throws XmlMappingException,
-			IOException {
-		checkNotNull("descriptionFile is null", descriptionFile);
-		checkNotNull("structureFile is null", structureFile);
+	public IridaWorkflow loadIridaWorkflow(Path descriptionFile, Path structureFile) throws IOException {
+		checkNotNull(descriptionFile, "descriptionFile is null");
+		checkNotNull(structureFile, "structureFile is null");
 
 		IridaWorkflowDescription worklowDescription = loadWorkflowDescription(descriptionFile);
 		IridaWorkflowStructure workflowStructure = loadWorkflowStructure(structureFile);
@@ -135,11 +144,8 @@ public class IridaWorkflowLoaderService {
 	 * @return An IridaWorkflowDescription object.
 	 * @throws IOException
 	 *             If there was an issue reading the passed file.
-	 * @throws XmlMappingException
-	 *             If there was an issue parsing the XML document.
 	 */
-	public IridaWorkflowDescription loadWorkflowDescription(Path descriptionFile) throws XmlMappingException,
-			IOException {
+	public IridaWorkflowDescription loadWorkflowDescription(Path descriptionFile) throws IOException {
 		checkNotNull("descriptionFile is null", descriptionFile);
 		if (!Files.exists(descriptionFile)) {
 			throw new FileNotFoundException(descriptionFile.toFile().getAbsolutePath());
