@@ -13,18 +13,21 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.files.ReferenceFileController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
@@ -48,18 +51,20 @@ public class ReferenceFileControllerTest {
 	// Services
 	private ProjectService projectService;
 	private ReferenceFileService referenceFileService;
+	private MessageSource messageSource;
 
 	@Before
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		referenceFileService = mock(ReferenceFileService.class);
+		messageSource = mock(MessageSource.class);
 
 		// Set up the reference file
 		Path path = Paths.get(FILE_PATH);
 		ReferenceFile file = new ReferenceFile(path);
 		when(referenceFileService.read(FILE_ID)).thenReturn(file);
 
-		controller = new ReferenceFileController(projectService, referenceFileService);
+		controller = new ReferenceFileController(projectService, referenceFileService, messageSource);
 	}
 
 	@Test
@@ -101,6 +106,23 @@ public class ReferenceFileControllerTest {
 		byte[] origBytes = Files.readAllBytes(path);
 		byte[] responseBytes = response.getContentAsByteArray();
 		assertArrayEquals("Response contents the correct file content", origBytes, responseBytes);
+	}
+
+	@Test
+	public void testDeleteReferenceFile() {
+		logger.debug("Testing delete reference file");
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		Project project = TestDataFactory.constructProject();
+		ReferenceFile file = TestDataFactory.constructReferenceFile();
+
+		when(projectService.read(project.getId())).thenReturn(project);
+		when(referenceFileService.read(file.getId())).thenReturn(file);
+
+		Map<String, Object> result = controller
+				.deleteReferenceFile(file.getId(), project.getId(), response, Locale.US);
+
+		assertTrue(result.containsKey("result"));
+		assertEquals("success", result.get("result"));
 	}
 
 	class TestReferenceFile extends ReferenceFile {

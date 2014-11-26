@@ -12,9 +12,13 @@
 			<h1 th:text="#{project.nav.referenceFiles}">Hello</h1>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-md-12">
-			<table class="table" ng-controller="FilesCtrl as table">
+	<div class="ng-cloak row" ng-controller="FilesCtrl as table">
+		<div class="col-md-12" ng-show="table.files.length===0">
+			<h2>__No reference files available for this project.</h2>
+			<p class="lead">__Ask a project manager to add reference files to this projec.</p>
+		</div>
+		<div class="col-md-12" ng-show="table.files.length > 0">
+			<table class="table">
 				<thead>
 				<tr>
 					<th>Name</th>
@@ -30,8 +34,14 @@
 					<td>{{file.createdDate | date:'mediumDate'}}</td>
 					<td>
 						<div class="btn-toolbar pull-right">
-							<button class="btn btn-xs btn-default" ng-click="table.download(file.id)">Download</button>
-							<button class="btn btn-xs btn-default" ng-click="table.deleteFile(file.id)">Delete</button>
+							<button class="btn btn-xs btn-default" ng-click="table.download(file.id)" data:tooltip="#{form.download}">
+								<span class="fa fa-fw fa-download"></span>
+								<span class="sr-only" th:text="#{form.download}"></span>
+							</button>
+							<button class="btn btn-xs btn-default" ng-click="table.deleteFile(file)" data:tooltip="#{form.btn.remove}">
+								<span class="fa fa-fw fa-trash"></span>
+								<span class="sr-only" th:text="#{form.btn.remove}"></span>
+							</button>
 						</div>
 					</td>
 				</tr>
@@ -41,7 +51,7 @@
 	</div>
 </main>
 <th:block layout:fragment="scripts" th:inline="javascript">
-	<script src="/resources/js/pages/projects/reference.js"></script>
+	<script th:src="@{/resources/js/pages/projects/reference.js}" src="/resources/js/pages/projects/reference.js"></script>
 </th:block>
 </body>
 </html>

@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -12,12 +13,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,14 +44,17 @@ public class ReferenceFileController {
 	private static final Logger logger = LoggerFactory.getLogger(ReferenceFileController.class);
 	// Converters
 	Formatter<Date> dateFormatter;
-	private ProjectService projectService;
-	private ReferenceFileService referenceFileService;
-	private FileSizeConverter fileSizeConverter;
+	private final ProjectService projectService;
+	private final ReferenceFileService referenceFileService;
+	private final FileSizeConverter fileSizeConverter;
+	private final MessageSource messageSource;
 
 	@Autowired
-	public ReferenceFileController(ProjectService projectService, ReferenceFileService referenceFileService) {
+	public ReferenceFileController(ProjectService projectService, ReferenceFileService referenceFileService,
+			MessageSource messageSource) {
 		this.projectService = projectService;
 		this.referenceFileService = referenceFileService;
+		this.messageSource = messageSource;
 		this.fileSizeConverter = new FileSizeConverter();
 		this.dateFormatter = new DateFormatter();
 	}
@@ -56,8 +62,11 @@ public class ReferenceFileController {
 	/**
 	 * Download a reference file based on the id passed.
 	 *
-	 * @param fileId   The id of the file to download
-	 * @param response {@link HttpServletResponse} to write to file to
+	 * @param fileId
+	 * 		The id of the file to download
+	 * @param response
+	 * 		{@link HttpServletResponse} to write to file to
+	 *
 	 * @throws IOException
 	 */
 	@RequestMapping(value = "/download/{fileId}")
@@ -72,8 +81,12 @@ public class ReferenceFileController {
 
 	/**
 	 * Add a new reference file to a project.
-	 * @param projectId The id of the project to add the file to.
-	 * @param file {@link MultipartFile} file being uploaded.
+	 *
+	 * @param projectId
+	 * 		The id of the project to add the file to.
+	 * @param file
+	 * 		{@link MultipartFile} file being uploaded.
+	 *
 	 * @return
 	 * @throws IOException
 	 */
@@ -119,20 +132,34 @@ public class ReferenceFileController {
 
 	/**
 	 * Delete a reference file.  This will remove it from the project.
-	 * @param fileId The id of the file to remove.
-	 * @param response {@link HttpServletResponse} required for returning an error state.
+	 *
+	 * @param fileId
+	 * 		The id of the file to remove.
+	 * @param response
+	 * 		{@link HttpServletResponse} required for returning an error state.
+	 *
 	 * @return Success or error based on the result of deleting the file.
 	 */
-	@RequestMapping("/delete")
-	public @ResponseBody String deleteReferenceFile(@RequestParam Long fileId, HttpServletResponse response) {
-		String result = "success";
+	@RequestMapping(value = "/delete", method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> deleteReferenceFile(@RequestParam Long fileId,
+			@RequestParam Long projectId, HttpServletResponse response, Locale locale) {
+		Map<String, Object> result = new HashMap<>();
+		Project project = projectService.read(projectId);
+		ReferenceFile file = referenceFileService.read(fileId);
 		try {
-			referenceFileService.delete(fileId);
+
+			logger.info("Removing file with id of : " + fileId);
+			projectService.removeReferenceFileFromProject(project, file);
+			result.put("result", "success");
+			result.put("msg", messageSource.getMessage("projects.meta.reference-file.delete-success",
+					new Object[] { file.getLabel(), project.getName() }, locale));
 		} catch (EntityNotFoundException e) {
 			// This is required else the client does not know that an error was thrown!
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			logger.error("Failed to upload reference file, reason unknown.", e);
-			result = "error";
+			result.put("result", "error");
+			result.put("msg", messageSource.getMessage("projects.meta.reference-file.delete-error",
+					new Object[] { file.getLabel(), project.getName() }, locale));
 		}
 		return result;
 	}

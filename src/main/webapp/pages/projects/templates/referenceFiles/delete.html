@@ -1,0 +1,19 @@
+<div id="delete-modal">
+	<div class="modal-header">
+		<h3 class="modal-title">
+			<span class="fa fa-trash fa-fw"></span> <span th:text="#{referenceFile.delete-modal.title}">Delte FIles</span>
+		</h3>
+	</div>
+	<div class="modal-body">
+		<h4 th:text="#{referenceFile.delete-modal.body}"></h4>
+		<ul>
+			<li>{{dCtrl.file.label}}</li>
+		</ul>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="dCtrl.close()"></button>
+		<button class="btn btn-primary" th:text="#{form.btn.remove}" ng-click="dCtrl.delete()">
+			__MOVE_OR_COPY__
+		</button>
+	</div>
+</div>

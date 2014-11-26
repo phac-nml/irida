@@ -114,6 +114,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 		registry.addViewController("/projects/templates/merge").setViewName("projects/templates/merge");
 		registry.addViewController("/projects/templates/copy").setViewName("projects/templates/copy");
 		registry.addViewController("/projects/templates/move").setViewName("projects/templates/move");
+		registry.addViewController("/projects/templates/referenceFiles/delete").setViewName("projects/templates/referenceFiles/delete");
 	}
 
 	@Bean

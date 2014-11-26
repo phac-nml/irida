@@ -1,6 +1,6 @@
 (function (angular, $, _) {
 
-  function FileService($rootScope, R) {
+  function ProjectFileService($rootScope, R) {
     "use strict";
     var svc = this,
         id = $rootScope.projectId,
@@ -11,27 +11,86 @@
       return base.customGET("all").then(function (data) {
         angular.copy(data.files, svc.files);
       });
+    };
+
+    $rootScope.$on('FILE_DELETED', function (e, args) {
+      console.log("deleteing")
+      angular.copy(_.filter(svc.files, function (f) {
+        return args.id !== f.id;
+      }), svc.files);
+    });
+  }
+
+  function FileService($rootScope, $modal, BASE_URL, R, notifications) {
+    "use strict";
+    var svc = this,
+        projectId = $rootScope.projectId,
+        api = R.all('referenceFiles');
+
+    svc.download = function (id) {
+      var iframe = document.createElement("iframe");
+      iframe.src = BASE_URL + "referenceFiles/download/" + id;
+      iframe.style.display = "none";
+      document.body.appendChild(iframe);
+    };
+
+    svc.deleteFile = function (file) {
+       var modalInstance = $modal.open({
+        templateUrl: BASE_URL + 'projects/templates/referenceFiles/delete',
+        controller : 'DeleteCtrl as dCtrl',
+         resolve: {
+           file: function() {
+             return file;
+           }
+         }
+      });
+
+      modalInstance.result.then(function () {
+        api.customPOST({
+          fileId   : file.id,
+          projectId: projectId
+        }, "delete").then(function (data) {
+          notifications.show({msg: data.msg, type: data.result});
+          $rootScope.$broadcast("FILE_DELETED", {id:file.id});
+        });
+      });
     }
   }
 
-  function FilesCtrl(FileService) {
+  function DeleteCtrl($modalInstance, file) {
     "use strict";
     var vm = this;
-    vm.files = FileService.files;
+    vm.file = file;
 
-    vm.download = function(id) {
-      console.log(id)
+    vm.delete = function () {
+      $modalInstance.close();
     };
 
-    vm.deleteFile = function(id) {
-      console.log(id)
+    vm.close = function() {
+      $modalInstance.dismiss();
+    };
+  }
+
+  function FilesCtrl(ProjectFileService, FileService) {
+    "use strict";
+    var vm = this;
+    vm.files = ProjectFileService.files;
+
+    vm.download = function (id) {
+      FileService.download(id);
     };
 
-    FileService.getFiles();
+    vm.deleteFile = function (file) {
+      FileService.deleteFile(file);
+    };
+
+    ProjectFileService.getFiles();
   }
 
   angular.module('References', [])
-    .service('FileService', ['$rootScope', 'Restangular', FileService])
-    .controller('FilesCtrl', ['FileService', FilesCtrl])
+    .service('ProjectFileService', ['$rootScope', 'Restangular', ProjectFileService])
+    .service('FileService', ['$rootScope', '$modal', 'BASE_URL', 'Restangular', 'notifications', FileService])
+    .controller('FilesCtrl', ['ProjectFileService', 'FileService', FilesCtrl])
+    .controller('DeleteCtrl', ['$modalInstance', 'file', DeleteCtrl])
   ;
 })(angular, jQuery, _);
