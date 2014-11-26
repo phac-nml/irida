@@ -1,40 +1,41 @@
-<span th:fragment="user-role-event (event)">
-    <span class="event-content user-role-event">
-        <i class="glyphicon glyphicon-user"></i>
-        <a href="/users" class="user-name"
-            th:href="@{/users/{uid}(uid=${event.user.getId()})}"
-            th:text="${event.user.label}">_USER)</a>
-        <span th:text="#{event.user_added.part1}">_is now a_</span>
-        <span th:text="#{'projectRole.'+${event.role}}">_ROLE_</span>
-        <span th:text="#{event.user_added.part2}">_on project_</span>
-        <a href="/projects" 
-            th:href="@{/projects/{pid}(pid=${event.project.getId()})}"
-            th:text="${event.project.label}">_project_</a>
-    </span>
+<!--/* 
+The 'th:with's below require some explanation.  They are used to 
+create <a href...> tags for the user and project which can then be used in a 
+internationalization message.  4 variables are created:
+    userHref = the href to the user in the event
+    userLink = the <a> tag which uses the userHref variable
+    projectHref = the href to the project
+    projectLink = the <a> tag using the projectHref
+These created variables are then used as parameters to a message so that they 
+can be internationalized.
+*/-->
+        
+<span th:fragment="user-role-event (event)">  
+    <i class="glyphicon glyphicon-user"></i>
+    <span class="event-content user-role-event"
+        th:with="userHref=@{/users/{uid}(uid=${event.user.getId()})},
+        userLink=${'&lt;a href='+ userHref +'&gt;'+ event.user.label +'&lt;/a&gt;'},
+        projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
+        projectLink=${'&lt;a href='+ projectHref +' &gt;'+ event.project.label +'&lt;/a&gt;'}" 
+        th:utext="#{event.user_added(${userLink},#{'projectRole.'+${event.role}},${projectLink})}"></span>
 </span>
 
 <span th:fragment="user-removed-event (event)">
     <i class="glyphicon glyphicon-ban-circle"></i>
-    <span class="event-content user-removed-event">
-        <a href="/users" 
-            th:href="@{/users/{uid}(uid=${event.user.getId()})}"
-            th:text="${event.user.label}"></a>
-        <span th:text="#{event.user_removed}">_USER_</span>
-        <a href="/projects" 
-            th:href="@{/projects/{pid}(pid=${event.project.getId()})}"
-            th:text="${event.project.label}"></a>
-    </span>
+    <span class="event-content user-removed-event" 
+            th:with="userHref=@{/users/{uid}(uid=${event.user.getId()})},
+            userLink=${'&lt;a href='+ userHref +'&gt;'+ event.user.label +'&lt;/a&gt; '},
+            projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
+            projectLink=${'&lt;a href='+ projectHref +' &gt;'+ event.project.label +'&lt;/a&gt;'}" 
+            th:utext="#{event.user_removed(${userLink},${projectLink})}"></span>
 </span>
 
 <span th:fragment="sample-added-event (event)">
     <i class="fa fa-flask"></i>
-    <span class="event-content sample-added-event">
-        <a href="/samples" 
-            th:href="@{/samples/{sid}(sid=${event.sample.getId()})}"
-            th:text="${event.sample.label}">_SAMPLE_</a>
-        <span th:text="#{event.sample_added}">_was added to_</span>
-        <a href="/projects" 
-            th:href="@{/projects/{pid}(pid=${event.project.getId()})}"
-            th:text="${event.project.label}"></a>
-    </span>
+    <span class="event-content sample-added-event"
+            th:with="sampleHref=@{/samples/{sid}(sid=${event.sample.getId()})},
+            sampleLink=${'&lt;a href='+ sampleHref +'&gt;'+ event.sample.label +'&lt;/a&gt;'},
+            projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
+            projectLink=${'&lt;a href='+ projectHref +'&gt;'+ event.project.label +'&lt;/a&gt;'}" 
+            th:utext="#{event.sample_added(${sampleLink},${projectLink})}"></span>
 </span>
