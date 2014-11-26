@@ -11,9 +11,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
-import org.springframework.security.oauth2.provider.DefaultAuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
 
 import com.google.common.collect.Sets;
@@ -59,11 +58,12 @@ public class WithMockOAuth2SecurityContextFactory implements WithSecurityContext
 		Authentication authentication = new UsernamePasswordAuthenticationToken(principal, principal.getPassword(),
 				principal.getAuthorities());
 
-		//Create the authorization request and OAuth2Authentication object
-		AuthorizationRequest authRequest = new DefaultAuthorizationRequest(clientId, scopeCollection);
+		// Create the authorization request and OAuth2Authentication object
+		OAuth2Request authRequest = new OAuth2Request(null, clientId, null, true, scopeCollection, null, null, null,
+				null);
 		OAuth2Authentication oAuth = new OAuth2Authentication(authRequest, authentication);
-		
-		//Add the OAuth2Authentication object to the security context
+
+		// Add the OAuth2Authentication object to the security context
 		SecurityContext context = SecurityContextHolder.createEmptyContext();
 		context.setAuthentication(oAuth);
 		return context;

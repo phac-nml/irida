@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
@@ -32,7 +31,6 @@ import com.google.common.base.Joiner;
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.security")
-@Import(IridaOAuth2Config.class)
 public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	private static final String ANONYMOUS_AUTHENTICATION_KEY = "anonymousTokenAuthProvider";
@@ -106,7 +104,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		return new IgnoreExpiredCredentialsForPasswordChangeChecker();
 	}
 
-	@Bean
+	@Bean(name = "userAuthenticationManager")
 	public AuthenticationManager authenticationManager() throws Exception {
 		return super.authenticationManager();
 	}

@@ -78,7 +78,7 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
 			try {
 				logger.trace("Found OAuth2Authentication in session.  Storing clientId in revision.");
 				OAuth2Authentication oAuth = (OAuth2Authentication) auth;
-				String clientId = oAuth.getAuthorizationRequest().getClientId();
+				String clientId = oAuth.getOAuth2Request().getClientId();
 				IridaClientDetails clientDetails = clientRepo.loadClientDetailsByClientId(clientId);
 				entity.setClientId(clientDetails.getId());
 			} catch (NullPointerException ex) {

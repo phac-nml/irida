@@ -360,4 +360,9 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	public Date getCreatedDate() {
 		return createdDate;
 	}
+
+	@Override
+	public boolean isAutoApprove(String scope) {
+		return true;
+	}
 }
