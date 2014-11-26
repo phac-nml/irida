@@ -247,7 +247,7 @@ public class ProjectSamplesControllerTest {
 
 		assertEquals("response should have CREATED status", HttpStatus.CREATED, response.getStatusCode());
 		final String location = response.getHeaders().getFirst(HttpHeaders.LOCATION);
-		assertEquals("location should include sample and project IDs", "http://localhost/projects/" + p.getId()
+		assertEquals("location should include sample and project IDs", "http://localhost/api/projects/" + p.getId()
 				+ "/samples/" + s.getId(), location);
 	}
 
