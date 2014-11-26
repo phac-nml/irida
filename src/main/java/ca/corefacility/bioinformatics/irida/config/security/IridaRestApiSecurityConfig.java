@@ -65,6 +65,10 @@ public class IridaRestApiSecurityConfig extends WebSecurityConfigurerAdapter {
 			httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET, "/api/**").access("#oauth2.hasScope('read')");
 			httpSecurity.authorizeRequests().antMatchers("/api/**")
 					.access("#oauth2.hasScope('read') and #oauth2.hasScope('write')");
+
+			// SecurityContextPersistenceFilter appears pretty high up (well
+			// before any OAuth related filters), so we'll put our anonymous
+			// user filter into the filter chain after that.
 			httpSecurity.addFilterAfter(new UnauthenticatedAnonymousAuthenticationFilter("anonymousTokenAuthProvider"),
 					SecurityContextPersistenceFilter.class);
 		}
@@ -84,6 +88,9 @@ public class IridaRestApiSecurityConfig extends WebSecurityConfigurerAdapter {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			super.configure(http);
+			// SecurityContextPersistenceFilter appears pretty high up (well
+			// before any OAuth related filters), so we'll put our anonymous
+			// user filter into the filter chain after that.
 			http.addFilterAfter(new UnauthenticatedAnonymousAuthenticationFilter("anonymousTokenAuthProvider"),
 					SecurityContextPersistenceFilter.class);
 		}
