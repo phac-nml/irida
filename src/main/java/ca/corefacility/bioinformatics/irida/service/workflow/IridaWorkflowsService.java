@@ -17,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadExceptio
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowIdentifier;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
  * Class used to load up installed workflows in IRIDA.
@@ -27,7 +28,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowIdentifi
 @Service
 public class IridaWorkflowsService {
 	private IridaWorkflowLoaderService iridaWorkflowLoaderService;
-	private String workflowResourceLocation;
+
+	private static final String WORKFLOW_DIR = "workflows";
 
 	/**
 	 * Stores registered workflows in the format of { workflowName ->
@@ -38,8 +40,6 @@ public class IridaWorkflowsService {
 	/**
 	 * Builds a new IridaWorkflowService for loading up installed workflows.
 	 * 
-	 * @param workflowResourceLocation
-	 *            Resource location for workflow files.
 	 * @param iridaWorkflowLoaderService
 	 *            The service used to load up workflows.
 	 * @throws IOException
@@ -48,18 +48,28 @@ public class IridaWorkflowsService {
 	 *             If there was an issue loading a workflow.
 	 */
 	@Autowired
-	public IridaWorkflowsService(String workflowResourceLocation, IridaWorkflowLoaderService iridaWorkflowLoaderService)
-			throws IOException, IridaWorkflowLoadException {
+	public IridaWorkflowsService(IridaWorkflowLoaderService iridaWorkflowLoaderService) throws IOException,
+			IridaWorkflowLoadException {
 		this.iridaWorkflowLoaderService = iridaWorkflowLoaderService;
-		this.workflowResourceLocation = workflowResourceLocation;
 
 		registeredWorkflows = new HashMap<>();
 
-		registerWorkflows();
+		registerWorkflows(AnalysisSubmission.class);
 	}
 
-	private void registerWorkflows() throws IOException, IridaWorkflowLoadException {
-		Path resourcePath = Paths.get(IridaWorkflowsService.class.getResource(workflowResourceLocation).getFile());
+	/**
+	 * Registers workflows that are stored as resources belonging to the passed
+	 * class.
+	 * 
+	 * @param analysisRootClass
+	 *            The class defining where the workflow files are stored.
+	 * @throws IOException
+	 *             If there was a problem reading a workflow.
+	 * @throws IridaWorkflowLoadException
+	 *             If there was a problem loading a workflow.
+	 */
+	private void registerWorkflows(Class<?> analysisRootClass) throws IOException, IridaWorkflowLoadException {
+		Path resourcePath = Paths.get(analysisRootClass.getResource(WORKFLOW_DIR).getFile());
 		DirectoryStream<Path> stream = Files.newDirectoryStream(resourcePath);
 
 		for (Path workflowDirectory : stream) {
