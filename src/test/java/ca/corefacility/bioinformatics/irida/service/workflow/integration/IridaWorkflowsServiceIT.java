@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsServiceConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowIdentifier;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -44,6 +45,10 @@ public class IridaWorkflowsServiceIT {
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
 
+	private static final IridaWorkflowIdentifier validWorkflow = new IridaWorkflowIdentifier("TestWorkflow", "0.0.1");
+	private static final IridaWorkflowIdentifier invalidWorkflow = new IridaWorkflowIdentifier("InvalidWorkflow",
+			"0.0.1");
+
 	@Before
 	public void setup() throws URISyntaxException {
 	}
@@ -55,7 +60,7 @@ public class IridaWorkflowsServiceIT {
 	 */
 	@Test
 	public void testLoadIridaWorkflowSuccess() throws IridaWorkflowLoadException {
-		assertNotNull(iridaWorkflowsService.loadIridaWorkflow("TestWorkflow"));
+		assertNotNull(iridaWorkflowsService.loadIridaWorkflow(validWorkflow));
 	}
 
 	/**
@@ -65,6 +70,6 @@ public class IridaWorkflowsServiceIT {
 	 */
 	@Test(expected = IridaWorkflowLoadException.class)
 	public void testLoadIridaWorkflowFail() throws IridaWorkflowLoadException {
-		iridaWorkflowsService.loadIridaWorkflow("InvalidWorkflow");
+		iridaWorkflowsService.loadIridaWorkflow(invalidWorkflow);
 	}
 }

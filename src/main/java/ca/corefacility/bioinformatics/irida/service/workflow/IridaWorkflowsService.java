@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowIdentifier;
 
 /**
  * Class used to load up installed workflows in IRIDA.
@@ -29,7 +30,7 @@ public class IridaWorkflowsService {
 
 	/**
 	 * Stores registered workflows in the format of { workflowName ->
-	 * workflowDirectoryPath }
+	 * IridaWorkflow }
 	 */
 	private Map<String, Path> registeredWorkflows;
 
@@ -73,15 +74,15 @@ public class IridaWorkflowsService {
 	 * @throws IridaWorkflowLoadException
 	 *             If there was an issue loading the workflow.
 	 */
-	public IridaWorkflow loadIridaWorkflow(String workflowName) throws IridaWorkflowLoadException {
-		checkNotNull(workflowName, "workflowName is null");
+	public IridaWorkflow loadIridaWorkflow(IridaWorkflowIdentifier workflowIdentifier) throws IridaWorkflowLoadException {
+		checkNotNull(workflowIdentifier, "workflowIdentifier is null");
 
-		Path workflowDirectory = registeredWorkflows.get(workflowName);
+		Path workflowDirectory = registeredWorkflows.get(workflowIdentifier.getWorkflowName());
 
 		try {
 			return iridaWorkflowLoaderService.loadIridaWorkflow(workflowDirectory);
 		} catch (Exception e) {
-			throw new IridaWorkflowLoadException("Could not load workflow with name " + workflowName
+			throw new IridaWorkflowLoadException("Could not load workflow " + workflowIdentifier
 					+ " from directory " + workflowDirectory);
 		}
 	}
