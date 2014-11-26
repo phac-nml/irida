@@ -146,7 +146,7 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 	 *            the identifier of the resource to retrieve from the database.
 	 * @return the model and view for the individual resource.
 	 */
-	@RequestMapping(value = "/api/{identifier}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{identifier}", method = RequestMethod.GET)
 	public ModelMap getResource(@PathVariable Long identifier) {
 		ModelMap model = new ModelMap();
 
@@ -227,7 +227,7 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 	 *            the identifier that should be deleted from the database.
 	 * @return a response indicating that the resource was deleted.
 	 */
-	@RequestMapping(value = "/api/{identifier}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
 	public ModelMap delete(@PathVariable Long identifier) {
 		ModelMap modelMap = new ModelMap();
 
@@ -254,7 +254,7 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 	 *            the properties to be updated and their new values.
 	 * @return a response indicating that the resource was updated.
 	 */
-	@RequestMapping(value = "/api/{identifier}", method = RequestMethod.PATCH, consumes = {
+	@RequestMapping(value = "/{identifier}", method = RequestMethod.PATCH, consumes = {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	public ModelMap update(@PathVariable Long identifier, @RequestBody Map<String, Object> representation) {
 		// update the resource specified by the client. clients *may* be able
