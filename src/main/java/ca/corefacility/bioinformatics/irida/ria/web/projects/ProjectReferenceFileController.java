@@ -24,7 +24,9 @@ import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import com.google.common.collect.ImmutableMap;
 
 /**
- * Created by josh on 14-11-24.
+ * Controller for ajax request dealing with project reference files.
+ *
+ * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping(value = "/projects/{projectId}/ajax/reference")
