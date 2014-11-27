@@ -51,21 +51,8 @@ public class ProjectReferenceFileController {
 	public @ResponseBody Map<String, Object> getReferenceFilesForProject(@PathVariable Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		// Let's add the reference files
-		List<Map<String, Object>> files = getReferenceFileData(project, locale);
-		return ImmutableMap.of("files", files);
-	}
-
-	/**
-	 * Get the information about a projects reference files in a format that can be used by the UI.
-	 *
-	 * @param project
-	 * 		{@link Project} Currently viewed project.
-	 *
-	 * @return List of reference file info.
-	 */
-	private List<Map<String, Object>> getReferenceFileData(Project project, Locale locale) {
 		List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
-		List<Map<String, Object>> mapList = new ArrayList<>();
+		List<Map<String, Object>> files = new ArrayList<>();
 		for (Join<Project, ReferenceFile> join : joinList) {
 			ReferenceFile file = join.getObject();
 			Map<String, Object> map = new HashMap<>();
@@ -84,8 +71,8 @@ public class ProjectReferenceFileController {
 							messageSource.getMessage("projects.reference-file.not-found", new Object[] { }, locale));
 				}
 			}
-			mapList.add(map);
+			files.add(map);
 		}
-		return mapList;
+		return ImmutableMap.of("files", files);
 	}
 }
