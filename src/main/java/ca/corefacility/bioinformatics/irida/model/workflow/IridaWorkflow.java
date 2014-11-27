@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.workflow;
 
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Describes a workflow for IRIDA.
@@ -36,10 +37,10 @@ public class IridaWorkflow {
 	/**
 	 * Gets a unique identifier for this workflow.
 	 * 
-	 * @return An {@link IridaWorkflowIdentifier} for this workflow.
+	 * @return A {@link UUID} for this workflow.
 	 */
-	public IridaWorkflowIdentifier getWorkflowIdentifier() {
-		return new IridaWorkflowIdentifier(workflowDescription.getName(), workflowDescription.getVersion());
+	public UUID getWorkflowIdentifier() {
+		return workflowDescription.getId();
 	}
 
 	@Override

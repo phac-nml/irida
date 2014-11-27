@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowIdentifier;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 
 /**
@@ -31,7 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 @Service
 public class IridaWorkflowsService {
 	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowsService.class);
-	
+
 	private static final String WORKFLOWS_DIR = "workflows";
 
 	private IridaWorkflowLoaderService iridaWorkflowLoaderService;
@@ -39,10 +39,11 @@ public class IridaWorkflowsService {
 	/**
 	 * Stores registered workflows within IRIDA.
 	 */
-	private Map<IridaWorkflowIdentifier, IridaWorkflow> registeredWorkflows;
+	private Map<UUID, IridaWorkflow> registeredWorkflows;
 
 	/**
-	 * Builds a new {@link IridaWorkflowService} for loading up installed workflows.
+	 * Builds a new {@link IridaWorkflowService} for loading up installed
+	 * workflows.
 	 * 
 	 * @param iridaWorkflowLoaderService
 	 *            The service used to load up workflows.
@@ -78,7 +79,8 @@ public class IridaWorkflowsService {
 			throw new IridaWorkflowLoadException("Missing directory " + workflowPath + " for class " + analysisClass);
 		} else {
 			try {
-				Set<IridaWorkflow> workflowVersions = iridaWorkflowLoaderService.loadAllWorkflowImplementations(workflowPath);
+				Set<IridaWorkflow> workflowVersions = iridaWorkflowLoaderService
+						.loadAllWorkflowImplementations(workflowPath);
 
 				for (IridaWorkflow workflow : workflowVersions) {
 					if (registeredWorkflows.containsKey(workflow.getWorkflowIdentifier())) {
@@ -94,22 +96,21 @@ public class IridaWorkflowsService {
 	}
 
 	/**
-	 * Returns a workflow with the given {@link IridaWorkflowIdentifier}.
+	 * Returns a workflow with the given id.
 	 * 
-	 * @param workflowIdentifier
+	 * @param workflowId
 	 *            The identifier of the workflow to get.
 	 * @return An {@link IridaWorkflow} with the given identifier.
 	 * @throws IridaWorkflowNotFoundException
 	 *             If no workflow with the given identifier was found.
 	 */
-	public IridaWorkflow getIridaWorkflow(IridaWorkflowIdentifier workflowIdentifier)
-			throws IridaWorkflowNotFoundException {
-		checkNotNull(workflowIdentifier, "workflowIdentifier is null");
+	public IridaWorkflow getIridaWorkflow(UUID workflowId) throws IridaWorkflowNotFoundException {
+		checkNotNull(workflowId, "workflowId is null");
 
-		if (registeredWorkflows.containsKey(workflowIdentifier)) {
-			return registeredWorkflows.get(workflowIdentifier);
+		if (registeredWorkflows.containsKey(workflowId)) {
+			return registeredWorkflows.get(workflowId);
 		} else {
-			throw new IridaWorkflowNotFoundException(workflowIdentifier);
+			throw new IridaWorkflowNotFoundException(workflowId);
 		}
 	}
 

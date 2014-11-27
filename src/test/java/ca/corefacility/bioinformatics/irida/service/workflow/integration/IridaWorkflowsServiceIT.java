@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultit
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowIdentifier;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -50,10 +50,8 @@ public class IridaWorkflowsServiceIT {
 
 	private IridaWorkflowsService iridaWorkflowsService;
 
-	private static final IridaWorkflowIdentifier validWorkflow = new IridaWorkflowIdentifier("TestWorkflow", "1.0");
-	private static final IridaWorkflowIdentifier invalidVersionWorkflow = new IridaWorkflowIdentifier("TestWorkflow",
-			"invalid");
-	private static final IridaWorkflowIdentifier invalidWorkflow = new IridaWorkflowIdentifier("InvalidWorkflow", "1.0");
+	private static final UUID validWorkflow = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
+	private static final UUID invalidWorkflow = UUID.fromString("dca0bcc1-cc02-4c08-bd13-c6937d56cf70");
 
 	@Before
 	public void setup() throws IOException, IridaWorkflowLoadException {
@@ -98,19 +96,5 @@ public class IridaWorkflowsServiceIT {
 		assertNotNull(workflowA);
 		IridaWorkflow workflowB = iridaWorkflows.iterator().next();
 		assertNotNull(workflowB);
-	}
-
-	/**
-	 * Tests to make sure we fail to load a workflow with an unknown version
-	 * number.
-	 * 
-	 * @throws IridaWorkflowNotFoundException
-	 * @throws IridaWorkflowLoadException
-	 * @throws IOException
-	 * 
-	 */
-	@Test(expected = IridaWorkflowNotFoundException.class)
-	public void testLoadIridaWorkflowVersionFail() throws IridaWorkflowLoadException {
-		iridaWorkflowsService.getIridaWorkflow(invalidVersionWorkflow);
 	}
 }
