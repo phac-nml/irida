@@ -16,7 +16,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutp
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
- * Download a zip archive of all output files within an {@link AnalysisSubmission}
+ * Download a zip archive of all output files within an
+ * {@link AnalysisSubmission}
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
@@ -29,20 +30,25 @@ public class FileUtilities {
 	public static final String EXTENSION_ZIP = ".zip";
 
 	/**
-	 * Utility method for download a zip file containing all output files from an analysis.
+	 * Utility method for download a zip file containing all output files from
+	 * an analysis.
 	 *
 	 * @param response
-	 * 		{@link HttpServletResponse}
+	 *            {@link HttpServletResponse}
 	 * @param fileName
-	 * 		Name fo the file to create
+	 *            Name fo the file to create
 	 * @param files
-	 * 		Set of {@link AnalysisOutputFile}
+	 *            Set of {@link AnalysisOutputFile}
 	 * @throws IOException
 	 */
-	public static void createAnalysisOutputFileZippedResponse(HttpServletResponse response, String fileName, Set<AnalysisOutputFile> files) throws IOException {
+	public static void createAnalysisOutputFileZippedResponse(HttpServletResponse response, String fileName,
+			Set<AnalysisOutputFile> files) throws IOException {
 		logger.debug("Creating zipped file response. [" + fileName + "]");
 
-		try (ZipOutputStream outputStream = new ZipOutputStream(response.getOutputStream())) {
+		// warnings suppressed here because we are actually closing the stream,
+		// eclipse just doesn't know it
+		try (@SuppressWarnings("resource")
+		ZipOutputStream outputStream = new ZipOutputStream(response.getOutputStream())) {
 
 			for (AnalysisOutputFile file : files) {
 				if (!Files.exists(file.getFile())) {
@@ -54,21 +60,23 @@ public class FileUtilities {
 				StringBuilder zipEntryName = new StringBuilder(fileName);
 				zipEntryName.append("/").append(file.getFile().getFileName().toString());
 
-				// 2) Tell the zip stream that we are starting a new entry in the archive.
+				// 2) Tell the zip stream that we are starting a new entry in
+				// the archive.
 				outputStream.putNextEntry(new ZipEntry(zipEntryName.toString()));
 
 				// 3) COPY all of thy bytes from the file to the output stream.
 				Files.copy(file.getFile(), outputStream);
 
-				// 4) Close the current entry in the archive in preparation for the next entry.
+				// 4) Close the current entry in the archive in preparation for
+				// the next entry.
 				outputStream.closeEntry();
 			}
 
 			// Set the response headers
 			response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + fileName + EXTENSION_ZIP);
-			//for zip file
+			// for zip file
 			response.setContentType(CONTENT_TYPE_APPLICATION_ZIP);
-			
+
 			// Tell the output stream that you are finished downloading.
 			outputStream.finish();
 			outputStream.close();
@@ -88,7 +96,7 @@ public class FileUtilities {
 	 * Method to remove unwanted characters from the filename.
 	 *
 	 * @param name
-	 * 		Name of the file
+	 *            Name of the file
 	 * @return The name with unwanted characters removed.
 	 */
 	private static String formatName(String name) {
