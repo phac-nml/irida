@@ -47,7 +47,6 @@ public class ProjectMetadataPageIT {
 	private final String PROJECT_DESCRIPTION = "This is an interesting project description.";
 	private final String PROJECT_ORGANISM = "E. coli";
 	private final String PROJECT_REMOTE_URL = "http://google.ca";
-	private final String REFERENCE_FILE_NAME = "02-2222_S1_L001_R1_001.fastq";
 
 	private WebDriver driver;
 	private ProjectMetadataPage page;
@@ -75,11 +74,6 @@ public class ProjectMetadataPageIT {
 		assertEquals("Displays the correct description", PROJECT_DESCRIPTION, page.getDataProjectDescription());
 		assertEquals("Displays the correct organism", PROJECT_ORGANISM, page.getDataProjectOrganism());
 		assertEquals("Displays the correct remoteURL", PROJECT_REMOTE_URL, page.getDataProjectRemoteURL());
-		assertEquals("Display reference files", 1, page.getReferenceFileCount());
-
-		page.clickReferenceFilesTab();
-		assertEquals("Displays the name of the reference file", REFERENCE_FILE_NAME, page.getReferenceFileName());
-
 		assertTrue("Contains edit metadata button", page.hasEditButton());
 
 		// Should not have edit button on project that is not owner of.

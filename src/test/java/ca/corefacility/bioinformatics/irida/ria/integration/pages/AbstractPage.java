@@ -54,6 +54,27 @@ public class AbstractPage {
 		return wait.until(ExpectedConditions.elementToBeClickable(element));
 	}
 
+	public void clickElement(WebElement element) {
+		boolean failed = true;
+		int count = 10;
+		while (failed && count > 0) {
+			count--;
+			try {
+				element.click();
+				failed = false;
+			} catch (Exception e) {
+				if (count == 0) {
+					throw e;
+				}
+				try {
+					Thread.sleep(250);
+				} catch (InterruptedException e1) {
+					logger.error("Cannot sleep thread.");
+				}
+			}
+		}
+	}
+
 	public WebElement waitForElementVisible(By locator) {
 		WebDriverWait wait = new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS);
 		return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
