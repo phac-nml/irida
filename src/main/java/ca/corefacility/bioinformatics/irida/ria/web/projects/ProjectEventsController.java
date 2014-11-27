@@ -90,7 +90,7 @@ public class ProjectEventsController {
 	 *            event itself
 	 * @param principal
 	 *            currently logged in principal
-	 * @return
+	 * @return The name of the events view
 	 */
 	@RequestMapping("/current_user")
 	public String getRecentEventsForUser(Model model, Principal principal) {
