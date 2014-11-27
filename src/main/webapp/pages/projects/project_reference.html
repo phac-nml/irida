@@ -12,8 +12,8 @@
 			<h1 th:text="#{project.nav.referenceFiles}">Hello</h1>
 		</div>
 	</div>
-	<div class="ng-cloak row" ng-controller="FilesCtrl as table">
-		<section th:with="owner=(${isOwner} or ${isAdmin})" class="col-md-12 alert alert-info" ng-show="table.files.length===0">
+	<div class="ng-cloak row" ng-controller="FilesCtrl as table" th:with="owner=(${isOwner} or ${isAdmin})">
+		<section class="col-md-12 alert alert-info" ng-show="table.files.length===0">
 			<strong th:text="#{referenceFile.no-files.heading}">__No reference files available for this project.</strong>
 
 			<p id="rf-notice" th:if="${!owner}" class="rf-user" th:text="#{referenceFile.no-files.body-user}">__Ask a project
@@ -22,9 +22,9 @@
 			<p id="rf-notice" th:if="${owner}" class="rf-owner" th:text="#{referenceFile.no-files.body-owner}">__Click the add
 				button to upload a new reference file to this project.</p>
 		</section>
-		<section class="row" ng-controller="FileUploadCtrl as upload">
+		<section th:if="${owner}" class="row" ng-controller="FileUploadCtrl as upload">
 			<div class="col-md-12">
-				<button class="btn btn-default" ng-file-select="upload.onFileSelect($files)">
+				<button class="btn btn-default uploadRefBtn" ng-file-select="upload.onFileSelect($files)">
 					<span class="fa fa-fw fa-upload"></span>
 					<span th:text="#{referenceFile.upload-btn}"></span>
 				</button>

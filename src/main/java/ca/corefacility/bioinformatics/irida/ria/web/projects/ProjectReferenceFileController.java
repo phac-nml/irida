@@ -64,7 +64,7 @@ public class ProjectReferenceFileController {
 			if (Files.exists(path)) {
 				try {
 					size = Files.size(path);
-					map.put("size", fileSizeConverter.convert(size));
+					map.put("size", size);
 				} catch (IOException e) {
 					logger.error("Cannot find the size of file " + file.getLabel());
 					map.put("size",

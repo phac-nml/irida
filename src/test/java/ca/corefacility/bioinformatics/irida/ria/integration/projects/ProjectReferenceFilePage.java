@@ -26,6 +26,9 @@ public class ProjectReferenceFilePage extends AbstractPage {
 	@FindBy(className = "ref-file-row")
 	List<WebElement> fileRows;
 
+	@FindBy(className = "uploadRefBtn")
+	private List<WebElement> uploadRefBtn;
+
 	public ProjectReferenceFilePage(WebDriver driver) {
 		super(driver);
 	}
@@ -62,5 +65,9 @@ public class ProjectReferenceFilePage extends AbstractPage {
 		waitForElementVisible(deleteModalLocator);
 		driver.findElement(By.id("deleteBtn")).click();
 		waitForElementInvisible(deleteModalLocator);
+	}
+
+	public boolean isUploadReferenceFileBtnPresent() {
+		return uploadRefBtn.size() > 0;
 	}
 }
