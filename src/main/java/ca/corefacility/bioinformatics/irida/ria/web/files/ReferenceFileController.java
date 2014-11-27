@@ -94,6 +94,7 @@ public class ReferenceFileController {
 	@RequestMapping("/project/{projectId}/new")
 	public @ResponseBody Map<String, Object> createNewReferenceFile(@PathVariable Long projectId,
 			@RequestParam("file") MultipartFile file, Locale locale) throws IOException {
+		Map<String, Object> response;
 
 		logger.debug("Adding reference file to project " + projectId);
 		logger.trace("Uploaded file size: " + file.getSize() + " bytes");
@@ -109,27 +110,34 @@ public class ReferenceFileController {
 		logger.debug("Wrote temp file to " + target);
 
 		ReferenceFile referenceFile = new ReferenceFile(target);
-		Join<Project, ReferenceFile> projectReferenceFileJoin = projectService
-				.addReferenceFileToProject(project, referenceFile);
-		logger.debug("Created reference file in project " + projectId);
+		try {
+			Join<Project, ReferenceFile> projectReferenceFileJoin = projectService
+					.addReferenceFileToProject(project, referenceFile);
+			logger.debug("Created reference file in project " + projectId);
 
-		ReferenceFile refFile = projectReferenceFileJoin.getObject();
-		Map<String, Object> result = new HashMap<>();
-		Path path = refFile.getFile();
-		if (Files.exists(path)) {
-			result.put("size", Files.size(path));
-		}
-		else {
-			result.put("size", messageSource.getMessage("projects.reference-file.not-found", new Object[]{}, locale));
-		}
-		result.put("id", refFile.getId().toString());
-		result.put("label", refFile.getLabel());
-		result.put("createdDate", refFile.getCreatedDate());
+			ReferenceFile refFile = projectReferenceFileJoin.getObject();
+			Map<String, Object> result = new HashMap<>();
+			Path path = refFile.getFile();
+			if (Files.exists(path)) {
+				result.put("size", Files.size(path));
+			}
+			else {
+				result.put("size", messageSource.getMessage("projects.reference-file.not-found", new Object[]{}, locale));
+			}
+			result.put("id", refFile.getId().toString());
+			result.put("label", refFile.getLabel());
+			result.put("createdDate", refFile.getCreatedDate());
 
-		// Clean up temporary files
-		Files.deleteIfExists(target);
-		Files.deleteIfExists(temp);
-		return ImmutableMap.of("result", result);
+			// Clean up temporary files
+			Files.deleteIfExists(target);
+			Files.deleteIfExists(temp);
+			response = ImmutableMap.of("result", result);
+		} catch (IllegalArgumentException e) {
+			response = ImmutableMap.of("error",
+					messageSource.getMessage("referenceFile.upload-error", new Object[] { file.getName() }, locale));
+		}
+
+		return response;
 	}
 
 	/**

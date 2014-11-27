@@ -41,16 +41,16 @@
 				</tr>
 				</thead>
 				<tbody>
-				<tr class="ref-file-row" ng-repeat="file in table.files" ng-class="file.size > 0 ? '' : 'danger'">
+				<tr class="ref-file-row" ng-repeat="file in table.files | orderBy:file.createdDate" ng-class="table.getRowClass(file)">
 					<td>{{file.label}}</td>
 					<td>{{file.size | bytes:2}}</td>
 					<td>{{file.createdDate | date:'mediumDate'}}</td>
 					<td>
 						<div class="btn-toolbar pull-right">
-							<button class="btn btn-xs btn-default" ng-click="table.download(file.id)" data:tooltip="#{form.download}">
+							<button ng-show="file.size > 0" class="btn btn-xs btn-default" ng-click="table.download(file.id)" data:tooltip="#{form.download}">
 								<span class="fa fa-fw fa-download"></span> <span class="sr-only" th:text="#{form.download}"></span>
 							</button>
-							<button th:if="${isOwner} or ${isAdmin}" ng-show="file.size > 0" class="btn btn-xs btn-default removeBtn" ng-click="table.deleteFile(file)" data:tooltip="#{form.btn.remove}">
+							<button th:if="${isOwner} or ${isAdmin}" class="btn btn-xs btn-default removeBtn" ng-click="table.deleteFile(file)" data:tooltip="#{form.btn.remove}">
 								<span class="fa fa-fw fa-trash"></span> <span class="sr-only" th:text="#{form.btn.remove}"></span>
 							</button>
 						</div>

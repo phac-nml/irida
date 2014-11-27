@@ -19,7 +19,8 @@
       }), svc.files);
     });
 
-    $rootScope.$on('NEW_FILE', function(e, args) {
+    $rootScope.$on('NEW_FILE', function (e, args) {
+      args.file.newFile = true;
       svc.files.push(args.file);
     });
   }
@@ -60,34 +61,35 @@
     }
   }
 
-  function FileUploadService($rootScope, $upload, BASE_URL) {
+  function FileUploadService($rootScope, $upload, BASE_URL, notifications) {
     "use strict";
     var svc = this,
         projectId = $rootScope.projectId;
 
-    svc.uploadFiles = function($files) {
+    svc.uploadFiles = function ($files) {
       // TODO: add a check to see if this file has already been upload and give a warning if it has.
-      _.each($files, function(file) {
+      _.each($files, function (file) {
         $upload.upload({
-          url: BASE_URL + "referenceFiles/project/" + projectId + "/new",
+          url : BASE_URL + "referenceFiles/project/" + projectId + "/new",
           file: file
-        }).success(function(data) {
-          $rootScope.$broadcast('NEW_FILE', {file: data.result})
-        }).error(function(data) {
-          console.log("error");
-          console.log(data);
+        }).success(function (data) {
+          if (data.error) {
+            notifications.show({type: 'error', msg: data.error});
+          } else {
+            $rootScope.$broadcast('NEW_FILE', {file: data.result});
+          }
         });
       });
     };
   }
 
   function bytes() {
-    return function(bytes, precision) {
+    return function (bytes, precision) {
       if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) return bytes;
       if (typeof precision === 'undefined') precision = 1;
       var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'],
           number = Math.floor(Math.log(bytes) / Math.log(1024));
-      return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) +  ' ' + units[number];
+      return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) + ' ' + units[number];
     };
   }
 
@@ -109,6 +111,17 @@
     "use strict";
     var vm = this;
 
+    vm.getRowClass = function (file) {
+      var rowClass = "";
+      if (!angular.isNumber(file.size)) {
+        rowClass = 'danger';
+      }
+      else if (file.newFile) {
+        rowClass = 'success';
+      }
+      return rowClass;
+    };
+
     vm.download = function (id) {
       FileService.download(id);
     };
@@ -126,7 +139,7 @@
     "use strict";
     var vm = this;
 
-    vm.onFileSelect = function($files) {
+    vm.onFileSelect = function ($files) {
       FileUploadService.uploadFiles($files);
     };
   }
@@ -134,7 +147,7 @@
   angular.module('References', ['angularFileUpload'])
     .service('ProjectFileService', ['$rootScope', 'Restangular', ProjectFileService])
     .service('FileService', ['$rootScope', '$modal', 'BASE_URL', 'Restangular', 'notifications', FileService])
-    .service('FileUploadService', ['$rootScope', '$upload', 'BASE_URL', FileUploadService])
+    .service('FileUploadService', ['$rootScope', '$upload', 'BASE_URL', 'notifications', FileUploadService])
     .filter('bytes', [bytes])
     .controller('FilesCtrl', ['ProjectFileService', 'FileService', FilesCtrl])
     .controller('DeleteCtrl', ['$modalInstance', 'file', DeleteCtrl])
