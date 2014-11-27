@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <iridaWorkflow>
+  <id>739f29ea-ae82-48b9-8914-3d2931405db6</id>
   <name>TestWorkflow</name>
   <version>1.0</version>
   <author>Mr. Developer</author>

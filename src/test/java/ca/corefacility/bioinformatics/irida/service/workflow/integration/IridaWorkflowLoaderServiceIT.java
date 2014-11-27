@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.xml.bind.JAXBException;
 
@@ -57,6 +58,8 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExcecutionListener.class })
 public class IridaWorkflowLoaderServiceIT {
+	
+	private final static UUID DEFAULT_ID = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
 
 	@Autowired
 	private IridaWorkflowLoaderService workflowLoaderService;
@@ -92,10 +95,10 @@ public class IridaWorkflowLoaderServiceIT {
 	}
 
 	private IridaWorkflowDescription buildTestDescription() throws MalformedURLException {
-		return buildTestDescription("TestWorkflow", "1.0");
+		return buildTestDescription(DEFAULT_ID, "TestWorkflow", "1.0");
 	}
 
-	private IridaWorkflowDescription buildTestDescription(String name, String version) throws MalformedURLException {
+	private IridaWorkflowDescription buildTestDescription(UUID id, String name, String version) throws MalformedURLException {
 		List<WorkflowOutput> outputs = new LinkedList<>();
 		outputs.add(new WorkflowOutput("output1", "output1.txt"));
 		outputs.add(new WorkflowOutput("output2", "output2.txt"));
@@ -106,7 +109,7 @@ public class IridaWorkflowLoaderServiceIT {
 						"http://toolshed.g2.bx.psu.edu/"), "8176b2575aa1");
 		tools.add(workflowTool);
 
-		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(name, version, "Mr. Developer",
+		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version, "Mr. Developer",
 				"developer@example.com", new WorkflowInput("sequence_reads", "reference"), outputs, tools);
 
 		return iridaWorkflow;

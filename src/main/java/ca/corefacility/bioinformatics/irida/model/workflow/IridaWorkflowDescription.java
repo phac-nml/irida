@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.workflow;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -20,6 +21,9 @@ import com.google.common.collect.ImmutableList;
 @XmlRootElement(name = "iridaWorkflow")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IridaWorkflowDescription {
+	@XmlElement(name = "id")
+	private UUID id;
+
 	@XmlElement(name = "name")
 	private String name;
 
@@ -50,6 +54,8 @@ public class IridaWorkflowDescription {
 	 * Generates a new {@link IridaWorkflowDescription} with the given
 	 * information.
 	 * 
+	 * @param id
+	 *            The {@link UUID} for a workflow.
 	 * @param name
 	 *            The name of the workflow.
 	 * @param version
@@ -65,8 +71,9 @@ public class IridaWorkflowDescription {
 	 * @param tools
 	 *            The list of tools for this workflow.
 	 */
-	public IridaWorkflowDescription(String name, String version, String author, String email, WorkflowInput inputs,
-			List<WorkflowOutput> outputs, List<WorkflowTool> tools) {
+	public IridaWorkflowDescription(UUID id, String name, String version, String author, String email,
+			WorkflowInput inputs, List<WorkflowOutput> outputs, List<WorkflowTool> tools) {
+		this.id = id;
 		this.name = name;
 		this.version = version;
 		this.author = author;
@@ -74,6 +81,10 @@ public class IridaWorkflowDescription {
 		this.inputs = inputs;
 		this.outputs = ImmutableList.copyOf(outputs);
 		this.tools = ImmutableList.copyOf(tools);
+	}
+
+	public UUID getId() {
+		return id;
 	}
 
 	public String getName() {
@@ -106,7 +117,7 @@ public class IridaWorkflowDescription {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, version, author, email, inputs, outputs, tools);
+		return Objects.hash(id, name, version, author, email, inputs, outputs, tools);
 	}
 
 	@Override
@@ -116,10 +127,10 @@ public class IridaWorkflowDescription {
 		else if (obj instanceof IridaWorkflowDescription) {
 			IridaWorkflowDescription other = (IridaWorkflowDescription) obj;
 
-			return Objects.equals(name, other.name) && Objects.equals(version, other.version)
-					&& Objects.equals(author, other.author) && Objects.equals(email, other.email)
-					&& Objects.equals(inputs, other.inputs) && Objects.equals(outputs, other.outputs)
-					&& Objects.equals(tools, other.tools);
+			return Objects.equals(id, other.id) && Objects.equals(name, other.name)
+					&& Objects.equals(version, other.version) && Objects.equals(author, other.author)
+					&& Objects.equals(email, other.email) && Objects.equals(inputs, other.inputs)
+					&& Objects.equals(outputs, other.outputs) && Objects.equals(tools, other.tools);
 		}
 
 		return false;
