@@ -42,7 +42,6 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -79,7 +78,6 @@ public class ProjectsControllerTest {
 	private ProjectsController controller;
 	private SampleService sampleService;
 	private UserService userService;
-	private ReferenceFileService referenceFileService;
 	private ProjectControllerUtils projectUtils;
 	private TaxonomyService taxonomyService;
 
@@ -90,8 +88,7 @@ public class ProjectsControllerTest {
 		userService = mock(UserService.class);
 		taxonomyService = mock(TaxonomyService.class);
 		projectUtils = mock(ProjectControllerUtils.class);
-		referenceFileService = mock(ReferenceFileService.class);
-		controller = new ProjectsController(projectService, sampleService, userService, projectUtils, referenceFileService, taxonomyService);
+		controller = new ProjectsController(projectService, sampleService, userService, projectUtils, taxonomyService);
 		user.setId(1L);
 
 		mockSidebarInfo();

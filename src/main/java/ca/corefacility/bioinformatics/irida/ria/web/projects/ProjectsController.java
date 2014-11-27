@@ -36,10 +36,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
@@ -50,7 +48,6 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsAdm
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -91,7 +88,6 @@ public class ProjectsController {
 	private final SampleService sampleService;
 	private final UserService userService;
 	private final ProjectControllerUtils projectControllerUtils;
-	private final ReferenceFileService referenceFileService;
 	private final TaxonomyService taxonomyService;
 
 	/*
@@ -102,13 +98,11 @@ public class ProjectsController {
 
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
-			ProjectControllerUtils projectControllerUtils, ReferenceFileService referenceFileService,
-			TaxonomyService taxonomyService) {
+			ProjectControllerUtils projectControllerUtils, TaxonomyService taxonomyService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
 		this.projectControllerUtils = projectControllerUtils;
-		this.referenceFileService = referenceFileService;
 		this.taxonomyService = taxonomyService;
 		this.dateFormatter = new DateFormatter();
 		this.fileSizeConverter = new FileSizeConverter();
@@ -476,21 +470,6 @@ public class ProjectsController {
 		map.put(ProjectsDataTable.RESPONSE_PARAM_SORT_COLUMN, sortColumn);
 		map.put(ProjectsDataTable.RESPONSE_PARAM_SORT_DIRECTION, sortDirection);
 		return map;
-	}
-
-	@RequestMapping(value = "/ajax/{projectId}/referenceFiles")
-	public @ResponseBody List<Map<String, String>> getProjectReferenceFiles(@PathVariable Long projectId) {
-		Project project = projectService.read(projectId);
-		List<Join<Project, ReferenceFile>> projectFileJoin = referenceFileService.getReferenceFilesForProject(project);
-		List<Map<String, String>> response = new ArrayList<>();
-		for (Join<Project, ReferenceFile> join : projectFileJoin) {
-			ReferenceFile file = join.getObject();
-			Map<String, String> map = new HashMap<>();
-			map.put("id", file.getId().toString());
-			map.put("text", file.getLabel());
-			response.add(map);
-		}
-		return response;
 	}
 
 	/**
