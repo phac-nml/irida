@@ -195,6 +195,21 @@ public class SamplesControllerTest {
 		verify(sampleService, times(2)).read(sampleId);
 		verify(sequenceFileService).getSequenceFilesForSample(sample);
 	}
+	
+	@Test
+	public void testRemoveFileFromSample(){
+		Long sampleId = 1l;
+		Long fileId = 2l;
+		Sample sample = new Sample();
+		SequenceFile file = new SequenceFile(Paths.get("/tmp"));
+
+		when(sampleService.read(sampleId)).thenReturn(sample);
+		when(sequenceFileService.read(fileId)).thenReturn(file);
+		
+		controller.removeFileFromSample(sampleId, fileId);
+		
+		verify(sampleService).removeSequenceFileFromSample(sample, file);
+	}
 
 	// ************************************************************************************************
 	// AJAX REQUESTS
