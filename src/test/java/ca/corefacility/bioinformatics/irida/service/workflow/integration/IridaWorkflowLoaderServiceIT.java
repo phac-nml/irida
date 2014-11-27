@@ -68,7 +68,6 @@ public class IridaWorkflowLoaderServiceIT {
 	private Path workflowVersionDirectoryPath;
 	private Path workflowDirectoryPathNoDefinition;
 	private Path workflowDirectoryPathNoStructure;
-	private Path workflowDirectoryPathInvalidVersion;
 
 	@Before
 	public void setup() throws JAXBException, URISyntaxException, FileNotFoundException {
@@ -83,8 +82,6 @@ public class IridaWorkflowLoaderServiceIT {
 				"TestAnalysisNoDefinition").toURI());
 		workflowDirectoryPathNoStructure = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
 				"TestAnalysisNoStructure").toURI());
-		workflowDirectoryPathInvalidVersion = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
-				"TestAnalysisInvalidVersion").toURI());
 	}
 
 	private IridaWorkflow buildTestWorkflow() throws MalformedURLException {
@@ -179,7 +176,7 @@ public class IridaWorkflowLoaderServiceIT {
 	@Test
 	public void testLoadAllWorkflowVersionsSuccess() throws IOException, IridaWorkflowLoadException {
 		Set<IridaWorkflow> iridaWorkflowsFromFile = workflowLoaderService
-				.loadAllWorkflowVersions(workflowDirectoryPath);
+				.loadAllWorkflowImplementations(workflowDirectoryPath);
 
 		assertEquals(2, iridaWorkflowsFromFile.size());
 		Iterator<IridaWorkflow> iter = iridaWorkflowsFromFile.iterator();
@@ -204,7 +201,7 @@ public class IridaWorkflowLoaderServiceIT {
 	 */
 	@Test(expected = FileNotFoundException.class)
 	public void testLoadWorkflowsFromDirectoryFailNoDefinition() throws IOException, IridaWorkflowLoadException {
-		workflowLoaderService.loadAllWorkflowVersions(workflowDirectoryPathNoDefinition);
+		workflowLoaderService.loadAllWorkflowImplementations(workflowDirectoryPathNoDefinition);
 	}
 
 	/**
@@ -214,17 +211,6 @@ public class IridaWorkflowLoaderServiceIT {
 	 */
 	@Test(expected = FileNotFoundException.class)
 	public void testLoadWorkflowsFromDirectoryFailNoStructure() throws IOException, IridaWorkflowLoadException {
-		workflowLoaderService.loadAllWorkflowVersions(workflowDirectoryPathNoStructure);
-	}
-
-	/**
-	 * Tests failing to load up a workflow from a directory where the version
-	 * number does not match the directory version.
-	 * 
-	 * @throws IridaWorkflowLoadException
-	 */
-	@Test(expected = IridaWorkflowLoadException.class)
-	public void testLoadWorkflowsFromDirectoryFailInvalidVersion() throws IOException, IridaWorkflowLoadException {
-		workflowLoaderService.loadAllWorkflowVersions(workflowDirectoryPathInvalidVersion);
+		workflowLoaderService.loadAllWorkflowImplementations(workflowDirectoryPathNoStructure);
 	}
 }

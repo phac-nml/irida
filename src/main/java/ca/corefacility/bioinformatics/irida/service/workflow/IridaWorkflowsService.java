@@ -77,7 +77,7 @@ public class IridaWorkflowsService {
 			throw new IridaWorkflowLoadException("Missing directory " + workflowPath + " for class " + analysisClass);
 		} else {
 			try {
-				Set<IridaWorkflow> workflowVersions = iridaWorkflowLoaderService.loadAllWorkflowVersions(workflowPath);
+				Set<IridaWorkflow> workflowVersions = iridaWorkflowLoaderService.loadAllWorkflowImplementations(workflowPath);
 
 				for (IridaWorkflow workflow : workflowVersions) {
 					if (registeredWorkflows.containsKey(workflow.getWorkflowIdentifier())) {

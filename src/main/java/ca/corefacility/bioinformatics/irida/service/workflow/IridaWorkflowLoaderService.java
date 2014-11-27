@@ -58,44 +58,35 @@ public class IridaWorkflowLoaderService {
 	 * Loads up a set of {@link IridaWorkflow}s from the given directory.
 	 * 
 	 * @param workflowDirectory
-	 *            The directory containing the different workflow versions and
-	 *            files.
-	 * @return A set of {@link IridaWorkflow}s for all versions of this
-	 *         workflow.
+	 *            The directory containing the different workflow
+	 *            implementations and files.
+	 * @return A set of {@link IridaWorkflow}s for all implementations.
 	 * @throws IOException
 	 *             If there was an issue reading one of the workflow files.
 	 * @throws IridaWorkflowLoadException
 	 *             If there was an issue when loading up the workflows.
 	 */
-	public Set<IridaWorkflow> loadAllWorkflowVersions(Path workflowDirectory) throws IOException,
+	public Set<IridaWorkflow> loadAllWorkflowImplementations(Path workflowDirectory) throws IOException,
 			IridaWorkflowLoadException {
 		checkNotNull(workflowDirectory, "workflowDirectory is null");
 		checkArgument(Files.isDirectory(workflowDirectory), "workflowDirectory is not a directory");
 
-		Set<IridaWorkflow> workflowVersions = new HashSet<>();
+		Set<IridaWorkflow> workflowImplementations = new HashSet<>();
 
 		DirectoryStream<Path> stream = Files.newDirectoryStream(workflowDirectory);
 
-		for (Path versionDirectory : stream) {
-			if (!Files.isDirectory(versionDirectory)) {
-				logger.warn("Workflow version directory " + workflowDirectory + " contains a file " + versionDirectory
+		for (Path implementationDirectory : stream) {
+			if (!Files.isDirectory(implementationDirectory)) {
+				logger.warn("Workflow directory " + workflowDirectory + " contains a file " + implementationDirectory
 						+ " that is not a proper workflow directory");
 			} else {
-				String workflowVersion = versionDirectory.toFile().getName();
-				IridaWorkflow iridaWorkflow = loadIridaWorkflowFromDirectory(versionDirectory);
+				IridaWorkflow iridaWorkflow = loadIridaWorkflowFromDirectory(implementationDirectory);
 
-				if (!workflowVersion.equals(iridaWorkflow.getWorkflowDescription().getVersion())) {
-					throw new IridaWorkflowLoadException("Workflow directory structure " + versionDirectory
-							+ " does not match version from workflow file: name="
-							+ iridaWorkflow.getWorkflowDescription().getName() + ", version="
-							+ iridaWorkflow.getWorkflowDescription().getVersion());
-				} else {
-					workflowVersions.add(iridaWorkflow);
-				}
+				workflowImplementations.add(iridaWorkflow);
 			}
 		}
 
-		return workflowVersions;
+		return workflowImplementations;
 	}
 
 	/**
