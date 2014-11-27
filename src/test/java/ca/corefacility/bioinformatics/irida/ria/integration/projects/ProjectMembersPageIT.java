@@ -9,7 +9,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
@@ -116,7 +115,8 @@ public class ProjectMembersPageIT {
 		List<WebElement> events = detailsPage.getEvents();
 		assertEquals(2, events.size());
 		WebElement mostRecentEvent = events.iterator().next();
-		WebElement userNameElement = mostRecentEvent.findElement(By.className("user-name"));
-		assertTrue(userNameElement.getText().contains(username));
+		String classes = mostRecentEvent.getAttribute("class");
+		assertTrue("event should be a user-role-event", classes.contains("user-role-event"));
+		assertTrue("event should contain the user name", mostRecentEvent.getText().contains(username));
 	}
 }
