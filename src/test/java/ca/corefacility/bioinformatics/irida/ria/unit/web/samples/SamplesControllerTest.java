@@ -94,21 +94,23 @@ public class SamplesControllerTest {
 		Sample sample = TestDataFactory.constructSample();
 		String organism = "E. coli";
 		String geographicLocationName = "The Forks";
-		Map<String, Object> updatedValues = ImmutableMap.of(SamplesController.ORGANISM, organism, SamplesController.GEOGRAPHIC_LOCATION_NAME, geographicLocationName);
-		Map<String, String> update = ImmutableMap.of(SamplesController.ORGANISM, organism, SamplesController.GEOGRAPHIC_LOCATION_NAME, geographicLocationName);
+		Map<String, Object> updatedValues = ImmutableMap.of(SamplesController.ORGANISM, organism,
+				SamplesController.GEOGRAPHIC_LOCATION_NAME, geographicLocationName);
+		Map<String, String> update = ImmutableMap.of(SamplesController.ORGANISM, organism,
+				SamplesController.GEOGRAPHIC_LOCATION_NAME, geographicLocationName);
 		when(sampleService.update(sample.getId(), updatedValues)).thenReturn(sample);
-		String result = controller
-				.updateSample(model, sample.getId(), null, update);
+		String result = controller.updateSample(model, sample.getId(), null, update);
 		assertEquals("Returns the correct redirect", "redirect:/samples/" + sample.getId(), result);
-		assertTrue("Model should be populated with updated attributes", model.containsAttribute(SamplesController.ORGANISM));
+		assertTrue("Model should be populated with updated attributes",
+				model.containsAttribute(SamplesController.ORGANISM));
 		assertTrue("Model should be populated with updated attributes",
 				model.containsAttribute(SamplesController.GEOGRAPHIC_LOCATION_NAME));
 		assertFalse("Model should not be populated with non-updated attributes",
 				model.containsAttribute(SamplesController.LATITUDE));
 	}
-	
+
 	@Test
-	public void testGetSampleFiles() throws IOException{
+	public void testGetSampleFiles() throws IOException {
 		ExtendedModelMap model = new ExtendedModelMap();
 		String userName = "bob";
 		Principal principal = () -> userName;
@@ -118,27 +120,29 @@ public class SamplesControllerTest {
 		file.setId(2l);
 		User user = new User();
 		Project project = new Project();
-		
+
 		@SuppressWarnings("unchecked")
-		List<Join<Sample,SequenceFile>> files = Lists.newArrayList(new SampleSequenceFileJoin(sample,file));
-		
+		List<Join<Sample, SequenceFile>> files = Lists.newArrayList(new SampleSequenceFileJoin(sample, file));
+
 		when(sampleService.read(sampleId)).thenReturn(sample);
 		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(files);
 		when(userService.getUserByUsername(userName)).thenReturn(user);
-		when(projectService.getProjectsForSample(sample)).thenReturn(Lists.newArrayList(new ProjectSampleJoin(project, sample)));
-		when(userService.getUsersForProject(project)).thenReturn((Lists.newArrayList(new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER))));
-		
+		when(projectService.getProjectsForSample(sample)).thenReturn(
+				Lists.newArrayList(new ProjectSampleJoin(project, sample)));
+		when(userService.getUsersForProject(project)).thenReturn(
+				(Lists.newArrayList(new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER))));
+
 		String sampleFiles = controller.getSampleFiles(model, sampleId, principal);
-		
+
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
-		
+
 		verify(sampleService, times(2)).read(sampleId);
 		verify(sequenceFileService).getSequenceFilesForSample(sample);
 	}
-	
+
 	@Test
-	public void testGetSampleFilesAsAdmin() throws IOException{
+	public void testGetSampleFilesAsAdmin() throws IOException {
 		ExtendedModelMap model = new ExtendedModelMap();
 		String userName = "bob";
 		Principal principal = () -> userName;
@@ -148,26 +152,26 @@ public class SamplesControllerTest {
 		file.setId(2l);
 		User user = new User();
 		user.setSystemRole(Role.ROLE_ADMIN);
-		
+
 		@SuppressWarnings("unchecked")
-		List<Join<Sample,SequenceFile>> files = Lists.newArrayList(new SampleSequenceFileJoin(sample,file));
-		
+		List<Join<Sample, SequenceFile>> files = Lists.newArrayList(new SampleSequenceFileJoin(sample, file));
+
 		when(sampleService.read(sampleId)).thenReturn(sample);
 		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(files);
 		when(userService.getUserByUsername(userName)).thenReturn(user);
-		
+
 		String sampleFiles = controller.getSampleFiles(model, sampleId, principal);
-		
+
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
-		
+
 		verify(sampleService, times(2)).read(sampleId);
 		verify(sequenceFileService).getSequenceFilesForSample(sample);
 		verifyZeroInteractions(projectService);
 	}
-	
+
 	@Test
-	public void testGetSampleFilesNoAccess() throws IOException{
+	public void testGetSampleFilesNoAccess() throws IOException {
 		ExtendedModelMap model = new ExtendedModelMap();
 		String userName = "bob";
 		Principal principal = () -> userName;
@@ -177,27 +181,29 @@ public class SamplesControllerTest {
 		file.setId(2l);
 		User user = new User();
 		Project project = new Project();
-		
+
 		@SuppressWarnings("unchecked")
-		List<Join<Sample,SequenceFile>> files = Lists.newArrayList(new SampleSequenceFileJoin(sample,file));
-		
+		List<Join<Sample, SequenceFile>> files = Lists.newArrayList(new SampleSequenceFileJoin(sample, file));
+
 		when(sampleService.read(sampleId)).thenReturn(sample);
 		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(files);
 		when(userService.getUserByUsername(userName)).thenReturn(user);
-		when(projectService.getProjectsForSample(sample)).thenReturn(Lists.newArrayList(new ProjectSampleJoin(project, sample)));
-		when(userService.getUsersForProject(project)).thenReturn((Lists.newArrayList(new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER))));
-		
+		when(projectService.getProjectsForSample(sample)).thenReturn(
+				Lists.newArrayList(new ProjectSampleJoin(project, sample)));
+		when(userService.getUsersForProject(project)).thenReturn(
+				(Lists.newArrayList(new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER))));
+
 		String sampleFiles = controller.getSampleFiles(model, sampleId, principal);
-		
+
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertFalse((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
-		
+
 		verify(sampleService, times(2)).read(sampleId);
 		verify(sequenceFileService).getSequenceFilesForSample(sample);
 	}
-	
+
 	@Test
-	public void testRemoveFileFromSample(){
+	public void testRemoveFileFromSample() {
 		Long sampleId = 1l;
 		Long fileId = 2l;
 		Sample sample = new Sample();
@@ -205,9 +211,9 @@ public class SamplesControllerTest {
 
 		when(sampleService.read(sampleId)).thenReturn(sample);
 		when(sequenceFileService.read(fileId)).thenReturn(file);
-		
+
 		controller.removeFileFromSample(sampleId, fileId);
-		
+
 		verify(sampleService).removeSequenceFileFromSample(sample, file);
 	}
 
