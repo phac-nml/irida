@@ -2,13 +2,10 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.sequenceFiles
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 
 /**
  * Created by josh on 14-08-06.
@@ -31,11 +28,6 @@ public class SequenceFilePages extends AbstractPage {
 	public void goToOverrepresentedPage() {
 		logger.debug("Going to Sequence File Overrepresented Page.");
 		get(driver, OVERREPRESENTED_URL);
-	}
-
-	private void waitForAjax() {
-		Wait<WebDriver> wait = new WebDriverWait(driver, 60);
-		wait.until(Ajax.waitForAjax(60000));
 	}
 
 	//***********************************************************************************************
