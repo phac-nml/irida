@@ -79,7 +79,6 @@ public class ProjectMetadataEditPageIT {
 				page.getDescriptionPlaceholder());
 		assertEquals("Contains a placeholder with the project remoteURL", PROJECT_REMOTE_URL,
 				page.getRemoteURLPlaceholder());
-		assertEquals("Should display on reference file", 1, page.getReferenceFileCount());
 	}
 
 	@Test
@@ -101,16 +100,5 @@ public class ProjectMetadataEditPageIT {
 		page.gotoPage(PROJECT_ID_OWNER);
 		page.updateProject(GOOD_PROJECT_NAME, GOOD_PROJECT_ORGANISM, GOOD_PROJECT_DESCRIPTION, BAD_PROJECT_URL);
 		assertTrue("Remains on the same page", driver.getCurrentUrl().contains("edit"));
-	}
-
-	@Test
-	public void testDeleteReferenceFile() {
-		page.gotoPage(PROJECT_ID_OWNER);
-		page.clickReferenceFilesTab();
-		assertEquals("Should display on reference file", 1, page.getReferenceFileCount());
-		page.clickDeleteReferenceFileButton();
-		assertTrue("Should display a delete reference file warning",
-				page.isDeleteReferenceFileWarningMessageDisplayed());
-		page.clickOKtoDeleteReferenceFile();
 	}
 }

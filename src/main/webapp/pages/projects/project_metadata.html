@@ -3,102 +3,53 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="projects/_base">
 <head>
-    <title th:text="${project.label} + ' - ' + #{project.nav.metadata}"></title>
+	<title th:text="${project.label} + ' - ' + #{project.nav.metadata}"></title>
 </head>
 <body>
 
 <main layout:fragment="main" th:object="${project}">
-    <div class="row">
-        <div class="col-md-10">
-            <h1 th:text="#{project.metadata.title(${project.label})}"></h1>
-        </div>
-        <div class="col-md-2">
-            <a id="edit-metadata" th:if="${isOwner} or ${isAdmin}" class="btn btn-default btn-sm pull-right"
-               th:href="@{'/projects/' + *{id} + '/metadata/edit'}" th:text="#{form.btn.edit}">__EDIT__</a>
-        </div>
-    </div>
+	<div class="row">
+		<div class="col-md-12 clearfix">
+			<h1 class="pull-left" th:text="#{project.metadata.title(${project.label})}"></h1>
+			<a id="edit-metadata" th:if="${isOwner} or ${isAdmin}" class="btn btn-default btn-sm pull-right"
+			                                                                                    th:href="@{'/projects/' + *{id} + '/metadata/edit'}" th:text="#{form.btn.edit}">__EDIT__</a>
+		</div>
+	</div>
 
-    <div tabset="" th:object="${project}">
-        <div tab="" th:attr="heading=#{projects.create.form.name}">
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    <h3 class="panel-title" th:text="#{projects.create.form.name}">Project Name</h3>
-                </div>
-                <div class="panel-body" id="name" th:text="*{label}">
-                </div>
-            </div>
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    <h3 class="panel-title" th:text="#{projects.create.form.description}">Project
-                        Description</h3>
-                </div>
-                <div class="panel-body" id="description" th:text="*{projectDescription}">
-                </div>
-            </div>
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    <h3 class="panel-title" th:text="#{projects.create.form.organism}">Project Organism</h3>
-                </div>
-                <div class="panel-body" id="organism" th:text="*{organism}">
+	<section th:object="${project}">
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title" th:text="#{projects.create.form.name}">Project Name</h3>
+			</div>
+			<div class="panel-body" id="name" th:text="*{label}">
+			</div>
+		</div>
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title" th:text="#{projects.create.form.description}">Project Description</h3>
+			</div>
+			<div class="panel-body" id="description" th:text="*{projectDescription}">
+			</div>
+		</div>
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title" th:text="#{projects.create.form.organism}">Project Organism</h3>
+			</div>
+			<div class="panel-body" id="organism" th:text="*{organism}">
 
-                </div>
-            </div>
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    <h3 class="panel-title" th:text="#{projects.create.form.wiki}">Project Wiki</h3>
-                </div>
-                <div class="panel-body">
-                    <a th:href="*{remoteURL}" id="remoteURL" th:text="*{remoteURL}"></a>
-                </div>
-            </div>
-        </div>
-        <div tab="" th:attr="heading=#{projects.meta.reference-files}">
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    <h3 class="panel-title" th:text="#{projects.meta.reference-files}">__Reference Files__</h3>
-                </div>
-                <div class="panel-body">
-                    <table id="referenceFiles" class="table">
-                        <thead>
-                        <tr>
-                            <th th:text="#{projects.meta.reference-file.name}">__Reference File Name__</th>
-                            <th th:text="#{projects.meta.reference-file.size}">__FILE_SIZE__</th>
-                            <th th:text="#{projects.meta.reference-file.createdDate}">__Date Added__</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="file : ${referenceFiles}">
-                            <td class="refFileName" th:text="${file.label}"></td>
-                            <td th:text="${file.size}"></td>
-                            <td th:text="${file.createdDate}"></td>
-                            <td class="text-right">
-                                <button data:file-id="${file.id}" class="btn btn-default btn-xs btn-download"
-                                        data:tooltip="#{form.download}"><span
-                                        class="glyphicon glyphicon-download-alt"></span>
-                                </button>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    <iframe id="invisible" style="display:none;"></iframe>
+			</div>
+		</div>
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title" th:text="#{projects.create.form.wiki}">Project Wiki</h3>
+			</div>
+			<div class="panel-body">
+				<a th:href="*{remoteURL}" id="remoteURL" th:text="*{remoteURL}"></a>
+			</div>
+		</div>
+	</section>
+
+	<iframe id="invisible" style="display:none;"></iframe>
 </main>
-
-<th:block layout:fragment="pageScripts" th:inline="javascript">
-    <script>
-        $(function () {
-            $(".btn-download").on('click', function () {
-                var id = $(this).data('file-id');
-                var iframe = document.getElementById('invisible');
-                var src = /*[[@{/referenceFiles/download/}]]*/ '/referenceFiles/download/';
-                iframe.src = src + id;
-            });
-        });
-    </script>
-</th:block>
 </body>
 </html>
