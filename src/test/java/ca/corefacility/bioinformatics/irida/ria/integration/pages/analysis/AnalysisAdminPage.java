@@ -38,7 +38,7 @@ public class AnalysisAdminPage extends AbstractPage {
 	public void clickShowFilterButton() {
 		WebElement filterBtn = driver.findElement(By.id("filterBtn"));
 		waitForElementToBeClickable(filterBtn);
-		filterBtn.click();
+		clickElement(filterBtn);
 		waitForElementVisible(By.id("table-filter"));
 	}
 
@@ -62,7 +62,7 @@ public class AnalysisAdminPage extends AbstractPage {
 	public void clickClearFilterButton() {
 		WebElement clearFilterBtn = driver.findElement(By.id("clearFilterBtn"));
 		waitForElementToBeClickable(clearFilterBtn);
-		clearFilterBtn.click();
+		clickElement(clearFilterBtn);
 		waitForTime(700);
 	}
 }

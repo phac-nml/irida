@@ -54,6 +54,18 @@ public class AbstractPage {
 		return wait.until(ExpectedConditions.elementToBeClickable(element));
 	}
 
+	public void clickElement(WebElement element) {
+		boolean failed = true;
+		while (failed) {
+			try {
+				element.click();
+				failed = false;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	public WebElement waitForElementVisible(By locator) {
 		WebDriverWait wait = new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS);
 		return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
