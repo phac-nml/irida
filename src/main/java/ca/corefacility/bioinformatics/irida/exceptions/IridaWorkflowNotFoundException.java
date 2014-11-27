@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.exceptions;
 
 import java.util.UUID;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+
 /**
  * Exception that gets thrown if a workflow is not found.
  * 
@@ -21,5 +23,16 @@ public class IridaWorkflowNotFoundException extends IridaWorkflowLoadException {
 	 */
 	public IridaWorkflowNotFoundException(UUID workflowId) {
 		super("No workflow found for " + workflowId);
+	}
+
+	/**
+	 * Constructs a new {@link IridaWorkflowNotFoundException} with the given
+	 * analysis type.
+	 * 
+	 * @param analysisType
+	 *            The analysis type of the workflow.
+	 */
+	public IridaWorkflowNotFoundException(Class<? extends Analysis> analysisType) {
+		super("No workflows found for " + analysisType);
 	}
 }

@@ -50,13 +50,12 @@ public class IridaWorkflowsServiceIT {
 
 	private IridaWorkflowsService iridaWorkflowsService;
 
-	private static final UUID validWorkflow = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
-	private static final UUID invalidWorkflow = UUID.fromString("dca0bcc1-cc02-4c08-bd13-c6937d56cf70");
+	private static final UUID validWorkflowId = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
+	private static final UUID invalidWorkflowId = UUID.fromString("dca0bcc1-cc02-4c08-bd13-c6937d56cf70");
 
 	@Before
 	public void setup() throws IOException, IridaWorkflowLoadException {
 		iridaWorkflowsService = new IridaWorkflowsService(iridaWorkflowLoaderService);
-		iridaWorkflowsService.registerAnalysis(TestAnalysis.class);
 	}
 
 	/**
@@ -67,19 +66,47 @@ public class IridaWorkflowsServiceIT {
 	 * @throws IOException
 	 */
 	@Test
-	public void testGetIridaWorkflowSuccess() throws IridaWorkflowLoadException {
-		assertNotNull(iridaWorkflowsService.getIridaWorkflow(validWorkflow));
+	public void testGetIridaWorkflowSuccess() throws IridaWorkflowLoadException, IOException {
+		iridaWorkflowsService.registerAnalysis(TestAnalysis.class, validWorkflowId);
+		assertNotNull(iridaWorkflowsService.getIridaWorkflow(validWorkflowId));
 	}
 
 	/**
 	 * Tests to make sure we fail to load an unknown workflow.
 	 * 
-	 * @throws IridaWorkflowNotFoundException
+	 * @throws IridaWorkflowLoadException
+	 * @throws IOException
 	 * 
 	 */
 	@Test(expected = IridaWorkflowNotFoundException.class)
-	public void testGetIridaWorkflowFail() throws IridaWorkflowNotFoundException {
-		iridaWorkflowsService.getIridaWorkflow(invalidWorkflow);
+	public void testGetIridaWorkflowFail() throws IOException, IridaWorkflowLoadException {
+		iridaWorkflowsService.registerAnalysis(TestAnalysis.class, validWorkflowId);
+		iridaWorkflowsService.getIridaWorkflow(invalidWorkflowId);
+	}
+
+	/**
+	 * Tests to make sure we succeed to load a valid default workflow.
+	 * 
+	 * @throws IridaWorkflowNotFoundException
+	 * @throws IridaWorkflowLoadException
+	 * @throws IOException
+	 */
+	@Test
+	public void testGetDefaultWorkflowSuccess() throws IridaWorkflowLoadException, IOException {
+		iridaWorkflowsService.registerAnalysis(TestAnalysis.class, validWorkflowId);
+		assertNotNull(iridaWorkflowsService.getDefaultWorkflow(TestAnalysis.class));
+	}
+
+	/**
+	 * Tests to make sure we fail on setting an invalid default workflow.
+	 * 
+	 * @throws IridaWorkflowNotFoundException
+	 * @throws IridaWorkflowLoadException
+	 * @throws IOException
+	 */
+	@Test(expected = IridaWorkflowLoadException.class)
+	public void testGetDefaultWorkflowFail() throws IridaWorkflowLoadException, IOException {
+		iridaWorkflowsService.registerAnalysis(TestAnalysis.class, invalidWorkflowId);
 	}
 
 	/**
@@ -91,7 +118,8 @@ public class IridaWorkflowsServiceIT {
 	 */
 	@Test(expected = IridaWorkflowLoadException.class)
 	public void testRegisterAnalysisDuplicateFail() throws IOException, IridaWorkflowLoadException {
-		iridaWorkflowsService.registerAnalysis(TestAnalysis.class);
+		iridaWorkflowsService.registerAnalysis(TestAnalysis.class, validWorkflowId);
+		iridaWorkflowsService.registerAnalysis(TestAnalysis.class, validWorkflowId);
 	}
 
 	/**
@@ -102,6 +130,7 @@ public class IridaWorkflowsServiceIT {
 	 */
 	@Test
 	public void testGetInstalledWorkflows() throws IOException, IridaWorkflowLoadException {
+		iridaWorkflowsService.registerAnalysis(TestAnalysis.class, validWorkflowId);
 		Collection<IridaWorkflow> iridaWorkflows = iridaWorkflowsService.getInstalledWorkflows();
 		assertEquals(2, iridaWorkflows.size());
 		IridaWorkflow workflowA = iridaWorkflows.iterator().next();

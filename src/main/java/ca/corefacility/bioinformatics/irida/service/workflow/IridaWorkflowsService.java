@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -39,7 +40,17 @@ public class IridaWorkflowsService {
 	/**
 	 * Stores registered workflows within IRIDA.
 	 */
-	private Map<UUID, IridaWorkflow> registeredWorkflows;
+	private Map<UUID, IridaWorkflow> allRegisteredWorkflows;
+
+	/**
+	 * Stores registered workflows for a particular analysis.
+	 */
+	private Map<Class<? extends Analysis>, Set<UUID>> registeredWorkflowsForAnalysis;
+
+	/**
+	 * Stores the id of a default workflow for an analysis.
+	 */
+	private Map<Class<? extends Analysis>, UUID> defaultWorkflowForAnalysis;
 
 	/**
 	 * Builds a new {@link IridaWorkflowService} for loading up installed
@@ -52,7 +63,9 @@ public class IridaWorkflowsService {
 	public IridaWorkflowsService(IridaWorkflowLoaderService iridaWorkflowLoaderService) {
 		this.iridaWorkflowLoaderService = iridaWorkflowLoaderService;
 
-		registeredWorkflows = new HashMap<>();
+		allRegisteredWorkflows = new HashMap<>();
+		registeredWorkflowsForAnalysis = new HashMap<>();
+		defaultWorkflowForAnalysis = new HashMap<>();
 	}
 
 	/**
@@ -61,14 +74,17 @@ public class IridaWorkflowsService {
 	 * 
 	 * @param analysisClass
 	 *            The class defining the type of analysis.
+	 * @param defaultWorkflowId
+	 *            The default id of the workflow for this analysis.
 	 * @throws IOException
 	 *             If there was a problem reading a workflow.
 	 * @throws IridaWorkflowLoadException
 	 *             If there was a problem loading a workflow.
 	 */
-	public void registerAnalysis(Class<? extends Analysis> analysisClass) throws IOException,
+	public void registerAnalysis(Class<? extends Analysis> analysisClass, UUID defaultWorkflowId) throws IOException,
 			IridaWorkflowLoadException {
 		checkNotNull(analysisClass, "analysisClass is null");
+		checkNotNull(defaultWorkflowId, "defaultWorkflowId is null");
 
 		logger.debug("Registering Analysis: " + analysisClass);
 		String analysisName = analysisClass.getSimpleName();
@@ -83,15 +99,51 @@ public class IridaWorkflowsService {
 						.loadAllWorkflowImplementations(workflowPath);
 
 				for (IridaWorkflow workflow : workflowVersions) {
-					if (registeredWorkflows.containsKey(workflow.getWorkflowIdentifier())) {
+					if (allRegisteredWorkflows.containsKey(workflow.getWorkflowIdentifier())) {
 						throw new IridaWorkflowLoadException("Duplicate workflow " + workflow.getWorkflowIdentifier());
 					} else {
-						registeredWorkflows.put(workflow.getWorkflowIdentifier(), workflow);
+						allRegisteredWorkflows.put(workflow.getWorkflowIdentifier(), workflow);
+						addWorkflowForAnalysis(analysisClass, workflow.getWorkflowIdentifier());
 					}
 				}
 			} catch (Exception e) {
 				throw new IridaWorkflowLoadException("Could not load workflows from directory " + workflowPath, e);
 			}
+
+			if (!registeredWorkflowsForAnalysis.get(analysisClass).contains(defaultWorkflowId)) {
+				throw new IridaWorkflowLoadException("No workflow with id " + defaultWorkflowId + " vailable for "
+						+ analysisClass);
+			} else {
+				defaultWorkflowForAnalysis.put(analysisClass, defaultWorkflowId);
+			}
+		}
+	}
+
+	private void addWorkflowForAnalysis(Class<? extends Analysis> analysisType, UUID id) {
+		if (!registeredWorkflowsForAnalysis.containsKey(analysisType)) {
+			registeredWorkflowsForAnalysis.put(analysisType, new HashSet<>());
+		}
+
+		registeredWorkflowsForAnalysis.get(analysisType).add(id);
+	}
+
+	/**
+	 * Gets the default workflow for a given type of analysis.
+	 * 
+	 * @param analysisType
+	 *            The type of analysis to search for.
+	 * @return An {@link IridaWorkflow} for this analysis type.
+	 * @throws IridaWorkflowNotFoundException
+	 */
+	public IridaWorkflow getDefaultWorkflow(Class<? extends Analysis> analysisType)
+			throws IridaWorkflowNotFoundException {
+		checkNotNull(analysisType, "analysisType is null");
+
+		if (!defaultWorkflowForAnalysis.containsKey(analysisType)) {
+			throw new IridaWorkflowNotFoundException(analysisType);
+		} else {
+			UUID id = defaultWorkflowForAnalysis.get(analysisType);
+			return allRegisteredWorkflows.get(id);
 		}
 	}
 
@@ -107,8 +159,8 @@ public class IridaWorkflowsService {
 	public IridaWorkflow getIridaWorkflow(UUID workflowId) throws IridaWorkflowNotFoundException {
 		checkNotNull(workflowId, "workflowId is null");
 
-		if (registeredWorkflows.containsKey(workflowId)) {
-			return registeredWorkflows.get(workflowId);
+		if (allRegisteredWorkflows.containsKey(workflowId)) {
+			return allRegisteredWorkflows.get(workflowId);
 		} else {
 			throw new IridaWorkflowNotFoundException(workflowId);
 		}
@@ -120,6 +172,6 @@ public class IridaWorkflowsService {
 	 * @return A collection of all installed workflows.
 	 */
 	public Collection<IridaWorkflow> getInstalledWorkflows() {
-		return registeredWorkflows.values();
+		return allRegisteredWorkflows.values();
 	}
 }
