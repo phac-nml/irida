@@ -165,11 +165,11 @@ public class IridaWorkflowLoaderServiceIT {
 	}
 
 	/**
-	 * Tests successfully loading up all versions of a workflow from a
+	 * Tests successfully loading up all implementations of a workflow from a
 	 * directory.
 	 */
 	@Test
-	public void testLoadAllWorkflowVersionsSuccess() throws IOException, IridaWorkflowLoadException {
+	public void testLoadAllWorkflowImplementationsSuccess() throws IOException, IridaWorkflowLoadException {
 		Set<IridaWorkflow> iridaWorkflowsFromFile = workflowLoaderService
 				.loadAllWorkflowImplementations(workflowDirectoryPath);
 
