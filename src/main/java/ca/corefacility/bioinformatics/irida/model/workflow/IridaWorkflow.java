@@ -14,8 +14,11 @@ public class IridaWorkflow {
 
 	/**
 	 * Defines a new {@link IridaWorkflow} with the given information.
-	 * @param workflowDescription  A description of the workflow.
-	 * @param workflowStructure  The structure defining this workflow.
+	 * 
+	 * @param workflowDescription
+	 *            A description of the workflow.
+	 * @param workflowStructure
+	 *            The structure defining this workflow.
 	 */
 	public IridaWorkflow(IridaWorkflowDescription workflowDescription, IridaWorkflowStructure workflowStructure) {
 		this.workflowDescription = workflowDescription;
@@ -26,20 +29,13 @@ public class IridaWorkflow {
 		return workflowDescription;
 	}
 
-	public void setWorkflowDescription(IridaWorkflowDescription workflowDescription) {
-		this.workflowDescription = workflowDescription;
-	}
-
 	public IridaWorkflowStructure getWorkflowStructure() {
 		return workflowStructure;
 	}
 
-	public void setWorkflowStructure(IridaWorkflowStructure workflowStructure) {
-		this.workflowStructure = workflowStructure;
-	}
-	
 	/**
 	 * Gets a unique identifier for this workflow.
+	 * 
 	 * @return An {@link IridaWorkflowIdentifier} for this workflow.
 	 */
 	public IridaWorkflowIdentifier getWorkflowIdentifier() {
