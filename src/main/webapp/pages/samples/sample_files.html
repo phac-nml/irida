@@ -57,21 +57,20 @@
         src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>            
     <script>
         /*<![CDATA[*/
-        var table;
         $(document).ready(function () {
             'use strict';
-            table = $("#filesTable").DataTable();
+            var table = $("#filesTable").DataTable();
             
             $("button.remove-file").on("click",function(){
             	var that = $(this);
             	var fileId = that.data("file-id");
             	var sampleId = /*[[${sample.id}]]*/ 0;
             	
-            	showRemoveFile(fileId, sampleId, $("#file-row-" + fileId));
+            	showRemoveFile(fileId, sampleId, $("#file-row-" + fileId), table);
             });
         });
         
-        function showRemoveFile(fileId, sampleId, fileRow) {
+        function showRemoveFile(fileId, sampleId, fileRow, table) {
         	var urlBase = /*[[@{/samples/ajax/}]]*/ "/samples/ajax/";
         	var removeURL = urlBase + sampleId + "/files/" + fileId;
         	
