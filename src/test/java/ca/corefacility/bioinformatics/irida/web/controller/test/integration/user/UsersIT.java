@@ -4,10 +4,8 @@ import static ca.corefacility.bioinformatics.irida.web.controller.test.integrati
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asManager;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asRole;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
-import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.is;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -62,12 +60,6 @@ public class UsersIT {
 	}
 
 	@Test
-	public void testGetCurrentUser() {
-		asUser().expect().body("resource.links.rel", hasItems("self", "user/projects")).and()
-				.body("resource.username", is("fbristow")).when().get("/api/users/current");
-	}
-
-	@Test
 	public void testCreateUserFail() {
 		// doesn't matter what the user is, we should fail here when trying to
 		// create a user because the current user doesn't have permission to
@@ -93,18 +85,6 @@ public class UsersIT {
 	public void testUpdateOtherAccountFail() {
 		asUser().given().body(createUser()).expect().response().statusCode(HttpStatus.SC_FORBIDDEN).when()
 				.patch("/api/users/2");
-	}
-
-	@Test
-	public void testUpdateOwnAccountSucceed() {
-		// figure out what the uri is for the current user
-		String responseBody = asUser().get("/users/current").asString();
-		String location = from(responseBody).getString("resource.links.find{it.rel == 'self'}.href");
-		Map<String, String> user = new HashMap<>();
-		String phoneNumber = "867-5309";
-		user.put("phoneNumber", phoneNumber);
-		asUser().given().body(user).expect().response().statusCode(HttpStatus.SC_OK).when().patch(location);
-		asUser().expect().body("resource.phoneNumber", is(phoneNumber)).when().get("/api/users/current");
 	}
 
 	private Map<String, String> createUser() {

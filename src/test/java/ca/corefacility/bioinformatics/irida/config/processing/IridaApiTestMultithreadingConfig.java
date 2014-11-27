@@ -8,7 +8,7 @@ import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 
 @Configuration
-@Profile("test")
+@Profile("it")
 public class IridaApiTestMultithreadingConfig {
 	@Bean(name = "fileProcessingChainExecutor")
 	@Description("In test, we actually just want to run in the current thread, don't bother making a thread pool.")

@@ -13,8 +13,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -64,7 +66,8 @@ public class IridaApiServicesConfig {
 				new FastqcFileProcessor(analysisRepository, apiMessageSource(), sequenceFileRepository));
 	}
 
-	@Bean
+	@Bean(name = "fileProcessingChainExecutor")
+	@Profile({ "dev", "prod" })
 	public TaskExecutor fileProcessingChainExecutor() {
 		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
 		taskExecutor.setCorePoolSize(16);
@@ -72,6 +75,12 @@ public class IridaApiServicesConfig {
 		taskExecutor.setQueueCapacity(100);
 		taskExecutor.setThreadPriority(Thread.MIN_PRIORITY);
 		return taskExecutor;
+	}
+
+	@Bean(name = "fileProcessingChainExecutor")
+	@Profile({ "it", "test" })
+	public TaskExecutor fileProcessingChainExecutorIntegrationTest() {
+		return new SyncTaskExecutor();
 	}
 
 	@Bean
@@ -87,7 +96,7 @@ public class IridaApiServicesConfig {
 		Path path = Paths.get(taxonomyFileLocation.getPath());
 		return new InMemoryTaxonomyService(path);
 	}
-	
+
 	/**
 	 * @return An Executor for handling uploads to Galaxy.
 	 */
@@ -100,7 +109,7 @@ public class IridaApiServicesConfig {
 		taskExecutor.setThreadPriority(Thread.MIN_PRIORITY);
 		return taskExecutor;
 	}
-	
+
 	@Bean
 	public Unmarshaller workflowDescriptionUnmarshaller() {
 		Jaxb2Marshaller jaxb2marshaller = new Jaxb2Marshaller();

@@ -88,7 +88,7 @@ public class ProjectSamplesController {
 	 * @return the response indicating that the sample was joined to the
 	 *         project.
 	 */
-	@RequestMapping(value = "/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "application/idcollection+json")
+	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "application/idcollection+json")
 	public ResponseEntity<String> copySampleToProject(final @PathVariable Long projectId,
 			final @RequestBody List<Long> sampleIds) {
 		final Project p = projectService.read(projectId);

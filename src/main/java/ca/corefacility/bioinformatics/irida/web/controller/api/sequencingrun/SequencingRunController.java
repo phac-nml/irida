@@ -50,7 +50,7 @@ public class SequencingRunController extends GenericController<SequencingRun, Se
 
 	}
 
-	@RequestMapping(value = "/api/miseqrun", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
+	@RequestMapping(value = "/miseqrun", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
 	public ResponseEntity<String> createMiseqRun(@RequestBody MiseqRunResource representation) {
 		return create(representation);

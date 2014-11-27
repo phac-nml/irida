@@ -111,7 +111,7 @@ public class ProjectIT {
 	public void testDeleteProject() {
 		String projectUri = "http://localhost:8080/api/projects/5";
 		asUser().expect().body("resource.links.rel", hasItems("collection")).and()
-				.body("resource.links.href", hasItems("http://localhost:8080/projects")).when().delete(projectUri);
+				.body("resource.links.href", hasItems("http://localhost:8080/api/projects")).when().delete(projectUri);
 	}
 
 	/**

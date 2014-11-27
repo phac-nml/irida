@@ -54,17 +54,19 @@ public class ProjectSamplesIT {
 	public void testCopySampleToProject() {
 		final List<String> samples = Lists.newArrayList("1");
 
-		final String projectUri = "/projects/4";
+		final String projectUri = "/api/projects/4";
 		final String projectJson = asUser().get(projectUri).asString();
 		final String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
 
+		assertTrue("The samples URI should end with /api/projects/4/samples",
+				samplesUri.endsWith("/api/projects/4/samples"));
 		final Response r = asUser().contentType(ContentType.JSON).body(samples)
 				.header("Content-Type", "application/idcollection+json").expect().response()
 				.statusCode(HttpStatus.CREATED.value()).when().post(samplesUri);
 		final String location = r.getHeader(HttpHeaders.LOCATION);
 		assertNotNull("Location should not be null.", location);
 		assertEquals("The project/sample location uses the wrong sample ID.",
-				"http://localhost:8080/projects/4/samples/1", location);
+				"http://localhost:8080/api/projects/4/samples/1", location);
 	}
 
 	@Test
@@ -74,7 +76,7 @@ public class ProjectSamplesIT {
 		sample.put("sequencerSampleId", "sample_1");
 
 		// load a project
-		String projectUri = "/projects/1";
+		String projectUri = "/api/projects/1";
 		// get the uri for creating samples associated with the project.
 		String projectJson = asUser().get(projectUri).asString();
 		String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
