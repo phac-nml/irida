@@ -8,7 +8,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowIdentifi
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class IridaWorkflowNotFoundException extends Exception {
+public class IridaWorkflowNotFoundException extends IridaWorkflowLoadException {
 
 	private static final long serialVersionUID = 5002643601663546169L;
 
