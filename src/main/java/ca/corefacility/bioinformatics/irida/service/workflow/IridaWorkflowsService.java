@@ -146,6 +146,20 @@ public class IridaWorkflowsService {
 			return allRegisteredWorkflows.get(id);
 		}
 	}
+	
+	/**
+	 * Gets a list of all the names of all installed workflows.
+	 * @return A list of all the names of all installed workflows.
+	 */
+	public Set<String> getAllWorkflowsByName() {
+		Set<String> names = new HashSet<>();
+		
+		for (IridaWorkflow workflow : getInstalledWorkflows()) {
+			names.add(workflow.getWorkflowDescription().getName());
+		}
+		
+		return names;
+	}
 
 	/**
 	 * Returns a workflow with the given id.

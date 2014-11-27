@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
 
 import org.junit.Before;
@@ -30,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoader
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.google.common.collect.Sets;
 
 /**
  * Tests our the {@link IridaWorkflowsService}.
@@ -137,5 +139,17 @@ public class IridaWorkflowsServiceIT {
 		assertNotNull(workflowA);
 		IridaWorkflow workflowB = iridaWorkflows.iterator().next();
 		assertNotNull(workflowB);
+	}
+	
+	/**
+	 * Tests getting a list of all the names of all installed workflows.
+	 * @throws IOException
+	 * @throws IridaWorkflowLoadException
+	 */
+	@Test
+	public void testGetAllWorkflowsByName() throws IOException, IridaWorkflowLoadException {
+		iridaWorkflowsService.registerAnalysis(TestAnalysis.class, validWorkflowId);
+		Set<String> names = iridaWorkflowsService.getAllWorkflowsByName();
+		assertEquals(Sets.newHashSet("TestWorkflow"), names);
 	}
 }
