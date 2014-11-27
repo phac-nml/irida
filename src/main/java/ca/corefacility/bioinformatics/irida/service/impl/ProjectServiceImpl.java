@@ -331,4 +331,22 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		return prfjRepository.save(j);
 	}
 
+	@Override
+	public void removeReferenceFileFromProject(Project project, ReferenceFile file) {
+		List<Join<Project, ReferenceFile>> referenceFilesForProject = prfjRepository
+				.findReferenceFilesForProject(project);
+		Join<Project, ReferenceFile> specificJoin = null;
+		for (Join<Project, ReferenceFile> join : referenceFilesForProject) {
+			if(join.getObject().equals(file)) {
+				specificJoin = join;
+				break;
+			}
+		}
+		if (specificJoin != null) {
+			prfjRepository.delete((ProjectReferenceFileJoin)specificJoin);
+		}
+		else {
+			throw new EntityNotFoundException("Cannot find a join for project [" + project.getName() + "] and reference file [" + file.getLabel() + "].");
+		}
+	}
 }
