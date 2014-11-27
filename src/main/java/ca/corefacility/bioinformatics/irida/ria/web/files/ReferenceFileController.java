@@ -93,7 +93,7 @@ public class ReferenceFileController {
 	 */
 	@RequestMapping("/project/{projectId}/new")
 	public @ResponseBody Map<String, Object> createNewReferenceFile(@PathVariable Long projectId,
-			@RequestParam("file") MultipartFile file) throws IOException {
+			@RequestParam("file") MultipartFile file, Locale locale) throws IOException {
 
 		logger.debug("Adding reference file to project " + projectId);
 		logger.trace("Uploaded file size: " + file.getSize() + " bytes");
@@ -116,11 +116,12 @@ public class ReferenceFileController {
 		ReferenceFile refFile = projectReferenceFileJoin.getObject();
 		Map<String, Object> result = new HashMap<>();
 		Path path = refFile.getFile();
-		long size = 0;
 		if (Files.exists(path)) {
-			size = Files.size(path);
+			result.put("size", Files.size(path));
 		}
-		result.put("size", size);
+		else {
+			result.put("size", messageSource.getMessage("projects.reference-file.not-found", new Object[]{}, locale));
+		}
 		result.put("id", refFile.getId().toString());
 		result.put("label", refFile.getLabel());
 		result.put("createdDate", refFile.getCreatedDate());

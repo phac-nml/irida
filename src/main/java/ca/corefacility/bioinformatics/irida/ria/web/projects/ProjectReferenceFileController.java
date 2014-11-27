@@ -60,16 +60,12 @@ public class ProjectReferenceFileController {
 			map.put("label", file.getLabel());
 			map.put("createdDate", file.getCreatedDate());
 			Path path = file.getFile();
-			long size = 0;
-			if (Files.exists(path)) {
-				try {
-					size = Files.size(path);
-					map.put("size", size);
-				} catch (IOException e) {
-					logger.error("Cannot find the size of file " + file.getLabel());
-					map.put("size",
-							messageSource.getMessage("projects.reference-file.not-found", new Object[] { }, locale));
-				}
+			try {
+				map.put("size", Files.size(path));
+			} catch (IOException e) {
+				logger.error("Cannot find the size of file " + file.getLabel());
+				map.put("size",
+						messageSource.getMessage("projects.reference-file.not-found", new Object[] { }, locale));
 			}
 			files.add(map);
 		}
