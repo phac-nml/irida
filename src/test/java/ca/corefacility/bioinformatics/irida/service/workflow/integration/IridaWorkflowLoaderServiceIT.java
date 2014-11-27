@@ -71,16 +71,16 @@ public class IridaWorkflowLoaderServiceIT {
 	@Before
 	public void setup() throws JAXBException, URISyntaxException, FileNotFoundException {
 		workflowXmlPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
-				"TestAnalysis/1.0/irida_workflow.xml").toURI());
+				"workflows/TestAnalysis/1.0/irida_workflow.xml").toURI());
 		workflowStructurePath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
-				"TestAnalysis/1.0/irida_workflow_structure.ga").toURI());
-		workflowDirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("TestAnalysis").toURI());
-		workflowVersionDirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("TestAnalysis/1.0")
+				"workflows/TestAnalysis/1.0/irida_workflow_structure.ga").toURI());
+		workflowDirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("workflows/TestAnalysis").toURI());
+		workflowVersionDirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("workflows/TestAnalysis/1.0")
 				.toURI());
 		workflowDirectoryPathNoDefinition = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
-				"TestAnalysisNoDefinition").toURI());
+				"workflows/TestAnalysisNoDefinition").toURI());
 		workflowDirectoryPathNoStructure = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
-				"TestAnalysisNoStructure").toURI());
+				"workflows/TestAnalysisNoStructure").toURI());
 	}
 
 	private IridaWorkflow buildTestWorkflow() throws MalformedURLException {

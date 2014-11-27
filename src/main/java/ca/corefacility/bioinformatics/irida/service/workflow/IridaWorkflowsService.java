@@ -31,6 +31,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 @Service
 public class IridaWorkflowsService {
 	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowsService.class);
+	
+	private static final String WORKFLOWS_DIR = "workflows";
 
 	private IridaWorkflowLoaderService iridaWorkflowLoaderService;
 
@@ -68,9 +70,9 @@ public class IridaWorkflowsService {
 		checkNotNull(analysisClass, "analysisClass is null");
 
 		logger.debug("Registering Analysis: " + analysisClass);
-		String workflowResourceDir = analysisClass.getSimpleName();
-		logger.debug(workflowResourceDir);
-		Path workflowPath = Paths.get(analysisClass.getResource(workflowResourceDir).getFile());
+		String analysisName = analysisClass.getSimpleName();
+		Path workflowsResourcePath = Paths.get(analysisClass.getResource(WORKFLOWS_DIR).getFile());
+		Path workflowPath = workflowsResourcePath.resolve(analysisName);
 
 		if (!Files.isDirectory(workflowPath)) {
 			throw new IridaWorkflowLoadException("Missing directory " + workflowPath + " for class " + analysisClass);
