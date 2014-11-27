@@ -37,7 +37,7 @@ public class ProjectReferenceFileController {
 	/*
 	 * Converters
 	 */
-	FileSizeConverter fileSizeConverter;
+	private FileSizeConverter fileSizeConverter;
 
 	@Autowired
 	public ProjectReferenceFileController(ProjectService projectService, ReferenceFileService referenceFileService) {
