@@ -51,7 +51,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	/**
 	 * Executor for running pipelines asynchronously.
 	 */
-	private final TaskExecutor executor;
+	private final TaskExecutor fileProcessingChainExecutor;
 	/**
 	 * File processing chain to execute on sequence files.
 	 */
@@ -69,11 +69,12 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	@Autowired
 	public SequenceFileServiceImpl(SequenceFileRepository sequenceFileRepository,
-			SampleSequenceFileJoinRepository ssfRepository, TaskExecutor executor, FileProcessingChain fileProcessingChain, Validator validator) {
+			SampleSequenceFileJoinRepository ssfRepository, TaskExecutor fileProcessingChainExecutor,
+			FileProcessingChain fileProcessingChain, Validator validator) {
 		super(sequenceFileRepository, validator, SequenceFile.class);
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.ssfRepository = ssfRepository;
-		this.executor = executor;
+		this.fileProcessingChainExecutor = fileProcessingChainExecutor;
 		this.fileProcessingChain = fileProcessingChain;
 	}
 
@@ -86,7 +87,8 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		// Send the file to the database repository to be stored (in super)
 		logger.trace("Calling super.create");
 		SequenceFile sf = super.create(sequenceFile);
-		executor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, sf.getId(), SecurityContextHolder.getContext()));
+		fileProcessingChainExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, sf.getId(),
+				SecurityContextHolder.getContext()));
 		return sf;
 	}
 
@@ -108,7 +110,8 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		
 		// only launch the file processing chain if the file has been modified.
 		if (updatedFields.containsKey(FILE_PROPERTY)) {
-			executor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, sf.getId(), SecurityContextHolder.getContext()));
+			fileProcessingChainExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, sf.getId(),
+					SecurityContextHolder.getContext()));
 		}
 		
 		return sf;
