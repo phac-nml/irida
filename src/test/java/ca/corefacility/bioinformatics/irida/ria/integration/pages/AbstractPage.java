@@ -56,12 +56,17 @@ public class AbstractPage {
 
 	public void clickElement(WebElement element) {
 		boolean failed = true;
-		while (failed) {
+		int count = 10;
+		while (failed && --count > 0) {
 			try {
 				element.click();
 				failed = false;
 			} catch (Exception e) {
-				e.printStackTrace();
+				try {
+					Thread.sleep(250);
+				} catch (InterruptedException e1) {
+					logger.error("Cannot sleep thread.");
+				}
 			}
 		}
 	}
