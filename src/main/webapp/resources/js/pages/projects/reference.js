@@ -35,14 +35,14 @@
     };
 
     svc.deleteFile = function (file) {
-       var modalInstance = $modal.open({
+      var modalInstance = $modal.open({
         templateUrl: BASE_URL + 'projects/templates/referenceFiles/delete',
         controller : 'DeleteCtrl as dCtrl',
-         resolve: {
-           file: function() {
-             return file;
-           }
-         }
+        resolve    : {
+          file: function () {
+            return file;
+          }
+        }
       });
 
       modalInstance.result.then(function () {
@@ -51,7 +51,7 @@
           projectId: projectId
         }, "delete").then(function (data) {
           notifications.show({msg: data.msg, type: data.result});
-          $rootScope.$broadcast("FILE_DELETED", {id:file.id});
+          $rootScope.$broadcast("FILE_DELETED", {id: file.id});
         });
       });
     }
@@ -66,7 +66,7 @@
       $modalInstance.close();
     };
 
-    vm.close = function() {
+    vm.close = function () {
       $modalInstance.dismiss();
     };
   }
@@ -74,7 +74,6 @@
   function FilesCtrl(ProjectFileService, FileService) {
     "use strict";
     var vm = this;
-    vm.files = ProjectFileService.files;
 
     vm.download = function (id) {
       FileService.download(id);
@@ -84,7 +83,9 @@
       FileService.deleteFile(file);
     };
 
-    ProjectFileService.getFiles();
+    ProjectFileService.getFiles().then(function () {
+      vm.files = ProjectFileService.files;
+    });
   }
 
   angular.module('References', [])
