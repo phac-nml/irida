@@ -1,14 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +33,12 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
- * <p> Integration test to ensure that the Project Details Page. </p>
+ * <p>
+ * Integration test to ensure that the Project Details Page.
+ * </p>
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,
@@ -81,9 +87,18 @@ public class ProjectDetailsPageIT {
 				detailsPage.getModifiedDate());
 	}
 
+	@Test
+	public void testDisplaysProjectEvent() {
+		List<WebElement> events = detailsPage.getEvents();
+		assertEquals(1, events.size());
+		WebElement next = events.iterator().next();
+		String className = next.getAttribute("class");
+		assertTrue(className.contains("user-role-event"));
+	}
+
 	/**
-	 * The modified date for a project is expressed in time since modification. This will return the correct format for
-	 * the displayed date.
+	 * The modified date for a project is expressed in time since modification.
+	 * This will return the correct format for the displayed date.
 	 *
 	 * @return the format for the modified year
 	 */

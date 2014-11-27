@@ -10,7 +10,9 @@
 <div class="row" layout:fragment="page">
     <main class="container" role="main" property="mainContentOfPage">
         <h1 th:utext="#{dashboard.heading}"></h1>
-        <section th:utext="#{dashboard.body}"></section>
+        <p th:utext="#{dashboard.body}"></p>
+        <h3 th:text="#{event.title}">_Recent Activities_</h3>
+        <div id="events"></div>
         <div class="row mrgn-tp-lg mrgn-bttm-lg">
             <div ng-controller="CarouselCtrl">
                 <div style="height: 200px">
@@ -22,10 +24,15 @@
                 </div>
             </div>
         </div>
+
     </main>
 </div>
 
 <th:block layout:fragment="page-scripts" th:inline="javascript">
+    <script th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}"
+	        src="/resources/bower_components/moment/min/moment-with-langs.min.js"></script>
+	<script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"
+	        src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
     <script>
 
         /*<![CDATA[*/
@@ -41,6 +48,17 @@
                 $scope.slides.push({image: BASE_URL + "resources/img/irida-logos-" + i + ".png"});
             }
         }
+        
+        $(function () {
+            var eventUrl = /*[[@{/events/current_user}]]*/ '/events/current_user/';
+            $.ajax({
+            	method: "GET",
+            	url: eventUrl,
+            	success: function(data, textStatus, jqXHR){
+            		$("#events").html(data);
+            	}
+            })
+        });
         /*]]>*/
     </script>
 </th:block>

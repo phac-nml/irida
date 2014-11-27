@@ -122,34 +122,6 @@ public class ProjectSamplesControllerTest {
 		return project;
 	}
 
-	private List<Join<Sample, SequenceFile>> getSequenceFilesForSample() {
-		List<Join<Sample, SequenceFile>> list = new ArrayList<>();
-		Sample sample = new Sample("TEST SAMPLE");
-		sample.setId(1L);
-		for (int i = 0; i < 20; i++) {
-			list.add(new SampleSequenceFileJoin(sample, new SequenceFile()));
-		}
-		return list;
-	}
-
-	/**
-	 * Get a page of samples for a project
-	 * 
-	 * @param project
-	 *            The project to use
-	 * @return A Page<ProjectSampleJoin> containing 10 samples
-	 */
-	private Page<ProjectSampleJoin> getSamplesForProjectPage(Project project) {
-		List<ProjectSampleJoin> psjList = new ArrayList<>();
-		for (int i = 0; i < 10; i++) {
-			Sample sample = new Sample("sample" + i);
-			sample.setId(i + 1L);
-			ProjectSampleJoin join = new ProjectSampleJoin(project, sample);
-			psjList.add(join);
-		}
-
-		return new PageImpl<>(psjList);
-	}
 
 	@Test
 	public void testCopySampleToProjectRemove() {
@@ -297,7 +269,6 @@ public class ProjectSamplesControllerTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetProjectsAvailableToCopySamplesAsAdmin() {
-		Long projectId = 1l;
 		String term = "";
 		int page = 0;
 		int pagesize = 10;
@@ -399,6 +370,7 @@ public class ProjectSamplesControllerTest {
 				response.getHeader("Content-Disposition"));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testPostUploadSampleToGalaxy() {
 		Sample sample = TestDataFactory.constructSample();
@@ -421,6 +393,7 @@ public class ProjectSamplesControllerTest {
 		assertTrue(result.containsKey("msg"));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testUploadSampleToGalaxyExceptions() {
 		Sample sample = TestDataFactory.constructSample();

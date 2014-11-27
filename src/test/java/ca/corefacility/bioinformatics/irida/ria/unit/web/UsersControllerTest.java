@@ -117,6 +117,7 @@ public class UsersControllerTest {
 		verify(messageSource, times(2)).getMessage(any(String.class), eq(null), any(Locale.class));
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Test
 	public void testGetUserSpecificPage() {
 		Principal principal = () -> USER_NAME;

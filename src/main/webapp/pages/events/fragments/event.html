@@ -1,0 +1,41 @@
+<!--/* 
+The 'th:with's below require some explanation.  They are used to 
+create <a href...> tags for the user and project which can then be used in a 
+internationalization message.  4 variables are created:
+    userHref = the href to the user in the event
+    userLink = the <a> tag which uses the userHref variable
+    projectHref = the href to the project
+    projectLink = the <a> tag using the projectHref
+These created variables are then used as parameters to a message so that they 
+can be internationalized.
+*/-->
+        
+<span th:fragment="user-role-event (event)">  
+    <i class="glyphicon glyphicon-user"></i>
+    <span class="event-content user-role-event"
+        th:with="userHref=@{/users/{uid}(uid=${event.user.getId()})},
+        userLink=${'&lt;a href='+ userHref +'&gt;'+ event.user.label +'&lt;/a&gt;'},
+        projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
+        projectLink=${'&lt;a href='+ projectHref +' &gt;'+ event.project.label +'&lt;/a&gt;'}" 
+        th:utext="#{event.user_added(${userLink},#{'projectRole.'+${event.role}},${projectLink})}"></span>
+</span>
+
+<span th:fragment="user-removed-event (event)">
+    <i class="glyphicon glyphicon-ban-circle"></i>
+    <span class="event-content user-removed-event" 
+            th:with="userHref=@{/users/{uid}(uid=${event.user.getId()})},
+            userLink=${'&lt;a href='+ userHref +'&gt;'+ event.user.label +'&lt;/a&gt; '},
+            projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
+            projectLink=${'&lt;a href='+ projectHref +' &gt;'+ event.project.label +'&lt;/a&gt;'}" 
+            th:utext="#{event.user_removed(${userLink},${projectLink})}"></span>
+</span>
+
+<span th:fragment="sample-added-event (event)">
+    <i class="fa fa-flask"></i>
+    <span class="event-content sample-added-event"
+            th:with="sampleHref=@{/samples/{sid}(sid=${event.sample.getId()})},
+            sampleLink=${'&lt;a href='+ sampleHref +'&gt;'+ event.sample.label +'&lt;/a&gt;'},
+            projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
+            projectLink=${'&lt;a href='+ projectHref +'&gt;'+ event.project.label +'&lt;/a&gt;'}" 
+            th:utext="#{event.sample_added(${sampleLink},${projectLink})}"></span>
+</span>
