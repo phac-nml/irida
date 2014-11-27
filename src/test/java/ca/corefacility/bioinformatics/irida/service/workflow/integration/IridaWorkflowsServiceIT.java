@@ -83,6 +83,18 @@ public class IridaWorkflowsServiceIT {
 	}
 
 	/**
+	 * Tests to make sure we fail to register duplicate workflows.
+	 * 
+	 * @throws IridaWorkflowLoadException
+	 * @throws IOException
+	 * 
+	 */
+	@Test(expected = IridaWorkflowLoadException.class)
+	public void testRegisterAnalysisDuplicateFail() throws IOException, IridaWorkflowLoadException {
+		iridaWorkflowsService.registerAnalysis(TestAnalysis.class);
+	}
+
+	/**
 	 * Tests getting a collection of all installed workflows.
 	 * 
 	 * @throws IridaWorkflowLoadException
