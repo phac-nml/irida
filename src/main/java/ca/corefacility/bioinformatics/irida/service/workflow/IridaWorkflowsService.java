@@ -35,13 +35,12 @@ public class IridaWorkflowsService {
 	private IridaWorkflowLoaderService iridaWorkflowLoaderService;
 
 	/**
-	 * Stores registered workflows in the format of { workflowName ->
-	 * IridaWorkflow }
+	 * Stores registered workflows within IRIDA.
 	 */
 	private Map<IridaWorkflowIdentifier, IridaWorkflow> registeredWorkflows;
 
 	/**
-	 * Builds a new IridaWorkflowService for loading up installed workflows.
+	 * Builds a new {@link IridaWorkflowService} for loading up installed workflows.
 	 * 
 	 * @param iridaWorkflowLoaderService
 	 *            The service used to load up workflows.
@@ -97,7 +96,7 @@ public class IridaWorkflowsService {
 	 * 
 	 * @param workflowIdentifier
 	 *            The identifier of the workflow to get.
-	 * @return An IridaWorkflow with the given identifier.
+	 * @return An {@link IridaWorkflow} with the given identifier.
 	 * @throws IridaWorkflowNotFoundException
 	 *             If no workflow with the given identifier was found.
 	 */
