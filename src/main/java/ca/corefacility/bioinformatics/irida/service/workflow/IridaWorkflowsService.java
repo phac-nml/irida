@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.service.workflow;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadExceptio
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowIdentifier;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 
 /**
  * Class used to load up installed workflows in IRIDA.
@@ -35,8 +34,6 @@ public class IridaWorkflowsService {
 
 	private IridaWorkflowLoaderService iridaWorkflowLoaderService;
 
-	private static final String WORKFLOW_DIR = "workflows";
-
 	/**
 	 * Stores registered workflows in the format of { workflowName ->
 	 * IridaWorkflow }
@@ -48,53 +45,49 @@ public class IridaWorkflowsService {
 	 * 
 	 * @param iridaWorkflowLoaderService
 	 *            The service used to load up workflows.
-	 * @throws IOException
-	 *             If there was an issue reading a file.
-	 * @throws IridaWorkflowLoadException
-	 *             If there was an issue loading a workflow.
 	 */
 	@Autowired
-	public IridaWorkflowsService(IridaWorkflowLoaderService iridaWorkflowLoaderService) throws IOException,
-			IridaWorkflowLoadException {
+	public IridaWorkflowsService(IridaWorkflowLoaderService iridaWorkflowLoaderService) {
 		this.iridaWorkflowLoaderService = iridaWorkflowLoaderService;
 
 		registeredWorkflows = new HashMap<>();
-
-		registerWorkflows(AnalysisSubmission.class);
 	}
 
 	/**
 	 * Registers workflows that are stored as resources belonging to the passed
-	 * class.
+	 * Analysis class.
 	 * 
-	 * @param analysisRootClass
-	 *            The class defining where the workflow files are stored.
+	 * @param analysisClass
+	 *            The class defining the type of analysis.
 	 * @throws IOException
 	 *             If there was a problem reading a workflow.
 	 * @throws IridaWorkflowLoadException
 	 *             If there was a problem loading a workflow.
 	 */
-	private void registerWorkflows(Class<?> analysisRootClass) throws IOException, IridaWorkflowLoadException {
-		Path resourcePath = Paths.get(analysisRootClass.getResource(WORKFLOW_DIR).getFile());
-		DirectoryStream<Path> stream = Files.newDirectoryStream(resourcePath);
+	public void registerAnalysis(Class<? extends Analysis> analysisClass) throws IOException,
+			IridaWorkflowLoadException {
+		checkNotNull(analysisClass, "analysisClass is null");
 
-		for (Path workflowDirectory : stream) {
-			if (!Files.isDirectory(workflowDirectory)) {
-				logger.warn("Workflow directory " + resourcePath + " contains a file " + workflowDirectory
-						+ " that is not a proper workflow directory");
-			} else {
+		logger.debug("Registering Analysis: " + analysisClass);
+		String workflowResourceDir = analysisClass.getSimpleName();
+		logger.debug(workflowResourceDir);
+		Path workflowPath = Paths.get(analysisClass.getResource(workflowResourceDir).getFile());
 
-				try {
-					Set<IridaWorkflow> workflowVersions = iridaWorkflowLoaderService
-							.loadAllWorkflowVersions(workflowDirectory);
+		if (!Files.isDirectory(workflowPath)) {
+			throw new IridaWorkflowLoadException("Missing directory " + workflowPath + " for class " + analysisClass);
+		} else {
+			try {
+				Set<IridaWorkflow> workflowVersions = iridaWorkflowLoaderService.loadAllWorkflowVersions(workflowPath);
 
-					for (IridaWorkflow workflow : workflowVersions) {
+				for (IridaWorkflow workflow : workflowVersions) {
+					if (registeredWorkflows.containsKey(workflow.getWorkflowIdentifier())) {
+						throw new IridaWorkflowLoadException("Duplicate workflow " + workflow.getWorkflowIdentifier());
+					} else {
 						registeredWorkflows.put(workflow.getWorkflowIdentifier(), workflow);
 					}
-				} catch (Exception e) {
-					throw new IridaWorkflowLoadException(
-							"Could not load workflows from directory " + workflowDirectory, e);
 				}
+			} catch (Exception e) {
+				throw new IridaWorkflowLoadException("Could not load workflows from directory " + workflowPath, e);
 			}
 		}
 	}

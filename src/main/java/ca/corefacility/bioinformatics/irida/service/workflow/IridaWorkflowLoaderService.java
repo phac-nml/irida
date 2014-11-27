@@ -75,7 +75,6 @@ public class IridaWorkflowLoaderService {
 		Set<IridaWorkflow> workflowVersions = new HashSet<>();
 
 		DirectoryStream<Path> stream = Files.newDirectoryStream(workflowDirectory);
-		String workflowName = workflowDirectory.toFile().getName();
 
 		for (Path versionDirectory : stream) {
 			if (!Files.isDirectory(versionDirectory)) {
@@ -85,10 +84,9 @@ public class IridaWorkflowLoaderService {
 				String workflowVersion = versionDirectory.toFile().getName();
 				IridaWorkflow iridaWorkflow = loadIridaWorkflowFromDirectory(versionDirectory);
 
-				if (!workflowName.equals(iridaWorkflow.getWorkflowDescription().getName())
-						|| !workflowVersion.equals(iridaWorkflow.getWorkflowDescription().getVersion())) {
+				if (!workflowVersion.equals(iridaWorkflow.getWorkflowDescription().getVersion())) {
 					throw new IridaWorkflowLoadException("Workflow directory structure " + versionDirectory
-							+ " does not match name from workflow file: name="
+							+ " does not match version from workflow file: name="
 							+ iridaWorkflow.getWorkflowDescription().getName() + ", version="
 							+ iridaWorkflow.getWorkflowDescription().getVersion());
 				} else {

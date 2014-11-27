@@ -69,25 +69,22 @@ public class IridaWorkflowLoaderServiceIT {
 	private Path workflowDirectoryPathNoDefinition;
 	private Path workflowDirectoryPathNoStructure;
 	private Path workflowDirectoryPathInvalidVersion;
-	private Path workflowDirectoryPathInvalidName;
 
 	@Before
 	public void setup() throws JAXBException, URISyntaxException, FileNotFoundException {
 		workflowXmlPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
-				"TestWorkflow/1.0/irida_workflow.xml").toURI());
+				"TestAnalysis/1.0/irida_workflow.xml").toURI());
 		workflowStructurePath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
-				"TestWorkflow/1.0/irida_workflow_structure.ga").toURI());
-		workflowDirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("TestWorkflow").toURI());
-		workflowVersionDirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("TestWorkflow/1.0")
+				"TestAnalysis/1.0/irida_workflow_structure.ga").toURI());
+		workflowDirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("TestAnalysis").toURI());
+		workflowVersionDirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("TestAnalysis/1.0")
 				.toURI());
 		workflowDirectoryPathNoDefinition = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
-				"TestWorkflowNoDefinition").toURI());
+				"TestAnalysisNoDefinition").toURI());
 		workflowDirectoryPathNoStructure = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
-				"TestWorkflowNoStructure").toURI());
+				"TestAnalysisNoStructure").toURI());
 		workflowDirectoryPathInvalidVersion = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
-				"TestWorkflowInvalidVersion").toURI());
-		workflowDirectoryPathInvalidName = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
-				"TestWorkflowInvalidName").toURI());
+				"TestAnalysisInvalidVersion").toURI());
 	}
 
 	private IridaWorkflow buildTestWorkflow() throws MalformedURLException {
@@ -229,16 +226,5 @@ public class IridaWorkflowLoaderServiceIT {
 	@Test(expected = IridaWorkflowLoadException.class)
 	public void testLoadWorkflowsFromDirectoryFailInvalidVersion() throws IOException, IridaWorkflowLoadException {
 		workflowLoaderService.loadAllWorkflowVersions(workflowDirectoryPathInvalidVersion);
-	}
-
-	/**
-	 * Tests failing to load up a workflow from a directory where the name does
-	 * not match the directory name.
-	 * 
-	 * @throws IridaWorkflowLoadException
-	 */
-	@Test(expected = IridaWorkflowLoadException.class)
-	public void testLoadWorkflowsFromDirectoryFailInvalidName() throws IOException, IridaWorkflowLoadException {
-		workflowLoaderService.loadAllWorkflowVersions(workflowDirectoryPathInvalidName);
 	}
 }

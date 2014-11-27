@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.workflow.integration;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
 
@@ -21,9 +22,11 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowIdentifier;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -43,6 +46,8 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 public class IridaWorkflowsServiceIT {
 
 	@Autowired
+	private IridaWorkflowLoaderService iridaWorkflowLoaderService;
+	
 	private IridaWorkflowsService iridaWorkflowsService;
 
 	private static final IridaWorkflowIdentifier validWorkflow = new IridaWorkflowIdentifier("TestWorkflow", "1.0");
@@ -52,16 +57,20 @@ public class IridaWorkflowsServiceIT {
 			"1.0");
 
 	@Before
-	public void setup() throws URISyntaxException {
+	public void setup() throws URISyntaxException, IOException, IridaWorkflowLoadException {
+		iridaWorkflowsService = new IridaWorkflowsService(iridaWorkflowLoaderService);
+		iridaWorkflowsService.registerAnalysis(TestAnalysis.class);
 	}
 
 	/**
 	 * Tests to make sure we can successfully load a workflow.
 	 * 
 	 * @throws IridaWorkflowNotFoundException
+	 * @throws IridaWorkflowLoadException 
+	 * @throws IOException 
 	 */
 	@Test
-	public void testGetIridaWorkflowSuccess() throws IridaWorkflowNotFoundException {
+	public void testGetIridaWorkflowSuccess() throws IridaWorkflowNotFoundException, IOException, IridaWorkflowLoadException {
 		assertNotNull(iridaWorkflowsService.getIridaWorkflow(validWorkflow));
 	}
 
@@ -78,24 +87,29 @@ public class IridaWorkflowsServiceIT {
 
 	/**
 	 * Tests getting a collection of all installed workflows.
+	 * @throws IridaWorkflowLoadException 
+	 * @throws IOException 
 	 */
 	@Test
-	public void testGetInstalledWorkflows() {
+	public void testGetInstalledWorkflows() throws IOException, IridaWorkflowLoadException {
 		Collection<IridaWorkflow> iridaWorkflows = iridaWorkflowsService.getInstalledWorkflows();
-		assertEquals(1, iridaWorkflows.size());
-		IridaWorkflow workflow = iridaWorkflows.iterator().next();
-		assertNotNull(workflow);
-		assertEquals(new IridaWorkflowIdentifier("TestWorkflow", "1.0"), workflow.getWorkflowIdentifier());
+		assertEquals(2, iridaWorkflows.size());
+		IridaWorkflow workflowA = iridaWorkflows.iterator().next();
+		assertNotNull(workflowA);
+		IridaWorkflow workflowB = iridaWorkflows.iterator().next();
+		assertNotNull(workflowB);
 	}
 	
 	/**
 	 * Tests to make sure we fail to load a workflow with an unknown version number.
 	 * 
 	 * @throws IridaWorkflowNotFoundException
+	 * @throws IridaWorkflowLoadException 
+	 * @throws IOException 
 	 * 
 	 */
 	@Test(expected = IridaWorkflowNotFoundException.class)
-	public void testLoadIridaWorkflowVersionFail() throws IridaWorkflowNotFoundException {
+	public void testLoadIridaWorkflowVersionFail() throws IridaWorkflowNotFoundException, IOException, IridaWorkflowLoadException {		
 		iridaWorkflowsService.getIridaWorkflow(invalidVersionWorkflow);
 	}
 }
