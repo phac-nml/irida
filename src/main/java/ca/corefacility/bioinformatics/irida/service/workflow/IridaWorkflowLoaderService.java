@@ -97,8 +97,11 @@ public class IridaWorkflowLoaderService {
 	 * @return An {@link IridaWorkflow} from this directory.
 	 * @throws IOException
 	 *             If there was an error reading one of the files.
+	 * @throws IridaWorkflowLoadException
+	 *             If there was an issue loading up the workflow.
 	 */
-	public IridaWorkflow loadIridaWorkflowFromDirectory(Path workflowDirectory) throws IOException {
+	public IridaWorkflow loadIridaWorkflowFromDirectory(Path workflowDirectory) throws IOException,
+			IridaWorkflowLoadException {
 		checkNotNull(workflowDirectory, "workflowDirectory is null");
 
 		return loadIridaWorkflow(workflowDirectory.resolve(WORKFLOW_DEFINITION_FILE),
@@ -115,8 +118,11 @@ public class IridaWorkflowLoaderService {
 	 * @return An IridaWorkflow object for this workflow.
 	 * @throws IOException
 	 *             If there was an issue reading the passed file.
+	 * @throws IridaWorkflowLoadException
+	 *             If there was an issue loading up the workflow.
 	 */
-	public IridaWorkflow loadIridaWorkflow(Path descriptionFile, Path structureFile) throws IOException {
+	public IridaWorkflow loadIridaWorkflow(Path descriptionFile, Path structureFile) throws IOException,
+			IridaWorkflowLoadException {
 		checkNotNull(descriptionFile, "descriptionFile is null");
 		checkNotNull(structureFile, "structureFile is null");
 
@@ -133,15 +139,25 @@ public class IridaWorkflowLoaderService {
 	 * @return An IridaWorkflowDescription object.
 	 * @throws IOException
 	 *             If there was an issue reading the passed file.
+	 * @throws IridaWorkflowLoadException
+	 *             If there was an issue loading up the workflow description.
 	 */
-	public IridaWorkflowDescription loadWorkflowDescription(Path descriptionFile) throws IOException {
+	public IridaWorkflowDescription loadWorkflowDescription(Path descriptionFile) throws IOException,
+			IridaWorkflowLoadException {
 		checkNotNull("descriptionFile is null", descriptionFile);
 		if (!Files.exists(descriptionFile)) {
 			throw new FileNotFoundException(descriptionFile.toFile().getAbsolutePath());
 		}
 
 		Source source = new StreamSource(new FileInputStream(descriptionFile.toFile()));
-		return (IridaWorkflowDescription) workflowDescriptionUnmarshaller.unmarshal(source);
+		IridaWorkflowDescription workflowDescription = (IridaWorkflowDescription) workflowDescriptionUnmarshaller
+				.unmarshal(source);
+
+		if (workflowDescription.getId() == null) {
+			throw new IridaWorkflowLoadException("No id for workflow description from file " + descriptionFile);
+		} else {
+			return workflowDescription;
+		}
 	}
 
 	/**

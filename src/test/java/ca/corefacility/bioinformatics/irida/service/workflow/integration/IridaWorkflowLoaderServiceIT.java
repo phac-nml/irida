@@ -58,7 +58,7 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExcecutionListener.class })
 public class IridaWorkflowLoaderServiceIT {
-	
+
 	private final static UUID DEFAULT_ID = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
 
 	@Autowired
@@ -70,6 +70,7 @@ public class IridaWorkflowLoaderServiceIT {
 	private Path workflowVersionDirectoryPath;
 	private Path workflowDirectoryPathNoDefinition;
 	private Path workflowDirectoryPathNoStructure;
+	private Path workflowDirectoryPathNoId;
 
 	@Before
 	public void setup() throws JAXBException, URISyntaxException, FileNotFoundException {
@@ -77,13 +78,16 @@ public class IridaWorkflowLoaderServiceIT {
 				"workflows/TestAnalysis/1.0/irida_workflow.xml").toURI());
 		workflowStructurePath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
 				"workflows/TestAnalysis/1.0/irida_workflow_structure.ga").toURI());
-		workflowDirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("workflows/TestAnalysis").toURI());
-		workflowVersionDirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("workflows/TestAnalysis/1.0")
+		workflowDirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("workflows/TestAnalysis")
 				.toURI());
+		workflowVersionDirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
+				"workflows/TestAnalysis/1.0").toURI());
 		workflowDirectoryPathNoDefinition = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
 				"workflows/TestAnalysisNoDefinition").toURI());
 		workflowDirectoryPathNoStructure = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
 				"workflows/TestAnalysisNoStructure").toURI());
+		workflowDirectoryPathNoId = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
+				"workflows/TestAnalysisNoId").toURI());
 	}
 
 	private IridaWorkflow buildTestWorkflow() throws MalformedURLException {
@@ -98,7 +102,8 @@ public class IridaWorkflowLoaderServiceIT {
 		return buildTestDescription(DEFAULT_ID, "TestWorkflow", "1.0");
 	}
 
-	private IridaWorkflowDescription buildTestDescription(UUID id, String name, String version) throws MalformedURLException {
+	private IridaWorkflowDescription buildTestDescription(UUID id, String name, String version)
+			throws MalformedURLException {
 		List<WorkflowOutput> outputs = new LinkedList<>();
 		outputs.add(new WorkflowOutput("output1", "output1.txt"));
 		outputs.add(new WorkflowOutput("output2", "output2.txt"));
@@ -119,9 +124,10 @@ public class IridaWorkflowLoaderServiceIT {
 	 * Tests loading up the workflow description file.
 	 * 
 	 * @throws IOException
+	 * @throws IridaWorkflowLoadException
 	 */
 	@Test
-	public void testLoadWorkflowDescription() throws IOException {
+	public void testLoadWorkflowDescription() throws IOException, IridaWorkflowLoadException {
 		IridaWorkflowDescription iridaWorkflowDescription = buildTestDescription();
 		IridaWorkflowDescription iridaWorkflowFromFile = workflowLoaderService.loadWorkflowDescription(workflowXmlPath);
 
@@ -132,9 +138,10 @@ public class IridaWorkflowLoaderServiceIT {
 	 * Tests loading up a workflow from a file.
 	 * 
 	 * @throws IOException
+	 * @throws IridaWorkflowLoadException
 	 */
 	@Test
-	public void testLoadWorkflow() throws IOException {
+	public void testLoadWorkflow() throws IOException, IridaWorkflowLoadException {
 		IridaWorkflow iridaWorkflow = buildTestWorkflow();
 		IridaWorkflow iridaWorkflowFromFile = workflowLoaderService.loadIridaWorkflow(workflowXmlPath,
 				workflowStructurePath);
@@ -210,5 +217,15 @@ public class IridaWorkflowLoaderServiceIT {
 	@Test(expected = FileNotFoundException.class)
 	public void testLoadWorkflowsFromDirectoryFailNoStructure() throws IOException, IridaWorkflowLoadException {
 		workflowLoaderService.loadAllWorkflowImplementations(workflowDirectoryPathNoStructure);
+	}
+
+	/**
+	 * Tests failing to load up a workflow with no id.
+	 * 
+	 * @throws IridaWorkflowLoadException
+	 */
+	@Test(expected = IridaWorkflowLoadException.class)
+	public void testLoadWorkflowsFromDirectoryFailNoId() throws IOException, IridaWorkflowLoadException {
+		workflowLoaderService.loadAllWorkflowImplementations(workflowDirectoryPathNoId);
 	}
 }
