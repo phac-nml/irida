@@ -21,7 +21,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.oxm.XmlMappingException;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -116,12 +115,10 @@ public class IridaWorkflowLoaderServiceIT {
 	/**
 	 * Tests loading up the workflow description file.
 	 * 
-	 * @throws JAXBException
-	 * @throws XmlMappingException
 	 * @throws IOException
 	 */
 	@Test
-	public void testLoadWorkflowDescription() throws JAXBException, XmlMappingException, IOException {
+	public void testLoadWorkflowDescription() throws IOException {
 		IridaWorkflowDescription iridaWorkflowDescription = buildTestDescription();
 		IridaWorkflowDescription iridaWorkflowFromFile = workflowLoaderService.loadWorkflowDescription(workflowXmlPath);
 
@@ -131,12 +128,10 @@ public class IridaWorkflowLoaderServiceIT {
 	/**
 	 * Tests loading up a workflow from a file.
 	 * 
-	 * @throws JAXBException
-	 * @throws XmlMappingException
 	 * @throws IOException
 	 */
 	@Test
-	public void testLoadWorkflow() throws JAXBException, XmlMappingException, IOException {
+	public void testLoadWorkflow() throws IOException {
 		IridaWorkflow iridaWorkflow = buildTestWorkflow();
 		IridaWorkflow iridaWorkflowFromFile = workflowLoaderService.loadIridaWorkflow(workflowXmlPath,
 				workflowStructurePath);
