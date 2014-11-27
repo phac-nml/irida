@@ -1,8 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.ProjectEventsUtilities;
 
 /**
  * <p>
@@ -10,11 +14,15 @@ import org.openqa.selenium.WebElement;
  * </p>
  * 
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class ProjectDetailsPage extends AbstractPage {
 
+	ProjectEventsUtilities projectEventsSection;
+
 	public ProjectDetailsPage(WebDriver driver) {
 		super(driver);
+		projectEventsSection = new ProjectEventsUtilities(driver);
 	}
 
 	public void goTo(Long projectId) {
@@ -44,5 +52,9 @@ public class ProjectDetailsPage extends AbstractPage {
 	public String getModifiedDate() {
 		WebElement date = driver.findElement(By.id("project-modified"));
 		return date.getText();
+	}
+
+	public List<WebElement> getEvents() {
+		return projectEventsSection.getEvents();
 	}
 }
