@@ -40,6 +40,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -445,6 +446,14 @@ public class ProjectServiceImplIT {
 
 		Collection<Join<Project, ReferenceFile>> files = asRole(Role.ROLE_ADMIN).referenceFileService.getReferenceFilesForProject(p);
 		assertTrue("No reference files should be assigned to project.", files.isEmpty());
+	}
+
+	@Test(expected = EntityNotFoundException.class)
+	public void testRemoveReferenceFileFromProjectExceptions() {
+		Project p = asRole(Role.ROLE_ADMIN).projectService.read(1L);
+		ReferenceFile f = asRole(Role.ROLE_ADMIN).referenceFileService.read(2L);
+
+		asRole(Role.ROLE_ADMIN).projectService.removeReferenceFileFromProject(p, f);
 	}
 
 	private Project p() {
