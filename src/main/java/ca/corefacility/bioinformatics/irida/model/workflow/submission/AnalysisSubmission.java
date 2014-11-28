@@ -64,7 +64,6 @@ public class AnalysisSubmission implements IridaThing {
 	/**
 	 * Defines the id of an installed workflow in IRIDA for performing this analysis.
 	 */
-	@NotNull
 	@Column(name="workflow_id")
 	private UUID workflowId;
 
