@@ -31,7 +31,7 @@
                 <tbody>
                 <tr role="row" th:each="file : ${files}" th:with="dateFormat=#{locale.date.long}" th:id="${'file-row-' + file.id}">
                     <td class="file-id" th:text="${file.id}">ID</td>
-                    <td><a class="file-name" th:href="@{/sequenceFiles/{id}(id=${file.id})}" href="#"
+                    <td><a class="file-name btn btn-default btn-xs" th:href="@{/sequenceFiles/{id}(id=${file.id})}" href="#"
                            th:text="${file.label}"></a></td>
                     <td data:order="${file.realCreatedDate}"
                         th:title="${#dates.format(file.realCreatedDate, dateFormat)}" th:text="${file.createdDate}">Date
@@ -39,9 +39,10 @@
                     <td data:order="${file.realSize}" th:text="${file.size}"></td>
                     <td class="file-buttons">
                         <span th:if="${canManageSample}">
-                            <button class="btn btn-danger btn-sm remove-file pull-right" 
-                                th:text="#{form.btn.remove}"
-                                th:attr="data-file-id=${file.id}">_Remove_</button>
+                            <button class="btn btn-default btn-xs remove-file pull-right" data:tooltip="#{form.btn.remove}"
+                                th:attr="data-file-id=${file.id}">
+                                <span class="fa fa-fw fa-trash"></span>
+                            </button>
                             </span>
                     </td>
                 </tr>
