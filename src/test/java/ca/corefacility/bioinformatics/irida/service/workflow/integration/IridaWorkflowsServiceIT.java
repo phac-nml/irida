@@ -53,6 +53,7 @@ public class IridaWorkflowsServiceIT {
 	private IridaWorkflowsService iridaWorkflowsService;
 
 	private static final UUID validWorkflowId = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
+	private static final UUID validWorkflowId2 = UUID.fromString("ee59af98-16c8-4337-a49b-8ecf7378dc65");
 	private static final UUID invalidWorkflowId = UUID.fromString("dca0bcc1-cc02-4c08-bd13-c6937d56cf70");
 
 	@Before
@@ -142,15 +143,17 @@ public class IridaWorkflowsServiceIT {
 	}
 	
 	/**
-	 * Tests getting a list of all the names of all installed workflows.
+	 * Tests getting a list of all installed workflows by name.
 	 * @throws IOException
 	 * @throws IridaWorkflowLoadException
 	 */
 	@Test
 	public void testGetAllWorkflowsByName() throws IOException, IridaWorkflowLoadException {
 		iridaWorkflowsService.registerAnalysis(TestAnalysis.class, validWorkflowId);
-		Set<String> names = iridaWorkflowsService.getAllWorkflowsByName();
-		assertEquals(Sets.newHashSet("TestWorkflow"), names);
+		iridaWorkflowsService.registerAnalysis(TestAnalysis2.class, validWorkflowId2);
+		
+		Set<String> workflows = iridaWorkflowsService.getAllWorkflowNames();
+		assertEquals(Sets.newHashSet("TestWorkflow", "TestWorkflow2"), workflows);
 	}
 	
 	/**
@@ -173,8 +176,13 @@ public class IridaWorkflowsServiceIT {
 	@Test
 	public void testGetDefaultWorkflowByName() throws IOException, IridaWorkflowLoadException {
 		iridaWorkflowsService.registerAnalysis(TestAnalysis.class, validWorkflowId);
+		iridaWorkflowsService.registerAnalysis(TestAnalysis2.class, validWorkflowId2);
+		
 		IridaWorkflow defaultWorkflow = iridaWorkflowsService.getDefaultWorkflow("TestWorkflow");
 		assertEquals(validWorkflowId, defaultWorkflow.getWorkflowIdentifier());
+		
+		IridaWorkflow defaultWorkflow2 = iridaWorkflowsService.getDefaultWorkflow("TestWorkflow2");
+		assertEquals(validWorkflowId2, defaultWorkflow2.getWorkflowIdentifier());
 	}
 	
 	/**

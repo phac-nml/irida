@@ -231,7 +231,7 @@ public class IridaWorkflowsService {
 	 * 
 	 * @return A list of all the names of all installed workflows.
 	 */
-	public Set<String> getAllWorkflowsByName() {
+	public Set<String> getAllWorkflowNames() {
 		Set<String> names = new HashSet<>();
 
 		for (IridaWorkflow workflow : getInstalledWorkflows()) {
