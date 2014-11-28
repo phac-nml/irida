@@ -28,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 
@@ -47,7 +46,6 @@ public class ReferenceFileController {
 	Formatter<Date> dateFormatter;
 	private final ProjectService projectService;
 	private final ReferenceFileService referenceFileService;
-	private final FileSizeConverter fileSizeConverter;
 	private final MessageSource messageSource;
 
 	@Autowired
@@ -56,7 +54,6 @@ public class ReferenceFileController {
 		this.projectService = projectService;
 		this.referenceFileService = referenceFileService;
 		this.messageSource = messageSource;
-		this.fileSizeConverter = new FileSizeConverter();
 		this.dateFormatter = new DateFormatter();
 	}
 
@@ -120,8 +117,7 @@ public class ReferenceFileController {
 			Path path = refFile.getFile();
 			if (Files.exists(path)) {
 				result.put("size", Files.size(path));
-			}
-			else {
+			} else {
 				result.put("size", messageSource.getMessage("projects.reference-file.not-found", new Object[]{}, locale));
 			}
 			result.put("id", refFile.getId().toString());
