@@ -116,7 +116,7 @@ public class ClientsControllerTest {
 	}
 
 	@Test
-	public void testPostCreateClient() throws Exception {
+	public void testPostCreateClient() {
 		IridaClientDetails client = new IridaClientDetails();
 		client.setId(1l);
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -132,7 +132,7 @@ public class ClientsControllerTest {
 	}
 
 	@Test
-	public void testPostCreateClientError() throws Exception {
+	public void testPostCreateClientError() {
 		IridaClientDetails client = new IridaClientDetails();
 		client.setId(1l);
 		ExtendedModelMap model = new ExtendedModelMap();
