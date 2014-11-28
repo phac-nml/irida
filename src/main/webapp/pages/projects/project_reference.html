@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="projects/_base">
+<head>
+	<title th:text="${project.label} + ' - ' + #{project.nav.referenceFiles}">TITLE</title>
+	<script>window.dependencies = ['References'];</script>
+</head>
+<body>
+<main layout:fragment="main" data:ng-init="${'projectId=' + project.getId()}">
+	<div class="row">
+		<div class="col-md-12">
+			<h1 th:text="#{project.nav.referenceFiles}">Hello</h1>
+		</div>
+	</div>
+	<div class="ng-cloak row" ng-controller="FilesCtrl as table" th:with="owner=(${isOwner} or ${isAdmin})">
+		<section class="col-md-12 alert alert-info" ng-show="table.files.length===0">
+			<strong th:text="#{referenceFile.no-files.heading}">__No reference files available for this project.</strong>
+
+			<p id="rf-notice" th:if="${!owner}" class="rf-user" th:text="#{referenceFile.no-files.body-user}">__Ask a project
+				manager to add reference files to this project.</p>
+
+			<p id="rf-notice" th:if="${owner}" class="rf-owner" th:text="#{referenceFile.no-files.body-owner}">__Click the add
+				button to upload a new reference file to this project.</p>
+		</section>
+		<section th:if="${owner}" class="row" ng-controller="FileUploadCtrl as upload">
+			<div class="col-md-12">
+				<button class="btn btn-default uploadRefBtn" ng-file-select="upload.onFileSelect($files)">
+					<span class="fa fa-fw fa-upload"></span>
+					<span th:text="#{referenceFile.upload-btn}"></span>
+				</button>
+			</div>
+		</section>
+		<section id="rf-files" class="col-md-12" ng-show="table.files.length > 0">
+			<table id="files-table" class="table">
+				<thead>
+				<tr>
+					<th th:text="#{projects.reference-file.name}">Name</th>
+					<th th:text="#{projects.reference-file.size}">File Size</th>
+					<th th:text="#{projects.reference-file.createdDate}">Added</th>
+					<th></th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr class="ref-file-row" ng-repeat="file in table.files | orderBy:file.createdDate" ng-class="table.getRowClass(file)">
+					<td>{{file.label}}</td>
+					<td>{{file.size | bytes:2}}</td>
+					<td>{{file.createdDate | date:'mediumDate'}}</td>
+					<td>
+						<div class="btn-toolbar pull-right">
+							<button ng-show="file.size > 0" class="btn btn-xs btn-default" ng-click="table.download(file.id)" data:tooltip="#{form.download}">
+								<span class="fa fa-fw fa-download"></span> <span class="sr-only" th:text="#{form.download}"></span>
+							</button>
+							<button th:if="${isOwner} or ${isAdmin}" class="btn btn-xs btn-default removeBtn" ng-click="table.deleteFile(file)" data:tooltip="#{form.btn.remove}">
+								<span class="fa fa-fw fa-trash"></span> <span class="sr-only" th:text="#{form.btn.remove}"></span>
+							</button>
+						</div>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</section>
+	</div>
+</main>
+<th:block layout:fragment="scripts" th:inline="javascript">
+	<script th:src="@{/resources/bower_components/ng-file-upload/angular-file-upload.min.js}" src="/resources/bower_components/ng-file-upload/angular-file-upload.min.js"></script>
+	<script th:src="@{/resources/js/pages/projects/reference.js}" src="/resources/js/pages/projects/reference.js"></script>
+</th:block>
+</body>
+</html>
