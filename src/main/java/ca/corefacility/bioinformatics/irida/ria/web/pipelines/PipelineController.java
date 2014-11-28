@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
@@ -178,7 +179,7 @@ public class PipelineController extends BaseController {
 		RemoteWorkflowPhylogenomics workflow = remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
 		AnalysisSubmissionPhylogenomics asp = new AnalysisSubmissionPhylogenomics(name, pipelineSubmission.getSequenceFiles(),
 				pipelineSubmission.getReferenceFile(),
-				workflow);
+				workflow, UUID.randomUUID());
 		
 		AnalysisSubmission createdSubmission = analysisSubmissionService.create(asp);
 		logger.debug("Successfully submitted analysis: " + createdSubmission);
