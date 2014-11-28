@@ -2,8 +2,8 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 
 
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.RootController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTRootController;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
@@ -19,11 +19,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Test for the {@link RootController}.
+ * Test for the {@link RESTRootController}.
  */
 public class RootControllerTest {
 
-    private RootController controller = new RootController();
+    private RESTRootController controller = new RESTRootController();
 
     @Before
     public void setUp() {
@@ -35,9 +35,9 @@ public class RootControllerTest {
 
     @Test
     public void testGetLinks() {
-        Map<String, Class<?>> controllers = RootController.CONTROLLERS;
+        Map<String, Class<?>> controllers = RESTRootController.CONTROLLERS;
         ModelMap map = controller.getLinks();
-        Object o = map.get(GenericController.RESOURCE_NAME);
+        Object o = map.get(RESTGenericController.RESOURCE_NAME);
         assertNotNull(o);
         assertTrue(o instanceof RootResource);
         RootResource r = (RootResource) o;

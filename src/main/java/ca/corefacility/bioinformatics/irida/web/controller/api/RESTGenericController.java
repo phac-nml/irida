@@ -42,7 +42,7 @@ import com.google.common.net.HttpHeaders;
  */
 @Controller
 @RequestMapping("/api/generic")
-public abstract class GenericController<Type extends IridaThing & Comparable<Type>, ResourceType extends Resource<Type>> {
+public abstract class RESTGenericController<Type extends IridaThing & Comparable<Type>, ResourceType extends Resource<Type>> {
 
 	/**
 	 * name of objects sent back to the client for all generic resources.
@@ -63,7 +63,7 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 	/**
 	 * logger.
 	 */
-	private static final Logger logger = LoggerFactory.getLogger(GenericController.class);
+	private static final Logger logger = LoggerFactory.getLogger(RESTGenericController.class);
 	/**
 	 * service used for working with classes in the database.
 	 */
@@ -74,12 +74,12 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 	 */
 	private Class<ResourceType> resourceType;
 
-	protected GenericController() {
+	protected RESTGenericController() {
 	}
 
 	/**
-	 * Construct an instance of {@link GenericController}.
-	 * {@link GenericController} is an abstract type, and should only be used as
+	 * Construct an instance of {@link RESTGenericController}.
+	 * {@link RESTGenericController} is an abstract type, and should only be used as
 	 * a super-class.
 	 * 
 	 * @param crudService
@@ -91,7 +91,7 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 	 *            the type used to serialize/de-serialize the type to the
 	 *            client.
 	 */
-	protected GenericController(CRUDService<Long, Type> crudService, Class<Type> type, Class<ResourceType> resourceType) {
+	protected RESTGenericController(CRUDService<Long, Type> crudService, Class<Type> type, Class<ResourceType> resourceType) {
 		this.crudService = crudService;
 		this.resourceType = resourceType;
 	}
@@ -134,7 +134,7 @@ public abstract class GenericController<Type extends IridaThing & Comparable<Typ
 		resources.add(linkTo(getClass()).withSelfRel());
 
 		ModelMap model = new ModelMap();
-		model.addAttribute(GenericController.RESOURCE_NAME, resources);
+		model.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
 		return model;
 	}
 

@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.spring.view;
 
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import com.google.common.net.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,7 @@ public class GenbankView extends AbstractView {
      */
     @Override
     protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        SequenceFileResource sfr = (SequenceFileResource) model.get(GenericController.RESOURCE_NAME);
+        SequenceFileResource sfr = (SequenceFileResource) model.get(RESTGenericController.RESOURCE_NAME);
         Path fileContent = sfr.getPath();
         String filename = fileContent.getFileName().toString();
         logger.trace("Sending file to client [" + filename + "]");

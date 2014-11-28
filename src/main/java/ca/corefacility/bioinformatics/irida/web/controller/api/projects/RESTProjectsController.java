@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 
 /**
  * Controller for managing {@link Project}s in the database.
@@ -23,7 +23,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController
  */
 @Controller
 @RequestMapping(value = "/api/projects")
-public class ProjectsController extends GenericController<Project, ProjectResource> {
+public class RESTProjectsController extends RESTGenericController<Project, ProjectResource> {
 
     /**
      * rel used for accessing an individual project.
@@ -37,21 +37,21 @@ public class ProjectsController extends GenericController<Project, ProjectResour
     /**
      * Default constructor. Should not be used.
      */
-    protected ProjectsController() {
+    protected RESTProjectsController() {
     }
 
     /**
-     * Constructor for {@link ProjectsController}, requires a reference to a {@link ProjectService}.
+     * Constructor for {@link RESTProjectsController}, requires a reference to a {@link ProjectService}.
      *
      * @param projectService the {@link ProjectService} to be used by this controller.
      */
     @Autowired
-    public ProjectsController(ProjectService projectService) {
+    public RESTProjectsController(ProjectService projectService) {
         super(projectService, Project.class, ProjectResource.class);
     }
 
     /**
-     * The {@link ProjectsController} should tell the client how to find the users for a specific {@link Project}.
+     * The {@link RESTProjectsController} should tell the client how to find the users for a specific {@link Project}.
      *
      * @param p the {@link Project} to construct custom links for.
      * @return a collection of custom links.
@@ -60,11 +60,11 @@ public class ProjectsController extends GenericController<Project, ProjectResour
     protected Collection<Link> constructCustomResourceLinks(Project p) {
         Collection<Link> links = new HashSet<>();
         Long projectId = p.getId();
-        links.add(linkTo(ProjectsController.class).
+        links.add(linkTo(RESTProjectsController.class).
                 slash(p.getId()).slash("users").
                 withRel(PROJECT_USERS_REL));
-        links.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId))
-                .withRel(ProjectSamplesController.REL_PROJECT_SAMPLES));
+        links.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId))
+                .withRel(RESTProjectSamplesController.REL_PROJECT_SAMPLES));
         return links;
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.support.AbstractDispatcherServletInitializer;
 
+import ca.corefacility.bioinformatics.irida.ria.config.WebConfigurer;
 import ca.corefacility.bioinformatics.irida.web.filter.HttpHeadFilter;
 
 /**
@@ -39,7 +40,7 @@ public class IridaWebApplicationInitializer extends AbstractDispatcherServletIni
 	@Override
 	public WebApplicationContext createServletApplicationContext() {
 		final AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
-		context.register(IridaRestApiWebConfig.class);
+		context.register(IridaRestApiWebConfig.class, WebConfigurer.class);
 		return context;
 	}
 

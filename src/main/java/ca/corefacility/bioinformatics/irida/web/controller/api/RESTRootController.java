@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api;
 
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.Link;
@@ -26,7 +26,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
-public class RootController {
+public class RESTRootController {
 
     /**
      * A collection of the controllers in our system.
@@ -35,15 +35,15 @@ public class RootController {
     /**
      * logger
      */
-    private static final Logger logger = LoggerFactory.getLogger(RootController.class);
+    private static final Logger logger = LoggerFactory.getLogger(RESTRootController.class);
 
     /**
      * Initialize a collection of all controllers in the system.
      */
     @PostConstruct
     public void initLinks() {
-        CONTROLLERS.put("users", UsersController.class);
-        CONTROLLERS.put("projects", ProjectsController.class);
+        CONTROLLERS.put("users", RESTUsersController.class);
+        CONTROLLERS.put("projects", RESTProjectsController.class);
     }
 
     /**
@@ -64,14 +64,14 @@ public class RootController {
         }
 
         // add a self-rel to the current page
-        resource.add(linkTo(methodOn(RootController.class).
+        resource.add(linkTo(methodOn(RESTRootController.class).
                 getLinks()).withSelfRel());
 
         // add all of the links to the response
         resource.add(links);
 
         ModelMap map = new ModelMap();
-        map.addAttribute(GenericController.RESOURCE_NAME, resource);
+        map.addAttribute(RESTGenericController.RESOURCE_NAME, resource);
 
         // respond to the client
         return map;

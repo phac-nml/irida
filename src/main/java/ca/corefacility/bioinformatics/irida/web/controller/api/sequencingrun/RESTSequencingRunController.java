@@ -18,9 +18,9 @@ import ca.corefacility.bioinformatics.irida.web.assembler.lookup.ModelLookup;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.IdentifiableResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencingrun.MiseqRunResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencingrun.SequencingRunResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.exception.GenericsException;
-import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
 
 /**
  *
@@ -28,24 +28,24 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.Projects
  */
 @Controller
 @RequestMapping(value = "/api/sequencingrun")
-public class SequencingRunController extends GenericController<SequencingRun, SequencingRunResource> {
-	private static final Logger logger = LoggerFactory.getLogger(SequencingRunController.class);
+public class RESTSequencingRunController extends RESTGenericController<SequencingRun, SequencingRunResource> {
+	private static final Logger logger = LoggerFactory.getLogger(RESTSequencingRunController.class);
 
 	/**
 	 * Default constructor. Should not be used.
 	 */
-	protected SequencingRunController() {
+	protected RESTSequencingRunController() {
 	}
 
 	/**
-	 * Constructor for {@link ProjectsController}, requires a reference to a
+	 * Constructor for {@link RESTProjectsController}, requires a reference to a
 	 * {@link ProjectService}.
 	 *
 	 * @param service
 	 *            the {@link MiseqRunService} to be used by this controller.
 	 */
 	@Autowired
-	public SequencingRunController(SequencingRunService service) {
+	public RESTSequencingRunController(SequencingRunService service) {
 		super(service, SequencingRun.class, SequencingRunResource.class);
 
 	}

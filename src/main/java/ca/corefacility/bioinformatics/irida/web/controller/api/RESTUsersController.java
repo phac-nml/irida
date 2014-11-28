@@ -26,7 +26,7 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
 
 /**
  * Controller for managing users.
@@ -37,12 +37,12 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.Projects
  */
 @Controller
 @RequestMapping(value = "/api/users")
-public class UsersController extends GenericController<User, UserResource> {
+public class RESTUsersController extends RESTGenericController<User, UserResource> {
 
 	/**
 	 * logger
 	 */
-	private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
+	private static final Logger logger = LoggerFactory.getLogger(RESTUsersController.class);
 	/**
 	 * a rel for getting a handle on the projects that a user belongs to.
 	 */
@@ -60,7 +60,7 @@ public class UsersController extends GenericController<User, UserResource> {
 	 */
 	private final UserService userService;
 
-	protected UsersController() {
+	protected RESTUsersController() {
 		this.projectService = null;
 		this.userService = null;
 	}
@@ -75,7 +75,7 @@ public class UsersController extends GenericController<User, UserResource> {
 	 *            the {@link ProjectService} that this controller uses.
 	 */
 	@Autowired
-	public UsersController(UserService userService, ProjectService projectService) {
+	public RESTUsersController(UserService userService, ProjectService projectService) {
 		super(userService, User.class, UserResource.class);
 		this.userService = userService;
 		this.projectService = projectService;
@@ -91,7 +91,7 @@ public class UsersController extends GenericController<User, UserResource> {
 	@Override
 	protected Collection<Link> constructCustomResourceLinks(User u) {
 		Collection<Link> links = new HashSet<>();
-		links.add(linkTo(UsersController.class).slash(u.getUsername()).slash("projects").withRel(REL_USER_PROJECTS));
+		links.add(linkTo(RESTUsersController.class).slash(u.getUsername()).slash("projects").withRel(REL_USER_PROJECTS));
 		return links;
 	}
 
@@ -113,7 +113,7 @@ public class UsersController extends GenericController<User, UserResource> {
 		// get all of the projects that this user belongs to
 		ResourceCollection<ProjectResource> resources = new ResourceCollection<>();
 		List<Join<Project, User>> projects = projectService.getProjectsForUser(u);
-		ControllerLinkBuilder linkBuilder = linkTo(ProjectsController.class);
+		ControllerLinkBuilder linkBuilder = linkTo(RESTProjectsController.class);
 
 		// add the project and a self-rel link to the project representation
 		for (Join<Project, User> join : projects) {

@@ -29,7 +29,7 @@ import com.google.common.net.HttpHeaders;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
-public class SequencingRunSequenceFilesController {
+public class RESTSequencingRunSequenceFilesController {
 
     private SequencingRunService miseqRunService;
     private SequenceFileService sequencefileService;
@@ -39,7 +39,7 @@ public class SequencingRunSequenceFilesController {
     public static final String SEQUENCEFILE_ID_KEY = "sequenceFileId";
     
     @Autowired
-    public SequencingRunSequenceFilesController(SequencingRunService service, SequenceFileService sequencefileService) {
+    public RESTSequencingRunSequenceFilesController(SequencingRunService service, SequenceFileService sequencefileService) {
         this.miseqRunService = service;
         this.sequencefileService = sequencefileService;
     }
@@ -63,7 +63,7 @@ public class SequencingRunSequenceFilesController {
         // then add the user to the project with the specified role.
         miseqRunService.addSequenceFileToSequencingRun(run, file);
 
-        String location = linkTo(SequencingRunController.class).slash(sequencingrunId).slash("sequenceFiles").slash(seqId).withSelfRel().getHref();
+        String location = linkTo(RESTSequencingRunController.class).slash(sequencingrunId).slash("sequenceFiles").slash(seqId).withSelfRel().getHref();
 
         MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
         responseHeaders.add(HttpHeaders.LOCATION, location);

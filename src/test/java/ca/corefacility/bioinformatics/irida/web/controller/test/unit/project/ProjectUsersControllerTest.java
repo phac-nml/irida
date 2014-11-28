@@ -30,9 +30,9 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectUsersController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectUsersController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
 
 import com.google.common.collect.ImmutableMap;
@@ -40,10 +40,10 @@ import com.google.common.collect.Lists;
 import com.google.common.net.HttpHeaders;
 
 /**
- * Tests for {@link ProjectUsersController}.
+ * Tests for {@link RESTProjectUsersController}.
  */
 public class ProjectUsersControllerTest {
-    private ProjectUsersController controller;
+    private RESTProjectUsersController controller;
     private ProjectService projectService;
     private UserService userService;
 
@@ -51,7 +51,7 @@ public class ProjectUsersControllerTest {
     public void setUp() {
         projectService = mock(ProjectService.class);
         userService = mock(UserService.class);
-        controller = new ProjectUsersController(userService, projectService);
+        controller = new RESTProjectUsersController(userService, projectService);
     }
 
     @Test
@@ -73,7 +73,7 @@ public class ProjectUsersControllerTest {
         verify(projectService, times(1)).read(p.getId());
         verify(userService, times(1)).getUsersForProject(p);
 
-        Object o = map.get(GenericController.RESOURCE_NAME);
+        Object o = map.get(RESTGenericController.RESOURCE_NAME);
         assertNotNull(o);
         assertTrue(o instanceof ResourceCollection);
         @SuppressWarnings("unchecked")
@@ -81,7 +81,7 @@ public class ProjectUsersControllerTest {
         assertEquals(1, users.size());
         UserResource ur = users.iterator().next();
         assertTrue(ur.getLink("self").getHref().endsWith(username));
-        Link relationship = ur.getLink(GenericController.REL_RELATIONSHIP);
+        Link relationship = ur.getLink(RESTGenericController.REL_RELATIONSHIP);
         assertNotNull(relationship);
         assertEquals("http://localhost/api/projects/" + p.getId() + "/users/" + username, relationship.getHref());
         assertTrue(users.getLink("self").getHref().contains(p.getId().toString()));
@@ -96,7 +96,7 @@ public class ProjectUsersControllerTest {
         when(userService.getUserByUsername(u.getUsername())).thenReturn(u);
 
         // prepare the "user" for addition to the project, just a map of userId and a username.
-        Map<String, String> user = ImmutableMap.of(ProjectUsersController.USER_ID_KEY, u.getUsername());
+        Map<String, String> user = ImmutableMap.of(RESTProjectUsersController.USER_ID_KEY, u.getUsername());
 
         // add the user to the project
         ResponseEntity<String> response = controller.addUserToProject(p.getId(), user);
@@ -129,16 +129,16 @@ public class ProjectUsersControllerTest {
         verify(userService).getUserByUsername(u.getUsername());
         verify(projectService).removeUserFromProject(p, u);
 
-        Object o = modelMap.get(GenericController.RESOURCE_NAME);
+        Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
         assertTrue(o instanceof RootResource);
         RootResource r = (RootResource) o;
         // confirm that a project link exists
-        Link projectLink = r.getLink(ProjectsController.REL_PROJECT);
+        Link projectLink = r.getLink(RESTProjectsController.REL_PROJECT);
         assertNotNull(projectLink);
         assertEquals("http://localhost/api/projects/" + p.getId(), projectLink.getHref());
 
         // confirm that a project users link exists
-        Link projectUsersLink = r.getLink(ProjectUsersController.REL_PROJECT_USERS);
+        Link projectUsersLink = r.getLink(RESTProjectUsersController.REL_PROJECT_USERS);
         assertNotNull(projectUsersLink);
         assertEquals("http://localhost/api/projects/" + p.getId() + "/users", projectUsersLink.getHref());
     }

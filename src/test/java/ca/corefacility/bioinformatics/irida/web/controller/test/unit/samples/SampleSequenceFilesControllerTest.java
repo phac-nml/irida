@@ -40,8 +40,8 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
 
 import com.google.common.collect.ImmutableMap;
@@ -49,10 +49,10 @@ import com.google.common.collect.Lists;
 import com.google.common.net.HttpHeaders;
 
 /**
- * Unit tests for {@link SampleSequenceFilesController}.
+ * Unit tests for {@link RESTSampleSequenceFilesController}.
  */
 public class SampleSequenceFilesControllerTest {
-	private SampleSequenceFilesController controller;
+	private RESTSampleSequenceFilesController controller;
 	private SequenceFileService sequenceFileService;
 	private SampleService sampleService;
 	private ProjectService projectService;
@@ -65,7 +65,7 @@ public class SampleSequenceFilesControllerTest {
 		projectService = mock(ProjectService.class);
 		miseqRunService= mock(SequencingRunService.class);
 
-		controller = new SampleSequenceFilesController(sequenceFileService, sampleService, projectService,miseqRunService);
+		controller = new RESTSampleSequenceFilesController(sequenceFileService, sampleService, projectService,miseqRunService);
 	}
 
 	@Test
@@ -87,7 +87,7 @@ public class SampleSequenceFilesControllerTest {
 		verify(sequenceFileService).getSequenceFilesForSample(s);
 		verify(sampleService).read(s.getId());
 
-		Object o = modelMap.get(GenericController.RESOURCE_NAME);
+		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertTrue(o instanceof ResourceCollection);
 		@SuppressWarnings("unchecked")
 		ResourceCollection<SequenceFileResource> resources = (ResourceCollection<SequenceFileResource>) o;
@@ -95,7 +95,7 @@ public class SampleSequenceFilesControllerTest {
 		assertEquals(1, resources.size());
 
 		Link selfCollection = resources.getLink(Link.REL_SELF);
-		Link sample = resources.getLink(SampleSequenceFilesController.REL_SAMPLE);
+		Link sample = resources.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
 		String sampleLocation = "http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId();
 		String sequenceFileLocation = sampleLocation + "/sequenceFiles/" + sf.getId();
 
@@ -127,13 +127,13 @@ public class SampleSequenceFilesControllerTest {
 
 		verify(sampleService, times(1)).removeSequenceFileFromSample(s, sf);
 
-		Object o = modelMap.get(GenericController.RESOURCE_NAME);
+		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertNotNull(o);
 		assertTrue(o instanceof RootResource);
 		RootResource resource = (RootResource) o;
 
-		Link sample = resource.getLink(SampleSequenceFilesController.REL_SAMPLE);
-		Link sequenceFiles = resource.getLink(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
+		Link sample = resource.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
+		Link sequenceFiles = resource.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
 
 		String projectLocation = "http://localhost/api/projects/" + p.getId();
 		String sampleLocation = projectLocation + "/samples/" + s.getId();
@@ -160,15 +160,15 @@ public class SampleSequenceFilesControllerTest {
 		verify(sampleService).read(s.getId());
 		verify(sequenceFileService).read(sf.getId());
 
-		Object o = modelMap.get(GenericController.RESOURCE_NAME);
+		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertNotNull(o);
 		assertTrue(o instanceof SequenceFileResource);
 		SequenceFileResource sfr = (SequenceFileResource) o;
 		assertEquals(sf.getFile().toString(), sfr.getFile());
 
 		Link self = sfr.getLink(Link.REL_SELF);
-		Link sampleSequenceFiles = sfr.getLink(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
-		Link sample = sfr.getLink(SampleSequenceFilesController.REL_SAMPLE);
+		Link sampleSequenceFiles = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
+		Link sample = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
 
 		String sampleLocation = "http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId();
 		String sequenceFileLocation = sampleLocation + "/sequenceFiles/" + sf.getId();
@@ -230,7 +230,7 @@ public class SampleSequenceFilesControllerTest {
 		when(sequenceFileService.read(sf.getId())).thenReturn(sf);
 		when(sampleService.addSequenceFileToSample(s, sf)).thenReturn(r);
 
-		Map<String, String> requestBody = ImmutableMap.of(SampleSequenceFilesController.SEQUENCE_FILE_ID_KEY, sf
+		Map<String, String> requestBody = ImmutableMap.of(RESTSampleSequenceFilesController.SEQUENCE_FILE_ID_KEY, sf
 				.getId().toString());
 
 		ResponseEntity<String> response = controller.addExistingSequenceFileToSample(p.getId(), s.getId(), requestBody);

@@ -28,8 +28,8 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.UsersController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTUsersController;
 
 import com.google.common.net.HttpHeaders;
 
@@ -39,7 +39,7 @@ import com.google.common.net.HttpHeaders;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
-public class ProjectUsersController {
+public class RESTProjectUsersController {
 
     /**
      * key used in map when adding user to project.
@@ -58,11 +58,11 @@ public class ProjectUsersController {
      */
     private ProjectService projectService;
 
-    protected ProjectUsersController() {
+    protected RESTProjectUsersController() {
     }
 
     @Autowired
-    public ProjectUsersController(UserService userService, ProjectService projectService) {
+    public RESTProjectUsersController(UserService userService, ProjectService projectService) {
         this.userService = userService;
         this.projectService = projectService;
     }
@@ -91,20 +91,20 @@ public class ProjectUsersController {
         for (Join<Project, User> r : relationships) {
             User u = r.getObject();
             UserResource ur = new UserResource(u);
-            ur.add(linkTo(UsersController.class).slash(u.getUsername()).withSelfRel());
-            ur.add(linkTo(methodOn(ProjectUsersController.class).removeUserFromProject(projectId,
-                    u.getUsername())).withRel(GenericController.REL_RELATIONSHIP));
+            ur.add(linkTo(RESTUsersController.class).slash(u.getUsername()).withSelfRel());
+            ur.add(linkTo(methodOn(RESTProjectUsersController.class).removeUserFromProject(projectId,
+                    u.getUsername())).withRel(RESTGenericController.REL_RELATIONSHIP));
 
             resources.add(ur);
         }
 
         // add a link to this resource to the response
         resources.add(
-                linkTo(methodOn(ProjectUsersController.class, String.class).getUsersForProject(projectId)).withSelfRel());
+                linkTo(methodOn(RESTProjectUsersController.class, String.class).getUsersForProject(projectId)).withSelfRel());
 
         // prepare the response for the client
         ModelMap model = new ModelMap();
-        model.addAttribute(GenericController.RESOURCE_NAME, resources);
+        model.addAttribute(RESTGenericController.RESOURCE_NAME, resources);
 
         return model;
     }
@@ -131,7 +131,7 @@ public class ProjectUsersController {
         // then add the user to the project with the specified role.
         projectService.addUserToProject(p, u, r);
 
-        String location = linkTo(ProjectsController.class).slash(projectId).slash("users").slash(username).withSelfRel().getHref();
+        String location = linkTo(RESTProjectsController.class).slash(projectId).slash("users").slash(username).withSelfRel().getHref();
 
         MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
         responseHeaders.add(HttpHeaders.LOCATION, location);
@@ -159,16 +159,16 @@ public class ProjectUsersController {
 
         // prepare a link back to the user collection of the project
         RootResource response = new RootResource();
-        response.add(linkTo(methodOn(ProjectUsersController.class).getUsersForProject(projectId))
+        response.add(linkTo(methodOn(RESTProjectUsersController.class).getUsersForProject(projectId))
                 .withRel(REL_PROJECT_USERS));
 
         // prepare a link back to the project
-        response.add(linkTo(ProjectsController.class).slash(projectId)
-                .withRel(ProjectsController.REL_PROJECT));
+        response.add(linkTo(RESTProjectsController.class).slash(projectId)
+                .withRel(RESTProjectsController.REL_PROJECT));
 
         // respond to the client
         ModelMap modelMap = new ModelMap();
-        modelMap.addAttribute(GenericController.RESOURCE_NAME, response);
+        modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, response);
 
         return modelMap;
     }

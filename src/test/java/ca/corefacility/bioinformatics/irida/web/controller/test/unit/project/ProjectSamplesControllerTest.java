@@ -35,10 +35,10 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectSamplesController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.projects.ProjectsController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
 
 import com.google.common.collect.ImmutableMap;
@@ -47,10 +47,10 @@ import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
 
 /**
- * Tests for {@link ProjectSamplesController}.
+ * Tests for {@link RESTProjectSamplesController}.
  */
 public class ProjectSamplesControllerTest {
-	private ProjectSamplesController controller;
+	private RESTProjectSamplesController controller;
 	private ProjectService projectService;
 	private SampleService sampleService;
 	private SequenceFileService sequenceFileService;
@@ -60,7 +60,7 @@ public class ProjectSamplesControllerTest {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
 		sequenceFileService = mock(SequenceFileService.class);
-		controller = new ProjectSamplesController(projectService, sampleService, sequenceFileService);
+		controller = new RESTProjectSamplesController(projectService, sampleService, sequenceFileService);
 	}
 
 	@Test
@@ -108,7 +108,7 @@ public class ProjectSamplesControllerTest {
 		verify(sampleService, times(1)).read(s.getId());
 
 		// confirm that the response looks right.
-		Object o = modelMap.get(GenericController.RESOURCE_NAME);
+		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertTrue(o instanceof RootResource);
 		RootResource resource = (RootResource) o;
 		List<Link> links = resource.getLinks();
@@ -116,7 +116,7 @@ public class ProjectSamplesControllerTest {
 		// should be two links in the response, one back to the individual
 		// project, the other to the samples collection
 		Set<String> rels = Sets
-				.newHashSet(ProjectsController.REL_PROJECT, ProjectSamplesController.REL_PROJECT_SAMPLES);
+				.newHashSet(RESTProjectsController.REL_PROJECT, RESTProjectSamplesController.REL_PROJECT_SAMPLES);
 		for (Link link : links) {
 			assertTrue(rels.contains(link.getRel()));
 			assertNotNull(rels.remove(link.getRel()));
@@ -145,7 +145,7 @@ public class ProjectSamplesControllerTest {
 		verify(projectService, times(1)).read(p.getId());
 		verify(sequenceFileService).getSequenceFilesForSample(s);
 
-		Object o = modelMap.get(GenericController.RESOURCE_NAME);
+		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertTrue(o instanceof ResourceCollection);
 		@SuppressWarnings("unchecked")
 		ResourceCollection<SampleResource> samples = (ResourceCollection<SampleResource>) o;
@@ -159,8 +159,8 @@ public class ProjectSamplesControllerTest {
 		assertEquals(s.getSampleName(), resource.getSampleName());
 		assertEquals(1, resource.getSequenceFileCount());
 		List<Link> links = resource.getLinks();
-		Set<String> rels = Sets.newHashSet(Link.REL_SELF, SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES,
-				ProjectSamplesController.REL_PROJECT);
+		Set<String> rels = Sets.newHashSet(Link.REL_SELF, RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES,
+				RESTProjectSamplesController.REL_PROJECT);
 		for (Link link : links) {
 			assertTrue("rels should contain link [" + link + "]", rels.contains(link.getRel()));
 			assertNotNull("rels should remove link [" + link + "]", rels.remove(link.getRel()));
@@ -182,13 +182,13 @@ public class ProjectSamplesControllerTest {
 		verify(sampleService).getSampleForProject(p, s.getId());
 		verify(projectService).read(p.getId());
 
-		Object o = modelMap.get(GenericController.RESOURCE_NAME);
+		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertTrue(o instanceof SampleResource);
 		SampleResource sr = (SampleResource) o;
 
 		Link selfLink = sr.getLink(Link.REL_SELF);
-		Link sequenceFilesLink = sr.getLink(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
-		Link projectLink = sr.getLink(ProjectSamplesController.REL_PROJECT);
+		Link sequenceFilesLink = sr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
+		Link projectLink = sr.getLink(RESTProjectSamplesController.REL_PROJECT);
 
 		String projectLocation = "http://localhost/api/projects/" + p.getId();
 		String sampleLocation = projectLocation + "/samples/" + s.getId();
@@ -218,17 +218,17 @@ public class ProjectSamplesControllerTest {
 		verify(sampleService).getSampleForProject(p, s.getId());
 		verify(sampleService).update(s.getId(), updatedFields);
 
-		Object o = modelMap.get(GenericController.RESOURCE_NAME);
+		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertNotNull(o);
 		assertTrue(o instanceof RootResource);
 		RootResource resource = (RootResource) o;
 		Map<String, String> links = linksToMap(resource.getLinks());
 		String self = links.get(Link.REL_SELF);
 		assertEquals("http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId(), self);
-		String sequenceFiles = links.get(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
+		String sequenceFiles = links.get(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
 		assertEquals("http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId() + "/sequenceFiles",
 				sequenceFiles);
-		String project = links.get(ProjectsController.REL_PROJECT);
+		String project = links.get(RESTProjectsController.REL_PROJECT);
 		assertEquals("http://localhost/api/projects/" + p.getId(), project);
 	}
 

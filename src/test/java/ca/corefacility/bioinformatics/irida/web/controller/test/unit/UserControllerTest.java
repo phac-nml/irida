@@ -29,19 +29,19 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.UsersController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTUsersController;
 
 import com.google.common.collect.Lists;
 
 /**
- * Unit tests for {@link UsersController}.
+ * Unit tests for {@link RESTUsersController}.
  *
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class UserControllerTest {
 
-    private UsersController controller;
+    private RESTUsersController controller;
     private UserService userService;
     private ProjectService projectService;
 
@@ -49,7 +49,7 @@ public class UserControllerTest {
     public void setUp() {
         userService = mock(UserService.class);
         projectService = mock(ProjectService.class);
-        controller = new UsersController(userService, projectService);
+        controller = new RESTUsersController(userService, projectService);
 
         // fake out the servlet response so that the URI builder will work.
         RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
@@ -111,7 +111,7 @@ public class UserControllerTest {
 
         @SuppressWarnings("unchecked")
 		ResourceCollection<UserResource> usersCollection = (ResourceCollection<UserResource>) output.get(
-                GenericController.RESOURCE_NAME);
+                RESTGenericController.RESOURCE_NAME);
         assertEquals("users collection is the wrong size.", 1, usersCollection.size());
         UserResource userResource = usersCollection.iterator().next();
         assertEquals("username is not correct.", username, userResource.getUsername());

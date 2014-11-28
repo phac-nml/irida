@@ -23,8 +23,8 @@ import com.google.common.base.Joiner;
  */
 @Controller
 @SessionAttributes("authorizationRequest")
-public class OAuthAccessController {
-	private static final Logger logger = LoggerFactory.getLogger(OAuthAccessController.class);
+public class RESTOAuthAccessController {
+	private static final Logger logger = LoggerFactory.getLogger(RESTOAuthAccessController.class);
 
 	@Autowired
 	private ClientDetailsService clientDetailsService;

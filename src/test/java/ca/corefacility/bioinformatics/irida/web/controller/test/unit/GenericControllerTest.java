@@ -31,7 +31,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.exception.GenericsException;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestEntity;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestResource;
@@ -40,7 +40,7 @@ import com.google.common.collect.Lists;
 import com.google.common.net.HttpHeaders;
 
 /**
- * Unit tests for the {@link GenericController}.
+ * Unit tests for the {@link RESTGenericController}.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
@@ -48,7 +48,7 @@ import com.google.common.net.HttpHeaders;
 public class GenericControllerTest {
 
 	private static final String RELATED_IDENTIFIABLE_TEST_ENTITY_KEY = "related";
-	private GenericController<IdentifiableTestEntity, IdentifiableTestResource> controller;
+	private RESTGenericController<IdentifiableTestEntity, IdentifiableTestResource> controller;
 	private CRUDService<Long, IdentifiableTestEntity> crudService;
 	private IdentifiableTestEntity entity;
 	private Map<String, Object> updatedFields;
@@ -61,7 +61,7 @@ public class GenericControllerTest {
 		entity = new IdentifiableTestEntity();
 		identifier = 1L;
 		entity.setId(identifier);
-		controller = new GenericController<IdentifiableTestEntity, IdentifiableTestResource>(crudService,
+		controller = new RESTGenericController<IdentifiableTestEntity, IdentifiableTestResource>(crudService,
 				IdentifiableTestEntity.class, IdentifiableTestResource.class) {
 		};
 		updatedFields = new HashMap<>();
@@ -96,8 +96,8 @@ public class GenericControllerTest {
 	@Test
 	public void testDeleteEntity() throws InstantiationException, IllegalAccessException {
 		ModelMap modelMap = controller.delete(2L);
-		RootResource rootResource = (RootResource) modelMap.get(GenericController.RESOURCE_NAME);
-		Link l = rootResource.getLink(GenericController.REL_COLLECTION);
+		RootResource rootResource = (RootResource) modelMap.get(RESTGenericController.RESOURCE_NAME);
+		Link l = rootResource.getLink(RESTGenericController.REL_COLLECTION);
 		assertNotNull(l);
 		assertEquals("http://localhost/api/generic", l.getHref());
 	}
@@ -145,9 +145,9 @@ public class GenericControllerTest {
 	public void testUpdate() throws InstantiationException, IllegalAccessException {
 		when(crudService.update(identifier, updatedFields)).thenReturn(entity);
 		ModelMap response = controller.update(identifier, updatedFields);
-		RootResource r = (RootResource) response.get(GenericController.RESOURCE_NAME);
+		RootResource r = (RootResource) response.get(RESTGenericController.RESOURCE_NAME);
 		assertNotNull(r.getLink(Link.REL_SELF));
-		assertNotNull(r.getLink(GenericController.REL_COLLECTION));
+		assertNotNull(r.getLink(RESTGenericController.REL_COLLECTION));
 	}
 
 	@Test

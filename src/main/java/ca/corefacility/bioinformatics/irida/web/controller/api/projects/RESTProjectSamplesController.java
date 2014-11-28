@@ -32,8 +32,8 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.GenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.samples.SampleSequenceFilesController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
 import com.google.common.net.HttpHeaders;
 
@@ -44,7 +44,7 @@ import com.google.common.net.HttpHeaders;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
-public class ProjectSamplesController {
+public class RESTProjectSamplesController {
 	/**
 	 * Rel to get to the project that this sample belongs to.
 	 */
@@ -67,11 +67,11 @@ public class ProjectSamplesController {
 	 */
 	private SequenceFileService sequenceFileService;
 
-	protected ProjectSamplesController() {
+	protected RESTProjectSamplesController() {
 	}
 
 	@Autowired
-	public ProjectSamplesController(ProjectService projectService, SampleService sampleService,
+	public RESTProjectSamplesController(ProjectService projectService, SampleService sampleService,
 			SequenceFileService sequenceFileService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
@@ -98,7 +98,7 @@ public class ProjectSamplesController {
 			final Sample s = sampleService.read(sampleId);
 			projectService.addSampleToProject(p, s);
 			final String location = linkTo(
-					methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel()
+					methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel()
 					.getHref();
 			responseHeaders.add(HttpHeaders.LOCATION, location);
 		}
@@ -131,7 +131,7 @@ public class ProjectSamplesController {
 
 		// construct a link to the sample itself on the samples controller
 		Long sampleId = r.getObject().getId();
-		String location = linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId))
+		String location = linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId))
 				.withSelfRel().getHref();
 
 		// construct a set of headers to add to the response
@@ -164,19 +164,19 @@ public class ProjectSamplesController {
 			SampleResource sr = new SampleResource();
 			sr.setResource(sample);
 			sr.setSequenceFileCount(getSequenceFileCountForSampleResource(sr));
-			sr.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sample.getId()))
+			sr.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sample.getId()))
 					.withSelfRel());
 			sr.add(linkTo(
-					methodOn(SampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sample.getId()))
-					.withRel(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
-			sr.add(linkTo(ProjectsController.class).slash(projectId).withRel(REL_PROJECT));
+					methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sample.getId()))
+					.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
+			sr.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
 			sampleResources.add(sr);
 		}
 
 		sampleResources
-				.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
+				.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
 
-		modelMap.addAttribute(GenericController.RESOURCE_NAME, sampleResources);
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sampleResources);
 
 		return modelMap;
 
@@ -192,7 +192,7 @@ public class ProjectSamplesController {
 		sr.setResource(sampleBySampleId);
 
 		Link withSelfRel = linkTo(
-				methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleBySampleId.getId()))
+				methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleBySampleId.getId()))
 				.withSelfRel();
 		String href = withSelfRel.getHref();
 
@@ -227,13 +227,13 @@ public class ProjectSamplesController {
 		sr.setSequenceFileCount(getSequenceFileCountForSampleResource(sr));
 
 		// add a link to: 1) self, 2) sequenceFiles, 3) project
-		sr.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel());
-		sr.add(linkTo(ProjectsController.class).slash(projectId).withRel(REL_PROJECT));
-		sr.add(linkTo(methodOn(SampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
-				.withRel(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
+		sr.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel());
+		sr.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
+		sr.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
+				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
 
 		// add the sample resource to the response
-		modelMap.addAttribute(GenericController.RESOURCE_NAME, sr);
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sr);
 
 		return modelMap;
 	}
@@ -264,12 +264,12 @@ public class ProjectSamplesController {
 		RootResource resource = new RootResource();
 		// add links back to the collection of samples and to the project
 		// itself.
-		resource.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSamples(projectId)).withRel(
+		resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId)).withRel(
 				REL_PROJECT_SAMPLES));
-		resource.add(linkTo(ProjectsController.class).slash(projectId).withRel(ProjectsController.REL_PROJECT));
+		resource.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(RESTProjectsController.REL_PROJECT));
 
 		// add the links to the response.
-		modelMap.addAttribute(GenericController.RESOURCE_NAME, resource);
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resource);
 
 		return modelMap;
 	}
@@ -303,13 +303,13 @@ public class ProjectSamplesController {
 		// respond to the client with a link to self, sequence files collection
 		// and project.
 		RootResource resource = new RootResource();
-		resource.add(linkTo(methodOn(ProjectSamplesController.class).getProjectSample(projectId, sampleId))
+		resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId))
 				.withSelfRel());
-		resource.add(linkTo(methodOn(SampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
-				.withRel(SampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
-		resource.add(linkTo(ProjectsController.class).slash(projectId).withRel(ProjectsController.REL_PROJECT));
+		resource.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
+				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
+		resource.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(RESTProjectsController.REL_PROJECT));
 
-		modelMap.addAttribute(GenericController.RESOURCE_NAME, resource);
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resource);
 
 		return modelMap;
 	}
