@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.submission;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
@@ -117,13 +119,19 @@ public class AnalysisSubmission implements IridaThing {
 	/**
 	 * Builds a new AnalysisSubmission object with the given information.
 	 * 
+	 * @param name The name of the workflow submission.
 	 * @param inputFiles
 	 *            The set of input files to perform an analysis on.
+	 * @param The id of the workflow for this submission.
+	 *            
 	 */
-	public AnalysisSubmission(String name, Set<SequenceFile> inputFiles) {
+	public AnalysisSubmission(String name, Set<SequenceFile> inputFiles, UUID workflowId) {
 		this();
+		checkNotNull(workflowId, "workflowId is null");
+		
 		this.name = name;
 		this.inputFiles = inputFiles;
+		this.workflowId = workflowId;
 	}
 
 	/**
@@ -241,9 +249,10 @@ public class AnalysisSubmission implements IridaThing {
 	 */
 	@Override
 	public String toString() {
-		return "AnalysisSubmission [id=" + id + ", remoteAnalysisId=" + remoteAnalysisId + ", createdDate="
-				+ createdDate + ", modifiedDate=" + modifiedDate + ", analysisState=" + analysisState + ", analysis="
-				+ analysis + "]";
+		return "AnalysisSubmission [id=" + id + ", name=" + name + ", workflowId=" + workflowId + ", remoteAnalysisId="
+				+ remoteAnalysisId + ", remoteWorkflowId=" + remoteWorkflowId + ", inputFiles=" + inputFiles
+				+ ", createdDate=" + createdDate + ", modifiedDate=" + modifiedDate + ", analysisState="
+				+ analysisState + ", analysis=" + analysis + "]";
 	}
 
 	/**

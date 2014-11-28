@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy;
 
 import java.util.Set;
+import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -48,10 +49,11 @@ public abstract class AnalysisSubmissionGalaxy<R extends RemoteWorkflowGalaxy>
 	 * Builds a new AnalysisSubmissionGalaxy with the given information.
 	 * @param inputFiles  A set of SequenceFiles to use for the analysis.
 	 * @param remoteWorkflow  A RemoteWorkflowGalaxy implementation for this analysis.
+	 * @param workflowId The id of the workflow to run for this submission.
 	 */
 	public AnalysisSubmissionGalaxy(String name, Set<SequenceFile> inputFiles,
-			R remoteWorkflow) {
-		super(name, inputFiles);
+			R remoteWorkflow, UUID workflowId) {
+		super(name, inputFiles, workflowId);
 		
 		this.remoteWorkflow = remoteWorkflow;
 	}
