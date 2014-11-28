@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.model.workflow;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -109,6 +111,23 @@ public class IridaWorkflowDescription {
 
 	public List<WorkflowOutput> getOutputs() {
 		return outputs;
+	}
+
+	/**
+	 * Gets a {@link Map} representation of the outputs of a workflow, linking
+	 * the output name to the {@link WorkflowOutput} entry.
+	 * 
+	 * @return A {@link Map} linking the output name to the
+	 *         {@link WorkflowOutput} entry.
+	 */
+	public Map<String, WorkflowOutput> getOutputsMap() {
+		Map<String, WorkflowOutput> outputsMap = new HashMap<>();
+
+		for (WorkflowOutput entry : outputs) {
+			outputsMap.put(entry.getName(), entry);
+		}
+
+		return outputsMap;
 	}
 
 	public List<WorkflowTool> getTools() {
