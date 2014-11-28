@@ -35,4 +35,15 @@ public class IridaWorkflowNotFoundException extends IridaWorkflowLoadException {
 	public IridaWorkflowNotFoundException(Class<? extends Analysis> analysisType) {
 		super("No workflows found for " + analysisType);
 	}
+	
+	/**
+	 * Constructs a new {@link IridaWorkflowNotFoundException} with the given
+	 * workflow name.
+	 * 
+	 * @param workflowName
+	 *            The name of the workflow.
+	 */
+	public IridaWorkflowNotFoundException(String workflowName) {
+		super("No workflows found for workflow named " + workflowName);
+	}
 }

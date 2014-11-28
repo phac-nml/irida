@@ -152,4 +152,52 @@ public class IridaWorkflowsServiceIT {
 		Set<String> names = iridaWorkflowsService.getAllWorkflowsByName();
 		assertEquals(Sets.newHashSet("TestWorkflow"), names);
 	}
+	
+	/**
+	 * Tests getting a default workflow by the analysis type.
+	 * @throws IOException
+	 * @throws IridaWorkflowLoadException
+	 */
+	@Test
+	public void testGetDefaultWorkflowAnalysisType() throws IOException, IridaWorkflowLoadException {
+		iridaWorkflowsService.registerAnalysis(TestAnalysis.class, validWorkflowId);
+		IridaWorkflow defaultWorkflow = iridaWorkflowsService.getDefaultWorkflow(TestAnalysis.class);
+		assertEquals(validWorkflowId, defaultWorkflow.getWorkflowIdentifier());
+	}
+	
+	/**
+	 * Tests getting a default workflow by the name.
+	 * @throws IOException
+	 * @throws IridaWorkflowLoadException
+	 */
+	@Test
+	public void testGetDefaultWorkflowByName() throws IOException, IridaWorkflowLoadException {
+		iridaWorkflowsService.registerAnalysis(TestAnalysis.class, validWorkflowId);
+		IridaWorkflow defaultWorkflow = iridaWorkflowsService.getDefaultWorkflow("TestWorkflow");
+		assertEquals(validWorkflowId, defaultWorkflow.getWorkflowIdentifier());
+	}
+	
+	/**
+	 * Tests getting all workflows for a given analysis type.
+	 * @throws IOException
+	 * @throws IridaWorkflowLoadException
+	 */
+	@Test
+	public void testGetAllWorkflowsForAnalysisType() throws IOException, IridaWorkflowLoadException {
+		iridaWorkflowsService.registerAnalysis(TestAnalysis.class, validWorkflowId);
+		Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsFor(TestAnalysis.class);
+		assertEquals(2, workflows.size());
+	}
+	
+	/**
+	 * Tests getting all workflows for a given workflow name.
+	 * @throws IOException
+	 * @throws IridaWorkflowLoadException
+	 */
+	@Test
+	public void testGetAllWorkflowsForWorkflowName() throws IOException, IridaWorkflowLoadException {
+		iridaWorkflowsService.registerAnalysis(TestAnalysis.class, validWorkflowId);
+		Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsFor("TestWorkflow");
+		assertEquals(2, workflows.size());
+	}
 }

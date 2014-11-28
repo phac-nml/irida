@@ -53,6 +53,11 @@ public class IridaWorkflowsService {
 	private Map<Class<? extends Analysis>, UUID> defaultWorkflowForAnalysis;
 
 	/**
+	 * Stores map of workflow names to ids.
+	 */
+	private Map<String, Class<? extends Analysis>> workflowNamesMap;
+
+	/**
 	 * Builds a new {@link IridaWorkflowService} for loading up installed
 	 * workflows.
 	 * 
@@ -66,6 +71,7 @@ public class IridaWorkflowsService {
 		allRegisteredWorkflows = new HashMap<>();
 		registeredWorkflowsForAnalysis = new HashMap<>();
 		defaultWorkflowForAnalysis = new HashMap<>();
+		workflowNamesMap = new HashMap<>();
 	}
 
 	/**
@@ -104,6 +110,7 @@ public class IridaWorkflowsService {
 					} else {
 						allRegisteredWorkflows.put(workflow.getWorkflowIdentifier(), workflow);
 						addWorkflowForAnalysis(analysisClass, workflow.getWorkflowIdentifier());
+						addWorkflowNameToAnalysis(workflow.getWorkflowDescription().getName(), analysisClass);
 					}
 				}
 			} catch (Exception e) {
@@ -116,6 +123,12 @@ public class IridaWorkflowsService {
 			} else {
 				defaultWorkflowForAnalysis.put(analysisClass, defaultWorkflowId);
 			}
+		}
+	}
+
+	private void addWorkflowNameToAnalysis(String workflowName, Class<? extends Analysis> analysisType) {
+		if (!workflowNamesMap.containsKey(workflowName)) {
+			workflowNamesMap.put(workflowName, analysisType);
 		}
 	}
 
@@ -146,18 +159,85 @@ public class IridaWorkflowsService {
 			return allRegisteredWorkflows.get(id);
 		}
 	}
-	
+
+	/**
+	 * Gets the default workflow for a workflow with the given name.
+	 * 
+	 * @param workflowName
+	 *            The name of the workflow to search.
+	 * @return A default implementing workflow with this name.
+	 * @throws IridaWorkflowNotFoundException
+	 *             If no corresponding workflow was found.
+	 */
+	public IridaWorkflow getDefaultWorkflow(String workflowName) throws IridaWorkflowNotFoundException {
+		checkNotNull(workflowName, "workflowName is null");
+
+		if (!workflowNamesMap.containsKey(workflowName)) {
+			throw new IridaWorkflowNotFoundException(workflowName);
+		} else {
+			Class<? extends Analysis> analysisType = workflowNamesMap.get(workflowName);
+			return getDefaultWorkflow(analysisType);
+		}
+	}
+
+	/**
+	 * Gets all the workflows for a given workflow name.
+	 * 
+	 * @param workflowName
+	 *            The name of workflow to search.
+	 * @return A Set of {@link IridaWorkflow} for this workflow name.
+	 * @throws IridaWorkflowNotFoundException
+	 *             If not corresponding workflows could be found.
+	 */
+	public Set<IridaWorkflow> getAllWorkflowsFor(String workflowName) throws IridaWorkflowNotFoundException {
+		checkNotNull(workflowName);
+
+		if (!workflowNamesMap.containsKey(workflowName)) {
+			throw new IridaWorkflowNotFoundException(workflowName);
+		} else {
+			Class<? extends Analysis> analysisType = workflowNamesMap.get(workflowName);
+			return getAllWorkflowsFor(analysisType);
+		}
+	}
+
+	/**
+	 * Gets all the workflows for a given analysis type.
+	 * 
+	 * @param analysisType
+	 *            The type of analysis to search for workflows.
+	 * @return A Set of {@link IridaWorkflow} for this analysis type.
+	 * @throws IridaWorkflowNotFoundException
+	 *             If not corresponding workflows could be found.
+	 */
+	public Set<IridaWorkflow> getAllWorkflowsFor(Class<? extends Analysis> analysisType)
+			throws IridaWorkflowNotFoundException {
+		checkNotNull(analysisType, "analysisType is null");
+
+		Set<IridaWorkflow> workflowsSet = new HashSet<>();
+
+		if (!registeredWorkflowsForAnalysis.containsKey(analysisType)) {
+			throw new IridaWorkflowNotFoundException(analysisType);
+		} else {
+			for (UUID id : registeredWorkflowsForAnalysis.get(analysisType)) {
+				workflowsSet.add(allRegisteredWorkflows.get(id));
+			}
+
+			return workflowsSet;
+		}
+	}
+
 	/**
 	 * Gets a list of all the names of all installed workflows.
+	 * 
 	 * @return A list of all the names of all installed workflows.
 	 */
 	public Set<String> getAllWorkflowsByName() {
 		Set<String> names = new HashSet<>();
-		
+
 		for (IridaWorkflow workflow : getInstalledWorkflows()) {
 			names.add(workflow.getWorkflowDescription().getName());
 		}
-		
+
 		return names;
 	}
 
