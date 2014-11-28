@@ -111,13 +111,15 @@ public class ClientsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/{clientId}/edit", method = RequestMethod.GET)
-	public String edit(@PathVariable Long clientId, Model model) {
+	public String getEditPage(@PathVariable Long clientId, Model model) {
 		IridaClientDetails client = clientDetailsService.read(clientId);
 
 		model.addAttribute("client", client);
 		// in practise our clients only have 1 grant type. adding it to model to
 		// make it easier
-		model.addAttribute("selectedGrant", client.getAuthorizedGrantTypes().iterator().next());
+		if (!client.getAuthorizedGrantTypes().isEmpty()) {
+			model.addAttribute("selectedGrant", client.getAuthorizedGrantTypes().iterator().next());
+		}
 		Set<String> scopes = client.getScope();
 
 		for (String scope : scopes) {
@@ -130,22 +132,22 @@ public class ClientsController extends BaseController {
 	}
 
 	@RequestMapping(value = "/{clientId}/edit", method = RequestMethod.POST)
-	public String submitEdit(@PathVariable Long clientId,
+	public String postEditClient(@PathVariable Long clientId,
 			@RequestParam(required = false, defaultValue = "0") Integer accessTokenValiditySeconds,
 			@RequestParam(required = false, defaultValue = "") String authorizedGrantTypes,
 			@RequestParam(required = false, defaultValue = "") String scope_read,
-			@RequestParam(required = false, defaultValue = "") String new_secret,
-			@RequestParam(required = false, defaultValue = "") String scope_write, Model model, Locale locale) {
-		Map<String,Object> updates = new HashMap<>();
+			@RequestParam(required = false, defaultValue = "") String scope_write,
+			@RequestParam(required = false, defaultValue = "") String new_secret, Model model, Locale locale) {
+		Map<String, Object> updates = new HashMap<>();
 		IridaClientDetails readClient = clientDetailsService.read(clientId);
-		
-		if(accessTokenValiditySeconds != 0){
+
+		if (accessTokenValiditySeconds != 0) {
 			updates.put("accessTokenValiditySeconds", accessTokenValiditySeconds);
 		}
-		if(! Strings.isNullOrEmpty(authorizedGrantTypes)){
+		if (!Strings.isNullOrEmpty(authorizedGrantTypes)) {
 			updates.put("authorizedGrantTypes", ImmutableSet.of(authorizedGrantTypes));
 		}
-		
+
 		Set<String> scopes = new HashSet<>();
 		if (scope_write.equals("write")) {
 			scopes.add("write");
@@ -153,24 +155,25 @@ public class ClientsController extends BaseController {
 		if (scope_read.equals("read")) {
 			scopes.add("read");
 		}
-		if(!scopes.isEmpty()){
+		if (!scopes.isEmpty()) {
 			updates.put("scope", scopes);
 		}
-		
-		if(!Strings.isNullOrEmpty(new_secret)){
+
+		if (!Strings.isNullOrEmpty(new_secret)) {
 			String clientSecret = generateClientSecret();
 			updates.put("clientSecret", clientSecret);
 		}
-		
+
 		String response;
-		try{
+		try {
 			clientDetailsService.update(clientId, updates);
 			response = "redirect:/clients/" + clientId;
-		}catch(RuntimeException e){
-			handleCreateUpdateException(e, model, locale, scope_write, scope_read, readClient.getClientId(), accessTokenValiditySeconds);
-			response = edit(clientId, model);
+		} catch (RuntimeException e) {
+			handleCreateUpdateException(e, model, locale, scope_write, scope_read, readClient.getClientId(),
+					accessTokenValiditySeconds);
+			response = getEditPage(clientId, model);
 		}
-		
+
 		return response;
 	}
 
@@ -233,7 +236,8 @@ public class ClientsController extends BaseController {
 			IridaClientDetails create = clientDetailsService.create(client);
 			responsePage = "redirect:/clients/" + create.getId();
 		} catch (RuntimeException ex) {
-			handleCreateUpdateException(ex, model, locale, scope_write, scope_read, client.getClientId(), client.getAccessTokenValiditySeconds());
+			handleCreateUpdateException(ex, model, locale, scope_write, scope_read, client.getClientId(),
+					client.getAccessTokenValiditySeconds());
 			responsePage = getAddClientPage(model);
 		}
 
@@ -367,10 +371,11 @@ public class ClientsController extends BaseController {
 		Joiner joiner = Joiner.on("");
 		return joiner.join(pwdArray);
 	}
-	
-	private int handleCreateUpdateException(RuntimeException caughtException, Model model, Locale locale, String scope_write, String scope_read, String clientId, Integer accesstokenValidity) {
-		Map<String,Object> errors = new HashMap<>();
-		
+
+	private int handleCreateUpdateException(RuntimeException caughtException, Model model, Locale locale,
+			String scope_write, String scope_read, String clientId, Integer accesstokenValidity) {
+		Map<String, Object> errors = new HashMap<>();
+
 		try {
 			throw caughtException;
 		} catch (DataIntegrityViolationException ex) {
@@ -384,7 +389,7 @@ public class ClientsController extends BaseController {
 		if (!errors.isEmpty()) {
 			model.addAttribute("errors", errors);
 
-			logger.debug("Client Details couldn't be created.");
+			logger.debug("Client Details couldn't be created or updated.");
 
 			model.addAttribute("given_clientId", clientId);
 			model.addAttribute("given_tokenValidity", accesstokenValidity);
@@ -396,7 +401,7 @@ public class ClientsController extends BaseController {
 				model.addAttribute("given_scope_read", scope_read);
 			}
 		}
-		
+
 		return errors.size();
 	}
 }
