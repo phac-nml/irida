@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -43,7 +43,7 @@ public class ProjectReferenceFilePageIT {
 
 	@Before
 	public void setUp() {
-		this.driver = TestUtilities.setDriverDefaults(new ChromeDriver());
+		this.driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
 	}
 
 	@After
@@ -57,17 +57,25 @@ public class ProjectReferenceFilePageIT {
 		LoginPage.loginAsUser(driver);
 
 		// 1. Without Files
-		ProjectReferenceFilePage page_noFiles = ProjectReferenceFilePage.goTo(driver, PROJECT_ID_WITHOUT_REFERENCE_FILES);
+		ProjectReferenceFilePage page_noFiles = ProjectReferenceFilePage
+				.goTo(driver, PROJECT_ID_WITHOUT_REFERENCE_FILES);
 		assertTrue(page_noFiles.isNoFileNoticeDisplayed());
 		assertFalse(page_noFiles.isNoFileNoticeOwner());
 		assertFalse(page_noFiles.isFilesTableDisplayed());
+		// Ensure upload button not present
+		assertFalse(page_noFiles.isUploadReferenceFileBtnPresent());
 
 		// 2. With Files
-		ProjectReferenceFilePage page_withFiles = ProjectReferenceFilePage.goTo(driver, PROJECT_ID_WITH_REFERENCE_FILES);
+		ProjectReferenceFilePage page_withFiles = ProjectReferenceFilePage
+				.goTo(driver, PROJECT_ID_WITH_REFERENCE_FILES);
 		assertFalse(page_withFiles.isNoFileNoticeDisplayed());
 		assertTrue(page_withFiles.isFilesTableDisplayed());
 		assertEquals(2, page_withFiles.numRefFiles());
 		assertFalse(page_withFiles.areRemoveFileBtnsAvailable());
+
+		// Ensure upload button not present
+		assertFalse(page_noFiles.isUploadReferenceFileBtnPresent());
+
 	}
 
 	@Test
@@ -76,17 +84,23 @@ public class ProjectReferenceFilePageIT {
 		LoginPage.loginAsAdmin(driver);
 
 		// 1. Without Files
-		ProjectReferenceFilePage page_noFiles = ProjectReferenceFilePage.goTo(driver, PROJECT_ID_WITHOUT_REFERENCE_FILES);
+		ProjectReferenceFilePage page_noFiles = ProjectReferenceFilePage
+				.goTo(driver, PROJECT_ID_WITHOUT_REFERENCE_FILES);
 		assertTrue(page_noFiles.isNoFileNoticeDisplayed());
 		assertTrue(page_noFiles.isNoFileNoticeOwner());
 		assertFalse(page_noFiles.isFilesTableDisplayed());
+		// Ensure upload button present
+		assertTrue(page_noFiles.isUploadReferenceFileBtnPresent());
 
 		// 3. With Files
-		ProjectReferenceFilePage page_withFiles = ProjectReferenceFilePage.goTo(driver, PROJECT_ID_WITH_REFERENCE_FILES);
+		ProjectReferenceFilePage page_withFiles = ProjectReferenceFilePage
+				.goTo(driver, PROJECT_ID_WITH_REFERENCE_FILES);
 		assertFalse(page_withFiles.isNoFileNoticeDisplayed());
 		assertTrue(page_withFiles.isFilesTableDisplayed());
 		assertTrue(page_withFiles.areRemoveFileBtnsAvailable());
 		assertEquals(2, page_withFiles.numRefFiles());
+		// Ensure upload button present
+		assertTrue(page_noFiles.isUploadReferenceFileBtnPresent());
 	}
 
 	@Test

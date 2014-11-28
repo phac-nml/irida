@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 
@@ -40,18 +39,12 @@ public class ProjectReferenceFileController {
 	private final ReferenceFileService referenceFileService;
 	private final MessageSource messageSource;
 
-	/*
-	 * Converters
-	 */
-	private FileSizeConverter fileSizeConverter;
-
 	@Autowired
 	public ProjectReferenceFileController(ProjectService projectService, ReferenceFileService referenceFileService,
 			MessageSource messageSource) {
 		this.projectService = projectService;
 		this.referenceFileService = referenceFileService;
 		this.messageSource = messageSource;
-		this.fileSizeConverter = new FileSizeConverter();
 	}
 
 	@RequestMapping("/all")
@@ -67,16 +60,12 @@ public class ProjectReferenceFileController {
 			map.put("label", file.getLabel());
 			map.put("createdDate", file.getCreatedDate());
 			Path path = file.getFile();
-			long size = 0;
-			if (Files.exists(path)) {
-				try {
-					size = Files.size(path);
-					map.put("size", fileSizeConverter.convert(size));
-				} catch (IOException e) {
-					logger.error("Cannot find the size of file " + file.getLabel());
-					map.put("size",
-							messageSource.getMessage("projects.reference-file.not-found", new Object[] { }, locale));
-				}
+			try {
+				map.put("size", Files.size(path));
+			} catch (IOException e) {
+				logger.error("Cannot find the size of file " + file.getLabel());
+				map.put("size",
+						messageSource.getMessage("projects.reference-file.not-found", new Object[] { }, locale));
 			}
 			files.add(map);
 		}

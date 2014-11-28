@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.stereotype.Controller;
@@ -29,9 +28,10 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for all {@link ReferenceFile} related views
@@ -46,7 +46,6 @@ public class ReferenceFileController {
 	Formatter<Date> dateFormatter;
 	private final ProjectService projectService;
 	private final ReferenceFileService referenceFileService;
-	private final FileSizeConverter fileSizeConverter;
 	private final MessageSource messageSource;
 
 	@Autowired
@@ -55,7 +54,6 @@ public class ReferenceFileController {
 		this.projectService = projectService;
 		this.referenceFileService = referenceFileService;
 		this.messageSource = messageSource;
-		this.fileSizeConverter = new FileSizeConverter();
 		this.dateFormatter = new DateFormatter();
 	}
 
@@ -91,8 +89,9 @@ public class ReferenceFileController {
 	 * @throws IOException
 	 */
 	@RequestMapping("/project/{projectId}/new")
-	public @ResponseBody Map<String, String> createNewReferenceFile(@PathVariable Long projectId,
-			@RequestParam("file") MultipartFile file) throws IOException {
+	public @ResponseBody Map<String, Object> createNewReferenceFile(@PathVariable Long projectId,
+			@RequestParam("file") MultipartFile file, Locale locale) throws IOException {
+		Map<String, Object> response;
 
 		logger.debug("Adding reference file to project " + projectId);
 		logger.trace("Uploaded file size: " + file.getSize() + " bytes");
@@ -108,26 +107,33 @@ public class ReferenceFileController {
 		logger.debug("Wrote temp file to " + target);
 
 		ReferenceFile referenceFile = new ReferenceFile(target);
-		Join<Project, ReferenceFile> projectReferenceFileJoin = projectService
-				.addReferenceFileToProject(project, referenceFile);
-		logger.debug("Created reference file in project " + projectId);
+		try {
+			Join<Project, ReferenceFile> projectReferenceFileJoin = projectService
+					.addReferenceFileToProject(project, referenceFile);
+			logger.debug("Created reference file in project " + projectId);
 
-		ReferenceFile refFile = projectReferenceFileJoin.getObject();
-		Map<String, String> result = new HashMap<>();
-		Path path = refFile.getFile();
-		long size = 0;
-		if (Files.exists(path)) {
-			size = Files.size(path);
+			ReferenceFile refFile = projectReferenceFileJoin.getObject();
+			Map<String, Object> result = new HashMap<>();
+			Path path = refFile.getFile();
+			if (Files.exists(path)) {
+				result.put("size", Files.size(path));
+			} else {
+				result.put("size", messageSource.getMessage("projects.reference-file.not-found", new Object[]{}, locale));
+			}
+			result.put("id", refFile.getId().toString());
+			result.put("label", refFile.getLabel());
+			result.put("createdDate", refFile.getCreatedDate());
+
+			// Clean up temporary files
+			Files.deleteIfExists(target);
+			Files.deleteIfExists(temp);
+			response = ImmutableMap.of("result", result);
+		} catch (IllegalArgumentException e) {
+			response = ImmutableMap.of("error",
+					messageSource.getMessage("referenceFile.upload-error", new Object[] { file.getName() }, locale));
 		}
-		result.put("size", fileSizeConverter.convert(size));
-		result.put("id", refFile.getId().toString());
-		result.put("label", refFile.getLabel());
-		result.put("createdDate", dateFormatter.print(refFile.getCreatedDate(), LocaleContextHolder.getLocale()));
 
-		// Clean up temporary files
-		Files.deleteIfExists(target);
-		Files.deleteIfExists(temp);
-		return result;
+		return response;
 	}
 
 	/**

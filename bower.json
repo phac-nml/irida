@@ -14,7 +14,6 @@
     "jquery": "2.1.1",
     "noty": "~2.2.5",
     "mustache": "0.8.2",
-    "jquery-file-upload": "9.7.0",
     "magnific-popup": "0.9.9",
     "bootstrap": "3.3.1",
     "DataTables": "1.10.2",
@@ -35,7 +34,8 @@
     "angular-resource": "1.2.7",
     "AngularJS-Toaster": "0.4.3",
     "angular-ui-select": "0.8.3",
-    "angular-animate": "1.2.7"
+    "angular-animate": "1.2.7",
+    "ng-file-upload": "1.6.12"
   },
   "devDependencies": {},
   "resolutions": {
