@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="${themePath + '_page'}">
+<head>
+    <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
+
+</head>
+<body>
+<div class="row" layout:fragment="page">
+    <main class="container" role="main" property="mainContentOfPage">
+        <h1 th:utext="#{dashboard.heading}"></h1>
+        <p th:utext="#{dashboard.body}"></p>
+        <h3 th:text="#{event.title}">_Recent Activities_</h3>
+        <div id="events"></div>
+        <div class="row mrgn-tp-lg mrgn-bttm-lg">
+            <div ng-controller="CarouselCtrl">
+                <div style="height: 200px">
+                    <div carousel="" interval="3000">
+                        <div slide="" ng-repeat="slide in slides" active="slide.active">
+                            <img ng-src="{{slide.image}}" style="margin:auto;"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<th:block layout:fragment="page-scripts" th:inline="javascript">
+    <script th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}"
+	        src="/resources/bower_components/moment/min/moment-with-langs.min.js"></script>
+	<script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"
+	        src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
+    <script>
+
+        /*<![CDATA[*/
+        document.createElement("carousel");
+        document.createElement("slide");
+        app.controller('CarouselCtrl', CarouselCtrl);
+        function CarouselCtrl($scope, BASE_URL) {
+            'use strict';
+            var carousel = this;
+
+            $scope.slides = [];
+            for (var i = 1; i < 5; i++) {
+                $scope.slides.push({image: BASE_URL + "resources/img/irida-logos-" + i + ".png"});
+            }
+        }
+        
+        $(function () {
+            var eventUrl = /*[[@{/events/current_user}]]*/ '/events/current_user/';
+            $.ajax({
+            	method: "GET",
+            	url: eventUrl,
+            	success: function(data, textStatus, jqXHR){
+            		$("#events").html(data);
+            	}
+            })
+        });
+        /*]]>*/
+    </script>
+</th:block>
+</body>
+</html>

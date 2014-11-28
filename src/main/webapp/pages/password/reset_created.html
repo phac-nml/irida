@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="${themePath + '_page'}">
+<head>
+    <title th:text="#{user.passwordReset}">_PASSWORD RESET_</title>
+</head>
+<body>
+<div layout:fragment="page">
+    <main class="col-md-12">
+        <h1 class="page-header" th:text="#{user.passwordReset}">_Reset User Password_</h1>
+
+        <div class="col-md-6">
+            <div class="panel-body">
+                <p th:text="#{password.reset.created(${email})}">_Password reset submitted for nobody@nowhere.com._</p>
+                <a href="/" th:href="@{/}" th:text="#{password.reset.success.link}">_Return to home_</a>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <p th:text="#{password.reset.created.description}">_Password reset was created_</p>
+        </div>
+    </main>
+</div>
+</body>
+</html>

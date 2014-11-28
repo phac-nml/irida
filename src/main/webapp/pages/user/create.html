@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="${themePath + '_page'}">
+<head>
+<title th:text="#{user.create.details}">_USER PAGE_</title>
+</head>
+<body>
+
+<main layout:fragment="page">
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
+				<form role="form" action="/users/1/edit"
+					th:action="@{/users/create}" method="post">
+					<section class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title" th:text="#{user.create.details}">_Create User_</h3>
+						</div>
+						<div class="panel-body">
+							<div class="form-group">
+								<label class="control-label" th:text="#{users.username}" for="username">_Username_</label> 
+								<div th:if="${#maps.containsKey(errors, 'username')}" th:text="${errors.username}" class="alert alert-warning">_First Name Error_</div>
+								<input type="text" id="username" name="username" class="form-control input-full" required="required" 
+									th:placeholder="#{users.username}" th:value="${given_username}"/>
+							</div>
+							
+							<div class="form-group">
+								<label class="control-label" th:text="#{user.firstName}" for="firstName">_First Name_</label> 
+								<div th:if="${#maps.containsKey(errors, 'firstName')}" th:text="${errors.firstName}" class="alert alert-warning">_First Name Error_</div>
+								<input type="text" id="firstName" name="firstName" class="form-control input-full"	required="required" 
+								th:placeholder="#{user.firstName}" th:value="${given_firstName}" />
+							</div>
+
+							<div class="form-group">
+								<label class="control-label" th:text="#{user.lastName}" for="lastName">_Last Name_</label>
+								<div id="lastName-error" th:if="${#maps.containsKey(errors, 'lastName')}" th:text="${errors.lastName}" class="alert alert-warning">_Last Name Error_</div> 
+								<input type="text" id="lastName" name="lastName" class="form-control input-full" required="required" 
+									th:placeholder="#{user.lastName}" th:value="${given_lastName}"/>
+							</div>
+
+							<div class="form-group">
+								<label th:text="#{users.email}"	for="email">_Email_</label>
+								<div id="email-error" th:if="${#maps.containsKey(errors, 'email')}" th:text="${errors.email}" class="alert alert-warning">_Email Error_</div> 
+								<input type="email" id="email" name="email" class="form-control input-full" required="required"	
+									th:placeholder="#{users.email}" th:value="${given_email}"/>
+							</div>
+							
+							<div class="form-group">
+								<label th:text="#{user.phone}" for="phoneNumber">_Phone Number_</label>
+								<div id="email-error" th:if="${#maps.containsKey(errors, 'phoneNumber')}" th:text="${errors.phoneNumber}" class="alert alert-warning">_Phone Number Error_</div> 
+								<input type="text" id="phoneNumber" name="phoneNumber" class="form-control input-full" 
+									th:placeholder="#{user.phone}" th:value="${given_phoneNumber}" required="required"/>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label" th:text="#{users.role}" for="systemRole">_Role_</label>
+								<div id="role-error" th:if="${#maps.containsKey(errors, 'role')}" th:text="${errors.role}" class="alert alert-warning">_Role Error_</div>
+								<select sec:authorize="hasRole('ROLE_ADMIN')" id="systemRole" name="systemRole" class="form-control input-full" required="required" >
+									<option th:each="role : ${allowedRoles}" th:value="${role.key}" th:text="${role.value}">_Role name_</option>
+								</select>
+								
+								<input sec:authorize="hasRole('ROLE_MANAGER')" type="hidden" id="systemRole" name="systemRole" th:value="ROLE_USER"
+									class="form-control input-full" required="required" />
+								<input sec:authorize="hasRole('ROLE_MANAGER')" id="systemRole" name="systemRole" th:value="${allowedRoles.ROLE_USER}"
+									class="form-control input-full" required="required" disabled="disabled" />
+							</div>
+							
+							<div class="form-group">
+								<label class="control-label" th:text="#{user.setpassword}" for="setpassword">_User Created Password_</label>
+								<input type="checkbox" id="setpassword" name="requireActivation" th:checked="${given_requireActivation}" checked="checked" value="requireActivation"/>
+                                <p class="help-block" th:text="#{user.create.setpassword.help}">_Activate User Help_</p>
+							</div>
+							
+							<div class="password">
+								<div class="form-group">
+									<label class="control-label" th:text="#{user.password}"	for="password">_Password_</label>
+									<div th:if="${#maps.containsKey(errors, 'password')}" th:text="${errors.password}" class="alert alert-warning">_Password Error_</div>
+									<input type="password" id="password" name="password" class="form-control input-full password" th:placeholder="#{user.password}" />
+								</div>
+	
+								<div class="form-group">
+									<label class="control-label" th:text="#{user.confirmPassword}" for="confirmPassword">_Confirm Password_</label> 
+									<input type="password" id="confirmPassword" name="confirmPassword" class="form-control input-full password" 
+									 th:placeholder="#{user.confirmPassword}" />
+								</div>
+							</div>
+						</div>
+                        <div class="panel-footer text-right">
+                            <a type="reset" class="btn btn-default" href="#" th:href="@{/users}">Cancel</a>
+                            <button type="submit" class="btn btn-primary submit">Create User</button>
+                        </div>
+					</section>
+				</form>
+			</div>
+		</div>
+	</main>
+
+
+	<th:block layout:fragment="page-scripts" th:inline="javascript">
+		<script type="text/javascript">
+			$(document).ready(function () {
+				var $setPassword = $("#setpassword");
+				
+				$setPassword.change(function(){
+					if($(this).prop('checked')){
+						$(".password").hide(100);
+						$(".password").removeAttr("required");
+					}
+					else{
+						$(".password").show(100);
+						$(".password").attr("required","required");
+					}
+				});
+				
+				if($setPassword.prop('checked')){
+					$(".password").hide();
+				}
+			});
+			
+		</script>
+	</th:block>
+</body>
+</html>

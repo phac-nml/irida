@@ -1,0 +1,15 @@
+.dataTables_filter input[type='search'] {
+  background-color: $color-grey-lighter;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: none;
+  color: #555;
+  padding: 5px;
+  font-weight: normal;
+  outline: none;
+  &:focus {
+    background-color: white;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    @include transition(background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow ease-in-out .5s);
+  }
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="samples/_base">
+<head lang="en">
+    <meta charset="UTF-8"/>
+    <title th:text="#{samples.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
+</head>
+<body>
+<main layout:fragment="main">
+    <div class="row">
+        <div class="col-md-10">
+            <h1 role="heading" th:text="#{samples.details.page-title(${sample.getLabel()})}">__TITLE__</h1>
+        </div>
+        <div class="col-md-2">
+            <a id="edit-sample" class="btn btn-default btn-sm pull-right"
+               th:href="@{'/samples/' + ${sample.getId()} + '/edit'}" th:text="#{form.btn.edit}">__EDIT__</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <p class="lead" th:text="${sample.getDescription()}"></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <b class="panel-title" th:text="#{samples.details.section.organism-title}">Organism Details</b>
+                </div>
+                <div class="panel-body">
+                    <dl>
+                        <dt th:text="#{samples.details.organism}"></dt>
+                        <dd id="dd-organism"
+                            th:text="${sample.getOrganism()} != null ? ${sample.getOrganism()} : #{organism.unknown}"></dd>
+                    </dl>
+                    <dl>
+                        <dt th:text="#{samples.details.isolate}"></dt>
+                        <dd id="dd-isolate"
+                            th:text="${sample.getIsolate()} != null ? ${sample.getIsolate()} : #{isolate.unknown}"></dd>
+                    </dl>
+                    <dl>
+                        <dt th:text="#{samples.details.strain}"></dt>
+                        <dd id="dd-strain"
+                            th:text="${sample.getStrain()} != null ? ${sample.getStrain()} : #{strain.unknown}"></dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <b class="panel-title" th:text="#{samples.collection.title}">__TITLE__</b>
+                </div>
+                <div class="panel-body">
+                    <dl th:if="${sample.getCollectedBy()} != null">
+                        <dt th:text="#{samples.collected-by}"></dt>
+                        <dd id="dd-collectedby" th:text="${sample.getCollectedBy()}"></dd>
+                    </dl>
+                    <dl th:with="df=#{locale.date.short}">
+                        <dt th:text="#{samples.collection-date.title}"></dt>
+                        <dd th:text="${sample.getCollectionDate()} != null ? ${#dates.format(sample.getCollectionDate(), df)} : #{samples.collection-date.unknown}"></dd>
+                    </dl>
+                    <dl th:if="${sample.getIsolationSource()} != null">
+                        <dt th:text="#{samples.isolation-source.title}"></dt>
+                        <dd id="dd-isolation-source" th:text="${sample.getIsolationSource()}"></dd>
+                    </dl>
+                    <dl th:if="${sample.getGeographicLocationName()} != null">
+                        <dt th:text="#{location.geographic.title}"></dt>
+                        <dd id="dd-geo-name" th:text="${sample.getGeographicLocationName()}"></dd>
+                    </dl>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl>
+                                <dt th:text="#{location.latitude}"></dt>
+                                <dd id="dd-latitude"
+                                    th:text="${sample.getLatitude()} != null ? ${sample.getLatitude()} : #{location.unknown}"></dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl>
+                                <dt th:text="#{location.longitude}"></dt>
+                                <dd id="dd-longitude"
+                                    th:text="${sample.getLongitude()} != null ? ${sample.getLongitude()} : #{location.unknown}"></dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

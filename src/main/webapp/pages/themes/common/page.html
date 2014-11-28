@@ -1,0 +1,169 @@
+<!DOCTYPE html><!--[if lt IE 9]>
+<html class="no-js lt-ie9" lang="en"><![endif]--><!--[if gt IE 8]><!-->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" class="no-js"
+      lang="en">
+<!--<![endif]-->
+<head lang="en">
+	<title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA Platform</title>
+	<th:block th:include="themes/common/fragments :: meta"></th:block>
+
+	<!--[if lte IE 8]
+	<script>
+		document.createElement('ng-include');
+		document.createElement('ng-pluralize');
+		document.createElement('ng-view');
+
+		// Optionally these for CSS
+		document.createElement('ng:include');
+		document.createElement('ng:pluralize');
+		document.createElement('ng:view');
+
+		// Angular Bootstrap
+		document.createElement('tabset');
+		document.createElement('tab');
+
+	</script>
+	<script th:src="@{/resources/bower_components/json2/json2.js}" src="/resources/bower_components/json2/json2.js"></script>
+	<![endif]-->
+
+	<link rel="stylesheet" th:href="@{/resources/bower_components/Font-Awesome/css/font-awesome.min.css}"
+	      href="/resources/bower_components/Font-Awesome/css/font-awesome.min.css"/>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/AngularJS-Toaster/toaster.css}"
+	      href="/resources/bower_components/AngularJS-Toaster/toaster.css"/>
+
+	<style>
+		.ng-cloak {
+			display: none !important;
+		}
+	</style>
+</head>
+<body vocab="http://schema.org/" typeof="WebPage" id="ng-app" ng-app="irida">
+<div toaster-container=""></div>
+<th:block layout:fragment="main-section">
+	<!--/* This is where each pages content should be loaded. */-->
+</th:block>
+
+<!--/* Site Wide Scripts */--><!--[if lt IE 9]>
+<script th:src="@{/resources/js/vendor/jquery-1.11.1.min.js}" src="/resources/js/vendor/jquery-1.11.1.min.js"></script>
+<script>
+	// Production steps of ECMA-262, Edition 5, 15.4.4.14
+	// Reference: http://es5.github.io/#x15.4.4.14
+	// Copied from: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
+	/*<![CDATA[*/
+    if (!Array.prototype.indexOf) {
+        Array.prototype.indexOf = function (searchElement, fromIndex) {
+            var k;
+            if (this == null) {
+                throw new TypeError('"this" is null or not defined');
+            }
+            var O = Object(this);
+            var len = O.length >>> 0;
+            if (len === 0) {
+                return -1;
+            }
+            var n = +fromIndex || 0;
+            if (Math.abs(n) === Infinity) {
+                n = 0;
+            }
+            if (n >= len) {
+                return -1;
+            }
+            k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
+            while (k < len) {
+                var kValue;
+                if (k in O && O[k] === searchElement) {
+                    return k;
+                }
+                k++;
+            }
+            return -1;
+        };
+    }
+    /*]]>*/
+</script>
+<![endif]--><!--[if gte IE 9 | !IE ]><!-->
+<script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"
+        src="/resources/bower_components/jquery/dist/jquery.min.js"></script>
+<!--<![endif]-->
+<script th:src="@{/resources/bower_components/lodash/dist/lodash.min.js}"
+        src="/resources/bower_components/lodash/dist/lodash.min.js"></script>
+<script th:src="@{/resources/bower_components/angular/angular.min.js}"
+        src="/resources/bower_components/angular/angular.min.js"></script>
+<script th:src="@{/resources/bower_components/angular-animate/angular-animate.min.js}"
+        src="/resources/bower_components/angular-animate/angular-animate.min.js"></script>
+<script th:src="@{/resources/bower_components/angular-resource/angular-resource.min.js}"
+        src="/resources/bower_components/angular-resource/angular-resource.min.js"></script>
+<script th:src="@{/resources/bower_components/angular-sanitize/angular-sanitize.min.js}"
+        src="/resources/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+<script th:src="@{'/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js'}"
+        src="/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+<script th:src="@{/resources/bower_components/angular-ui-utils/ui-utils.min.js}"
+        src="/resources/bower_components/angular-ui-utils/ui-utils.min.js"></script>
+<script th:src="@{/resources/bower_components/restangular/src/restangular.js}"
+        src="/resources/bower_components/restangular/src/restangular.js"></script>
+
+<script th:src="@{/resources/bower_components/AngularJS-Toaster/toaster.js}"
+        src="/resources/bower_components/AngularJS-Toaster/toaster.js"></script>
+<script th:src="@{/resources/js/services/notifications/irida-notifications.js}"
+        src="/resources/js/services/notifications/irida-notifications-min.js"></script>
+
+<script th:inline="javascript">
+	/*<![CDATA[*/
+	window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.utils', 'restangular', 'irida.notifications']);
+	var app = angular.module('irida', window.dependencies)
+			.value('BASE_URL', /*[[@{/}]]*/ '/')
+		// This configures the base url globally for all restangular calls.
+			.config(function (RestangularProvider) {
+				RestangularProvider.setBaseUrl(/*[[@{/}]]*/ "/");
+			})
+			.run(function (paginationConfig) {
+				paginationConfig.firstText = /*[[#{table.first}]]*/ 'First';
+				paginationConfig.previousText = /*[[#{table.previous}]]*/ 'Previous';
+				paginationConfig.nextText = /*[[#{table.next}]]*/ 'Next';
+				paginationConfig.lastText = /*[[#{table.last}]]*/ 'Last';
+				paginationConfig.boundaryLinks = true;
+				paginationConfig.directionLinks = true;
+			})
+			.directive('ngFocus', [function () {
+				var FOCUS_CLASS = "ng-focused";
+				return {
+					restrict: 'A',
+					require: 'ngModel',
+					link: function (scope, element, attrs, ctrl) {
+						ctrl.$focused = false;
+						element.bind('focus', function (evt) {
+							element.addClass(FOCUS_CLASS);
+							scope.$apply(function () {
+								ctrl.$focused = true;
+							});
+						}).bind('blur', function (evt) {
+							element.removeClass(FOCUS_CLASS);
+							scope.$apply(function () {
+								ctrl.$focused = false;
+							});
+						});
+					}
+				}
+			}]).config(function ($httpProvider) {
+				$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
+				// Make sure that all ajax form data is sent in the correct format.
+				$httpProvider.defaults.transformRequest = function (data) {
+					if (data === undefined) {
+						return data;
+					}
+					return $.param(data);
+				};
+			});
+	/*]]>*/
+</script>
+
+<th:block layout:fragment="theme-scripts">
+	<!--/* This is where the main for the theme template are loaded. */-->
+</th:block>
+
+<th:block layout:fragment="page-scripts">
+	<!--/* This is where scripts specific for each page should be loaded. */-->
+</th:block>
+</body>
+</html>

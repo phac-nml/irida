@@ -1,0 +1,75 @@
+.project-details {
+  li {
+    border-bottom: 1px solid $color-grey-lighter;
+    line-height: 2em;
+  }
+  i.glyphicon {
+    color: $color-grey-light;
+    margin-right: .5em;
+  }
+  em {
+    font-style: normal;
+  }
+  span {
+    float: right;
+  }
+}
+
+.panel.associated-projects {
+  div.panel-body {
+    padding: 0 !important;
+  }
+  .list-group-item {
+    border-radius: 0 !important;
+  }
+}
+
+.sidebar {
+  border: 1px solid $color-grey-lighter;
+  border-top-color: lighten($color-grey-lighter, 5);
+  border-bottom-color: darken($color-grey-lighter, 20);
+  border-radius: 4px;
+  margin-bottom: 1em;
+  @include box-shadow(rgba(0, 0, 0, .2) 0 1px 2px); // Mimics bootstrap box-shadow
+}
+
+.sidebar__heading {
+  border-bottom: 1px solid $color-grey-lighter;
+  padding: 10px;
+  h2 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.sidebar__body {
+  position: relative;
+  >div {
+    border-top: 1px solid lighten($color-grey-lighter, 3);
+    padding: 6px 4px;
+  }
+  .form-group {
+    padding: 4px 8px;
+  }
+  input[type="text"].form-control {
+    border: 1px solid darken($color-grey-lighter, 5);
+    @include box-shadow(rgba(0, 0, 0, .1) 0 1px 2px inset)
+  }
+  .input-group-btn button {
+    border: 1px solid darken($color-grey-lighter, 5) !important;
+    color: darken($color-grey-lighter, 20);
+  }
+}
+
+.sidebar__icon {
+  color: $color-grey-light;
+  width: 15%;
+}
+
+.sidebar__value {
+  color: $color-grey-darker;
+  position: absolute;
+  right: 8px;
+}

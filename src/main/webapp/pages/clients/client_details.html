@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="clients/_base">
+<head>
+    <title th:text="#{client.details.title(${client.clientId})}">_USER PAGE_</title>
+</head>
+<body>
+<main layout:fragment="main">
+    <div class="row mrgn-tp-lg">
+    	<!-- User details -->
+    	<div class="col-md-8 col-md-offset-2">
+            <h1 th:text="${client.clientId}">_Name_</h1>
+            <div class="panel panel-primary">
+                <div class="panel-heading clearfix">
+                	<h3 class="panel-title pull-left" th:text="#{client.details.title}">_User Details_</h3>
+					<div class="btn-group-xs pull-right">
+				        <div id="remove-btn" class="btn btn-danger" th:text="#{client.remove.button}">Remove</div>
+                	</div>
+                </div>
+                <div class="panel-body">
+                    <ul class="nav nav-pills nav-stacked project-details" th:inline="text">
+                    	<li>
+                    		<i class="glyphicon glyphicon-barcode"></i>&nbsp;[[#{iridaThing.id}]]
+                    		<span class="pull-right" id="client-id"
+                                th:text="${client.id}">_ID_</span>
+                    	</li>
+                    	<li>
+                    		<i class="glyphicon glyphicon-tag"></i>&nbsp;[[#{client.clientid}]]
+                    		<span class="pull-right" id="client-clientid"
+                                th:text="${client.clientId}">_Client ID_</span>
+                    	</li>
+                        <li>
+                            <i class="glyphicon glyphicon-eye-close"></i>&nbsp;[[#{client.details.clientSecret}]]
+                            <span class="pull-right" id="client-secret"
+                                th:text="${client.clientSecret}">_Secret_</span>
+                        </li>
+                        <li>
+                            <i class="glyphicon glyphicon-ok-sign"></i>&nbsp;[[#{client.grant-types}]]
+                            <span class="pull-right" id="client-grants"
+                                th:text="${grants}">_Grants_</span>
+                        </li>
+                        <li>
+                            <i class="glyphicon glyphicon-transfer"></i>&nbsp;[[#{client.scopes}]]
+                            <span class="pull-right" id="client-scopes"
+                                th:text="${scopes}">_Scopes_</span>
+                        </li>
+                        
+                        <li>
+                            <i class="glyphicon glyphicon-time"></i>&nbsp;[[#{client.details.tokenValidity}]]
+                            <span class="pull-right tokenValidityInSeconds" id="client-token-validity"
+                                th:text="${client.accessTokenValiditySeconds}">_Token Validity_</span>
+                        </li>
+                        <li>
+                        	<i class="glyphicon glyphicon-calendar"></i>&nbsp;[[#{iridaThing.timestamp}]]
+                        	<span class="pull-right" id="client-created"
+                                th:text="${#calendars.format(client.createdDate, 'dd MMM yyyy')}">_DATE_CREATED_</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+       </div>
+       <section>
+           <form id="removeForm" action="/clients/remove" th:action="@{/clients/remove}" method="POST">
+               <input type="hidden" th:value="${client.id}" name="id"/>
+           </form>
+       </section>
+</main>
+<th:block layout:fragment="pageScripts">
+    <script th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}"
+            src="/resources/bower_components/moment/min/moment-with-langs.min.js"></script>
+    <script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
+            src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
+    <script th:inline="javascript">
+    	$(document).ready(function(){
+    		var removeUrl = /*[[@{/clients/remove}]]*/ '/clients/remove';
+    		var data = "id=" + /*[[${client.id}]]*/ '1 ';
+    		$("#remove-btn").click(function(){
+    			noty({
+    				layout: "center",
+    	            type: "default",
+    	            text: /*[[#{client.remove.confirm(${client.clientId})}]]*/ "Remove client?",
+    	            modal: true,
+    	            buttons: [
+    	                {
+    	                    addClass: 'btn btn-primary btn-sm confirm-delete',
+    	                    text: /*[[#{form.btn.confim}]]*/ 'OK',
+    	                    onClick: function ($noty) {
+    	                        $("#removeForm").submit();
+    	                    }
+    	                },
+    	                {
+    	                    addClass: 'btn btn-default btn-sm',
+    	                    text: /*[[#{form.btn.cancel}]]*/ 'Cancel',
+    	                    onClick: function ($noty) {
+    	                        $noty.close();
+    	                    }
+    	                }
+    	            ],
+    			});
+
+    		});
+    	});
+    	
+    </script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="clients/_base">
+<head>
+    <title th:text="#{clients.title}">_Clients_</title>
+    <link rel="stylesheet" href="/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css"/>
+</head>
+<body>
+<main layout:fragment="page">
+    <div class="col-md-12">
+        <main role="main" property="mainContentOfPage">
+            <h1 th:text="#{clients.title}">_Clients_</h1>
+            <a href="/clients/create" th:href="@{/clients/create}" th:text="#{clients.add}" class="btn btn-default mrgn-bttm-md">_Add
+                Client_</a>
+            <table id="clientsTable" class="table table-striped table-hover">
+                <thead>
+                <tr th:inline="text">
+                    <th id="id-header">[[#{iridaThing.id}]]<i class="glyphicon"></i></th>
+                    <th id="clientid-header">[[#{client.clientid}]]<i class="glyphicon"></i></th>
+                    <th id="grants-header">[[#{client.grant-types}]]<i class="glyphicon"></i></th>
+                    <th id="created-header">[[#{iridaThing.timestamp}]]<i class="glyphicon"></i></th>
+                </tr>
+                </thead>
+                <tbody id="client-table-body"></tbody>
+            </table>
+        </main>
+    </div>
+</main>
+<th:block layout:fragment="pageScripts">
+    <script th:src="@{/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js}"
+            src="/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $(document).ready(function () {
+            $('#clientsTable').DataTable({
+                dom: "<'top'lf>rt<'bottom'ip><'clear'>",
+                processing: true,
+                serverSide: true,
+                deferRender: true,
+                ajax: /*[[@{'/clients/ajax/list'}]]*/ '/clients/ajax/list',
+                stateSave: true,
+                stateDuration: -1,
+                order: [[1, "desc"]],
+                columnDefs: [
+                    {
+                        'className': "clientIdCol",
+                        'targets': 0
+                    },
+                    {
+                        'render': function (data, type, row) {
+                            return '<a class="clientLink" href="' +
+                                /*[[@{/clients/}]]*/ ''
+                            + row[0] + '">' + data + '</a>';
+                        },
+                        'targets': 1
+                    }
+                ]
+            });
+        });
+        /*]]>*/
+    </script>
+</th:block>
+</body>
+</html>

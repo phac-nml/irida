@@ -1,0 +1,49 @@
+// Inputs
+.input-full {
+  width: 100%;
+}
+
+// Notifications
+//  This is for showing a server error notification to the user
+.form-group .alert {
+  padding: 3px 6px;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.large-checkbox {
+  label {
+    position: relative;
+    font-size: 14px;
+    cursor: pointer;
+    color: $color-grey;
+    &:before, &:after {
+      font-family: FontAwesome;
+      font-weight: 100;
+      font-size: 22px;
+      /*absolutely positioned*/
+      position: absolute;
+      top: -14px;
+      left: 0;
+    }
+  }
+  label:before {
+    content: '\f0c8'; /*unchecked*/
+  }
+  label:after {
+    content: '\f14a'; /*checked*/
+    max-width: 0;
+    overflow: hidden;
+    opacity: 0.5;
+  }
+  input[type="checkbox"] {
+    display: none;
+  }
+  input[type="checkbox"]:checked + label:after {
+    max-width: 25px;
+    opacity: 1;
+  }
+  input[type="checkbox"]:checked + label:before {
+    display: none;
+  }
+}

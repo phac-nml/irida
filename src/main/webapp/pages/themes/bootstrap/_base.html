@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="themes/common/page">
+<head>
+    <link rel="stylesheet" th:href="@{/resources/bower_components/bootstrap/dist/css/bootstrap.min.css}"
+          href="/resources/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" th:href="@{/resources/bower_components/Bootflat/css/site.min.css}"
+          href="/resources/bower_components/Bootflat/css/site.min.css"/>
+    <!--<link rel="stylesheet" th:href="@{/resources/bower_components/bootstrap/dist/css/bootstrap-theme.min.css}"-->
+    <!--href="/resources/bower_components/bootstrap/dist/css/bootstrap-theme.min.css"/>-->
+    <link rel="stylesheet" th:href="@{/resources/css/themes/bootstrap/main.css}"
+          href="/resources/css/themes/bootstrap/main.css"/>
+    <link rel="stylesheet" th:href="@{/resources/css/main.css}" href="/resources/css/main.css"/>
+    <!--/* Page specific css fragments or links are added here when run. */-->
+    <!--[if lt IE 9]>
+    <script th:src="@{/resources/bower_components/respondJs/dest/respond.min.js}"
+            src="/resources/bower_components/respondJs/dest/respond.min.js"></script>
+    <script th:src="@{/resources/bower_components/html5shiv/dist/html5shiv.min.js}"
+            src="/resources/bower_components/html5shiv/dist/html5shiv.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+
+
+<div layout:fragment="main-section">
+
+    <div layout:fragment="content">
+    </div>
+</div>
+
+
+<th:block layout:fragment="theme-scripts">
+
+</th:block>
+</body>
+</html>

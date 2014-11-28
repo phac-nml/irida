@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="projects/_base">
+<head>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2.css}"
+	      href="/resources/bower_components/select2/select2.css"/>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}"
+	      href="/resources/bower_components/select2/select2-bootstrap.css"/>
+</head>
+<body>
+
+<main layout:fragment="main" th:object="${project}">
+	<div class="row">
+		<div class="col-md-10">
+			<h1 role="heading" th:text="#{project.metadata.title(*{label})}"></h1>
+		</div>
+	</div>
+
+	<section>
+		<form th:action="@{/projects/{projectId}/metadata/edit(projectId=${project.getId()})}" method="post" role="form"
+		      class="panel panel-info" th:object="${project}">
+			<div class="panel-heading">
+				<h3 class="panel-title">Edit Project Metadata</h3>
+			</div>
+			<div class="panel-body">
+				<div class="form-group">
+					<label for="name" th:text="#{projects.create.form.name}"></label>
+
+					<div th:if="${#maps.containsKey(errors, 'name')}" class="alert alert-warning"
+					     th:text="${errors.name}"></div>
+					<input class="form-control input-full" type="text" name="name" id="name"
+					       th:placeholder="*{name}"/>
+				</div>
+				<div class="form-group">
+					<label for="projectOrganism" th:text="#{projects.create.form.organism}">Project Organism</label>
+
+					<div th:if="${#maps.containsKey(errors, 'organism')}" class="alert alert-warning"
+					     th:text="${errors.organism}"></div>
+
+					<input type="text" id="projectOrganism" class="organism-select form-control input-full"
+					       name="organism" th:placeholder="*{organism}"/>
+
+				</div>
+				<div class="form-group">
+					<label for="projectDescription" th:text="#{projects.create.form.description}">Project Description</label>
+
+					<div th:if="${#maps.containsKey(errors, 'description')}" class="alert alert-warning"
+					     th:text="${errors.description}"></div>
+                        <textarea class="form-control input-full" name="projectDescription"
+                                  id="projectDescription"
+                                  rows="3" th:placeholder="*{projectDescription}"></textarea>
+				</div>
+				<div class="form-group">
+					<label for="projectWiki" th:text="#{projects.create.form.wiki}">Project Wiki URL</label>
+
+					<div th:if="${#maps.containsKey(errors, 'remoteURL')}" class="alert alert-warning"
+					     th:text="${errors.remoteURL}"></div>
+					<input class="form-control input-full" name="remoteURL" type="url" id="projectWiki"
+					       th:placeholder="*{remoteURL}"/>
+				</div>
+			</div>
+			<div class="panel-footer text-right">
+				<a class="btn btn-default" th:href="@{'/projects/' + *{id} + '/metadata'}"
+				   th:text="#{form.btn.cancel}">Cancel</a>
+				<button id="submit" type="submit" class="btn btn-primary"
+				        th:text="#{form.btn.update}"></button>
+			</div>
+		</form>
+	</section>
+</main>
+<th:block layout:fragment="scripts" th:inline="javascript">
+	<script th:src="@{/resources/bower_components/select2/select2.min.js}"
+	        src="/resources/bower_components/select2/select2.min.js"></script>
+	<script>
+		$(function () {
+			$(".organism-select").select2({
+				placeholder       : /*[[#{projects.create.form.select-organism}]]*/ "Enter Organism",
+				minimumInputLength: 2,
+				ajax              : { // instead of writing the function to execute the request we use Select2's convenient helper
+					url     : /*[[@{/projects/ajax/taxonomy/search}]]*/ '/projects/ajax/taxonomy/search',
+					dataType: 'json',
+					data    : function (term, page) {
+						return {
+							searchTerm: term // search term
+						};
+					},
+					results : function (data, page) { // parse the results into the format expected by Select2.
+						// since we are using custom formatting functions we do not need to alter remote JSON data
+						return {results: data};
+					}
+				}
+
+			});
+		});
+	</script>
+</th:block>
+</body>
+</html>

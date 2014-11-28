@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="projects/_base">
+<head>
+    <title th:text="${project.label} + ' - ' + #{project.nav.details}"></title>
+</head>
+<body>
+<main layout:fragment="main">
+    <h1 th:text="${project.label}"></h1>
+
+    <h3 th:text="#{event.title}">_Recent Activities_</h3>
+    <div id="events"></div>
+</main>
+<th:block layout:fragment="scripts" th:inline="javascript">
+    <script>
+        $(function () {
+            var eventUrl = /*[[@{/events/project/{id}(id=${project.getId()})}]]*/ '/events/project/'
+            $.ajax({
+            	method: "GET",
+            	url: eventUrl,
+            	success: function(data, textStatus, jqXHR){
+            		$("#events").html(data);
+            	}
+            })
+        });
+    </script>
+</th:block>
+</body>
+</html>

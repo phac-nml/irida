@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="${themePath + '_page'}">
+<head>
+	<title th:text="#{analysis.page.admin.title}">THIS IS SOMETHING
+		WRONG</title>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/angular-busy/angular-busy.css}"
+	      href="/resources/bower_components/angular-busy/angular-busy.css"/>
+	<script>
+		window.dependencies = ['cgBusy', 'irida.datatables'];
+	</script>
+</head>
+<body>
+
+<div layout:fragment="page">
+	<main class="col-md-12"><h1 th:text="#{analysis.page.admin.title}">HEY I'M A GLOBAL ANALYSIS PAGE</h1>
+
+		<div class="row" ng-controller="AnalysisTableCtrl">
+			<div class="col-md-12">
+				<div class="form-inline">
+					<button id="filterBtn" class="btn btn-info"
+					        ng-click="filter.isCollapsed = !filter.isCollapsed"
+					        th:inline="text">
+						<span class="fa fa-filter fa-fw"></span>
+						[[#{analysis.btn.filter}]]
+					</button>
+					<div class="form-group">
+						<select class="form-control" name="count" id="count" ng-model="filterCriteria.count"
+						        ng-change="filterResult()">
+							<option value="10">10</option>
+							<option value="25">25</option>
+							<option value="50">50</option>
+							<option value="100">100</option>
+						</select>
+						<label for="count" th:text="#{global.tables.select-page-size}">Select Page Size</label>
+					</div>
+				</div>
+				<table class="table table-striped">
+					<thead>
+					<tr>
+						<th class="col-md-2" sort-by="" onsort="onSort" sortdir="filterCriteria.sortDir"
+						    sortedby="filterCriteria.sortedBy"
+						    sortValue="name" th:text="#{'analysis.table.name'}">Name
+						</th>
+						<th class="col-md-4" th:text="#{analysis.table.type}">
+							Analysis Type
+						</th>
+						<th class="col-md-2" sort-by="" onsort="onSort" sortdir="filterCriteria.sortDir"
+						    sortedby="filterCriteria.sortedBy"
+						    sortValue="analysisState" th:text="#{'analysis.table.state'}">State
+						</th>
+						<th class="col-md-3" sort-by="" onsort="onSort" sortdir="filterCriteria.sortDir"
+						    sortedby="filterCriteria.sortedBy"
+						    sortValue="createdDate" th:text="#{'analysis.table.date'}">Created
+						</th>
+						<th class="col-md-1"></th>
+					</tr>
+					<tr>
+						<td id="table-filter" colspan="5">
+							<div class="row" collapse="filter.isCollapsed">
+								<div class="form-group col-md-2">
+									<label for="name-filter" th:text="#{analysis.filter.byName}">Filter by Name</label>
+									<input id="name-filter" name="name-filter" type="text"
+									       class="form-control input-full"
+									       ng-model="filterCriteria.name"/>
+								</div>
+
+								<div class="form-group col-md-4">
+									<label for="type-filter" th:text="#{analysis.filter.byType}">Filter by Type</label>
+									<select disabled="disabled" name="type-filter" id="type-filter"
+									        class="form-control input-full" ng-model="filterCriteria.type"
+									        ng-change="filterResult()">
+										<option value="" th:text="#{analysis.select.all}">All</option>
+										<option th:each="type : ${types}" th:value="${type.key}"
+										        th:text="${type.value}"></option>
+									</select>
+								</div>
+
+								<div class="form-group col-md-2">
+									<label for="state-filer" th:text="#{analysis.filter.byState}">Filter by
+										State</label>
+									<select id="state-filer" name="state-filter" class="input-full form-control"
+									        ng-model="filterCriteria.state"
+									        ng-change="filterResult()"
+									        ng-options="state.text for state in filter.states">
+										<option value="" th:text="#{analysis.select.all}">All</option>
+									</select>
+								</div>
+
+								<div class="form-group col-md-3">
+									<label th:text="#{analysis.filter.byDate}">Filter by Date Range</label>
+
+									<div class="row">
+										<div class="col-md-12 mrgn-bttm-md">
+											<input type="text" class="form-control input-full"
+											       ui-event="{click : 'datepicker.min.open($event)'}"
+											       th:placeholder="#{form.placeholder.date.min}"
+											       th:attr="datepicker-popup=#{datepicker.short}"
+											       ng-model="filterCriteria.minDate"
+											       is-open="datepicker.min.opened"
+											       min-date="minDate" max-date="datepicker.maxDate"
+											       ng-change="filterResult()"/>
+										</div>
+										<div class="col-md-12 mrgn-tp-sm">
+											<input type="text" class="form-control input-full"
+											       ui-event="{click : 'datepicker.max.open($event)'}"
+											       th:placeholder="#{form.placeholder.date.max}"
+											       placeholder="max"
+											       th:attr="datepicker-popup=#{datepicker.short}"
+											       ng-model="filterCriteria.maxDate"
+											       is-open="datepicker.max.opened"
+											       max-date="datepicker.maxDate"
+											       ng-change="filterResult()"/>
+										</div>
+									</div>
+								</div>
+
+								<div class="filter-btns col-md-1">
+									<button id="clearFilterBtn" type="button" class="btn btn-default pull-right"
+									        th:text="#{form.btn.clear}" ng-click="clearFilter()">Clear
+									</button>
+								</div>
+							</div>
+						</td>
+					</tr>
+					</thead>
+					<tbody cg-busy="filterPromise">
+					<tr class="analysis-row" ng-repeat="a in analysis">
+						<td>{{a.name}}</td>
+						<td>{{a.type}}</td>
+						<td>
+							<div class="label {{a.status | stateToClass}}">
+								{{a.status | stateToText}}
+							</div>
+						</td>
+						<td th:inline="text">
+							<span class="fa fa-calendar-o fa-fw"></span> {{a.createdDate | date:'medium'}}
+						</td>
+						<td class="text-right">
+							<!-- TODO: Make as directive -->
+							<div class="btn-group" ng-show="a.status == 'COMPLETED'"
+							     ng-controller="TreeModalCtrl as tree">
+								<button class="btn btn-default btn-xs"
+								        th:attr="tooltip=#{form.preview}"
+								        ng-show="a.typeId =='1'"
+								        ng-click="tree.open(a)"><span
+										class="fa fa-eye fa-fw"></span>
+								</button>
+								<a class="btn btn-default btn-xs" ng-href="{{url}}/download/{{a.id}}" href="#"
+								   th:attr="tooltip=#{form.download-files}">
+									<span class="fa fa-download fa-fw"></span>
+									<span class="sr-only" th:text="#{form.download-files}">Download Files</span>
+								</a>
+							</div>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+				<div class="text-center">
+					<pagination ng-hide="paging.totalPages &lt; 2"
+					            items-per-page="filterCriteria.count"
+					            total-items="paging.totalAnalysis"
+					            ng-model="paging.page" first-text="&laquo;"
+					            last-text="&raquo;"
+					            next-text="&rsaquo;" previous-text="&lsaquo;"
+					            boundary-links="true"></pagination>
+				</div>
+				<div id="phyloCanvas"></div>
+				<script type="text/ng-template" id="treeModal.html">
+					<div class="modal-header">
+						<button type="button" class="close" ng-click="close()"><span
+								aria-hidden="true">&times;</span><span
+								class="sr-only" th:text="#{form.btn.close}">Close</span></button>
+						<h2 class="modal-title">{{analysis.name}}
+							<small>{{analysis.type}}</small>
+						</h2>
+					</div>
+					<div class="modal-body" cg-busy="loadingTree">
+						<iframe style="width: 860px; height: 900px; border: none" scrolling="no" seamless="seamless"
+						        ng-src="{{iFrameSRC}}"></iframe>
+					</div>
+				</script>
+			</div>
+		</div>
+	</main>
+</div>
+<th:block layout:fragment="page-scripts" th:inline="javascript">
+
+<script th:src="@{/resources/bower_components/angular-busy/angular-busy.js}"
+        src="/resources/bower_components/angular-busy/angular-busy.js"></script>
+<script th:src="@{/resources/js/directives/datatables/irida-datatable-min.js}"
+        src="/resources/js/directives/datatables/irida-datatable-min.js"></script>
+<script>
+/*<![CDATA[*/
+
+/*[- */
+// These are the for submission states
+// "class" is the css class for displaying the label (e.g. 'info' will be converted to 'label-info')
+/* -]*/
+var states = {
+	'NEW'             : {
+		'class': 'info',
+		'text' : /*[[#{analysis.state.new}]]*/'new'
+	},
+	'PREPARING'       : {
+		'class': 'info',
+		'text' : /*[[#{analysis.state.preparing}]]*/ 'preparing'
+	},
+	'SUBMITTING'      : {
+		'class': 'info',
+		'text' : /*[[#{analysis.state.submitted}]]*/ 'submitted'
+	},
+	'RUNNING'         : {
+		'class': 'primary',
+		'text' : /*[[#{analysis.state.running}]]*/'running'
+	},
+	'FINISHED_RUNNING': {
+		'class': 'default',
+		'text' : /*[[#{analysis.state.finished}]]*/ 'finished running'
+	},
+	'COMPLETED'       : {
+		'class': 'success',
+		'text' : /*[[#{analysis.state.completed}]]*/ 'completed'
+	},
+	'ERROR'           : {
+		'class': 'danger',
+		'text' : /*[[#{analysis.state.error}]]*/'error'
+	}
+};
+/*[- */
+// cgBusyDefaults (https://github.com/cgross/angular-busy) show busy/loading indicators on any
+// $http or $resource request, or on any promise
+/* -]*/
+app.value('cgBusyDefaults', {
+	message    : /*[[#{analysis.table.filtering}]]*/ 'Loading Stuff',
+	backdrop   : false,
+	templateUrl: /*[[@{/resources/bower_components/angular-busy/angular-busy.html}]]*/ 'my_custom_template.html',
+	delay      : 300,
+	minDuration: 700
+})
+		.value('baseUrl',
+		/*[[@{/analysis/}]]*/ '/analysis'
+)
+	/*[- */
+	// This creates an object to handle the actual queries to the server.
+	/* -]*/
+		.provider('api', function () {
+			'use strict';
+			this.$get = ['$resource', function ($resource) {
+				return $resource(/*[[@{'/analysis/ajax/all'}]]*/ '/analysis/ajax/all', {}, {
+					query: {method: 'GET', isArray: false}
+				});
+			}]
+		})
+	/*[- */
+	// This object is what is called to make the server call.  It returns a promise that will be fulfilled.
+	/* -]*/
+		.factory('AnalysisService', function ($q, api) {
+			'use strict';
+			function AnalysisService() {
+				var self = this;
+				self.getAnalysis = function (params) {
+					var deferred = $q.defer();
+					api.query(params, function (data) {
+						deferred.resolve(data);
+					});
+					return deferred.promise;
+				}
+			}
+
+			return new AnalysisService();
+		});
+/*[- */
+// Filters are used on ng-models.  The value of the model is passed throug the filter before being
+// displayed.  (e.g. {{'NEW' | stateToClass}} returns 'label-info'
+/* -]*/
+app.filter('stateToClass', function () {
+	'use strict';
+	return function (state) {
+		return 'label-' + states[state]['class'];
+	}
+}).filter('stateToText', function () {
+	"use strict";
+	return function (state) {
+		return states[state]['text'];
+	}
+});
+
+app.controller('TreeModalCtrl', TreeModalCtrl);
+
+app.controller('AnalysisTableCtrl', function ($scope, $sce, AnalysisService, baseUrl) {
+	'use strict';
+	$scope.url = baseUrl + "ajax";
+
+	/*[- */
+	// filter: used to control the filter section of the page.
+	//  - isCollapsed = whether the filter is open on the screen (initially closed)
+	//  - states = populates the states select.
+	/* -]*/
+	$scope.filter = {
+		isCollapsed: true,
+		states     : _.map(states, function (v, k) {
+			return {text: v.text, value: k};
+		})
+	};
+
+	/*[- */
+	// datepicker: used to handle information for the date pickers in the filter
+	//  - min = minimum date to show results for
+	//  - max = maximum date to show results for
+	/* -]*/
+	$scope.datepicker = {
+		min    : {
+			open: function open($event) {
+				$event.preventDefault();
+				$event.stopPropagation();
+				$scope.datepicker.min.opened = true;
+			}
+		},
+		max    : {
+			open: function open($event) {
+				$event.preventDefault();
+				$event.stopPropagation();
+				$scope.datepicker.max.opened = true;
+			}
+		},
+		maxDate: new Date() // Max date should always be today!
+	};
+
+	/*[- */
+	// paging: handle all things to do with the paging of the
+	//  - page = the current page being displayed.
+	//  - totalAnalysis = the total number of analysis available in the system
+	//  - totalPages = the total number of pages (totalAnalysis / num per page)
+	/* -]*/
+	$scope.paging = {
+		page         : 1,
+		totalAnalysis: 1,
+		totalPages   : 1
+	};
+
+	/*[- */
+	// defaultCriteria: these are the defaults for creating the table
+	/* -]*/
+	var defaultCriteria = {
+		page    : 0,
+		sortDir : 'desc',
+		sortedBy: 'createdDate',
+		count   : 10,
+		minDate : '',
+		maxDate : ''
+	};
+	/*[- */
+	// filterCriteria: this is passed to the server on each page request.
+	//  - initially a copy of the defaultCriteria
+	/* -]*/
+	$scope.filterCriteria = _.clone(defaultCriteria);
+
+	/*[- */
+	// This uses Restangular to call the server with the filterCriteria.
+	// When the ajax call is complete the table is recreated.
+	/* -]*/
+	$scope.fetchResult = function () {
+		$scope.filterPromise = AnalysisService.getAnalysis($scope.filterCriteria);
+
+		return $scope.filterPromise.then(function (data) {
+			if (data.hasOwnProperty('analysis')) {
+				$scope.analysis = data.analysis;
+				$scope.paging.totalAnalysis = data.totalAnalysis;
+				$scope.paging.totalPages = data.totalPages;
+			} else {
+				// Normally will only hit on bad credentials.
+				window.location = window.location;
+			}
+		}, function () {
+			$scope.analysis = [];
+		});
+	};
+
+	/*[- */
+	// filterResult
+	//  - Called when filtering data.
+	/* -]*/
+	$scope.filterResult = function () {
+		$scope.filterCriteria.page = 0;
+		$scope.fetchResult().then(function () {
+			$scope.paging.page = 1;
+		});
+	};
+
+	/*[- */
+	// clearFilter
+	//  Clears all the filters and closes the filter area.
+	/* -]*/
+	$scope.clearFilter = function () {
+		$scope.filterCriteria = _.clone(defaultCriteria);
+		$scope.filterResult();
+		$scope.filter.isCollapsed = true;
+	};
+
+	/*[- */
+	// onSort
+	//
+	/* -]*/
+	$scope.onSort = function (sortedBy, sortDir) {
+		$scope.filterCriteria.sortedBy = sortedBy;
+		$scope.filterCriteria.sortDir = sortDir;
+		$scope.filterCriteria.page = 1;
+		$scope.fetchResult().then(function () {
+			$scope.filterCriteria.page = 0;
+		});
+	};
+
+	/*[- */
+	// Watches watch for a change in the first parameter then call second parameter when they change
+	/* -]*/
+
+	/*[- */
+	// This watch occurs when a different page is select.  Triggers a server call with the new page.
+	/* -]*/
+	$scope.$watch('paging.page', function () {
+		$scope.filterCriteria.page = $scope.paging.page - 1;
+		$scope.fetchResult();
+	});
+
+	/*[- */
+	// This watch occurs when the name is filtered.
+	//  'debounce' whats for the given time before calling.  This allows the user to enter
+	//  multiple characters without triggering for each one.
+	/* -]*/
+	$scope.$watch("filterCriteria.name", _.debounce(function (n, o) {
+		if (n != o) {
+			$scope.fetchResult().then(function () {
+				$scope.paging.page = 1;
+			});
+		}
+	}, 500));
+});
+
+/*[- */
+// Controller for handling the open figtee preview button
+/* -]*/
+function TreeModalCtrl($modal) {
+	'use strict';
+	var vm = this;
+
+	vm.open = function (analysis) {
+		$modal.open({
+			templateUrl: 'treeModal.html',
+			controller : PhyloSVGCtrl,
+			size       : 'lg',
+			resolve    : {
+				analysis: function () {
+					return analysis;
+				}
+			}
+		});
+	}
+}
+
+/*[- */
+// This is the controller for when the tree preview is open.
+// TODO: when there are more analysis types this will need to be updated to tree url not standard.
+/* -]*/
+function PhyloSVGCtrl($scope, $modalInstance, baseUrl, analysis) {
+	'use strict';
+	$scope.analysis = analysis;
+	$scope.iFrameSRC = baseUrl + 'preview/tree/' + analysis.id;
+	$scope.close = function () {
+		$modalInstance.close();
+	};
+}
+/*]]>*/
+</script>
+</th:block>
+</body>
+</html>

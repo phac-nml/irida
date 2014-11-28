@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link href="/resources/wet-theme/css/theme.min.css"/>
+</head>
+<body>
+<nav th:fragment="menu-en" role="navigation" id="wb-sm" data-trgt="mb-pnl"
+     class="wb-menu visible-md visible-lg" typeof="SiteNavigationElement">
+    <div class="pnl-strt container visible-md visible-lg nvbar">
+        <div class="row">
+            <ul class="list-inline menu" role="menubar">
+                <li><a href="#projects" class="item" th:text="#{nav.main.project}">Projects</a>
+                    <ul class="sm list-unstyled" id="projects" role="menu">
+                        <li>
+                            <a href="/projects" th:href="@{/projects}" th:text="#{nav.main.project-list}">List Projects</a>
+                        </li>
+                        <li sec:authorize="hasAnyRole('ROLE_ADMIN')">
+                            <a href="/projects/all" th:href="@{/projects/all}"
+                               th:text="#{nav.main.project-list-all}">List All Projects</a>
+                        </li>
+                        <li>
+                            <a th:href="@{/projects/new}" href="/projects/new"
+                               th:text="#{nav.main.project-create}">Create New Project</a>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="#users" class="item" th:text="#{nav.main.users}">Users</a>
+                    <ul class="sm list-unstyled" id="users" role="menu">
+                        <li><a href="/users" th:href="@{/users}" th:text="#{nav.main.users-list}">List Users</a></li>
+                        <li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')">
+                            <a href="#" th:href="@{/users/create}" th:text="#{nav.main.add.user}"></a>
+                        </li>
+                    </ul>
+                </li>
+                <!--<li><a href="#pipelines" class="item" th:text="#{nav.main.pipelines}">Pipelines</a>-->
+                    <!--<ul class="sm list-unstyled">-->
+                        <!--<li><a href="#" th:text="#{nav.main.runpipeline}">Run New Pipeline</a></li>-->
+                        <!--<li><a href="#" th:text="#{nav.main.viewpipelines}">View Running Pipelines</a></li>-->
+                    <!--</ul>-->
+                <!--</li>-->
+                <li><a href="#analysis" class="item" th:text="#{nav.main.analysis}">Analysis</a>
+                    <ul class="sm list-unstyled">
+                        <li><a th:href="@{/analysis/admin}" href="/analysis/admin" th:text="#{nav.main.analysis-admin}">List All Analysis</a></li>
+                    </ul>
+                </li>
+                <li class="pull-right">
+                    <ul class="list-inline menu">
+                        <li sec:authorize="hasRole('ROLE_ADMIN')"><a href="#admin" class="item" th:text="#{nav.main.admin}">_Admin_</a>
+                            <ul class="sm list-unstyled" role="menu">
+                                <li><a href="#" th:href="@{/clients}" th:text="#{nav.main.clients}">_Clients_</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li><a href="#contribute" class="item" th:text="#{nav.main.settings}">Settings</a>
+                            <ul class="sm list-unstyled" role="menu">
+                                <li><a href="#" th:href="@{/users/current}" th:text="#{nav.main.account}">Account</a>
+                                </li>
+                                <li><a href="#" th:href="@{/remote_api}" th:text="#{nav.main.remoteapis}">Remote API Status</a>
+                                </li>
+                                <li><a th:href="@{/logout}" href="/logout" th:text="#{nav.main.logout}">Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</nav>
+</body>
+</html>

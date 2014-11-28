@@ -1,0 +1,27 @@
+@import "pages/project";
+@import "components/pagination";
+
+.navbar {
+  margin-bottom: 0;
+}
+
+.mrgn-rght-sm{
+  margin-right: 5px;
+}
+.mrgn-bttm-md {
+  margin-bottom: 10px;
+}
+.mrgn-tp-lg {
+  margin-top: 20px;
+}
+
+
+// Update z-index for submenu
+.navbar-nav>li>.dropdown-menu {
+  z-index: 10000;
+}
+
+.navbar.subnav {
+  z-index: 500;
+  margin-bottom: 15px;
+}
