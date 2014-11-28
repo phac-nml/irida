@@ -71,7 +71,9 @@
 			</column>
 			<column name="remote_analysis_id" type="VARCHAR(255)" />
 			<column name="remote_workflow_id" type="VARCHAR(255)" />
-			<column name="workflow_id" type="BINARY(255)" />
+			<column name="workflow_id" type="BINARY(255)">
+				<constraints nullable="false"/>
+			</column>
 			<column name="analysis_state" type="VARCHAR(255)">
 				<constraints nullable="false" />
 			</column>
