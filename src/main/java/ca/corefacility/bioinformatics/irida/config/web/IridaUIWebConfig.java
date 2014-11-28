@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.config;
+package ca.corefacility.bioinformatics.irida.config.web;
 
 import java.util.HashSet;
 import java.util.Locale;
@@ -36,6 +36,7 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.ria.config.WebEmailConfig;
 
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 import com.google.common.collect.ImmutableMap;
@@ -46,8 +47,8 @@ import com.google.common.collect.ImmutableMap;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.ria" })
-@Import({ IridaApiServicesConfig.class, WebSecurityConfig.class, WebEmailConfig.class, OAuth2Configuration.class })
-public class WebConfigurer extends WebMvcConfigurerAdapter {
+@Import({ IridaApiServicesConfig.class, WebEmailConfig.class })
+public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	private static final String SPRING_PROFILE_PRODUCTION = "prod";
 	private static final String TEMPLATE_LOCATION = "/pages/";
 	private static final String TEMPLATE_SUFFIX = ".html";
@@ -56,7 +57,7 @@ public class WebConfigurer extends WebMvcConfigurerAdapter {
 	private static final String LOCALE_CHANGE_PARAMETER = "lang";
 	private static final String DEFAULT_ENCODING = "UTF-8";
 	private static final String[] RESOURCE_LOCATIONS = { "classpath:/i18n/messages", "classpath:/i18n/mobile" };
-	private static final Logger logger = LoggerFactory.getLogger(WebConfigurer.class);
+	private static final Logger logger = LoggerFactory.getLogger(IridaUIWebConfig.class);
 	public static final long MAX_UPLOAD_SIZE = 20971520L; // 20MB
 	public static final int MAX_IN_MEMORY_SIZE = 1048576; // 1MB
 

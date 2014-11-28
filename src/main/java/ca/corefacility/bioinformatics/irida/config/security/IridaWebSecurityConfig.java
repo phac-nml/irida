@@ -9,9 +9,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -32,7 +34,9 @@ import org.springframework.security.oauth2.provider.token.ResourceServerTokenSer
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
+import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 
+import ca.corefacility.bioinformatics.irida.ria.security.CredentialsExpriredAuthenticationFailureHandler;
 import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousAuthenticationFilter;
 
 /**
@@ -44,11 +48,51 @@ import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousA
  */
 @Configuration
 @EnableWebSecurity
-@ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.repositories.remote")
-public class IridaRestApiSecurityConfig extends WebSecurityConfigurerAdapter {
+public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
+	
+	@Configuration
+	@Order(101)
+	protected static class UISecurityConfig extends WebSecurityConfigurerAdapter {
+		@Autowired
+		CredentialsExpriredAuthenticationFailureHandler authFailureHandler;
+		
+		@Override
+		public void configure(WebSecurity web) throws Exception {
+			web.ignoring().antMatchers("/resources/**").antMatchers("/public/**");
+		}
+
+		@Override
+		protected void configure(HttpSecurity http) throws Exception {
+			authFailureHandler.setDefaultFailureUrl("/login?error=true");
+			// @formatter:off
+			http
+
+			// Prevent Cross Site Request Forgery
+			.csrf().disable()
+			// Refactor login form
+
+			// See https://jira.springsource.org/browse/SPR-11496
+			// This is for SockJS and Web Sockets
+			.headers()
+				.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
+			.and()
+			.formLogin().defaultSuccessUrl("/dashboard").loginPage("/login").failureHandler(authFailureHandler).permitAll()
+			.and()
+			.logout().logoutSuccessUrl("/login").logoutUrl("/logout").permitAll()
+			.and()
+			.authorizeRequests().regexMatchers("/login((\\?lang=[a-z]{2}|#.*)|(\\?error=true))?").permitAll()
+				.antMatchers("/").permitAll()
+				.antMatchers("/license").permitAll()
+				.antMatchers("/resources/**").permitAll()
+				.antMatchers("/password_reset/**").permitAll()
+				.antMatchers("/**").fullyAuthenticated();
+			// @formatter:on
+		}
+	}
 
 	@Configuration
 	@EnableResourceServer
+	@ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.repositories.remote")
 	protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
 		@Autowired

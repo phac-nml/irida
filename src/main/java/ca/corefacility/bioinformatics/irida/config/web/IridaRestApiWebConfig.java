@@ -26,7 +26,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.xml.MarshallingView;
 
-import ca.corefacility.bioinformatics.irida.config.security.IridaRestApiSecurityConfig;
+import ca.corefacility.bioinformatics.irida.config.security.IridaWebSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaScheduledTasksConfig;
 import ca.corefacility.bioinformatics.irida.web.spring.view.FastaView;
@@ -45,7 +45,7 @@ import com.google.common.collect.ImmutableMap;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.web.controller.api" })
-@Import({ IridaApiServicesConfig.class, IridaRestApiSecurityConfig.class, IridaScheduledTasksConfig.class })
+@Import({ IridaApiServicesConfig.class, IridaWebSecurityConfig.class, IridaScheduledTasksConfig.class })
 public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 
 	private static final long TEN_GIGABYTES = 10737418240l;

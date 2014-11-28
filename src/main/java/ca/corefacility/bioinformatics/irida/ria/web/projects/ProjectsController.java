@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ca.corefacility.bioinformatics.irida.config.web.IridaUIWebConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -42,7 +43,6 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
-import ca.corefacility.bioinformatics.irida.ria.config.WebConfigurer;
 import ca.corefacility.bioinformatics.irida.ria.exceptions.ProjectSelfEditException;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsAdminDataTable;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
@@ -235,8 +235,8 @@ public class ProjectsController {
 			projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
 			model.addAttribute("project", project);
-			model.addAttribute("maxFileSize", WebConfigurer.MAX_UPLOAD_SIZE);
-			model.addAttribute("maxFileSizeString", fileSizeConverter.convert(WebConfigurer.MAX_UPLOAD_SIZE));
+			model.addAttribute("maxFileSize", IridaUIWebConfig.MAX_UPLOAD_SIZE);
+			model.addAttribute("maxFileSizeString", fileSizeConverter.convert(IridaUIWebConfig.MAX_UPLOAD_SIZE));
 			model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_METADATA);
 			return PROJECT_METADATA_EDIT_PAGE;
 		} else {

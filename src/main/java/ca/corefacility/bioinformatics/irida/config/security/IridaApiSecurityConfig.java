@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.config.security;
 
 import java.util.List;
 
+import org.apache.oltu.oauth2.client.OAuthClient;
+import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -112,5 +114,10 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+	
+	@Bean
+	public OAuthClient oAuthClient() {
+		return new OAuthClient(new URLConnectionClient());
 	}
 }
