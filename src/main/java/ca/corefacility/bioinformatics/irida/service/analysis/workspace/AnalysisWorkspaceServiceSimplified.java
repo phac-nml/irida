@@ -5,8 +5,8 @@ import java.nio.file.Path;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.workflow.PreparedWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
@@ -40,7 +40,7 @@ public interface AnalysisWorkspaceServiceSimplified {
 	 *             If the workflow passed to this analysis submission could not
 	 *             be found.
 	 */
-	public PreparedWorkflow<?> prepareAnalysisFiles(AnalysisSubmission analysisSubmission)
+	public PreparedWorkflowGalaxy prepareAnalysisFiles(AnalysisSubmission analysisSubmission)
 			throws ExecutionManagerException, IridaWorkflowNotFoundException;
 
 	/**
