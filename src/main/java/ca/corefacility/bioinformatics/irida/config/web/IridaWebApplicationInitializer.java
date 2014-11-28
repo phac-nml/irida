@@ -4,11 +4,11 @@ import javax.servlet.Filter;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.DelegatingFilterProxy;
-import org.springframework.web.servlet.support.AbstractDispatcherServletInitializer;
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
+import ca.corefacility.bioinformatics.irida.config.security.IridaWebSecurityConfig;
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.web.filter.HttpHeadFilter;
 
 /**
@@ -17,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.web.filter.HttpHeadFilter;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
-public class IridaWebApplicationInitializer extends AbstractDispatcherServletInitializer {
+public class IridaWebApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
 	@Override
 	public void onStartup(final ServletContext servletContext) throws ServletException {
@@ -37,24 +37,22 @@ public class IridaWebApplicationInitializer extends AbstractDispatcherServletIni
 	}
 
 	@Override
-	public WebApplicationContext createServletApplicationContext() {
-		final AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
-		context.register(IridaRestApiWebConfig.class, IridaUIWebConfig.class);
-		return context;
-	}
-
-	@Override
 	protected String[] getServletMappings() {
 		return new String[] { "/" };
 	}
 
 	@Override
-	protected WebApplicationContext createRootApplicationContext() {
-		return null;
+	protected Filter[] getServletFilters() {
+		return new Filter[] { new HttpHeadFilter() };
 	}
 
 	@Override
-	protected Filter[] getServletFilters() {
-		return new Filter[] { new HttpHeadFilter() };
+	protected Class<?>[] getRootConfigClasses() {
+		return new Class[] { IridaApiServicesConfig.class };
+	}
+
+	@Override
+	protected Class<?>[] getServletConfigClasses() {
+		return new Class[] { IridaRestApiWebConfig.class, IridaUIWebConfig.class, IridaWebSecurityConfig.class };
 	}
 }

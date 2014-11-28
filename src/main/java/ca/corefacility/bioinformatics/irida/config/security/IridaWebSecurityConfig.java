@@ -51,7 +51,7 @@ import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousA
 public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Configuration
-	@Order(101)
+	@Order(2)
 	protected static class UISecurityConfig extends WebSecurityConfigurerAdapter {
 		@Autowired
 		CredentialsExpriredAuthenticationFailureHandler authFailureHandler;

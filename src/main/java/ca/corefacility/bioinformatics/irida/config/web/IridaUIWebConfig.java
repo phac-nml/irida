@@ -35,7 +35,6 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.ria.config.WebEmailConfig;
 
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
@@ -47,7 +46,7 @@ import com.google.common.collect.ImmutableMap;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.ria" })
-@Import({ IridaApiServicesConfig.class, WebEmailConfig.class })
+@Import(WebEmailConfig.class)
 public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	private static final String SPRING_PROFILE_PRODUCTION = "prod";
 	private static final String TEMPLATE_LOCATION = "/pages/";
@@ -63,7 +62,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 
 	// This is set in the resources/configuration.properties file.
 	protected @Value("${ui.theme}") String theme;
-
 
 	@Autowired
 	private Environment env;
@@ -116,7 +114,8 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		registry.addViewController("/projects/templates/merge").setViewName("projects/templates/merge");
 		registry.addViewController("/projects/templates/copy").setViewName("projects/templates/copy");
 		registry.addViewController("/projects/templates/move").setViewName("projects/templates/move");
-		registry.addViewController("/projects/templates/referenceFiles/delete").setViewName("projects/templates/referenceFiles/delete");
+		registry.addViewController("/projects/templates/referenceFiles/delete").setViewName(
+				"projects/templates/referenceFiles/delete");
 	}
 
 	@Bean
@@ -126,7 +125,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		resolver.setPrefix(TEMPLATE_LOCATION);
 		resolver.setSuffix(TEMPLATE_SUFFIX);
 		resolver.setTemplateMode(TEMPLATE_MODE);
-
 
 		// Set template cache timeout if in production
 		// Don't cache at all if in development
@@ -189,4 +187,5 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		dialects.add(new DataAttributeDialect());
 		return dialects;
 	}
+
 }

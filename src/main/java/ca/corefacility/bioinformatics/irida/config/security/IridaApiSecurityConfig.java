@@ -21,6 +21,8 @@ import org.springframework.security.config.annotation.method.configuration.Globa
 import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
+import org.springframework.security.web.access.expression.WebSecurityExpressionHandler;
 
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.IgnoreExpiredCredentialsForPasswordChangeChecker;
@@ -30,13 +32,14 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Joiner;
 
+@SuppressWarnings("deprecation")
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.security")
 public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	private static final String ANONYMOUS_AUTHENTICATION_KEY = "anonymousTokenAuthProvider";
-	
+
 	private static final String[] ROLE_HIERARCHIES = new String[] { "ROLE_ADMIN > ROLE_MANAGER",
 			"ROLE_MANAGER > ROLE_USER", "ROLE_ADMIN > ROLE_SEQUENCER" };
 
@@ -71,15 +74,16 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 		auth.userDetailsService(userRepository).passwordEncoder(passwordEncoder());
 		auth.authenticationProvider(authenticationProvider()).authenticationProvider(anonymousAuthenticationProvider());
 	}
-	
+
 	/**
 	 * Authentication provider for anonymous requests. Will be used for
 	 * username/password grants requesting /oauth/token.
 	 * 
 	 * @return
 	 */
-	private AuthenticationProvider anonymousAuthenticationProvider(){
-		AnonymousAuthenticationProvider anonymousAuthenticationProvider = new AnonymousAuthenticationProvider(ANONYMOUS_AUTHENTICATION_KEY);
+	private AuthenticationProvider anonymousAuthenticationProvider() {
+		AnonymousAuthenticationProvider anonymousAuthenticationProvider = new AnonymousAuthenticationProvider(
+				ANONYMOUS_AUTHENTICATION_KEY);
 		return anonymousAuthenticationProvider;
 	}
 
@@ -115,9 +119,23 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
+
 	@Bean
 	public OAuthClient oAuthClient() {
 		return new OAuthClient(new URLConnectionClient());
+	}
+
+	/**
+	 * Default {@link WebSecurityExpressionHandler}. This is used by Thymeleaf's
+	 * Spring Security plugin, and isn't actually used anywhere in the back-end,
+	 * but it needs to be in the back-end configuration classes because the
+	 * Thymeleaf plugin looks for this expression handler in the ROOT context
+	 * instead of in the context that it's running in.
+	 * 
+	 * @return
+	 */
+	@Bean
+	public WebSecurityExpressionHandler webSecurityExpressionHandler() {
+		return new DefaultWebSecurityExpressionHandler();
 	}
 }
