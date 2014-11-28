@@ -52,12 +52,12 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	/**
 	 * Executor for running pipelines asynchronously.
 	 */
-	private final TaskExecutor executor;
+	private final TaskExecutor fileProcessingChainExecutor;
 	/**
 	 * File processing chain to execute on sequence files.
 	 */
 	private final FileProcessingChain fileProcessingChain;
-	
+
 	private static final String FILE_PROPERTY = "file";
 
 	/**
@@ -76,7 +76,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		super(sequenceFileRepository, validator, SequenceFile.class);
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.ssfRepository = ssfRepository;
-		this.executor = executor;
+		this.fileProcessingChainExecutor = executor;
 		this.fileProcessingChain = fileProcessingChain;
 	}
 
@@ -89,7 +89,8 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		// Send the file to the database repository to be stored (in super)
 		logger.trace("Calling super.create");
 		SequenceFile sf = super.create(sequenceFile);
-		executor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, sf.getId(), SecurityContextHolder.getContext()));
+		fileProcessingChainExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, sf.getId(),
+				SecurityContextHolder.getContext()));
 		return sf;
 	}
 
@@ -108,12 +109,13 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Transactional
 	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException {
 		SequenceFile sf = super.update(id, updatedFields);
-		
+
 		// only launch the file processing chain if the file has been modified.
 		if (updatedFields.containsKey(FILE_PROPERTY)) {
-			executor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, sf.getId(), SecurityContextHolder.getContext()));
+			fileProcessingChainExecutor.execute(new SequenceFileProcessorLauncher(fileProcessingChain, sf.getId(),
+					SecurityContextHolder.getContext()));
 		}
-		
+
 		return sf;
 	}
 
@@ -179,7 +181,9 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 			try {
 				fileProcessingChain.launchChain(sequenceFileId);
 			} catch (FileProcessorTimeoutException e) {
-				logger.error("FileProcessingChain did *not* execute -- the transaction opened by SequenceFileService never closed.", e);
+				logger.error(
+						"FileProcessingChain did *not* execute -- the transaction opened by SequenceFileService never closed.",
+						e);
 			}
 
 			// erase the security context if we copied the context into the

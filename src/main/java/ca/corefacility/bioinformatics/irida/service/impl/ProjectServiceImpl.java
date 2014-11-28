@@ -20,10 +20,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -109,6 +113,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
+	@LaunchesProjectEvent(UserRoleSetProjectEvent.class)
 	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role) {
 		try {
 			ProjectUserJoin join = pujRepository.save(new ProjectUserJoin(project, user, role));
@@ -124,6 +129,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
+	@LaunchesProjectEvent(UserRemovedProjectEvent.class)
 	public void removeUserFromProject(Project project, User user) throws ProjectWithoutOwnerException {
 		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
 		if (!allowRoleChange(projectJoinForUser)) {
@@ -137,6 +143,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
+	@LaunchesProjectEvent(UserRoleSetProjectEvent.class)
 	public Join<Project, User> updateUserProjectRole(Project project, User user, ProjectRole projectRole)
 			throws ProjectWithoutOwnerException {
 		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
@@ -176,6 +183,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
+	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
 	public ProjectSampleJoin addSampleToProject(Project project, Sample sample) {
 		logger.trace("Adding sample to project.");
 		// the sample hasn't been persisted before, persist it before calling
@@ -323,4 +331,22 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		return prfjRepository.save(j);
 	}
 
+	@Override
+	public void removeReferenceFileFromProject(Project project, ReferenceFile file) {
+		List<Join<Project, ReferenceFile>> referenceFilesForProject = prfjRepository
+				.findReferenceFilesForProject(project);
+		Join<Project, ReferenceFile> specificJoin = null;
+		for (Join<Project, ReferenceFile> join : referenceFilesForProject) {
+			if(join.getObject().equals(file)) {
+				specificJoin = join;
+				break;
+			}
+		}
+		if (specificJoin != null) {
+			prfjRepository.delete((ProjectReferenceFileJoin)specificJoin);
+		}
+		else {
+			throw new EntityNotFoundException("Cannot find a join for project [" + project.getName() + "] and reference file [" + file.getLabel() + "].");
+		}
+	}
 }
