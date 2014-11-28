@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.service.workflow;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -146,10 +145,10 @@ public class IridaWorkflowLoaderService {
 			IridaWorkflowLoadException {
 		checkNotNull("descriptionFile is null", descriptionFile);
 		if (!Files.exists(descriptionFile)) {
-			throw new FileNotFoundException(descriptionFile.toFile().getAbsolutePath());
+			throw new FileNotFoundException(descriptionFile.toAbsolutePath().toString());
 		}
 
-		Source source = new StreamSource(new FileInputStream(descriptionFile.toFile()));
+		Source source = new StreamSource(Files.newInputStream(descriptionFile));
 		IridaWorkflowDescription workflowDescription = (IridaWorkflowDescription) workflowDescriptionUnmarshaller
 				.unmarshal(source);
 
@@ -173,7 +172,7 @@ public class IridaWorkflowLoaderService {
 	public IridaWorkflowStructure loadWorkflowStructure(Path structureFile) throws FileNotFoundException {
 		checkNotNull("structureFile is null", structureFile);
 		if (!Files.exists(structureFile)) {
-			throw new FileNotFoundException(structureFile.toFile().getAbsolutePath());
+			throw new FileNotFoundException(structureFile.toAbsolutePath().toString());
 		}
 
 		return new IridaWorkflowStructure(structureFile);

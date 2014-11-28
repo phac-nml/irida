@@ -189,14 +189,14 @@ public class IridaWorkflowsService {
 	 * @throws IridaWorkflowNotFoundException
 	 *             If not corresponding workflows could be found.
 	 */
-	public Set<IridaWorkflow> getAllWorkflowsFor(String workflowName) throws IridaWorkflowNotFoundException {
+	public Set<IridaWorkflow> getAllWorkflowsByName(String workflowName) throws IridaWorkflowNotFoundException {
 		checkNotNull(workflowName);
 
 		if (!workflowNamesMap.containsKey(workflowName)) {
 			throw new IridaWorkflowNotFoundException(workflowName);
 		} else {
 			Class<? extends Analysis> analysisType = workflowNamesMap.get(workflowName);
-			return getAllWorkflowsFor(analysisType);
+			return getAllWorkflowsByClass(analysisType);
 		}
 	}
 
@@ -209,7 +209,7 @@ public class IridaWorkflowsService {
 	 * @throws IridaWorkflowNotFoundException
 	 *             If not corresponding workflows could be found.
 	 */
-	public Set<IridaWorkflow> getAllWorkflowsFor(Class<? extends Analysis> analysisType)
+	public Set<IridaWorkflow> getAllWorkflowsByClass(Class<? extends Analysis> analysisType)
 			throws IridaWorkflowNotFoundException {
 		checkNotNull(analysisType, "analysisType is null");
 

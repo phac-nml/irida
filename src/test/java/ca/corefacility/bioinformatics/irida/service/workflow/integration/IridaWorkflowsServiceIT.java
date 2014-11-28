@@ -193,7 +193,7 @@ public class IridaWorkflowsServiceIT {
 	@Test
 	public void testGetAllWorkflowsForAnalysisType() throws IOException, IridaWorkflowLoadException {
 		iridaWorkflowsService.registerAnalysis(TestAnalysis.class, validWorkflowId);
-		Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsFor(TestAnalysis.class);
+		Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsByClass(TestAnalysis.class);
 		assertEquals(2, workflows.size());
 	}
 	
@@ -205,7 +205,7 @@ public class IridaWorkflowsServiceIT {
 	@Test
 	public void testGetAllWorkflowsForWorkflowName() throws IOException, IridaWorkflowLoadException {
 		iridaWorkflowsService.registerAnalysis(TestAnalysis.class, validWorkflowId);
-		Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsFor("TestWorkflow");
+		Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsByName("TestWorkflow");
 		assertEquals(2, workflows.size());
 	}
 }
