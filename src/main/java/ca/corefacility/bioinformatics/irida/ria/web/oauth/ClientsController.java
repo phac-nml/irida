@@ -110,6 +110,15 @@ public class ClientsController extends BaseController {
 		return CLIENT_DETAILS_PAGE;
 	}
 
+	/**
+	 * Get the page to edit {@link IridaClientDetails}
+	 * 
+	 * @param clientId
+	 *            The ID of the {@link IridaClientDetails}
+	 * @param model
+	 *            Model for the view
+	 * @return view name for editing client details
+	 */
 	@RequestMapping(value = "/{clientId}/edit", method = RequestMethod.GET)
 	public String getEditPage(@PathVariable Long clientId, Model model) {
 		IridaClientDetails client = clientDetailsService.read(clientId);
@@ -131,6 +140,28 @@ public class ClientsController extends BaseController {
 		return EDIT_CLIENT_PAGE;
 	}
 
+	/**
+	 * Submit client details edit
+	 * 
+	 * @param clientId
+	 *            the long ID of the {@link IridaClientDetails} to edit
+	 * @param accessTokenValiditySeconds
+	 *            The new accessTokenValiditySeconds
+	 * @param authorizedGrantTypes
+	 *            the new authorizedGrantTypes
+	 * @param scope_read
+	 *            whether to allow read scope
+	 * @param scope_write
+	 *            whether to allow write scope
+	 * @param new_secret
+	 *            Wether to generate a new client secret
+	 * @param model
+	 *            Model for the view
+	 * @param locale
+	 *            Locale of the logged in user
+	 * @return Redirect to the client details page if successful, the edit page
+	 *         if there are errors
+	 */
 	@RequestMapping(value = "/{clientId}/edit", method = RequestMethod.POST)
 	public String postEditClient(@PathVariable Long clientId,
 			@RequestParam(required = false, defaultValue = "0") Integer accessTokenValiditySeconds,
@@ -372,6 +403,26 @@ public class ClientsController extends BaseController {
 		return joiner.join(pwdArray);
 	}
 
+	/**
+	 * Handle the errors that might occur when creating or updating
+	 * {@link IridaClientDetails}
+	 * 
+	 * @param caughtException
+	 *            The exception that was thrown when creating or updating
+	 * @param model
+	 *            Model for the view to display errors
+	 * @param locale
+	 *            Locale of the logged in user
+	 * @param scope_write
+	 *            The value entered for scope_write
+	 * @param scope_read
+	 *            The value entered for scope_read
+	 * @param clientId
+	 *            The entered client ID
+	 * @param accesstokenValidity
+	 *            The entered accesstokenValidity
+	 * @return The number of errors that were found
+	 */
 	private int handleCreateUpdateException(RuntimeException caughtException, Model model, Locale locale,
 			String scope_write, String scope_read, String clientId, Integer accesstokenValidity) {
 		Map<String, Object> errors = new HashMap<>();
