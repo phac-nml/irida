@@ -3,7 +3,9 @@ package ca.corefacility.bioinformatics.irida.ria.web.samples;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -29,15 +31,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for all sample related views
@@ -57,12 +67,13 @@ public class SamplesController extends BaseController {
 	// Model attributes
 	private static final String MODEL_ATTR_SAMPLE = "sample";
 	private static final String MODEL_ATTR_FILES = "files";
+	public static final String MODEL_ATTR_CAN_MANAGE_SAMPLE = "canManageSample";
 
 	// Page Names
 	private static final String SAMPLES_DIR = "samples/";
 	private static final String SAMPLE_PAGE = SAMPLES_DIR + "sample";
 	private static final String SAMPLE_EDIT_PAGE = SAMPLES_DIR + "sample_edit";
-	private static final String SAMPLE_FILES_PAGE = SAMPLES_DIR + "sample_files";
+	public static final String SAMPLE_FILES_PAGE = SAMPLES_DIR + "sample_files";
 
 	// Field Names
 	public static final String SAMPLE_NAME = "sampleName";
@@ -76,23 +87,27 @@ public class SamplesController extends BaseController {
 	public static final String GEOGRAPHIC_LOCATION_NAME = "geographicLocationName";
 	public static final String LATITUDE = "latitude";
 	public static final String LONGITUDE = "longitude";
-	private static final ImmutableList<String> FIELDS = ImmutableList
-			.of(SAMPLE_NAME, DESCRIPTION, ORGANISM, ISOLATE, STRAIN, COLLECTED_BY, ISOLATION_SOURCE,
-					GEOGRAPHIC_LOCATION_NAME, LATITUDE,
-					LONGITUDE);
+	private static final ImmutableList<String> FIELDS = ImmutableList.of(SAMPLE_NAME, DESCRIPTION, ORGANISM, ISOLATE,
+			STRAIN, COLLECTED_BY, ISOLATION_SOURCE, GEOGRAPHIC_LOCATION_NAME, LATITUDE, LONGITUDE);
 
 	// Services
 	private final SampleService sampleService;
 	private final SequenceFileService sequenceFileService;
+
+	private final ProjectService projectService;
+	private final UserService userService;
 
 	// Converters
 	Formatter<Date> dateFormatter;
 	Converter<Long, String> fileSizeConverter;
 
 	@Autowired
-	public SamplesController(SampleService sampleService, SequenceFileService sequenceFileService) {
+	public SamplesController(SampleService sampleService, SequenceFileService sequenceFileService,
+			UserService userService, ProjectService projectService) {
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
+		this.userService = userService;
+		this.projectService = projectService;
 		this.dateFormatter = new DateFormatter();
 		this.fileSizeConverter = new FileSizeConverter();
 	}
@@ -103,8 +118,11 @@ public class SamplesController extends BaseController {
 
 	/**
 	 * Get the samples details page.
-	 * @param model Spring {@link Model}
-	 * @param sampleId The id for the sample
+	 * 
+	 * @param model
+	 *            Spring {@link Model}
+	 * @param sampleId
+	 *            The id for the sample
 	 * @return The name of the page.
 	 */
 	@RequestMapping("/{sampleId}")
@@ -119,8 +137,10 @@ public class SamplesController extends BaseController {
 	/**
 	 * Get the sample edit page
 	 *
-	 * @param model    Spring {@link Model}
-	 * @param sampleId The id for the sample
+	 * @param model
+	 *            Spring {@link Model}
+	 * @param sampleId
+	 *            The id for the sample
 	 * @return The name of the edit page
 	 */
 	@RequestMapping(value = "/{sampleId}/edit", method = RequestMethod.GET)
@@ -138,10 +158,14 @@ public class SamplesController extends BaseController {
 	/**
 	 * Update the details of a sample
 	 *
-	 * @param model Spring {@link Model}
-	 * @param sampleId The id for the sample
-	 * @param collectionDate Date the sample was collected (Optional)
-	 * @param params Map of fields to update.  See FIELDS.
+	 * @param model
+	 *            Spring {@link Model}
+	 * @param sampleId
+	 *            The id for the sample
+	 * @param collectionDate
+	 *            Date the sample was collected (Optional)
+	 * @param params
+	 *            Map of fields to update. See FIELDS.
 	 * @return The name of the details page.
 	 */
 	@RequestMapping(value = "/{sampleId}/edit", method = RequestMethod.POST)
@@ -177,17 +201,22 @@ public class SamplesController extends BaseController {
 	/**
 	 * Get the page that shows the files belonging to that sample.
 	 *
-	 * @param model    Spring {@link Model}
-	 * @param sampleId Sample id
+	 * @param model
+	 *            Spring {@link Model}
+	 * @param sampleId
+	 *            Sample id
 	 * @return
 	 * @throws IOException
 	 */
 	@RequestMapping("/{sampleId}/files")
-	public String getSampleFiles(final Model model, @PathVariable Long sampleId) throws IOException {
+	public String getSampleFiles(final Model model, @PathVariable Long sampleId, Principal principal)
+			throws IOException {
 		Sample sample = sampleService.read(sampleId);
 		List<Map<String, Object>> files = getFilesForSample(sampleId);
+		boolean projectManagerForSample = isProjectManagerForSample(sample, principal);
 		model.addAttribute(MODEL_ATTR_FILES, files);
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
+		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, projectManagerForSample);
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
 		return SAMPLE_FILES_PAGE;
 	}
@@ -199,13 +228,12 @@ public class SamplesController extends BaseController {
 	/**
 	 * Get a list of details about files associated with a specific sample
 	 *
-	 * @param sampleId The id of the sample to find the files for.
+	 * @param sampleId
+	 *            The id of the sample to find the files for.
 	 * @return A list file details.
 	 */
 	@RequestMapping(value = "/ajax/{sampleId}/files", produces = MediaType.APPLICATION_JSON_VALUE)
-	public
-	@ResponseBody
-	List<Map<String, Object>> getFilesForSample(@PathVariable Long sampleId) throws IOException {
+	public @ResponseBody List<Map<String, Object>> getFilesForSample(@PathVariable Long sampleId) throws IOException {
 		Sample sample = sampleService.read(sampleId);
 		List<Join<Sample, SequenceFile>> joinList = sequenceFileService.getSequenceFilesForSample(sample);
 
@@ -214,6 +242,26 @@ public class SamplesController extends BaseController {
 			response.add(getFileDataMap(join.getObject()));
 		}
 		return response;
+	}
+
+	/**
+	 * Remove a given sequence file from a sample
+	 * 
+	 * @param sampleId
+	 *            the {@link Sample} id
+	 * @param fileId
+	 *            The {@link SequenceFile} id
+	 * @return map stating the request was successful
+	 */
+	@RequestMapping(value = "/ajax/{sampleId}/files/{fileId}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
+	@ResponseBody
+	public Map<String, String> removeFileFromSample(@PathVariable Long sampleId, @PathVariable Long fileId) {
+		Sample sample = sampleService.read(sampleId);
+		SequenceFile sequenceFile = sequenceFileService.read(fileId);
+
+		sampleService.removeSequenceFileFromSample(sample, sequenceFile);
+
+		return ImmutableMap.of("response", "success");
 	}
 
 	// ************************************************************************************************
@@ -235,5 +283,36 @@ public class SamplesController extends BaseController {
 		m.put("size", size);
 		m.put("realSize", realSize.toString());
 		return m;
+	}
+
+	/**
+	 * Test if the {@link User} is a {@link ProjectRole#PROJECT_OWNER} for the
+	 * given {@link Sample}
+	 * 
+	 * @param sample
+	 *            The sample to test
+	 * @param principal
+	 *            The currently logged in principal
+	 * @return true/false if they have management permissions for the sample
+	 */
+	private boolean isProjectManagerForSample(Sample sample, Principal principal) {
+		User userByUsername = userService.getUserByUsername(principal.getName());
+
+		if (userByUsername.getSystemRole().equals(Role.ROLE_ADMIN)) {
+			return true;
+		}
+
+		List<Join<Project, Sample>> projectsForSample = projectService.getProjectsForSample(sample);
+		for (Join<Project, Sample> join : projectsForSample) {
+			Collection<Join<Project, User>> usersForProject = userService.getUsersForProject(join.getSubject());
+			for (Join<Project, User> puj : usersForProject) {
+				ProjectUserJoin casted = (ProjectUserJoin) puj;
+				if (casted.getObject().equals(userByUsername)
+						&& casted.getProjectRole().equals(ProjectRole.PROJECT_OWNER)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }
