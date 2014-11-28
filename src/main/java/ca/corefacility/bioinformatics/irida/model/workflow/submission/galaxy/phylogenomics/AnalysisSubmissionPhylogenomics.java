@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics;
 
 import java.util.Set;
+import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -40,12 +41,13 @@ public class AnalysisSubmissionPhylogenomics
 	 * @param inputFiles  The set of input files to submit.
 	 * @param referenceFile  The reference file to submit.
 	 * @param remoteWorkflow  The remote workflow to submit.
+	 * @param workflowId The id of the workflow to run for this submission.
 	 */
 	public AnalysisSubmissionPhylogenomics(String name,
 			Set<SequenceFile> inputFiles,
 			ReferenceFile referenceFile,
-			RemoteWorkflowPhylogenomics remoteWorkflow) {
-		super(name, inputFiles, remoteWorkflow);
+			RemoteWorkflowPhylogenomics remoteWorkflow, UUID workflowId) {
+		super(name, inputFiles, remoteWorkflow, workflowId);
 		this.referenceFile = referenceFile;
 	}
 

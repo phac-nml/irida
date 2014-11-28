@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -62,6 +63,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	private AnalysisSubmissionPhylogenomics analysisSubmission;
 
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
+	
+	private UUID workflowId = UUID.randomUUID();
 
 	/**
 	 * Sets up variables for tests.
@@ -75,7 +78,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				analysisExecutionServicePhylogenomics);
 
 		analysisSubmission = new AnalysisSubmissionPhylogenomics("my analysis", sequenceFiles,
-				referenceFile, remoteWorkflow);
+				referenceFile, remoteWorkflow, workflowId);
 		analysisSubmission.setId(INTERNAL_ID);
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
 
