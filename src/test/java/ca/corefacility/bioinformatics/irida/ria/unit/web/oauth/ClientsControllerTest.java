@@ -60,7 +60,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.read(clientId)).thenReturn(iridaClientDetails);
 
-		String detailsPage = controller.read(clientId, model, locale);
+		String detailsPage = controller.read(clientId, model);
 
 		assertEquals(ClientsController.CLIENT_DETAILS_PAGE, detailsPage);
 		assertEquals(model.get("client"), iridaClientDetails);
@@ -113,7 +113,7 @@ public class ClientsControllerTest {
 	}
 
 	@Test
-	public void testPostCreateClient() {
+	public void testPostCreateClient() throws Exception {
 		IridaClientDetails client = new IridaClientDetails();
 		client.setId(1l);
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -129,7 +129,7 @@ public class ClientsControllerTest {
 	}
 
 	@Test
-	public void testPostCreateClientError() {
+	public void testPostCreateClientError() throws Exception {
 		IridaClientDetails client = new IridaClientDetails();
 		client.setId(1l);
 		ExtendedModelMap model = new ExtendedModelMap();
