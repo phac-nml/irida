@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.workflow.submission;
 
 import java.util.Date;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -59,6 +60,13 @@ public class AnalysisSubmission implements IridaThing {
 	@Size(min = 3)
 	@Column(name="name")
 	private String name;
+	
+	/**
+	 * Defines the id of an installed workflow in IRIDA for performing this analysis.
+	 */
+	@NotNull
+	@Column(name="workflow_id")
+	private UUID workflowId;
 
 	/**
 	 * Defines the remote id for the location where an analysis was run. With
@@ -251,5 +259,24 @@ public class AnalysisSubmission implements IridaThing {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * Gets the id of the implementing workflow for this analysis.
+	 * 
+	 * @return The id of the implementing workflow for this analysis.
+	 */
+	public UUID getWorkflowId() {
+		return workflowId;
+	}
+
+	/**
+	 * Sets the id of the workflow for this analysis.
+	 * 
+	 * @param workflowId
+	 *            The id of the workflow for this analysis.
+	 */
+	public void setWorkflowId(UUID workflowId) {
+		this.workflowId = workflowId;
 	}
 }
