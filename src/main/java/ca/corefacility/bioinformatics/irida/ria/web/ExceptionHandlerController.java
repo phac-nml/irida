@@ -25,6 +25,13 @@ public class ExceptionHandlerController {
 	private static final String OAUTH_ERROR_PAGE = "errors/oauth_error";
 	private static final Logger logger = LoggerFactory.getLogger(ExceptionHandlerController.class);
 
+	/**
+	 * Handle an {@link EntityNotFoundException} and return an http 404
+	 * 
+	 * @param ex
+	 *            The EntityNotFoundException caught
+	 * @return the name of the not_found view
+	 */
 	@ExceptionHandler(EntityNotFoundException.class)
 	@ResponseStatus(value = HttpStatus.NOT_FOUND)
 	public String handleResourceNotFoundException(EntityNotFoundException ex) {
@@ -32,6 +39,13 @@ public class ExceptionHandlerController {
 		return NOT_FOUND_PAGE;
 	}
 
+	/**
+	 * Handle an {@link AccessDeniedException} and return an Http 403
+	 * 
+	 * @param ex
+	 *            The caught {@link AccessDeniedException}
+	 * @return name of the access denied view
+	 */
 	@ExceptionHandler(AccessDeniedException.class)
 	@ResponseStatus(value = HttpStatus.FORBIDDEN)
 	public String handleAccessDeniedException(AccessDeniedException ex) {
@@ -39,6 +53,14 @@ public class ExceptionHandlerController {
 		return ACCESS_DENIED_PAGE;
 	}
 
+	/**
+	 * Catch an {@link OAuthProblemException} and return an http 500 error
+	 * 
+	 * @param ex
+	 *            the caught {@link OAuthProblemException}
+	 * @return A {@link ModelAndView} containing the name of the oauth error
+	 *         view
+	 */
 	@ExceptionHandler(OAuthProblemException.class)
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 	public ModelAndView handleOAuthProblemException(OAuthProblemException ex) {
@@ -49,6 +71,14 @@ public class ExceptionHandlerController {
 		return modelAndView;
 	}
 
+	/**
+	 * Catch all other exception types and display a generic error page and 500
+	 * error
+	 * 
+	 * @param ex
+	 *            The caught exception
+	 * @return Name of the generic error page
+	 */
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 	public String handleOtherExceptions(Exception ex) {
