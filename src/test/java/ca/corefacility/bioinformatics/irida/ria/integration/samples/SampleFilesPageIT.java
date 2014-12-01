@@ -59,6 +59,14 @@ public class SampleFilesPageIT {
 		assertEquals("Displays the correct number of sequence files", 3, page.getSequenceFileCount());
 		assertEquals("Displays the correct file name.", FILE_NAME, page.getSequenceFileName());
 	}
+	
+	@Test
+	public void testDeleteFile() {
+		page.gotoPage(SAMPLE_ID);
+		
+		page.deleteFirstFile();
+		assertTrue(page.notySuccessDisplayed());
+	}
 
 	@After
 	public void destroy() {

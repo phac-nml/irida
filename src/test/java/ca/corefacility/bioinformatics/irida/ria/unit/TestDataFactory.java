@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
@@ -80,7 +81,7 @@ public class TestDataFactory {
 		Set<SequenceFile> files = new HashSet<>();
 		files.add(constructSequenceFile());
 		Long id = 5L;
-		AnalysisSubmission analysisSubmission = new AnalysisSubmission("submission-" + id, files);
+		AnalysisSubmission analysisSubmission = new AnalysisSubmission("submission-" + id, files, UUID.randomUUID());
 		analysisSubmission.setId(id);
 		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
 		analysisSubmission.setAnalysis(constructAnalysis());
