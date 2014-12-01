@@ -3,121 +3,121 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="clients/_base">
 <head>
-    <title th:text="#{client.create}">_Create Client_</title>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2.css}"
-          href="/resources/bower_components/select2/select2.css"/>
-    <link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}"
-          href="/resources/bower_components/select2/select2-bootstrap.css"/>
+	<title th:text="#{client.create}">_Create Client_</title>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2.css}"
+	      href="/resources/bower_components/select2/select2.css"/>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}"
+	      href="/resources/bower_components/select2/select2-bootstrap.css"/>
 </head>
 <body>
 <main layout:fragment="main">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
-            <form role="form" action="/clients/create"
-                  th:action="@{/clients/{id}/edit(id=${client.id})}" method="post">
-                <section class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title" th:text="#{client.edit.title(${client.clientId})}">_Edit Client_</h3>
-                    </div>
-                    <div class="panel-body">
-                        <div class="form-group">
-                            <label class="control-label" th:text="#{client.clientid}" for="clientId">_Client_id_</label>
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2 mrgn-tp-lg wb-frmvld">
+			<form role="form" action="/clients/create"
+			      th:action="@{/clients/{id}/edit(id=${client.id})}" method="post">
+				<section class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title" th:text="#{client.edit.title(${client.clientId})}">_Edit Client_</h3>
+					</div>
+					<div class="panel-body">
+						<div class="form-group">
+							<label class="control-label" th:text="#{client.clientid}" for="clientId">_Client_id_</label>
 
-                            <div th:if="${#maps.containsKey(errors, 'clientId')}" th:text="${errors.clientId}"
-                                 class="alert alert-warning">_Client ID Error_
-                            </div>
-                            <input type="text" class="form-control input-full"
-                                   disabled="disabled" th:value="${client.clientId}"/>
-                        </div>
+							<div th:if="${#maps.containsKey(errors, 'clientId')}" th:text="${errors.clientId}"
+							     class="alert alert-warning">_Client ID Error_
+							</div>
+							<input type="text" class="form-control input-full"
+							       disabled="disabled" th:value="${client.clientId}"/>
+						</div>
 
-                        <div class="form-group">
-                            <label class="control-label" th:text="#{client.details.tokenValidity}" for="tokenValidity">_Token
-                                Validity_</label>
+						<div class="form-group">
+							<label class="control-label" th:text="#{client.details.tokenValidity}" for="tokenValidity">_Token
+								Validity_</label>
 
-                            <div th:if="${#maps.containsKey(errors, 'tokenValidity')}" th:text="${errors.tokenValidity}"
-                                 class="alert alert-warning">_Token Validity Error_
-                            </div>
+							<div th:if="${#maps.containsKey(errors, 'tokenValidity')}" th:text="${errors.tokenValidity}"
+							     class="alert alert-warning">_Token Validity Error_
+							</div>
 
-                            <select id="tokenValidity" name="accessTokenValiditySeconds"
-                                     class="form-control input-full">
-                                <option class="tokenValidityInSeconds" th:each="time : ${available_token_validity}"
-                                        th:value="${time}" th:text="${time}" th:selected="${time == client.accessTokenValiditySeconds}"/>
-                            </select>
+							<select id="tokenValidity" name="accessTokenValiditySeconds"
+							        class="form-control input-full">
+								<option class="tokenValidityInSeconds" th:each="time : ${available_token_validity}"
+								        th:value="${time}" th:text="${time}" th:selected="${time == client.accessTokenValiditySeconds}"/>
+							</select>
 
-                        </div>
+						</div>
 
-                        <div class="form-group">
-                            <label class="control-label" th:text="#{client.grant-types}" for="authorizedGrantTypes">_Grant
-                                Types_</label>
+						<div class="form-group">
+							<label class="control-label" th:text="#{client.grant-types}" for="authorizedGrantTypes">_Grant
+								Types_</label>
 
-                            <div id="grant-error" th:if="${#maps.containsKey(errors, 'grant')}"
-                                 th:text="${errors.grant}" class="alert alert-warning">_Role Error_
-                            </div>
-                            <select id="authorizedGrantTypes" name="authorizedGrantTypes"
-                                    class="form-control input-full" required="required" >
-                                <option th:each="grant : ${available_grants}" th:value="${grant}" th:text="${grant}" th:selected="${grant == selectedGrant}"/>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <div class="checkbox">
+							<div id="grant-error" th:if="${#maps.containsKey(errors, 'grant')}"
+							     th:text="${errors.grant}" class="alert alert-warning">_Role Error_
+							</div>
+							<select id="authorizedGrantTypes" name="authorizedGrantTypes"
+							        class="form-control input-full" required="required">
+								<option th:each="grant : ${available_grants}" th:value="${grant}" th:text="${grant}" th:selected="${grant == selectedGrant}"/>
+							</select>
+						</div>
 
-                                <label for="new_secret">
-                                    <input type="checkbox" id="new_secret" name="new_secret" value="new_secret"/>
-                                    <span th:text="#{client.edit.new-secret}">_NEW SECRET_</span>
-                                </label>
-                            </div>
-                           
-                        </div>
+						<div class="form-group">
+							<div class="col-md-12">
+								<div class="checkbox">
 
-                        <div class="form-group">
-                            <label class="control-label" th:text="#{client.scopes}">_Scopes_</label>
+									<label for="new_secret"> <input type="checkbox" id="new_secret" name="new_secret" value="new_secret"/>
+										<span th:text="#{client.edit.new-secret}">_NEW SECRET_</span> </label>
+								</div>
+							</div>
 
-                            <div id="scope-error" th:if="${#maps.containsKey(errors, 'scope')}"
-                                 th:text="${errors.scope}" class="alert alert-warning">_Scope Error_
-                            </div>
-                            <div class="checkbox">
+						</div>
 
-                                <label for="scope_read">
-                                    <input type="checkbox" id="scope_read" name="scope_read" th:checked="${given_scope_read}" checked="checked" value="read"/>
-                                    <span th:text="#{client.scope.read}">Read</span>
-                                </label>
-                            </div>
-                            <div class="checkbox">
+						<div class="form-group">
+							<label class="control-label" th:text="#{client.scopes}">_Scopes_</label>
 
-                                <label for="scope_write">
-                                    <input type="checkbox" id="scope_write" name="scope_write" th:checked="${given_scope_write}" checked="checked" value="write"/>
-                                    <span th:text="#{client.scope.write}">Write</span>
-                                </label>
-                            </div>
-                        </div>
+							<div id="scope-error" th:if="${#maps.containsKey(errors, 'scope')}"
+							     th:text="${errors.scope}" class="alert alert-warning">_Scope Error_
+							</div>
+							<div class="col-md-12">
+								<div class="checkbox">
 
-                    </div>
-                    <div class="panel-footer text-right">
-                        <a type="reset" class="btn btn-default" href="#" th:href="@{/clients}">Cancel</a>
-                        <button id="edit-client-submit" type="submit" th:text="#{client.create.button}"
-                                class="btn btn-primary submit">Create User
-                        </button>
-                    </div>
-                </section>
-            </form>
-        </div>
-    </div>
+									<label for="scope_read">
+										<input type="checkbox" id="scope_read" name="scope_read" th:checked="${given_scope_read}" checked="checked" value="read"/>
+										<span th:text="#{client.scope.read}">Read</span> </label>
+								</div>
+							</div>
+							<div class="col-md-12">
+								<div class="checkbox">
+									<label for="scope_write">
+										<input type="checkbox" id="scope_write" name="scope_write" th:checked="${given_scope_write}" checked="checked" value="write"/>
+										<span th:text="#{client.scope.write}">Write</span> </label>
+								</div>
+							</div>
+						</div>
+
+					</div>
+					<div class="panel-footer text-right">
+						<a type="reset" class="btn btn-default" href="#" th:href="@{/clients}">Cancel</a>
+						<button id="edit-client-submit" type="submit" th:text="#{client.create.button}"
+						        class="btn btn-primary submit">Create User
+						</button>
+					</div>
+				</section>
+			</form>
+		</div>
+	</div>
 </main>
 
-
 <th:block layout:fragment="pageScripts" th:inline="javascript">
-    <script th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}"
-            src="/resources/bower_components/moment/min/moment-with-langs.min.js"></script>
-    <script th:src="@{/resources/bower_components/select2/select2.min.js}"
-            src="/resources/bower_components/select2/select2.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("#tokenValidity").select2().select2("val", [[${given_tokenValidity}]]);
-            $("#authorizedGrantTypes").select2();
-        });
+	<script th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}"
+	        src="/resources/bower_components/moment/min/moment-with-langs.min.js"></script>
+	<script th:src="@{/resources/bower_components/select2/select2.min.js}"
+	        src="/resources/bower_components/select2/select2.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$("#tokenValidity").select2().select2("val", [[${given_tokenValidity}]]);
+			$("#authorizedGrantTypes").select2();
+		});
 
-    </script>
+	</script>
 </th:block>
 </body>
 </html>
