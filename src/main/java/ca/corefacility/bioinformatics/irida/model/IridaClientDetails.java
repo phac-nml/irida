@@ -363,6 +363,6 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 
 	@Override
 	public boolean isAutoApprove(String scope) {
-		return true;
+		return false;
 	}
 }

@@ -16,6 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.LocaleResolver;
@@ -146,11 +147,14 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	}
 
 	@Bean
-	public ViewResolver viewResolver() {
+	public ViewResolver thymeleafViewResolver() {
+		logger.debug("Configuring thymeleaf view resolver.");
 		ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
 		viewResolver.setTemplateEngine(templateEngine());
 		viewResolver.setOrder(1);
 		viewResolver.setStaticVariables(ImmutableMap.of("themePath", "themes/" + theme + "/"));
+		// DO NOT try to handle REST API calls.
+		viewResolver.setOrder(Ordered.LOWEST_PRECEDENCE);
 		return viewResolver;
 	}
 

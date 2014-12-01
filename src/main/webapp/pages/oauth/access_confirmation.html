@@ -22,11 +22,13 @@
       	</ul>
       	<p th:text="#{auth.adminmessage(${auth_request.clientId})}">_Note: clientId has been authorized as part of the IRIDA network by the site's administrators._</p>
 
-	  <form id='confirmationForm' name='confirmationForm' action='/oauth/authorize' method='post'>
+	  <form id='confirmationForm' name='confirmationForm' th:action='@{/api/oauth/authorize}' method='post'>
+        <input th:each="scope : ${scopes}" type="hidden" th:name="${'scope.'+ scope}" value="true"/>
 	  	<input name='user_oauth_approval' value='true' type='hidden'/>
 	  	<input name='authorize' th:value="#{auth.authorize}" value='_Authorize_' type='submit'/>
 	  </form>
-	  <form id='denialForm' name='denialForm' action='/oauth/authorize' method='post'>
+	  <form id='denialForm' name='denialForm' th:action='@{/api/oauth/authorize}' method='post'>
+	  	<input th:each="scope : ${scopes}" type="hidden" th:name="${'scope.'+ scope}" value="false"/>
 	  	<input name='user_oauth_approval' value='false' type='hidden'/>
 	  	<input name='deny' th:value="#{auth.deny}" value='_Deny_' type='submit'/>
 	  </form>

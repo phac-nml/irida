@@ -45,7 +45,7 @@ public class OltuAuthorizationController {
 	@Value("${server.base.url}")
 	private String serverBase;
 
-	public static final String TOKEN_ENDPOINT = "/authorization/token";
+	public static final String TOKEN_ENDPOINT = "/api/authorization/token";
 
 	private final RemoteAPITokenService tokenService;
 	private final RemoteAPIService remoteAPIService;

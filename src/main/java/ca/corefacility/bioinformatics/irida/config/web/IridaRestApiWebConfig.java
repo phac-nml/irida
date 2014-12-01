@@ -1,16 +1,18 @@
 package ca.corefacility.bioinformatics.irida.config.web;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.Ordered;
 import org.springframework.http.MediaType;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.web.accept.ContentNegotiationManager;
@@ -22,7 +24,6 @@ import org.springframework.web.servlet.config.annotation.ContentNegotiationConfi
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.xml.MarshallingView;
 
@@ -47,6 +48,8 @@ import com.google.common.collect.ImmutableMap;
 public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 
 	private static final long TEN_GIGABYTES = 10737418240l;
+	
+	private static final Logger logger = LoggerFactory.getLogger(IridaRestApiWebConfig.class);
 
 	@Bean
 	public MultipartResolver multipartResolver() {
@@ -56,21 +59,15 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 	}
 
 	@Bean
-	public ViewResolver viewResolver(ContentNegotiationManager contentNegotiationManager) {
+	public ViewResolver apiViewResolver(ContentNegotiationManager contentNegotiationManager) {
+		logger.debug("Configuring REST API view resolver.");
 		ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
-		resolver.setViewResolvers(Arrays.asList(internalResourceViewResolver()));
 		resolver.setDefaultViews(defaultViews());
 		resolver.setContentNegotiationManager(contentNegotiationManager);
-
+		resolver.setOrder(Ordered.HIGHEST_PRECEDENCE);
 		return resolver;
 	}
-
-	public ViewResolver internalResourceViewResolver() {
-		InternalResourceViewResolver internalResourceViewResolver = new InternalResourceViewResolver();
-
-		return internalResourceViewResolver;
-	}
-
+	
 	private List<View> defaultViews() {
 		List<View> views = new ArrayList<>();
 		MappingJackson2JsonView jsonView = new MappingJackson2JsonView();

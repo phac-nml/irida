@@ -50,6 +50,6 @@ public class RESTOAuthAccessController {
 		model.put("scopes",join);
 		model.put("principal", principal);
 
-		return new ModelAndView("access_confirmation", model);
+		return new ModelAndView("oauth/access_confirmation", model);
 	}
 }

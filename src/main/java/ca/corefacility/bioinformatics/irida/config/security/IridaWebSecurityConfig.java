@@ -16,7 +16,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration;
@@ -34,7 +33,7 @@ import org.springframework.security.oauth2.provider.token.ResourceServerTokenSer
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
-import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import ca.corefacility.bioinformatics.irida.ria.security.CredentialsExpriredAuthenticationFailureHandler;
 import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousAuthenticationFilter;
@@ -49,50 +48,11 @@ import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousA
 @Configuration
 @EnableWebSecurity
 public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
-	
-	@Configuration
-	@Order(2)
-	protected static class UISecurityConfig extends WebSecurityConfigurerAdapter {
-		@Autowired
-		CredentialsExpriredAuthenticationFailureHandler authFailureHandler;
-		
-		@Override
-		public void configure(WebSecurity web) throws Exception {
-			web.ignoring().antMatchers("/resources/**").antMatchers("/public/**");
-		}
-
-		@Override
-		protected void configure(HttpSecurity http) throws Exception {
-			authFailureHandler.setDefaultFailureUrl("/login?error=true");
-			// @formatter:off
-			http
-
-			// Prevent Cross Site Request Forgery
-			.csrf().disable()
-			// Refactor login form
-
-			// See https://jira.springsource.org/browse/SPR-11496
-			// This is for SockJS and Web Sockets
-			.headers()
-				.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
-			.and()
-			.formLogin().defaultSuccessUrl("/dashboard").loginPage("/login").failureHandler(authFailureHandler).permitAll()
-			.and()
-			.logout().logoutSuccessUrl("/login").logoutUrl("/logout").permitAll()
-			.and()
-			.authorizeRequests().regexMatchers("/login((\\?lang=[a-z]{2}|#.*)|(\\?error=true))?").permitAll()
-				.antMatchers("/").permitAll()
-				.antMatchers("/license").permitAll()
-				.antMatchers("/resources/**").permitAll()
-				.antMatchers("/password_reset/**").permitAll()
-				.antMatchers("/**").fullyAuthenticated();
-			// @formatter:on
-		}
-	}
 
 	@Configuration
 	@EnableResourceServer
 	@ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.repositories.remote")
+	@Order(Ordered.HIGHEST_PRECEDENCE + 2)
 	protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
 		@Autowired
@@ -105,10 +65,20 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		@Override
 		public void configure(final HttpSecurity httpSecurity) throws Exception {
-			httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-			httpSecurity.authorizeRequests().antMatchers(HttpMethod.GET, "/api/**").access("#oauth2.hasScope('read')");
-			httpSecurity.authorizeRequests().antMatchers("/api/**")
+			// httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+			httpSecurity.formLogin().usernameParameter("username").passwordParameter("password")
+					.loginPage("/api/login").loginProcessingUrl("/api/login.do").defaultSuccessUrl("/api/success")
+					.permitAll();
+			httpSecurity.antMatcher("/api/oauth/authorize*").authorizeRequests().antMatchers("/api/oauth/authorize*")
+					.fullyAuthenticated();
+			httpSecurity.regexMatcher("/api.*").authorizeRequests().regexMatchers(HttpMethod.GET, "/api.*")
+					.access("#oauth2.hasScope('read')");
+			httpSecurity.regexMatcher("/api.*").authorizeRequests().regexMatchers("/api.*")
 					.access("#oauth2.hasScope('read') and #oauth2.hasScope('write')");
+			httpSecurity.headers().frameOptions().disable();
+			httpSecurity.csrf().requireCsrfProtectionMatcher(new AntPathRequestMatcher("/api/oauth/authorize"))
+					.disable();
+			httpSecurity.exceptionHandling().accessDeniedPage("/api/login?error");
 
 			// SecurityContextPersistenceFilter appears pretty high up (well
 			// before any OAuth related filters), so we'll put our anonymous
@@ -128,6 +98,7 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 	 *
 	 */
 	@Configuration
+	@Order(Ordered.HIGHEST_PRECEDENCE)
 	protected static class AuthorizationServerConfigurer extends AuthorizationServerSecurityConfiguration {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
@@ -168,7 +139,6 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 			endpoints.pathMapping("/oauth/confirm_access", "/api/oauth/confirm_access");
 			endpoints.pathMapping("/oauth/error", "/api/oauth/error");
 			endpoints.pathMapping("/oauth/authorize", "/api/oauth/authorize");
-			endpoints.getFrameworkEndpointHandlerMapping().setOrder(Ordered.HIGHEST_PRECEDENCE);
 		}
 
 		@Override
@@ -181,6 +151,48 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 			return new InMemoryAuthorizationCodeServices();
 		}
 
+	}
+
+	@Configuration
+	@Order(Ordered.HIGHEST_PRECEDENCE + 1)
+	protected static class UISecurityConfig extends WebSecurityConfigurerAdapter {
+		@Autowired
+		CredentialsExpriredAuthenticationFailureHandler authFailureHandler;
+
+		@Override
+		public void configure(WebSecurity web) throws Exception {
+			web.ignoring().antMatchers("/resources/**").antMatchers("/public/**");
+		}
+
+		@Override
+		protected void configure(HttpSecurity http) throws Exception {
+			authFailureHandler.setDefaultFailureUrl("/login?error=true");
+			// @formatter:off
+			http.requestMatcher(request -> {
+				return !request.getRequestURI().matches("^.*/api.*$");
+			}).authorizeRequests().and()
+			
+			
+
+			// Prevent Cross Site Request Forgery
+			.csrf().disable()
+			// Refactor login form
+			
+			// See https://jira.springsource.org/browse/SPR-11496
+			// This is for SockJS and Web Sockets
+			.headers().frameOptions().disable()
+			.formLogin().defaultSuccessUrl("/dashboard").loginPage("/login").failureHandler(authFailureHandler).permitAll()
+			.and()
+			.logout().logoutSuccessUrl("/login").logoutUrl("/logout").permitAll()
+			.and()
+			.authorizeRequests().regexMatchers("/login((\\?lang=[a-z]{2}|#.*)|(\\?error=true))?").permitAll()
+				.antMatchers("/").permitAll()
+				.antMatchers("/license").permitAll()
+				.antMatchers("/resources/**").permitAll()
+				.antMatchers("/password_reset/**").permitAll()
+				.antMatchers("/**").fullyAuthenticated();
+			// @formatter:on
+		}
 	}
 
 	@Bean

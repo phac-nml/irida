@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class RESTLoginController {
 	@RequestMapping("/api/login")
 	public String login(){
-		return "login";
+		return "oauth/login-api";
 	}
 	
 	@RequestMapping("/api/success")
