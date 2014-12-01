@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="${themePath + '_page'}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorator="${themePath + '_page'}">
 <head>
-    <title th:text="#{error.denied.title}">_Denied_</title>
+<title th:text="#{error.denied.title}">_Denied_</title>
 </head>
 <body>
-<main layout:fragment="page">
-    <!-- TODO: (Josh  - 2014-06-24) Customize this based on the error received -->
+    <main layout:fragment="page">
     <h1 th:text="#{error.denied.title}">_Denied_</h1>
     <p th:text="#{error.denied.content}">_Access is denied_</p>
     <p th:text="#{error.contact_admins}">_contact admins_</p>
-</main>
+    </main>
 </body>
 </html>

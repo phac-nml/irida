@@ -1,10 +1,14 @@
-<!DOCTYPE HTML>
-
-<html>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorator="${themePath + '_page'}">
+<head>
+<title th:text="#{error.oauth.title}">_OAUTH ERROR_</title>
+</head>
 <body>
-    <h1 th:text="#{global.title}">_Demo OAuth2 Web Client_</h1>
-	<h3 th:text="#{error.title}">_An error has occurred while authorizing with OAuth2:_</h3>
-	<p th:text="${exception.message}">_Exception message_<p>
-	<p><a href="/" text="#{error.return}">_Return to index_</a></p>
+    <main layout:fragment="page">
+    <h1 th:text="#{error.oauth.title}">_OAUTH ERROR_</h1>
+    <p th:text="#{error.oauth.content(${exception.message})}">_OAUTH ERROR_</p>
+    <p th:text="#{error.contact_admins}">_contact admins_</p>
+    </main>
 </body>
 </html>
