@@ -86,6 +86,7 @@ public class IridaApiServicesConfig {
 	@Bean
 	public Validator validator() {
 		ResourceBundleMessageSource validatorMessageSource = new ResourceBundleMessageSource();
+		validatorMessageSource.setBasename("ValidationMessages");
 		LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
 		validator.setValidationMessageSource(validatorMessageSource);
 		return validator;
