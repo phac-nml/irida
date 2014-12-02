@@ -35,7 +35,7 @@ public class UnmappedErrorController {
 		return modelAndView;
 	}
 
-	@RequestMapping(value = "/404", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/404")
 	@ResponseBody
 	public String basic404Json() {
 		logger.error("User requested page that does not exist via REST API");
