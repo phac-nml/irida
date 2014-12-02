@@ -310,7 +310,7 @@
       linker: function linker() {
         vm.export.open = false;
         $modal.open({
-          templateUrl: BASE_URL + 'projects/samples/linker',
+          templateUrl: BASE_URL + 'projects/templates/samples/linker',
           controller : 'LinkerCtrl as lCtrl',
           resolve    : {
             samples  : function () {
@@ -325,7 +325,7 @@
       galaxy: function galaxy() {
         vm.export.open = false;
         $modal.open({
-          templateUrl: BASE_URL + 'projects/' + SamplesService.getProjectId() + '/samples/galaxy',
+          templateUrl: BASE_URL + 'projects/' + SamplesService.getProjectId() + '/templates/samples/galaxy',
           controller: 'GalaxyCtrl as gCtrl'
         });
       }

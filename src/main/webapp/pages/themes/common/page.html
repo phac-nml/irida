@@ -110,11 +110,24 @@
 <script th:inline="javascript">
 	/*<![CDATA[*/
 	window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ngAnimate', 'ui.bootstrap', 'ui.utils', 'restangular', 'irida.notifications']);
+	var interceptor = function ($q, $location) {
+		return {
+			request: function (config) {
+				if(config.url.indexOf("/template") > -1) {
+					config.headers.Accept = "text/html";
+				}
+				return config;
+			}
+		};
+	};
 	var app = angular.module('irida', window.dependencies)
 			.value('BASE_URL', /*[[@{/}]]*/ '/')
 		// This configures the base url globally for all restangular calls.
 			.config(function (RestangularProvider) {
 				RestangularProvider.setBaseUrl(/*[[@{/}]]*/ "/");
+			})
+			.config(function($httpProvider) {
+				$httpProvider.interceptors.push(interceptor);
 			})
 			.run(function (paginationConfig) {
 				paginationConfig.firstText = /*[[#{table.first}]]*/ 'First';

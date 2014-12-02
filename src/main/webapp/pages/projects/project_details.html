@@ -19,6 +19,9 @@
             $.ajax({
             	method: "GET",
             	url: eventUrl,
+            	headers: {
+            		Accept: 'text/html'
+            	},
             	success: function(data, textStatus, jqXHR){
             		$("#events").html(data);
             	}

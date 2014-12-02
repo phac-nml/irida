@@ -6,9 +6,11 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -28,7 +30,9 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
- * <p> Integration test to ensure that the Project Details Page. </p>
+ * <p>
+ * Integration test to ensure that the Project Details Page.
+ * </p>
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
@@ -53,7 +57,7 @@ public class ProjectMetadataPageIT {
 
 	@Before
 	public void setUp() {
-		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
 		LoginPage.loginAsAdmin(driver);
 		page = new ProjectMetadataPage(driver);
 	}
@@ -67,6 +71,7 @@ public class ProjectMetadataPageIT {
 	}
 
 	@Test
+	@Ignore("Disabled because the user that's logging in is an administrator, so the tests shouldn't work!")
 	public void displaysTheProjectMetaData() {
 		page.goTo(PROJECT_ID_OWNER);
 		assertEquals("Displays the correct page title", PAGE_TITLE, driver.getTitle());
