@@ -63,13 +63,13 @@ public class EditClientPageIT {
 
 	@Test
 	public void testCreateGoodClient() {
-		page.editClient(null, true, false, false);
+		page.editClient(null, true, true, false);
 		assertTrue(page.checkSuccess());
 	}
 
 	@Test
 	public void testEditClientWithNewSecret() {
-		page.editClient(null, true, false, true);
+		page.editClient(null, true, true, true);
 		assertTrue(page.checkSuccess());
 		ClientDetailsPage detailsPage = new ClientDetailsPage(driver);
 		String newSecret = detailsPage.getClientSecret();

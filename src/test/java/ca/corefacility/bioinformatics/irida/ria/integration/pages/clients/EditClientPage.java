@@ -18,29 +18,35 @@ public class EditClientPage extends AbstractPage {
 	public EditClientPage(WebDriver driver) {
 		super(driver);
 	}
-	
-	public void goToEditPage(Long id){
-		String url = "clients/"+id+"/edit";
+
+	public void goToEditPage(Long id) {
+		String url = "clients/" + id + "/edit";
 		logger.trace("Going to edit page for client " + id);
-		get(driver,url);
+		get(driver, url);
 	}
 
 	public void editClient(String grant, boolean scope_read, boolean scope_write, boolean generateClientSecret) {
 
-		if(!Strings.isNullOrEmpty(grant)){
+		if (!Strings.isNullOrEmpty(grant)) {
 			WebElement grantField = driver.findElement(By.id("authorizedGrantTypes"));
 			grantField.sendKeys(grant);
 		}
-		
-		if(generateClientSecret){
+
+		if (generateClientSecret) {
 			driver.findElement(By.id("new_secret")).click();
 		}
 
 		if (scope_read) {
-			driver.findElement(By.id("scope_read")).click();
+			WebElement checkBox = driver.findElement(By.id("scope_read"));
+			if (!checkBox.isSelected()) {
+				checkBox.click();
+			}
 		}
 		if (scope_write) {
-			driver.findElement(By.id("scope_write")).click();
+			WebElement checkBox = driver.findElement(By.id("scope_write"));
+			if (!checkBox.isSelected()) {
+				checkBox.click();
+			}
 		}
 
 		WebElement submit = driver.findElement(By.id("edit-client-submit"));
