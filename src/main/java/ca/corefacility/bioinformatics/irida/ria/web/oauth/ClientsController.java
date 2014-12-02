@@ -39,6 +39,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 /**
@@ -55,6 +57,7 @@ public class ClientsController extends BaseController {
 	public static final String CLIENTS_PAGE = "clients/list";
 	public static final String CLIENT_DETAILS_PAGE = "clients/client_details";
 	public static final String ADD_CLIENT_PAGE = "clients/create";
+	public static final String EDIT_CLIENT_PAGE = "clients/edit";
 
 	private final IridaClientDetailsService clientDetailsService;
 	private final MessageSource messageSource;
@@ -95,7 +98,7 @@ public class ClientsController extends BaseController {
 	 * @return The view name of the client details page
 	 */
 	@RequestMapping("/{clientId}")
-	public String read(@PathVariable Long clientId, Model model, Locale locale) {
+	public String read(@PathVariable Long clientId, Model model) {
 		IridaClientDetails client = clientDetailsService.read(clientId);
 
 		String grants = StringUtils.collectionToDelimitedString(client.getAuthorizedGrantTypes(), ", ");
@@ -105,6 +108,103 @@ public class ClientsController extends BaseController {
 		model.addAttribute("grants", grants);
 		model.addAttribute("scopes", scopes);
 		return CLIENT_DETAILS_PAGE;
+	}
+
+	/**
+	 * Get the page to edit {@link IridaClientDetails}
+	 * 
+	 * @param clientId
+	 *            The ID of the {@link IridaClientDetails}
+	 * @param model
+	 *            Model for the view
+	 * @return view name for editing client details
+	 */
+	@RequestMapping(value = "/{clientId}/edit", method = RequestMethod.GET)
+	public String getEditPage(@PathVariable Long clientId, Model model) {
+		IridaClientDetails client = clientDetailsService.read(clientId);
+
+		model.addAttribute("client", client);
+		// in practise our clients only have 1 grant type. adding it to model to
+		// make it easier
+		if (!client.getAuthorizedGrantTypes().isEmpty()) {
+			model.addAttribute("selectedGrant", client.getAuthorizedGrantTypes().iterator().next());
+		}
+		Set<String> scopes = client.getScope();
+
+		for (String scope : scopes) {
+			model.addAttribute("given_scope_" + scope, true);
+		}
+
+		getAddClientPage(model);
+
+		return EDIT_CLIENT_PAGE;
+	}
+
+	/**
+	 * Submit client details edit
+	 * 
+	 * @param clientId
+	 *            the long ID of the {@link IridaClientDetails} to edit
+	 * @param accessTokenValiditySeconds
+	 *            The new accessTokenValiditySeconds
+	 * @param authorizedGrantTypes
+	 *            the new authorizedGrantTypes
+	 * @param scope_read
+	 *            whether to allow read scope
+	 * @param scope_write
+	 *            whether to allow write scope
+	 * @param new_secret
+	 *            Wether to generate a new client secret
+	 * @param model
+	 *            Model for the view
+	 * @param locale
+	 *            Locale of the logged in user
+	 * @return Redirect to the client details page if successful, the edit page
+	 *         if there are errors
+	 */
+	@RequestMapping(value = "/{clientId}/edit", method = RequestMethod.POST)
+	public String postEditClient(@PathVariable Long clientId,
+			@RequestParam(required = false, defaultValue = "0") Integer accessTokenValiditySeconds,
+			@RequestParam(required = false, defaultValue = "") String authorizedGrantTypes,
+			@RequestParam(required = false, defaultValue = "") String scope_read,
+			@RequestParam(required = false, defaultValue = "") String scope_write,
+			@RequestParam(required = false, defaultValue = "") String new_secret, Model model, Locale locale) {
+		Map<String, Object> updates = new HashMap<>();
+		IridaClientDetails readClient = clientDetailsService.read(clientId);
+
+		if (accessTokenValiditySeconds != 0) {
+			updates.put("accessTokenValiditySeconds", accessTokenValiditySeconds);
+		}
+		if (!Strings.isNullOrEmpty(authorizedGrantTypes)) {
+			updates.put("authorizedGrantTypes", ImmutableSet.of(authorizedGrantTypes));
+		}
+
+		Set<String> scopes = new HashSet<>();
+		if (scope_write.equals("write")) {
+			scopes.add("write");
+		}
+		if (scope_read.equals("read")) {
+			scopes.add("read");
+		}
+		
+		updates.put("scope", scopes);
+		
+		if (!Strings.isNullOrEmpty(new_secret)) {
+			String clientSecret = generateClientSecret();
+			updates.put("clientSecret", clientSecret);
+		}
+
+		String response;
+		try {
+			clientDetailsService.update(clientId, updates);
+			response = "redirect:/clients/" + clientId;
+		} catch (RuntimeException e) {
+			handleCreateUpdateException(e, model, locale, scope_write, scope_read, readClient.getClientId(),
+					accessTokenValiditySeconds);
+			response = getEditPage(clientId, model);
+		}
+
+		return response;
 	}
 
 	/**
@@ -161,34 +261,13 @@ public class ClientsController extends BaseController {
 
 		client.setScope(scopes);
 
-		Map<String, String> errors = new HashMap<>();
 		String responsePage = null;
 		try {
 			IridaClientDetails create = clientDetailsService.create(client);
 			responsePage = "redirect:/clients/" + create.getId();
-		} catch (DataIntegrityViolationException ex) {
-			if (ex.getMessage().contains(IridaClientDetails.CLIENT_ID_CONSTRAINT_NAME)) {
-				errors.put("clientId", messageSource.getMessage("client.add.clientId.exists", null, locale));
-			}
-		} catch (ConstraintViolationException ex) {
-			errors.putAll(getErrorsFromViolationException(ex));
-		}
-
-		if (!errors.isEmpty()) {
-			model.addAttribute("errors", errors);
-
-			logger.debug("Client Details couldn't be created.");
-
-			model.addAttribute("given_clientId", client.getClientId());
-			model.addAttribute("given_tokenValidity", client.getAccessTokenValiditySeconds());
-			if (scope_write.equals("write")) {
-				model.addAttribute("given_scope_write", scope_write);
-			}
-
-			if (scope_read.equals("read")) {
-				model.addAttribute("given_scope_read", scope_read);
-			}
-
+		} catch (RuntimeException ex) {
+			handleCreateUpdateException(ex, model, locale, scope_write, scope_read, client.getClientId(),
+					client.getAccessTokenValiditySeconds());
 			responsePage = getAddClientPage(model);
 		}
 
@@ -321,5 +400,58 @@ public class ClientsController extends BaseController {
 		// 6. Create string.
 		Joiner joiner = Joiner.on("");
 		return joiner.join(pwdArray);
+	}
+
+	/**
+	 * Handle the errors that might occur when creating or updating
+	 * {@link IridaClientDetails}
+	 * 
+	 * @param caughtException
+	 *            The exception that was thrown when creating or updating
+	 * @param model
+	 *            Model for the view to display errors
+	 * @param locale
+	 *            Locale of the logged in user
+	 * @param scope_write
+	 *            The value entered for scope_write
+	 * @param scope_read
+	 *            The value entered for scope_read
+	 * @param clientId
+	 *            The entered client ID
+	 * @param accesstokenValidity
+	 *            The entered accesstokenValidity
+	 * @return The number of errors that were found
+	 */
+	private int handleCreateUpdateException(RuntimeException caughtException, Model model, Locale locale,
+			String scope_write, String scope_read, String clientId, Integer accesstokenValidity) {
+		Map<String, Object> errors = new HashMap<>();
+
+		try {
+			throw caughtException;
+		} catch (DataIntegrityViolationException ex) {
+			if (ex.getMessage().contains(IridaClientDetails.CLIENT_ID_CONSTRAINT_NAME)) {
+				errors.put("clientId", messageSource.getMessage("client.add.clientId.exists", null, locale));
+			}
+		} catch (ConstraintViolationException ex) {
+			errors.putAll(getErrorsFromViolationException(ex));
+		}
+
+		if (!errors.isEmpty()) {
+			model.addAttribute("errors", errors);
+
+			logger.debug("Client Details couldn't be created or updated.");
+
+			model.addAttribute("given_clientId", clientId);
+			model.addAttribute("given_tokenValidity", accesstokenValidity);
+			if (scope_write.equals("write")) {
+				model.addAttribute("given_scope_write", scope_write);
+			}
+
+			if (scope_read.equals("read")) {
+				model.addAttribute("given_scope_read", scope_read);
+			}
+		}
+
+		return errors.size();
 	}
 }

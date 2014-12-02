@@ -24,6 +24,10 @@ public class ClientDetailsPage extends AbstractPage {
 		get(driver, RELATIVE_URL + "/" + clientId);
 		this.clientId = clientId;
 	}
+	
+	public ClientDetailsPage(WebDriver driver){
+		super(driver);
+	}
 
 	public boolean verifyClient(Long id, String clientId) {
 		logger.trace("Getting table size");
@@ -43,6 +47,10 @@ public class ClientDetailsPage extends AbstractPage {
 		}
 
 		return true;
+	}
+	
+	public String getClientSecret(){
+		return driver.findElement(By.id("client-secret")).getText();
 	}
 
 	public void clickDeleteButton() {

@@ -95,9 +95,9 @@
 
 					</div>
 					<div class="panel-footer text-right">
-						<a type="reset" class="btn btn-default" href="#" th:href="@{/clients}">Cancel</a>
-						<button id="edit-client-submit" type="submit" th:text="#{client.create.button}"
-						        class="btn btn-primary submit">Create User
+						<a type="reset" class="btn btn-default" href="#" th:href="@{/clients/{id}(id=${client.id})}">Cancel</a>
+						<button id="edit-client-submit" type="submit" th:text="#{client.edit.button}"
+						        class="btn btn-primary submit">_EDIT_CLIENT_
 						</button>
 					</div>
 				</section>
@@ -106,7 +106,7 @@
 	</div>
 </main>
 
-<th:block layout:fragment="scripts" th:inline="javascript">
+<th:block layout:fragment="pageScripts" th:inline="javascript">
 	<script th:src="@{/resources/bower_components/select2/select2.min.js}"
 	        src="/resources/bower_components/select2/select2.min.js"></script>
 	<script type="text/javascript">
