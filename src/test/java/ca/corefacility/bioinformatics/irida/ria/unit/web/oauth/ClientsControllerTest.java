@@ -12,9 +12,11 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -29,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.components.DataTable;
 import ca.corefacility.bioinformatics.irida.ria.web.oauth.ClientsController;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 public class ClientsControllerTest {
@@ -60,7 +63,7 @@ public class ClientsControllerTest {
 
 		when(clientDetailsService.read(clientId)).thenReturn(iridaClientDetails);
 
-		String detailsPage = controller.read(clientId, model, locale);
+		String detailsPage = controller.read(clientId, model);
 
 		assertEquals(ClientsController.CLIENT_DETAILS_PAGE, detailsPage);
 		assertEquals(model.get("client"), iridaClientDetails);
@@ -151,6 +154,89 @@ public class ClientsControllerTest {
 		assertTrue(errors.containsKey("clientId"));
 
 		verify(clientDetailsService).create(client);
+	}
+
+	@Test
+	public void testGetEditPage() {
+		IridaClientDetails client = new IridaClientDetails();
+		client.setAuthorizedGrantTypes(ImmutableSet.of("password"));
+		client.setScope(ImmutableSet.of("read"));
+		Long id = 1l;
+		client.setId(id);
+		ExtendedModelMap model = new ExtendedModelMap();
+
+		when(clientDetailsService.read(id)).thenReturn(client);
+
+		String editPage = controller.getEditPage(id, model);
+
+		assertEquals(ClientsController.EDIT_CLIENT_PAGE, editPage);
+		assertTrue(model.containsAttribute("client"));
+		assertTrue(model.containsAttribute("given_scope_read"));
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testSubmitEditClient() {
+		IridaClientDetails client = new IridaClientDetails();
+		Long id = 1l;
+		client.setId(id);
+		ExtendedModelMap model = new ExtendedModelMap();
+		String scope_read = "read";
+
+		when(clientDetailsService.read(id)).thenReturn(client);
+		when(clientDetailsService.update(eq(id), any(Map.class))).thenReturn(client);
+
+		String postCreateClient = controller.postEditClient(id, 0, "", scope_read, "", "", model, locale);
+
+		assertEquals("redirect:/clients/1", postCreateClient);
+		@SuppressWarnings("rawtypes")
+		ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
+		verify(clientDetailsService).update(eq(id), captor.capture());
+
+		Map<String, Object> value = captor.getValue();
+		assertTrue(value.containsKey("scope"));
+		Set<String> scope = (Set<String>) value.get("scope");
+		assertTrue(scope.contains(scope_read));
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testSubmitEditClientError() {
+		IridaClientDetails client = new IridaClientDetails();
+		Long id = 1l;
+		client.setId(id);
+		ExtendedModelMap model = new ExtendedModelMap();
+
+		when(clientDetailsService.read(id)).thenReturn(client);
+		DataIntegrityViolationException ex = new DataIntegrityViolationException("Error: "
+				+ IridaClientDetails.CLIENT_ID_CONSTRAINT_NAME);
+
+		when(clientDetailsService.update(eq(id), any(Map.class))).thenThrow(ex);
+
+		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "", model, locale);
+		assertEquals(ClientsController.EDIT_CLIENT_PAGE, postCreateClient);
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testSubmitEditWithClientSecretUpdate() {
+		IridaClientDetails client = new IridaClientDetails();
+		Long id = 1l;
+		client.setId(id);
+		ExtendedModelMap model = new ExtendedModelMap();
+
+		when(clientDetailsService.read(id)).thenReturn(client);
+		when(clientDetailsService.update(eq(id), any(Map.class))).thenReturn(client);
+
+		String postCreateClient = controller.postEditClient(id, 0, "", "", "", "true", model, locale);
+
+		assertEquals("redirect:/clients/1", postCreateClient);
+		@SuppressWarnings("rawtypes")
+		ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
+		verify(clientDetailsService).update(eq(id), captor.capture());
+
+		Map<String, Object> value = captor.getValue();
+		assertTrue(value.containsKey("clientSecret"));
 	}
 
 	@Test

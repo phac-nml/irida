@@ -16,6 +16,7 @@
                 	<h3 class="panel-title pull-left" th:text="#{client.details.title}">_User Details_</h3>
 					<div class="btn-group-xs pull-right">
 				        <div id="remove-btn" class="btn btn-danger" th:text="#{client.remove.button}">Remove</div>
+                        <a href="#" th:href="@{/clients/{id}/edit(id=${client.id})}" id="edit-btn" class="btn btn-default" th:text="#{form.btn.edit}">Edit</a>
                 	</div>
                 </div>
                 <div class="panel-body">
