@@ -7,7 +7,7 @@
 <body>
     <main layout:fragment="page">
     <h1 th:text="#{error.other.title}"></h1>
-    <p th:text="#{error.other.content}">_Not found_</p>
+    <p th:utext="#{error.other.content(${adminEmail})}">_Not found_</p>
     </main>
 </body>
 </html>

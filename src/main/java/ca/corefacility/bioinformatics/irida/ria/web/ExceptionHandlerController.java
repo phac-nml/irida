@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -25,6 +26,9 @@ public class ExceptionHandlerController {
 	private static final String OAUTH_ERROR_PAGE = "errors/oauth_error";
 	private static final Logger logger = LoggerFactory.getLogger(ExceptionHandlerController.class);
 
+	@Value("${mail.server.email}")
+	private String adminEmail;
+
 	/**
 	 * Handle an {@link EntityNotFoundException} and return an http 404
 	 * 
@@ -34,9 +38,11 @@ public class ExceptionHandlerController {
 	 */
 	@ExceptionHandler(EntityNotFoundException.class)
 	@ResponseStatus(value = HttpStatus.NOT_FOUND)
-	public String handleResourceNotFoundException(EntityNotFoundException ex) {
+	public ModelAndView handleResourceNotFoundException(EntityNotFoundException ex) {
 		logger.error(ex.getMessage(), ex);
-		return NOT_FOUND_PAGE;
+		ModelAndView modelAndView = new ModelAndView(NOT_FOUND_PAGE);
+		modelAndView.addObject("adminEmail", adminEmail);
+		return modelAndView;
 	}
 
 	/**
@@ -48,9 +54,11 @@ public class ExceptionHandlerController {
 	 */
 	@ExceptionHandler(AccessDeniedException.class)
 	@ResponseStatus(value = HttpStatus.FORBIDDEN)
-	public String handleAccessDeniedException(AccessDeniedException ex) {
+	public ModelAndView handleAccessDeniedException(AccessDeniedException ex) {
 		logger.error(ex.getMessage(), ex);
-		return ACCESS_DENIED_PAGE;
+		ModelAndView modelAndView = new ModelAndView(ACCESS_DENIED_PAGE);
+		modelAndView.addObject("adminEmail", adminEmail);
+		return modelAndView;
 	}
 
 	/**
@@ -68,6 +76,7 @@ public class ExceptionHandlerController {
 
 		ModelAndView modelAndView = new ModelAndView(OAUTH_ERROR_PAGE);
 		modelAndView.addObject("exception", ex);
+		modelAndView.addObject("adminEmail", adminEmail);
 		return modelAndView;
 	}
 
@@ -81,8 +90,10 @@ public class ExceptionHandlerController {
 	 */
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-	public String handleOtherExceptions(Exception ex) {
+	public ModelAndView handleOtherExceptions(Exception ex) {
 		logger.error(ex.getMessage(), ex);
-		return OTHER_ERROR_PAGE;
+		ModelAndView modelAndView = new ModelAndView(OTHER_ERROR_PAGE);
+		modelAndView.addObject("adminEmail", adminEmail);
+		return modelAndView;
 	}
 }

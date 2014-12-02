@@ -8,7 +8,7 @@
     <main layout:fragment="page">
     <h1 th:text="#{error.oauth.title}">_OAUTH ERROR_</h1>
     <p th:text="#{error.oauth.content(${exception.message})}">_OAUTH ERROR_</p>
-    <p th:text="#{error.contact_admins}">_contact admins_</p>
+    <p th:utext="#{error.contact_admins(${adminEmail})}">_contact admins_</p>
     </main>
 </body>
 </html>
