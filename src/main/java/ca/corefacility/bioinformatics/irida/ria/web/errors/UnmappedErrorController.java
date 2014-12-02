@@ -3,8 +3,10 @@ package ca.corefacility.bioinformatics.irida.ria.web.errors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -25,11 +27,18 @@ public class UnmappedErrorController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping("/404")
+	@RequestMapping(value = "/404", produces = MediaType.TEXT_HTML_VALUE)
 	public ModelAndView basic404() {
 		logger.error("User requested page that does not exist");
 		ModelAndView modelAndView = new ModelAndView(ExceptionHandlerController.NOT_FOUND_PAGE);
 		modelAndView.addObject("adminEmail", adminEmail);
 		return modelAndView;
+	}
+
+	@RequestMapping(value = "/404", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public String basic404Json() {
+		logger.error("User requested page that does not exist via REST API");
+		return "";
 	}
 }
