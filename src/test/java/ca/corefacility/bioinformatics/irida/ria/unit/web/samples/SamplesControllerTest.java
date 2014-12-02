@@ -5,10 +5,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.times;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,15 +23,24 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesController;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
 /**
  * Created by josh on 14-07-30.
@@ -38,12 +51,16 @@ public class SamplesControllerTest {
 	private SamplesController controller;
 	private SampleService sampleService;
 	private SequenceFileService sequenceFileService;
+	private UserService userService;
+	private ProjectService projectService;
 
 	@Before
 	public void setUp() {
 		sampleService = mock(SampleService.class);
 		sequenceFileService = mock(SequenceFileService.class);
-		controller = new SamplesController(sampleService, sequenceFileService);
+		userService = mock(UserService.class);
+		projectService = mock(ProjectService.class);
+		controller = new SamplesController(sampleService, sequenceFileService, userService, projectService);
 	}
 
 	// ************************************************************************************************
@@ -77,17 +94,127 @@ public class SamplesControllerTest {
 		Sample sample = TestDataFactory.constructSample();
 		String organism = "E. coli";
 		String geographicLocationName = "The Forks";
-		Map<String, Object> updatedValues = ImmutableMap.of(SamplesController.ORGANISM, organism, SamplesController.GEOGRAPHIC_LOCATION_NAME, geographicLocationName);
-		Map<String, String> update = ImmutableMap.of(SamplesController.ORGANISM, organism, SamplesController.GEOGRAPHIC_LOCATION_NAME, geographicLocationName);
+		Map<String, Object> updatedValues = ImmutableMap.of(SamplesController.ORGANISM, organism,
+				SamplesController.GEOGRAPHIC_LOCATION_NAME, geographicLocationName);
+		Map<String, String> update = ImmutableMap.of(SamplesController.ORGANISM, organism,
+				SamplesController.GEOGRAPHIC_LOCATION_NAME, geographicLocationName);
 		when(sampleService.update(sample.getId(), updatedValues)).thenReturn(sample);
-		String result = controller
-				.updateSample(model, sample.getId(), null, update);
+		String result = controller.updateSample(model, sample.getId(), null, update);
 		assertEquals("Returns the correct redirect", "redirect:/samples/" + sample.getId(), result);
-		assertTrue("Model should be populated with updated attributes", model.containsAttribute(SamplesController.ORGANISM));
+		assertTrue("Model should be populated with updated attributes",
+				model.containsAttribute(SamplesController.ORGANISM));
 		assertTrue("Model should be populated with updated attributes",
 				model.containsAttribute(SamplesController.GEOGRAPHIC_LOCATION_NAME));
 		assertFalse("Model should not be populated with non-updated attributes",
 				model.containsAttribute(SamplesController.LATITUDE));
+	}
+
+	@Test
+	public void testGetSampleFiles() throws IOException {
+		ExtendedModelMap model = new ExtendedModelMap();
+		String userName = "bob";
+		Principal principal = () -> userName;
+		Long sampleId = 1l;
+		Sample sample = new Sample();
+		SequenceFile file = new SequenceFile(Paths.get("/tmp"));
+		file.setId(2l);
+		User user = new User();
+		Project project = new Project();
+
+		@SuppressWarnings("unchecked")
+		List<Join<Sample, SequenceFile>> files = Lists.newArrayList(new SampleSequenceFileJoin(sample, file));
+
+		when(sampleService.read(sampleId)).thenReturn(sample);
+		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(files);
+		when(userService.getUserByUsername(userName)).thenReturn(user);
+		when(projectService.getProjectsForSample(sample)).thenReturn(
+				Lists.newArrayList(new ProjectSampleJoin(project, sample)));
+		when(userService.getUsersForProject(project)).thenReturn(
+				(Lists.newArrayList(new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER))));
+
+		String sampleFiles = controller.getSampleFiles(model, sampleId, principal);
+
+		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
+		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
+
+		verify(sampleService, times(2)).read(sampleId);
+		verify(sequenceFileService).getSequenceFilesForSample(sample);
+	}
+
+	@Test
+	public void testGetSampleFilesAsAdmin() throws IOException {
+		ExtendedModelMap model = new ExtendedModelMap();
+		String userName = "bob";
+		Principal principal = () -> userName;
+		Long sampleId = 1l;
+		Sample sample = new Sample();
+		SequenceFile file = new SequenceFile(Paths.get("/tmp"));
+		file.setId(2l);
+		User user = new User();
+		user.setSystemRole(Role.ROLE_ADMIN);
+
+		@SuppressWarnings("unchecked")
+		List<Join<Sample, SequenceFile>> files = Lists.newArrayList(new SampleSequenceFileJoin(sample, file));
+
+		when(sampleService.read(sampleId)).thenReturn(sample);
+		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(files);
+		when(userService.getUserByUsername(userName)).thenReturn(user);
+
+		String sampleFiles = controller.getSampleFiles(model, sampleId, principal);
+
+		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
+		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
+
+		verify(sampleService, times(2)).read(sampleId);
+		verify(sequenceFileService).getSequenceFilesForSample(sample);
+		verifyZeroInteractions(projectService);
+	}
+
+	@Test
+	public void testGetSampleFilesNoAccess() throws IOException {
+		ExtendedModelMap model = new ExtendedModelMap();
+		String userName = "bob";
+		Principal principal = () -> userName;
+		Long sampleId = 1l;
+		Sample sample = new Sample();
+		SequenceFile file = new SequenceFile(Paths.get("/tmp"));
+		file.setId(2l);
+		User user = new User();
+		Project project = new Project();
+
+		@SuppressWarnings("unchecked")
+		List<Join<Sample, SequenceFile>> files = Lists.newArrayList(new SampleSequenceFileJoin(sample, file));
+
+		when(sampleService.read(sampleId)).thenReturn(sample);
+		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(files);
+		when(userService.getUserByUsername(userName)).thenReturn(user);
+		when(projectService.getProjectsForSample(sample)).thenReturn(
+				Lists.newArrayList(new ProjectSampleJoin(project, sample)));
+		when(userService.getUsersForProject(project)).thenReturn(
+				(Lists.newArrayList(new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER))));
+
+		String sampleFiles = controller.getSampleFiles(model, sampleId, principal);
+
+		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
+		assertFalse((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
+
+		verify(sampleService, times(2)).read(sampleId);
+		verify(sequenceFileService).getSequenceFilesForSample(sample);
+	}
+
+	@Test
+	public void testRemoveFileFromSample() {
+		Long sampleId = 1l;
+		Long fileId = 2l;
+		Sample sample = new Sample();
+		SequenceFile file = new SequenceFile(Paths.get("/tmp"));
+
+		when(sampleService.read(sampleId)).thenReturn(sample);
+		when(sequenceFileService.read(fileId)).thenReturn(file);
+
+		controller.removeFileFromSample(sampleId, fileId);
+
+		verify(sampleService).removeSequenceFileFromSample(sample, file);
 	}
 
 	// ************************************************************************************************

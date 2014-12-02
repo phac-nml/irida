@@ -109,7 +109,7 @@
 
 <script th:inline="javascript">
 	/*<![CDATA[*/
-	window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.utils', 'restangular', 'irida.notifications']);
+	window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ngAnimate', 'ui.bootstrap', 'ui.utils', 'restangular', 'irida.notifications']);
 	var app = angular.module('irida', window.dependencies)
 			.value('BASE_URL', /*[[@{/}]]*/ '/')
 		// This configures the base url globally for all restangular calls.
@@ -123,6 +123,8 @@
 				paginationConfig.lastText = /*[[#{table.last}]]*/ 'Last';
 				paginationConfig.boundaryLinks = true;
 				paginationConfig.directionLinks = true;
+				paginationConfig.maxSize = 8;
+				paginationConfig.rotate = false;
 			})
 			.directive('ngFocus', [function () {
 				var FOCUS_CLASS = "ng-focused";

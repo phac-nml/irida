@@ -44,8 +44,8 @@
 			<h1 role="heading" th:text="#{project.samples.h1(${project.label})}">__PAGE_TITLE__</h1>
 		</div>
 	</div>
-	<div class="row" ng-controller="SubNavCtrl as subnav">
-		<div class="col-md-9 mrgn-bttm-md">
+	<div class="row mrgn-bttm-md">
+		<div class="col-md-9" ng-controller="SubNavCtrl as subnav">
 			<div class="btn-toolbar">
 				<!-- Sample Selection (Page, All, None) -->
 				<div class="btn-group" dropdown="" is-open="subnav.selection.isopen">
@@ -92,8 +92,7 @@
 					<ul class="dropdown-menu" role="menu">
 						<li>
 							<a id="exportDownloadBtn" href="#" ng-click="subnav.export.download()">
-								<span class="fa fa-fw fa-download"></span>&nbsp; <span th:text="#{form.download}">_Download</span>
-							</a>
+								<span class="fa fa-fw fa-download"></span>&nbsp; <span th:text="#{form.download}">_Download</span> </a>
 						</li>
 						<li th:if="${linkerAvailable}">
 							<a id="exportLinkerBtn" href="#" ng-click="subnav.export.linker()"><span class="fa fa-fw fa-terminal"></span>&nbsp;<span th:text="#{project.samples.export.linker}"></span></a>
@@ -107,7 +106,11 @@
 					</ul>
 				</div>
 			</div>
-
+		</div>
+		<div class="col-md-3">
+			<span class="pull-right selected__counts" ng-controller="SelectedCountCtrl as countCtrl">
+			<span th:text="#{project.samples.table.select-count}"></span>&nbsp;<span id="selected-count" class="badge" ng-bind="countCtrl.count">0</span>
+		</span>
 		</div>
 	</div>
 	<div class="row" data:cg-busy="'{promise: cgPromise,templateUrl:\'' + @{/resources/bower_components/angular-busy/angular-busy.html} + '\', delay: 250, backdrop:true, message: \'' + #{cg-busy.samples.table} +  '\'}'">

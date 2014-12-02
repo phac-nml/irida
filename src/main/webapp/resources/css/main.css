@@ -253,16 +253,6 @@
   right: 8px;
 }
 
-/* line 1, ../../styles/components/_subnav.scss */
-.subnav__highlight {
-  color: white !important;
-  border-radius: 4px;
-  padding: 8px;
-  margin: 5px;
-  background-color: rgba(0, 0, 0, 0.5);
-  border-top: 1px solid rgba(0, 0, 0, 0.4);
-}
-
 /* line 2, ../../styles/_layout.scss */
 main h1 {
   margin-top: 15px;
@@ -298,41 +288,51 @@ iframe.remote-api-frame {
   height: 400px;
 }
 
-/* line 20, ../../styles/main.scss */
+/* line 19, ../../styles/main.scss */
 .login__links a {
   margin-top: 10px;
   display: block;
 }
 
-/* line 26, ../../styles/main.scss */
+/* line 25, ../../styles/main.scss */
 .clickable {
   display: block;
   cursor: pointer;
 }
-/* line 29, ../../styles/main.scss */
+/* line 28, ../../styles/main.scss */
 .clickable span {
   display: inline-block;
 }
 
-/* line 34, ../../styles/main.scss */
+/* line 33, ../../styles/main.scss */
 .nav-tabs li {
   cursor: pointer;
 }
 
-/* line 39, ../../styles/main.scss */
+/* line 38, ../../styles/main.scss */
 #table-filter {
   padding: 0;
 }
-/* line 41, ../../styles/main.scss */
+/* line 40, ../../styles/main.scss */
 #table-filter > div {
   padding: 20px;
 }
-/* line 44, ../../styles/main.scss */
+/* line 43, ../../styles/main.scss */
 #table-filter .filter-btns > button {
   margin-top: 33px;
 }
 
-/* line 49, ../../styles/main.scss */
+/* line 48, ../../styles/main.scss */
+.selected__counts {
+  color: white !important;
+  border-radius: 4px;
+  padding: 4px 8px 6px 8px;
+  margin: 5px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-top: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+/* line 57, ../../styles/main.scss */
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer;
 }
