@@ -10,7 +10,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -44,21 +43,20 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectMetadataPageIT {
-	private final String PAGE_TITLE = "IRIDA Platform - project - Metadata";
-	private final Long PROJECT_ID_OWNER = 1L;
-	private final Long PROJECT_ID_COLLABORATOR = 6L;
-	private final String PROJECT_NAME = "project";
-	private final String PROJECT_DESCRIPTION = "This is an interesting project description.";
-	private final String PROJECT_ORGANISM = "E. coli";
-	private final String PROJECT_REMOTE_URL = "http://google.ca";
+	private final String PAGE_TITLE = "IRIDA Platform - project2 - Metadata";
+	private final Long PROJECT_ID_AS_OWNER = 2L;
+	private final Long PROJECT_ID_AS_COLLABORATOR = 1L;
+	private final String PROJECT_NAME = "project2";
+	private final String PROJECT_DESCRIPTION = "This is another interesting project description.";
+	private final String PROJECT_ORGANISM = "Salmonella";
+	private final String PROJECT_REMOTE_URL = "http://salmonella-wiki.ca";
 
 	private WebDriver driver;
 	private ProjectMetadataPage page;
 
 	@Before
 	public void setUp() {
-		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
-		LoginPage.loginAsAdmin(driver);
+		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
 		page = new ProjectMetadataPage(driver);
 	}
 
@@ -73,7 +71,8 @@ public class ProjectMetadataPageIT {
 	@Test
 	@Ignore("Disabled because the user that's logging in is an administrator, so the tests shouldn't work!")
 	public void displaysTheProjectMetaData() {
-		page.goTo(PROJECT_ID_OWNER);
+		LoginPage.loginAsUser(driver);
+		page.goTo(PROJECT_ID_AS_OWNER);
 		assertEquals("Displays the correct page title", PAGE_TITLE, driver.getTitle());
 		assertEquals("Displays the correct project name", PROJECT_NAME, page.getDataProjectName());
 		assertEquals("Displays the correct description", PROJECT_DESCRIPTION, page.getDataProjectDescription());
@@ -82,7 +81,7 @@ public class ProjectMetadataPageIT {
 		assertTrue("Contains edit metadata button", page.hasEditButton());
 
 		// Should not have edit button on project that is not owner of.
-		page.goTo(PROJECT_ID_COLLABORATOR);
+		page.goTo(PROJECT_ID_AS_COLLABORATOR);
 		assertFalse("Should not contain the edit medtadata button if they are only a collaborator",
 				page.hasEditButton());
 	}
