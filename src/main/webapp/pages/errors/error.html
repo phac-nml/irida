@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorator="${themePath + '_page'}">
+<head>
+<title th:text="#{error.other.title}">_Server Error_</title>
+</head>
+<body>
+    <main layout:fragment="page">
+    <h1 th:text="#{error.other.title}"></h1>
+    <p th:utext="#{error.other.content(${adminEmail})}">_Not found_</p>
+    </main>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorator="${themePath + '_page'}">
+<head>
+<title th:text="#{error.denied.title}">_Denied_</title>
+</head>
+<body>
+    <main layout:fragment="page">
+    <h1 th:text="#{error.denied.title}">_Denied_</h1>
+    <p th:text="#{error.denied.content}">_Access is denied_</p>
+    <p th:utext="#{error.contact_admins(${adminEmail})}">_contact admins_</p>
+    </main>
+</body>
+</html>
