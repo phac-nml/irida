@@ -109,7 +109,7 @@
 
 <script th:inline="javascript">
 	/*<![CDATA[*/
-	window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ui.bootstrap', 'ui.utils', 'restangular', 'irida.notifications']);
+	window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ngAnimate', 'ui.bootstrap', 'ui.utils', 'restangular', 'irida.notifications']);
 	var app = angular.module('irida', window.dependencies)
 			.value('BASE_URL', /*[[@{/}]]*/ '/')
 		// This configures the base url globally for all restangular calls.
