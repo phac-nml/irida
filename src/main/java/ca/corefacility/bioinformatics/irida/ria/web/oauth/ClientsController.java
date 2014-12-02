@@ -186,10 +186,9 @@ public class ClientsController extends BaseController {
 		if (scope_read.equals("read")) {
 			scopes.add("read");
 		}
-		if (!scopes.isEmpty()) {
-			updates.put("scope", scopes);
-		}
-
+		
+		updates.put("scope", scopes);
+		
 		if (!Strings.isNullOrEmpty(new_secret)) {
 			String clientSecret = generateClientSecret();
 			updates.put("clientSecret", clientSecret);
