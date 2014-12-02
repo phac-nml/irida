@@ -66,19 +66,21 @@
                             <div id="scope-error" th:if="${#maps.containsKey(errors, 'scope')}"
                                  th:text="${errors.scope}" class="alert alert-warning">_Scope Error_
                             </div>
-                            <div class="checkbox">
-
-                                <label for="scope_read">
-                                    <input type="checkbox" id="scope_read" name="scope_read" th:checked="${given_scope_read}" checked="checked" value="read"/>
-                                    <span th:text="#{client.scope.read}">Read</span>
-                                </label>
+                            <div class="col-md-12">
+                                <div class="checkbox">
+                                    <label for="scope_read">
+                                        <input type="checkbox" id="scope_read" name="scope_read" th:checked="${given_scope_read}" checked="checked" value="read"/>
+                                        <span th:text="#{client.scope.read}">Read</span>
+                                    </label>
+                                </div>
                             </div>
-                            <div class="checkbox">
-
-                                <label for="scope_write">
-                                    <input type="checkbox" id="scope_write" name="scope_write" th:checked="${given_scope_write}" checked="checked" value="write"/>
-                                    <span th:text="#{client.scope.write}">Write</span>
-                                </label>
+                            <div class="col-md-12">
+                                <div class="checkbox">
+                                    <label for="scope_write">
+                                        <input type="checkbox" id="scope_write" name="scope_write" th:checked="${given_scope_write}" checked="checked" value="write"/>
+                                        <span th:text="#{client.scope.write}">Write</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
 
