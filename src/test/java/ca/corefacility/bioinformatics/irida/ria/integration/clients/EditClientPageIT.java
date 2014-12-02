@@ -1,7 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.clients;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -74,6 +75,12 @@ public class EditClientPageIT {
 		ClientDetailsPage detailsPage = new ClientDetailsPage(driver);
 		String newSecret = detailsPage.getClientSecret();
 		assertNotEquals(ORIGINAL_SECRET, newSecret);
+	}
+
+	@Test
+	public void testClientsWithoutScope() {
+		page.editClient(null, false, false, false);
+		assertFalse(page.checkSuccess());
 	}
 
 }

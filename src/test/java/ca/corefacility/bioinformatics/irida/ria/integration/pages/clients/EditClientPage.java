@@ -36,18 +36,11 @@ public class EditClientPage extends AbstractPage {
 			driver.findElement(By.id("new_secret")).click();
 		}
 
-		if (scope_read) {
-			WebElement checkBox = driver.findElement(By.id("scope_read"));
-			if (!checkBox.isSelected()) {
-				checkBox.click();
-			}
-		}
-		if (scope_write) {
-			WebElement checkBox = driver.findElement(By.id("scope_write"));
-			if (!checkBox.isSelected()) {
-				checkBox.click();
-			}
-		}
+		WebElement readCheckbox = driver.findElement(By.id("scope_read"));
+		setCheckbox(scope_read, readCheckbox);
+
+		WebElement writeCheckbox = driver.findElement(By.id("scope_write"));
+		setCheckbox(scope_write, writeCheckbox);
 
 		WebElement submit = driver.findElement(By.id("edit-client-submit"));
 		submit.click();
@@ -58,6 +51,18 @@ public class EditClientPage extends AbstractPage {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	private void setCheckbox(boolean value, WebElement box) {
+		if (value) {
+			if (!box.isSelected()) {
+				box.click();
+			}
+		} else {
+			if (box.isSelected()) {
+				box.click();
+			}
 		}
 	}
 }
