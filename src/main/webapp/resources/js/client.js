@@ -1,4 +1,4 @@
-$(function () {
+(function ($, moment) {
 // get a readable string of the time from a given number of seconds
   function getTimeFrom(seconds) {
     var timeFromEpoch = (new Date().getTime() / 1000) + parseInt(seconds);
@@ -11,4 +11,4 @@ $(function () {
     var text = getTimeFrom($option.text());
     $option.html(text);
   });
-})();
+})(jQuery, moment);
