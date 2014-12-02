@@ -9,7 +9,6 @@
 @import "components/magnific-popup";
 @import "components/noty";
 @import "components/panels";
-@import "components/subnav";
 // Layout
 @import "layout";
 // Pages
@@ -44,6 +43,15 @@
   .filter-btns > button {
     margin-top: 33px;
   }
+}
+
+.selected__counts {
+  color: white !important;
+  border-radius: 4px;
+  padding: 4px 8px 6px 8px;
+  margin: 5px;
+  background-color: rgba(0, 0, 0, .5);
+  border-top: 1px solid rgba(0, 0, 0, .4);
 }
 
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
