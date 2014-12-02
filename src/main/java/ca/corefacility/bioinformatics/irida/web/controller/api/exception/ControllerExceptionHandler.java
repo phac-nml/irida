@@ -38,7 +38,7 @@ import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-@ControllerAdvice
+@ControllerAdvice(basePackages = "ca.corefacility.bioinformatics.irida.web.controller.api")
 public class ControllerExceptionHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);

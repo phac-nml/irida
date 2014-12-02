@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web;
+package ca.corefacility.bioinformatics.irida.ria.web.errors;
 
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.slf4j.Logger;
@@ -18,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
-@ControllerAdvice
+@ControllerAdvice(basePackages = "ca.corefacility.bioinformatics.irida.ria.web")
 public class ExceptionHandlerController {
 	public static final String NOT_FOUND_PAGE = "errors/not_found";
 	public static final String ACCESS_DENIED_PAGE = "errors/access_denied";
