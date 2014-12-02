@@ -524,7 +524,7 @@
       vm.uploading = true;
       SamplesService.galaxyUpload(vm.email, vm.name).then(function(data) {
         vm.uploading = false;
-        if(data.result == 'success') {
+        if(data.result === 'success') {
           vm.close();
           // TODO: Create a progress bar to monitor the status of the upload.
         }
