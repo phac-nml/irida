@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -107,6 +108,8 @@ public class WorkspaceServicePhylogenomicsTest {
 	
 	private Join<Sample, SequenceFile> sampleAJoinWithB;
 	
+	private UUID workflowId = UUID.randomUUID();
+	
 	/**
 	 * Sets up variables for testing.
 	 * @throws IOException
@@ -161,7 +164,7 @@ public class WorkspaceServicePhylogenomicsTest {
 				TREE_LABEL, MATRIX_LABEL, TABLE_LABEL);
 		
 		submission = new AnalysisSubmissionPhylogenomics("my analysis",
-			inputFiles, referenceFile, remoteWorkflow);
+			inputFiles, referenceFile, remoteWorkflow, workflowId);
 		
 		workflowHistory = new History();
 		workflowHistory.setId(HISTORY_ID);

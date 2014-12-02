@@ -15,10 +15,10 @@ import javax.xml.bind.annotation.XmlElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WorkflowInput {
 
-	@XmlElement(name="sequenceReadsSingle")
+	@XmlElement(name = "sequenceReadsSingle")
 	private String sequenceReadsSingle;
 
-	@XmlElement(name="reference")
+	@XmlElement(name = "reference")
 	private String reference;
 
 	public WorkflowInput() {
@@ -26,8 +26,12 @@ public class WorkflowInput {
 
 	/**
 	 * Builds a new {@link WorkflowInput} object with the given information.
-	 * @param sequenceReadsSingle  The label to use for a collection of single-end sequence reads.
-	 * @param reference  The label to use for a reference file.
+	 * 
+	 * @param sequenceReadsSingle
+	 *            The label to use for a collection of single-end sequence
+	 *            reads.
+	 * @param reference
+	 *            The label to use for a reference file.
 	 */
 	public WorkflowInput(String sequenceReadsSingle, String reference) {
 		this.sequenceReadsSingle = sequenceReadsSingle;
@@ -38,16 +42,8 @@ public class WorkflowInput {
 		return sequenceReadsSingle;
 	}
 
-	public void setSequenceReadsSingle(String sequenceReadsSingle) {
-		this.sequenceReadsSingle = sequenceReadsSingle;
-	}
-
 	public String getReference() {
 		return reference;
-	}
-
-	public void setReference(String reference) {
-		this.reference = reference;
 	}
 
 	@Override

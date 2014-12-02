@@ -4,9 +4,10 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 /**
- * Defines the structure of a workflow for IRIDA.  The structure consists of a JSON-formatted file
- * that has been exported from Galaxy and which defines the set and execution plan for all tools
- * in the workflow.  An example of this file is given below.
+ * Defines the structure of a workflow for IRIDA. The structure consists of a
+ * JSON-formatted file that has been exported from Galaxy and which defines the
+ * set and execution plan for all tools in the workflow. An example of this file
+ * is given below.
  * 
  * <pre>
  * {
@@ -29,7 +30,9 @@ public class IridaWorkflowStructure {
 
 	/**
 	 * Builds a new {@link IridaWorkflowStructure} with the given information.
-	 * @param workflowFile  The file defining the structure of this workflow.
+	 * 
+	 * @param workflowFile
+	 *            The file defining the structure of this workflow.
 	 */
 	public IridaWorkflowStructure(Path workflowFile) {
 		this.workflowFile = workflowFile;
@@ -37,10 +40,6 @@ public class IridaWorkflowStructure {
 
 	public Path getWorkflowFile() {
 		return workflowFile;
-	}
-
-	public void setWorkflowFile(Path workflowFile) {
-		this.workflowFile = workflowFile;
 	}
 
 	@Override

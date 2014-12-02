@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -64,6 +65,8 @@ public class AnalysisSubmissionRepositoryIT {
 
 	@Autowired
 	private SequenceFileRepository sequenceFileRepository;
+	
+	private UUID workflowId = UUID.randomUUID();
 
 	private AnalysisSubmissionPhylogenomics analysisSubmission;
 	private AnalysisSubmissionPhylogenomics analysisSubmission2;
@@ -94,12 +97,12 @@ public class AnalysisSubmissionRepositoryIT {
 		assertNotNull(remoteWorkflow);
 
 		analysisSubmission = new AnalysisSubmissionPhylogenomics(analysisName, sequenceFiles,
-				referenceFile, remoteWorkflow);
+				referenceFile, remoteWorkflow, workflowId);
 		analysisSubmission.setRemoteAnalysisId(analysisId);
 		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTING);
 		
 		analysisSubmission2 = new AnalysisSubmissionPhylogenomics(analysisName2, sequenceFiles2,
-				referenceFile, remoteWorkflow);
+				referenceFile, remoteWorkflow, workflowId);
 		analysisSubmission2.setRemoteAnalysisId(analysisId2);
 		analysisSubmission2.setAnalysisState(AnalysisState.SUBMITTING);
 	}

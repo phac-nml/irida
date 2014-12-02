@@ -15,19 +15,23 @@ import javax.xml.bind.annotation.XmlAttribute;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WorkflowOutput {
 
-	@XmlAttribute(name="name")
+	@XmlAttribute(name = "name")
 	private String name;
 
-	@XmlAttribute(name="fileName")
+	@XmlAttribute(name = "fileName")
 	private String fileName;
 
 	public WorkflowOutput() {
 	}
 
 	/**
-	 * Defines a new {@link WorkflowOutput} object for descripting the output files of a workflow.
-	 * @param name  The name of the particular output.
-	 * @param fileName  The file name in Galaxy of the output.
+	 * Defines a new {@link WorkflowOutput} object for descripting the output
+	 * files of a workflow.
+	 * 
+	 * @param name
+	 *            The name of the particular output.
+	 * @param fileName
+	 *            The file name in Galaxy of the output.
 	 */
 	public WorkflowOutput(String name, String fileName) {
 		this.name = name;
@@ -38,16 +42,8 @@ public class WorkflowOutput {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public String getFileName() {
 		return fileName;
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
 	}
 
 	@Override
