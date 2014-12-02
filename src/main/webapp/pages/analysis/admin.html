@@ -406,10 +406,8 @@ app.controller('AnalysisTableCtrl', function ($scope, $sce, AnalysisService, bas
 	$scope.onSort = function (sortedBy, sortDir) {
 		$scope.filterCriteria.sortedBy = sortedBy;
 		$scope.filterCriteria.sortDir = sortDir;
-		$scope.filterCriteria.page = 1;
-		$scope.fetchResult().then(function () {
-			$scope.filterCriteria.page = 0;
-		});
+		$scope.filterCriteria.page = 0;
+		$scope.fetchResult();
 	};
 
 	/*[- */
