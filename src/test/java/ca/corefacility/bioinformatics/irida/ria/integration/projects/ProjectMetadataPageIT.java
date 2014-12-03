@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -69,7 +68,6 @@ public class ProjectMetadataPageIT {
 	}
 
 	@Test
-	@Ignore("Disabled because the user that's logging in is an administrator, so the tests shouldn't work!")
 	public void displaysTheProjectMetaData() {
 		LoginPage.loginAsUser(driver);
 		page.goTo(PROJECT_ID_AS_OWNER);
