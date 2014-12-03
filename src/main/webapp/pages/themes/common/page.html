@@ -95,8 +95,6 @@
         src="/resources/bower_components/angular-animate/angular-animate.min.js"></script>
 <script th:src="@{/resources/bower_components/angular-resource/angular-resource.min.js}"
         src="/resources/bower_components/angular-resource/angular-resource.min.js"></script>
-<script th:src="@{/resources/bower_components/angular-sanitize/angular-sanitize.min.js}"
-        src="/resources/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
 <script th:src="@{'/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js'}"
         src="/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
 <script th:src="@{/resources/bower_components/restangular/src/restangular.js}"
@@ -109,7 +107,7 @@
 
 <script th:inline="javascript">
 	/*<![CDATA[*/
-	window.dependencies = _.union(window.dependencies || [], ['ngAria', 'ngResource', 'ngSanitize', 'ngAnimate', 'ui.bootstrap', 'restangular', 'irida.notifications']);
+	window.dependencies = _.union(window.dependencies || [], ['ngAria', 'ngResource', 'ngAnimate', 'ui.bootstrap', 'restangular', 'irida.notifications']);
 	var interceptor = function ($q, $location) {
 		return {
 			request: function (config) {

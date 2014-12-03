@@ -23,7 +23,6 @@
     "raphael": "2.1.2",
     "bower": "*",
     "angular": "1.3.5",
-    "angular-sanitize": "1.3.5",
     "Bootflat": "2.0.4",
     "json2": "*",
     "html5shiv": "3.7.2",
