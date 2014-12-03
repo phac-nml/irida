@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
@@ -43,6 +44,7 @@ import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultit
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -84,7 +86,7 @@ public class SequenceFileServiceImplIT {
 	private SampleService sampleService;
 	@Autowired
 	private SequencingRunService sequencingRunService;
-	
+
 	@Autowired
 	@Qualifier("sequenceFileBaseDirectory")
 	private Path baseDirectory;
@@ -255,8 +257,16 @@ public class SequenceFileServiceImplIT {
 
 		sf.setFile(sequenceFile);
 		sequenceFileService.createSequenceFileInSample(sf, s);
-		
+
 		SequencingRun mr = sequencingRunService.read(1L);
 		sequencingRunService.addSequenceFileToSequencingRun(mr, sf);
+	}
+
+	@Test
+	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
+	public void testGetSequencefilesForSampleAsSequencer() throws IOException {
+		Sample s = sampleService.read(1L);
+		List<Join<Sample, SequenceFile>> sequenceFilesForSample = sequenceFileService.getSequenceFilesForSample(s);
+		assertEquals(1, sequenceFilesForSample.size());
 	}
 }
