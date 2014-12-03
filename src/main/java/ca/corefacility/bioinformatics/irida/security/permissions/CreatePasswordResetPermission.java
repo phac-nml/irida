@@ -10,8 +10,21 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.user.PasswordResetRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
+/**
+ * permission stating whether a user can create a {@link PasswordReset} for
+ * another given user.
+ * 
+ * Allows a {@link Role#ROLE_ADMIN} to create for anyone, a
+ * {@link Role#ROLE_MANAGER} to create for anyone but a {@link Role#ROLE_ADMIN},
+ * and a {@link Role#ROLE_USER} to create for themselves.
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Component
 public class CreatePasswordResetPermission extends BasePermission<PasswordReset, String> {
+
+	private static final String PERMISSION_PROVIDED = "canCreatePasswordReset";
 
 	private final UserRepository userRepository;
 
@@ -20,8 +33,6 @@ public class CreatePasswordResetPermission extends BasePermission<PasswordReset,
 		super(PasswordReset.class, String.class, repository);
 		this.userRepository = userRepository;
 	}
-
-	private static final String PERMISSION_PROVIDED = "canCreatePasswordReset";
 
 	@Override
 	public String getPermissionProvided() {
