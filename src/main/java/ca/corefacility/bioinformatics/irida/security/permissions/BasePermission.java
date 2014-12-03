@@ -92,11 +92,10 @@ public abstract class BasePermission<DomainObjectType, IdentifierType extends Se
 		DomainObjectType domainObject;
 
 		if (identifierType.isAssignableFrom(targetDomainObject.getClass())) {
-			Long id = (Long) targetDomainObject;
-			logger.trace("Trying to find domain object by id [" + id + "]");
-			domainObject = repository.findOne((IdentifierType) id);
+			logger.trace("Trying to find domain object by id [" + targetDomainObject + "]");
+			domainObject = repository.findOne((IdentifierType) targetDomainObject);
 			if (domainObject == null) {
-				throw new EntityNotFoundException("Could not find entity with id [" + id + "]");
+				throw new EntityNotFoundException("Could not find entity with id [" + targetDomainObject + "]");
 			}
 		} else if (domainObjectType.isAssignableFrom(targetDomainObject.getClass())) {
 			// reflection replacement for instanceof
