@@ -94,7 +94,7 @@
 									<div class="row">
 										<div class="col-md-12 mrgn-bttm-md">
 											<input type="text" class="form-control input-full"
-											       ui-event="{click : 'datepicker.min.open($event)'}"
+											       ng-click="datepicker.min.open($event)"
 											       th:placeholder="#{form.placeholder.date.min}"
 											       th:attr="datepicker-popup=#{datepicker.short}"
 											       ng-model="filterCriteria.minDate"
@@ -104,7 +104,7 @@
 										</div>
 										<div class="col-md-12 mrgn-tp-sm">
 											<input type="text" class="form-control input-full"
-											       ui-event="{click : 'datepicker.max.open($event)'}"
+											       ng-click="datepicker.max.open($event)"
 											       th:placeholder="#{form.placeholder.date.max}"
 											       placeholder="max"
 											       th:attr="datepicker-popup=#{datepicker.short}"
