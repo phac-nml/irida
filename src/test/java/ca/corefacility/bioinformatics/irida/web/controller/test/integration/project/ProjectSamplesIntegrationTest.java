@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.integration.pro
 
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asAdmin;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
+import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asSequencer;
 import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -134,5 +135,23 @@ public class ProjectSamplesIntegrationTest {
 
 		// now confirm that the sample name was updated
 		asUser().expect().body("resource.sampleName", is(updatedName)).when().get(projectSampleUri);
+	}
+
+	@Test
+	public void testReadSampleAsAdmin() {
+		String projectUri = "http://localhost:8080/projects/5";
+		String projectSampleUri = projectUri + "/samples/1";
+
+		asAdmin().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles")).when()
+				.get(projectSampleUri);
+	}
+
+	@Test
+	public void testReadSampleAsSequencer() {
+		String projectUri = "http://localhost:8080/projects/5";
+		String projectSampleUri = projectUri + "/samples/1";
+
+		asSequencer().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles")).when()
+				.get(projectSampleUri);
 	}
 }

@@ -115,7 +115,7 @@
 		<repository>
 			<id>repo.springsource.org</id>
 			<name>repo.springsource.org-releases</name>
-			<url>https://repo.springsource.org/libs-milestone-local</url>
+			<url>https://repo.spring.io/libs-milestone-local</url>
 		</repository>
 		<!-- Use maven central over HTTPS instead of HTTP -->
 		<repository>
