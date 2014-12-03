@@ -75,6 +75,7 @@ public class IridaApiServicesConfig {
 	@Bean
 	public Validator validator() {
 		ResourceBundleMessageSource validatorMessageSource = new ResourceBundleMessageSource();
+		validatorMessageSource.setBasename("ValidationMessages");
 		LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
 		validator.setValidationMessageSource(validatorMessageSource);
 		return validator;
@@ -85,7 +86,7 @@ public class IridaApiServicesConfig {
 		Path path = Paths.get(taxonomyFileLocation.getPath());
 		return new InMemoryTaxonomyService(path);
 	}
-	
+
 	/**
 	 * @return An Executor for handling uploads to Galaxy.
 	 */
@@ -98,7 +99,7 @@ public class IridaApiServicesConfig {
 		taskExecutor.setThreadPriority(Thread.MIN_PRIORITY);
 		return taskExecutor;
 	}
-	
+
 	@Bean
 	public Unmarshaller workflowDescriptionUnmarshaller() {
 		Jaxb2Marshaller jaxb2marshaller = new Jaxb2Marshaller();

@@ -59,7 +59,7 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *            from.
 	 * @return the references to {@link SequenceFile}.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
 	public List<Join<Sample, SequenceFile>> getSequenceFilesForSample(Sample sample);
 
 	/**
