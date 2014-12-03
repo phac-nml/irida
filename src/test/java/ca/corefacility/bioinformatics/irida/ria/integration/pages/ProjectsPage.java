@@ -92,4 +92,8 @@ public class ProjectsPage extends AbstractPage {
 		Wait<WebDriver> wait = new WebDriverWait(driver, 60);
 		wait.until(Ajax.waitForAjax(60000));
 	}
+
+	public void clickCreateProjectLink() {
+		driver.findElement(By.id("newProjectBtn")).click();
+	}
 }

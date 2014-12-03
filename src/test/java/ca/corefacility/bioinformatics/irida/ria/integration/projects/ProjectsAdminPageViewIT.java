@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -45,7 +45,7 @@ public class ProjectsAdminPageViewIT {
 
 	@Before
 	public void setup() {
-		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
 		LoginPage.loginAsAdmin(driver);
 		projectsPage = new ProjectsPage(driver);
 		projectsPage.toAdminProjectsPage();
@@ -63,6 +63,10 @@ public class ProjectsAdminPageViewIT {
 		assertEquals("Projects table should be populated by 5 projects", 5, projectsPage.projectsTableSize());
 		assertTrue("Admin should have checkboxes to select projects",
 				projectsPage.adminShouldBeAbleToSelectViaCheckboxes());
+
+		// Should have a link to create a new project
+		projectsPage.clickCreateProjectLink();
+		assertTrue(driver.getCurrentUrl().contains("/projects/new"));
 	}
 
 	@Test

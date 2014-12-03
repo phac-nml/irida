@@ -10,8 +10,8 @@
 <body>
 <div layout:fragment="page">
     <main class="col-md-12" role="main" property="mainContentOfPage">
-        <h1 th:text="#{projects.title}">Projects</h1>
-        <table id="projectsTable" class="table table-striped table-hover">
+        <h1><span th:text="#{projects.title}">Projects</span><a th:href="@{/projects/new}" href="/projects/new" class="btn btn-default pull-right"  id="newProjectBtn"><span class="fa fa-fw fa-plus"></span>&nbsp;<span th:text="#{projects.btb.create-project}">Create New Project</span></a></h1>
+        <table id="projectsTable" class="table table-hover">
             <thead>
             <tr role="row" th:inline="text">
                 <td><input type="checkbox" id="selectAll"/></td>
@@ -71,7 +71,7 @@
                         "data": "name",
                         'render': function (data, type, row) {
                             var urlBase = /*[[@{/projects/}]]*/ '/projects/';
-                            return '<a href="' + urlBase + row.id + '">' + data + '</a>';
+                            return '<a class="btn btn-default btn-xs" href="' + urlBase + row.id + '">' + data + '</a>';
                         }
                     },
                     {
