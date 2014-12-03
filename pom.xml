@@ -15,7 +15,7 @@
 	</issueManagement>
 
 	<scm>
-		<connection>scm:git:http://irida.corefacility.ca/gitlab/irida/irida.git</connection>
+		<connection>scm:git:http://irida.corefacility.ca/gitlab/irida/irida.git</connection
 		<developerConnection>scm:git:ssh://git@irida.corefacility.ca/gitlab/irida/irida.git</developerConnection>
 		<url>http://irida.corefacility.ca/gitlab/irida/irida</url>
 	</scm>
@@ -53,6 +53,11 @@
 		</developer>
 	</developers>
 	<repositories>
+		<repository>
+			<id>repo.springsource.org</id>
+			<name>repo.springsource.org-releases</name>
+			<url>https://repo.spring.io/libs-milestone-local</url>
+		</repository>
 		<!-- Use maven central over HTTPS instead of HTTP -->
 		<repository>
 			<id>central</id>
