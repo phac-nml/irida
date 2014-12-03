@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -44,14 +44,11 @@ public class EditClientPageIT {
 	private static final String ORIGINAL_SECRET = "xxxxxxxx";
 
 	private WebDriver driver;
-	private EditClientPage page;
 
 	@Before
 	public void setup() {
-		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
 		LoginPage.loginAsAdmin(driver);
-		page = new EditClientPage(driver);
-		page.goToEditPage(1l);
 	}
 
 	@After
@@ -64,12 +61,14 @@ public class EditClientPageIT {
 
 	@Test
 	public void testCreateGoodClient() {
+		EditClientPage page = EditClientPage.goToEditPage(driver, 1L);
 		page.editClient(null, true, true, false);
 		assertTrue(page.checkSuccess());
 	}
 
 	@Test
 	public void testEditClientWithNewSecret() {
+		EditClientPage page = EditClientPage.goToEditPage(driver, 1L);
 		page.editClient(null, true, true, true);
 		assertTrue(page.checkSuccess());
 		ClientDetailsPage detailsPage = new ClientDetailsPage(driver);
@@ -79,6 +78,7 @@ public class EditClientPageIT {
 
 	@Test
 	public void testClientsWithoutScope() {
+		EditClientPage page = EditClientPage.goToEditPage(driver, 1L);
 		page.editClient(null, false, false, false);
 		assertFalse(page.checkSuccess());
 	}

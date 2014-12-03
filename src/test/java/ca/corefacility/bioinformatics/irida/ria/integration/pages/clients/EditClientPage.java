@@ -1,17 +1,33 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.clients;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+
+import com.google.common.base.Strings;
 
 public class EditClientPage extends AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(EditClientPage.class);
+
+	@FindBy(id = "scope_write")
+	private WebElement cbScropeWrite;
+
+	@FindBy(id = "scope_read")
+	private WebElement cbScopeRead;
+
+	@FindBy(id = "new_secret")
+	private WebElement cbNewSecret;
+
+	@FindBy(id = "authorizedGrantTypes")
+	private WebElement authorizedGrantTypes;
+
+	@FindBy(id = "edit-client-submit")
+	private WebElement editClientSubmit;
 
 	public static String SUCCESS_PAGE = "clients/\\d+";
 
@@ -19,31 +35,29 @@ public class EditClientPage extends AbstractPage {
 		super(driver);
 	}
 
-	public void goToEditPage(Long id) {
+	public static EditClientPage goToEditPage(WebDriver driver, Long id) {
 		String url = "clients/" + id + "/edit";
 		logger.trace("Going to edit page for client " + id);
 		get(driver, url);
+		waitForTime(200);
+		return PageFactory.initElements(driver, EditClientPage.class);
 	}
 
 	public void editClient(String grant, boolean scope_read, boolean scope_write, boolean generateClientSecret) {
 
 		if (!Strings.isNullOrEmpty(grant)) {
-			WebElement grantField = driver.findElement(By.id("authorizedGrantTypes"));
-			grantField.sendKeys(grant);
+			authorizedGrantTypes.sendKeys(grant);
 		}
 
 		if (generateClientSecret) {
-			driver.findElement(By.id("new_secret")).click();
+			cbNewSecret.click();
 		}
 
-		WebElement readCheckbox = driver.findElement(By.id("scope_read"));
-		setCheckbox(scope_read, readCheckbox);
+		setCheckbox(scope_read, cbScopeRead);
 
-		WebElement writeCheckbox = driver.findElement(By.id("scope_write"));
-		setCheckbox(scope_write, writeCheckbox);
+		setCheckbox(scope_write, cbScropeWrite);
 
-		WebElement submit = driver.findElement(By.id("edit-client-submit"));
-		submit.click();
+		editClientSubmit.click();
 	}
 
 	public boolean checkSuccess() {
