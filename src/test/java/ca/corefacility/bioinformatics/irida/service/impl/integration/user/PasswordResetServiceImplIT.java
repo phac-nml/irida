@@ -10,7 +10,6 @@ import java.util.Map;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -89,13 +88,6 @@ public class PasswordResetServiceImplIT {
 		User u = userService.loadUserByEmail("manager@nowhere.com");
 		change.put("user_id", u.getId());
 		passwordResetService.update(pr.getId(), change);
-	}
-
-	@Test(expected = AccessDeniedException.class)
-	@WithMockUser(username = "fbristow", roles = "MANAGER")
-	public void testManagerResetForAdmin() {
-		User adminUser = userService.getUserByUsername("tester");
-		passwordResetService.create(new PasswordReset(adminUser));
 	}
 
 	private PasswordReset pw() {
