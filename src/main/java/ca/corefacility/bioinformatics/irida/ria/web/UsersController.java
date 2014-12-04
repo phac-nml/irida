@@ -129,6 +129,8 @@ public class UsersController {
 		// add the user to the model
 		User user = userService.read(userId);
 		model.addAttribute("user", user);
+		
+		User principalUser = userService.getUserByUsername(principal.getName());
 
 		Locale locale = LocaleContextHolder.getLocale();
 
@@ -138,8 +140,10 @@ public class UsersController {
 		model.addAttribute("systemRole", systemRole);
 
 		// check if we should show an edit button
-		boolean canEditUser = canEditUser(principal, user);
+		boolean canEditUser = canEditUser(principalUser, user);
 		model.addAttribute("canEditUser", canEditUser);
+		
+		model.addAttribute("canCreatePasswordReset", PasswordResetController.canCreatePasswordReset(principalUser, user));
 
 		// show the user's projects
 		List<Join<Project, User>> projectsForUser = projectService.getProjectsForUser(user);
@@ -568,11 +572,9 @@ public class UsersController {
 	 *
 	 * @return boolean if the principal can edit the user
 	 */
-	private boolean canEditUser(Principal principal, User user) {
-		User readPrincipal = userService.getUserByUsername(principal.getName());
-
-		boolean principalAdmin = readPrincipal.getAuthorities().contains(Role.ROLE_ADMIN);
-		boolean usersEqual = user.equals(readPrincipal);
+	private boolean canEditUser(User principalUser, User user) {
+		boolean principalAdmin = principalUser.getAuthorities().contains(Role.ROLE_ADMIN);
+		boolean usersEqual = user.equals(principalUser);
 
 		return principalAdmin || usersEqual;
 	}

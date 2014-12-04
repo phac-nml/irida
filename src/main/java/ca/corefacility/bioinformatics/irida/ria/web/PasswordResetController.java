@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
+import java.security.Principal;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Locale;
@@ -271,20 +272,25 @@ public class PasswordResetController {
 	 * Create a new {@link PasswordReset} for the given {@link User}
 	 *
 	 * @param userId
-	 * 		The ID of the {@link User}
+	 *            The ID of the {@link User}
 	 */
 	@RequestMapping("/ajax/create/{userId}")
 	@ResponseBody
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public Map<String, Object> adminNewPasswordReset(@PathVariable Long userId, Locale locale) {
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
+	public Map<String, Object> adminNewPasswordReset(@PathVariable Long userId, Principal principal, Locale locale) {
 		User user = userService.read(userId);
-		createNewPasswordReset(user);
-		return ImmutableMap.of(
-				"success", true,
-				"message", messageSource
-						.getMessage("password.reset.success-message", new Object[] { user.getFirstName() }, locale),
-				"title", messageSource.getMessage("password.reset.success-title", null, locale)
-		);
+		User principalUser = userService.getUserByUsername(principal.getName());
+
+		if (canCreatePasswordReset(principalUser, user)) {
+			createNewPasswordReset(user);
+			return ImmutableMap.of("success", true, "message", messageSource.getMessage(
+					"password.reset.success-message", new Object[] { user.getFirstName() }, locale), "title",
+					messageSource.getMessage("password.reset.success-title", null, locale));
+		}
+
+		return ImmutableMap.of("success", false, "message",
+				messageSource.getMessage("password.reset.error-message", null, locale), "title",
+				messageSource.getMessage("password.reset.error-title", null, locale));
 	}
 
 	/**
@@ -309,6 +315,32 @@ public class PasswordResetController {
 		AnonymousAuthenticationToken anonymousToken = new AnonymousAuthenticationToken("nobody", "nobody",
 				ImmutableList.of(Role.ROLE_ANONYMOUS));
 		SecurityContextHolder.getContext().setAuthentication(anonymousToken);
+	}
+	
+	/**
+	 * Test if a user should be able to click the password reset button
+	 * 
+	 * @param principal
+	 *            The currently logged in principal
+	 * @param user
+	 *            The user being edited
+	 * @return true if the principal can create a password reset for the user
+	 */
+	public static boolean canCreatePasswordReset(User principalUser, User user) {
+		Role userRole = user.getSystemRole();
+		Role principalRole = principalUser.getSystemRole();
+
+		if (principalRole.equals(Role.ROLE_ADMIN)) {
+			return true;
+		} else if (principalRole.equals(Role.ROLE_MANAGER)) {
+			if (userRole.equals(Role.ROLE_ADMIN)) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 }
