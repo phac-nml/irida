@@ -24,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
  * 
  */
 @Component
-public class UpdateReferenceFilePermission extends BasePermission<ReferenceFile> {
+public class UpdateReferenceFilePermission extends BasePermission<ReferenceFile, Long> {
 
 	public static final String PERMISSION_PROVIDED = "canUpdateReferenceFile";
 
@@ -36,7 +36,7 @@ public class UpdateReferenceFilePermission extends BasePermission<ReferenceFile>
 	public UpdateReferenceFilePermission(ReferenceFileRepository referenceFileRepository,
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			ProjectReferenceFileJoinRepository prfRepository) {
-		super(ReferenceFile.class, referenceFileRepository);
+		super(ReferenceFile.class, Long.class, referenceFileRepository);
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
 		this.prfRepository = prfRepository;
