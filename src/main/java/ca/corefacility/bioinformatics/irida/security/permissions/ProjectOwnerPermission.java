@@ -23,7 +23,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
  *
  */
 @Component
-public class ProjectOwnerPermission extends BasePermission<Project> {
+public class ProjectOwnerPermission extends BasePermission<Project, Long> {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectOwnerPermission.class);
 	private static final String PERMISSION_PROVIDED = "isProjectOwner";
 
@@ -36,7 +36,7 @@ public class ProjectOwnerPermission extends BasePermission<Project> {
 	@Autowired
 	public ProjectOwnerPermission(ProjectRepository projectRepository, UserRepository userRepository,
 			ProjectUserJoinRepository pujRepository) {
-		super(Project.class, projectRepository);
+		super(Project.class, Long.class, projectRepository);
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
 	}
