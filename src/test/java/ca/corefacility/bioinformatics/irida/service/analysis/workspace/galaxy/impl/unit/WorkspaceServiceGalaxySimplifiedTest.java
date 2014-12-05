@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.i
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
@@ -101,7 +102,7 @@ public class WorkspaceServiceGalaxySimplifiedTest {
 	private static final String SEQUENCE_FILE_LABEL = "sequence_reads";
 	private static final String REFERENCE_FILE_LABEL = "reference";
 	private static final String SEQUENCE_FILE_ID = "12";
-	// private static final String REFERENCE_FILE_ID = "13";
+	private static final String REFERENCE_FILE_ID = "13";
 
 	private static final String TREE_LABEL = "tree";
 	private static final String MATRIX_LABEL = "snp_matrix";
@@ -251,23 +252,23 @@ public class WorkspaceServiceGalaxySimplifiedTest {
 		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileB)).thenReturn(sampleBJoin);
 		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileC)).thenReturn(sampleCJoin);
 
-		// when(galaxyHistoriesService.fileToHistory(
-		// refFile, InputFileType.FASTA,
-		// workflowHistory)).thenReturn(refDataset);
+		when(galaxyHistoriesService.fileToHistory(refFile, InputFileType.FASTA, workflowHistory))
+				.thenReturn(refDataset);
 		when(galaxyHistoriesService.constructCollection(any(CollectionDescription.class), eq(workflowHistory)))
 				.thenReturn(collectionResponse);
 		when(galaxyWorkflowService.getWorkflowDetails(WORKFLOW_ID)).thenReturn(workflowDetails);
 		when(galaxyWorkflowService.getWorkflowInputId(workflowDetails, SEQUENCE_FILE_LABEL)).thenReturn(
 				SEQUENCE_FILE_ID);
-		// when(galaxyWorkflowService.getWorkflowInputId(
-		// workflowDetails,
-		// REFERENCE_FILE_LABEL)).thenReturn(REFERENCE_FILE_ID);
+		when(galaxyWorkflowService.getWorkflowInputId(workflowDetails, REFERENCE_FILE_LABEL)).thenReturn(
+				REFERENCE_FILE_ID);
 
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
 		PreparedWorkflowGalaxy preparedWorkflow = workflowPreparation.prepareAnalysisFiles(submission);
 		assertEquals("preparedWorflow history id not equal to " + HISTORY_ID, HISTORY_ID,
 				preparedWorkflow.getRemoteAnalysisId());
 		assertNotNull("workflowInputs in preparedWorkflow is null", preparedWorkflow.getWorkflowInputs());
+		assertTrue(preparedWorkflow.getWorkflowInputs().getInputsObject().getInputs().containsKey(REFERENCE_FILE_ID));
+		assertTrue(preparedWorkflow.getWorkflowInputs().getInputsObject().getInputs().containsKey(SEQUENCE_FILE_ID));
 	}
 
 	/**

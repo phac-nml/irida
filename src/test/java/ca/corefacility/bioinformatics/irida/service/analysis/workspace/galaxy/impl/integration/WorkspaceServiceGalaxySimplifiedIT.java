@@ -122,7 +122,7 @@ public class WorkspaceServiceGalaxySimplifiedIT {
 	}
 
 	/**
-	 * Tests out successfully submitting a workflow for execution.
+	 * Tests out successfully preparing workflow input files for execution.
 	 * 
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
