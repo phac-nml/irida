@@ -287,11 +287,11 @@ public class PasswordResetController {
 			response = ImmutableMap.of("success", true, "message", messageSource.getMessage(
 					"password.reset.success-message", new Object[] { user.getFirstName() }, locale), "title",
 					messageSource.getMessage("password.reset.success-title", null, locale));
+		} else {
+			response = ImmutableMap.of("success", false, "message",
+					messageSource.getMessage("password.reset.error-message", null, locale), "title",
+					messageSource.getMessage("password.reset.error-title", null, locale));
 		}
-
-		response = ImmutableMap.of("success", false, "message",
-				messageSource.getMessage("password.reset.error-message", null, locale), "title",
-				messageSource.getMessage("password.reset.error-title", null, locale));
 
 		return response;
 	}
