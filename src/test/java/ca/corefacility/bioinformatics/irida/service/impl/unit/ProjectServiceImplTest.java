@@ -121,6 +121,7 @@ public class ProjectServiceImplTest {
 	public void testAddSampleToProject() {
 		Sample s = new Sample();
 		s.setSampleName("sample");
+		s.setSequencerSampleId("external");
 		s.setId(new Long(2222));
 		Project p = project();
 
@@ -131,7 +132,7 @@ public class ProjectServiceImplTest {
 		Join<Project, Sample> rel = projectService.addSampleToProject(p, s);
 
 		verify(psjRepository).save(join);
-		verifyZeroInteractions(sampleRepository);
+		verify(sampleRepository).getSampleBySequencerSampleId(p, s.getSequencerSampleId());
 
 		assertNotNull(rel);
 		assertEquals(rel.getSubject(), p);
