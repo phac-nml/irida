@@ -13,16 +13,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.history.Revision;
+import org.springframework.data.history.Revisions;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -40,6 +43,7 @@ import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultit
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -59,6 +63,7 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -252,7 +257,7 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test(expected = AccessDeniedException.class)
-	@WithMockUser(username = "user1", roles = "USER")
+	@WithMockUser(username = "user2", roles = "USER")
 	public void testRejectReadProjectAsUserRole() {
 		projectService.read(3L);
 	}
@@ -471,7 +476,72 @@ public class ProjectServiceImplIT {
 
 		projectService.removeReferenceFileFromProject(p, f);
 	}
-	
+
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetAllProjectRevisions() {
+		final String modifiedName = "creates a new revision";
+		final String modifiedDesc = "another new revision";
+		final Project p = projectService.read(1L);
+		projectService.update(p.getId(), ImmutableMap.of("name", modifiedName));
+		projectService.update(p.getId(), ImmutableMap.of("projectDescription", modifiedDesc));
+
+		// reverse the order so that the latest revision is first in the list.
+		final Revisions<Integer, Project> revisions = projectService.findRevisions(1L).reverse();
+		assertEquals("Should have 2 revisions.", 2, revisions.getContent().size());
+
+		final Iterator<Revision<Integer, Project>> iterator = revisions.iterator();
+		final Revision<Integer, Project> mostRecent = iterator.next();
+		assertEquals("most recent revision should have project description change.", modifiedDesc, mostRecent
+				.getEntity().getProjectDescription());
+		assertEquals("most recent revision should also have name changed.", modifiedName, mostRecent.getEntity()
+				.getName());
+
+		final Revision<Integer, Project> secondRecent = iterator.next();
+		assertEquals("second most recent revision should have modified name.", modifiedName, secondRecent.getEntity()
+				.getName());
+		assertNotEquals("second most recent revision should *not* have modified description.", modifiedDesc,
+				secondRecent.getEntity().getProjectDescription());
+	}
+
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetPagedProjectRevisions() {
+		final String modifiedName = "creates a new revision";
+		final String modifiedDesc = "another new revision";
+		final Project p = projectService.read(1L);
+		projectService.update(p.getId(), ImmutableMap.of("name", modifiedName));
+		projectService.update(p.getId(), ImmutableMap.of("projectDescription", modifiedDesc));
+
+		// reverse the order so that the latest revision is first in the list.
+		final Page<Revision<Integer, Project>> revisions = projectService.findRevisions(1L, new PageRequest(1, 1));
+		assertEquals("Should have 2 revisions.", 1, revisions.getContent().size());
+
+		final Revision<Integer, Project> mostRecent = revisions.iterator().next();
+		assertEquals("most recent revision should have project description change.", modifiedDesc, mostRecent
+				.getEntity().getProjectDescription());
+		assertEquals("most recent revision should also have name changed.", modifiedName, mostRecent.getEntity()
+				.getName());
+	}
+
+	@Test(expected = EntityRevisionDeletedException.class)
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetDeletedProjectRevisions() {
+		projectService.update(1L, ImmutableMap.of("name", "some useless new name"));
+		projectService.delete(1L);
+
+		projectService.findRevisions(1L);
+	}
+
+	@Test(expected = EntityRevisionDeletedException.class)
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetPagedDeletedProjectRevisions() {
+		projectService.update(1L, ImmutableMap.of("name", "some useless new name"));
+		projectService.delete(1L);
+
+		projectService.findRevisions(1L, new PageRequest(1, 1));
+	}
+
 	private Project p() {
 		Project p = new Project();
 		p.setName("Project name");
