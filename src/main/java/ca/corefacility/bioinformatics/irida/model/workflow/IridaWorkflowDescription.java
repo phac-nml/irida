@@ -105,6 +105,15 @@ public class IridaWorkflowDescription {
 		return email;
 	}
 
+	/**
+	 * Whether or not this workflow requires a reference file.
+	 * 
+	 * @return True if this workflow requires a reference file, false otherwise.
+	 */
+	public boolean requiresReference() {
+		return getInputs().getReference() != null;
+	}
+
 	public WorkflowInput getInputs() {
 		return inputs;
 	}

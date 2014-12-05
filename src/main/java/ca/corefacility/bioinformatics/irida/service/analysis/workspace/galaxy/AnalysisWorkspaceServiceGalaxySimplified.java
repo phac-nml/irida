@@ -36,7 +36,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhyl
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionReference;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
@@ -246,6 +245,14 @@ public class AnalysisWorkspaceServiceGalaxySimplified implements AnalysisWorkspa
 		checkNotNull(sequenceFilesLabel, "sequenceReadsSingleLabel is null");
 		checkNotNull(referenceFileLabel, "referenceFileLabel is null");
 
+		if (iridaWorkflow.getWorkflowDescription().requiresReference()) {
+			checkArgument(analysisSubmission.getReferenceFile().isPresent(),
+					"workflow requires reference but none defined in submission");
+		} else {
+			checkArgument(!analysisSubmission.getReferenceFile().isPresent(),
+					"workflow does not require a reference and a reference file is set in the submission");
+		}
+
 		String temporaryLibraryName = AnalysisSubmissionPhylogenomics.class.getSimpleName() + "-"
 				+ UUID.randomUUID().toString();
 
@@ -269,29 +276,51 @@ public class AnalysisWorkspaceServiceGalaxySimplified implements AnalysisWorkspa
 		inputs.setWorkflowId(workflowDetails.getId());
 		inputs.setInput(workflowSequenceFileInputId, new WorkflowInputs.WorkflowInput(collectionResponse.getId(),
 				WorkflowInputs.InputSourceType.HDCA));
-		prepareReferenceFile(analysisSubmission, workflowHistory, referenceFileLabel, workflowDetails, inputs);
 
 		String analysisId = workflowHistory.getId();
+
+		if (iridaWorkflow.getWorkflowDescription().requiresReference()) {
+			prepareReferenceFile(analysisSubmission.getReferenceFile().get(), workflowHistory, referenceFileLabel,
+					workflowDetails, inputs);
+		}
 
 		return new PreparedWorkflowGalaxy(analysisId, new WorkflowInputsGalaxy(inputs));
 	}
 
-	private void prepareReferenceFile(AnalysisSubmission analysisSubmission, History workflowHistory,
-			String referenceFileLabel, WorkflowDetails workflowDetails, WorkflowInputs inputs) throws UploadException,
-			GalaxyDatasetException, WorkflowException {
-		if (analysisSubmission instanceof AnalysisSubmissionReference) {
-			AnalysisSubmissionReference submissionReference = (AnalysisSubmissionReference) analysisSubmission;
-			ReferenceFile referenceFile = submissionReference.getReferenceFile();
+	/**
+	 * Prepares a reference file for input to the workflow.
+	 * 
+	 * @param referenceFile
+	 *            The {@link ReferenceFile} for the workflow.
+	 * @param workflowHistory
+	 *            The {@link History} for the workflow.
+	 * @param referenceFileLabel
+	 *            The label for the reference file in the workflow.
+	 * @param workflowDetails
+	 *            The {@link WorkflowDetails} for the workflow.
+	 * @param inputs
+	 *            The {@link WorkflowInputs} object used to setup inputs for the
+	 *            workflow.
+	 * @throws UploadException
+	 *             If there's an exception when uploading files to the workflow
+	 *             engine.
+	 * @throws GalaxyDatasetException
+	 *             If there's an exception with Galaxy datasets.
+	 * @throws WorkflowException
+	 *             If there's an exception with workflow methods.
+	 */
+	private void prepareReferenceFile(ReferenceFile referenceFile, History workflowHistory, String referenceFileLabel,
+			WorkflowDetails workflowDetails, WorkflowInputs inputs) throws UploadException, GalaxyDatasetException,
+			WorkflowException {
 
-			Dataset referenceDataset = galaxyHistoriesService.fileToHistory(referenceFile.getFile(),
-					InputFileType.FASTA, workflowHistory);
+		Dataset referenceDataset = galaxyHistoriesService.fileToHistory(referenceFile.getFile(), InputFileType.FASTA,
+				workflowHistory);
 
-			String workflowReferenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
-					referenceFileLabel);
+		String workflowReferenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
+				referenceFileLabel);
 
-			inputs.setInput(workflowReferenceFileInputId, new WorkflowInputs.WorkflowInput(referenceDataset.getId(),
-					WorkflowInputs.InputSourceType.HDA));
-		}
+		inputs.setInput(workflowReferenceFileInputId, new WorkflowInputs.WorkflowInput(referenceDataset.getId(),
+				WorkflowInputs.InputSourceType.HDA));
 	}
 
 	/**
