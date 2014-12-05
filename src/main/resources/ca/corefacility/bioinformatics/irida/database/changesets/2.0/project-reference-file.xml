@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+	<changeSet id="project-reference-file" author="fbristow">
+
+		<createTable tableName="reference_file">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="createdDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="filePath" type="varchar(255)">
+				<constraints nullable="false" unique="true"
+					uniqueConstraintName="UK_REFERENCE_FILE_FILE_PATH" />
+			</column>
+			<column name="fileRevisionNumber" type="bigint(20)" />
+			<column name="modifiedDate" type="datetime" />
+			<column name="fileLength" type="bigint(20)" />
+		</createTable>
+
+		<createTable tableName="reference_file_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" foreignKeyName="FK_REFERENCE_FILE_REVISION"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="createdDate" type="datetime" />
+			<column name="filePath" type="varchar(255)" />
+			<column name="fileRevisionNumber" type="bigint(20)" />
+			<column name="modifiedDate" type="datetime" />
+			<column name="fileLength" type="bigint(20)" />
+		</createTable>
+
+		<createTable tableName="project_referencefile">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="createdDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="project_id" type="bigint(20)">
+				<constraints foreignKeyName="FK_PROJECT_REFERENCEFILE_PROJECT"
+					referencedColumnNames="id" referencedTableName="project" />
+			</column>
+			<column name="referenceFile_id" type="bigint(20)">
+				<constraints foreignKeyName="FK_PROJECT_REFERENCEFILE_REFERENCEFILE"
+					referencedColumnNames="id" referencedTableName="project" />
+			</column>
+		</createTable>
+
+		<addUniqueConstraint constraintName="UK_PROJECT_REFERENCEFILE"
+			tableName="project_referencefile" columnNames="project_id, referenceFile_id" />
+
+		<createTable tableName="project_referencefile_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" foreignKeyName="FK_PROJECT_REFERENCEFILE_REVISION"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="createdDate" type="datetime" />
+			<column name="project_id" type="bigint(20)" />
+			<column name="referenceFile_id" type="bigint(20)" />
+		</createTable>
+	</changeSet>
+</databaseChangeLog>

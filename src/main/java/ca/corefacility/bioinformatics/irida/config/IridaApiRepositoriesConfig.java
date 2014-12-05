@@ -1,23 +1,18 @@
 package ca.corefacility.bioinformatics.irida.config;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.RevisionListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.env.Environment;
 import org.springframework.data.envers.repository.support.EnversRevisionRepositoryFactoryBean;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -27,8 +22,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import ca.corefacility.bioinformatics.irida.config.data.DataConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.repositories.SequenceFileFilesystem;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.SequenceFileFilesystemImpl;
 import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.UserRevListener;
 
 /**
@@ -40,16 +33,15 @@ import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.Use
 @Configuration
 @EnableTransactionManagement(order = 1000)
 @EnableJpaRepositories(basePackages = "ca.corefacility.bioinformatics.irida.repositories", repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class)
-@Import({ IridaApiPropertyPlaceholderConfig.class, IridaApiJdbcDataSourceConfig.class })
+@Import({ IridaApiPropertyPlaceholderConfig.class, IridaApiJdbcDataSourceConfig.class,
+		IridaApiFilesystemRepositoryConfig.class })
+@EnableJpaAuditing
 public class IridaApiRepositoriesConfig {
-
-	private static final Logger logger = LoggerFactory.getLogger(IridaApiRepositoriesConfig.class);
-
 	@Autowired
 	private DataConfig dataConfig;
 
-	private @Value("${sequence.file.base.directory}")
-	String sequenceFileBaseDirectory;
+	@Autowired
+	private Environment environment;
 
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
@@ -69,23 +61,13 @@ public class IridaApiRepositoriesConfig {
 		return new JpaTransactionManager();
 	}
 
-	@Bean
-	public SequenceFileFilesystem sequenceFileFilesystem() {
-		Path baseDirectory = Paths.get(sequenceFileBaseDirectory);
-		if (!Files.exists(baseDirectory)) {
-			logger.error("Storage directory [" + sequenceFileBaseDirectory + "] for SequenceFiles does not exist!");
-			System.exit(1);
-		}
-		return new SequenceFileFilesystemImpl(baseDirectory);
-	}
-
 	@Bean(initMethod = "initialize")
 	public RevisionListener revisionListener() {
 		return new UserRevListener();
 	}
-	
+
 	@Bean
-	public AuditReader auditReader(EntityManagerFactory entityManagerFactory){
+	public AuditReader auditReader(EntityManagerFactory entityManagerFactory) {
 		return AuditReaderFactory.get(entityManagerFactory.createEntityManager());
 	}
 }

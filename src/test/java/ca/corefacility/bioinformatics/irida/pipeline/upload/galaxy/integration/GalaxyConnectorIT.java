@@ -18,12 +18,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
-import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
-import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyConnector;
 
@@ -34,9 +30,7 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
-	IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class,
-	IridaApiTestMultithreadingConfig.class, NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class  })
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class})
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
@@ -45,6 +39,9 @@ public class GalaxyConnectorIT {
 	@Autowired
 	private LocalGalaxy localGalaxy;
 
+	/**
+	 * Sets up information for Galaxy connector tests.
+	 */
 	@Before
 	public void setup() {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());

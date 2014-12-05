@@ -12,10 +12,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.model.MiseqRun;
-import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 /**
@@ -60,39 +59,19 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *            from.
 	 * @return the references to {@link SequenceFile}.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
 	public List<Join<Sample, SequenceFile>> getSequenceFilesForSample(Sample sample);
 
 	/**
 	 * Get a {@link List} of {@link SequenceFile} references for a specific
-	 * {@link MiseqRun}.
+	 * {@link SequencingRun}.
 	 * 
-	 * @param miseqRun
-	 *            the {@link MiseqRun} to get the {@link SequenceFile}
+	 * @param sequencingRun
+	 *            the {@link SequencingRun} to get the {@link SequenceFile}
 	 *            references from.
 	 * @return the references to {@link SequenceFile}.
 	 */
-	public Set<SequenceFile> getSequenceFilesForMiseqRun(MiseqRun miseqRun);
-
-	/**
-	 * Add an {@link OverrepresentedSequence} to a {@link SequenceFile}.
-	 * 
-	 * @param sequenceFile
-	 * @param sequence
-	 */
-	public void addOverrepresentedSequenceToSequenceFile(SequenceFile sequenceFile, OverrepresentedSequence sequence);
-
-	/**
-	 * Update a {@link SequenceFile} without calling the file processors.
-	 * 
-	 * @param id
-	 *            the id of the {@link SequenceFile}
-	 * @param updatedFields
-	 *            the fields that were update.
-	 * @return the {@link SequenceFile} that exists in the database.
-	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequenceFile')")
-	public SequenceFile updateWithoutProcessors(Long id, Map<String, Object> updatedFields);
+	public Set<SequenceFile> getSequenceFilesForSequencingRun(SequencingRun sequencingRun);
 
 	/**
 	 * {@inheritDoc}

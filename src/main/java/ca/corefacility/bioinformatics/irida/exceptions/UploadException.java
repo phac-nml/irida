@@ -7,7 +7,7 @@ package ca.corefacility.bioinformatics.irida.exceptions;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
-public class UploadException extends Exception {
+public class UploadException extends ExecutionManagerException {
 	private static final long serialVersionUID = 8934376035189966872L;
 
 	/**

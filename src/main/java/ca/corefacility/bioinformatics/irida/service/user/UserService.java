@@ -1,19 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.user;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.Project;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.user.Group;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.service.CRUDService;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -21,12 +7,45 @@ import java.util.Map;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.user.Group;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.service.CRUDService;
+
 /**
  * Customized service for accessing user objects.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public interface UserService extends CRUDService<Long, User>, UserDetailsService {
+
+	/**
+	 * If a user is an administrator, they are permitted to update any user
+	 * property. If a manager or user is updating an account, they should not be
+	 * permitted to change the role of the user (only administrators can create
+	 * users with role other than Role.ROLE_USER).
+	 */
+	static final String UPDATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
+			+ "(!#properties.containsKey('systemRole') and hasPermission(#uid, 'canUpdateUser'))";
+
+	/**
+	 * A user is permitted to change their own password if they did not
+	 * successfully log in, but the reason for the login failure is that their
+	 * credentials are expired. This permission checks to see that the user is
+	 * authenticated, or that the principle in the security context has an
+	 * expired password.
+	 */
+	static final String CHANGE_PASSWORD_PERMISSIONS = "isFullyAuthenticated() or "
+			+ "(principal instanceof T(ca.corefacility.bioinformatics.irida.model.user.User) and !principal.isCredentialsNonExpired())";
 
 	/**
 	 * {@inheritDoc}
@@ -105,16 +124,6 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	public User changePassword(Long userId, String password);
 
 	/**
-	 * A user is permitted to change their own password if they did not
-	 * successfully log in, but the reason for the login failure is that their
-	 * credentials are expired. This permission checks to see that the user is
-	 * authenticated, or that the principle in the security context has an
-	 * expired password.
-	 */
-	static final String CHANGE_PASSWORD_PERMISSIONS = "isFullyAuthenticated() or "
-			+ "(principal instanceof T(ca.corefacility.bioinformatics.irida.model.user.User) and !principal.isCredentialsNonExpired())";
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize(CREATE_USER_PERMISSIONS)
@@ -135,15 +144,6 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	public User update(Long uid, Map<String, Object> properties);
 
 	/**
-	 * If a user is an administrator, they are permitted to update any user
-	 * property. If a manager or user is updating an account, they should not be
-	 * permitted to change the role of the user (only administrators can create
-	 * users with role other than Role.ROLE_USER).
-	 */
-	static final String UPDATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
-			+ "(!#properties.containsKey('systemRole') and hasPermission(#uid, 'canUpdateUser'))";
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasRole('ROLE_MANAGER')")
@@ -154,7 +154,6 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 */
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public Iterable<User> findAll();
-	
 
 	/**
 	 * Get the set of {@link User} that belong to a {@link Group}.
@@ -167,4 +166,5 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 *             if the {@link Group} cannot be found.
 	 */
 	public Collection<Join<User, Group>> getUsersForGroup(Group g) throws EntityNotFoundException;
+
 }

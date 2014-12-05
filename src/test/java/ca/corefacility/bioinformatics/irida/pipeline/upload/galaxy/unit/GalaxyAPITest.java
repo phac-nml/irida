@@ -46,17 +46,24 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyFolderPath
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker.UploadEventListener;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.LibraryContentId;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadEventListener;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploaderAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryContentSearch;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrarySearch;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUserSearch;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
+import com.github.jmchilton.blend4j.galaxy.RolesClient;
+import com.github.jmchilton.blend4j.galaxy.UsersClient;
 import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
+import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.github.jmchilton.blend4j.galaxy.beans.User;
@@ -77,12 +84,22 @@ public class GalaxyAPITest {
 	@Mock
 	private LibrariesClient librariesClient;
 	@Mock
+	private RolesClient rolesClient;
+	@Mock
+	private UsersClient usersClient;
+	@Mock
 	private ClientResponse okayResponse;
 	@Mock
 	private ClientResponse invalidResponse;
 
 	@Mock
-	private GalaxySearch galaxySearch;
+	private GalaxyLibrarySearch galaxySearch;
+	@Mock
+	private GalaxyLibraryContentSearch galaxyLibraryContentSearch;
+	@Mock
+	private GalaxyRoleSearch galaxyRoleSearch;
+	@Mock
+	private GalaxyUserSearch galaxyUserSearch;
 	@Mock
 	private GalaxyLibraryBuilder galaxyLibrary;
 	
@@ -115,11 +132,13 @@ public class GalaxyAPITest {
 			"references");
 	final private GalaxyFolderPath illuminaFolderPath = new GalaxyFolderPath(
 			"/illumina_reads");
+	LibraryContentId illuminaContentId = new LibraryContentId(libraryId, illuminaFolderPath);
 	final private GalaxyFolderPath referencesFolderPath = new GalaxyFolderPath(
 			"/references");
+	LibraryContentId referencesContentId = new LibraryContentId(libraryId, referencesFolderPath);
 	final private String galaxyURL = "http://localhost/";
 
-	private GalaxyAPI workflowRESTAPI;
+	private GalaxyUploaderAPI workflowRESTAPI;
 	private Map<String, LibraryContent> libraryMap;
 	private Path dataFile1;
 	private Path dataFile2;
@@ -147,11 +166,13 @@ public class GalaxyAPITest {
 		when(galaxyInstance.getApiKey()).thenReturn(realAdminAPIKey);
 		when(galaxyInstance.getLibrariesClient()).thenReturn(librariesClient);
 		when(galaxyInstance.getGalaxyUrl()).thenReturn(galaxyURL);
+		when(galaxyInstance.getRolesClient()).thenReturn(rolesClient);
+		when(galaxyInstance.getUsersClient()).thenReturn(usersClient);
 
-		when(galaxySearch.galaxyUserExists(realAdminEmail)).thenReturn(true);
+		when(galaxyUserSearch.exists(realAdminEmail)).thenReturn(true);
 
-		workflowRESTAPI = new GalaxyAPI(galaxyInstance, realAdminEmail,
-				galaxySearch, galaxyLibrary);
+		workflowRESTAPI = new GalaxyUploaderAPI(galaxyInstance, realAdminEmail,
+				galaxySearch, galaxyLibraryContentSearch, galaxyRoleSearch, galaxyUserSearch, galaxyLibrary);
 		workflowRESTAPI.setDataStorage(Uploader.DataStorage.REMOTE);
 
 		// setup files
@@ -193,24 +214,24 @@ public class GalaxyAPITest {
 		realAdminRole.setName(realAdminEmail.getName());
 		realAdminRole.setId(adminRoleId);
 
-		when(galaxySearch.findUserWithEmail(realUserEmail))
+		when(galaxyUserSearch.findById(realUserEmail))
 				.thenReturn(realUser);
-		when(galaxySearch.galaxyUserExists(realUserEmail)).thenReturn(true);
-		when(galaxySearch.findUserRoleWithEmail(realUserEmail)).thenReturn(
+		when(galaxyUserSearch.exists(realUserEmail)).thenReturn(true);
+		when(galaxyRoleSearch.findById(realUserEmail)).thenReturn(
 				realUserRole);
-		when(galaxySearch.userRoleExistsFor(realUserEmail)).thenReturn(true);
-		when(galaxySearch.findLibraryWithId(libraryId)).thenReturn(
+		when(galaxyRoleSearch.exists(realUserEmail)).thenReturn(true);
+		when(galaxySearch.findById(libraryId)).thenReturn(
 				returnedLibrary);
-		when(galaxySearch.findUserRoleWithEmail(realAdminEmail)).thenReturn(
+		when(galaxyRoleSearch.findById(realAdminEmail)).thenReturn(
 				realAdminRole);
-		when(galaxySearch.userRoleExistsFor(realAdminEmail)).thenReturn(true);
+		when(galaxyRoleSearch.exists(realAdminEmail)).thenReturn(true);
 		when(galaxyLibrary.buildEmptyLibrary(libraryName)).thenReturn(
 				returnedLibrary);
 		when(
 				galaxyLibrary.changeLibraryOwner(any(Library.class),
 						eq(realUserEmail), eq(realAdminEmail))).thenReturn(
 				returnedLibrary);
-		when(galaxySearch.libraryContentAsMap(libraryId))
+		when(galaxyLibraryContentSearch.libraryContentAsMap(libraryId))
 				.thenReturn(libraryMap);
 	}
 
@@ -240,22 +261,22 @@ public class GalaxyAPITest {
 		realAdminRole.setName(realAdminEmail.getName());
 		realAdminRole.setId(adminRoleId);
 
-		when(galaxySearch.findUserWithEmail(realUserEmail))
+		when(galaxyUserSearch.findById(realUserEmail))
 				.thenReturn(realUser);
-		when(galaxySearch.galaxyUserExists(realUserEmail))
+		when(galaxyUserSearch.exists(realUserEmail))
 			.thenReturn(true);
-		when(galaxySearch.findUserRoleWithEmail(realUserEmail)).thenReturn(
+		when(galaxyRoleSearch.findById(realUserEmail)).thenReturn(
 				realUserRole);
-		when(galaxySearch.userRoleExistsFor(realUserEmail)).thenReturn(true);
-		when(galaxySearch.findLibraryWithId(libraryId)).thenReturn(
+		when(galaxyRoleSearch.exists(realUserEmail)).thenReturn(true);
+		when(galaxySearch.findById(libraryId)).thenReturn(
 				existingLibrary);
-		when(galaxySearch.findUserRoleWithEmail(realAdminEmail)).thenReturn(
+		when(galaxyRoleSearch.findById(realAdminEmail)).thenReturn(
 				realAdminRole);
-		when(galaxySearch.userRoleExistsFor(realAdminEmail)).thenReturn(true);
-		when(galaxySearch.findLibraryWithName(libraryName)).thenReturn(
+		when(galaxyRoleSearch.exists(realAdminEmail)).thenReturn(true);
+		when(galaxySearch.findByName(libraryName)).thenReturn(
 				libraries);
-		when(galaxySearch.libraryExists(libraryName)).thenReturn(true);
-		when(galaxySearch.libraryContentAsMap(libraryId))
+		when(galaxySearch.existsByName(libraryName)).thenReturn(true);
+		when(galaxyLibraryContentSearch.libraryContentAsMap(libraryId))
 				.thenReturn(libraryMap);
 	}
 
@@ -312,17 +333,15 @@ public class GalaxyAPITest {
 		illuminaFolder.setFolderId(rootFolderId);
 
 		when(
-				galaxySearch.findLibraryContentWithId(libraryId,
-						illuminaFolderPath)).thenThrow(new NoGalaxyContentFoundException());
+				galaxyLibraryContentSearch.findById(illuminaContentId))
+						.thenThrow(new NoGalaxyContentFoundException());
 		when(
-				galaxySearch.libraryContentExists(libraryId,
-						illuminaFolderPath)).thenReturn(false);
+				galaxyLibraryContentSearch.exists(illuminaContentId)).thenReturn(false);
 		when(
-				galaxySearch.findLibraryContentWithId(libraryId,
-						referencesFolderPath)).thenThrow(new NoGalaxyContentFoundException());
+				galaxyLibraryContentSearch.findById(referencesContentId))
+						.thenThrow(new NoGalaxyContentFoundException());
 		when(
-				galaxySearch.libraryContentExists(libraryId,
-						referencesFolderPath)).thenReturn(false);
+				galaxyLibraryContentSearch.exists(referencesContentId)).thenReturn(false);
 		when(
 				galaxyLibrary.createLibraryFolder(any(Library.class),
 						eq(illuminaFolderName))).thenReturn(illuminaFolder);
@@ -330,7 +349,7 @@ public class GalaxyAPITest {
 				galaxyLibrary.createLibraryFolder(any(Library.class),
 						eq(referencesFolderName))).thenReturn(referencesFolder);
 
-		when(galaxySearch.findLibraryWithId(nonExistentLibraryId)).thenThrow(
+		when(galaxySearch.findById(nonExistentLibraryId)).thenThrow(
 				new NoLibraryFoundException());
 	}
 
@@ -353,17 +372,14 @@ public class GalaxyAPITest {
 		libraryMap.put(illuminaFolderPath.getName(), illuminaContent);
 
 		when(
-				galaxySearch.findLibraryContentWithId(libraryId,
-						illuminaFolderPath)).thenReturn(illuminaContent);
+				galaxyLibraryContentSearch.findById(illuminaContentId)).thenReturn(illuminaContent);
 		when(
-				galaxySearch.libraryContentExists(libraryId,
-						illuminaFolderPath)).thenReturn(true);
+				galaxyLibraryContentSearch.exists(illuminaContentId)).thenReturn(true);
 		when(
-				galaxySearch.findLibraryContentWithId(libraryId,
-						referencesFolderPath)).thenThrow(new NoGalaxyContentFoundException());
+				galaxyLibraryContentSearch.findById(referencesContentId))
+						.thenThrow(new NoGalaxyContentFoundException());
 		when(
-				galaxySearch.libraryContentExists(libraryId,
-						referencesFolderPath)).thenReturn(false);
+				galaxyLibraryContentSearch.exists(referencesContentId)).thenReturn(false);
 		when(
 				galaxyLibrary.createLibraryFolder(any(Library.class),
 						eq(illuminaFolderName))).thenReturn(illuminaFolder);
@@ -392,17 +408,14 @@ public class GalaxyAPITest {
 		illuminaFolder.setFolderId(rootFolderId);
 
 		when(
-				galaxySearch.findLibraryContentWithId(libraryId,
-						illuminaFolderPath)).thenThrow(new NoGalaxyContentFoundException());
+				galaxyLibraryContentSearch.findById(illuminaContentId))
+						.thenThrow(new NoGalaxyContentFoundException());
 		when(
-				galaxySearch.libraryContentExists(libraryId,
-						illuminaFolderPath)).thenReturn(false);
+				galaxyLibraryContentSearch.exists(illuminaContentId)).thenReturn(false);
 		when(
-				galaxySearch.findLibraryContentWithId(libraryId,
-						referencesFolderPath)).thenReturn(referenceContent);
+				galaxyLibraryContentSearch.findById(referencesContentId)).thenReturn(referenceContent);
 		when(
-				galaxySearch.libraryContentExists(libraryId,
-						referencesFolderPath)).thenReturn(true);
+				galaxyLibraryContentSearch.exists(referencesContentId)).thenReturn(true);
 		when(
 				galaxyLibrary.createLibraryFolder(any(Library.class),
 						eq(illuminaFolderName))).thenReturn(illuminaFolder);
@@ -435,17 +448,13 @@ public class GalaxyAPITest {
 		libraryMap.put(illuminaFolderPath.getName(), illuminaContent);
 
 		when(
-				galaxySearch.findLibraryContentWithId(libraryId,
-						illuminaFolderPath)).thenReturn(illuminaContent);
+				galaxyLibraryContentSearch.findById(illuminaContentId)).thenReturn(illuminaContent);
 		when(
-				galaxySearch.libraryContentExists(libraryId,
-						illuminaFolderPath)).thenReturn(true);
+				galaxyLibraryContentSearch.exists(illuminaContentId)).thenReturn(true);
 		when(
-				galaxySearch.findLibraryContentWithId(libraryId,
-						referencesFolderPath)).thenReturn(referenceContent);
+				galaxyLibraryContentSearch.findById(referencesContentId)).thenReturn(referenceContent);
 		when(
-				galaxySearch.libraryContentExists(libraryId,
-						referencesFolderPath)).thenReturn(true);
+				galaxyLibraryContentSearch.exists(referencesContentId)).thenReturn(true);
 		when(
 				galaxyLibrary.createLibraryFolder(any(Library.class),
 						eq(illuminaFolderName))).thenReturn(illuminaFolder);
@@ -503,7 +512,7 @@ public class GalaxyAPITest {
 		
 		URL url = new URL(galaxyURL);
 
-		when(galaxySearch.findUserWithEmail(fakeUserEmail))
+		when(galaxyUserSearch.findById(fakeUserEmail))
 			.thenThrow(new GalaxyUserNotFoundException(fakeUserEmail, url));
 
 		workflowRESTAPI.buildGalaxyLibrary(libraryName, fakeUserEmail);
@@ -522,7 +531,7 @@ public class GalaxyAPITest {
 			UploadException {
 		setupBuildLibrary();
 
-		workflowRESTAPI = new GalaxyAPI(galaxyInstance, nonExistentAdminEmail);
+		workflowRESTAPI = new GalaxyUploaderAPI(galaxyInstance, nonExistentAdminEmail);
 	}
 
 	/**
@@ -534,10 +543,10 @@ public class GalaxyAPITest {
 	@Test(expected = GalaxyUserNoRoleException.class)
 	public void testBuildGalaxyLibraryNoUserRole() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
-		when(galaxySearch.findUserWithEmail(realUserEmail))
+		when(galaxyUserSearch.findById(realUserEmail))
 				.thenReturn(realUser);
-		when(galaxySearch.galaxyUserExists(realUserEmail)).thenReturn(true);
-		when(galaxySearch.userRoleExistsFor(realUserEmail))
+		when(galaxyUserSearch.exists(realUserEmail)).thenReturn(true);
+		when(galaxyRoleSearch.exists(realUserEmail))
 				.thenReturn(false);
 
 		workflowRESTAPI.buildGalaxyLibrary(libraryName, realUserEmail);
@@ -590,10 +599,8 @@ public class GalaxyAPITest {
 		setupUploadSampleToLibrary(samples, sampleFolders, false);
 
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
-		verify(galaxySearch).libraryContentExists(libraryId,
-				illuminaFolderPath);
-		verify(galaxySearch).libraryContentExists(libraryId,
-				referencesFolderPath);
+		verify(galaxyLibraryContentSearch).exists(illuminaContentId);
+		verify(galaxyLibraryContentSearch).exists(referencesContentId);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class),
 				eq(referencesFolderName));
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class),
@@ -638,12 +645,9 @@ public class GalaxyAPITest {
 		setupUploadSampleToLibrary(samples, sampleFolders, false);
 
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
-		verify(galaxySearch).libraryContentExists(libraryId,
-				illuminaFolderPath);
-		verify(galaxySearch).findLibraryContentWithId(libraryId,
-				illuminaFolderPath);
-		verify(galaxySearch).libraryContentExists(libraryId,
-				referencesFolderPath);
+		verify(galaxyLibraryContentSearch).exists(illuminaContentId);
+		verify(galaxyLibraryContentSearch).findById(illuminaContentId);
+		verify(galaxyLibraryContentSearch).exists(referencesContentId);
 		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class),
 				eq(referencesFolderName));
 		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class),
@@ -694,16 +698,18 @@ public class GalaxyAPITest {
 				+ dataFile1.getFileName());
 		fileContent.setId(fileId);
 		libraryMap.put(fileContent.getName(), fileContent);
+		
+		// setup sample file in response to LibrariesClient.showDataset
+		LibraryDataset uploadedDataset  = new LibraryDataset();
+		uploadedDataset.setFileSize(Long.toString(dataFile1.toFile().length()));
+		when(librariesClient.showDataset(libraryId, fileId)).thenReturn(uploadedDataset);
 
 		setupUploadSampleToLibrary(samples, sampleFolders, false);
 
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
-		verify(galaxySearch).libraryContentExists(libraryId,
-				illuminaFolderPath);
-		verify(galaxySearch).findLibraryContentWithId(libraryId,
-				illuminaFolderPath);
-		verify(galaxySearch).libraryContentExists(libraryId,
-				referencesFolderPath);
+		verify(galaxyLibraryContentSearch).exists(illuminaContentId);
+		verify(galaxyLibraryContentSearch).findById(illuminaContentId);
+		verify(galaxyLibraryContentSearch).exists(referencesContentId);
 		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class),
 				eq(referencesFolderName));
 		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class),
@@ -754,16 +760,18 @@ public class GalaxyAPITest {
 				+ dataFile1.getFileName());
 		fileContent.setId(fileId);
 		libraryMap.put(fileContent.getName(), fileContent);
+		
+		// setup sample file in response to LibrariesClient.showDataset
+		LibraryDataset uploadedDataset  = new LibraryDataset();
+		uploadedDataset.setFileSize(Long.toString(dataFile1.toFile().length()));
+		when(librariesClient.showDataset(libraryId, fileId)).thenReturn(uploadedDataset);
 
 		setupUploadSampleToLibrary(samples, sampleFolders, false);
 
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
-		verify(galaxySearch).libraryContentExists(libraryId,
-				illuminaFolderPath);
-		verify(galaxySearch).findLibraryContentWithId(libraryId,
-				illuminaFolderPath);
-		verify(galaxySearch).libraryContentExists(libraryId,
-				referencesFolderPath);
+		verify(galaxyLibraryContentSearch).exists(illuminaContentId);
+		verify(galaxyLibraryContentSearch).findById(illuminaContentId);
+		verify(galaxyLibraryContentSearch).exists(referencesContentId);
 		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class),
 				eq(referencesFolderName));
 		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class),
@@ -804,12 +812,9 @@ public class GalaxyAPITest {
 		setupUploadSampleToLibrary(samples, sampleFolders, false);
 
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
-		verify(galaxySearch).libraryContentExists(libraryId,
-				illuminaFolderPath);
-		verify(galaxySearch).findLibraryContentWithId(libraryId,
-				illuminaFolderPath);
-		verify(galaxySearch).libraryContentExists(libraryId,
-				referencesFolderPath);
+		verify(galaxyLibraryContentSearch).exists(illuminaContentId);
+		verify(galaxyLibraryContentSearch).findById(illuminaContentId);
+		verify(galaxyLibraryContentSearch).exists(referencesContentId);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class),
 				eq(referencesFolderName));
 		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class),
@@ -848,12 +853,10 @@ public class GalaxyAPITest {
 		setupUploadSampleToLibrary(samples, sampleFolders, false);
 
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
-		verify(galaxySearch).libraryContentExists(libraryId,
-				illuminaFolderPath);
+		verify(galaxyLibraryContentSearch).exists(illuminaContentId);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class),
 				eq(illuminaFolderName));
-		verify(galaxySearch).libraryContentExists(libraryId,
-				referencesFolderPath);
+		verify(galaxyLibraryContentSearch).exists(referencesContentId);
 		verify(galaxyLibrary, never()).createLibraryFolder(any(Library.class),
 				eq(referencesFolderName));
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class),
@@ -894,12 +897,10 @@ public class GalaxyAPITest {
 				invalidResponse);
 
 		assertFalse(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
-		verify(galaxySearch).libraryContentExists(libraryId,
-				illuminaFolderPath);
+		verify(galaxyLibraryContentSearch).exists(illuminaContentId);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class),
 				eq(referencesFolderName));
-		verify(galaxySearch).libraryContentExists(libraryId,
-				referencesFolderPath);
+		verify(galaxyLibraryContentSearch).exists(referencesContentId);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class),
 				eq(illuminaFolderName));
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class),
@@ -945,12 +946,10 @@ public class GalaxyAPITest {
 		setupUploadSampleToLibrary(samples, folders, false);
 
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
-		verify(galaxySearch).libraryContentExists(libraryId,
-				illuminaFolderPath);
+		verify(galaxyLibraryContentSearch).exists(illuminaContentId);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class),
 				eq(illuminaFolderName));
-		verify(galaxySearch).libraryContentExists(libraryId,
-				referencesFolderPath);
+		verify(galaxyLibraryContentSearch).exists(referencesContentId);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class),
 				eq(referencesFolderName));
 		verify(galaxyLibrary)
@@ -1037,12 +1036,10 @@ public class GalaxyAPITest {
 		setupUploadSampleToLibrary(samples, folders, false);
 
 		assertTrue(workflowRESTAPI.uploadFilesToLibrary(samples, libraryId));
-		verify(galaxySearch).libraryContentExists(libraryId,
-				illuminaFolderPath);
+		verify(galaxyLibraryContentSearch).exists(illuminaContentId);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class),
 				eq(illuminaFolderName));
-		verify(galaxySearch).libraryContentExists(libraryId,
-				referencesFolderPath);
+		verify(galaxyLibraryContentSearch).exists(referencesContentId);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class),
 				eq(referencesFolderName));
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class),
@@ -1078,22 +1075,20 @@ public class GalaxyAPITest {
 
 		setupUploadSampleToLibrary(samples, folders, false);
 
-		when(galaxySearch.galaxyUserExists(realUserEmail)).thenReturn(true);
-		when(galaxySearch.libraryExists(libraryName)).thenReturn(false);
+		when(galaxyUserSearch.exists(realUserEmail)).thenReturn(true);
+		when(galaxySearch.existsByName(libraryName)).thenReturn(false);
 
 		assertEquals(expectedUploadResult, workflowRESTAPI.uploadSamples(
 				samples, libraryName, realUserEmail));
 		assertTrue(expectedUploadResult.newLocationCreated());
-		verify(galaxySearch).libraryExists(libraryName);
+		verify(galaxySearch).existsByName(libraryName);
 		verify(galaxyLibrary).buildEmptyLibrary(libraryName);
 		verify(galaxyLibrary).changeLibraryOwner(any(Library.class),
 				eq(realUserEmail), eq(realAdminEmail));
-		verify(galaxySearch).libraryContentExists(libraryId,
-				illuminaFolderPath);
+		verify(galaxyLibraryContentSearch).exists(illuminaContentId);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class),
 				eq(illuminaFolderName));
-		verify(galaxySearch).libraryContentExists(libraryId,
-				referencesFolderPath);
+		verify(galaxyLibraryContentSearch).exists(referencesContentId);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class),
 				eq(referencesFolderName));
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class),
@@ -1129,7 +1124,7 @@ public class GalaxyAPITest {
 
 		setupUploadSampleToLibrary(samples, folders, false);
 
-		when(galaxySearch.galaxyUserExists(realUserEmail)).thenReturn(false);
+		when(galaxyUserSearch.exists(realUserEmail)).thenReturn(false);
 		workflowRESTAPI.uploadSamples(samples, libraryName, realUserEmail);
 	}
 
@@ -1160,22 +1155,20 @@ public class GalaxyAPITest {
 
 		setupUploadSampleToLibrary(samples, folders, true);
 
-		when(galaxySearch.galaxyUserExists(realUserEmail)).thenReturn(true);
+		when(galaxyUserSearch.exists(realUserEmail)).thenReturn(true);
 
 		assertEquals(expectedUploadResult, workflowRESTAPI.uploadSamples(
 				samples, libraryName, realUserEmail));
 		assertFalse(expectedUploadResult.newLocationCreated());
-		verify(galaxySearch).libraryExists(libraryName);
-		verify(galaxySearch).findLibraryWithName(libraryName);
+		verify(galaxySearch).existsByName(libraryName);
+		verify(galaxySearch).findByName(libraryName);
 		verify(galaxyLibrary, never()).buildEmptyLibrary(libraryName);
 		verify(galaxyLibrary, never()).changeLibraryOwner(any(Library.class),
 				eq(realUserEmail), eq(realAdminEmail));
-		verify(galaxySearch).libraryContentExists(libraryId,
-				illuminaFolderPath);
+		verify(galaxyLibraryContentSearch).exists(illuminaContentId);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class),
 				eq(illuminaFolderName));
-		verify(galaxySearch).libraryContentExists(libraryId,
-				referencesFolderPath);
+		verify(galaxyLibraryContentSearch).exists(referencesContentId);
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class),
 				eq(referencesFolderName));
 		verify(galaxyLibrary).createLibraryFolder(any(Library.class),
@@ -1272,7 +1265,7 @@ public class GalaxyAPITest {
 	 */
 	@Test
 	public void testIsConnectedValid() {
-		when(galaxySearch.galaxyUserExists(realAdminEmail)).thenReturn(true);
+		when(galaxyUserSearch.exists(realAdminEmail)).thenReturn(true);
 		
 		assertTrue(workflowRESTAPI.isConnected());
 	}
@@ -1282,7 +1275,7 @@ public class GalaxyAPITest {
 	 */
 	@Test
 	public void testIsConnectedInvalid() {
-		when(galaxySearch.galaxyUserExists(realAdminEmail)).thenReturn(false);
+		when(galaxyUserSearch.exists(realAdminEmail)).thenReturn(false);
 		
 		assertFalse(workflowRESTAPI.isConnected());
 	}
@@ -1292,7 +1285,7 @@ public class GalaxyAPITest {
 	 */
 	@Test
 	public void testIsConnectedInvalidException() {
-		when(galaxySearch.galaxyUserExists(realAdminEmail)).thenThrow(new ClientHandlerException());
+		when(galaxyUserSearch.exists(realAdminEmail)).thenThrow(new ClientHandlerException());
 		
 		assertFalse(workflowRESTAPI.isConnected());
 	}
@@ -1302,7 +1295,7 @@ public class GalaxyAPITest {
 	 */
 	@Test
 	public void testIsConnectedInvalidNewException() {
-		when(galaxySearch.galaxyUserExists(realAdminEmail)).thenThrow(uniformInterfaceException);
+		when(galaxyUserSearch.exists(realAdminEmail)).thenThrow(uniformInterfaceException);
 		
 		assertFalse(workflowRESTAPI.isConnected());
 	}

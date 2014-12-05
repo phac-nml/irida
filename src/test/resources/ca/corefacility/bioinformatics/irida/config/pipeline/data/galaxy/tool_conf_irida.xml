@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='utf-8'?>
+<toolbox>
+  <tool file="irida/collection_list_paired.xml" />
+  <tool file="irida/core_pipeline_outputs.xml" />
+</toolbox>

@@ -6,29 +6,30 @@ import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.irida.IridaSample;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.validators.annotations.Latitude;
-import ca.corefacility.bioinformatics.irida.validators.annotations.Longitude;
-import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleName;
+import ca.corefacility.bioinformatics.irida.model.user.Organization;
 import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmission;
-import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmissionOneOf;
 
 /**
  * A biological sample. Each sample may correspond to many files.
@@ -45,15 +46,19 @@ import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmissionOneO
 @Entity
 @Table(name = "sample")
 @Audited
-public class Sample implements IridaThing, Comparable<Sample> {
+@EntityListeners(AuditingEntityListener.class)
+public class Sample implements IridaThing, IridaSample, Comparable<Sample> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
+	@CreatedDate
+	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
+	private final Date createdDate;
 
+	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
@@ -63,14 +68,8 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	 * from the perspective of a user; especially since the external identifier
 	 * is provided entirely externally from the system.
 	 */
-	@NotNull(message = "{sample.external.id.notnull}")
-	@Size(min = 3, message = "{sample.external.id.too.short}")
-	@ValidSampleName
 	private String sequencerSampleId;
 
-	@NotNull(message = "{sample.name.notnull}")
-	@Size(min = 3, message = "{sample.name.too.short}")
-	@ValidSampleName
 	private String sampleName;
 
 	@Lob
@@ -80,45 +79,34 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	 * The most descriptive organism name for this sample (to the species, if
 	 * relevant).
 	 */
-	@NotNull(message = "{sample.organism.notnull}", groups = NCBISubmission.class)
-	@Size(min = 3, message = "{sample.organism.too.short}")
 	private String organism;
 
 	/**
 	 * identification or description of the specific individual from which this
 	 * sample was obtained
 	 */
-	@NotNull(message = "{sample.isolate.notnull}", groups = { NCBISubmission.class, NCBISubmissionOneOf.class })
-	@Size(min = 3, message = "{sample.isolate.too.short}")
 	private String isolate;
 
 	/**
 	 * microbial or eukaryotic strain name
 	 */
-	@NotNull(message = "{sample.strain.name.notnull}", groups = { NCBISubmission.class, NCBISubmissionOneOf.class })
-	@Size(min = 3, message = "{sample.strain.name.too.short}")
 	private String strain;
 
 	/**
 	 * Name of the person who collected the sample.
 	 */
-	@NotNull(message = "{sample.collected.by.notnull}", groups = NCBISubmission.class)
-	@Size(min = 3, message = "{sample.collected.by.too.short}")
 	private String collectedBy;
 
 	/**
 	 * Date of sampling
 	 */
-	@NotNull(message = "{sample.collection.date.notnull}", groups = NCBISubmission.class)
+	@Temporal(TemporalType.DATE)
 	private Date collectionDate;
 
 	/**
 	 * Geographical origin of the sample (country derived from
 	 * http://www.insdc.org/documents/country-qualifier-vocabulary).
 	 */
-	@NotNull(message = "{sample.geographic.location.name.notnull}", groups = NCBISubmission.class)
-	@Pattern(regexp = "\\w+(:\\w+(:\\w+)?)?", message = "{sample.geographic.location.name.pattern}")
-	@Size(min = 3, message = "{sample.geographic.location.name.too.short}")
 	private String geographicLocationName;
 
 	@NotNull(message = "{sample.host.notnull}", groups = NCBISubmission.class)
@@ -129,7 +117,6 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	 * Describes the physical, environmental and/or local geographical source of
 	 * the biological sample from which the sample was derived.
 	 */
-	@NotNull(message = "{sample.isolation.source.notnull}", groups = NCBISubmission.class)
 	@Lob
 	private String isolationSource;
 
@@ -137,12 +124,8 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	 * lat_lon is marked as a *mandatory* attribute in NCBI BioSample, but in
 	 * practice many of the fields are shown as "missing".
 	 */
-	@NotNull(message = "{sample.latitude.notnull}", groups = NCBISubmission.class)
-	@Latitude
 	private String latitude;
 
-	@NotNull(message = "{sample.longitude.notnull}", groups = NCBISubmission.class)
-	@Longitude
 	private String longitude;
 
 	/**
@@ -150,8 +133,6 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	 * description for the proper format and list of allowed institutes,
 	 * http://www.insdc.org/controlled-vocabulary-culturecollection-qualifier
 	 */
-	@NotNull(message = "{sample.culture.collection.notnull}", groups = NCBISubmission.class)
-	@Size(min = 1, message = "{sample.culture.collection.too.short}")
 	private String cultureCollection;
 
 	/**
@@ -222,9 +203,11 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
 	private List<SampleSequenceFileJoin> sequenceFiles;
 
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	private Organization organization;
+
 	public Sample() {
 		createdDate = new Date();
-		modifiedDate = createdDate;
 	}
 
 	/**
@@ -234,6 +217,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	 *            The name of the sample
 	 */
 	public Sample(String sampleName) {
+		this();
 		this.sampleName = sampleName;
 	}
 
@@ -246,6 +230,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	 *            The ID of the sample
 	 */
 	public Sample(String sampleName, String sampleId) {
+		this();
 		this.sampleName = sampleName;
 		this.sequencerSampleId = sampleId;
 	}
@@ -270,7 +255,8 @@ public class Sample implements IridaThing, Comparable<Sample> {
 					&& Objects.equals(pathotype, sample.pathotype) && Objects.equals(serotype, sample.serotype)
 					&& Objects.equals(serovar, sample.serovar)
 					&& Objects.equals(specimenVoucher, sample.specimenVoucher)
-					&& Objects.equals(subgroup, sample.subgroup) && Objects.equals(subtype, sample.subtype);
+					&& Objects.equals(subgroup, sample.subgroup) && Objects.equals(subtype, sample.subtype)
+					&& Objects.equals(organization, sample.organization);
 		}
 
 		return false;
@@ -281,7 +267,7 @@ public class Sample implements IridaThing, Comparable<Sample> {
 		return Objects.hash(id, createdDate, modifiedDate, sequencerSampleId, sampleName, description, organism,
 				isolate, strain, collectedBy, collectionDate, geographicLocationName, host, isolationSource, latitude,
 				longitude, cultureCollection, genotype, passageHistory, pathotype, serotype, serovar, specimenVoucher,
-				subgroup, subtype);
+				subgroup, subtype, organization);
 	}
 
 	@Override
@@ -328,16 +314,6 @@ public class Sample implements IridaThing, Comparable<Sample> {
 	}
 
 	@Override
-	public Date getTimestamp() {
-		return createdDate;
-	}
-
-	@Override
-	public void setTimestamp(Date date) {
-		this.createdDate = date;
-	}
-
-	@Override
 	public Date getModifiedDate() {
 		return modifiedDate;
 	}
@@ -347,28 +323,8 @@ public class Sample implements IridaThing, Comparable<Sample> {
 		this.modifiedDate = modifiedDate;
 	}
 
-	public List<ProjectSampleJoin> getProjects() {
-		return projects;
-	}
-
-	public void setProjects(List<ProjectSampleJoin> projects) {
-		this.projects = projects;
-	}
-
-	public List<SampleSequenceFileJoin> getSequenceFiles() {
-		return sequenceFiles;
-	}
-
-	public void setSequenceFiles(List<SampleSequenceFileJoin> sequenceFiles) {
-		this.sequenceFiles = sequenceFiles;
-	}
-
 	public Date getCreatedDate() {
 		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
 	}
 
 	public Host getHost() {
@@ -521,5 +477,13 @@ public class Sample implements IridaThing, Comparable<Sample> {
 
 	public void setSubtype(String subtype) {
 		this.subtype = subtype;
+	}
+
+	public Organization getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(Organization organization) {
+		this.organization = organization;
 	}
 }

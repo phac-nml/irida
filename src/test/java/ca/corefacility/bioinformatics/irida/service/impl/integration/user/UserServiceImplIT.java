@@ -20,11 +20,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
@@ -36,15 +39,17 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Group;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.GroupService;
@@ -58,7 +63,7 @@ import com.google.common.collect.ImmutableMap;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
-		IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
+		IridaApiNoGalaxyTestConfig.class, IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExcecutionListener.class })
@@ -252,7 +257,7 @@ public class UserServiceImplIT {
 		assertEquals("Username is wrong.", username, u.getUsername());
 	}
 
-	@Test(expected = EntityNotFoundException.class)
+	@Test(expected = UsernameNotFoundException.class)
 	public void testGetUserByInvalidUsername() {
 		String username = "random garbage";
 		userService.getUserByUsername(username);
@@ -334,6 +339,20 @@ public class UserServiceImplIT {
 
 		userService.create(u);
 	}
+	
+	@Test
+	public void testSearchUser(){
+		String search = "Mr";
+		Page<User> searchUser = userService.search(UserSpecification.searchUser(search), 0, 10, Direction.ASC, "id");
+		assertEquals(3,searchUser.getContent().size());
+		for(User u : searchUser){
+			assertTrue(u.getFirstName().contains("Mr"));
+		}
+		
+		search = "User";
+		searchUser = userService.search(UserSpecification.searchUser(search), 0, 10, Direction.ASC, "id");
+		assertEquals(2,searchUser.getContent().size());
+	}
 
 	@Test(expected = AccessDeniedException.class)
 	// @Ignore("This test is disabled because it shows a (possibly) language-level issue with dynamic JDK proxys.")
@@ -354,7 +373,6 @@ public class UserServiceImplIT {
 		u.setEmail("differentUser@nowhere.com");
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-			u.setCreatedDate(sdf.parse("2013-07-18 14:20:19.0"));
 			u.setModifiedDate(sdf.parse("2013-07-18 14:20:19.0"));
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block

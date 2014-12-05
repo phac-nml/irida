@@ -1,8 +1,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.user;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
-
 import ca.corefacility.bioinformatics.irida.model.user.Group;
+import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 
 /**
  * Repository for managing {@link Group} objects.
@@ -10,6 +9,6 @@ import ca.corefacility.bioinformatics.irida.model.user.Group;
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
-public interface GroupRepository extends PagingAndSortingRepository<Group, Long> {
+public interface GroupRepository extends IridaJpaRepository<Group, Long> {
 
 }

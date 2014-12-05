@@ -28,6 +28,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.validation.ConstraintViolationException;
 
@@ -45,12 +52,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
-import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
-import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
-import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
@@ -65,35 +68,36 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectNam
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyAPI;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxySearch;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrarySearch;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploaderAPI;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadFileSizeException;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.ProgressUpdate;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.UploadEventListenerTracker;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
+import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
-import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset.Source;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
+import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 
 /**
- * Integration tests for {@link GalaxyAPI}.  Will use a running instance of Galaxy to test against.
+ * Integration tests for {@link GalaxyUploaderAPI}.  Will use a running instance of Galaxy to test against.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
-		IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class,
-		IridaApiTestMultithreadingConfig.class, NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class  })
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
@@ -102,20 +106,34 @@ public class GalaxyAPIIT {
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyAPIIT.class);
 	
+	private final ExecutorService executor = Executors.newFixedThreadPool(1); 
+	
 	@Autowired
 	private LocalGalaxy localGalaxy;
 
 	@Autowired
-	private GalaxyAPI galaxyAPI;
-
+	private GalaxyUploaderAPI galaxyAPI;
+	
+	private LibrariesClient librariesClient;
+	
 	private List<Path> dataFilesSingle;
+	private List<Path> dataFilesSingleModified;
+	private List<Path> dataFilesSingleNewlineTestNoNewline;
 	private List<Path> dataFilesDouble;
+	
+	private Path dataFile1NewlineTestNoNewline;
 
+	/**
+	 * Sets up variables and files for Galaxy API tests.
+	 * @throws URISyntaxException
+	 */
 	@Before
 	public void setup() throws URISyntaxException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 		galaxyAPI.setDataStorage(Uploader.DataStorage.REMOTE);
-
+		
+		librariesClient = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient();
+		
 		setupDataFiles();
 	}
 
@@ -126,11 +144,24 @@ public class GalaxyAPIIT {
 	private void setupDataFiles() throws URISyntaxException {
 		Path dataFile1 = Paths.get(GalaxyAPIIT.class.getResource(
 				"testData1.fastq").toURI());
+		dataFile1NewlineTestNoNewline = Paths.get(GalaxyAPIIT.class.getResource(
+				"testData1NoNewline.fastq").toURI());
+		
+		// Slightly modified version of dataFile1 to test detection of different files when uploading
+		Path dataFile1Modified = Paths.get(GalaxyAPIIT.class.getResource(
+				"modifiedTestData/testData1.fastq").toURI());
+		
 		Path dataFile2 = Paths.get(GalaxyAPIIT.class.getResource(
 				"testData2.fastq").toURI());
 
 		dataFilesSingle = new ArrayList<Path>();
 		dataFilesSingle.add(dataFile1);
+		
+		dataFilesSingleModified = new ArrayList<Path>();
+		dataFilesSingleModified.add(dataFile1Modified);
+		
+		dataFilesSingleNewlineTestNoNewline = new ArrayList<Path>();
+		dataFilesSingleNewlineTestNoNewline.add(dataFile1NewlineTestNoNewline);
 
 		dataFilesDouble = new ArrayList<Path>();
 		dataFilesDouble.add(dataFile1);
@@ -248,7 +279,7 @@ public class GalaxyAPIIT {
 				persistedHistory.getId(), historyDataset);
 		assertNotNull(historyDetails);
 
-		String dataId = getIdForFileInHistory(filename,
+		String dataId = Util.getIdForFileInHistory(filename,
 				persistedHistory.getId(), galaxyInstance);
 		assertNotNull(dataId);
 
@@ -275,28 +306,37 @@ public class GalaxyAPIIT {
 		
 		return dataset;
 	}
-
+	
 	/**
-	 * Given a file within a Galaxy history, finds the id of that file.
-	 * @param filename  The name of the file within a history.
-	 * @param historyId  The id of the history.
-	 * @param galaxyInstance  The GalaxyInstance to use for connections.
-	 * @return  The id of the file in this history, or null if no such file.
+	 * Method for waiting for a library upload to complete.
+	 * @param datasetLibraryId
+	 * @param libraryId
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 * @throws TimeoutException
 	 */
-	private String getIdForFileInHistory(String filename, String historyId,
-			GalaxyInstance galaxyInstance) {
-		String dataId = null;
-		List<HistoryContents> historyContentsList = galaxyInstance
-				.getHistoriesClient().showHistoryContents(historyId);
+	private void waitForLibraryUpload(String datasetLibraryId, String libraryId) throws InterruptedException, ExecutionException, TimeoutException {
+		final int libraryPollingTime = 5 * 1000;
+		final int libraryTimeout = 5 * 60 * 1000;
+		final String libraryOkState = "ok";
 
-		for (HistoryContents contents : historyContentsList) {
-			if (filename.equals(contents.getName())) {
-				dataId = contents.getId();
-				break;
+		Future<Void> waitForLibraries = executor.submit(new Callable<Void>(){
+			@Override
+			public Void call() throws Exception {
+				LibraryDataset libraryDataset = librariesClient.showDataset(
+						libraryId, datasetLibraryId);
+				while (!libraryOkState.equals(libraryDataset.getState())) {
+					Thread.sleep(libraryPollingTime);
+
+					libraryDataset = librariesClient.showDataset(
+							libraryId, datasetLibraryId);
+				}
+				
+				return null;
 			}
-		}
-
-		return dataId;
+		});
+		
+		waitForLibraries.get(libraryTimeout, TimeUnit.MILLISECONDS);
 	}
 
 	/**
@@ -375,7 +415,7 @@ public class GalaxyAPIIT {
 	@Test(expected = GalaxyConnectException.class)
 	public void testCreateGalaxyAPIInvalidAdmin()
 			throws ConstraintViolationException, UploadException {
-		new GalaxyAPI(localGalaxy.getGalaxyURL(),
+		new GalaxyUploaderAPI(localGalaxy.getGalaxyURL(),
 				localGalaxy.getNonExistentGalaxyAdminName(),
 				localGalaxy.getAdminAPIKey());
 	}
@@ -397,7 +437,7 @@ public class GalaxyAPIIT {
 			wrongAdminAPIKey = "badbadbadbadbadbadbadbadbadbadbaa";
 		}
 
-		new GalaxyAPI(localGalaxy.getGalaxyURL(), localGalaxy.getAdminName(),
+		new GalaxyUploaderAPI(localGalaxy.getGalaxyURL(), localGalaxy.getAdminName(),
 				wrongAdminAPIKey);
 	}
 
@@ -840,7 +880,7 @@ public class GalaxyAPIIT {
 	@Test(expected = GalaxyConnectException.class)
 	public void testGalaxyWrongAddress() throws URISyntaxException,
 			ConstraintViolationException, UploadException {
-		new GalaxyAPI(localGalaxy.getInvalidGalaxyURL(),
+		new GalaxyUploaderAPI(localGalaxy.getInvalidGalaxyURL(),
 				localGalaxy.getAdminName(), localGalaxy.getAdminAPIKey());
 	}
 
@@ -1004,12 +1044,18 @@ public class GalaxyAPIIT {
 	public void testUploadSampleToExistingLibrary() throws URISyntaxException,
 			MalformedURLException, ConstraintViolationException,
 			UploadException, InterruptedException {
-		GalaxySearch galaxySearchAdmin = new GalaxySearch(
-				localGalaxy.getGalaxyInstanceAdmin());
-		GalaxySearch galaxySearchUser1 = new GalaxySearch(
-				localGalaxy.getGalaxyInstanceUser1());
+		GalaxyLibrarySearch galaxySearchAdmin = new GalaxyLibrarySearch(
+				localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient(),
+				localGalaxy.getGalaxyURL());
+		GalaxyRoleSearch galaxyRoleSearchAdmin = new GalaxyRoleSearch(
+				localGalaxy.getGalaxyInstanceAdmin().getRolesClient(),
+				localGalaxy.getGalaxyURL());
+		GalaxyLibrarySearch galaxySearchUser1 = new GalaxyLibrarySearch(
+				localGalaxy.getGalaxyInstanceUser1().getLibrariesClient(),
+				localGalaxy.getGalaxyURL());
 		GalaxyLibraryBuilder galaxyLibrary = new GalaxyLibraryBuilder(
-				localGalaxy.getGalaxyInstanceAdmin(), galaxySearchAdmin);
+				localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient(),
+				galaxyRoleSearchAdmin, localGalaxy.getGalaxyURL());
 		UploadResult expectedUploadResult;
 
 		GalaxyProjectName libraryName = new GalaxyProjectName(
@@ -1026,7 +1072,7 @@ public class GalaxyAPIIT {
 				libraryName, null, localGalaxy.getGalaxyURL().toString());
 
 		// build initial folders within library
-		Library library = galaxySearchUser1.findLibraryWithId(libraryId);
+		Library library = galaxySearchUser1.findById(libraryId);
 		assertNotNull(library);
 		LibraryFolder illuminaFolder = galaxyLibrary.createLibraryFolder(
 				library, new GalaxyFolderName("illumina_reads"));
@@ -1040,12 +1086,12 @@ public class GalaxyAPIIT {
 
 		// user 1 should have access to library
 		List<Library> libraries = galaxySearchUser1
-				.findLibraryWithName(libraryName);
+				.findByName(libraryName);
 		assertEquals("The number of libraries with name " + libraryName
 				+ " is not one", 1, libraries.size());
 
 		// admin should have access to library
-		libraries = galaxySearchAdmin.findLibraryWithName(libraryName);
+		libraries = galaxySearchAdmin.findByName(libraryName);
 		assertEquals("The number of libraries with name " + libraryName
 				+ " is not one", 1, libraries.size());
 
@@ -1123,7 +1169,7 @@ public class GalaxyAPIIT {
 		assertEquals("fastqsanger",datasetData2.getDataType());
 
 		// no duplicate folders or libraries for user1
-		libraries = galaxySearchUser1.findLibraryWithName(libraryName);
+		libraries = galaxySearchUser1.findByName(libraryName);
 		assertEquals("The number of libraries with name " + libraryName
 				+ " is not one", 1, libraries.size());
 		sampleFolderCount = countNumberOfFolderPaths(libraryContents,
@@ -1140,7 +1186,7 @@ public class GalaxyAPIIT {
 				referencesFolderCount);
 
 		// no duplicate libraries for admin
-		libraries = galaxySearchAdmin.findLibraryWithName(libraryName);
+		libraries = galaxySearchAdmin.findByName(libraryName);
 		assertEquals("The number of libraries with name " + libraryName
 				+ " is not one", 1, libraries.size());
 	}
@@ -1156,12 +1202,15 @@ public class GalaxyAPIIT {
 	public void testUploadSampleToExistingLibraryDifferentUsers()
 			throws URISyntaxException, MalformedURLException,
 			ConstraintViolationException, UploadException {
-		GalaxySearch galaxySearchAdmin = new GalaxySearch(
-				localGalaxy.getGalaxyInstanceAdmin());
-		GalaxySearch galaxySearchUser1 = new GalaxySearch(
-				localGalaxy.getGalaxyInstanceUser1());
-		GalaxySearch galaxySearchUser2 = new GalaxySearch(
-				localGalaxy.getGalaxyInstanceUser2());
+		GalaxyLibrarySearch galaxySearchAdmin = new GalaxyLibrarySearch(
+				localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient(),
+				localGalaxy.getGalaxyURL());
+		GalaxyLibrarySearch galaxySearchUser1 = new GalaxyLibrarySearch(
+				localGalaxy.getGalaxyInstanceUser1().getLibrariesClient(),
+				localGalaxy.getGalaxyURL());
+		GalaxyLibrarySearch galaxySearchUser2 = new GalaxyLibrarySearch(
+				localGalaxy.getGalaxyInstanceUser2().getLibrariesClient(),
+				localGalaxy.getGalaxyURL());
 
 		GalaxyProjectName libraryName = new GalaxyProjectName(
 				"testUploadSampleToExistingLibraryDifferentUsers");
@@ -1173,21 +1222,21 @@ public class GalaxyAPIIT {
 		assertNotNull(libraryId);
 
 		// library should be visible to user 1 and admin
-		assertNotNull(galaxySearchUser1.findLibraryWithId(libraryId));
-		assertEquals(1, galaxySearchUser1.findLibraryWithName(libraryName)
+		assertNotNull(galaxySearchUser1.findById(libraryId));
+		assertEquals(1, galaxySearchUser1.findByName(libraryName)
 				.size());
-		assertNotNull(galaxySearchAdmin.findLibraryWithId(libraryId));
-		assertEquals(1, galaxySearchAdmin.findLibraryWithName(libraryName)
+		assertNotNull(galaxySearchAdmin.findById(libraryId));
+		assertEquals(1, galaxySearchAdmin.findByName(libraryName)
 				.size());
 
 		// library should not be visible to user 2
 		try {
-			galaxySearchUser2.findLibraryWithId(libraryId);
+			galaxySearchUser2.findById(libraryId);
 			fail("Library found for user 2");
 		} catch (NoLibraryFoundException e) {}
 		
 		try {
-			galaxySearchUser2.findLibraryWithName(libraryName);
+			galaxySearchUser2.findByName(libraryName);
 			fail("Library found for user 2");
 		} catch (NoLibraryFoundException e) {}
 
@@ -1209,22 +1258,22 @@ public class GalaxyAPIIT {
 				localGalaxy.getUser2Name()));
 
 		// library should be visible to user 1 and admin
-		assertNotNull(galaxySearchUser1.findLibraryWithId(libraryId));
-		assertEquals(1, galaxySearchUser1.findLibraryWithName(libraryName)
+		assertNotNull(galaxySearchUser1.findById(libraryId));
+		assertEquals(1, galaxySearchUser1.findByName(libraryName)
 				.size());
-		assertNotNull(galaxySearchAdmin.findLibraryWithId(libraryId));
-		assertEquals(1, galaxySearchAdmin.findLibraryWithName(libraryName)
+		assertNotNull(galaxySearchAdmin.findById(libraryId));
+		assertEquals(1, galaxySearchAdmin.findByName(libraryName)
 				.size());
 
 		// library should not be visible to user 2 (user 2 shared with user 1,
 		// but did not gain access)
 		try {
-			galaxySearchUser2.findLibraryWithId(libraryId);
+			galaxySearchUser2.findById(libraryId);
 			fail("Library found for user 2");
 		} catch (NoLibraryFoundException e) {}
 		
 		try {
-			galaxySearchUser2.findLibraryWithName(libraryName);
+			galaxySearchUser2.findByName(libraryName);
 			fail("Library found for user 2");
 		} catch (NoLibraryFoundException e) {}
 
@@ -1258,31 +1307,33 @@ public class GalaxyAPIIT {
 	}
 
 	/**
-	 * Tests uploading a sample where one file already is uploaded in Galaxy.
+	 * Tests uploading a sample where one file already is uploaded in Galaxy and successfully skipping over the file.
 	 * @throws URISyntaxException
 	 * @throws MalformedURLException
 	 * @throws ConstraintViolationException
 	 * @throws UploadException
+	 * @throws TimeoutException 
+	 * @throws ExecutionException 
+	 * @throws InterruptedException 
 	 */
 	@Test
-	public void testUploadSampleOneFileAlreadyExists()
+	public void testUploadSampleOneFileAlreadyExistsSuccessSkip()
 			throws URISyntaxException, MalformedURLException,
-			ConstraintViolationException, UploadException {
+			ConstraintViolationException, UploadException, InterruptedException, ExecutionException, TimeoutException {
 		GalaxyProjectName libraryName = new GalaxyProjectName(
-				"testUploadSampleOneFileAlreadyExists");
+				"testUploadSampleOneFileAlreadyExistsSuccessSkip");
 
 		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName(
 				"testData"), dataFilesSingle);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 
+		// remove trailing '/'
 		String localGalaxyURL = localGalaxy
 				.getGalaxyURL()
 				.toString()
 				.substring(0,
-						localGalaxy.getGalaxyURL().toString().length() - 1); // remove
-																				// trailing
-																				// '/'
+						localGalaxy.getGalaxyURL().toString().length() - 1);
 
 		GalaxyUploadResult actualUploadResult = galaxyAPI.uploadSamples(
 				samples, libraryName, localGalaxy.getAdminName());
@@ -1319,6 +1370,11 @@ public class GalaxyAPIIT {
 		assertEquals("file",
 				contentsMap.get("/illumina_reads/testData/testData1.fastq")
 						.getType());
+		
+		LibraryContent datasetContent = contentsMap.get("/illumina_reads/testData/testData1.fastq");
+		
+		// wait for the original library upload to complete.
+		waitForLibraryUpload(datasetContent.getId(), actualLibrary.getId());
 
 		// now attempt to upload dataFilesDouble with two files, only one file
 		// should upload
@@ -1326,10 +1382,11 @@ public class GalaxyAPIIT {
 				dataFilesDouble);
 		samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
-
-		// make sure both libraries are the same
+		
 		actualUploadResult = galaxyAPI.uploadSamples(samples, libraryName,
 				localGalaxy.getAdminName());
+
+		// make sure both libraries are the same
 		assertNotNull(actualUploadResult);
 		assertEquals(libraryName, actualUploadResult.getLocationName());
 		assertEquals(new URL(localGalaxyURL + "/library"),
@@ -1392,6 +1449,141 @@ public class GalaxyAPIIT {
 				"/illumina_reads");
 		assertEquals("More than one copy of /references was created", 1,
 				countReferencesFolder);
+	}
+	
+	/**
+	 * Tests uploading a sample where one file already is uploaded in Galaxy
+	 * (but incomplete upload) and failing to skip over the file.
+	 * 
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 * @throws TimeoutException
+	 * @throws ExecutionException
+	 * @throws InterruptedException
+	 */
+	@Test(expected = LibraryUploadFileSizeException.class)
+	public void testUploadSampleOneFileAlreadyExistsFailSkip() throws URISyntaxException, MalformedURLException,
+			ConstraintViolationException, UploadException, InterruptedException, ExecutionException, TimeoutException {
+		GalaxyProjectName libraryName = new GalaxyProjectName("testUploadSampleOneFileAlreadyExistsFailSkip");
+
+		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName("testData"), dataFilesSingleModified);
+		List<UploadSample> samples = new ArrayList<UploadSample>();
+		samples.add(galaxySample);
+
+		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
+
+		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
+
+		List<LibraryContent> libraryContents = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
+				.getLibraryContents(actualLibrary.getId());
+		Map<String, LibraryContent> contentsMap = fileToLibraryContentMap(libraryContents);
+		LibraryContent datasetContent = contentsMap.get("/illumina_reads/testData/testData1.fastq");
+
+		// wait for the original library upload to complete.
+		waitForLibraryUpload(datasetContent.getId(), actualLibrary.getId());
+
+		// now attempt to upload dataFilesDouble with two files
+		// this should fail since we are uploading a modified version of
+		// testData1.fastq
+		galaxySample = new GalaxySample(new GalaxyFolderName("testData"), dataFilesDouble);
+		samples = new ArrayList<UploadSample>();
+		samples.add(galaxySample);
+
+		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
+	}
+	
+	/**
+	 * Tests uploading a sample where one file already is uploaded in Galaxy
+	 * but did not have a trailing newline and Galaxy added a trailing newline (which Galaxy likes to do but changes file size)
+	 * and I successfully detect this addition and skip re-uploading the file.
+	 * 
+	 * @throws URISyntaxException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 * @throws TimeoutException
+	 * @throws ExecutionException
+	 * @throws InterruptedException
+	 * @throws IOException 
+	 */
+	@Test
+	public void testUploadSampleOneFileAlreadyExistsSuccessTrailingnewlineSkip() throws URISyntaxException, ConstraintViolationException, UploadException, InterruptedException, ExecutionException, TimeoutException, IOException {
+		GalaxyProjectName libraryName = new GalaxyProjectName("testUploadSampleOneFileAlreadyExistsSuccessTrailingnewlineSkip");
+
+		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName("testData"), dataFilesSingleNewlineTestNoNewline);
+		List<UploadSample> samples = new ArrayList<UploadSample>();
+		samples.add(galaxySample);
+
+		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
+
+		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
+
+		List<LibraryContent> libraryContents = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
+				.getLibraryContents(actualLibrary.getId());
+		Map<String, LibraryContent> contentsMap = fileToLibraryContentMap(libraryContents);
+		LibraryContent datasetContent = contentsMap.get("/illumina_reads/testData/testData1NoNewline.fastq");
+
+		// wait for the original library upload to complete.
+		waitForLibraryUpload(datasetContent.getId(), actualLibrary.getId());
+		
+		LibraryDataset datasetNoNewline = 
+				localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient().showDataset(actualLibrary.getId(), datasetContent.getId());
+				
+		// make sure Galaxy still does add a newline at the end.  Increase file size by 1.
+		long fileSize = dataFile1NewlineTestNoNewline.toFile().length();
+		long galaxyFileSize = Long.parseLong(datasetNoNewline.getFileSize());
+		assertEquals(fileSize + 1, galaxyFileSize);
+
+		// now attempt to re-upload the file.  It should properly be skipped even though the sizes are off by one
+		assertNotNull(galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
+	}
+	
+	/**
+	 * Tests uploading a sample where one file already is uploaded in Galaxy using the "linking" or "local" mode.
+	 * This is different from the "remote" mode in that no trailing newline should be added to the file uploaded
+	 * in Galaxy, but we should still properly skip re-uploading this file.
+	 * 
+	 * @throws URISyntaxException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 * @throws TimeoutException
+	 * @throws ExecutionException
+	 * @throws InterruptedException
+	 * @throws IOException 
+	 */
+	@Test
+	public void testUploadSampleOneFileAlreadyExistsSuccessLinkSkip() throws URISyntaxException, ConstraintViolationException, UploadException, InterruptedException, ExecutionException, TimeoutException, IOException {
+		galaxyAPI.setDataStorage(Uploader.DataStorage.LOCAL);
+		
+		GalaxyProjectName libraryName = new GalaxyProjectName("testUploadSampleOneFileAlreadyExistsSuccessLinkSkip");
+
+		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName("testData"), dataFilesSingleNewlineTestNoNewline);
+		List<UploadSample> samples = new ArrayList<UploadSample>();
+		samples.add(galaxySample);
+
+		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
+
+		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
+
+		List<LibraryContent> libraryContents = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
+				.getLibraryContents(actualLibrary.getId());
+		Map<String, LibraryContent> contentsMap = fileToLibraryContentMap(libraryContents);
+		LibraryContent datasetContent = contentsMap.get("/illumina_reads/testData/testData1NoNewline.fastq");
+
+		// wait for the original library upload to complete.
+		waitForLibraryUpload(datasetContent.getId(), actualLibrary.getId());
+		
+		LibraryDataset datasetNoNewline = 
+				localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient().showDataset(actualLibrary.getId(), datasetContent.getId());
+				
+		// make sure Galaxy does not add newline to file if it is linked.
+		long fileSize = dataFile1NewlineTestNoNewline.toFile().length();
+		long galaxyFileSize = Long.parseLong(datasetNoNewline.getFileSize());
+		assertEquals(fileSize, galaxyFileSize);
+
+		// now attempt to re-upload the file.  It should properly be skipped
+		assertNotNull(galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
 	}
 	
 	/**
@@ -1580,6 +1772,6 @@ public class GalaxyAPIIT {
 		
 		GalaxyInstance galaxyInstance = GalaxyInstanceFactory.get(
 				localGalaxy.getTestGalaxyURL().toString(), "1");
-		new GalaxyAPI(galaxyInstance, new GalaxyAccountEmail("a@b.c"));
+		new GalaxyUploaderAPI(galaxyInstance, new GalaxyAccountEmail("a@b.c"));
 	}
 }

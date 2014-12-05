@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="remote-api-name" author="tom">
+		<addColumn tableName="remote_api">
+			<column name="name" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="remote_api_AUD">
+			<column name="name" type="varchar(255)" />
+		</addColumn>
+
+
+		<!-- Update the name of the remote api uk constraint -->
+		<dropColumn columnName="serviceURI" tableName="remote_api" />
+
+		<addColumn tableName="remote_api">
+			<column name="serviceURI" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+
+		<addUniqueConstraint columnNames="serviceURI"
+			constraintName="UK_REMOTE_API_SERVICEURI" tableName="remote_api" />
+			
+		<!-- Remove the clientid unique key -->
+		<dropColumn columnName="clientId" tableName="remote_api" />
+		
+		<addColumn tableName="remote_api">
+			<column name="clientId" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+
+	</changeSet>
+</databaseChangeLog>

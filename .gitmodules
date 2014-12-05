@@ -1,0 +1,3 @@
+[submodule "lib/galaxy-dependencies"]
+	path = lib/galaxy-dependencies
+	url = https://github.com/apetkau/galaxy-dependencies.git

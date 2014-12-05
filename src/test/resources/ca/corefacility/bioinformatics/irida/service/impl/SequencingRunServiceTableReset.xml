@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+	<!-- Tables *must* be listed in the order that they can be deleted to satisfy 
+		referential integrity -->
+	<sequencing_run />
+	<miseq_run />
+	<sequencing_run_entity />
+	<host />
+	<sample />
+	<sequence_file />
+	<sequence_file_properties />
+	<system_role />
+	<user />
+	<project />
+
+	<analysis />
+	<analysis_fastqc />
+	<overrepresented_sequence />
+	<analysis_fastqc_overrepresented_sequence />
+	<analysis_properties />
+	<analysis_sequence_file />
+
+	<client_details />
+	<client_role />
+	<client_details_authorities />
+	<client_details_resource_ids />
+	<client_details_grant_types />
+	<client_details_scope />
+
+	<password_reset />
+	<remote_api />
+	<remote_api_token />
+	<project_user />
+	<sequencefile_sample />
+	<project_sample />
+	<logicalGroup />
+	<user_group />
+
+	<!-- All auditing table references *only* refer to the Revisions table, 
+		so they can all be listed in an arbitrary order *after* the Revisions table. -->
+	<Revisions />
+	<overrepresented_sequence_AUD />
+	<project_user_AUD />
+	<project_AUD />
+	<project_sample_AUD />
+	<project_user_AUD />
+	<sequencing_run_AUD />
+	<miseq_run_AUD />
+	<sequencing_run_entity_AUD />
+	<sequence_file_AUD />
+	<sequence_file_properties_AUD />
+	<sequencefile_sample_AUD />
+	<system_role_AUD />
+	<user_AUD />
+	<sample_AUD />
+	<remote_api_AUD />
+	<remote_api_token_AUD />
+	<logicalGroup_AUD />
+	<user_group_AUD />
+	<host_AUD />
+	<client_details_scope_AUD />
+	<client_details_grant_types_AUD />
+	<client_details_resource_ids_AUD />
+	<client_details_authorities_AUD />
+	<client_role_AUD />
+	<client_details_AUD />
+	<analysis_AUD />
+	<analysis_fastqc_AUD />
+	<analysis_properties_AUD />
+	<analysis_sequence_file_AUD />
+	<analysis_fastqc_overrepresented_sequence_AUD />
+</dataset>

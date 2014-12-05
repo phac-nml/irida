@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,6 +27,9 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Email;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -44,6 +48,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 		@UniqueConstraint(name = User.USER_EMAIL_CONSTRAINT_NAME, columnNames = "email"),
 		@UniqueConstraint(name = User.USER_USERNAME_CONSTRAINT_NAME, columnNames = "username") })
 @Audited
+@EntityListeners(AuditingEntityListener.class)
 public class User implements IridaThing, Comparable<User>, UserDetails {
 
 	private static final long serialVersionUID = -7516211470008791995L;
@@ -58,10 +63,12 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	@NotNull(message = "{user.username.notnull}")
 	@Size(min = 3, message = "{user.username.size}")
 	private String username;
+
 	@NotNull(message = "{user.email.notnull}")
 	@Size(min = 5, message = "{user.email.size}")
 	@Email(message = "{user.email.invalid}")
 	private String email;
+
 	@NotNull(message = "{user.password.notnull}")
 	// passwords must be at least six characters long, but prohibit passwords
 	// longer than 1024 (who's going to remember a password that long anyway?)
@@ -71,26 +78,33 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 			@Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}"),
 			@Pattern(regexp = "^.*[a-z].*$", message = "{user.password.lowercase}") })
 	private String password;
+
 	@NotNull(message = "{user.firstName.notnull}")
 	@Size(min = 2, message = "{user.firstName.size}")
 	private String firstName;
+
 	@NotNull(message = "{user.lastName.notnull}")
 	@Size(min = 2, message = "{user.lastName.size}")
 	private String lastName;
+
 	@NotNull(message = "{user.phoneNumber.notnull}")
 	@Size(min = 4, message = "{user.phoneNumber.size}")
 	private String phoneNumber;
+
 	@NotNull
 	private boolean enabled = true;
 
 	@ManyToOne
-	@JoinColumn(name = "system_role")
+	@JoinColumn(name = "system_role", nullable = false)
 	@NotNull(message = "{user.systemRole.notnull}")
 	private Role systemRole;
 
+	@CreatedDate
+	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
+	private final Date createdDate;
 
+	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
@@ -100,9 +114,8 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
 	private List<ProjectUserJoin> projects;
-	
 
-	@OneToMany(mappedBy="user")
+	@OneToMany(mappedBy = "user")
 	private Collection<RemoteAPIToken> tokens;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
@@ -113,7 +126,6 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	 */
 	public User() {
 		createdDate = new Date();
-		modifiedDate = createdDate;
 		locale = "en";
 		credentialsNonExpired = true;
 		this.systemRole = Role.ROLE_USER;
@@ -309,16 +321,6 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	}
 
 	@Override
-	public Date getTimestamp() {
-		return createdDate;
-	}
-
-	@Override
-	public void setTimestamp(Date date) {
-		this.createdDate = date;
-	}
-
-	@Override
 	public Date getModifiedDate() {
 		return modifiedDate;
 	}
@@ -348,19 +350,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 		return createdDate;
 	}
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
 	public void setSystemRole(Role systemRole) {
 		this.systemRole = systemRole;
-	}
-
-	public List<ProjectUserJoin> getProjects() {
-		return projects;
-	}
-
-	public void setProjects(List<ProjectUserJoin> projects) {
-		this.projects = projects;
 	}
 }

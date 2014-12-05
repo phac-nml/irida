@@ -1,19 +1,28 @@
 package ca.corefacility.bioinformatics.irida.model;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.URL;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * Description of a remote Irida API that this API can communicate with via
@@ -23,9 +32,12 @@ import org.hibernate.validator.constraints.URL;
  *
  */
 @Entity
-@Table(name = "remote_api")
+@Table(name = "remote_api", uniqueConstraints = { @UniqueConstraint(name = RemoteAPI.SERVICE_URI_CONSTRAINT_NAME, columnNames = "serviceURI") })
 @Audited
-public class RemoteAPI implements Comparable<RemoteAPI> {
+@EntityListeners(AuditingEntityListener.class)
+public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
+
+	public static final String SERVICE_URI_CONSTRAINT_NAME = "UK_REMOTE_API_SERVICEURI";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,26 +45,41 @@ public class RemoteAPI implements Comparable<RemoteAPI> {
 
 	@NotNull
 	@URL
-	@Column(name = "serviceURI", unique = true)
+	@Column(name = "serviceURI")
 	private String serviceURI;
+
+	@NotNull
+	private String name;
 
 	private String description;
 
 	@NotNull
-	@Column(name = "clientId", unique = true)
+	@Column(name = "clientId")
 	private String clientId;
 
 	@NotNull
 	@Column(name = "clientSecret")
 	private String clientSecret;
 
-	@OneToMany(mappedBy = "remoteApi")
+	@OneToMany(mappedBy = "remoteApi", cascade = CascadeType.REMOVE)
 	private Collection<RemoteAPIToken> tokens;
 
+	@CreatedDate
+	@NotNull
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdDate;
+
+	@LastModifiedDate
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date modifiedDate;
+
 	public RemoteAPI() {
+		createdDate = new Date();
 	}
 
-	public RemoteAPI(String serviceURI, String description, String clientId, String clientSecret) {
+	public RemoteAPI(String name, String serviceURI, String description, String clientId, String clientSecret) {
+		this();
+		this.name = name;
 		this.serviceURI = serviceURI;
 		this.description = description;
 		this.clientId = clientId;
@@ -113,6 +140,14 @@ public class RemoteAPI implements Comparable<RemoteAPI> {
 		this.description = description;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	/**
 	 * @return the clientId
 	 */
@@ -153,8 +188,8 @@ public class RemoteAPI implements Comparable<RemoteAPI> {
 	public boolean equals(Object other) {
 		if (other instanceof RemoteAPI) {
 			RemoteAPI p = (RemoteAPI) other;
-			return Objects.equals(serviceURI, p.serviceURI) && Objects.equals(clientId, p.clientId)
-					&& Objects.equals(clientSecret, p.clientSecret);
+			return Objects.equals(name, p.name) && Objects.equals(serviceURI, p.serviceURI)
+					&& Objects.equals(clientId, p.clientId) && Objects.equals(clientSecret, p.clientSecret);
 		}
 
 		return false;
@@ -167,7 +202,27 @@ public class RemoteAPI implements Comparable<RemoteAPI> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(serviceURI, clientId, clientSecret);
+		return Objects.hash(name, serviceURI, clientId, clientSecret);
+	}
+
+	@Override
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	@Override
+	public String getLabel() {
+		return "RemoteApi[ " + clientId + " ]";
+	}
+
+	@Override
+	public Date getModifiedDate() {
+		return modifiedDate;
+	}
+
+	@Override
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
 	}
 
 }

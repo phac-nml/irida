@@ -37,7 +37,7 @@ import javax.validation.constraints.Pattern;
 		@Pattern(regexp = "^[^\\^]*$", message = "{irida.name.invalid.circumflex}"),
 		@Pattern(regexp = "^[^\\|]*$", message = "{irida.name.invalid.pipe}"),
 		@Pattern(regexp = "^[^\\&]*$", message = "{irida.name.invalid.ampersand}"), })
-@Target({ ElementType.FIELD, ElementType.ANNOTATION_TYPE })
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(validatedBy = {})

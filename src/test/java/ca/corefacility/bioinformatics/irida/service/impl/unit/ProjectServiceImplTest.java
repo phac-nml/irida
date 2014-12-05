@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -9,6 +10,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -19,32 +23,47 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedProjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.util.SequenceFileUtilities;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ * @author Franklin Bristow <franklin.bristow@phac-apsc.gc.ca>
  */
 public class ProjectServiceImplTest {
 	private ProjectService projectService;
@@ -53,6 +72,10 @@ public class ProjectServiceImplTest {
 	private UserRepository userRepository;
 	private ProjectUserJoinRepository pujRepository;
 	private ProjectSampleJoinRepository psjRepository;
+	private RelatedProjectRepository relatedProjectRepository;
+	private ReferenceFileRepository referenceFileRepository;
+	private ProjectReferenceFileJoinRepository prfjRepository;
+	private SequenceFileUtilities sequenceFileUtilities;
 	private Validator validator;
 
 	@Before
@@ -63,13 +86,13 @@ public class ProjectServiceImplTest {
 		userRepository = mock(UserRepository.class);
 		pujRepository = mock(ProjectUserJoinRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);
+		relatedProjectRepository = mock(RelatedProjectRepository.class);
+		referenceFileRepository = mock(ReferenceFileRepository.class);
+		prfjRepository = mock(ProjectReferenceFileJoinRepository.class);
+		sequenceFileUtilities = mock(SequenceFileUtilities.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
-				psjRepository, validator);
-	}
-
-	@After
-	public void tearDown() {
-		SecurityContextHolder.getContext().setAuthentication(null);
+				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository,
+				sequenceFileUtilities, validator);
 	}
 
 	@Test
@@ -91,12 +114,14 @@ public class ProjectServiceImplTest {
 
 		verify(projectRepository).save(p);
 		verify(userRepository).loadUserByUsername(username);
+		SecurityContextHolder.getContext().setAuthentication(null);
 	}
 
 	@Test
 	public void testAddSampleToProject() {
 		Sample s = new Sample();
 		s.setSampleName("sample");
+		s.setSequencerSampleId("external");
 		s.setId(new Long(2222));
 		Project p = project();
 
@@ -107,7 +132,7 @@ public class ProjectServiceImplTest {
 		Join<Project, Sample> rel = projectService.addSampleToProject(p, s);
 
 		verify(psjRepository).save(join);
-		verifyZeroInteractions(sampleRepository);
+		verify(sampleRepository).getSampleBySequencerSampleId(p, s.getSequencerSampleId());
 
 		assertNotNull(rel);
 		assertEquals(rel.getSubject(), p);
@@ -195,22 +220,198 @@ public class ProjectServiceImplTest {
 		verify(sampleRepository).save(s);
 	}
 
+	@Test(expected = EntityExistsException.class)
+	public void testAddSampleWithSameSequencerId() {
+		Project p = project();
+		Sample s = new Sample();
+		Sample otherSample = new Sample("name", "external");
+		s.setSequencerSampleId("external");
+		s.setSampleName("name");
+
+		when(sampleRepository.getSampleBySequencerSampleId(p, s.getSequencerSampleId())).thenReturn(otherSample);
+
+		projectService.addSampleToProject(p, s);
+	}
+
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testUserHasProjectRole() {
 		Project p = project();
 		User u = new User();
 
-		List<Join<Project, User>> joins = new ArrayList<>();
-		joins.add(new ProjectUserJoin(p, u,ProjectRole.PROJECT_OWNER));
+		List<ProjectUserJoin> joins = new ArrayList<>();
+		joins.add(new ProjectUserJoin(p, u, ProjectRole.PROJECT_OWNER));
+		Page<ProjectUserJoin> page = new PageImpl<>(joins);
 
-		when(pujRepository.getProjectsForUserWithRole(u, ProjectRole.PROJECT_OWNER)).thenReturn(joins);
+		when(pujRepository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(page);
 
 		assertTrue("User has ownership of project.", projectService.userHasProjectRole(u, p, ProjectRole.PROJECT_OWNER));
+	}
+
+	@Test
+	public void testAddRelatedProject() {
+		Project p1 = new Project("project 1");
+		Project p2 = new Project("project 2");
+
+		RelatedProjectJoin rp = new RelatedProjectJoin(p1, p2);
+
+		when(relatedProjectRepository.save(any(RelatedProjectJoin.class))).thenReturn(rp);
+
+		RelatedProjectJoin returned = projectService.addRelatedProject(p1, p2);
+
+		assertNotNull(returned);
+		assertEquals(rp, returned);
+
+		verify(relatedProjectRepository).save(any(RelatedProjectJoin.class));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddSameRelatedProject() {
+		Project p1 = new Project("project 1");
+
+		projectService.addRelatedProject(p1, p1);
+	}
+
+	@Test(expected = EntityExistsException.class)
+	public void testAlreadyRelatedProject() {
+		Project p1 = new Project("project 1");
+		Project p2 = new Project("project 2");
+
+		when(relatedProjectRepository.save(any(RelatedProjectJoin.class))).thenThrow(
+				new DataIntegrityViolationException("relation already exists"));
+
+		projectService.addRelatedProject(p1, p2);
+	}
+
+	@Test
+	public void testGetRelatedProjects() {
+		Project p1 = new Project("project 1");
+		Project p2 = new Project("project 2");
+		Project p3 = new Project("project 3");
+
+		List<RelatedProjectJoin> relatedProjectList = Lists.newArrayList(new RelatedProjectJoin(p1, p2),
+				new RelatedProjectJoin(p1, p3));
+
+		when(relatedProjectRepository.getRelatedProjectsForProject(p1)).thenReturn(relatedProjectList);
+
+		List<RelatedProjectJoin> relatedProjects = projectService.getRelatedProjects(p1);
+		assertFalse(relatedProjects.isEmpty());
+		for (RelatedProjectJoin rp : relatedProjects) {
+			assertEquals(p1, rp.getSubject());
+		}
+
+		verify(relatedProjectRepository).getRelatedProjectsForProject(p1);
+	}
+
+	@Test
+	public void testUpdateProjectUserJoin() throws ProjectWithoutOwnerException {
+		Project project = new Project("Project 1");
+		User user = new User();
+		User user2 = new User();
+		ProjectRole projectRole = ProjectRole.PROJECT_USER;
+		ProjectUserJoin oldJoin = new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER);
+		@SuppressWarnings("unchecked")
+		List<Join<Project, User>> owners = Lists.newArrayList(new ProjectUserJoin(project, user,
+				ProjectRole.PROJECT_OWNER), new ProjectUserJoin(project, user2, ProjectRole.PROJECT_OWNER));
+
+		when(pujRepository.getProjectJoinForUser(project, user)).thenReturn(oldJoin);
+		when(pujRepository.save(oldJoin)).thenReturn(oldJoin);
+		when(pujRepository.getUsersForProjectByRole(project, ProjectRole.PROJECT_OWNER)).thenReturn(owners);
+
+		Join<Project, User> updateUserProjectRole = projectService.updateUserProjectRole(project, user, projectRole);
+
+		assertNotNull(updateUserProjectRole);
+		ProjectUserJoin newJoin = (ProjectUserJoin) updateUserProjectRole;
+		assertEquals(projectRole, newJoin.getProjectRole());
+
+		verify(pujRepository).getProjectJoinForUser(project, user);
+		verify(pujRepository).getUsersForProjectByRole(project, ProjectRole.PROJECT_OWNER);
+		verify(pujRepository).save(oldJoin);
+	}
+
+	@Test(expected = EntityNotFoundException.class)
+	public void testUpdateProjectUserJoinNotExists() throws ProjectWithoutOwnerException {
+		Project project = new Project("Project 1");
+		User user = new User();
+		ProjectRole projectRole = ProjectRole.PROJECT_USER;
+
+		when(pujRepository.getProjectJoinForUser(project, user)).thenReturn(null);
+
+		projectService.updateUserProjectRole(project, user, projectRole);
+	}
+
+	@Test(expected = ProjectWithoutOwnerException.class)
+	public void testUpdateProjectUserJoinIllegalChange() throws ProjectWithoutOwnerException {
+		Project project = new Project("Project 1");
+		User user = new User();
+		ProjectRole projectRole = ProjectRole.PROJECT_USER;
+		ProjectUserJoin oldJoin = new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER);
+		@SuppressWarnings("unchecked")
+		List<Join<Project, User>> owners = Lists.newArrayList(new ProjectUserJoin(project, user,
+				ProjectRole.PROJECT_OWNER));
+
+		when(pujRepository.getProjectJoinForUser(project, user)).thenReturn(oldJoin);
+		when(pujRepository.getUsersForProjectByRole(project, ProjectRole.PROJECT_OWNER)).thenReturn(owners);
+
+		projectService.updateUserProjectRole(project, user, projectRole);
+
+	}
+
+	@Test
+	public void testGetProjectsForSample() {
+		Sample sample = new Sample("my sample");
+		@SuppressWarnings("unchecked")
+		List<Join<Project, Sample>> projects = Lists.newArrayList(new ProjectSampleJoin(new Project("p1"), sample),
+				new ProjectSampleJoin(new Project("p2"), sample));
+
+		when(psjRepository.getProjectForSample(sample)).thenReturn(projects);
+
+		List<Join<Project, Sample>> projectsForSample = projectService.getProjectsForSample(sample);
+		assertEquals(2, projectsForSample.size());
+
+		verify(psjRepository).getProjectForSample(sample);
+	}
+
+	@Test
+	public void testRemoveRelatedProject() {
+		RelatedProjectJoin join = new RelatedProjectJoin();
+		projectService.removeRelatedProject(join);
+		verify(relatedProjectRepository).delete(join);
+	}
+
+	@Test
+	public void testRemoveRelatedProject2ProjectArgs() {
+		Project x = new Project("projectx");
+		Project y = new Project("projecty");
+
+		RelatedProjectJoin join = new RelatedProjectJoin(x, y);
+		when(relatedProjectRepository.getRelatedProjectJoin(x, y)).thenReturn(join);
+
+		projectService.removeRelatedProject(x, y);
+
+		verify(relatedProjectRepository).getRelatedProjectJoin(x, y);
+		verify(relatedProjectRepository).delete(join);
 	}
 
 	private Project project() {
 		Project p = new Project("project");
 		p.setId(new Long(2222));
 		return p;
+	}
+
+	@Test
+	public void testAddReferenceFileToProject() throws IOException {
+		Project p = new Project();
+		Path createTempFile = Files.createTempFile(null, null);
+		ReferenceFile f = new ReferenceFile(createTempFile);
+
+		when(referenceFileRepository.save(f)).thenReturn(f);
+		when(sequenceFileUtilities.countSequenceFileLengthInBases(createTempFile)).thenReturn(1000l);
+
+		projectService.addReferenceFileToProject(p, f);
+
+		verify(referenceFileRepository).save(f);
+		verify(sequenceFileUtilities).countSequenceFileLengthInBases(createTempFile);
+		verify(prfjRepository).save(new ProjectReferenceFileJoin(p, f));
 	}
 }

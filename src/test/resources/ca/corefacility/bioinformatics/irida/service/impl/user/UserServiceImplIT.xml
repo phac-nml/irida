@@ -16,13 +16,14 @@
 	<user id="3" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
 		email="anotherDifferentUser@nowhere.com" firstName="Mr." lastName="Admin"
 		password="$2a$10$rgdnCrrAqN11Hz03mcGCg.R9gZehmEcyLC3kUGQJ1fEBlF9ld.4v."
-		phoneNumber="867-5309" username="admin" enabled="true"
-		system_role="ROLE_ADMIN" credentialsNonExpired="true" />
-	
+		phoneNumber="867-5309" username="admin" enabled="true" system_role="ROLE_ADMIN"
+		credentialsNonExpired="true" />
+
 	<project name="project" id="1" createdDate="2013-07-18 14:20:19.0"
 		modifiedDate="2013-07-18 14:20:19.0" />
-	<project_user project_id="1" user_id="1" projectRole="PROJECT_OWNER" />
-	
+	<project_user project_id="1" user_id="1" projectRole="PROJECT_OWNER"
+		createdDate="2013-07-18 14:20:19.0" />
+
 	<logicalGroup id="1" createdDate="2013-07-18 14:20:19.0"
 		modifiedDate="2013-07-18 14:20:19.0" name="group1" />
 

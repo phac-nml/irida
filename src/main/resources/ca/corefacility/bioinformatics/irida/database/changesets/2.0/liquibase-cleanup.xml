@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="liquibase-cleanup" author="tom">
+		<!-- Add a not null constraint to password reset id -->
+		<addNotNullConstraint columnDataType="varchar(255)"
+			columnName="id" tableName="password_reset" />
+
+		<!-- Add a not null constraint to the file path -->
+		<addNotNullConstraint columnDataType="varchar(255)"
+			columnName="filePath" tableName="sequence_file" />
+
+		<!-- Fix the primary key on system_role_AUD -->
+		<dropPrimaryKey tableName="system_role_AUD" />
+		<dropColumn columnName="id" tableName="system_role_AUD" />
+		<addPrimaryKey columnNames="name, REV" tableName="system_role_AUD" />
+
+		<!-- Add a UK to user_group -->
+		<addUniqueConstraint columnNames="user_id, logicalGroup_id"
+			constraintName="UK_USER_GROUP" tableName="user_group" />
+	</changeSet>
+</databaseChangeLog>

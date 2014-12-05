@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+	<system_role description="A basic user in the system" name="ROLE_USER" />
+	<system_role description="An administrator" name="ROLE_ADMIN" />
+
+	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+		email="manager@nowhere.com" firstName="Mr." lastName="Manager"
+		password="$2a$10$rgdnCrrAqN11Hz03mcGCg.R9gZehmEcyLC3kUGQJ1fEBlF9ld.4v."
+		phoneNumber="867-5309" username="fbristow" system_role="ROLE_ADMIN"
+		credentialsNonExpired="true" enabled="true" />
+
+	<sequencing_run id="1" createdDate="2013-07-18 14:20:19.0" />
+	<sequencing_run id="2" createdDate="2013-07-18 14:20:19.0" />
+	<sequencing_run id="3" createdDate="2013-07-18 14:20:19.0" />
+	<sequencing_run id="4" createdDate="2013-07-18 14:20:19.0" />
+	<sequencing_run id="5" createdDate="2013-07-18 14:20:19.0" />
+	
+	<miseq_run id="1" workflow="Test workflow"/>
+	<miseq_run id="2" workflow="Test workflow"/>
+	<miseq_run id="3" workflow="Test workflow"/>
+	
+	<sequencing_run_entity id="4" data="test data 4"/>
+	<sequencing_run_entity id="5" data="test data 5"/>
+
+	<sequence_file id="1" sequencingRun_id="3" filePath="/FileThatMayNotExist"
+		createdDate="2013-07-18 14:20:19.0" fileRevisionNumber="1"/>
+	<sequence_file id="2" sequencingRun_id="2" filePath="/FileThatMayNotExist1"
+		createdDate="2013-07-18 14:20:19.0" fileRevisionNumber="1"/>
+	<sequence_file id="3" sequencingRun_id="3" filePath="/FileThatMayNotExist2"
+		createdDate="2013-07-18 14:20:19.0" fileRevisionNumber="1"/>
+	<sequence_file id="4" sequencingRun_id="3" filePath="/FileThatMayNotExist3"
+		createdDate="2013-07-18 14:20:19.0" fileRevisionNumber="1"/>
+
+	<sample id="1" sampleName="sample" sequencerSampleId="sample1"
+		createdDate="2013-07-18 14:20:19.0" />
+	<sample id="2" sampleName="sample" sequencerSampleId="sample2"
+		createdDate="2013-07-18 14:20:19.0" />
+	<project id="1" name="project 1" createdDate="2013-07-18 14:20:19.0" />
+
+	<sequencefile_sample id="1" sequenceFile_id="1"
+		sample_id="1" createdDate="2013-07-18 14:20:19.0" />
+	<sequencefile_sample id="2" sequenceFile_id="2"
+		sample_id="1" createdDate="2013-07-18 14:20:19.0" />
+	<sequencefile_sample id="3" sequenceFile_id="3"
+		sample_id="2" createdDate="2013-07-18 14:20:19.0" />
+	<sequencefile_sample id="4" sequenceFile_id="4"
+		sample_id="2" createdDate="2013-07-18 14:20:19.0" />
+
+	<project_sample id="1" project_id="1" sample_id="1"
+		createdDate="2013-07-18 14:20:19.0" />
+	<project_user id="1" project_id="1" user_id="1"
+		projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0" />
+</dataset>

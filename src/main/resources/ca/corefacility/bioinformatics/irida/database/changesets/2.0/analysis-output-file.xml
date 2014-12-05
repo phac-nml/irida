@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="analysis-output-file" author="fbristow">
+		<createTable tableName="analysis_output_file">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="createdDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="executionManagerFileId" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="filePath" type="varchar(255)">
+				<constraints nullable="false" unique="true"
+					uniqueConstraintName="UK_ANALYSIS_OUTPUT_FILE_FILE_PATH" />
+			</column>
+			<column name="fileRevisionNumber" type="bigint(20)" />
+			<column name="modifiedDate" type="datetime" />
+			<column name="analysis_id" type="bigint(20)">
+				<constraints referencedTableName="analysis"
+					referencedColumnNames="id" foreignKeyName="FK_ANALYSIS_OUTPUT_FILE_ANALYSIS" />
+			</column>
+		</createTable>
+
+		<createTable tableName="analysis_output_file_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_ANALYSIS_OUTPUT_FILE_REVISION" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="createdDate" type="datetime" />
+			<column name="executionManagerFileId" type="varchar(255)" />
+			<column name="filePath" type="varchar(255)" />
+			<column name="fileRevisionNumber" type="bigint(20)" />
+			<column name="modifiedDate" type="datetime" />
+			<column name="analysis_id" type="bigint(20)" />
+		</createTable>
+
+		<addColumn tableName="analysis_fastqc">
+			<column name="fastQCReport_id" type="bigint(20)">
+				<constraints referencedTableName="analysis_output_file"
+					referencedColumnNames="id" foreignKeyName="FK_ANALYSIS_FASTQC_REPORT" />
+			</column>
+		</addColumn>
+
+		<addColumn tableName="analysis_fastqc_AUD">
+			<column name="fastQCReport_id" type="bigint(20)" />
+		</addColumn>
+
+		<createTable tableName="analysis_phylogenomicspipeline">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					referencedTableName="analysis" referencedColumnNames="id"
+					foreignKeyName="FK_ANALYSIS_PHYLOGENOMICSPIPELINE_ANALYSIS" />
+			</column>
+			<column name="phylogeneticTree_id" type="bigint(20)">
+				<constraints referencedTableName="analysis_output_file"
+					referencedColumnNames="id" foreignKeyName="FK_ANALYSIS_PHYLOGENOMICSPIPELINE_TREE" />
+			</column>
+			<column name="snpMatrix_id" type="bigint(20)">
+				<constraints referencedTableName="analysis_output_file"
+					referencedColumnNames="id" foreignKeyName="FK_ANALYSIS_PHYLOGENOMICSPIPELINE_MATRIX" />
+			</column>
+			<column name="snpTable_id" type="bigint(20)">
+				<constraints referencedTableName="analysis_output_file"
+					referencedColumnNames="id" foreignKeyName="FK_ANALYSIS_PHYLOGENOMICSPIPELINE_TABLE" />
+			</column>
+		</createTable>
+
+		<createTable tableName="analysis_phylogenomicspipeline_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="phylogeneticTree_id" type="bigint(20)" />
+			<column name="snpMatrix_id" type="bigint(20)" />
+			<column name="snpTable_id" type="bigint(20)" />
+		</createTable>
+		<addForeignKeyConstraint baseTableName="analysis_phylogenomicspipeline_AUD"
+			baseColumnNames="id,REV" referencedTableName="analysis_AUD"
+			referencedColumnNames="id,REV" constraintName="FK_ANALYSIS_PHYLOGENOMICSPIPELINE_REVISION" />
+	</changeSet>
+</databaseChangeLog>

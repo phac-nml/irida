@@ -2,12 +2,18 @@ package ca.corefacility.bioinformatics.irida.service.sample;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
@@ -15,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
  * A service class for working with samples.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public interface SampleService extends CRUDService<Long, Sample> {
 
@@ -23,7 +30,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadSample')")
 	public Sample read(Long id) throws EntityNotFoundException;
-	
+
 	/**
 	 * Add a {@link SequenceFile} to a {@link Sample}.
 	 * 
@@ -64,6 +71,46 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public List<Join<Project, Sample>> getSamplesForProject(Project project);
+
+	/**
+	 * Get the {@link Sample}s for a {@link Project} in page form
+	 * 
+	 * @param project
+	 *            The project to read from
+	 * @param name
+	 *            The sample name to search
+	 * @param page
+	 *            The page number
+	 * @param size
+	 *            The size of the page
+	 * @param order
+	 *            The order of the page
+	 * @param sortProperties
+	 *            The properties to sort on
+	 * @return A {@link Page} of {@link Join}s between {@link Project} and
+	 *         {@link Sample}
+	 */
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	public Page<ProjectSampleJoin> getSamplesForProjectWithName(Project project, String name, int page, int size,
+			Direction order, String... sortProperties);
+
+	/**
+	 * Search the samples for a project using a given specification
+	 * 
+	 * @param specification
+	 *            The specification to search with
+	 * @param page
+	 *            The page number
+	 * @param size
+	 *            the size of the page
+	 * @param order
+	 *            the sort direction and order
+	 * @param sortProperties
+	 *            The properties to sort on
+	 * @return A Page of {@link ProjectSampleJoin}s
+	 */
+	public Page<ProjectSampleJoin> searchProjectSamples(Specification<ProjectSampleJoin> specification, int page,
+			int size, Direction order, String... sortProperties);
 
 	/**
 	 * Get the {@link Sample} for the given ID
@@ -110,4 +157,55 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *         <code>mergeInto</code>).
 	 */
 	public Sample mergeSamples(Project p, Sample mergeInto, Sample... toMerge);
+
+	/**
+	 * Given a sample gets the total number of bases in all sequence files in
+	 * this sample.
+	 * 
+	 * @param sample
+	 *            The sample to find the total number of bases.
+	 * @return The total number of bases in all sequence files in this sample.
+	 * @throws SequenceFileAnalysisException
+	 *             If there was an error getting FastQC analyses for a sequence
+	 *             file.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	public Long getTotalBasesForSample(Sample sample)
+			throws SequenceFileAnalysisException;
+
+	/**
+	 * Given the length of a reference file, estimate the total coverage for
+	 * this sample.
+	 * 
+	 * @param sample
+	 *            The sample to estimate coverage for.
+	 * 
+	 * @param referenceFileLength
+	 *            The length of the reference file in bases.
+	 * @return The estimate coverage of all sequence data in this sample.
+	 * @throws SequenceFileAnalysisException
+	 *             If there was an error getting FastQC analyses for a sequence
+	 *             file.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	public Double estimateCoverageForSample(Sample sample,
+			long referenceFileLength) throws SequenceFileAnalysisException;
+	
+	/**
+	 * Given a {@link ReferenceFile}, estimate the total coverage for
+	 * this sample.
+	 * 
+	 * @param sample
+	 *            The sample to estimate coverage for.
+	 * 
+	 * @param referenceFile
+	 *            The {@link ReferenceFile} to estimate coverage for.
+	 * @return The estimate coverage of all sequence data in this sample.
+	 * @throws SequenceFileAnalysisException
+	 *             If there was an error getting FastQC analyses for a sequence
+	 *             file.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	public Double estimateCoverageForSample(Sample sample,
+			ReferenceFile referenceFile) throws SequenceFileAnalysisException;
 }

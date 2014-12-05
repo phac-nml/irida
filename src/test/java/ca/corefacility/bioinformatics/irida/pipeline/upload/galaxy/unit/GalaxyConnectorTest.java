@@ -12,6 +12,11 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyConnector;
 
+/**
+ * Tests for class describing a connection to Galaxy.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 public class GalaxyConnectorTest {
 	
 	private URL galaxyURL;

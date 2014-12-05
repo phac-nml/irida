@@ -2,17 +2,18 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
 import static com.google.common.base.Preconditions.*;
 
+import java.net.URL;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.ChangeLibraryPermissionsException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
@@ -32,24 +33,29 @@ public class GalaxyLibraryBuilder {
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyLibraryBuilder.class);
 
-	private GalaxyInstance galaxyInstance;
-	private GalaxySearch galaxySearch;
+	private LibrariesClient librariesClient;
+	private GalaxyRoleSearch galaxyRoleSearch;
+	private URL galaxyURL;
 
 	/**
 	 * Creates a new GalaxyLibrary object for working with Galaxy libraries.
 	 * 
-	 * @param galaxyInstance
-	 *            The GalaxyInstance object to work with.
-	 * @param galaxySearch
-	 *            The GalaxySearch object to use for searching.
+	 * @param librariesClient
+	 *            The LibrariesClient to start working with libraries.
+	 *  @param galaxyRoleSearch
+	 *             The GalaxyRoleSearch used to search for Galaxy Roles.
+	 *  @param galaxyURL
+	 *              The URL to the Galaxy instance.
 	 */
-	public GalaxyLibraryBuilder(GalaxyInstance galaxyInstance,
-			GalaxySearch galaxySearch) {
-		checkNotNull(galaxyInstance, "galaxyInstance is null");
-		checkNotNull(galaxySearch, "galaxySearch is null");
+	public GalaxyLibraryBuilder(LibrariesClient librariesClient,
+				GalaxyRoleSearch galaxyRoleSearch, URL galaxyURL) {
+		checkNotNull(librariesClient, "librariesClient is null");
+		checkNotNull(galaxyRoleSearch, "galaxyRoleSearch is null");
+		checkNotNull(galaxyURL, "galaxyURL is null");
 
-		this.galaxyInstance = galaxyInstance;
-		this.galaxySearch = galaxySearch;
+		this.librariesClient = librariesClient;
+		this.galaxyRoleSearch = galaxyRoleSearch;
+		this.galaxyURL = galaxyURL;
 	}
 
 	/**
@@ -67,19 +73,18 @@ public class GalaxyLibraryBuilder {
 
 		Library persistedLibrary;
 
-		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
 		Library library = new Library(libraryName.getName());
 		persistedLibrary = librariesClient.createLibrary(library);
 
 		if (persistedLibrary != null) {
 			logger.debug("Created library=" + library.getName() + " libraryId="
 					+ persistedLibrary.getId() + " in Galaxy url="
-					+ galaxyInstance.getGalaxyUrl());
+					+ galaxyURL);
 
 			return persistedLibrary;
 		} else {
 			throw new CreateLibraryException("Could not create library named "
-					+ libraryName + " in Galaxy " + galaxyInstance.getGalaxyUrl());
+					+ libraryName + " in Galaxy " + galaxyURL);
 		}
 	}
 
@@ -100,7 +105,6 @@ public class GalaxyLibraryBuilder {
 		checkNotNull(folderName, "folderName is null");
 
 		LibraryFolder folder = null;
-		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
 
 		if (librariesClient != null) {
 			LibraryContent rootContent = librariesClient.getRootFolder(library
@@ -119,7 +123,7 @@ public class GalaxyLibraryBuilder {
 		if (folder == null) {
 			throw new CreateLibraryException("Could not create library folder="
 					+ folderName + " within library " + library.getName() +
-					" in Galaxy " + galaxyInstance.getGalaxyUrl());
+					" in Galaxy " + galaxyURL);
 		} else {
 			return folder;
 		}
@@ -148,8 +152,6 @@ public class GalaxyLibraryBuilder {
 
 		LibraryFolder folder = null;
 
-		LibrariesClient librariesClient = galaxyInstance.getLibrariesClient();
-
 		if (librariesClient != null) {
 			LibraryFolder newFolder = new LibraryFolder();
 			newFolder.setName(folderName.getName());
@@ -162,7 +164,7 @@ public class GalaxyLibraryBuilder {
 			throw new CreateLibraryException("Could not create library folder="
 					+ folderName + " within folder " + libraryFolder.getName()
 					+ " in library " + library.getName() +
-					" in Galaxy " + galaxyInstance.getGalaxyUrl());
+					" in Galaxy " + galaxyURL);
 		} else {
 			return folder;
 		}
@@ -181,19 +183,17 @@ public class GalaxyLibraryBuilder {
 	 * @return The Library we changed the owner of.
 	 * @throws ChangeLibraryPermissionsException
 	 *             If an error occurred changing the library permissions.
-	 * @throws GalaxyUserNoRoleException
-	 *             If no corresponding roles for the Galaxy users could be
-	 *             found.
+	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
 	public Library changeLibraryOwner(Library library,
 			GalaxyAccountEmail userEmail, GalaxyAccountEmail adminEmail)
-			throws ChangeLibraryPermissionsException, GalaxyUserNoRoleException {
+			throws ChangeLibraryPermissionsException, ExecutionManagerObjectNotFoundException {
 		checkNotNull(library, "library is null");
 		checkNotNull(library.getId(), "library.getId() is null");
 		checkNotNull(userEmail, "userEmail is null");
 
-		Role userRole = galaxySearch.findUserRoleWithEmail(userEmail);
-		Role adminRole = galaxySearch.findUserRoleWithEmail(adminEmail);
+		Role userRole = galaxyRoleSearch.findById(userEmail);
+		Role adminRole = galaxyRoleSearch.findById(adminEmail);
 
 		LibraryPermissions permissions = new LibraryPermissions();
 		permissions.getAccessInRoles().add(userRole.getId());
@@ -205,23 +205,23 @@ public class GalaxyLibraryBuilder {
 		permissions.getModifyInRoles().add(userRole.getId());
 		permissions.getModifyInRoles().add(adminRole.getId());
 
-		ClientResponse response = galaxyInstance.getLibrariesClient()
+		ClientResponse response = librariesClient
 				.setLibraryPermissions(library.getId(), permissions);
 
 		if (ClientResponse.Status.OK.equals(response.getClientResponseStatus())) {
 			logger.debug("Changed owner of library=" + library.getName()
 					+ " libraryId=" + library.getId() + " to roles:"
 					+ userRole.getName() + "," + adminRole.getName()
-					+ " in Galaxy url=" + galaxyInstance.getGalaxyUrl());
+					+ " in Galaxy url=" + galaxyURL);
 
 			return library;
 		} else {
 			throw new ChangeLibraryPermissionsException(
 					"Could not change the owner for library="
 							+ library.getName() + " in Galaxy "
-							+ galaxyInstance.getGalaxyUrl()
+							+ galaxyURL
 							+ ": response status=" + response.getClientResponseStatus() +
 							", message=\"" + response.getEntity(String.class) + "\"");
-		}
+		} 
 	}
 }

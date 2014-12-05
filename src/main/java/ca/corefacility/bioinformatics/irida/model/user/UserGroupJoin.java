@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,6 +19,8 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 
@@ -30,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 @Entity
 @Table(name = "user_group", uniqueConstraints = @UniqueConstraint(columnNames = { "user_id", "logicalGroup_id" }))
 @Audited
+@EntityListeners(AuditingEntityListener.class)
 public class UserGroupJoin implements Join<User, Group> {
 
 	@Id
@@ -37,22 +41,26 @@ public class UserGroupJoin implements Join<User, Group> {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id", nullable = false)
 	@NotNull
 	private User user;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "logicalGroup_id")
+	@JoinColumn(name = "logicalGroup_id", nullable = false)
 	@NotNull
 	private Group logicalGroup;
 
+	@CreatedDate
+	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
+	private final Date createdDate;
 
 	protected UserGroupJoin() {
+		this.createdDate = new Date();
 	}
 
 	public UserGroupJoin(User u, Group g) {
+		this();
 		this.user = u;
 		this.logicalGroup = g;
 	}
@@ -73,6 +81,10 @@ public class UserGroupJoin implements Join<User, Group> {
 	@Override
 	public Long getId() {
 		return this.id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	@Override
@@ -97,12 +109,11 @@ public class UserGroupJoin implements Join<User, Group> {
 
 	@Override
 	public Date getTimestamp() {
-		return createdDate;
+		return getCreatedDate();
 	}
 
 	@Override
-	public void setTimestamp(Date timestamp) {
-		this.createdDate = timestamp;
+	public Date getCreatedDate() {
+		return createdDate;
 	}
-
 }

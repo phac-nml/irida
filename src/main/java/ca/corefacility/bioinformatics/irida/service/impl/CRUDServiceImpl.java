@@ -15,12 +15,14 @@ import org.springframework.beans.TypeMismatchException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.model.Timestamped;
+import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 /**
@@ -29,17 +31,19 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public class CRUDServiceImpl<KeyType extends Serializable, ValueType> implements
+public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Timestamped> implements
 		CRUDService<KeyType, ValueType> {
 	private static final String NO_SUCH_ID_EXCEPTION = "No such identifier exists in the database.";
 
-	private static final String CREATED_DATE_SORT_PROPERTY = "createdDate";
+	protected static final String CREATED_DATE_SORT_PROPERTY = "createdDate";
 
-	protected final PagingAndSortingRepository<ValueType, KeyType> repository;
+	private final static String[] DEFAULT_SORT_PROPERTIES = { CREATED_DATE_SORT_PROPERTY };
+
+	protected final IridaJpaRepository<ValueType, KeyType> repository;
 	protected final Validator validator;
 	protected final Class<ValueType> valueType;
 
-	public CRUDServiceImpl(PagingAndSortingRepository<ValueType, KeyType> repository, Validator validator,
+	public CRUDServiceImpl(IridaJpaRepository<ValueType, KeyType> repository, Validator validator,
 			Class<ValueType> valueType) {
 		this.repository = repository;
 		this.validator = validator;
@@ -139,7 +143,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType> implements
 				DirectFieldAccessor dfa = new DirectFieldAccessor(instance);
 				dfa.setPropertyValue(key, value);
 			} catch (IllegalArgumentException | NotWritablePropertyException | TypeMismatchException e) {
-				throw new InvalidPropertyException("Unable to access field [" + key + "]",valueType);
+				throw new InvalidPropertyException("Unable to access field [" + key + "]", valueType);
 			}
 		}
 
@@ -187,5 +191,21 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType> implements
 	@Transactional(readOnly = true)
 	public Iterable<ValueType> readMultiple(Iterable<KeyType> idents) {
 		return repository.findAll(idents);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Page<ValueType> search(Specification<ValueType> specification, int page, int size, Direction order,
+			String... sortProperties) {
+		// if the sort properties are null, empty, or are an empty string, use
+		// CREATED_DATE
+		if (sortProperties == null || sortProperties.length == 0
+				|| (sortProperties.length == 1 && sortProperties[0].equals(""))) {
+			sortProperties = DEFAULT_SORT_PROPERTIES;
+		}
+
+		return repository.findAll(specification, new PageRequest(page, size, order, sortProperties));
 	}
 }

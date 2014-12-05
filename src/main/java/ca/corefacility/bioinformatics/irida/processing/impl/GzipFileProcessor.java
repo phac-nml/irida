@@ -8,15 +8,15 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.zip.GZIPInputStream;
 
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-
-import com.google.common.collect.ImmutableMap;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
 /**
  * Handle gzip-ed files (if necessary). This class partially assumes that gzip
@@ -33,20 +33,21 @@ public class GzipFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(GzipFileProcessor.class);
 	private static final String GZIP_EXTENSION = ".gz";
 
-	private SequenceFileService sequenceFileService;
+	private SequenceFileRepository sequenceFileRepository;
 
-	public GzipFileProcessor(SequenceFileService sequenceFileService) {
-		this.sequenceFileService = sequenceFileService;
+	public GzipFileProcessor(SequenceFileRepository sequenceFileService) {
+		this.sequenceFileRepository = sequenceFileService;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SequenceFile process(SequenceFile sequenceFile) throws FileProcessorException {
+	@Transactional
+	public void process(Long sequenceFileId) throws FileProcessorException {
+		SequenceFile sequenceFile = sequenceFileRepository.findOne(sequenceFileId);
 		Path file = sequenceFile.getFile();
-		String nameWithoutExtension = file.toString();
-		String originalFilename = file.toString();
+		String nameWithoutExtension = file.getFileName().toString();
 
 		// strip the extension from the filename (if necessary)
 		if (nameWithoutExtension.endsWith(GZIP_EXTENSION)) {
@@ -61,25 +62,21 @@ public class GzipFileProcessor implements FileProcessor {
 				try (GZIPInputStream zippedInputStream = new GZIPInputStream(Files.newInputStream(file))) {
 					logger.trace("Handling gzip compressed file.");
 
-					Path target = Paths.get(nameWithoutExtension);
+					Path targetDirectory = Files.createTempDirectory(null);
+					Path target = targetDirectory.resolve(nameWithoutExtension);
+					logger.debug("Target directory is [" + targetDirectory + "]");
 					logger.debug("Writing uncompressed file to [" + target + "]");
 
 					Files.copy(zippedInputStream, target);
 
-					// if the new name is different from the name before, update
-					// the file name in the database.
-					if (!nameWithoutExtension.equals(originalFilename)) {
-						sequenceFile = sequenceFileService.updateWithoutProcessors(sequenceFile.getId(),
-								ImmutableMap.of("file", (Object) target));
-					}
+					sequenceFile.setFile(target);
+					sequenceFile = sequenceFileRepository.save(sequenceFile);
 				}
 			}
 		} catch (Exception e) {
 			logger.error("Failed to process the input file [" + sequenceFile + "]; stack trace follows.", e);
 			throw new FileProcessorException("Failed to process input file [" + sequenceFile + "].");
 		}
-
-		return sequenceFile;
 	}
 
 	/**

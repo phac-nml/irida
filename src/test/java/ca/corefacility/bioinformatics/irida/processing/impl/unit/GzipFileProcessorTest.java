@@ -2,24 +2,23 @@ package ca.corefacility.bioinformatics.irida.processing.impl.unit;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
 /**
  * Tests for {@link GzipFileProcessor}.
@@ -30,13 +29,13 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 public class GzipFileProcessorTest {
 
 	private GzipFileProcessor fileProcessor;
-	private SequenceFileService sequenceFileService;
+	private SequenceFileRepository sequenceFileRepository;
 	private static final String FILE_CONTENTS = ">test read\nACGTACTCATG";
 
 	@Before
 	public void setUp() {
-		sequenceFileService = mock(SequenceFileService.class);
-		fileProcessor = new GzipFileProcessor(sequenceFileService);
+		sequenceFileRepository = mock(SequenceFileRepository.class);
+		fileProcessor = new GzipFileProcessor(sequenceFileRepository);
 	}
 
 	@Test
@@ -45,16 +44,16 @@ public class GzipFileProcessorTest {
 		SequenceFile sf = constructSequenceFile();
 		Path original = sf.getFile();
 
-		SequenceFile modified = fileProcessor.process(sf);
+		when(sequenceFileRepository.findOne(any(Long.class))).thenReturn(sf);
 
-		verifyZeroInteractions(sequenceFileService);
-		assertEquals("no changes were expected.", modified, sf);
+		fileProcessor.process(1L);
+
+		verify(sequenceFileRepository, times(0)).save(any(SequenceFile.class));
 
 		Files.deleteIfExists(sf.getFile());
 		Files.deleteIfExists(original);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void handleCompressedFileWithGzExtension() throws IOException {
 		// the file processor should decompress the file, then update the
@@ -72,13 +71,18 @@ public class GzipFileProcessorTest {
 		Files.copy(uncompressed, out);
 		out.close();
 
-		when(sequenceFileService.updateWithoutProcessors(eq(sf.getId()), any(Map.class))).thenReturn(sfUpdated);
+		when(sequenceFileRepository.save(sf)).thenReturn(sfUpdated);
+		when(sequenceFileRepository.findOne(id)).thenReturn(sf);
 
 		sf.setFile(compressed);
 
-		SequenceFile modified = fileProcessor.process(sf);
+		fileProcessor.process(id);
 
-		verify(sequenceFileService).updateWithoutProcessors(eq(sf.getId()), any(Map.class));
+		ArgumentCaptor<SequenceFile> argument = ArgumentCaptor.forClass(SequenceFile.class);
+		verify(sequenceFileRepository).save(argument.capture());
+		SequenceFile modified = argument.getValue();
+
+		verify(sequenceFileRepository).save(sf);
 		String uncompressedFileContents = new String(Files.readAllBytes(modified.getFile()));
 		assertEquals("uncompressed file and file in database should be the same.", FILE_CONTENTS,
 				uncompressedFileContents);
@@ -105,14 +109,21 @@ public class GzipFileProcessorTest {
 
 		sf.setFile(compressed);
 
-		SequenceFile modified = fileProcessor.process(sf);
+		when(sequenceFileRepository.findOne(id)).thenReturn(sf);
 
-		verifyZeroInteractions(sequenceFileService);
+		fileProcessor.process(id);
+
+		ArgumentCaptor<SequenceFile> argument = ArgumentCaptor.forClass(SequenceFile.class);
+		verify(sequenceFileRepository).save(argument.capture());
+		SequenceFile modified = argument.getValue();
+
 		String uncompressedFileContents = new String(Files.readAllBytes(modified.getFile()));
 		assertEquals("uncompressed file and file in database should be the same.", FILE_CONTENTS,
 				uncompressedFileContents);
 		Files.delete(uncompressed);
-		Files.delete(compressed);
+		if (Files.exists(compressed)) {
+			Files.delete(compressed);
+		}
 	}
 
 	private SequenceFile constructSequenceFile() throws IOException {

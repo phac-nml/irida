@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+	<changeSet id="sequencer-type-runs" author="tom">
+
+		<!-- Create sequencing_run -->
+		<createTable tableName="sequencing_run">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="description" type="longtext" />
+			<column name="createdDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="modifiedDate" type="datetime" />
+		</createTable>
+
+		<createTable tableName="sequencing_run_AUD">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_SEQUENCING_RUN_REVISION" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="description" type="longtext" />
+			<column name="createdDate" type="datetime" />
+			<column name="modifiedDate" type="datetime" />
+		</createTable>
+
+		<!-- Transfer legacy data -->
+		<sql>
+			INSERT INTO sequencing_run (id, description, createdDate,
+			modifiedDate) SELECT id,description,createdDate,modifiedDate FROM
+			miseq_run
+		</sql>
+
+		<sql>
+			INSERT INTO sequencing_run_AUD (id, REV, REVTYPE, description,
+			createdDate, modifiedDate)
+			SELECT id, REV, REVTYPE, description,
+			createdDate, modifiedDate FROM miseq_run_AUD;
+		</sql>
+
+		<!-- Update FK from sequence_file -->
+		<dropForeignKeyConstraint baseTableName="sequence_file"
+			constraintName="FK_SEQUENCE_FILE_MISEQ_RUN" />
+
+		<!-- Update referenced column names -->
+		<renameColumn tableName="sequence_file" oldColumnName="miseqRun_id"
+			newColumnName="sequencingRun_id" columnDataType="bigint(20)" />
+
+		<renameColumn tableName="sequence_file_AUD"
+			oldColumnName="miseqRun_id" newColumnName="sequencingRun_id"
+			columnDataType="bigint(20)" />
+
+		<addForeignKeyConstraint constraintName="FK_SEQUENCE_FILE_SEQUENCING_RUN"
+			referencedTableName="sequencing_run" baseColumnNames="sequencingRun_id"
+			baseTableName="sequence_file" referencedColumnNames="id" />
+
+		<!-- Drop legacy columns -->
+		<dropColumn tableName="miseq_run" columnName="description" />
+		<dropColumn tableName="miseq_run_AUD" columnName="description" />
+		<dropColumn tableName="miseq_run" columnName="createdDate" />
+		<dropColumn tableName="miseq_run_AUD" columnName="createdDate" />
+		<dropColumn tableName="miseq_run" columnName="modifiedDate" />
+		<dropColumn tableName="miseq_run_AUD" columnName="modifiedDate" />
+
+		<!-- add new notnull to miseq_run.workflow -->
+		<addNotNullConstraint tableName="miseq_run"
+			columnName="workflow" columnDataType="varchar(255)" />
+
+		<!-- remove autoincrement from id. Need to create a new temporary column, 
+			transfer the ids, drop the old id, then rename the column -->
+		<addColumn tableName="miseq_run">
+			<column name="tmp_id" type="bigint(20)"/>
+		</addColumn>
+
+		<sql>
+			UPDATE miseq_run SET tmp_id = id;
+		</sql>
+
+		<dropColumn tableName="miseq_run" columnName="id" />
+
+		<renameColumn tableName="miseq_run" oldColumnName="tmp_id"
+			newColumnName="id" columnDataType="bigint(20)" />
+
+		<addPrimaryKey columnNames="id" tableName="miseq_run" />
+
+		<dropColumn tableName="miseq_run_AUD" columnName="REVTYPE" />
+
+		<!-- Add FK from miseq_run to sequencing_run -->
+		<addForeignKeyConstraint constraintName="FK_MISEQ_RUN_SEQUENCING_RUN"
+			referencedTableName="sequencing_run" baseColumnNames="id"
+			baseTableName="miseq_run" referencedColumnNames="id" />
+
+	</changeSet>
+</databaseChangeLog>

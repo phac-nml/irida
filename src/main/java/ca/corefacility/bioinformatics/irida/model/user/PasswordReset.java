@@ -7,6 +7,11 @@ import java.util.UUID;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import ca.corefacility.bioinformatics.irida.model.Timestamped;
+
 /**
  * A password reset object.
  * 
@@ -14,11 +19,13 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "password_reset")
-public class PasswordReset implements Comparable<PasswordReset> {
+@EntityListeners(AuditingEntityListener.class)
+public class PasswordReset implements Comparable<PasswordReset>, Timestamped {
 
+	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
+	private final Date createdDate;
 
 	@OneToOne
 	@NotNull
@@ -29,10 +36,11 @@ public class PasswordReset implements Comparable<PasswordReset> {
 	private String id;
 
 	protected PasswordReset() {
+		this.createdDate = new Date();
 	}
 
 	public PasswordReset(User user) {
-		this.createdDate = new Date();
+		this();
 		this.user = user;
 		this.id = UUID.randomUUID().toString();
 	}
@@ -64,9 +72,20 @@ public class PasswordReset implements Comparable<PasswordReset> {
 		if (other instanceof PasswordReset) {
 			PasswordReset p = (PasswordReset) other;
 			return Objects.equals(createdDate, p.createdDate) && Objects.equals(user, p.user)
-					&&	Objects.equals(id, p.id);
+					&& Objects.equals(id, p.id);
 		}
 
 		return false;
 	}
+
+	@Override
+	public Date getModifiedDate() {
+		return createdDate;
+	}
+
+	@Override
+	public void setModifiedDate(Date modifiedDate) {
+		throw new UnsupportedOperationException("A PasswordReset cannot be updated");
+	}
+
 }

@@ -1,13 +1,13 @@
 package ca.corefacility.bioinformatics.irida.exceptions.galaxy;
 
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 
 /**
  * When there is no role for a user within Galaxy.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyUserNoRoleException extends UploadException {
+public class GalaxyUserNoRoleException extends ExecutionManagerObjectNotFoundException {
 	private static final long serialVersionUID = 7783940011662578668L;
 
 	/**

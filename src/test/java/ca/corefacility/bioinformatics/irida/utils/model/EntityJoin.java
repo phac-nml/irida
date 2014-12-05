@@ -2,7 +2,9 @@
 package ca.corefacility.bioinformatics.irida.utils.model;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+
 import java.util.Date;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import org.hibernate.envers.Audited;
 
 /**
@@ -72,12 +75,11 @@ public class EntityJoin implements Join<IdentifiableTestEntity, OtherEntity>{
 
 	@Override
 	public Date getTimestamp() {
-		return createdDate;
+		return getCreatedDate();
 	}
 
 	@Override
-	public void setTimestamp(Date timestamp) {
-		createdDate = timestamp;
+	public Date getCreatedDate() {
+		return createdDate;
 	}
-
 }

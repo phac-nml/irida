@@ -39,12 +39,12 @@ public class RemoteAPIToken {
 	private Date expiryDate;
 
 	@ManyToOne
-	@JoinColumn(name = "remote_api_id")
+	@JoinColumn(name = "remote_api_id", nullable = false)
 	@NotNull
 	RemoteAPI remoteApi;
 
 	@ManyToOne
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id", nullable = false)
 	@NotNull
 	User user;
 

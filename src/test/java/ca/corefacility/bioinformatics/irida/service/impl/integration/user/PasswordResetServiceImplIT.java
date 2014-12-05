@@ -7,12 +7,11 @@ import static org.junit.Assert.fail;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -20,12 +19,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -33,16 +32,17 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableList;
 
 /**
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
-		IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
+		IridaApiNoGalaxyTestConfig.class, IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
+		WithSecurityContextTestExcecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/user/PasswordResetServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class PasswordResetServiceImplIT {
@@ -51,14 +51,8 @@ public class PasswordResetServiceImplIT {
 	@Autowired
 	private UserService userService;
 
-	@Before
-	public void setup() {
-		AnonymousAuthenticationToken anonymousToken = new AnonymousAuthenticationToken("nobody", "nobody",
-				ImmutableList.of(Role.ROLE_ANONYMOUS));
-		SecurityContextHolder.getContext().setAuthentication(anonymousToken);
-	}
-
 	@Test
+	@WithMockUser(username = "tester", roles = "ADMIN")
 	public void testCreatePasswordReset() {
 		PasswordReset pw1 = pw();
 		passwordResetService.create(pw1);
@@ -70,6 +64,7 @@ public class PasswordResetServiceImplIT {
 	}
 
 	@Test(expected = EntityNotFoundException.class)
+	@WithMockUser(username = "tester", roles = "ADMIN")
 	public void testEnsureOnlyOneResetPerUser() {
 		PasswordReset pw1 = passwordResetService.create(pw());
 		passwordResetService.create(pw());
@@ -77,6 +72,7 @@ public class PasswordResetServiceImplIT {
 	}
 
 	@Test(expected = EntityNotFoundException.class)
+	@WithMockUser(username = "tester", roles = "ADMIN")
 	public void testDeletePasswordReset() {
 		PasswordReset pr = passwordResetService.read("12213-123123-123123-12312");
 		assertNotNull(pr);
@@ -85,6 +81,7 @@ public class PasswordResetServiceImplIT {
 	}
 
 	@Test(expected = UnsupportedOperationException.class)
+	@WithMockUser(username = "tester", roles = "ADMIN")
 	public void testCannotUpdateAPasswordReset() {
 		PasswordReset pr = passwordResetService.read("12213-123123-123123-12312");
 		Map<String, Object> change = new HashMap<>();

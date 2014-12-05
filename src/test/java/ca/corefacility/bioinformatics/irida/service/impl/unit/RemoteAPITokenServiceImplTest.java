@@ -43,7 +43,7 @@ public class RemoteAPITokenServiceImplTest {
 		service = new RemoteAPITokenServiceImpl(tokenRepository, userRepo);
 		
 		user = new User("tom", "an@email.com", "password1", "tom", "matthews", "123456789");
-		remoteAPI = new RemoteAPI("http://nowhere", "a test api", "clientId", "clientSecret");
+		remoteAPI = new RemoteAPI("apiname", "http://nowhere", "a test api", "clientId", "clientSecret");
 		SecurityContextHolder.getContext().setAuthentication(new TestingAuthenticationToken(user, null));
 		remoteAPIToken = new RemoteAPIToken("token",remoteAPI,new Date());
 	}

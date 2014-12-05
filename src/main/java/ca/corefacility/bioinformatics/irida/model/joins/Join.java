@@ -56,14 +56,6 @@ public interface Join<SubjectType extends IridaThing, ObjectType extends IridaTh
 	public Date getTimestamp();
 
 	/**
-	 * Set the timestamp for this object
-	 * 
-	 * @param timestamp
-	 *            a {@link Date} timestamp to set for this object
-	 */
-	public void setTimestamp(Date timestamp);
-
-	/**
 	 * By default, we will return the label of the subject of the join.
 	 */
 	public default String getLabel() {

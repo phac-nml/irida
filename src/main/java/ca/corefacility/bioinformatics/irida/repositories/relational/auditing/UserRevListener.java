@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.repositories.relational.auditing;
 
+import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.IridaClientDetailsRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
 import org.hibernate.envers.RevisionListener;
@@ -21,6 +23,7 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(UserRevListener.class); 
     private static ApplicationContext applicationContext;
     private static UserRepository urepo;
+    private static IridaClientDetailsRepository clientRepo;
 
     @Override
     public void newRevision(Object revisionEntity) {
@@ -31,7 +34,7 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
             User userByUsername = urepo.loadUserByUsername(principal.getUsername());
             
             if(userByUsername != null){
-                rev.setUser(userByUsername);
+                rev.setUserId(userByUsername.getId());
             }
             else{
                 throw new IllegalStateException("User could not be read by username so revision could not be created");
@@ -57,6 +60,7 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
     
     public void initialize(){
         urepo = applicationContext.getBean(UserRepository.class);
+        clientRepo = applicationContext.getBean(IridaClientDetailsRepository.class);
     }
     
 	/**
@@ -71,9 +75,16 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
 		// If the user is connecting via OAuth2 this object will be an
 		// OAuth2Authentication
 		if (auth instanceof OAuth2Authentication) {
-			logger.trace("Found OAuth2Authentication in session.  Storing clientId in revision.");
-			OAuth2Authentication oAuth = (OAuth2Authentication) auth;
-			entity.setClientId(oAuth.getAuthorizationRequest().getClientId());
+			try {
+				logger.trace("Found OAuth2Authentication in session.  Storing clientId in revision.");
+				OAuth2Authentication oAuth = (OAuth2Authentication) auth;
+				String clientId = oAuth.getAuthorizationRequest().getClientId();
+				IridaClientDetails clientDetails = clientRepo.loadClientDetailsByClientId(clientId);
+				entity.setClientId(clientDetails.getId());
+			} catch (NullPointerException ex) {
+				throw new IllegalStateException(
+						"The OAuth2 client details are not in the session so it cannot be added to the revision.");
+			}
 		}
 	}
     

@@ -1,12 +1,11 @@
 package ca.corefacility.bioinformatics.irida.repositories.sample;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.repository.history.RevisionRepository;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.Project;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 
 /**
  * A repository for storing Sample objects
@@ -14,8 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
-public interface SampleRepository extends PagingAndSortingRepository<Sample, Long>,
-		RevisionRepository<Sample, Long, Integer> {
+public interface SampleRepository extends IridaJpaRepository<Sample, Long> {
 	/**
 	 * Get a {@link Sample} with the given string sample identifier from a
 	 * specific project.

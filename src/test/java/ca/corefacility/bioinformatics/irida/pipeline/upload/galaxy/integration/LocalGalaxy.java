@@ -1,26 +1,32 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 import javax.annotation.PreDestroy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
+import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
+import com.github.jmchilton.blend4j.galaxy.beans.Workflow;
 import com.github.jmchilton.galaxybootstrap.BootStrapper;
 import com.github.jmchilton.galaxybootstrap.BootStrapper.GalaxyDaemon;
 import com.github.jmchilton.galaxybootstrap.GalaxyProperties;
 
 /**
- * An class containing information about the running instance of Galaxy for integration testing.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
- *
- */
-/**
+ * A class containing information about the running instance of Galaxy for integration testing.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
@@ -47,7 +53,11 @@ public class LocalGalaxy {
 	private GalaxyAccountEmail user2Name;
 	private String user2Password;
 	private String user2APIKey;
-
+	
+	private GalaxyAccountEmail workflowUserName;
+	private String workflowUserPassword;
+	private String workflowUserAPIKey;
+	
 	private GalaxyAccountEmail nonExistentGalaxyAdminName;
 	private GalaxyAccountEmail nonExistentGalaxyUserName;
 
@@ -56,6 +66,26 @@ public class LocalGalaxy {
 	private GalaxyInstance galaxyInstanceAdmin;
 	private GalaxyInstance galaxyInstanceUser1;
 	private GalaxyInstance galaxyInstanceUser2;
+	private GalaxyInstance galaxyInstanceWorkflowUser;
+	
+	private String singleInputWorkflowId;
+	private String singleInputWorkflowLabel;
+	
+	private String worklowCollectionListId;
+	private String workflowCollectionListLabel;
+	
+	private String workflowCorePipelineTestId;
+	private String workflowCorePipelineTestSequenceFilesLabel;
+	private String workflowCorePipelineTestReferenceLabel;
+	private String workflowCorePipelineTestTreeName;
+	private String workflowCorePipelineTestMatrixName;
+	private String workflowCorePipelineTestTabelName;
+	private Path workflowCorePipelineTestMatrix;
+	private Path workflowCorePipelineTestTree;
+	private Path workflowCorePipelineTestSnpTable;
+	
+	private String invalidWorkflowId;
+	private String invalidWorkflowLabel = "invalid";
 
 	/**
 	 * Method to cleanup the running instance of Galaxy when finished with tests.
@@ -74,6 +104,16 @@ public class LocalGalaxy {
 	public void deleteGalaxy() {
 		logger.debug("Deleting Galaxy directory: " + bootStrapper.getPath());
 		bootStrapper.deleteGalaxyRoot();
+	}
+	
+	/**
+	 * Gets the root directory where the local Galaxy is running.
+	 * @return  The root directory for the local Galaxy.
+	 */
+	public Path getGalaxyPath() {
+		checkNotNull(bootStrapper);
+		
+		return Paths.get(bootStrapper.getPath());
 	}
 
 	/**
@@ -378,6 +418,215 @@ public class LocalGalaxy {
 			UploaderAccountName invalidGalaxyUserName) {
 		this.invalidGalaxyUserName = invalidGalaxyUserName;
 	}
+	
+	/**
+	 * Reads the given file into a string.
+	 * @param file  The file to read.
+	 * @return  A string of the file contents.
+	 * @throws IOException
+	 */
+	private String readFile(Path file) throws IOException {
+		String fileContents = "";
+		List<String> lines = Files.readAllLines(file, Charset.defaultCharset());
+
+		for (String line : lines) {
+			fileContents += line + "\n";
+		}
+		
+		return fileContents;
+	}
+	
+	/**
+	 * Constructs a workflow in the test Galaxy with the given workflow file.
+	 * @param workflowFile  The file to construct a workflow from.
+	 * @return  The id of the workflow constructed.
+	 * @throws IOException If there was an error reading the workflow file.
+	 */
+	private String constructTestWorkflow(Path workflowFile) throws IOException,RuntimeException {
+		checkNotNull(workflowFile, "workflowFile is null");
+				
+		String content = readFile(workflowFile);
+		
+		WorkflowsClient workflowsClient = galaxyInstanceWorkflowUser.getWorkflowsClient();
+		Workflow workflow = workflowsClient.importWorkflow(content);
+		
+		if (workflow != null && workflow.getId() != null) {	
+			return workflow.getId();
+		} else {
+			throw new RuntimeException("Error building workflow from file " + workflowFile + " in Galaxy " + 
+					galaxyURL);
+		}
+	}
+	
+	/**
+	 * Sets up the single input workflow.
+	 */
+	private void setupWorkflowSingleInput() {
+		try {
+			Path workflowFile = Paths.get(LocalGalaxy.class.getResource(
+					"GalaxyWorkflowSingleInput.ga").toURI());
+			
+			// build workflow
+			singleInputWorkflowId = constructTestWorkflow(workflowFile);
+			singleInputWorkflowLabel = "fastq";
+		} catch (URISyntaxException | IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	/**
+	 * Sets up a collection list workflow.
+	 */
+	private void setupWorkflowCollectionListPaired() {
+		try {
+			Path workflowFile = Paths.get(LocalGalaxy.class.getResource(
+					"workflow_collection_list_paired.ga").toURI());
+			
+			// build workflow
+			worklowCollectionListId = constructTestWorkflow(workflowFile);
+			workflowCollectionListLabel = "input_list";
+			
+			// find a workflow id that's invalid
+		} catch (URISyntaxException | IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	/**
+	 * Sets up a test of the core pipeline workflow.
+	 */
+	private void setupWorkflowCorePipelineTest() {
+		try {
+			Path workflowFile = Paths.get(LocalGalaxy.class.getResource(
+					"Workflow-Core_Pipeline_Test.ga").toURI());
+			
+			this.workflowCorePipelineTestTree = Paths.get(LocalGalaxy.class.getResource(
+					"phylogeneticTree.txt").toURI());
+			this.workflowCorePipelineTestMatrix = Paths.get(LocalGalaxy.class.getResource(
+					"snpMatrix.tsv").toURI());
+			this.workflowCorePipelineTestSnpTable = Paths.get(LocalGalaxy.class.getResource(
+					"snpTable.tsv").toURI());
+			
+			// build workflow
+			this.workflowCorePipelineTestId = constructTestWorkflow(workflowFile);
+			this.workflowCorePipelineTestSequenceFilesLabel = "sequence_reads";
+			this.workflowCorePipelineTestReferenceLabel = "reference";
+			this.workflowCorePipelineTestTreeName = "phylogeneticTree.txt";
+			this.workflowCorePipelineTestTabelName = "snpTable.tsv";
+			this.workflowCorePipelineTestMatrixName = "snpMatrix.tsv";
+			
+			// find a workflow id that's invalid
+		} catch (URISyntaxException | IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Gets the workflow id for a single input workflow.
+	 * @return  The id of the workflow.
+	 */
+	public String getSingleInputWorkflowId() {
+		return singleInputWorkflowId;
+	}
+
+	/**
+	 * Gets the input label for the single input workflow.
+	 * @return  The input label for the single input workflow.
+	 */
+	public String getSingleInputWorkflowLabel() {
+		return singleInputWorkflowLabel;
+	}
+	
+	/**
+	 * Gets a workflow ID for a collection list workflow.
+	 * @return  The id of a collection list workflow.
+	 */
+	public String getWorklowCollectionListId() {
+		return worklowCollectionListId;
+	}
+
+	/**
+	 * Gets the workflow input label of a collection list workflow.
+	 * @return  The workflow input label of a collection list workflow.
+	 */
+	public String getWorkflowCollectionListLabel() {
+		return workflowCollectionListLabel;
+	}
+	
+	/**
+	 * Gets a test core pipeline workflow id.
+	 * @return  A test core pipeline workflow id.
+	 */
+	public String getWorkflowCorePipelineTestId() {
+		return workflowCorePipelineTestId;
+	}
+
+	/**
+	 * Gets a test core pipeline label for sequence files.
+	 * @return  A test core pipeline label for sequence files.
+	 */
+	public String getWorkflowCorePipelineTestSequenceFilesLabel() {
+		return workflowCorePipelineTestSequenceFilesLabel;
+	}
+
+	/**
+	 * Gets a test core pipeline label for reference files.
+	 * @return  A test core pipeline label for reference files.
+	 */
+	public String getWorkflowCorePipelineTestReferenceLabel() {
+		return workflowCorePipelineTestReferenceLabel;
+	}
+
+	/**
+	 * Gets the name for the tree output from the test workflow.
+	 * @return  The name for the tree output from the test workflow. 
+	 */
+	public String getWorkflowCorePipelineTestTreeName() {
+		return workflowCorePipelineTestTreeName;
+	}
+
+	/**
+	 * Gets the name for the matrix output from the test workflow.
+	 * @return The name for the matrix output from the test workflow.
+	 */
+	public String getWorkflowCorePipelineTestMatrixName() {
+		return workflowCorePipelineTestMatrixName;
+	}
+
+	/**
+	 * Gets the name for the snp table label from the test workflow.
+	 * @return The name for the snp table label from the test workflow.
+	 */
+	public String getWorkflowCorePipelineTestTabelName() {
+		return workflowCorePipelineTestTabelName;
+	}
+
+	/**
+	 * Sets up all workflows for this local galaxy.
+	 */
+	public void setupWorkflows() {
+		setupWorkflowSingleInput();
+		setupWorkflowCollectionListPaired();
+		setupWorkflowCorePipelineTest();
+		
+		invalidWorkflowId = "invalid";
+	}
+
+	/**
+	 * Gets a workflow id that is invalid.
+	 * @return  An invalid workflow id.
+	 */
+	public String getInvalidWorkflowId() {
+		return invalidWorkflowId;
+	}
+
+	/**
+	 * Gets an invalid workflow label.
+	 * @return  An invalid workflow label.
+	 */
+	public String getInvalidWorkflowLabel() {
+		return invalidWorkflowLabel;
+	}
 
 	/**
 	 * Sets a url used for testing purposes.
@@ -393,5 +642,118 @@ public class LocalGalaxy {
 	 */
 	public URL getTestGalaxyURL() {
 		return testGalaxyURL;
+	}
+	
+	/**
+	 * Gets a checksum for a example core pipeline workflow.
+	 * @return  The checksum for an example core pipeline workflow.
+	 */
+	public String getWorkflowCorePipelineTestChecksum() {
+		return "1ed4352eed1a4e00188affbd9c2b954934522598a9951e92732a13cdabf15f0e46e9e112531cbb29";
+	}
+
+	/**
+	 * Gets a checksum for an example workflow.
+	 * @return  The checksum for an example workflow.
+	 */
+	public String getSingleInputWorkflowChecksum() {
+		return "db670b734c3808abc5e71acdd9bb23b1f12886158f2ae9b39d79d95d914e790f512a3420d913bb3a";
+	}
+	
+	/**
+	 * Gets an invalid checksum for an example workflow.
+	 * @return  An invalid checksum for an example workflow.
+	 */
+	public String getSingleInputWorkflowChecksumInvalid() {
+		return "eb670b734c3808abc5e71acdd9bb23b1f12886158f2ae9b39d79d95d914e790f512a3420d913bb3a";
+	}
+
+	/**
+	 * Gets an example output snp matrix.
+	 * @return  An example output snp matrix.
+	 */
+	public Path getWorkflowCorePipelineTestMatrix() {
+		return workflowCorePipelineTestMatrix;
+	}
+
+	/**
+	 * Gets an exampe output phylogenetic tree.
+	 * @return  An example output phylogenetic tree.
+	 */
+	public Path getWorkflowCorePipelineTestTree() {
+		return workflowCorePipelineTestTree;
+	}
+
+	/**
+	 * Gets an example output snp table.
+	 * @return  An example output snp table.
+	 */
+	public Path getWorkflowCorePipelineTestSnpTable() {
+		return workflowCorePipelineTestSnpTable;
+	}
+
+	/**
+	 * Gets a user name for running workflows.
+	 * @return A user name for running workflows.
+	 */
+	public GalaxyAccountEmail getWorkflowUserName() {
+		return workflowUserName;
+	}
+
+	/**
+	 * Sets a user name for running workflows.
+	 * @param workflowUserName  A user name for running workflows.
+	 */
+	public void setWorkflowUserName(GalaxyAccountEmail workflowUserName) {
+		this.workflowUserName = workflowUserName;
+	}
+
+	/**
+	 * Gets a password for a user for running workflows.
+	 * @return  A password for a user for running workflows.
+	 */
+	public String getWorkflowUserPassword() {
+		return workflowUserPassword;
+	}
+
+	/**
+	 * Sets a password for a user running workflows.
+	 * @param workflowUserPassword  A password for a user running workflows.
+	 */
+	public void setWorkflowUserPassword(String workflowUserPassword) {
+		this.workflowUserPassword = workflowUserPassword;
+	}
+
+	/**
+	 * Gets an API key for a user running workflows.
+	 * @return An API key for a user running workflows.
+	 */
+	public String getWorkflowUserAPIKey() {
+		return workflowUserAPIKey;
+	}
+
+	/**
+	 * Sets an API key for a user running workflows.
+	 * @param workflowUserAPIKey  An API key for a user running workflows.
+	 */
+	public void setWorkflowUserAPIKey(String workflowUserAPIKey) {
+		this.workflowUserAPIKey = workflowUserAPIKey;
+	}
+
+	/**
+	 * Gets a GalaxyInstace for a workflow user.
+	 * @return  A GalaxyInstance for a workflow user.
+	 */
+	public GalaxyInstance getGalaxyInstanceWorkflowUser() {
+		return galaxyInstanceWorkflowUser;
+	}
+
+	/**
+	 * Sets a GalaxyInstance for a workflow user.
+	 * @param galaxyInstanceWorkflowUser  A GalaxyInstance for a workflow user.
+	 */
+	public void setGalaxyInstanceWorkflowUser(
+			GalaxyInstance galaxyInstanceWorkflowUser) {
+		this.galaxyInstanceWorkflowUser = galaxyInstanceWorkflowUser;
 	}
 }

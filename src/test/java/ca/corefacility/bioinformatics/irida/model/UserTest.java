@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
  */
 public class UserTest {
 
-	private static final String MESSAGES_BASENAME = "ca.corefacility.bioinformatics.irida.validation.ValidationMessages";
+	private static final String MESSAGES_BASENAME = "ValidationMessages";
 	private Validator validator;
 	private ResourceBundle b;
 
@@ -222,14 +222,12 @@ public class UserTest {
 		// same.
 		Date created = new Date(1);
 		User u1 = new User("username", "email", "password", "firstName", "lastName", "phoneNumber");
-		u1.setTimestamp(created);
 		u1.setModifiedDate(created);
 		User u2 = new User("username", "email", "password", "firstName", "lastName", "phoneNumber");
 		// the two users DO NOT share the same created date, and should
 		// therefore be different
 		assertFalse("users should not be equal.", u1.equals(u2));
 
-		u2.setTimestamp(created);
 		u2.setModifiedDate(created);
 		u2.setId(u1.getId());
 		// now the two users share the same identifier, and should therefore be

@@ -7,12 +7,17 @@
 		password="$2a$10$rgdnCrrAqN11Hz03mcGCg.R9gZehmEcyLC3kUGQJ1fEBlF9ld.4v."
 		phoneNumber="867-5309" username="tom" system_role="ROLE_USER"
 		credentialsNonExpired="true" enabled="true" />
-	
-	<remote_api id="1" serviceURI="http://nowhere" clientId="client" clientSecret="secret" />
-	<remote_api id="2" serviceURI="http://nowhere2" clientId="client2" clientSecret="secret2" />
-	<remote_api id="3" serviceURI="http://nowhere3" clientId="client3" clientSecret="secret3" />
-	
-	<remote_api_token id="1" tokenString="123456789" expiryDate="9999-11-20 12:00:00" remote_api_id="1" user_id="1"/>
-	<remote_api_token id="2" tokenString="123456789" expiryDate="2000-11-20 12:00:00" remote_api_id="2" user_id="1"/>
+
+	<remote_api id="1" name="api 1" serviceURI="http://nowhere" clientId="client"
+		clientSecret="secret" createdDate="2013-07-18 14:20:19.0" />
+	<remote_api id="2" name="api 1" serviceURI="http://nowhere2" clientId="client2"
+		clientSecret="secret2" createdDate="2013-07-18 14:20:19.0" />
+	<remote_api id="3" name="api 1" serviceURI="http://nowhere3" clientId="client3"
+		clientSecret="secret3" createdDate="2013-07-18 14:20:19.0" />
+
+	<remote_api_token id="1" tokenString="123456789"
+		expiryDate="9999-11-20 12:00:00" remote_api_id="1" user_id="1" />
+	<remote_api_token id="2" tokenString="123456789"
+		expiryDate="2000-11-20 12:00:00" remote_api_id="2" user_id="1" />
 
 </dataset>

@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -20,10 +21,12 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
@@ -34,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 @Entity
 @Table(name = "project_user", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "user_id" }))
 @Audited
+@EntityListeners(AuditingEntityListener.class)
 public class ProjectUserJoin implements Join<Project, User> {
 
 	@Id
@@ -52,6 +56,8 @@ public class ProjectUserJoin implements Join<Project, User> {
 	@Enumerated(EnumType.STRING)
 	private ProjectRole projectRole;
 
+	@CreatedDate
+	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
 
@@ -66,9 +72,13 @@ public class ProjectUserJoin implements Join<Project, User> {
 		this.user = object;
 		this.projectRole = projectRole;
 	}
-	
+
 	public Long getId() {
 		return this.id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	@Override
@@ -108,12 +118,12 @@ public class ProjectUserJoin implements Join<Project, User> {
 
 	@Override
 	public Date getTimestamp() {
-		return createdDate;
+		return getCreatedDate();
 	}
 
 	@Override
-	public void setTimestamp(Date timestamp) {
-		this.createdDate = timestamp;
+	public Date getCreatedDate() {
+		return createdDate;
 	}
 
 	/**

@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.exceptions.galaxy;
 
 import java.net.URL;
 
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 
 /**
@@ -10,7 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEma
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class GalaxyUserNotFoundException extends UploadException {
+public class GalaxyUserNotFoundException extends ExecutionManagerObjectNotFoundException {
 	private static final long serialVersionUID = 2496168579584339258L;
 	
 	private GalaxyAccountEmail userEmail;

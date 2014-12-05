@@ -1,13 +1,13 @@
 package ca.corefacility.bioinformatics.irida.exceptions.galaxy;
 
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 
 /**
  * When no data library could be found.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class NoLibraryFoundException extends UploadException {
+public class NoLibraryFoundException extends ExecutionManagerObjectNotFoundException {
 	private static final long serialVersionUID = -2968750017497563652L;
 
 	/**

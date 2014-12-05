@@ -25,7 +25,7 @@ public interface FileProcessor {
 	 * @throws FileProcessorException
 	 *             when processing fails.
 	 */
-	public SequenceFile process(SequenceFile sequenceFile) throws FileProcessorException;
+	public void process(Long sequenceFileId) throws FileProcessorException;
 
 	/**
 	 * If the {@link FileProcessor} throws a {@link FileProcessorException}, the

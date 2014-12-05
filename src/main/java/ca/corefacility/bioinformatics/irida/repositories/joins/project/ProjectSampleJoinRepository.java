@@ -2,23 +2,26 @@ package ca.corefacility.bioinformatics.irida.repositories.joins.project;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 /**
  * Repository for managing {@link ProjectUserJoin}.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * 
  */
-public interface ProjectSampleJoinRepository extends CrudRepository<ProjectSampleJoin, Long> {
+public interface ProjectSampleJoinRepository extends PagingAndSortingRepository<ProjectSampleJoin, Long>,
+		JpaSpecificationExecutor<ProjectSampleJoin> {
 	/**
 	 * Get a collection of the {@link Project}s related to a {@link Sample}
 	 * 
@@ -41,7 +44,6 @@ public interface ProjectSampleJoinRepository extends CrudRepository<ProjectSampl
 	@Modifying
 	@Query("delete from ProjectSampleJoin j where j.project = ?1 and j.sample = ?2")
 	public void removeSampleFromProject(Project project, Sample sample);
-	
 
 	/**
 	 * Get the {@link Sample}s associated with a {@link Project}
@@ -53,4 +55,5 @@ public interface ProjectSampleJoinRepository extends CrudRepository<ProjectSampl
 	 */
 	@Query("select j from ProjectSampleJoin j where j.project = ?1")
 	public List<Join<Project, Sample>> getSamplesForProject(Project project);
+
 }

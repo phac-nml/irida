@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,11 +16,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 /**
@@ -30,16 +34,34 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 @Entity
 @Table(name = "project_sample", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "sample_id" }))
 @Audited
+@EntityListeners(AuditingEntityListener.class)
 public class ProjectSampleJoin implements Join<Project, Sample> {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	Long id;
+
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "project_id")
+	private Project project;
+
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "sample_id")
+	private Sample sample;
+
+	@CreatedDate
+	@NotNull
+	@Temporal(TemporalType.TIMESTAMP)
+	private final Date createdDate;
 
 	public ProjectSampleJoin() {
 		createdDate = new Date();
 	}
 
 	public ProjectSampleJoin(Project subject, Sample object) {
+		this();
 		this.project = subject;
 		this.sample = object;
-		createdDate = new Date();
 	}
 
 	@Override
@@ -56,23 +78,12 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 		return Objects.hash(project, sample);
 	}
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	Long id;
-
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "project_id")
-	private Project project;
-
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "sample_id")
-	private Sample sample;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
-	
 	public Long getId() {
 		return this.id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	@Override
@@ -97,11 +108,11 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 
 	@Override
 	public Date getTimestamp() {
-		return createdDate;
+		return getCreatedDate();
 	}
 
 	@Override
-	public void setTimestamp(Date timestamp) {
-		this.createdDate = timestamp;
+	public Date getCreatedDate() {
+		return createdDate;
 	}
 }

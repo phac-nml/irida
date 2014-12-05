@@ -27,10 +27,6 @@ public class PasswordResetServiceImpl extends CRUDServiceImpl<String, PasswordRe
 	 */
 	private PasswordResetRepository passwordResetRepository;
 
-	protected PasswordResetServiceImpl() {
-		super(null, null, PasswordReset.class);
-	}
-
 	@Autowired
 	public PasswordResetServiceImpl(PasswordResetRepository passwordResetRepository, Validator validator) {
 		super(passwordResetRepository, validator, PasswordReset.class);

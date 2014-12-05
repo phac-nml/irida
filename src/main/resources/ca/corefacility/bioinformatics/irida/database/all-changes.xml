@@ -24,4 +24,24 @@
     <include file="changesets/2.0/sequencer-agnostic-files.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/2.0/oauth-clientid-envers.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/2.0/samples.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/client-details.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/add-not-null-constraints.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/organization.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/add-organism-project.xml" relativeToChangelogFile="true" />
+	<include file="changesets/2.0/sequencer-type-runs.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/related-projects.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/add-analysis-types.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/drop-user-revision-fk.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/liquibase-cleanup.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/remoteapi-dates.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/project-reference-file.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/analysis-output-file.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/oauth-token.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/remote-api-name.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/analysis-submission.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/samples-collection-date.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/remote-related-projects.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/snapshots.xml" relativeToChangelogFile="true"/>
+	<include file="changesets/2.0/project-events.xml" relativeToChangelogFile="true"/>
+	
 </databaseChangeLog>

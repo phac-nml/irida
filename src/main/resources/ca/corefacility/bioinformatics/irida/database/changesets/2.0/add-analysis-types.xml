@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="add-analysis-types" author="fbristow">
+		<!-- CREATE THE ANALYSIS TABLES BEFORE WE TRANSFER DATA FROM THE EXISTING 
+			SEQUENCE_FILE TABLE INTO THE NEW FASTQC_ANALYSIS TABLES. -->
+
+		<createTable tableName="analysis">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="createdDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="longtext" />
+			<column name="executionManagerAnalysisId" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="modifiedDate" type="datetime" />
+		</createTable>
+
+		<createTable tableName="analysis_properties">
+			<column name="analysis_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					referencedTableName="analysis" referencedColumnNames="id"
+					foreignKeyName="FK_ANALYSIS_PROPERTIES_ANALYSIS" />
+			</column>
+			<column name="property_value" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="property_key" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="analysis_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_ANALYSIS_REVISION" referencedColumnNames="id"
+					referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="createdDate" type="datetime" />
+			<column name="description" type="longtext" />
+			<column name="executionManagerAnalysisId" type="varchar(255)" />
+			<column name="modifiedDate" type="datetime" />
+		</createTable>
+
+		<createTable tableName="analysis_properties_AUD">
+			<column name="analysis_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_ANALYSIS_PROPERTIES_REVISION"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="property_value" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="property_key" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="analysis_fastqc">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_ANALYSIS_PARENT" referencedTableName="analysis"
+					referencedColumnNames="id" />
+			</column>
+			<column name="duplicationLevelChart" type="longblob">
+				<constraints nullable="false" />
+			</column>
+			<column name="encoding" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="fileType" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="filteredSequences" type="int(11)">
+				<constraints nullable="false" />
+			</column>
+			<column name="gcContent" type="smallint(6)">
+				<constraints nullable="false" />
+			</column>
+			<column name="maxLength" type="int(11)">
+				<constraints nullable="false" />
+			</column>
+			<column name="minLength" type="int(11)">
+				<constraints nullable="false" />
+			</column>
+			<column name="perBaseQualityScoreChart" type="longblob">
+				<constraints nullable="false" />
+			</column>
+			<column name="perSequenceQualityScoreChart" type="longblob">
+				<constraints nullable="false" />
+			</column>
+			<column name="totalBases" type="bigint(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="totalSequences" type="int(11)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="analysis_fastqc_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="duplicationLevelChart" type="longblob" />
+			<column name="encoding" type="varchar(255)" />
+			<column name="fileType" type="varchar(255)" />
+			<column name="filteredSequences" type="int(11)" />
+			<column name="gcContent" type="smallint(6)" />
+			<column name="maxLength" type="int(11)" />
+			<column name="minLength" type="int(11)" />
+			<column name="perBaseQualityScoreChart" type="longblob" />
+			<column name="perSequenceQualityScoreChart" type="longblob" />
+			<column name="totalBases" type="bigint(20)" />
+			<column name="totalSequences" type="int(11)" />
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="analysis_fastqc_AUD"
+			baseColumnNames="id, REV" referencedTableName="analysis_AUD"
+			referencedColumnNames="id, REV" constraintName="FK_ANALYSIS_FASTQC_PARENT_REVISION" />
+
+		<createTable tableName="analysis_sequence_file">
+			<column name="analysis_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"
+					foreignKeyName="FK_ANALYSIS_SEQUENCE_FILE_ANALYSIS"
+					referencedTableName="analysis" referencedColumnNames="id" />
+			</column>
+			<column name="inputFiles_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"
+					foreignKeyName="FK_ANALYSIS_SEQUENCE_FILE_SEQUENCE_FILE"
+					referencedTableName="sequence_file" referencedColumnNames="id" />
+			</column>
+		</createTable>
+
+		<createTable tableName="analysis_sequence_file_AUD">
+			<column name="analysis_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="inputFiles_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_ANALYSIS_SEQUENCE_FILE_REVISION"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+
+		<!-- transfer properties from sequence_file into analysis_fastqc. The length 
+			'WHERE' clause is necessary to avoid any cases where FastQC was unable to 
+			execute on an uploaded file. -->
+		<sql>
+			INSERT INTO analysis (id, createdDate, description,
+			executionManagerAnalysisId, modifiedDate) SELECT id, createdDate,
+			'FastQC analysis', 'internal', modifiedDate FROM sequence_file WHERE
+			duplicationLevelChart IS NOT NULL AND encoding IS NOT NULL AND
+			fileType IS NOT NULL AND filteredSequences IS NOT NULL AND gcContent
+			IS NOT NULL AND maxLength IS NOT NULL AND minLength IS NOT NULL AND
+			perBaseQualityScoreChart IS NOT NULL AND perSequenceQualityScoreChart
+			IS NOT NULL AND totalBases IS NOT NULL AND totalSequences IS NOT
+			NULL;
+
+			INSERT INTO analysis_fastqc (id,duplicationLevelChart,
+			encoding,fileType,filteredSequences,gcContent, maxLength,
+			minLength,perBaseQualityScoreChart,perSequenceQualityScoreChart,
+			totalBases,totalSequences) SELECT id,duplicationLevelChart, encoding,
+			fileType,filteredSequences,gcContent, maxLength,
+			minLength,perBaseQualityScoreChart,perSequenceQualityScoreChart,
+			totalBases,totalSequences FROM sequence_file WHERE
+			duplicationLevelChart IS NOT NULL AND encoding IS NOT NULL AND
+			fileType IS NOT NULL AND filteredSequences IS NOT NULL AND gcContent
+			IS NOT NULL AND maxLength IS NOT NULL AND minLength IS NOT NULL AND
+			perBaseQualityScoreChart IS NOT NULL AND perSequenceQualityScoreChart
+			IS NOT NULL AND totalBases IS NOT NULL AND totalSequences IS NOT
+			NULL;
+
+			INSERT INTO analysis_AUD (id, REV, REVTYPE, createdDate,
+			description,
+			executionManagerAnalysisId, modifiedDate) SELECT id, REV,
+			REVTYPE,
+			createdDate, 'FastQC analysis', 'internal', modifiedDate FROM
+			sequence_file_AUD WHERE duplicationLevelChart IS NOT NULL AND
+			encoding IS NOT NULL AND fileType IS NOT NULL AND filteredSequences
+			IS NOT NULL AND gcContent IS NOT NULL AND maxLength IS NOT NULL AND
+			minLength IS NOT NULL AND perBaseQualityScoreChart IS NOT NULL AND
+			perSequenceQualityScoreChart IS NOT NULL AND totalBases IS NOT NULL
+			AND totalSequences IS NOT NULL;
+
+			INSERT INTO analysis_fastqc_AUD (id,
+			REV, duplicationLevelChart,
+			encoding,fileType,filteredSequences,gcContent, maxLength,
+			minLength,perBaseQualityScoreChart,perSequenceQualityScoreChart,
+			totalBases,totalSequences) SELECT id,REV,
+			duplicationLevelChart,
+			encoding,
+			fileType,filteredSequences,gcContent, maxLength,
+			minLength,perBaseQualityScoreChart,perSequenceQualityScoreChart,
+			totalBases,totalSequences FROM sequence_file_AUD WHERE
+			duplicationLevelChart IS NOT NULL AND encoding IS NOT NULL AND
+			fileType IS NOT NULL AND filteredSequences IS NOT NULL AND gcContent
+			IS NOT NULL AND maxLength IS NOT NULL AND minLength IS NOT NULL AND
+			perBaseQualityScoreChart IS NOT NULL AND perSequenceQualityScoreChart
+			IS NOT NULL AND totalBases IS NOT NULL AND totalSequences IS NOT
+			NULL;
+		</sql>
+
+		<!-- we created rows in the analysis table by specifying the id to be equal 
+			to the id of the file that it was originally associated with, so we can just 
+			create rows in the join tables where the two ids are equal for the initial 
+			import -->
+		<sql>
+			INSERT INTO analysis_sequence_file(analysis_id, inputFiles_id)
+			SELECT id, id FROM analysis;
+
+			INSERT INTO
+			analysis_sequence_file_AUD(analysis_id, inputFiles_id, REV,
+			REVTYPE)
+			SELECT id, id, REV, REVTYPE FROM analysis_AUD;
+		</sql>
+
+		<!-- now drop the columns from sequence_file and sequence_file_AUD -->
+		<dropColumn tableName="sequence_file" columnName="duplicationLevelChart" />
+		<dropColumn tableName="sequence_file" columnName="encoding" />
+		<dropColumn tableName="sequence_file" columnName="fileType" />
+		<dropColumn tableName="sequence_file" columnName="filteredSequences" />
+		<dropColumn tableName="sequence_file" columnName="gcContent" />
+		<dropColumn tableName="sequence_file" columnName="maxLength" />
+		<dropColumn tableName="sequence_file" columnName="minLength" />
+		<dropColumn tableName="sequence_file" columnName="perBaseQualityScoreChart" />
+		<dropColumn tableName="sequence_file" columnName="perSequenceQualityScoreChart" />
+		<dropColumn tableName="sequence_file" columnName="totalBases" />
+		<dropColumn tableName="sequence_file" columnName="totalSequences" />
+
+		<dropColumn tableName="sequence_file_AUD" columnName="duplicationLevelChart" />
+		<dropColumn tableName="sequence_file_AUD" columnName="encoding" />
+		<dropColumn tableName="sequence_file_AUD" columnName="fileType" />
+		<dropColumn tableName="sequence_file_AUD" columnName="filteredSequences" />
+		<dropColumn tableName="sequence_file_AUD" columnName="gcContent" />
+		<dropColumn tableName="sequence_file_AUD" columnName="maxLength" />
+		<dropColumn tableName="sequence_file_AUD" columnName="minLength" />
+		<dropColumn tableName="sequence_file_AUD" columnName="perBaseQualityScoreChart" />
+		<dropColumn tableName="sequence_file_AUD" columnName="perSequenceQualityScoreChart" />
+		<dropColumn tableName="sequence_file_AUD" columnName="totalBases" />
+		<dropColumn tableName="sequence_file_AUD" columnName="totalSequences" />
+
+		<!-- Create mapping tables between analysis_fastqc and overrepresented_sequence -->
+		<createTable tableName="analysis_fastqc_overrepresented_sequence">
+			<column name="analysis_fastqc_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					referencedTableName="analysis_fastqc" referencedColumnNames="id"
+					foreignKeyName="FK_FASTQC_OVERREPRESENTED_FASTQC" />
+			</column>
+			<column name="overrepresentedSequences_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					referencedTableName="overrepresented_sequence"
+					referencedColumnNames="id" foreignKeyName="FK_FASTQC_OVERREPRESENTED_OVERREPRESENTED"
+					unique="true" uniqueConstraintName="UK_FASTQC_OVERREPRESENTED_OVERREPRESENTED" />
+			</column>
+		</createTable>
+		<createTable tableName="analysis_fastqc_overrepresented_sequence_AUD">
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_FASTQC_OVERREPRESENTED_REVISION"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="analysis_fastqc_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="overrepresentedSequences_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+		</createTable>
+
+		<!-- copy sequenceFile_id from overepresented_sequence into analysis_fastqc_overrepresented_sequence 
+			(again, analysis_id == sequenceFile_id), then drop the column from overrepresented_sequence -->
+		<sql>
+			INSERT INTO
+			analysis_fastqc_overrepresented_sequence(analysis_fastqc_id,
+			overrepresentedSequences_id) SELECT sequenceFile_id, id FROM
+			overrepresented_sequence WHERE sequenceFile_id IS NOT NULL;
+
+			INSERT
+			INTO
+			analysis_fastqc_overrepresented_sequence_AUD(analysis_fastqc_id,
+			overrepresentedSequences_id, REV, REVTYPE) SELECT sequenceFile_id,
+			id, REV, REVTYPE FROM overrepresented_sequence_AUD WHERE
+			sequenceFile_id IS NOT NULL;
+		</sql>
+
+		<dropForeignKeyConstraint baseTableName="overrepresented_sequence"
+			constraintName="FK_OVERREPRESENTED_SEQUENCE_SEQUENCE_FILE" />
+		<dropColumn tableName="overrepresented_sequence"
+			columnName="sequenceFile_id" />
+		<dropColumn tableName="overrepresented_sequence_AUD"
+			columnName="sequenceFile_id" />
+	</changeSet>
+</databaseChangeLog>

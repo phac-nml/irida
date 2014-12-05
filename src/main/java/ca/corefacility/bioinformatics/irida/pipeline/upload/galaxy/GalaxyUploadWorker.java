@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.validation.ConstraintViolationException;
@@ -10,59 +10,77 @@ import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.jersey.api.client.ClientHandlerException;
-
+import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadConnectionException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
 
+import com.sun.jersey.api.client.ClientHandlerException;
+
 /**
  * Class for performing the actual work of uploading files to Galaxy.
+ * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyUploadWorker implements UploadWorker {
-	
+
 	private static final Logger logger = LoggerFactory
 			.getLogger(GalaxyUploadWorker.class);
 	
-	private List<UploadEventListener> eventListeners;
+	private static final int NO_TOTAL_SAMPLES = -1;
+	private static final int NO_CURRENT_SAMPLE = -1;
+	private static final UploadFolderName NO_SAMPLE_NAME = null;
 
-	private GalaxyAPI galaxyAPI;
-	
+	private GalaxyUploaderAPI galaxyAPI;
+
 	private List<UploadSample> samples;
 	private GalaxyProjectName dataLocation;
 	private GalaxyAccountEmail userName;
-	
+
 	private UploadResult uploadResult = null;
 	private UploadException uploadException = null;
-	
+
+	private int totalSamples = NO_TOTAL_SAMPLES;
+	private int currentSample = NO_CURRENT_SAMPLE;
+	private UploadFolderName sampleName = NO_SAMPLE_NAME;
+	private float proportionComplete = 0.0f;
+	private boolean finished = false;
+
 	/**
-	 * Constructs a new GalaxyUploadWorker for performing the upload of files to Galaxy within a new Thread.
-	 * @param galaxyAPI  The GalaxyAPI to connect to an instance of Galaxy.
-	 * @param samples  The list of samples to upload.
-	 * @param dataLocation  The location of the Galaxy project to upload into.
-	 * @param userName  The user to upload the data as.
+	 * Constructs a new GalaxyUploadWorker for performing the upload of files to
+	 * Galaxy within a new Thread.
+	 * 
+	 * @param galaxyAPI
+	 *            The GalaxyAPI to connect to an instance of Galaxy.
+	 * @param samples
+	 *            The list of samples to upload.
+	 * @param dataLocation
+	 *            The location of the Galaxy project to upload into.
+	 * @param userName
+	 *            The user to upload the data as.
 	 */
-	public GalaxyUploadWorker(GalaxyAPI galaxyAPI, List<UploadSample> samples,
-			GalaxyProjectName dataLocation, GalaxyAccountEmail userName) {
+	public GalaxyUploadWorker(GalaxyUploaderAPI galaxyAPI,
+			List<UploadSample> samples, GalaxyProjectName dataLocation,
+			GalaxyAccountEmail userName) {
 		checkNotNull(galaxyAPI, "galaxyAPI is null");
 		checkNotNull(samples, "samples is null");
 		checkNotNull(dataLocation, "dataLocation is null");
 		checkNotNull(userName, "userName is null");
-		
+
 		this.galaxyAPI = galaxyAPI;
 		this.samples = samples;
 		this.dataLocation = dataLocation;
 		this.userName = userName;
-		
-		eventListeners = new LinkedList<UploadEventListener>();
+
+		galaxyAPI.addUploadEventListener(this);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -70,48 +88,21 @@ public class GalaxyUploadWorker implements UploadWorker {
 	public void run() {
 		try {
 			uploadResult = uploadSamples(samples, dataLocation, userName);
-			finish(uploadResult);
 		} catch (ConstraintViolationException e) {
 			this.uploadException = new UploadException(e);
-			exception(uploadException);
 		} catch (UploadException e) {
 			this.uploadException = e;
-			exception(uploadException);
 		} catch (RuntimeException e) {
 			this.uploadException = new UploadException(e);
-			exception(uploadException);
 		} catch (Exception e) {
 			// handle any remaining exceptions
 			this.uploadException = new UploadException(e);
-			exception(uploadException);
 		}
+
+		finished = true;
+		proportionComplete = 1.0f;
 	}
-	
-	/**
-	 * Gets a copy of the event listeners list.
-	 * @return  A copy of the event listeners list
-	 */
-	private synchronized List<UploadEventListener> getEventListenersCopy() {
-		List<UploadEventListener> eventListenersList = new LinkedList<UploadEventListener>(eventListeners);
-		return eventListenersList;
-	}
-	
-	/**
-	 * Runs the finish() method on all event listeners.
-	 * @param uploadResult  The result of the upload.
-	 */
-	private void finish(UploadResult uploadResult) {
-		getEventListenersCopy().forEach(listener -> listener.finish(uploadResult));
-	}
-	
-	/**
-	 * Runs the exception() method on all event listeners.
-	 * @param uploadException  The exception that occured.
-	 */
-	private void exception(UploadException uploadException) {
-		getEventListenersCopy().forEach(listener -> listener.exception(uploadException));
-	}
-	
+
 	/**
 	 * Uploads the given list of samples to the passed data location name with
 	 * the passed user.
@@ -130,9 +121,8 @@ public class GalaxyUploadWorker implements UploadWorker {
 	 *             If the samples, dataLocation or userName are invalid.
 	 */
 	private UploadResult uploadSamples(List<UploadSample> samples,
-			GalaxyProjectName dataLocation,
-			GalaxyAccountEmail userName) throws UploadException,
-			ConstraintViolationException {
+			GalaxyProjectName dataLocation, GalaxyAccountEmail userName)
+			throws UploadException, ConstraintViolationException {
 
 		logger.debug("Uploading samples to Galaxy Library " + dataLocation
 				+ ", userEmail=" + userName + ", samples=" + samples);
@@ -140,8 +130,7 @@ public class GalaxyUploadWorker implements UploadWorker {
 		try {
 			return galaxyAPI.uploadSamples(samples, dataLocation, userName);
 		} catch (ClientHandlerException e) {
-			throw new UploadConnectionException(
-					"Could not upload to Galaxy", e);
+			throw new UploadConnectionException("Could not upload to Galaxy", e);
 		}
 	}
 
@@ -149,7 +138,7 @@ public class GalaxyUploadWorker implements UploadWorker {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public UploadResult getUploadResult() {
+	public synchronized UploadResult getUploadResult() {
 		return uploadResult;
 	}
 
@@ -157,7 +146,7 @@ public class GalaxyUploadWorker implements UploadWorker {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public UploadException getUploadException() {
+	public synchronized UploadException getUploadException() {
 		return uploadException;
 	}
 
@@ -165,7 +154,7 @@ public class GalaxyUploadWorker implements UploadWorker {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean exceptionOccured() {
+	public synchronized boolean exceptionOccured() {
 		return uploadException != null;
 	}
 
@@ -173,9 +162,70 @@ public class GalaxyUploadWorker implements UploadWorker {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public synchronized void addUploadEventListener(UploadEventListener eventListener) {
-		checkNotNull(eventListener, "eventListener is null");
-		eventListeners.add(eventListener);
-		galaxyAPI.addUploadEventListener(eventListener);
+	public synchronized float getProportionComplete() {
+		return proportionComplete;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int getTotalSamples() throws NoSuchValueException {
+		if (totalSamples == NO_TOTAL_SAMPLES) {
+			throw new NoSuchValueException("No total samples");
+		} else {
+			return totalSamples;
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int getCurrentSample() throws NoSuchValueException {
+		if (currentSample == NO_CURRENT_SAMPLE) {
+			throw new NoSuchValueException("No current sample");
+		} else {
+			return currentSample;
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public UploadFolderName getSampleName() throws NoSuchValueException {
+		if (sampleName == NO_SAMPLE_NAME) {
+			throw new NoSuchValueException("No sample name");
+		} else {
+			return sampleName;
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public synchronized void sampleProgressUpdate(int totalSamples,
+			int currentSample, UploadFolderName sampleName) {
+		checkNotNull(sampleName, "sampleName is null");
+		checkArgument(totalSamples > 0, "totalSamples=" + totalSamples
+				+ " is invalid, must be positive");
+		checkArgument(currentSample >= 0 && currentSample < totalSamples,
+				"currentSample=" + currentSample + " must be in range [0,"
+						+ totalSamples + ").");
+
+		this.totalSamples = totalSamples;
+		this.currentSample = currentSample;
+		this.sampleName = sampleName;
+		this.proportionComplete = (float) currentSample / (float) totalSamples;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public synchronized boolean isFinished() {
+		return finished;
 	}
 }

@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import ca.corefacility.bioinformatics.irida.model.Project;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
@@ -22,10 +22,10 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
  * 
  */
 @Component
-public class ReadProjectPermission extends BasePermission<Project> {
+public class ReadProjectPermission extends BasePermission<Project, Long> {
 
 	private static final Logger logger = LoggerFactory.getLogger(ReadProjectPermission.class);
-	private static final String PERMISSION_PROVIDED = "canReadProject";
+	public static final String PERMISSION_PROVIDED = "canReadProject";
 
 	private UserRepository userRepository;
 	private ProjectUserJoinRepository pujRepository;
@@ -36,7 +36,7 @@ public class ReadProjectPermission extends BasePermission<Project> {
 	@Autowired
 	public ReadProjectPermission(ProjectRepository projectRepository, UserRepository userRepository,
 			ProjectUserJoinRepository pujRepository) {
-		super(Project.class, projectRepository);
+		super(Project.class, Long.class, projectRepository);
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
 	}

@@ -20,6 +20,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -29,11 +34,13 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.user.UserGroupJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.impl.user.UserServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
 /**
  * Testing the behavior of {@link UserServiceImpl}
@@ -56,7 +63,8 @@ public class UserServiceImplTest {
 		passwordEncoder = mock(PasswordEncoder.class);
 		pujRepository = mock(ProjectUserJoinRepository.class);
 		userGroupJoinRepository = mock(UserGroupJoinRepository.class);
-		userService = new UserServiceImpl(userRepository, pujRepository, userGroupJoinRepository, passwordEncoder, validator);
+		userService = new UserServiceImpl(userRepository, pujRepository, userGroupJoinRepository, passwordEncoder,
+				validator);
 	}
 
 	@Test(expected = EntityNotFoundException.class)
@@ -210,31 +218,50 @@ public class UserServiceImplTest {
 
 		userService.create(u);
 	}
-	
+
 	@Test
-	public void testLoadUserByEmail(){
+	public void testLoadUserByEmail() {
 		String email = "fbristow@gmail.com";
 		User u = user();
 		User u2 = user();
-		
+
 		when(userRepository.loadUserByEmail(email)).thenReturn(u);
-		
-		u2.setCreatedDate(u.getCreatedDate());
+
 		u2.setModifiedDate(u.getModifiedDate());
-		
+
 		User loadUserByEmail = userService.loadUserByEmail(email);
-		
+
 		assertEquals(u2, loadUserByEmail);
 	}
-	
-	
+
 	@Test(expected = EntityNotFoundException.class)
-	public void testLoadUserByEmailNotFound(){
+	public void testLoadUserByEmailNotFound() {
 		String email = "bademail@nowhere.com";
 		when(userRepository.loadUserByEmail(email)).thenReturn(null);
-		
+
 		userService.loadUserByEmail(email);
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testSearchUser(){
+		int page = 1;
+		int size = 10;
+		Direction order = Direction.ASC;
+		String sortProperties = "id";
+		String searchString = "tom";
+		
+		
+		Page<User> userPage = new PageImpl<>(Lists.newArrayList(new User(1l, "tom", "tom@nowhere.com", "123456798", "Tom",
+				"Matthews", "1234"), new User(2l, "tomorrow", "tomorrow@somewhere.com", "ABCDEFGHIJ", "Tommorrow", "Sillyname", "5678")));
+		
+		when(userRepository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(userPage);
+		
+		Page<User> searchUser = userService.search(UserSpecification.searchUser(searchString), page, size, order, sortProperties);
+		assertEquals(userPage, searchUser);
+		
+		verify(userRepository).findAll(any(Specification.class), any(PageRequest.class));
 	}
 
 	private User user() {
