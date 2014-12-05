@@ -22,7 +22,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
  * 
  */
 @Component
-public class ReadSamplePermission extends BasePermission<Sample> {
+public class ReadSamplePermission extends BasePermission<Sample, Long> {
 
 	private static final String PERMISSION_PROVIDED = "canReadSample";
 
@@ -36,7 +36,7 @@ public class ReadSamplePermission extends BasePermission<Sample> {
 	@Autowired
 	public ReadSamplePermission(SampleRepository sampleRepository, UserRepository userRepository,
 			ProjectUserJoinRepository pujRepository, ProjectSampleJoinRepository psjRepository) {
-		super(Sample.class, sampleRepository);
+		super(Sample.class, Long.class, sampleRepository);
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
 		this.psjRepository = psjRepository;

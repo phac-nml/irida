@@ -12,4 +12,5 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
  */
 @PreAuthorize("permitAll")
 public interface PasswordResetService extends CRUDService<String, PasswordReset> {
+
 }

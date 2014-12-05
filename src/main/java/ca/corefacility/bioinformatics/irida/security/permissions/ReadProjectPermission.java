@@ -22,7 +22,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
  * 
  */
 @Component
-public class ReadProjectPermission extends BasePermission<Project> {
+public class ReadProjectPermission extends BasePermission<Project, Long> {
 
 	private static final Logger logger = LoggerFactory.getLogger(ReadProjectPermission.class);
 	public static final String PERMISSION_PROVIDED = "canReadProject";
@@ -36,7 +36,7 @@ public class ReadProjectPermission extends BasePermission<Project> {
 	@Autowired
 	public ReadProjectPermission(ProjectRepository projectRepository, UserRepository userRepository,
 			ProjectUserJoinRepository pujRepository) {
-		super(Project.class, projectRepository);
+		super(Project.class, Long.class, projectRepository);
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
 	}

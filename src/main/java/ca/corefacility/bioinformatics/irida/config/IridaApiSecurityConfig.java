@@ -49,7 +49,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	 * permission to invoke a method by the expression handler.
 	 */
 	@Autowired
-	private List<BasePermission<?>> basePermissions;
+	private List<BasePermission<?,?>> basePermissions;
 
 	@Autowired
 	private UserRepository userRepository;
