@@ -281,16 +281,19 @@ public class PasswordResetController {
 		User user = userService.read(userId);
 		User principalUser = userService.getUserByUsername(principal.getName());
 
+		Map<String, Object> response;
 		if (canCreatePasswordReset(principalUser, user)) {
 			createNewPasswordReset(user);
-			return ImmutableMap.of("success", true, "message", messageSource.getMessage(
+			response = ImmutableMap.of("success", true, "message", messageSource.getMessage(
 					"password.reset.success-message", new Object[] { user.getFirstName() }, locale), "title",
 					messageSource.getMessage("password.reset.success-title", null, locale));
 		}
 
-		return ImmutableMap.of("success", false, "message",
+		response = ImmutableMap.of("success", false, "message",
 				messageSource.getMessage("password.reset.error-message", null, locale), "title",
 				messageSource.getMessage("password.reset.error-title", null, locale));
+
+		return response;
 	}
 
 	/**
