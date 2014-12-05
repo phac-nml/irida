@@ -69,6 +69,18 @@ public class ProjectSamplesIntegrationTest {
 	}
 
 	@Test
+	public void testCopySampleToProjectWithSameId() {
+		final List<String> samples = Lists.newArrayList("3");
+
+		final String projectUri = "/projects/4";
+		final String projectJson = asUser().get(projectUri).asString();
+		final String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
+
+		asUser().contentType(ContentType.JSON).body(samples).header("Content-Type", "application/idcollection+json")
+				.expect().response().statusCode(HttpStatus.CONFLICT.value()).when().post(samplesUri);
+	}
+
+	@Test
 	public void testAddSampleToProject() {
 		Map<String, String> sample = new HashMap<>();
 		sample.put("sampleName", "sample_1");
@@ -142,8 +154,8 @@ public class ProjectSamplesIntegrationTest {
 		String projectUri = "http://localhost:8080/projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
 
-		asAdmin().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles")).when()
-				.get(projectSampleUri);
+		asAdmin().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
+				.when().get(projectSampleUri);
 	}
 
 	@Test
@@ -151,7 +163,7 @@ public class ProjectSamplesIntegrationTest {
 		String projectUri = "http://localhost:8080/projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
 
-		asSequencer().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles")).when()
-				.get(projectSampleUri);
+		asSequencer().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
+				.when().get(projectSampleUri);
 	}
 }
