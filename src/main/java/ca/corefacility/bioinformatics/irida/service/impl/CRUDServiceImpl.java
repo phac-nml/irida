@@ -12,6 +12,7 @@ import javax.validation.Validator;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.NotWritablePropertyException;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -222,7 +223,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	public Revisions<Integer, ValueType> findRevisions(KeyType id) throws EntityRevisionDeletedException {
 		try {
 			return repository.findRevisions(id);
-		} catch (Exception e) {
+		} catch (InvalidDataAccessApiUsageException e) {
 			throw new EntityRevisionDeletedException(String.format("Resource with id [%d] was deleted.", id), e);
 		}
 	}
@@ -236,7 +237,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 			throws EntityRevisionDeletedException {
 		try {
 			return repository.findRevisions(id, pageable);
-		} catch (Exception e) {
+		} catch (InvalidDataAccessApiUsageException e) {
 			throw new EntityRevisionDeletedException(String.format("Resource with id [%d] was deleted.", id), e);
 		}
 	}
