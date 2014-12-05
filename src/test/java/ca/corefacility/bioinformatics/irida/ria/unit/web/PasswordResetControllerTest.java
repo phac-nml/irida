@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
+import java.security.Principal;
 import java.util.Base64;
 import java.util.Locale;
 import java.util.Map;
@@ -25,6 +26,7 @@ import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.utilities.EmailController;
@@ -53,7 +55,7 @@ public class PasswordResetControllerTest {
 
 		controller = new PasswordResetController(userService, passwordResetService, emailController, messageSource);
 	}
-	
+
 	@After
 	public void cleanup() {
 		SecurityContextHolder.clearContext();
@@ -94,8 +96,8 @@ public class PasswordResetControllerTest {
 
 		assertEquals(PasswordResetController.SUCCESS_REDIRECT + Base64.getEncoder().encodeToString(email.getBytes()),
 				sendNewPassword);
-		assertEquals("User should not be logged in after resetting password", username, SecurityContextHolder.getContext()
-				.getAuthentication().getName());
+		assertEquals("User should not be logged in after resetting password", username, SecurityContextHolder
+				.getContext().getAuthentication().getName());
 
 		verify(passwordResetService).read(resetId);
 		verify(userService).changePassword(user.getId(), password);
@@ -164,11 +166,16 @@ public class PasswordResetControllerTest {
 	@Test
 	public void testAdminNewPasswordReset() {
 		User user = TestDataFactory.constructUser();
+		String loggedInUsername = "loggedIn";
+		Principal principal = () -> loggedInUsername;
+		User loggedIn = new User(loggedInUsername, null, null, null, null, null);
+		loggedIn.setSystemRole(Role.ROLE_ADMIN);
+
 		when(userService.read(TestDataFactory.USER_ID)).thenReturn(user);
-		when(messageSource
-				.getMessage(anyString(), any(), any(Locale.class)))
-				.thenReturn("Anything can work here");
-		Map<String, Object> result = controller.adminNewPasswordReset(TestDataFactory.USER_ID, Locale.US);
+		when(userService.getUserByUsername(loggedInUsername)).thenReturn(loggedIn);
+
+		when(messageSource.getMessage(anyString(), any(), any(Locale.class))).thenReturn("Anything can work here");
+		Map<String, Object> result = controller.adminNewPasswordReset(TestDataFactory.USER_ID, principal, Locale.US);
 		assertTrue(result.containsKey("message"));
 		assertTrue(result.containsKey("title"));
 		assertTrue(result.containsKey("success"));
