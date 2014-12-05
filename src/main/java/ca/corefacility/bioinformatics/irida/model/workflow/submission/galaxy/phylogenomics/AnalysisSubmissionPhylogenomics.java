@@ -3,11 +3,7 @@ package ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.ph
 import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.envers.Audited;
@@ -28,10 +24,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.Ana
 public class AnalysisSubmissionPhylogenomics
 	extends AnalysisSubmissionGalaxy<RemoteWorkflowPhylogenomics> {
 	
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "reference_file_id")
-	private ReferenceFile referenceFile;
-	
 	@SuppressWarnings("unused")
 	private AnalysisSubmissionPhylogenomics() {
 	}
@@ -48,31 +40,11 @@ public class AnalysisSubmissionPhylogenomics
 			ReferenceFile referenceFile,
 			RemoteWorkflowPhylogenomics remoteWorkflow, UUID workflowId) {
 		super(name, inputFiles, remoteWorkflow, workflowId);
-		this.referenceFile = referenceFile;
+		setReferenceFile(referenceFile);
 	}
 
-	/**
-	 * Sets the reference file.
-	 * @param referenceFile  The reference file.
-	 */
-	public void setReferenceFile(ReferenceFile referenceFile) {
-		this.referenceFile = referenceFile;
-	}
-
-	/**
-	 * Gets the ReferenceFile.
-	 * @return  The ReferenceFile.
-	 */
-	public ReferenceFile getReferenceFile() {
-		return referenceFile;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
-		return "AnalysisSubmissionPhylogenomics [referenceFile="
-				+ referenceFile + ", toString()=" + super.toString() + "]";
+		return "AnalysisSubmissionPhylogenomics [toString()=" + super.toString() + "]";
 	}
 }
