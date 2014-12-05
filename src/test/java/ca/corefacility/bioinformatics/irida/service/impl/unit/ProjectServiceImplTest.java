@@ -219,6 +219,19 @@ public class ProjectServiceImplTest {
 		verify(sampleRepository).save(s);
 	}
 
+	@Test(expected = EntityExistsException.class)
+	public void testAddSampleWithSameSequencerId() {
+		Project p = project();
+		Sample s = new Sample();
+		Sample otherSample = new Sample("name", "external");
+		s.setSequencerSampleId("external");
+		s.setSampleName("name");
+
+		when(sampleRepository.getSampleBySequencerSampleId(p, s.getSequencerSampleId())).thenReturn(otherSample);
+
+		projectService.addSampleToProject(p, s);
+	}
+
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testUserHasProjectRole() {
@@ -357,7 +370,7 @@ public class ProjectServiceImplTest {
 
 		verify(psjRepository).getProjectForSample(sample);
 	}
-	
+
 	@Test
 	public void testRemoveRelatedProject() {
 		RelatedProjectJoin join = new RelatedProjectJoin();

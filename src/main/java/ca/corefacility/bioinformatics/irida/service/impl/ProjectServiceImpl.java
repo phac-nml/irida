@@ -186,6 +186,14 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
 	public ProjectSampleJoin addSampleToProject(Project project, Sample sample) {
 		logger.trace("Adding sample to project.");
+
+		// Check to ensure a sample with this sequencer id doesn't exist in this
+		// project already
+		if (sampleRepository.getSampleBySequencerSampleId(project, sample.getSequencerSampleId()) != null) {
+			throw new EntityExistsException("Sample with sequencer id '" + sample.getSequencerSampleId()
+					+ "' already exists in project " + project.getId());
+		}
+
 		// the sample hasn't been persisted before, persist it before calling
 		// the relationshipRepository.
 		if (sample.getId() == null) {
@@ -337,16 +345,16 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 				.findReferenceFilesForProject(project);
 		Join<Project, ReferenceFile> specificJoin = null;
 		for (Join<Project, ReferenceFile> join : referenceFilesForProject) {
-			if(join.getObject().equals(file)) {
+			if (join.getObject().equals(file)) {
 				specificJoin = join;
 				break;
 			}
 		}
 		if (specificJoin != null) {
-			prfjRepository.delete((ProjectReferenceFileJoin)specificJoin);
-		}
-		else {
-			throw new EntityNotFoundException("Cannot find a join for project [" + project.getName() + "] and reference file [" + file.getLabel() + "].");
+			prfjRepository.delete((ProjectReferenceFileJoin) specificJoin);
+		} else {
+			throw new EntityNotFoundException("Cannot find a join for project [" + project.getName()
+					+ "] and reference file [" + file.getLabel() + "].");
 		}
 	}
 }
