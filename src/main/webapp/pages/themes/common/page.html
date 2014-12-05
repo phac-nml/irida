@@ -11,6 +11,7 @@
 </head>
 <body vocab="http://schema.org/" typeof="WebPage" id="ng-app" ng-app="irida">
 <div toaster-container=""></div>
+
 <th:block layout:fragment="main-section">
 	<!--/* This is where each pages content should be loaded. */-->
 </th:block>
@@ -101,6 +102,11 @@
 					    });
 				    }
 			    }
+		    }])
+		    .controller('CartCtrl', [function () {
+			    "use strict";
+			    var vm = this;
+			    vm.show = false;
 		    }])
 		;
 	/*]]>*/

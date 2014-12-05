@@ -4,7 +4,7 @@
         layout:decorator="themes/bootstrap/_base">
 <head lang="en"></head>
 <body>
-<div layout:fragment="content">
+<div style="height: 100%;" layout:fragment="content" ng-controller="CartCtrl as cart">
     <nav class="navbar navbar-inverse navbar-static-top" role="navigation" ng-init="navbarCollapsed = true">
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
@@ -71,14 +71,22 @@
                         </ul>
                     </li>
                 </ul>
+	            <button type="button" class="btn btn-success btn-sm navbar-btn navbar-right" ng-click="cart.show=!cart.show"><span class="badge badge-default">28</span>&nbsp;Cart</button>
             </div>
             <!-- /.navbar-collapse -->
         </div>
         <!-- /.container-fluid -->
     </nav>
     <th:block layout:fragment="subnav"></th:block>
-    <div class="container">
-        <div class="row main-area" layout:fragment="page"></div>
+    <div style="height: 100%; padding-top: 15px;" class="st-container" ng-class="{'cart-open':cart.show}">
+        <div class="st-content">
+	        <div class="container st-content-inner">
+		        <div class="row" layout:fragment="page"></div>
+	        </div>
+        </div>
+	    <aside class="cart">
+		    <button class="btn btn-primary" ng-click="cart.show=false">Close</button>
+	    </aside>
     </div>
 </div>
 </body>
