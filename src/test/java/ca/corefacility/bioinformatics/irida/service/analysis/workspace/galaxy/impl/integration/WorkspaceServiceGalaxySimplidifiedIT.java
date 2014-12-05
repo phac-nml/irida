@@ -127,7 +127,7 @@ public class WorkspaceServiceGalaxySimplidifiedIT {
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
@@ -139,10 +139,10 @@ public class WorkspaceServiceGalaxySimplidifiedIT {
 		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
 		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
 		History createdHistory = historiesClient.create(history);
-		
+
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowId);
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
-		String workflowString = new String(Files.readAllBytes(workflowPath),  StandardCharsets.UTF_8);
+		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
 
 		AnalysisSubmissionPhylogenomics analysisSubmission = analysisExecutionGalaxyITService

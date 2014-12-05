@@ -16,7 +16,6 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -29,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-//@Service
 public class IridaWorkflowsService {
 	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowsService.class);
 
