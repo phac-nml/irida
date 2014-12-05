@@ -40,12 +40,49 @@
     }
   }
 
+  function StorageService($sessionStorage) {
+    "use strict";
+    var projectId;
+    var storage = $sessionStorage;
+    function addProject(id) {
+      projectId = id;
+      var projects = storage.projects || {};
+      projects[id] = projects[id] || {};
+      storage.$default({projects : projects});
+    }
+
+    function addSample(id) {
+      storage.projects[projectId][id] = true;
+    }
+
+    function removeSample(id) {
+      delete storage.projects[projectId][id];
+    }
+
+    function getKeys() {
+      return Object.keys(storage.projects[projectId]);
+    }
+
+    function clear() {
+      delete storage.projects[projectId];
+      addProject(projectId);
+    }
+
+    return ({
+      addProject   : addProject,
+      addSample    : addSample,
+      removeSample : removeSample,
+      getKeys      : getKeys,
+      clear        : clear
+    });
+  }
+
   /*[- */
 // Responsible for all server calls for samples
 // @param $rootScope The root scope for the page.
 // @param R Restangular
   /* -]*/
-  function SamplesService($rootScope, BASE_URL, R, notifications, filter) {
+  function SamplesService($rootScope, storage, BASE_URL, R, notifications, filter) {
     "use strict";
     var svc = this,
         id = $rootScope.projectId,
@@ -53,14 +90,6 @@
         selected = [],
         filtered = [];
     svc.samples = [];
-
-    svc.getSamples = function (f) {
-      _.extend(svc.filter, f || {});
-      $rootScope.cgPromise = base.customGET("").then(function (data) {
-        angular.copy(data.samples, svc.samples);
-        $rootScope.$broadcast('SAMPLES_INIT', {total: data.samples.length});
-      });
-    };
 
     svc.getNumSamples = function () {
       return svc.samples.length;
@@ -73,9 +102,11 @@
     svc.updateSample = function (s) {
       if (s.selected) {
         selected.push(s)
+        storage.addSample(s.id);
       }
       else {
         selected = _.without(selected, s);
+        storage.removeSample(s.id);
       }
       updateSelectedCount()
     };
@@ -92,8 +123,9 @@
       params.sampleIds = getSelectedSampleIds();
       return base.customPOST(params, 'merge').then(function (data) {
         if (data.result === 'success') {
-          svc.getSamples();
+          getSamples();
           selected = [];
+          storage.clear();
           updateSelectedCount();
           notifications.show({type: data.result, msg: data.message});
         }
@@ -113,6 +145,7 @@
       _.each(filtered.slice(begin, begin + filter.count), function (s) {
         if (!s.selected) {
           s.selected = true;
+          storage.addSample(s.id);
           selected.push(s);
         }
       });
@@ -124,6 +157,7 @@
         s.selected = true;
         if (!_.contains(selected, s)) {
           selected.push(s);
+          storage.addSample(s.id);
         }
       });
       updateSelectedCount();
@@ -134,6 +168,7 @@
         s.selected = false
       });
       selected = [];
+      storage.clear();
       updateSelectedCount();
     };
 
@@ -150,11 +185,11 @@
 
     svc.galaxyUpload = function (email, name) {
       return base.customPOST({
-        email: email,
-        name: name,
+        email    : email,
+        name     : name,
         sampleIds: getSelectedSampleIds()
-      }, 'galaxy/upload').then(function(data) {
-        if(data.result === 'success') {
+      }, 'galaxy/upload').then(function (data) {
+        if (data.result === 'success') {
           notifications.show({msg: data.msg});
         }
         return data;
@@ -195,6 +230,27 @@
     function updateSelectedCount() {
       $rootScope.$broadcast('COUNT', {count: selected.length});
     }
+
+    function getSamples(f) {
+      _.extend(svc.filter, f || {});
+      $rootScope.cgPromise = base.customGET("").then(function (data) {
+        var selectedKeys = storage.getKeys();
+        $rootScope.$broadcast('COUNT', {count: selectedKeys.length});
+        console.log(selectedKeys)
+        _.each(data.samples, function(s) {
+            if(_.contains(selectedKeys, s.id + "")) {
+              s.selected = true;
+            }
+        });
+        angular.copy(data.samples, svc.samples);
+        $rootScope.$broadcast('SAMPLES_INIT', {total: data.samples.length});
+      });
+    }
+
+    svc.init = function () {
+      getSamples();
+      storage.addProject(id);
+    };
   }
 
   function sortBy() {
@@ -272,7 +328,7 @@
     };
 
     // Initial call to get the samples
-    SamplesService.getSamples({});
+    SamplesService.init();
   }
 
   function SubNavCtrl($scope, $modal, BASE_URL, SamplesService) {
@@ -302,12 +358,12 @@
     };
 
     vm.export = {
-      open  : false,
+      open    : false,
       download: function download() {
         vm.export.open = false;
         SamplesService.downloadFiles();
       },
-      linker: function linker() {
+      linker  : function linker() {
         vm.export.open = false;
         $modal.open({
           templateUrl: BASE_URL + 'projects/templates/samples/linker',
@@ -322,11 +378,11 @@
           }
         });
       },
-      galaxy: function galaxy() {
+      galaxy  : function galaxy() {
         vm.export.open = false;
         $modal.open({
           templateUrl: BASE_URL + 'projects/' + SamplesService.getProjectId() + '/templates/samples/galaxy',
-          controller: 'GalaxyCtrl as gCtrl'
+          controller : 'GalaxyCtrl as gCtrl'
         });
       }
     };
@@ -522,9 +578,9 @@
 
     vm.upload = function () {
       vm.uploading = true;
-      SamplesService.galaxyUpload(vm.email, vm.name).then(function(data) {
+      SamplesService.galaxyUpload(vm.email, vm.name).then(function (data) {
         vm.uploading = false;
-        if(data.result === 'success') {
+        if (data.result === 'success') {
           vm.close();
           // TODO: Create a progress bar to monitor the status of the upload.
         }
@@ -547,11 +603,12 @@
     };
   }
 
-  angular.module('Samples', ['cgBusy'])
+  angular.module('Samples', ['cgBusy', 'ngStorage'])
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
+    .service('StorageService', ['$sessionStorage', StorageService])
     .service('Select2Service', ['$timeout', Select2Service])
-    .service('SamplesService', ['$rootScope', 'BASE_URL', 'Restangular', 'notifications', 'FilterFactory', SamplesService])
+    .service('SamplesService', ['$rootScope', 'StorageService', 'BASE_URL', 'Restangular', 'notifications', 'FilterFactory', SamplesService])
     .filter('PagingFilter', ['$rootScope', 'FilterFactory', 'SamplesService', PagingFilter])
     .directive('sortBy', [sortBy])
     .controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
