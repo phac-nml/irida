@@ -121,6 +121,7 @@ public class ProjectServiceImplTest {
 	public void testAddSampleToProject() {
 		Sample s = new Sample();
 		s.setSampleName("sample");
+		s.setSequencerSampleId("external");
 		s.setId(new Long(2222));
 		Project p = project();
 
@@ -131,7 +132,7 @@ public class ProjectServiceImplTest {
 		Join<Project, Sample> rel = projectService.addSampleToProject(p, s);
 
 		verify(psjRepository).save(join);
-		verifyZeroInteractions(sampleRepository);
+		verify(sampleRepository).getSampleBySequencerSampleId(p, s.getSequencerSampleId());
 
 		assertNotNull(rel);
 		assertEquals(rel.getSubject(), p);
@@ -217,6 +218,19 @@ public class ProjectServiceImplTest {
 		projectService.addSampleToProject(p, s);
 
 		verify(sampleRepository).save(s);
+	}
+
+	@Test(expected = EntityExistsException.class)
+	public void testAddSampleWithSameSequencerId() {
+		Project p = project();
+		Sample s = new Sample();
+		Sample otherSample = new Sample("name", "external");
+		s.setSequencerSampleId("external");
+		s.setSampleName("name");
+
+		when(sampleRepository.getSampleBySequencerSampleId(p, s.getSequencerSampleId())).thenReturn(otherSample);
+
+		projectService.addSampleToProject(p, s);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -357,7 +371,7 @@ public class ProjectServiceImplTest {
 
 		verify(psjRepository).getProjectForSample(sample);
 	}
-	
+
 	@Test
 	public void testRemoveRelatedProject() {
 		RelatedProjectJoin join = new RelatedProjectJoin();

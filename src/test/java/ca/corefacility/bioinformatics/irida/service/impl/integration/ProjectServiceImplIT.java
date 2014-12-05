@@ -238,6 +238,24 @@ public class ProjectServiceImplIT {
 		projectService.addSampleToProject(p, s);
 	}
 
+	@Test(expected = EntityExistsException.class)
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testAddSampleToProjectWithSameSequencerId() {
+		Sample s = sampleService.read(1L);
+		Project p = projectService.read(1L);
+
+		projectService.addSampleToProject(p, s);
+
+		Sample otherSample = new Sample(s.getSampleName(), s.getSequencerSampleId());
+
+		projectService.addSampleToProject(p, otherSample);
+
+		// if 2 exist with the same id, this call will fail
+		Sample sampleBySequencerSampleId = sampleService.getSampleBySequencerSampleId(p,
+				otherSample.getSequencerSampleId());
+		assertNotNull(sampleBySequencerSampleId);
+	}
+
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testRemoveSampleFromProject() {
