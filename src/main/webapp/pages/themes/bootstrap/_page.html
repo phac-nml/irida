@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html
+<html xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorator="themes/bootstrap/_base">
 <head lang="en"></head>
@@ -139,7 +139,7 @@
 							<button type="button" class="btn btn-info btn-sm navbar-btn navbar-right"
 							        ng-click="cart.show=!cart.show">
 								<span th:text="#{cart.label}"></span>&nbsp;
-								<span class="badge badge-default ">3</span>
+								<span class="badge badge-default" ng-bind="cart.projects.length">0</span>
 							</button>
 						</div>
 						<!-- /.navbar-collapse -->
@@ -151,11 +151,15 @@
 			</div>
 		</div>
 		<aside class="cart">
-			<section>
-				<p th:text="#{cart.empty-text}"></p>
+			<section ng-hide="cart.projects.length">
+				<p class="lead" th:text="#{cart.empty-text}"></p>
+				<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close</button>
 			</section>
-			<button class="btn btn-default" ng-click="cart.show=false">Close</button>
-			<button class="btn btn-primary pull-right">Run Pipeline</button>
+			<section ng-show="cart.projects.length">
+
+				<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close</button>
+				<button class="btn btn-primary pull-right" th:text="#{cart.btn.run}">Run Pipeline</button>
+			</section>
 		</aside>
 	</div>
 </div>
