@@ -64,7 +64,7 @@ import com.google.common.collect.Sets;
 		WithSecurityContextTestExcecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class WorkspaceServiceGalaxySimplidifiedIT {
+public class WorkspaceServiceGalaxySimplifiedIT {
 
 	@Autowired
 	private DatabaseSetupGalaxyITService analysisExecutionGalaxyITService;
