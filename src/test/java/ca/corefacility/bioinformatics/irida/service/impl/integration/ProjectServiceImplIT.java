@@ -226,6 +226,23 @@ public class ProjectServiceImplIT {
 		asRole(Role.ROLE_ADMIN).projectService.addSampleToProject(p, s);
 	}
 
+	@Test(expected = EntityExistsException.class)
+	public void testAddSampleToProjectWithSameSequencerId() {
+		Sample s = asRole(Role.ROLE_ADMIN).sampleService.read(1L);
+		Project p = asRole(Role.ROLE_ADMIN).projectService.read(1L);
+
+		asRole(Role.ROLE_ADMIN).projectService.addSampleToProject(p, s);
+
+		Sample otherSample = new Sample(s.getSampleName(), s.getSequencerSampleId());
+
+		asRole(Role.ROLE_ADMIN).projectService.addSampleToProject(p, otherSample);
+
+		// if 2 exist with the same id, this call will fail
+		Sample sampleBySequencerSampleId = sampleService.getSampleBySequencerSampleId(p,
+				otherSample.getSequencerSampleId());
+		assertNotNull(sampleBySequencerSampleId);
+	}
+
 	@Test
 	public void testRemoveSampleFromProject() {
 		Sample s = asRole(Role.ROLE_ADMIN).sampleService.read(1L);
@@ -310,7 +327,7 @@ public class ProjectServiceImplIT {
 		for (int i = 0; i < reversed.size(); i++) {
 			assertEquals(forward.get(i), reversed.get(i));
 		}
-		
+
 		Project excludeProject = projectService.read(2l);
 		Page<ProjectUserJoin> search = projectService.searchProjectUsers(
 				ProjectUserJoinSpecification.excludeProject(excludeProject), 0, 10, Direction.DESC);
@@ -336,7 +353,7 @@ public class ProjectServiceImplIT {
 		for (int i = 0; i < reversed.size(); i++) {
 			assertEquals(forward.get(i), reversed.get(i));
 		}
-		
+
 		Project excludeProject = projectService.read(5l);
 		Page<Project> search = projectService.search(ProjectSpecification.excludeProject(excludeProject), 0, 10,
 				Direction.DESC);
@@ -444,7 +461,8 @@ public class ProjectServiceImplIT {
 
 		asRole(Role.ROLE_ADMIN).projectService.removeReferenceFileFromProject(p, f);
 
-		Collection<Join<Project, ReferenceFile>> files = asRole(Role.ROLE_ADMIN).referenceFileService.getReferenceFilesForProject(p);
+		Collection<Join<Project, ReferenceFile>> files = asRole(Role.ROLE_ADMIN).referenceFileService
+				.getReferenceFilesForProject(p);
 		assertTrue("No reference files should be assigned to project.", files.isEmpty());
 	}
 
