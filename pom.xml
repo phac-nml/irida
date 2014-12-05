@@ -7,7 +7,7 @@
     <groupId>ca.corefacility.bioinformatics.irida.ria</groupId>
     <artifactId>irida-ui</artifactId>
     <packaging>war</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
 
     <issueManagement>
         <system>GitLab</system>
