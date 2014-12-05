@@ -74,7 +74,7 @@ public class ProjectSamplesIT {
 	public void testCopySampleToProjectWithSameId() {
 		final List<String> samples = Lists.newArrayList("3");
 
-		final String projectUri = "/projects/4";
+		final String projectUri = "/api/projects/4";
 		final String projectJson = asUser().get(projectUri).asString();
 		final String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
 
