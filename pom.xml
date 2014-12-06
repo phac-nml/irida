@@ -5,7 +5,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida-api</artifactId>
 	<packaging>jar</packaging>
-	<version>2.0.0</version>
+	<version>2.0.1</version>
 	<name>irida-api</name>
 	<url>http://gitlab.corefacility.ca/irida/irida-api</url>
 
@@ -580,10 +580,6 @@
 		<hibernate.validator.version>5.1.1.Final</hibernate.validator.version>
 		<javax.el-api.version>2.2</javax.el-api.version>
 		<el-ri.version>1.0</el-ri.version>
-<<<<<<< HEAD
-		<com.github.jmchilton.blend4j.version>0.2.0-SNAPSHOT-1167ef08bbf7359d781e910ce8253fc36295f291</com.github.jmchilton.blend4j.version>
-		<com.github.jmchilton.galaxybootstrap.version>0.5.0</com.github.jmchilton.galaxybootstrap.version>
-=======
 		<com.github.jmchilton.galaxybootstrap.version>0.3.0</com.github.jmchilton.galaxybootstrap.version>
 		<com.github.jmchilton.blend4j.version>0.2.0-SNAPSHOT</com.github.jmchilton.blend4j.version>
 		<com.github.jmchilton.galaxybootstrap.version>0.4.0</com.github.jmchilton.galaxybootstrap.version>
@@ -592,7 +588,6 @@
 		<liquibase.version>3.2.2</liquibase.version>
 		<biojava.version>3.0</biojava.version>
 		<ehcache.version>2.9.0</ehcache.version>
->>>>>>> development
 
 		<!-- plugins -->
 		<maven.failsafe.plugin.version>2.17</maven.failsafe.plugin.version>
@@ -626,14 +621,9 @@
 			in the defined repository -->
 		<test.galaxy.revision>7e4d21621ce12e13ebbdf9fd3259df58c3ef124c</test.galaxy.revision>
 
-<<<<<<< HEAD
-		<!-- Galaxy Testing Revision: either 'latest' or a revision from https://bitbucket.org/galaxy/galaxy-dist -->
-		<test.galaxy.revision>ff30da7a2873416a332b7700eb15e26a1bf3c46e</test.galaxy.revision>
-=======
 		<!-- URL to a pre-populated SQLite database for Galaxy -->
 		<!-- Set to 'local' to use the local version stored in irida-api, or set 
 			this to a URL -->
 		<test.galaxy.database>local</test.galaxy.database>
->>>>>>> development
 	</properties>
 </project>
