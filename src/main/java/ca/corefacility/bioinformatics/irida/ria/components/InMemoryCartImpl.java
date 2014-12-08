@@ -12,7 +12,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 /**
- * A HashMap based {@link Cart}
+ * A Map based {@link Cart}
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
@@ -20,7 +20,15 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 @Component
 @Scope("session")
 public class InMemoryCartImpl implements Cart {
-	private Map<Project, Set<Sample>> selected = new HashMap<>();
+	private Map<Project, Set<Sample>> selected;
+
+	public InMemoryCartImpl() {
+		this(new HashMap<>());
+	}
+
+	public InMemoryCartImpl(Map<Project, Set<Sample>> selected) {
+		this.selected = selected;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -46,6 +54,10 @@ public class InMemoryCartImpl implements Cart {
 	public void removeProjectSample(Project project, Set<Sample> samples) {
 		Set<Sample> selectedSamplesForProject = getSelectedSamplesForProject(project);
 		selectedSamplesForProject.removeAll(samples);
+
+		if (getSelectedSamplesForProject(project).isEmpty()) {
+			removeProject(project);
+		}
 	}
 
 	/**
