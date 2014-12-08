@@ -190,6 +190,9 @@ public class AnalysisWorkspaceServiceGalaxySimplified implements AnalysisWorkspa
 		description.setCollectionType(DatasetCollectionType.LIST.toString());
 		description.setName(COLLECTION_NAME);
 
+		// TODO Only supports one sequence file per sample right now and
+		// throws an exception if more than one sequence file shares the same
+		// sample. This will be fixed in a future release.
 		Map<Path, Sample> samplesMap = new HashMap<>();
 		for (Join<Sample, SequenceFile> sampleSequenceJoin : sampleSequenceFiles) {
 			SequenceFile sequenceFile = sampleSequenceJoin.getObject();
