@@ -48,7 +48,7 @@
   function SamplesService($rootScope, BASE_URL, R, notifications, filter) {
     "use strict";
     var svc = this,
-        id = $rootScope.projectId,
+        id = angular.element("#projectId").val(),
         base = R.all('projects/' + id + '/ajax/samples'),
         selected = [],
         filtered = [];
