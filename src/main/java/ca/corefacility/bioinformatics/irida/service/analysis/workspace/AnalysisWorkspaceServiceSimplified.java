@@ -17,7 +17,9 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 public interface AnalysisWorkspaceServiceSimplified {
 
 	/**
-	 * Prepares the workspace for an analysis given an analysis submission.
+	 * Prepares the workspace for an analysis given an analysis submission. This
+	 * provides a remote location where files can be stored for analysis
+	 * (creates a Galaxy History).
 	 * 
 	 * @param analysisSubmission
 	 *            The submission used to perform an analysis.
@@ -28,8 +30,8 @@ public interface AnalysisWorkspaceServiceSimplified {
 	public String prepareAnalysisWorkspace(AnalysisSubmission analysisSubmission) throws ExecutionManagerException;
 
 	/**
-	 * Prepares the files for a workflow for an analysis given an analysis
-	 * submission.
+	 * Uploads and prepares the files and other necessary data structures of a
+	 * workflow for an analysis given an analysis submission.
 	 * 
 	 * @param analysisSubmission
 	 *            The submission used to perform an analysis.
