@@ -57,7 +57,7 @@ public class CartController {
 	 */
 	@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public Map<String, Object> getCart() {
+	public Map<String, Object> getCartMap() {
 		List<Map<String, Object>> projects = getProjectsAsList(cart);
 		return ImmutableMap.of("projects", projects);
 	}
@@ -73,7 +73,7 @@ public class CartController {
 	 */
 	@RequestMapping(value = "/project/{projectId}/samples", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public Map<String, Object> addProjectSample(@PathVariable Long projectId, @RequestBody List<Long> sampleIds) {
+	public Map<String, Object> addProjectSample(@PathVariable Long projectId, @RequestBody Set<Long> sampleIds) {
 		Project project = projectService.read(projectId);
 		Set<Sample> samples = getSamplesForProjet(project, sampleIds);
 
@@ -94,7 +94,7 @@ public class CartController {
 	 */
 	@RequestMapping(value = "/project/{projectId}/samples", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public Map<String, Object> removeProjectSample(@PathVariable Long projectId, @RequestBody List<Long> sampleIds) {
+	public Map<String, Object> removeProjectSample(@PathVariable Long projectId, @RequestBody Set<Long> sampleIds) {
 		Project project = projectService.read(projectId);
 		Set<Sample> samples = getSamplesForProjet(project, sampleIds);
 		cart.removeProjectSample(project, samples);
@@ -148,7 +148,7 @@ public class CartController {
 	 *            the {@link Sample} ids
 	 * @return A Set of {@link Sample}s
 	 */
-	private Set<Sample> getSamplesForProjet(Project project, List<Long> sampleIds) {
+	private Set<Sample> getSamplesForProjet(Project project, Set<Long> sampleIds) {
 		return sampleIds.stream().map((id) -> {
 			return sampleService.getSampleForProject(project, id);
 		}).collect(Collectors.toSet());
