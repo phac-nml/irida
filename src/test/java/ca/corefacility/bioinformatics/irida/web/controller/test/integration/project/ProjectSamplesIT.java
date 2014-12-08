@@ -141,7 +141,7 @@ public class ProjectSamplesIT {
 
 	@Test
 	public void testReadSampleAsAdmin() {
-		String projectUri = "http://localhost:8080/projects/5";
+		String projectUri = "http://localhost:8080/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
 
 		asAdmin().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles")).when()
@@ -150,7 +150,7 @@ public class ProjectSamplesIT {
 
 	@Test
 	public void testReadSampleAsSequencer() {
-		String projectUri = "http://localhost:8080/projects/5";
+		String projectUri = "http://localhost:8080/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
 
 		asSequencer().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles")).when()

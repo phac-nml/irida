@@ -23,6 +23,8 @@ public abstract class BasePermission<DomainObjectType, IdentifierType extends Se
 
 	private static final Logger logger = LoggerFactory.getLogger(BasePermission.class);
 
+	private static final String ADMIN_AUTHORITY = Role.ROLE_ADMIN.getAuthority();
+
 	/**
 	 * Get the implementation-specific permission provided.
 	 * 
@@ -142,7 +144,7 @@ public abstract class BasePermission<DomainObjectType, IdentifierType extends Se
 	public final boolean isAllowed(Authentication authentication, Object targetDomainObject) {
 		// fast pass for administrators -- administrators are allowed to access
 		// everything.
-		if (authentication.getAuthorities().contains(Role.ROLE_ADMIN)) {
+		if (authentication.getAuthorities().stream().anyMatch(g -> g.getAuthority().equals(ADMIN_AUTHORITY))) {
 			return true;
 		}
 
