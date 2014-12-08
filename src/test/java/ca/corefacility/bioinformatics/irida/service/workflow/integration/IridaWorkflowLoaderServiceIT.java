@@ -115,7 +115,8 @@ public class IridaWorkflowLoaderServiceIT {
 		tools.add(workflowTool);
 
 		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version, "Mr. Developer",
-				"developer@example.com", new WorkflowInput("sequence_reads", "reference"), outputs, tools);
+				"developer@example.com", TestAnalysis.class, new WorkflowInput("sequence_reads", "reference"), outputs,
+				tools);
 
 		return iridaWorkflow;
 	}

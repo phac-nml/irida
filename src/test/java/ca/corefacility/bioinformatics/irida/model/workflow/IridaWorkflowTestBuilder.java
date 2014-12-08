@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import ca.corefacility.bioinformatics.irida.service.workflow.integration.TestAnalysis;
+
 /**
  * Builds test {@link IridaWorkflow}s.
  * 
@@ -51,7 +53,8 @@ public class IridaWorkflowTestBuilder {
 		tools.add(workflowTool);
 
 		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version, "Mr. Developer",
-				"developer@example.com", new WorkflowInput("sequence_reads", "reference"), outputs, tools);
+				"developer@example.com", TestAnalysis.class, new WorkflowInput("sequence_reads", "reference"), outputs,
+				tools);
 
 		return iridaWorkflow;
 	}
