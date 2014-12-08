@@ -3,7 +3,7 @@
   function ProjectFileService($rootScope, R) {
     "use strict";
     var svc = this,
-        id = $rootScope.projectId,
+        id = angular.element("#projectId").val(),
         base = R.all('projects/' + id + '/ajax/reference');
     svc.files = [];
 
@@ -28,7 +28,7 @@
   function FileService($rootScope, $modal, BASE_URL, R, notifications) {
     "use strict";
     var svc = this,
-        projectId = $rootScope.projectId,
+        projectId = angular.element("#projectId").val(),
         api = R.all('referenceFiles');
 
     svc.download = function (id) {

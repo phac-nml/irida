@@ -213,7 +213,7 @@ public class ProjectSamplesPage extends AbstractPage {
 
 	// Table sorting
 	public void sortTableByName() {
-		driver.findElement(By.id("sortName")).click();
+		driver.findElement(By.cssSelector("#sortName a")).click();
 	}
 	public void sortTableByCreatedDate() { driver.findElement(By.id("sortCreatedDate")).click();}
 
