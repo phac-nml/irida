@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
 import org.slf4j.Logger;
@@ -118,7 +119,7 @@ public class SamplesController extends BaseController {
 
 	/**
 	 * Get the samples details page.
-	 * 
+	 *
 	 * @param model
 	 *            Spring {@link Model}
 	 * @param sampleId
@@ -246,7 +247,7 @@ public class SamplesController extends BaseController {
 
 	/**
 	 * Remove a given sequence file from a sample
-	 * 
+	 *
 	 * @param sampleId
 	 *            the {@link Sample} id
 	 * @param fileId
@@ -262,6 +263,15 @@ public class SamplesController extends BaseController {
 		sampleService.removeSequenceFileFromSample(sample, sequenceFile);
 
 		return ImmutableMap.of("response", "success");
+	}
+
+	@RequestMapping("/ajax/download/file/{fileId}")
+	public void downloadFile(@PathVariable Long fileId, HttpServletResponse response) throws IOException {
+		SequenceFile file = sequenceFileService.read(fileId);
+		Path path = file.getFile();
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getLabel() + "\"");
+		Files.copy(path, response.getOutputStream());
+		response.flushBuffer();
 	}
 
 	// ************************************************************************************************
@@ -288,7 +298,7 @@ public class SamplesController extends BaseController {
 	/**
 	 * Test if the {@link User} is a {@link ProjectRole#PROJECT_OWNER} for the
 	 * given {@link Sample}
-	 * 
+	 *
 	 * @param sample
 	 *            The sample to test
 	 * @param principal
