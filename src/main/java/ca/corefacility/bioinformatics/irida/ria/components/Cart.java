@@ -7,7 +7,11 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 /**
+ * A shopping cart like object for storing {@link Sample}s selected for running
+ * an analysis
+ * 
  * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public interface Cart {
 
@@ -50,4 +54,11 @@ public interface Cart {
 	 * @return A {@link List} of {@link Sample} belonging to the {@link Project}
 	 */
 	public Set<Sample> getSelectedSamplesForProject(Project project);
+
+	/**
+	 * Get all of the {@link Project}s selected in the {@link Cart}
+	 * 
+	 * @return a Set of {@link Project}s
+	 */
+	public Set<Project> getProjects();
 }
