@@ -62,6 +62,7 @@
 </div>
 
 <th:block layout:fragment="page-scripts">
+	<input th:if="${project != null}" type="hidden" id="projectId" th:value="${project.getId()}"/>
 	<script th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}"
 	        src="/resources/bower_components/moment/min/moment-with-langs.min.js"></script>
 	<script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"

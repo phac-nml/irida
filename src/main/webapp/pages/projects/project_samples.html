@@ -39,7 +39,6 @@
 	</div>
 </aside>
 <main layout:fragment="main" data:ng-init="${'projectId=' + project.getId()}">
-	<input type="hidden" id="projectId" th:value="${project.getId()}"/>
 	<div class="row">
 		<div class="col-md-12">
 			<h1 role="heading" th:text="#{project.samples.h1(${project.label})}">__PAGE_TITLE__</h1>
