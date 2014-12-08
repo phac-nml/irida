@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.unit.web;
+package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
