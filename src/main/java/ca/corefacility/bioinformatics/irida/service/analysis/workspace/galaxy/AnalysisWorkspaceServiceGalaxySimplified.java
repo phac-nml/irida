@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -337,7 +338,7 @@ public class AnalysisWorkspaceServiceGalaxySimplified implements AnalysisWorkspa
 		checkNotNull(outputDirectory, "outputDirectory is null");
 		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
 		checkNotNull(analysisSubmission.getRemoteWorkflowId(), "remoteWorkflowId is null");
-		checkArgument(outputDirectory.toFile().exists(), "outputDirectory " + outputDirectory + " does not exist");
+		checkArgument(Files.exists(outputDirectory), "outputDirectory " + outputDirectory + " does not exist");
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysisSubmission.getWorkflowId());
 		String analysisId = analysisSubmission.getRemoteAnalysisId();
