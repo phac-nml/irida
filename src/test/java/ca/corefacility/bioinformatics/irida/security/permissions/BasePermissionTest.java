@@ -26,7 +26,7 @@ import com.google.common.collect.Sets;
  * 
  */
 public class BasePermissionTest {
-	private BasePermission<Permittable> basePermission;
+	private BasePermission<Permittable, Long> basePermission;
 	private CrudRepository<Permittable, Long> crudRepository;
 
 	private Authentication auth;
@@ -35,12 +35,11 @@ public class BasePermissionTest {
 	@Before
 	public void setUp() {
 		crudRepository = mock(CrudRepository.class);
-		basePermission = new PermittablePermission(Permittable.class,
-				crudRepository);
+		basePermission = new PermittablePermission(Permittable.class, Long.class, crudRepository);
 
 		auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 	}
-	
+
 	/**
 	 * Tests successfully allowing permission for a single object by Long id.
 	 */
@@ -50,7 +49,7 @@ public class BasePermissionTest {
 
 		assertTrue(basePermission.isAllowed(auth, 1L));
 	}
-	
+
 	/**
 	 * Tests failing to allow permission due to an id not found.
 	 */
@@ -58,17 +57,17 @@ public class BasePermissionTest {
 	public void testEntityNotFound() {
 		basePermission.isAllowed(auth, 1L);
 	}
-	
+
 	/**
 	 * Tests successfully allowing permission for collection of single long id.
 	 */
 	@Test
 	public void testPermissionSingleCollectionLongSuccess() {
 		when(crudRepository.findOne(1L)).thenReturn(new Permittable(1L));
-		
+
 		assertTrue(basePermission.isAllowed(auth, Sets.newHashSet(1L)));
 	}
-	
+
 	/**
 	 * Tests failing to allow permission for collection of single long id.
 	 */
@@ -76,7 +75,7 @@ public class BasePermissionTest {
 	public void testPermissionSingleCollectionLongFail() {
 		basePermission.isAllowed(auth, Sets.newHashSet(1L));
 	}
-	
+
 	/**
 	 * Tests successfully allowing permission for collection of two long ids.
 	 */
@@ -84,18 +83,19 @@ public class BasePermissionTest {
 	public void testPermissionTwoCollectionLongSuccess() {
 		when(crudRepository.findOne(1L)).thenReturn(new Permittable(1L));
 		when(crudRepository.findOne(2L)).thenReturn(new Permittable(2L));
-		
-		assertTrue(basePermission.isAllowed(auth, Sets.newHashSet(1L,2L)));
+
+		assertTrue(basePermission.isAllowed(auth, Sets.newHashSet(1L, 2L)));
 	}
-	
+
 	/**
-	 * Tests failing to allow permission for collection of two long ids (one id exists, one doesn't).
+	 * Tests failing to allow permission for collection of two long ids (one id
+	 * exists, one doesn't).
 	 */
 	@Test(expected = EntityNotFoundException.class)
 	public void testPermissionTwoCollectionLongFail() {
 		when(crudRepository.findOne(1L)).thenReturn(new Permittable(1L));
-		
-		basePermission.isAllowed(auth, Sets.newHashSet(1L,2L));
+
+		basePermission.isAllowed(auth, Sets.newHashSet(1L, 2L));
 	}
 
 	/**
@@ -104,8 +104,7 @@ public class BasePermissionTest {
 	@Test
 	public void testPermissionSuccess() {
 		Permittable permittable1 = new Permittable(1L);
-		basePermission = new VariablePermittablePermission(Permittable.class,
-				crudRepository, permittable1);
+		basePermission = new VariablePermittablePermission(Permittable.class, Long.class, crudRepository, permittable1);
 
 		assertTrue(basePermission.isAllowed(auth, permittable1));
 	}
@@ -116,8 +115,7 @@ public class BasePermissionTest {
 	@Test
 	public void testPermissionFailNotPermitted() {
 		Permittable permittable1 = new Permittable(1L);
-		basePermission = new VariablePermittablePermission(Permittable.class,
-				crudRepository, permittable1);
+		basePermission = new VariablePermittablePermission(Permittable.class, Long.class, crudRepository, permittable1);
 
 		assertFalse(basePermission.isAllowed(auth, new Permittable(2L)));
 	}
@@ -127,8 +125,7 @@ public class BasePermissionTest {
 	 */
 	@Test
 	public void testPermissionCollectionEmptySuccess() {
-		basePermission = new VariablePermittablePermission(Permittable.class,
-				crudRepository);
+		basePermission = new VariablePermittablePermission(Permittable.class, Long.class, crudRepository);
 
 		assertTrue(basePermission.isAllowed(auth, Sets.newHashSet()));
 	}
@@ -139,11 +136,9 @@ public class BasePermissionTest {
 	@Test
 	public void testPermissionCollectionSuccess() {
 		Permittable permittable1 = new Permittable(1L);
-		basePermission = new VariablePermittablePermission(Permittable.class,
-				crudRepository, permittable1);
+		basePermission = new VariablePermittablePermission(Permittable.class, Long.class, crudRepository, permittable1);
 
-		assertTrue(basePermission
-				.isAllowed(auth, Sets.newHashSet(permittable1)));
+		assertTrue(basePermission.isAllowed(auth, Sets.newHashSet(permittable1)));
 	}
 
 	/**
@@ -152,11 +147,9 @@ public class BasePermissionTest {
 	@Test
 	public void testPermissionCollectionFailNotPermitted() {
 		Permittable permittable1 = new Permittable(1L);
-		basePermission = new VariablePermittablePermission(Permittable.class,
-				crudRepository, permittable1);
+		basePermission = new VariablePermittablePermission(Permittable.class, Long.class, crudRepository, permittable1);
 
-		assertFalse(basePermission.isAllowed(auth,
-				Sets.newHashSet(new Permittable(2L))));
+		assertFalse(basePermission.isAllowed(auth, Sets.newHashSet(new Permittable(2L))));
 	}
 
 	/**
@@ -166,39 +159,35 @@ public class BasePermissionTest {
 	public void testPermissionCollectionSuccessTwoElements() {
 		Permittable permittable1 = new Permittable(1L);
 		Permittable permittable2 = new Permittable(2L);
-		basePermission = new VariablePermittablePermission(Permittable.class,
-				crudRepository, permittable1, permittable2);
+		basePermission = new VariablePermittablePermission(Permittable.class, Long.class, crudRepository, permittable1,
+				permittable2);
 
-		assertTrue(basePermission.isAllowed(auth,
-				Sets.newHashSet(permittable1, permittable2)));
+		assertTrue(basePermission.isAllowed(auth, Sets.newHashSet(permittable1, permittable2)));
 	}
 
 	/**
-	 * Tests failing permission for a collection with one element allowed and one element not.
+	 * Tests failing permission for a collection with one element allowed and
+	 * one element not.
 	 */
 	@Test
 	public void testPermissionCollectionFailTwoElementsOneFail() {
 		Permittable permittable1 = new Permittable(1L);
 		Permittable permittable2 = new Permittable(2L);
-		basePermission = new VariablePermittablePermission(Permittable.class,
-				crudRepository, permittable1);
+		basePermission = new VariablePermittablePermission(Permittable.class, Long.class, crudRepository, permittable1);
 
-		assertFalse(basePermission.isAllowed(auth,
-				Sets.newHashSet(permittable1, permittable2)));
+		assertFalse(basePermission.isAllowed(auth, Sets.newHashSet(permittable1, permittable2)));
 	}
-	
+
 	/**
 	 * Tests throwing an exception for an invalid collection type.
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testPermissionCollectionFailInvalidType() {
-		basePermission = new VariablePermittablePermission(Permittable.class,
-				crudRepository);
+		basePermission = new VariablePermittablePermission(Permittable.class, Long.class, crudRepository);
 
-		basePermission.isAllowed(auth,
-				Sets.newHashSet("invalid"));
+		basePermission.isAllowed(auth, Sets.newHashSet("invalid"));
 	}
-	
+
 	/**
 	 * Tests succeeding with non-generic collection type.
 	 */
@@ -206,25 +195,23 @@ public class BasePermissionTest {
 	@Test
 	public void testPermissionSucccessNonGenericCollectionType() {
 		Permittable permittable1 = new Permittable(1L);
-		basePermission = new VariablePermittablePermission(Permittable.class,
-				crudRepository, permittable1);
-		
+		basePermission = new VariablePermittablePermission(Permittable.class, Long.class, crudRepository, permittable1);
+
 		Set set = new HashSet();
 		set.add(permittable1);
 
 		assertTrue(basePermission.isAllowed(auth, set));
 	}
-	
+
 	/**
 	 * Tests throwing an exception for a mixed collection type.
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testPermissionFailMixedCollectionType() {
 		Permittable permittable1 = new Permittable(1L);
-		basePermission = new VariablePermittablePermission(Permittable.class,
-				crudRepository, permittable1);
-		
+		basePermission = new VariablePermittablePermission(Permittable.class, Long.class, crudRepository, permittable1);
+
 		Set mixedSet = new HashSet();
 		mixedSet.add(permittable1);
 		mixedSet.add("invalid");
@@ -239,25 +226,28 @@ public class BasePermissionTest {
 
 	/**
 	 * A class which allows the definition of permissions for different objects.
+	 * 
 	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
 	 *
 	 */
-	private static class VariablePermittablePermission extends
-			BasePermission<Permittable> {
+	private static class VariablePermittablePermission extends BasePermission<Permittable, Long> {
 
 		private Set<Permittable> permittedObjects;
 
 		/**
 		 * Builds a new class for checking permissions of different objects.
-		 * @param domainObjectType  The type of object to check.
-		 * @param repository  The repository storing this type of object.
-		 * @param permittedObjects  A list of objects which will succeed the permissions check.
+		 * 
+		 * @param domainObjectType
+		 *            The type of object to check.
+		 * @param repository
+		 *            The repository storing this type of object.
+		 * @param permittedObjects
+		 *            A list of objects which will succeed the permissions
+		 *            check.
 		 */
-		protected VariablePermittablePermission(
-				Class<Permittable> domainObjectType,
-				CrudRepository<Permittable, Long> repository,
-				Permittable... permittedObjects) {
-			super(domainObjectType, repository);
+		protected VariablePermittablePermission(Class<Permittable> domainObjectType, Class<Long> identifierType,
+				CrudRepository<Permittable, Long> repository, Permittable... permittedObjects) {
+			super(domainObjectType, identifierType, repository);
 
 			this.permittedObjects = new HashSet<>();
 			for (Permittable permittedId : permittedObjects) {
@@ -271,18 +261,16 @@ public class BasePermissionTest {
 		}
 
 		@Override
-		protected boolean customPermissionAllowed(
-				Authentication authentication, Permittable targetDomainObject) {
+		protected boolean customPermissionAllowed(Authentication authentication, Permittable targetDomainObject) {
 			return permittedObjects.contains(targetDomainObject);
 		}
 	}
 
-	private static class PermittablePermission extends
-			BasePermission<Permittable> {
+	private static class PermittablePermission extends BasePermission<Permittable, Long> {
 
-		protected PermittablePermission(Class<Permittable> domainObjectType,
+		protected PermittablePermission(Class<Permittable> domainObjectType, Class<Long> identifierType,
 				CrudRepository<Permittable, Long> repository) {
-			super(domainObjectType, repository);
+			super(domainObjectType, identifierType, repository);
 		}
 
 		@Override
@@ -291,14 +279,14 @@ public class BasePermissionTest {
 		}
 
 		@Override
-		protected boolean customPermissionAllowed(
-				Authentication authentication, Permittable targetDomainObject) {
+		protected boolean customPermissionAllowed(Authentication authentication, Permittable targetDomainObject) {
 			return true;
 		}
 	}
 
 	/**
 	 * An object used as a placeholder for checking permissions.
+	 * 
 	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
 	 *
 	 */
@@ -307,7 +295,9 @@ public class BasePermissionTest {
 
 		/**
 		 * Builds a new object for checking permissions with a given id.
-		 * @param id  The id of the object for checking permissions.
+		 * 
+		 * @param id
+		 *            The id of the object for checking permissions.
 		 */
 		public Permittable(Long id) {
 			this.id = id;

@@ -18,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
  * 
  */
 @Component
-public class UpdateUserPermission extends BasePermission<User> {
+public class UpdateUserPermission extends BasePermission<User, Long> {
 
 	private static final String PERMISSION_PROVIDED = "canUpdateUser";
 
@@ -31,7 +31,7 @@ public class UpdateUserPermission extends BasePermission<User> {
 	 */
 	@Autowired
 	public UpdateUserPermission(UserRepository userRepository) {
-		super(User.class, userRepository);
+		super(User.class, Long.class, userRepository);
 		this.userRepository = userRepository;
 	}
 
@@ -42,7 +42,8 @@ public class UpdateUserPermission extends BasePermission<User> {
 	public boolean customPermissionAllowed(Authentication authentication, User u) {
 		logger.trace("Checking if [" + authentication + "] can modify [" + u + "]");
 
-		// really quick check: if the principle is of ROLE_SEQUENCER, they should
+		// really quick check: if the principle is of ROLE_SEQUENCER, they
+		// should
 		// be rejected immediately.
 		if (authentication.getAuthorities().contains(Role.ROLE_SEQUENCER)) {
 			logger.trace("Tool attempting to modify itself: [" + authentication + "], attempt rejected.");
@@ -52,8 +53,11 @@ public class UpdateUserPermission extends BasePermission<User> {
 		boolean isOwnAccount = modifyingOwnAccount(authentication, u);
 		boolean isAdmin = authentication.getAuthorities().contains(Role.ROLE_ADMIN);
 
-		//We're not allowing a manager to modify an admin.  This is checking if the logged in user is a manager and if the passed model object is an admin. 
-		boolean isManagerModifyingAdmin = authentication.getAuthorities().contains(Role.ROLE_MANAGER) && u.getAuthorities().contains(Role.ROLE_ADMIN);
+		// We're not allowing a manager to modify an admin. This is checking if
+		// the logged in user is a manager and if the passed model object is an
+		// admin.
+		boolean isManagerModifyingAdmin = authentication.getAuthorities().contains(Role.ROLE_MANAGER)
+				&& u.getAuthorities().contains(Role.ROLE_ADMIN);
 
 		return (isOwnAccount || isAdmin) && !isManagerModifyingAdmin;
 	}

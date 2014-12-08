@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
+import java.security.Principal;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Locale;
@@ -72,9 +73,9 @@ public class PasswordResetController {
 	 * Get the password reset page
 	 *
 	 * @param resetId
-	 * 		The ID of the {@link PasswordReset}
+	 *            The ID of the {@link PasswordReset}
 	 * @param model
-	 * 		A model for the page
+	 *            A model for the page
 	 *
 	 * @return The string name of the page
 	 */
@@ -103,18 +104,18 @@ public class PasswordResetController {
 	 * Send the new password for a given password reset
 	 *
 	 * @param resetId
-	 * 		The ID of the {@link PasswordReset}
+	 *            The ID of the {@link PasswordReset}
 	 * @param password
-	 * 		The new password to set
+	 *            The new password to set
 	 * @param confirmPassword
-	 * 		Confirm the new password
+	 *            Confirm the new password
 	 * @param model
-	 * 		A model for the given page
+	 *            A model for the given page
 	 * @param locale
-	 * 		The locale of the request
+	 *            The locale of the request
 	 *
 	 * @return The string name of the success view, or on failure the
-	 * getResetPage view
+	 *         getResetPage view
 	 */
 	@RequestMapping(value = "/{resetId}", method = RequestMethod.POST)
 	public String sendNewPassword(@PathVariable String resetId, @RequestParam String password,
@@ -164,9 +165,9 @@ public class PasswordResetController {
 	 * Success page for a password reset
 	 *
 	 * @param encodedEmail
-	 * 		A base64 encoded email address
+	 *            A base64 encoded email address
 	 * @param model
-	 * 		Model for the view
+	 *            Model for the view
 	 *
 	 * @return The password reset success view name
 	 */
@@ -187,7 +188,7 @@ public class PasswordResetController {
 	 * Get the reset password page
 	 *
 	 * @param model
-	 * 		Model for this view
+	 *            Model for this view
 	 *
 	 * @return The view name for the email entry page
 	 */
@@ -200,9 +201,9 @@ public class PasswordResetController {
 	 * Create a password reset for the given email address
 	 *
 	 * @param email
-	 * 		The email address to create a password reset for
+	 *            The email address to create a password reset for
 	 * @param model
-	 * 		Model for the view
+	 *            Model for the view
 	 *
 	 * @return Reset created page if the email exists in the system
 	 */
@@ -232,9 +233,9 @@ public class PasswordResetController {
 	 * Success page for creating a password reset
 	 *
 	 * @param encodedEmail
-	 * 		Base64 encoded email of the user
+	 *            Base64 encoded email of the user
 	 * @param model
-	 * 		Model for the request
+	 *            Model for the request
 	 *
 	 * @return View name for the reset created page
 	 */
@@ -253,7 +254,7 @@ public class PasswordResetController {
 	 * Return the activation view
 	 *
 	 * @param model
-	 * 		Model for the view
+	 *            Model for the view
 	 *
 	 * @return Name of the activation view
 	 */
@@ -271,20 +272,28 @@ public class PasswordResetController {
 	 * Create a new {@link PasswordReset} for the given {@link User}
 	 *
 	 * @param userId
-	 * 		The ID of the {@link User}
+	 *            The ID of the {@link User}
 	 */
 	@RequestMapping("/ajax/create/{userId}")
 	@ResponseBody
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public Map<String, Object> adminNewPasswordReset(@PathVariable Long userId, Locale locale) {
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
+	public Map<String, Object> adminNewPasswordReset(@PathVariable Long userId, Principal principal, Locale locale) {
 		User user = userService.read(userId);
-		createNewPasswordReset(user);
-		return ImmutableMap.of(
-				"success", true,
-				"message", messageSource
-						.getMessage("password.reset.success-message", new Object[] { user.getFirstName() }, locale),
-				"title", messageSource.getMessage("password.reset.success-title", null, locale)
-		);
+		User principalUser = userService.getUserByUsername(principal.getName());
+
+		Map<String, Object> response;
+		if (canCreatePasswordReset(principalUser, user)) {
+			createNewPasswordReset(user);
+			response = ImmutableMap.of("success", true, "message", messageSource.getMessage(
+					"password.reset.success-message", new Object[] { user.getFirstName() }, locale), "title",
+					messageSource.getMessage("password.reset.success-title", null, locale));
+		} else {
+			response = ImmutableMap.of("success", false, "message",
+					messageSource.getMessage("password.reset.error-message", null, locale), "title",
+					messageSource.getMessage("password.reset.error-title", null, locale));
+		}
+
+		return response;
 	}
 
 	/**
@@ -292,7 +301,7 @@ public class PasswordResetController {
 	 * email
 	 *
 	 * @param user
-	 * 		The user to create the reset for
+	 *            The user to create the reset for
 	 */
 	private void createNewPasswordReset(User user) {
 		PasswordReset passwordReset = new PasswordReset(user);
@@ -309,6 +318,32 @@ public class PasswordResetController {
 		AnonymousAuthenticationToken anonymousToken = new AnonymousAuthenticationToken("nobody", "nobody",
 				ImmutableList.of(Role.ROLE_ANONYMOUS));
 		SecurityContextHolder.getContext().setAuthentication(anonymousToken);
+	}
+
+	/**
+	 * Test if a user should be able to click the password reset button
+	 * 
+	 * @param principal
+	 *            The currently logged in principal
+	 * @param user
+	 *            The user being edited
+	 * @return true if the principal can create a password reset for the user
+	 */
+	public static boolean canCreatePasswordReset(User principalUser, User user) {
+		Role userRole = user.getSystemRole();
+		Role principalRole = principalUser.getSystemRole();
+
+		if (principalRole.equals(Role.ROLE_ADMIN)) {
+			return true;
+		} else if (principalRole.equals(Role.ROLE_MANAGER)) {
+			if (userRole.equals(Role.ROLE_ADMIN)) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 }
