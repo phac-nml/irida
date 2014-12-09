@@ -29,7 +29,7 @@ public class IridaWorkflowsServiceTestConfig {
 	@Bean
 	public IridaWorkflowsService iridaWorkflowsService() throws IOException, IridaWorkflowLoadException {
 		IridaWorkflowsService workflowsService = new IridaWorkflowsService(iridaWorkflowLoaderService);
-		workflowsService.registerAnalysis(TestAnalysis.class, UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6"));
+//		workflowsService.registerAnalysis(TestAnalysis.class, UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6"));
 
 		return workflowsService;
 	}

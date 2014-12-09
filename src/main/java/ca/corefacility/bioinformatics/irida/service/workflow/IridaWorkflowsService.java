@@ -17,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowDefaultException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -31,9 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 public class IridaWorkflowsService {
 	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowsService.class);
 
-	private static final String WORKFLOWS_DIR = "workflows";
-
-	private IridaWorkflowLoaderService iridaWorkflowLoaderService;
+//	private static final String WORKFLOWS_DIR = "workflows";
 
 	/**
 	 * Stores registered workflows within IRIDA.
@@ -64,63 +64,50 @@ public class IridaWorkflowsService {
 	 */
 	@Autowired
 	public IridaWorkflowsService(IridaWorkflowLoaderService iridaWorkflowLoaderService) {
-		this.iridaWorkflowLoaderService = iridaWorkflowLoaderService;
 
 		allRegisteredWorkflows = new HashMap<>();
 		registeredWorkflowsForAnalysis = new HashMap<>();
 		defaultWorkflowForAnalysis = new HashMap<>();
 		workflowNamesMap = new HashMap<>();
 	}
+	
+	/**
+	 * Sets the given workflow as a default workflow for it's analysis type.
+	 * @param workflowId  The workflow id to set as default.
+	 * @throws IridaWorkflowNotFoundException  If the given workflow cannot be found.
+	 * @throws IridaWorkflowDefaultException  If the corresponding workflow type already has a default workflow set.
+	 */
+	public void setDefaultWorkflow(UUID workflowId) throws IridaWorkflowNotFoundException, IridaWorkflowDefaultException {
+		checkNotNull(workflowId, "workflowId is null");
+		
+		IridaWorkflow iridaWorkflow = getIridaWorkflow(workflowId);
+		Class<? extends Analysis> analysisClass = iridaWorkflow.getWorkflowDescription().getAnalysisClass();
+		if (defaultWorkflowForAnalysis.containsKey(analysisClass)) {
+			throw new IridaWorkflowDefaultException("Cannot set workflow " + workflowId + " as default, already exists default workflow for " + analysisClass);
+		} else {
+			defaultWorkflowForAnalysis.put(analysisClass, workflowId);
+		}
+	}
 
 	/**
-	 * Registers workflows that are stored as resources belonging to the passed
-	 * Analysis class.
-	 * 
-	 * @param analysisClass
-	 *            The class defining the type of analysis.
-	 * @param defaultWorkflowId
-	 *            The default id of the workflow for this analysis.
-	 * @throws IOException
-	 *             If there was a problem reading a workflow.
-	 * @throws IridaWorkflowLoadException
-	 *             If there was a problem loading a workflow.
+	 * Registers the given workflow with this service.
+	 * @param iridaWorkflow  The workflow to register.
+	 * @throws IridaWorkflowException  If there was an issue when registering the workflow.
 	 */
-	public void registerAnalysis(Class<? extends Analysis> analysisClass, UUID defaultWorkflowId) throws IOException,
-			IridaWorkflowLoadException {
-		checkNotNull(analysisClass, "analysisClass is null");
-		checkNotNull(defaultWorkflowId, "defaultWorkflowId is null");
+	public void registerWorkflow(IridaWorkflow iridaWorkflow) throws IridaWorkflowException {
+		checkNotNull(iridaWorkflow, "iridaWorkflow is null");
+		
+		Class<? extends Analysis> analysisClass = iridaWorkflow.getWorkflowDescription().getAnalysisClass();		
+		UUID workflowId = iridaWorkflow.getWorkflowDescription().getId();		
+		String workflowName = iridaWorkflow.getWorkflowDescription().getName();
 
-		logger.debug("Registering Analysis: " + analysisClass);
-		String analysisName = analysisClass.getSimpleName();
-		Path workflowsResourcePath = Paths.get(analysisClass.getResource(WORKFLOWS_DIR).getFile());
-		Path workflowPath = workflowsResourcePath.resolve(analysisName);
-
-		if (!Files.isDirectory(workflowPath)) {
-			throw new IridaWorkflowLoadException("Missing directory " + workflowPath + " for class " + analysisClass);
+		logger.debug("Registering workflow: " + iridaWorkflow);
+		if (allRegisteredWorkflows.containsKey(workflowId)) {
+			throw new IridaWorkflowException("Duplicate workflow " + workflowId);
 		} else {
-			try {
-				Set<IridaWorkflow> workflowVersions = iridaWorkflowLoaderService
-						.loadAllWorkflowImplementations(workflowPath);
-
-				for (IridaWorkflow workflow : workflowVersions) {
-					if (allRegisteredWorkflows.containsKey(workflow.getWorkflowIdentifier())) {
-						throw new IridaWorkflowLoadException("Duplicate workflow " + workflow.getWorkflowIdentifier());
-					} else {
-						allRegisteredWorkflows.put(workflow.getWorkflowIdentifier(), workflow);
-						addWorkflowForAnalysis(analysisClass, workflow.getWorkflowIdentifier());
-						addWorkflowNameToAnalysis(workflow.getWorkflowDescription().getName(), analysisClass);
-					}
-				}
-			} catch (Exception e) {
-				throw new IridaWorkflowLoadException("Could not load workflows from directory " + workflowPath, e);
-			}
-
-			if (!registeredWorkflowsForAnalysis.get(analysisClass).contains(defaultWorkflowId)) {
-				throw new IridaWorkflowLoadException("No workflow with id " + defaultWorkflowId + " vailable for "
-						+ analysisClass);
-			} else {
-				defaultWorkflowForAnalysis.put(analysisClass, defaultWorkflowId);
-			}
+			allRegisteredWorkflows.put(workflowId, iridaWorkflow);
+			addWorkflowForAnalysis(analysisClass, workflowId);
+			addWorkflowNameToAnalysis(workflowName, analysisClass);
 		}
 	}
 
