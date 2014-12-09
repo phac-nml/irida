@@ -27,7 +27,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.google.common.collect.ImmutableMap;
 
 /**
- * Controller managing interactions with the user's {@link Cart}
+ * Controller managing interactions with the selected sequences
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
@@ -50,9 +50,9 @@ public class CartController {
 	}
 
 	/**
-	 * Get a Json representation of what's in the {@link Cart}. Format: {
-	 * 'projects' : [ { 'id': '5', 'label': 'project', 'samples': [ { 'id': '6',
-	 * 'label': 'a sample' } ] } ]}
+	 * Get a Json representation of what's in the cart. Format: { 'projects' : [
+	 * { 'id': '5', 'label': 'project', 'samples': [ { 'id': '6', 'label': 'a
+	 * sample' } ] } ]}
 	 * 
 	 * @return a Map<String,Object> containing the cart information.
 	 */
@@ -79,18 +79,24 @@ public class CartController {
 	 * Get the cart object. This method should only be accessed
 	 * programmatically.
 	 * 
-	 * @return The {@link Cart} object
+	 * @return The cart map
 	 */
 	public Map<Project, Set<Sample>> getSelected() {
 		return selected;
 	}
 
+	/**
+	 * Set the cart object programatically. Used mostly for testing.
+	 * 
+	 * @param selected
+	 *            A Map<Project,Set<Sample>> of selected samples
+	 */
 	public void setSelected(Map<Project, Set<Sample>> selected) {
 		this.selected = selected;
 	}
 
 	/**
-	 * Add a {@link Sample} to the {@link Cart} from a given {@link Project}
+	 * Add a {@link Sample} to the cart from a given {@link Project}
 	 * 
 	 * @param projectId
 	 *            The {@link Project} ID
@@ -110,8 +116,7 @@ public class CartController {
 	}
 
 	/**
-	 * Delete a {@link Sample} from the {@link Cart} from a given
-	 * {@link Project}
+	 * Delete a {@link Sample} from the cart from a given {@link Project}
 	 * 
 	 * @param projectId
 	 *            The {@link Project} ID
@@ -135,7 +140,7 @@ public class CartController {
 	}
 
 	/**
-	 * Add an entire {@link Project} to the {@link Cart}
+	 * Add an entire {@link Project} to the cart
 	 * 
 	 * @param projectId
 	 *            The ID of the {@link Project}
@@ -188,11 +193,8 @@ public class CartController {
 	}
 
 	/**
-	 * Get the {@link Project}s in the {@link Cart} as a List for JSON
-	 * serialization
+	 * Get the {@link Project}s in the cart as a List for JSON serialization
 	 * 
-	 * @param cart
-	 *            The {@link Cart} object
 	 * @return A List<Map<String,Object>> containing the relevant Project and
 	 *         Sample information
 	 */
