@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.integration;
+package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -32,8 +32,8 @@ import com.google.common.collect.ImmutableList;
 /**
  * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
-public class GalaxyControllerIT {
-	private static final Logger logger = LoggerFactory.getLogger(GalaxyControllerIT.class);
+public class GalaxyControllerTest {
+	private static final Logger logger = LoggerFactory.getLogger(GalaxyControllerTest.class);
 
 	private GalaxyController controller;
 	private MessageSource messageSource;
@@ -51,6 +51,7 @@ public class GalaxyControllerIT {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testPostUploadSampleToGalaxy() {
+		logger.info("Testing upload to galaxy");
 		Sample sample = TestDataFactory.constructSample();
 		List<Sample> samples = ImmutableList.of(sample);
 		UploadWorker worker = TestDataFactory.constructUploadWorker();
