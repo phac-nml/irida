@@ -40,6 +40,25 @@
     }
   }
 
+  function GalaxyNotificationService($rootScope, $compile) {
+    "use strict";
+    var div = null;
+
+    function add(sessionAttr) {
+      if (div === null) {
+        div = $compile('<div class="galaxy-notifications"></div>')($rootScope);
+        angular.element('body').append(div);
+      }
+
+      var not = $compile('<galaxy-notification session="' + sessionAttr + '"></galaxy-notification>')($rootScope);
+      div.append(not);
+    }
+
+    return {
+      add: add
+    };
+  }
+
   /*[- */
 // Responsible for all server calls for samples
 // @param $rootScope The root scope for the page.
@@ -150,11 +169,11 @@
 
     svc.galaxyUpload = function (email, name) {
       return base.customPOST({
-        email: email,
-        name: name,
+        email    : email,
+        name     : name,
         sampleIds: getSelectedSampleIds()
-      }, 'galaxy/upload').then(function(data) {
-        if(data.result === 'success') {
+      }, 'galaxy/upload').then(function (data) {
+        if (data.result === 'success') {
           notifications.show({msg: data.msg});
         }
         return data;
@@ -226,6 +245,30 @@
           scope.onsort(scope.sortedby, scope.sortdir);
         };
       }
+    };
+  }
+
+  function galaxyNotification() {
+    "use strict";
+    return {
+      template  : '<div class="progress"><div class="progress-bar" role="progressbar" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100" ng-style="{\'width\': progress + \'%\'}" style="height: 10px; width: 0;"><span class="sr-only">{{progress}} Complete</span></div></div>',
+      restrict  : 'E',
+      replace   : true,
+      scope     : {
+        session: '@'
+      },
+      controller: ['$scope', '$interval', '$http', 'BASE_URL', function ($scope, $interval, $http, BASE_URL) {
+        var URL = BASE_URL + "galaxy/poll/" + $scope.session;
+        var timer = $interval(function () {
+          $http.get(URL).then(function(result) {
+            console.log(result.data);
+            $scope.progress = Math.ceil(result.data.progress * 100);
+            if(result.data.finished) {
+              $interval.cancel(timer);
+            }
+          });
+        }, 500);
+      }]
     };
   }
 
@@ -302,12 +345,12 @@
     };
 
     vm.export = {
-      open  : false,
+      open    : false,
       download: function download() {
         vm.export.open = false;
         SamplesService.downloadFiles();
       },
-      linker: function linker() {
+      linker  : function linker() {
         vm.export.open = false;
         $modal.open({
           templateUrl: BASE_URL + 'projects/samples/linker',
@@ -322,11 +365,11 @@
           }
         });
       },
-      galaxy: function galaxy() {
+      galaxy  : function galaxy() {
         vm.export.open = false;
         $modal.open({
           templateUrl: BASE_URL + 'projects/' + SamplesService.getProjectId() + '/samples/galaxy',
-          controller: 'GalaxyCtrl as gCtrl'
+          controller : 'GalaxyCtrl as gCtrl'
         });
       }
     };
@@ -516,17 +559,17 @@
     });
   }
 
-  function GalaxyCtrl($timeout, $modalInstance, SamplesService) {
+  function GalaxyCtrl($modalInstance, SamplesService, GalaxyNotificationService) {
     "use strict";
     var vm = this;
 
     vm.upload = function () {
       vm.uploading = true;
-      SamplesService.galaxyUpload(vm.email, vm.name).then(function(data) {
+      SamplesService.galaxyUpload(vm.email, vm.name).then(function (data) {
         vm.uploading = false;
-        if(data.result === 'success') {
+        if (data.result === 'success') {
           vm.close();
-          // TODO: Create a progress bar to monitor the status of the upload.
+          GalaxyNotificationService.add(data.sessionAttr);
         }
         else {
           vm.errors = data.errors;
@@ -550,10 +593,12 @@
   angular.module('Samples', ['cgBusy'])
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
+    .service('GalaxyNotificationService', ['$rootScope', '$compile', GalaxyNotificationService])
     .service('Select2Service', ['$timeout', Select2Service])
     .service('SamplesService', ['$rootScope', 'BASE_URL', 'Restangular', 'notifications', 'FilterFactory', SamplesService])
     .filter('PagingFilter', ['$rootScope', 'FilterFactory', 'SamplesService', PagingFilter])
     .directive('sortBy', [sortBy])
+    .directive('galaxyNotification', [galaxyNotification])
     .controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
     .controller('SamplesTableCtrl', ['SamplesService', 'FilterFactory', SamplesTableCtrl])
@@ -563,6 +608,6 @@
     .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
     .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
     .controller('FilterCtrl', ['$scope', 'FilterFactory', FilterCtrl])
-    .controller('GalaxyCtrl', ['$timeout', '$modalInstance', 'SamplesService', GalaxyCtrl])
+    .controller('GalaxyCtrl', ['$modalInstance', 'SamplesService', 'GalaxyNotificationService', GalaxyCtrl])
   ;
 })(angular, $, _);
