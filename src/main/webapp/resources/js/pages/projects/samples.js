@@ -44,18 +44,44 @@
     "use strict";
     var div = null;
 
-    function add(sessionAttr) {
+    function add(sessionAttr, msg) {
       if (div === null) {
-        div = $compile('<div class="galaxy-notifications"></div>')($rootScope);
+        div = $compile('<div class="irida-notifications"></div>')($rootScope);
         angular.element('body').append(div);
       }
 
-      var not = $compile('<galaxy-notification session="' + sessionAttr + '"></galaxy-notification>')($rootScope);
+      var not = $compile('<galaxy-notification message="' + msg + '" session="' + sessionAttr + '"></galaxy-notification>')($rootScope);
       div.append(not);
     }
 
     return {
       add: add
+    };
+  }
+
+  function GalaxyService($http, BASE_URL, GalaxyNotificationService) {
+    "use strict";
+    var svc = this,
+        URLS = {
+          upload: BASE_URL + "galaxy/upload",
+          poll  : BASE_URL + "galaxy/poll/"
+        };
+
+    svc.upload = function (params) {
+      return $http.post(URLS.upload, params)
+        .success(function (data) {
+          if (data.result === 'success') {
+            GalaxyNotificationService.add(data.sessionAttr, data.msg);
+            return data;
+          }
+        })
+        .error(function (data) {
+
+        });
+    };
+
+    svc.poll = function (id) {
+      return $http.get(URLS.poll + id);
     };
   }
 
@@ -108,7 +134,7 @@
     };
 
     svc.merge = function (params) {
-      params.sampleIds = getSelectedSampleIds();
+      params.sampleIds = svc.getSelectedSampleIds();
       return base.customPOST(params, 'merge').then(function (data) {
         if (data.result === 'success') {
           svc.getSamples();
@@ -157,7 +183,7 @@
     };
 
     svc.downloadFiles = function () {
-      var ids = getSelectedSampleIds();
+      var ids = svc.getSelectedSampleIds();
       var mapped = _.map(ids, function (id) {
         return "ids=" + id
       });
@@ -167,27 +193,14 @@
       document.body.appendChild(iframe);
     };
 
-    svc.galaxyUpload = function (email, name) {
-      return base.customPOST({
-        email    : email,
-        name     : name,
-        sampleIds: getSelectedSampleIds()
-      }, 'galaxy/upload').then(function (data) {
-        if (data.result === 'success') {
-          notifications.show({msg: data.msg});
-        }
-        return data;
-      })
-    };
-
-    function getSelectedSampleIds() {
+    svc.getSelectedSampleIds = function () {
       return _.map(selected, 'id');
     }
 
     function copyMoveSamples(projectId, move) {
 
       return base.customPOST({
-        sampleIds         : getSelectedSampleIds(),
+        sampleIds         : svc.getSelectedSampleIds(),
         newProjectId      : projectId,
         removeFromOriginal: move
       }, "copy").then(function (data) {
@@ -248,27 +261,50 @@
     };
   }
 
-  function galaxyNotification() {
+  function galaxyNotification($interval, $timeout, GalaxyService) {
     "use strict";
+    var timer;
+
+    function link(scope, element, attrs) {
+      element.on('click', function () {
+          removeElement(300);
+      });
+
+      element.on('$destroy', function () {
+        $interval.cancel(timer);
+      });
+
+      timer = $interval(function () {
+        GalaxyService.poll(scope.session).then(function (result) {
+          scope.progress = Math.ceil(result.data.progress * 100);
+          if (result.data.finished) {
+            removeElement(2000);
+          }
+        });
+      }, 500);
+
+      function removeElement(length) {
+        $interval.cancel(timer);
+        $timeout(function () {
+          element.addClass('remove');
+
+          $timeout(function () {
+            scope.$destroy();
+            element.remove();
+          }, 500);
+        }, length);
+      }
+    }
+
     return {
-      template  : '<div class="progress"><div class="progress-bar" role="progressbar" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100" ng-style="{\'width\': progress + \'%\'}" style="height: 10px; width: 0;"><span class="sr-only">{{progress}} Complete</span></div></div>',
-      restrict  : 'E',
-      replace   : true,
-      scope     : {
-        session: '@'
+      template: '<div class="irida-notification__item"><p>{{message}}</p><progressbar value="progress"></progressbar></div>',
+      restrict: 'E',
+      replace : true,
+      scope   : {
+        session: '@',
+        message: '@'
       },
-      controller: ['$scope', '$interval', '$http', 'BASE_URL', function ($scope, $interval, $http, BASE_URL) {
-        var URL = BASE_URL + "galaxy/poll/" + $scope.session;
-        var timer = $interval(function () {
-          $http.get(URL).then(function(result) {
-            console.log(result.data);
-            $scope.progress = Math.ceil(result.data.progress * 100);
-            if(result.data.finished) {
-              $interval.cancel(timer);
-            }
-          });
-        }, 500);
-      }]
+      link    : link
     };
   }
 
@@ -369,7 +405,12 @@
         vm.export.open = false;
         $modal.open({
           templateUrl: BASE_URL + 'projects/' + SamplesService.getProjectId() + '/samples/galaxy',
-          controller : 'GalaxyCtrl as gCtrl'
+          controller : 'GalaxyCtrl as gCtrl',
+          resolve    : {
+            sampleIds: function () {
+              return SamplesService.getSelectedSampleIds();
+            }
+          }
         });
       }
     };
@@ -559,17 +600,16 @@
     });
   }
 
-  function GalaxyCtrl($modalInstance, SamplesService, GalaxyNotificationService) {
+  function GalaxyCtrl($modalInstance, GalaxyService, sampleIds) {
     "use strict";
     var vm = this;
 
     vm.upload = function () {
       vm.uploading = true;
-      SamplesService.galaxyUpload(vm.email, vm.name).then(function (data) {
+      GalaxyService.upload({email: vm.email, name: vm.name, sampleIds: sampleIds}).then(function (response) {
         vm.uploading = false;
-        if (data.result === 'success') {
+        if (response.data.result === 'success') {
           vm.close();
-          GalaxyNotificationService.add(data.sessionAttr);
         }
         else {
           vm.errors = data.errors;
@@ -593,12 +633,13 @@
   angular.module('Samples', ['cgBusy'])
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
+    .service('GalaxyService', ['$http', 'BASE_URL', 'GalaxyNotificationService', GalaxyService])
     .service('GalaxyNotificationService', ['$rootScope', '$compile', GalaxyNotificationService])
     .service('Select2Service', ['$timeout', Select2Service])
     .service('SamplesService', ['$rootScope', 'BASE_URL', 'Restangular', 'notifications', 'FilterFactory', SamplesService])
     .filter('PagingFilter', ['$rootScope', 'FilterFactory', 'SamplesService', PagingFilter])
     .directive('sortBy', [sortBy])
-    .directive('galaxyNotification', [galaxyNotification])
+    .directive('galaxyNotification', ['$interval', '$timeout', 'GalaxyService', galaxyNotification])
     .controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
     .controller('SamplesTableCtrl', ['SamplesService', 'FilterFactory', SamplesTableCtrl])
@@ -608,6 +649,6 @@
     .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
     .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
     .controller('FilterCtrl', ['$scope', 'FilterFactory', FilterCtrl])
-    .controller('GalaxyCtrl', ['$modalInstance', 'SamplesService', 'GalaxyNotificationService', GalaxyCtrl])
+    .controller('GalaxyCtrl', ['$modalInstance', 'GalaxyService', 'sampleIds', GalaxyCtrl])
   ;
 })(angular, $, _);

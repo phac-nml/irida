@@ -56,10 +56,38 @@
 
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
-.galaxy-notifications {
-  background-color: red;
+.irida-notifications {
   position: absolute;
-  bottom: 10px;
+  top: 10px;
   right: 10px;
-  width: 250px;
+  width: 300px;
+  padding: 1rem;
+}
+
+
+.irida-notification__item {
+  opacity: .9;
+  background-color: rgb(150, 177, 196);
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 4px;
+  transition: opacity 500ms linear;
+
+  .progress, .progress-bar {
+    height: 10px;
+    margin-bottom: 0;
+  }
+
+  p {
+    color: #222;
+  }
+
+  &:hover {
+    opacity: 1;
+    cursor: pointer;
+  }
+
+  &.remove {
+    opacity: 0;
+  }
 }
