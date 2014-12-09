@@ -1,7 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -15,13 +16,11 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.ria.components.Cart;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -29,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.google.common.collect.Sets;
 
 public class CartControllerTest {
-	Cart cart;
 	SampleService sampleService;
 	ProjectService projectService;
 
@@ -42,16 +40,14 @@ public class CartControllerTest {
 
 	@Before
 	public void setup() {
-		cart = mock(Cart.class);
 		sampleService = mock(SampleService.class);
 		projectService = mock(ProjectService.class);
 
-		controller = new CartController(cart, sampleService, projectService);
+		controller = new CartController(sampleService, projectService);
 
 		testData();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testAddProjectSample() {
 		Set<Long> subIds = Sets.newHashSet(sampleIds.iterator().next());
@@ -64,19 +60,22 @@ public class CartControllerTest {
 			verify(sampleService).getSampleForProject(project, id);
 		}
 
-		@SuppressWarnings("rawtypes")
-		ArgumentCaptor<Set> captor = ArgumentCaptor.forClass(Set.class);
-		verify(cart).addProjectSample(eq(project), captor.capture());
-		Set<Sample> value = captor.getValue();
-		for (Sample s : value) {
-			assertTrue(samples.contains(s));
+		Map<Project, Set<Sample>> selected = controller.getSelected();
+		assertEquals(1, selected.keySet().size());
+		Project projectKey = selected.keySet().iterator().next();
+		assertEquals(project, projectKey);
+		for (Sample s : selected.get(projectKey)) {
+			assertTrue(subIds.contains(s.getId()));
 		}
 
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testRemoveProjectSample() {
+		Map<Project, Set<Sample>> selected = new HashMap<>();
+		selected.put(project, samples);
+		controller.setSelected(selected);
+
 		Set<Long> subIds = Sets.newHashSet(sampleIds.iterator().next());
 
 		Map<String, Object> addProjectSample = controller.removeProjectSample(projectId, subIds);
@@ -88,17 +87,16 @@ public class CartControllerTest {
 			verify(sampleService).getSampleForProject(project, id);
 		}
 
-		@SuppressWarnings("rawtypes")
-		ArgumentCaptor<Set> captor = ArgumentCaptor.forClass(Set.class);
-		verify(cart).removeProjectSample(eq(project), captor.capture());
-		Set<Sample> value = captor.getValue();
-		for (Sample s : value) {
-			assertTrue(samples.contains(s));
-		}
+		selected = controller.getSelected();
 
+		assertEquals(1, selected.keySet().size());
+		Project projectKey = selected.keySet().iterator().next();
+		assertEquals(project, projectKey);
+		for (Sample s : selected.get(projectKey)) {
+			assertFalse(subIds.contains(s.getId()));
+		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testAddProject() {
 		Map<String, Object> addProject = controller.addProject(projectId);
@@ -113,12 +111,12 @@ public class CartControllerTest {
 		verify(projectService).read(projectId);
 		verify(sampleService).getSamplesForProject(project);
 
-		@SuppressWarnings("rawtypes")
-		ArgumentCaptor<Set> captor = ArgumentCaptor.forClass(Set.class);
-		verify(cart).addProjectSample(eq(project), captor.capture());
-		Set<Sample> value = captor.getValue();
-		for (Sample s : value) {
-			assertTrue(samples.contains(s));
+		Map<Project, Set<Sample>> selected = controller.getSelected();
+		assertEquals(1, selected.keySet().size());
+		Project projectKey = selected.keySet().iterator().next();
+		assertEquals(project, projectKey);
+		for (Sample s : selected.get(projectKey)) {
+			assertTrue(sampleIds.contains(s.getId()));
 		}
 	}
 
@@ -126,16 +124,13 @@ public class CartControllerTest {
 	public void testRemoveProject() {
 		controller.removeProject(projectId);
 		verify(projectService).read(projectId);
-		verify(cart).removeProject(project);
 	}
 
 	@Test
 	public void testGetCartMap() {
 		Map<Project, Set<Sample>> selected = new HashMap<>();
 		selected.put(project, samples);
-
-		when(cart.getProjects()).thenReturn(selected.keySet());
-		when(cart.getSelectedSamplesForProject(project)).thenReturn(samples);
+		controller.setSelected(selected);
 
 		Map<String, Object> cartMap = controller.getCartMap();
 		assertTrue(cartMap.containsKey("projects"));
