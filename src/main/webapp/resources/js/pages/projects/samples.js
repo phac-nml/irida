@@ -74,9 +74,6 @@
             GalaxyNotificationService.add(data.sessionAttr, data.msg);
             return data;
           }
-        })
-        .error(function (data) {
-
         });
     };
 
