@@ -74,6 +74,9 @@
             GalaxyNotificationService.add(data.sessionAttr, data.msg);
             return data;
           }
+          else {
+            return data;
+          }
         })
         .error(function (data) {
 
@@ -616,7 +619,9 @@
           vm.close();
         }
         else {
-          vm.errors = data.errors;
+          console.log(response)
+          vm.errors = response.data.errors;
+
         }
       });
     };
