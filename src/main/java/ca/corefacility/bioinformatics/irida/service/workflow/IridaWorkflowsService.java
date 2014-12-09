@@ -12,6 +12,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowDefaultException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
@@ -25,9 +26,10 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
+@Service
 public class IridaWorkflowsService {
 	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowsService.class);
-	
+
 	/**
 	 * Stores registered workflows within IRIDA.
 	 */
@@ -51,14 +53,29 @@ public class IridaWorkflowsService {
 	/**
 	 * Builds a new {@link IridaWorkflowService} for loading up installed
 	 * workflows.
+	 * 
+	 * @param iridaWorkflows
+	 *            A {@link Set} of {@link IridaWorkflow}s to use in IRIDA.
+	 * @param defaultIridaWorkflows
+	 *            A {@link Set} of {@link UUID}s to use as the default
+	 *            workflows.
+	 * @throws IridaWorkflowException
+	 *             If there was an issue when attempting to register the
+	 *             workflows.
 	 */
 	@Autowired
-	public IridaWorkflowsService() {
+	public IridaWorkflowsService(Set<IridaWorkflow> iridaWorkflows, Set<UUID> defaultIridaWorkflows)
+			throws IridaWorkflowException {
+		checkNotNull(iridaWorkflows, "iridaWorkflows is null");
+		checkNotNull(defaultIridaWorkflows, "defaultWorkflows is null");
 
 		allRegisteredWorkflows = new HashMap<>();
 		registeredWorkflowsForAnalysis = new HashMap<>();
 		defaultWorkflowForAnalysis = new HashMap<>();
 		workflowNamesMap = new HashMap<>();
+
+		registerWorkflows(iridaWorkflows);
+		setDefaultWorkflows(defaultIridaWorkflows);
 	}
 
 	/**

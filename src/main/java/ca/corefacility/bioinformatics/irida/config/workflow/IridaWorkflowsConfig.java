@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.config.workflow;
 
-import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
 
@@ -9,12 +8,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import com.google.common.collect.Sets;
-
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
-import ca.corefacility.bioinformatics.irida.service.workflow.integration.TestAnalysis;
+
+import com.google.common.collect.Sets;
 
 /**
  * Class used to load up test workflows.
@@ -23,19 +20,27 @@ import ca.corefacility.bioinformatics.irida.service.workflow.integration.TestAna
  *
  */
 @Configuration
-@Profile("test")
-public class IridaWorkflowsTestConfig {
+@Profile({ "dev", "prod", "it" })
+public class IridaWorkflowsConfig {
 
 	@Autowired
 	private IridaWorkflowLoaderService iridaWorkflowLoaderService;
 
+	/**
+	 * Builds a set of workflows to load up into IRIDA.
+	 * 
+	 * @return A set of workflows to load into IRIDA.
+	 */
 	@Bean
-	public Set<IridaWorkflow> iridaWorkflows() throws IOException, IridaWorkflowLoadException {
-		Set<IridaWorkflow> workflowsSet = iridaWorkflowLoaderService.loadWorkflowsForClass(TestAnalysis.class);
-
-		return workflowsSet;
+	public Set<IridaWorkflow> iridaWorkflows() {
+		return Sets.newHashSet();
 	}
-	
+
+	/**
+	 * A set of workflow ids to use as defaults.
+	 * 
+	 * @return A set of workflow ids to use as defaults.
+	 */
 	@Bean
 	public Set<UUID> defaultIridaWorkflows() {
 		return Sets.newHashSet();

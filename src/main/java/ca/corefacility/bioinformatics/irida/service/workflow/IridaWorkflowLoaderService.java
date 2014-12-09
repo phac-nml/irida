@@ -38,7 +38,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 public class IridaWorkflowLoaderService {
 
 	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowLoaderService.class);
-	
+
 	private static final String WORKFLOWS_DIR = "workflows";
 
 	private static final String WORKFLOW_DEFINITION_FILE = "irida_workflow.xml";
@@ -57,7 +57,7 @@ public class IridaWorkflowLoaderService {
 	public IridaWorkflowLoaderService(Unmarshaller workflowDescriptionUnmarshaller) {
 		this.workflowDescriptionUnmarshaller = workflowDescriptionUnmarshaller;
 	}
-	
+
 	/**
 	 * Loads workflows that are stored as resources belonging to the passed
 	 * Analysis class.
@@ -83,9 +83,10 @@ public class IridaWorkflowLoaderService {
 			Path workflowsResourcePath = Paths.get(workflowsDirResourceURL.getFile());
 			Path workflowPath = workflowsResourcePath.resolve(analysisName);
 			logger.debug("Loading Workflows for: " + analysisClass + " from " + workflowPath);
-	
+
 			if (!Files.isDirectory(workflowPath)) {
-				throw new IridaWorkflowLoadException("Missing directory " + workflowPath + " for class " + analysisClass);
+				throw new IridaWorkflowLoadException("Missing directory " + workflowPath + " for class "
+						+ analysisClass);
 			} else {
 				return loadAllWorkflowImplementations(workflowPath);
 			}
