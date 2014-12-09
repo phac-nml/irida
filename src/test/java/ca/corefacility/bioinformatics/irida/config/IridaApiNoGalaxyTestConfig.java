@@ -4,8 +4,10 @@ import java.util.concurrent.Executor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 
+import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsTestConfig;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
@@ -20,6 +22,7 @@ import com.google.common.util.concurrent.MoreExecutors;
  *
  */
 @Configuration
+@Import({ IridaWorkflowsTestConfig.class })
 @Profile("test")
 public class IridaApiNoGalaxyTestConfig {
 

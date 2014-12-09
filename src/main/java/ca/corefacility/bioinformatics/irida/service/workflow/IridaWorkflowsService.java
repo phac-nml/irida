@@ -18,6 +18,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowDefaultExcep
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowIdSet;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 
 /**
@@ -55,16 +57,16 @@ public class IridaWorkflowsService {
 	 * workflows.
 	 * 
 	 * @param iridaWorkflows
-	 *            A {@link Set} of {@link IridaWorkflow}s to use in IRIDA.
+	 *            A {@link IridaWorkflowSet} of {@link IridaWorkflow}s to use in IRIDA.
 	 * @param defaultIridaWorkflows
-	 *            A {@link Set} of {@link UUID}s to use as the default
+	 *            A {@link IridaWorkflowIdSet} of {@link UUID}s to use as the default
 	 *            workflows.
 	 * @throws IridaWorkflowException
 	 *             If there was an issue when attempting to register the
 	 *             workflows.
 	 */
 	@Autowired
-	public IridaWorkflowsService(Set<IridaWorkflow> iridaWorkflows, Set<UUID> defaultIridaWorkflows)
+	public IridaWorkflowsService(IridaWorkflowSet iridaWorkflows, IridaWorkflowIdSet defaultIridaWorkflows)
 			throws IridaWorkflowException {
 		checkNotNull(iridaWorkflows, "iridaWorkflows is null");
 		checkNotNull(defaultIridaWorkflows, "defaultWorkflows is null");
@@ -74,8 +76,8 @@ public class IridaWorkflowsService {
 		defaultWorkflowForAnalysis = new HashMap<>();
 		workflowNamesMap = new HashMap<>();
 
-		registerWorkflows(iridaWorkflows);
-		setDefaultWorkflows(defaultIridaWorkflows);
+		registerWorkflows(iridaWorkflows.getIridaWorkflows());
+		setDefaultWorkflows(defaultIridaWorkflows.getIridaWorkflowIds());
 	}
 
 	/**

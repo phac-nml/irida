@@ -1,14 +1,12 @@
 package ca.corefacility.bioinformatics.irida.config.workflow;
 
-import java.util.Set;
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowIdSet;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowSet;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
 
 import com.google.common.collect.Sets;
@@ -32,8 +30,8 @@ public class IridaWorkflowsConfig {
 	 * @return A set of workflows to load into IRIDA.
 	 */
 	@Bean
-	public Set<IridaWorkflow> iridaWorkflows() {
-		return Sets.newHashSet();
+	public IridaWorkflowSet iridaWorkflows() {
+		return new IridaWorkflowSet(Sets.newHashSet());
 	}
 
 	/**
@@ -42,7 +40,7 @@ public class IridaWorkflowsConfig {
 	 * @return A set of workflow ids to use as defaults.
 	 */
 	@Bean
-	public Set<UUID> defaultIridaWorkflows() {
-		return Sets.newHashSet();
+	public IridaWorkflowIdSet defaultIridaWorkflows() {
+		return new IridaWorkflowIdSet(Sets.newHashSet());
 	}
 }

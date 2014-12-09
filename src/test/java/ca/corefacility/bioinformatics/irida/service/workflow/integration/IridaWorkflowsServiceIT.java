@@ -31,6 +31,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowDefaultExcep
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowIdSet;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowSet;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -75,12 +77,11 @@ public class IridaWorkflowsServiceIT {
 		Path workflow2DirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
 				"workflows/TestAnalysis2/1.0").toURI());
 
-		iridaWorkflowsService = new IridaWorkflowsService(Sets.newHashSet(), Sets.newHashSet());
+		iridaWorkflowsService = new IridaWorkflowsService(new IridaWorkflowSet(Sets.newHashSet()), new IridaWorkflowIdSet(Sets.newHashSet()));
 
 		testWorkflow1v1 = iridaWorkflowLoaderService.loadIridaWorkflowFromDirectory(workflowVersion1DirectoryPath);
 		testWorkflow1v2 = iridaWorkflowLoaderService.loadIridaWorkflowFromDirectory(workflowVersion2DirectoryPath);
 		testWorkflow2 = iridaWorkflowLoaderService.loadIridaWorkflowFromDirectory(workflow2DirectoryPath);
-
 	}
 
 	/**
