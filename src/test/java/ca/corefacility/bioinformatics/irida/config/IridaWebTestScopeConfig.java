@@ -7,8 +7,14 @@ import org.springframework.beans.factory.config.CustomScopeConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.SimpleThreadScope;
-import org.springframework.web.context.request.SessionScope;
 
+/**
+ * Configuration file for allowing session scoped beans in test. Include this
+ * file in @ContextConfiguration(classes) on integration tests.
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Configuration
 public class IridaWebTestScopeConfig {
 	@Bean
