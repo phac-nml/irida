@@ -41,9 +41,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowStructur
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowOutput;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowTool;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.google.common.collect.Sets;
 
 /**
  * Tests loading up workflows.
@@ -71,6 +73,10 @@ public class IridaWorkflowLoaderServiceIT {
 	private Path workflowDirectoryPathNoDefinition;
 	private Path workflowDirectoryPathNoStructure;
 	private Path workflowDirectoryPathNoId;
+	
+	private static final UUID workflowId1v1 = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
+	private static final UUID workflowId1v2 = UUID.fromString("c5f29cb2-1b68-4d34-9b93-609266af7551");
+	private Set<UUID> workflowIds1Set = Sets.newHashSet(workflowId1v1, workflowId1v2);
 
 	@Before
 	public void setup() throws JAXBException, URISyntaxException, FileNotFoundException {
@@ -115,9 +121,38 @@ public class IridaWorkflowLoaderServiceIT {
 		tools.add(workflowTool);
 
 		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version, "Mr. Developer",
-				"developer@example.com", new WorkflowInput("sequence_reads", "reference"), outputs, tools);
+				"developer@example.com", TestAnalysis.class, new WorkflowInput("sequence_reads", "reference"), outputs,
+				tools);
 
 		return iridaWorkflow;
+	}
+	
+	/**
+	 * Tests successfully loading a set of workflows from the analysis class.
+	 * 
+	 * @throws IOException
+	 * @throws IridaWorkflowLoadException
+	 */
+	@Test
+	public void testLoadWorkflowsForClassSuccess() throws IOException, IridaWorkflowLoadException {
+		Set<IridaWorkflow> iridaWorkflows = workflowLoaderService.loadWorkflowsForClass(TestAnalysis.class);
+		assertEquals(2, iridaWorkflows.size());
+		Iterator<IridaWorkflow> iter = iridaWorkflows.iterator();
+		UUID id1 = iter.next().getWorkflowIdentifier();
+		UUID id2 = iter.next().getWorkflowIdentifier();
+
+		assertEquals(workflowIds1Set, Sets.newHashSet(id1, id2));
+	}
+	
+	/**
+	 * Tests failing to load a set of workflows from the analysis class.
+	 * 
+	 * @throws IOException
+	 * @throws IridaWorkflowLoadException
+	 */
+	@Test(expected=IridaWorkflowLoadException.class)
+	public void testLoadWorkflowsForClassFail() throws IOException, IridaWorkflowLoadException {
+		workflowLoaderService.loadWorkflowsForClass(Analysis.class);
 	}
 
 	/**
