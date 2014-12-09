@@ -45,7 +45,7 @@
 		</div>
 	</div>
 	<div class="row mrgn-bttm-md">
-		<div class="col-md-9" ng-controller="SubNavCtrl as subnav">
+		<div class="col-md-7" ng-controller="SubNavCtrl as subnav">
 			<div class="btn-toolbar">
 				<!-- Sample Selection (Page, All, None) -->
 				<div class="btn-group" dropdown="" is-open="subnav.selection.isopen">
@@ -107,7 +107,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-md-3">
+		<div class="col-md-5">
 			<span class="pull-right selected__counts" ng-controller="SelectedCountCtrl as countCtrl">
 			<span th:text="#{project.samples.table.select-count}"></span>&nbsp;<span id="selected-count" class="badge" ng-bind="countCtrl.count">0</span>
 		</span>
