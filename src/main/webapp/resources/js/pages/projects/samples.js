@@ -280,6 +280,10 @@
           if (result.data.finished) {
             removeElement(2000);
           }
+          else if(result.error) {
+            // TODO: Handle in next merge.
+            console.log(result.data.error)
+          }
         });
       }, 500);
 

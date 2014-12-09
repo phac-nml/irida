@@ -27,6 +27,8 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.upload.galaxy.GalaxyUploadService;
 
+import com.google.common.collect.ImmutableMap;
+
 /**
  * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
@@ -90,17 +92,27 @@ public class GalaxyController {
 	 * @return JSON Response with current status
 	 */
 	@RequestMapping("/poll/{sessionId}")
-	public @ResponseBody Map<String, Object> pollGalaxy(@PathVariable String sessionId, HttpSession session) {
+	public @ResponseBody Map<String, Object> pollGalaxy(@PathVariable String sessionId, HttpSession session, Locale locale) {
+		Map<String, Object> result = null;
 		UploadWorker worker = (UploadWorker) session.getAttribute(sessionId);
+		if (worker != null) {
 
-		Map<String, Object> result = new HashMap<>();
+			result = new HashMap<>();
 
-		result.put("progress", worker.getProportionComplete());
-		result.put("finished", worker.isFinished());
+			result.put("progress", worker.getProportionComplete());
+			result.put("finished", worker.isFinished());
 
-		if (worker.exceptionOccured()) {
-			logger.error("Galaxy Upload Exception: ", worker.getUploadException());
-			result.put("error", worker.getUploadException());
+			if (worker.exceptionOccured()) {
+				logger.error("Galaxy Upload Exception: ", worker.getUploadException());
+				result.put("error", worker.getUploadException());
+			}
+
+			if (worker.isFinished()) {
+				session.removeAttribute(sessionId);
+			}
+		}
+		else {
+			result = ImmutableMap.of("error", messageSource.getMessage("galaxy.error", new Object[]{}, locale));
 		}
 
 		return result;
