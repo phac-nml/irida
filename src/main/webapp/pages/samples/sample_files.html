@@ -84,7 +84,7 @@
 			$("button.download-file").on("click", function () {
 				var that = $(this);
 				var fileId = that.data("file-id");
-				var url = /*[[@{/samples/ajax/download/file/}]]*/ '/samples/ajax/download/file/';
+				var url = /*[[@{/sequenceFiles/download/}]]*/ '/sequenceFiles/download/';
 				var iframe = document.createElement("iframe");
 				iframe.src = url + fileId;
 				iframe.style.display = "none";
