@@ -355,7 +355,7 @@ public class GalaxyUploaderAPI {
 	 *             If there was an issue creating a new library.
 	 */
 	private boolean uploadSample(UploadSample sample, LibraryFolder rootFolder, LibrariesClient librariesClient,
-			Library library, Map<String, LibraryContent> libraryMap) throws LibraryUploadException,
+			Library library, Map<String, List<LibraryContent>> libraryMap) throws LibraryUploadException,
 			CreateLibraryException {
 		boolean success = false;
 		LibraryFolder persistedSampleFolder;
@@ -365,11 +365,19 @@ public class GalaxyUploaderAPI {
 		// if Galaxy already contains a folder for this sample, don't create a
 		// new folder
 		if (libraryMap.containsKey(expectedSamplePath)) {
-			LibraryContent persistedSampleFolderAsContent = libraryMap.get(expectedSamplePath);
+			List<LibraryContent> persistedSampleFolderAsContentList = libraryMap.get(expectedSamplePath);
 
-			persistedSampleFolder = new LibraryFolder();
-			persistedSampleFolder.setId(persistedSampleFolderAsContent.getId());
-			persistedSampleFolder.setName(persistedSampleFolderAsContent.getName());
+			if (persistedSampleFolderAsContentList.size() == 0) {
+				throw new LibraryUploadException("No LibraryContent for path " + expectedSamplePath);
+			} else if (persistedSampleFolderAsContentList.size() > 1) {
+				throw new LibraryUploadException("Duplicate sample folders (" + persistedSampleFolderAsContentList.size()
+						+ ") for path " + expectedSamplePath);
+			} else {
+				LibraryContent persistedSampleFolderAsContent = persistedSampleFolderAsContentList.get(0);
+				persistedSampleFolder = new LibraryFolder();
+				persistedSampleFolder.setId(persistedSampleFolderAsContent.getId());
+				persistedSampleFolder.setName(persistedSampleFolderAsContent.getName());
+			}
 		} else {
 			persistedSampleFolder = galaxyLibrary.createLibraryFolder(library, rootFolder, sample.getSampleName());
 
@@ -386,7 +394,11 @@ public class GalaxyUploaderAPI {
 
 			// if file already exists, check size
 			if (libraryMap.containsKey(sampleFilePath)) {
-				LibraryContent sampleGalaxyFileContent = libraryMap.get(sampleFilePath);
+				List<LibraryContent> sampleGalaxyFileContentList = libraryMap.get(sampleFilePath);
+				if (sampleGalaxyFileContentList.size() != 1) {
+					throw new LibraryUploadException();
+				}
+				LibraryContent sampleGalaxyFileContent = sampleGalaxyFileContentList.get(0);
 				LibraryDataset sampleFileDataset = librariesClient.showDataset(library.getId(),
 						sampleGalaxyFileContent.getId());
 
@@ -568,7 +580,7 @@ public class GalaxyUploaderAPI {
 
 			Library library = galaxyLibrarySearchAdmin.findById(libraryID);
 
-			Map<String, LibraryContent> libraryContentMap = galaxyLibraryContentSearchAdmin.libraryContentAsMap(libraryID);
+			Map<String, List<LibraryContent>> libraryContentMap = galaxyLibraryContentSearchAdmin.libraryContentAsMap(libraryID);
 
 			LibraryFolder illuminaFolder;
 

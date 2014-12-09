@@ -3,11 +3,11 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
@@ -92,16 +92,25 @@ public class GalaxyLibraryContentSearch extends GalaxySearch<LibraryContent, Lib
 	 * 
 	 * @param libraryId
 	 *            The library to get all contents from.
-	 * @return A Map mapping the path of the library content to the
-	 *         LibraryContent object.
+	 * @return A Map mapping the path of the library content to a list of
+	 *         {@link LibraryContent} objects.
 	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
-	public Map<String, LibraryContent> libraryContentAsMap(String libraryId)
+	public Map<String, List<LibraryContent>> libraryContentAsMap(String libraryId)
 			throws ExecutionManagerObjectNotFoundException {
 		checkNotNull(libraryId, "libraryId is null");
 
 		List<LibraryContent> libraryContents = getLibraryContents(libraryId);
+		Map<String, List<LibraryContent>> libraryContentsMap = new HashMap<>();
 		
-		return libraryContents.stream().collect(Collectors.toMap(LibraryContent::getName, Function.identity()));
+		for (LibraryContent content : libraryContents) {
+			if (!libraryContentsMap.containsKey(content.getName())) {
+				libraryContentsMap.put(content.getName(), new LinkedList<>());
+			}
+			
+			List<LibraryContent> libraryContentList = libraryContentsMap.get(content.getName());
+			libraryContentList.add(content);
+		}
+		return libraryContentsMap;
 	}
 }

@@ -30,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrary
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
+import com.google.common.collect.Lists;
 
 public class GalaxyLibraryContentSearchTest {
 	
@@ -60,8 +61,8 @@ public class GalaxyLibraryContentSearchTest {
 	private URL galaxyURL;
 
 	private List<Library> allLibrariesList;
-	private Map<String, LibraryContent> singleLibraryContentsAsMap;
-	private Map<String, LibraryContent> multipleLibraryContentsAsMap;
+	private Map<String, List<LibraryContent>> singleLibraryContentsAsMap;
+	private Map<String, List<LibraryContent>> multipleLibraryContentsAsMap;
 	
 	/**
 	 * Setup objects for test.
@@ -106,8 +107,8 @@ public class GalaxyLibraryContentSearchTest {
 		when(librariesClient.getLibraryContents(LIBRARY_ID)).thenReturn(
 				singleLibraryContents);
 
-		singleLibraryContentsAsMap = new HashMap<String, LibraryContent>();
-		singleLibraryContentsAsMap.put(FOLDER_PATH.getName(), validFolder);
+		singleLibraryContentsAsMap = new HashMap<>();
+		singleLibraryContentsAsMap.put(FOLDER_PATH.getName(), Lists.newArrayList(validFolder));
 
 		List<LibraryContent> multipleLibraryContents = new ArrayList<LibraryContent>();
 		LibraryContent validFolder1 = new LibraryContent();
@@ -123,10 +124,10 @@ public class GalaxyLibraryContentSearchTest {
 		when(librariesClient.getLibraryContents(LIBRARY_ID_MULTIPLE_CONTENTS))
 				.thenReturn(multipleLibraryContents);
 
-		multipleLibraryContentsAsMap = new HashMap<String, LibraryContent>();
-		multipleLibraryContentsAsMap.put(FOLDER_PATH.getName(), validFolder1);
+		multipleLibraryContentsAsMap = new HashMap<>();
+		multipleLibraryContentsAsMap.put(FOLDER_PATH.getName(), Lists.newArrayList(validFolder1));
 		multipleLibraryContentsAsMap.put(ILLUMINA_FOLDER_NAME.getName(),
-				validFolder2);
+				Lists.newArrayList(validFolder2));
 
 		when(librariesClient.getLibraryContents(INVALID_LIBRARY_ID))
 				.thenReturn(null);
@@ -189,7 +190,7 @@ public class GalaxyLibraryContentSearchTest {
 	 */
 	@Test
 	public void testLibraryContentAsMap() throws ExecutionManagerObjectNotFoundException {
-		Map<String, LibraryContent> validFolder = galaxyLibraryContentSearch
+		Map<String, List<LibraryContent>> validFolder = galaxyLibraryContentSearch
 				.libraryContentAsMap(LIBRARY_ID);
 		assertEquals(singleLibraryContentsAsMap, validFolder);
 
