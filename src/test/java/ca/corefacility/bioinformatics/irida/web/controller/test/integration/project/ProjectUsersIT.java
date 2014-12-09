@@ -23,6 +23,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -46,7 +47,7 @@ public class ProjectUsersIT {
 	@Test
 	public void testAddExistingUserToProject() {
 		String username = "tom";
-		String projectUri = "http://localhost:8080/api/projects/1";
+		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/1";
 		Map<String, String> users = new HashMap<>();
 		users.put("userId", username);
 
@@ -71,7 +72,7 @@ public class ProjectUsersIT {
 	@Test
 	public void testRemoveUserFromProject() {
 		String name = "Josh";
-		String projectUri = "http://localhost:8080/api/projects/2";
+		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/2";
 
 		// get the project
 		String projectJson = asUser().get(projectUri).asString();
