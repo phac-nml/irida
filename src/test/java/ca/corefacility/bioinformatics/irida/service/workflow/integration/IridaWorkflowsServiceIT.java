@@ -76,7 +76,7 @@ public class IridaWorkflowsServiceIT {
 		Path workflow2DirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
 				"workflows/TestAnalysis2/1.0").toURI());
 		
-		iridaWorkflowsService = new IridaWorkflowsService(iridaWorkflowLoaderService);
+		iridaWorkflowsService = new IridaWorkflowsService();
 		
 		testWorkflow1v1 = iridaWorkflowLoaderService.loadIridaWorkflowFromDirectory(workflowVersion1DirectoryPath);
 		testWorkflow1v2 = iridaWorkflowLoaderService.loadIridaWorkflowFromDirectory(workflowVersion2DirectoryPath);

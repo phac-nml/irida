@@ -2,10 +2,6 @@ package ca.corefacility.bioinformatics.irida.service.workflow;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowDefaultException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -32,9 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
  */
 public class IridaWorkflowsService {
 	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowsService.class);
-
-	// private static final String WORKFLOWS_DIR = "workflows";
-
+	
 	/**
 	 * Stores registered workflows within IRIDA.
 	 */
@@ -58,12 +51,9 @@ public class IridaWorkflowsService {
 	/**
 	 * Builds a new {@link IridaWorkflowService} for loading up installed
 	 * workflows.
-	 * 
-	 * @param iridaWorkflowLoaderService
-	 *            The service used to load up workflows.
 	 */
 	@Autowired
-	public IridaWorkflowsService(IridaWorkflowLoaderService iridaWorkflowLoaderService) {
+	public IridaWorkflowsService() {
 
 		allRegisteredWorkflows = new HashMap<>();
 		registeredWorkflowsForAnalysis = new HashMap<>();
