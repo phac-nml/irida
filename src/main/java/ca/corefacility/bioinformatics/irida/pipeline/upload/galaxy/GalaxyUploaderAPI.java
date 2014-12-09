@@ -387,6 +387,50 @@ public class GalaxyUploaderAPI {
 		
 		return persistedSampleFolder;
 	}
+	
+	private boolean skipUploadForFile(File sampleFile, String sampleFilePathGalaxy, LibrariesClient librariesClient,
+			Library library, Map<String, List<LibraryContent>> libraryMap) throws LibraryUploadException {
+		boolean shouldSkip = false;
+		
+		if (libraryMap.containsKey(sampleFilePathGalaxy)) {
+			List<LibraryContent> sampleGalaxyFileContentList = libraryMap.get(sampleFilePathGalaxy);
+			if (sampleGalaxyFileContentList.size() == 0) {
+				throw new LibraryUploadException("sampleGalaxyFileContentList has size 0 for file " + sampleFilePathGalaxy);
+			} else {	
+				long localFileSize = sampleFile.length();
+				
+				// for every file with the same name, check the size
+				for (LibraryContent fileWithSameNameAsSample : sampleGalaxyFileContentList) {
+					LibraryDataset sampleFileDataset = librariesClient.showDataset(library.getId(),
+							fileWithSameNameAsSample.getId());
+
+					long galaxyFileSize = Long.parseLong(sampleFileDataset.getFileSize());
+					
+					if (galaxyFileSize == localFileSize) {
+						logger.debug("File from local path=" + sampleFile.getAbsolutePath() + ", size=" + localFileSize
+								+ " already exists on Galaxy path=" + sampleFilePathGalaxy + ", size="
+								+ galaxyFileSize + " in library name=" + library.getName() + " id=" + library.getId()
+								+ " in Galaxy url=" + galaxyInstance.getGalaxyUrl() + " skipping upload");
+						shouldSkip = true;
+					} else if (galaxyFileSize == (localFileSize + 1)) {
+						// It's possible for Galaxy to add an extra trailing newline
+						// at the end of a file if there was no newline before. This
+						// is due to Galaxy attempting to write out datasets with
+						// Unix style newlines. The code for this is in
+						// https://bitbucket.org/galaxy/galaxy-dist/src/7e4d21621ce12e13ebbdf9fd3259df58c3ef124c/lib/galaxy/datatypes/data.py?at=stable#cl-673
+						logger.debug("File from local path=" + sampleFile.getAbsolutePath() + ", size=" + localFileSize
+								+ " already exists on Galaxy path=" + sampleFilePathGalaxy + ", size="
+								+ galaxyFileSize + " in library name=" + library.getName() + " id=" + library.getId()
+								+ " in Galaxy url=" + galaxyInstance.getGalaxyUrl()
+								+ " sizes off by 1 so assuming Galaxy added a trailing newline ... " + " skipping upload");
+						shouldSkip = true;
+					}
+				}
+			}
+		}
+		
+		return shouldSkip;
+	}
 
 	/**
 	 * Performs an upload of the sample files.
@@ -416,50 +460,10 @@ public class GalaxyUploaderAPI {
 		LibraryFolder persistedSampleFolder = getOrBuildSampleFolder(libraryMap, sample, rootFolder, library);
 
 		for (Path path : sample.getSampleFiles()) {
-			boolean shouldSkip = false;
-
 			File file = path.toFile();
-			String sampleFilePath = samplePath(rootFolder, sample, file);
+			String sampleFilePathGalaxy = samplePath(rootFolder, sample, file);
 
-			// if file already exists, check size to determine if we should upload
-			if (libraryMap.containsKey(sampleFilePath)) {
-				List<LibraryContent> sampleGalaxyFileContentList = libraryMap.get(sampleFilePath);
-				if (sampleGalaxyFileContentList.size() == 0) {
-					throw new LibraryUploadException("sampleGalaxyFileContentList has size 0 for file " + sampleFilePath);
-				} else {	
-					long localFileSize = file.length();
-					
-					// for every file with the same name, check the size
-					for (LibraryContent fileWithSameNameAsSample : sampleGalaxyFileContentList) {
-						LibraryDataset sampleFileDataset = librariesClient.showDataset(library.getId(),
-								fileWithSameNameAsSample.getId());
-	
-						long galaxyFileSize = Long.parseLong(sampleFileDataset.getFileSize());
-						
-						if (galaxyFileSize == localFileSize) {
-							logger.debug("File from local path=" + file.getAbsolutePath() + ", size=" + localFileSize
-									+ " already exists on Galaxy path=" + samplePath(rootFolder, sample, file) + ", size="
-									+ galaxyFileSize + " in library name=" + library.getName() + " id=" + library.getId()
-									+ " in Galaxy url=" + galaxyInstance.getGalaxyUrl() + " skipping upload");
-							shouldSkip = true;
-						} else if (galaxyFileSize == (localFileSize + 1)) {
-							// It's possible for Galaxy to add an extra trailing newline
-							// at the end of a file if there was no newline before. This
-							// is due to Galaxy attempting to write out datasets with
-							// Unix style newlines. The code for this is in
-							// https://bitbucket.org/galaxy/galaxy-dist/src/7e4d21621ce12e13ebbdf9fd3259df58c3ef124c/lib/galaxy/datatypes/data.py?at=stable#cl-673
-							logger.debug("File from local path=" + file.getAbsolutePath() + ", size=" + localFileSize
-									+ " already exists on Galaxy path=" + samplePath(rootFolder, sample, file) + ", size="
-									+ galaxyFileSize + " in library name=" + library.getName() + " id=" + library.getId()
-									+ " in Galaxy url=" + galaxyInstance.getGalaxyUrl()
-									+ " sizes off by 1 so assuming Galaxy added a trailing newline ... " + " skipping upload");
-							shouldSkip = true;
-						}
-					}
-				}
-			}
-			
-			if (!shouldSkip) {
+			if (!skipUploadForFile(file, sampleFilePathGalaxy, librariesClient, library, libraryMap)) {
 				success &= doUploadWithLogging(persistedSampleFolder, file, librariesClient,
 						library, samplePath(rootFolder, sample, file));
 			}
