@@ -33,7 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 public class IridaWorkflowsService {
 	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowsService.class);
 
-//	private static final String WORKFLOWS_DIR = "workflows";
+	// private static final String WORKFLOWS_DIR = "workflows";
 
 	/**
 	 * Stores registered workflows within IRIDA.
@@ -70,35 +70,80 @@ public class IridaWorkflowsService {
 		defaultWorkflowForAnalysis = new HashMap<>();
 		workflowNamesMap = new HashMap<>();
 	}
-	
+
 	/**
 	 * Sets the given workflow as a default workflow for it's analysis type.
-	 * @param workflowId  The workflow id to set as default.
-	 * @throws IridaWorkflowNotFoundException  If the given workflow cannot be found.
-	 * @throws IridaWorkflowDefaultException  If the corresponding workflow type already has a default workflow set.
+	 * 
+	 * @param workflowId
+	 *            The workflow id to set as default.
+	 * @throws IridaWorkflowNotFoundException
+	 *             If the given workflow cannot be found.
+	 * @throws IridaWorkflowDefaultException
+	 *             If the corresponding workflow type already has a default
+	 *             workflow set.
 	 */
-	public void setDefaultWorkflow(UUID workflowId) throws IridaWorkflowNotFoundException, IridaWorkflowDefaultException {
+	public void setDefaultWorkflow(UUID workflowId) throws IridaWorkflowNotFoundException,
+			IridaWorkflowDefaultException {
 		checkNotNull(workflowId, "workflowId is null");
-		
+
 		IridaWorkflow iridaWorkflow = getIridaWorkflow(workflowId);
 		Class<? extends Analysis> analysisClass = iridaWorkflow.getWorkflowDescription().getAnalysisClass();
 		if (defaultWorkflowForAnalysis.containsKey(analysisClass)) {
-			throw new IridaWorkflowDefaultException("Cannot set workflow " + workflowId + " as default, already exists default workflow for " + analysisClass);
+			throw new IridaWorkflowDefaultException("Cannot set workflow " + workflowId
+					+ " as default, already exists default workflow for " + analysisClass);
 		} else {
 			defaultWorkflowForAnalysis.put(analysisClass, workflowId);
 		}
 	}
 
 	/**
+	 * Sets the given set of workflow ids as default workflows.
+	 * 
+	 * @param defaultWorkflows
+	 *            The set of workflow ids to set as defaults.
+	 * @throws IridaWorkflowNotFoundException
+	 *             If one of the workflow ids has no corresponding workflow.
+	 * @throws IridaWorkflowDefaultException
+	 *             If there was an issue setting a default workflow.
+	 */
+	public void setDefaultWorkflows(Set<UUID> defaultWorkflows) throws IridaWorkflowNotFoundException,
+			IridaWorkflowDefaultException {
+		checkNotNull(defaultWorkflows, "iridaWorkflows is null");
+
+		for (UUID workflowId : defaultWorkflows) {
+			setDefaultWorkflow(workflowId);
+		}
+	}
+
+	/**
+	 * Registers the set of workflows with IRIDA.
+	 * 
+	 * @param iridaWorkflows
+	 *            The set of workflows to register.
+	 * @throws IridaWorkflowException
+	 *             If there was an issue registering a workflow.
+	 */
+	public void registerWorkflows(Set<IridaWorkflow> iridaWorkflows) throws IridaWorkflowException {
+		checkNotNull(iridaWorkflows, "iridaWorkflows is null");
+
+		for (IridaWorkflow iridaWorkflow : iridaWorkflows) {
+			registerWorkflow(iridaWorkflow);
+		}
+	}
+
+	/**
 	 * Registers the given workflow with this service.
-	 * @param iridaWorkflow  The workflow to register.
-	 * @throws IridaWorkflowException  If there was an issue when registering the workflow.
+	 * 
+	 * @param iridaWorkflow
+	 *            The workflow to register.
+	 * @throws IridaWorkflowException
+	 *             If there was an issue when registering the workflow.
 	 */
 	public void registerWorkflow(IridaWorkflow iridaWorkflow) throws IridaWorkflowException {
 		checkNotNull(iridaWorkflow, "iridaWorkflow is null");
-		
-		Class<? extends Analysis> analysisClass = iridaWorkflow.getWorkflowDescription().getAnalysisClass();		
-		UUID workflowId = iridaWorkflow.getWorkflowDescription().getId();		
+
+		Class<? extends Analysis> analysisClass = iridaWorkflow.getWorkflowDescription().getAnalysisClass();
+		UUID workflowId = iridaWorkflow.getWorkflowDescription().getId();
 		String workflowName = iridaWorkflow.getWorkflowDescription().getName();
 
 		logger.debug("Registering workflow: " + iridaWorkflow);

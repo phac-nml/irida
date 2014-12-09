@@ -155,6 +155,19 @@ public class IridaWorkflowsServiceIT {
 		iridaWorkflowsService.setDefaultWorkflow(workflowId1v1);
 		iridaWorkflowsService.setDefaultWorkflow(workflowId1v2);
 	}
+	
+	/**
+	 * Tests setting a collection of default workflows
+	 * @throws IridaWorkflowException 
+	 */
+	@Test
+	public void testsetDefaultWorkflowsSuccess() throws IridaWorkflowException {
+		iridaWorkflowsService.registerWorkflows(Sets.newHashSet(testWorkflow1v1, testWorkflow2));
+		iridaWorkflowsService.setDefaultWorkflows(Sets.newHashSet(workflowId1v1, workflowId2));
+		
+		assertEquals(testWorkflow1v1, iridaWorkflowsService.getDefaultWorkflow(TestAnalysis.class));
+		assertEquals(testWorkflow2, iridaWorkflowsService.getDefaultWorkflow(TestAnalysis2.class));
+	}
 
 	/**
 	 * Tests to make sure we fail to register duplicate workflows.
@@ -163,9 +176,21 @@ public class IridaWorkflowsServiceIT {
 	 * 
 	 */
 	@Test(expected = IridaWorkflowException.class)
-	public void testRegisterAnalysisDuplicateFail() throws IridaWorkflowException {
+	public void testRegisterWorkflowDuplicateFail() throws IridaWorkflowException {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
+	}
+	
+	/**
+	 * Tests registering a set of workflows.
+	 * @throws IridaWorkflowException 
+	 */
+	@Test
+	public void testRegisterWorkflowsSuccess() throws IridaWorkflowException {
+		iridaWorkflowsService.registerWorkflows(Sets.newHashSet(testWorkflow1v1, testWorkflow2));
+		
+		Set<String> workflows = iridaWorkflowsService.getAllWorkflowNames();
+		assertEquals(Sets.newHashSet("TestWorkflow", "TestWorkflow2"), workflows);
 	}
 
 	/**
