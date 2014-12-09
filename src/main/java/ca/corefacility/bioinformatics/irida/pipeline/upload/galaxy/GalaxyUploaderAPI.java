@@ -355,6 +355,38 @@ public class GalaxyUploaderAPI {
 
 		return String.format("/%s/%s/%s", rootFolderName, sample.getSampleName(), file.getName());
 	}
+	
+	private LibraryFolder getOrBuildSampleFolder(Map<String, List<LibraryContent>> libraryMap,
+			UploadSample sample, LibraryFolder rootFolder, Library library) throws CreateLibraryException, LibraryUploadException {
+		LibraryFolder persistedSampleFolder;
+		String expectedSamplePath = samplePath(rootFolder, sample);
+		
+		// if Galaxy already contains a folder for this sample, don't create a
+		// new folder
+		if (libraryMap.containsKey(expectedSamplePath)) {
+			List<LibraryContent> persistedSampleFolderAsContentList = libraryMap.get(expectedSamplePath);
+
+			if (persistedSampleFolderAsContentList.size() == 0) {
+				throw new LibraryUploadException("No LibraryContent for path " + expectedSamplePath);
+			} else if (persistedSampleFolderAsContentList.size() > 1) {
+				throw new LibraryUploadException("Duplicate sample folders (" + persistedSampleFolderAsContentList.size()
+						+ ") for path " + expectedSamplePath);
+			} else {
+				LibraryContent persistedSampleFolderAsContent = persistedSampleFolderAsContentList.get(0);
+				persistedSampleFolder = new LibraryFolder();
+				persistedSampleFolder.setId(persistedSampleFolderAsContent.getId());
+				persistedSampleFolder.setName(persistedSampleFolderAsContent.getName());
+			}
+		} else {
+			persistedSampleFolder = galaxyLibrary.createLibraryFolder(library, rootFolder, sample.getSampleName());
+
+			logger.debug("Created Galaxy sample folder name=" + expectedSamplePath + " id="
+					+ persistedSampleFolder.getId() + " in library name=" + library.getName() + " id="
+					+ library.getId() + " in Galaxy url=" + galaxyInstance.getGalaxyUrl());
+		}
+		
+		return persistedSampleFolder;
+	}
 
 	/**
 	 * Performs an upload of the sample files.
@@ -379,36 +411,9 @@ public class GalaxyUploaderAPI {
 	private boolean uploadSample(UploadSample sample, LibraryFolder rootFolder, LibrariesClient librariesClient,
 			Library library, Map<String, List<LibraryContent>> libraryMap) throws LibraryUploadException,
 			CreateLibraryException {
-		boolean success = false;
-		LibraryFolder persistedSampleFolder;
+		boolean success = true;
 
-		String expectedSamplePath = samplePath(rootFolder, sample);
-
-		// if Galaxy already contains a folder for this sample, don't create a
-		// new folder
-		if (libraryMap.containsKey(expectedSamplePath)) {
-			List<LibraryContent> persistedSampleFolderAsContentList = libraryMap.get(expectedSamplePath);
-
-			if (persistedSampleFolderAsContentList.size() == 0) {
-				throw new LibraryUploadException("No LibraryContent for path " + expectedSamplePath);
-			} else if (persistedSampleFolderAsContentList.size() > 1) {
-				throw new LibraryUploadException("Duplicate sample folders (" + persistedSampleFolderAsContentList.size()
-						+ ") for path " + expectedSamplePath);
-			} else {
-				LibraryContent persistedSampleFolderAsContent = persistedSampleFolderAsContentList.get(0);
-				persistedSampleFolder = new LibraryFolder();
-				persistedSampleFolder.setId(persistedSampleFolderAsContent.getId());
-				persistedSampleFolder.setName(persistedSampleFolderAsContent.getName());
-			}
-		} else {
-			persistedSampleFolder = galaxyLibrary.createLibraryFolder(library, rootFolder, sample.getSampleName());
-
-			logger.debug("Created Galaxy sample folder name=" + expectedSamplePath + " id="
-					+ persistedSampleFolder.getId() + " in library name=" + library.getName() + " id="
-					+ library.getId() + " in Galaxy url=" + galaxyInstance.getGalaxyUrl());
-		}
-
-		success = true;
+		LibraryFolder persistedSampleFolder = getOrBuildSampleFolder(libraryMap, sample, rootFolder, library);
 
 		for (Path path : sample.getSampleFiles()) {
 			boolean shouldSkip = false;
