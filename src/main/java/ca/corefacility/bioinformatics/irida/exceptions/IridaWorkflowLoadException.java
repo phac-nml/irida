@@ -5,7 +5,7 @@ package ca.corefacility.bioinformatics.irida.exceptions;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class IridaWorkflowLoadException extends Exception {
+public class IridaWorkflowLoadException extends IridaWorkflowException {
 
 	private static final long serialVersionUID = -2054557407529157457L;
 
