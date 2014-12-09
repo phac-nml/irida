@@ -85,6 +85,10 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="modified_date" type="datetime" />
+			<column name="reference_file_id" type="bigint(20)">
+				<constraints foreignKeyName="FK_ANALYSIS_SUBMISSION_REFERENCE_FILE_ID"
+					referencedColumnNames="id" referencedTableName="reference_file" />
+			</column>
 		</createTable>
 
 		<createTable tableName="analysis_submission_AUD">
@@ -105,6 +109,7 @@
 			<column name="analysis_id" type="bigint(20)" />
 			<column name="created_date" type="datetime" />
 			<column name="modified_date" type="datetime" />
+			<column name="reference_file_id" type="bigint(20)" />
 		</createTable>
 
 		<createTable tableName="analysis_submission_galaxy">
@@ -138,10 +143,6 @@
 					foreignKeyName="FK_ANALYSIS_SUBMISSION_PHYLOGENOMICS_ID"
 					referencedColumnNames="id" referencedTableName="analysis_submission_galaxy" />
 			</column>
-			<column name="reference_file_id" type="BIGINT(20)">
-				<constraints foreignKeyName="FK_REFERENCE_FILE_ID"
-					referencedColumnNames="id" referencedTableName="reference_file" />
-			</column>
 		</createTable>
 
 		<createTable tableName="analysis_submission_phylogenomics_AUD">
@@ -151,7 +152,6 @@
 			<column name="REV" type="INT(11)">
 				<constraints nullable="false" primaryKey="true" />
 			</column>
-			<column name="reference_file_id" type="BIGINT(20)" />
 		</createTable>
 
 		<addForeignKeyConstraint baseColumnNames="id, REV"

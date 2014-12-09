@@ -71,11 +71,11 @@
     <analysis_submission_galaxy id="6" remote_workflow_id="1"/>
     <analysis_submission_galaxy id="7" remote_workflow_id="1"/>
 
-    <analysis_submission_phylogenomics id="1" reference_file_id="1"/>
-    <analysis_submission_phylogenomics id="2" reference_file_id="1"/>
-    <analysis_submission_phylogenomics id="3" reference_file_id="1"/>
-    <analysis_submission_phylogenomics id="4" reference_file_id="1"/>
-    <analysis_submission_phylogenomics id="5" reference_file_id="1"/>
-    <analysis_submission_phylogenomics id="6" reference_file_id="1"/>
-    <analysis_submission_phylogenomics id="7" reference_file_id="1"/>
+    <analysis_submission_phylogenomics id="1"/>
+    <analysis_submission_phylogenomics id="2"/>
+    <analysis_submission_phylogenomics id="3"/>
+    <analysis_submission_phylogenomics id="4"/>
+    <analysis_submission_phylogenomics id="5"/>
+    <analysis_submission_phylogenomics id="6"/>
+    <analysis_submission_phylogenomics id="7"/>
 </dataset>

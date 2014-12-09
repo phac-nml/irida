@@ -538,6 +538,26 @@
 		<finalName>irida</finalName>
 		<plugins>
 			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.9.1</version>
+				<executions>
+					<execution>
+						<id>reserve-ports</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>reserve-network-port</goal>
+						</goals>
+						<configuration>
+							<portNames>
+								<portName>jetty.port</portName>
+								<portName>jetty.port.stop</portName>
+							</portNames>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>${maven.failsafe.plugin.version}</version>
 				<configuration>
@@ -550,9 +570,6 @@
 							</value>
 						</property>
 					</properties>
-					<systemPropertyVariables>
-						<spring.profiles.active>it</spring.profiles.active>
-					</systemPropertyVariables>
 				</configuration>
 				<executions>
 					<execution>
@@ -571,6 +588,9 @@
 								<test.galaxy.branch>${test.galaxy.branch}</test.galaxy.branch>
 								<test.galaxy.revision>${test.galaxy.revision}</test.galaxy.revision>
 								<test.galaxy.database>${test.galaxy.database}</test.galaxy.database>
+								<jetty.port>${jetty.port}</jetty.port>
+								<spring.profiles.active>it</spring.profiles.active>
+								<jetty.port>${jetty.port}</jetty.port>
 							</systemPropertyVariables>
 						</configuration>
 					</execution>
@@ -713,7 +733,7 @@
 				<version>${maven.jetty.plugin.version}</version>
 				<configuration>
 					<scanIntervalSeconds>1</scanIntervalSeconds>
-					<stopPort>8995</stopPort>
+					<stopPort>${jetty.port.stop}</stopPort>
 					<stopKey>STOP</stopKey>
 				</configuration>
 				<executions>
@@ -733,6 +753,14 @@
 										done in failsafe plugin -->
 									<name>spring.profiles.active</name>
 									<value>it</value>
+								</systemProperty>
+								<systemProperty>
+									<name>jetty.port</name>
+									<value>${jetty.port}</value>
+								</systemProperty>
+								<systemProperty>
+									<name>jetty.port.stop</name>
+									<value>${jetty.port.stop}</value>
 								</systemProperty>
 							</systemProperties>
 						</configuration>

@@ -7,12 +7,16 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.history.Revision;
+import org.springframework.data.history.Revisions;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.Timestamped;
 
@@ -189,4 +193,32 @@ public interface CRUDService<IdentifierType extends Serializable, Type extends T
 	 */
 	public Page<Type> search(Specification<Type> specification, int page, int size, Direction order,
 			String... sortProperties);
+
+	/**
+	 * Find all of the revisions for the specified identifier.
+	 * 
+	 * @param id
+	 *            the identifier to find revisions for.
+	 * @return the collection of revisions for the identifier.
+	 * @throws EntityRevisionDeletedException
+	 *             if the resource corresponding to the identifier was
+	 *             previously deleted.
+	 */
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public Revisions<Integer, Type> findRevisions(IdentifierType id) throws EntityRevisionDeletedException;
+
+	/**
+	 * Returns a {@link Page} of revisions for the entity with the given id.
+	 * 
+	 * @param id
+	 *            the identifier to find revisions for.
+	 * @param pageable
+	 *            the page specification.
+	 * @return the page of revisions for the specified resource.
+	 * @throws EntityRevisionDeletedException
+	 *             if the resource corresponding to the identifier was
+	 *             previously deleted.
+	 */
+	public Page<Revision<Integer, Type>> findRevisions(IdentifierType id, Pageable pageable)
+			throws EntityRevisionDeletedException;
 }

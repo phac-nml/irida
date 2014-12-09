@@ -449,13 +449,13 @@ INSERT INTO `analysis_submission_galaxy` (id, remote_workflow_id) VALUES ('9', '
 INSERT INTO `analysis_submission_galaxy` (id, remote_workflow_id) VALUES ('10', '1');
 
 -- analysis_submission_phylogenomics
-INSERT INTO `analysis_submission_phylogenomics` (id, reference_file_id) VALUES ('1', '1');
-INSERT INTO `analysis_submission_phylogenomics` (id, reference_file_id) VALUES ('2', '1');
-INSERT INTO `analysis_submission_phylogenomics` (id, reference_file_id) VALUES ('3', '1');
-INSERT INTO `analysis_submission_phylogenomics` (id, reference_file_id) VALUES ('4', '1');
-INSERT INTO `analysis_submission_phylogenomics` (id, reference_file_id) VALUES ('5', '1');
-INSERT INTO `analysis_submission_phylogenomics` (id, reference_file_id) VALUES ('6', '1');
-INSERT INTO `analysis_submission_phylogenomics` (id, reference_file_id) VALUES ('7', '1');
-INSERT INTO `analysis_submission_phylogenomics` (id, reference_file_id) VALUES ('8', '1');
-INSERT INTO `analysis_submission_phylogenomics` (id, reference_file_id) VALUES ('9', '1');
-INSERT INTO `analysis_submission_phylogenomics` (id, reference_file_id) VALUES ('10', '1');
+INSERT INTO `analysis_submission_phylogenomics` (id) VALUES ('1');
+INSERT INTO `analysis_submission_phylogenomics` (id) VALUES ('2');
+INSERT INTO `analysis_submission_phylogenomics` (id) VALUES ('3');
+INSERT INTO `analysis_submission_phylogenomics` (id) VALUES ('4');
+INSERT INTO `analysis_submission_phylogenomics` (id) VALUES ('5');
+INSERT INTO `analysis_submission_phylogenomics` (id) VALUES ('6');
+INSERT INTO `analysis_submission_phylogenomics` (id) VALUES ('7');
+INSERT INTO `analysis_submission_phylogenomics` (id) VALUES ('8');
+INSERT INTO `analysis_submission_phylogenomics` (id) VALUES ('9');
+INSERT INTO `analysis_submission_phylogenomics` (id) VALUES ('10');

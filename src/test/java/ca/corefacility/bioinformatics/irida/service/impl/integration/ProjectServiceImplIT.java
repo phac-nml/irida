@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -21,10 +22,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.history.Revision;
+import org.springframework.data.history.Revisions;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
@@ -41,6 +43,7 @@ import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultit
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -49,7 +52,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
@@ -61,7 +63,7 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -90,9 +92,10 @@ public class ProjectServiceImplIT {
 	private Path referenceFileBaseDirectory;
 
 	@Test
+	@WithMockUser(username = "manager", roles = "MANAGER")
 	public void testCreateProjectAsManager() {
 		try {
-			asRole(Role.ROLE_MANAGER).projectService.create(p());
+			projectService.create(p());
 		} catch (AccessDeniedException e) {
 			fail("Manager should allowed to create a project.");
 		} catch (Exception e) {
@@ -102,9 +105,10 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
+	@WithMockUser(username = "user", roles = "USER")
 	public void testCreateProjectAsUser() {
 		try {
-			asRole(Role.ROLE_USER).projectService.create(p());
+			projectService.create(p());
 		} catch (AccessDeniedException e) {
 			fail("User should be allowed to create a project.");
 		} catch (Exception e) {
@@ -114,9 +118,10 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testCreateProjectAsAdmin() {
 		try {
-			asRole(Role.ROLE_ADMIN).projectService.create(p());
+			projectService.create(p());
 		} catch (AccessDeniedException e) {
 			fail("Admin should be allowed to create project.");
 		} catch (Exception e) {
@@ -126,36 +131,38 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testAddUserToProject() {
-		Project p = asRole(Role.ROLE_ADMIN).projectService.read(1L);
-		User u = asRole(Role.ROLE_ADMIN).userService.read(1L);
-		Join<Project, User> join = asRole(Role.ROLE_ADMIN).projectService.addUserToProject(p, u,
-				ProjectRole.PROJECT_OWNER);
+		Project p = projectService.read(1L);
+		User u = userService.read(1L);
+		Join<Project, User> join = projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
 		assertNotNull("Join was not populated.", join);
 		assertEquals("Join has wrong project.", p, join.getSubject());
 		assertEquals("Join has wrong user.", u, join.getObject());
 
-		List<Join<Project, User>> projects = asRole(Role.ROLE_ADMIN).projectService.getProjectsForUser(u);
+		List<Join<Project, User>> projects = projectService.getProjectsForUser(u);
 		assertEquals("User is not part of project.", p, projects.iterator().next().getSubject());
 	}
 
 	@Test(expected = EntityExistsException.class)
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testAddUserToProjectTwice() {
-		Project p = asRole(Role.ROLE_ADMIN).projectService.read(1L);
-		User u = asRole(Role.ROLE_ADMIN).userService.read(1L);
-		asRole(Role.ROLE_ADMIN).projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
-		asRole(Role.ROLE_ADMIN).projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
+		Project p = projectService.read(1L);
+		User u = userService.read(1L);
+		projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
+		projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
 	}
 
 	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testAddTwoUsersToProject() {
-		Project p = asRole(Role.ROLE_ADMIN).projectService.read(1L);
-		User u1 = asRole(Role.ROLE_ADMIN).userService.read(1L);
-		User u2 = asRole(Role.ROLE_ADMIN).userService.read(2L);
-		asRole(Role.ROLE_ADMIN).projectService.addUserToProject(p, u1, ProjectRole.PROJECT_OWNER);
-		asRole(Role.ROLE_ADMIN).projectService.addUserToProject(p, u2, ProjectRole.PROJECT_OWNER);
+		Project p = projectService.read(1L);
+		User u1 = userService.read(1L);
+		User u2 = userService.read(2L);
+		projectService.addUserToProject(p, u1, ProjectRole.PROJECT_OWNER);
+		projectService.addUserToProject(p, u2, ProjectRole.PROJECT_OWNER);
 
-		Collection<Join<Project, User>> usersOnProject = asRole(Role.ROLE_ADMIN).userService.getUsersForProject(p);
+		Collection<Join<Project, User>> usersOnProject = userService.getUsersForProject(p);
 		assertEquals("Wrong number of users on project.", 2, usersOnProject.size());
 		Set<User> users = Sets.newHashSet(u1, u2);
 		for (Join<Project, User> user : usersOnProject) {
@@ -165,120 +172,150 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testRemoveUserFromProject() throws ProjectWithoutOwnerException {
-		User u = asRole(Role.ROLE_ADMIN).userService.read(4l);
-		Project p = asRole(Role.ROLE_ADMIN).projectService.read(4l);
+		User u = userService.read(4l);
+		Project p = projectService.read(4l);
 
-		asRole(Role.ROLE_ADMIN).projectService.removeUserFromProject(p, u);
+		projectService.removeUserFromProject(p, u);
 
-		Collection<Join<Project, User>> usersOnProject = asRole(Role.ROLE_ADMIN).userService.getUsersForProject(p);
+		Collection<Join<Project, User>> usersOnProject = userService.getUsersForProject(p);
 		assertTrue("No users should be on the project.", usersOnProject.isEmpty());
 	}
 
 	@Test(expected = ProjectWithoutOwnerException.class)
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testRemoveUserFromProjectAbandoned() throws ProjectWithoutOwnerException {
-		User u = asRole(Role.ROLE_ADMIN).userService.read(3l);
-		Project p = asRole(Role.ROLE_ADMIN).projectService.read(2l);
+		User u = userService.read(3l);
+		Project p = projectService.read(2l);
 
-		asRole(Role.ROLE_ADMIN).projectService.removeUserFromProject(p, u);
+		projectService.removeUserFromProject(p, u);
 	}
 
 	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetProjectsForUser() {
-		User u = asRole(Role.ROLE_ADMIN).userService.read(3l);
+		User u = userService.read(3l);
 
-		Collection<Join<Project, User>> projects = asRole(Role.ROLE_ADMIN).projectService.getProjectsForUser(u);
+		Collection<Join<Project, User>> projects = projectService.getProjectsForUser(u);
 
 		assertEquals("User should have 2 projects.", 2, projects.size());
 		assertEquals("User should be on project 2.", Long.valueOf(2l), projects.iterator().next().getSubject().getId());
 	}
 
 	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetProjectsManagedBy() {
-		User u = asRole(Role.ROLE_ADMIN).userService.read(3l);
+		User u = userService.read(3l);
 
-		Collection<ProjectUserJoin> projects = asRole(Role.ROLE_ADMIN).projectService.getProjectsForUserWithRole(u,
-				ProjectRole.PROJECT_OWNER);
+		Collection<ProjectUserJoin> projects = projectService.getProjectsForUserWithRole(u, ProjectRole.PROJECT_OWNER);
 
 		assertEquals("User should have one project.", 1, projects.size());
 		assertEquals("User should be on project 2.", Long.valueOf(2l), projects.iterator().next().getSubject().getId());
 	}
 
 	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testAddSampleToProject() {
-		Sample s = asRole(Role.ROLE_ADMIN).sampleService.read(1L);
-		Project p = asRole(Role.ROLE_ADMIN).projectService.read(1L);
+		Sample s = sampleService.read(1L);
+		Project p = projectService.read(1L);
 
-		Join<Project, Sample> join = asRole(Role.ROLE_ADMIN).projectService.addSampleToProject(p, s);
+		Join<Project, Sample> join = projectService.addSampleToProject(p, s);
 		assertEquals("Project should equal original project.", p, join.getSubject());
 		assertEquals("Sample should equal orginal sample.", s, join.getObject());
 
-		Collection<Join<Project, Sample>> samples = asRole(Role.ROLE_ADMIN).sampleService.getSamplesForProject(p);
+		Collection<Join<Project, Sample>> samples = sampleService.getSamplesForProject(p);
 		assertTrue("Sample should be part of collection.", samples.contains(join));
 	}
 
 	@Test(expected = EntityExistsException.class)
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testAddSampleToProjectTwice() {
-		Sample s = asRole(Role.ROLE_ADMIN).sampleService.read(1L);
-		Project p = asRole(Role.ROLE_ADMIN).projectService.read(1L);
+		Sample s = sampleService.read(1L);
+		Project p = projectService.read(1L);
 
-		asRole(Role.ROLE_ADMIN).projectService.addSampleToProject(p, s);
-		asRole(Role.ROLE_ADMIN).projectService.addSampleToProject(p, s);
+		projectService.addSampleToProject(p, s);
+		projectService.addSampleToProject(p, s);
+	}
+
+	@Test(expected = EntityExistsException.class)
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testAddSampleToProjectWithSameSequencerId() {
+		Sample s = sampleService.read(1L);
+		Project p = projectService.read(1L);
+
+		projectService.addSampleToProject(p, s);
+
+		Sample otherSample = new Sample(s.getSampleName(), s.getSequencerSampleId());
+
+		projectService.addSampleToProject(p, otherSample);
+
+		// if 2 exist with the same id, this call will fail
+		Sample sampleBySequencerSampleId = sampleService.getSampleBySequencerSampleId(p,
+				otherSample.getSequencerSampleId());
+		assertNotNull(sampleBySequencerSampleId);
 	}
 
 	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testRemoveSampleFromProject() {
-		Sample s = asRole(Role.ROLE_ADMIN).sampleService.read(1L);
-		Project p = asRole(Role.ROLE_ADMIN).projectService.read(2L);
+		Sample s = sampleService.read(1L);
+		Project p = projectService.read(2L);
 
-		asRole(Role.ROLE_ADMIN).projectService.removeSampleFromProject(p, s);
+		projectService.removeSampleFromProject(p, s);
 
-		Collection<Join<Project, Sample>> samples = asRole(Role.ROLE_ADMIN).sampleService.getSamplesForProject(p);
+		Collection<Join<Project, Sample>> samples = sampleService.getSamplesForProject(p);
 		assertTrue("No samples should be assigned to project.", samples.isEmpty());
 	}
 
 	@Test
+	@WithMockUser(username = "sequencer", roles = "SEQUENCER")
 	public void testReadProjectAsSequencerRole() {
-		asRole(Role.ROLE_SEQUENCER).projectService.read(1L);
+		projectService.read(1L);
 	}
 
 	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "user2", roles = "USER")
 	public void testRejectReadProjectAsUserRole() {
-		asRole(Role.ROLE_USER).projectService.read(3L);
+		projectService.read(3L);
 	}
 
 	@Test
+	@WithMockUser(username = "sequencer", roles = "SEQUENCER")
 	public void testAddSampleToProjectAsSequencer() {
-		Project p = asRole(Role.ROLE_SEQUENCER).projectService.read(1L);
+		Project p = projectService.read(1L);
 		Sample s = s();
 
-		Join<Project, Sample> join = asRole(Role.ROLE_SEQUENCER).projectService.addSampleToProject(p, s);
+		Join<Project, Sample> join = projectService.addSampleToProject(p, s);
 		assertNotNull("Join should not be empty.", join);
 		assertEquals("Wrong project in join.", p, join.getSubject());
 		assertEquals("Wrong sample in join.", s, join.getObject());
 	}
 
 	@Test
+	@WithMockUser(username = "user1", roles = "USER")
 	public void testFindAllProjectsAsUser() {
-		List<Project> projects = (List<Project>) asUsername("user1", Role.ROLE_USER).projectService.findAll();
+		List<Project> projects = (List<Project>) projectService.findAll();
 		// this user should only have access to one project:
 
 		assertEquals("Wrong number of projects.", 2, projects.size());
 	}
 
 	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testFindAllProjectsAsAdmin() {
-		List<Project> projects = (List<Project>) asUsername("user1", Role.ROLE_ADMIN).projectService.findAll();
+		List<Project> projects = (List<Project>) projectService.findAll();
 		// this admin should have access to 5 projects
 
 		assertEquals("Wrong number of projects.", 8, projects.size());
 	}
 
 	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testUserHasProjectRole() {
-		User user = asRole(Role.ROLE_ADMIN).userService.read(3l);
-		Project project = asRole(Role.ROLE_ADMIN).projectService.read(2l);
-		assertTrue(asRole(Role.ROLE_ADMIN).projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER));
+		User user = userService.read(3l);
+		Project project = projectService.read(2l);
+		assertTrue(projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER));
 	}
 
 	@Test
@@ -310,7 +347,7 @@ public class ProjectServiceImplIT {
 		for (int i = 0; i < reversed.size(); i++) {
 			assertEquals(forward.get(i), reversed.get(i));
 		}
-		
+
 		Project excludeProject = projectService.read(2l);
 		Page<ProjectUserJoin> search = projectService.searchProjectUsers(
 				ProjectUserJoinSpecification.excludeProject(excludeProject), 0, 10, Direction.DESC);
@@ -336,7 +373,7 @@ public class ProjectServiceImplIT {
 		for (int i = 0; i < reversed.size(); i++) {
 			assertEquals(forward.get(i), reversed.get(i));
 		}
-		
+
 		Project excludeProject = projectService.read(5l);
 		Page<Project> search = projectService.search(ProjectSpecification.excludeProject(excludeProject), 0, 10,
 				Direction.DESC);
@@ -411,7 +448,7 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
-	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testAddReferenceFileToProject() throws IOException, URISyntaxException {
 		ReferenceFile f = new ReferenceFile();
 
@@ -438,22 +475,89 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testRemoveReferenceFileFromProject() {
-		Project p = asRole(Role.ROLE_ADMIN).projectService.read(1L);
-		ReferenceFile f = asRole(Role.ROLE_ADMIN).referenceFileService.read(1L);
+		Project p = projectService.read(1L);
+		ReferenceFile f = referenceFileService.read(1L);
 
-		asRole(Role.ROLE_ADMIN).projectService.removeReferenceFileFromProject(p, f);
+		projectService.removeReferenceFileFromProject(p, f);
 
-		Collection<Join<Project, ReferenceFile>> files = asRole(Role.ROLE_ADMIN).referenceFileService.getReferenceFilesForProject(p);
+		Collection<Join<Project, ReferenceFile>> files = referenceFileService.getReferenceFilesForProject(p);
 		assertTrue("No reference files should be assigned to project.", files.isEmpty());
 	}
 
 	@Test(expected = EntityNotFoundException.class)
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testRemoveReferenceFileFromProjectExceptions() {
-		Project p = asRole(Role.ROLE_ADMIN).projectService.read(1L);
-		ReferenceFile f = asRole(Role.ROLE_ADMIN).referenceFileService.read(2L);
+		Project p = projectService.read(1L);
+		ReferenceFile f = referenceFileService.read(2L);
 
-		asRole(Role.ROLE_ADMIN).projectService.removeReferenceFileFromProject(p, f);
+		projectService.removeReferenceFileFromProject(p, f);
+	}
+
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetAllProjectRevisions() {
+		final String modifiedName = "creates a new revision";
+		final String modifiedDesc = "another new revision";
+		final Project p = projectService.read(1L);
+		projectService.update(p.getId(), ImmutableMap.of("name", modifiedName));
+		projectService.update(p.getId(), ImmutableMap.of("projectDescription", modifiedDesc));
+
+		// reverse the order so that the latest revision is first in the list.
+		final Revisions<Integer, Project> revisions = projectService.findRevisions(1L).reverse();
+		assertEquals("Should have 2 revisions.", 2, revisions.getContent().size());
+
+		final Iterator<Revision<Integer, Project>> iterator = revisions.iterator();
+		final Revision<Integer, Project> mostRecent = iterator.next();
+		assertEquals("most recent revision should have project description change.", modifiedDesc, mostRecent
+				.getEntity().getProjectDescription());
+		assertEquals("most recent revision should also have name changed.", modifiedName, mostRecent.getEntity()
+				.getName());
+
+		final Revision<Integer, Project> secondRecent = iterator.next();
+		assertEquals("second most recent revision should have modified name.", modifiedName, secondRecent.getEntity()
+				.getName());
+		assertNotEquals("second most recent revision should *not* have modified description.", modifiedDesc,
+				secondRecent.getEntity().getProjectDescription());
+	}
+
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetPagedProjectRevisions() {
+		final String modifiedName = "creates a new revision";
+		final String modifiedDesc = "another new revision";
+		final Project p = projectService.read(1L);
+		projectService.update(p.getId(), ImmutableMap.of("name", modifiedName));
+		projectService.update(p.getId(), ImmutableMap.of("projectDescription", modifiedDesc));
+
+		// reverse the order so that the latest revision is first in the list.
+		final Page<Revision<Integer, Project>> revisions = projectService.findRevisions(1L, new PageRequest(1, 1));
+		assertEquals("Should have 2 revisions.", 1, revisions.getContent().size());
+
+		final Revision<Integer, Project> mostRecent = revisions.iterator().next();
+		assertEquals("most recent revision should have project description change.", modifiedDesc, mostRecent
+				.getEntity().getProjectDescription());
+		assertEquals("most recent revision should also have name changed.", modifiedName, mostRecent.getEntity()
+				.getName());
+	}
+
+	@Test(expected = EntityRevisionDeletedException.class)
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetDeletedProjectRevisions() {
+		projectService.update(1L, ImmutableMap.of("name", "some useless new name"));
+		projectService.delete(1L);
+
+		projectService.findRevisions(1L);
+	}
+
+	@Test(expected = EntityRevisionDeletedException.class)
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetPagedDeletedProjectRevisions() {
+		projectService.update(1L, ImmutableMap.of("name", "some useless new name"));
+		projectService.delete(1L);
+
+		projectService.findRevisions(1L, new PageRequest(1, 1));
 	}
 
 	private Project p() {
@@ -471,29 +575,5 @@ public class ProjectServiceImplIT {
 		s.setSequencerSampleId("external");
 
 		return s;
-	}
-
-	private ProjectServiceImplIT asUsername(String username, Role r) {
-		User u = new User();
-		u.setUsername(username);
-		u.setPassword(passwordEncoder.encode("Password1"));
-		u.setSystemRole(r);
-		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
-				ImmutableList.of(r));
-		auth.setDetails(u);
-		SecurityContextHolder.getContext().setAuthentication(auth);
-		return this;
-	}
-
-	private ProjectServiceImplIT asRole(Role r) {
-		User u = new User();
-		u.setUsername("fbristow");
-		u.setPassword(passwordEncoder.encode("Password1"));
-		u.setSystemRole(r);
-		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, "Password1",
-				ImmutableList.of(r));
-		auth.setDetails(u);
-		SecurityContextHolder.getContext().setAuthentication(auth);
-		return this;
 	}
 }

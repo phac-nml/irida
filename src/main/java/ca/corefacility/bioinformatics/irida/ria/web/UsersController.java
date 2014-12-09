@@ -113,11 +113,11 @@ public class UsersController {
 	 * Request for a specific user details page.
 	 *
 	 * @param userId
-	 * 		The id for the user to show details for.
+	 *            The id for the user to show details for.
 	 * @param model
-	 * 		Spring model to populate the html page
+	 *            Spring model to populate the html page
 	 * @param principal
-	 * 		the currently logged in user
+	 *            the currently logged in user
 	 *
 	 * @return The name of the user/details page
 	 */
@@ -130,6 +130,8 @@ public class UsersController {
 		User user = userService.read(userId);
 		model.addAttribute("user", user);
 
+		User principalUser = userService.getUserByUsername(principal.getName());
+
 		Locale locale = LocaleContextHolder.getLocale();
 
 		// add the user's role to the model
@@ -138,8 +140,11 @@ public class UsersController {
 		model.addAttribute("systemRole", systemRole);
 
 		// check if we should show an edit button
-		boolean canEditUser = canEditUser(principal, user);
+		boolean canEditUser = canEditUser(principalUser, user);
 		model.addAttribute("canEditUser", canEditUser);
+
+		model.addAttribute("canCreatePasswordReset",
+				PasswordResetController.canCreatePasswordReset(principalUser, user));
 
 		// show the user's projects
 		List<Join<Project, User>> projectsForUser = projectService.getProjectsForUser(user);
@@ -174,9 +179,9 @@ public class UsersController {
 	 * Get the currently logged in user's page
 	 *
 	 * @param model
-	 * 		The model to pass on
+	 *            The model to pass on
 	 * @param principal
-	 * 		The currently logged in user
+	 *            The currently logged in user
 	 *
 	 * @return getUserSpecificPage for the currently logged in user
 	 */
@@ -191,21 +196,21 @@ public class UsersController {
 	 * Submit a user edit
 	 *
 	 * @param userId
-	 * 		The id of the user to edit (required)
+	 *            The id of the user to edit (required)
 	 * @param firstName
-	 * 		The firstname to update
+	 *            The firstname to update
 	 * @param lastName
-	 * 		the lastname to update
+	 *            the lastname to update
 	 * @param email
-	 * 		the email to update
+	 *            the email to update
 	 * @param systemRole
-	 * 		the role to update
+	 *            the role to update
 	 * @param password
-	 * 		the password to update
+	 *            the password to update
 	 * @param confirmPassword
-	 * 		password confirmation
+	 *            password confirmation
 	 * @param model
-	 * 		The model to work on
+	 *            The model to work on
 	 *
 	 * @return The name of the user view
 	 */
@@ -286,9 +291,9 @@ public class UsersController {
 	 * Get the user edit page
 	 *
 	 * @param userId
-	 * 		The ID of the user to get
+	 *            The ID of the user to get
 	 * @param model
-	 * 		The model for the returned view
+	 *            The model for the returned view
 	 *
 	 * @return The user edit view
 	 */
@@ -353,17 +358,17 @@ public class UsersController {
 	 * Create a new user object
 	 *
 	 * @param user
-	 * 		User to create as a motel attribute
+	 *            User to create as a motel attribute
 	 * @param systemRole
-	 * 		The system role to give to the user
+	 *            The system role to give to the user
 	 * @param confirmPassword
-	 * 		Password confirmation
+	 *            Password confirmation
 	 * @param requireActivation
-	 * 		Checkbox whether the user account needs to be activated
+	 *            Checkbox whether the user account needs to be activated
 	 * @param model
-	 * 		Model for the view
+	 *            Model for the view
 	 * @param principal
-	 * 		The user creating the object
+	 *            The user creating the object
 	 *
 	 * @return A redirect to the user details view
 	 */
@@ -441,18 +446,18 @@ public class UsersController {
 	 * Get the listing of users
 	 *
 	 * @param principal
-	 * 		The logged in user
+	 *            The logged in user
 	 * @param start
-	 * 		The start page
+	 *            The start page
 	 * @param length
-	 * 		The length of a page
+	 *            The length of a page
 	 * @param draw
 	 * @param sortColumn
-	 * 		The column to sort on
+	 *            The column to sort on
 	 * @param direction
-	 * 		The direction to sort
+	 *            The direction to sort
 	 * @param searchValue
-	 * 		The value to search with
+	 *            The value to search with
 	 *
 	 * @return A Model Map<String,Object> containing the users to list
 	 */
@@ -512,9 +517,9 @@ public class UsersController {
 	 * Handle exceptions for the create and update pages
 	 *
 	 * @param ex
-	 * 		an exception to handle
+	 *            an exception to handle
 	 * @param locale
-	 * 		The locale to work with
+	 *            The locale to work with
 	 *
 	 * @return A Map<String,String> of errors to render
 	 */
@@ -548,7 +553,7 @@ public class UsersController {
 	 * Handle {@link AccessDeniedException} and {@link EntityNotFoundException}
 	 *
 	 * @param e
-	 * 		THe exception to handle
+	 *            THe exception to handle
 	 *
 	 * @return An error page
 	 */
@@ -562,17 +567,15 @@ public class UsersController {
 	 * Check if the logged in user is allowed to edit the given user.
 	 *
 	 * @param principal
-	 * 		The currently logged in principal
+	 *            The currently logged in principal
 	 * @param user
-	 * 		The user to edit
+	 *            The user to edit
 	 *
 	 * @return boolean if the principal can edit the user
 	 */
-	private boolean canEditUser(Principal principal, User user) {
-		User readPrincipal = userService.getUserByUsername(principal.getName());
-
-		boolean principalAdmin = readPrincipal.getAuthorities().contains(Role.ROLE_ADMIN);
-		boolean usersEqual = user.equals(readPrincipal);
+	private boolean canEditUser(User principalUser, User user) {
+		boolean principalAdmin = principalUser.getAuthorities().contains(Role.ROLE_ADMIN);
+		boolean usersEqual = user.equals(principalUser);
 
 		return principalAdmin || usersEqual;
 	}
@@ -581,7 +584,7 @@ public class UsersController {
 	 * Check if the logged in user is an Admin
 	 *
 	 * @param principal
-	 * 		The logged in user to check
+	 *            The logged in user to check
 	 *
 	 * @return if the user is an admin
 	 */

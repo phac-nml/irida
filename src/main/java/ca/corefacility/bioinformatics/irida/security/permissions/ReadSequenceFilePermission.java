@@ -24,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
  * 
  */
 @Component
-public class ReadSequenceFilePermission extends BasePermission<SequenceFile> {
+public class ReadSequenceFilePermission extends BasePermission<SequenceFile, Long> {
 
 	private static final String PERMISSION_PROVIDED = "canReadSequenceFile";
 
@@ -40,7 +40,7 @@ public class ReadSequenceFilePermission extends BasePermission<SequenceFile> {
 	public ReadSequenceFilePermission(SequenceFileRepository sequenceFileRepository, UserRepository userRepository,
 			ProjectUserJoinRepository pujRepository, ProjectSampleJoinRepository psjRepository,
 			SampleSequenceFileJoinRepository ssfRepository) {
-		super(SequenceFile.class, sequenceFileRepository);
+		super(SequenceFile.class, Long.class, sequenceFileRepository);
 		this.userRepository = userRepository;
 		this.pujRepository = pujRepository;
 		this.psjRepository = psjRepository;
