@@ -16,7 +16,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpSession;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
@@ -48,26 +48,26 @@ public class GalaxyControllerIT {
 		controller = new GalaxyController(messageSource, galaxyUploadService, sampleService);
 	}
 
-		@SuppressWarnings("unchecked")
-		@Test
-		public void testPostUploadSampleToGalaxy() {
-			Sample sample = TestDataFactory.constructSample();
-			List<Sample> samples = ImmutableList.of(sample);
-			UploadWorker worker = TestDataFactory.constructUploadWorker();
-			MockHttpServletRequest request = new MockHttpServletRequest();
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testPostUploadSampleToGalaxy() {
+		Sample sample = TestDataFactory.constructSample();
+		List<Sample> samples = ImmutableList.of(sample);
+		UploadWorker worker = TestDataFactory.constructUploadWorker();
+		MockHttpSession session = new MockHttpSession();
 
-			when(sampleService.readMultiple(ImmutableList.of(sample.getId()))).thenReturn(samples);
-			String accountEmail = "test@gmail.com";
-			String accountUsername = "Test";
-			when(galaxyUploadService.performUploadSelectedSamples(anySet(), any(GalaxyProjectName.class), any(
-					GalaxyAccountEmail.class)))
-					.thenReturn(worker);
+		when(sampleService.readMultiple(ImmutableList.of(sample.getId()))).thenReturn(samples);
+		String accountEmail = "test@gmail.com";
+		String accountUsername = "Test";
+		when(galaxyUploadService.performUploadSelectedSamples(anySet(), any(GalaxyProjectName.class), any(
+				GalaxyAccountEmail.class)))
+				.thenReturn(worker);
 
-			Map<String, Object> result = controller
-					.upload(accountEmail, accountUsername, ImmutableList.of(sample.getId()), request,
-							Locale.US);
-			assertTrue(result.containsKey("result"));
-			assertEquals("success", result.get("result"));
-			assertTrue(result.containsKey("msg"));
-		}
+		Map<String, Object> result = controller
+				.upload(accountEmail, accountUsername, ImmutableList.of(sample.getId()), session,
+						Locale.US);
+		assertTrue(result.containsKey("result"));
+		assertEquals("success", result.get("result"));
+		assertTrue(result.containsKey("msg"));
+	}
 }

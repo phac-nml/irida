@@ -7,7 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +56,8 @@ public class GalaxyController {
 	 * 		Galaxy user's name
 	 * @param sampleIds
 	 * 		A {@link List} of ids for {@link Sample} to transfer
-	 * @param request
-	 * 		{@link HttpServletRequest}
+	 * @param session
+	 * 		{@link HttpSession}
 	 * @param locale
 	 * 		{@link Locale}
 	 *
@@ -65,14 +65,14 @@ public class GalaxyController {
 	 */
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> upload(@RequestParam String email, @RequestParam String name,
-			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, HttpServletRequest request, Locale locale) {
+			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, HttpSession session, Locale locale) {
 		List<Sample> samples = (List<Sample>) sampleService.readMultiple(sampleIds);
 		Map<String, Object> result = new HashMap<>();
 		UploadWorker worker = galaxyUploadService
 				.performUploadSelectedSamples(new HashSet<>(samples), new GalaxyProjectName(name),
 						new GalaxyAccountEmail(email));
 		String sessionAttr = "gw-" + UUID.randomUUID();
-		request.getSession().setAttribute(sessionAttr, worker);
+		session.setAttribute(sessionAttr, worker);
 		result.put("result", "success");
 		result.put("sessionAttr", sessionAttr);
 		result.put("msg", messageSource.getMessage("galaxy.success", new Object[] { samples.size() }, locale));
@@ -84,14 +84,14 @@ public class GalaxyController {
 	 *
 	 * @param sessionId
 	 * 		The id the the {@link UploadWorker} stored in the session.
-	 * @param request
-	 * 		{@link HttpServletRequest}
+	 * @param session
+	 * 		{@link HttpSession}
 	 *
 	 * @return JSON Response with current status
 	 */
 	@RequestMapping("/poll/{sessionId}")
-	public @ResponseBody Map<String, Object> pollGalaxy(@PathVariable String sessionId, HttpServletRequest request) {
-		UploadWorker worker = (UploadWorker) request.getSession().getAttribute(sessionId);
+	public @ResponseBody Map<String, Object> pollGalaxy(@PathVariable String sessionId, HttpSession session) {
+		UploadWorker worker = (UploadWorker) session.getAttribute(sessionId);
 
 		Map<String, Object> result = new HashMap<>();
 
