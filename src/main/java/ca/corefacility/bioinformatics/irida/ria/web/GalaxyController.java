@@ -112,7 +112,7 @@ public class GalaxyController {
 			}
 		}
 		else {
-			result = ImmutableMap.of("error", messageSource.getMessage("galaxy.error", new Object[]{}, locale));
+			result = ImmutableMap.of("error", messageSource.getMessage("galaxy.error-poll", new Object[]{}, locale));
 		}
 
 		return result;
