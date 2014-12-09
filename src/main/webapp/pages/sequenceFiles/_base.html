@@ -80,7 +80,7 @@
     </aside>
 </div>
 
-<th:block layout:fragment="page-scripts">
+<th:block th:inline="javascript" layout:fragment="page-scripts">
     <script th:src="@{/resources/wet-theme/js/deps/jquery.magnific-popup.min.js}"
             src="/resources/wet-theme/js/deps/jquery.magnific-popup.min.js"></script>
     <script th:src="@{/resources/wet-theme/js/deps/jquery.dataTables.min.js}"
