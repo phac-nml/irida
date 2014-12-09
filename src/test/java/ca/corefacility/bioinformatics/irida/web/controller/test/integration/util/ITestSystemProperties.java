@@ -3,4 +3,5 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.integration.uti
 public class ITestSystemProperties {
 	public static final String APP_PORT = System.getProperty("jetty.port");
 	protected static final String BASE_URL = "http://localhost:" + APP_PORT + "/";
+	
 }
