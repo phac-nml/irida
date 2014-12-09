@@ -20,7 +20,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilit
  */
 public class AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractPage.class);
-	protected static final String BASE_URL = "http://localhost:8080/";
+	private static final String APPLICATION_PORT = System.getProperty("jetty.port");
+	protected static final String BASE_URL = "http://localhost:" + APPLICATION_PORT + "/";
 	private static final Long TIME_OUT_IN_SECONDS = 10L;
 
 	@FindBy(className = "error")
@@ -101,7 +102,7 @@ public class AbstractPage {
 
 	public boolean isElementOnScreen(String id) {
 		driver.manage().timeouts().implicitlyWait(0, TimeUnit.MILLISECONDS);
-		boolean exists = driver.findElements( By.id(id) ).size() != 0;
+		boolean exists = driver.findElements(By.id(id)).size() != 0;
 		driver.manage().timeouts().implicitlyWait(TestUtilities.DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
 		return exists;
 	}
