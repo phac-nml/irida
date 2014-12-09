@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
-import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsServiceTestConfig;
+import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsTestConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServiceTestConfig;
 
 /**
@@ -28,7 +28,7 @@ import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServic
 @Configuration
 @Import({ IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class,
 		NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class, RemoteWorkflowServiceTestConfig.class,
-		AnalysisExecutionServiceTestConfig.class, IridaWorkflowsServiceTestConfig.class })
+		AnalysisExecutionServiceTestConfig.class, IridaWorkflowsTestConfig.class })
 @Profile("test")
 public class IridaApiGalaxyTestConfig {
 

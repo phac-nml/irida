@@ -5,13 +5,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -38,6 +38,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 public class IridaWorkflowLoaderService {
 
 	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowLoaderService.class);
+	
+	private static final String WORKFLOWS_DIR = "workflows";
 
 	private static final String WORKFLOW_DEFINITION_FILE = "irida_workflow.xml";
 	private static final String WORKFLOW_STRUCTURE_FILE = "irida_workflow_structure.ga";
@@ -56,57 +58,39 @@ public class IridaWorkflowLoaderService {
 		this.workflowDescriptionUnmarshaller = workflowDescriptionUnmarshaller;
 	}
 	
-//	/**
-//	 * Registers workflows that are stored as resources belonging to the passed
-//	 * Analysis class.
-//	 * 
-//	 * @param analysisClass
-//	 *            The class defining the type of analysis.
-//	 * @param defaultWorkflowId
-//	 *            The default id of the workflow for this analysis.
-//	 * @throws IOException
-//	 *             If there was a problem reading a workflow.
-//	 * @throws IridaWorkflowLoadException
-//	 *             If there was a problem loading a workflow.
-//	 */
-//	public void registerAnalysis(Class<? extends Analysis> analysisClass, UUID defaultWorkflowId) throws IOException,
-//			IridaWorkflowLoadException {
-//		checkNotNull(analysisClass, "analysisClass is null");
-//		checkNotNull(defaultWorkflowId, "defaultWorkflowId is null");
-//
-//		logger.debug("Registering Analysis: " + analysisClass);
-//		String analysisName = analysisClass.getSimpleName();
-//		Path workflowsResourcePath = Paths.get(analysisClass.getResource(WORKFLOWS_DIR).getFile());
-//		Path workflowPath = workflowsResourcePath.resolve(analysisName);
-//
-//		if (!Files.isDirectory(workflowPath)) {
-//			throw new IridaWorkflowLoadException("Missing directory " + workflowPath + " for class " + analysisClass);
-//		} else {
-//			try {
-//				Set<IridaWorkflow> workflowVersions = iridaWorkflowLoaderService
-//						.loadAllWorkflowImplementations(workflowPath);
-//
-//				for (IridaWorkflow workflow : workflowVersions) {
-//					if (allRegisteredWorkflows.containsKey(workflow.getWorkflowIdentifier())) {
-//						throw new IridaWorkflowLoadException("Duplicate workflow " + workflow.getWorkflowIdentifier());
-//					} else {
-//						allRegisteredWorkflows.put(workflow.getWorkflowIdentifier(), workflow);
-//						addWorkflowForAnalysis(analysisClass, workflow.getWorkflowIdentifier());
-//						addWorkflowNameToAnalysis(workflow.getWorkflowDescription().getName(), analysisClass);
-//					}
-//				}
-//			} catch (Exception e) {
-//				throw new IridaWorkflowLoadException("Could not load workflows from directory " + workflowPath, e);
-//			}
-//
-//			if (!registeredWorkflowsForAnalysis.get(analysisClass).contains(defaultWorkflowId)) {
-//				throw new IridaWorkflowLoadException("No workflow with id " + defaultWorkflowId + " vailable for "
-//						+ analysisClass);
-//			} else {
-//				defaultWorkflowForAnalysis.put(analysisClass, defaultWorkflowId);
-//			}
-//		}
-//	}
+	/**
+	 * Loads workflows that are stored as resources belonging to the passed
+	 * Analysis class.
+	 * 
+	 * @param analysisClass
+	 *            The class defining the type of analysis.
+	 * @return A Set of {@link IridaWorkflow}s that implement the given analysis
+	 *         class type.
+	 * @throws IOException
+	 *             If there was a problem reading a workflow.
+	 * @throws IridaWorkflowLoadException
+	 *             If there was a problem loading a workflow.
+	 */
+	public Set<IridaWorkflow> loadWorkflowsForClass(Class<? extends Analysis> analysisClass) throws IOException,
+			IridaWorkflowLoadException {
+		checkNotNull(analysisClass, "analysisClass is null");
+
+		String analysisName = analysisClass.getSimpleName();
+		URL workflowsDirResourceURL = analysisClass.getResource(WORKFLOWS_DIR);
+		if (workflowsDirResourceURL == null) {
+			throw new IridaWorkflowLoadException("Missing directory " + WORKFLOWS_DIR + " for class " + analysisClass);
+		} else {
+			Path workflowsResourcePath = Paths.get(workflowsDirResourceURL.getFile());
+			Path workflowPath = workflowsResourcePath.resolve(analysisName);
+			logger.debug("Loading Workflows for: " + analysisClass + " from " + workflowPath);
+	
+			if (!Files.isDirectory(workflowPath)) {
+				throw new IridaWorkflowLoadException("Missing directory " + workflowPath + " for class " + analysisClass);
+			} else {
+				return loadAllWorkflowImplementations(workflowPath);
+			}
+		}
+	}
 
 	/**
 	 * Loads up a set of {@link IridaWorkflow}s from the given directory.
