@@ -24,8 +24,14 @@ public interface AnalysisExecutionServiceSimplified {
 	 * @return An {@link AnalysisSubmission} for the prepared submission.
 	 * @throws ExecutionManagerException
 	 *             If there was an issue preparing the analysis.
+	 * @throws IridaWorkflowNotFoundException
+	 *             If the workflow for this submission could not be found in
+	 *             IRIDA.
+	 * @throws IOException
+	 *             If there was an issue reading in the workflow file.
 	 */
-	public AnalysisSubmission prepareSubmission(AnalysisSubmission analysisSubmission) throws ExecutionManagerException;
+	public AnalysisSubmission prepareSubmission(AnalysisSubmission analysisSubmission)
+			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException;
 
 	/**
 	 * Executes the passed prepared {@link AnalysisSubmission} in an execution
