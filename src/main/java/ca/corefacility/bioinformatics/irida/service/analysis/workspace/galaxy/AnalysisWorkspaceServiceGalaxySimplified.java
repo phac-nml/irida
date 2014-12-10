@@ -14,6 +14,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerDownloadException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -62,6 +65,8 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionR
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
 public class AnalysisWorkspaceServiceGalaxySimplified implements AnalysisWorkspaceServiceSimplified {
+
+	private static final Logger logger = LoggerFactory.getLogger(AnalysisWorkspaceServiceGalaxySimplified.class);
 
 	private static final String COLLECTION_NAME = "irida_collection_list";
 
@@ -331,14 +336,15 @@ public class AnalysisWorkspaceServiceGalaxySimplified implements AnalysisWorkspa
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Analysis getAnalysisResults(AnalysisSubmission analysisSubmission, Path outputDirectory)
-			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException {
+	public Analysis getAnalysisResults(AnalysisSubmission analysisSubmission) throws ExecutionManagerException,
+			IridaWorkflowNotFoundException, IOException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getInputFiles(), "input sequence files is null");
-		checkNotNull(outputDirectory, "outputDirectory is null");
 		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
 		checkNotNull(analysisSubmission.getRemoteWorkflowId(), "remoteWorkflowId is null");
-		checkArgument(Files.exists(outputDirectory), "outputDirectory " + outputDirectory + " does not exist");
+
+		Path outputDirectory = Files.createTempDirectory("analysis-output");
+		logger.trace("Created temporary directory " + outputDirectory + " for analysis output files");
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysisSubmission.getWorkflowId());
 		String analysisId = analysisSubmission.getRemoteAnalysisId();
