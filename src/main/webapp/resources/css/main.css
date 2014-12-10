@@ -346,7 +346,7 @@ iframe.remote-api-frame {
   padding: 1rem;
 }
 
-/* line 68, ../../styles/main.scss */
+/* line 67, ../../styles/main.scss */
 .irida-notification__item {
   opacity: .9;
   background-color: #96b1c4;
@@ -355,21 +355,22 @@ iframe.remote-api-frame {
   border-radius: 4px;
   transition: opacity 500ms linear;
 }
-/* line 76, ../../styles/main.scss */
+/* line 75, ../../styles/main.scss */
 .irida-notification__item .progress, .irida-notification__item .progress-bar {
   height: 10px;
   margin-bottom: 0;
 }
-/* line 81, ../../styles/main.scss */
+/* line 80, ../../styles/main.scss */
 .irida-notification__item p {
   color: #222;
 }
-/* line 85, ../../styles/main.scss */
+/* line 84, ../../styles/main.scss */
 .irida-notification__item:hover {
   opacity: 1;
   cursor: pointer;
 }
-/* line 90, ../../styles/main.scss */
+/* line 89, ../../styles/main.scss */
 .irida-notification__item.remove {
+  background-color: #5cb85c;
   opacity: 0;
 }

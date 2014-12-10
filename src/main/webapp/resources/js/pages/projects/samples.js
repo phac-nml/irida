@@ -44,13 +44,14 @@
     "use strict";
     var div = null;
 
-    function add(sessionAttr, msg) {
+    function add(workerId, msg) {
       if (div === null) {
         div = $compile('<div class="irida-notifications"></div>')($rootScope);
         angular.element('body').append(div);
       }
 
-      var not = $compile('<galaxy-notification message="' + msg + '" session="' + sessionAttr + '"></galaxy-notification>')($rootScope);
+      var template = '<galaxy-notification message="' + msg + '" workerId="' + workerId + '"></galaxy-notification>';
+      var not = $compile(template)($rootScope);
       div.append(not);
     }
 
@@ -64,21 +65,21 @@
     var svc = this,
         URLS = {
           upload: BASE_URL + "galaxy/upload",
-          poll  : BASE_URL + "galaxy/poll/"
+          poll  : BASE_URL + "galaxy/poll/workers"
         };
 
     svc.upload = function (params) {
       return $http.post(URLS.upload, params)
         .success(function (data) {
           if (data.result === 'success') {
-            GalaxyNotificationService.add(data.sessionAttr, data.msg);
+            GalaxyNotificationService.add(data.workerId, data.msg);
             return data;
           }
         });
     };
 
-    svc.poll = function (id) {
-      return $http.get(URLS.poll + id);
+    svc.poll = function (workerId) {
+      return $http.post(URLS.poll, {"workerId": workerId});
     };
   }
 
@@ -258,7 +259,7 @@
     };
   }
 
-  function galaxyNotification($interval, $timeout, GalaxyService) {
+  function galaxyNotification($timeout, GalaxyService) {
     "use strict";
     var timer;
 
@@ -268,24 +269,30 @@
       });
 
       element.on('$destroy', function () {
-        $interval.cancel(timer);
+        $timeout.cancel(timer);
       });
 
-      timer = $interval(function () {
-        GalaxyService.poll(scope.session).then(function (result) {
-          scope.progress = Math.ceil(result.data.progress * 100);
-          if (result.data.finished) {
-            removeElement(2000);
-          }
-          else if(result.error) {
-            // TODO: Handle in next merge.
-            console.log(result.data.error)
-          }
-        });
-      }, 500);
+      var poll = function poll () {
+          timer = $timeout(function() {
+            GalaxyService.poll(attrs.workerid).then(function (result) {
+              scope.progress = Math.ceil(result.data.progress * 100);
+              scope.title = result.data.title;
+              scope.message = result.data.message;
+              if (result.data.finished) {
+                removeElement(2000);
+              }
+              else if(result.error) {
+                // TODO: Handle in next merge.
+                console.log(result.data.error)
+              }
+              else {
+                poll();
+              }
+            });
+          }, 500);
+      };
 
       function removeElement(length) {
-        $interval.cancel(timer);
         $timeout(function () {
           element.addClass('remove');
 
@@ -295,14 +302,15 @@
           }, 500);
         }, length);
       }
+
+      poll();
     }
 
     return {
-      template: '<div class="irida-notification__item"><p>{{message}}</p><progressbar value="progress"></progressbar></div>',
+      template: '<div class="irida-notification__item"><p><b>{{title}}</b></p><p>{{message}}</p><progressbar value="progress"></progressbar></div>',
       restrict: 'E',
       replace : true,
       scope   : {
-        session: '@',
         message: '@'
       },
       link    : link
@@ -613,7 +621,7 @@
           vm.close();
         }
         else {
-          vm.errors = data.errors;
+          vm.errors = response.data.errors;
         }
       });
     };
@@ -640,7 +648,7 @@
     .service('SamplesService', ['$rootScope', 'BASE_URL', 'Restangular', 'notifications', 'FilterFactory', SamplesService])
     .filter('PagingFilter', ['$rootScope', 'FilterFactory', 'SamplesService', PagingFilter])
     .directive('sortBy', [sortBy])
-    .directive('galaxyNotification', ['$interval', '$timeout', 'GalaxyService', galaxyNotification])
+    .directive('galaxyNotification', ['$timeout', 'GalaxyService', galaxyNotification])
     .controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
     .controller('SamplesTableCtrl', ['SamplesService', 'FilterFactory', SamplesTableCtrl])
