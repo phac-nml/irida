@@ -46,6 +46,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
+import com.google.common.base.Optional;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
@@ -355,14 +356,15 @@ public class GalaxyUploaderAPI {
 		return String.format("/%s/%s/%s", rootFolderName, sample.getSampleName(), file.getName());
 	}
 	
-	private LibraryFolder getOrBuildSampleFolder(Map<String, List<LibraryContent>> libraryMap, UploadSample sample,
-			LibraryFolder rootFolder, Library library) throws CreateLibraryException, LibraryUploadException {
+	private Optional<LibraryFolder> getSampleFolder(Map<String, List<LibraryContent>> libraryMap, UploadSample sample,
+			LibraryFolder rootFolder) throws CreateLibraryException, LibraryUploadException {
 		LibraryFolder persistedSampleFolder;
 		String expectedSamplePath = samplePath(rootFolder, sample);
 
-		// if Galaxy already contains a folder for this sample, don't create a
-		// new folder
-		if (libraryMap.containsKey(expectedSamplePath)) {
+		// if Galaxy does not contain a folder for this sample, return empty
+		if (!libraryMap.containsKey(expectedSamplePath)) {
+			return Optional.absent();
+		} else {
 			List<LibraryContent> persistedSampleFolderAsContentList = libraryMap.get(expectedSamplePath);
 
 			if (persistedSampleFolderAsContentList.size() == 0) {
@@ -376,18 +378,26 @@ public class GalaxyUploaderAPI {
 				persistedSampleFolder.setId(persistedSampleFolderAsContent.getId());
 				persistedSampleFolder.setName(persistedSampleFolderAsContent.getName());
 			}
-		} else {
-			persistedSampleFolder = galaxyLibrary.createLibraryFolder(library, rootFolder, sample.getSampleName());
 
-			logger.debug(String.format(
-					"Created Galaxy sample folder name=%s id=%s in library name=%s id=%s in Galaxy url=%s",
-					expectedSamplePath, persistedSampleFolder.getId(), library.getName(), library.getId(),
-					galaxyInstance.getGalaxyUrl()));
+			return Optional.of(persistedSampleFolder);
 		}
+	}
+	
+	private LibraryFolder buildSampleFolder(UploadSample sample,
+			LibraryFolder rootFolder, Library library) throws CreateLibraryException {
+		LibraryFolder persistedSampleFolder;
+		String expectedSamplePath = samplePath(rootFolder, sample);
+
+		persistedSampleFolder = galaxyLibrary.createLibraryFolder(library, rootFolder, sample.getSampleName());
+
+		logger.debug(String.format(
+				"Created Galaxy sample folder name=%s id=%s in library name=%s id=%s in Galaxy url=%s",
+				expectedSamplePath, persistedSampleFolder.getId(), library.getName(), library.getId(),
+				galaxyInstance.getGalaxyUrl()));
 
 		return persistedSampleFolder;
 	}
-	
+
 	private boolean skipUploadForFile(File sampleFile, String sampleFilePathGalaxy, LibrariesClient librariesClient,
 			Library library, Map<String, List<LibraryContent>> libraryMap) throws LibraryUploadException {
 		boolean shouldSkip = false;
@@ -416,12 +426,10 @@ public class GalaxyUploaderAPI {
 						shouldSkip = true;
 					} else if (galaxyFileSize == (localFileSize + 1)) {
 						// It's possible for Galaxy to add an extra trailing
-						// newline
-						// at the end of a file if there was no newline before.
-						// This
-						// is due to Galaxy attempting to write out datasets
-						// with
-						// Unix style newlines. The code for this is in
+						// newline at the end of a file if there was no newline
+						// before. This is due to Galaxy attempting to write out
+						// datasets with Unix style newlines. The code for this
+						// is in
 						// https://bitbucket.org/galaxy/galaxy-dist/src/7e4d21621ce12e13ebbdf9fd3259df58c3ef124c/lib/galaxy/datatypes/data.py?at=stable#cl-673
 						logger.debug(String
 								.format("File from local path=%s, size=%s already exists on Galaxy path=%s, size=%s in library name=%s id=%s in Galaxy url=%s sizes off by 1 so assuming Galaxy added a trailing newline ... skipping upload",
@@ -462,15 +470,22 @@ public class GalaxyUploaderAPI {
 			CreateLibraryException {
 		boolean success = true;
 
-		LibraryFolder persistedSampleFolder = getOrBuildSampleFolder(libraryMap, sample, rootFolder, library);
+		LibraryFolder persistedSampleFolder;
+		Optional<LibraryFolder> persistedSampleFolderOptional = getSampleFolder(libraryMap, sample, rootFolder);
+
+		if (!persistedSampleFolderOptional.isPresent()) {
+			persistedSampleFolder = buildSampleFolder(sample, rootFolder, library);
+		} else {
+			persistedSampleFolder = persistedSampleFolderOptional.get();
+		}
 
 		for (Path path : sample.getSampleFiles()) {
 			File file = path.toFile();
 			String sampleFilePathGalaxy = samplePath(rootFolder, sample, file);
 
 			if (!skipUploadForFile(file, sampleFilePathGalaxy, librariesClient, library, libraryMap)) {
-				success &= doUploadWithLogging(persistedSampleFolder, file, librariesClient,
-						library, samplePath(rootFolder, sample, file));
+				success &= doUploadWithLogging(persistedSampleFolder, file, librariesClient, library,
+						samplePath(rootFolder, sample, file));
 			}
 		}
 
