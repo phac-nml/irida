@@ -69,10 +69,10 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxySample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyUploadResult;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryContentSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrarySearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploaderAPI;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadFileSizeException;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.ProgressUpdate;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.UploadEventListenerTracker;
 
@@ -114,10 +114,14 @@ public class GalaxyAPIIT {
 	@Autowired
 	private GalaxyUploaderAPI galaxyAPI;
 	
+	@Autowired
+	private GalaxyLibraryContentSearch galaxyLibraryContentSearch;
+	
 	private LibrariesClient librariesClient;
 	
 	private List<Path> dataFilesSingle;
 	private List<Path> dataFilesSingleModified;
+	private List<Path> dataFilesSingleModified2;
 	private List<Path> dataFilesSingleNewlineTestNoNewline;
 	private List<Path> dataFilesDouble;
 	
@@ -151,6 +155,10 @@ public class GalaxyAPIIT {
 		Path dataFile1Modified = Paths.get(GalaxyAPIIT.class.getResource(
 				"modifiedTestData/testData1.fastq").toURI());
 		
+		// Slightly modified version of dataFile1 and dataFile1Modified to test detection of different files when uploading
+		Path dataFile1Modified2 = Paths.get(GalaxyAPIIT.class.getResource(
+				"modifiedTestData2/testData1.fastq").toURI());
+		
 		Path dataFile2 = Paths.get(GalaxyAPIIT.class.getResource(
 				"testData2.fastq").toURI());
 
@@ -159,6 +167,9 @@ public class GalaxyAPIIT {
 		
 		dataFilesSingleModified = new ArrayList<Path>();
 		dataFilesSingleModified.add(dataFile1Modified);
+		
+		dataFilesSingleModified2 = new ArrayList<>();
+		dataFilesSingleModified2.add(dataFile1Modified2);
 		
 		dataFilesSingleNewlineTestNoNewline = new ArrayList<Path>();
 		dataFilesSingleNewlineTestNoNewline.add(dataFile1NewlineTestNoNewline);
@@ -1350,28 +1361,28 @@ public class GalaxyAPIIT {
 		assertEquals(new URL(localGalaxyURL + "/" + GalaxyUploadResult.LIBRARY_API_BASE + actualUploadResult.getLibraryId()),
 				actualUploadResult.getLibraryAPIURL());
 
-		List<LibraryContent> libraryContents = localGalaxy
-				.getGalaxyInstanceAdmin().getLibrariesClient()
-				.getLibraryContents(actualLibrary.getId());
-		Map<String, LibraryContent> contentsMap = fileToLibraryContentMap(libraryContents);
-		assertEquals(5, contentsMap.size());
+		Map<String, List<LibraryContent>> contentsMapList = 
+				galaxyLibraryContentSearch.libraryContentAsMap(actualLibrary.getId());
+		assertEquals(5, contentsMapList.size());
 
-		assertTrue(contentsMap.containsKey("/"));
-		assertEquals("folder", contentsMap.get("/").getType());
-		assertTrue(contentsMap.containsKey("/illumina_reads"));
-		assertEquals("folder", contentsMap.get("/illumina_reads").getType());
-		assertTrue(contentsMap.containsKey("/references"));
-		assertEquals("folder", contentsMap.get("/references").getType());
-		assertTrue(contentsMap.containsKey("/illumina_reads/testData"));
-		assertEquals("folder", contentsMap.get("/illumina_reads/testData")
-				.getType());
-		assertTrue(contentsMap
+		assertTrue(contentsMapList.containsKey("/"));
+		assertEquals("folder", contentsMapList.get("/").get(0).getType());
+		assertTrue(contentsMapList.containsKey("/illumina_reads"));
+		assertEquals("folder", contentsMapList.get("/illumina_reads").get(0).getType());
+		assertTrue(contentsMapList.containsKey("/references"));
+		assertEquals("folder", contentsMapList.get("/references").get(0).getType());
+		assertTrue(contentsMapList.containsKey("/illumina_reads/testData"));
+		assertEquals("folder", contentsMapList.get("/illumina_reads/testData")
+				.get(0).getType());
+		assertTrue(contentsMapList
 				.containsKey("/illumina_reads/testData/testData1.fastq"));
+		assertEquals(1, contentsMapList
+				.get("/illumina_reads/testData/testData1.fastq").size());
 		assertEquals("file",
-				contentsMap.get("/illumina_reads/testData/testData1.fastq")
-						.getType());
+				contentsMapList.get("/illumina_reads/testData/testData1.fastq")
+						.get(0).getType());
 		
-		LibraryContent datasetContent = contentsMap.get("/illumina_reads/testData/testData1.fastq");
+		LibraryContent datasetContent = contentsMapList.get("/illumina_reads/testData/testData1.fastq").get(0);
 		
 		// wait for the original library upload to complete.
 		waitForLibraryUpload(datasetContent.getId(), actualLibrary.getId());
@@ -1400,60 +1411,44 @@ public class GalaxyAPIIT {
 		assertEquals(new URL(localGalaxyURL + "/" + GalaxyUploadResult.LIBRARY_API_BASE + actualUploadResult.getLibraryId()),
 				actualUploadResult.getLibraryAPIURL());
 
-		libraryContents = localGalaxy.getGalaxyInstanceAdmin()
-				.getLibrariesClient().getLibraryContents(actualLibrary.getId());
-		contentsMap = fileToLibraryContentMap(libraryContents);
-		assertEquals(6, contentsMap.size());
+		contentsMapList = 
+				galaxyLibraryContentSearch.libraryContentAsMap(actualLibrary.getId());
+		assertEquals(6, contentsMapList.size());
 
-		assertTrue(contentsMap.containsKey("/"));
-		assertEquals("folder", contentsMap.get("/").getType());
-		assertTrue(contentsMap.containsKey("/illumina_reads"));
-		assertEquals("folder", contentsMap.get("/illumina_reads").getType());
-		assertTrue(contentsMap.containsKey("/references"));
-		assertEquals("folder", contentsMap.get("/references").getType());
-		assertTrue(contentsMap.containsKey("/illumina_reads/testData"));
-		assertEquals("folder", contentsMap.get("/illumina_reads/testData")
-				.getType());
-		assertTrue(contentsMap
+		assertTrue(contentsMapList.containsKey("/"));
+		assertEquals("folder", contentsMapList.get("/").get(0).getType());
+		assertTrue(contentsMapList.containsKey("/illumina_reads"));
+		assertEquals("folder", contentsMapList.get("/illumina_reads").get(0).getType());
+		assertEquals(1, contentsMapList
+				.get("/illumina_reads").size());
+		assertTrue(contentsMapList.containsKey("/references"));
+		assertEquals(1, contentsMapList
+				.get("/references").size());
+		assertEquals("folder", contentsMapList.get("/references").get(0).getType());
+		assertTrue(contentsMapList.containsKey("/illumina_reads/testData"));
+		assertEquals(1, contentsMapList
+				.get("/illumina_reads/testData").size());
+		assertEquals("folder", contentsMapList.get("/illumina_reads/testData")
+				.get(0).getType());
+		assertTrue(contentsMapList
 				.containsKey("/illumina_reads/testData/testData1.fastq"));
+		assertEquals(1, contentsMapList
+				.get("/illumina_reads/testData/testData1.fastq").size());
 		assertEquals("file",
-				contentsMap.get("/illumina_reads/testData/testData1.fastq")
-						.getType());
-		assertTrue(contentsMap
+				contentsMapList.get("/illumina_reads/testData/testData1.fastq")
+						.get(0).getType());
+		assertTrue(contentsMapList
 				.containsKey("/illumina_reads/testData/testData2.fastq"));
+		assertEquals(1, contentsMapList
+				.get("/illumina_reads/testData/testData2.fastq").size());
 		assertEquals("file",
-				contentsMap.get("/illumina_reads/testData/testData2.fastq")
-						.getType());
-
-		// make sure only 1 instance of testData2 exists in library
-		int countTestData2 = countNumberOfFolderPaths(libraryContents,
-				"/illumina_reads/testData/testData2.fastq");
-		assertEquals("More than one copy of testData2.fastq was uploaded", 1,
-				countTestData2);
-
-		// make sure only 1 instance of testData sample folder exists in library
-		int countTestDataFolder = countNumberOfFolderPaths(libraryContents,
-				"/illumina_reads/testData");
-		assertEquals(
-				"More than one copy of /illumina_reads/testData was created",
-				1, countTestDataFolder);
-
-		// make sure only 1 instance of illumina_reads folder exists in library
-		int countIlluminaReadsFolder = countNumberOfFolderPaths(
-				libraryContents, "/illumina_reads");
-		assertEquals("More than one copy of /illumina_reads was created", 1,
-				countIlluminaReadsFolder);
-
-		// make sure only 1 instance of references folder exists in library
-		int countReferencesFolder = countNumberOfFolderPaths(libraryContents,
-				"/illumina_reads");
-		assertEquals("More than one copy of /references was created", 1,
-				countReferencesFolder);
+				contentsMapList.get("/illumina_reads/testData/testData2.fastq")
+						.get(0).getType());
 	}
 	
 	/**
-	 * Tests uploading a sample where one file already is uploaded in Galaxy
-	 * (but incomplete upload) and failing to skip over the file.
+	 * Tests uploading a sample where a file already is uploaded in Galaxy
+	 * and a different file with the same name, but different size is uploaded.
 	 * 
 	 * @throws URISyntaxException
 	 * @throws MalformedURLException
@@ -1463,35 +1458,110 @@ public class GalaxyAPIIT {
 	 * @throws ExecutionException
 	 * @throws InterruptedException
 	 */
-	@Test(expected = LibraryUploadFileSizeException.class)
-	public void testUploadSampleOneFileAlreadyExistsFailSkip() throws URISyntaxException, MalformedURLException,
+	@Test
+	public void testUploadSampleOneFileAlreadyExistsSuccessUploadSecondFile() throws URISyntaxException, MalformedURLException,
 			ConstraintViolationException, UploadException, InterruptedException, ExecutionException, TimeoutException {
-		GalaxyProjectName libraryName = new GalaxyProjectName("testUploadSampleOneFileAlreadyExistsFailSkip");
+		GalaxyProjectName libraryName = new GalaxyProjectName("testUploadSampleOneFileAlreadyExistsSuccessUploadSecondFile");
 
 		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName("testData"), dataFilesSingleModified);
 		List<UploadSample> samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 
+		// upload file to library
 		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
 
 		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
 
-		List<LibraryContent> libraryContents = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
-				.getLibraryContents(actualLibrary.getId());
-		Map<String, LibraryContent> contentsMap = fileToLibraryContentMap(libraryContents);
-		LibraryContent datasetContent = contentsMap.get("/illumina_reads/testData/testData1.fastq");
+		Map<String, List<LibraryContent>> contentsMapList = 
+				galaxyLibraryContentSearch.libraryContentAsMap(actualLibrary.getId());
+		List<LibraryContent> fileList = contentsMapList.get("/illumina_reads/testData/testData1.fastq");
+		assertEquals(1, fileList.size());
+		LibraryContent datasetContent = fileList.get(0);
 
 		// wait for the original library upload to complete.
 		waitForLibraryUpload(datasetContent.getId(), actualLibrary.getId());
 
 		// now attempt to upload dataFilesDouble with two files
-		// this should fail since we are uploading a modified version of
+		// this should succeed in uploading a new file since we are uploading a modified version of
 		// testData1.fastq
 		galaxySample = new GalaxySample(new GalaxyFolderName("testData"), dataFilesDouble);
 		samples = new ArrayList<UploadSample>();
 		samples.add(galaxySample);
 
+		assertNotNull(galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
+		
+		// should have 2 entries for this file
+		contentsMapList = 
+				galaxyLibraryContentSearch.libraryContentAsMap(actualLibrary.getId());
+		fileList = contentsMapList.get("/illumina_reads/testData/testData1.fastq");
+		assertEquals(2, fileList.size());
+	}
+	
+	/**
+	 * Tests uploading a sample where two files with the same name (but different sizes) are already uploaded in Galaxy
+	 * and a different file with the same name, but different size is uploaded.
+	 * 
+	 * @throws URISyntaxException
+	 * @throws MalformedURLException
+	 * @throws ConstraintViolationException
+	 * @throws UploadException
+	 * @throws TimeoutException
+	 * @throws ExecutionException
+	 * @throws InterruptedException
+	 */
+	@Test
+	public void testUploadSampleTwoFilesAlreadyExistsSuccessUploadThirdFile() throws URISyntaxException, MalformedURLException,
+			ConstraintViolationException, UploadException, InterruptedException, ExecutionException, TimeoutException {
+		GalaxyProjectName libraryName = new GalaxyProjectName("testUploadSampleTwoFilesAlreadyExistsSuccessUploadThirdFile");
+
+		UploadSample galaxySample = new GalaxySample(new GalaxyFolderName("testData"), dataFilesSingleModified);
+		List<UploadSample> samples = new ArrayList<UploadSample>();
+		samples.add(galaxySample);
+
+		// upload file to library
 		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
+
+		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
+
+		// only 1 file
+		Map<String, List<LibraryContent>> contentsMapList = 
+				galaxyLibraryContentSearch.libraryContentAsMap(actualLibrary.getId());
+		List<LibraryContent> fileList = contentsMapList.get("/illumina_reads/testData/testData1.fastq");
+		assertEquals(1, fileList.size());
+		LibraryContent datasetContent = fileList.get(0);
+
+		// wait for the original library upload to complete.
+		waitForLibraryUpload(datasetContent.getId(), actualLibrary.getId());
+		
+		
+		galaxySample = new GalaxySample(new GalaxyFolderName("testData"), dataFilesSingleModified2);
+		samples = new ArrayList<>();
+		samples.add(galaxySample);
+
+		// upload file to library
+		galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName());
+		actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
+
+		// only 2 files
+		contentsMapList = 
+				galaxyLibraryContentSearch.libraryContentAsMap(actualLibrary.getId());
+		fileList = contentsMapList.get("/illumina_reads/testData/testData1.fastq");
+		assertEquals(2, fileList.size());
+		
+		// now attempt to upload dataFilesDouble with two files
+		// this should succeed in uploading a new file since we are uploading a modified version of
+		// testData1.fastq
+		galaxySample = new GalaxySample(new GalaxyFolderName("testData"), dataFilesDouble);
+		samples = new ArrayList<UploadSample>();
+		samples.add(galaxySample);
+
+		assertNotNull(galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
+		
+		// should have 3 entries for this file
+		contentsMapList = 
+				galaxyLibraryContentSearch.libraryContentAsMap(actualLibrary.getId());
+		fileList = contentsMapList.get("/illumina_reads/testData/testData1.fastq");
+		assertEquals(3, fileList.size());
 	}
 	
 	/**
@@ -1519,10 +1589,11 @@ public class GalaxyAPIIT {
 
 		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
 
-		List<LibraryContent> libraryContents = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
-				.getLibraryContents(actualLibrary.getId());
-		Map<String, LibraryContent> contentsMap = fileToLibraryContentMap(libraryContents);
-		LibraryContent datasetContent = contentsMap.get("/illumina_reads/testData/testData1NoNewline.fastq");
+		Map<String, List<LibraryContent>> contentsMapList = 
+				galaxyLibraryContentSearch.libraryContentAsMap(actualLibrary.getId());
+		List<LibraryContent> fileList = contentsMapList.get("/illumina_reads/testData/testData1NoNewline.fastq");
+		assertEquals(1, fileList.size());
+		LibraryContent datasetContent = fileList.get(0);
 
 		// wait for the original library upload to complete.
 		waitForLibraryUpload(datasetContent.getId(), actualLibrary.getId());
@@ -1537,6 +1608,11 @@ public class GalaxyAPIIT {
 
 		// now attempt to re-upload the file.  It should properly be skipped even though the sizes are off by one
 		assertNotNull(galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
+		
+		contentsMapList = 
+				galaxyLibraryContentSearch.libraryContentAsMap(actualLibrary.getId());
+		contentsMapList.get("/illumina_reads/testData/testData1NoNewline.fastq");
+		assertEquals(1, fileList.size());
 	}
 	
 	/**
@@ -1566,10 +1642,11 @@ public class GalaxyAPIIT {
 
 		Library actualLibrary = findLibraryByName(libraryName, localGalaxy.getGalaxyInstanceAdmin());
 
-		List<LibraryContent> libraryContents = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
-				.getLibraryContents(actualLibrary.getId());
-		Map<String, LibraryContent> contentsMap = fileToLibraryContentMap(libraryContents);
-		LibraryContent datasetContent = contentsMap.get("/illumina_reads/testData/testData1NoNewline.fastq");
+		Map<String, List<LibraryContent>> contentsMapList = 
+				galaxyLibraryContentSearch.libraryContentAsMap(actualLibrary.getId());
+		List<LibraryContent> fileList = contentsMapList.get("/illumina_reads/testData/testData1NoNewline.fastq");
+		assertEquals(1, fileList.size());
+		LibraryContent datasetContent = fileList.get(0);
 
 		// wait for the original library upload to complete.
 		waitForLibraryUpload(datasetContent.getId(), actualLibrary.getId());
@@ -1584,6 +1661,11 @@ public class GalaxyAPIIT {
 
 		// now attempt to re-upload the file.  It should properly be skipped
 		assertNotNull(galaxyAPI.uploadSamples(samples, libraryName, localGalaxy.getAdminName()));
+		
+		contentsMapList = 
+				galaxyLibraryContentSearch.libraryContentAsMap(actualLibrary.getId());
+		fileList = contentsMapList.get("/illumina_reads/testData/testData1NoNewline.fastq");
+		assertEquals(1, fileList.size());  // should still only be one copy of the file
 	}
 	
 	/**

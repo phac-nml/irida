@@ -67,6 +67,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
 import com.github.jmchilton.blend4j.galaxy.beans.Role;
 import com.github.jmchilton.blend4j.galaxy.beans.User;
+import com.google.common.collect.Lists;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
@@ -139,7 +140,7 @@ public class GalaxyAPITest {
 	final private String galaxyURL = "http://localhost/";
 
 	private GalaxyUploaderAPI workflowRESTAPI;
-	private Map<String, LibraryContent> libraryMap;
+	private Map<String, List<LibraryContent>> libraryMap;
 	private Path dataFile1;
 	private Path dataFile2;
 	private List<Path> dataFilesSingle;
@@ -188,7 +189,7 @@ public class GalaxyAPITest {
 		dataFilesDouble.add(dataFile1);
 		dataFilesDouble.add(dataFile2);
 
-		libraryMap = new HashMap<String, LibraryContent>();
+		libraryMap = new HashMap<>();
 
 		realUser.setEmail(realUserEmail.getName());
 	}
@@ -297,7 +298,7 @@ public class GalaxyAPITest {
 			setupBuildLibrary();
 		}
 
-		libraryMap.put("/", libraryContent);
+		libraryMap.put("/", Lists.newArrayList(libraryContent));
 		when(librariesClient.getRootFolder(libraryId)).thenReturn(
 				libraryContent);
 		when(libraryContent.getId()).thenReturn(rootFolderId);
@@ -369,7 +370,7 @@ public class GalaxyAPITest {
 		LibraryContent illuminaContent = new LibraryContent();
 		illuminaContent.setName(illuminaFolderPath.getName());
 		illuminaContent.setType("folder");
-		libraryMap.put(illuminaFolderPath.getName(), illuminaContent);
+		libraryMap.put(illuminaFolderPath.getName(), Lists.newArrayList(illuminaContent));
 
 		when(
 				galaxyLibraryContentSearch.findById(illuminaContentId)).thenReturn(illuminaContent);
@@ -401,7 +402,7 @@ public class GalaxyAPITest {
 		LibraryContent referenceContent = new LibraryContent();
 		referenceContent.setName(referencesFolderPath.getName());
 		referenceContent.setType("folder");
-		libraryMap.put(referencesFolderPath.getName(), referenceContent);
+		libraryMap.put(referencesFolderPath.getName(), Lists.newArrayList(referenceContent));
 
 		LibraryFolder illuminaFolder = new LibraryFolder();
 		illuminaFolder.setName(illuminaFolderPath.getName());
@@ -436,7 +437,7 @@ public class GalaxyAPITest {
 		LibraryContent referenceContent = new LibraryContent();
 		referenceContent.setName(referencesFolderPath.getName());
 		referenceContent.setType("folder");
-		libraryMap.put(referencesFolderPath.getName(), referenceContent);
+		libraryMap.put(referencesFolderPath.getName(), Lists.newArrayList(referenceContent));
 
 		LibraryFolder illuminaFolder = new LibraryFolder();
 		illuminaFolder.setName(illuminaFolderPath.getName());
@@ -445,7 +446,7 @@ public class GalaxyAPITest {
 		LibraryContent illuminaContent = new LibraryContent();
 		illuminaContent.setName(illuminaFolderPath.getName());
 		illuminaContent.setType("folder");
-		libraryMap.put(illuminaFolderPath.getName(), illuminaContent);
+		libraryMap.put(illuminaFolderPath.getName(), Lists.newArrayList(illuminaContent));
 
 		when(
 				galaxyLibraryContentSearch.findById(illuminaContentId)).thenReturn(illuminaContent);
@@ -640,7 +641,7 @@ public class GalaxyAPITest {
 		LibraryContent folderContent = new LibraryContent();
 		folderContent.setName(sampleFolder.getName());
 		folderContent.setId(sampleFolder.getFolderId());
-		libraryMap.put(sampleFolder.getName(), folderContent);
+		libraryMap.put(sampleFolder.getName(), Lists.newArrayList(folderContent));
 
 		setupUploadSampleToLibrary(samples, sampleFolders, false);
 
@@ -690,14 +691,14 @@ public class GalaxyAPITest {
 		LibraryContent folderContent = new LibraryContent();
 		folderContent.setName(sampleFolder.getName());
 		folderContent.setId(sampleFolder.getFolderId());
-		libraryMap.put(sampleFolder.getName(), folderContent);
+		libraryMap.put(sampleFolder.getName(), Lists.newArrayList(folderContent));
 
 		// add sample file to map of already existing files
 		LibraryContent fileContent = new LibraryContent();
 		fileContent.setName(sampleFolder.getName() + "/"
 				+ dataFile1.getFileName());
 		fileContent.setId(fileId);
-		libraryMap.put(fileContent.getName(), fileContent);
+		libraryMap.put(fileContent.getName(), Lists.newArrayList(fileContent));
 		
 		// setup sample file in response to LibrariesClient.showDataset
 		LibraryDataset uploadedDataset  = new LibraryDataset();
@@ -752,14 +753,14 @@ public class GalaxyAPITest {
 		LibraryContent folderContent = new LibraryContent();
 		folderContent.setName(sampleFolder.getName());
 		folderContent.setId(sampleFolder.getFolderId());
-		libraryMap.put(sampleFolder.getName(), folderContent);
+		libraryMap.put(sampleFolder.getName(), Lists.newArrayList(folderContent));
 
 		// add sample file to map of one already existing file
 		LibraryContent fileContent = new LibraryContent();
 		fileContent.setName(sampleFolder.getName() + "/"
 				+ dataFile1.getFileName());
 		fileContent.setId(fileId);
-		libraryMap.put(fileContent.getName(), fileContent);
+		libraryMap.put(fileContent.getName(), Lists.newArrayList(fileContent));
 		
 		// setup sample file in response to LibrariesClient.showDataset
 		LibraryDataset uploadedDataset  = new LibraryDataset();
