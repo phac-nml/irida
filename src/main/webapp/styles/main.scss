@@ -64,7 +64,6 @@
   padding: 1rem;
 }
 
-
 .irida-notification__item {
   opacity: .9;
   background-color: rgb(150, 177, 196);
@@ -88,6 +87,7 @@
   }
 
   &.remove {
+    background-color: $color-success;
     opacity: 0;
   }
 }
