@@ -100,8 +100,7 @@ public class GalaxyController {
 	 */
 	@RequestMapping(value = "/poll/workers", method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> pollGalaxy(@RequestParam String workerId, HttpSession session,
-			Locale locale)
-			throws NoSuchValueException {
+			Locale locale) {
 		// TODO (14-12-09 - josh): Handle exception properly
 		Map<String, Object> result = null;
 		UploadWorker worker = (UploadWorker) session.getAttribute(workerId);
