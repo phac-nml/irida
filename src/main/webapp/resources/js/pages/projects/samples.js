@@ -40,6 +40,49 @@
     }
   }
 
+  function GalaxyNotificationService($rootScope, $compile) {
+    "use strict";
+    var div = null;
+
+    function add(workerId, msg) {
+      if (div === null) {
+        div = $compile('<div class="irida-notifications"></div>')($rootScope);
+        angular.element('body').append(div);
+      }
+
+      var template = '<galaxy-notification message="' + msg + '" workerId="' + workerId + '"></galaxy-notification>';
+      var not = $compile(template)($rootScope);
+      div.append(not);
+    }
+
+    return {
+      add: add
+    };
+  }
+
+  function GalaxyService($http, BASE_URL, GalaxyNotificationService) {
+    "use strict";
+    var svc = this,
+        URLS = {
+          upload: BASE_URL + "galaxy/upload",
+          poll  : BASE_URL + "galaxy/poll/workers"
+        };
+
+    svc.upload = function (params) {
+      return $http.post(URLS.upload, params)
+        .success(function (data) {
+          if (data.result === 'success') {
+            GalaxyNotificationService.add(data.workerId, data.msg);
+            return data;
+          }
+        });
+    };
+
+    svc.poll = function (workerId) {
+      return $http.post(URLS.poll, {"workerId": workerId});
+    };
+  }
+
   /*[- */
 // Responsible for all server calls for samples
 // @param $rootScope The root scope for the page.
@@ -89,7 +132,7 @@
     };
 
     svc.merge = function (params) {
-      params.sampleIds = getSelectedSampleIds();
+      params.sampleIds = svc.getSelectedSampleIds();
       return base.customPOST(params, 'merge').then(function (data) {
         if (data.result === 'success') {
           svc.getSamples();
@@ -138,7 +181,7 @@
     };
 
     svc.downloadFiles = function () {
-      var ids = getSelectedSampleIds();
+      var ids = svc.getSelectedSampleIds();
       var mapped = _.map(ids, function (id) {
         return "ids=" + id
       });
@@ -148,27 +191,14 @@
       document.body.appendChild(iframe);
     };
 
-    svc.galaxyUpload = function (email, name) {
-      return base.customPOST({
-        email: email,
-        name: name,
-        sampleIds: getSelectedSampleIds()
-      }, 'galaxy/upload').then(function(data) {
-        if(data.result === 'success') {
-          notifications.show({msg: data.msg});
-        }
-        return data;
-      })
-    };
-
-    function getSelectedSampleIds() {
+    svc.getSelectedSampleIds = function () {
       return _.map(selected, 'id');
     }
 
     function copyMoveSamples(projectId, move) {
 
       return base.customPOST({
-        sampleIds         : getSelectedSampleIds(),
+        sampleIds         : svc.getSelectedSampleIds(),
         newProjectId      : projectId,
         removeFromOriginal: move
       }, "copy").then(function (data) {
@@ -226,6 +256,64 @@
           scope.onsort(scope.sortedby, scope.sortdir);
         };
       }
+    };
+  }
+
+  function galaxyNotification($timeout, GalaxyService) {
+    "use strict";
+    var timer;
+
+    function link(scope, element, attrs) {
+      element.on('click', function () {
+          removeElement(300);
+      });
+
+      element.on('$destroy', function () {
+        $timeout.cancel(timer);
+      });
+
+      var poll = function poll () {
+          timer = $timeout(function() {
+            GalaxyService.poll(attrs.workerid).then(function (result) {
+              scope.progress = Math.ceil(result.data.progress * 100);
+              scope.title = result.data.title;
+              scope.message = result.data.message;
+              if (result.data.finished) {
+                removeElement(2000);
+              }
+              else if(result.error) {
+                // TODO: Handle in next merge.
+                console.log(result.data.error)
+              }
+              else {
+                poll();
+              }
+            });
+          }, 500);
+      };
+
+      function removeElement(length) {
+        $timeout(function () {
+          element.addClass('remove');
+
+          $timeout(function () {
+            scope.$destroy();
+            element.remove();
+          }, 500);
+        }, length);
+      }
+
+      poll();
+    }
+
+    return {
+      template: '<div class="irida-notification__item"><p><b>{{title}}</b></p><p>{{message}}</p><progressbar value="progress"></progressbar></div>',
+      restrict: 'E',
+      replace : true,
+      scope   : {
+        message: '@'
+      },
+      link    : link
     };
   }
 
@@ -302,12 +390,12 @@
     };
 
     vm.export = {
-      open  : false,
+      open    : false,
       download: function download() {
         vm.export.open = false;
         SamplesService.downloadFiles();
       },
-      linker: function linker() {
+      linker  : function linker() {
         vm.export.open = false;
         $modal.open({
           templateUrl: BASE_URL + 'projects/samples/linker',
@@ -322,11 +410,16 @@
           }
         });
       },
-      galaxy: function galaxy() {
+      galaxy  : function galaxy() {
         vm.export.open = false;
         $modal.open({
           templateUrl: BASE_URL + 'projects/' + SamplesService.getProjectId() + '/samples/galaxy',
-          controller: 'GalaxyCtrl as gCtrl'
+          controller : 'GalaxyCtrl as gCtrl',
+          resolve    : {
+            sampleIds: function () {
+              return SamplesService.getSelectedSampleIds();
+            }
+          }
         });
       }
     };
@@ -516,20 +609,19 @@
     });
   }
 
-  function GalaxyCtrl($timeout, $modalInstance, SamplesService) {
+  function GalaxyCtrl($modalInstance, GalaxyService, sampleIds) {
     "use strict";
     var vm = this;
 
     vm.upload = function () {
       vm.uploading = true;
-      SamplesService.galaxyUpload(vm.email, vm.name).then(function(data) {
+      GalaxyService.upload({email: vm.email, name: vm.name, sampleIds: sampleIds}).then(function (response) {
         vm.uploading = false;
-        if(data.result === 'success') {
+        if (response.data.result === 'success') {
           vm.close();
-          // TODO: Create a progress bar to monitor the status of the upload.
         }
         else {
-          vm.errors = data.errors;
+          vm.errors = response.data.errors;
         }
       });
     };
@@ -550,10 +642,13 @@
   angular.module('Samples', ['cgBusy'])
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
+    .service('GalaxyService', ['$http', 'BASE_URL', 'GalaxyNotificationService', GalaxyService])
+    .service('GalaxyNotificationService', ['$rootScope', '$compile', GalaxyNotificationService])
     .service('Select2Service', ['$timeout', Select2Service])
     .service('SamplesService', ['$rootScope', 'BASE_URL', 'Restangular', 'notifications', 'FilterFactory', SamplesService])
     .filter('PagingFilter', ['$rootScope', 'FilterFactory', 'SamplesService', PagingFilter])
     .directive('sortBy', [sortBy])
+    .directive('galaxyNotification', ['$timeout', 'GalaxyService', galaxyNotification])
     .controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
     .controller('SamplesTableCtrl', ['SamplesService', 'FilterFactory', SamplesTableCtrl])
@@ -563,6 +658,6 @@
     .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
     .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
     .controller('FilterCtrl', ['$scope', 'FilterFactory', FilterCtrl])
-    .controller('GalaxyCtrl', ['$timeout', '$modalInstance', 'SamplesService', GalaxyCtrl])
+    .controller('GalaxyCtrl', ['$modalInstance', 'GalaxyService', 'sampleIds', GalaxyCtrl])
   ;
 })(angular, $, _);

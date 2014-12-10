@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anySet;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -25,8 +24,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.validation.ConstraintViolationException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
@@ -34,7 +31,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -46,11 +42,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesController;
@@ -370,48 +363,4 @@ public class ProjectSamplesControllerTest {
 				response.getHeader("Content-Disposition"));
 	}
 
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testPostUploadSampleToGalaxy() {
-		Sample sample = TestDataFactory.constructSample();
-		List<Sample> samples = ImmutableList.of(sample);
-		UploadWorker worker = TestDataFactory.constructUploadWorker();
-		MockHttpServletRequest request = new MockHttpServletRequest();
-
-		when(sampleService.readMultiple(ImmutableList.of(sample.getId()))).thenReturn(samples);
-		String accountEmail = "test@gmail.com";
-		String accountUsername = "Test";
-		when(galaxyUploadService.performUploadSelectedSamples(anySet(), any(GalaxyProjectName.class), any(
-				GalaxyAccountEmail.class)))
-				.thenReturn(worker);
-
-		Map<String, Object> result = controller
-				.postUploadSampleToGalaxy(1L, accountUsername, accountEmail, ImmutableList.of(sample.getId()), request,
-						Locale.US);
-		assertTrue(result.containsKey("result"));
-		assertEquals("success", result.get("result"));
-		assertTrue(result.containsKey("msg"));
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testUploadSampleToGalaxyExceptions() {
-		Sample sample = TestDataFactory.constructSample();
-		List<Sample> samples = ImmutableList.of(sample);
-		MockHttpServletRequest request = new MockHttpServletRequest();
-
-		when(sampleService.readMultiple(ImmutableList.of(sample.getId()))).thenReturn(samples);
-		String accountEmail = "jskd sdlid 9 ds d";
-		String accountUsername = null;
-		when(galaxyUploadService.performUploadSelectedSamples(anySet(), any(GalaxyProjectName.class), any(
-				GalaxyAccountEmail.class)))
-				.thenThrow(new ConstraintViolationException("Some Error", null));
-
-		Map<String, Object> result = controller
-				.postUploadSampleToGalaxy(1L, accountUsername, accountEmail, ImmutableList.of(sample.getId()), request,
-						Locale.US);
-		assertTrue(result.containsKey("result"));
-		assertEquals("errors", result.get("result"));
-
-	}
 }

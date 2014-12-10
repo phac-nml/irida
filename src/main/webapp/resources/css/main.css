@@ -336,3 +336,41 @@ iframe.remote-api-frame {
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer;
 }
+
+/* line 59, ../../styles/main.scss */
+.irida-notifications {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 300px;
+  padding: 1rem;
+}
+
+/* line 67, ../../styles/main.scss */
+.irida-notification__item {
+  opacity: .9;
+  background-color: #96b1c4;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 4px;
+  transition: opacity 500ms linear;
+}
+/* line 75, ../../styles/main.scss */
+.irida-notification__item .progress, .irida-notification__item .progress-bar {
+  height: 10px;
+  margin-bottom: 0;
+}
+/* line 80, ../../styles/main.scss */
+.irida-notification__item p {
+  color: #222;
+}
+/* line 84, ../../styles/main.scss */
+.irida-notification__item:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+/* line 89, ../../styles/main.scss */
+.irida-notification__item.remove {
+  background-color: #5cb85c;
+  opacity: 0;
+}
