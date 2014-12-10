@@ -16,6 +16,9 @@
 			<input id="name" type="text" class="form-control" th:attr="ng-init='gCtrl.setName(\'' + ${name} + '\');'"  ng-model="gCtrl.name"/>
 			<div id="galaxy-error" ng-show="gCtrl.errors.objectName" class="alert alert-danger" role="alert">{{gCtrl.errors.objectName}}</div>
 		</div>
+		<div class="form-group" ng-show="gCtrl.errors.accessDenied">
+			<p class="alert alert-warning">{{ gCtrl.errors.accessDenied }}</p>
+		</div>
 	</div>
 	<div class="modal-footer">
 		<button class="btn btn-default" ng-click="gCtrl.close()" th:text="#{form.btn.close}">Close</button>

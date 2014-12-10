@@ -22,6 +22,7 @@
   function PagingFilter($rootScope, filter, SamplesService) {
     "use strict";
     return function (samples) {
+      var samples = samples || [];
       // samples have already been sorted and filter based on the side bar.
       SamplesService.setFilteredSamples(samples);
       $rootScope.$broadcast('PAGING_UPDATE', {total: samples.length});
@@ -193,7 +194,7 @@
 
     svc.getSelectedSampleIds = function () {
       return _.map(selected, 'id');
-    }
+    };
 
     function copyMoveSamples(projectId, move) {
 
@@ -216,7 +217,7 @@
             }
             return true;
           }), svc.samples);
-          selected = 0;
+          selected = [];
           updateSelectedCount();
         }
       });
@@ -278,12 +279,13 @@
               scope.progress = Math.ceil(result.data.progress * 100);
               scope.title = result.data.title;
               scope.message = result.data.message;
-              if (result.data.finished) {
-                removeElement(2000);
+              if(result.data.error) {
+                scope.error = true;
+                element.addClass('error');
               }
-              else if(result.error) {
-                // TODO: Handle in next merge.
-                console.log(result.data.error)
+              else if (result.data.finished) {
+                element.addClass('success');
+                removeElement(2000);
               }
               else {
                 poll();
@@ -307,7 +309,7 @@
     }
 
     return {
-      template: '<div class="irida-notification__item"><p><b>{{title}}</b></p><p>{{message}}</p><progressbar value="progress"></progressbar></div>',
+      templateUrl: '/template/notification.html',
       restrict: 'E',
       replace : true,
       scope   : {
