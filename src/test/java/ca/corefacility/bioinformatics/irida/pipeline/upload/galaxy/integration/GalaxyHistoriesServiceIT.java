@@ -155,9 +155,9 @@ public class GalaxyHistoriesServiceIT {
 				librariesClient.uploadFilesystemPathsRequest(testLibrary.getId(), upload)
 				.getClientResponseStatus());
 		
-		Map<String, LibraryContent> libraryContent = 
+		Map<String, List<LibraryContent>> libraryContent = 
 				galaxyLibraryContentSearch.libraryContentAsMap(testLibrary.getId());
-		LibraryContent fileContent = libraryContent.get("/" + dataFile.toFile().getName());
+		LibraryContent fileContent = libraryContent.get("/" + dataFile.toFile().getName()).get(0);
 		assertNotNull(fileContent);
 		
 		return fileContent.getId();
