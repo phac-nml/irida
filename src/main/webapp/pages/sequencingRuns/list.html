@@ -14,14 +14,17 @@
     <div class="col-md-12" ng-controller="RunsTableCtrl as table">
         <table id="samplesTable" class="table ng-cloak">
             <thead>
-                <tr>
-                    <th id="sortId" th:text="#{iridaThing.id}">_ID_</th>
-                    <th id="sortType" th:text="#{sequencingruns.type}">_sequencer_</th>
-                    <th id="sortCreatedDate" th:text="#{iridaThing.timestamp}">_Created date_</th>
+                <tr ng-controller="SortCtrl as sCtrl">
+                    <th id="sortId" th:text="#{iridaThing.id}" sort-by="" onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
+                        sortedBy="sCtrl.filter.sortedBy" sortValue="id">_ID_</th>
+                    <th id="sortType" th:text="#{sequencingruns.type}" sort-by="" onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
+                        sortedBy="sCtrl.filter.sortedBy" sortValue="sequencerType">_sequencer_</th>
+                    <th id="sortCreatedDate" th:text="#{iridaThing.timestamp}" sort-by="" onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
+                        sortedBy="sCtrl.filter.sortedBy" sortValue="createdDate">_Created date_</th>
                 </tr>
             </thead>
             <tbody>
-                <tr class="sample-row" ng-repeat="run in table.runs | PagingFilter">
+                <tr class="sample-row" ng-repeat="run in table.runs | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
                     <td class="sample-name"><a class="btn btn-default btn-xs"
                         data:ng-href="@{'/sequencingRuns/{{run.id}}'}" href="#">{{run.id}}</a></td>
                     <td>{{run.sequencerType}}</td>
@@ -129,12 +132,45 @@
     	    });
     	  }
     	  
+    	  function sortBy() {
+		    'use strict';
+		    return {
+		      template  : '<a class="clickable" ng-click="sort(sortValue)">' +
+		      '<span ng-transclude=""></span>' +
+		      '<span class="pull-right" ng-show="sortedby == sortvalue">' +
+		      '<i class="fa fa-fw" ng-class="{true: \'fa-sort-asc\', false: \'fa-sort-desc\'}[sortdir]"></i>' +
+		      '</span><span class="pull-right" ng-show="sortedby != sortvalue"><i class="fa fa-sort fa-fw"></i></span></a>',
+		      restrict  : 'EA',
+		      transclude: true,
+		      replace   : false,
+		      scope     : {
+		        sortdir  : '=',
+		        sortedby : '=',
+		        sortvalue: '@',
+		        onsort   : '='
+		      },
+		      link      : function (scope) {
+		        scope.sort = function () {
+		          if (scope.sortedby === scope.sortvalue) {
+		            scope.sortdir = !scope.sortdir;
+		          }
+		          else {
+		            scope.sortedby = scope.sortvalue;
+		            scope.sortdir = true;
+		          }
+		          scope.onsort(scope.sortedby, scope.sortdir);
+		        };
+		      }
+		    };
+		  }
+    	  
     	  angular.module('SequencingRuns', ['cgBusy'])
     	    .run(['$rootScope', setRootVariable])
     	    .factory('FilterFactory', [FilterFactory])
     	    .service('RunsService', ['$rootScope', 'BASE_URL', 'Restangular', 'FilterFactory', RunsService])
-    	    .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
     	    .filter('PagingFilter', ['$rootScope', 'FilterFactory', 'RunsService', PagingFilter])
+    	    .directive('sortBy', [sortBy])
+    	    .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
     	    .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
     	    .controller('RunsTableCtrl', ['FilterFactory', 'RunsService',  RunsTableCtrl]);
     	})(angular, $, _);
