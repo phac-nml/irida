@@ -78,6 +78,7 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.workspaceService = workspaceService;
+		this.iridaWorkflowsService = iridaWorkflowsService;
 	}
 
 	/**
