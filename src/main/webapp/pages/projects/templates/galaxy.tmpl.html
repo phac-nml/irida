@@ -8,7 +8,8 @@
 	<div class="modal-body">
 		<div class="form-group">
 			<label for="email" th:text="#{galaxy.label.email}"></label>
-			<input id="email" class="form-control" type="email" th:attr="ng-init='gCtrl.setEmail(\'' + ${email} + '\')'" ng-model="gCtrl.email"/>
+			<input id="email" class="form-control" type="email" style="width: 100%" th:attr="ng-init='gCtrl.setEmail(\'' + ${email} + '\')'" ng-model="gCtrl.email"/>
+			<div class="alert alert-danger" role="alert" ng-show="gCtrl.errors.galaxyAccountEmail">{{gCtrl.errors.galaxyAccountEmail}}</div>
 		</div>
 		<div class="form-group">
 			<label for="name" th:text="#{galaxy.label.library}"></label>

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.ConstraintViolationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,7 @@ import com.google.common.collect.ImmutableMap;
  */
 @Controller
 @RequestMapping(value = "/galaxy")
-public class GalaxyController {
+public class GalaxyController extends BaseController {
 	private static final Logger logger = LoggerFactory.getLogger(GalaxyController.class);
 
 	private final MessageSource messageSource;
@@ -70,15 +71,20 @@ public class GalaxyController {
 			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, HttpSession session, Locale locale) {
 		List<Sample> samples = (List<Sample>) sampleService.readMultiple(sampleIds);
 		Map<String, Object> result = new HashMap<>();
-		UploadWorker worker = galaxyUploadService
-				.performUploadSelectedSamples(new HashSet<>(samples), new GalaxyProjectName(name),
-						new GalaxyAccountEmail(email));
-		UUID randomUUID = UUID.randomUUID();
-		String sessionAttr = randomUUID + "-gw";
-		session.setAttribute(sessionAttr, worker);
-		result.put("result", "success");
-		result.put("workerId", sessionAttr);
-		result.put("msg", messageSource.getMessage("galaxy.upload-initialized", new Object[] { }, locale));
+		try {
+			UploadWorker worker = galaxyUploadService
+					.performUploadSelectedSamples(new HashSet<>(samples), new GalaxyProjectName(name),
+							new GalaxyAccountEmail(email));
+			UUID randomUUID = UUID.randomUUID();
+			String sessionAttr = randomUUID + "-gw";
+			session.setAttribute(sessionAttr, worker);
+			result.put("result", "success");
+			result.put("workerId", sessionAttr);
+			result.put("msg", messageSource.getMessage("galaxy.upload-initialized", new Object[] { }, locale));
+		} catch (ConstraintViolationException e) {
+			result.put("result", "error");
+			result.put("errors", getErrorsFromViolationException(e));
+		}
 		return result;
 	}
 
