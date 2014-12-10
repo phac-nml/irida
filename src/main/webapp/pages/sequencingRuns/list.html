@@ -21,7 +21,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr class="sample-row" ng-repeat="run in table.runs">
+                <tr class="sample-row" ng-repeat="run in table.runs | PagingFilter">
                     <td class="sample-name"><a class="btn btn-default btn-xs"
                         data:ng-href="@{'/sequencingRuns/{{run.id}}'}" href="#">{{run.id}}</a></td>
                     <td>{{run.sequencerType}}</td>
@@ -62,6 +62,7 @@
     		svc.getRuns = function(){
     			$rootScope.cgPromise = base.customGET("").then(function (data) {
     		        angular.copy(data, svc.runs);
+    		        $rootScope.$broadcast('RUNS_INIT', {total: data.length});
 		      	});
     			return svc.runs;
     		}
@@ -71,9 +72,18 @@
     	  function RunsTableCtrl(filter, RunsService) {
     	  	"use strict";
     		var vm = this;
-    			
+			vm.filter = filter;
     		vm.runs = RunsService.getRuns();
   
+		  }
+    	  
+    	  function PagingFilter($rootScope, filter, RunsService) {
+		    "use strict";
+		    return function (runs) {
+		      $rootScope.$broadcast('PAGING_UPDATE', {total: runs.length});
+		      var begin = filter.page * filter.count;
+		      return runs.slice(begin, begin + filter.count);
+		    }
 		  }
     	  
     	  function SortCtrl($rootScope, filter) {
@@ -124,6 +134,7 @@
     	    .factory('FilterFactory', [FilterFactory])
     	    .service('RunsService', ['$rootScope', 'BASE_URL', 'Restangular', 'FilterFactory', RunsService])
     	    .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
+    	    .filter('PagingFilter', ['$rootScope', 'FilterFactory', 'RunsService', PagingFilter])
     	    .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
     	    .controller('RunsTableCtrl', ['FilterFactory', 'RunsService',  RunsTableCtrl]);
     	})(angular, $, _);
