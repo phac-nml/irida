@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -23,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyConnectExcep
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNoRoleException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadFileSizeException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoLibraryFoundException;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
@@ -47,6 +46,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryFolder;
+import com.google.common.base.Optional;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
@@ -290,6 +290,28 @@ public class GalaxyUploaderAPI {
 		return librariesClient.uploadFilesystemPathsRequest(library.getId(), upload);
 	}
 
+	private boolean doUploadWithLogging(LibraryFolder persistedSampleFolder, File file,
+			LibrariesClient librariesClient, Library library, String samplePath) {
+		ClientResponse uploadResponse = uploadFile(persistedSampleFolder, file, librariesClient, library);
+
+		boolean success = ClientResponse.Status.OK.equals(uploadResponse.getClientResponseStatus());
+
+		if (success) {
+			logger.debug(String
+					.format("Uploaded file to Galaxy path=%s from local path=%s dataStorage=%s in library name=%s id=%s in Galaxy url=%s",
+							samplePath, file.getAbsolutePath(), dataStorage, library.getName(), library.getId(),
+							galaxyInstance.getGalaxyUrl()));
+		} else {
+			logger.debug(String
+					.format("Failed to upload file to Galaxy, response=%s (%s), response message=\"%s\", path=%s from local path=%s dataStorage=%s in library name=%s id=%s in Galaxy url=%s",
+							uploadResponse.getStatus(), uploadResponse.getClientResponseStatus(),
+							uploadResponse.getEntity(String.class), samplePath, file.getAbsolutePath(), dataStorage,
+							library.getName(), library.getId(), galaxyInstance.getGalaxyUrl()));
+		}
+
+		return success;
+	}
+
 	/**
 	 * Constructs a String describing the path of the given sample within the
 	 * given folder.
@@ -333,6 +355,95 @@ public class GalaxyUploaderAPI {
 
 		return String.format("/%s/%s/%s", rootFolderName, sample.getSampleName(), file.getName());
 	}
+	
+	private Optional<LibraryFolder> getSampleFolder(Map<String, List<LibraryContent>> libraryMap, UploadSample sample,
+			LibraryFolder rootFolder) throws CreateLibraryException, LibraryUploadException {
+		LibraryFolder persistedSampleFolder;
+		String expectedSamplePath = samplePath(rootFolder, sample);
+
+		// if Galaxy does not contain a folder for this sample, return empty
+		if (!libraryMap.containsKey(expectedSamplePath)) {
+			return Optional.absent();
+		} else {
+			List<LibraryContent> persistedSampleFolderAsContentList = libraryMap.get(expectedSamplePath);
+
+			if (persistedSampleFolderAsContentList.size() == 0) {
+				throw new LibraryUploadException("No LibraryContent for path " + expectedSamplePath);
+			} else if (persistedSampleFolderAsContentList.size() > 1) {
+				throw new LibraryUploadException("Duplicate sample folders ("
+						+ persistedSampleFolderAsContentList.size() + ") for path " + expectedSamplePath);
+			} else {
+				LibraryContent persistedSampleFolderAsContent = persistedSampleFolderAsContentList.get(0);
+				persistedSampleFolder = new LibraryFolder();
+				persistedSampleFolder.setId(persistedSampleFolderAsContent.getId());
+				persistedSampleFolder.setName(persistedSampleFolderAsContent.getName());
+			}
+
+			return Optional.of(persistedSampleFolder);
+		}
+	}
+	
+	private LibraryFolder buildSampleFolder(UploadSample sample,
+			LibraryFolder rootFolder, Library library) throws CreateLibraryException {
+		LibraryFolder persistedSampleFolder;
+		String expectedSamplePath = samplePath(rootFolder, sample);
+
+		persistedSampleFolder = galaxyLibrary.createLibraryFolder(library, rootFolder, sample.getSampleName());
+
+		logger.debug(String.format(
+				"Created Galaxy sample folder name=%s id=%s in library name=%s id=%s in Galaxy url=%s",
+				expectedSamplePath, persistedSampleFolder.getId(), library.getName(), library.getId(),
+				galaxyInstance.getGalaxyUrl()));
+
+		return persistedSampleFolder;
+	}
+
+	private boolean skipUploadForFile(File sampleFile, String sampleFilePathGalaxy, LibrariesClient librariesClient,
+			Library library, Map<String, List<LibraryContent>> libraryMap) throws LibraryUploadException {
+		boolean shouldSkip = false;
+
+		if (libraryMap.containsKey(sampleFilePathGalaxy)) {
+			List<LibraryContent> sampleGalaxyFileContentList = libraryMap.get(sampleFilePathGalaxy);
+			if (sampleGalaxyFileContentList.size() == 0) {
+				throw new LibraryUploadException("sampleGalaxyFileContentList has size 0 for file "
+						+ sampleFilePathGalaxy);
+			} else {
+				long localFileSize = sampleFile.length();
+
+				// for every file with the same name, check the size
+				for (LibraryContent fileWithSameNameAsSample : sampleGalaxyFileContentList) {
+					LibraryDataset sampleFileDataset = librariesClient.showDataset(library.getId(),
+							fileWithSameNameAsSample.getId());
+
+					long galaxyFileSize = Long.parseLong(sampleFileDataset.getFileSize());
+
+					if (galaxyFileSize == localFileSize) {
+						logger.debug(String
+								.format("File from local path=%s, size=%s already exists on Galaxy path=%s, size=%s in library name=%s id=%s in Galaxy url=%s skipping upload",
+										sampleFile.getAbsolutePath(), localFileSize, sampleFilePathGalaxy,
+										galaxyFileSize, library.getName(), library.getId(),
+										galaxyInstance.getGalaxyUrl()));
+						shouldSkip = true;
+					} else if (galaxyFileSize == (localFileSize + 1)) {
+						// It's possible for Galaxy to add an extra trailing
+						// newline at the end of a file if there was no newline
+						// before. This is due to Galaxy attempting to write out
+						// datasets with Unix style newlines. The code for this
+						// is in
+						// https://bitbucket.org/galaxy/galaxy-dist/src/7e4d21621ce12e13ebbdf9fd3259df58c3ef124c/lib/galaxy/datatypes/data.py?at=stable#cl-673
+						logger.debug(String
+								.format("File from local path=%s, size=%s already exists on Galaxy path=%s, size=%s in library name=%s id=%s in Galaxy url=%s sizes off by 1 so assuming Galaxy added a trailing newline ... skipping upload",
+										sampleFile.getAbsolutePath(), localFileSize, sampleFilePathGalaxy,
+										galaxyFileSize, library.getName(), library.getId(),
+										galaxyInstance.getGalaxyUrl()));
+						shouldSkip = true;
+					}
+				}
+			}
+		}
+
+		return shouldSkip;
+	}
 
 	/**
 	 * Performs an upload of the sample files.
@@ -355,82 +466,26 @@ public class GalaxyUploaderAPI {
 	 *             If there was an issue creating a new library.
 	 */
 	private boolean uploadSample(UploadSample sample, LibraryFolder rootFolder, LibrariesClient librariesClient,
-			Library library, Map<String, LibraryContent> libraryMap) throws LibraryUploadException,
+			Library library, Map<String, List<LibraryContent>> libraryMap) throws LibraryUploadException,
 			CreateLibraryException {
-		boolean success = false;
+		boolean success = true;
+
 		LibraryFolder persistedSampleFolder;
+		Optional<LibraryFolder> persistedSampleFolderOptional = getSampleFolder(libraryMap, sample, rootFolder);
 
-		String expectedSamplePath = samplePath(rootFolder, sample);
-
-		// if Galaxy already contains a folder for this sample, don't create a
-		// new folder
-		if (libraryMap.containsKey(expectedSamplePath)) {
-			LibraryContent persistedSampleFolderAsContent = libraryMap.get(expectedSamplePath);
-
-			persistedSampleFolder = new LibraryFolder();
-			persistedSampleFolder.setId(persistedSampleFolderAsContent.getId());
-			persistedSampleFolder.setName(persistedSampleFolderAsContent.getName());
+		if (!persistedSampleFolderOptional.isPresent()) {
+			persistedSampleFolder = buildSampleFolder(sample, rootFolder, library);
 		} else {
-			persistedSampleFolder = galaxyLibrary.createLibraryFolder(library, rootFolder, sample.getSampleName());
-
-			logger.debug("Created Galaxy sample folder name=" + expectedSamplePath + " id="
-					+ persistedSampleFolder.getId() + " in library name=" + library.getName() + " id="
-					+ library.getId() + " in Galaxy url=" + galaxyInstance.getGalaxyUrl());
+			persistedSampleFolder = persistedSampleFolderOptional.get();
 		}
-
-		success = true;
 
 		for (Path path : sample.getSampleFiles()) {
 			File file = path.toFile();
-			String sampleFilePath = samplePath(rootFolder, sample, file);
+			String sampleFilePathGalaxy = samplePath(rootFolder, sample, file);
 
-			// if file already exists, check size
-			if (libraryMap.containsKey(sampleFilePath)) {
-				LibraryContent sampleGalaxyFileContent = libraryMap.get(sampleFilePath);
-				LibraryDataset sampleFileDataset = librariesClient.showDataset(library.getId(),
-						sampleGalaxyFileContent.getId());
-
-				long galaxyFileSize = Long.parseLong(sampleFileDataset.getFileSize());
-				long localFileSize = file.length();
-
-				if (galaxyFileSize == localFileSize) {
-					logger.debug("File from local path=" + file.getAbsolutePath() + ", size=" + localFileSize
-							+ " already exists on Galaxy path=" + samplePath(rootFolder, sample, file) + ", size="
-							+ galaxyFileSize + " in library name=" + library.getName() + " id=" + library.getId()
-							+ " in Galaxy url=" + galaxyInstance.getGalaxyUrl() + " skipping upload");
-				} else if (galaxyFileSize == (localFileSize + 1)) {
-					// It's possible for Galaxy to add an extra trailing newline
-					// at the end of a file if there was no newline before. This
-					// is due to Galaxy attempting to write out datasets with
-					// Unix style newlines. The code for this is in
-					// https://bitbucket.org/galaxy/galaxy-dist/src/7e4d21621ce12e13ebbdf9fd3259df58c3ef124c/lib/galaxy/datatypes/data.py?at=stable#cl-673
-					logger.debug("File from local path=" + file.getAbsolutePath() + ", size=" + localFileSize
-							+ " already exists on Galaxy path=" + samplePath(rootFolder, sample, file) + ", size="
-							+ galaxyFileSize + " in library name=" + library.getName() + " id=" + library.getId()
-							+ " in Galaxy url=" + galaxyInstance.getGalaxyUrl()
-							+ " sizes off by 1 so assuming Galaxy added a trailing newline ... " + " skipping upload");
-				} else {
-					throw new LibraryUploadFileSizeException(file, library, sampleFileDataset,
-							galaxyInstance.getGalaxyUrl());
-				}
-			} else {
-				ClientResponse uploadResponse = uploadFile(persistedSampleFolder, file, librariesClient, library);
-
-				success &= ClientResponse.Status.OK.equals(uploadResponse.getClientResponseStatus());
-
-				if (success) {
-					logger.debug("Uploaded file to Galaxy path=" + samplePath(rootFolder, sample, file)
-							+ " from local path=" + file.getAbsolutePath() + " dataStorage=" + dataStorage
-							+ " in library name=" + library.getName() + " id=" + library.getId() + " in Galaxy url="
-							+ galaxyInstance.getGalaxyUrl());
-				} else {
-					logger.debug("Failed to upload file to Galaxy, response \"" + uploadResponse.getStatus() + " "
-							+ uploadResponse.getClientResponseStatus() + "\", " + "response message=\""
-							+ uploadResponse.getEntity(String.class) + "\"" + " path="
-							+ samplePath(rootFolder, sample, file) + " from local path=" + file.getAbsolutePath()
-							+ " dataStorage=" + dataStorage + " in library name=" + library.getName() + " id="
-							+ library.getId() + " in Galaxy url=" + galaxyInstance.getGalaxyUrl());
-				}
+			if (!skipUploadForFile(file, sampleFilePathGalaxy, librariesClient, library, libraryMap)) {
+				success &= doUploadWithLogging(persistedSampleFolder, file, librariesClient, library,
+						samplePath(rootFolder, sample, file));
 			}
 		}
 
@@ -568,7 +623,7 @@ public class GalaxyUploaderAPI {
 
 			Library library = galaxyLibrarySearchAdmin.findById(libraryID);
 
-			Map<String, LibraryContent> libraryContentMap = galaxyLibraryContentSearchAdmin.libraryContentAsMap(libraryID);
+			Map<String, List<LibraryContent>> libraryContentMap = galaxyLibraryContentSearchAdmin.libraryContentAsMap(libraryID);
 
 			LibraryFolder illuminaFolder;
 

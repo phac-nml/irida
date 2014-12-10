@@ -199,12 +199,41 @@ public class GalaxyLibraryContentSearchIT {
 				new GalaxyProjectName("GalaxyLibraryContentSearchIT_testGalaxyLibraryContentAsMapSuccess");
 		GalaxyFolderName folderName = new GalaxyFolderName("folder");
 		Library createdLibrary = buildLibrary(libraryName, folderName);
-		Map<String, LibraryContent> foundContent = 
+		Map<String, List<LibraryContent>> foundContent = 
 				galaxyLibraryContentSearch.libraryContentAsMap(createdLibrary.getId());
 		assertNotNull(foundContent);
 		assertEquals(2, foundContent.size());
 		assertTrue(foundContent.containsKey(folderNameToPath(folderName).getName()));
 		assertTrue(foundContent.containsKey("/"));
+		assertEquals(1, foundContent.get(folderNameToPath(folderName).getName()).size());
+	}
+	
+	/**
+	 * Tests getting library content as a map successfully with duplicate folder names.
+	 * @throws ExecutionManagerObjectNotFoundException 
+	 */
+	@Test
+	public void testGalaxyLibraryContentAsMapDuplicateSuccess() throws ExecutionManagerObjectNotFoundException {
+		GalaxyProjectName libraryName =
+				new GalaxyProjectName("GalaxyLibraryContentSearchIT_testGalaxyLibraryContentAsMapDuplicateSuccess");
+		GalaxyFolderName folderName = new GalaxyFolderName("folder");
+		Library createdLibrary = buildLibrary(libraryName, folderName);
+		
+		// build duplicate folder
+		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient();
+		LibraryContent rootContent = librariesClient.getRootFolder(createdLibrary.getId());
+		LibraryFolder folder = new LibraryFolder();
+		folder.setFolderId(rootContent.getId());
+		folder.setName(folderName.getName());
+		librariesClient.createFolder(createdLibrary.getId(), folder);
+		
+		Map<String, List<LibraryContent>> foundContent = 
+				galaxyLibraryContentSearch.libraryContentAsMap(createdLibrary.getId());
+		assertNotNull(foundContent);
+		assertEquals(2, foundContent.size());
+		assertTrue(foundContent.containsKey(folderNameToPath(folderName).getName()));
+		assertTrue(foundContent.containsKey("/"));
+		assertEquals(2, foundContent.get(folderNameToPath(folderName).getName()).size());
 	}
 	
 	/**
