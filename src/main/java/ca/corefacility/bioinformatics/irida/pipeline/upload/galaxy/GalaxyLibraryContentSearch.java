@@ -3,20 +3,19 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URL;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.LibraryContentId;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.sun.jersey.api.client.UniformInterfaceException;
-
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.LibraryContentId;
 
 public class GalaxyLibraryContentSearch extends GalaxySearch<LibraryContent, LibraryContentId> {
 
@@ -101,16 +100,6 @@ public class GalaxyLibraryContentSearch extends GalaxySearch<LibraryContent, Lib
 		checkNotNull(libraryId, "libraryId is null");
 
 		List<LibraryContent> libraryContents = getLibraryContents(libraryId);
-		Map<String, List<LibraryContent>> libraryContentsMap = new HashMap<>();
-		
-		for (LibraryContent content : libraryContents) {
-			if (!libraryContentsMap.containsKey(content.getName())) {
-				libraryContentsMap.put(content.getName(), new LinkedList<>());
-			}
-			
-			List<LibraryContent> libraryContentList = libraryContentsMap.get(content.getName());
-			libraryContentList.add(content);
-		}
-		return libraryContentsMap;
+		return libraryContents.stream().collect(Collectors.groupingBy(LibraryContent::getName));
 	}
 }
