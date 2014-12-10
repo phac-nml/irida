@@ -161,6 +161,15 @@
 			</table>
 		</div>
 	</div>
+	<script type="text/ng-template" id="/template/notification.html">
+		<div class="irida-notification__item">
+			<p><b>{{title}}</b></p>
+			<p>{{message}}</p>
+			<div ng-hide="error">
+				<progressbar value="progress"></progressbar>
+			</div>
+		</div>
+	</script>
 </main>
 
 <th:block layout:fragment="scripts" th:inline="javascript">

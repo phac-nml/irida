@@ -70,7 +70,7 @@
   margin-bottom: 1rem;
   padding: 1rem;
   border-radius: 4px;
-  transition: opacity 500ms linear;
+  transition: all 500ms linear;
 
   .progress, .progress-bar {
     height: 10px;
@@ -79,6 +79,7 @@
 
   p {
     color: #222;
+    font-size: .8em;
   }
 
   &:hover {
@@ -86,8 +87,18 @@
     cursor: pointer;
   }
 
-  &.remove {
+  &.error {
+    background-color: $color-danger;
+    p {
+      color: #fff;
+    }
+  }
+
+  &.success {
     background-color: $color-success;
+  }
+
+  &.remove {
     opacity: 0;
   }
 }

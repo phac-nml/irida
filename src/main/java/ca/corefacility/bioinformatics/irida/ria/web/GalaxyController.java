@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyUserNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.LibraryUploadFileSizeException;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
@@ -84,6 +88,9 @@ public class GalaxyController {
 		} catch (ConstraintViolationException e) {
 			result.put("result", "error");
 			result.put("errors", BaseController.getErrorsFromViolationException(e));
+		} catch (AccessDeniedException e) {
+			result.put("result", "error");
+			result.put("errors", ImmutableMap.of("accessDenied", messageSource.getMessage("galaxy.upload-error.access-denied", new Object[]{}, locale)));
 		}
 		return result;
 	}
@@ -102,21 +109,36 @@ public class GalaxyController {
 	public @ResponseBody Map<String, Object> pollGalaxy(@RequestParam String workerId, HttpSession session,
 			Locale locale) throws NoSuchValueException {
 		// TODO (14-12-09 - josh): Handle exception properly
-		Map<String, Object> result = null;
-		UploadWorker worker = (UploadWorker) session.getAttribute(workerId);
+		Map<String, Object> result = new HashMap<>();
 
-		if (worker != null) {
+		if (session.getAttribute(workerId) instanceof UploadWorker) {
+			UploadWorker worker = (UploadWorker) session.getAttribute(workerId);
 
-			result = new HashMap<>();
 			result.put("finished", worker.isFinished());
 			result.put("progress", worker.getProportionComplete());
 
 			if (worker.exceptionOccured()) {
 				logger.error("Galaxy Upload Exception: ", worker.getUploadException());
-				result.put("error", worker.getUploadException());
-			}
+				result.put("title",
+						messageSource.getMessage("galaxy.upload-error.title", new Object[] { }, locale));
+				result.put("error", true);
 
-			if (worker.isFinished()) {
+				UploadException ex = worker.getUploadException();
+				if (ex instanceof LibraryUploadFileSizeException) {
+					LibraryUploadFileSizeException lex = (LibraryUploadFileSizeException) ex;
+					result.put("message", messageSource
+							.getMessage("galaxy.upload-error.message",
+									new Object[] { lex.getLocalFile().getName() },
+									locale));
+				}
+				else if (ex instanceof GalaxyUserNotFoundException) {
+					GalaxyUserNotFoundException gex = (GalaxyUserNotFoundException)ex;
+					result.put("message",
+							messageSource.getMessage("galaxy.upload-error.email", new Object[] {
+									gex.getUserEmail().getName()
+							}, locale));
+				}
+			} else if (worker.isFinished()) {
 				session.removeAttribute(workerId);
 				result.put("title", messageSource.getMessage("galaxy.finished-title", new Object[] { }, locale));
 				result.put("message", messageSource.getMessage("galaxy.finished-message", new Object[] {
@@ -132,15 +154,16 @@ public class GalaxyController {
 							worker.getTotalSamples()
 					}, locale));
 				} catch (NoSuchValueException e) {
-					result.put("msg", messageSource.getMessage("galaxy.upload-initialized", new Object[] { }, locale));
+					// This seems to occur on the first few polls, therefore tell the user it is being initialized..
+					result.put("msg",
+							messageSource.getMessage("galaxy.upload-initialized", new Object[] { }, locale));
 				}
 
 			}
 		} else {
-			result = ImmutableMap.of("error", messageSource.getMessage("galaxy.error-poll", new Object[] { }, locale));
+			result.put("error", messageSource.getMessage("galaxy.error-poll", new Object[] { }, locale));
 		}
 
 		return result;
 	}
-
 }
