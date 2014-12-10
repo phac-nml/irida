@@ -279,22 +279,23 @@ insert into related_project (`subject_id`, `relatedProject_id`, `createdDate`) V
 -- remote apis
 insert into remote_api (name,clientId,clientSecret,description,serviceURI,createdDate) values ("Test Web Client","webClient","webClientSecret","A local testing api","http://localhost:8080",now());
 
+-- sequence run
+insert into sequencing_run (createdDate, description, modifiedDate) values ('2014-07-30 08:24:33','Superbug','2014-07-30 08:24:33');
+insert into miseq_run(id,workflow) values (1,"test workflow");
+
 -- sequence files
-insert into sequence_file (createdDate, fileRevisionNumber, modifiedDate, filePath, sequencingRun_id) values ('2014-07-30 08:24:34',2,'2014-07-30 08:24:34','/tmp/sequence-files/1/2/02-2222_S1_L001_R1_001.fastq',NULL);
-insert into sequence_file (createdDate, fileRevisionNumber, modifiedDate, filePath, sequencingRun_id) values ('2014-07-30 08:24:34',2,'2014-07-30 08:24:34','/tmp/sequence-files/2/2/02-2222_S1_L001_R2_001.fastq',NULL);
-insert into sequence_file (createdDate, fileRevisionNumber, modifiedDate, filePath, sequencingRun_id) values ('2014-07-30 08:24:35',2,'2014-07-30 08:24:35','/tmp/sequence-files/3/2/01-1111_S1_L001_R1_001.fastq',NULL);
-insert into sequence_file (createdDate, fileRevisionNumber, modifiedDate, filePath, sequencingRun_id) values ('2014-07-30 08:24:35',2,'2014-07-30 08:24:35','/tmp/sequence-files/4/2/01-1111_S1_L001_R2_001.fastq',NULL);
-insert into sequence_file (createdDate, fileRevisionNumber, modifiedDate, filePath, sequencingRun_id) values ('2014-07-30 08:24:35',2,'2014-07-30 08:24:35','/tmp/sequence-files/5/2/03-3333_S1_L001_R1_001.fastq',NULL);
-insert into sequence_file (createdDate, fileRevisionNumber, modifiedDate, filePath, sequencingRun_id) values ('2014-07-30 08:24:35',2,'2014-07-30 08:24:35','/tmp/sequence-files/6/2/03-3333_S1_L001_R2_001.fastq',NULL);
+insert into sequence_file (createdDate, fileRevisionNumber, modifiedDate, filePath, sequencingRun_id) values ('2014-07-30 08:24:34',2,'2014-07-30 08:24:34','/tmp/sequence-files/1/2/02-2222_S1_L001_R1_001.fastq',1);
+insert into sequence_file (createdDate, fileRevisionNumber, modifiedDate, filePath, sequencingRun_id) values ('2014-07-30 08:24:34',2,'2014-07-30 08:24:34','/tmp/sequence-files/2/2/02-2222_S1_L001_R2_001.fastq',1);
+insert into sequence_file (createdDate, fileRevisionNumber, modifiedDate, filePath, sequencingRun_id) values ('2014-07-30 08:24:35',2,'2014-07-30 08:24:35','/tmp/sequence-files/3/2/01-1111_S1_L001_R1_001.fastq',1);
+insert into sequence_file (createdDate, fileRevisionNumber, modifiedDate, filePath, sequencingRun_id) values ('2014-07-30 08:24:35',2,'2014-07-30 08:24:35','/tmp/sequence-files/4/2/01-1111_S1_L001_R2_001.fastq',1);
+insert into sequence_file (createdDate, fileRevisionNumber, modifiedDate, filePath, sequencingRun_id) values ('2014-07-30 08:24:35',2,'2014-07-30 08:24:35','/tmp/sequence-files/5/2/03-3333_S1_L001_R1_001.fastq',1);
+insert into sequence_file (createdDate, fileRevisionNumber, modifiedDate, filePath, sequencingRun_id) values ('2014-07-30 08:24:35',2,'2014-07-30 08:24:35','/tmp/sequence-files/6/2/03-3333_S1_L001_R2_001.fastq',1);
 
 INSERT INTO `sequence_file` (id, createdDate, fileRevisionNumber, modifiedDate, filePath, sequencingRun_id) VALUES (7,'2014-08-06 10:01:02',2,'2014-08-06 10:01:02','/tmp/sequence-files/7/2/02-2222_S1_L001_R1_001.fastq',NULL),(8,'2014-08-06 10:01:03',2,'2014-08-06 10:01:03','/tmp/sequence-files/8/2/02-2222_S1_L001_R2_001.fastq',NULL),(9,'2014-08-06 10:01:03',2,'2014-08-06 10:01:03','/tmp/sequence-files/9/2/01-1111_S1_L001_R1_001.fastq',NULL),(10,'2014-08-06 10:01:03',2,'2014-08-06 10:01:03','/tmp/sequence-files/10/2/01-1111_S1_L001_R2_001.fastq',NULL),(11,'2014-08-06 10:01:04',2,'2014-08-06 10:01:04','/tmp/sequence-files/11/2/03-3333_S1_L001_R1_001.fastq',NULL),(12,'2014-08-06 10:01:04',2,'2014-08-06 10:01:04','/tmp/sequence-files/12/2/03-3333_S1_L001_R2_001.fastq',NULL);
 
 
 -- sequencefile sample
 INSERT INTO `sequencefile_sample` (id, createdDate, sample_id, sequencefile_id) VALUES (1,'2014-07-30 08:24:34',52,1),(2,'2014-07-30 08:24:34',52,2),(3,'2014-07-30 08:24:35',51,3),(4,'2014-07-30 08:24:35',51,4),(5,'2014-07-30 08:24:35',53,5),(6,'2014-07-30 08:24:35',53,6),(7,'2014-08-06 10:01:03',52,7),(8,'2014-08-06 10:01:03',52,8),(9,'2014-08-06 10:01:03',51,9),(10,'2014-08-06 10:01:04',51,10),(11,'2014-08-06 10:01:04',53,11),(12,'2014-08-06 10:01:04',53,12);
-
--- sequence run
-insert into sequencing_run (createdDate, description, modifiedDate) values ('2014-07-30 08:24:33','Superbug','2014-07-30 08:24:33');
 
 -- analysis
 INSERT INTO `analysis` (id, createdDate, description, executionManagerAnalysisId, modifiedDate) VALUES (1,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc','2014-07-30 08:24:35'),(2,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc','2014-07-30 08:24:35'),(3,'2014-07-30 08:24:34','Analysis produced by FastQC','internal-fastqc','2014-07-30 08:24:34'),(4,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc','2014-07-30 08:24:35'),(5,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc','2014-07-30 08:24:35'),(6,'2014-07-30 08:24:35','Analysis produced by FastQC','internal-fastqc','2014-07-30 08:24:35'),(7,'2014-08-06 10:01:04','Analysis produced by FastQC','internal-fastqc','2014-08-06 10:01:04'),(8,'2014-08-06 10:01:03','Analysis produced by FastQC','internal-fastqc','2014-08-06 10:01:03'),(9,'2014-08-06 10:01:03','Analysis produced by FastQC','internal-fastqc','2014-08-06 10:01:03'),(10,'2014-08-06 10:01:04','Analysis produced by FastQC','internal-fastqc','2014-08-06 10:01:04'),(11,'2014-08-06 10:01:04','Analysis produced by FastQC','internal-fastqc','2014-08-06 10:01:04'),(12,'2014-08-06 10:01:03','Analysis produced by FastQC','internal-fastqc','2014-08-06 10:01:03');
