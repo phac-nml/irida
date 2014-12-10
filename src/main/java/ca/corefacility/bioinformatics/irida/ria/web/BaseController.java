@@ -30,7 +30,7 @@ public class BaseController {
 	 * 		{@link javax.validation.ConstraintViolationException} for the form submitted.
 	 * @return Map of string {fieldName, error}
 	 */
-	protected Map<String, String> getErrorsFromViolationException(ConstraintViolationException e) {
+	public static Map<String, String> getErrorsFromViolationException(ConstraintViolationException e) {
 		Map<String, String> errors = new HashMap<>();
 		for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
 			String message = violation.getMessage();
@@ -53,7 +53,7 @@ public class BaseController {
 	 * 		The locale of the request
 	 * @return A Map of strings with the property names and error messages
 	 */
-	protected Map<String, String> getErrorsFromDataIntegrityViolationException(DataIntegrityViolationException e,
+	public static Map<String, String> getErrorsFromDataIntegrityViolationException(DataIntegrityViolationException e,
 			Map<String, ExceptionPropertyAndMessage> messageNames, MessageSource messageSource, Locale locale) {
 		Map<String, String> errors = new HashMap<>();
 		boolean found = false;

@@ -35,7 +35,7 @@ import com.google.common.collect.ImmutableMap;
  */
 @Controller
 @RequestMapping(value = "/galaxy")
-public class GalaxyController extends BaseController {
+public class GalaxyController {
 	private static final Logger logger = LoggerFactory.getLogger(GalaxyController.class);
 
 	private final MessageSource messageSource;
@@ -83,7 +83,7 @@ public class GalaxyController extends BaseController {
 			result.put("msg", messageSource.getMessage("galaxy.upload-initialized", new Object[] { }, locale));
 		} catch (ConstraintViolationException e) {
 			result.put("result", "error");
-			result.put("errors", getErrorsFromViolationException(e));
+			result.put("errors", BaseController.getErrorsFromViolationException(e));
 		}
 		return result;
 	}
