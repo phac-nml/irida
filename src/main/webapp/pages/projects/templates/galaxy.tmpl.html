@@ -14,7 +14,7 @@
 		<div class="form-group">
 			<label for="name" th:text="#{galaxy.label.library}"></label>
 			<input id="name" type="text" class="form-control" th:attr="ng-init='gCtrl.setName(\'' + ${name} + '\');'"  ng-model="gCtrl.name"/>
-			<div id="galaxy-error" ng-show="gCtrl.errors" class="alert alert-danger" role="alert">{{gCtrl.errors}}</div>
+			<div id="galaxy-error" ng-show="gCtrl.errors.objectName" class="alert alert-danger" role="alert">{{gCtrl.errors.objectName}}</div>
 		</div>
 	</div>
 	<div class="modal-footer">
