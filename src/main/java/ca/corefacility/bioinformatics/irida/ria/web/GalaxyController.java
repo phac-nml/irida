@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.ConstraintViolationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,15 +71,20 @@ public class GalaxyController {
 			@RequestParam(value = "sampleIds[]") List<Long> sampleIds, HttpSession session, Locale locale) {
 		List<Sample> samples = (List<Sample>) sampleService.readMultiple(sampleIds);
 		Map<String, Object> result = new HashMap<>();
-		UploadWorker worker = galaxyUploadService
-				.performUploadSelectedSamples(new HashSet<>(samples), new GalaxyProjectName(name),
-						new GalaxyAccountEmail(email));
-		UUID randomUUID = UUID.randomUUID();
-		String sessionAttr = randomUUID + "-gw";
-		session.setAttribute(sessionAttr, worker);
-		result.put("result", "success");
-		result.put("workerId", sessionAttr);
-		result.put("msg", messageSource.getMessage("galaxy.upload-initialized", new Object[] { }, locale));
+		try {
+			UploadWorker worker = galaxyUploadService
+					.performUploadSelectedSamples(new HashSet<>(samples), new GalaxyProjectName(name),
+							new GalaxyAccountEmail(email));
+			UUID randomUUID = UUID.randomUUID();
+			String sessionAttr = randomUUID + "-gw";
+			session.setAttribute(sessionAttr, worker);
+			result.put("result", "success");
+			result.put("workerId", sessionAttr);
+			result.put("msg", messageSource.getMessage("galaxy.upload-initialized", new Object[] { }, locale));
+		} catch (ConstraintViolationException e) {
+			result.put("result", "error");
+			result.put("errors", BaseController.getErrorsFromViolationException(e));
+		}
 		return result;
 	}
 
@@ -94,8 +100,7 @@ public class GalaxyController {
 	 */
 	@RequestMapping(value = "/poll/workers", method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> pollGalaxy(@RequestParam String workerId, HttpSession session,
-			Locale locale)
-			throws NoSuchValueException {
+			Locale locale) throws NoSuchValueException {
 		// TODO (14-12-09 - josh): Handle exception properly
 		Map<String, Object> result = null;
 		UploadWorker worker = (UploadWorker) session.getAttribute(workerId);
