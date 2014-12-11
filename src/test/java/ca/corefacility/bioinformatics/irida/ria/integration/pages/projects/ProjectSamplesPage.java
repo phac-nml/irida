@@ -266,4 +266,39 @@ public class ProjectSamplesPage extends AbstractPage {
 		input.sendKeys(organism);
 		waitForTime(550);
 	}
+
+	// Galaxy
+	public boolean isGalaxyModalOpen() {
+		return driver.findElements(By.id("galaxy-modal")).size() > 0;
+	}
+
+	public void updateGalaxyEmail(String email) {
+		WebElement emailField = driver.findElement(By.id("email"));
+		emailField.clear();
+		emailField.sendKeys(email);
+		waitForTime(400);
+	}
+
+	public void updateGalaxyDataLibraryInput(String name) {
+		WebElement library = driver.findElement(By.id("library"));
+		library.clear();
+		library.sendKeys(name);
+		waitForTime(400);
+	}
+
+	public boolean isGalaxySubmitBtnEnabled () {
+		return driver.findElement(By.id("galaxy-submit-btn")).isEnabled();
+	}
+
+	public boolean isEmailErrorRequiredMessageDisplayed () {
+		return driver.findElement(By.id("error-email-required")).isDisplayed();
+	}
+
+	public boolean isEmailErrorFormatMessageDisaplayed() {
+		return driver.findElement(By.id("error-email-format")).isDisplayed();
+	}
+
+	public boolean isLibraryErrorRequiredMessageDisplayed() {
+		return driver.findElement(By.id("error-library-required")).isDisplayed();
+	}
 }
