@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -460,6 +461,46 @@ public class ProjectSamplesPageIT {
 		assertEquals(3, page.getFilteredSampleCount());
 		page.filterByOrganism("Listeria");
 		assertEquals(2, page.getFilteredSampleCount());
+	}
+
+	@Test
+	@Ignore
+	public void testGalaxyErrorMessages() {
+		LoginPage.loginAsAdmin(driver);
+		page.goToPage();
+
+		// Select samples
+		page.clickBtn("selectBtn");
+		page.clickBtn("selectAllBtn");
+
+		// Click send to Galaxy button
+		page.clickBtn("exportOptionsBtn");
+		page.clickBtn("exportGalaxyBtn");
+		assertTrue(page.isGalaxyModalOpen());
+		assertTrue(page.isGalaxySubmitBtnEnabled());
+
+		// Try empty email
+		page.updateGalaxyEmail("");
+		assertTrue(page.isEmailErrorRequiredMessageDisplayed());
+		assertFalse(page.isGalaxySubmitBtnEnabled());
+
+		// Try a bad email
+		page.updateGalaxyEmail("aaaa");
+		assertTrue(page.isEmailErrorFormatMessageDisaplayed());
+		assertFalse(page.isGalaxySubmitBtnEnabled());
+
+		// Send good email
+		page.updateGalaxyEmail("test@test.com");
+		assertTrue(page.isGalaxySubmitBtnEnabled());
+
+		// Remove the data library name
+		page.updateGalaxyDataLibraryInput("");
+		assertTrue(page.isLibraryErrorRequiredMessageDisplayed());
+		assertFalse(page.isGalaxySubmitBtnEnabled());
+
+		// Send good library name
+		page.updateGalaxyDataLibraryInput("TestLibrary");
+		assertTrue(page.isGalaxySubmitBtnEnabled());
 	}
 
 	@Test

@@ -91,6 +91,8 @@
         src="/resources/bower_components/angular/angular.min.js"></script>
 <script th:src="@{/resources/bower_components/angular-animate/angular-animate.min.js}"
         src="/resources/bower_components/angular-animate/angular-animate.min.js"></script>
+<script src="/resources/bower_components/angular-messages/angular-messages.min.js"
+        th:src="@{/resources/bower_components/angular-messages/angular-messages.min.js}"></script>
 <script th:src="@{/resources/bower_components/angular-resource/angular-resource.min.js}"
         src="/resources/bower_components/angular-resource/angular-resource.min.js"></script>
 <script th:src="@{/resources/bower_components/angular-sanitize/angular-sanitize.min.js}"
@@ -109,7 +111,7 @@
 
 <script th:inline="javascript">
 	/*<![CDATA[*/
-	window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ngAnimate', 'ui.bootstrap', 'ui.utils', 'restangular', 'irida.notifications']);
+	window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ngAnimate', 'ngMessages', 'ui.bootstrap', 'ui.utils', 'restangular', 'irida.notifications']);
 	var app = angular.module('irida', window.dependencies)
 			.value('BASE_URL', /*[[@{/}]]*/ '/')
 		// This configures the base url globally for all restangular calls.

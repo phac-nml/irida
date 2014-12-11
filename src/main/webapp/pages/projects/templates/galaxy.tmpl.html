@@ -1,4 +1,4 @@
-<div id="merge-samples-modal" class="form">
+<form name="galaxyForm" id="galaxy-modal" class="form">
 	<div class="modal-header">
 		<h3 class="modal-title">
 			<span class="fa fa-fw fa-cloud"></span>
@@ -6,15 +6,22 @@
 		</h3>
 	</div>
 	<div class="modal-body">
-		<div class="form-group">
+		<div class="form-group" th:attr="ng-init='gCtrl.setEmail(\'' + ${email} + '\')'">
 			<label for="email" th:text="#{galaxy.label.email}"></label>
-			<input id="email" class="form-control" type="email" style="width: 100%" th:attr="ng-init='gCtrl.setEmail(\'' + ${email} + '\')'" ng-model="gCtrl.email"/>
+			<input required="required" name="email" id="email" class="form-control" type="email" style="width: 100%" ng-model="gCtrl.email" ng-model-options="{ debounce: 300 }"/>
 			<div class="alert alert-danger" role="alert" ng-show="gCtrl.errors.galaxyAccountEmail">{{gCtrl.errors.galaxyAccountEmail}}</div>
+			<div ng-messages="galaxyForm.email.$error">
+				<div id="error-email-required" class="alert alert-danger" ng-message="required" th:text="#{form.error.email.required}">Email address is required</div>
+				<div id="error-email-format" class="alert alert-danger" ng-message="email" th:text="#{from.error.email.format}">Please enter a valid email address.</div>
+			</div>
 		</div>
-		<div class="form-group">
-			<label for="name" th:text="#{galaxy.label.library}"></label>
-			<input id="name" type="text" class="form-control" th:attr="ng-init='gCtrl.setName(\'' + ${name} + '\');'"  ng-model="gCtrl.name"/>
+		<div class="form-group" th:attr="ng-init='gCtrl.setName(\'' + ${name} + '\');'">
+			<label for="library" th:text="#{galaxy.label.library}"></label>
+			<input name="library" id="library" type="text" class="form-control"  ng-model="gCtrl.name" required="required"  ng-model-options="{ debounce: 300 }"/>
 			<div id="galaxy-error" ng-show="gCtrl.errors.objectName" class="alert alert-danger" role="alert">{{gCtrl.errors.objectName}}</div>
+			<div ng-messages="galaxyForm.library.$error">
+				<div id="error-library-required" class="alert alert-danger" ng-message="required" th:text="#{galaxy.form.library.required}">Data Library Name is required.</div>
+			</div>
 		</div>
 		<div class="form-group" ng-show="gCtrl.errors.accessDenied">
 			<p class="alert alert-warning">{{ gCtrl.errors.accessDenied }}</p>
@@ -22,9 +29,9 @@
 	</div>
 	<div class="modal-footer">
 		<button class="btn btn-default" ng-click="gCtrl.close()" th:text="#{form.btn.close}">Close</button>
-		<button ng-disabled="gCtrl.uploading" class="btn btn-primary" ng-click="gCtrl.upload()">
+		<button id="galaxy-submit-btn" ng-disabled="galaxyForm.$invalid || gCtrl.uploading" class="btn btn-primary" ng-click="gCtrl.upload()">
 			<span class="fa fa-fw" ng-class="gCtrl.uploading ? 'fa-spinner fa-spin' : 'fa-cloud-upload'"></span>
 			&nbsp;<span th:text="#{galaxy.btn.upload}"></span>
 		</button>
 	</div>
-</div>
+</form>
