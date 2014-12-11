@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
+import com.google.common.base.Strings;
+
 /**
  * Represents the common elements in a page within the application.
  *
@@ -20,7 +22,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilit
  */
 public class AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractPage.class);
-	private static final String APPLICATION_PORT = System.getProperty("jetty.port");
+	private static final String APPLICATION_PORT = Strings.isNullOrEmpty(System.getProperty("jetty.port")) ? "8080" : System.getProperty("jetty.port");
 	protected static final String BASE_URL = "http://localhost:" + APPLICATION_PORT + "/";
 	private static final Long TIME_OUT_IN_SECONDS = 10L;
 

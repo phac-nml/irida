@@ -204,6 +204,11 @@ public class ProjectSamplesPageIT {
 		assertEquals(1, page.getTotalSelectedSamplesCount());
 		page.clickLastPageButton();
 		assertEquals(1, page.getTotalSelectedSamplesCount());
+
+		// If you go to another page and come back samples should still be selected
+		page.goToPage("3");
+		page.goToPage();
+		assertEquals(1, page.getTotalSelectedSamplesCount());
 	}
 
 	@Test
