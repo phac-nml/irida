@@ -236,7 +236,6 @@
       $rootScope.cgPromise = base.customGET("").then(function (data) {
         var selectedKeys = storage.getKeys();
         $rootScope.$broadcast('COUNT', {count: selectedKeys.length});
-        console.log(selectedKeys)
         _.each(data.samples, function(s) {
             if(_.contains(selectedKeys, s.id + "")) {
               s.selected = true;
