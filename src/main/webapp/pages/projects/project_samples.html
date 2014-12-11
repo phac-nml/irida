@@ -16,6 +16,16 @@
 		<span ng-show="sf.total === 0 || sf.count !== sf.total" class="badge badge-primary pull-right ng-cloak"><span id="samples-filtered" ng-bind="sf.count">0</span> <span th:text="#{grammar.of}"></span> <span id="samples-total" ng-bind="sf.total">0</span></span>
 	</div>
 	<div class="sidebar__body">
+
+		<div class="form-group" ng-controller="FilterCountCtrl as filterCountCtrl">
+			<label for="count" th:text="#{table.filter.count}">Page Size</label>
+			<select id="count" class="form-control" style="width: 100%;" ng-model="filterCountCtrl.count" ng-change="filterCountCtrl.updateCount()">
+				<option value="10">10</option>
+				<option value="25">25</option>
+				<option value="50">50</option>
+				<option value="All">All</option>
+			</select>
+		</div>
 		<div class="form-group">
 			<label for="sample-name-filter" th:text="#{project.sample.filter-name}">_Sample Name</label>
 

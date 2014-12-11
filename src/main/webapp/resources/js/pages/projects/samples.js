@@ -265,31 +265,31 @@
 
     function link(scope, element, attrs) {
       element.on('click', function () {
-          removeElement(300);
+        removeElement(300);
       });
 
       element.on('$destroy', function () {
         $timeout.cancel(timer);
       });
 
-      var poll = function poll () {
-          timer = $timeout(function() {
-            GalaxyService.poll(attrs.workerid).then(function (result) {
-              scope.progress = Math.ceil(result.data.progress * 100);
-              scope.title = result.data.title;
-              scope.message = result.data.message;
-              if (result.data.finished) {
-                removeElement(2000);
-              }
-              else if(result.error) {
-                // TODO: Handle in next merge.
-                console.log(result.data.error)
-              }
-              else {
-                poll();
-              }
-            });
-          }, 500);
+      var poll = function poll() {
+        timer = $timeout(function () {
+          GalaxyService.poll(attrs.workerid).then(function (result) {
+            scope.progress = Math.ceil(result.data.progress * 100);
+            scope.title = result.data.title;
+            scope.message = result.data.message;
+            if (result.data.finished) {
+              removeElement(2000);
+            }
+            else if (result.error) {
+              // TODO: Handle in next merge.
+              console.log(result.data.error)
+            }
+            else {
+              poll();
+            }
+          });
+        }, 500);
       };
 
       function removeElement(length) {
@@ -341,6 +341,19 @@
       vm.page = args.page;
       vm.update();
     });
+  }
+
+  function FilterCountCtrl(filter, SampleService) {
+    var vm = this;
+    vm.count = filter.count;
+
+    vm.updateCount = function () {
+      if (vm.count !== 'All') {
+        filter.count = vm.count;
+      } else {
+        filter.count = SampleService.getNumSamples();
+      }
+    }
   }
 
   /*[- */
@@ -651,6 +664,7 @@
     .directive('galaxyNotification', ['$timeout', 'GalaxyService', galaxyNotification])
     .controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
+    .controller('FilterCountCtrl', ['FilterFactory', 'SamplesService', FilterCountCtrl])
     .controller('SamplesTableCtrl', ['SamplesService', 'FilterFactory', SamplesTableCtrl])
     .controller('MergeCtrl', ['$scope', '$modalInstance', 'Select2Service', 'SamplesService', 'samples', MergeCtrl])
     .controller('CopyMoveCtrl', ['$modalInstance', '$rootScope', 'BASE_URL', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl])
