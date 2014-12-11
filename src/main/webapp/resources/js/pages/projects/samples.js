@@ -617,7 +617,6 @@
 
     vm.upload = function () {
       vm.uploading = true;
-      console.log(vm.email);
       GalaxyService.upload({email: vm.email, name: vm.name, sampleIds: sampleIds}).then(function (response) {
         vm.uploading = false;
         if (response.data.result === 'success') {
