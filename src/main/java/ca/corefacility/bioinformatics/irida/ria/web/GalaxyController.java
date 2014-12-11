@@ -140,7 +140,7 @@ public class GalaxyController {
 				}
 				else {
 					result.put("message",
-							messageSource.getMessage("galaxy.upload-error.generic", new Object[] { ex.getMessage() }, locale));
+							messageSource.getMessage("galaxy.upload-error.generic", new Object[] { }, locale));
 				}
 			} else if (worker.isFinished()) {
 				session.removeAttribute(workerId);
