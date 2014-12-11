@@ -266,4 +266,14 @@ public class ProjectSamplesPage extends AbstractPage {
 		input.sendKeys(organism);
 		waitForTime(550);
 	}
+
+	public void selectPageSize(String count) {
+		List<WebElement> options = driver.findElements(By.cssSelector("#count option"));
+		for (WebElement el : options) {
+			if (el.getAttribute("value").equals(count)) {
+				el.click();
+				break;
+			}
+		}
+	}
 }
