@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+  <id>1f9ea289-5053-4e4a-bc76-1f0c60b179f8</id>
+  <name>SNVPhylTest</name>
+  <version>0.1</version>
+  <author>Aaron Petkau</author>
+  <email>aaron.petkau@phac-aspc.gc.ca</email>
+  <analysis_class>ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline</analysis_class>
+  <inputs>
+    <sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
+    <reference>reference</reference>
+  </inputs>
+  <outputs>
+    <output name="tree" fileName="phylogeneticTree.txt"/>
+    <output name="matrix" fileName="snpMatrix.tsv"/>
+    <output name="table" fileName="snpTable.tsv"/>
+  </outputs>
+  <tools>
+    <tool>
+      <name>sam_to_bam</name>
+      <id>toolshed.g2.bx.psu.edu/repos/devteam/sam_to_bam/sam_to_bam/1.1.4</id>
+      <version>1.1.4</version>
+      <owner>devteam</owner>
+      <url>http://toolshed.g2.bx.psu.edu/</url>
+      <revision>8176b2575aa1</revision>
+    </tool>
+  </tools>
+</iridaWorkflow>

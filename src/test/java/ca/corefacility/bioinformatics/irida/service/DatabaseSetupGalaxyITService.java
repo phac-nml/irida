@@ -31,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phy
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflowRepository;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxySimplified;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -62,11 +63,14 @@ public class DatabaseSetupGalaxyITService {
 	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
 
 	@Autowired
+	private AnalysisExecutionServiceGalaxySimplified analysisExecutionServiceGalaxySimplified;
+
+	@Autowired
 	private AnalysisSubmissionService analysisSubmissionService;
 
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
-	
+
 	private UUID workflowId = UUID.randomUUID();
 
 	/**
@@ -131,10 +135,46 @@ public class DatabaseSetupGalaxyITService {
 
 		AnalysisSubmission submission = analysisSubmissionService
 				.create(new AnalysisSubmissionPhylogenomics("my analysis",
-						sequenceFiles, referenceFile, remoteWorkflow, workflowId));
+						sequenceFiles, referenceFile, remoteWorkflow,
+						workflowId));
 
 		return analysisSubmissionRepository.getByType(submission.getId(),
 				AnalysisSubmissionPhylogenomics.class);
+	}
+
+	/**
+	 * Sets up an AnalysisSubmission and saves all dependencies in database.
+	 * 
+	 * @param sampleId
+	 *            The id of the sample to associate with the given sequence
+	 *            file.
+	 * @param sequenceFilePath
+	 *            The path to an input sequence file for this test.
+	 * @param referenceFilePath
+	 *            The path to an input reference file for this test.
+	 * @param iridaWorkflowID
+	 *            The id of an irida workflow.
+	 * @return An AnalysisSubmissionPhylogenomics which has been saved to the
+	 *         database.
+	 */
+	public AnalysisSubmission setupSubmissionInDatabase(long sampleId,
+			Path sequenceFilePath, Path referenceFilePath, UUID iridaWorkflowId) {
+
+		SequenceFile sequenceFile = setupSampleSequenceFileInDatabase(sampleId,
+				sequenceFilePath).get(0);
+
+		Set<SequenceFile> sequenceFiles = new HashSet<>();
+		sequenceFiles.add(sequenceFile);
+
+		ReferenceFile referenceFile = referenceFileRepository
+				.save(new ReferenceFile(referenceFilePath));
+
+		AnalysisSubmission submission = analysisSubmissionService
+				.create(new AnalysisSubmission("my analysis", sequenceFiles,
+						referenceFile, iridaWorkflowId));
+
+		return analysisSubmissionRepository.getByType(submission.getId(),
+				AnalysisSubmission.class);
 	}
 
 	/**
@@ -208,6 +248,42 @@ public class DatabaseSetupGalaxyITService {
 				WorkflowStatus workflowStatus;
 				do {
 					workflowStatus = analysisExecutionServicePhylogenomics
+							.getWorkflowStatus(analysisSubmission);
+					Thread.sleep(pollingTime);
+				} while (!WorkflowState.OK.equals(workflowStatus.getState()));
+
+				return null;
+			}
+
+		});
+		try {
+			waitForHistory.get(totalSecondsWait, TimeUnit.SECONDS);
+		} catch (TimeoutException e) {
+			throw new Exception("Timeout > " + totalSecondsWait
+					+ " s when waiting for history for " + analysisSubmission,
+					e);
+		}
+	}
+
+	/**
+	 * Wait for the given analysis submission to be complete.
+	 * 
+	 * @param analysisSubmission
+	 *            The analysis submission to wait for.
+	 * @throws Exception
+	 */
+	public void waitUntilSubmissionCompleteSimplified(
+			AnalysisSubmission analysisSubmission) throws Exception {
+		final int totalSecondsWait = 1 * 60; // 1 minute
+		final int pollingTime = 2000; // 2 seconds
+
+		Future<Void> waitForHistory = executor.submit(new Callable<Void>() {
+
+			@Override
+			public Void call() throws Exception {
+				WorkflowStatus workflowStatus;
+				do {
+					workflowStatus = analysisExecutionServiceGalaxySimplified
 							.getWorkflowStatus(analysisSubmission);
 					Thread.sleep(pollingTime);
 				} while (!WorkflowState.OK.equals(workflowStatus.getState()));
