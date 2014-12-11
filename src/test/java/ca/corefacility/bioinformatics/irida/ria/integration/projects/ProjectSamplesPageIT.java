@@ -503,6 +503,18 @@ public class ProjectSamplesPageIT {
 		assertTrue(page.isGalaxySubmitBtnEnabled());
 	}
 
+	@Test
+	public void testChangingTableSize() {
+		LoginPage.loginAsAdmin(driver);
+		page.goToPage();
+
+		assertEquals(10, page.getNumberOfSamplesDisplayed());
+		page.selectPageSize("25");
+		assertEquals(21, page.getNumberOfSamplesDisplayed());
+		page.selectPageSize("10");
+		assertEquals(10, page.getNumberOfSamplesDisplayed());
+	}
+
 	private int getSampleFlagCount(String command) {
 		Pattern pattern = Pattern.compile("-s");
 		Matcher matcher = pattern.matcher(command);
