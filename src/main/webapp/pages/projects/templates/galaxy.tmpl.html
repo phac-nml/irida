@@ -9,7 +9,7 @@
 		<div class="form-group" th:attr="ng-init='gCtrl.setEmail(\'' + ${email} + '\')'">
 			<label for="email" th:text="#{galaxy.label.email}"></label>
 			<input required="required" name="email" id="email" class="form-control" type="email" style="width: 100%" ng-model="gCtrl.email" ng-model-options="{ debounce: 300 }"/>
-			<div class="alert alert-danger" role="alert" ng-show="gCtrl.errors.galaxyAccountEmail">Email error {{gCtrl.errors.galaxyAccountEmail}}</div>
+			<div class="alert alert-danger" role="alert" ng-show="gCtrl.errors.galaxyAccountEmail">{{gCtrl.errors.galaxyAccountEmail}}</div>
 			<div ng-messages="galaxyForm.email.$error">
 				<div class="alert alert-danger" ng-message="required" th:text="#{form.error.email.required}">Email address is required</div>
 				<div class="alert alert-danger" ng-message="email" th:text="#{from.error.email.format}">Please enter a valid email address.</div>
