@@ -28,6 +28,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -66,8 +67,20 @@ public class ProjectSamplesIT {
 				.statusCode(HttpStatus.CREATED.value()).when().post(samplesUri);
 		final String location = r.getHeader(HttpHeaders.LOCATION);
 		assertNotNull("Location should not be null.", location);
-		assertEquals("The project/sample location uses the wrong sample ID.",
-				"http://localhost:8080/api/projects/4/samples/1", location);
+		assertEquals("The project/sample location uses the wrong sample ID.", ITestSystemProperties.BASE_URL
+				+ "/api/projects/4/samples/1", location);
+	}
+
+	@Test
+	public void testCopySampleToProjectWithSameId() {
+		final List<String> samples = Lists.newArrayList("3");
+
+		final String projectUri = "/api/projects/4";
+		final String projectJson = asUser().get(projectUri).asString();
+		final String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
+
+		asUser().contentType(ContentType.JSON).body(samples).header("Content-Type", "application/idcollection+json")
+				.expect().response().statusCode(HttpStatus.CONFLICT.value()).when().post(samplesUri);
 	}
 
 	@Test
@@ -90,12 +103,12 @@ public class ProjectSamplesIT {
 		String location = r.getHeader(HttpHeaders.LOCATION);
 
 		assertNotNull(location);
-		assertTrue(location.matches("^http://localhost:8080/api/projects/[0-9]+/samples/[0-9]+$"));
+		assertTrue(location.matches("^" + ITestSystemProperties.BASE_URL + "/api/projects/[0-9]+/samples/[0-9]+$"));
 	}
 
 	@Test
 	public void testDeleteSampleFromProject() {
-		String projectUri = "http://localhost:8080/api/projects/4";
+		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/4";
 
 		// load the project
 		String projectJson = asUser().get(projectUri).asString();
@@ -125,7 +138,7 @@ public class ProjectSamplesIT {
 
 	@Test
 	public void testUpdateProjectSample() {
-		String projectUri = "http://localhost:8080/api/projects/5";
+		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
 		Map<String, String> updatedFields = new HashMap<>();
 		String updatedName = "Totally-different-sample-name";
@@ -141,19 +154,19 @@ public class ProjectSamplesIT {
 
 	@Test
 	public void testReadSampleAsAdmin() {
-		String projectUri = "http://localhost:8080/api/projects/5";
+		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
 
-		asAdmin().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles")).when()
-				.get(projectSampleUri);
+		asAdmin().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
+				.when().get(projectSampleUri);
 	}
 
 	@Test
 	public void testReadSampleAsSequencer() {
-		String projectUri = "http://localhost:8080/api/projects/5";
+		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
 
-		asSequencer().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles")).when()
-				.get(projectSampleUri);
+		asSequencer().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
+				.when().get(projectSampleUri);
 	}
 }

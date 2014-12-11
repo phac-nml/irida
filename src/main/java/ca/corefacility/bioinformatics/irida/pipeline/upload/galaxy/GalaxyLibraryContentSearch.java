@@ -6,17 +6,16 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
+import ca.corefacility.bioinformatics.irida.model.upload.galaxy.LibraryContentId;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.sun.jersey.api.client.UniformInterfaceException;
-
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyContentFoundException;
-import ca.corefacility.bioinformatics.irida.model.upload.galaxy.LibraryContentId;
 
 public class GalaxyLibraryContentSearch extends GalaxySearch<LibraryContent, LibraryContentId> {
 
@@ -92,16 +91,15 @@ public class GalaxyLibraryContentSearch extends GalaxySearch<LibraryContent, Lib
 	 * 
 	 * @param libraryId
 	 *            The library to get all contents from.
-	 * @return A Map mapping the path of the library content to the
-	 *         LibraryContent object.
+	 * @return A Map mapping the path of the library content to a list of
+	 *         {@link LibraryContent} objects.
 	 * @throws ExecutionManagerObjectNotFoundException 
 	 */
-	public Map<String, LibraryContent> libraryContentAsMap(String libraryId)
+	public Map<String, List<LibraryContent>> libraryContentAsMap(String libraryId)
 			throws ExecutionManagerObjectNotFoundException {
 		checkNotNull(libraryId, "libraryId is null");
 
 		List<LibraryContent> libraryContents = getLibraryContents(libraryId);
-		
-		return libraryContents.stream().collect(Collectors.toMap(LibraryContent::getName, Function.identity()));
+		return libraryContents.stream().collect(Collectors.groupingBy(LibraryContent::getName));
 	}
 }

@@ -24,6 +24,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -78,7 +79,7 @@ public class ProjectIT {
 				.post(PROJECTS);
 		String location = r.getHeader(HttpHeaders.LOCATION);
 		assertNotNull(location);
-		assertTrue(location.startsWith("http://localhost:8080/api/projects/"));
+		assertTrue(location.startsWith(ITestSystemProperties.BASE_URL + "/api/projects/"));
 		String responseBody = asUser().get(location).asString();
 		String projectUsersLocation = from(responseBody).get("resource.links.find{it.rel=='project/users'}.href");
 		// confirm that the current user was added to the project.
@@ -109,9 +110,9 @@ public class ProjectIT {
 
 	@Test
 	public void testDeleteProject() {
-		String projectUri = "http://localhost:8080/api/projects/5";
+		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
 		asUser().expect().body("resource.links.rel", hasItems("collection")).and()
-				.body("resource.links.href", hasItems("http://localhost:8080/api/projects")).when().delete(projectUri);
+				.body("resource.links.href", hasItems(ITestSystemProperties.BASE_URL + "/api/projects")).when().delete(projectUri);
 	}
 
 	/**
@@ -122,7 +123,7 @@ public class ProjectIT {
 	 */
 	@Test
 	public void verifyExistenceOfProjectWithHEAD() {
-		String projectUri = "http://localhost:8080/api/projects/5";
+		String projectUri = ITestSystemProperties.BASE_URL + "/api/projects/5";
 		asUser().expect().statusCode(HttpStatus.OK.value()).when().head(projectUri);
 		asUser().given().header("Accept", MediaType.JSON_UTF_8.toString()).expect().statusCode(HttpStatus.OK.value())
 				.when().head(projectUri);

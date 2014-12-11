@@ -11,48 +11,83 @@
             "inputs": [
                 {
                     "description": "", 
-                    "name": "fastq"
+                    "name": "sequence_reads"
                 }
             ], 
-            "name": "Input dataset", 
+            "name": "Input dataset collection", 
             "outputs": [], 
             "position": {
-                "left": 342.5, 
-                "top": 320.5
+                "left": 620.5, 
+                "top": 372.5
             }, 
             "tool_errors": null, 
             "tool_id": null, 
-            "tool_state": "{\"name\": \"fastq\"}", 
+            "tool_state": "{\"collection_type\": \"list\", \"name\": \"sequence_reads\"}", 
             "tool_version": null, 
-            "type": "data_input", 
+            "type": "data_collection_input", 
             "user_outputs": []
         }, 
         "1": {
             "annotation": "", 
             "id": 1, 
+            "input_connections": {}, 
+            "inputs": [
+                {
+                    "description": "", 
+                    "name": "reference"
+                }
+            ], 
+            "name": "Input dataset", 
+            "outputs": [], 
+            "position": {
+                "left": 634.5, 
+                "top": 469.5
+            }, 
+            "tool_errors": null, 
+            "tool_id": null, 
+            "tool_state": "{\"name\": \"reference\"}", 
+            "tool_version": null, 
+            "type": "data_input", 
+            "user_outputs": []
+        }, 
+        "2": {
+            "annotation": "", 
+            "id": 2, 
             "input_connections": {
-                "input": {
+                "fasta": {
+                    "id": 1, 
+                    "output_name": "output"
+                }, 
+                "sequence_reads": {
                     "id": 0, 
                     "output_name": "output"
                 }
             }, 
             "inputs": [], 
-            "name": "Select", 
+            "name": "core_pipeline_outputs", 
             "outputs": [
                 {
-                    "name": "out_file1", 
-                    "type": "input"
+                    "name": "csv", 
+                    "type": "csv"
+                }, 
+                {
+                    "name": "output_tree", 
+                    "type": "txt"
+                }, 
+                {
+                    "name": "positions", 
+                    "type": "tabular"
                 }
             ], 
             "position": {
-                "left": 560.5, 
-                "top": 321.5
+                "left": 847.5, 
+                "top": 406.5
             }, 
             "post_job_actions": {}, 
             "tool_errors": null, 
-            "tool_id": "Grep1", 
-            "tool_state": "{\"__page__\": 0, \"input\": \"null\", \"invert\": \"\\\"false\\\"\", \"__rerun_remap_job_id__\": null, \"pattern\": \"\\\"^@\\\"\"}", 
-            "tool_version": "1.0.1", 
+            "tool_id": "core_pipeline_outputs", 
+            "tool_state": "{\"__page__\": 0, \"fasta\": \"null\", \"sequence_reads\": \"null\", \"__rerun_remap_job_id__\": null}", 
+            "tool_version": "0.1.0", 
             "type": "tool", 
             "user_outputs": []
         }

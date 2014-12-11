@@ -7,15 +7,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 
-import com.google.common.util.concurrent.MoreExecutors;
-
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
+import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsTestConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServiceTestConfig;
+
+import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * Configuration for any integration tests requiring the use of Galaxy. Used to
@@ -28,7 +29,7 @@ import ca.corefacility.bioinformatics.irida.config.workflow.RemoteWorkflowServic
 @Configuration
 @Import({ IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class,
 		NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class, RemoteWorkflowServiceTestConfig.class,
-		AnalysisExecutionServiceTestConfig.class })
+		AnalysisExecutionServiceTestConfig.class, IridaWorkflowsTestConfig.class })
 @Profile("test")
 public class IridaApiGalaxyTestConfig {
 

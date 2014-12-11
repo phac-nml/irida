@@ -16,6 +16,16 @@
 		<span ng-show="sf.total === 0 || sf.count !== sf.total" class="badge badge-primary pull-right ng-cloak"><span id="samples-filtered" ng-bind="sf.count">0</span> <span th:text="#{grammar.of}"></span> <span id="samples-total" ng-bind="sf.total">0</span></span>
 	</div>
 	<div class="sidebar__body">
+
+		<div class="form-group" ng-controller="FilterCountCtrl as filterCountCtrl">
+			<label for="count" th:text="#{table.filter.count}">Page Size</label>
+			<select id="count" class="form-control" style="width: 100%;" ng-model="filterCountCtrl.count" ng-change="filterCountCtrl.updateCount()">
+				<option value="10">10</option>
+				<option value="25">25</option>
+				<option value="50">50</option>
+				<option value="All">All</option>
+			</select>
+		</div>
 		<div class="form-group">
 			<label for="sample-name-filter" th:text="#{project.sample.filter-name}">_Sample Name</label>
 
@@ -45,7 +55,7 @@
 		</div>
 	</div>
 	<div class="row mrgn-bttm-md">
-		<div class="col-md-9" ng-controller="SubNavCtrl as subnav">
+		<div class="col-md-7" ng-controller="SubNavCtrl as subnav">
 			<div class="btn-toolbar">
 				<!-- Sample Selection (Page, All, None) -->
 				<div class="btn-group" dropdown="" is-open="subnav.selection.isopen">
@@ -105,9 +115,14 @@
 						</li>
 					</ul>
 				</div>
+
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-default btn-sm" th:text="#{project.samples.nav.run-pipeline}">Run Pipeline</button>
+					<button type="button" class="btn btn-default btn-sm" th:text="#{project.samples.nav.add-to-cart}">Add to Cart</button>
+				</div>
 			</div>
 		</div>
-		<div class="col-md-3">
+		<div class="col-md-5">
 			<span class="pull-right selected__counts" ng-controller="SelectedCountCtrl as countCtrl">
 			<span th:text="#{project.samples.table.select-count}"></span>&nbsp;<span id="selected-count" class="badge" ng-bind="countCtrl.count">0</span>
 		</span>

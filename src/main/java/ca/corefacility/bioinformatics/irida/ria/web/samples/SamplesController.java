@@ -118,7 +118,7 @@ public class SamplesController extends BaseController {
 
 	/**
 	 * Get the samples details page.
-	 * 
+	 *
 	 * @param model
 	 *            Spring {@link Model}
 	 * @param sampleId
@@ -246,7 +246,7 @@ public class SamplesController extends BaseController {
 
 	/**
 	 * Remove a given sequence file from a sample
-	 * 
+	 *
 	 * @param sampleId
 	 *            the {@link Sample} id
 	 * @param fileId
@@ -288,7 +288,7 @@ public class SamplesController extends BaseController {
 	/**
 	 * Test if the {@link User} is a {@link ProjectRole#PROJECT_OWNER} for the
 	 * given {@link Sample}
-	 * 
+	 *
 	 * @param sample
 	 *            The sample to test
 	 * @param principal

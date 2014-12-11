@@ -18,9 +18,8 @@
 	</div>
 	<div class="modal-footer">
 		<button class="btn btn-default" ng-click="gCtrl.close()" th:text="#{form.btn.close}">Close</button>
-		<button ng-disabled="gCtrl.submitted" class="btn btn-primary" ng-click="gCtrl.upload()">
-			<span ng-show="gCtrl.uploading" class="fa fa-spinner fa-spin fa-fw"></span>
-			<span ng-hide="gCtrl.uploading" class="fa fa-fw fa-cloud-upload"></span>
+		<button ng-disabled="gCtrl.uploading" class="btn btn-primary" ng-click="gCtrl.upload()">
+			<span class="fa fa-fw" ng-class="gCtrl.uploading ? 'fa-spinner fa-spin' : 'fa-cloud-upload'"></span>
 			&nbsp;<span th:text="#{galaxy.btn.upload}"></span>
 		</button>
 	</div>

@@ -213,7 +213,7 @@ public class ProjectSamplesPage extends AbstractPage {
 
 	// Table sorting
 	public void sortTableByName() {
-		driver.findElement(By.id("sortName")).click();
+		driver.findElement(By.cssSelector("#sortName a")).click();
 	}
 	public void sortTableByCreatedDate() { driver.findElement(By.id("sortCreatedDate")).click();}
 
@@ -265,5 +265,15 @@ public class ProjectSamplesPage extends AbstractPage {
 		input.clear();
 		input.sendKeys(organism);
 		waitForTime(550);
+	}
+
+	public void selectPageSize(String count) {
+		List<WebElement> options = driver.findElements(By.cssSelector("#count option"));
+		for (WebElement el : options) {
+			if (el.getAttribute("value").equals(count)) {
+				el.click();
+				break;
+			}
+		}
 	}
 }

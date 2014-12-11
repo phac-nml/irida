@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.model.workflow.submission;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -21,6 +22,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -36,6 +38,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 
 /**
@@ -110,6 +113,10 @@ public class AnalysisSubmission implements IridaThing {
 			CascadeType.REFRESH })
 	@JoinColumn(name="analysis_id")
 	private Analysis analysis;
+	
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "reference_file_id")
+	private ReferenceFile referenceFile;
 
 	protected AnalysisSubmission() {
 		this.createdDate = new Date();
@@ -132,6 +139,47 @@ public class AnalysisSubmission implements IridaThing {
 		this.name = name;
 		this.inputFiles = inputFiles;
 		this.workflowId = workflowId;
+		this.referenceFile = null;
+	}
+	
+
+	/**
+	 * Builds a new AnalysisSubmission object with the given information.
+	 * 
+	 * @param name
+	 *            The name of the workflow submission.
+	 * @param inputFiles
+	 *            The set of input files to perform an analysis on.
+	 * @param referenceFile
+	 *            The reference file to use for the analysis.
+	 * @param The
+	 *            id of the workflow for this submission.
+	 * 
+	 */
+	public AnalysisSubmission(String name, Set<SequenceFile> inputFiles, ReferenceFile referenceFile, UUID workflowId) {
+		this(name, inputFiles, workflowId);
+		checkNotNull(referenceFile, "referenceFile is null");
+
+		this.referenceFile = referenceFile;
+	}
+
+	/**
+	 * Sets the reference file.
+	 * 
+	 * @param referenceFile
+	 *            The reference file.
+	 */
+	public void setReferenceFile(ReferenceFile referenceFile) {
+		this.referenceFile = referenceFile;
+	}
+
+	/**
+	 * Gets the ReferenceFile.
+	 * 
+	 * @return The ReferenceFile.
+	 */
+	public Optional<ReferenceFile> getReferenceFile() {
+		return (referenceFile != null) ? Optional.of(referenceFile) : Optional.empty();
 	}
 
 	/**

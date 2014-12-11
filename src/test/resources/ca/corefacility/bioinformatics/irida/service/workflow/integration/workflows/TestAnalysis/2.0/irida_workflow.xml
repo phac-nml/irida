@@ -6,6 +6,7 @@
   <version>2.0</version>
   <author>Mr. Developer</author>
   <email>developer@example.com</email>
+  <analysis_class>ca.corefacility.bioinformatics.irida.service.workflow.integration.TestAnalysis</analysis_class>
   <inputs>
     <sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
     <reference>reference</reference>

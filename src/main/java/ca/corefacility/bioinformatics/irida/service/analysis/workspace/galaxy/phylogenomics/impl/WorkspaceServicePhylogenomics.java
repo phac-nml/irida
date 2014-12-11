@@ -190,7 +190,7 @@ public class WorkspaceServicePhylogenomics
 				uploadSequenceFiles(sampleSequenceFiles, workflowHistory, workflowLibrary);
 
 		Dataset referenceDataset = 
-				uploadReferenceFile(analysisSubmission.getReferenceFile(), workflowHistory);
+				uploadReferenceFile(analysisSubmission.getReferenceFile().get(), workflowHistory);
 		
 		RemoteWorkflowPhylogenomics remoteWorkflow = analysisSubmission.getRemoteWorkflow();
 		
