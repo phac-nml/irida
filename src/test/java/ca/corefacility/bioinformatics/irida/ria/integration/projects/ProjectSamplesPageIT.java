@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
@@ -463,6 +464,7 @@ public class ProjectSamplesPageIT {
 	}
 
 	@Test
+	@Ignore
 	public void testGalaxyErrorMessages() {
 		LoginPage.loginAsAdmin(driver);
 		page.goToPage();
