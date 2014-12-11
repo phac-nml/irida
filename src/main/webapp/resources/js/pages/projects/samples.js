@@ -273,25 +273,25 @@
         $timeout.cancel(timer);
       });
 
-      var poll = function poll () {
-          timer = $timeout(function() {
-            GalaxyService.poll(attrs.workerid).then(function (result) {
-              scope.progress = Math.ceil(result.data.progress * 100);
-              scope.title = result.data.title;
-              scope.message = result.data.message;
-              if(result.data.error) {
-                scope.error = true;
-                element.addClass('error');
-              }
-              else if (result.data.finished) {
-                element.addClass('success');
-                removeElement(2000);
-              }
-              else {
-                poll();
-              }
-            });
-          }, 500);
+      var poll = function poll() {
+        timer = $timeout(function () {
+          GalaxyService.poll(attrs.workerid).then(function (result) {
+            scope.progress = Math.ceil(result.data.progress * 100);
+            scope.title = result.data.title;
+            scope.message = result.data.message;
+            if (result.data.error) {
+              scope.error = true;
+              element.addClass('error');
+            }
+            else if (result.data.finished) {
+              element.addClass('success');
+              removeElement(2000);
+            }
+            else {
+              poll();
+            }
+          });
+        }, 500);
       };
 
       function removeElement(length) {
@@ -310,12 +310,12 @@
 
     return {
       templateUrl: '/template/notification.html',
-      restrict: 'E',
-      replace : true,
-      scope   : {
+      restrict   : 'E',
+      replace    : true,
+      scope      : {
         message: '@'
       },
-      link    : link
+      link       : link
     };
   }
 
@@ -327,7 +327,7 @@
   function PagingCtrl($scope, filter) {
     "use strict";
     var vm = this;
-    vm.count = 10;
+    vm.count = filter.count;
     vm.total = 0;
     vm.page = 1;
 
@@ -343,9 +343,13 @@
       vm.page = args.page;
       vm.update();
     });
+
+    $scope.$on('PAGE_SIZE_CHANGE', function (e, args) {
+      vm.count = filter.count;
+    });
   }
 
-  function FilterCountCtrl(filter, SampleService) {
+  function FilterCountCtrl($rootScope, filter, SampleService) {
     var vm = this;
     vm.count = filter.count;
 
@@ -355,6 +359,7 @@
       } else {
         filter.count = SampleService.getNumSamples();
       }
+      $rootScope.$broadcast('PAGE_SIZE_CHANGE');
     }
   }
 
@@ -666,7 +671,7 @@
     .directive('galaxyNotification', ['$timeout', 'GalaxyService', galaxyNotification])
     .controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
-    .controller('FilterCountCtrl', ['FilterFactory', 'SamplesService', FilterCountCtrl])
+    .controller('FilterCountCtrl', ['$rootScope', 'FilterFactory', 'SamplesService', FilterCountCtrl])
     .controller('SamplesTableCtrl', ['SamplesService', 'FilterFactory', SamplesTableCtrl])
     .controller('MergeCtrl', ['$scope', '$modalInstance', 'Select2Service', 'SamplesService', 'samples', MergeCtrl])
     .controller('CopyMoveCtrl', ['$modalInstance', '$rootScope', 'BASE_URL', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl])
