@@ -229,6 +229,65 @@
     };
   }
 
+  function galaxyNotification($timeout, GalaxyService) {
+    "use strict";
+    var timer;
+
+    function link(scope, element, attrs) {
+      element.on('click', function () {
+        removeElement(300);
+      });
+
+      element.on('$destroy', function () {
+        $timeout.cancel(timer);
+      });
+
+      var poll = function poll() {
+        timer = $timeout(function () {
+          GalaxyService.poll(attrs.workerid).then(function (result) {
+            scope.progress = Math.ceil(result.data.progress * 100);
+            scope.title = result.data.title;
+            scope.message = result.data.message;
+            if (result.data.error) {
+              scope.error = true;
+              element.addClass('error');
+            }
+            else if (result.data.finished) {
+              element.addClass('success');
+              removeElement(2000);
+            }
+            else {
+              poll();
+            }
+          });
+        }, 500);
+      };
+
+      function removeElement(length) {
+        $timeout(function () {
+          element.addClass('remove');
+
+          $timeout(function () {
+            scope.$destroy();
+            element.remove();
+          }, 500);
+        }, length);
+      }
+
+      poll();
+    }
+
+    return {
+      templateUrl: '/template/notification.html',
+      restrict   : 'E',
+      replace    : true,
+      scope      : {
+        message: '@'
+      },
+      link       : link
+    };
+  }
+
   /*[- */
 // Handles everything to do with paging for the Samples Table
 // @param $scope Scope the controller is responsible for
@@ -237,7 +296,7 @@
   function PagingCtrl($scope, filter) {
     "use strict";
     var vm = this;
-    vm.count = 10;
+    vm.count = filter.count;
     vm.total = 0;
     vm.page = 1;
 
@@ -253,6 +312,24 @@
       vm.page = args.page;
       vm.update();
     });
+
+    $scope.$on('PAGE_SIZE_CHANGE', function (e, args) {
+      vm.count = filter.count;
+    });
+  }
+
+  function FilterCountCtrl($rootScope, filter, SampleService) {
+    var vm = this;
+    vm.count = filter.count;
+
+    vm.updateCount = function () {
+      if (vm.count !== 'All') {
+        filter.count = vm.count;
+      } else {
+        filter.count = SampleService.getNumSamples();
+      }
+      $rootScope.$broadcast('PAGE_SIZE_CHANGE');
+    }
   }
 
   /*[- */
@@ -556,6 +633,7 @@
     .directive('sortBy', [sortBy])
     .controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
+    .controller('FilterCountCtrl', ['$rootScope', 'FilterFactory', 'SamplesService', FilterCountCtrl])
     .controller('SamplesTableCtrl', ['SamplesService', 'FilterFactory', SamplesTableCtrl])
     .controller('MergeCtrl', ['$scope', '$modalInstance', 'Select2Service', 'SamplesService', 'samples', MergeCtrl])
     .controller('CopyMoveCtrl', ['$modalInstance', '$rootScope', 'BASE_URL', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl])
