@@ -138,6 +138,10 @@ public class GalaxyController {
 									gex.getUserEmail().getName()
 							}, locale));
 				}
+				else {
+					result.put("message",
+							messageSource.getMessage("galaxy.upload-error.generic", new Object[] { ex.getMessage() }, locale));
+				}
 			} else if (worker.isFinished()) {
 				session.removeAttribute(workerId);
 				result.put("title", messageSource.getMessage("galaxy.finished-title", new Object[] { }, locale));
