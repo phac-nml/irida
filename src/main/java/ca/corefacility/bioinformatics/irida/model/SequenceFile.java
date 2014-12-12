@@ -89,7 +89,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
 	private List<SampleSequenceFileJoin> samples;
-	
+
 	public SequenceFile() {
 		createdDate = new Date();
 		fileRevisionNumber = 0L;

@@ -75,10 +75,10 @@ public class Project implements IridaThing, IridaProject, Comparable<Project> {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "relatedProject")
 	private List<RelatedProjectJoin> projectsRelatedTo;
-
+	
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
 	private List<ProjectReferenceFileJoin> referenceFiles;
-
+	
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "localProject")
 	private List<RemoteRelatedProject> remoteRelatedProjects;
 
