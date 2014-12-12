@@ -40,9 +40,11 @@ import com.google.common.collect.ImmutableMap;
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
-public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecutionServiceSimplified {
+public class AnalysisExecutionServiceGalaxySimplified implements
+		AnalysisExecutionServiceSimplified {
 
-	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxySimplified.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(AnalysisExecutionServiceGalaxySimplified.class);
 
 	private AnalysisSubmissionService analysisSubmissionService;
 	private AnalysisService analysisService;
@@ -69,9 +71,12 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	 *            A service for loading up {@link IridaWorkflow}s.
 	 */
 	@Autowired
-	public AnalysisExecutionServiceGalaxySimplified(AnalysisSubmissionService analysisSubmissionService,
-			AnalysisService analysisService, GalaxyWorkflowService galaxyWorkflowService,
-			GalaxyHistoriesService galaxyHistoriesService, AnalysisWorkspaceServiceGalaxySimplified workspaceService,
+	public AnalysisExecutionServiceGalaxySimplified(
+			AnalysisSubmissionService analysisSubmissionService,
+			AnalysisService analysisService,
+			GalaxyWorkflowService galaxyWorkflowService,
+			GalaxyHistoriesService galaxyHistoriesService,
+			AnalysisWorkspaceServiceGalaxySimplified workspaceService,
 			IridaWorkflowsService iridaWorkflowsService) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisService = analysisService;
@@ -86,28 +91,41 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	 */
 	@Override
 	@Transactional
-	public AnalysisSubmission prepareSubmission(AnalysisSubmission analysisSubmission)
-			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException {
+	public AnalysisSubmission prepareSubmission(
+			AnalysisSubmission analysisSubmission)
+			throws ExecutionManagerException, IridaWorkflowNotFoundException,
+			IOException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
-		checkNotNull(analysisSubmission.getId(), "analysisSubmission id is null");
-		checkArgument(null == analysisSubmission.getRemoteAnalysisId(), "remote analyis id should be null");
-		checkArgument(null == analysisSubmission.getRemoteWorkflowId(), "remoteWorkflowId should be null");
-		checkArgument(AnalysisState.PREPARING.equals(analysisSubmission.getAnalysisState()),
-				"analysis state should be " + AnalysisState.PREPARING);
+		checkNotNull(analysisSubmission.getId(),
+				"analysisSubmission id is null");
+		checkArgument(null == analysisSubmission.getRemoteAnalysisId(),
+				"remote analyis id should be null");
+		checkArgument(null == analysisSubmission.getRemoteWorkflowId(),
+				"remoteWorkflowId should be null");
+		checkArgument(AnalysisState.PREPARING.equals(analysisSubmission
+				.getAnalysisState()), "analysis state should be "
+				+ AnalysisState.PREPARING);
 
-		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysisSubmission.getWorkflowId());
-		IridaWorkflowStructure workflowStructure = iridaWorkflow.getWorkflowStructure();
+		IridaWorkflow iridaWorkflow = iridaWorkflowsService
+				.getIridaWorkflow(analysisSubmission.getWorkflowId());
+		IridaWorkflowStructure workflowStructure = iridaWorkflow
+				.getWorkflowStructure();
 
 		logger.debug("Preparing submission for " + analysisSubmission);
 
-		String workflowId = galaxyWorkflowService.uploadGalaxyWorkflow(workflowStructure.getWorkflowFile());
+		String workflowId = galaxyWorkflowService
+				.uploadGalaxyWorkflow(workflowStructure.getWorkflowFile());
 		analysisSubmission.setRemoteWorkflowId(workflowId);
-		logger.trace("Uploaded workflow for " + analysisSubmission + " to workflow with id=" + workflowId);
+		logger.trace("Uploaded workflow for " + analysisSubmission
+				+ " to workflow with id=" + workflowId);
 
-		String analysisId = workspaceService.prepareAnalysisWorkspace(analysisSubmission);
-		logger.trace("Created Galaxy history for analysis " + " id=" + analysisId + ", " + analysisSubmission);
+		String analysisId = workspaceService
+				.prepareAnalysisWorkspace(analysisSubmission);
+		logger.trace("Created Galaxy history for analysis " + " id="
+				+ analysisId + ", " + analysisSubmission);
 
-		analysisSubmissionService.update(analysisSubmission.getId(), ImmutableMap.of("remoteWorkflowId", workflowId));
+		analysisSubmissionService.update(analysisSubmission.getId(),
+				ImmutableMap.of("remoteWorkflowId", workflowId));
 		return analysisSubmissionService.update(analysisSubmission.getId(),
 				ImmutableMap.of("remoteAnalysisId", analysisId));
 	}
@@ -117,17 +135,21 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	 */
 	@Override
 	@Transactional
-	public AnalysisSubmission executeAnalysis(AnalysisSubmission analysisSubmission) throws ExecutionManagerException,
-			IridaWorkflowNotFoundException {
+	public AnalysisSubmission executeAnalysis(
+			AnalysisSubmission analysisSubmission)
+			throws ExecutionManagerException, IridaWorkflowNotFoundException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
-		checkNotNull(analysisSubmission.getRemoteAnalysisId(), "remote analyis id is null");
-		checkArgument(AnalysisState.SUBMITTING.equals(analysisSubmission.getAnalysisState()), " analysis should be "
+		checkNotNull(analysisSubmission.getRemoteAnalysisId(),
+				"remote analyis id is null");
+		checkArgument(AnalysisState.SUBMITTING.equals(analysisSubmission
+				.getAnalysisState()), " analysis should be "
 				+ AnalysisState.SUBMITTING);
 
 		logger.debug("Running submission for " + analysisSubmission);
 
 		logger.trace("Preparing files for " + analysisSubmission);
-		PreparedWorkflowGalaxy preparedWorkflow = workspaceService.prepareAnalysisFiles(analysisSubmission);
+		PreparedWorkflowGalaxy preparedWorkflow = workspaceService
+				.prepareAnalysisFiles(analysisSubmission);
 		WorkflowInputsGalaxy input = preparedWorkflow.getWorkflowInputs();
 
 		logger.trace("Executing " + analysisSubmission);
@@ -141,21 +163,26 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	 */
 	@Override
 	@Transactional
-	public Analysis transferAnalysisResults(AnalysisSubmission submittedAnalysis) throws ExecutionManagerException,
-			IOException, IridaWorkflowNotFoundException {
+	public Analysis transferAnalysisResults(AnalysisSubmission submittedAnalysis)
+			throws ExecutionManagerException, IOException,
+			IridaWorkflowNotFoundException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
-		checkNotNull(submittedAnalysis.getRemoteAnalysisId(), "remoteAnalysisId is null");
-		checkArgument(AnalysisState.FINISHED_RUNNING.equals(submittedAnalysis.getAnalysisState()),
-				" analysis should be " + AnalysisState.FINISHED_RUNNING);
+		checkNotNull(submittedAnalysis.getRemoteAnalysisId(),
+				"remoteAnalysisId is null");
+		checkArgument(AnalysisState.FINISHED_RUNNING.equals(submittedAnalysis
+				.getAnalysisState()), " analysis should be "
+				+ AnalysisState.FINISHED_RUNNING);
 		verifyAnalysisSubmissionExists(submittedAnalysis);
 
 		logger.debug("Getting results for " + submittedAnalysis);
-		Analysis analysisResults = workspaceService.getAnalysisResults(submittedAnalysis);
+		Analysis analysisResults = workspaceService
+				.getAnalysisResults(submittedAnalysis);
 
 		logger.trace("Saving results for " + submittedAnalysis);
 		Analysis savedAnalysis = analysisService.create(analysisResults);
 
-		analysisSubmissionService.update(submittedAnalysis.getId(), ImmutableMap.of("analysis", savedAnalysis));
+		analysisSubmissionService.update(submittedAnalysis.getId(),
+				ImmutableMap.of("analysis", savedAnalysis));
 
 		return savedAnalysis;
 	}
@@ -164,9 +191,11 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	 * {@inheritDoc}
 	 */
 	@Override
-	public WorkflowStatus getWorkflowStatus(AnalysisSubmission submittedAnalysis) throws ExecutionManagerException {
+	public WorkflowStatus getWorkflowStatus(AnalysisSubmission submittedAnalysis)
+			throws ExecutionManagerException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
-		checkNotNull(submittedAnalysis.getRemoteAnalysisId(), "remote analysis id is null");
+		checkNotNull(submittedAnalysis.getRemoteAnalysisId(),
+				"remote analysis id is null");
 
 		String analysisId = submittedAnalysis.getRemoteAnalysisId();
 		return galaxyHistoriesService.getStatusForHistory(analysisId);
@@ -180,13 +209,17 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	 * @throws WorkflowException
 	 *             If there was an issue validating the workflow.
 	 */
-	public void validateWorkflow(RemoteWorkflowGalaxy remoteWorkflow) throws WorkflowException {
+	public void validateWorkflow(RemoteWorkflowGalaxy remoteWorkflow)
+			throws WorkflowException {
 		checkNotNull(remoteWorkflow, "remoteWorkflow is null");
 
-		if (!galaxyWorkflowService.validateWorkflowByChecksum(remoteWorkflow.getWorkflowChecksum(),
+		if (!galaxyWorkflowService.validateWorkflowByChecksum(
+				remoteWorkflow.getWorkflowChecksum(),
 				remoteWorkflow.getWorkflowId())) {
-			throw new WorkflowChecksumInvalidException("passed workflow with id=" + remoteWorkflow.getWorkflowId()
-					+ " does not have correct checksum " + remoteWorkflow.getWorkflowChecksum());
+			throw new WorkflowChecksumInvalidException(
+					"passed workflow with id=" + remoteWorkflow.getWorkflowId()
+							+ " does not have correct checksum "
+							+ remoteWorkflow.getWorkflowChecksum());
 		}
 	}
 
@@ -199,9 +232,11 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	 *             If the given analysis submission does not exist in the
 	 *             database.
 	 */
-	private void verifyAnalysisSubmissionExists(AnalysisSubmission submission) throws EntityNotFoundException {
+	private void verifyAnalysisSubmissionExists(AnalysisSubmission submission)
+			throws EntityNotFoundException {
 		if (!analysisSubmissionService.exists(submission.getId())) {
-			throw new EntityNotFoundException("Could not find analysis submission for " + submission);
+			throw new EntityNotFoundException(
+					"Could not find analysis submission for " + submission);
 		}
 	}
 }
