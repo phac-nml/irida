@@ -27,12 +27,12 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 
 /**
- * An experiment object to capture experiment metadata about a
- * {@link SequencingRun}.
+ * An experiment object to capture experiment metadata about how a
+ * {@link SequenceFile} was generated.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
