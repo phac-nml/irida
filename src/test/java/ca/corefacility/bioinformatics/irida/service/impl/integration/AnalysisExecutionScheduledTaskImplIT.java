@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 import org.junit.Assume;
 import org.junit.Before;
@@ -30,14 +31,13 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
@@ -78,7 +78,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	private RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics;
 
 	@Autowired
-	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
+	private AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified;
 
 	@Autowired
 	private AuthenticationProvider authenticationProvider;
@@ -89,6 +89,8 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	private Path sequenceFilePath2;
 	private Path referenceFilePath;
 	private Path referenceFilePath2;
+	
+	private UUID iridaPhylogenomicsWorkflowId = UUID.fromString("1f9ea289-5053-4e4a-bc76-1f0c60b179f8");
 
 	/**
 	 * Sets up variables for testing.
@@ -102,7 +104,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(
 				analysisSubmissionService, analysisSubmissionRepository,
-				analysisExecutionServicePhylogenomics);
+				analysisExecutionServiceSimplified);
 
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource(
@@ -125,7 +127,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		
 		referenceFilePath2 = Files.createTempFile("testReference", ".fasta");
 		Files.delete(referenceFilePath2);
-		Files.copy(referenceFilePathReal, referenceFilePath2);
+		Files.copy(referenceFilePathReal, referenceFilePath2);		
 	}
 
 	/**
@@ -137,35 +139,29 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSubmitToExecuteToResults() throws Exception {
-		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = remoteWorkflowServicePhylogenomics
-				.getCurrentWorkflow();
-
-		AnalysisSubmissionPhylogenomics analysisSubmission = analysisExecutionGalaxyITService
-				.setupSubmissionInDatabase(1L, sequenceFilePath,
-						referenceFilePath, remoteWorkflowUnsaved);
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, iridaPhylogenomicsWorkflowId);
 		assertEquals(AnalysisState.NEW, analysisSubmission.getAnalysisState());
 
 		analysisExecutionScheduledTask.executeAnalyses();
-		AnalysisSubmissionPhylogenomics executedSubmission = analysisSubmissionRepository
-				.getByType(analysisSubmission.getId(),
-						AnalysisSubmissionPhylogenomics.class);
+		AnalysisSubmission executedSubmission = analysisSubmissionRepository
+				.findOne(analysisSubmission.getId());
 
 		assertEquals(AnalysisState.RUNNING,
 				executedSubmission.getAnalysisState());
 
-		WorkflowStatus status = analysisExecutionServicePhylogenomics
+		WorkflowStatus status = analysisExecutionServiceSimplified
 				.getWorkflowStatus(executedSubmission);
 
 		analysisExecutionGalaxyITService.assertValidStatus(status);
 
 		analysisExecutionGalaxyITService
-				.waitUntilSubmissionComplete(executedSubmission);
+				.waitUntilSubmissionCompleteSimplified(executedSubmission);
 
 		analysisExecutionScheduledTask.transferAnalysesResults();
 
-		AnalysisSubmissionPhylogenomics transferedSubmission = analysisSubmissionRepository
-				.getByType(executedSubmission.getId(),
-						AnalysisSubmissionPhylogenomics.class);
+		AnalysisSubmission transferedSubmission = analysisSubmissionRepository
+				.findOne(executedSubmission.getId());
 
 		assertEquals(AnalysisState.COMPLETED,
 				transferedSubmission.getAnalysisState());
@@ -180,28 +176,21 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testHandleSingleSubmission() throws Exception {
-		RemoteWorkflowPhylogenomics remoteWorkflow = remoteWorkflowServicePhylogenomics
-				.getCurrentWorkflow();
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, iridaPhylogenomicsWorkflowId);
 
-		AnalysisSubmissionPhylogenomics analysisSubmission = analysisExecutionGalaxyITService
-				.setupSubmissionInDatabase(1L, sequenceFilePath,
-						referenceFilePath, remoteWorkflow);
-
-		AnalysisSubmissionPhylogenomics analysisSubmission2 = analysisExecutionGalaxyITService
-				.setupSubmissionInDatabaseNoWorkflowSave(2L, sequenceFilePath2,
-						referenceFilePath2, remoteWorkflow);
+		AnalysisSubmission analysisSubmission2 = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, iridaPhylogenomicsWorkflowId);
 
 		assertEquals(AnalysisState.NEW, analysisSubmission.getAnalysisState());
 		assertEquals(AnalysisState.NEW, analysisSubmission2.getAnalysisState());
 
 		analysisExecutionScheduledTask.executeAnalyses();
-		AnalysisSubmissionPhylogenomics executedSubmission1 = analysisSubmissionRepository
-				.getByType(analysisSubmission.getId(),
-						AnalysisSubmissionPhylogenomics.class);
+		AnalysisSubmission executedSubmission1 = analysisSubmissionRepository
+				.findOne(analysisSubmission.getId());
 
-		AnalysisSubmissionPhylogenomics executedSubmission2 = analysisSubmissionRepository
-				.getByType(analysisSubmission2.getId(),
-						AnalysisSubmissionPhylogenomics.class);
+		AnalysisSubmission executedSubmission2 = analysisSubmissionRepository
+				.findOne(analysisSubmission2.getId());
 
 		// I do not know the order the analyses will be executed
 		if (AnalysisState.NEW.equals(executedSubmission1.getAnalysisState())) {
@@ -227,18 +216,13 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testErrorExecute() {
-		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = remoteWorkflowServicePhylogenomics
-				.getCurrentWorkflow();
-
-		AnalysisSubmissionPhylogenomics analysisSubmission = analysisExecutionGalaxyITService
-				.setupSubmissionInDatabase(1L, sequenceFilePath,
-						referenceFilePath, remoteWorkflowUnsaved);
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, iridaPhylogenomicsWorkflowId);
 
 		analysisExecutionScheduledTask.executeAnalyses();
 
-		AnalysisSubmissionPhylogenomics executedSubmission = analysisSubmissionRepository
-				.getByType(analysisSubmission.getId(),
-						AnalysisSubmissionPhylogenomics.class);
+		AnalysisSubmission executedSubmission = analysisSubmissionRepository
+				.findOne(analysisSubmission.getId());
 
 		// set Galaxy analysis id to invalid to force an error
 		analysisSubmissionService.update(executedSubmission.getId(),
@@ -246,26 +230,21 @@ public class AnalysisExecutionScheduledTaskImplIT {
 
 		analysisExecutionScheduledTask.transferAnalysesResults();
 
-		AnalysisSubmissionPhylogenomics errorSubmission = analysisSubmissionRepository
-				.getByType(executedSubmission.getId(),
-						AnalysisSubmissionPhylogenomics.class);
+		AnalysisSubmission errorSubmission = analysisSubmissionRepository
+				.findOne(executedSubmission.getId());
 
 		assertEquals(AnalysisState.ERROR, errorSubmission.getAnalysisState());
 	}
 
 	/**
-	 * Tests out an invalid authentication object for the schduler. during
-	 * execution
+	 * Tests out an invalid authentication object for the scheduler during
+	 * execution.
 	 */
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testInvalidAuthentication() {
-		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = remoteWorkflowServicePhylogenomics
-				.getCurrentWorkflow();
-
-		analysisExecutionGalaxyITService
-				.setupSubmissionInDatabase(1L, sequenceFilePath,
-						referenceFilePath, remoteWorkflowUnsaved);
+		analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, iridaPhylogenomicsWorkflowId);
 		
 		SecurityContextHolder.clearContext();
 		analysisExecutionScheduledTask.executeAnalyses();

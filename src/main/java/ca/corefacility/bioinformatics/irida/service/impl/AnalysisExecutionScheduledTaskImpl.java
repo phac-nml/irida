@@ -8,16 +8,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
 
 /**
  * Implementation of analysis execution tasks. This will scan for
@@ -34,7 +34,7 @@ public class AnalysisExecutionScheduledTaskImpl implements
 
 	private AnalysisSubmissionService analysisSubmissionService;
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
-	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
+	private AnalysisExecutionServiceSimplified analysisExecutionService;
 
 	/**
 	 * Builds a new AnalysisExecutionScheduledTaskImpl with the given service
@@ -44,17 +44,17 @@ public class AnalysisExecutionScheduledTaskImpl implements
 	 *            A service for accessing AnalysisSubmissions.
 	 * @param analysisSubmissionRepository
 	 *            A repository for analysis submissions.
-	 * @param analysisExecutionServicePhylogenomics
+	 * @param analysisExecutionService
 	 *            A service for executing analyses.
 	 */
 	@Autowired
 	public AnalysisExecutionScheduledTaskImpl(
 			AnalysisSubmissionService analysisSubmissionService,
 			AnalysisSubmissionRepository analysisSubmissionRepository,
-			AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics) {
+			AnalysisExecutionServiceSimplified analysisExecutionService) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
-		this.analysisExecutionServicePhylogenomics = analysisExecutionServicePhylogenomics;
+		this.analysisExecutionService = analysisExecutionService;
 	}
 
 	/**
@@ -74,30 +74,26 @@ public class AnalysisExecutionScheduledTaskImpl implements
 			setStateForSubmission(analysisSubmission,
 					AnalysisState.PREPARING);
 
-			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
-					.getByType(analysisSubmission.getId(),
-							AnalysisSubmissionPhylogenomics.class);
-
 			try {
-				AnalysisSubmissionPhylogenomics preparedSubmission = analysisExecutionServicePhylogenomics
-						.prepareSubmission(analysisSubmissionPhylogenomics);
+				AnalysisSubmission preparedSubmission = analysisExecutionService
+						.prepareSubmission(analysisSubmission);
 
 				setStateForSubmission(preparedSubmission,
 						AnalysisState.SUBMITTING);
 
-				analysisExecutionServicePhylogenomics
+				analysisExecutionService
 						.executeAnalysis(preparedSubmission);
 
 				setStateForSubmission(preparedSubmission,
 						AnalysisState.RUNNING);
 			} catch (ExecutionManagerException e) {
 				logger.error("Could not execute analysis "
-						+ analysisSubmissionPhylogenomics, e);
-				setStateForSubmission(analysisSubmissionPhylogenomics,
+						+ analysisSubmission, e);
+				setStateForSubmission(analysisSubmission,
 						AnalysisState.ERROR);
 			} catch (Exception e) {
 				logger.error("Error for analysis", e);
-				setStateForSubmission(analysisSubmissionPhylogenomics,
+				setStateForSubmission(analysisSubmission,
 						AnalysisState.ERROR);
 			}
 		}
@@ -118,29 +114,26 @@ public class AnalysisExecutionScheduledTaskImpl implements
 			AnalysisSubmission analysisSubmission = analysisSubmissions
 					.get(0);
 
-			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
-					.getByType(analysisSubmission.getId(),
-							AnalysisSubmissionPhylogenomics.class);
 			try {
-				WorkflowStatus workflowStatus = analysisExecutionServicePhylogenomics
-						.getWorkflowStatus(analysisSubmissionPhylogenomics);
+				WorkflowStatus workflowStatus = analysisExecutionService
+						.getWorkflowStatus(analysisSubmission);
 
 				handleWorkflowStatus(workflowStatus,
-						analysisSubmissionPhylogenomics);
+						analysisSubmission);
 
 			} catch (ExecutionManagerException e) {
 				logger.error("Could not get status for analysis "
-						+ analysisSubmissionPhylogenomics, e);
-				setStateForSubmission(analysisSubmissionPhylogenomics,
+						+ analysisSubmission, e);
+				setStateForSubmission(analysisSubmission,
 						AnalysisState.ERROR);
 			} catch (IOException e) {
 				logger.error("Could not transfer results for analysis "
-						+ analysisSubmissionPhylogenomics, e);
-				setStateForSubmission(analysisSubmissionPhylogenomics,
+						+ analysisSubmission, e);
+				setStateForSubmission(analysisSubmission,
 						AnalysisState.ERROR);
 			} catch (Exception e) {
 				logger.error("Error for analysis", e);
-				setStateForSubmission(analysisSubmissionPhylogenomics,
+				setStateForSubmission(analysisSubmission,
 						AnalysisState.ERROR);
 			}
 		}
@@ -157,24 +150,25 @@ public class AnalysisExecutionScheduledTaskImpl implements
 	 *             If there was an issue in the execution manager.
 	 * @throws IOException
 	 *             If there was an issue saving the results on an analysis.
+	 * @throws IridaWorkflowNotFoundException  If an IRIDA workflow could not be found for the analysis.
 	 */
 	private void handleWorkflowStatus(WorkflowStatus workflowStatus,
-			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics)
-			throws ExecutionManagerException, IOException {
+			AnalysisSubmission analysisSubmission)
+			throws ExecutionManagerException, IOException, IridaWorkflowNotFoundException {
 		WorkflowState workflowState = workflowStatus.getState();
 		switch (workflowState) {
 			case OK:
-				setStateForSubmission(analysisSubmissionPhylogenomics,
+				setStateForSubmission(analysisSubmission,
 						AnalysisState.FINISHED_RUNNING);
 
-				Analysis analysisResults = analysisExecutionServicePhylogenomics
-						.transferAnalysisResults(analysisSubmissionPhylogenomics);
+				Analysis analysisResults = analysisExecutionService
+						.transferAnalysisResults(analysisSubmission);
 
 				logger.debug("Transfered results for analysis submission "
-						+ analysisSubmissionPhylogenomics.getRemoteAnalysisId()
+						+ analysisSubmission.getRemoteAnalysisId()
 						+ " to analysis " + analysisResults.getId());
 
-				setStateForSubmission(analysisSubmissionPhylogenomics,
+				setStateForSubmission(analysisSubmission,
 						AnalysisState.COMPLETED);
 				break;
 
@@ -184,16 +178,16 @@ public class AnalysisExecutionScheduledTaskImpl implements
 			case QUEUED:
 			case RUNNING:
 				logger.debug("Workflow for analysis "
-						+ analysisSubmissionPhylogenomics
+						+ analysisSubmission
 						+ " is running: percent "
 						+ workflowStatus.getPercentComplete());
 				break;
 
 			default:
 				logger.error("Workflow for analysis "
-						+ analysisSubmissionPhylogenomics + " in error state "
+						+ analysisSubmission + " in error state "
 						+ workflowStatus);
-				setStateForSubmission(analysisSubmissionPhylogenomics,
+				setStateForSubmission(analysisSubmission,
 						AnalysisState.ERROR);
 				break;
 		}
