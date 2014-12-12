@@ -141,6 +141,7 @@ public class AnalysisExecutionServiceGalaxySimplified implements
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getRemoteAnalysisId(),
 				"remote analyis id is null");
+		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
 		checkArgument(AnalysisState.SUBMITTING.equals(analysisSubmission
 				.getAnalysisState()), " analysis should be "
 				+ AnalysisState.SUBMITTING);

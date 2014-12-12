@@ -29,7 +29,9 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
@@ -188,8 +190,60 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 	}
 
 	/**
+	 * Tests out attempting to execute an analysis with an invalid remote workflow id.
+	 * 
+	 * @throws IOException
+	 * @throws IridaWorkflowNotFoundException
+	 * @throws IllegalArgumentException
+	 */
+	@Test(expected = WorkflowException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testExecuteAnalysisFailRemoteWorkflowId()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException,
+			IOException {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
+				.setupSubmissionInDatabase(1L, sequenceFilePath,
+						referenceFilePath, validIridaWorkflowId);
+
+		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
+		AnalysisSubmission analysisSubmitted = analysisExecutionServiceGalaxySimplified
+				.prepareSubmission(analysisSubmission);
+
+		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
+		analysisSubmitted.setRemoteWorkflowId(localGalaxy.getInvalidWorkflowId());
+		analysisExecutionServiceGalaxySimplified
+				.executeAnalysis(analysisSubmitted);
+	}
+	
+	/**
+	 * Tests out attempting to execute an analysis with an invalid remote analysis id.
+	 * 
+	 * @throws IOException
+	 * @throws IridaWorkflowNotFoundException
+	 * @throws IllegalArgumentException
+	 */
+	@Test(expected = ExecutionManagerObjectNotFoundException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testExecuteAnalysisFailRemoteAnalysisId()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException,
+			IOException {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
+				.setupSubmissionInDatabase(1L, sequenceFilePath,
+						referenceFilePath, validIridaWorkflowId);
+
+		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
+		AnalysisSubmission analysisSubmitted = analysisExecutionServiceGalaxySimplified
+				.prepareSubmission(analysisSubmission);
+
+		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
+		analysisSubmitted.setRemoteAnalysisId("invalid");
+		analysisExecutionServiceGalaxySimplified
+				.executeAnalysis(analysisSubmitted);
+	}
+	
+	/**
 	 * Tests out attempting to execute an analysis with an invalid initial
-	 * state..
+	 * state.
 	 * 
 	 * @throws IOException
 	 * @throws IridaWorkflowNotFoundException
