@@ -1,5 +1,11 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.project.library.LibraryDescription;
 
 /**
@@ -10,4 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.project.library.LibraryDescrip
  */
 public interface LibraryDescriptionService extends CRUDService<Long, LibraryDescription> {
 
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#libraryDescription.project, 'isProjectOwner')")
+	public LibraryDescription create(@Valid LibraryDescription libraryDescription) throws EntityExistsException,
+			ConstraintViolationException;
 }

@@ -24,4 +24,9 @@ public class LibraryDescriptionServiceImpl extends CRUDServiceImpl<Long, Library
 			final Validator validator) {
 		super(repository, validator, LibraryDescription.class);
 	}
+	
+	@Override
+	public LibraryDescription create(final LibraryDescription libraryDescription) {
+		return super.create(libraryDescription);
+	}
 }

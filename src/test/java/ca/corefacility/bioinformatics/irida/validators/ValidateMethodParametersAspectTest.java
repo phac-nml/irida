@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import javax.validation.Validator;
 
 import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
+import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -75,8 +76,8 @@ public class ValidateMethodParametersAspectTest {
 	public void testThrowsConstraintViolations() {
 		String first = "first";
 		Set<ConstraintViolation<Object>> violations = new HashSet<>();
-		violations.add(ConstraintViolationImpl.forBeanValidation(null, null, Object.class, null, null, first, null,
-				null, null));
+		violations.add(ConstraintViolationImpl.forBeanValidation(null, null, Object.class, null, null, first,
+				PathImpl.createRootPath(), null, null));
 		when(validator.validate(any())).thenReturn(violations);
 		proxy.testOneValidParameter(first);
 	}
@@ -94,12 +95,12 @@ public class ValidateMethodParametersAspectTest {
 		interfaceProxy.testParameterAnnotatedInClass(param);
 		verify(validator).validate(param);
 	}
-	
+
 	@Test
 	public void testValidatesIterable() {
 		List<String> collection = Lists.newArrayList("first", "second", "third", "fourth");
 		interfaceProxy.testIterableValidAnnotation(collection);
-		
+
 		verify(validator, times(collection.size())).validate(any(String.class));
 		for (String el : collection) {
 			verify(validator).validate(el);
