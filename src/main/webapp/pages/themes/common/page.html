@@ -111,47 +111,58 @@
 	<script th:src="@{/resources/js/services/notifications/irida-notifications.js}"
 	        src="/resources/js/services/notifications/irida-notifications-min.js"></script>
 
-	<script th:inline="javascript">
-		/*<![CDATA[*/
-		window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ngAnimate', 'ngMessages', 'ui.bootstrap', 'ui.utils', 'restangular', 'irida.notifications']);
-		var app = angular.module('irida', window.dependencies)
-			.value('BASE_URL', /*[[@{/}]]*/ '/')
-			// This configures the base url globally for all restangular calls.
-			.config(function (RestangularProvider) {
-				RestangularProvider.setBaseUrl(/*[[@{/}]]*/ "/");
-			})
-			.run(function (paginationConfig) {
-				paginationConfig.firstText = /*[[#{table.first}]]*/ 'First';
-				paginationConfig.previousText = /*[[#{table.previous}]]*/ 'Previous';
-				paginationConfig.nextText = /*[[#{table.next}]]*/ 'Next';
-				paginationConfig.lastText = /*[[#{table.last}]]*/ 'Last';
-				paginationConfig.boundaryLinks = true;
-				paginationConfig.directionLinks = true;
-				paginationConfig.maxSize = 8;
-				paginationConfig.rotate = false;
-			})
-			.directive('ngFocus', [function () {
-				var FOCUS_CLASS = "ng-focused";
-				return {
-					restrict: 'A',
-					require : 'ngModel',
-					link    : function (scope, element, attrs, ctrl) {
-						ctrl.$focused = false;
-						element.bind('focus', function (evt) {
-							element.addClass(FOCUS_CLASS);
-							scope.$apply(function () {
-								ctrl.$focused = true;
-							});
-						}).bind('blur', function (evt) {
-							element.removeClass(FOCUS_CLASS);
-							scope.$apply(function () {
-								ctrl.$focused = false;
-							});
+<script th:inline="javascript">
+	/*<![CDATA[*/
+	function SessionFactory(scope, $timeout) {
+		var svc = this,
+		    TIMEOUT_LENGTH = 1000, //1500000,
+		    timeout;
+
+		timeout = $timeout(function () {
+			console.log('session timeout');
+		}, TIMEOUT_LENGTH);
+	}
+
+	window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ngAnimate', 'ngMessages', 'ui.bootstrap', 'ui.utils', 'restangular', 'irida.notifications']);
+	var app = angular.module('irida', window.dependencies)
+		.value('BASE_URL', /*[[@{/}]]*/ '/')
+		// This configures the base url globally for all restangular calls.
+		.config(function (RestangularProvider) {
+			RestangularProvider.setBaseUrl(/*[[@{/}]]*/ "/");
+		})
+		.run(function (paginationConfig) {
+			paginationConfig.firstText = /*[[#{table.first}]]*/ 'First';
+			paginationConfig.previousText = /*[[#{table.previous}]]*/ 'Previous';
+			paginationConfig.nextText = /*[[#{table.next}]]*/ 'Next';
+			paginationConfig.lastText = /*[[#{table.last}]]*/ 'Last';
+			paginationConfig.boundaryLinks = true;
+			paginationConfig.directionLinks = true;
+			paginationConfig.maxSize = 8;
+			paginationConfig.rotate = false;
+		})
+		.factory('SessionFactory', [SessionFactory])
+		.directive('ngFocus', [function () {
+			var FOCUS_CLASS = "ng-focused";
+			return {
+				restrict: 'A',
+				require : 'ngModel',
+				link    : function (scope, element, attrs, ctrl) {
+					ctrl.$focused = false;
+					element.bind('focus', function (evt) {
+						element.addClass(FOCUS_CLASS);
+						scope.$apply(function () {
+							ctrl.$focused = true;
 						});
-					}
+					}).bind('blur', function (evt) {
+						element.removeClass(FOCUS_CLASS);
+						scope.$apply(function () {
+							ctrl.$focused = false;
+						});
+					});
 				}
-			}]).config(function ($httpProvider) {
-				$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+			}
+		}]).config(function ($httpProvider) {
+			$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 				// Make sure that all ajax form data is sent in the correct format.
 				$httpProvider.defaults.transformRequest = function (data) {
