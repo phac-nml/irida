@@ -14,15 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowChecksumInvalidException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
@@ -200,28 +197,6 @@ public class AnalysisExecutionServiceGalaxySimplified implements
 
 		String analysisId = submittedAnalysis.getRemoteAnalysisId();
 		return galaxyHistoriesService.getStatusForHistory(analysisId);
-	}
-
-	/**
-	 * Validates the given workflow.
-	 * 
-	 * @param remoteWorkflow
-	 *            The Galaxy workflow to validate.
-	 * @throws WorkflowException
-	 *             If there was an issue validating the workflow.
-	 */
-	public void validateWorkflow(RemoteWorkflowGalaxy remoteWorkflow)
-			throws WorkflowException {
-		checkNotNull(remoteWorkflow, "remoteWorkflow is null");
-
-		if (!galaxyWorkflowService.validateWorkflowByChecksum(
-				remoteWorkflow.getWorkflowChecksum(),
-				remoteWorkflow.getWorkflowId())) {
-			throw new WorkflowChecksumInvalidException(
-					"passed workflow with id=" + remoteWorkflow.getWorkflowId()
-							+ " does not have correct checksum "
-							+ remoteWorkflow.getWorkflowChecksum());
-		}
 	}
 
 	/**

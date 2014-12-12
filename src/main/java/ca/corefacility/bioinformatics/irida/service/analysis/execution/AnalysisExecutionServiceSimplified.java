@@ -30,8 +30,10 @@ public interface AnalysisExecutionServiceSimplified {
 	 * @throws IOException
 	 *             If there was an issue reading in the workflow file.
 	 */
-	public AnalysisSubmission prepareSubmission(AnalysisSubmission analysisSubmission)
-			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException;
+	public AnalysisSubmission prepareSubmission(
+			AnalysisSubmission analysisSubmission)
+			throws ExecutionManagerException, IridaWorkflowNotFoundException,
+			IOException;
 
 	/**
 	 * Executes the passed prepared {@link AnalysisSubmission} in an execution
@@ -46,8 +48,9 @@ public interface AnalysisExecutionServiceSimplified {
 	 *             If the workflow for this submission could not be found in
 	 *             IRIDA.
 	 */
-	public AnalysisSubmission executeAnalysis(AnalysisSubmission analysisSubmission) throws ExecutionManagerException,
-			IridaWorkflowNotFoundException;
+	public AnalysisSubmission executeAnalysis(
+			AnalysisSubmission analysisSubmission)
+			throws ExecutionManagerException, IridaWorkflowNotFoundException;
 
 	/**
 	 * Gets the status for the given submitted analysis.
@@ -59,7 +62,8 @@ public interface AnalysisExecutionServiceSimplified {
 	 * @throws ExecutionManagerException
 	 *             If there was an issue checking the status.
 	 */
-	public WorkflowStatus getWorkflowStatus(AnalysisSubmission submittedAnalysis) throws ExecutionManagerException;
+	public WorkflowStatus getWorkflowStatus(AnalysisSubmission submittedAnalysis)
+			throws ExecutionManagerException;
 
 	/**
 	 * Downloads and saves the results of an {@link Analysis} that was
@@ -78,6 +82,7 @@ public interface AnalysisExecutionServiceSimplified {
 	 *             If there was an error loading the analysis results from an
 	 *             execution manager.
 	 */
-	public Analysis transferAnalysisResults(AnalysisSubmission submittedAnalysis) throws ExecutionManagerException,
-			IridaWorkflowNotFoundException, IOException;
+	public Analysis transferAnalysisResults(AnalysisSubmission submittedAnalysis)
+			throws ExecutionManagerException, IridaWorkflowNotFoundException,
+			IOException;
 }

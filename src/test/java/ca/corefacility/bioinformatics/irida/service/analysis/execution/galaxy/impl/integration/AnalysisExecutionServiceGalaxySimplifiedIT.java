@@ -53,7 +53,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
- * Tests out the analysis service for the phylogenomic pipeline.
+ * Tests out the analysis service for the Galaxy analyses.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
@@ -190,7 +190,8 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 	}
 
 	/**
-	 * Tests out attempting to execute an analysis with an invalid remote workflow id.
+	 * Tests out attempting to execute an analysis with an invalid remote
+	 * workflow id.
 	 * 
 	 * @throws IOException
 	 * @throws IridaWorkflowNotFoundException
@@ -210,13 +211,15 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 				.prepareSubmission(analysisSubmission);
 
 		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
-		analysisSubmitted.setRemoteWorkflowId(localGalaxy.getInvalidWorkflowId());
+		analysisSubmitted.setRemoteWorkflowId(localGalaxy
+				.getInvalidWorkflowId());
 		analysisExecutionServiceGalaxySimplified
 				.executeAnalysis(analysisSubmitted);
 	}
-	
+
 	/**
-	 * Tests out attempting to execute an analysis with an invalid remote analysis id.
+	 * Tests out attempting to execute an analysis with an invalid remote
+	 * analysis id.
 	 * 
 	 * @throws IOException
 	 * @throws IridaWorkflowNotFoundException
@@ -240,7 +243,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		analysisExecutionServiceGalaxySimplified
 				.executeAnalysis(analysisSubmitted);
 	}
-	
+
 	/**
 	 * Tests out attempting to execute an analysis with an invalid initial
 	 * state.

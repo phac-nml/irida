@@ -42,7 +42,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
 /**
- * Tests out an execution service for phylogenomics analyses.
+ * Tests out an execution service for Galaxy analyses.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
@@ -92,25 +92,33 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	 * @throws ExecutionManagerException
 	 */
 	@Before
-	public void setup() throws IridaWorkflowNotFoundException, IOException, ExecutionManagerException {
+	public void setup() throws IridaWorkflowNotFoundException, IOException,
+			ExecutionManagerException {
 		MockitoAnnotations.initMocks(this);
 
 		String submissionName = "name";
 		Set<SequenceFile> submissionInputFiles = Sets.newHashSet();
 
-		analysisSubmission = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisSubmitted = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisSubmission = new AnalysisSubmission(submissionName,
+				submissionInputFiles, WORKFLOW_ID);
+		analysisSubmitted = new AnalysisSubmission(submissionName,
+				submissionInputFiles, WORKFLOW_ID);
 
-		workflowManagement = new AnalysisExecutionServiceGalaxySimplified(analysisSubmissionService, analysisService,
-				galaxyWorkflowService, galaxyHistoriesService, analysisWorkspaceServiceSimplified,
-				iridaWorkflowsService);
+		workflowManagement = new AnalysisExecutionServiceGalaxySimplified(
+				analysisSubmissionService, analysisService,
+				galaxyWorkflowService, galaxyHistoriesService,
+				analysisWorkspaceServiceSimplified, iridaWorkflowsService);
 
-		when(iridaWorkflowsService.getIridaWorkflow(WORKFLOW_ID)).thenReturn(iridaWorkflow);
-		when(iridaWorkflow.getWorkflowStructure()).thenReturn(iridaWorkflowStructure);
+		when(iridaWorkflowsService.getIridaWorkflow(WORKFLOW_ID)).thenReturn(
+				iridaWorkflow);
+		when(iridaWorkflow.getWorkflowStructure()).thenReturn(
+				iridaWorkflowStructure);
 		when(iridaWorkflowStructure.getWorkflowFile()).thenReturn(workflowFile);
 
-		when(analysisSubmissionService.create(analysisSubmission)).thenReturn(analysisSubmission);
-		when(analysisSubmissionService.read(INTERNAL_ANALYSIS_ID)).thenReturn(analysisSubmission);
+		when(analysisSubmissionService.create(analysisSubmission)).thenReturn(
+				analysisSubmission);
+		when(analysisSubmissionService.read(INTERNAL_ANALYSIS_ID)).thenReturn(
+				analysisSubmission);
 
 		analysisSubmission.setId(INTERNAL_ANALYSIS_ID);
 		analysisSubmitted.setId(INTERNAL_ANALYSIS_ID);
@@ -119,13 +127,20 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 
 		analysisSubmitted.setRemoteAnalysisId(ANALYSIS_ID);
 
-		preparedWorkflow = new PreparedWorkflowGalaxy(ANALYSIS_ID, workflowInputsGalaxy);
+		preparedWorkflow = new PreparedWorkflowGalaxy(ANALYSIS_ID,
+				workflowInputsGalaxy);
 
 		analysisIdMap = ImmutableMap.of("remoteAnalysisId", ANALYSIS_ID);
 
-		when(galaxyWorkflowService.uploadGalaxyWorkflow(workflowFile)).thenReturn(REMOTE_WORKFLOW_ID);
-		when(analysisWorkspaceServiceSimplified.prepareAnalysisWorkspace(analysisSubmission)).thenReturn(ANALYSIS_ID);
-		when(analysisSubmissionService.update(INTERNAL_ANALYSIS_ID, analysisIdMap)).thenReturn(analysisSubmitted);
+		when(galaxyWorkflowService.uploadGalaxyWorkflow(workflowFile))
+				.thenReturn(REMOTE_WORKFLOW_ID);
+		when(
+				analysisWorkspaceServiceSimplified
+						.prepareAnalysisWorkspace(analysisSubmission))
+				.thenReturn(ANALYSIS_ID);
+		when(
+				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID,
+						analysisIdMap)).thenReturn(analysisSubmitted);
 	}
 
 	/**
@@ -136,18 +151,22 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test
-	public void testPrepareSubmissionSuccess() throws ExecutionManagerException, IridaWorkflowNotFoundException,
+	public void testPrepareSubmissionSuccess()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException,
 			IOException {
-		AnalysisSubmission returnedSubmission = workflowManagement.prepareSubmission(analysisSubmission);
+		AnalysisSubmission returnedSubmission = workflowManagement
+				.prepareSubmission(analysisSubmission);
 
-		assertEquals("analysisSubmission not equal to returned submission", analysisSubmitted, returnedSubmission);
+		assertEquals("analysisSubmission not equal to returned submission",
+				analysisSubmitted, returnedSubmission);
 
 		verify(galaxyWorkflowService).uploadGalaxyWorkflow(workflowFile);
-		verify(analysisWorkspaceServiceSimplified).prepareAnalysisWorkspace(analysisSubmission);
+		verify(analysisWorkspaceServiceSimplified).prepareAnalysisWorkspace(
+				analysisSubmission);
 		verify(analysisSubmissionService).update(INTERNAL_ANALYSIS_ID,
 				ImmutableMap.of("remoteWorkflowId", REMOTE_WORKFLOW_ID));
-		verify(analysisSubmissionService)
-				.update(INTERNAL_ANALYSIS_ID, ImmutableMap.of("remoteAnalysisId", ANALYSIS_ID));
+		verify(analysisSubmissionService).update(INTERNAL_ANALYSIS_ID,
+				ImmutableMap.of("remoteAnalysisId", ANALYSIS_ID));
 	}
 
 	/**
@@ -159,10 +178,11 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test(expected = WorkflowUploadException.class)
-	public void testPrepareSubmissionFailInvalidWorkflow() throws ExecutionManagerException, IOException,
+	public void testPrepareSubmissionFailInvalidWorkflow()
+			throws ExecutionManagerException, IOException,
 			IridaWorkflowNotFoundException {
-		when(galaxyWorkflowService.uploadGalaxyWorkflow(workflowFile)).thenThrow(
-				new WorkflowUploadException(null, null));
+		when(galaxyWorkflowService.uploadGalaxyWorkflow(workflowFile))
+				.thenThrow(new WorkflowUploadException(null, null));
 
 		workflowManagement.prepareSubmission(analysisSubmission);
 	}
@@ -175,10 +195,13 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test(expected = ExecutionManagerException.class)
-	public void testPrepareSubmissionFailWorkspace() throws ExecutionManagerException, IridaWorkflowNotFoundException,
+	public void testPrepareSubmissionFailWorkspace()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException,
 			IOException {
-		when(analysisWorkspaceServiceSimplified.prepareAnalysisWorkspace(analysisSubmission)).thenThrow(
-				new ExecutionManagerException());
+		when(
+				analysisWorkspaceServiceSimplified
+						.prepareAnalysisWorkspace(analysisSubmission))
+				.thenThrow(new ExecutionManagerException());
 
 		workflowManagement.prepareSubmission(analysisSubmission);
 	}
@@ -190,16 +213,23 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test
-	public void testExecuteAnalysisSuccess() throws ExecutionManagerException, IridaWorkflowNotFoundException {
+	public void testExecuteAnalysisSuccess() throws ExecutionManagerException,
+			IridaWorkflowNotFoundException {
 		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTING);
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
-		when(analysisWorkspaceServiceSimplified.prepareAnalysisFiles(analysisSubmission)).thenReturn(preparedWorkflow);
+		when(
+				analysisWorkspaceServiceSimplified
+						.prepareAnalysisFiles(analysisSubmission)).thenReturn(
+				preparedWorkflow);
 
-		AnalysisSubmission returnedSubmission = workflowManagement.executeAnalysis(analysisSubmission);
+		AnalysisSubmission returnedSubmission = workflowManagement
+				.executeAnalysis(analysisSubmission);
 
-		assertEquals("analysisSubmission not equal to returned submission", analysisSubmission, returnedSubmission);
+		assertEquals("analysisSubmission not equal to returned submission",
+				analysisSubmission, returnedSubmission);
 
-		verify(analysisWorkspaceServiceSimplified).prepareAnalysisFiles(analysisSubmission);
+		verify(analysisWorkspaceServiceSimplified).prepareAnalysisFiles(
+				analysisSubmission);
 		verify(galaxyWorkflowService).runWorkflow(workflowInputsGalaxy);
 	}
 
@@ -210,8 +240,8 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	 * @throws IllegalArgumentException
 	 */
 	@Test(expected = IllegalArgumentException.class)
-	public void testExecuteAnalysisFailAlreadySubmitted() throws ExecutionManagerException,
-			IridaWorkflowNotFoundException {
+	public void testExecuteAnalysisFailAlreadySubmitted()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException {
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
 
@@ -225,11 +255,13 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test(expected = ExecutionManagerException.class)
-	public void testExecuteAnalysisFailPrepareWorkflow() throws ExecutionManagerException,
-			IridaWorkflowNotFoundException {
+	public void testExecuteAnalysisFailPrepareWorkflow()
+			throws ExecutionManagerException, IridaWorkflowNotFoundException {
 		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTING);
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
-		when(analysisWorkspaceServiceSimplified.prepareAnalysisFiles(analysisSubmission)).thenThrow(
+		when(
+				analysisWorkspaceServiceSimplified
+						.prepareAnalysisFiles(analysisSubmission)).thenThrow(
 				new ExecutionManagerException());
 
 		workflowManagement.executeAnalysis(analysisSubmission);
@@ -242,11 +274,16 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test(expected = WorkflowException.class)
-	public void testExecuteAnalysisFail() throws ExecutionManagerException, IridaWorkflowNotFoundException {
+	public void testExecuteAnalysisFail() throws ExecutionManagerException,
+			IridaWorkflowNotFoundException {
 		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTING);
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
-		when(analysisWorkspaceServiceSimplified.prepareAnalysisFiles(analysisSubmission)).thenReturn(preparedWorkflow);
-		when(galaxyWorkflowService.runWorkflow(workflowInputsGalaxy)).thenThrow(new WorkflowException());
+		when(
+				analysisWorkspaceServiceSimplified
+						.prepareAnalysisFiles(analysisSubmission)).thenReturn(
+				preparedWorkflow);
+		when(galaxyWorkflowService.runWorkflow(workflowInputsGalaxy))
+				.thenThrow(new WorkflowException());
 
 		workflowManagement.executeAnalysis(analysisSubmission);
 	}
@@ -258,13 +295,16 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	 */
 	@Test
 	public void testGetWorkflowStatusSuccess() throws ExecutionManagerException {
-		WorkflowStatus workflowStatus = new WorkflowStatus(WorkflowState.OK, 1.0f);
+		WorkflowStatus workflowStatus = new WorkflowStatus(WorkflowState.OK,
+				1.0f);
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
 
-		when(galaxyHistoriesService.getStatusForHistory(analysisSubmission.getRemoteAnalysisId())).thenReturn(
-				workflowStatus);
+		when(
+				galaxyHistoriesService.getStatusForHistory(analysisSubmission
+						.getRemoteAnalysisId())).thenReturn(workflowStatus);
 
-		assertEquals(workflowStatus, workflowManagement.getWorkflowStatus(analysisSubmission));
+		assertEquals(workflowStatus,
+				workflowManagement.getWorkflowStatus(analysisSubmission));
 	}
 
 	/**
@@ -273,10 +313,13 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	 * @throws ExecutionManagerException
 	 */
 	@Test(expected = WorkflowException.class)
-	public void testGetWorkflowStatusFailNoStatus() throws ExecutionManagerException {
+	public void testGetWorkflowStatusFailNoStatus()
+			throws ExecutionManagerException {
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
 
-		when(galaxyHistoriesService.getStatusForHistory(analysisSubmission.getRemoteAnalysisId())).thenThrow(
+		when(
+				galaxyHistoriesService.getStatusForHistory(analysisSubmission
+						.getRemoteAnalysisId())).thenThrow(
 				new WorkflowException());
 
 		workflowManagement.getWorkflowStatus(analysisSubmission);
@@ -290,16 +333,24 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test
-	public void testTransferAnalysisResultsSuccess() throws ExecutionManagerException, IOException,
+	public void testTransferAnalysisResultsSuccess()
+			throws ExecutionManagerException, IOException,
 			IridaWorkflowNotFoundException {
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
 		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_RUNNING);
-		when(analysisSubmissionService.exists(INTERNAL_ANALYSIS_ID)).thenReturn(true);
-		when(analysisWorkspaceServiceSimplified.getAnalysisResults(analysisSubmission)).thenReturn(analysisResults);
-		when(analysisService.create(analysisResults)).thenReturn(analysisResults);
+		when(analysisSubmissionService.exists(INTERNAL_ANALYSIS_ID))
+				.thenReturn(true);
+		when(
+				analysisWorkspaceServiceSimplified
+						.getAnalysisResults(analysisSubmission)).thenReturn(
+				analysisResults);
+		when(analysisService.create(analysisResults)).thenReturn(
+				analysisResults);
 
-		Analysis actualResults = workflowManagement.transferAnalysisResults(analysisSubmission);
-		assertEquals("analysisResults should be equal", analysisResults, actualResults);
+		Analysis actualResults = workflowManagement
+				.transferAnalysisResults(analysisSubmission);
+		assertEquals("analysisResults should be equal", analysisResults,
+				actualResults);
 
 		verify(analysisService).create(analysisResults);
 	}
@@ -312,12 +363,15 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test(expected = ExecutionManagerException.class)
-	public void testGetAnalysisResultsFail() throws ExecutionManagerException, IOException,
-			IridaWorkflowNotFoundException {
+	public void testGetAnalysisResultsFail() throws ExecutionManagerException,
+			IOException, IridaWorkflowNotFoundException {
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
 		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_RUNNING);
-		when(analysisSubmissionService.exists(INTERNAL_ANALYSIS_ID)).thenReturn(true);
-		when(analysisWorkspaceServiceSimplified.getAnalysisResults(analysisSubmission)).thenThrow(
+		when(analysisSubmissionService.exists(INTERNAL_ANALYSIS_ID))
+				.thenReturn(true);
+		when(
+				analysisWorkspaceServiceSimplified
+						.getAnalysisResults(analysisSubmission)).thenThrow(
 				new ExecutionManagerException());
 
 		workflowManagement.transferAnalysisResults(analysisSubmission);
@@ -332,7 +386,8 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test(expected = NullPointerException.class)
-	public void testGetAnalysisResultsFailNotSubmittedNullId() throws ExecutionManagerException, IOException,
+	public void testGetAnalysisResultsFailNotSubmittedNullId()
+			throws ExecutionManagerException, IOException,
 			IridaWorkflowNotFoundException {
 		analysisSubmission.setRemoteAnalysisId(null);
 		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_RUNNING);
@@ -348,11 +403,13 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test(expected = EntityNotFoundException.class)
-	public void testGetAnalysisResultsFailAnalysisIdInvalid() throws ExecutionManagerException, IOException,
+	public void testGetAnalysisResultsFailAnalysisIdInvalid()
+			throws ExecutionManagerException, IOException,
 			IridaWorkflowNotFoundException {
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
 		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_RUNNING);
-		when(analysisSubmissionService.exists(INTERNAL_ANALYSIS_ID)).thenReturn(false);
+		when(analysisSubmissionService.exists(INTERNAL_ANALYSIS_ID))
+				.thenReturn(false);
 
 		workflowManagement.transferAnalysisResults(analysisSubmission);
 	}
