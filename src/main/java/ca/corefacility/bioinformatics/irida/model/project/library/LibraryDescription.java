@@ -85,7 +85,7 @@ public class LibraryDescription implements IridaThing {
 		this.strategy = strategy;
 		this.layout = layout;
 	}
-
+	
 	@Override
 	public Date getCreatedDate() {
 		return this.createdDate;
@@ -103,7 +103,7 @@ public class LibraryDescription implements IridaThing {
 
 	@Override
 	public String getLabel() {
-		return this.comment;
+		return this.createdDate.toString();
 	}
 
 	@Override
@@ -134,6 +134,10 @@ public class LibraryDescription implements IridaThing {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+	
+	public Project getProject() {
+		return this.project;
 	}
 
 	public static enum Source {
