@@ -23,6 +23,17 @@ public class Strategy {
 	@Column(name = "protocol", nullable = false)
 	private final String protocol;
 
+	/**
+	 * For Hibernate.
+	 */
+	@SuppressWarnings("unused")
+	private Strategy() {
+		this.modeInsertSize = null;
+		this.minInsertSize = null;
+		this.maxInsertSize = null;
+		this.protocol = null;
+	}
+
 	public Strategy(final Integer modeInsertSize, final Integer minInsertSize, final Integer maxInsertSize,
 			final String protocol) {
 		this.minInsertSize = minInsertSize;

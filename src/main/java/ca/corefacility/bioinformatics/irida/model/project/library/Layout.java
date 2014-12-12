@@ -21,6 +21,15 @@ public class Layout {
 	@Column(name = "layout_type", nullable = false)
 	private final LayoutType layoutType;
 
+	/**
+	 * For hibernate.
+	 */
+	@SuppressWarnings("unused")
+	private Layout() {
+		this.readLengths = null;
+		this.layoutType = null;
+	}
+
 	public Layout(final Integer readLengths, final LayoutType layoutType) {
 		this.readLengths = readLengths;
 		this.layoutType = layoutType;
