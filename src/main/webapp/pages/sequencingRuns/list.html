@@ -12,7 +12,7 @@
     <h1 th:text="#{sequencingruns.title}">_Sequencing runs_</h1>
 
     <div class="col-md-12" ng-controller="RunsTableCtrl as table">
-        <table id="samplesTable" class="table ng-cloak">
+        <table id="runsTable" class="table ng-cloak">
             <thead>
                 <tr ng-controller="SortCtrl as sCtrl">
                     <th id="sortId" th:text="#{iridaThing.id}" sort-by="" onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
@@ -24,8 +24,8 @@
                 </tr>
             </thead>
             <tbody>
-                <tr class="sample-row" ng-repeat="run in table.runs | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
-                    <td class="sample-name"><a class="btn btn-default btn-xs"
+                <tr class="run-row" ng-repeat="run in table.runs | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
+                    <td class="run-id"><a class="btn btn-default btn-xs"
                         data:ng-href="@{'/sequencingRuns/{{run.id}}'}" href="#">{{run.id}}</a></td>
                     <td>{{run.sequencerName}}</td>
                     <td class="createdDate" data-date="{{run.createdDate}}" tooltip-popup-delay='500' tooltip-placement="left" tooltip="{{run.createdDate | date:'medium'}}">
