@@ -44,4 +44,5 @@
 	<include file="changesets/2.0/snapshots.xml" relativeToChangelogFile="true"/>
 	<include file="changesets/2.0/project-events.xml" relativeToChangelogFile="true"/>
 	
+	<include file="changesets/3.0.0/all-changes.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
