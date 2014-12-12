@@ -18,7 +18,7 @@
                     <th id="sortId" th:text="#{iridaThing.id}" sort-by="" onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
                         sortedBy="sCtrl.filter.sortedBy" sortValue="id">_ID_</th>
                     <th id="sortType" th:text="#{sequencingruns.type}" sort-by="" onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
-                        sortedBy="sCtrl.filter.sortedBy" sortValue="sequencerType">_sequencer_</th>
+                        sortedBy="sCtrl.filter.sortedBy" sortValue="sequencerName">_sequencer_</th>
                     <th id="sortCreatedDate" th:text="#{iridaThing.timestamp}" sort-by="" onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
                         sortedBy="sCtrl.filter.sortedBy" sortValue="createdDate">_Created date_</th>
                 </tr>
@@ -27,7 +27,7 @@
                 <tr class="sample-row" ng-repeat="run in table.runs | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
                     <td class="sample-name"><a class="btn btn-default btn-xs"
                         data:ng-href="@{'/sequencingRuns/{{run.id}}'}" href="#">{{run.id}}</a></td>
-                    <td>{{run.sequencerType}}</td>
+                    <td>{{run.sequencerName}}</td>
                     <td class="createdDate" data-date="{{run.createdDate}}" tooltip-popup-delay='500' tooltip-placement="left" tooltip="{{run.createdDate | date:'medium'}}">
 						<span>{{run.createdDate | date:'mediumDate'}}</span></td>
                 </tr>

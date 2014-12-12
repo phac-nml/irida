@@ -124,4 +124,11 @@ public abstract class SequencingRun implements IridaThing, Comparable<Sequencing
 		return false;
 	}
 
+	/**
+	 * Get the name of the sequencer type
+	 * 
+	 * @return Name of the sequencer
+	 */
+	public abstract String getSequencerName();
+
 }

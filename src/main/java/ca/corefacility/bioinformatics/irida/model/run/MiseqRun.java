@@ -20,6 +20,8 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 @Audited
 public class MiseqRun extends SequencingRun implements IridaThing {
 
+	private static final String SEQUENCER_NAME = "MiSeq";
+	
 	private String investigatorName;
 
 	private String projectName;
@@ -130,6 +132,11 @@ public class MiseqRun extends SequencingRun implements IridaThing {
 	public String toString() {
 		return "MiseqRun{" + "id=" + getId() + ", investigatorName=" + investigatorName + ", projectName="
 				+ projectName + '}';
+	}
+
+	@Override
+	public String getSequencerName() {
+		return SEQUENCER_NAME;
 	}
 
 }
