@@ -132,4 +132,9 @@ public class MiseqRun extends SequencingRun implements IridaThing {
 				+ projectName + '}';
 	}
 
+	@Override
+	public String getSequencerType() {
+		return "MiSeq";
+	}
+
 }
