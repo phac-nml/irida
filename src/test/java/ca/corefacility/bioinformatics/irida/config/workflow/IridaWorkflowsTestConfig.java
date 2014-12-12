@@ -14,8 +14,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
-import ca.corefacility.bioinformatics.irida.service.workflow.integration.TestAnalysis;
 
 import com.google.common.collect.Sets;
 

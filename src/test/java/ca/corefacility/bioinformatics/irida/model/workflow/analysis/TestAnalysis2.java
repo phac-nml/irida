@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.workflow.integration;
+package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
 import java.util.Set;
 

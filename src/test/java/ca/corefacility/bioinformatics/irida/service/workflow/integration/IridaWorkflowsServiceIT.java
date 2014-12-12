@@ -33,6 +33,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowSet;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis2;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -70,11 +72,11 @@ public class IridaWorkflowsServiceIT {
 
 	@Before
 	public void setup() throws IOException, URISyntaxException, IridaWorkflowException {
-		Path workflowVersion1DirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
+		Path workflowVersion1DirectoryPath = Paths.get(TestAnalysis.class.getResource(
 				"workflows/TestAnalysis/1.0").toURI());
-		Path workflowVersion2DirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
+		Path workflowVersion2DirectoryPath = Paths.get(TestAnalysis.class.getResource(
 				"workflows/TestAnalysis/2.0").toURI());
-		Path workflow2DirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
+		Path workflow2DirectoryPath = Paths.get(TestAnalysis.class.getResource(
 				"workflows/TestAnalysis2/1.0").toURI());
 
 		iridaWorkflowsService = new IridaWorkflowsService(new IridaWorkflowSet(Sets.newHashSet()), new IridaWorkflowIdSet(Sets.newHashSet()));
