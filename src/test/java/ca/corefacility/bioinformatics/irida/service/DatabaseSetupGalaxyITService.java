@@ -157,24 +157,20 @@ public class DatabaseSetupGalaxyITService {
 	 * @return An AnalysisSubmissionPhylogenomics which has been saved to the
 	 *         database.
 	 */
-	public AnalysisSubmission setupSubmissionInDatabase(long sampleId,
-			Path sequenceFilePath, Path referenceFilePath, UUID iridaWorkflowId) {
+	public AnalysisSubmission setupSubmissionInDatabase(long sampleId, Path sequenceFilePath, Path referenceFilePath,
+			UUID iridaWorkflowId) {
 
-		SequenceFile sequenceFile = setupSampleSequenceFileInDatabase(sampleId,
-				sequenceFilePath).get(0);
+		SequenceFile sequenceFile = setupSampleSequenceFileInDatabase(sampleId, sequenceFilePath).get(0);
 
 		Set<SequenceFile> sequenceFiles = new HashSet<>();
 		sequenceFiles.add(sequenceFile);
 
-		ReferenceFile referenceFile = referenceFileRepository
-				.save(new ReferenceFile(referenceFilePath));
+		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
-		AnalysisSubmission submission = analysisSubmissionService
-				.create(new AnalysisSubmission("my analysis", sequenceFiles,
-						referenceFile, iridaWorkflowId));
+		AnalysisSubmission submission = analysisSubmissionService.create(new AnalysisSubmission("my analysis",
+				sequenceFiles, referenceFile, iridaWorkflowId));
 
-		return analysisSubmissionRepository.getByType(submission.getId(),
-				AnalysisSubmission.class);
+		return analysisSubmissionRepository.getByType(submission.getId(), AnalysisSubmission.class);
 	}
 
 	/**
@@ -272,8 +268,7 @@ public class DatabaseSetupGalaxyITService {
 	 *            The analysis submission to wait for.
 	 * @throws Exception
 	 */
-	public void waitUntilSubmissionCompleteSimplified(
-			AnalysisSubmission analysisSubmission) throws Exception {
+	public void waitUntilSubmissionCompleteSimplified(AnalysisSubmission analysisSubmission) throws Exception {
 		final int totalSecondsWait = 1 * 60; // 1 minute
 		final int pollingTime = 2000; // 2 seconds
 
@@ -283,8 +278,7 @@ public class DatabaseSetupGalaxyITService {
 			public Void call() throws Exception {
 				WorkflowStatus workflowStatus;
 				do {
-					workflowStatus = analysisExecutionServiceGalaxySimplified
-							.getWorkflowStatus(analysisSubmission);
+					workflowStatus = analysisExecutionServiceGalaxySimplified.getWorkflowStatus(analysisSubmission);
 					Thread.sleep(pollingTime);
 				} while (!WorkflowState.OK.equals(workflowStatus.getState()));
 
@@ -295,9 +289,8 @@ public class DatabaseSetupGalaxyITService {
 		try {
 			waitForHistory.get(totalSecondsWait, TimeUnit.SECONDS);
 		} catch (TimeoutException e) {
-			throw new Exception("Timeout > " + totalSecondsWait
-					+ " s when waiting for history for " + analysisSubmission,
-					e);
+			throw new Exception("Timeout > " + totalSecondsWait + " s when waiting for history for "
+					+ analysisSubmission, e);
 		}
 	}
 

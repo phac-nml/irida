@@ -398,20 +398,22 @@ public class GalaxyWorkflowsIT {
 	
 	/**
 	 * Tests getting workflow details.
-	 * @throws WorkflowException 
+	 * 
+	 * @throws WorkflowException
 	 */
 	@Test
-	public void testGetWorkflowDetailsSuccess() throws WorkflowException  {
+	public void testGetWorkflowDetailsSuccess() throws WorkflowException {
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		assertNotNull(galaxyWorkflowService.getWorkflowDetails(workflowId));
 	}
-	
+
 	/**
 	 * Tests getting workflow details and failing.
-	 * @throws WorkflowException 
+	 * 
+	 * @throws WorkflowException
 	 */
-	@Test(expected=WorkflowException.class)
-	public void testGetWorkflowDetailsFail() throws WorkflowException  {
+	@Test(expected = WorkflowException.class)
+	public void testGetWorkflowDetailsFail() throws WorkflowException {
 		String workflowId = localGalaxy.getInvalidWorkflowId();
 		assertNotNull(galaxyWorkflowService.getWorkflowDetails(workflowId));
 	}

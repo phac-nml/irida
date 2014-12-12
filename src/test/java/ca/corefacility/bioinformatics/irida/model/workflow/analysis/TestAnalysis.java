@@ -12,8 +12,7 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
  */
 public class TestAnalysis extends Analysis {
 
-	public TestAnalysis(Set<SequenceFile> inputFiles,
-			String executionManagerAnalysisId) {
+	public TestAnalysis(Set<SequenceFile> inputFiles, String executionManagerAnalysisId) {
 		super(inputFiles, executionManagerAnalysisId);
 	}
 

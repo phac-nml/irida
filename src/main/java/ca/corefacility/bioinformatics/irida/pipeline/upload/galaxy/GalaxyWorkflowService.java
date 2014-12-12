@@ -211,13 +211,16 @@ public class GalaxyWorkflowService {
 
 	/**
 	 * Gets details about a given workflow.
-	 * @param workflowId  The id of the workflow.
-	 * @return  A details object for this workflow.
-	 * @throws WorkflowException If there was an issue getting the details of the workflow.
+	 * 
+	 * @param workflowId
+	 *            The id of the workflow.
+	 * @return A details object for this workflow.
+	 * @throws WorkflowException
+	 *             If there was an issue getting the details of the workflow.
 	 */
 	public WorkflowDetails getWorkflowDetails(String workflowId) throws WorkflowException {
 		checkNotNull(workflowId, "workflowId is null");
-		
+
 		try {
 			return workflowsClient.showWorkflow(workflowId);
 		} catch (RuntimeException e) {
