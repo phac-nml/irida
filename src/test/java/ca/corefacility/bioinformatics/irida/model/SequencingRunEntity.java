@@ -44,7 +44,7 @@ public class SequencingRunEntity extends SequencingRun {
 	}
 
 	@Override
-	public String getSequencerName() {
+	public String getSequencerType() {
 		return "TestSequencer";
 	}
 

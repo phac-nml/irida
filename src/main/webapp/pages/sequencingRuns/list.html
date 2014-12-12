@@ -31,7 +31,7 @@
                     ng-repeat="run in table.runs | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
                     <td class="run-id"><a class="btn btn-default btn-xs"
                         data:ng-href="@{'/sequencingRuns/{{run.id}}'}" href="#">{{run.id}}</a></td>
-                    <td>{{run.sequencerName}}</td>
+                    <td>{{run.sequencerType}}</td>
                     <td class="createdDate" data-date="{{run.createdDate}}" tooltip-popup-delay='500'
                         tooltip-placement="left" tooltip="{{run.createdDate | date:'medium'}}"><span>{{run.createdDate
                             | date:'mediumDate'}}</span></td>
