@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -82,8 +81,6 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	private PreparedWorkflowGalaxy preparedWorkflow;
 	private WorkflowInputsGalaxy workflowInputsGalaxy;
 
-	private Map<String, Object> analysisIdMap;
-
 	/**
 	 * Setup variables for tests.
 	 * 
@@ -120,8 +117,6 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 		analysisSubmitted.setRemoteAnalysisId(ANALYSIS_ID);
 
 		preparedWorkflow = new PreparedWorkflowGalaxy(ANALYSIS_ID, workflowInputsGalaxy);
-
-		analysisIdMap = ImmutableMap.of();
 
 		when(galaxyWorkflowService.uploadGalaxyWorkflow(workflowFile)).thenReturn(REMOTE_WORKFLOW_ID);
 		when(analysisWorkspaceServiceSimplified.prepareAnalysisWorkspace(analysisSubmission)).thenReturn(ANALYSIS_ID);
