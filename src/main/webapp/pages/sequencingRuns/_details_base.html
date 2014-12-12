@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorator="${themePath + '_page'}">
+<head lang="en">
+<meta charset="UTF-8" />
+<title>_Sequencing Run_</title>
+</head>
+<body>
+
+    <div layout:fragment="page">
+        <main class="col-md-9 col-md-push-3" layout:fragment="main"> </main>
+        <aside class="col-md-3 col-md-pull-9 visible-md visible-lg">
+            <div class="sidebar">
+                <div class="sidebar__heading">
+                    <h2 th:text="#{sequencingruns.details.title(${run.id})}">__NAME__</h2>
+                </div>
+                <div class="sidebar__body">
+                    <div>
+                        <span class="fa fa-fw fa-barcode sidebar__icon"></span> <span th:text="#{iridaThing.id}">ID</span>
+                        <span id="sb-id" class="sidebar__value" th:text="${run.getId()}"></span>
+                    </div>
+                    <div>
+                        <span class="fa fa-fw fa-desktop sidebar__icon"></span> <span th:text="#{sequencingruns.details.type}">ID</span>
+                        <span id="sb-id" class="sidebar__value" th:text="${run.sequencerType}"></span>
+                    </div>
+                    <div>
+                        <span class="fa fa-fw fa-calendar-o sidebar__icon"></span> <em
+                            th:text="#{iridaThing.timestamp}">Created</em> <span id="sb-created"
+                            class="sidebar__value" th:text="${#calendars.format(run.getCreatedDate(), 'dd MMM yyyy')}"></span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+    <th:block layout:fragment="page-scripts">
+
+        <th:block layout:fragment="pageScripts"></th:block>
+    </th:block>
+</body>
+</html>
