@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,8 +11,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
@@ -52,6 +56,11 @@ public class LoginController extends BaseController {
 			model.addAttribute("error", hasError);
 			return "themes/" + theme + LOGIN_PAGE;
 		}
+	}
+
+	@RequestMapping("/login/poke")
+	public @ResponseBody Map<String, Object> pokeSession() {
+		return ImmutableMap.of("success", true);
 	}
 
 	private boolean isAuthenticated() {
