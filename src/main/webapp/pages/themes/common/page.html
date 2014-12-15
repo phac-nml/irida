@@ -46,9 +46,10 @@
 <script type="text/ng-template" id="/session-modal.html">
 	<div>
 		<div class="modal-header">
-			<b class="modal-title">
-				<span th:text="#{session.timeout-modal.header}"></span>&nbsp;{{timeleft | moment}}.
-			</b>
+			<b class="modal-title" th:text="#{session.timeout-modal.header}"></b>
+		</div>
+		<div class="modal-body">
+			{{timeleft | moment}}
 		</div>
 		<div class="modal-footer">
 			<button class="btn btn-default" ng-click="logout()" th:text="#{session.timeout-modal.logout}">Log me out</button>
@@ -94,10 +95,10 @@
 
 	<script th:inline="javascript">
 		/*<![CDATA[*/
-		function SessionFactory($timeout, $interval, $window, $modal, $log) {
+		function SessionFactory($timeout, $interval, $window, $modal) {
 			var sessionTime = TL_CONSTANTS.SESSION_TIMEOUT * 1000,
 			    initialWait = sessionTime * .85,
-			    modalWait = sessionTime * .3,
+			    modalWait = sessionTime * .15 + 500,
 			    timeout,
 			    restartTimeout;
 
@@ -133,9 +134,7 @@
 			}
 
 			function start() {
-				$log.info("Starting session timer for " + sessionTime);
 				timeout = $timeout(function SessionTimer() {
-					$log.info("Should be showing a modal window now.");
 					_restart();
 				}, initialWait);
 			}
@@ -172,10 +171,10 @@
 
 		window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ngAnimate', 'ngMessages', 'ui.bootstrap', 'ui.utils', 'restangular', 'irida.notifications']);
 		var app = angular.module('irida', window.dependencies)
-			.value('BASE_URL', /*[[@{/}]]*/ '/')
+			.value('BASE_URL', TL_CONSTANTS.BASE_URL)
 		// This configures the base url globally for all restangular calls.
 			.config(function (RestangularProvider) {
-				RestangularProvider.setBaseUrl(/*[[@{/}]]*/ "/");
+				RestangularProvider.setBaseUrl(TL_CONSTANTS.BASE_URL);
 			})
 			.run(function (paginationConfig) {
 				paginationConfig.firstText = /*[[#{table.first}]]*/ 'First';
@@ -190,7 +189,7 @@
 			.run(['SessionFactory', function (session) {
 				session.start();
 			}])
-			.factory('SessionFactory', ['$timeout', '$interval', '$window', '$modal', '$log', SessionFactory])
+			.factory('SessionFactory', ['$timeout', '$interval', '$window', '$modal', SessionFactory])
 			.factory('HttpInterceptor', ['$injector', HttpInterceptor])
 			.filter('moment', function () {
 				return function (timeleft) {
