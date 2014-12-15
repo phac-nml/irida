@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -22,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 public class SequencingRunController {
 
 	public static final String LIST_VIEW = "sequencingRuns/list";
+	public static final String DETAILS_VIEW = "sequencingRuns/details";
 
 	private final SequencingRunService sequencingRunService;
 
@@ -38,6 +41,19 @@ public class SequencingRunController {
 	@RequestMapping
 	public String getListPage() {
 		return LIST_VIEW;
+	}
+	
+	/**
+	 * Get the sequencing run display page
+	 * @param runId
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/{runId}")
+	public String getDetailsPage(@PathVariable Long runId, Model model){
+		SequencingRun run = sequencingRunService.read(runId);
+		model.addAttribute("run",run);
+		return DETAILS_VIEW;
 	}
 
 	/**

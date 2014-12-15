@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.SequencingRunEntity;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
@@ -40,5 +41,19 @@ public class SequencingRunControllerTest {
 		Iterable<SequencingRun> sequencingRuns = controller.getSequencingRuns();
 		verify(sequencingRunService).findAll();
 		assertEquals(sequencingRuns, runs);
+	}
+
+	@Test
+	public void testGetDetailsPage() {
+		Long runId = 1l;
+		SequencingRun sequencingRunEntity = new SequencingRunEntity();
+		ExtendedModelMap model = new ExtendedModelMap();
+		when(sequencingRunService.read(runId)).thenReturn(sequencingRunEntity);
+
+		String detailsPage = controller.getDetailsPage(runId, model);
+
+		verify(sequencingRunService).read(runId);
+		assertEquals(SequencingRunController.DETAILS_VIEW, detailsPage);
+		assertEquals(sequencingRunEntity, model.get("run"));
 	}
 }
