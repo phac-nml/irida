@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisExecutionWorker;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
@@ -41,12 +42,12 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxySimplified.class);
 
-	private AnalysisSubmissionService analysisSubmissionService;
-	private AnalysisService analysisService;
-	private AnalysisWorkspaceServiceGalaxySimplified workspaceService;
-	private GalaxyHistoriesService galaxyHistoriesService;
-	private GalaxyWorkflowService galaxyWorkflowService;
-	private IridaWorkflowsService iridaWorkflowsService;
+	private final AnalysisSubmissionService analysisSubmissionService;
+	private final AnalysisService analysisService;
+	private final AnalysisWorkspaceServiceGalaxySimplified workspaceService;
+	private final GalaxyHistoriesService galaxyHistoriesService;
+	private final GalaxyWorkflowService galaxyWorkflowService;
+	private final IridaWorkflowsService iridaWorkflowsService;
 
 	/**
 	 * Builds a new {@link AnalysisExecutionServiceGalaxySimplified} with the
@@ -83,8 +84,7 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	 */
 	@Override
 	@Transactional
-	public AnalysisSubmission prepareSubmission(AnalysisSubmission analysisSubmission)
-			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException {
+	public AnalysisExecutionWorker prepareSubmission(AnalysisSubmission analysisSubmission) {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getId(), "analysisSubmission id is null");
 		checkArgument(null == analysisSubmission.getRemoteAnalysisId(), "remote analyis id should be null");
@@ -92,20 +92,29 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 		checkArgument(AnalysisState.PREPARING.equals(analysisSubmission.getAnalysisState()),
 				"analysis state should be " + AnalysisState.PREPARING);
 
-		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysisSubmission.getWorkflowId());
-		IridaWorkflowStructure workflowStructure = iridaWorkflow.getWorkflowStructure();
-
-		logger.debug("Preparing submission for " + analysisSubmission);
-
-		String workflowId = galaxyWorkflowService.uploadGalaxyWorkflow(workflowStructure.getWorkflowFile());
-		analysisSubmission.setRemoteWorkflowId(workflowId);
-		logger.trace("Uploaded workflow for " + analysisSubmission + " to workflow with id=" + workflowId);
-
-		String analysisId = workspaceService.prepareAnalysisWorkspace(analysisSubmission);
-		logger.trace("Created Galaxy history for analysis " + " id=" + analysisId + ", " + analysisSubmission);
-
-		return analysisSubmissionService.update(analysisSubmission.getId(),
-				ImmutableMap.of("remoteAnalysisId", analysisId, "remoteWorkflowId", workflowId));
+		AnalysisExecutionWorker prepareSubmissionWorker = new AnalysisExecutionWorker(){
+			@Override
+			protected AnalysisSubmission doWork() throws Exception {
+				IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysisSubmission.getWorkflowId());
+				IridaWorkflowStructure workflowStructure = iridaWorkflow.getWorkflowStructure();
+	
+				logger.debug("Preparing submission for " + analysisSubmission);
+	
+				String workflowId = galaxyWorkflowService.uploadGalaxyWorkflow(workflowStructure.getWorkflowFile());
+				analysisSubmission.setRemoteWorkflowId(workflowId);
+				logger.trace("Uploaded workflow for " + analysisSubmission + " to workflow with id=" + workflowId);
+	
+				String analysisId = workspaceService.prepareAnalysisWorkspace(analysisSubmission);
+				
+				logger.trace("Created Galaxy history for analysis " + " id=" + analysisId + ", " + analysisSubmission);
+	
+				return analysisSubmissionService.update(analysisSubmission.getId(),
+						ImmutableMap.of("remoteAnalysisId", analysisId, "remoteWorkflowId", workflowId));
+			}
+		};
+		prepareSubmissionWorker.start();
+		
+		return prepareSubmissionWorker;
 	}
 
 	/**

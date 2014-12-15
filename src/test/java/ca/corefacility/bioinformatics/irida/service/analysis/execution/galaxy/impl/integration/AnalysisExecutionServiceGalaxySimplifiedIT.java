@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.impl.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -31,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -39,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisExecutionWorker;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
@@ -139,22 +139,22 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 	 * Tests out successfully submitting a workflow for execution.
 	 * 
 	 * @throws InterruptedException
-	 * @throws ExecutionManagerException
-	 * @throws IOException
-	 * @throws IridaWorkflowNotFoundException
+	 * @throws NoSuchValueException 
+	 * @throws ExecutionManagerException 
+	 * @throws IridaWorkflowNotFoundException 
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testExecuteAnalysisSuccess() throws InterruptedException, ExecutionManagerException,
-			IridaWorkflowNotFoundException, IOException {
+	public void testExecuteAnalysisSuccess() throws InterruptedException, NoSuchValueException, IridaWorkflowNotFoundException, ExecutionManagerException {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
-		AnalysisSubmission analysisSubmitted = analysisExecutionServiceSimplified
+		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
+		preparationWorker.join();
+		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();
 
-		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
 		AnalysisSubmission analysisExecuted = analysisExecutionServiceSimplified
 				.executeAnalysis(analysisSubmitted);
 		assertNotNull("analysisExecuted is null", analysisExecuted);
@@ -178,18 +178,22 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 	 * 
 	 * @throws IOException
 	 * @throws IridaWorkflowNotFoundException
+	 * @throws InterruptedException 
+	 * @throws NoSuchValueException 
 	 * @throws IllegalArgumentException
 	 */
 	@Test(expected = WorkflowException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testExecuteAnalysisFailRemoteWorkflowId() throws ExecutionManagerException,
-			IridaWorkflowNotFoundException, IOException {
+			IridaWorkflowNotFoundException, IOException, InterruptedException, NoSuchValueException {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
-		AnalysisSubmission analysisSubmitted = analysisExecutionServiceSimplified
+		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
+		preparationWorker.join();
+		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();
 
 		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
 		analysisSubmitted.setRemoteWorkflowId(localGalaxy.getInvalidWorkflowId());
@@ -202,18 +206,22 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 	 * 
 	 * @throws IOException
 	 * @throws IridaWorkflowNotFoundException
+	 * @throws InterruptedException 
+	 * @throws NoSuchValueException 
 	 * @throws IllegalArgumentException
 	 */
 	@Test(expected = ExecutionManagerObjectNotFoundException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testExecuteAnalysisFailRemoteAnalysisId() throws ExecutionManagerException,
-			IridaWorkflowNotFoundException, IOException {
+			IridaWorkflowNotFoundException, IOException, InterruptedException, NoSuchValueException {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
-		AnalysisSubmission analysisSubmitted = analysisExecutionServiceSimplified
+		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
+		preparationWorker.join();
+		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();
 
 		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
 		analysisSubmitted.setRemoteAnalysisId("invalid");
@@ -226,18 +234,22 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 	 * 
 	 * @throws IOException
 	 * @throws IridaWorkflowNotFoundException
+	 * @throws InterruptedException 
+	 * @throws NoSuchValueException 
 	 * @throws IllegalArgumentException
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testExecuteAnalysisFailState() throws ExecutionManagerException, IridaWorkflowNotFoundException,
-			IOException {
+			IOException, InterruptedException, NoSuchValueException {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
-		AnalysisSubmission analysisSubmitted = analysisExecutionServiceSimplified
+		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
+		preparationWorker.join();
+		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();
 
 		analysisSubmitted.setAnalysisState(AnalysisState.NEW);
 		analysisExecutionServiceSimplified.executeAnalysis(analysisSubmitted);
@@ -245,22 +257,20 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 
 	/**
 	 * Tests out successfully preparing a workflow submission.
-	 * 
-	 * @throws InterruptedException
-	 * @throws ExecutionManagerException
-	 * @throws IOException
-	 * @throws IridaWorkflowNotFoundException
+	 * @throws InterruptedException 
+	 * @throws NoSuchValueException 
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareSubmissionSuccess() throws InterruptedException, ExecutionManagerException,
-			IridaWorkflowNotFoundException, IOException {
+	public void testPrepareSubmissionSuccess() throws InterruptedException, NoSuchValueException {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
-		AnalysisSubmission analysisSubmitted = analysisExecutionServiceSimplified
+		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
+		preparationWorker.join();
+		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();
 		assertNotNull("analysisSubmitted is null", analysisSubmitted);
 		assertNotNull("remoteWorkflowId is null", analysisSubmitted.getRemoteWorkflowId());
 		assertNotNull("remoteAnalysisId is null", analysisSubmitted.getRemoteAnalysisId());
@@ -269,20 +279,20 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 	/**
 	 * Tests out attempting to prepare a workflow with an invalid id for
 	 * execution.
-	 * 
-	 * @throws ExecutionManagerException
-	 * @throws IOException
-	 * @throws IridaWorkflowNotFoundException
+	 * @throws InterruptedException 
 	 */
 	@Test(expected = IridaWorkflowNotFoundException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareSubmissionFailInvalidWorkflow() throws ExecutionManagerException,
-			IridaWorkflowNotFoundException, IOException {
+	public void testPrepareSubmissionFailInvalidWorkflow() throws InterruptedException {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, invalidIridaWorkflowId);
 
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
-		analysisExecutionServiceSimplified.prepareSubmission(analysisSubmission);
+		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
+				.prepareSubmission(analysisSubmission);
+		preparationWorker.join();
+		assertTrue(preparationWorker.exceptionOccured());
+		assertEquals(IridaWorkflowNotFoundException.class, preparationWorker.getException().getClass());
 	}
 
 	/**
@@ -297,8 +307,11 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 				sequenceFilePath, referenceFilePath, iridaPhylogenomicsWorkflowId);
 
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
-		AnalysisSubmission analysisSubmitted = analysisExecutionServiceSimplified
+		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
+		preparationWorker.join();
+		assertFalse(preparationWorker.exceptionOccured());
+		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();
 
 		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
 		AnalysisSubmission analysisExecuted = analysisExecutionServiceSimplified
@@ -368,8 +381,10 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
-		AnalysisSubmission analysisSubmitted = analysisExecutionServiceSimplified
+		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
+		preparationWorker.join();
+		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();
 
 		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
 		AnalysisSubmission analysisExecuted = analysisExecutionServiceSimplified

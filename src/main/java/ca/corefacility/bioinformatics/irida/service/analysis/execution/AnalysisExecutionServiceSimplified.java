@@ -6,6 +6,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisExecutionWorker;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
@@ -21,17 +22,9 @@ public interface AnalysisExecutionServiceSimplified {
 	 * 
 	 * @param analysisSubmission
 	 *            The {@link AnalysisSubmission} to prepare.
-	 * @return An {@link AnalysisSubmission} for the prepared submission.
-	 * @throws ExecutionManagerException
-	 *             If there was an issue preparing the analysis.
-	 * @throws IridaWorkflowNotFoundException
-	 *             If the workflow for this submission could not be found in
-	 *             IRIDA.
-	 * @throws IOException
-	 *             If there was an issue reading in the workflow file.
+	 * @return An {@link AnalysisExecutionWorker} for the thread doing the preparation of submissions.
 	 */
-	public AnalysisSubmission prepareSubmission(AnalysisSubmission analysisSubmission)
-			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException;
+	public AnalysisExecutionWorker prepareSubmission(AnalysisSubmission analysisSubmission);
 
 	/**
 	 * Executes the passed prepared {@link AnalysisSubmission} in an execution

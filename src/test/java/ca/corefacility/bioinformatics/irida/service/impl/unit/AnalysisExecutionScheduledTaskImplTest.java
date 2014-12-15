@@ -17,6 +17,7 @@ import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -24,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisExecutionWorker;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
@@ -58,6 +60,9 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	@Mock
 	private AnalysisPhylogenomicsPipeline analysis;
+	
+	@Mock
+	private AnalysisExecutionWorker prepareSubmissionWorker;
 
 	private static final String ANALYSIS_ID = "1";
 	private static final Long INTERNAL_ID = 1L;
@@ -69,9 +74,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	/**
 	 * Sets up variables for tests.
+	 * @throws NoSuchValueException 
 	 */
 	@Before
-	public void setup() {
+	public void setup() throws NoSuchValueException {
 		MockitoAnnotations.initMocks(this);
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(
@@ -87,6 +93,9 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				analysisSubmissionRepository.getByType(INTERNAL_ID,
 						AnalysisSubmissionPhylogenomics.class)).thenReturn(
 				analysisSubmission);
+		
+		when(prepareSubmissionWorker.getResult()).thenReturn(analysisSubmission);
+		when(prepareSubmissionWorker.isFinished()).thenReturn(true);
 	}
 
 	/**
@@ -108,7 +117,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		when(
 				analysisExecutionService
 						.prepareSubmission(analysisSubmission)).thenReturn(
-				analysisSubmission);
+							prepareSubmissionWorker);
 
 		analysisExecutionScheduledTask.executeAnalyses();
 
@@ -242,7 +251,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		when(
 				analysisExecutionService
 						.prepareSubmission(analysisSubmission)).thenReturn(
-				analysisSubmission);
+							prepareSubmissionWorker);
 
 		when(
 				analysisExecutionService

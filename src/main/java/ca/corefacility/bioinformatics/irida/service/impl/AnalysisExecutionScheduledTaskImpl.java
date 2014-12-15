@@ -13,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisExecutionWorker;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
@@ -75,8 +76,9 @@ public class AnalysisExecutionScheduledTaskImpl implements
 					AnalysisState.PREPARING);
 
 			try {
-				AnalysisSubmission preparedSubmission = analysisExecutionService
+				AnalysisExecutionWorker preparationWorker = analysisExecutionService
 						.prepareSubmission(analysisSubmission);
+				AnalysisSubmission preparedSubmission = preparationWorker.getResult();
 
 				setStateForSubmission(preparedSubmission,
 						AnalysisState.SUBMITTING);

@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.impl.unit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -17,6 +17,7 @@ import org.mockito.MockitoAnnotations;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -28,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisExecutionWorker;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
@@ -87,9 +89,10 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
 	 * @throws ExecutionManagerException
+	 * @throws NoSuchValueException 
 	 */
 	@Before
-	public void setup() throws IridaWorkflowNotFoundException, IOException, ExecutionManagerException {
+	public void setup() throws IridaWorkflowNotFoundException, IOException, ExecutionManagerException, NoSuchValueException {
 		MockitoAnnotations.initMocks(this);
 
 		String submissionName = "name";
@@ -131,12 +134,14 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IOException
-	 * @throws IridaWorkflowNotFoundException
+	 * @throws InterruptedException 
+	 * @throws NoSuchValueException 
 	 */
 	@Test
-	public void testPrepareSubmissionSuccess() throws ExecutionManagerException, IridaWorkflowNotFoundException,
-			IOException {
-		AnalysisSubmission returnedSubmission = workflowManagement.prepareSubmission(analysisSubmission);
+	public void testPrepareSubmissionSuccess() throws InterruptedException, ExecutionManagerException, IOException, NoSuchValueException {
+		AnalysisExecutionWorker prepareWorker = workflowManagement.prepareSubmission(analysisSubmission);
+		prepareWorker.join();
+		AnalysisSubmission returnedSubmission = prepareWorker.getResult();
 
 		assertEquals("analysisSubmission not equal to returned submission", analysisSubmitted, returnedSubmission);
 
@@ -150,33 +155,35 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	 * Tests failing to prepare an analysis due to an issue when uploading the
 	 * workflow.
 	 * 
-	 * @throws ExecutionManagerException
 	 * @throws IOException
-	 * @throws IridaWorkflowNotFoundException
+	 * @throws InterruptedException 
+	 * @throws WorkflowUploadException 
 	 */
-	@Test(expected = WorkflowUploadException.class)
-	public void testPrepareSubmissionFailInvalidWorkflow() throws ExecutionManagerException, IOException,
-			IridaWorkflowNotFoundException {
+	@Test
+	public void testPrepareSubmissionFailInvalidWorkflow() throws InterruptedException, WorkflowUploadException, IOException {
 		when(galaxyWorkflowService.uploadGalaxyWorkflow(workflowFile)).thenThrow(
 				new WorkflowUploadException(null, null));
 
-		workflowManagement.prepareSubmission(analysisSubmission);
+		AnalysisExecutionWorker prepareWorker = workflowManagement.prepareSubmission(analysisSubmission);
+		prepareWorker.join();
+		assertTrue(prepareWorker.exceptionOccured());
+		assertEquals(WorkflowUploadException.class, prepareWorker.getException().getClass());
 	}
 
 	/**
 	 * Tests failing to prepare an analysis workspace.
-	 * 
-	 * @throws ExecutionManagerException
-	 * @throws IOException
-	 * @throws IridaWorkflowNotFoundException
+	 * @throws ExecutionManagerException 
+	 * @throws InterruptedException 
 	 */
-	@Test(expected = ExecutionManagerException.class)
-	public void testPrepareSubmissionFailWorkspace() throws ExecutionManagerException, IridaWorkflowNotFoundException,
-			IOException {
+	@Test
+	public void testPrepareSubmissionFailWorkspace() throws ExecutionManagerException, InterruptedException {
 		when(analysisWorkspaceServiceSimplified.prepareAnalysisWorkspace(analysisSubmission)).thenThrow(
 				new ExecutionManagerException());
 
-		workflowManagement.prepareSubmission(analysisSubmission);
+		AnalysisExecutionWorker prepareWorker = workflowManagement.prepareSubmission(analysisSubmission);
+		prepareWorker.join();
+		assertTrue(prepareWorker.exceptionOccured());
+		assertEquals(ExecutionManagerException.class, prepareWorker.getException().getClass());
 	}
 
 	/**
