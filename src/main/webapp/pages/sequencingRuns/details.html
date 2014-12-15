@@ -21,9 +21,9 @@
                     <b class="panel-title" th:text="#{sequencingruns.details.details}">Run Details</b>
                 </div>
                 <div class="panel-body">
-                    <dl>
-                        <dt th:text="#{sequencingruns.details.description}">_Description_</dt>
-                        <dd th:if="${run.description}" th:text="${run.description}">_Description_</dd>
+                    <dl class="run-detail">
+                        <dt class="run-detail-key" th:text="#{sequencingruns.details.description}">_Description_</dt>
+                        <dd class="run-detail-value" th:if="${run.description}" th:text="${run.description}">_Description_</dd>
                     </dl>
                     <div th:replace="sequencingRuns/sequencers :: ${run.sequencerType} (${run})"></div>
                 </div>
