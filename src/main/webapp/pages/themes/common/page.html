@@ -43,23 +43,26 @@
 	<!--/* This is where each pages content should be loaded. */-->
 </th:block>
 
-<th:block sec:authorize="isAuthenticated()">
-
-	<script type="text/ng-template" id="/session-modal.html">
-		<div>
-			<div class="modal-header">
-				<h3 class="modal-title">
-					Your session will expire in 5 minutes.
-				</h3>
-			</div>
-			<div class="modal-body">
-				<progressbar class="progress-striped" value="timeleft" type="warning">{{ timeleft }}</progressbar>
-			</div>
-			<div class="modal-footer">
-				<button class="btn btn-default">Log me out</button>
-				<button class="btn btn-primary" ng-click="poke()">Keep me ere</button>
-			</div>
+<script type="text/ng-template" id="/session-modal.html">
+	<div>
+		<div class="modal-header">
+			<b class="modal-title">
+				<span th:text="#{session.timeout-modal.header}"></span>&nbsp;{{timeleft | moment}}.
+			</b>
 		</div>
+		<div class="modal-footer">
+			<button class="btn btn-default" ng-click="logout()" th:text="#{session.timeout-modal.logout}">Log me out</button>
+			<button class="btn btn-primary" ng-click="poke()" th:text="#{session.timeout-modal.poke}">Keep me here</button>
+		</div>
+	</div>
+</script>
+
+<th:block sec:authorize="isAuthenticated()">
+	<script th:inline="javascript">
+		var TL_CONSTANTS = {
+			BASE_URL: /*[[@{/}]]*/ '/',
+			SESSION_TIMEOUT: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800
+		};
 	</script>
 
 	<script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"
@@ -92,46 +95,52 @@
 	<script th:inline="javascript">
 		/*<![CDATA[*/
 		function SessionFactory($timeout, $interval, $window, $modal, $log) {
-			var TWENTY_FIVE_MIN = 1500000,
-			    FIVE_MIN = 300000,
+			var sessionTime = TL_CONSTANTS.SESSION_TIMEOUT * 1000,
+			    initialWait = sessionTime * .85,
+			    modalWait = sessionTime * .3,
 			    timeout,
 			    restartTimeout;
 
-			function restart() {
-				$log.info("5 minutes to logout");
+			function _restart() {
 				$modal.open({
 					templateUrl: '/session-modal.html',
+					size: 'sm',
 					controller : ['$scope', '$http', '$modalInstance', function ($scope, $http, $modalInstance) {
-						var i = 0;
 						$scope.poke = function () {
 							$interval.cancel(countdown);
 							$timeout.cancel(restartTimeout);
 							$timeout.cancel(timeout);
-							$http.get("/login/poke").success(function () {
+							$http.get(TL_CONSTANTS.BASE_URL + "login/poke").success(function () {
 								start();
 								$modalInstance.close();
 							});
 						};
 
+						$scope.logout = function () {
+							$window.location(TL_CONSTANTS.BASE_URL + "logout");
+						};
+
+						var i = 0;
 						var countdown = $interval(function () {
-							$scope.timeleft = (300 - ++i) / 300 * 100;
+							$scope.timeleft = TL_CONSTANTS.SESSION_TIMEOUT - ++i;
 						}, 1000);
 
 						restartTimeout = $timeout(function () {
 							$window.location.reload();
-						}, FIVE_MIN);
+						}, modalWait);
 					}]
 				});
 			}
 
 			function start() {
+				$log.info("Starting session timer for " + sessionTime);
 				timeout = $timeout(function SessionTimer() {
-					restart();
-				}, TWENTY_FIVE_MIN);
+					$log.info("Should be showing a modal window now.");
+					_restart();
+				}, initialWait);
 			}
 
 			function reset() {
-				$log.info("Resetting the session timer");
 				$timeout.cancel(timeout);
 				start();
 			}
@@ -144,7 +153,7 @@
 
 		function HttpInterceptor($injector) {
 			return {
-				request : function (config) {
+				request: function (config) {
 					if (config.url.indexOf("/template") > -1) {
 						config.headers.Accept = "text/html";
 					}
@@ -183,6 +192,13 @@
 			}])
 			.factory('SessionFactory', ['$timeout', '$interval', '$window', '$modal', '$log', SessionFactory])
 			.factory('HttpInterceptor', ['$injector', HttpInterceptor])
+			.filter('moment', function () {
+				return function (timeleft) {
+					if (angular.isNumber(timeleft)) {
+						return moment.duration(timeleft).humanize(true);
+					}
+				};
+			})
 			.directive('ngFocus', [function () {
 				var FOCUS_CLASS = "ng-focused";
 				return {

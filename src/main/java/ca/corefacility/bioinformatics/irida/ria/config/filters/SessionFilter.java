@@ -33,7 +33,6 @@ public class SessionFilter extends GenericFilterBean {
 
 		HttpSession session = request.getSession();
 
-		logger.debug("Setting model attribute for session timeout, " + SESSION_TIMEOUT);
 		session.setMaxInactiveInterval(SESSION_TIMEOUT);
 		session.setAttribute("SESSION_TIMEOUT", SESSION_TIMEOUT);
 
