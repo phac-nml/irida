@@ -14,6 +14,8 @@ import org.springframework.ui.ExtendedModelMap;
 import ca.corefacility.bioinformatics.irida.model.SequencingRunEntity;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.ria.web.SequencingRunController;
+import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileUtilities;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
 import com.google.common.collect.Lists;
@@ -22,11 +24,14 @@ public class SequencingRunControllerTest {
 	private SequencingRunController controller;
 
 	private SequencingRunService sequencingRunService;
+	private SequenceFileService sequenceFileService;
+	private SequenceFileUtilities sequenceFileUtilities;
 
 	@Before
 	public void setup() {
 		sequencingRunService = mock(SequencingRunService.class);
-		controller = new SequencingRunController(sequencingRunService);
+		sequenceFileService = mock(SequenceFileService.class);
+		controller = new SequencingRunController(sequencingRunService, sequenceFileService, sequenceFileUtilities);
 	}
 
 	@Test
