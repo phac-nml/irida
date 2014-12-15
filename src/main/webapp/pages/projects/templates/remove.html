@@ -1,0 +1,22 @@
+<div id="remove-samples-modal">
+	<div class="modal-header">
+		<h3 class="modal-title">
+			<span class="fa fa-trash fa-fw"></span>
+			<span th:text="#{project.samples.modal.remove.title}">_REMOVE_SAMPLES_</span>
+		</h3>
+	</div>
+	<div class="modal-body">
+		<h4>
+			<span th:text="#{project.samples.modal.remove.intro}">The following samples will be removed:</span>
+		</h4>
+		<ul id="samples-list">
+			<li ng-repeat="s in cmCtrl.samples">{{s.sampleName}}</li>
+		</ul>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" th:text="#{form.btn.cancel}" ng-click="cmCtrl.close()"></button>
+		<button id="confirm-remove-samples" class="btn btn-primary" th:text="#{project.samples.modal.remove.complete}" ng-click="cmCtrl.remove()">
+			__REMOVE__
+		</button>
+	</div>
+</div>
