@@ -255,6 +255,17 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
+	public void testRemoveSamplesFromProject() {
+		Sample s1 = asRole(Role.ROLE_ADMIN).sampleService.read(1L);
+		Project p = asRole(Role.ROLE_ADMIN).projectService.read(2L);
+
+		asRole(Role.ROLE_ADMIN).projectService.removeSamplesFromProject(p, ImmutableList.of(s1));
+
+		Collection<Join<Project, Sample>> samples = asRole(Role.ROLE_ADMIN).sampleService.getSamplesForProject(p);
+		assertTrue("No samples should be assigned to project.", samples.isEmpty());
+	}
+
+	@Test
 	public void testReadProjectAsSequencerRole() {
 		asRole(Role.ROLE_SEQUENCER).projectService.read(1L);
 	}
