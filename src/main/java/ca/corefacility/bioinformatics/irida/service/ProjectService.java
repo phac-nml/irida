@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -101,6 +102,17 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public void removeSampleFromProject(Project project, Sample sample);
+	
+	/**
+	 * Remove a collection of {@link Sample}s from a {@link Project}
+	 * 
+	 * @param project
+	 *            the {@link Project} to remove the {@link Sample}s from.
+	 * @param samples
+	 *            the {@link Sample}s to remove.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	public void removeSamplesFromProject(Project project, Collection<Sample> samples);
 
 	/**
 	 * Get all {@link Project}s associated with a particular {@link User}.
