@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,8 +9,11 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
+import org.springframework.web.filter.GenericFilterBean;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiSecurityConfig;
+import ca.corefacility.bioinformatics.irida.ria.config.filters.SessionFilter;
 import ca.corefacility.bioinformatics.irida.ria.security.CredentialsExpriredAuthenticationFailureHandler;
 
 /**
@@ -55,7 +59,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/license").permitAll()
 			.antMatchers("/resources/**").permitAll()
 			.antMatchers("/password_reset/**").permitAll()
-			.antMatchers("/**").fullyAuthenticated();
+			.antMatchers("/**").fullyAuthenticated()
+		.and().addFilterAfter(getSessionModelFilter(), SecurityContextHolderAwareRequestFilter.class);
 		// @formatter:on
+	}
+
+	@Bean
+	public GenericFilterBean getSessionModelFilter() {
+		return new SessionFilter();
 	}
 }
