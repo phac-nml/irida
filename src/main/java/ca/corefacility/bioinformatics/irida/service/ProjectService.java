@@ -42,7 +42,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *
 	 * @return a reference to the relationship resource created between the two entities.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role);
 
 	/**
@@ -56,7 +56,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @throws ProjectWithoutOwnerException
 	 * 		if removing this user would leave the project without an owner
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public void removeUserFromProject(Project project, User user) throws ProjectWithoutOwnerException;
 
 	/**
@@ -88,7 +88,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *
 	 * @return a reference to the relationship resource created between the two entities.
 	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'isProjectOwner')")
 	public Join<Project, Sample> addSampleToProject(Project project, Sample sample);
 
 	/**
@@ -100,7 +100,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @param sample
 	 * 		the {@link Sample} to remove.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public void removeSampleFromProject(Project project, Sample sample);
 	
 	/**
@@ -111,7 +111,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @param samples
 	 *            the {@link Sample}s to remove.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public void removeSamplesFromProject(Project project, Collection<Sample> samples);
 
 	/**
