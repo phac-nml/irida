@@ -14,6 +14,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -412,6 +413,43 @@ public class ProjectSamplesController {
 				samplesMergeCount,
 				mergeIntoSample.getSampleName()
 		}, locale));
+		return result;
+	}
+
+	/**
+	 * Remove the given {@link Sample}s from the given {@link Project}
+	 * 
+	 * @param projectId
+	 *            ID of the project to remove from
+	 * @param sampleIds
+	 *            {@link Sample} ids to remove
+	 * @param locale
+	 *            User's locale
+	 * @return Map with success message
+	 */
+	@RequestMapping(value = "/{projectId}/ajax/samples/remove", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	@Transactional
+	public Map<String, Object> removeSamplesFromProject(@PathVariable Long projectId,
+			@RequestParam(value = "samples[]") List<Long> samples, Locale locale) {
+		Map<String, Object> result = new HashMap<>();
+		
+		//read the project
+		Project project = projectService.read(projectId);
+		
+		//remove each sample from the project
+		for (Long sampleId : samples) {
+			Sample sample = sampleService.read(sampleId);
+			projectService.removeSampleFromProject(project, sample);
+		}
+
+		//build success message
+		result.put("result", "success");
+		result.put(
+				"message",
+				messageSource.getMessage("project.samples.remove.success",
+						new Object[] { samples.size(), project.getLabel() }, locale));
+
 		return result;
 	}
 

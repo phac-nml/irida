@@ -92,6 +92,10 @@
 							<a id="moveBtn" href="#" ng-click="subnav.openModal('move')"><span class="fa fa-truck fa-fw"></span>
 								<span th:text="#{project.samples.nav.move}"></span></a>
 						</li>
+                        <li th:if="${isOwner} or ${isAdmin}">
+                            <a id="removeBtn" href="#" ng-click="subnav.openModal('remove')"><span class="fa fa-remove fa-fw"></span>
+                                <span th:text="#{project.samples.nav.remove}"></span></a>
+                        </li>
 					</ul>
 				</div>
 
