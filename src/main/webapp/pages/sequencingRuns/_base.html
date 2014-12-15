@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="${themePath + '_page'}">
+<head lang="en">
+    <meta charset="UTF-8"/>
+</head>
+<body>
+
+<div layout:fragment="page">
+
+    <main class="col-md-12" layout:fragment="main">
+
+    </main>
+</div>
+
+<th:block layout:fragment="page-scripts">
+
+    <th:block layout:fragment="scripts"></th:block>
+</th:block>
+</body>
+</html>

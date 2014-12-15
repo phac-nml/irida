@@ -53,6 +53,14 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Iterable<SequencingRun> findAll() {
+		return super.findAll();
+	}
+
+	/**
 	 * {@inheritDoc }
 	 */
 	@Override

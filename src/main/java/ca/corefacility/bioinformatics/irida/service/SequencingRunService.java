@@ -31,6 +31,13 @@ public interface SequencingRunService extends CRUDService<Long, SequencingRun> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public Iterable<SequencingRun> findAll();
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasRole('ROLE_SEQUENCER')")
 	public SequencingRun create(@Valid SequencingRun object) throws EntityExistsException, ConstraintViolationException;
 
@@ -54,13 +61,18 @@ public interface SequencingRunService extends CRUDService<Long, SequencingRun> {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#file, 'canReadSequenceFile')")
 	public SequencingRun getSequencingRunForSequenceFile(SequenceFile file);
-	
+
 	/**
-	 * Deletes a {@link SequencingRun} and cascades the delete to any empty {@link Sample}s.  If a Sample is empty after the delete, it will also be deleted.
-	 * @param id The ID of the {@link SequencingRun} to delete.
-	 * @throws EntityNotFoundException If a {@link SequencingRun} with this ID doesn't exist
+	 * Deletes a {@link SequencingRun} and cascades the delete to any empty
+	 * {@link Sample}s. If a Sample is empty after the delete, it will also be
+	 * deleted.
+	 * 
+	 * @param id
+	 *            The ID of the {@link SequencingRun} to delete.
+	 * @throws EntityNotFoundException
+	 *             If a {@link SequencingRun} with this ID doesn't exist
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-    public void delete(Long id) throws EntityNotFoundException;
+	public void delete(Long id) throws EntityNotFoundException;
 }
