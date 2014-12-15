@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="${themePath + '_base'}">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 	<title th:text="#{login.title}">THIS IS SOMETHING WRONG</title>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/bootstrap/dist/css/bootstrap.min.css}"
+	      href="/resources/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="/resources/css/main.css" th:href="@{/resources/css/main.css}"/>
+	<link rel="stylesheet" href="/resources/css/themes/bootstrap/main.css"
+	      th:href="@{/resources/css/themes/bootstrap/main.css}"/>
 </head>
 <body>
 <main layout:fragment="content" class="container main-area" role="main" property="mainContentOfPage">
