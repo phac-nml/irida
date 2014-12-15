@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload;
 
 import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.model.RunnableTaskWorker;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 
@@ -12,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public interface UploadWorker extends Runnable, UploadEventListener {
+public interface UploadWorker extends RunnableTaskWorker, UploadEventListener {
 
 	/**
 	 * Returns the final upload result when the worker is finished running.
@@ -37,21 +38,6 @@ public interface UploadWorker extends Runnable, UploadEventListener {
 	 *         complete.
 	 */
 	public float getProportionComplete();
-
-	/**
-	 * True if an exception occured while uploading, false otherwise.
-	 * 
-	 * @return True if an exception occured while uploading, false otherwise.
-	 */
-	public boolean exceptionOccured();
-
-	/**
-	 * True if the upload is finished (or an execption occured), false
-	 * otherwise.
-	 * 
-	 * @return True if the upload is finished, or false otherwise.
-	 */
-	public boolean isFinished();
 
 	/**
 	 * Gets the total samples being uploaded by this worker.
