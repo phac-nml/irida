@@ -366,14 +366,16 @@ public class ProjectSamplesControllerTest {
 	@Test
 	public void testRemoveSamplesFromProject() {
 		Project project = TestDataFactory.constructProject();
-		Sample sample = TestDataFactory.constructSample();
+		ImmutableList<Long> sampleIds = ImmutableList.of(1l, 2l);
+
+		ImmutableList<Sample> samples = ImmutableList.of(new Sample("s1"), new Sample("s2"));
 
 		when(projectService.read(project.getId())).thenReturn(project);
-		when(sampleService.read(sample.getId())).thenReturn(sample);
+		when(sampleService.readMultiple(sampleIds)).thenReturn(samples);
 
-		controller.removeSamplesFromProject(project.getId(), ImmutableList.of(sample.getId()), Locale.US);
+		controller.removeSamplesFromProject(project.getId(), sampleIds, Locale.US);
 
-		verify(projectService).removeSampleFromProject(project, sample);
+		verify(projectService).removeSamplesFromProject(project, samples);
 	}
 
 }

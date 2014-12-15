@@ -435,11 +435,11 @@ public class ProjectSamplesController {
 		//read the project
 		Project project = projectService.read(projectId);
 		
-		//remove each sample from the project
-		for (Long sampleId : samples) {
-			Sample sample = sampleService.read(sampleId);
-			projectService.removeSampleFromProject(project, sample);
-		}
+		//get the samples
+		Iterable<Sample> readMultiple = sampleService.readMultiple(samples);
+		
+		//remove all samples
+		projectService.removeSamplesFromProject(project, readMultiple);
 
 		//build success message
 		result.put("result", "success");
