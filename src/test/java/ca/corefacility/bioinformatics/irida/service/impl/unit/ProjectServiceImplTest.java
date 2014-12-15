@@ -59,6 +59,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.util.SequenceFileUtilities;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 /**
@@ -413,5 +414,17 @@ public class ProjectServiceImplTest {
 		verify(referenceFileRepository).save(f);
 		verify(sequenceFileUtilities).countSequenceFileLengthInBases(createTempFile);
 		verify(prfjRepository).save(new ProjectReferenceFileJoin(p, f));
+	}
+	
+	@Test
+	public void testRemoveSamplesFromProject() {
+		Project project = new Project();
+		List<Sample> samples = ImmutableList.of(new Sample("s1"), new Sample("s2"));
+
+		projectService.removeSamplesFromProject(project, samples);
+
+		for (Sample s : samples) {
+			verify(psjRepository).removeSampleFromProject(project, s);
+		}
 	}
 }
