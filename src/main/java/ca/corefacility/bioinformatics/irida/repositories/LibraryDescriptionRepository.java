@@ -13,5 +13,12 @@ import ca.corefacility.bioinformatics.irida.model.project.library.LibraryDescrip
  */
 public interface LibraryDescriptionRepository extends IridaJpaRepository<LibraryDescription, Long> {
 
+	/**
+	 * Find all {@link LibraryDescription} for the specified {@link Project}.
+	 * 
+	 * @param project
+	 *            the {@link Project} to load {@link LibraryDescription} for.
+	 * @return the {@link LibraryDescription} for a {@link Project}.
+	 */
 	public Set<LibraryDescription> findByProject(final Project project);
 }
