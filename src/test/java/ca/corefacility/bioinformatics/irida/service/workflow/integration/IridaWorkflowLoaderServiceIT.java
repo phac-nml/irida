@@ -42,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowOutput;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowTool;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -80,19 +81,19 @@ public class IridaWorkflowLoaderServiceIT {
 
 	@Before
 	public void setup() throws JAXBException, URISyntaxException, FileNotFoundException {
-		workflowXmlPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
+		workflowXmlPath = Paths.get(TestAnalysis.class.getResource(
 				"workflows/TestAnalysis/1.0/irida_workflow.xml").toURI());
-		workflowStructurePath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
+		workflowStructurePath = Paths.get(TestAnalysis.class.getResource(
 				"workflows/TestAnalysis/1.0/irida_workflow_structure.ga").toURI());
-		workflowDirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource("workflows/TestAnalysis")
+		workflowDirectoryPath = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysis")
 				.toURI());
-		workflowVersionDirectoryPath = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
+		workflowVersionDirectoryPath = Paths.get(TestAnalysis.class.getResource(
 				"workflows/TestAnalysis/1.0").toURI());
-		workflowDirectoryPathNoDefinition = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
+		workflowDirectoryPathNoDefinition = Paths.get(TestAnalysis.class.getResource(
 				"workflows/TestAnalysisNoDefinition").toURI());
-		workflowDirectoryPathNoStructure = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
+		workflowDirectoryPathNoStructure = Paths.get(TestAnalysis.class.getResource(
 				"workflows/TestAnalysisNoStructure").toURI());
-		workflowDirectoryPathNoId = Paths.get(IridaWorkflowLoaderServiceIT.class.getResource(
+		workflowDirectoryPathNoId = Paths.get(TestAnalysis.class.getResource(
 				"workflows/TestAnalysisNoId").toURI());
 	}
 

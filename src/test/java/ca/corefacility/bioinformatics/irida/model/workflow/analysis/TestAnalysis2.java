@@ -1,13 +1,12 @@
-package ca.corefacility.bioinformatics.irida.service.workflow.integration;
+package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
 import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 
 /**
  * Class defining an analysis for testing purposes.
+ * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */

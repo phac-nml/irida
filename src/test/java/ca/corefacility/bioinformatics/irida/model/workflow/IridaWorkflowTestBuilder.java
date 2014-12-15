@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import ca.corefacility.bioinformatics.irida.service.workflow.integration.TestAnalysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
 
 /**
  * Builds test {@link IridaWorkflow}s.

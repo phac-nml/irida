@@ -26,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxySimplified;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxySimplified;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
@@ -90,7 +91,15 @@ public class AnalysisExecutionServiceTestConfig {
 				galaxyWorkflowService(), galaxyHistoriesService(),
 				workspaceServicePhylogenomics());
 	}
-	
+
+	@Lazy
+	@Bean
+	public AnalysisExecutionServiceGalaxySimplified analysisExecutionServiceGalaxySimplified() {
+		return new AnalysisExecutionServiceGalaxySimplified(analysisSubmissionService, analysisService,
+				galaxyWorkflowService(), galaxyHistoriesService(), analysisWorkspaceServiceSimplified(),
+				iridaWorkflowsService);
+	}
+
 	@Lazy @Bean
 	public AnalysisWorkspaceServiceGalaxySimplified analysisWorkspaceServiceSimplified() {
 		return new AnalysisWorkspaceServiceGalaxySimplified(galaxyHistoriesService(), galaxyWorkflowService(),

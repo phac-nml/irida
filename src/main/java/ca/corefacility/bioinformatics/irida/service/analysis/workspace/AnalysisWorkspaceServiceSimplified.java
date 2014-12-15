@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -51,9 +50,6 @@ public interface AnalysisWorkspaceServiceSimplified {
 	 * 
 	 * @param analysisSubmission
 	 *            The submission to get the results for.
-	 * @param outputDirectory
-	 *            A directory to store output files downloaded from this
-	 *            analysis.
 	 * @return An Analysis object containing the results.
 	 * @throws ExecutionManagerException
 	 *             If there was an error getting the results.
@@ -64,6 +60,6 @@ public interface AnalysisWorkspaceServiceSimplified {
 	 *             If there was an error when loading the results of an analysis
 	 *             from Galaxy to a local file.
 	 */
-	public Analysis getAnalysisResults(AnalysisSubmission analysisSubmission, Path outputDirectory)
+	public Analysis getAnalysisResults(AnalysisSubmission analysisSubmission)
 			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException;
 }

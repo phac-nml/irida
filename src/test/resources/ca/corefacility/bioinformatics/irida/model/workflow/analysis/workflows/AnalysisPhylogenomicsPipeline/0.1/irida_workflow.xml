@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <iridaWorkflow>
-  <id>c5f29cb2-1b68-4d34-9b93-609266af7551</id>
-  <name>TestWorkflow</name>
-  <version>2.0</version>
-  <author>Mr. Developer</author>
-  <email>developer@example.com</email>
-  <analysis_class>ca.corefacility.bioinformatics.irida.service.workflow.integration.TestAnalysis</analysis_class>
+  <id>1f9ea289-5053-4e4a-bc76-1f0c60b179f8</id>
+  <name>SNVPhylTest</name>
+  <version>0.1</version>
+  <author>Aaron Petkau</author>
+  <email>aaron.petkau@phac-aspc.gc.ca</email>
+  <analysis_class>ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline</analysis_class>
   <inputs>
     <sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
     <reference>reference</reference>
   </inputs>
   <outputs>
-    <output name="output1" fileName="output1.txt"></output>
-    <output name="output2" fileName="output2.txt"></output>
+    <output name="tree" fileName="phylogeneticTree.txt"/>
+    <output name="matrix" fileName="snpMatrix.tsv"/>
+    <output name="table" fileName="snpTable.tsv"/>
   </outputs>
   <tools>
     <tool>
