@@ -25,6 +25,10 @@ public class SequencingRunController {
 
 	public static final String LIST_VIEW = "sequencingRuns/list";
 	public static final String DETAILS_VIEW = "sequencingRuns/details";
+	
+	public static final String ACTIVE_NAV = "activeNav";
+	public static final String ACTIVE_NAV_DETAILS = "details";
+	public static final String ACTIVE_NAV_FILES = "files";
 
 	private final SequencingRunService sequencingRunService;
 
@@ -53,6 +57,23 @@ public class SequencingRunController {
 	public String getDetailsPage(@PathVariable Long runId, Model model){
 		SequencingRun run = sequencingRunService.read(runId);
 		model.addAttribute("run",run);
+		model.addAttribute(ACTIVE_NAV,ACTIVE_NAV_DETAILS);
+		
+		return DETAILS_VIEW;
+	}
+	
+	/**
+	 * Get the sequencing run display page
+	 * @param runId
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/{runId}/files")
+	public String getFilesPage(@PathVariable Long runId, Model model){
+		SequencingRun run = sequencingRunService.read(runId);
+		model.addAttribute("run",run);
+		model.addAttribute(ACTIVE_NAV,ACTIVE_NAV_FILES);
+		
 		return DETAILS_VIEW;
 	}
 
