@@ -51,6 +51,11 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.project.library.Layout;
+import ca.corefacility.bioinformatics.irida.model.project.library.LibraryDescription;
+import ca.corefacility.bioinformatics.irida.model.project.library.Strategy;
+import ca.corefacility.bioinformatics.irida.model.project.library.Layout.LayoutType;
+import ca.corefacility.bioinformatics.irida.model.project.library.LibraryDescription.Source;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
@@ -558,6 +563,39 @@ public class ProjectServiceImplIT {
 		projectService.delete(1L);
 
 		projectService.findRevisions(1L, new PageRequest(1, 1));
+	}
+
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "manager", roles = "MANAGER")
+	public void testCreateLibraryDescriptionNotAllowed() {
+		final LibraryDescription ld = createLibraryDescription();
+		projectService.addLibraryDescriptionToProject(projectService.read(1L), ld);
+	}
+
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testCreateLibraryDescriptionAsAdmin() {
+		final LibraryDescription ld = projectService.addLibraryDescriptionToProject(projectService.read(1L),
+				createLibraryDescription());
+
+		assertNotNull("Should have created the library description with a new id.", ld.getId());
+	}
+
+	@Test
+	@WithMockUser(username = "user1", roles = "USER")
+	public void testCreateLibraryDescriptionAsProjectOwner() {
+		final LibraryDescription ld = projectService.addLibraryDescriptionToProject(projectService.read(2L),
+				createLibraryDescription());
+		assertNotNull("Should have created the library description with a new id.", ld.getId());
+	}
+
+	private LibraryDescription createLibraryDescription() {
+		final Strategy s = new Strategy(1, 1, 1, "protocol");
+		final Layout l = new Layout(1, LayoutType.PAIRED_END);
+		final LibraryDescription ld = new LibraryDescription(Source.AMPLICON, s, l);
+		ld.setComment("This is a comment.");
+
+		return ld;
 	}
 
 	private Project p() {

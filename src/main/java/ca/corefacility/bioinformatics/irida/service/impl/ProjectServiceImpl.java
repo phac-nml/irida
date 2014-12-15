@@ -35,8 +35,10 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.project.library.LibraryDescription;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.LibraryDescriptionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
@@ -67,13 +69,15 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final ReferenceFileRepository referenceFileRepository;
 	private final ProjectReferenceFileJoinRepository prfjRepository;
 	private final SequenceFileUtilities sequenceFileUtilities;
+	private final LibraryDescriptionRepository libraryDescriptionRepository;
 
 	@Autowired
 	public ProjectServiceImpl(ProjectRepository projectRepository, SampleRepository sampleRepository,
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
 			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository,
-			SequenceFileUtilities sequenceFileUtilities, Validator validator) {
+			SequenceFileUtilities sequenceFileUtilities, LibraryDescriptionRepository libraryDescriptionRepository,
+			Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.sampleRepository = sampleRepository;
 		this.userRepository = userRepository;
@@ -83,6 +87,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.referenceFileRepository = referenceFileRepository;
 		this.prfjRepository = prfjRepository;
 		this.sequenceFileUtilities = sequenceFileUtilities;
+		this.libraryDescriptionRepository = libraryDescriptionRepository;
 	}
 
 	@Override
@@ -328,6 +333,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		return psjRepository.getProjectForSample(sample);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Join<Project, ReferenceFile> addReferenceFileToProject(Project project, ReferenceFile referenceFile) {
 		// calculate the file length
@@ -339,6 +347,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		return prfjRepository.save(j);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void removeReferenceFileFromProject(Project project, ReferenceFile file) {
 		List<Join<Project, ReferenceFile>> referenceFilesForProject = prfjRepository
@@ -356,5 +367,23 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			throw new EntityNotFoundException("Cannot find a join for project [" + project.getName()
 					+ "] and reference file [" + file.getLabel() + "].");
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public LibraryDescription addLibraryDescriptionToProject(final Project project,
+			final LibraryDescription libraryDescription) {
+		libraryDescription.setProject(project);
+		return libraryDescriptionRepository.save(libraryDescription);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<LibraryDescription> findLibraryDescriptionsForProject(final Project project) {
+		throw new UnsupportedOperationException();
 	}
 }

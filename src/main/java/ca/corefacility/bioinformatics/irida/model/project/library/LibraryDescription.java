@@ -76,16 +76,15 @@ public class LibraryDescription implements IridaThing {
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH, optional = false)
 	@JoinColumn(name = "project_id")
-	private final Project project;
+	private Project project;
 
-	public LibraryDescription(final Project project, final Source source, final Strategy strategy, final Layout layout) {
+	public LibraryDescription(final Source source, final Strategy strategy, final Layout layout) {
 		this.createdDate = new Date();
-		this.project = project;
 		this.source = source;
 		this.strategy = strategy;
 		this.layout = layout;
 	}
-	
+
 	@Override
 	public Date getCreatedDate() {
 		return this.createdDate;
@@ -135,9 +134,13 @@ public class LibraryDescription implements IridaThing {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-	
+
 	public Project getProject() {
 		return this.project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
 	}
 
 	public static enum Source {
