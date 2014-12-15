@@ -30,10 +30,9 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 public interface ProjectService extends CRUDService<Long, Project> {
 
 	/**
-	 * Add the specified {@link User} to the {@link Project} with a {@link Role}
-	 * . If the {@link User} is a manager for the {@link Project}, then the
-	 * {@link User} should be added to the {@link Project} with the
-	 * 'ROLE_MANAGER' {@link Role}.
+	 * Add the specified {@link User} to the {@link Project} with a {@link Role} . If the {@link User} is a manager for
+	 * the {@link Project}, then the {@link User} should be added to the {@link Project} with the 'ROLE_MANAGER' {@link
+	 * Role}.
 	 *
 	 * @param project
 	 *            the {@link Project} to add the user to.
@@ -42,8 +41,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @param role
 	 *            the role that the user plays on the {@link Project}.
 	 *
-	 * @return a reference to the relationship resource created between the two
-	 *         entities.
+	 * @return a reference to the relationship resource created between the two entities.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role);
@@ -57,8 +55,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 *            the {@link User} to be removed from the {@link Project}.
 	 *
 	 * @throws ProjectWithoutOwnerException
-	 *             if removing this user would leave the project without an
-	 *             owner
+	 * 		if removing this user would leave the project without an owner
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public void removeUserFromProject(Project project, User user) throws ProjectWithoutOwnerException;
@@ -87,20 +84,17 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @param project
 	 *            the {@link Project} to add the {@link Sample} to.
 	 * @param sample
-	 *            the {@link Sample} to add to the {@link Project}. If the
-	 *            {@link Sample} has not previously been persisted, the service
-	 *            will persist the {@link Sample}.
+	 * 		the {@link Sample} to add to the {@link Project}. If the {@link Sample} has not previously been persisted, the
+	 * 		service will persist the {@link Sample}.
 	 *
-	 * @return a reference to the relationship resource created between the two
-	 *         entities.
+	 * @return a reference to the relationship resource created between the two entities.
 	 */
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
 	public Join<Project, Sample> addSampleToProject(Project project, Sample sample);
 
 	/**
-	 * Remove the specified {@link Sample} from the {@link Project}. The
-	 * {@link Sample} will also be deleted from the system because
-	 * {@link Sample}s cannot exist outside of a {@link Project}.
+	 * Remove the specified {@link Sample} from the {@link Project}. The {@link Sample} will also be deleted from the
+	 * system because {@link Sample}s cannot exist outside of a {@link Project}.
 	 *
 	 * @param project
 	 *            the {@link Project} to remove the {@link Sample} from.
@@ -121,8 +115,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	public List<Join<Project, User>> getProjectsForUser(User user);
 
 	/**
-	 * Search {@link ProjectUserJoin}s with a given specification and paging
-	 * parameters
+	 * Search {@link ProjectUserJoin}s with a given specification and paging parameters
 	 *
 	 * @param specification
 	 *            The specification to search with
@@ -141,22 +134,20 @@ public interface ProjectService extends CRUDService<Long, Project> {
 			Direction order, String... sortProperties);
 
 	/**
-	 * Get all {@link Project}s associated with a particular {@link User} where
-	 * that user has a {@link ProjectRole}.PROJECT_OWNER role on the project.
+	 * Get all {@link Project}s associated with a particular {@link User} where that user has a {@link
+	 * ProjectRole}.PROJECT_OWNER role on the project.
 	 *
 	 * @param user
 	 *            the user to get projects for.
 	 * @param role
 	 *            the user's role on the project
 	 *
-	 * @return A collection of {@link ProjectUserJoin}s describing the projects
-	 *         associated with the user.
+	 * @return A collection of {@link ProjectUserJoin}s describing the projects associated with the user.
 	 */
 	public List<ProjectUserJoin> getProjectsForUserWithRole(User user, ProjectRole role);
 
 	/**
-	 * Check if a {@link User} has a given {@link ProjectRole} on a
-	 * {@link Project}
+	 * Check if a {@link User} has a given {@link ProjectRole} on a {@link Project}
 	 *
 	 * @param user
 	 *            The user to test
@@ -208,8 +199,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	public List<RelatedProjectJoin> getRelatedProjects(Project project);
 
 	/**
-	 * Get all {@link RelatedProjectJoin}s where the given Project is the
-	 * relatedProject property.
+	 * Get all {@link RelatedProjectJoin}s where the given Project is the relatedProject property.
 	 *
 	 * @param project
 	 *            The child project
@@ -229,8 +219,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	public void removeRelatedProject(RelatedProjectJoin relatedProject);
 
 	/**
-	 * Remove a {@link RelatedProjectJoin} for the given project and related
-	 * project
+	 * Remove a {@link RelatedProjectJoin} for the given project and related project
 	 *
 	 * @param subject
 	 *            the owning project
@@ -259,8 +248,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @param referenceFile
 	 *            the {@link ReferenceFile}.
 	 *
-	 * @return a {@link Join} representing the relationship between the
-	 *         {@link Project} and {@link ReferenceFile}.
+	 * @return a {@link Join} representing the relationship between the {@link Project} and {@link ReferenceFile}.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public Join<Project, ReferenceFile> addReferenceFileToProject(Project project, ReferenceFile referenceFile);
@@ -269,8 +257,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * Remove a {@link ReferenceFile} from a {@link Project}
 	 *
 	 * @param join
-	 *            a {@link ProjectReferenceFileJoin} between the
-	 *            {@link ReferenceFile} and {@link Project}
+	 * 		a {@link ProjectReferenceFileJoin} between the {@link ReferenceFile} and {@link Project}
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public void removeReferenceFileFromProject(Project project, ReferenceFile referenceFile);

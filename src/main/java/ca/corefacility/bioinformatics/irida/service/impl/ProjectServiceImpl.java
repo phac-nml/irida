@@ -333,9 +333,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		return psjRepository.getProjectForSample(sample);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Join<Project, ReferenceFile> addReferenceFileToProject(Project project, ReferenceFile referenceFile) {
 		// calculate the file length
@@ -347,9 +344,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		return prfjRepository.save(j);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void removeReferenceFileFromProject(Project project, ReferenceFile file) {
 		List<Join<Project, ReferenceFile>> referenceFilesForProject = prfjRepository
