@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
+import java.util.concurrent.Executor;
 
 import javax.transaction.Transactional;
 
@@ -48,6 +49,7 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	private final GalaxyHistoriesService galaxyHistoriesService;
 	private final GalaxyWorkflowService galaxyWorkflowService;
 	private final IridaWorkflowsService iridaWorkflowsService;
+	private final Executor analysisTaskExecutor;
 
 	/**
 	 * Builds a new {@link AnalysisExecutionServiceGalaxySimplified} with the
@@ -65,18 +67,20 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	 *            A service for a workflow workspace.
 	 * @param iridaWorkflowsService
 	 *            A service for loading up {@link IridaWorkflow}s.
+	 *  @param analysisTaskExecutor An {@link Executor} for executing sub tasks for analyses.
 	 */
 	@Autowired
 	public AnalysisExecutionServiceGalaxySimplified(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisService analysisService, GalaxyWorkflowService galaxyWorkflowService,
 			GalaxyHistoriesService galaxyHistoriesService, AnalysisWorkspaceServiceGalaxySimplified workspaceService,
-			IridaWorkflowsService iridaWorkflowsService) {
+			IridaWorkflowsService iridaWorkflowsService, Executor analysisTaskExecutor) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisService = analysisService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.workspaceService = workspaceService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
+		this.analysisTaskExecutor = analysisTaskExecutor;
 	}
 
 	/**
@@ -112,7 +116,7 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 						ImmutableMap.of("remoteAnalysisId", analysisId, "remoteWorkflowId", workflowId));
 			}
 		};
-		prepareSubmissionWorker.start();
+		analysisTaskExecutor.execute(prepareSubmissionWorker);
 		
 		return prepareSubmissionWorker;
 	}

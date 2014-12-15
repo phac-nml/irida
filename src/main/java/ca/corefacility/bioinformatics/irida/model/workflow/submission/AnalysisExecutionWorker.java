@@ -10,7 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.RunnableTaskWorker;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public abstract class AnalysisExecutionWorker extends Thread implements RunnableTaskWorker {
+public abstract class AnalysisExecutionWorker implements RunnableTaskWorker {
 
 	private Exception exception = null;
 	private boolean isFinished = false;

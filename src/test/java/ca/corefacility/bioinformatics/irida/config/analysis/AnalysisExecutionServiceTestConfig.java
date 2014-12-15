@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config.analysis;
 
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.Executor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -39,6 +40,7 @@ import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.RolesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
+import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * Test configuration for AnalysisExecutionService classes.
@@ -92,13 +94,21 @@ public class AnalysisExecutionServiceTestConfig {
 				galaxyWorkflowService(), galaxyHistoriesService(),
 				workspaceServicePhylogenomics());
 	}
+	
+	/**
+	 * @return An {@link Executor} for executing analysis tasks.
+	 */
+	@Bean
+	public Executor analysisTaskExecutor() {
+		return MoreExecutors.sameThreadExecutor();
+	}
 
 	@Lazy
 	@Bean
 	public AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified() {
 		return new AnalysisExecutionServiceGalaxySimplified(analysisSubmissionService, analysisService,
 				galaxyWorkflowService(), galaxyHistoriesService(), analysisWorkspaceServiceSimplified(),
-				iridaWorkflowsService);
+				iridaWorkflowsService, analysisTaskExecutor());
 	}
 
 	@Lazy @Bean

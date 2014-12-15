@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.impl.unit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Executor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -41,6 +43,7 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.MoreExecutors;
 
 /**
  * Tests out an execution service for Galaxy analyses.
@@ -71,6 +74,8 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	private IridaWorkflowStructure iridaWorkflowStructure;
 	@Mock
 	private Path workflowFile;
+	
+	private Executor analysisTaskExecutor = MoreExecutors.sameThreadExecutor();
 
 	private AnalysisSubmission analysisSubmission;
 	private AnalysisSubmission analysisSubmitted;
@@ -103,7 +108,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 
 		workflowManagement = new AnalysisExecutionServiceGalaxySimplified(analysisSubmissionService, analysisService,
 				galaxyWorkflowService, galaxyHistoriesService, analysisWorkspaceServiceSimplified,
-				iridaWorkflowsService);
+				iridaWorkflowsService, analysisTaskExecutor);
 
 		when(iridaWorkflowsService.getIridaWorkflow(WORKFLOW_ID)).thenReturn(iridaWorkflow);
 		when(iridaWorkflow.getWorkflowStructure()).thenReturn(iridaWorkflowStructure);
@@ -140,7 +145,6 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	@Test
 	public void testPrepareSubmissionSuccess() throws InterruptedException, ExecutionManagerException, IOException, NoSuchValueException {
 		AnalysisExecutionWorker prepareWorker = workflowManagement.prepareSubmission(analysisSubmission);
-		prepareWorker.join();
 		AnalysisSubmission returnedSubmission = prepareWorker.getResult();
 
 		assertEquals("analysisSubmission not equal to returned submission", analysisSubmitted, returnedSubmission);
@@ -165,7 +169,6 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 				new WorkflowUploadException(null, null));
 
 		AnalysisExecutionWorker prepareWorker = workflowManagement.prepareSubmission(analysisSubmission);
-		prepareWorker.join();
 		assertTrue(prepareWorker.exceptionOccured());
 		assertEquals(WorkflowUploadException.class, prepareWorker.getException().getClass());
 	}
@@ -181,7 +184,6 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 				new ExecutionManagerException());
 
 		AnalysisExecutionWorker prepareWorker = workflowManagement.prepareSubmission(analysisSubmission);
-		prepareWorker.join();
 		assertTrue(prepareWorker.exceptionOccured());
 		assertEquals(ExecutionManagerException.class, prepareWorker.getException().getClass());
 	}

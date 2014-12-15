@@ -98,6 +98,20 @@ public class IridaApiServicesConfig {
 		Path path = Paths.get(taxonomyFileLocation.getPath());
 		return new InMemoryTaxonomyService(path);
 	}
+	
+	
+	/**
+	 * @return An {@link Executor} for executing analysis tasks.
+	 */
+	@Bean
+	public Executor analysisTaskExecutor() {
+		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+		taskExecutor.setCorePoolSize(4);
+		taskExecutor.setMaxPoolSize(8);
+		taskExecutor.setQueueCapacity(1000);
+		taskExecutor.setThreadPriority(Thread.MIN_PRIORITY);
+		return taskExecutor;
+	}
 
 	/**
 	 * @return An Executor for handling uploads to Galaxy.

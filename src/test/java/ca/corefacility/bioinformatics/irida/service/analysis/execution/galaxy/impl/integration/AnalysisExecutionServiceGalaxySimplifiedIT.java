@@ -152,9 +152,9 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
-		preparationWorker.join();
 		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();
 
+		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
 		AnalysisSubmission analysisExecuted = analysisExecutionServiceSimplified
 				.executeAnalysis(analysisSubmitted);
 		assertNotNull("analysisExecuted is null", analysisExecuted);
@@ -192,7 +192,6 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
-		preparationWorker.join();
 		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();
 
 		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
@@ -220,7 +219,6 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
-		preparationWorker.join();
 		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();
 
 		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
@@ -248,7 +246,6 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
-		preparationWorker.join();
 		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();
 
 		analysisSubmitted.setAnalysisState(AnalysisState.NEW);
@@ -269,7 +266,6 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
-		preparationWorker.join();
 		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();
 		assertNotNull("analysisSubmitted is null", analysisSubmitted);
 		assertNotNull("remoteWorkflowId is null", analysisSubmitted.getRemoteWorkflowId());
@@ -281,7 +277,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 	 * execution.
 	 * @throws InterruptedException 
 	 */
-	@Test(expected = IridaWorkflowNotFoundException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareSubmissionFailInvalidWorkflow() throws InterruptedException {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
@@ -290,7 +286,6 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
-		preparationWorker.join();
 		assertTrue(preparationWorker.exceptionOccured());
 		assertEquals(IridaWorkflowNotFoundException.class, preparationWorker.getException().getClass());
 	}
@@ -309,8 +304,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
-		preparationWorker.join();
-		assertFalse(preparationWorker.exceptionOccured());
+		assertFalse("An exception occured " + preparationWorker.getException(), preparationWorker.exceptionOccured());
 		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();
 
 		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
@@ -383,7 +377,6 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
-		preparationWorker.join();
 		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();
 
 		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
