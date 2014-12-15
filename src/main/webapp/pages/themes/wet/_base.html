@@ -16,21 +16,6 @@
           href="/resources/wet-theme/css/theme.min.css"/>
     <link rel="stylesheet" th:href="@{/resources/css/main.css}" href="/resources/css/main.css"/>
     <link rel="stylesheet" th:href="@{/resources/css/themes/wet/main.css}" href="/resources/css/themes/wet/main.css"/>
-
-    <!--[if lt IE 9]>
-    <link th:href="@{/resources/wet-theme/assets/favicon.ico}" href="/resources/wet-theme/assets/favicon.ico"
-          rel="shortcut icon"/>
-    <link rel="stylesheet" th:href="@{/resources/wet-theme/css/ie8-wet-boew.min.css}"
-          href="/resources/wet-theme/css/ie8-wet-boew.min.css"/>
-    <link rel="stylesheet" th:href="@{/resources/css/ie8-theme.min.css}" href="/resources/css/ie8-theme.min.css"/>
-    <script src="/resources/wet-theme/js/jquery-1.11.1.min.js"
-            th:src="@{/resources/wet-theme/js/jquery-1.11.1.min.js}"></script>
-    <script src="/resources/wet-theme/js/ie8-wet-boew.min.js"
-            th:src="@{/resources/wet-theme/js/ie8-wet-boew.min.js}"></script>
-    <![endif]-->
-    <!-- END MAIN SCRIPTS FROM WET PAGES -->
-
-    <!--/* Page specific css fragments or links are added here when run. */-->
 </head>
 <body>
 
@@ -48,13 +33,11 @@
 
 
 <th:block layout:fragment="theme-scripts">
-    <!--[if gte IE 9 | !IE ]><!-->
+    <script src="/resources/bower_components/jquery/dist/jquery.min.js"
+            th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"></script>
     <script th:src="@{/resources/wet-theme/js/wet-boew.min.js}" src="/resources/wet-theme/js/wet-boew.min.js"></script>
-    <!--<![endif]-->
-    <!--[if lt IE 9]>
     <script th:src="@{/resources/wet-theme/js/ie8-wet-boew2.min.js}"
             src="/resources/wet-theme/js/ie8-wet-boew2.min.js"></script>
-    <![endif]-->
 </th:block>
 </body>
 </html>

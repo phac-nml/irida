@@ -416,6 +416,42 @@ public class ProjectSamplesController {
 	}
 
 	/**
+	 * Remove the given {@link Sample}s from the given {@link Project}
+	 * 
+	 * @param projectId
+	 *            ID of the project to remove from
+	 * @param sampleIds
+	 *            {@link Sample} ids to remove
+	 * @param locale
+	 *            User's locale
+	 * @return Map with success message
+	 */
+	@RequestMapping(value = "/{projectId}/ajax/samples/remove", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Map<String, Object> removeSamplesFromProject(@PathVariable Long projectId,
+			@RequestParam(value = "samples[]") List<Long> samples, Locale locale) {
+		Map<String, Object> result = new HashMap<>();
+		
+		//read the project
+		Project project = projectService.read(projectId);
+		
+		//get the samples
+		Iterable<Sample> readMultiple = sampleService.readMultiple(samples);
+		
+		//remove all samples
+		projectService.removeSamplesFromProject(project, readMultiple);
+
+		//build success message
+		result.put("result", "success");
+		result.put(
+				"message",
+				messageSource.getMessage("project.samples.remove.success",
+						new Object[] { samples.size(), project.getLabel() }, locale));
+
+		return result;
+	}
+
+	/**
 	 * Download a set of sequence files from selected samples within a project
 	 *
 	 * @param projectId

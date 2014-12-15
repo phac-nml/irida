@@ -151,6 +151,19 @@
     svc.move = function (projectId) {
       return copyMoveSamples(projectId, true);
     };
+    
+    svc.remove = function() {
+	var params = {};
+	params.samples = svc.getSelectedSampleIds();
+	return base.customPOST(params, 'remove').then(function (data) {
+	        if (data.result === 'success') {
+	          svc.getSamples();
+	          selected = [];
+	          updateSelectedCount();
+	          notifications.show({type: data.result, msg: data.message});
+	        }
+	      });
+    }
 
     svc.selectPage = function () {
       var begin = filter.page * filter.count;
@@ -523,6 +536,12 @@
         vm.close();
       });
     };
+    
+    vm.remove = function(){
+	SamplesService.remove(vm.selected).then(function () {
+	    vm.close();
+	});
+    }
 
     Select2Service.init("#projectsSelect", {
       minimumLength: 2,

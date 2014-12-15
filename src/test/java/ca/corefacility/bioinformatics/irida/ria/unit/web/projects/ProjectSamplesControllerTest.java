@@ -362,5 +362,20 @@ public class ProjectSamplesControllerTest {
 		assertEquals("Content-Disposition should include the file name", "attachment; filename=\"test_project.zip\"",
 				response.getHeader("Content-Disposition"));
 	}
+	
+	@Test
+	public void testRemoveSamplesFromProject() {
+		Project project = TestDataFactory.constructProject();
+		ImmutableList<Long> sampleIds = ImmutableList.of(1l, 2l);
+
+		ImmutableList<Sample> samples = ImmutableList.of(new Sample("s1"), new Sample("s2"));
+
+		when(projectService.read(project.getId())).thenReturn(project);
+		when(sampleService.readMultiple(sampleIds)).thenReturn(samples);
+
+		controller.removeSamplesFromProject(project.getId(), sampleIds, Locale.US);
+
+		verify(projectService).removeSamplesFromProject(project, samples);
+	}
 
 }

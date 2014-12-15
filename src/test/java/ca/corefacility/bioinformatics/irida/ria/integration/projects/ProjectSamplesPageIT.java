@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -295,6 +296,27 @@ public class ProjectSamplesPageIT {
 		// Check to make sure the samples where copied there
 		page.goToPage("2");
 		assertEquals(3, page.getNumberOfSamplesDisplayed());
+	}
+
+	@Test
+	public void testRemoveSamples() {
+		LoginPage.loginAsAdmin(driver);
+		page.goToPage();
+		
+		page.selectSampleByRow(1);
+		String sample1Name = page.getSampleNameByRow(1);
+		page.selectSampleByRow(2);
+		String sample2Name = page.getSampleNameByRow(2);
+
+		page.clickBtn("samplesOptionsBtn");
+		page.clickBtn("removeBtn");
+		assertTrue(page.isItemVisible("remove-samples-modal"));
+		page.clickBtn("confirm-remove-samples");
+
+		assertTrue(page.checkSuccessNotification());
+		
+		assertNotEquals(sample1Name,page.getSampleNameByRow(1));
+		assertNotEquals(sample2Name,page.getSampleNameByRow(2));
 	}
 
 	@Test
