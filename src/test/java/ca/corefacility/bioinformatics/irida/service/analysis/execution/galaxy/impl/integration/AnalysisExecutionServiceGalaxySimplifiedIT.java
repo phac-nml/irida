@@ -325,15 +325,15 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 
 		assertTrue("phylogenetic trees should be equal",
 				com.google.common.io.Files.equal(expectedTree.toFile(), phylogeneticTree.getFile().toFile()));
-		assertEquals(expectedTree.toFile().getName(), phylogeneticTree.getFile().toFile().getName());
+		assertEquals(expectedTree.getFileName(), phylogeneticTree.getFile().getFileName());
 
 		assertTrue("snp matrices should be correct",
 				com.google.common.io.Files.equal(expectedSnpMatrix.toFile(), snpMatrix.getFile().toFile()));
-		assertEquals(expectedSnpMatrix.toFile().getName(), snpMatrix.getFile().toFile().getName());
+		assertEquals(expectedSnpMatrix.getFileName(), snpMatrix.getFile().getFileName());
 
 		assertTrue("snpTable should be correct",
 				com.google.common.io.Files.equal(expectedSnpTable.toFile(), snpTable.getFile().toFile()));
-		assertEquals(expectedSnpTable.toFile().getName(), snpTable.getFile().toFile().getName());
+		assertEquals(expectedSnpTable.getFileName(), snpTable.getFile().getFileName());
 
 		AnalysisSubmission finalSubmission = analysisSubmissionRepository.getByType(analysisExecuted.getId(),
 				AnalysisSubmission.class);
