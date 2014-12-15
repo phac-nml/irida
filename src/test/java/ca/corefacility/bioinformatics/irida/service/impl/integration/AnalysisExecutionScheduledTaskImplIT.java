@@ -39,7 +39,6 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
-import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -73,9 +72,6 @@ public class AnalysisExecutionScheduledTaskImplIT {
 
 	@Autowired
 	private AnalysisSubmissionService analysisSubmissionService;
-
-	@Autowired
-	private RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics;
 
 	@Autowired
 	private AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified;
@@ -180,7 +176,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 				sequenceFilePath, referenceFilePath, iridaPhylogenomicsWorkflowId);
 
 		AnalysisSubmission analysisSubmission2 = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath, referenceFilePath, iridaPhylogenomicsWorkflowId);
+				sequenceFilePath2, referenceFilePath2, iridaPhylogenomicsWorkflowId);
 
 		assertEquals(AnalysisState.NEW, analysisSubmission.getAnalysisState());
 		assertEquals(AnalysisState.NEW, analysisSubmission2.getAnalysisState());

@@ -45,7 +45,7 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxySimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -83,7 +83,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 	private AnalysisService analysisService;
 
 	@Autowired
-	private AnalysisExecutionServiceGalaxySimplified analysisExecutionServiceGalaxySimplified;
+	private AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified;
 
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
@@ -151,16 +151,16 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
-		AnalysisSubmission analysisSubmitted = analysisExecutionServiceGalaxySimplified
+		AnalysisSubmission analysisSubmitted = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
 
 		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
-		AnalysisSubmission analysisExecuted = analysisExecutionServiceGalaxySimplified
+		AnalysisSubmission analysisExecuted = analysisExecutionServiceSimplified
 				.executeAnalysis(analysisSubmitted);
 		assertNotNull("analysisExecuted is null", analysisExecuted);
 		assertNotNull("remoteAnalysisId is null", analysisExecuted.getRemoteAnalysisId());
 
-		WorkflowStatus status = analysisExecutionServiceGalaxySimplified.getWorkflowStatus(analysisExecuted);
+		WorkflowStatus status = analysisExecutionServiceSimplified.getWorkflowStatus(analysisExecuted);
 		analysisExecutionGalaxyITService.assertValidStatus(status);
 
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.findOne(analysisExecuted.getId());
@@ -188,12 +188,12 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
-		AnalysisSubmission analysisSubmitted = analysisExecutionServiceGalaxySimplified
+		AnalysisSubmission analysisSubmitted = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
 
 		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
 		analysisSubmitted.setRemoteWorkflowId(localGalaxy.getInvalidWorkflowId());
-		analysisExecutionServiceGalaxySimplified.executeAnalysis(analysisSubmitted);
+		analysisExecutionServiceSimplified.executeAnalysis(analysisSubmitted);
 	}
 
 	/**
@@ -212,12 +212,12 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
-		AnalysisSubmission analysisSubmitted = analysisExecutionServiceGalaxySimplified
+		AnalysisSubmission analysisSubmitted = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
 
 		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
 		analysisSubmitted.setRemoteAnalysisId("invalid");
-		analysisExecutionServiceGalaxySimplified.executeAnalysis(analysisSubmitted);
+		analysisExecutionServiceSimplified.executeAnalysis(analysisSubmitted);
 	}
 
 	/**
@@ -236,11 +236,11 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
-		AnalysisSubmission analysisSubmitted = analysisExecutionServiceGalaxySimplified
+		AnalysisSubmission analysisSubmitted = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
 
 		analysisSubmitted.setAnalysisState(AnalysisState.NEW);
-		analysisExecutionServiceGalaxySimplified.executeAnalysis(analysisSubmitted);
+		analysisExecutionServiceSimplified.executeAnalysis(analysisSubmitted);
 	}
 
 	/**
@@ -259,7 +259,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
-		AnalysisSubmission analysisSubmitted = analysisExecutionServiceGalaxySimplified
+		AnalysisSubmission analysisSubmitted = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
 		assertNotNull("analysisSubmitted is null", analysisSubmitted);
 		assertNotNull("remoteWorkflowId is null", analysisSubmitted.getRemoteWorkflowId());
@@ -282,7 +282,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 				sequenceFilePath, referenceFilePath, invalidIridaWorkflowId);
 
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
-		analysisExecutionServiceGalaxySimplified.prepareSubmission(analysisSubmission);
+		analysisExecutionServiceSimplified.prepareSubmission(analysisSubmission);
 	}
 
 	/**
@@ -297,17 +297,17 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 				sequenceFilePath, referenceFilePath, iridaPhylogenomicsWorkflowId);
 
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
-		AnalysisSubmission analysisSubmitted = analysisExecutionServiceGalaxySimplified
+		AnalysisSubmission analysisSubmitted = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
 
 		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
-		AnalysisSubmission analysisExecuted = analysisExecutionServiceGalaxySimplified
+		AnalysisSubmission analysisExecuted = analysisExecutionServiceSimplified
 				.executeAnalysis(analysisSubmitted);
 
 		analysisExecutionGalaxyITService.waitUntilSubmissionCompleteSimplified(analysisExecuted);
 
 		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
-		Analysis analysisResults = analysisExecutionServiceGalaxySimplified.transferAnalysisResults(analysisExecuted);
+		Analysis analysisResults = analysisExecutionServiceSimplified.transferAnalysisResults(analysisExecuted);
 		assertEquals(AnalysisPhylogenomicsPipeline.class, analysisResults.getClass());
 		AnalysisPhylogenomicsPipeline analysisResultsPhylogenomics = (AnalysisPhylogenomicsPipeline) analysisResults;
 
@@ -368,17 +368,17 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
 		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
-		AnalysisSubmission analysisSubmitted = analysisExecutionServiceGalaxySimplified
+		AnalysisSubmission analysisSubmitted = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
 
 		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
-		AnalysisSubmission analysisExecuted = analysisExecutionServiceGalaxySimplified
+		AnalysisSubmission analysisExecuted = analysisExecutionServiceSimplified
 				.executeAnalysis(analysisSubmitted);
 
 		analysisExecutionGalaxyITService.waitUntilSubmissionCompleteSimplified(analysisExecuted);
 
 		analysisExecuted.setId(555l);
 		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
-		analysisExecutionServiceGalaxySimplified.transferAnalysisResults(analysisExecuted);
+		analysisExecutionServiceSimplified.transferAnalysisResults(analysisExecuted);
 	}
 }

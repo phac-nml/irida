@@ -31,7 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phy
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflowRepository;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxySimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -63,7 +63,7 @@ public class DatabaseSetupGalaxyITService {
 	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
 
 	@Autowired
-	private AnalysisExecutionServiceGalaxySimplified analysisExecutionServiceGalaxySimplified;
+	private AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified;
 
 	@Autowired
 	private AnalysisSubmissionService analysisSubmissionService;
@@ -278,7 +278,7 @@ public class DatabaseSetupGalaxyITService {
 			public Void call() throws Exception {
 				WorkflowStatus workflowStatus;
 				do {
-					workflowStatus = analysisExecutionServiceGalaxySimplified.getWorkflowStatus(analysisSubmission);
+					workflowStatus = analysisExecutionServiceSimplified.getWorkflowStatus(analysisSubmission);
 					Thread.sleep(pollingTime);
 				} while (!WorkflowState.OK.equals(workflowStatus.getState()));
 
