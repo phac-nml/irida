@@ -589,6 +589,22 @@ public class ProjectServiceImplIT {
 		assertNotNull("Should have created the library description with a new id.", ld.getId());
 	}
 
+	@Test
+	@WithMockUser(username = "user1", roles = "USER")
+	public void testFindLibraryDescriptionsForProjectAsProjectOwner() {
+		final Project p = projectService.read(2L);
+		final Set<LibraryDescription> libraryDescriptions = projectService.findLibraryDescriptionsForProject(p);
+		assertEquals("Should only be one library description.", 1, libraryDescriptions.size());
+	}
+	
+	@Test
+	@WithMockUser(username = "user2", roles = "USER")
+	public void testFindLibraryDescriptionsForProjectAsProjectUser() {
+		final Project p = projectService.read(7L);
+		final Set<LibraryDescription> libraryDescriptions = projectService.findLibraryDescriptionsForProject(p);
+		assertEquals("Should only be one library description.", 1, libraryDescriptions.size());
+	}
+
 	private LibraryDescription createLibraryDescription() {
 		final Strategy s = new Strategy(1, 1, 1, "protocol");
 		final Layout l = new Layout(1, LayoutType.PAIRED_END);

@@ -378,6 +378,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	public Set<LibraryDescription> findLibraryDescriptionsForProject(final Project project) {
-		throw new UnsupportedOperationException();
+		return libraryDescriptionRepository.findByProject(project);
 	}
 }

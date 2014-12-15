@@ -78,6 +78,17 @@ public class LibraryDescription implements IridaThing {
 	@JoinColumn(name = "project_id")
 	private Project project;
 
+	/**
+	 * For hibernate.
+	 */
+	@SuppressWarnings("unused")
+	private LibraryDescription() {
+		this.createdDate = new Date();
+		this.source = null;
+		this.strategy = null;
+		this.layout = null;
+	}
+
 	public LibraryDescription(final Source source, final Strategy strategy, final Layout layout) {
 		this.createdDate = new Date();
 		this.source = source;
