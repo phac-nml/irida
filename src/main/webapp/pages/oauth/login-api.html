@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <body>
-        <h1 id="banner" th:text="#{login.title}">_Login to IRIDA REST API_</h1>  
+        <h1 id="banner" th:text="#{login.api.title}">_Login to IRIDA REST API_</h1>  
         <form name="f" th:action="@{/api/login.do}" method="POST">
             <table>
                 <tr>
-                    <td th:text="#{login.username}">_User name:_</td>
+                    <td th:text="#{login.api.username}">_User name:_</td>
                     <td><input type='text' name='username' /></td>
                 </tr>
                 <tr>
-                    <td th:text="#{login.password}">_Password:_</td>
+                    <td th:text="#{login.api.password}">_Password:_</td>
                     <td><input type='password' name='password'/></td>
                 </tr>
                 <tr>
