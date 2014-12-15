@@ -429,7 +429,6 @@ public class ProjectSamplesController {
 	 */
 	@RequestMapping(value = "/{projectId}/ajax/samples/remove", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	@Transactional
 	public Map<String, Object> removeSamplesFromProject(@PathVariable Long projectId,
 			@RequestParam(value = "samples[]") List<Long> samples, Locale locale) {
 		Map<String, Object> result = new HashMap<>();
