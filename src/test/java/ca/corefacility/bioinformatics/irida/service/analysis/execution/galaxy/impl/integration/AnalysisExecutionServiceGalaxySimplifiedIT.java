@@ -149,7 +149,6 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
-		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();
@@ -189,7 +188,6 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
-		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();
@@ -216,7 +214,6 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
-		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();
@@ -243,7 +240,6 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
-		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();
@@ -263,7 +259,6 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
-		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();
@@ -283,7 +278,6 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, invalidIridaWorkflowId);
 
-		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
 		assertTrue(preparationWorker.exceptionOccured());
@@ -301,7 +295,6 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, iridaPhylogenomicsWorkflowId);
 
-		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
 		assertFalse("An exception occured " + preparationWorker.getException(), preparationWorker.exceptionOccured());
@@ -374,7 +367,6 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
-		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();

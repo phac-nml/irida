@@ -119,7 +119,6 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 
 		analysisSubmission.setId(INTERNAL_ANALYSIS_ID);
 		analysisSubmitted.setId(INTERNAL_ANALYSIS_ID);
-		analysisSubmission.setAnalysisState(AnalysisState.PREPARING);
 		analysisSubmitted.setAnalysisState(AnalysisState.PREPARING);
 
 		analysisSubmitted.setRemoteAnalysisId(ANALYSIS_ID);
@@ -132,6 +131,10 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID,
 						ImmutableMap.of("remoteAnalysisId", ANALYSIS_ID, "remoteWorkflowId", REMOTE_WORKFLOW_ID)))
 				.thenReturn(analysisSubmitted);
+		when(
+				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID,
+						ImmutableMap.of("analysisState", AnalysisState.PREPARING)))
+				.thenReturn(analysisSubmission);
 	}
 
 	/**
