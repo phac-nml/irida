@@ -21,7 +21,7 @@ public class LoginController extends BaseController {
 	private static final String WET_BOEW_THEME = "wet";
 	private @Value("${ui.theme}") String theme;
 	private static final String SPLASH_PAGE = "themes/wet/splash";
-	private static final String LOGIN_PAGE = "login";
+	private static final String LOGIN_PAGE =  "/login";
 
 
 	@RequestMapping(value = "/")
@@ -50,7 +50,7 @@ public class LoginController extends BaseController {
 			return "forward:/dashboard";
 		} else {
 			model.addAttribute("error", hasError);
-			return LOGIN_PAGE;
+			return "themes/" + theme + LOGIN_PAGE;
 		}
 	}
 
