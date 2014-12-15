@@ -173,7 +173,7 @@
 		window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ngAnimate', 'ngMessages', 'ui.bootstrap', 'ui.utils', 'restangular', 'irida.notifications']);
 		var app = angular.module('irida', window.dependencies)
 			.value('BASE_URL', /*[[@{/}]]*/ '/')
-			// This configures the base url globally for all restangular calls.
+		// This configures the base url globally for all restangular calls.
 			.config(function (RestangularProvider) {
 				RestangularProvider.setBaseUrl(/*[[@{/}]]*/ "/");
 			})
@@ -223,7 +223,6 @@
 			.config(function ($httpProvider) {
 				$httpProvider.interceptors.push('HttpInterceptor');
 
-
 				// Make sure that all ajax form data is sent in the correct format.
 				$httpProvider.defaults.transformRequest = function (data) {
 					if (data === undefined) {
@@ -234,9 +233,7 @@
 			});
 		/*]]>*/
 	</script>
-
 </th:block>
-
 <th:block layout:fragment="theme-scripts">
 	<!--/* This is where the main for the theme template are loaded. */-->
 </th:block>
