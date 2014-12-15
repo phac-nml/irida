@@ -1,22 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="${themePath + '_base'}">
 <head>
 	<title th:text="#{login.title}">THIS IS SOMETHING WRONG</title>
-	<link th:href="@{/resources/wet-theme/assets/favicon.ico}" href="/resources/wet-theme/assets/favicon.ico" rel="icon"
-	      type="image/x-icon"/>
-	<link rel="stylesheet" th:href="@{/resources/wet-theme/css/wet-boew.min.css}"
-	      href="/resources/wet-theme/css/wet-boew.min.css"/>
-	<link rel="stylesheet" th:href="@{/resources/wet-theme/css/theme.min.css}"
-	      href="/resources/wet-theme/css/theme.min.css"/>
-	<link rel="stylesheet" th:href="@{/resources/css/main.css}" href="/resources/css/main.css"/>
-	<link rel="stylesheet" th:href="@{/resources/css/themes/wet/main.css}" href="/resources/css/themes/wet/main.css"/>
 </head>
 <body>
-<div th:replace="themes/wet/partials/header :: header">HEADER</div>
-<main class="container main-area" role="main" property="mainContentOfPage">
+<main layout:fragment="content" class="container main-area" role="main" property="mainContentOfPage">
 	<h1 class="page-header" th:text="#{login.title}"></h1>
 	<section>
-		hello
 		<div class="row">
 			<div class="col-md-6">
 				<form name="loginForm" role="form" method="post" th:action="@{/login}" action="/login">
@@ -30,27 +22,22 @@
 						       th:placeholder="#{login.username}" autofocus="true" placeholder="Enter email"/>
 					</div>
 					<div class="form-group">
-						<label for="passwordTF" th:text="#{global.password.label}">Password</label> <input
-						type="password" class="form-control input-full" id="passwordTF"
-						name="password"
-						th:placeholder="#{global.password.placeholder}" placeholder="Password"/>
+						<label for="passwordTF" th:text="#{global.password.label}">Password</label>
+						<input type="password" class="form-control input-full" id="passwordTF"
+						       name="password"
+						       th:placeholder="#{global.password.placeholder}" placeholder="Password"/>
 					</div>
 					<button id="submitBtn" type="submit" class="btn btn-primary" th:text="#{login.btn}">Submit</button>
 					<div class="login__links">
-						<a href="/password_reset" th:href="@{/password_reset}" th:text="#{user.passwordReset}">Reset
-							Password
-						</a>
-						<a href="#" th:href="@{/password_reset/activate}">Activate Account</a>
-					</div>
+						<a href="/password_reset" th:href="@{/password_reset}" th:text="#{user.passwordReset}">Reset Password</a>
+						<a href="#" th:href="@{/password_reset/activate}">Activate Account</a></div>
 				</form>
 			</div>
 			<div class="col-md-6">
 				<h2 th:text="#{login.sidebar-intro}">IRIDA Summary</h2>
-
 				<p th:text="#{login.sidebar-body}">IRIDA Summary</p></div>
 		</div>
 	</section>
 </main>
-<div th:replace="themes/wet/partials/footer :: footer">FOOTER</div>
 </body>
 </html>
