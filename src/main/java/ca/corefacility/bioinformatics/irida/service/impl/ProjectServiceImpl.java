@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -232,7 +231,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
-	public void removeSamplesFromProject(Project project, Collection<Sample> samples) {
+	public void removeSamplesFromProject(Project project, Iterable<Sample> samples) {
 		for (Sample s : samples) {
 			psjRepository.removeSampleFromProject(project, s);
 		}
