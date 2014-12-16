@@ -68,6 +68,7 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -274,7 +275,20 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testRemoveSamplesFromProject() {
+		Sample s1 = sampleService.read(1L);
+		Project p = projectService.read(2L);
+
+		projectService.removeSamplesFromProject(p, ImmutableList.of(s1));
+
+		Collection<Join<Project, Sample>> samples = sampleService.getSamplesForProject(p);
+		assertTrue("No samples should be assigned to project.", samples.isEmpty());
+	}
+
+	@Test
 	@WithMockUser(username = "sequencer", roles = "SEQUENCER")
+
 	public void testReadProjectAsSequencerRole() {
 		projectService.read(1L);
 	}

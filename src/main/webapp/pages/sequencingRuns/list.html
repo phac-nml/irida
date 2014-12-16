@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-    layout:decorator="remote_apis/_base">
+    layout:decorator="sequencingRuns/_base">
 <head>
 <title th:text="#{sequencingruns.title}">_Clients_</title>
 <link rel="stylesheet" th:href="@{/resources/bower_components/angular-busy/angular-busy.css}"
@@ -20,7 +20,7 @@
                     <th id="sortId" th:text="#{iridaThing.id}" sort-by="" onsort="sCtrl.onSort"
                         sortdir="sCtrl.filter.sortDir" sortedBy="sCtrl.filter.sortedBy" sortValue="id">_ID_</th>
                     <th id="sortType" th:text="#{sequencingruns.type}" sort-by="" onsort="sCtrl.onSort"
-                        sortdir="sCtrl.filter.sortDir" sortedBy="sCtrl.filter.sortedBy" sortValue="sequencerName">_sequencer_</th>
+                        sortdir="sCtrl.filter.sortDir" sortedBy="sCtrl.filter.sortedBy" sortValue="sequencerType">_sequencer_</th>
                     <th id="sortCreatedDate" th:text="#{iridaThing.timestamp}" sort-by="" onsort="sCtrl.onSort"
                         sortdir="sCtrl.filter.sortDir" sortedBy="sCtrl.filter.sortedBy" sortValue="createdDate">_Created
                         date_</th>
