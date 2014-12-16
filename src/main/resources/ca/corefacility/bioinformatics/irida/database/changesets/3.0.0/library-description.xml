@@ -74,5 +74,15 @@
 		<addColumn tableName="sequence_file_AUD">
 			<column name="library_description_id" type="bigint(20)" />
 		</addColumn>
+
+		<addColumn tableName="project">
+			<column name="default_library_description" type="bigint(20)">
+				<constraints referencedTableName="library_description"
+					referencedColumnNames="id" foreignKeyName="FK_DEFAULT_LIBRARY_DESCRIPTION" />
+			</column>
+		</addColumn>
+		<addColumn tableName="project_AUD">
+			<column name="default_library_description" type="bigint(20)" />
+		</addColumn>
 	</changeSet>
 </databaseChangeLog>
