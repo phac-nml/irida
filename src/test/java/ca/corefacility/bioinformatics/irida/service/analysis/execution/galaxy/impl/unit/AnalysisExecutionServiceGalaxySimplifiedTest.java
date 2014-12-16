@@ -119,7 +119,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 
 		analysisSubmission.setId(INTERNAL_ANALYSIS_ID);
 		analysisSubmitted.setId(INTERNAL_ANALYSIS_ID);
-		analysisSubmitted.setAnalysisState(AnalysisState.PREPARING);
+		analysisSubmitted.setAnalysisState(AnalysisState.PREPARED);
 
 		analysisSubmitted.setRemoteAnalysisId(ANALYSIS_ID);
 
@@ -129,7 +129,8 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 		when(analysisWorkspaceServiceSimplified.prepareAnalysisWorkspace(analysisSubmission)).thenReturn(ANALYSIS_ID);
 		when(
 				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID,
-						ImmutableMap.of("remoteAnalysisId", ANALYSIS_ID, "remoteWorkflowId", REMOTE_WORKFLOW_ID)))
+						ImmutableMap.of("remoteAnalysisId", ANALYSIS_ID, "remoteWorkflowId", REMOTE_WORKFLOW_ID,
+								"analysisState", AnalysisState.PREPARED)))
 				.thenReturn(analysisSubmitted);
 		when(
 				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID,
@@ -155,7 +156,8 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 		verify(galaxyWorkflowService).uploadGalaxyWorkflow(workflowFile);
 		verify(analysisWorkspaceServiceSimplified).prepareAnalysisWorkspace(analysisSubmission);
 		verify(analysisSubmissionService).update(INTERNAL_ANALYSIS_ID,
-				ImmutableMap.of("remoteWorkflowId", REMOTE_WORKFLOW_ID, "remoteAnalysisId", ANALYSIS_ID));
+				ImmutableMap.of("remoteWorkflowId", REMOTE_WORKFLOW_ID, "remoteAnalysisId", ANALYSIS_ID,
+						"analysisState", AnalysisState.PREPARED));
 	}
 
 	/**

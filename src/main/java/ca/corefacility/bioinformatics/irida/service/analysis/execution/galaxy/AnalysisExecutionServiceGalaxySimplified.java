@@ -117,7 +117,8 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 				logger.trace("Created Galaxy history for analysis " + " id=" + analysisId + ", " + preparingAnalysis);
 	
 				return analysisSubmissionService.update(preparingAnalysis.getId(),
-						ImmutableMap.of("remoteAnalysisId", analysisId, "remoteWorkflowId", workflowId));
+						ImmutableMap.of("remoteAnalysisId", analysisId, "remoteWorkflowId", workflowId,
+								"analysisState", AnalysisState.PREPARED));
 			}
 		};
 		analysisTaskExecutor.execute(prepareSubmissionWorker);

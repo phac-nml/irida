@@ -262,9 +262,11 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = preparationWorker.getResult();
+		assertFalse(preparationWorker.exceptionOccured());
 		assertNotNull("analysisSubmitted is null", analysisSubmitted);
 		assertNotNull("remoteWorkflowId is null", analysisSubmitted.getRemoteWorkflowId());
 		assertNotNull("remoteAnalysisId is null", analysisSubmitted.getRemoteAnalysisId());
+		assertEquals(AnalysisState.PREPARED, analysisSubmitted.getAnalysisState());
 	}
 
 	/**
