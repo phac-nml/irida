@@ -16,8 +16,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -25,13 +23,12 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisExecutionWorker;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 
 /**
@@ -47,7 +44,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	@Mock
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	@Mock
-	private AnalysisExecutionServiceSimplified analysisExecutionService;
+	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
 
 	@Mock
 	private RemoteWorkflowPhylogenomics remoteWorkflow;
@@ -60,9 +57,6 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	@Mock
 	private AnalysisPhylogenomicsPipeline analysis;
-	
-	@Mock
-	private AnalysisExecutionWorker prepareSubmissionWorker;
 
 	private static final String ANALYSIS_ID = "1";
 	private static final Long INTERNAL_ID = 1L;
@@ -74,15 +68,14 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	/**
 	 * Sets up variables for tests.
-	 * @throws NoSuchValueException 
 	 */
 	@Before
-	public void setup() throws NoSuchValueException {
+	public void setup() {
 		MockitoAnnotations.initMocks(this);
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(
 				analysisSubmissionService, analysisSubmissionRepository,
-				analysisExecutionService);
+				analysisExecutionServicePhylogenomics);
 
 		analysisSubmission = new AnalysisSubmissionPhylogenomics("my analysis", sequenceFiles,
 				referenceFile, remoteWorkflow, workflowId);
@@ -93,20 +86,15 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				analysisSubmissionRepository.getByType(INTERNAL_ID,
 						AnalysisSubmissionPhylogenomics.class)).thenReturn(
 				analysisSubmission);
-		
-		when(prepareSubmissionWorker.getResult()).thenReturn(analysisSubmission);
-		when(prepareSubmissionWorker.isFinished()).thenReturn(true);
 	}
 
 	/**
 	 * Tests successfully executing submitted analyses.
 	 * 
 	 * @throws ExecutionManagerException
-	 * @throws IOException 
-	 * @throws IridaWorkflowNotFoundException 
 	 */
 	@Test
-	public void testExecuteAnalysesSuccess() throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException {
+	public void testExecuteAnalysesSuccess() throws ExecutionManagerException {
 		analysisSubmission.setAnalysisState(AnalysisState.NEW);
 
 		when(
@@ -115,9 +103,9 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				Arrays.asList(analysisSubmission));
 
 		when(
-				analysisExecutionService
+				analysisExecutionServicePhylogenomics
 						.prepareSubmission(analysisSubmission)).thenReturn(
-							prepareSubmissionWorker);
+				analysisSubmission);
 
 		analysisExecutionScheduledTask.executeAnalyses();
 
@@ -125,11 +113,11 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				AnalysisState.NEW);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.PREPARING);
-		verify(analysisExecutionService).prepareSubmission(
+		verify(analysisExecutionServicePhylogenomics).prepareSubmission(
 				analysisSubmission);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.SUBMITTING);
-		verify(analysisExecutionService).executeAnalysis(
+		verify(analysisExecutionServicePhylogenomics).executeAnalysis(
 				analysisSubmission);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.RUNNING);
@@ -139,12 +127,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	 * Tests no analyses to submit.
 	 * 
 	 * @throws ExecutionManagerException
-	 * @throws IOException 
-	 * @throws IridaWorkflowNotFoundException 
 	 */
 	@Test
 	public void testExecuteAnalysesNoAnalyses()
-			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException {
+			throws ExecutionManagerException {
 
 		when(
 				analysisSubmissionRepository
@@ -155,7 +141,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		verify(analysisSubmissionRepository).findByAnalysisState(
 				AnalysisState.NEW);
-		verify(analysisExecutionService, never())
+		verify(analysisExecutionServicePhylogenomics, never())
 				.prepareSubmission(analysisSubmission);
 	}
 
@@ -163,12 +149,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	 * Tests preparing an analysis and receiving an error exception. state.
 	 * 
 	 * @throws ExecutionManagerException
-	 * @throws IOException 
-	 * @throws IridaWorkflowNotFoundException 
 	 */
 	@Test
 	public void testExecuteAnalysesPrepareError()
-			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException {
+			throws ExecutionManagerException {
 		analysisSubmission.setAnalysisState(AnalysisState.NEW);
 
 		when(
@@ -177,7 +161,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				Arrays.asList(analysisSubmission));
 
 		when(
-				analysisExecutionService
+				analysisExecutionServicePhylogenomics
 						.prepareSubmission(analysisSubmission)).thenThrow(
 				new ExecutionManagerException());
 
@@ -187,9 +171,9 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				AnalysisState.NEW);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.PREPARING);
-		verify(analysisExecutionService).prepareSubmission(
+		verify(analysisExecutionServicePhylogenomics).prepareSubmission(
 				analysisSubmission);
-		verify(analysisExecutionService, never()).executeAnalysis(
+		verify(analysisExecutionServicePhylogenomics, never()).executeAnalysis(
 				analysisSubmission);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.ERROR);
@@ -199,12 +183,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	 * Tests preparing an analysis and receiving an some random error exception.
 	 * 
 	 * @throws ExecutionManagerException
-	 * @throws IOException 
-	 * @throws IridaWorkflowNotFoundException 
 	 */
 	@Test
 	public void testExecuteAnalysesPrepareOtherException()
-			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException {
+			throws ExecutionManagerException {
 		analysisSubmission.setAnalysisState(AnalysisState.NEW);
 
 		when(
@@ -213,7 +195,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				Arrays.asList(analysisSubmission));
 
 		when(
-				analysisExecutionService
+				analysisExecutionServicePhylogenomics
 						.prepareSubmission(analysisSubmission)).thenThrow(
 				new RuntimeException());
 
@@ -223,9 +205,9 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				AnalysisState.NEW);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.PREPARING);
-		verify(analysisExecutionService).prepareSubmission(
+		verify(analysisExecutionServicePhylogenomics).prepareSubmission(
 				analysisSubmission);
-		verify(analysisExecutionService, never()).executeAnalysis(
+		verify(analysisExecutionServicePhylogenomics, never()).executeAnalysis(
 				analysisSubmission);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.ERROR);
@@ -235,12 +217,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	 * Tests executing submitted analyses and moving it to an error state.
 	 * 
 	 * @throws ExecutionManagerException
-	 * @throws IOException 
-	 * @throws IridaWorkflowNotFoundException 
 	 */
 	@Test
 	public void testExecuteAnalysesExecuteError()
-			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException {
+			throws ExecutionManagerException {
 		analysisSubmission.setAnalysisState(AnalysisState.NEW);
 
 		when(
@@ -249,12 +229,12 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				Arrays.asList(analysisSubmission));
 
 		when(
-				analysisExecutionService
+				analysisExecutionServicePhylogenomics
 						.prepareSubmission(analysisSubmission)).thenReturn(
-							prepareSubmissionWorker);
+				analysisSubmission);
 
 		when(
-				analysisExecutionService
+				analysisExecutionServicePhylogenomics
 						.executeAnalysis(analysisSubmission)).thenThrow(
 				new ExecutionManagerException());
 
@@ -264,11 +244,11 @@ public class AnalysisExecutionScheduledTaskImplTest {
 				AnalysisState.NEW);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.PREPARING);
-		verify(analysisExecutionService).prepareSubmission(
+		verify(analysisExecutionServicePhylogenomics).prepareSubmission(
 				analysisSubmission);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.SUBMITTING);
-		verify(analysisExecutionService).executeAnalysis(
+		verify(analysisExecutionServicePhylogenomics).executeAnalysis(
 				analysisSubmission);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.ERROR);
@@ -279,11 +259,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IOException
-	 * @throws IridaWorkflowNotFoundException 
 	 */
 	@Test
 	public void testTransferAnalysesResultsSuccess()
-			throws ExecutionManagerException, IOException, IridaWorkflowNotFoundException {
+			throws ExecutionManagerException, IOException {
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
 
 		when(
@@ -291,11 +270,11 @@ public class AnalysisExecutionScheduledTaskImplTest {
 						.findByAnalysisState(AnalysisState.RUNNING))
 				.thenReturn(Arrays.asList(analysisSubmission));
 		when(
-				analysisExecutionService
+				analysisExecutionServicePhylogenomics
 						.transferAnalysisResults(analysisSubmission))
 				.thenReturn(analysis);
 		when(
-				analysisExecutionService
+				analysisExecutionServicePhylogenomics
 						.getWorkflowStatus(analysisSubmission)).thenReturn(
 				new WorkflowStatus(WorkflowState.OK, 100.0f));
 
@@ -303,9 +282,9 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		verify(analysisSubmissionRepository).findByAnalysisState(
 				AnalysisState.RUNNING);
-		verify(analysisExecutionService).getWorkflowStatus(
+		verify(analysisExecutionServicePhylogenomics).getWorkflowStatus(
 				analysisSubmission);
-		verify(analysisExecutionService).transferAnalysisResults(
+		verify(analysisExecutionServicePhylogenomics).transferAnalysisResults(
 				analysisSubmission);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.COMPLETED);
@@ -332,16 +311,15 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests skipping over transferring results for a submitted analysis that's
+	 * Tests skipping over transfering results for a submitted analysis that's
 	 * still running.
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IOException
-	 * @throws IridaWorkflowNotFoundException 
 	 */
 	@Test
 	public void testTransferAnalysesResultsSuccessNotComplete()
-			throws ExecutionManagerException, IOException, IridaWorkflowNotFoundException {
+			throws ExecutionManagerException, IOException {
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
 
 		when(
@@ -349,11 +327,11 @@ public class AnalysisExecutionScheduledTaskImplTest {
 						.findByAnalysisState(AnalysisState.RUNNING))
 				.thenReturn(Arrays.asList(analysisSubmission));
 		when(
-				analysisExecutionService
+				analysisExecutionServicePhylogenomics
 						.transferAnalysisResults(analysisSubmission))
 				.thenReturn(analysis);
 		when(
-				analysisExecutionService
+				analysisExecutionServicePhylogenomics
 						.getWorkflowStatus(analysisSubmission)).thenReturn(
 				new WorkflowStatus(WorkflowState.RUNNING, 50.0f));
 
@@ -361,9 +339,9 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		verify(analysisSubmissionRepository).findByAnalysisState(
 				AnalysisState.RUNNING);
-		verify(analysisExecutionService).getWorkflowStatus(
+		verify(analysisExecutionServicePhylogenomics).getWorkflowStatus(
 				analysisSubmission);
-		verify(analysisExecutionService, never())
+		verify(analysisExecutionServicePhylogenomics, never())
 				.transferAnalysisResults(analysisSubmission);
 	}
 
@@ -373,11 +351,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IOException
-	 * @throws IridaWorkflowNotFoundException 
 	 */
 	@Test
 	public void testTransferAnalysesGalaxyError()
-			throws ExecutionManagerException, IOException, IridaWorkflowNotFoundException {
+			throws ExecutionManagerException, IOException {
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
 
 		when(
@@ -385,11 +362,11 @@ public class AnalysisExecutionScheduledTaskImplTest {
 						.findByAnalysisState(AnalysisState.RUNNING))
 				.thenReturn(Arrays.asList(analysisSubmission));
 		when(
-				analysisExecutionService
+				analysisExecutionServicePhylogenomics
 						.transferAnalysisResults(analysisSubmission))
 				.thenReturn(analysis);
 		when(
-				analysisExecutionService
+				analysisExecutionServicePhylogenomics
 						.getWorkflowStatus(analysisSubmission)).thenReturn(
 				new WorkflowStatus(WorkflowState.ERROR, 50.0f));
 
@@ -397,11 +374,11 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		verify(analysisSubmissionRepository).findByAnalysisState(
 				AnalysisState.RUNNING);
-		verify(analysisExecutionService).getWorkflowStatus(
+		verify(analysisExecutionServicePhylogenomics).getWorkflowStatus(
 				analysisSubmission);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.ERROR);
-		verify(analysisExecutionService, never())
+		verify(analysisExecutionServicePhylogenomics, never())
 				.transferAnalysisResults(analysisSubmission);
 	}
 
@@ -411,11 +388,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IOException
-	 * @throws IridaWorkflowNotFoundException 
 	 */
 	@Test
 	public void testTransferAnalysesTransferError()
-			throws ExecutionManagerException, IOException, IridaWorkflowNotFoundException {
+			throws ExecutionManagerException, IOException {
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
 
 		when(
@@ -423,11 +399,11 @@ public class AnalysisExecutionScheduledTaskImplTest {
 						.findByAnalysisState(AnalysisState.RUNNING))
 				.thenReturn(Arrays.asList(analysisSubmission));
 		when(
-				analysisExecutionService
+				analysisExecutionServicePhylogenomics
 						.transferAnalysisResults(analysisSubmission))
 				.thenThrow(new ExecutionManagerException());
 		when(
-				analysisExecutionService
+				analysisExecutionServicePhylogenomics
 						.getWorkflowStatus(analysisSubmission)).thenReturn(
 				new WorkflowStatus(WorkflowState.OK, 100.0f));
 
@@ -435,11 +411,11 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		verify(analysisSubmissionRepository).findByAnalysisState(
 				AnalysisState.RUNNING);
-		verify(analysisExecutionService).getWorkflowStatus(
+		verify(analysisExecutionServicePhylogenomics).getWorkflowStatus(
 				analysisSubmission);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.FINISHED_RUNNING);
-		verify(analysisExecutionService).transferAnalysisResults(
+		verify(analysisExecutionServicePhylogenomics).transferAnalysisResults(
 				analysisSubmission);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.ERROR);
@@ -451,11 +427,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IOException
-	 * @throws IridaWorkflowNotFoundException 
 	 */
 	@Test
 	public void testTransferAnalysesOtherException()
-			throws ExecutionManagerException, IOException, IridaWorkflowNotFoundException {
+			throws ExecutionManagerException, IOException {
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
 
 		when(
@@ -463,7 +438,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 						.findByAnalysisState(AnalysisState.RUNNING))
 				.thenReturn(Arrays.asList(analysisSubmission));
 		when(
-				analysisExecutionService
+				analysisExecutionServicePhylogenomics
 						.transferAnalysisResults(analysisSubmission))
 				.thenThrow(new RuntimeException());
 
@@ -471,7 +446,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		verify(analysisSubmissionRepository).findByAnalysisState(
 				AnalysisState.RUNNING);
-		verify(analysisExecutionService, never())
+		verify(analysisExecutionServicePhylogenomics, never())
 				.transferAnalysisResults(analysisSubmission);
 		verify(analysisSubmissionService).setStateForAnalysisSubmission(
 				INTERNAL_ID, AnalysisState.ERROR);

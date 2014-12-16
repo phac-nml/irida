@@ -24,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -49,11 +49,11 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 
 	@Autowired
-	private AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified;
+	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
 
 	@Autowired
 	private UserService userService;
-
+	
 	/**
 	 * Cycle through any outstanding submissions and execute them.
 	 */
@@ -61,7 +61,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	public void executeAnalyses() {
 		analysisExecutionScheduledTask().executeAnalyses();
 	}
-
+	
 	/**
 	 * Cycle through any completed submissions and transfer the results.
 	 */
@@ -71,15 +71,14 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	}
 
 	/**
-	 * Creates a new bean with a AnalysisExecutionScheduledTask for performing
-	 * the analysis tasks.
-	 * 
-	 * @return A AnalysisExecutionScheduledTask bean.
+	 * Creates a new bean with a AnalysisExecutionScheduledTask for performing the analysis tasks.
+	 * @return  A AnalysisExecutionScheduledTask bean. 
 	 */
 	@Bean
 	public AnalysisExecutionScheduledTask analysisExecutionScheduledTask() {
-		return new AnalysisExecutionScheduledTaskImpl(analysisSubmissionService, analysisSubmissionRepository,
-				analysisExecutionServiceSimplified);
+		return new AnalysisExecutionScheduledTaskImpl(
+				analysisSubmissionService, analysisSubmissionRepository,
+				analysisExecutionServicePhylogenomics);
 	}
 
 	/**
@@ -92,13 +91,14 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 
 	/**
 	 * Builds a new Executor for scheduled tasks.
-	 * 
 	 * @return A new Executor for scheduled tasks.
 	 */
 	private Executor taskExecutor() {
-		ScheduledExecutorService delegateExecutor = Executors.newSingleThreadScheduledExecutor();
+		ScheduledExecutorService delegateExecutor = Executors
+				.newSingleThreadScheduledExecutor();
 		SecurityContext schedulerContext = createSchedulerSecurityContext();
-		return new DelegatingSecurityContextScheduledExecutorService(delegateExecutor, schedulerContext);
+		return new DelegatingSecurityContextScheduledExecutorService(
+				delegateExecutor, schedulerContext);
 	}
 
 	/**
@@ -109,16 +109,16 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	private SecurityContext createSchedulerSecurityContext() {
 		SecurityContext context = SecurityContextHolder.createEmptyContext();
 
-		Authentication anonymousToken = new AnonymousAuthenticationToken("nobody", "nobody",
-				ImmutableList.of(Role.ROLE_ANONYMOUS));
-
+		Authentication anonymousToken = new AnonymousAuthenticationToken(
+				"nobody", "nobody", ImmutableList.of(Role.ROLE_ANONYMOUS));
+		
 		Authentication oldAuthentication = SecurityContextHolder.getContext().getAuthentication();
 		SecurityContextHolder.getContext().setAuthentication(anonymousToken);
 		User admin = userService.getUserByUsername("admin");
 		SecurityContextHolder.getContext().setAuthentication(oldAuthentication);
 
-		Authentication adminAuthentication = new PreAuthenticatedAuthenticationToken(admin, null,
-				Lists.newArrayList(Role.ROLE_ADMIN));
+		Authentication adminAuthentication = new PreAuthenticatedAuthenticationToken(
+				admin, null, Lists.newArrayList(Role.ROLE_ADMIN));
 
 		context.setAuthentication(adminAuthentication);
 
