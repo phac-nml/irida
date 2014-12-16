@@ -16,17 +16,32 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 
+/**
+ * Utilities class for converting {@link SequenceFile} objects for the web
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ *
+ */
 @Component
-public class SequenceFileUtilities {
+public class SequenceFileWebUtilities {
 	// Converters
 	Formatter<Date> dateFormatter;
 	Converter<Long, String> fileSizeConverter;
-	
-	public SequenceFileUtilities(){
+
+	public SequenceFileWebUtilities() {
 		this.dateFormatter = new DateFormatter();
 		this.fileSizeConverter = new FileSizeConverter();
 	}
-	
+
+	/**
+	 * Get a Map representation of a {@link SequenceFile}
+	 * 
+	 * @param file
+	 *            The sequence file to convert
+	 * @return The sequence file map
+	 * @throws IOException
+	 *             if reading the file fails
+	 */
 	public Map<String, Object> getFileDataMap(SequenceFile file) throws IOException {
 		Path path = file.getFile();
 		Long realSize = 0L;

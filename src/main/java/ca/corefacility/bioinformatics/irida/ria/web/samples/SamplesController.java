@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,11 +14,9 @@ import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.Formatter;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,8 +34,8 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -96,6 +92,7 @@ public class SamplesController extends BaseController {
 
 	private final ProjectService projectService;
 	private final UserService userService;
+	private final SequenceFileWebUtilities sequenceFileUtilities;
 
 	// Converters
 	Formatter<Date> dateFormatter;
@@ -103,13 +100,12 @@ public class SamplesController extends BaseController {
 
 	@Autowired
 	public SamplesController(SampleService sampleService, SequenceFileService sequenceFileService,
-			UserService userService, ProjectService projectService) {
+			UserService userService, ProjectService projectService, SequenceFileWebUtilities sequenceFileUtilities) {
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
 		this.userService = userService;
 		this.projectService = projectService;
-		this.dateFormatter = new DateFormatter();
-		this.fileSizeConverter = new FileSizeConverter();
+		this.sequenceFileUtilities = sequenceFileUtilities;
 	}
 
 	/************************************************************************************************
@@ -239,7 +235,7 @@ public class SamplesController extends BaseController {
 
 		List<Map<String, Object>> response = new ArrayList<>();
 		for (Join<Sample, SequenceFile> join : joinList) {
-			response.add(getFileDataMap(join.getObject()));
+			response.add(sequenceFileUtilities.getFileDataMap(join.getObject()));
 		}
 		return response;
 	}
@@ -262,27 +258,6 @@ public class SamplesController extends BaseController {
 		sampleService.removeSequenceFileFromSample(sample, sequenceFile);
 
 		return ImmutableMap.of("response", "success");
-	}
-
-	// ************************************************************************************************
-	// Helper Methods
-	// ************************************************************************************************
-	private Map<String, Object> getFileDataMap(SequenceFile file) throws IOException {
-		Path path = file.getFile();
-		Long realSize = 0L;
-
-		if (Files.exists(path)) {
-			realSize = Files.size(path);
-		}
-		String size = fileSizeConverter.convert(realSize);
-		Map<String, Object> m = new HashMap<>();
-		m.put("id", file.getId().toString());
-		m.put("label", file.getLabel());
-		m.put("realCreatedDate", file.getCreatedDate());
-		m.put("createdDate", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
-		m.put("size", size);
-		m.put("realSize", realSize.toString());
-		return m;
 	}
 
 	/**

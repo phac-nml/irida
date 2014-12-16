@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
-import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
@@ -42,10 +42,10 @@ public class SequencingRunController {
 
 	private final SequencingRunService sequencingRunService;
 	private final SequenceFileService sequenceFileService;
-	private final SequenceFileUtilities sequenceFileUtilities;
+	private final SequenceFileWebUtilities sequenceFileUtilities;
 
 	@Autowired
-	public SequencingRunController(SequencingRunService sequencingRunService, SequenceFileService sequenceFileService, SequenceFileUtilities sequenceFileUtilities) {
+	public SequencingRunController(SequencingRunService sequencingRunService, SequenceFileService sequenceFileService, SequenceFileWebUtilities sequenceFileUtilities) {
 		this.sequencingRunService = sequencingRunService;
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFileUtilities = sequenceFileUtilities;
