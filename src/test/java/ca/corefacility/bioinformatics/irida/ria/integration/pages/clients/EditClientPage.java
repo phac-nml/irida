@@ -6,9 +6,9 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+
+import com.google.common.base.Strings;
 
 public class EditClientPage extends AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(EditClientPage.class);
@@ -23,6 +23,7 @@ public class EditClientPage extends AbstractPage {
 		String url = "clients/" + id + "/edit";
 		logger.trace("Going to edit page for client " + id);
 		get(driver, url);
+		waitForTime(200);
 	}
 
 	public void editClient(String grant, boolean scope_read, boolean scope_write, boolean generateClientSecret) {

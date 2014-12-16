@@ -5,26 +5,6 @@
 <!--<![endif]-->
 <head lang="en">
 	<title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA Platform</title>
-	<th:block th:include="themes/common/fragments :: meta"></th:block>
-
-	<!--[if lte IE 8]
-	<script>
-		document.createElement('ng-include');
-		document.createElement('ng-pluralize');
-		document.createElement('ng-view');
-
-		// Optionally these for CSS
-		document.createElement('ng:include');
-		document.createElement('ng:pluralize');
-		document.createElement('ng:view');
-
-		// Angular Bootstrap
-		document.createElement('tabset');
-		document.createElement('tab');
-
-	</script>
-	<script th:src="@{/resources/bower_components/json2/json2.js}" src="/resources/bower_components/json2/json2.js"></script>
-	<![endif]-->
 
 	<link rel="stylesheet" th:href="@{/resources/bower_components/Font-Awesome/css/font-awesome.min.css}"
 	      href="/resources/bower_components/Font-Awesome/css/font-awesome.min.css"/>
@@ -55,6 +35,9 @@
 	</div>
 </script>
 
+<script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"
+        src="/resources/bower_components/jquery/dist/jquery.min.js"></script>
+
 <th:block sec:authorize="isAuthenticated()">
 	<script th:inline="javascript">
 		var TL_CONSTANTS = {
@@ -62,10 +45,7 @@
 			SESSION_TIMEOUT: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800
 		};
 	</script>
-
-	<script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"
-	        src="/resources/bower_components/jquery/dist/jquery.min.js"></script>
-	<!--<![endif]-->
+	
 	<script th:src="@{/resources/bower_components/lodash/dist/lodash.min.js}"
 	        src="/resources/bower_components/lodash/dist/lodash.min.js"></script>
 	<script th:src="@{/resources/bower_components/angular/angular.min.js}"
