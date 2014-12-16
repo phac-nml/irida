@@ -23,7 +23,7 @@ public class EditClientPage extends AbstractPage {
 		String url = "clients/" + id + "/edit";
 		logger.trace("Going to edit page for client " + id);
 		get(driver, url);
-		waitForTime(400);
+		waitForTime(200);
 	}
 
 	public void editClient(String grant, boolean scope_read, boolean scope_write, boolean generateClientSecret) {
