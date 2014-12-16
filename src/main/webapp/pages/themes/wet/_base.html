@@ -8,8 +8,6 @@
 	      type="image/x-icon"/>
 	<link rel="stylesheet" th:href="@{/resources/wet-theme/css/wet-boew.min.css}"
 	      href="/resources/wet-theme/css/wet-boew.min.css"/>
-
-	<!-- MAIN SCRIPTS FROM WET PAGES -->
 	<link rel="stylesheet" th:href="@{/resources/wet-theme/css/theme.min.css}"
 	      href="/resources/wet-theme/css/theme.min.css"/>
 	<link rel="stylesheet" th:href="@{/resources/css/main.css}" href="/resources/css/main.css"/>
@@ -26,13 +24,10 @@
 
 	<!-- FOOTER -->
 	<div th:replace="themes/wet/partials/footer :: footer">FOOTER</div>
-
-	<!-- Required WET Scripts -->
-	<script src="/resources/bower_components/jquery/dist/jquery.min.js"
-	        th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"></script>
-	<script th:src="@{/resources/wet-theme/js/wet-boew.min.js}" src="/resources/wet-theme/js/wet-boew.min.js"></script>
-	<script th:src="@{/resources/wet-theme/js/ie8-wet-boew2.min.js}"
-	        src="/resources/wet-theme/js/ie8-wet-boew2.min.js"></script>
 </div>
+
+<th:block layout:fragment="theme-scripts">
+	<script th:src="@{/resources/wet-theme/js/wet-boew.min.js}" src="/resources/wet-theme/js/wet-boew.min.js"></script>
+</th:block>
 </body>
 </html>
