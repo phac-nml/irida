@@ -4,57 +4,30 @@
       layout:decorator="themes/common/page">
 <head>
 
-    <!--[if gte IE 9 | !IE ]><!-->
-    <link th:href="@{/resources/wet-theme/assets/favicon.ico}" href="/resources/wet-theme/assets/favicon.ico" rel="icon"
-          type="image/x-icon"/>
-    <link rel="stylesheet" th:href="@{/resources/wet-theme/css/wet-boew.min.css}"
-          href="/resources/wet-theme/css/wet-boew.min.css"/>
-    <!--<![endif]-->
-
-    <!-- MAIN SCRIPTS FROM WET PAGES -->
-    <link rel="stylesheet" th:href="@{/resources/wet-theme/css/theme.min.css}"
-          href="/resources/wet-theme/css/theme.min.css"/>
-    <link rel="stylesheet" th:href="@{/resources/css/main.css}" href="/resources/css/main.css"/>
-    <link rel="stylesheet" th:href="@{/resources/css/themes/wet/main.css}" href="/resources/css/themes/wet/main.css"/>
-
-    <!--[if lt IE 9]>
-    <link th:href="@{/resources/wet-theme/assets/favicon.ico}" href="/resources/wet-theme/assets/favicon.ico"
-          rel="shortcut icon"/>
-    <link rel="stylesheet" th:href="@{/resources/wet-theme/css/ie8-wet-boew.min.css}"
-          href="/resources/wet-theme/css/ie8-wet-boew.min.css"/>
-    <link rel="stylesheet" th:href="@{/resources/css/ie8-theme.min.css}" href="/resources/css/ie8-theme.min.css"/>
-    <script src="/resources/wet-theme/js/jquery-1.11.1.min.js"
-            th:src="@{/resources/wet-theme/js/jquery-1.11.1.min.js}"></script>
-    <script src="/resources/wet-theme/js/ie8-wet-boew.min.js"
-            th:src="@{/resources/wet-theme/js/ie8-wet-boew.min.js}"></script>
-    <![endif]-->
-    <!-- END MAIN SCRIPTS FROM WET PAGES -->
-
-    <!--/* Page specific css fragments or links are added here when run. */-->
+	<link th:href="@{/resources/wet-theme/assets/favicon.ico}" href="/resources/wet-theme/assets/favicon.ico" rel="icon"
+	      type="image/x-icon"/>
+	<link rel="stylesheet" th:href="@{/resources/wet-theme/css/wet-boew.min.css}"
+	      href="/resources/wet-theme/css/wet-boew.min.css"/>
+	<link rel="stylesheet" th:href="@{/resources/wet-theme/css/theme.min.css}"
+	      href="/resources/wet-theme/css/theme.min.css"/>
+	<link rel="stylesheet" th:href="@{/resources/css/main.css}" href="/resources/css/main.css"/>
+	<link rel="stylesheet" th:href="@{/resources/css/themes/wet/main.css}" href="/resources/css/themes/wet/main.css"/>
 </head>
 <body>
 
-
 <div layout:fragment="main-section">
-    <!-- HEADER -->
-    <div th:replace="themes/wet/partials/header :: header">HEADER</div>
+	<!-- HEADER -->
+	<div th:replace="themes/wet/partials/header :: header">HEADER</div>
 
-    <div layout:fragment="content">
-    </div>
+	<div layout:fragment="content">
+	</div>
 
-    <!-- FOOTER -->
-    <div th:replace="themes/wet/partials/footer :: footer">FOOTER</div>
+	<!-- FOOTER -->
+	<div th:replace="themes/wet/partials/footer :: footer">FOOTER</div>
 </div>
 
-
 <th:block layout:fragment="theme-scripts">
-    <!--[if gte IE 9 | !IE ]><!-->
-    <script th:src="@{/resources/wet-theme/js/wet-boew.min.js}" src="/resources/wet-theme/js/wet-boew.min.js"></script>
-    <!--<![endif]-->
-    <!--[if lt IE 9]>
-    <script th:src="@{/resources/wet-theme/js/ie8-wet-boew2.min.js}"
-            src="/resources/wet-theme/js/ie8-wet-boew2.min.js"></script>
-    <![endif]-->
+	<script th:src="@{/resources/wet-theme/js/wet-boew.min.js}" src="/resources/wet-theme/js/wet-boew.min.js"></script>
 </th:block>
 </body>
 </html>
