@@ -22,7 +22,8 @@ public interface AnalysisExecutionServiceSimplified {
 	 * 
 	 * @param analysisSubmission
 	 *            The {@link AnalysisSubmission} to prepare.
-	 * @return An {@link AnalysisExecutionWorker} for the thread doing the preparation of submissions.
+	 * @return An {@link AnalysisExecutionWorker} for the thread doing the
+	 *         preparation of submissions.
 	 */
 	public AnalysisExecutionWorker prepareSubmission(AnalysisSubmission analysisSubmission);
 
@@ -32,15 +33,9 @@ public interface AnalysisExecutionServiceSimplified {
 	 * 
 	 * @param analysisSubmission
 	 *            The {@link AnalysisSubmission} to execute.
-	 * @return An {@link AnalysisSubmission} for the executed analysis.
-	 * @throws ExecutionManagerException
-	 *             If there was an issue executing the analysis.
-	 * @throws IridaWorkflowNotFoundException
-	 *             If the workflow for this submission could not be found in
-	 *             IRIDA.
+	 * @return An {@link AnalysisExecutionWorker} for the executed analysis.
 	 */
-	public AnalysisSubmission executeAnalysis(AnalysisSubmission analysisSubmission) throws ExecutionManagerException,
-			IridaWorkflowNotFoundException;
+	public AnalysisExecutionWorker executeAnalysis(AnalysisSubmission analysisSubmission);
 
 	/**
 	 * Gets the status for the given submitted analysis.

@@ -67,7 +67,8 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	 *            A service for a workflow workspace.
 	 * @param iridaWorkflowsService
 	 *            A service for loading up {@link IridaWorkflow}s.
-	 *  @param analysisTaskExecutor An {@link Executor} for executing sub tasks for analyses.
+	 * @param analysisTaskExecutor
+	 *            An {@link Executor} for executing sub tasks for analyses.
 	 */
 	@Autowired
 	public AnalysisExecutionServiceGalaxySimplified(AnalysisSubmissionService analysisSubmissionService,
@@ -87,41 +88,42 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional
 	public AnalysisExecutionWorker prepareSubmission(final AnalysisSubmission analysisSubmission) {
-		checkArgument(AnalysisState.NEW.equals(analysisSubmission.getAnalysisState()),
-				"analysis state should be " + AnalysisState.NEW);
-		
+		checkArgument(AnalysisState.NEW.equals(analysisSubmission.getAnalysisState()), "analysis state should be "
+				+ AnalysisState.NEW);
+
 		final AnalysisSubmission preparingAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
 				ImmutableMap.of("analysisState", AnalysisState.PREPARING));
-		
-		AnalysisExecutionWorker prepareSubmissionWorker = new AnalysisExecutionWorker(preparingAnalysis, analysisSubmissionService){
+
+		AnalysisExecutionWorker prepareSubmissionWorker = new AnalysisExecutionWorker(preparingAnalysis,
+				analysisSubmissionService) {
 			@Override
 			protected AnalysisSubmission doWork() throws Exception {
 				checkNotNull(preparingAnalysis, "analysisSubmission is null");
 				checkNotNull(preparingAnalysis.getId(), "analysisSubmission id is null");
 				checkArgument(null == preparingAnalysis.getRemoteAnalysisId(), "remote analyis id should be null");
 				checkArgument(null == preparingAnalysis.getRemoteWorkflowId(), "remoteWorkflowId should be null");
-				
+
 				IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(preparingAnalysis.getWorkflowId());
 				IridaWorkflowStructure workflowStructure = iridaWorkflow.getWorkflowStructure();
-	
+
 				logger.debug("Preparing submission for " + preparingAnalysis);
-	
+
 				String workflowId = galaxyWorkflowService.uploadGalaxyWorkflow(workflowStructure.getWorkflowFile());
 				preparingAnalysis.setRemoteWorkflowId(workflowId);
 				logger.trace("Uploaded workflow for " + preparingAnalysis + " to workflow with id=" + workflowId);
-	
+
 				String analysisId = workspaceService.prepareAnalysisWorkspace(preparingAnalysis);
-				
+
 				logger.trace("Created Galaxy history for analysis " + " id=" + analysisId + ", " + preparingAnalysis);
-	
-				return analysisSubmissionService.update(preparingAnalysis.getId(),
-						ImmutableMap.of("remoteAnalysisId", analysisId, "remoteWorkflowId", workflowId,
-								"analysisState", AnalysisState.PREPARED));
+
+				return analysisSubmissionService.update(preparingAnalysis.getId(), ImmutableMap.of("remoteAnalysisId",
+						analysisId, "remoteWorkflowId", workflowId, "analysisState", AnalysisState.PREPARED));
 			}
 		};
 		analysisTaskExecutor.execute(prepareSubmissionWorker);
-		
+
 		return prepareSubmissionWorker;
 	}
 
@@ -130,24 +132,37 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	 */
 	@Override
 	@Transactional
-	public AnalysisSubmission executeAnalysis(AnalysisSubmission analysisSubmission) throws ExecutionManagerException,
-			IridaWorkflowNotFoundException {
-		checkNotNull(analysisSubmission, "analysisSubmission is null");
-		checkNotNull(analysisSubmission.getRemoteAnalysisId(), "remote analyis id is null");
-		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
-		checkArgument(AnalysisState.SUBMITTING.equals(analysisSubmission.getAnalysisState()), " analysis should be "
-				+ AnalysisState.SUBMITTING);
+	public AnalysisExecutionWorker executeAnalysis(AnalysisSubmission analysisSubmission) {
 
-		logger.debug("Running submission for " + analysisSubmission);
+		checkArgument(AnalysisState.PREPARED.equals(analysisSubmission.getAnalysisState()), " analysis should be "
+				+ AnalysisState.PREPARED);
+		final AnalysisSubmission submittingAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
+				ImmutableMap.of("analysisState", AnalysisState.SUBMITTING));
 
-		logger.trace("Preparing files for " + analysisSubmission);
-		PreparedWorkflowGalaxy preparedWorkflow = workspaceService.prepareAnalysisFiles(analysisSubmission);
-		WorkflowInputsGalaxy input = preparedWorkflow.getWorkflowInputs();
+		AnalysisExecutionWorker analysisExecutionWorker = new AnalysisExecutionWorker(submittingAnalysis,
+				analysisSubmissionService) {
+			@Override
+			protected AnalysisSubmission doWork() throws Exception {
+				checkNotNull(submittingAnalysis, "analysisSubmission is null");
+				checkNotNull(submittingAnalysis.getRemoteAnalysisId(), "remote analyis id is null");
+				checkNotNull(submittingAnalysis.getWorkflowId(), "workflowId is null");
 
-		logger.trace("Executing " + analysisSubmission);
-		galaxyWorkflowService.runWorkflow(input);
+				logger.debug("Running submission for " + submittingAnalysis);
 
-		return analysisSubmissionService.read(analysisSubmission.getId());
+				logger.trace("Preparing files for " + submittingAnalysis);
+				PreparedWorkflowGalaxy preparedWorkflow = workspaceService.prepareAnalysisFiles(submittingAnalysis);
+				WorkflowInputsGalaxy input = preparedWorkflow.getWorkflowInputs();
+
+				logger.trace("Executing " + submittingAnalysis);
+				galaxyWorkflowService.runWorkflow(input);
+
+				return analysisSubmissionService.update(submittingAnalysis.getId(),
+						ImmutableMap.of("analysisState", AnalysisState.SUBMITTED));
+			}
+		};
+		analysisTaskExecutor.execute(analysisExecutionWorker);
+
+		return analysisExecutionWorker;
 	}
 
 	/**

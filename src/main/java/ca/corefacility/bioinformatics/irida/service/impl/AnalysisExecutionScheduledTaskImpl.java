@@ -88,11 +88,6 @@ public class AnalysisExecutionScheduledTaskImpl implements
 
 				setStateForSubmission(preparedSubmission,
 						AnalysisState.RUNNING);
-			} catch (ExecutionManagerException e) {
-				logger.error("Could not execute analysis "
-						+ analysisSubmission, e);
-				setStateForSubmission(analysisSubmission,
-						AnalysisState.ERROR);
 			} catch (Exception e) {
 				logger.error("Error for analysis", e);
 				setStateForSubmission(analysisSubmission,
