@@ -4,40 +4,35 @@
       layout:decorator="themes/common/page">
 <head>
 
-    <!--[if gte IE 9 | !IE ]><!-->
-    <link th:href="@{/resources/wet-theme/assets/favicon.ico}" href="/resources/wet-theme/assets/favicon.ico" rel="icon"
-          type="image/x-icon"/>
-    <link rel="stylesheet" th:href="@{/resources/wet-theme/css/wet-boew.min.css}"
-          href="/resources/wet-theme/css/wet-boew.min.css"/>
-    <!--<![endif]-->
+	<link th:href="@{/resources/wet-theme/assets/favicon.ico}" href="/resources/wet-theme/assets/favicon.ico" rel="icon"
+	      type="image/x-icon"/>
+	<link rel="stylesheet" th:href="@{/resources/wet-theme/css/wet-boew.min.css}"
+	      href="/resources/wet-theme/css/wet-boew.min.css"/>
 
-    <!-- MAIN SCRIPTS FROM WET PAGES -->
-    <link rel="stylesheet" th:href="@{/resources/wet-theme/css/theme.min.css}"
-          href="/resources/wet-theme/css/theme.min.css"/>
-    <link rel="stylesheet" th:href="@{/resources/css/main.css}" href="/resources/css/main.css"/>
-    <link rel="stylesheet" th:href="@{/resources/css/themes/wet/main.css}" href="/resources/css/themes/wet/main.css"/>
+	<!-- MAIN SCRIPTS FROM WET PAGES -->
+	<link rel="stylesheet" th:href="@{/resources/wet-theme/css/theme.min.css}"
+	      href="/resources/wet-theme/css/theme.min.css"/>
+	<link rel="stylesheet" th:href="@{/resources/css/main.css}" href="/resources/css/main.css"/>
+	<link rel="stylesheet" th:href="@{/resources/css/themes/wet/main.css}" href="/resources/css/themes/wet/main.css"/>
 </head>
 <body>
 
-
 <div layout:fragment="main-section">
-    <!-- HEADER -->
-    <div th:replace="themes/wet/partials/header :: header">HEADER</div>
+	<!-- HEADER -->
+	<div th:replace="themes/wet/partials/header :: header">HEADER</div>
 
-    <div layout:fragment="content">
-    </div>
+	<div layout:fragment="content">
+	</div>
 
-    <!-- FOOTER -->
-    <div th:replace="themes/wet/partials/footer :: footer">FOOTER</div>
+	<!-- FOOTER -->
+	<div th:replace="themes/wet/partials/footer :: footer">FOOTER</div>
+
+	<!-- Required WET Scripts -->
+	<script src="/resources/bower_components/jquery/dist/jquery.min.js"
+	        th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"></script>
+	<script th:src="@{/resources/wet-theme/js/wet-boew.min.js}" src="/resources/wet-theme/js/wet-boew.min.js"></script>
+	<script th:src="@{/resources/wet-theme/js/ie8-wet-boew2.min.js}"
+	        src="/resources/wet-theme/js/ie8-wet-boew2.min.js"></script>
 </div>
-
-
-<th:block layout:fragment="theme-scripts">
-    <script src="/resources/bower_components/jquery/dist/jquery.min.js"
-            th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"></script>
-    <script th:src="@{/resources/wet-theme/js/wet-boew.min.js}" src="/resources/wet-theme/js/wet-boew.min.js"></script>
-    <script th:src="@{/resources/wet-theme/js/ie8-wet-boew2.min.js}"
-            src="/resources/wet-theme/js/ie8-wet-boew2.min.js"></script>
-</th:block>
 </body>
 </html>
