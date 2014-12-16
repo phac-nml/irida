@@ -29,7 +29,7 @@
 				</tr>
 				</thead>
 				<tbody>
-				<tr role="row" th:each="file : ${files}" th:with="dateFormat=#{locale.date.long}"
+				<tr class="file-row" role="row" th:each="file : ${files}" th:with="dateFormat=#{locale.date.long}"
 				    th:id="${'file-row-' + file.id}">
 					<td class="file-id" th:text="${file.id}">ID</td>
 					<td>
