@@ -40,9 +40,9 @@
 
 <th:block sec:authorize="isAuthenticated()">
 	<script th:inline="javascript">
-		var TL_CONSTANTS = {
+		var TL = {
 			BASE_URL: /*[[@{/}]]*/ '/',
-			SESSION_TIMEOUT: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800
+			SESSION_LENGTH: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800
 		};
 	</script>
 	
@@ -73,33 +73,32 @@
 	<script th:inline="javascript">
 		/*<![CDATA[*/
 		function SessionFactory($timeout, $interval, $window, $modal) {
-			var sessionTime = TL_CONSTANTS.SESSION_TIMEOUT * 1000,
-			    initialWait = sessionTime * .85,
-			    modalWait = sessionTime * .15 + 500,
+			var modalWait = 120000, // 2 minutes
+			    initialWait = TL.SESSION_LENGTH * 1000 - modalWait + 500, // Give a little overlap
 			    timeout,
 			    restartTimeout;
 
 			function _restart() {
 				$modal.open({
 					templateUrl: '/session-modal.html',
-					controller : ['$scope', '$http', '$modalInstance', function ($scope, $http, $modalInstance) {
+					controller : ['$scope', '$http', '$window', '$modalInstance', function ($scope, $http, $window, $modalInstance) {
 						$scope.poke = function () {
 							$interval.cancel(countdown);
 							$timeout.cancel(restartTimeout);
 							$timeout.cancel(timeout);
-							$http.get(TL_CONSTANTS.BASE_URL + "login/poke").success(function () {
+							$http.get(TL.BASE_URL + "login/poke").success(function () {
 								start();
 								$modalInstance.close();
 							});
 						};
 
 						$scope.logout = function () {
-							$window.location(TL_CONSTANTS.BASE_URL + "logout");
+							$window.location = TL.BASE_URL + "logout";
 						};
 
-						var i = 0;
+						$scope.timeleft = modalWait;
 						var countdown = $interval(function () {
-							$scope.timeleft = TL_CONSTANTS.SESSION_TIMEOUT - ++i;
+							$scope.timeleft = $scope.timeleft - 1000;
 						}, 1000);
 
 						restartTimeout = $timeout(function () {
@@ -147,10 +146,10 @@
 
 		window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ngAnimate', 'ngMessages', 'ui.bootstrap', 'ui.utils', 'restangular', 'irida.notifications']);
 		var app = angular.module('irida', window.dependencies)
-			.value('BASE_URL', TL_CONSTANTS.BASE_URL)
+			.value('BASE_URL', TL.BASE_URL)
 		// This configures the base url globally for all restangular calls.
 			.config(function (RestangularProvider) {
-				RestangularProvider.setBaseUrl(TL_CONSTANTS.BASE_URL);
+				RestangularProvider.setBaseUrl(TL.BASE_URL);
 			})
 			.run(function (paginationConfig) {
 				paginationConfig.firstText = /*[[#{table.first}]]*/ 'First';
@@ -170,7 +169,7 @@
 			.filter('moment', function () {
 				return function (timeleft) {
 					if (angular.isNumber(timeleft)) {
-						return moment.duration(timeleft).humanize(true);
+						return moment.duration(timeleft, "milliseconds").humanize();
 					}
 				};
 			})
