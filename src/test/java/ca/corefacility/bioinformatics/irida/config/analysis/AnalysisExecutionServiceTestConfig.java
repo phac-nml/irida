@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.config.analysis;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -63,7 +62,7 @@ public class AnalysisExecutionServiceTestConfig {
 
 	@Autowired
 	private AnalysisSubmissionService analysisSubmissionService;
-	
+
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 
@@ -84,22 +83,20 @@ public class AnalysisExecutionServiceTestConfig {
 
 	@Autowired
 	private SampleService sampleService;
-	
+
 	@Autowired
 	private SequenceFileRepository sequenceFileRepository;
-	
+
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
 
 	@Lazy
 	@Bean
 	public AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics() {
-		return new AnalysisExecutionServicePhylogenomics(
-				analysisSubmissionService, analysisService,
-				galaxyWorkflowService(), galaxyHistoriesService(),
-				workspaceServicePhylogenomics());
+		return new AnalysisExecutionServicePhylogenomics(analysisSubmissionService, analysisService,
+				galaxyWorkflowService(), galaxyHistoriesService(), workspaceServicePhylogenomics());
 	}
-	
+
 	/**
 	 * @return An {@link Executor} for executing analysis tasks.
 	 */
@@ -113,54 +110,53 @@ public class AnalysisExecutionServiceTestConfig {
 	public AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified() {
 		return new AnalysisExecutionServiceGalaxySimplified(analysisSubmissionService, analysisService,
 				galaxyWorkflowService(), galaxyHistoriesService(), analysisWorkspaceServiceSimplified(),
-				iridaWorkflowsService, analysisTaskExecutor(), analysisExecutionServiceGalaxyAsyncSimplified());
+				analysisTaskExecutor(), analysisExecutionServiceGalaxyAsyncSimplified());
 	}
-	
-	@Lazy @Bean
+
+	@Lazy
+	@Bean
 	public AnalysisExecutionServiceGalaxyAsyncSimplified analysisExecutionServiceGalaxyAsyncSimplified() {
 		return new AnalysisExecutionServiceGalaxyAsyncSimplified(analysisSubmissionService, analysisService,
 				galaxyWorkflowService(), galaxyHistoriesService(), analysisWorkspaceServiceSimplified(),
 				iridaWorkflowsService);
 	}
 
-	@Lazy @Bean
+	@Lazy
+	@Bean
 	public AnalysisWorkspaceServiceGalaxySimplified analysisWorkspaceServiceSimplified() {
 		return new AnalysisWorkspaceServiceGalaxySimplified(galaxyHistoriesService(), galaxyWorkflowService(),
 				sampleSequenceFileJoinRepository, sequenceFileRepository, galaxyLibraryBuilder(), iridaWorkflowsService);
 	}
-	
+
 	@Lazy
 	@Bean
 	public WorkspaceServicePhylogenomics workspaceServicePhylogenomics() {
-		return new WorkspaceServicePhylogenomics(
-				galaxyHistoriesService(), galaxyWorkflowService(),
+		return new WorkspaceServicePhylogenomics(galaxyHistoriesService(), galaxyWorkflowService(),
 				sampleSequenceFileJoinRepository, sequenceFileRepository, galaxyLibraryBuilder());
 	}
 
 	@Lazy
 	@Bean
 	public GalaxyHistoriesService galaxyHistoriesService() {
-		HistoriesClient historiesClient = localGalaxy
-				.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser()
-				.getToolsClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
+		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getToolsClient();
 		return new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService());
 	}
-	
+
 	@Lazy
 	@Bean
 	public GalaxyLibrariesService galaxyLibrariesService() {
 		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
 		return new GalaxyLibrariesService(librariesClient);
 	}
-	
+
 	@Lazy
 	@Bean
 	public GalaxyLibraryBuilder galaxyLibraryBuilder() {
 		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
 		return new GalaxyLibraryBuilder(librariesClient, galaxyRoleSearch(), localGalaxy.getGalaxyURL());
 	}
-	
+
 	@Lazy
 	@Bean
 	public GalaxyRoleSearch galaxyRoleSearch() {
@@ -171,20 +167,18 @@ public class AnalysisExecutionServiceTestConfig {
 	@Lazy
 	@Bean
 	public GalaxyWorkflowService galaxyWorkflowService() {
-		HistoriesClient historiesClient = localGalaxy
-				.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		WorkflowsClient workflowsClient = localGalaxy
-				.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
 
-		return new GalaxyWorkflowService(historiesClient, workflowsClient,
-				new StandardPasswordEncoder(), StandardCharsets.UTF_8);
+		return new GalaxyWorkflowService(historiesClient, workflowsClient, new StandardPasswordEncoder(),
+				StandardCharsets.UTF_8);
 	}
 
 	@Lazy
 	@Bean
 	public DatabaseSetupGalaxyITService analysisExecutionGalaxyITService() {
-		return new DatabaseSetupGalaxyITService(remoteWorkflowRepository,
-				referenceFileRepository, seqeunceFileService, sampleService,
-				analysisExecutionServicePhylogenomics(), analysisSubmissionService, analysisSubmissionRepository);
+		return new DatabaseSetupGalaxyITService(remoteWorkflowRepository, referenceFileRepository, seqeunceFileService,
+				sampleService, analysisExecutionServicePhylogenomics(), analysisSubmissionService,
+				analysisSubmissionRepository);
 	}
 }

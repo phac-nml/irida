@@ -125,7 +125,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 				analysisWorkspaceServiceSimplified, iridaWorkflowsService);
 		workflowManagement = new AnalysisExecutionServiceGalaxySimplified(analysisSubmissionService, analysisService,
 				galaxyWorkflowService, galaxyHistoriesService, analysisWorkspaceServiceSimplified,
-				iridaWorkflowsService, analysisTaskExecutor, workflowManagementAsync);
+				analysisTaskExecutor, workflowManagementAsync);
 
 		when(iridaWorkflowsService.getIridaWorkflow(WORKFLOW_ID)).thenReturn(iridaWorkflow);
 		when(iridaWorkflow.getWorkflowStructure()).thenReturn(iridaWorkflowStructure);

@@ -17,8 +17,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
@@ -31,7 +29,6 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxySimplified;
-import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -49,7 +46,6 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	private final AnalysisWorkspaceServiceGalaxySimplified workspaceService;
 	private final GalaxyHistoriesService galaxyHistoriesService;
 	private final GalaxyWorkflowService galaxyWorkflowService;
-	private final IridaWorkflowsService iridaWorkflowsService;
 	private final AnalysisExecutionServiceGalaxyAsyncSimplified analysisExecutionServiceGalaxyAsyncSimplified;
 	private final Executor analysisTaskExecutor;
 
@@ -67,36 +63,34 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	 *            A service for Galaxy histories.
 	 * @param workspaceService
 	 *            A service for a workflow workspace.
-	 * @param iridaWorkflowsService
-	 *            A service for loading up {@link IridaWorkflow}s.
 	 * @param analysisTaskExecutor
 	 *            An {@link Executor} for executing sub tasks for analyses.
-	 * @param analysisExecutionServiceGalaxyAsyncSimplified An {@link AnalysisExecutionServiceGalaxyAsyncSimplified} for executing the tasks asynchronously.
+	 * @param analysisExecutionServiceGalaxyAsyncSimplified
+	 *            An {@link AnalysisExecutionServiceGalaxyAsyncSimplified} for
+	 *            executing the tasks asynchronously.
 	 */
 	@Autowired
 	public AnalysisExecutionServiceGalaxySimplified(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisService analysisService, GalaxyWorkflowService galaxyWorkflowService,
 			GalaxyHistoriesService galaxyHistoriesService, AnalysisWorkspaceServiceGalaxySimplified workspaceService,
-			IridaWorkflowsService iridaWorkflowsService, Executor analysisTaskExecutor, AnalysisExecutionServiceGalaxyAsyncSimplified analysisExecutionServiceGalaxyAsyncSimplified) {
+			Executor analysisTaskExecutor,
+			AnalysisExecutionServiceGalaxyAsyncSimplified analysisExecutionServiceGalaxyAsyncSimplified) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisService = analysisService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.workspaceService = workspaceService;
-		this.iridaWorkflowsService = iridaWorkflowsService;
 		this.analysisTaskExecutor = analysisTaskExecutor;
 		this.analysisExecutionServiceGalaxyAsyncSimplified = analysisExecutionServiceGalaxyAsyncSimplified;
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @throws ExecutionManagerException 
-	 * @throws IOException 
-	 * @throws IridaWorkflowNotFoundException 
 	 */
 	@Override
 	@Transactional
-	public Future<AnalysisSubmission> prepareSubmission(final AnalysisSubmission analysisSubmission) throws IridaWorkflowNotFoundException, IOException, ExecutionManagerException {
+	public Future<AnalysisSubmission> prepareSubmission(final AnalysisSubmission analysisSubmission)
+			throws IridaWorkflowNotFoundException, IOException, ExecutionManagerException {
 		checkArgument(AnalysisState.NEW.equals(analysisSubmission.getAnalysisState()), "analysis state should be "
 				+ AnalysisState.NEW);
 

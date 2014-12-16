@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowStructure;
@@ -79,18 +80,19 @@ public class AnalysisExecutionServiceGalaxyAsyncSimplified {
 	}
 
 	/**
-	 * /** Prepares the given {@link AnalysisSubmission} to be executed within
-	 * an execution manager. This will persist the submission within the
-	 * database.
+	 * Prepares the given {@link AnalysisSubmission} to be executed within an
+	 * execution manager. This will persist the submission within the database.
 	 * 
 	 * @param analysisSubmission
 	 *            The {@link AnalysisSubmission} to prepare.
-	 * @return An {@link AnalysisExecutionWorker} for the thread doing the
-	 *         preparation of submissions.
+	 * @return A {@link Future} with an {@link AnalysisSubmission} for the
+	 *         analysis submitted.
 	 * @throws IridaWorkflowNotFoundException
+	 *             If there was an issue getting a workflow.
 	 * @throws IOException
+	 *             If there was an issue reading the workflow.
 	 * @throws ExecutionManagerException
-	 * @throws WorkflowException
+	 *             If there was an issue preparing a workspace for the workflow.
 	 */
 	@Transactional
 	@Async("analysisTaskExecutor")

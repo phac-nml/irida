@@ -26,6 +26,12 @@ public interface AnalysisExecutionServiceSimplified {
 	 * 
 	 * @return A {@link Future} of type {@link AnalysisSubmission} which can be
 	 *         used to access the prepared submission.
+	 * @throws IridaWorkflowNotFoundException
+	 *             If there was an issue getting a workflow.
+	 * @throws IOException
+	 *             If there was an issue reading the workflow.
+	 * @throws ExecutionManagerException
+	 *             If there was an issue preparing a workspace for the workflow.
 	 */
 	public Future<AnalysisSubmission> prepareSubmission(AnalysisSubmission analysisSubmission)
 			throws IridaWorkflowNotFoundException, IOException, ExecutionManagerException;
