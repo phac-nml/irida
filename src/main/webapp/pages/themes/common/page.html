@@ -46,10 +46,7 @@
 <script type="text/ng-template" id="/session-modal.html">
 	<div>
 		<div class="modal-header">
-			<b class="modal-title" th:text="#{session.timeout-modal.header}"></b>
-		</div>
-		<div class="modal-body">
-			{{timeleft | moment}}
+			<b class="modal-title"><span th:text="#{session.timeout-modal.header}"></span>&nbsp;{{timeleft | moment}}</b>
 		</div>
 		<div class="modal-footer">
 			<button class="btn btn-default" ng-click="logout()" th:text="#{session.timeout-modal.logout}">Log me out</button>
@@ -105,7 +102,6 @@
 			function _restart() {
 				$modal.open({
 					templateUrl: '/session-modal.html',
-					size: 'sm',
 					controller : ['$scope', '$http', '$modalInstance', function ($scope, $http, $modalInstance) {
 						$scope.poke = function () {
 							$interval.cancel(countdown);
