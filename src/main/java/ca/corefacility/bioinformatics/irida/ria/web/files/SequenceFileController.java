@@ -22,14 +22,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
 /**
  * Controller for all {@link SequenceFile} related views
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping("/sequenceFiles")
@@ -59,11 +62,14 @@ public class SequenceFileController {
 	 */
 	private SequenceFileService sequenceFileService;
 	private AnalysisService analysisService;
+	private SequencingRunService sequencingRunService;
 
 	@Autowired
-	public SequenceFileController(SequenceFileService sequenceFileService, AnalysisService analysisService) {
+	public SequenceFileController(SequenceFileService sequenceFileService, AnalysisService analysisService,
+			SequencingRunService sequencingRunService) {
 		this.sequenceFileService = sequenceFileService;
 		this.analysisService = analysisService;
+		this.sequencingRunService = sequencingRunService;
 		this.dateFormatter = new DateFormatter();
 	}
 
@@ -71,8 +77,10 @@ public class SequenceFileController {
 	 * Gets the name of the template for the sequence file chart / main page.
 	 * Populates the template with the standard info.
 	 *
-	 * @param model          {@link Model}
-	 * @param sequenceFileId Id for the sequence file
+	 * @param model
+	 *            {@link Model}
+	 * @param sequenceFileId
+	 *            Id for the sequence file
 	 * @return The name of the template.
 	 */
 	@RequestMapping("/{sequenceFileId}")
@@ -84,11 +92,13 @@ public class SequenceFileController {
 	}
 
 	/**
-	 * Gets the name of the template for the sequence file overrepresented sequences page.
-	 * Populates the template with the standard info.
+	 * Gets the name of the template for the sequence file overrepresented
+	 * sequences page. Populates the template with the standard info.
 	 *
-	 * @param model          {@link Model}
-	 * @param sequenceFileId Id for the sequence file.
+	 * @param model
+	 *            {@link Model}
+	 * @param sequenceFileId
+	 *            Id for the sequence file.
 	 * @return The name fo the template
 	 */
 	@RequestMapping("/{sequenceFileId}/overrepresented")
@@ -102,8 +112,10 @@ public class SequenceFileController {
 	/**
 	 * Downloads a sequence file.
 	 *
-	 * @param sequenceFileId Id for the file to download.
-	 * @param response       {@link HttpServletResponse}
+	 * @param sequenceFileId
+	 *            Id for the file to download.
+	 * @param response
+	 *            {@link HttpServletResponse}
 	 * @throws IOException
 	 */
 	@RequestMapping("/download/{sequenceFileId}")
@@ -119,9 +131,12 @@ public class SequenceFileController {
 	/**
 	 * Get images specific for individual sequence files.
 	 *
-	 * @param sequenceFileId Id for the sequnece file.
-	 * @param type           The type of image to get.
-	 * @param response       {@link HttpServletResponse}
+	 * @param sequenceFileId
+	 *            Id for the sequnece file.
+	 * @param type
+	 *            The type of image to get.
+	 * @param response
+	 *            {@link HttpServletResponse}
 	 * @throws IOException
 	 */
 	@RequestMapping(value = "/img/{sequenceFileId}/{type}", produces = MediaType.IMAGE_PNG_VALUE)
@@ -135,10 +150,9 @@ public class SequenceFileController {
 				chart = fastQC.getPerBaseQualityScoreChart();
 			} else if (type.equals(IMG_PERSEQUENCE)) {
 				chart = fastQC.getPerSequenceQualityScoreChart();
-			} else if(type.equals(IMG_DUPLICATION_LEVEL)) {
+			} else if (type.equals(IMG_DUPLICATION_LEVEL)) {
 				chart = fastQC.getDuplicationLevelChart();
-			}
-			else {
+			} else {
 				throw new EntityNotFoundException("Image not found");
 			}
 			response.getOutputStream().write(chart);
@@ -149,7 +163,8 @@ public class SequenceFileController {
 	/**
 	 * Gets the FastQC analysis for a sequence file.
 	 *
-	 * @param file {@link SequenceFile}
+	 * @param file
+	 *            {@link SequenceFile}
 	 * @return {@link AnalysisFastQC}
 	 */
 	private AnalysisFastQC getFastQCAnalysis(SequenceFile file) {
@@ -164,14 +179,18 @@ public class SequenceFileController {
 	/**
 	 * Populates the model with the default information for a file.
 	 *
-	 * @param sequenceFileId Id for the sequence file.
-	 * @param model          {@link Model}
+	 * @param sequenceFileId
+	 *            Id for the sequence file.
+	 * @param model
+	 *            {@link Model}
 	 */
 	private void createDefaultPageInfo(Long sequenceFileId, Model model) {
 		SequenceFile file = sequenceFileService.read(sequenceFileId);
+		SequencingRun run = sequencingRunService.getSequencingRunForSequenceFile(file);
 		AnalysisFastQC fastQC = getFastQCAnalysis(file);
 		model.addAttribute("file", file);
 		model.addAttribute("created", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
 		model.addAttribute("fastQC", fastQC);
+		model.addAttribute("run", run);
 	}
 }
