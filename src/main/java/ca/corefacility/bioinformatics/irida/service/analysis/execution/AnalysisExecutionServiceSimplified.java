@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.execution;
 
 import java.io.IOException;
+import java.util.concurrent.Future;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -22,10 +23,12 @@ public interface AnalysisExecutionServiceSimplified {
 	 * 
 	 * @param analysisSubmission
 	 *            The {@link AnalysisSubmission} to prepare.
-	 * @return An {@link AnalysisExecutionWorker} for the thread doing the
-	 *         preparation of submissions.
+	 * 
+	 * @return A {@link Future} of type {@link AnalysisSubmission} which can be
+	 *         used to access the prepared submission.
 	 */
-	public AnalysisExecutionWorker prepareSubmission(AnalysisSubmission analysisSubmission);
+	public Future<AnalysisSubmission> prepareSubmission(AnalysisSubmission analysisSubmission)
+			throws IridaWorkflowNotFoundException, IOException, ExecutionManagerException;
 
 	/**
 	 * Executes the passed prepared {@link AnalysisSubmission} in an execution

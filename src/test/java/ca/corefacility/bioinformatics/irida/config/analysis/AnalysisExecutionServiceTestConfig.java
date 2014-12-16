@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.config.analysis;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +11,7 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
@@ -28,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsyncSimplified;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxySimplified;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxySimplified;
@@ -50,6 +54,7 @@ import com.google.common.util.concurrent.MoreExecutors;
  */
 @Configuration
 @Profile("test")
+@EnableAsync
 @Conditional(NonWindowsPlatformCondition.class)
 public class AnalysisExecutionServiceTestConfig {
 
@@ -99,7 +104,7 @@ public class AnalysisExecutionServiceTestConfig {
 	 * @return An {@link Executor} for executing analysis tasks.
 	 */
 	@Bean
-	public Executor analysisTaskExecutor() {
+	public ExecutorService analysisTaskExecutor() {
 		return MoreExecutors.sameThreadExecutor();
 	}
 
@@ -108,7 +113,14 @@ public class AnalysisExecutionServiceTestConfig {
 	public AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified() {
 		return new AnalysisExecutionServiceGalaxySimplified(analysisSubmissionService, analysisService,
 				galaxyWorkflowService(), galaxyHistoriesService(), analysisWorkspaceServiceSimplified(),
-				iridaWorkflowsService, analysisTaskExecutor());
+				iridaWorkflowsService, analysisTaskExecutor(), analysisExecutionServiceGalaxyAsyncSimplified());
+	}
+	
+	@Lazy @Bean
+	public AnalysisExecutionServiceGalaxyAsyncSimplified analysisExecutionServiceGalaxyAsyncSimplified() {
+		return new AnalysisExecutionServiceGalaxyAsyncSimplified(analysisSubmissionService, analysisService,
+				galaxyWorkflowService(), galaxyHistoriesService(), analysisWorkspaceServiceSimplified(),
+				iridaWorkflowsService);
 	}
 
 	@Lazy @Bean

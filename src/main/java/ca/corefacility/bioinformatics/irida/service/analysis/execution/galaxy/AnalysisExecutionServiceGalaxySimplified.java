@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Future;
 
 import javax.transaction.Transactional;
 
@@ -49,6 +50,7 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	private final GalaxyHistoriesService galaxyHistoriesService;
 	private final GalaxyWorkflowService galaxyWorkflowService;
 	private final IridaWorkflowsService iridaWorkflowsService;
+	private final AnalysisExecutionServiceGalaxyAsyncSimplified analysisExecutionServiceGalaxyAsyncSimplified;
 	private final Executor analysisTaskExecutor;
 
 	/**
@@ -69,12 +71,13 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	 *            A service for loading up {@link IridaWorkflow}s.
 	 * @param analysisTaskExecutor
 	 *            An {@link Executor} for executing sub tasks for analyses.
+	 * @param analysisExecutionServiceGalaxyAsyncSimplified An {@link AnalysisExecutionServiceGalaxyAsyncSimplified} for executing the tasks asynchronously.
 	 */
 	@Autowired
 	public AnalysisExecutionServiceGalaxySimplified(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisService analysisService, GalaxyWorkflowService galaxyWorkflowService,
 			GalaxyHistoriesService galaxyHistoriesService, AnalysisWorkspaceServiceGalaxySimplified workspaceService,
-			IridaWorkflowsService iridaWorkflowsService, Executor analysisTaskExecutor) {
+			IridaWorkflowsService iridaWorkflowsService, Executor analysisTaskExecutor, AnalysisExecutionServiceGalaxyAsyncSimplified analysisExecutionServiceGalaxyAsyncSimplified) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisService = analysisService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
@@ -82,49 +85,25 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 		this.workspaceService = workspaceService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
 		this.analysisTaskExecutor = analysisTaskExecutor;
+		this.analysisExecutionServiceGalaxyAsyncSimplified = analysisExecutionServiceGalaxyAsyncSimplified;
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * @throws ExecutionManagerException 
+	 * @throws IOException 
+	 * @throws IridaWorkflowNotFoundException 
 	 */
 	@Override
 	@Transactional
-	public AnalysisExecutionWorker prepareSubmission(final AnalysisSubmission analysisSubmission) {
+	public Future<AnalysisSubmission> prepareSubmission(final AnalysisSubmission analysisSubmission) throws IridaWorkflowNotFoundException, IOException, ExecutionManagerException {
 		checkArgument(AnalysisState.NEW.equals(analysisSubmission.getAnalysisState()), "analysis state should be "
 				+ AnalysisState.NEW);
 
 		final AnalysisSubmission preparingAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
 				ImmutableMap.of("analysisState", AnalysisState.PREPARING));
 
-		AnalysisExecutionWorker prepareSubmissionWorker = new AnalysisExecutionWorker(preparingAnalysis,
-				analysisSubmissionService) {
-			@Override
-			protected AnalysisSubmission doWork() throws Exception {
-				checkNotNull(preparingAnalysis, "analysisSubmission is null");
-				checkNotNull(preparingAnalysis.getId(), "analysisSubmission id is null");
-				checkArgument(null == preparingAnalysis.getRemoteAnalysisId(), "remote analyis id should be null");
-				checkArgument(null == preparingAnalysis.getRemoteWorkflowId(), "remoteWorkflowId should be null");
-
-				IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(preparingAnalysis.getWorkflowId());
-				IridaWorkflowStructure workflowStructure = iridaWorkflow.getWorkflowStructure();
-
-				logger.debug("Preparing submission for " + preparingAnalysis);
-
-				String workflowId = galaxyWorkflowService.uploadGalaxyWorkflow(workflowStructure.getWorkflowFile());
-				preparingAnalysis.setRemoteWorkflowId(workflowId);
-				logger.trace("Uploaded workflow for " + preparingAnalysis + " to workflow with id=" + workflowId);
-
-				String analysisId = workspaceService.prepareAnalysisWorkspace(preparingAnalysis);
-
-				logger.trace("Created Galaxy history for analysis " + " id=" + analysisId + ", " + preparingAnalysis);
-
-				return analysisSubmissionService.update(preparingAnalysis.getId(), ImmutableMap.of("remoteAnalysisId",
-						analysisId, "remoteWorkflowId", workflowId, "analysisState", AnalysisState.PREPARED));
-			}
-		};
-		analysisTaskExecutor.execute(prepareSubmissionWorker);
-
-		return prepareSubmissionWorker;
+		return analysisExecutionServiceGalaxyAsyncSimplified.prepareSubmission(preparingAnalysis);
 	}
 
 	/**

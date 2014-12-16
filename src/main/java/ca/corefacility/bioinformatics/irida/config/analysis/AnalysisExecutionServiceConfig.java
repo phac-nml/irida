@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
@@ -37,6 +38,7 @@ import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
  *
  */
 @Configuration
+@EnableAsync
 @Profile({ "dev", "prod", "it" })
 public class AnalysisExecutionServiceConfig {
 	
