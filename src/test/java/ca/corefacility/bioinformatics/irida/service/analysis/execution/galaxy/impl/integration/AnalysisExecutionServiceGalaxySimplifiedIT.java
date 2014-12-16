@@ -31,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNot
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
@@ -98,6 +99,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 	private UUID validIridaWorkflowId;
 	private UUID invalidIridaWorkflowId = UUID.fromString("8ec369e8-1b39-4b9a-97a1-70ac1f6cc9e6");
 	private UUID iridaPhylogenomicsWorkflowId;
+	private UUID iridaWorkflowIdInvalidWorkflowFile = UUID.fromString("d54f1780-e6c9-472a-92dd-63520ec85967");
 
 	/**
 	 * Sets up variables for testing.
@@ -284,6 +286,24 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 				.prepareSubmission(analysisSubmission);
 		assertTrue(preparationWorker.exceptionOccured());
 		assertEquals(IridaWorkflowNotFoundException.class, preparationWorker.getException().getClass());
+		assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisState());
+	}
+	
+	/**
+	 * Tests out attempting to prepare a workflow with an invalid Galaxy workflow file.
+	 * @throws InterruptedException 
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testPrepareSubmissionFailInvalidGalaxyWorkflowFile() throws InterruptedException {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, iridaWorkflowIdInvalidWorkflowFile);
+
+		AnalysisExecutionWorker preparationWorker = analysisExecutionServiceSimplified
+				.prepareSubmission(analysisSubmission);
+		assertTrue(preparationWorker.exceptionOccured());
+		assertEquals(WorkflowUploadException.class, preparationWorker.getException().getClass());
+		assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisState());
 	}
 
 	/**

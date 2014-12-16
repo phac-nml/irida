@@ -87,7 +87,6 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional
 	public AnalysisExecutionWorker prepareSubmission(final AnalysisSubmission analysisSubmission) {
 		checkArgument(AnalysisState.NEW.equals(analysisSubmission.getAnalysisState()),
 				"analysis state should be " + AnalysisState.NEW);
@@ -95,7 +94,7 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 		final AnalysisSubmission preparingAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
 				ImmutableMap.of("analysisState", AnalysisState.PREPARING));
 		
-		AnalysisExecutionWorker prepareSubmissionWorker = new AnalysisExecutionWorker(){
+		AnalysisExecutionWorker prepareSubmissionWorker = new AnalysisExecutionWorker(preparingAnalysis, analysisSubmissionService){
 			@Override
 			protected AnalysisSubmission doWork() throws Exception {
 				checkNotNull(preparingAnalysis, "analysisSubmission is null");

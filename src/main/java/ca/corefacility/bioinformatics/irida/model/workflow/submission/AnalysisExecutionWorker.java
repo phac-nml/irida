@@ -1,7 +1,12 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.submission;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.model.RunnableTaskWorker;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Defines methods for a worker thread to implement for handling tasks for
@@ -12,9 +17,28 @@ import ca.corefacility.bioinformatics.irida.model.RunnableTaskWorker;
  */
 public abstract class AnalysisExecutionWorker implements RunnableTaskWorker {
 
+	private AnalysisSubmission submission;
+	private AnalysisSubmissionService analysisSubmissionService;
+
 	private Exception exception = null;
 	private boolean isFinished = false;
 	private AnalysisSubmission result = null;
+
+	/**
+	 * Builds a new {@link AnalysisExecutionWorker} for the given submission.
+	 * 
+	 * @param submission
+	 *            The submission for this worker.
+	 * @param analysisSubmissionService
+	 *            The service class for analysis submissions.
+	 */
+	public AnalysisExecutionWorker(AnalysisSubmission submission, AnalysisSubmissionService analysisSubmissionService) {
+		checkNotNull(submission, "submission is null");
+		checkNotNull(analysisSubmissionService, "analysisSubmissionService is null");
+
+		this.submission = submission;
+		this.analysisSubmissionService = analysisSubmissionService;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -25,6 +49,8 @@ public abstract class AnalysisExecutionWorker implements RunnableTaskWorker {
 			result = doWork();
 		} catch (Exception e) {
 			exception = e;
+
+			analysisSubmissionService.update(submission.getId(), ImmutableMap.of("analysisState", AnalysisState.ERROR));
 		}
 
 		isFinished = true;
