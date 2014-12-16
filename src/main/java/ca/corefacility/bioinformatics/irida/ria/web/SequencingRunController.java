@@ -35,7 +35,7 @@ public class SequencingRunController {
 	public static final String LIST_VIEW = "sequencingRuns/list";
 	public static final String DETAILS_VIEW = "sequencingRuns/details";
 	public static final String FILES_VIEW = "sequencingRuns/run_files";
-	
+
 	public static final String ACTIVE_NAV = "activeNav";
 	public static final String ACTIVE_NAV_DETAILS = "details";
 	public static final String ACTIVE_NAV_FILES = "files";
@@ -45,7 +45,8 @@ public class SequencingRunController {
 	private final SequenceFileWebUtilities sequenceFileUtilities;
 
 	@Autowired
-	public SequencingRunController(SequencingRunService sequencingRunService, SequenceFileService sequenceFileService, SequenceFileWebUtilities sequenceFileUtilities) {
+	public SequencingRunController(SequencingRunService sequencingRunService, SequenceFileService sequenceFileService,
+			SequenceFileWebUtilities sequenceFileUtilities) {
 		this.sequencingRunService = sequencingRunService;
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFileUtilities = sequenceFileUtilities;
@@ -60,44 +61,46 @@ public class SequencingRunController {
 	public String getListPage() {
 		return LIST_VIEW;
 	}
-	
+
 	/**
 	 * Get the sequencing run display page
+	 * 
 	 * @param runId
 	 * @param model
 	 * @return
 	 */
 	@RequestMapping("/{runId}")
-	public String getDetailsPage(@PathVariable Long runId, Model model){
+	public String getDetailsPage(@PathVariable Long runId, Model model) {
 		SequencingRun run = sequencingRunService.read(runId);
-		model.addAttribute("run",run);
-		model.addAttribute(ACTIVE_NAV,ACTIVE_NAV_DETAILS);
-		
+		model.addAttribute("run", run);
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_DETAILS);
+
 		return DETAILS_VIEW;
 	}
-	
+
 	/**
 	 * Get the sequencing run display page
+	 * 
 	 * @param runId
 	 * @param model
 	 * @return
 	 */
 	@RequestMapping("/{runId}/files")
-	public String getFilesPage(@PathVariable Long runId, Model model) throws IOException{
+	public String getFilesPage(@PathVariable Long runId, Model model) throws IOException {
 		SequencingRun run = sequencingRunService.read(runId);
-		
+
 		Set<SequenceFile> sequenceFilesForSequencingRun = sequenceFileService.getSequenceFilesForSequencingRun(run);
 		List<Map<String, Object>> runMaps = new ArrayList<>();
-		
-		for(SequenceFile f : sequenceFilesForSequencingRun){
+
+		for (SequenceFile f : sequenceFilesForSequencingRun) {
 			Map<String, Object> fileDataMap = sequenceFileUtilities.getFileDataMap(f);
 			runMaps.add(fileDataMap);
 		}
-		
+
 		model.addAttribute("files", runMaps);
-		model.addAttribute("run",run);
-		model.addAttribute(ACTIVE_NAV,ACTIVE_NAV_FILES);
-		
+		model.addAttribute("run", run);
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_FILES);
+
 		return FILES_VIEW;
 	}
 
