@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -56,7 +57,7 @@ public class SequencingRunControllerTest {
 	}
 
 	@Test
-	public void testGetDetailsPage() {
+	public void testGetDetailsPage() throws IOException {
 		Long runId = 1l;
 		SequencingRun sequencingRunEntity = new SequencingRunEntity();
 		ExtendedModelMap model = new ExtendedModelMap();
@@ -67,6 +68,7 @@ public class SequencingRunControllerTest {
 		verify(sequencingRunService).read(runId);
 		assertEquals(SequencingRunController.DETAILS_VIEW, detailsPage);
 		assertEquals(sequencingRunEntity, model.get("run"));
+		assertTrue(model.containsKey("files"));
 	}
 
 	@SuppressWarnings("rawtypes")

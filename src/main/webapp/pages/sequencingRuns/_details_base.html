@@ -9,11 +9,17 @@
          th:with="baseLink=@{/sequencingRuns/{id}(id=${run.getId()})}">
         <div class="container">
             <ul class="nav navbar-nav">
-                <li th:class="${activeNav} == 'details' ? 'active'"><a th:href="${baseLink}" href="#"
-                                                                       th:text="#{samples.nav.details}">Details</a>
+                <li th:class="${activeNav} == 'details' ? 'active'">
+                    <a th:href="${baseLink}" href="#" th:text="#{samples.nav.details}">
+                        _Details_
+                    </a>
                 </li>
-                <li th:class="${activeNav} == 'files' ? 'active'"><a th:href="${baseLink + '/files'}" href="#"
-                                                                     th:text="#{samples.nav.files}">Files</a></li>
+                <li th:class="${activeNav} == 'files' ? 'active'">
+                    <a th:href="${baseLink + '/files'}" href="#" >
+                        <span th:text="#{samples.nav.files}">_Files_</span>
+                        <span id="file-count" class="badge badge-default" th:text="${#lists.size(files)}">0</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </nav>

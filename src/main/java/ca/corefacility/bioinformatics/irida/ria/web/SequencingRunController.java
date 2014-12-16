@@ -68,11 +68,11 @@ public class SequencingRunController {
 	 * @param runId
 	 * @param model
 	 * @return
+	 * @throws IOException 
 	 */
 	@RequestMapping("/{runId}")
-	public String getDetailsPage(@PathVariable Long runId, Model model) {
-		SequencingRun run = sequencingRunService.read(runId);
-		model.addAttribute("run", run);
+	public String getDetailsPage(@PathVariable Long runId, Model model) throws IOException {
+		model = getPageDetails(runId, model);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_DETAILS);
 
 		return DETAILS_VIEW;
@@ -87,18 +87,7 @@ public class SequencingRunController {
 	 */
 	@RequestMapping("/{runId}/files")
 	public String getFilesPage(@PathVariable Long runId, Model model) throws IOException {
-		SequencingRun run = sequencingRunService.read(runId);
-
-		Set<SequenceFile> sequenceFilesForSequencingRun = sequenceFileService.getSequenceFilesForSequencingRun(run);
-		List<Map<String, Object>> runMaps = new ArrayList<>();
-
-		for (SequenceFile f : sequenceFilesForSequencingRun) {
-			Map<String, Object> fileDataMap = sequenceFileUtilities.getFileDataMap(f);
-			runMaps.add(fileDataMap);
-		}
-
-		model.addAttribute("files", runMaps);
-		model.addAttribute("run", run);
+		model = getPageDetails(runId, model);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_FILES);
 
 		return FILES_VIEW;
@@ -113,5 +102,22 @@ public class SequencingRunController {
 	@ResponseBody
 	public Iterable<SequencingRun> getSequencingRuns() {
 		return sequencingRunService.findAll();
+	}
+
+	private Model getPageDetails(Long runId, Model model) throws IOException {
+		SequencingRun run = sequencingRunService.read(runId);
+
+		Set<SequenceFile> sequenceFilesForSequencingRun = sequenceFileService.getSequenceFilesForSequencingRun(run);
+		List<Map<String, Object>> runMaps = new ArrayList<>();
+
+		for (SequenceFile f : sequenceFilesForSequencingRun) {
+			Map<String, Object> fileDataMap = sequenceFileUtilities.getFileDataMap(f);
+			runMaps.add(fileDataMap);
+		}
+
+		model.addAttribute("files", runMaps);
+		model.addAttribute("run", run);
+
+		return model;
 	}
 }

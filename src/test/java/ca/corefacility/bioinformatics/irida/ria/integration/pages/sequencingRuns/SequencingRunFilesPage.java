@@ -43,4 +43,8 @@ public class SequencingRunFilesPage extends AbstractPage {
 	public Map<String, String> getSequenceFileByRow(int row) {
 		return getSequenceFiles().get(row);
 	}
+
+	public int getFilesCount() {
+		return Integer.parseInt(driver.findElement(By.id("file-count")).getText());
+	}
 }

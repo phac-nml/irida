@@ -64,4 +64,9 @@ public class SequencingRunFilesPageIT {
 		assertEquals("2", sequenceFileByRow.get("id"));
 		assertEquals("FileThatMayNotExist1", sequenceFileByRow.get("fileName"));
 	}
+
+	@Test
+	public void testGetFilesCount() {
+		assertEquals(3, page.getFilesCount());
+	}
 }
