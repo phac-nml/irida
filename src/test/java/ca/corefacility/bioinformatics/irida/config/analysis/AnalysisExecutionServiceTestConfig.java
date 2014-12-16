@@ -109,8 +109,8 @@ public class AnalysisExecutionServiceTestConfig {
 	@Bean
 	public AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified() {
 		return new AnalysisExecutionServiceGalaxySimplified(analysisSubmissionService, analysisService,
-				galaxyWorkflowService(), galaxyHistoriesService(), analysisWorkspaceServiceSimplified(),
-				analysisTaskExecutor(), analysisExecutionServiceGalaxyAsyncSimplified());
+				galaxyHistoriesService(), analysisWorkspaceServiceSimplified(),
+				analysisExecutionServiceGalaxyAsyncSimplified());
 	}
 
 	@Lazy

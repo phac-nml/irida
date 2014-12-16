@@ -7,7 +7,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisExecutionWorker;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
@@ -42,9 +41,16 @@ public interface AnalysisExecutionServiceSimplified {
 	 * 
 	 * @param analysisSubmission
 	 *            The {@link AnalysisSubmission} to execute.
-	 * @return An {@link AnalysisExecutionWorker} for the executed analysis.
+	 * @return A {@link Future} with an {@link AnalysisSubmission} for the
+	 *         analysis submitted.
+	 * @throws ExecutionManagerException
+	 *             If there was an exception submitting the analysis to the
+	 *             execution manager.
+	 * @throws IridaWorkflowNotFoundException
+	 *             If the workflow for the analysis was not found.
 	 */
-	public AnalysisExecutionWorker executeAnalysis(AnalysisSubmission analysisSubmission);
+	public Future<AnalysisSubmission> executeAnalysis(AnalysisSubmission analysisSubmission)
+			throws IridaWorkflowNotFoundException, ExecutionManagerException;
 
 	/**
 	 * Gets the status for the given submitted analysis.

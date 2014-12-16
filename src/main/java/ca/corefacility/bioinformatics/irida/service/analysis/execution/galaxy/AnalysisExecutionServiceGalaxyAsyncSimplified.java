@@ -16,12 +16,11 @@ import org.springframework.scheduling.annotation.AsyncResult;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowStructure;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisExecutionWorker;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
@@ -38,6 +37,7 @@ import com.google.common.collect.ImmutableMap;
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
+@Async("analysisTaskExecutor")
 public class AnalysisExecutionServiceGalaxyAsyncSimplified {
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxyAsyncSimplified.class);
@@ -95,7 +95,6 @@ public class AnalysisExecutionServiceGalaxyAsyncSimplified {
 	 *             If there was an issue preparing a workspace for the workflow.
 	 */
 	@Transactional
-	@Async("analysisTaskExecutor")
 	public Future<AnalysisSubmission> prepareSubmission(final AnalysisSubmission analysisSubmission)
 			throws IridaWorkflowNotFoundException, IOException, ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
@@ -121,5 +120,41 @@ public class AnalysisExecutionServiceGalaxyAsyncSimplified {
 						AnalysisState.PREPARED));
 
 		return new AsyncResult<>(analysisPrepared);
+	}
+
+	/**
+	 * Executes the passed prepared {@link AnalysisSubmission} in an execution
+	 * manager.
+	 * 
+	 * @param analysisSubmission
+	 *            The {@link AnalysisSubmission} to execute.
+	 * @return A {@link Future} with an {@link AnalysisSubmission} for the
+	 *         analysis submitted.
+	 * @throws ExecutionManagerException
+	 *             If there was an exception submitting the analysis to the
+	 *             execution manager.
+	 * @throws IridaWorkflowNotFoundException
+	 *             If the workflow for the analysis was not found.
+	 */
+	@Transactional
+	public Future<AnalysisSubmission> executeAnalysis(AnalysisSubmission analysisSubmission)
+			throws IridaWorkflowNotFoundException, ExecutionManagerException {
+		checkNotNull(analysisSubmission, "analysisSubmission is null");
+		checkNotNull(analysisSubmission.getRemoteAnalysisId(), "remote analyis id is null");
+		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
+
+		logger.debug("Running submission for " + analysisSubmission);
+
+		logger.trace("Preparing files for " + analysisSubmission);
+		PreparedWorkflowGalaxy preparedWorkflow = workspaceService.prepareAnalysisFiles(analysisSubmission);
+		WorkflowInputsGalaxy input = preparedWorkflow.getWorkflowInputs();
+
+		logger.trace("Executing " + analysisSubmission);
+		galaxyWorkflowService.runWorkflow(input);
+
+		AnalysisSubmission submittedAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
+				ImmutableMap.of("analysisState", AnalysisState.SUBMITTED));
+
+		return new AsyncResult<>(submittedAnalysis);
 	}
 }
