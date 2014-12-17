@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
@@ -23,7 +21,6 @@ import org.springframework.web.filter.GenericFilterBean;
  */
 @Component
 public class SessionFilter extends GenericFilterBean {
-	private static final Logger logger = LoggerFactory.getLogger(SessionFilter.class);
 	private @Value("${session.max.timeout}") int SESSION_TIMEOUT;
 
 	@Override public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
