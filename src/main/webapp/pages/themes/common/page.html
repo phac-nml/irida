@@ -5,26 +5,6 @@
 <!--<![endif]-->
 <head lang="en">
 	<title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA Platform</title>
-	<th:block th:include="themes/common/fragments :: meta"></th:block>
-
-	<!--[if lte IE 8]
-	<script>
-		document.createElement('ng-include');
-		document.createElement('ng-pluralize');
-		document.createElement('ng-view');
-
-		// Optionally these for CSS
-		document.createElement('ng:include');
-		document.createElement('ng:pluralize');
-		document.createElement('ng:view');
-
-		// Angular Bootstrap
-		document.createElement('tabset');
-		document.createElement('tab');
-
-	</script>
-	<script th:src="@{/resources/bower_components/json2/json2.js}" src="/resources/bower_components/json2/json2.js"></script>
-	<![endif]-->
 
 	<link rel="stylesheet" th:href="@{/resources/bower_components/Font-Awesome/css/font-awesome.min.css}"
 	      href="/resources/bower_components/Font-Awesome/css/font-awesome.min.css"/>
@@ -42,49 +22,30 @@
 <th:block layout:fragment="main-section">
 	<!--/* This is where each pages content should be loaded. */-->
 </th:block>
-<script src="/resources/bower_components/jquery/dist/jquery.min.js"
-        th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"></script>
-<th:block sec:authorize="isAuthenticated()">
-	<!--/* Site Wide Scripts */--><!--[if lt IE 9]>
-	<script th:src="@{/resources/js/vendor/jquery-1.11.1.min.js}"
-	        src="/resources/js/vendor/jquery-1.11.1.min.js"></script>
-	<script>
-		// Production steps of ECMA-262, Edition 5, 15.4.4.14
-		// Reference: http://es5.github.io/#x15.4.4.14
-		// Copied from: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
-		/*<![CDATA[*/
-    if (!Array.prototype.indexOf) {
-        Array.prototype.indexOf = function (searchElement, fromIndex) {
-            var k;
-            if (this == null) {
-                throw new TypeError('"this" is null or not defined');
-            }
-            var O = Object(this);
-            var len = O.length >>> 0;
-            if (len === 0) {
-                return -1;
-            }
-            var n = +fromIndex || 0;
-            if (Math.abs(n) === Infinity) {
-                n = 0;
-            }
-            if (n >= len) {
-                return -1;
-            }
-            k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
-            while (k < len) {
-                var kValue;
-                if (k in O && O[k] === searchElement) {
-                    return k;
-                }
-                k++;
-            }
-            return -1;
-        };
-    }
-    /*]]>*/
+
+<script type="text/ng-template" id="/session-modal.html">
+	<div>
+		<div class="modal-header">
+			<b class="modal-title"><span th:text="#{session.timeout-modal.header}"></span>&nbsp;{{timeleft | moment}}</b>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-default" ng-click="logout()" th:text="#{session.timeout-modal.logout}">Log me out</button>
+			<button class="btn btn-primary" ng-click="poke()" th:text="#{session.timeout-modal.poke}">Keep me here</button>
+		</div>
+	</div>
 </script>
-<![endif]-->
+
+<script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"
+        src="/resources/bower_components/jquery/dist/jquery.min.js"></script>
+
+<th:block sec:authorize="isAuthenticated()">
+	<script th:inline="javascript">
+		var TL = {
+			BASE_URL: /*[[@{/}]]*/ '/',
+			SESSION_LENGTH: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800
+		};
+	</script>
+	
 	<script th:src="@{/resources/bower_components/lodash/dist/lodash.min.js}"
 	        src="/resources/bower_components/lodash/dist/lodash.min.js"></script>
 	<script th:src="@{/resources/bower_components/angular/angular.min.js}"
@@ -111,12 +72,89 @@
 
 	<script th:inline="javascript">
 		/*<![CDATA[*/
+		function SessionFactory($timeout, $interval, $window, $modal) {
+			var modalWait = 120000, // 2 minutes
+			    initialWait = TL.SESSION_LENGTH * 1000 - modalWait + 500, // Give a little overlap
+			    timeout,
+			    restartTimeout,
+				opened = false;
+
+			function _restart() {
+				if (!opened) {
+					opened = true;
+					$modal.open({
+						templateUrl: '/session-modal.html',
+						controller : ['$scope', '$http', '$window', '$modalInstance', function ($scope, $http, $window, $modalInstance) {
+							$scope.poke = function () {
+								$interval.cancel(countdown);
+								$timeout.cancel(restartTimeout);
+								$timeout.cancel(timeout);
+								$http.head($window.location.href).success(function () {
+									start();
+									opened = false;
+									$modalInstance.close();
+								});
+							};
+
+							$scope.logout = function () {
+								$window.location = TL.BASE_URL + "logout";
+							};
+
+							$scope.timeleft = modalWait;
+							var countdown = $interval(function () {
+								$scope.timeleft = $scope.timeleft - 1000;
+							}, 1000);
+
+							restartTimeout = $timeout(function () {
+								$window.location.reload();
+							}, modalWait);
+						}]
+					});
+				}
+			}
+
+			function start() {
+				timeout = $timeout(function SessionTimer() {
+					_restart();
+				}, initialWait);
+			}
+
+			function reset() {
+				$timeout.cancel(timeout);
+				start();
+			}
+
+			return ({
+				start: start,
+				reset: reset
+			})
+		}
+
+		function HttpInterceptor($injector) {
+			return {
+				request: function (config) {
+					if (config.url.indexOf("/template") > -1) {
+						config.headers.Accept = "text/html";
+					}
+					if (config.method === "POST") {
+						config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+					}
+					return config;
+				},
+				response: function (response) {
+					var session = $injector.get('SessionFactory');
+					session.reset();
+					return response;
+				}
+			};
+		}
+
 		window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ngAnimate', 'ngMessages', 'ui.bootstrap', 'ui.utils', 'restangular', 'irida.notifications']);
 		var app = angular.module('irida', window.dependencies)
-			.value('BASE_URL', /*[[@{/}]]*/ '/')
-			// This configures the base url globally for all restangular calls.
+			.value('BASE_URL', TL.BASE_URL)
+		// This configures the base url globally for all restangular calls.
 			.config(function (RestangularProvider) {
-				RestangularProvider.setBaseUrl(/*[[@{/}]]*/ "/");
+				RestangularProvider.setBaseUrl(TL.BASE_URL);
 			})
 			.run(function (paginationConfig) {
 				paginationConfig.firstText = /*[[#{table.first}]]*/ 'First';
@@ -127,6 +165,18 @@
 				paginationConfig.directionLinks = true;
 				paginationConfig.maxSize = 8;
 				paginationConfig.rotate = false;
+			})
+			.run(['SessionFactory', function (session) {
+				session.start();
+			}])
+			.factory('SessionFactory', ['$timeout', '$interval', '$window', '$modal', SessionFactory])
+			.factory('HttpInterceptor', ['$injector', HttpInterceptor])
+			.filter('moment', function () {
+				return function (timeleft) {
+					if (angular.isNumber(timeleft)) {
+						return moment.duration(timeleft, "milliseconds").humanize();
+					}
+				};
 			})
 			.directive('ngFocus', [function () {
 				var FOCUS_CLASS = "ng-focused";
@@ -148,8 +198,9 @@
 						});
 					}
 				}
-			}]).config(function ($httpProvider) {
-				$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+			}])
+			.config(function ($httpProvider) {
+				$httpProvider.interceptors.push('HttpInterceptor');
 
 				// Make sure that all ajax form data is sent in the correct format.
 				$httpProvider.defaults.transformRequest = function (data) {
