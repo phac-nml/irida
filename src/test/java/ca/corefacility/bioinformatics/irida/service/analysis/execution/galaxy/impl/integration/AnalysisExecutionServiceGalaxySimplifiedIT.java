@@ -18,6 +18,8 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
@@ -72,6 +74,8 @@ import com.google.common.collect.ImmutableMap;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisExecutionServiceGalaxySimplifiedIT {
+
+	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxySimplifiedIT.class);
 
 	@Autowired
 	private DatabaseSetupGalaxyITService analysisExecutionGalaxyITService;
@@ -249,6 +253,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		} catch (ExecutionException e) {
 			// check to make sure the submission is in the error state
 			AnalysisSubmission savedSubmission = analysisSubmissionRepository.findOne(analysisSubmitted.getId());
+			logger.debug("Submission on exception=" + savedSubmission.getId());
 			assertEquals(AnalysisState.ERROR, savedSubmission.getAnalysisState());
 
 			throw e.getCause();
@@ -322,10 +327,13 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 
 		Future<AnalysisSubmission> analysisSubmissionFuture = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
-		assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisState());
 		try {
 			analysisSubmissionFuture.get();
 		} catch (ExecutionException e) {
+			logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
+			assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
+					.getAnalysisState());
+
 			// pull out real exception
 			throw e.getCause();
 		}
@@ -348,6 +356,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		try {
 			analysisSubmissionFuture.get();
 		} catch (ExecutionException e) {
+			logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
 			assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
 					.getAnalysisState());
 
@@ -363,7 +372,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetAnalysisResultsSuccessPhylogenomics() throws Exception {
+	public void testTransferAnalysisResultsSuccessPhylogenomics() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, iridaPhylogenomicsWorkflowId);
 
@@ -378,7 +387,19 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		analysisExecutionGalaxyITService.waitUntilSubmissionCompleteSimplified(analysisExecuted);
 
 		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
-		Analysis analysisResults = analysisExecutionServiceSimplified.transferAnalysisResults(analysisExecuted);
+		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionServiceSimplified
+				.transferAnalysisResults(analysisExecuted);
+		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
+		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
+				.getId());
+		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState());
+		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompleted.getAnalysisState());
+
+		Analysis analysisResults = analysisSubmissionCompleted.getAnalysis();
+		Analysis analysisResultsDatabase = analysisSubmissionCompletedDatabase.getAnalysis();
+		assertEquals("analysis results in returned submission and from database should be the same",
+				analysisResults.getId(), analysisResultsDatabase.getId());
+
 		assertEquals(AnalysisPhylogenomicsPipeline.class, analysisResults.getClass());
 		AnalysisPhylogenomicsPipeline analysisResultsPhylogenomics = (AnalysisPhylogenomicsPipeline) analysisResults;
 
@@ -427,14 +448,14 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 	}
 
 	/**
-	 * Tests out failing to get analysis results due to analysis not being
-	 * submitted.
+	 * Tests out failing to get analysis results due to analysis submission
+	 * having an invalid id (not submitted).
 	 * 
-	 * @throws Exception
+	 * @throws Throwable
 	 */
 	@Test(expected = EntityNotFoundException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetAnalysisResultsFail() throws Exception {
+	public void testTransferAnalysisResultsFailInvalidId() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
@@ -450,6 +471,55 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 
 		analysisExecuted.setId(555l);
 		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
-		analysisExecutionServiceSimplified.transferAnalysisResults(analysisExecuted);
+		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionServiceSimplified
+				.transferAnalysisResults(analysisExecuted);
+		try {
+			analysisSubmissionCompletedFuture.get();
+		} catch (ExecutionException e) {
+			logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
+			assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
+					.getAnalysisState());
+
+			// pull out real exception
+			throw e.getCause();
+		}
+	}
+
+	/**
+	 * Tests out failing to get analysis results due to analysis submission
+	 * having an invalid remote analysis id (submission not existing in Galaxy).
+	 * 
+	 * @throws Throwable
+	 */
+	@Test(expected = NullPointerException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testTransferAnalysisResultsFailInvalidRemoteAnalysisId() throws Throwable {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
+
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionServiceSimplified
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+
+		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionServiceSimplified
+				.executeAnalysis(analysisSubmitted);
+		AnalysisSubmission analysisExecuted = analysisExecutionFuture.get();
+
+		analysisExecutionGalaxyITService.waitUntilSubmissionCompleteSimplified(analysisExecuted);
+
+		analysisSubmissionService.update(analysisExecuted.getId(), ImmutableMap.of("remoteAnalysisId", "invalid"));
+		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
+		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionServiceSimplified
+				.transferAnalysisResults(analysisExecuted);
+		try {
+			analysisSubmissionCompletedFuture.get();
+		} catch (ExecutionException e) {
+			logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
+			assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
+					.getAnalysisState());
+
+			// pull out real exception
+			throw e.getCause();
+		}
 	}
 }

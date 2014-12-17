@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequ
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceAspect;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
 
@@ -34,45 +35,51 @@ import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 
 /**
  * Configuration for an AnalysisExecutionService class.
+ * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Configuration
-@EnableAsync
+@EnableAsync(order = AnalysisExecutionServiceConfig.ASYNC_ORDER)
 @Profile({ "dev", "prod", "it" })
 public class AnalysisExecutionServiceConfig {
-	
+
+	public static final int ASYNC_ORDER = AnalysisExecutionServiceAspect.ANALYSIS_EXECUTION_ASPECT_ORDER - 1;
+
 	@Autowired
 	private ExecutionManagerGalaxy executionManager;
-	
+
 	@Autowired
 	private AnalysisSubmissionService analysisSubmissionService;
-	
+
 	@Autowired
 	private AnalysisService analysisService;
-	
+
 	@Autowired
 	private SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository;
-	
+
 	@Autowired
 	private SequenceFileRepository sequenceFileRepository;
-	
+
 	/**
-	 * Builds a new AnalysisExecutionServicePhylogenomics which can be used for launching
-	 *  phylogenomics analyses.
-	 * @return  A AnalysisExecutionServicePhylogenomics for launching phylogenomics analyeses.
+	 * Builds a new AnalysisExecutionServicePhylogenomics which can be used for
+	 * launching phylogenomics analyses.
+	 * 
+	 * @return A AnalysisExecutionServicePhylogenomics for launching
+	 *         phylogenomics analyeses.
 	 */
-	@Lazy @Bean
+	@Lazy
+	@Bean
 	public AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics() {
-		return new AnalysisExecutionServicePhylogenomics(analysisSubmissionService,
-				analysisService, galaxyWorkflowService(), galaxyHistoriesService(),
-				workspaceService());
+		return new AnalysisExecutionServicePhylogenomics(analysisSubmissionService, analysisService,
+				galaxyWorkflowService(), galaxyHistoriesService(), workspaceService());
 	}
 
 	/**
 	 * @return A new WorkspaceService for the phylogenomic pipeline.
 	 */
-	@Lazy @Bean
+	@Lazy
+	@Bean
 	public WorkspaceServicePhylogenomics workspaceService() {
 		return new WorkspaceServicePhylogenomics(galaxyHistoriesService(), galaxyWorkflowService(),
 				sampleSequenceFileJoinRepository, sequenceFileRepository, galaxyLibraryBuilder());
@@ -81,99 +88,110 @@ public class AnalysisExecutionServiceConfig {
 	/**
 	 * @return A GalaxyWorkflowService for interacting with Galaxy workflows.
 	 */
-	@Lazy @Bean
+	@Lazy
+	@Bean
 	public GalaxyWorkflowService galaxyWorkflowService() {
 		return new GalaxyWorkflowService(historiesClient(), workflowsClient(), workflowChecksumEncoder(),
 				StandardCharsets.UTF_8);
 	}
-	
+
 	/**
 	 * @return A GalaxyLibraryBuilder for building libraries.
 	 */
-	@Lazy @Bean
+	@Lazy
+	@Bean
 	public GalaxyLibraryBuilder galaxyLibraryBuilder() {
 		return new GalaxyLibraryBuilder(librariesClient(), galaxyRoleSearch(), executionManager.getLocation());
 	}
-	
+
 	/**
 	 * @return A GalaxyRoleSearch for searching through Galaxy roles.
 	 */
-	@Lazy @Bean
+	@Lazy
+	@Bean
 	public GalaxyRoleSearch galaxyRoleSearch() {
 		return new GalaxyRoleSearch(rolesClient(), executionManager.getLocation());
 	}
-	
+
 	/**
 	 * @return A RolesClient for dealing with roles in Galaxy.
 	 */
-	@Lazy @Bean
+	@Lazy
+	@Bean
 	public RolesClient rolesClient() {
 		return galaxyInstance().getRolesClient();
 	}
 
 	/**
-	 * @return  A PasswordEncoder for generating or validating workflow checksums.
+	 * @return A PasswordEncoder for generating or validating workflow
+	 *         checksums.
 	 */
-	@Lazy @Bean
+	@Lazy
+	@Bean
 	public PasswordEncoder workflowChecksumEncoder() {
 		return new StandardPasswordEncoder();
 	}
 
 	/**
-	 * @return  A WorkflowsClient for interacting with Galaxy.
+	 * @return A WorkflowsClient for interacting with Galaxy.
 	 */
-	@Lazy @Bean
+	@Lazy
+	@Bean
 	public WorkflowsClient workflowsClient() {
 		return galaxyInstance().getWorkflowsClient();
 	}
-	
+
 	/**
-	 * @return  A LibrariesClient for interacting with Galaxy.
+	 * @return A LibrariesClient for interacting with Galaxy.
 	 */
-	@Lazy @Bean
+	@Lazy
+	@Bean
 	public LibrariesClient librariesClient() {
 		return galaxyInstance().getLibrariesClient();
 	}
 
 	/**
-	 * @return  A GalaxyHistoriesService for interacting with Galaxy histories.
+	 * @return A GalaxyHistoriesService for interacting with Galaxy histories.
 	 */
-	@Lazy @Bean
+	@Lazy
+	@Bean
 	public GalaxyHistoriesService galaxyHistoriesService() {
-		return new GalaxyHistoriesService(historiesClient(), toolsClient(),
-				galaxyLibrariesService());
+		return new GalaxyHistoriesService(historiesClient(), toolsClient(), galaxyLibrariesService());
 	}
-	
+
 	/**
-	 * @return  A GalaxyHistoriesService for interacting with Galaxy histories.
+	 * @return A GalaxyHistoriesService for interacting with Galaxy histories.
 	 */
-	@Lazy @Bean
+	@Lazy
+	@Bean
 	public GalaxyLibrariesService galaxyLibrariesService() {
 		return new GalaxyLibrariesService(librariesClient());
 	}
-	
+
 	/**
-	 * @return  A ToolsClient for interacting with Galaxy tools.
+	 * @return A ToolsClient for interacting with Galaxy tools.
 	 */
-	@Lazy @Bean
+	@Lazy
+	@Bean
 	public ToolsClient toolsClient() {
 		return galaxyInstance().getToolsClient();
 	}
 
 	/**
-	 * @return  A HistoriesClient for interacting with Galaxy histories.
+	 * @return A HistoriesClient for interacting with Galaxy histories.
 	 */
-	@Lazy @Bean
+	@Lazy
+	@Bean
 	public HistoriesClient historiesClient() {
 		return galaxyInstance().getHistoriesClient();
 	}
-	
+
 	/**
-	 * @return  An instance of a connection to Galaxy.
+	 * @return An instance of a connection to Galaxy.
 	 */
-	@Lazy @Bean
+	@Lazy
+	@Bean
 	public GalaxyInstance galaxyInstance() {
-		return GalaxyInstanceFactory.get(executionManager.getLocation().toString(),
-				executionManager.getAPIKey());
+		return GalaxyInstanceFactory.get(executionManager.getLocation().toString(), executionManager.getAPIKey());
 	}
 }

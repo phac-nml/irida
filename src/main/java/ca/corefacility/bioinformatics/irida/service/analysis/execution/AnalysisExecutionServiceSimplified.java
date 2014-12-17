@@ -6,7 +6,6 @@ import java.util.concurrent.Future;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
@@ -65,13 +64,13 @@ public interface AnalysisExecutionServiceSimplified {
 	public WorkflowStatus getWorkflowStatus(AnalysisSubmission submittedAnalysis) throws ExecutionManagerException;
 
 	/**
-	 * Downloads and saves the results of an {@link Analysis} that was
+	 * Downloads and saves the results of an {@link AnalysisSubmission} that was
 	 * previously submitted from an execution manager.
 	 * 
 	 * @param submittedAnalysis
 	 *            An {@link AnalysisSubmission} that was previously submitted.
-	 * @return An {@link Analysis} object containing information about the
-	 *         particular analysis.
+	 * @return A {@link Future} with an {@link AnalysisSubmission} object
+	 *         containing information about the particular analysis.
 	 * @throws ExecutionManagerException
 	 *             If there was an issue with the execution manager.
 	 * @throws IridaWorkflowNotFoundException
@@ -81,6 +80,6 @@ public interface AnalysisExecutionServiceSimplified {
 	 *             If there was an error loading the analysis results from an
 	 *             execution manager.
 	 */
-	public Analysis transferAnalysisResults(AnalysisSubmission submittedAnalysis) throws ExecutionManagerException,
-			IridaWorkflowNotFoundException, IOException;
+	public Future<AnalysisSubmission> transferAnalysisResults(AnalysisSubmission submittedAnalysis)
+			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException;
 }

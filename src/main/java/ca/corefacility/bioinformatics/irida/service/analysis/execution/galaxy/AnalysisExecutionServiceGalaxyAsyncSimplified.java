@@ -6,23 +6,23 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.IOException;
 import java.util.concurrent.Future;
 
-import javax.transaction.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.transaction.annotation.Transactional;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowStructure;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -45,7 +45,6 @@ public class AnalysisExecutionServiceGalaxyAsyncSimplified {
 	private final AnalysisSubmissionService analysisSubmissionService;
 	private final AnalysisService analysisService;
 	private final AnalysisWorkspaceServiceGalaxySimplified workspaceService;
-	private final GalaxyHistoriesService galaxyHistoriesService;
 	private final GalaxyWorkflowService galaxyWorkflowService;
 	private final IridaWorkflowsService iridaWorkflowsService;
 
@@ -59,8 +58,6 @@ public class AnalysisExecutionServiceGalaxyAsyncSimplified {
 	 *            A service for analysis results.
 	 * @param galaxyWorkflowService
 	 *            A service for Galaxy workflows.
-	 * @param galaxyHistoriesService
-	 *            A service for Galaxy histories.
 	 * @param workspaceService
 	 *            A service for a workflow workspace.
 	 * @param iridaWorkflowsService
@@ -69,12 +66,10 @@ public class AnalysisExecutionServiceGalaxyAsyncSimplified {
 	@Autowired
 	public AnalysisExecutionServiceGalaxyAsyncSimplified(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisService analysisService, GalaxyWorkflowService galaxyWorkflowService,
-			GalaxyHistoriesService galaxyHistoriesService, AnalysisWorkspaceServiceGalaxySimplified workspaceService,
-			IridaWorkflowsService iridaWorkflowsService) {
+			AnalysisWorkspaceServiceGalaxySimplified workspaceService, IridaWorkflowsService iridaWorkflowsService) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisService = analysisService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
-		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.workspaceService = workspaceService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
 	}
@@ -156,5 +151,43 @@ public class AnalysisExecutionServiceGalaxyAsyncSimplified {
 				ImmutableMap.of("analysisState", AnalysisState.SUBMITTED));
 
 		return new AsyncResult<>(submittedAnalysis);
+	}
+
+	/**
+	 * Downloads and saves the results of an {@link AnalysisSubmission} that was
+	 * previously submitted from an execution manager.
+	 * 
+	 * @param submittedAnalysis
+	 *            An {@link AnalysisSubmission} that was previously submitted.
+	 * @return A {@link Future} with an {@link AnalysisSubmission} object
+	 *         containing information about the particular analysis.
+	 * @throws ExecutionManagerException
+	 *             If there was an issue with the execution manager.
+	 * @throws IridaWorkflowNotFoundException
+	 *             If the workflow for this submission could not be found in
+	 *             IRIDA.
+	 * @throws IOException
+	 *             If there was an error loading the analysis results from an
+	 *             execution manager.
+	 */
+	@Transactional
+	public Future<AnalysisSubmission> transferAnalysisResults(AnalysisSubmission submittedAnalysis)
+			throws ExecutionManagerException, IOException, IridaWorkflowNotFoundException {
+		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
+		checkNotNull(submittedAnalysis.getRemoteAnalysisId(), "remoteAnalysisId is null");
+		if (!analysisSubmissionService.exists(submittedAnalysis.getId())) {
+			throw new EntityNotFoundException("Could not find analysis submission for " + submittedAnalysis);
+		}
+
+		logger.debug("Getting results for " + submittedAnalysis);
+		Analysis analysisResults = workspaceService.getAnalysisResults(submittedAnalysis);
+
+		logger.trace("Saving results for " + submittedAnalysis);
+		Analysis savedAnalysis = analysisService.create(analysisResults);
+
+		AnalysisSubmission completedSubmission = analysisSubmissionService.update(submittedAnalysis.getId(),
+				ImmutableMap.of("analysis", savedAnalysis, "analysisState", AnalysisState.COMPLETED));
+
+		return new AsyncResult<>(completedSubmission);
 	}
 }

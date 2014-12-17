@@ -8,22 +8,16 @@ import java.util.concurrent.Future;
 
 import javax.transaction.Transactional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
-import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxySimplified;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -34,11 +28,7 @@ import com.google.common.collect.ImmutableMap;
  */
 public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecutionServiceSimplified {
 
-	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxySimplified.class);
-
 	private final AnalysisSubmissionService analysisSubmissionService;
-	private final AnalysisService analysisService;
-	private final AnalysisWorkspaceServiceGalaxySimplified workspaceService;
 	private final GalaxyHistoriesService galaxyHistoriesService;
 	private final AnalysisExecutionServiceGalaxyAsyncSimplified analysisExecutionServiceGalaxyAsyncSimplified;
 
@@ -48,25 +38,18 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	 * 
 	 * @param analysisSubmissionService
 	 *            A service for analysis submissions.
-	 * @param analysisService
-	 *            A service for analysis results.
 	 * @param galaxyHistoriesService
 	 *            A service for Galaxy histories.
-	 * @param workspaceService
-	 *            A service for a workflow workspace.
 	 * @param analysisExecutionServiceGalaxyAsyncSimplified
 	 *            An {@link AnalysisExecutionServiceGalaxyAsyncSimplified} for
 	 *            executing the tasks asynchronously.
 	 */
 	@Autowired
 	public AnalysisExecutionServiceGalaxySimplified(AnalysisSubmissionService analysisSubmissionService,
-			AnalysisService analysisService, GalaxyHistoriesService galaxyHistoriesService,
-			AnalysisWorkspaceServiceGalaxySimplified workspaceService,
+			GalaxyHistoriesService galaxyHistoriesService,
 			AnalysisExecutionServiceGalaxyAsyncSimplified analysisExecutionServiceGalaxyAsyncSimplified) {
 		this.analysisSubmissionService = analysisSubmissionService;
-		this.analysisService = analysisService;
 		this.galaxyHistoriesService = galaxyHistoriesService;
-		this.workspaceService = workspaceService;
 		this.analysisExecutionServiceGalaxyAsyncSimplified = analysisExecutionServiceGalaxyAsyncSimplified;
 	}
 
@@ -107,23 +90,15 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	 */
 	@Override
 	@Transactional
-	public Analysis transferAnalysisResults(AnalysisSubmission submittedAnalysis) throws ExecutionManagerException,
-			IOException, IridaWorkflowNotFoundException {
-		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
-		checkNotNull(submittedAnalysis.getRemoteAnalysisId(), "remoteAnalysisId is null");
+	public Future<AnalysisSubmission> transferAnalysisResults(AnalysisSubmission submittedAnalysis)
+			throws ExecutionManagerException, IOException, IridaWorkflowNotFoundException {
 		checkArgument(AnalysisState.FINISHED_RUNNING.equals(submittedAnalysis.getAnalysisState()),
 				" analysis should be " + AnalysisState.FINISHED_RUNNING);
-		verifyAnalysisSubmissionExists(submittedAnalysis);
 
-		logger.debug("Getting results for " + submittedAnalysis);
-		Analysis analysisResults = workspaceService.getAnalysisResults(submittedAnalysis);
+		AnalysisSubmission submittingAnalysis = analysisSubmissionService.update(submittedAnalysis.getId(),
+				ImmutableMap.of("analysisState", AnalysisState.COMPLETING));
 
-		logger.trace("Saving results for " + submittedAnalysis);
-		Analysis savedAnalysis = analysisService.create(analysisResults);
-
-		analysisSubmissionService.update(submittedAnalysis.getId(), ImmutableMap.of("analysis", savedAnalysis));
-
-		return savedAnalysis;
+		return analysisExecutionServiceGalaxyAsyncSimplified.transferAnalysisResults(submittingAnalysis);
 	}
 
 	/**
@@ -136,20 +111,5 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 
 		String analysisId = submittedAnalysis.getRemoteAnalysisId();
 		return galaxyHistoriesService.getStatusForHistory(analysisId);
-	}
-
-	/**
-	 * Verifies if the analysis submission exists.
-	 * 
-	 * @param submission
-	 *            The submission to check.
-	 * @throws EntityNotFoundException
-	 *             If the given analysis submission does not exist in the
-	 *             database.
-	 */
-	private void verifyAnalysisSubmissionExists(AnalysisSubmission submission) throws EntityNotFoundException {
-		if (!analysisSubmissionService.exists(submission.getId())) {
-			throw new EntityNotFoundException("Could not find analysis submission for " + submission);
-		}
 	}
 }

@@ -47,6 +47,11 @@ public enum AnalysisState {
 	 * An analysis that has finished running in the execution manager.
 	 */
 	FINISHED_RUNNING("FINISHED_RUNNING"),
+	
+	/**
+	 * An analysis that is complete but data needs to be transferred back into IRIDA.
+	 */
+	COMPLETING("COMPLETING"),
 
 	/**
 	 * An analysis that has completed and been loaded into IRIDA.
