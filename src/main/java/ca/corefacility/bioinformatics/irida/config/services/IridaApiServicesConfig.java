@@ -118,6 +118,7 @@ public class IridaApiServicesConfig {
 	 * 
 	 * @return A new {@link Executor} for analysis tasks.
 	 */
+	@Bean
 	public Executor analysisTaskExecutor(UserService userService) {
 		ScheduledExecutorService delegateExecutor = Executors.newScheduledThreadPool(4);
 		SecurityContext schedulerContext = createAnalysisTaskSecurityContext(userService);
