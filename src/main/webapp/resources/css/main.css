@@ -1,526 +1,62 @@
-/* line 1, ../../styles/components/_buttons.scss */
-.btn-xs.glyphicon {
-  font-size: 10px;
-  padding: 3px 6px;
-}
+/*
+Error: Invalid CSS after "...rumbs li a:afte": expected selector, was "`r"
+        on line 137 of /Users/josh/IRIDA/irida-ui/./src/main/webapp/styles/main.scss
 
-/* line 1, ../../styles/components/_datatables.scss */
-.dataTables_filter input[type='search'] {
-  background-color: #eeeeee;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-shadow: none;
-  color: #555;
-  padding: 5px;
-  font-weight: normal;
-  outline: none;
-}
-/* line 10, ../../styles/components/_datatables.scss */
-.dataTables_filter input[type='search']:focus {
-  background-color: white;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  -moz-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
-  -o-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
-  -webkit-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
-  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
-}
+132:   background: hsla(34,85%,35%,1);
+133:   position: relative;
+134:   display: block;
+135:   float: left;
+136: }
+137: .breadcrumbs li a:afte`r {
+138:   content: " ";
+139:   display: block;
+140:   width: 0;
+141:   height: 0;
+142:   border-top: 50px solid transparent;           /* Go big on the size, and let overflow hide *\/
 
-/* line 2, ../../styles/components/_forms.scss */
-.input-full {
-  width: 100%;
-}
-
-/* line 8, ../../styles/components/_forms.scss */
-.form-group .alert {
-  padding: 3px 6px;
-  font-weight: bold;
-  margin-bottom: 0;
-}
-
-/* line 15, ../../styles/components/_forms.scss */
-.large-checkbox label {
-  position: relative;
-  font-size: 14px;
-  cursor: pointer;
-  color: #555555;
-}
-/* line 20, ../../styles/components/_forms.scss */
-.large-checkbox label:before, .large-checkbox label:after {
-  font-family: FontAwesome;
-  font-weight: 100;
-  font-size: 22px;
-  /*absolutely positioned*/
-  position: absolute;
-  top: -14px;
-  left: 0;
-}
-/* line 30, ../../styles/components/_forms.scss */
-.large-checkbox label:before {
-  content: '\f0c8';
-  /*unchecked*/
-}
-/* line 33, ../../styles/components/_forms.scss */
-.large-checkbox label:after {
-  content: '\f14a';
-  /*checked*/
-  max-width: 0;
-  overflow: hidden;
-  opacity: 0.5;
-}
-/* line 39, ../../styles/components/_forms.scss */
-.large-checkbox input[type="checkbox"] {
-  display: none;
-}
-/* line 42, ../../styles/components/_forms.scss */
-.large-checkbox input[type="checkbox"]:checked + label:after {
-  max-width: 25px;
-  opacity: 1;
-}
-/* line 46, ../../styles/components/_forms.scss */
-.large-checkbox input[type="checkbox"]:checked + label:before {
-  display: none;
-}
-
-/* line 1, ../../styles/components/_magnific-popup.scss */
-.image-link {
-  cursor: -webkit-zoom-in;
-  cursor: -moz-zoom-in;
-  cursor: zoom-in;
-}
-
-/* This block of CSS adds opacity transition to background */
-/* line 8, ../../styles/components/_magnific-popup.scss */
-.mfp-with-zoom .mfp-container,
-.mfp-with-zoom.mfp-bg {
-  opacity: 0;
-  -webkit-backface-visibility: hidden;
-  -webkit-transition: all 0.3s ease-out;
-  -moz-transition: all 0.3s ease-out;
-  -o-transition: all 0.3s ease-out;
-  transition: all 0.3s ease-out;
-}
-
-/* line 18, ../../styles/components/_magnific-popup.scss */
-.mfp-with-zoom.mfp-ready .mfp-container {
-  opacity: 1;
-}
-
-/* line 21, ../../styles/components/_magnific-popup.scss */
-.mfp-with-zoom.mfp-ready.mfp-bg {
-  opacity: 0.8;
-}
-
-/* line 25, ../../styles/components/_magnific-popup.scss */
-.mfp-with-zoom.mfp-removing .mfp-container,
-.mfp-with-zoom.mfp-removing.mfp-bg {
-  opacity: 0;
-}
-
-/* padding-bottom and top for image */
-/* line 31, ../../styles/components/_magnific-popup.scss */
-.mfp-no-margins img.mfp-img {
-  padding: 0;
-}
-
-/* position of shadow behind the image */
-/* line 35, ../../styles/components/_magnific-popup.scss */
-.mfp-no-margins .mfp-figure:after {
-  top: 0;
-  bottom: 0;
-}
-
-/* padding for main container */
-/* line 40, ../../styles/components/_magnific-popup.scss */
-.mfp-no-margins .mfp-container {
-  padding: 0;
-}
-
-/* line 44, ../../styles/components/_magnific-popup.scss */
-.form-popup {
-  position: relative;
-  background: #ffffff;
-  width: auto;
-  max-width: 500px;
-  margin: 20px auto;
-  border-radius: 4px;
-}
-/* line 51, ../../styles/components/_magnific-popup.scss */
-.form-popup .modal-header {
-  background-color: #2572b4;
-  color: #ffffff;
-  border-radius: 4px 4px 0 0;
-}
-/* line 56, ../../styles/components/_magnific-popup.scss */
-.form-popup .mfp-close {
-  color: #ffffff;
-}
-
-/* line 1, ../../styles/components/_noty.scss */
-.noty_message h2 {
-  margin-top: 5px;
-  font-size: 1.4em;
-}
-
-/* line 2, ../../styles/components/_panels.scss */
-.project-details li {
-  border-bottom: 1px solid #eeeeee;
-  line-height: 2em;
-}
-/* line 6, ../../styles/components/_panels.scss */
-.project-details i.glyphicon {
-  color: #797979;
-  margin-right: .5em;
-}
-/* line 10, ../../styles/components/_panels.scss */
-.project-details em {
-  font-style: normal;
-}
-/* line 13, ../../styles/components/_panels.scss */
-.project-details span {
-  float: right;
-}
-
-/* line 19, ../../styles/components/_panels.scss */
-.panel.associated-projects div.panel-body {
-  padding: 0 !important;
-}
-/* line 22, ../../styles/components/_panels.scss */
-.panel.associated-projects .list-group-item {
-  border-radius: 0 !important;
-}
-
-/* line 27, ../../styles/components/_panels.scss */
-.sidebar {
-  border: 1px solid #eeeeee;
-  border-top-color: #fbfbfb;
-  border-bottom-color: #bbbbbb;
-  border-radius: 4px;
-  margin-bottom: 1em;
-  -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-  box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-}
-
-/* line 36, ../../styles/components/_panels.scss */
-.sidebar__heading {
-  border-bottom: 1px solid #eeeeee;
-  padding: 10px;
-}
-/* line 39, ../../styles/components/_panels.scss */
-.sidebar__heading h2 {
-  font-size: 1.6rem;
-  font-weight: 600;
-  margin: 0;
-  padding: 0;
-}
-
-/* line 47, ../../styles/components/_panels.scss */
-.sidebar__body {
-  position: relative;
-}
-/* line 49, ../../styles/components/_panels.scss */
-.sidebar__body > div {
-  border-top: 1px solid #f6f6f6;
-  padding: 6px 4px;
-}
-/* line 53, ../../styles/components/_panels.scss */
-.sidebar__body .form-group {
-  padding: 4px 8px;
-}
-/* line 56, ../../styles/components/_panels.scss */
-.sidebar__body input[type="text"].form-control {
-  border: 1px solid #e2e2e2;
-  -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px inset;
-  -webkit-box-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px inset;
-  box-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px inset;
-}
-/* line 60, ../../styles/components/_panels.scss */
-.sidebar__body .input-group-btn button {
-  border: 1px solid #e2e2e2 !important;
-  color: #bbbbbb;
-}
-
-/* line 66, ../../styles/components/_panels.scss */
-.sidebar__icon {
-  color: #797979;
-  width: 15%;
-}
-
-/* line 71, ../../styles/components/_panels.scss */
-.sidebar__value {
-  color: #222222;
-  position: absolute;
-  right: 8px;
-}
-
-/* line 2, ../../styles/_layout.scss */
-main h1 {
-  margin-top: 15px;
-}
-/* line 5, ../../styles/_layout.scss */
-main.col-md-9 h1 {
-  margin-top: 0;
-}
-
-/* line 2, ../../styles/pages/_sequenceFile.scss */
-.sequenceFile main > div {
-  margin-top: 10px;
-}
-/* line 5, ../../styles/pages/_sequenceFile.scss */
-.sequenceFile .col-md-8 h2 {
-  font-size: 18px;
-  margin: 0;
-}
-/* line 9, ../../styles/pages/_sequenceFile.scss */
-.sequenceFile a img {
-  border: 4px solid #d9edf7;
-  border-radius: 4px;
-}
-/* line 13, ../../styles/pages/_sequenceFile.scss */
-.sequenceFile .col-md-4 img {
-  width: 100%;
-}
-
-/* line 1, ../../styles/pages/_remoteApi.scss */
-iframe.remote-api-frame {
-  border: none;
-  width: 100%;
-  height: 400px;
-}
-
-/* line 19, ../../styles/main.scss */
-.login__links a {
-  margin-top: 10px;
-  display: block;
-}
-
-/* line 25, ../../styles/main.scss */
-.clickable {
-  display: block;
-  cursor: pointer;
-}
-/* line 28, ../../styles/main.scss */
-.clickable span {
-  display: inline-block;
-}
-
-/* line 33, ../../styles/main.scss */
-.nav-tabs li {
-  cursor: pointer;
-}
-
-/* line 38, ../../styles/main.scss */
-#table-filter {
-  padding: 0;
-}
-/* line 40, ../../styles/main.scss */
-#table-filter > div {
-  padding: 20px;
-}
-/* line 43, ../../styles/main.scss */
-#table-filter .filter-btns > button {
-  margin-top: 33px;
-}
-
-/* line 48, ../../styles/main.scss */
-.selected__counts {
-  color: white !important;
-  border-radius: 4px;
-  padding: 4px 8px 6px 8px;
-  margin: 5px;
-  background-color: rgba(0, 0, 0, 0.5);
-  border-top: 1px solid rgba(0, 0, 0, 0.4);
-}
-
-/* line 57, ../../styles/main.scss */
-.nav, .pagination, .carousel, .panel-title a {
-  cursor: pointer;
-}
-
-/* line 59, ../../styles/main.scss */
-.irida-notifications {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 300px;
-  padding: 1rem;
-}
-
-/* line 67, ../../styles/main.scss */
-.irida-notification__item {
-  opacity: .9;
-  background-color: #96b1c4;
-  margin-bottom: 1rem;
-  padding: 1rem;
-  border-radius: 4px;
-  transition: all 500ms linear;
-}
-/* line 75, ../../styles/main.scss */
-.irida-notification__item .progress, .irida-notification__item .progress-bar {
-  height: 10px;
-  margin-bottom: 0;
-}
-/* line 80, ../../styles/main.scss */
-.irida-notification__item p {
-  color: #222;
-  font-size: .8em;
-}
-/* line 85, ../../styles/main.scss */
-.irida-notification__item:hover {
-  opacity: 1;
-  cursor: pointer;
-}
-/* line 90, ../../styles/main.scss */
-.irida-notification__item.error {
-  background-color: #d9534f;
-}
-/* line 92, ../../styles/main.scss */
-.irida-notification__item.error p {
-  color: #fff;
-}
-/* line 97, ../../styles/main.scss */
-.irida-notification__item.success {
-  background-color: #5cb85c;
-}
-/* line 101, ../../styles/main.scss */
-.irida-notification__item.remove {
-  opacity: 0;
-}
-
-/* line 106, ../../styles/main.scss */
-.breadcrumbs {
-  padding-bottom: 15px;
-}
-
-/* line 110, ../../styles/main.scss */
-.breadcrumbs > div {
-  background-color: orange;
-}
-
-/* line 114, ../../styles/main.scss */
-.breadcrumbs ol {
-  list-style: none;
-  overflow: hidden;
-  padding: 0;
-}
-
-/* line 119, ../../styles/main.scss */
-.breadcrumbs li {
-  float: left;
-}
-
-/* line 122, ../../styles/main.scss */
-.breadcrumbs li a {
-  color: white;
-  text-decoration: none;
-  padding: 10px 0 10px 55px;
-  background: brown;
-  /* fallback color */
-  background: #a5630d;
-  position: relative;
-  display: block;
-  float: left;
-}
-
-/* line 132, ../../styles/main.scss */
-.breadcrumbs li a:after {
-  content: " ";
-  display: block;
-  width: 0;
-  height: 0;
-  border-top: 50px solid transparent;
-  /* Go big on the size, and let overflow hide */
-  border-bottom: 50px solid transparent;
-  border-left: 30px solid #a5630d;
-  position: absolute;
-  top: 50%;
-  margin-top: -50px;
-  left: 100%;
-  z-index: 2;
-}
-
-/* line 146, ../../styles/main.scss */
-.breadcrumbs li a:before {
-  content: " ";
-  display: block;
-  width: 0;
-  height: 0;
-  border-top: 50px solid transparent;
-  /* Go big on the size, and let overflow hide */
-  border-bottom: 50px solid transparent;
-  border-left: 30px solid white;
-  position: absolute;
-  top: 50%;
-  margin-top: -50px;
-  margin-left: 1px;
-  left: 100%;
-  z-index: 1;
-}
-
-/* line 161, ../../styles/main.scss */
-.breadcrumbs li:first-child a {
-  padding-left: 10px;
-}
-
-/* line 164, ../../styles/main.scss */
-.breadcrumbs li:nth-child(2) a {
-  background: #d48011;
-}
-
-/* line 165, ../../styles/main.scss */
-.breadcrumbs li:nth-child(2) a:after {
-  border-left-color: #d48011;
-}
-
-/* line 166, ../../styles/main.scss */
-.breadcrumbs li:nth-child(3) a {
-  background: #ee992b;
-}
-
-/* line 167, ../../styles/main.scss */
-.breadcrumbs li:nth-child(3) a:after {
-  border-left-color: #ee992b;
-}
-
-/* line 168, ../../styles/main.scss */
-.breadcrumbs li:nth-child(4) a {
-  background: #f2b05a;
-}
-
-/* line 169, ../../styles/main.scss */
-.breadcrumbs li:nth-child(4) a:after {
-  border-left-color: #f2b05a;
-}
-
-/* line 170, ../../styles/main.scss */
-.breadcrumbs li:nth-child(5) a {
-  background: #f5c689;
-}
-
-/* line 171, ../../styles/main.scss */
-.breadcrumbs li:nth-child(5) a:after {
-  border-left-color: #f5c689;
-}
-
-/* line 172, ../../styles/main.scss */
-.breadcrumbs li:last-child a {
-  background: white !important;
-  color: black;
-  pointer-events: none;
-  cursor: default;
-}
-
-/* line 178, ../../styles/main.scss */
-.breadcrumbs li:last-child a:after {
-  border: 0;
-}
-
-/* line 179, ../../styles/main.scss */
-.breadcrumbs li a:hover {
-  background: #76470a;
-}
-
-/* line 180, ../../styles/main.scss */
-.breadcrumbs li a:hover:after {
-  border-left-color: #76470a !important;
-}
+Backtrace:
+/Users/josh/IRIDA/irida-ui/./src/main/webapp/styles/main.scss:137
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/scss/parser.rb:1163:in `expected'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/scss/parser.rb:1099:in `expected'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/scss/static_parser.rb:21:in `parse_selector'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/tree/visitors/perform.rb:414:in `visit_rule'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/tree/visitors/base.rb:36:in `visit'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/tree/visitors/perform.rb:158:in `block in visit'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/stack.rb:79:in `block in with_base'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/stack.rb:115:in `with_frame'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/stack.rb:79:in `with_base'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/tree/visitors/perform.rb:158:in `visit'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/tree/visitors/base.rb:52:in `block in visit_children'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/tree/visitors/base.rb:52:in `map'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/tree/visitors/base.rb:52:in `visit_children'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/tree/visitors/perform.rb:167:in `block in visit_children'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/tree/visitors/perform.rb:179:in `with_environment'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/tree/visitors/perform.rb:166:in `visit_children'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/tree/visitors/base.rb:36:in `block in visit'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/tree/visitors/perform.rb:186:in `visit_root'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/tree/visitors/base.rb:36:in `visit'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/tree/visitors/perform.rb:157:in `visit'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/tree/visitors/perform.rb:8:in `visit'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/tree/root_node.rb:36:in `css_tree'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/tree/root_node.rb:20:in `render'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/engine.rb:268:in `render'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/plugin/compiler.rb:491:in `update_stylesheet'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/plugin/compiler.rb:215:in `block in update_stylesheets'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/plugin/compiler.rb:209:in `each'
+/Library/Ruby/Gems/2.0.0/gems/sass-3.4.8/lib/sass/plugin/compiler.rb:209:in `update_stylesheets'
+/Library/Ruby/Gems/2.0.0/gems/compass-1.0.1/lib/compass/sass_compiler.rb:40:in `compile!'
+/Library/Ruby/Gems/2.0.0/gems/compass-1.0.1/lib/compass/commands/update_project.rb:49:in `perform'
+/Library/Ruby/Gems/2.0.0/gems/compass-1.0.1/lib/compass/commands/base.rb:18:in `execute'
+/Library/Ruby/Gems/2.0.0/gems/compass-1.0.1/lib/compass/commands/project_base.rb:19:in `execute'
+/Library/Ruby/Gems/2.0.0/gems/compass-1.0.1/lib/compass/exec/sub_command_ui.rb:43:in `perform!'
+/Library/Ruby/Gems/2.0.0/gems/compass-1.0.1/lib/compass/exec/sub_command_ui.rb:15:in `run!'
+/Library/Ruby/Gems/2.0.0/gems/compass-1.0.1/bin/compass:30:in `block in <top (required)>'
+/Library/Ruby/Gems/2.0.0/gems/compass-1.0.1/bin/compass:44:in `call'
+/Library/Ruby/Gems/2.0.0/gems/compass-1.0.1/bin/compass:44:in `<top (required)>'
+/usr/bin/compass:23:in `load'
+/usr/bin/compass:23:in `<main>'
+*/
+body:before {
+  white-space: pre;
+  font-family: monospace;
+  content: "Error: Invalid CSS after \"...rumbs li a:afte\": expected selector, was \"`r\"\A         on line 137 of /Users/josh/IRIDA/irida-ui/./src/main/webapp/styles/main.scss\A \A 132:   background: hsla(34,85%,35%,1);\A 133:   position: relative;\A 134:   display: block;\A 135:   float: left;\A 136: }\A 137: .breadcrumbs li a:afte`r {\A 138:   content: \" \";\A 139:   display: block;\A 140:   width: 0;\A 141:   height: 0;\A 142:   border-top: 50px solid transparent;           /* Go big on the size, and let overflow hide */"; }

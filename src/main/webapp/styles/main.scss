@@ -111,6 +111,11 @@
   background-color: orange;
 }
 
+.breadcrumbs .container {
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+
 .breadcrumbs ol {
   list-style: none;
   overflow: hidden;
@@ -129,7 +134,7 @@
   display: block;
   float: left;
 }
-.breadcrumbs li a:after {
+.breadcrumbs li a:afte`r {
   content: " ";
   display: block;
   width: 0;
