@@ -85,7 +85,9 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 * @param file
 	 *            One side of the file pair
 	 * @return The other side of the file pair
+	 * @throws EntityNotFoundException
+	 *             If a pair cannot be found
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#file, 'canReadSequenceFile')")
-	public SequenceFile getPairForSequenceFile(SequenceFile file);
+	public SequenceFile getPairForSequenceFile(SequenceFile file) throws EntityNotFoundException;
 }
