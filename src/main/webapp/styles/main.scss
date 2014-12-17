@@ -103,16 +103,13 @@
   }
 }
 
+$breadcrumb-color: lighten($color-primary, 5%);
 .breadcrumbs {
-  padding-bottom: 15px;
-}
-
-.breadcrumbs > div {
-  background-color: orange;
+  background-color: $breadcrumb-color;
 }
 
 .breadcrumbs .container {
-  padding-bottom: 0 !important;
+  padding: 0 !important;
   margin-bottom: 0 !important;
 }
 
@@ -120,28 +117,27 @@
   list-style: none;
   overflow: hidden;
   padding: 0;
+  margin-bottom: 0;
 }
 .breadcrumbs li {
   float: left;
 }
 .breadcrumbs li a {
-  color: white;
+  color: #ffffff;
   text-decoration: none;
-  padding: 10px 0 10px 55px;
-  background: brown;                   /* fallback color */
-  background: hsla(34,85%,35%,1);
+  padding: 5px 0 5px 55px;
   position: relative;
   display: block;
   float: left;
 }
-.breadcrumbs li a:afte`r {
+.breadcrumbs li a:after {
   content: " ";
   display: block;
   width: 0;
   height: 0;
-  border-top: 50px solid transparent;           /* Go big on the size, and let overflow hide */
+  border-top: 50px solid transparent;
   border-bottom: 50px solid transparent;
-  border-left: 30px solid hsla(34,85%,35%,1);
+  border-left: 30px solid $breadcrumb-color;
   position: absolute;
   top: 50%;
   margin-top: -50px;
@@ -153,33 +149,35 @@
   display: block;
   width: 0;
   height: 0;
-  border-top: 50px solid transparent;           /* Go big on the size, and let overflow hide */
+  border-top: 50px solid transparent;
   border-bottom: 50px solid transparent;
-  border-left: 30px solid white;
+  border-left: 30px solid #ffffff;
   position: absolute;
   top: 50%;
   margin-top: -50px;
-  margin-left: 1px;
+  margin-left: 0px;
   left: 100%;
   z-index: 1;
 }
 .breadcrumbs li:first-child a {
-  padding-left: 10px;
+  padding-left: 2em;
 }
-.breadcrumbs li:nth-child(2) a       { background:        hsla(34,85%,45%,1); }
-.breadcrumbs li:nth-child(2) a:after { border-left-color: hsla(34,85%,45%,1); }
-.breadcrumbs li:nth-child(3) a       { background:        hsla(34,85%,55%,1); }
-.breadcrumbs li:nth-child(3) a:after { border-left-color: hsla(34,85%,55%,1); }
-.breadcrumbs li:nth-child(4) a       { background:        hsla(34,85%,65%,1); }
-.breadcrumbs li:nth-child(4) a:after { border-left-color: hsla(34,85%,65%,1); }
-.breadcrumbs li:nth-child(5) a       { background:        hsla(34,85%,75%,1); }
-.breadcrumbs li:nth-child(5) a:after { border-left-color: hsla(34,85%,75%,1); }
+
+$loop-color: $breadcrumb-color;
+@for $i from 2 to 6 {
+  $loop-color: lighten($loop-color, 10%);
+  .breadcrumbs li:nth-child(#{$i}) a { background-color: $loop-color }
+  .breadcrumbs li:nth-child(#{$i}) a:after { border-left-color: $loop-color }
+}
+
 .breadcrumbs li:last-child a {
-  background: white !important;
-  color: black;
   pointer-events: none;
   cursor: default;
+  background-color: #ffffff;
+  color: $color-text;
+  border-color: white;
 }
-.breadcrumbs li:last-child a:after { border: 0; }
-.breadcrumbs li a:hover { background: hsla(34,85%,25%,1); }
-.breadcrumbs li a:hover:after { border-left-color: hsla(34,85%,25%,1) !important; }
+
+.breadcrumbs li:last-child a:after { border: 0; border-left-color: #ffffff!important; }
+.breadcrumbs li a:hover { background: $color-primary; }
+.breadcrumbs li a:hover:after { border-left-color: $color-primary !important; }
