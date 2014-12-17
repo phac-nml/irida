@@ -23,12 +23,10 @@ import com.google.common.collect.ImmutableMap;
 public class LoginController extends BaseController {
 	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 	private static final String WET_BOEW_THEME = "wet";
-	// This is set in the resources/configuration.properties file.
-	private @Value("${session.max.timeout}") int SESSION_TIMEOUT;
-	private @Value("${ui.theme}") String theme;
 	private static final String SPLASH_PAGE = "themes/wet/splash";
-	private static final String LOGIN_PAGE =  "login";
-
+	private static final String LOGIN_PAGE = "login";
+	// This is set in the resources/configuration.properties file.
+	private @Value("${ui.theme}") String theme;
 
 	@RequestMapping(value = "/")
 	public String showSplash() {
