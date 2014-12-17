@@ -235,7 +235,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public void removeSampleFromProject(Project project, Sample sample) {
 		psjRepository.removeSampleFromProject(project, sample);
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 */

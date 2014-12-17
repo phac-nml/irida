@@ -32,8 +32,8 @@
 	<user id="6" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
 		email="sequencer@nowhere.com" firstName="Seq" lastName="Uencer"
 		password="$2a$10$rgdnCrrAqN11Hz03mcGCg.R9gZehmEcyLC3kUGQJ1fEBlF9ld.4v."
-		phoneNumber="867-5309" username="sequencer" enabled="true"
-		system_role="ROLE_SEQUENCER" credentialsNonExpired="true" />
+		phoneNumber="867-5309" username="sequencer" enabled="true" system_role="ROLE_SEQUENCER"
+		credentialsNonExpired="true" />
 	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project" />
 	<project id="2" createdDate="2013-07-18 14:20:19.0" name="project2" />
 	<project id="3" createdDate="2013-07-18 14:20:19.0" name="project3" />

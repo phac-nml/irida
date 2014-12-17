@@ -288,6 +288,7 @@ public class ProjectServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "sequencer", roles = "SEQUENCER")
+
 	public void testReadProjectAsSequencerRole() {
 		projectService.read(1L);
 	}
