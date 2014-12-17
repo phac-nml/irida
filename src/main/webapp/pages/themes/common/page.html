@@ -86,7 +86,7 @@
 							$interval.cancel(countdown);
 							$timeout.cancel(restartTimeout);
 							$timeout.cancel(timeout);
-							$http.get(TL.BASE_URL + "login/poke").success(function () {
+							$http.head($window.location.href).success(function () {
 								start();
 								$modalInstance.close();
 							});

@@ -58,11 +58,6 @@ public class LoginController extends BaseController {
 		}
 	}
 
-	@RequestMapping("/login/poke")
-	public @ResponseBody Map<String, Object> pokeSession() {
-		return ImmutableMap.of("success", true);
-	}
-
 	private boolean isAuthenticated() {
 		return SecurityContextHolder.getContext().getAuthentication() instanceof UsernamePasswordAuthenticationToken;
 
