@@ -76,36 +76,41 @@
 			var modalWait = 120000, // 2 minutes
 			    initialWait = TL.SESSION_LENGTH * 1000 - modalWait + 500, // Give a little overlap
 			    timeout,
-			    restartTimeout;
+			    restartTimeout,
+				opened = false;
 
 			function _restart() {
-				$modal.open({
-					templateUrl: '/session-modal.html',
-					controller : ['$scope', '$http', '$window', '$modalInstance', function ($scope, $http, $window, $modalInstance) {
-						$scope.poke = function () {
-							$interval.cancel(countdown);
-							$timeout.cancel(restartTimeout);
-							$timeout.cancel(timeout);
-							$http.head($window.location.href).success(function () {
-								start();
-								$modalInstance.close();
-							});
-						};
+				if (!opened) {
+					opened = true;
+					$modal.open({
+						templateUrl: '/session-modal.html',
+						controller : ['$scope', '$http', '$window', '$modalInstance', function ($scope, $http, $window, $modalInstance) {
+							$scope.poke = function () {
+								$interval.cancel(countdown);
+								$timeout.cancel(restartTimeout);
+								$timeout.cancel(timeout);
+								$http.head($window.location.href).success(function () {
+									start();
+									opened = false;
+									$modalInstance.close();
+								});
+							};
 
-						$scope.logout = function () {
-							$window.location = TL.BASE_URL + "logout";
-						};
+							$scope.logout = function () {
+								$window.location = TL.BASE_URL + "logout";
+							};
 
-						$scope.timeleft = modalWait;
-						var countdown = $interval(function () {
-							$scope.timeleft = $scope.timeleft - 1000;
-						}, 1000);
+							$scope.timeleft = modalWait;
+							var countdown = $interval(function () {
+								$scope.timeleft = $scope.timeleft - 1000;
+							}, 1000);
 
-						restartTimeout = $timeout(function () {
-							$window.location.reload();
-						}, modalWait);
-					}]
-				});
+							restartTimeout = $timeout(function () {
+								$window.location.reload();
+							}, modalWait);
+						}]
+					});
+				}
 			}
 
 			function start() {
