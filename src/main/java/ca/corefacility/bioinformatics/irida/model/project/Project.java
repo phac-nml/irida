@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.model.project;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -11,11 +12,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -31,7 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaProject;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
-import ca.corefacility.bioinformatics.irida.model.project.library.LibraryDescription;
+import ca.corefacility.bioinformatics.irida.model.project.library.ProjectLibraryDescriptionJoin;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.model.user.Organization;
 
@@ -87,10 +86,9 @@ public class Project implements IridaThing, IridaProject, Comparable<Project> {
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	private Organization organization;
-	
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "default_library_description")
-	private LibraryDescription defaultLibraryDescription;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, mappedBy = "")
+	private Set<ProjectLibraryDescriptionJoin> libraryDescriptions;
 
 	private String organism;
 

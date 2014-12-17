@@ -10,8 +10,11 @@
 	<sequence_file_properties />
 	<system_role />
 	<user />
+	
 	<project />
 	<related_project />
+	
+	<library_description />
 
 	<remote_workflow />
 	<remote_workflow_phylogenomics />
@@ -49,7 +52,7 @@
 	<logicalGroup />
 	<user_group />
 	<project_referencefile />
-	<library_description />
+	<project_library_description />
 
 	<project_event />
 
@@ -108,4 +111,5 @@
 	<analysis_output_file_AUD />
 	<remote_related_project_AUD />
 	<library_description_AUD />
+	<project_library_description_AUD />
 </dataset>

@@ -36,9 +36,11 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.library.LibraryDescription;
+import ca.corefacility.bioinformatics.irida.model.project.library.ProjectLibraryDescriptionJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.LibraryDescriptionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectLibraryDescriptionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
@@ -69,6 +71,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final ReferenceFileRepository referenceFileRepository;
 	private final ProjectReferenceFileJoinRepository prfjRepository;
 	private final SequenceFileUtilities sequenceFileUtilities;
+	private final ProjectLibraryDescriptionRepository projectLibraryDescriptionRepository;
 	private final LibraryDescriptionRepository libraryDescriptionRepository;
 
 	@Autowired
@@ -76,8 +79,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
 			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository,
-			SequenceFileUtilities sequenceFileUtilities, LibraryDescriptionRepository libraryDescriptionRepository,
-			Validator validator) {
+			SequenceFileUtilities sequenceFileUtilities,
+			ProjectLibraryDescriptionRepository projectLibraryDescriptionRepository,
+			LibraryDescriptionRepository libraryDescriptionRepository, Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.sampleRepository = sampleRepository;
 		this.userRepository = userRepository;
@@ -87,6 +91,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.referenceFileRepository = referenceFileRepository;
 		this.prfjRepository = prfjRepository;
 		this.sequenceFileUtilities = sequenceFileUtilities;
+		this.projectLibraryDescriptionRepository = projectLibraryDescriptionRepository;
 		this.libraryDescriptionRepository = libraryDescriptionRepository;
 	}
 
@@ -230,7 +235,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public void removeSampleFromProject(Project project, Sample sample) {
 		psjRepository.removeSampleFromProject(project, sample);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -331,6 +336,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional
 	public void removeRelatedProject(Project subject, Project relatedProject) {
 		RelatedProjectJoin relatedProjectJoin = relatedProjectRepository.getRelatedProjectJoin(subject, relatedProject);
 		removeRelatedProject(relatedProjectJoin);
@@ -345,6 +351,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	}
 
 	@Override
+	@Transactional
 	public Join<Project, ReferenceFile> addReferenceFileToProject(Project project, ReferenceFile referenceFile) {
 		// calculate the file length
 		Long referenceFileLength = sequenceFileUtilities.countSequenceFileLengthInBases(referenceFile.getFile());
@@ -378,17 +385,41 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	public LibraryDescription addLibraryDescriptionToProject(final Project project,
-			final LibraryDescription libraryDescription) {
-		libraryDescription.setProject(project);
-		return libraryDescriptionRepository.save(libraryDescription);
+	@Transactional(readOnly = true)
+	public Set<Join<Project, LibraryDescription>> findLibraryDescriptionsForProject(final Project project) {
+		return projectLibraryDescriptionRepository.findByProject(project);
+	}
+
+	@Transactional(readOnly = true)
+	public Join<Project, LibraryDescription> findDefaultLibraryDescriptionForProject(final Project project) {
+		return projectLibraryDescriptionRepository.findDefaultLibraryDescriptionForProject(project);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<LibraryDescription> findLibraryDescriptionsForProject(final Project project) {
-		return libraryDescriptionRepository.findByProject(project);
+	@Transactional
+	public Join<Project, LibraryDescription> addLibraryDescriptionToProject(final Project project,
+			LibraryDescription libraryDescription, final Boolean makeDefault) {
+		if (libraryDescription.getId() == null) {
+			libraryDescription = libraryDescriptionRepository.save(libraryDescription);
+		}
+
+		// only one library description should be the default, so if we're
+		// setting a new default library description, we need to remove any
+		// existing default library descriptions first.
+		if (makeDefault) {
+			projectLibraryDescriptionRepository.unsetDefaultLibraryDescriptionForProject(project);
+		}
+
+		try {
+			return projectLibraryDescriptionRepository.save(new ProjectLibraryDescriptionJoin(project,
+					libraryDescription, makeDefault));
+		} catch (DataIntegrityViolationException e) {
+			throw new EntityExistsException("Project " + project.getLabel() + " is already related to "
+					+ libraryDescription.getLabel(), e);
+		}
+
 	}
 }

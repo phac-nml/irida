@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.project.library;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
@@ -33,6 +35,18 @@ public class Layout {
 	public Layout(final Integer readLengths, final LayoutType layoutType) {
 		this.readLengths = readLengths;
 		this.layoutType = layoutType;
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (o == this) {
+			return true;
+		} else if (o instanceof Layout) {
+			final Layout l = (Layout) o;
+			return Objects.equals(readLengths, l.readLengths) && Objects.equals(layoutType, l.layoutType);
+		}
+
+		return false;
 	}
 
 	public Integer getReadLengths() {

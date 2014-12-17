@@ -72,12 +72,18 @@
 	<library_description id="1" comment="comment"
 		created_date="2013-07-18 14:20:19.0" layout_type="PAIRED_END"
 		read_lengths="100" source="METAGENOMIC" max_insert_size="1000"
-		min_insert_size="1000" mode_insert_size="1000" protocol="This is one crazy protocol."
-		project_id="2" />
-	
+		min_insert_size="1000" mode_insert_size="1000" protocol="This is one crazy protocol." />
+
 	<library_description id="2" comment="comment"
 		created_date="2013-07-18 14:20:19.0" layout_type="PAIRED_END"
 		read_lengths="100" source="METAGENOMIC" max_insert_size="1000"
-		min_insert_size="1000" mode_insert_size="1000" protocol="This is one crazy protocol."
-		project_id="7" />
+		min_insert_size="1000" mode_insert_size="1000" protocol="This is one crazy protocol." />
+
+	<project_library_description id="1"
+		created_date="2013-07-18 14:20:19.0" project_id="2"
+		library_description_id="1" default_library_description="false" />
+
+	<project_library_description id="2"
+		created_date="2013-07-18 14:20:19.0" project_id="7"
+		library_description_id="2" default_library_description="false" />
 </dataset>

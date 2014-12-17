@@ -1,21 +1,18 @@
 package ca.corefacility.bioinformatics.irida.model.project.library;
 
 import java.util.Date;
+import java.util.Objects;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -28,7 +25,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
 
 /**
  * An experiment object to capture experiment metadata about how a
@@ -74,10 +70,6 @@ public class LibraryDescription implements IridaThing {
 	@NotNull
 	private final Layout layout;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH, optional = false)
-	@JoinColumn(name = "project_id")
-	private Project project;
-
 	/**
 	 * For hibernate.
 	 */
@@ -94,6 +86,25 @@ public class LibraryDescription implements IridaThing {
 		this.source = source;
 		this.strategy = strategy;
 		this.layout = layout;
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (o == this) {
+			return true;
+		} else if (o instanceof LibraryDescription) {
+			final LibraryDescription ld = (LibraryDescription) o;
+			return Objects.equals(createdDate, ld.createdDate) && Objects.equals(modifiedDate, ld.modifiedDate)
+					&& Objects.equals(comment, ld.comment) && Objects.equals(source, ld.source)
+					&& Objects.equals(strategy, ld.strategy) && Objects.equals(layout, ld.layout);
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(createdDate, modifiedDate, comment, source, strategy, layout);
 	}
 
 	@Override
@@ -144,14 +155,6 @@ public class LibraryDescription implements IridaThing {
 
 	public void setComment(String comment) {
 		this.comment = comment;
-	}
-
-	public Project getProject() {
-		return this.project;
-	}
-
-	public void setProject(Project project) {
-		this.project = project;
 	}
 
 	public static enum Source {

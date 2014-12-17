@@ -288,7 +288,6 @@ public class ProjectServiceImplIT {
 
 	@Test
 	@WithMockUser(username = "sequencer", roles = "SEQUENCER")
-
 	public void testReadProjectAsSequencerRole() {
 		projectService.read(1L);
 	}
@@ -589,8 +588,8 @@ public class ProjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testCreateLibraryDescriptionAsAdmin() {
-		final LibraryDescription ld = projectService.addLibraryDescriptionToProject(projectService.read(1L),
-				createLibraryDescription());
+		final Join<Project, LibraryDescription> ld = projectService.addLibraryDescriptionToProject(
+				projectService.read(1L), createLibraryDescription());
 
 		assertNotNull("Should have created the library description with a new id.", ld.getId());
 	}
@@ -598,8 +597,8 @@ public class ProjectServiceImplIT {
 	@Test
 	@WithMockUser(username = "user1", roles = "USER")
 	public void testCreateLibraryDescriptionAsProjectOwner() {
-		final LibraryDescription ld = projectService.addLibraryDescriptionToProject(projectService.read(2L),
-				createLibraryDescription());
+		final Join<Project, LibraryDescription> ld = projectService.addLibraryDescriptionToProject(
+				projectService.read(2L), createLibraryDescription());
 		assertNotNull("Should have created the library description with a new id.", ld.getId());
 	}
 
@@ -607,16 +606,69 @@ public class ProjectServiceImplIT {
 	@WithMockUser(username = "user1", roles = "USER")
 	public void testFindLibraryDescriptionsForProjectAsProjectOwner() {
 		final Project p = projectService.read(2L);
-		final Set<LibraryDescription> libraryDescriptions = projectService.findLibraryDescriptionsForProject(p);
+		final Set<Join<Project, LibraryDescription>> libraryDescriptions = projectService
+				.findLibraryDescriptionsForProject(p);
 		assertEquals("Should only be one library description.", 1, libraryDescriptions.size());
 	}
-	
+
 	@Test
 	@WithMockUser(username = "user2", roles = "USER")
 	public void testFindLibraryDescriptionsForProjectAsProjectUser() {
 		final Project p = projectService.read(7L);
-		final Set<LibraryDescription> libraryDescriptions = projectService.findLibraryDescriptionsForProject(p);
+		final Set<Join<Project, LibraryDescription>> libraryDescriptions = projectService
+				.findLibraryDescriptionsForProject(p);
 		assertEquals("Should only be one library description.", 1, libraryDescriptions.size());
+	}
+
+	@Test
+	@WithMockUser(username = "user1", roles = "USER")
+	public void testFindDefaultLibraryDescriptionForProjectAsUser() {
+		final Project p = projectService.read(2L);
+		final LibraryDescription ld = createLibraryDescription();
+		projectService.addDefaultLibraryDescriptionToProject(p, ld);
+		final Join<Project, LibraryDescription> libraryDescription = projectService
+				.findDefaultLibraryDescriptionForProject(p);
+		assertNotNull("Should be a library description for project 7.", libraryDescription);
+		assertEquals("Default library description should be the one that's specified.", ld,
+				libraryDescription.getObject());
+	}
+	
+	@Test(expected = EntityExistsException.class)
+	@WithMockUser(username = "user1", roles = "USER")
+	public void testAddSameLibraryDescriptionTwice() {
+		final Project p = projectService.read(2L);
+		final LibraryDescription ld = createLibraryDescription();
+		projectService.addLibraryDescriptionToProject(p, ld);
+		final Join<Project, LibraryDescription> j = projectService.findLibraryDescriptionsForProject(p).iterator().next();
+		projectService.addLibraryDescriptionToProject(p, j.getObject());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", roles = "USER")
+	public void testAddTwoDefaultLibraryDescriptions() {
+		final Project p = projectService.read(2L);
+		final LibraryDescription ld1 = createLibraryDescription();
+		final LibraryDescription ld2 = createLibraryDescription();
+		ld2.setComment("This is a different comment.");
+		assertNotEquals("the two library descriptions should not be equal.", ld1, ld2);
+		projectService.addDefaultLibraryDescriptionToProject(p, ld1);
+		projectService.addDefaultLibraryDescriptionToProject(p, ld2);
+		final Join<Project, LibraryDescription> defaultLibraryDescription = projectService.findDefaultLibraryDescriptionForProject(p);
+		assertEquals("The default library description should be the second one added.", ld2, defaultLibraryDescription.getObject());
+	}
+	
+	@Test
+	@WithMockUser(username = "user1", roles = "USER")
+	public void testAddNoDefaultLibraryDescriptions() {
+		final Project p = projectService.read(2L);
+		final LibraryDescription ld1 = createLibraryDescription();
+		final LibraryDescription ld2 = createLibraryDescription();
+		ld2.setComment("This is a different comment.");
+		assertNotEquals("the two library descriptions should not be equal.", ld1, ld2);
+		projectService.addLibraryDescriptionToProject(p, ld1);
+		projectService.addLibraryDescriptionToProject(p, ld2);
+		final Join<Project, LibraryDescription> defaultLibraryDescription = projectService.findDefaultLibraryDescriptionForProject(p);
+		
 	}
 
 	private LibraryDescription createLibraryDescription() {
