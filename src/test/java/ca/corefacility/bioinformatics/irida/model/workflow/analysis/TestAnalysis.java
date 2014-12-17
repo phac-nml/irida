@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
 import java.util.Set;
 
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
  * Class defining an analysis for testing purposes.

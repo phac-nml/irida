@@ -11,13 +11,13 @@ import java.util.UUID;
 
 import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -58,7 +58,7 @@ public class TestDataFactory {
 	}
 
 	/**
-	 * Construct a {@link ca.corefacility.bioinformatics.irida.model.SequenceFile}
+	 * Construct a {@link ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile}
 	 *
 	 * @return A fake sequence files with a randomly generated path.
 	 */
