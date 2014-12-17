@@ -386,3 +386,141 @@ iframe.remote-api-frame {
 .irida-notification__item.remove {
   opacity: 0;
 }
+
+/* line 106, ../../styles/main.scss */
+.breadcrumbs {
+  padding-bottom: 15px;
+}
+
+/* line 110, ../../styles/main.scss */
+.breadcrumbs > div {
+  background-color: orange;
+}
+
+/* line 114, ../../styles/main.scss */
+.breadcrumbs ol {
+  list-style: none;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* line 119, ../../styles/main.scss */
+.breadcrumbs li {
+  float: left;
+}
+
+/* line 122, ../../styles/main.scss */
+.breadcrumbs li a {
+  color: white;
+  text-decoration: none;
+  padding: 10px 0 10px 55px;
+  background: brown;
+  /* fallback color */
+  background: #a5630d;
+  position: relative;
+  display: block;
+  float: left;
+}
+
+/* line 132, ../../styles/main.scss */
+.breadcrumbs li a:after {
+  content: " ";
+  display: block;
+  width: 0;
+  height: 0;
+  border-top: 50px solid transparent;
+  /* Go big on the size, and let overflow hide */
+  border-bottom: 50px solid transparent;
+  border-left: 30px solid #a5630d;
+  position: absolute;
+  top: 50%;
+  margin-top: -50px;
+  left: 100%;
+  z-index: 2;
+}
+
+/* line 146, ../../styles/main.scss */
+.breadcrumbs li a:before {
+  content: " ";
+  display: block;
+  width: 0;
+  height: 0;
+  border-top: 50px solid transparent;
+  /* Go big on the size, and let overflow hide */
+  border-bottom: 50px solid transparent;
+  border-left: 30px solid white;
+  position: absolute;
+  top: 50%;
+  margin-top: -50px;
+  margin-left: 1px;
+  left: 100%;
+  z-index: 1;
+}
+
+/* line 161, ../../styles/main.scss */
+.breadcrumbs li:first-child a {
+  padding-left: 10px;
+}
+
+/* line 164, ../../styles/main.scss */
+.breadcrumbs li:nth-child(2) a {
+  background: #d48011;
+}
+
+/* line 165, ../../styles/main.scss */
+.breadcrumbs li:nth-child(2) a:after {
+  border-left-color: #d48011;
+}
+
+/* line 166, ../../styles/main.scss */
+.breadcrumbs li:nth-child(3) a {
+  background: #ee992b;
+}
+
+/* line 167, ../../styles/main.scss */
+.breadcrumbs li:nth-child(3) a:after {
+  border-left-color: #ee992b;
+}
+
+/* line 168, ../../styles/main.scss */
+.breadcrumbs li:nth-child(4) a {
+  background: #f2b05a;
+}
+
+/* line 169, ../../styles/main.scss */
+.breadcrumbs li:nth-child(4) a:after {
+  border-left-color: #f2b05a;
+}
+
+/* line 170, ../../styles/main.scss */
+.breadcrumbs li:nth-child(5) a {
+  background: #f5c689;
+}
+
+/* line 171, ../../styles/main.scss */
+.breadcrumbs li:nth-child(5) a:after {
+  border-left-color: #f5c689;
+}
+
+/* line 172, ../../styles/main.scss */
+.breadcrumbs li:last-child a {
+  background: white !important;
+  color: black;
+  pointer-events: none;
+  cursor: default;
+}
+
+/* line 178, ../../styles/main.scss */
+.breadcrumbs li:last-child a:after {
+  border: 0;
+}
+
+/* line 179, ../../styles/main.scss */
+.breadcrumbs li a:hover {
+  background: #76470a;
+}
+
+/* line 180, ../../styles/main.scss */
+.breadcrumbs li a:hover:after {
+  border-left-color: #76470a !important;
+}

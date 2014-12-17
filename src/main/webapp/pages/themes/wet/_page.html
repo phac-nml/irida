@@ -8,6 +8,7 @@
 	<div class="row">
 		<div th:replace="${themePath + 'partials/sitemenu'} :: menu-en">MENU</div>
 		<th:block layout:fragment="subnav"></th:block>
+		<th:block layout:fragment="breadcrumbs"></th:block>
 	</div>
 	<div class="row main-area" layout:fragment="page">
 	</div>
