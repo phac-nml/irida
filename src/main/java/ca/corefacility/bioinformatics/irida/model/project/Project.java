@@ -87,7 +87,7 @@ public class Project implements IridaThing, IridaProject, Comparable<Project> {
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	private Organization organization;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, mappedBy = "")
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, mappedBy = "project")
 	private Set<ProjectLibraryDescriptionJoin> libraryDescriptions;
 
 	private String organism;

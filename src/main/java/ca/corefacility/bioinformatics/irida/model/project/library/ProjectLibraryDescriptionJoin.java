@@ -33,8 +33,8 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
  *
  */
 @Entity
-@Table(name = "project_library_description", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id",
-		"library_description_id" }))
+@Table(name = "project_library_description", uniqueConstraints = @UniqueConstraint(name = "UK_PROJECT_LIBRARY_DESCRIPTION", columnNames = {
+		"project_id", "library_description_id" }))
 @Audited
 @EntityListeners(AuditingEntityListener.class)
 public class ProjectLibraryDescriptionJoin implements Join<Project, LibraryDescription> {
