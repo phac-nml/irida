@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -13,6 +14,7 @@ import javax.validation.Validator;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.core.task.TaskExecutor;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -89,5 +91,20 @@ public class SequenceFileServiceTest {
 		when(pairRepository.getPairForSequenceFile(file)).thenReturn(null);
 
 		sequenceFileService.getPairForSequenceFile(file);
+	}
+
+	@Test
+	public void testCreateSequenceFilePair() {
+		SequenceFile file1 = new SequenceFile(Paths.get("/file1"));
+		SequenceFile file2 = new SequenceFile(Paths.get("/file2"));
+
+		sequenceFileService.createSequenceFilePair(file1, file2);
+
+		ArgumentCaptor<SequenceFilePair> pairCaptor = ArgumentCaptor.forClass(SequenceFilePair.class);
+		verify(pairRepository).save(pairCaptor.capture());
+		SequenceFilePair pair = pairCaptor.getValue();
+
+		assertTrue(pair.getFiles().contains(file1));
+		assertTrue(pair.getFiles().contains(file2));
 	}
 }
