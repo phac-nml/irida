@@ -8,7 +8,15 @@
 	<div class="row">
 		<div th:replace="${themePath + 'partials/sitemenu'} :: menu-en">MENU</div>
 		<th:block layout:fragment="subnav"></th:block>
-		<th:block layout:fragment="breadcrumbs"></th:block>
+		<div th:if="${breadcrumbs}" class="breadcrumbs">
+			<div class="container">
+				<ol>
+					<li th:each="breadcrumb : ${breadcrumbs}">
+						<a th:href="@{${breadcrumb.url}}" th:text="${breadcrumb.text}"></a>
+					</li>
+				</ol>
+			</div>
+		</div>
 	</div>
 	<div class="row main-area" layout:fragment="page">
 	</div>

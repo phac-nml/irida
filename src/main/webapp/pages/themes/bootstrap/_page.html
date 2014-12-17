@@ -77,8 +77,16 @@
         <!-- /.container-fluid -->
     </nav>
     <th:block layout:fragment="subnav"></th:block>
-    <th:block layout:fragment="breadcrumbs"></th:block>
-    <div class="container">
+    <div th:if="${breadcrumbs}" class="breadcrumbs">
+        <div class="container">
+            <ol>
+                <li th:each="breadcrumb : ${breadcrumbs}">
+                    <a th:href="@{${breadcrumb.url}}" th:text="${breadcrumb.text}"></a>
+                </li>
+            </ol>
+        </div>
+    </div>
+    <div style="margin-top: 15px" class="container">
         <div class="row main-area" layout:fragment="page"></div>
     </div>
 </div>
