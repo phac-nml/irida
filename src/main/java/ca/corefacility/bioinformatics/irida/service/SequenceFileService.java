@@ -78,4 +78,13 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 */
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequenceFile')")
 	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException;
+
+	/**
+	 * Get the paired {@link SequenceFile} for the given {@link SequenceFile}
+	 * 
+	 * @param file
+	 * @return
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#file, 'canReadSequenceFile')")
+	public SequenceFile getPairForSequenceFile(SequenceFile file);
 }
