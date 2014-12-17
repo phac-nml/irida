@@ -17,7 +17,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.RemoteWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.RemoteWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;

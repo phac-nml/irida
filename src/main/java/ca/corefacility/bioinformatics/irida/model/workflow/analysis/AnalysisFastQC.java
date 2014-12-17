@@ -16,7 +16,7 @@ import org.hibernate.envers.Audited;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
  * Specific implementation of {@link Analysis} for storing properties created by

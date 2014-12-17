@@ -16,9 +16,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;

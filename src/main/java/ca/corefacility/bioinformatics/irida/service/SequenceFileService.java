@@ -12,10 +12,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
  * Service for managing {@link SequenceFile} entities.

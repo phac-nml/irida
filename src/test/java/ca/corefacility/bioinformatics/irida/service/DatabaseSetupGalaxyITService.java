@@ -19,10 +19,10 @@ import java.util.concurrent.TimeoutException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;

@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 
 import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
