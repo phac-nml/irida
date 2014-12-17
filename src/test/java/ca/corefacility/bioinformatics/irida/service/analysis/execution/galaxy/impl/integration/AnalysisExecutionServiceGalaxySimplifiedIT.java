@@ -162,8 +162,9 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
-		analysisExecutionServiceSimplified.prepareSubmission(analysisSubmission);
-		AnalysisSubmission analysisSubmitted = analysisSubmissionRepository.findOne(analysisSubmission.getId());
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionServiceSimplified
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
 
 		Future<AnalysisSubmission> analysisExecutedFuture = analysisExecutionServiceSimplified
 				.executeAnalysis(analysisSubmitted);
@@ -199,8 +200,9 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
-		analysisExecutionServiceSimplified.prepareSubmission(analysisSubmission);
-		AnalysisSubmission analysisSubmitted = analysisSubmissionRepository.findOne(analysisSubmission.getId());
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionServiceSimplified
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
 
 		analysisSubmitted.setRemoteWorkflowId(localGalaxy.getInvalidWorkflowId());
 		analysisSubmissionService.update(analysisSubmitted.getId(),
@@ -232,8 +234,9 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
-		analysisExecutionServiceSimplified.prepareSubmission(analysisSubmission);
-		AnalysisSubmission analysisSubmitted = analysisSubmissionRepository.findOne(analysisSubmission.getId());
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionServiceSimplified
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
 
 		analysisSubmitted.setRemoteAnalysisId("invalid");
 		analysisSubmissionService.update(analysisSubmitted.getId(), ImmutableMap.of("remoteAnalysisId", "invalid"));
@@ -342,10 +345,12 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 
 		Future<AnalysisSubmission> analysisSubmissionFuture = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
-		assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisState());
 		try {
 			analysisSubmissionFuture.get();
 		} catch (ExecutionException e) {
+			assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
+					.getAnalysisState());
+
 			// pull out real exception
 			throw e.getCause();
 		}

@@ -2,7 +2,8 @@ package ca.corefacility.bioinformatics.irida.config.analysis;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -11,9 +12,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.security.concurrent.DelegatingSecurityContextScheduledExecutorService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
@@ -43,7 +51,7 @@ import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.RolesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
-import com.google.common.util.concurrent.MoreExecutors;
+import com.google.common.collect.Lists;
 
 /**
  * Test configuration for AnalysisExecutionService classes.
@@ -95,14 +103,6 @@ public class AnalysisExecutionServiceTestConfig {
 	public AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics() {
 		return new AnalysisExecutionServicePhylogenomics(analysisSubmissionService, analysisService,
 				galaxyWorkflowService(), galaxyHistoriesService(), workspaceServicePhylogenomics());
-	}
-
-	/**
-	 * @return An {@link Executor} for executing analysis tasks.
-	 */
-	@Bean
-	public ExecutorService analysisTaskExecutor() {
-		return MoreExecutors.sameThreadExecutor();
 	}
 
 	@Lazy
@@ -162,6 +162,36 @@ public class AnalysisExecutionServiceTestConfig {
 	public GalaxyRoleSearch galaxyRoleSearch() {
 		RolesClient rolesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getRolesClient();
 		return new GalaxyRoleSearch(rolesClient, localGalaxy.getGalaxyURL());
+	}
+
+	/**
+	 * Builds a new Executor for scheduled tasks.
+	 * 
+	 * @return A new Executor for scheduled tasks.
+	 */
+	@Bean
+	public Executor analysisTaskExecutor() {
+		ScheduledExecutorService delegateExecutor = Executors.newSingleThreadScheduledExecutor();
+		SecurityContext schedulerContext = createSchedulerSecurityContext();
+		return new DelegatingSecurityContextScheduledExecutorService(delegateExecutor, schedulerContext);
+	}
+
+	/**
+	 * Creates a security context object for the scheduled tasks.
+	 * 
+	 * @return A {@link SecurityContext} for the scheduled tasks.
+	 */
+	private SecurityContext createSchedulerSecurityContext() {
+		SecurityContext context = SecurityContextHolder.createEmptyContext();
+
+		User admin = new User();
+		admin.setUsername("aaron");
+		Authentication adminAuthentication = new PreAuthenticatedAuthenticationToken(admin, null,
+				Lists.newArrayList(Role.ROLE_ADMIN));
+
+		context.setAuthentication(adminAuthentication);
+
+		return context;
 	}
 
 	@Lazy
