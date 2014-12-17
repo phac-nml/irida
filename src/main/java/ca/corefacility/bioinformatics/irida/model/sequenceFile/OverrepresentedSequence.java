@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model;
+package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -19,7 +19,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
 
 /**
  * A {@link SequenceFile} may have 0 or more over-represented sequences.

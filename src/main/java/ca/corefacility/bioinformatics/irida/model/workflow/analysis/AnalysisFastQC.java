@@ -15,7 +15,7 @@ import org.hibernate.envers.Audited;
 
 import com.google.common.collect.Sets;
 
-import ca.corefacility.bioinformatics.irida.model.OverrepresentedSequence;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
