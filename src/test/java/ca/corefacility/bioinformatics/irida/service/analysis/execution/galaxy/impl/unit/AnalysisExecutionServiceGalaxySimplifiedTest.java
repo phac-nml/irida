@@ -80,7 +80,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	private AnalysisSubmission analysisPreparing;
 	private AnalysisSubmission analysisPrepared;
 	private AnalysisSubmission analysisSubmitting;
-	private AnalysisSubmission analysisSubmitted;
+	private AnalysisSubmission analysisRunning;
 	private AnalysisSubmission analysisFinishedRunning;
 	private AnalysisSubmission analysisCompleting;
 	private AnalysisSubmission analysisCompleted;
@@ -114,7 +114,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 		analysisPreparing = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
 		analysisPrepared = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
 		analysisSubmitting = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisSubmitted = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisRunning = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
 		analysisFinishedRunning = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
 		analysisCompleting = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
 		analysisCompleted = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
@@ -152,20 +152,20 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 				analysisPrepared);
 
 		analysisSubmitting.setId(INTERNAL_ANALYSIS_ID);
-		analysisSubmitting.setAnalysisState(AnalysisState.SUBMITTED);
+		analysisSubmitting.setAnalysisState(AnalysisState.SUBMITTING);
 		analysisSubmitting.setRemoteAnalysisId(REMOTE_WORKFLOW_ID);
 		analysisSubmitting.setRemoteAnalysisId(ANALYSIS_ID);
 		when(
 				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID,
 						ImmutableMap.of("analysisState", AnalysisState.SUBMITTING))).thenReturn(analysisSubmitting);
 
-		analysisSubmitted.setId(INTERNAL_ANALYSIS_ID);
-		analysisSubmitted.setAnalysisState(AnalysisState.SUBMITTING);
-		analysisSubmitted.setRemoteAnalysisId(REMOTE_WORKFLOW_ID);
-		analysisSubmitted.setRemoteAnalysisId(ANALYSIS_ID);
+		analysisRunning.setId(INTERNAL_ANALYSIS_ID);
+		analysisRunning.setAnalysisState(AnalysisState.RUNNING);
+		analysisRunning.setRemoteAnalysisId(REMOTE_WORKFLOW_ID);
+		analysisRunning.setRemoteAnalysisId(ANALYSIS_ID);
 		when(
 				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID,
-						ImmutableMap.of("analysisState", AnalysisState.SUBMITTED))).thenReturn(analysisSubmitted);
+						ImmutableMap.of("analysisState", AnalysisState.RUNNING))).thenReturn(analysisRunning);
 
 		analysisFinishedRunning.setId(INTERNAL_ANALYSIS_ID);
 		analysisFinishedRunning.setAnalysisState(AnalysisState.FINISHED_RUNNING);
@@ -297,14 +297,14 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 
 		Future<AnalysisSubmission> preparedAnalysisFuture = workflowManagement.executeAnalysis(analysisPrepared);
 		AnalysisSubmission returnedSubmission = preparedAnalysisFuture.get();
-		assertEquals("analysisSubmitted not equal to returned submission", analysisSubmitted, returnedSubmission);
+		assertEquals("analysisSubmitted not equal to returned submission", analysisRunning, returnedSubmission);
 
 		verify(analysisSubmissionService).update(INTERNAL_ANALYSIS_ID,
 				ImmutableMap.of("analysisState", AnalysisState.SUBMITTING));
 		verify(analysisWorkspaceServiceSimplified).prepareAnalysisFiles(analysisSubmitting);
 		verify(galaxyWorkflowService).runWorkflow(workflowInputsGalaxy);
 		verify(analysisSubmissionService).update(INTERNAL_ANALYSIS_ID,
-				ImmutableMap.of("analysisState", AnalysisState.SUBMITTED));
+				ImmutableMap.of("analysisState", AnalysisState.RUNNING));
 	}
 
 	/**

@@ -148,7 +148,7 @@ public class AnalysisExecutionServiceGalaxyAsyncSimplified {
 		galaxyWorkflowService.runWorkflow(input);
 
 		AnalysisSubmission submittedAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
-				ImmutableMap.of("analysisState", AnalysisState.SUBMITTED));
+				ImmutableMap.of("analysisState", AnalysisState.RUNNING));
 
 		return new AsyncResult<>(submittedAnalysis);
 	}

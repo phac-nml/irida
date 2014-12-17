@@ -32,11 +32,6 @@ public enum AnalysisState {
 	 * Occurs when an analysis is first submitting.
 	 */
 	SUBMITTING("SUBMITTING"),
-	
-	/**
-	 * Occurs when an analysis is finished submitting.
-	 */
-	SUBMITTED("SUBMITTED"),
 
 	/**
 	 * An analysis that is running in the execution manager.

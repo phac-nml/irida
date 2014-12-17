@@ -174,7 +174,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 				.executeAnalysis(analysisSubmitted);
 		AnalysisSubmission analysisExecuted = analysisExecutedFuture.get();
 
-		assertEquals(AnalysisState.SUBMITTED, analysisExecuted.getAnalysisState());
+		assertEquals(AnalysisState.RUNNING, analysisExecuted.getAnalysisState());
 
 		assertNotNull("remoteAnalysisId is null", analysisExecuted.getRemoteAnalysisId());
 
