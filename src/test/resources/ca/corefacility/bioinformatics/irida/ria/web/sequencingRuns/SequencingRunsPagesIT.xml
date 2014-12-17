@@ -16,4 +16,14 @@
 	<sequencing_run id="2" createdDate="2014-08-30 08:24:33"
 		description="Another cool run" />
 	<miseq_run id="2" workflow="test workflow" />
+
+	<sequence_file id="1" sequencingRun_id="1"
+		filePath="/FileThatMayNotExist" createdDate="2013-07-18 14:20:19.0"
+		fileRevisionNumber="1" />
+	<sequence_file id="2" sequencingRun_id="1"
+		filePath="/FileThatMayNotExist1" createdDate="2013-07-18 14:20:19.0"
+		fileRevisionNumber="1" />
+	<sequence_file id="3" sequencingRun_id="1"
+		filePath="/FileThatMayNotExist2" createdDate="2013-07-18 14:20:19.0"
+		fileRevisionNumber="1" />
 </dataset>

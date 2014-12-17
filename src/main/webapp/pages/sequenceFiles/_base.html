@@ -52,6 +52,16 @@
                         <em th:text="#{sf.encoding}">_ENCODING_</em>
                         <span id="file-encoding" th:text="*{encoding}"></span>
                     </li>
+                    <li sec:authorize="hasRole('ROLE_ADMIN')" th:if="${run}">
+                        <i class="fa fa-cogs"></i>
+                        <em th:text="#{sf.sidebar.run}">_Sequencing Run_</em>
+                        <span class="pull-right">
+                            <a href="#" th:href="@{/sequencingRuns/{id}(id=${run.id})}" 
+                               id="sequencing-run" th:text="${run.id}">
+                               _RUN_
+                            </a>
+                        </span>
+                    </li>
                 </ul>
             </div>
         </div>

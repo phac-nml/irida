@@ -21,9 +21,12 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.SequencingRunEntity;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
 /**
  * Unit Tests for @{link SequenceFileController}
@@ -39,22 +42,26 @@ public class SequenceFileControllerTest {
 	// Services
 	private SequenceFileService sequenceFileService;
 	private AnalysisService analysisService;
+	private SequencingRunService sequencingRunService;
 
 	@Before
 	public void setUp() {
 		sequenceFileService = mock(SequenceFileService.class);
 		analysisService = mock(AnalysisService.class);
-		controller = new SequenceFileController(sequenceFileService, analysisService);
+		sequencingRunService = mock(SequencingRunService.class);
+		controller = new SequenceFileController(sequenceFileService, analysisService, sequencingRunService);
 
 		Path path = Paths.get(FILE_PATH);
 		SequenceFile file = new SequenceFile(path);
+		SequencingRun run = new SequencingRunEntity();
 		when(sequenceFileService.read(anyLong())).thenReturn(file);
+		when(sequencingRunService.getSequencingRunForSequenceFile(file)).thenReturn(run);
 	}
 
 	/**
-	 * ********************************************************************************************
+	 *********************************************************************************************
 	 * PAGE TESTS
-	 * *********************************************************************************************
+	 *********************************************************************************************
 	 */
 
 	@Test
@@ -101,6 +108,7 @@ public class SequenceFileControllerTest {
 		assertTrue("Model should contain information about the file.", model.containsAttribute("file"));
 		assertTrue("Model should contain the created date for the file.", model.containsAttribute("created"));
 		assertTrue("Model should contain the fastQC data for the file.", model.containsAttribute("fastQC"));
+		assertTrue("Model should contain the sequencing run.", model.containsAttribute("run"));
 		assertTrue("Model should contain the active nav id", model.containsAttribute(SequenceFileController.ACTIVE_NAV));
 	}
 }

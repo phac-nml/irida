@@ -33,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
+import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -53,6 +54,7 @@ public class SamplesControllerTest {
 	private SequenceFileService sequenceFileService;
 	private UserService userService;
 	private ProjectService projectService;
+	private SequenceFileWebUtilities sequenceFileWebUtilities;
 
 	@Before
 	public void setUp() {
@@ -60,7 +62,8 @@ public class SamplesControllerTest {
 		sequenceFileService = mock(SequenceFileService.class);
 		userService = mock(UserService.class);
 		projectService = mock(ProjectService.class);
-		controller = new SamplesController(sampleService, sequenceFileService, userService, projectService);
+		sequenceFileWebUtilities = new SequenceFileWebUtilities();
+		controller = new SamplesController(sampleService, sequenceFileService, userService, projectService, sequenceFileWebUtilities);
 	}
 
 	// ************************************************************************************************
