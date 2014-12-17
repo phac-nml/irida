@@ -17,8 +17,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -47,28 +45,13 @@ public class DatabaseSetupGalaxyITService {
 
 	private final ExecutorService executor = Executors.newFixedThreadPool(1);
 
-	@Autowired
 	private RemoteWorkflowRepository remoteWorkflowRepository;
-
-	@Autowired
 	private ReferenceFileRepository referenceFileRepository;
-
-	@Autowired
 	private SequenceFileService seqeunceFileService;
-
-	@Autowired
 	private SampleService sampleService;
-
-	@Autowired
 	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
-
-	@Autowired
 	private AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified;
-
-	@Autowired
 	private AnalysisSubmissionService analysisSubmissionService;
-
-	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 
 	private UUID workflowId = UUID.randomUUID();
@@ -82,15 +65,14 @@ public class DatabaseSetupGalaxyITService {
 	 * @param seqeunceFileService
 	 * @param sampleService
 	 * @param analysisExecutionServicePhylogenomics
+	 * @param analysisExecutionServiceSimplified
 	 * @param analysisSubmissionService
 	 * @param analysisSubmissionRepsitory
 	 */
-	public DatabaseSetupGalaxyITService(
-			RemoteWorkflowRepository remoteWorkflowRepository,
-			ReferenceFileRepository referenceFileRepository,
-			SequenceFileService seqeunceFileService,
-			SampleService sampleService,
-			AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics,
+	public DatabaseSetupGalaxyITService(RemoteWorkflowRepository remoteWorkflowRepository,
+			ReferenceFileRepository referenceFileRepository, SequenceFileService seqeunceFileService,
+			SampleService sampleService, AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics,
+			AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified,
 			AnalysisSubmissionService analysisSubmissionService,
 			AnalysisSubmissionRepository analysisSubmissionRepository) {
 		super();
@@ -99,6 +81,7 @@ public class DatabaseSetupGalaxyITService {
 		this.seqeunceFileService = seqeunceFileService;
 		this.sampleService = sampleService;
 		this.analysisExecutionServicePhylogenomics = analysisExecutionServicePhylogenomics;
+		this.analysisExecutionServiceSimplified = analysisExecutionServiceSimplified;
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 	}
@@ -120,26 +103,20 @@ public class DatabaseSetupGalaxyITService {
 	 * @return An AnalysisSubmissionPhylogenomics which has been saved to the
 	 *         database.
 	 */
-	public AnalysisSubmissionPhylogenomics setupSubmissionInDatabaseNoWorkflowSave(
-			long sampleId, Path sequenceFilePath, Path referenceFilePath,
-			RemoteWorkflowPhylogenomics remoteWorkflow) {
+	public AnalysisSubmissionPhylogenomics setupSubmissionInDatabaseNoWorkflowSave(long sampleId,
+			Path sequenceFilePath, Path referenceFilePath, RemoteWorkflowPhylogenomics remoteWorkflow) {
 
-		SequenceFile sequenceFile = setupSampleSequenceFileInDatabase(sampleId,
-				sequenceFilePath).get(0);
+		SequenceFile sequenceFile = setupSampleSequenceFileInDatabase(sampleId, sequenceFilePath).get(0);
 
 		Set<SequenceFile> sequenceFiles = new HashSet<>();
 		sequenceFiles.add(sequenceFile);
 
-		ReferenceFile referenceFile = referenceFileRepository
-				.save(new ReferenceFile(referenceFilePath));
+		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
-		AnalysisSubmission submission = analysisSubmissionService
-				.create(new AnalysisSubmissionPhylogenomics("my analysis",
-						sequenceFiles, referenceFile, remoteWorkflow,
-						workflowId));
+		AnalysisSubmission submission = analysisSubmissionService.create(new AnalysisSubmissionPhylogenomics(
+				"my analysis", sequenceFiles, referenceFile, remoteWorkflow, workflowId));
 
-		return analysisSubmissionRepository.getByType(submission.getId(),
-				AnalysisSubmissionPhylogenomics.class);
+		return analysisSubmissionRepository.getByType(submission.getId(), AnalysisSubmissionPhylogenomics.class);
 	}
 
 	/**
@@ -183,15 +160,13 @@ public class DatabaseSetupGalaxyITService {
 	 * @return A List of SequenceFile objects with the given sequence file path
 	 *         attached and saved in the database.
 	 */
-	public List<SequenceFile> setupSampleSequenceFileInDatabase(long sampleId,
-			Path... sequenceFilePaths) {
+	public List<SequenceFile> setupSampleSequenceFileInDatabase(long sampleId, Path... sequenceFilePaths) {
 		Sample sample = sampleService.read(sampleId);
 		List<SequenceFile> returnedSequenceFiles = new ArrayList<>();
 
 		for (Path sequenceFilePath : sequenceFilePaths) {
-			Join<Sample, SequenceFile> sampleSeqFile = seqeunceFileService
-					.createSequenceFileInSample(new SequenceFile(
-							sequenceFilePath), sample);
+			Join<Sample, SequenceFile> sampleSeqFile = seqeunceFileService.createSequenceFileInSample(new SequenceFile(
+					sequenceFilePath), sample);
 			SequenceFile sequenceFile = sampleSeqFile.getObject();
 			returnedSequenceFiles.add(sequenceFile);
 		}
@@ -213,15 +188,13 @@ public class DatabaseSetupGalaxyITService {
 	 * @return An AnalysisSubmissionPhylogenomics which has been saved to the
 	 *         database.
 	 */
-	public AnalysisSubmissionPhylogenomics setupSubmissionInDatabase(
-			long sampleId, Path sequenceFilePath, Path referenceFilePath,
-			RemoteWorkflowPhylogenomics remoteWorkflow) {
+	public AnalysisSubmissionPhylogenomics setupSubmissionInDatabase(long sampleId, Path sequenceFilePath,
+			Path referenceFilePath, RemoteWorkflowPhylogenomics remoteWorkflow) {
 
-		RemoteWorkflowPhylogenomics remoteWorkflowSaved = remoteWorkflowRepository
-				.save(remoteWorkflow);
+		RemoteWorkflowPhylogenomics remoteWorkflowSaved = remoteWorkflowRepository.save(remoteWorkflow);
 
-		return setupSubmissionInDatabaseNoWorkflowSave(sampleId,
-				sequenceFilePath, referenceFilePath, remoteWorkflowSaved);
+		return setupSubmissionInDatabaseNoWorkflowSave(sampleId, sequenceFilePath, referenceFilePath,
+				remoteWorkflowSaved);
 	}
 
 	/**
@@ -231,9 +204,7 @@ public class DatabaseSetupGalaxyITService {
 	 *            The analysis submission to wait for.
 	 * @throws Exception
 	 */
-	public void waitUntilSubmissionComplete(
-			AnalysisSubmissionPhylogenomics analysisSubmission)
-			throws Exception {
+	public void waitUntilSubmissionComplete(AnalysisSubmissionPhylogenomics analysisSubmission) throws Exception {
 		final int totalSecondsWait = 1 * 60; // 1 minute
 		final int pollingTime = 2000; // 2 seconds
 
@@ -243,8 +214,7 @@ public class DatabaseSetupGalaxyITService {
 			public Void call() throws Exception {
 				WorkflowStatus workflowStatus;
 				do {
-					workflowStatus = analysisExecutionServicePhylogenomics
-							.getWorkflowStatus(analysisSubmission);
+					workflowStatus = analysisExecutionServicePhylogenomics.getWorkflowStatus(analysisSubmission);
 					Thread.sleep(pollingTime);
 				} while (!WorkflowState.OK.equals(workflowStatus.getState()));
 
@@ -255,9 +225,8 @@ public class DatabaseSetupGalaxyITService {
 		try {
 			waitForHistory.get(totalSecondsWait, TimeUnit.SECONDS);
 		} catch (TimeoutException e) {
-			throw new Exception("Timeout > " + totalSecondsWait
-					+ " s when waiting for history for " + analysisSubmission,
-					e);
+			throw new Exception("Timeout > " + totalSecondsWait + " s when waiting for history for "
+					+ analysisSubmission, e);
 		}
 	}
 
@@ -301,10 +270,8 @@ public class DatabaseSetupGalaxyITService {
 	 */
 	public void assertValidStatus(WorkflowStatus status) {
 		assertNotNull("WorkflowStatus is null", status);
-		assertFalse("WorkflowState is " + WorkflowState.UNKNOWN,
-				WorkflowState.UNKNOWN.equals(status.getState()));
+		assertFalse("WorkflowState is " + WorkflowState.UNKNOWN, WorkflowState.UNKNOWN.equals(status.getState()));
 		float percentComplete = status.getPercentComplete();
-		assertTrue("percentComplete not in range of 0 to 100",
-				0.0f <= percentComplete && percentComplete <= 100.0f);
+		assertTrue("percentComplete not in range of 0 to 100", 0.0f <= percentComplete && percentComplete <= 100.0f);
 	}
 }

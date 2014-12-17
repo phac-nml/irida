@@ -40,9 +40,12 @@ import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.Use
 		IridaApiFilesystemRepositoryConfig.class })
 @EnableJpaAuditing
 public class IridaApiRepositoriesConfig {
-	
+
+	/**
+	 * The order for transaction management.
+	 */
 	public static final int TRANSACTION_MANAGEMENT_ORDER = 1000;
-	
+
 	@Autowired
 	private DataConfig dataConfig;
 

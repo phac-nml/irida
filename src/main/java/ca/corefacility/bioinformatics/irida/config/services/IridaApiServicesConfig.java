@@ -114,25 +114,25 @@ public class IridaApiServicesConfig {
 	}
 
 	/**
-	 * Builds a new Executor for analysis tasks.
+	 * Builds a new {@link Executor} for analysis tasks.
 	 * 
-	 * @return A new Executor for analysis tasks.
+	 * @return A new {@link Executor} for analysis tasks.
 	 */
 	public Executor analysisTaskExecutor(UserService userService) {
 		ScheduledExecutorService delegateExecutor = Executors.newScheduledThreadPool(4);
-		SecurityContext schedulerContext = createSchedulerSecurityContext(userService);
+		SecurityContext schedulerContext = createAnalysisTaskSecurityContext(userService);
 		return new DelegatingSecurityContextScheduledExecutorService(delegateExecutor, schedulerContext);
 	}
 
 	/**
-	 * Creates a security context object for the scheduled tasks.
+	 * Creates a security context object for the analysis tasks.
 	 * 
 	 * @param userService
 	 *            A {@link UserService}.
 	 * 
 	 * @return A {@link SecurityContext} for the analysis tasks.
 	 */
-	private SecurityContext createSchedulerSecurityContext(UserService userService) {
+	private SecurityContext createAnalysisTaskSecurityContext(UserService userService) {
 		SecurityContext context = SecurityContextHolder.createEmptyContext();
 
 		Authentication anonymousToken = new AnonymousAuthenticationToken("nobody", "nobody",

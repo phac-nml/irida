@@ -33,6 +33,9 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 @Order(AnalysisExecutionServiceAspect.ANALYSIS_EXECUTION_ASPECT_ORDER)
 public class AnalysisExecutionServiceAspect {
 
+	/**
+	 * Defines the order for the {@link AnalysisExecutionServiceAspect}.
+	 */
 	public static final int ANALYSIS_EXECUTION_ASPECT_ORDER = IridaApiRepositoriesConfig.TRANSACTION_MANAGEMENT_ORDER - 1;
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceAspect.class);

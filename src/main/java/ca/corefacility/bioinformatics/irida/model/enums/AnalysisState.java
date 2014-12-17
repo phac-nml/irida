@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Defins a set of states that an analysis submission can be in.
+ * Defines a set of states for an {@link AnalysisSubmission}.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
@@ -22,7 +22,7 @@ public enum AnalysisState {
 	 * Occurs when an analysis is starting to be submitted.
 	 */
 	PREPARING("PREPARING"),
-	
+
 	/**
 	 * Occurs when an analysis is finished preparing.
 	 */
@@ -42,9 +42,10 @@ public enum AnalysisState {
 	 * An analysis that has finished running in the execution manager.
 	 */
 	FINISHED_RUNNING("FINISHED_RUNNING"),
-	
+
 	/**
-	 * An analysis that is complete but data needs to be transferred back into IRIDA.
+	 * An analysis that is complete but data needs to be transferred back into
+	 * IRIDA.
 	 */
 	COMPLETING("COMPLETING"),
 
@@ -83,8 +84,7 @@ public enum AnalysisState {
 	 */
 	public static AnalysisState fromString(String stateString) {
 		AnalysisState state = stateMap.get(stateString);
-		checkNotNull(state, "state for string \"" + stateString
-				+ "\" does not exist");
+		checkNotNull(state, "state for string \"" + stateString + "\" does not exist");
 
 		return state;
 	}

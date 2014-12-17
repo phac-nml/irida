@@ -17,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.validators.ValidMethodParametersAspe
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class IridaApiAspectsConfig {
-	
+
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 
@@ -32,7 +32,8 @@ public class IridaApiAspectsConfig {
 	}
 
 	@Bean
-	public AnalysisExecutionServiceAspect analysisExecutionServiceAspect(AnalysisSubmissionRepository analysisSubmissionRepository) {
+	public AnalysisExecutionServiceAspect analysisExecutionServiceAspect(
+			AnalysisSubmissionRepository analysisSubmissionRepository) {
 		return new AnalysisExecutionServiceAspect(analysisSubmissionRepository);
 	}
 }

@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model;
 
 /**
  * Defines a task to be executed in another thread to perform tasks.
+ * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */

@@ -54,7 +54,7 @@ import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.google.common.collect.Lists;
 
 /**
- * Test configuration for AnalysisExecutionService classes.
+ * Test configuration for {@link AnalysisExecutionService} classes.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
@@ -163,9 +163,9 @@ public class AnalysisExecutionServiceTestConfig {
 	}
 
 	/**
-	 * Builds a new Executor for scheduled tasks.
+	 * Builds a new Executor for analysis tasks.
 	 * 
-	 * @return A new Executor for scheduled tasks.
+	 * @return A new Executor for analysis tasks.
 	 */
 	@Bean
 	public Executor analysisTaskExecutor() {
@@ -175,9 +175,9 @@ public class AnalysisExecutionServiceTestConfig {
 	}
 
 	/**
-	 * Creates a security context object for the scheduled tasks.
+	 * Creates a security context object for the analysis tasks.
 	 * 
-	 * @return A {@link SecurityContext} for the scheduled tasks.
+	 * @return A {@link SecurityContext} for the analysis tasks.
 	 */
 	private SecurityContext createSchedulerSecurityContext() {
 		SecurityContext context = SecurityContextHolder.createEmptyContext();
@@ -206,7 +206,7 @@ public class AnalysisExecutionServiceTestConfig {
 	@Bean
 	public DatabaseSetupGalaxyITService analysisExecutionGalaxyITService() {
 		return new DatabaseSetupGalaxyITService(remoteWorkflowRepository, referenceFileRepository, seqeunceFileService,
-				sampleService, analysisExecutionServicePhylogenomics(), analysisSubmissionService,
-				analysisSubmissionRepository);
+				sampleService, analysisExecutionServicePhylogenomics(), analysisExecutionServiceSimplified(),
+				analysisSubmissionService, analysisSubmissionRepository);
 	}
 }

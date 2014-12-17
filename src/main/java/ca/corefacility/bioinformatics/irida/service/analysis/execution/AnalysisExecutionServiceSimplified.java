@@ -9,7 +9,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
- * Service for submission of analyses to an execution manager.
+ * Service for submission of {@link AnalysisSubmission}s to an execution
+ * manager.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */

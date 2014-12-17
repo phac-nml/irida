@@ -32,8 +32,8 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 import com.google.common.collect.ImmutableMap;
 
 /**
- * Service for executing analysis stages within a Galaxy execution manager
- * asynchronously.
+ * Service for executing {@link AnalysisSubmission} stages within a Galaxy
+ * execution manager asynchronously.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */

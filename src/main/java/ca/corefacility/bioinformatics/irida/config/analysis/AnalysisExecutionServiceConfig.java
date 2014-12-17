@@ -44,6 +44,10 @@ import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 @Profile({ "dev", "prod", "it" })
 public class AnalysisExecutionServiceConfig {
 
+	/**
+	 * The order for asynchronous tasks. In particular, defines the order for
+	 * methods in {@link AnalysisExecutionServiceGalaxyAsyncSimplified}.
+	 */
 	public static final int ASYNC_ORDER = AnalysisExecutionServiceAspect.ANALYSIS_EXECUTION_ASPECT_ORDER - 1;
 
 	@Autowired
