@@ -215,4 +215,12 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 
 		throw new EntityNotFoundException("Pair cannot be found for this sequence file");
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SequenceFilePair createSequenceFilePair(SequenceFile file1, SequenceFile file2) {
+		return pairRepository.save(new SequenceFilePair(file1, file2));
+	}
 }

@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 
 /**
  * Service for managing {@link SequenceFile} entities.
@@ -90,4 +91,14 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#file, 'canReadSequenceFile')")
 	public SequenceFile getPairForSequenceFile(SequenceFile file) throws EntityNotFoundException;
+
+	/**
+	 * Create a new {@link SequenceFilePair} for the given files
+	 * 
+	 * @param file1
+	 * @param file2
+	 * @return A new {@link SequenceFilePair} object
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#file1, 'canReadSequenceFile') and hasPermission(#file2, 'canReadSequenceFile'))")
+	public SequenceFilePair createSequenceFilePair(SequenceFile file1, SequenceFile file2);
 }
