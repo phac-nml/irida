@@ -90,7 +90,8 @@ public class GalaxyController {
 			result.put("errors", BaseController.getErrorsFromViolationException(e));
 		} catch (AccessDeniedException e) {
 			result.put("result", "error");
-			result.put("errors", ImmutableMap.of("accessDenied", messageSource.getMessage("galaxy.upload-error.access-denied", new Object[]{}, locale)));
+			result.put("errors", ImmutableMap.of("accessDenied",
+					messageSource.getMessage("galaxy.upload-error.access-denied", new Object[] { }, locale)));
 		}
 		return result;
 	}
@@ -129,13 +130,15 @@ public class GalaxyController {
 							.getMessage("galaxy.upload-error.message",
 									new Object[] { lex.getLocalFile().getName() },
 									locale));
-				}
-				else if (ex instanceof GalaxyUserNotFoundException) {
-					GalaxyUserNotFoundException gex = (GalaxyUserNotFoundException)ex;
+				} else if (ex instanceof GalaxyUserNotFoundException) {
+					GalaxyUserNotFoundException gex = (GalaxyUserNotFoundException) ex;
 					result.put("message",
 							messageSource.getMessage("galaxy.upload-error.email", new Object[] {
 									gex.getUserEmail().getName()
 							}, locale));
+				} else {
+					result.put("message",
+							messageSource.getMessage("galaxy.upload-error.generic", new Object[] { }, locale));
 				}
 			} else if (worker.isFinished()) {
 				session.removeAttribute(workerId);
