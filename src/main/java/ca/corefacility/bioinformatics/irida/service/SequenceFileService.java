@@ -34,7 +34,7 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadSequenceFile')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or hasPermission(#id, 'canReadSequenceFile')")
 	public SequenceFile read(Long id) throws EntityNotFoundException;
 
 	/**
@@ -99,6 +99,6 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 * @param file2
 	 * @return A new {@link SequenceFilePair} object
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or (hasPermission(#file1, 'canReadSequenceFile') and hasPermission(#file2, 'canReadSequenceFile'))")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or (hasPermission(#file1, 'canReadSequenceFile') and hasPermission(#file2, 'canReadSequenceFile'))")
 	public SequenceFilePair createSequenceFilePair(SequenceFile file1, SequenceFile file2);
 }
