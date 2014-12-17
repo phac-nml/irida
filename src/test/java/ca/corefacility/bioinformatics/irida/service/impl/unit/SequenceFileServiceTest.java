@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.impl.SequenceFileServiceImpl;
@@ -30,6 +31,7 @@ public class SequenceFileServiceTest {
 	private SequenceFileService sequenceFileService;
 	private SampleSequenceFileJoinRepository ssfRepository;
 	private SequenceFileRepository sequenceFileRepository;
+	private SequenceFilePairRepository pairRepository;
 	private TaskExecutor executor;
 	private FileProcessingChain fileProcessingChain;
 	private Validator validator;
@@ -41,8 +43,8 @@ public class SequenceFileServiceTest {
 		this.executor = mock(TaskExecutor.class);
 		this.fileProcessingChain = mock(FileProcessingChain.class);
 		this.validator = mock(Validator.class);
-		this.sequenceFileService = new SequenceFileServiceImpl(sequenceFileRepository, ssfRepository, executor,
-				fileProcessingChain, validator);
+		this.sequenceFileService = new SequenceFileServiceImpl(sequenceFileRepository, ssfRepository, pairRepository,
+				executor, fileProcessingChain, validator);
 	}
 
 	@Test
