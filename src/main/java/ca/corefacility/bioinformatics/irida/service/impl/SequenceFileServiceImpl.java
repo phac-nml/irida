@@ -199,6 +199,9 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public SequenceFile getPairForSequenceFile(SequenceFile file) {
 		SequenceFilePair pairForSequenceFile = pairRepository.getPairForSequenceFile(file);
