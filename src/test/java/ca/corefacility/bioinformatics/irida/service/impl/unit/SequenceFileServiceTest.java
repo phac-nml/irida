@@ -1,10 +1,13 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.nio.file.Paths;
 
 import javax.validation.Validator;
 
@@ -12,8 +15,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.task.TaskExecutor;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
@@ -25,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.SequenceFileServiceImpl
  * Test the behaviour of {@link SequenceFileService}.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class SequenceFileServiceTest {
@@ -40,6 +46,7 @@ public class SequenceFileServiceTest {
 	public void setUp() {
 		this.ssfRepository = mock(SampleSequenceFileJoinRepository.class);
 		this.sequenceFileRepository = mock(SequenceFileRepository.class);
+		pairRepository = mock(SequenceFilePairRepository.class);
 		this.executor = mock(TaskExecutor.class);
 		this.fileProcessingChain = mock(FileProcessingChain.class);
 		this.validator = mock(Validator.class);
@@ -59,5 +66,28 @@ public class SequenceFileServiceTest {
 		// verify that we're only actually running one file processor on the new
 		// sequence file.
 		verify(executor, times(1)).execute(any(Runnable.class));
+	}
+
+	@Test
+	public void testGetPairForSequenceFile() {
+		SequenceFile file = new SequenceFile(Paths.get("/file1"));
+		SequenceFile pairFile = new SequenceFile(Paths.get("/file2"));
+		SequenceFilePair pair = new SequenceFilePair(file, pairFile);
+
+		when(pairRepository.getPairForSequenceFile(file)).thenReturn(pair);
+
+		SequenceFile pairForSequenceFile = sequenceFileService.getPairForSequenceFile(file);
+
+		assertEquals(pairFile, pairForSequenceFile);
+		verify(pairRepository).getPairForSequenceFile(file);
+	}
+
+	@Test(expected = EntityNotFoundException.class)
+	public void testGetPairForSequenceFileNotExists() {
+		SequenceFile file = new SequenceFile(Paths.get("/file1"));
+
+		when(pairRepository.getPairForSequenceFile(file)).thenReturn(null);
+
+		sequenceFileService.getPairForSequenceFile(file);
 	}
 }
