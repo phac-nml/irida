@@ -4,6 +4,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import javax.validation.Validator;
 
@@ -21,7 +23,16 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.concurrent.DelegatingSecurityContextScheduledExecutorService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
 import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
@@ -29,6 +40,8 @@ import ca.corefacility.bioinformatics.irida.config.analysis.RemoteWorkflowServic
 import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositoriesConfig;
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
@@ -37,6 +50,7 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisReposi
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 /**
  * Configuration for the IRIDA platform.
@@ -98,19 +112,43 @@ public class IridaApiServicesConfig {
 		Path path = Paths.get(taxonomyFileLocation.getPath());
 		return new InMemoryTaxonomyService(path);
 	}
-	
-	
+
 	/**
-	 * @return An {@link Executor} for executing analysis tasks.
+	 * Builds a new Executor for analysis tasks.
+	 * 
+	 * @return A new Executor for analysis tasks.
 	 */
-	@Bean
-	public Executor analysisTaskExecutor() {
-		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-		taskExecutor.setCorePoolSize(4);
-		taskExecutor.setMaxPoolSize(8);
-		taskExecutor.setQueueCapacity(1000);
-		taskExecutor.setThreadPriority(Thread.MIN_PRIORITY);
-		return taskExecutor;
+	public Executor analysisTaskExecutor(UserService userService) {
+		ScheduledExecutorService delegateExecutor = Executors.newScheduledThreadPool(4);
+		SecurityContext schedulerContext = createSchedulerSecurityContext(userService);
+		return new DelegatingSecurityContextScheduledExecutorService(delegateExecutor, schedulerContext);
+	}
+
+	/**
+	 * Creates a security context object for the scheduled tasks.
+	 * 
+	 * @param userService
+	 *            A {@link UserService}.
+	 * 
+	 * @return A {@link SecurityContext} for the analysis tasks.
+	 */
+	private SecurityContext createSchedulerSecurityContext(UserService userService) {
+		SecurityContext context = SecurityContextHolder.createEmptyContext();
+
+		Authentication anonymousToken = new AnonymousAuthenticationToken("nobody", "nobody",
+				ImmutableList.of(Role.ROLE_ANONYMOUS));
+
+		Authentication oldAuthentication = SecurityContextHolder.getContext().getAuthentication();
+		SecurityContextHolder.getContext().setAuthentication(anonymousToken);
+		User admin = userService.getUserByUsername("admin");
+		SecurityContextHolder.getContext().setAuthentication(oldAuthentication);
+
+		Authentication adminAuthentication = new PreAuthenticatedAuthenticationToken(admin, null,
+				Lists.newArrayList(Role.ROLE_ADMIN));
+
+		context.setAuthentication(adminAuthentication);
+
+		return context;
 	}
 
 	/**
