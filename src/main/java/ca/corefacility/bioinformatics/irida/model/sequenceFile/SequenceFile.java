@@ -84,7 +84,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "sequencingRun_id")
 	private SequencingRun sequencingRun;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "library_description_id")
 	private LibraryDescription libraryDescription;
