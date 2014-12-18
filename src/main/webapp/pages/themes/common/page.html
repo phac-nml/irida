@@ -26,15 +26,11 @@
 <script type="text/ng-template" id="/session-modal.html">
 	<div>
 		<div class="modal-header">
-			<b class="modal-title">
-				<span th:text="#{session.timeout-modal.header}"></span>
-				&nbsp;{{timeleft | moment}}</b>
+			<b class="modal-title"><span th:text="#{session.timeout-modal.header}"></span>&nbsp;{{timeleft | moment}}</b>
 		</div>
 		<div class="modal-footer">
-			<button class="btn btn-default" ng-click="logout()" th:text="#{session.timeout-modal.logout}">Log me out
-			</button>
-			<button class="btn btn-primary" ng-click="poke()" th:text="#{session.timeout-modal.poke}">Keep me here
-			</button>
+			<button class="btn btn-default" ng-click="logout()" th:text="#{session.timeout-modal.logout}">Log me out</button>
+			<button class="btn btn-primary" ng-click="poke()" th:text="#{session.timeout-modal.poke}">Keep me here</button>
 		</div>
 	</div>
 </script>
