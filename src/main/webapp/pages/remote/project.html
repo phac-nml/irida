@@ -40,7 +40,7 @@
             <div class="clearfix">
                 <h1 th:text="${project.getName()}"></h1>
                 <div class="alert alert-warning" role="alert">
-                    <span th:text="#{project.remote.disclaimer}">_Note: this project exists on the remote IRIDA installation:_</span>
+                    <span th:text="#{project.remote.disclaimer}">_Note: this project exists on the remote IRIDA installation:_</span> 
                     <a href="#" th:href="@{/remote_api/{id}(id=${api.getId()})}" th:text="${api.name}"></a>
                 </div>
             </div>
@@ -53,13 +53,13 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>     
 </main>
 
 
     <th:block layout:fragment="page-scripts" th:inline="javascript">
         <script type="text/javascript">
-
+            
         </script>
     </th:block>
 </body>
