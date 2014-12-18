@@ -26,11 +26,15 @@
 <script type="text/ng-template" id="/session-modal.html">
 	<div>
 		<div class="modal-header">
-			<b class="modal-title"><span th:text="#{session.timeout-modal.header}"></span>&nbsp;{{timeleft | moment}}</b>
+			<b class="modal-title">
+				<span th:text="#{session.timeout-modal.header}"></span>
+				&nbsp;{{timeleft | moment}}</b>
 		</div>
 		<div class="modal-footer">
-			<button class="btn btn-default" ng-click="logout()" th:text="#{session.timeout-modal.logout}">Log me out</button>
-			<button class="btn btn-primary" ng-click="poke()" th:text="#{session.timeout-modal.poke}">Keep me here</button>
+			<button class="btn btn-default" ng-click="logout()" th:text="#{session.timeout-modal.logout}">Log me out
+			</button>
+			<button class="btn btn-primary" ng-click="poke()" th:text="#{session.timeout-modal.poke}">Keep me here
+			</button>
 		</div>
 	</div>
 </script>
@@ -41,11 +45,17 @@
 <th:block sec:authorize="isAuthenticated()">
 	<script th:inline="javascript">
 		var TL = {
-			BASE_URL: /*[[@{/}]]*/ '/',
-			SESSION_LENGTH: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800
+			BASE_URL      : /*[[@{/}]]*/ '/',
+			SESSION_LENGTH: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800,
+			lang          : {
+				crumbs: {
+					"projects": "Projects",
+					"samples" : "Samples"
+				}
+			}
 		};
 	</script>
-	
+
 	<script th:src="@{/resources/bower_components/lodash/dist/lodash.min.js}"
 	        src="/resources/bower_components/lodash/dist/lodash.min.js"></script>
 	<script th:src="@{/resources/bower_components/angular/angular.min.js}"
@@ -77,7 +87,7 @@
 			    initialWait = TL.SESSION_LENGTH * 1000 - modalWait + 500, // Give a little overlap
 			    timeout,
 			    restartTimeout,
-				opened = false;
+			    opened = false;
 
 			function _restart() {
 				if (!opened) {
@@ -132,7 +142,7 @@
 
 		function HttpInterceptor($injector) {
 			return {
-				request: function (config) {
+				request : function (config) {
 					if (config.url.indexOf("/template") > -1) {
 						config.headers.Accept = "text/html";
 					}
@@ -152,7 +162,7 @@
 		window.dependencies = _.union(window.dependencies || [], ['ngResource', 'ngSanitize', 'ngAnimate', 'ngMessages', 'ui.bootstrap', 'ui.utils', 'restangular', 'irida.notifications']);
 		var app = angular.module('irida', window.dependencies)
 			.value('BASE_URL', TL.BASE_URL)
-		// This configures the base url globally for all restangular calls.
+			// This configures the base url globally for all restangular calls.
 			.config(function (RestangularProvider) {
 				RestangularProvider.setBaseUrl(TL.BASE_URL);
 			})
@@ -209,7 +219,34 @@
 					}
 					return $.param(data);
 				};
-			});
+			})
+			.controller('BreadcrumbController', ['$window', '$log', function ($window, $log) {
+				"use strict";
+				var vm = this, frags = $window.location.pathname.split("/");
+				// Need to find the start
+				var found = false;
+				while (!found && frags.length > 0) {
+					if (TL.lang.crumbs[frags[0]]) {
+						found = true;
+					}
+					else {
+						frags.shift();
+					}
+				}
+				vm.crumbs = [];
+
+				if (frags.length > 1) {
+					// Get root element
+					var url = TL.BASE_URL;
+					while (frags.length > 0) {
+						var name = frags.shift();
+						url += name;
+						name = TL.lang.crumbs[name] || name;
+						vm.crumbs.push({url: url, text: name});
+						url += frags.length ? "/" : "";
+					}
+				}
+			}]);
 		/*]]>*/
 	</script>
 </th:block>
