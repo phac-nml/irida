@@ -167,6 +167,7 @@ public class AnalysisExecutionServiceTestConfig {
 	 * 
 	 * @return A new Executor for analysis tasks.
 	 */
+	@Profile({"test", "it"})
 	@Bean
 	public Executor analysisTaskExecutor() {
 		ScheduledExecutorService delegateExecutor = Executors.newSingleThreadScheduledExecutor();
