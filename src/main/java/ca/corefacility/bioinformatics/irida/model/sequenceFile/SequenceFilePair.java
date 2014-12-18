@@ -26,6 +26,8 @@ import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.google.common.collect.ImmutableSet;
+
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 
 @Entity
@@ -94,7 +96,8 @@ public class SequenceFilePair implements IridaThing {
 	}
 
 	public Set<SequenceFile> getFiles() {
-		return files;
+		// returning an ImmutableSet to ensure it isn't changed
+		return ImmutableSet.copyOf(files);
 	}
 
 	/**
