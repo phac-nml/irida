@@ -56,5 +56,8 @@
 			<column name="REVTYPE" type="tinyint(4)" />
 		</createTable>
 
+		<addUniqueConstraint columnNames="files_id"
+			constraintName="UK_SEQUENCE_FILE_PAIR" tableName="sequence_file_pair_files" />
+
 	</changeSet>
 </databaseChangeLog>
