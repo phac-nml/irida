@@ -7,16 +7,16 @@
 <div class="container" layout:fragment="content">
 	<div class="row">
 		<div th:replace="${themePath + 'partials/sitemenu'} :: menu-en">MENU</div>
-		<th:block layout:fragment="subnav"></th:block>
-		<div th:if="${breadcrumbs}" class="breadcrumbs">
-			<div class="container">
+		<div ng-controller="BreadcrumbController as breadcrumb" class="breadcrumbs">
+			<div class="container ng-cloak">
 				<ol>
-					<li th:each="breadcrumb : ${breadcrumbs}">
-						<a th:href="@{${breadcrumb.url}}" th:text="${breadcrumb.text}"></a>
+					<li ng-repeat="crumb in breadcrumb.crumbs">
+						<a href="{{ crumb.url }}">{{ crumb.text }}</a>
 					</li>
 				</ol>
 			</div>
 		</div>
+		<th:block layout:fragment="subnav"></th:block>
 	</div>
 	<div class="row main-area" layout:fragment="page">
 	</div>
