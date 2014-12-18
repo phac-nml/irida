@@ -61,7 +61,7 @@ import com.google.common.collect.Lists;
  */
 @Configuration
 @Profile("test")
-@EnableAsync
+@EnableAsync(order = AnalysisExecutionServiceConfig.ASYNC_ORDER)
 @Conditional(NonWindowsPlatformCondition.class)
 public class AnalysisExecutionServiceTestConfig {
 
