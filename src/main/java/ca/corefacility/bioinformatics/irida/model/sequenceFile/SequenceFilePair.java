@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -38,6 +39,7 @@ public class SequenceFilePair implements IridaThing {
 
 	@CreatedDate
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "created_date")
 	private Date createdDate;
 
 	@OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER, orphanRemoval = true)
