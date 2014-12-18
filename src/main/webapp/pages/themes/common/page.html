@@ -49,8 +49,8 @@
 			SESSION_LENGTH: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800,
 			lang          : {
 				crumbs: {
-					"projects": "Projects",
-					"samples" : "Samples"
+					"projects": /*[[#{bc.projects}]]*/ "Projects",
+					"samples" : /*[[#{bc.samples}]]*/ "Samples"
 				}
 			}
 		};
