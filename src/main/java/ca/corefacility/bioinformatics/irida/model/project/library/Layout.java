@@ -48,6 +48,15 @@ public class Layout {
 
 		return false;
 	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(readLengths, layoutType);
+	}
+
+	public LayoutType getLayoutType() {
+		return layoutType;
+	}
 
 	public Integer getReadLengths() {
 		return readLengths;
