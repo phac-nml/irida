@@ -11,8 +11,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  * Created by josh on 14-08-06.
  */
 public class SequenceFilePages extends AbstractPage {
-	public static final String RELATIVE_URL = "sequenceFiles/1";
-	public static final String OVERREPRESENTED_URL = RELATIVE_URL + "/overrepresented";
+	public static final String RELATIVE_URL = "sequenceFiles/1/summary";
+	public static final String OVERREPRESENTED_URL = "sequenceFiles/1//overrepresented";
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFilePages.class);
 
 	public SequenceFilePages(WebDriver driver) {
