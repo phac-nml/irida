@@ -97,7 +97,17 @@ public class SequenceFilePair implements IridaThing {
 		return files;
 	}
 
+	/**
+	 * Set the {@link SequenceFile}s in this pair. Note it must contain 2 files.
+	 * 
+	 * @param files
+	 *            The set of {@link SequenceFile}s
+	 */
 	public void setFiles(Set<SequenceFile> files) {
+		if (files.size() != 2) {
+			throw new IllegalArgumentException("SequenceFilePair must have 2 files");
+		}
+
 		this.files = files;
 	}
 }
