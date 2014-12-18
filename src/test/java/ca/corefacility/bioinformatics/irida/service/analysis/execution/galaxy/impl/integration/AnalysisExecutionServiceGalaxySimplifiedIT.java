@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.impl.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -39,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
@@ -48,6 +47,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhyl
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -91,6 +91,9 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 
 	@Autowired
 	private AnalysisService analysisService;
+
+	@Autowired
+	private AnalysisRepository analysisRepository;
 
 	@Autowired
 	private AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified;
@@ -375,6 +378,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 	public void testTransferAnalysisResultsSuccessPhylogenomics() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, iridaPhylogenomicsWorkflowId);
+		SequenceFile sequenceFile = analysisSubmission.getInputFiles().iterator().next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
@@ -390,6 +394,9 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionServiceSimplified
 				.transferAnalysisResults(analysisExecuted);
 		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
+		assertEquals(1,
+				analysisRepository.findAnalysesForSequenceFile(sequenceFile, AnalysisPhylogenomicsPipeline.class)
+						.size());
 		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
 				.getId());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState());
@@ -458,6 +465,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 	public void testTransferAnalysisResultsFailInvalidId() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
+		SequenceFile sequenceFile = analysisSubmission.getInputFiles().iterator().next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
@@ -479,6 +487,9 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 			logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
 			assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
 					.getAnalysisState());
+			assertEquals(0,
+					analysisRepository.findAnalysesForSequenceFile(sequenceFile, AnalysisPhylogenomicsPipeline.class)
+							.size());
 
 			// pull out real exception
 			throw e.getCause();
@@ -496,6 +507,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 	public void testTransferAnalysisResultsFailInvalidRemoteAnalysisId() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
+		SequenceFile sequenceFile = analysisSubmission.getInputFiles().iterator().next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionServiceSimplified
 				.prepareSubmission(analysisSubmission);
@@ -517,6 +529,9 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 			logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
 			assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
 					.getAnalysisState());
+			assertEquals(0,
+					analysisRepository.findAnalysesForSequenceFile(sequenceFile, AnalysisPhylogenomicsPipeline.class)
+							.size());
 
 			// pull out real exception
 			throw e.getCause();
