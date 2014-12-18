@@ -17,6 +17,9 @@
 		</div>
 	</div>
 	<div class="row">
+		<p th:with="url=@{${#httpServletRequest.requestURI}}">
+			<span th:text="${#strings.contains(#httpServletRequest.requestURI, 'projects')} ? 'fred' : 'barney'"></span>
+		</p>
 		<div class="col-md-12">
 			<table id="filesTable">
 				<thead>
@@ -29,11 +32,11 @@
 				</tr>
 				</thead>
 				<tbody>
-				<tr role="row" th:each="file : ${files}" th:with="dateFormat=#{locale.date.long}"
+				<tr role="row" th:each="file : ${files}" th:with="dateFormat=#{locale.date.long}, url=@{${#httpServletRequest.requestURI}}"
 				    th:id="${'file-row-' + file.id}">
 					<td class="file-id" th:text="${file.id}">ID</td>
 					<td>
-						<a class="file-name btn btn-default btn-xs" th:href="@{/sequenceFiles/{id}(id=${file.id})}"
+						<a class="file-name btn btn-default btn-xs" th:href="${#strings.contains(url, 'projects')} ? ${'sequenceFiles/' + file.id + '/summary'} : @{/sequenceFiles/{id}/summary(id=${file.id})}"
 						   href="#"
 						   th:text="${file.label}"></a>
 					</td>

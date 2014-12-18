@@ -123,7 +123,7 @@ $breadcrumb-color: lighten($color-primary, 5%);
   float: left;
 }
 .breadcrumbs li a {
-  color: #ffffff;
+  color: #000000;
   text-decoration: none;
   padding: 5px 0 5px 55px;
   position: relative;
@@ -166,7 +166,7 @@ $breadcrumb-color: lighten($color-primary, 5%);
 $loop-color: $breadcrumb-color;
 @for $i from 2 to 6 {
   $loop-color: lighten($loop-color, 10%);
-  .breadcrumbs li:nth-child(#{$i}) a { background-color: $loop-color }
+  .breadcrumbs li:nth-child(#{$i}) a { background-color: $loop-color; }
   .breadcrumbs li:nth-child(#{$i}) a:after { border-left-color: $loop-color }
 }
 
@@ -174,7 +174,6 @@ $loop-color: $breadcrumb-color;
   pointer-events: none;
   cursor: default;
   background-color: #ffffff;
-  color: $color-text;
   border-color: white;
 }
 

@@ -46,7 +46,8 @@
 			lang          : {
 				crumbs: {
 					"projects": /*[[#{bc.projects}]]*/ "Projects",
-					"samples" : /*[[#{bc.samples}]]*/ "Samples"
+					"samples" : /*[[#{bc.samples}]]*/ "Samples",
+					"sequenceFiles": /*[[#{bc.sequenceFiles}]]*/ "Sequence Files"
 				}
 			}
 		};
@@ -231,17 +232,25 @@
 				}
 				vm.crumbs = [];
 
-				if (frags.length > 1) {
 					// Get root element
 					var url = TL.BASE_URL;
-					while (frags.length > 0) {
+					while (frags.length > 1) {
 						var name = frags.shift();
+						if (!TL.lang.crumbs[name]) {
+							break;
+						}
+
 						url += name;
 						name = TL.lang.crumbs[name] || name;
 						vm.crumbs.push({url: url, text: name});
-						url += frags.length ? "/" : "";
+
+						if (frags.length) {
+							var num = frags.shift();
+							url += "/" + num;
+							vm.crumbs.push({url: url, text: num});
+						}
+						url += "/";
 					}
-				}
 			}]);
 		/*]]>*/
 	</script>

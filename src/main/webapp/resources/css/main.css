@@ -413,7 +413,7 @@ iframe.remote-api-frame {
 
 /* line 125, ../../styles/main.scss */
 .breadcrumbs li a {
-  color: #ffffff;
+  color: #000000;
   text-decoration: none;
   padding: 5px 0 5px 55px;
   position: relative;
@@ -504,22 +504,21 @@ iframe.remote-api-frame {
   pointer-events: none;
   cursor: default;
   background-color: #ffffff;
-  color: #333333;
   border-color: white;
 }
 
-/* line 181, ../../styles/main.scss */
+/* line 180, ../../styles/main.scss */
 .breadcrumbs li:last-child a:after {
   border: 0;
   border-left-color: #ffffff !important;
 }
 
-/* line 182, ../../styles/main.scss */
+/* line 181, ../../styles/main.scss */
 .breadcrumbs li a:hover {
   background: #2572b4;
 }
 
-/* line 183, ../../styles/main.scss */
+/* line 182, ../../styles/main.scss */
 .breadcrumbs li a:hover:after {
   border-left-color: #2572b4 !important;
 }
