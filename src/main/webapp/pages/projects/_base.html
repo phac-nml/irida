@@ -8,58 +8,38 @@
 </head>
 <body>
 
-<nav class="navbar navbar-default navbar-static-top subnav" role="navigation" layout:fragment="subnav"
-     ng-init="projectSubnav=true" th:with="baseLink=${'/projects/' + project.getId()}">
+<nav class="navbar navbar-default navbar-static-top subnav" role="navigation" layout:fragment="subnav" ng-init="projectSubnav=true" th:with="baseLink=${'/projects/' + project.getId()}">
 	<div class="container">
 		<div class="navbar-header">
-			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-			        ng-click="projectSubnav=!projectSubnav"
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" ng-click="projectSubnav=!projectSubnav"
 			        data-target="#bs-example-navbar-collapse-1">
-				<span class="sr-only">Toggle navigation</span>
-				<span class="icon-bar"></span> <span
-				class="icon-bar"></span>
-				<span class="icon-bar"></span>
+				<span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span
+				class="icon-bar"></span> <span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" th:classappend="${activeNav} == 'dashboard' ? 'active'" th:href="@{${baseLink}}"
-			   href="#"><span
-				class="glyphicon glyphicon-home"></span>
-			</a>
+			<a class="navbar-brand" th:classappend="${activeNav} == 'dashboard' ? 'active'" th:href="@{${baseLink}}" href="#"><span
+				class="glyphicon glyphicon-home"></span></a>
 		</div>
 		<div class="collapse navbar-collapse" collapse="projectSubnav" th:inline="text">
 			<ul class="nav navbar-nav">
 
-				<li th:class="${activeNav} == 'samples' ? 'active'">
-					<a th:href="@{${baseLink} + '/samples'}">[[#{project.nav.samples}]]&nbsp;<span
-						class="badge badge-default" th:text="${samples}"></span>
-					</a>
+				<li th:class="${activeNav} == 'samples' ? 'active'"><a th:href="@{${baseLink} + '/samples'}">[[#{project.nav.samples}]]&nbsp;<span
+						class="badge badge-default" th:text="${samples}"></span></a></li>
+				<li th:class="${activeNav} == 'members' ? 'active'"><a th:href="@{${baseLink} + '/members'}">[[#{project.nav.members}]]&nbsp;<span
+						class="badge badge-default" th:text="${users}"></span></a>
 				</li>
-				<li th:class="${activeNav} == 'members' ? 'active'">
-					<a th:href="@{${baseLink} + '/members'}">[[#{project.nav.members}]]&nbsp;<span
-						class="badge badge-default" th:text="${users}"></span>
-					</a>
-				</li>
-				<li th:class="${activeNav} == 'associated' ? 'active'">
-					<a th:href="@{${baseLink} + '/associated'}">[[#{project.nav.associated}]]&nbsp;<span
-						class="badge badge-default" th:text="${related_project_count}"></span>
-					</a>
+				<li th:class="${activeNav} == 'associated' ? 'active'"><a th:href="@{${baseLink} + '/associated'}">[[#{project.nav.associated}]]&nbsp;<span
+						class="badge badge-default" th:text="${related_project_count}"></span></a>
 				</li>
 
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
-						<span th:text="#{project.nav.settings}"></span>
-						&nbsp;
-						<span class="caret"></span>
-					</a>
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"><span th:text="#{project.nav.settings}"></span>&nbsp;<span class="caret"></span></a>
 					<ul class="dropdown-menu" role="menu">
-						<li th:class="${activeNav} == 'metadata' ? 'active'">
-							<a th:href="@{${baseLink} + '/metadata'}">[[#{project.nav.metadata}]]</a>
+						<li th:class="${activeNav} == 'metadata' ? 'active'"><a th:href="@{${baseLink} + '/metadata'}">[[#{project.nav.metadata}]]</a>
 						</li>
 						<li th:class="${activeNav} == 'reference' ? 'active'">
-							<a href="" th:href="@{${baseLink} + '/referenceFiles'}"
-							   th:text="#{project.nav.referenceFiles}">_Reference Files
-							</a>
+							<a href="" th:href="@{${baseLink} + '/referenceFiles'}" th:text="#{project.nav.referenceFiles}">_Reference Files</a>
 						</li>
 					</ul>
 				</li>
@@ -67,7 +47,6 @@
 		</div>
 	</div>
 </nav>
-
 <div layout:fragment="page">
 
 	<main class="col-md-9 col-md-push-3" layout:fragment="main">
