@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.AsyncResult;
 
 import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.Futures;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
@@ -25,12 +24,18 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisE
 
 /**
  * Implementation of analysis execution tasks. This will scan for
- * {@link AnalysisSubmission}s and execute the {@link Analysis} defined by the submissions.
+ * {@link AnalysisSubmission}s and execute the {@link Analysis} defined by the
+ * submissions.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionScheduledTask {
+	
+	private Object prepareAnalysesLock = new Object();
+	private Object executeAnalysesLock = new Object();
+	private Object monitorRunningAnalysesLock = new Object();
+	private Object transferAnalysesResultsLock = new Object();
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionScheduledTaskImpl.class);
 
@@ -58,22 +63,24 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 */
 	@Override
 	public Set<Future<AnalysisSubmission>> prepareAnalyses() {
-		List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-				.findByAnalysisState(AnalysisState.NEW);
-		
-		Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
-
-		for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
-			logger.debug("Preparing " + analysisSubmission);
-
-			try {
-				submissions.add(analysisExecutionServiceSimplified.prepareSubmission(analysisSubmission));
-			} catch (ExecutionManagerException | IridaWorkflowNotFoundException | IOException e) {
-				logger.error("Error preparing submission " + analysisSubmission, e);
+		synchronized(prepareAnalysesLock) {
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
+					.findByAnalysisState(AnalysisState.NEW);
+	
+			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
+	
+			for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
+				logger.debug("Preparing " + analysisSubmission);
+	
+				try {
+					submissions.add(analysisExecutionServiceSimplified.prepareSubmission(analysisSubmission));
+				} catch (ExecutionManagerException | IridaWorkflowNotFoundException | IOException e) {
+					logger.error("Error preparing submission " + analysisSubmission, e);
+				}
 			}
+	
+			return submissions;
 		}
-		
-		return submissions;
 	}
 
 	/**
@@ -81,22 +88,24 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 */
 	@Override
 	public Set<Future<AnalysisSubmission>> executeAnalyses() {
-		List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-				.findByAnalysisState(AnalysisState.PREPARED);
-		
-		Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
-
-		for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
-			logger.debug("Executing " + analysisSubmission);
-
-			try {
-				submissions.add(analysisExecutionServiceSimplified.executeAnalysis(analysisSubmission));
-			} catch (ExecutionManagerException | IridaWorkflowNotFoundException e) {
-				logger.error("Error executing submission " + analysisSubmission, e);
+		synchronized(executeAnalysesLock) {
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
+					.findByAnalysisState(AnalysisState.PREPARED);
+	
+			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
+	
+			for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
+				logger.debug("Executing " + analysisSubmission);
+	
+				try {
+					submissions.add(analysisExecutionServiceSimplified.executeAnalysis(analysisSubmission));
+				} catch (ExecutionManagerException | IridaWorkflowNotFoundException e) {
+					logger.error("Error executing submission " + analysisSubmission, e);
+				}
 			}
+	
+			return submissions;
 		}
-		
-		return submissions;
 	}
 
 	/**
@@ -104,26 +113,28 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 */
 	@Override
 	public Set<Future<AnalysisSubmission>> monitorRunningAnalyses() {
-		List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-				.findByAnalysisState(AnalysisState.RUNNING);
-		
-		Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
-		
-		for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
-			logger.debug("Checking state of " + analysisSubmission);
-
-			try {
-				WorkflowStatus workflowStatus = analysisExecutionServiceSimplified
-						.getWorkflowStatus(analysisSubmission);
-				submissions.add(handleWorkflowStatus(workflowStatus, analysisSubmission));
-			} catch (ExecutionManagerException | RuntimeException e) {
-				logger.error("Error checking state for " + analysisSubmission, e);
-				analysisSubmission.setAnalysisState(AnalysisState.ERROR);
-				submissions.add(new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission)));
+		synchronized(monitorRunningAnalysesLock) {
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
+					.findByAnalysisState(AnalysisState.RUNNING);
+	
+			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
+	
+			for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
+				logger.debug("Checking state of " + analysisSubmission);
+	
+				try {
+					WorkflowStatus workflowStatus = analysisExecutionServiceSimplified
+							.getWorkflowStatus(analysisSubmission);
+					submissions.add(handleWorkflowStatus(workflowStatus, analysisSubmission));
+				} catch (ExecutionManagerException | RuntimeException e) {
+					logger.error("Error checking state for " + analysisSubmission, e);
+					analysisSubmission.setAnalysisState(AnalysisState.ERROR);
+					submissions.add(new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission)));
+				}
 			}
+	
+			return submissions;
 		}
-		
-		return submissions;
 	}
 
 	/**
@@ -131,22 +142,24 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 */
 	@Override
 	public Set<Future<AnalysisSubmission>> transferAnalysesResults() {
-		List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-				.findByAnalysisState(AnalysisState.FINISHED_RUNNING);
-		
-		Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
-
-		for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
-			logger.debug("Transferring results for " + analysisSubmission);
-
-			try {
-				submissions.add(analysisExecutionServiceSimplified.transferAnalysisResults(analysisSubmission));
-			} catch (ExecutionManagerException | IridaWorkflowNotFoundException | IOException e) {
-				logger.error("Error transferring submission " + analysisSubmission, e);
+		synchronized(transferAnalysesResultsLock) {
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
+					.findByAnalysisState(AnalysisState.FINISHED_RUNNING);
+	
+			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
+	
+			for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
+				logger.debug("Transferring results for " + analysisSubmission);
+	
+				try {
+					submissions.add(analysisExecutionServiceSimplified.transferAnalysisResults(analysisSubmission));
+				} catch (ExecutionManagerException | IridaWorkflowNotFoundException | IOException e) {
+					logger.error("Error transferring submission " + analysisSubmission, e);
+				}
 			}
+	
+			return submissions;
 		}
-		
-		return submissions;
 	}
 
 	/**
@@ -156,11 +169,13 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 *            The status of the workflow.
 	 * @param analysisSubmission
 	 *            The {@link AnalysisSubmission}.
-	 *  @return A {@link Future} with an {@link AnalysisSubmission} for this submission.
+	 * @return A {@link Future} with an {@link AnalysisSubmission} for this
+	 *         submission.
 	 */
-	private Future<AnalysisSubmission> handleWorkflowStatus(WorkflowStatus workflowStatus, AnalysisSubmission analysisSubmission) {
+	private Future<AnalysisSubmission> handleWorkflowStatus(WorkflowStatus workflowStatus,
+			AnalysisSubmission analysisSubmission) {
 		Future<AnalysisSubmission> returnedSubmission;
-		
+
 		WorkflowState workflowState = workflowStatus.getState();
 		switch (workflowState) {
 		case OK:
@@ -178,7 +193,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			logger.debug("Workflow for analysis " + analysisSubmission + " is running: percent "
 					+ workflowStatus.getPercentComplete());
 			returnedSubmission = new AsyncResult<>(analysisSubmission);
-			
+
 			break;
 
 		default:
@@ -189,7 +204,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 
 			break;
 		}
-		
+
 		return returnedSubmission;
 	}
 }
