@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -50,6 +51,9 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 
 	@Autowired
 	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
+	
+	@Autowired
+	private AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified;
 
 	@Autowired
 	private UserService userService;
@@ -71,14 +75,14 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	}
 
 	/**
-	 * Creates a new bean with a AnalysisExecutionScheduledTask for performing the analysis tasks.
-	 * @return  A AnalysisExecutionScheduledTask bean. 
+	 * Creates a new bean with a AnalysisExecutionScheduledTask for performing
+	 * the analysis tasks.
+	 * 
+	 * @return A AnalysisExecutionScheduledTask bean.
 	 */
 	@Bean
 	public AnalysisExecutionScheduledTask analysisExecutionScheduledTask() {
-		return new AnalysisExecutionScheduledTaskImpl(
-				analysisSubmissionService, analysisSubmissionRepository,
-				analysisExecutionServicePhylogenomics);
+		return new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository, analysisExecutionServiceSimplified);
 	}
 
 	/**
