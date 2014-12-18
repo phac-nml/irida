@@ -126,7 +126,6 @@
 		</div>
 		<!-- /.container-fluid -->
 	</nav>
-	<th:block layout:fragment="subnav"></th:block>
 	<div ng-controller="BreadcrumbController as breadcrumb" class="breadcrumbs">
 		<div class="container ng-cloak">
 			<ol>
@@ -136,6 +135,7 @@
 			</ol>
 		</div>
 	</div>
+	<th:block layout:fragment="subnav"></th:block>
 	<div style="margin-top: 15px" class="container">
 		<div class="row main-area" layout:fragment="page"></div>
 	</div>
