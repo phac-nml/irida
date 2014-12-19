@@ -46,7 +46,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrary
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceServiceSimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
@@ -63,9 +63,9 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionR
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
-public class AnalysisWorkspaceServiceGalaxySimplified implements AnalysisWorkspaceServiceSimplified {
+public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService {
 
-	private static final Logger logger = LoggerFactory.getLogger(AnalysisWorkspaceServiceGalaxySimplified.class);
+	private static final Logger logger = LoggerFactory.getLogger(AnalysisWorkspaceServiceGalaxy.class);
 
 	private static final String COLLECTION_NAME = "irida_collection_list";
 
@@ -80,7 +80,7 @@ public class AnalysisWorkspaceServiceGalaxySimplified implements AnalysisWorkspa
 	private IridaWorkflowsService iridaWorkflowsService;
 
 	/**
-	 * Builds a new {@link AnalysisWorkspaceServiceGalaxySimplified} with the
+	 * Builds a new {@link AnalysisWorkspaceServiceGalaxy} with the
 	 * given information.
 	 * 
 	 * @param galaxyHistoriesService
@@ -95,7 +95,7 @@ public class AnalysisWorkspaceServiceGalaxySimplified implements AnalysisWorkspa
 	 * @param iridaWorkflowsService
 	 *            A service used for loading workflows from IRIDA.
 	 */
-	public AnalysisWorkspaceServiceGalaxySimplified(GalaxyHistoriesService galaxyHistoriesService,
+	public AnalysisWorkspaceServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService,
 			SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository,
 			SequenceFileRepository sequenceFileRepository, GalaxyLibraryBuilder libraryBuilder,

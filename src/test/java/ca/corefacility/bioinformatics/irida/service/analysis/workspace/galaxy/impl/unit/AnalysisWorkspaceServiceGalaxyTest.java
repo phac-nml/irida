@@ -45,7 +45,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrary
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxySimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
@@ -61,7 +61,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionR
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class WorkspaceServiceGalaxySimplifiedTest {
+public class AnalysisWorkspaceServiceGalaxyTest {
 
 	@Mock
 	private GalaxyHistoriesService galaxyHistoriesService;
@@ -82,7 +82,7 @@ public class WorkspaceServiceGalaxySimplifiedTest {
 	@Mock
 	private IridaWorkflowsService iridaWorkflowsService;
 
-	private AnalysisWorkspaceServiceGalaxySimplified workflowPreparation;
+	private AnalysisWorkspaceServiceGalaxy workflowPreparation;
 
 	private Set<SequenceFile> inputFiles;
 	private ReferenceFile referenceFile;
@@ -182,7 +182,7 @@ public class WorkspaceServiceGalaxySimplifiedTest {
 		workflowDetails = new WorkflowDetails();
 		workflowDetails.setId(WORKFLOW_ID);
 
-		workflowPreparation = new AnalysisWorkspaceServiceGalaxySimplified(galaxyHistoriesService,
+		workflowPreparation = new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService,
 				galaxyWorkflowService, sampleSequenceFileJoinRepository, sequenceFileRepository, libraryBuilder,
 				iridaWorkflowsService);
 	}

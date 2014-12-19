@@ -13,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
-public interface AnalysisWorkspaceServiceSimplified {
+public interface AnalysisWorkspaceService {
 
 	/**
 	 * Prepares the workspace for an analysis given an analysis submission. This
