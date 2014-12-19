@@ -33,13 +33,19 @@ import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.Use
  * 
  */
 @Configuration
-@EnableTransactionManagement(order = 1000)
+@EnableTransactionManagement(order = IridaApiRepositoriesConfig.TRANSACTION_MANAGEMENT_ORDER)
 @EnableJpaRepositories(basePackages = "ca.corefacility.bioinformatics.irida.repositories", repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class)
 @ComponentScan("ca.corefacility.bioinformatics.irida.repositories.remote")
 @Import({ IridaApiPropertyPlaceholderConfig.class, IridaApiJdbcDataSourceConfig.class,
 		IridaApiFilesystemRepositoryConfig.class })
 @EnableJpaAuditing
 public class IridaApiRepositoriesConfig {
+
+	/**
+	 * The order for transaction management.
+	 */
+	public static final int TRANSACTION_MANAGEMENT_ORDER = 1000;
+
 	@Autowired
 	private DataConfig dataConfig;
 
