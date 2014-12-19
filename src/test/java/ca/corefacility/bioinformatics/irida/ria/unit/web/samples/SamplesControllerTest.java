@@ -94,8 +94,9 @@ public class SamplesControllerTest {
 		when(sampleService.update(sample.getId(), updatedValues)).thenReturn(sample);
 
 		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setRequestURI("/projects/5/samples/" + sample.getId() + "/edit");
 		String result = controller.updateSample(model, sample.getId(), null, update, request);
-		assertEquals("Returns the correct redirect", "redirect:/samples/" + sample.getId(), result);
+		assertTrue("Returns the correct redirect", result.contains(sample.getId() + "/details"));
 		assertTrue("Model should be populated with updated attributes",
 				model.containsAttribute(SamplesController.ORGANISM));
 		assertTrue("Model should be populated with updated attributes",

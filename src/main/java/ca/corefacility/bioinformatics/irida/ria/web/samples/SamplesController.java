@@ -186,8 +186,6 @@ public class SamplesController extends BaseController {
 
 		String url = request.getRequestURI();
 		String redirectUrl = url.substring(0, url.indexOf("/edit")) + "/details";
-		logger.debug("Redirect URL: ", redirectUrl);
-
 		return "redirect:" + redirectUrl;
 	}
 
