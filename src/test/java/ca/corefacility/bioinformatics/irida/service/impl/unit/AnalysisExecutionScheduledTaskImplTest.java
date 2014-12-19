@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,6 +21,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -89,10 +92,11 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@Test
-	public void testPrepareAnalysesSuccess() throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException {
+	public void testPrepareAnalysesSuccess() throws ExecutionManagerException, IridaWorkflowNotFoundException,
+			IOException {
 		analysisSubmission.setAnalysisState(AnalysisState.NEW);
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.NEW)).thenReturn(
@@ -102,20 +106,20 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		verify(analysisExecutionServiceSimplified).prepareSubmission(analysisSubmission);
 	}
-	
+
 	/**
 	 * Tests no analysis to prepare.
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@Test
-	public void testPrepareAnalysesNoAnalysis() throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException {
+	public void testPrepareAnalysesNoAnalysis() throws ExecutionManagerException, IridaWorkflowNotFoundException,
+			IOException {
 		analysisSubmission.setAnalysisState(AnalysisState.NEW);
 
-		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.NEW)).thenReturn(
-				Arrays.asList());
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.NEW)).thenReturn(Arrays.asList());
 
 		analysisExecutionScheduledTask.prepareAnalyses();
 
@@ -159,7 +163,99 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully transfering results for a submitted analysis.
+	 * Tests successfully switching analysis state to
+	 * {@link AnalysisState.FINISHED_RUNNING} on success in Galaxy.
+	 * 
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 */
+	@Test
+	public void testMonitorRunningAnalysesSuccessFinished() throws ExecutionManagerException,
+			IridaWorkflowNotFoundException {
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
+				Arrays.asList(analysisSubmission));
+		when(analysisExecutionServiceSimplified.getWorkflowStatus(analysisSubmission)).thenReturn(
+				new WorkflowStatus(WorkflowState.OK, 100.0f));
+
+		analysisExecutionScheduledTask.monitorRunningAnalyses();
+
+		assertEquals(AnalysisState.FINISHED_RUNNING, analysisSubmission.getAnalysisState());
+		verify(analysisSubmissionRepository).save(analysisSubmission);
+	}
+
+	/**
+	 * Tests successfully skipping over switching analysis state for a running
+	 * analysis in Galaxy.
+	 * 
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 */
+	@Test
+	public void testMonitorRunningAnalysesSuccessRunning() throws ExecutionManagerException,
+			IridaWorkflowNotFoundException {
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
+				Arrays.asList(analysisSubmission));
+		when(analysisExecutionServiceSimplified.getWorkflowStatus(analysisSubmission)).thenReturn(
+				new WorkflowStatus(WorkflowState.RUNNING, 50.0f));
+
+		analysisExecutionScheduledTask.monitorRunningAnalyses();
+
+		assertEquals(AnalysisState.RUNNING, analysisSubmission.getAnalysisState());
+		verify(analysisSubmissionRepository, never()).save(analysisSubmission);
+	}
+
+	/**
+	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR}
+	 * if there was an error Galaxy state.
+	 * 
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 */
+	@Test
+	public void testMonitorRunningAnalysesSuccessError() throws ExecutionManagerException,
+			IridaWorkflowNotFoundException {
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
+				Arrays.asList(analysisSubmission));
+		when(analysisExecutionServiceSimplified.getWorkflowStatus(analysisSubmission)).thenReturn(
+				new WorkflowStatus(WorkflowState.ERROR, 50.0f));
+
+		analysisExecutionScheduledTask.monitorRunningAnalyses();
+
+		assertEquals(AnalysisState.ERROR, analysisSubmission.getAnalysisState());
+		verify(analysisSubmissionRepository).save(analysisSubmission);
+	}
+
+	/**
+	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR}
+	 * if there was an unknown Galaxy state.
+	 * 
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 */
+	@Test
+	public void testMonitorRunningAnalysesSuccessUnknown() throws ExecutionManagerException,
+			IridaWorkflowNotFoundException {
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
+				Arrays.asList(analysisSubmission));
+		when(analysisExecutionServiceSimplified.getWorkflowStatus(analysisSubmission)).thenReturn(
+				new WorkflowStatus(WorkflowState.UNKNOWN, 50.0f));
+
+		analysisExecutionScheduledTask.monitorRunningAnalyses();
+
+		assertEquals(AnalysisState.ERROR, analysisSubmission.getAnalysisState());
+		verify(analysisSubmissionRepository).save(analysisSubmission);
+	}
+
+	/**
+	 * Tests successfully transferring results for a submitted analysis.
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IOException
