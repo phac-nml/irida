@@ -17,9 +17,6 @@
 		</div>
 	</div>
 	<div class="row">
-		<p th:with="url=@{${#httpServletRequest.requestURI}}">
-			<span th:text="${#strings.contains(#httpServletRequest.requestURI, 'projects')} ? 'fred' : 'barney'"></span>
-		</p>
 		<div class="col-md-12">
 			<table id="filesTable">
 				<thead>
