@@ -39,7 +39,7 @@ public class EditClientPage extends AbstractPage {
 		String url = "clients/" + id + "/edit";
 		logger.trace("Going to edit page for client " + id);
 		get(driver, url);
-		waitForTime(200);
+		waitForTime(400);
 		return PageFactory.initElements(driver, EditClientPage.class);
 	}
 

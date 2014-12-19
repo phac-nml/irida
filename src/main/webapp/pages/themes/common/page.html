@@ -8,15 +8,19 @@
 	      href="/resources/bower_components/Font-Awesome/css/font-awesome.min.css"/>
 	<link rel="stylesheet" th:href="@{/resources/bower_components/AngularJS-Toaster/toaster.css}"
 	      href="/resources/bower_components/AngularJS-Toaster/toaster.css"/>
+
+	<style>
+		.ng-cloak {
+			display: none !important;
+		}
+	</style>
 </head>
 <body vocab="http://schema.org/" typeof="WebPage" id="ng-app" ng-app="irida">
 <div toaster-container=""></div>
-
 <div style="height: 100%;" ng-controller="CartCtrl as cart">
 	<div style="height: 100%;" class="st-container" ng-class="{'cart-open':cart.show}">
 		<div class="st-content">
-			<div class="st-content-inner" layout:fragment="main-section">
-			</div>
+			<div class="st-content-inner" layout:fragment="main-section"> </div>
 		</div>
 		<aside class="cart">
 			<section ng-hide="cart.projects.length">
@@ -24,113 +28,252 @@
 				<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close</button>
 			</section>
 			<section ng-show="cart.projects.length">
-
 				<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close</button>
 				<button class="btn btn-primary pull-right" th:text="#{cart.btn.run}">Run Pipeline</button>
 			</section>
 		</aside>
 	</div>
 </div>
+<th:block layout:fragment="main-section">
+	<!--/* This is where each pages content should be loaded. */-->
+</th:block>
 
+<script type="text/ng-template" id="/session-modal.html">
+	<div>
+		<div class="modal-header">
+			<b class="modal-title"><span th:text="#{session.timeout-modal.header}"></span>&nbsp;{{timeleft | moment}}</b>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-default" ng-click="logout()" th:text="#{session.timeout-modal.logout}">Log me out</button>
+			<button class="btn btn-primary" ng-click="poke()" th:text="#{session.timeout-modal.poke}">Keep me here</button>
+		</div>
+	</div>
+</script>
+<script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"
+		src="/resources/bower_components/jquery/dist/jquery.min.js"></script>
 
-
-<script src="/resources/bower_components/jquery/dist/jquery.min.js"
-        th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}"></script>
-<script th:src="@{/resources/bower_components/lodash/dist/lodash.min.js}"
-        src="/resources/bower_components/lodash/dist/lodash.min.js"></script>
-<script th:src="@{/resources/bower_components/angular/angular.min.js}"
-        src="/resources/bower_components/angular/angular.min.js"></script>
-<script src="/resources/bower_components/angular-aria/angular-aria.min.js"
-        th:src="@{/resources/bower_components/angular-aria/angular-aria.min.js}"></script>
-<script th:src="@{/resources/bower_components/angular-animate/angular-animate.min.js}"
-        src="/resources/bower_components/angular-animate/angular-animate.min.js"></script>
-<script th:src="@{/resources/bower_components/angular-resource/angular-resource.min.js}"
-        src="/resources/bower_components/angular-resource/angular-resource.min.js"></script>
-<script th:src="@{'/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js'}"
-        src="/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
-<script th:src="@{/resources/bower_components/restangular/src/restangular.js}"
-        src="/resources/bower_components/restangular/src/restangular.js"></script>
-
-<script th:src="@{/resources/bower_components/AngularJS-Toaster/toaster.js}"
-        src="/resources/bower_components/AngularJS-Toaster/toaster.js"></script>
-<script th:src="@{/resources/js/services/notifications/irida-notifications.js}"
-        src="/resources/js/services/notifications/irida-notifications-min.js"></script>
-
-<script th:inline="javascript">
-	/*<![CDATA[*/
-	window.dependencies = _.union(window.dependencies || [], ['ngAria', 'ngResource', 'ngAnimate', 'ui.bootstrap', 'restangular', 'irida.notifications']);
-	var interceptor = function ($q, $location) {
-		return {
-			request: function (config) {
-				if (config.url.indexOf("/template") > -1) {
-					config.headers.Accept = "text/html";
+<th:block sec:authorize="isAuthenticated()">
+	<script th:inline="javascript">
+		var TL = {
+			BASE_URL      : /*[[@{/}]]*/ '/',
+			SESSION_LENGTH: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800,
+			lang          : {
+				crumbs: {
+					"projects": /*[[#{bc.projects}]]*/ "Projects",
+					"samples" : /*[[#{bc.samples}]]*/ "Samples",
+					"sequenceFiles": /*[[#{bc.sequenceFiles}]]*/ "Sequence Files"
 				}
-				if (config.method === "POST") {
-					config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
-				}
-				return config;
 			}
 		};
-	};
-	var app = angular.module('irida', window.dependencies)
-		    .value('BASE_URL', /*[[@{/}]]*/ '/')
-		    // This configures the base url globally for all restangular calls.
-		    .config(function (RestangularProvider) {
-			    RestangularProvider.setBaseUrl(/*[[@{/}]]*/);
-		    })
-		    .config(function ($httpProvider) {
-			    $httpProvider.interceptors.push(interceptor);
+	</script>
 
+	<script th:src="@{/resources/bower_components/lodash/dist/lodash.min.js}"
+	        src="/resources/bower_components/lodash/dist/lodash.min.js"></script>
+	<script th:src="@{/resources/bower_components/angular/angular.min.js}"
+	        src="/resources/bower_components/angular/angular.min.js"></script>
+	<script src="/resources/bower_components/angular-aria/angular-aria.min.js"
+			th:src="@{/resources/bower_components/angular-aria/angular-aria.min.js}"></script>
+	<script th:src="@{/resources/bower_components/angular-animate/angular-animate.min.js}"
+	        src="/resources/bower_components/angular-animate/angular-animate.min.js"></script>
+	<script src="/resources/bower_components/angular-messages/angular-messages.min.js"
+	        th:src="@{/resources/bower_components/angular-messages/angular-messages.min.js}"></script>
+	<script th:src="@{/resources/bower_components/angular-resource/angular-resource.min.js}"
+	        src="/resources/bower_components/angular-resource/angular-resource.min.js"></script>
+	<script th:src="@{'/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js'}"
+	        src="/resources/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+	<script th:src="@{/resources/bower_components/restangular/src/restangular.js}"
+	        src="/resources/bower_components/restangular/src/restangular.js"></script>
 
-			    // Make sure that all ajax form data is sent in the correct format.
-			    $httpProvider.defaults.transformRequest = function (data) {
-				    if (data === undefined) {
-					    return data;
-				    }
-				    return $.param(data);
-			    };
-		    })
-		    .run(function (paginationConfig) {
-			    paginationConfig.firstText = /*[[#{table.first}]]*/ 'First';
-			    paginationConfig.previousText = /*[[#{table.previous}]]*/ 'Previous';
-			    paginationConfig.nextText = /*[[#{table.next}]]*/ 'Next';
-			    paginationConfig.lastText = /*[[#{table.last}]]*/ 'Last';
-			    paginationConfig.boundaryLinks = true;
-			    paginationConfig.directionLinks = true;
-			    paginationConfig.maxSize = 8;
-			    paginationConfig.rotate = false;
-		    })
-		    .directive('ngFocus', [function () {
-			    var FOCUS_CLASS = "ng-focused";
-			    return {
-				    restrict: 'A',
-				    require : 'ngModel',
-				    link    : function (scope, element, attrs, ctrl) {
-					    ctrl.$focused = false;
-					    element.bind('focus', function (evt) {
-						    element.addClass(FOCUS_CLASS);
-						    scope.$apply(function () {
-							    ctrl.$focused = true;
-						    });
-					    }).bind('blur', function (evt) {
-						    element.removeClass(FOCUS_CLASS);
-						    scope.$apply(function () {
-							    ctrl.$focused = false;
-						    });
-					    });
-				    }
-			    }
-		    }])
-		    .controller('CartCtrl', [function () {
-			    "use strict";
-			    var vm = this;
-			    vm.show = false;
-			    vm.projects = [];
-		    }])
-		;
-	/*]]>*/
-</script>
+	<script th:src="@{/resources/bower_components/AngularJS-Toaster/toaster.js}"
+	        src="/resources/bower_components/AngularJS-Toaster/toaster.js"></script>
+	<script th:src="@{/resources/js/services/notifications/irida-notifications.js}"
+	        src="/resources/js/services/notifications/irida-notifications-min.js"></script>
 
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		function SessionFactory($timeout, $interval, $window, $modal) {
+			var modalWait = 120000, // 2 minutes
+			    initialWait = TL.SESSION_LENGTH * 1000 - modalWait + 500, // Give a little overlap
+			    timeout,
+			    restartTimeout,
+			    opened = false;
+
+			function _restart() {
+				if (!opened) {
+					opened = true;
+					$modal.open({
+						templateUrl: '/session-modal.html',
+						controller : ['$scope', '$http', '$window', '$modalInstance', function ($scope, $http, $window, $modalInstance) {
+							$scope.poke = function () {
+								$interval.cancel(countdown);
+								$timeout.cancel(restartTimeout);
+								$timeout.cancel(timeout);
+								$http.head($window.location.href).success(function () {
+									start();
+									opened = false;
+									$modalInstance.close();
+								});
+							};
+
+							$scope.logout = function () {
+								$window.location = TL.BASE_URL + "logout";
+							};
+
+							$scope.timeleft = modalWait;
+							var countdown = $interval(function () {
+								$scope.timeleft = $scope.timeleft - 1000;
+							}, 1000);
+
+							restartTimeout = $timeout(function () {
+								$window.location.reload();
+							}, modalWait);
+						}]
+					});
+				}
+			}
+
+			function start() {
+				timeout = $timeout(function SessionTimer() {
+					_restart();
+				}, initialWait);
+			}
+
+			function reset() {
+				$timeout.cancel(timeout);
+				start();
+			}
+
+			return ({
+				start: start,
+				reset: reset
+			})
+		}
+
+		function HttpInterceptor($injector) {
+			return {
+				request : function (config) {
+					if (config.url.indexOf("/template") > -1) {
+						config.headers.Accept = "text/html";
+					}
+					if (config.method === "POST") {
+						config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+					}
+					return config;
+				},
+				response: function (response) {
+					var session = $injector.get('SessionFactory');
+					session.reset();
+					return response;
+				}
+			};
+		}
+
+		window.dependencies = _.union(window.dependencies || [], ['ngAria', 'ngResource', 'ngAnimate', 'ngMessages', 'ui.bootstrap', 'restangular', 'irida.notifications']);
+		var app = angular.module('irida', window.dependencies)
+			.value('BASE_URL', TL.BASE_URL)
+			// This configures the base url globally for all restangular calls.
+			.config(function (RestangularProvider) {
+				RestangularProvider.setBaseUrl(TL.BASE_URL);
+			})
+			.run(function (paginationConfig) {
+				paginationConfig.firstText = /*[[#{table.first}]]*/ 'First';
+				paginationConfig.previousText = /*[[#{table.previous}]]*/ 'Previous';
+				paginationConfig.nextText = /*[[#{table.next}]]*/ 'Next';
+				paginationConfig.lastText = /*[[#{table.last}]]*/ 'Last';
+				paginationConfig.boundaryLinks = true;
+				paginationConfig.directionLinks = true;
+				paginationConfig.maxSize = 8;
+				paginationConfig.rotate = false;
+			})
+			.run(['SessionFactory', function (session) {
+				session.start();
+			}])
+			.factory('SessionFactory', ['$timeout', '$interval', '$window', '$modal', SessionFactory])
+			.factory('HttpInterceptor', ['$injector', HttpInterceptor])
+			.filter('moment', function () {
+				return function (timeleft) {
+					if (angular.isNumber(timeleft)) {
+						return moment.duration(timeleft, "milliseconds").humanize();
+					}
+				};
+			})
+			.directive('ngFocus', [function () {
+				var FOCUS_CLASS = "ng-focused";
+				return {
+					restrict: 'A',
+					require : 'ngModel',
+					link    : function (scope, element, attrs, ctrl) {
+						ctrl.$focused = false;
+						element.bind('focus', function (evt) {
+							element.addClass(FOCUS_CLASS);
+							scope.$apply(function () {
+								ctrl.$focused = true;
+							});
+						}).bind('blur', function (evt) {
+							element.removeClass(FOCUS_CLASS);
+							scope.$apply(function () {
+								ctrl.$focused = false;
+							});
+						});
+					}
+				}
+			}])
+			.config(function ($httpProvider) {
+				$httpProvider.interceptors.push('HttpInterceptor');
+
+				// Make sure that all ajax form data is sent in the correct format.
+				$httpProvider.defaults.transformRequest = function (data) {
+					if (data === undefined) {
+						return data;
+					}
+					return $.param(data);
+				};
+			})
+			.controller('BreadcrumbController', ['$window', '$log', function ($window, $log) {
+				"use strict";
+				var vm = this, frags = $window.location.pathname.split("/");
+				// Need to find the start
+				var found = false;
+				while (!found && frags.length > 0) {
+					if (TL.lang.crumbs[frags[0]]) {
+						found = true;
+					}
+					else {
+						frags.shift();
+					}
+				}
+				vm.crumbs = [];
+
+					// Get root element
+					var url = TL.BASE_URL;
+					while (frags.length > 1) {
+						var name = frags.shift();
+						if (!TL.lang.crumbs[name]) {
+							break;
+						}
+
+						url += name;
+						name = TL.lang.crumbs[name] || name;
+						vm.crumbs.push({url: url, text: name});
+
+						if (frags.length) {
+							var num = frags.shift();
+							url += "/" + num;
+							vm.crumbs.push({url: url, text: num});
+						}
+						url += "/";
+					}
+			}])
+				.controller('CartCtrl', [function () {
+					"use strict";
+					var vm = this;
+					vm.show = false;
+					vm.projects = [];
+				}])
+				;
+		/*]]>*/
+	</script>
+</th:block>
 <th:block layout:fragment="theme-scripts">
 	<!--/* This is where the main for the theme template are loaded. */-->
 </th:block>

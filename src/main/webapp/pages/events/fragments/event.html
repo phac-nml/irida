@@ -33,7 +33,7 @@ can be internationalized.
 <span th:fragment="sample-added-event (event)">
     <i class="fa fa-flask"></i>
     <span class="event-content sample-added-event"
-            th:with="sampleHref=@{/samples/{sid}(sid=${event.sample.getId()})},
+            th:with="sampleHref=@{/projects/{pid}/samples/{sid}/details(sid=${event.sample.getId()}, pid=${event.project.getId()})},
             sampleLink=${'&lt;a href='+ sampleHref +'&gt;'+ event.sample.label +'&lt;/a&gt;'},
             projectHref=@{/projects/{pid}(pid=${event.project.getId()})},
             projectLink=${'&lt;a href='+ projectHref +'&gt;'+ event.project.label +'&lt;/a&gt;'}" 
