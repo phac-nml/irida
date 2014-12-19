@@ -158,7 +158,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return Location of the modal template
 	 */
-	@RequestMapping("/templates/samples/linker")
+	@RequestMapping("/projects/templates/samples/linker")
 	public String getLinkerModal(Model model) {
 		model.addAttribute("scriptName", LINKER_SCRIPT);
 		return PROJECT_TEMPLATE_DIR + "linker.tmpl";
@@ -176,7 +176,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return Location of the modal template
 	 */
-	@RequestMapping("/{projectId}/templates/samples/galaxy")
+	@RequestMapping("/projects/{projectId}/templates/samples/galaxy")
 	public String getGalaxyModal(Model model, Principal principal, @PathVariable Long projectId) {
 		model.addAttribute("email", userService.getUserByUsername(principal.getName()).getEmail());
 		model.addAttribute("name", projectService.read(projectId).getName() + "-" + principal.getName());
