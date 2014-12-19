@@ -49,9 +49,9 @@ import com.google.common.collect.ImmutableMap;
 @RequestMapping("/analysis")
 public class AnalysisController {
 	private static final Map<String, String> ANALYSIS_TYPE_NAMES = ImmutableMap.of("1",
-			"Whole Genome Phylogenomics Pipeline", "2", "Other Analysis Submission");
+			"Whole Genome Phylogenomics Pipeline");
 	private static final Map<Class<? extends AnalysisSubmission>, String> ANALYSIS_TYPE_IDS = ImmutableMap.of(
-			AnalysisSubmission.class, "1", AnalysisSubmission.class, "2");
+			AnalysisSubmission.class, "1");
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
 	/*
 	 * CONSTANTS
