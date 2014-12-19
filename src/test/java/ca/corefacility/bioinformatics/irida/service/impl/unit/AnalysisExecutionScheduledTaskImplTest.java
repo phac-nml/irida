@@ -24,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
@@ -46,9 +45,6 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	@Mock
 	private AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified;
-
-	@Mock
-	private RemoteWorkflowPhylogenomics remoteWorkflow;
 
 	@Mock
 	private Set<SequenceFile> sequenceFiles;

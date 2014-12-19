@@ -30,11 +30,9 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflowRepository;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -55,9 +53,6 @@ public class AnalysisSubmissionRepositoryIT {
 
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
-
-	@Autowired
-	private RemoteWorkflowRepository remoteWorkflowRepository;
 
 	@Autowired
 	private ReferenceFileRepository referenceFileRepository;
@@ -91,9 +86,6 @@ public class AnalysisSubmissionRepositoryIT {
 		
 		ReferenceFile referenceFile = referenceFileRepository.findOne(1L);
 		assertNotNull(referenceFile);
-		RemoteWorkflowPhylogenomics remoteWorkflow = remoteWorkflowRepository
-				.getByType("1", RemoteWorkflowPhylogenomics.class);
-		assertNotNull(remoteWorkflow);
 
 		analysisSubmission = new AnalysisSubmission(analysisName, sequenceFiles,
 				referenceFile, workflowId);

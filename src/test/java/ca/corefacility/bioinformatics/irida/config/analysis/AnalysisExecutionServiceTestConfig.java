@@ -32,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflowRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
@@ -77,9 +76,6 @@ public class AnalysisExecutionServiceTestConfig {
 
 	@Autowired
 	private SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository;
-
-	@Autowired
-	private RemoteWorkflowRepository remoteWorkflowRepository;
 
 	@Autowired
 	private ReferenceFileRepository referenceFileRepository;
