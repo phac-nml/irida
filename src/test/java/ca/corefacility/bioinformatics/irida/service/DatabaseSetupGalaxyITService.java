@@ -26,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflowRepository;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -42,7 +41,6 @@ public class DatabaseSetupGalaxyITService {
 
 	private final ExecutorService executor = Executors.newFixedThreadPool(1);
 
-	private RemoteWorkflowRepository remoteWorkflowRepository;
 	private ReferenceFileRepository referenceFileRepository;
 	private SequenceFileService seqeunceFileService;
 	private SampleService sampleService;
@@ -50,13 +48,10 @@ public class DatabaseSetupGalaxyITService {
 	private AnalysisSubmissionService analysisSubmissionService;
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 
-	private UUID workflowId = UUID.randomUUID();
-
 	/**
 	 * Builds a new AnalysisExecutionGalaxyITService with the given
 	 * services/repositories.
 	 * 
-	 * @param remoteWorkflowRepository
 	 * @param referenceFileRepository
 	 * @param seqeunceFileService
 	 * @param sampleService
@@ -64,14 +59,13 @@ public class DatabaseSetupGalaxyITService {
 	 * @param analysisSubmissionService
 	 * @param analysisSubmissionRepsitory
 	 */
-	public DatabaseSetupGalaxyITService(RemoteWorkflowRepository remoteWorkflowRepository,
-			ReferenceFileRepository referenceFileRepository, SequenceFileService seqeunceFileService,
+	public DatabaseSetupGalaxyITService(ReferenceFileRepository referenceFileRepository,
+			SequenceFileService seqeunceFileService,
 			SampleService sampleService,
 			AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified,
 			AnalysisSubmissionService analysisSubmissionService,
 			AnalysisSubmissionRepository analysisSubmissionRepository) {
 		super();
-		this.remoteWorkflowRepository = remoteWorkflowRepository;
 		this.referenceFileRepository = referenceFileRepository;
 		this.seqeunceFileService = seqeunceFileService;
 		this.sampleService = sampleService;

@@ -28,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.components.PipelineSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
@@ -36,7 +35,6 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -70,7 +68,6 @@ public class PipelineController extends BaseController {
 	private SampleService sampleService;
 	private ReferenceFileService referenceFileService;
 	private SequenceFileService sequenceFileService;
-	private RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics;
 	private AnalysisSubmissionService analysisSubmissionService;
 	private MessageSource messageSource;
 
@@ -82,13 +79,11 @@ public class PipelineController extends BaseController {
 	@Autowired
 	public PipelineController(SampleService sampleService, SequenceFileService sequenceFileService,
 			ReferenceFileService referenceFileService,
-			RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics,
 			AnalysisSubmissionService analysisSubmissionService,
 			MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
 		this.referenceFileService = referenceFileService;
-		this.remoteWorkflowServicePhylogenomics = remoteWorkflowServicePhylogenomics;
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.messageSource = messageSource;
 

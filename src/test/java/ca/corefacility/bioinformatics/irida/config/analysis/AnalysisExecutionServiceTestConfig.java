@@ -190,7 +190,7 @@ public class AnalysisExecutionServiceTestConfig {
 	@Lazy
 	@Bean
 	public DatabaseSetupGalaxyITService analysisExecutionGalaxyITService() {
-		return new DatabaseSetupGalaxyITService(remoteWorkflowRepository, referenceFileRepository, seqeunceFileService,
+		return new DatabaseSetupGalaxyITService(referenceFileRepository, seqeunceFileService,
 				sampleService, analysisExecutionServiceSimplified(),
 				analysisSubmissionService, analysisSubmissionRepository);
 	}
