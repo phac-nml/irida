@@ -40,7 +40,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhyl
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
@@ -262,7 +261,7 @@ public class AnalysisWorkspaceServiceGalaxySimplified implements AnalysisWorkspa
 					"workflow does not require a reference and a reference file is set in the submission");
 		}
 
-		String temporaryLibraryName = AnalysisSubmissionPhylogenomics.class.getSimpleName() + "-"
+		String temporaryLibraryName = AnalysisSubmission.class.getSimpleName() + "-"
 				+ UUID.randomUUID().toString();
 
 		History workflowHistory = galaxyHistoriesService.findById(analysisSubmission.getRemoteAnalysisId());

@@ -30,7 +30,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.ria.components.PipelineSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -176,10 +175,9 @@ public class PipelineController extends BaseController {
 
 	private void startPipeline(Long pipelineId, String name) {
 		// TODO: (14-08-28 - Josh) pipelineId needs to be passed b/c front end does not need to know the details.
-		RemoteWorkflowPhylogenomics workflow = remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
-		AnalysisSubmissionPhylogenomics asp = new AnalysisSubmissionPhylogenomics(name, pipelineSubmission.getSequenceFiles(),
+		AnalysisSubmission asp = new AnalysisSubmission(name, pipelineSubmission.getSequenceFiles(),
 				pipelineSubmission.getReferenceFile(),
-				workflow, UUID.randomUUID());
+				UUID.randomUUID());
 		
 		AnalysisSubmission createdSubmission = analysisSubmissionService.create(asp);
 		logger.debug("Successfully submitted analysis: " + createdSubmission);

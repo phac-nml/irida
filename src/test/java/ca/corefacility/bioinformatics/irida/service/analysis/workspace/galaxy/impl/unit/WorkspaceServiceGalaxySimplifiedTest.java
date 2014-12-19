@@ -40,7 +40,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowTestBuil
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
@@ -180,8 +179,7 @@ public class WorkspaceServiceGalaxySimplifiedTest {
 		remoteWorkflow = new RemoteWorkflowPhylogenomics(WORKFLOW_ID, workflowChecksum, SEQUENCE_FILE_LABEL,
 				REFERENCE_FILE_LABEL, TREE_LABEL, MATRIX_LABEL, TABLE_LABEL);
 
-		submission = new AnalysisSubmissionPhylogenomics("my analysis", inputFiles, referenceFile, remoteWorkflow,
-				workflowId);
+		submission = new AnalysisSubmission("my analysis", inputFiles, referenceFile, workflowId);
 
 		workflowHistory = new History();
 		workflowHistory.setId(HISTORY_ID);

@@ -33,7 +33,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -52,7 +51,7 @@ public class AnalysisController {
 	private static final Map<String, String> ANALYSIS_TYPE_NAMES = ImmutableMap.of("1",
 			"Whole Genome Phylogenomics Pipeline", "2", "Other Analysis Submission");
 	private static final Map<Class<? extends AnalysisSubmission>, String> ANALYSIS_TYPE_IDS = ImmutableMap.of(
-			AnalysisSubmissionPhylogenomics.class, "1", AnalysisSubmission.class, "2");
+			AnalysisSubmission.class, "1", AnalysisSubmission.class, "2");
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
 	/*
 	 * CONSTANTS

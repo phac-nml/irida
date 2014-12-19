@@ -32,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflowRepository;
@@ -68,8 +67,8 @@ public class AnalysisSubmissionRepositoryIT {
 	
 	private UUID workflowId = UUID.randomUUID();
 
-	private AnalysisSubmissionPhylogenomics analysisSubmission;
-	private AnalysisSubmissionPhylogenomics analysisSubmission2;
+	private AnalysisSubmission analysisSubmission;
+	private AnalysisSubmission analysisSubmission2;
 	private static final String analysisId = "10";
 	private static final String analysisId2 = "11";
 	private final String analysisName = "analysis 1";
@@ -96,13 +95,13 @@ public class AnalysisSubmissionRepositoryIT {
 				.getByType("1", RemoteWorkflowPhylogenomics.class);
 		assertNotNull(remoteWorkflow);
 
-		analysisSubmission = new AnalysisSubmissionPhylogenomics(analysisName, sequenceFiles,
-				referenceFile, remoteWorkflow, workflowId);
+		analysisSubmission = new AnalysisSubmission(analysisName, sequenceFiles,
+				referenceFile, workflowId);
 		analysisSubmission.setRemoteAnalysisId(analysisId);
 		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTING);
 		
-		analysisSubmission2 = new AnalysisSubmissionPhylogenomics(analysisName2, sequenceFiles2,
-				referenceFile, remoteWorkflow, workflowId);
+		analysisSubmission2 = new AnalysisSubmission(analysisName2, sequenceFiles2,
+				referenceFile, workflowId);
 		analysisSubmission2.setRemoteAnalysisId(analysisId2);
 		analysisSubmission2.setAnalysisState(AnalysisState.SUBMITTING);
 	}
@@ -113,17 +112,15 @@ public class AnalysisSubmissionRepositoryIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSaveAnalysisSubmission() {
-		AnalysisSubmissionPhylogenomics savedSubmission = analysisSubmissionRepository
+		AnalysisSubmission savedSubmission = analysisSubmissionRepository
 				.save(analysisSubmission);
 
-		AnalysisSubmissionPhylogenomics loadedSubmission = analysisSubmissionRepository
+		AnalysisSubmission loadedSubmission = analysisSubmissionRepository
 				.getByType(savedSubmission.getId(),
-						AnalysisSubmissionPhylogenomics.class);
+						AnalysisSubmission.class);
 
 		assertEquals(analysisSubmission.getRemoteAnalysisId(),
 				loadedSubmission.getRemoteAnalysisId());
-		assertEquals(analysisSubmission.getRemoteWorkflow(),
-				loadedSubmission.getRemoteWorkflow());
 		assertEquals(analysisSubmission.getInputFiles(),
 				loadedSubmission.getInputFiles());
 		assertEquals(analysisSubmission.getReferenceFile(),
@@ -138,8 +135,8 @@ public class AnalysisSubmissionRepositoryIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetAnalysisSubmissionFail() {
-		AnalysisSubmissionPhylogenomics savedSubmission = analysisSubmissionRepository
-				.getByType(999L, AnalysisSubmissionPhylogenomics.class);
+		AnalysisSubmission savedSubmission = analysisSubmissionRepository
+				.getByType(999L, AnalysisSubmission.class);
 		assertNull(savedSubmission);
 	}
 

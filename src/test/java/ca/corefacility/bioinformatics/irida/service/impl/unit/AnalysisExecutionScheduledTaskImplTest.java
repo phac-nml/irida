@@ -26,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -62,7 +61,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	private static final String ANALYSIS_ID = "1";
 	private static final Long INTERNAL_ID = 1L;
-	private AnalysisSubmissionPhylogenomics analysisSubmission;
+	private AnalysisSubmission analysisSubmission;
 
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
@@ -78,13 +77,10 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionServiceSimplified);
 
-		analysisSubmission = new AnalysisSubmissionPhylogenomics("my analysis", sequenceFiles, referenceFile,
-				remoteWorkflow, workflowId);
+		analysisSubmission = new AnalysisSubmission("my analysis", sequenceFiles, referenceFile,
+				workflowId);
 		analysisSubmission.setId(INTERNAL_ID);
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
-
-		when(analysisSubmissionRepository.getByType(INTERNAL_ID, AnalysisSubmissionPhylogenomics.class)).thenReturn(
-				analysisSubmission);
 	}
 
 	/**
