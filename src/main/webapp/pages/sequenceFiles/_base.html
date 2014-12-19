@@ -9,10 +9,10 @@
 <nav class="navbar navbar-default navbar-static-top subnav" role="navigation" layout:fragment="subnav">
     <div class="container">
         <ul class="nav navbar-nav" th:inline="text" th:with="baseLink=${'/sequenceFiles/' + file.getId()}">
-            <li th:class="${activeNav} == 'dashboard' ? 'active'"><a th:href="@{${baseLink}}">
+            <li th:class="${activeNav} == 'dashboard' ? 'active'"><a href="summary">
                 <span th:text="#{sf.subnav.summary}"></span></a></li>
             <li th:class="${activeNav} == 'overrepresented' ? 'active'"><a
-                th:href="@{${baseLink} + '/overrepresented'}">
+                href="overrepresented">
                 <span th:text="#{sf.subnav.overrepresented}"></span>&nbsp;<span class="badge" th:text="${fastQC.overrepresentedSequences.size()}"></span></a></li>
         </ul>
         <div class="navbar-right">

@@ -18,7 +18,7 @@ public class SampleDetailsPage extends AbstractPage {
 	}
 
 	public void gotoPage(Long sampleId) {
-		get(driver, RELATIVE_URL + sampleId);
+		get(driver, RELATIVE_URL + sampleId + "/details");
 	}
 
 	public Long getSampleId() {

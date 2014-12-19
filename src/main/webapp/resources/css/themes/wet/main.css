@@ -48,25 +48,26 @@
   background-color: white;
   border-left: 1px solid #cccccc;
   border-right: 1px solid #cccccc;
+  padding-top: 1em;
 }
 
-/* line 25, ../../../../styles/themes/wet/helpers/_wet-overrides.scss */
+/* line 26, ../../../../styles/themes/wet/helpers/_wet-overrides.scss */
 .has-error label {
   color: #d9d34f;
 }
 
-/* line 30, ../../../../styles/themes/wet/helpers/_wet-overrides.scss */
+/* line 31, ../../../../styles/themes/wet/helpers/_wet-overrides.scss */
 label + span.wb-date-wrap {
   display: block;
   width: 100%;
 }
-/* line 34, ../../../../styles/themes/wet/helpers/_wet-overrides.scss */
+/* line 35, ../../../../styles/themes/wet/helpers/_wet-overrides.scss */
 span.wb-date-wrap .input-full {
   width: auto;
   display: inline-block;
 }
 
-/* line 41, ../../../../styles/themes/wet/helpers/_wet-overrides.scss */
+/* line 42, ../../../../styles/themes/wet/helpers/_wet-overrides.scss */
 label {
   margin-top: 5px;
 }

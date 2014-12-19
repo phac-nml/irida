@@ -17,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class SampleFilesPage extends AbstractPage {
-	public static final String RELATIVE_URL = "samples/{id}/files";
+	public static final String RELATIVE_URL = "samples/{id}/sequenceFiles";
 
 	public SampleFilesPage(WebDriver driver) {
 		super(driver);

@@ -66,7 +66,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
 @Controller
-@RequestMapping(value = "/projects")
 public class ProjectSamplesController {
 	// From configuration.properties
 	private @Value("${ngsarchive.linker.available}") Boolean LINKER_AVAILABLE;
@@ -134,7 +133,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return Name of the project samples list view
 	 */
-	@RequestMapping("/{projectId}/samples")
+	@RequestMapping("/projects/{projectId}/samples")
 	public String getProjectSamplesPage(final Model model, final Principal principal, @PathVariable long projectId) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
@@ -159,7 +158,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return Location of the modal template
 	 */
-	@RequestMapping("/templates/samples/linker")
+	@RequestMapping("/projects/templates/samples/linker")
 	public String getLinkerModal(Model model) {
 		model.addAttribute("scriptName", LINKER_SCRIPT);
 		return PROJECT_TEMPLATE_DIR + "linker.tmpl";
@@ -177,7 +176,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return Location of the modal template
 	 */
-	@RequestMapping("/{projectId}/templates/samples/galaxy")
+	@RequestMapping("/projects/{projectId}/templates/samples/galaxy")
 	public String getGalaxyModal(Model model, Principal principal, @PathVariable Long projectId) {
 		model.addAttribute("email", userService.getUserByUsername(principal.getName()).getEmail());
 		model.addAttribute("name", projectService.read(projectId).getName() + "-" + principal.getName());
@@ -192,7 +191,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return A list of {@link Sample} in the current project
 	 */
-	@RequestMapping(value = "/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+	@RequestMapping(value = "/projects/{projectId}/ajax/samples", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
 	public @ResponseBody Map<String, Object> getProjectSamples(@PathVariable Long projectId) {
 		Map<String, Object> result = new HashMap<>();
 		Project project = projectService.read(projectId);
@@ -220,7 +219,7 @@ public class ProjectSamplesController {
 	 * @return a Map<String,Object> containing: total: total number of elements results: A Map<Long,String> of project
 	 * IDs and project names.
 	 */
-	@RequestMapping(value = "/ajax/samples/available_projects")
+	@RequestMapping(value = "/projects/ajax/samples/available_projects")
 	@ResponseBody
 	public Map<String, Object> getProjectsAvailableToCopySamples(@RequestParam String term, @RequestParam int pageSize,
 			@RequestParam int page, Principal principal) {
@@ -271,7 +270,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return A list of warnings
 	 */
-	@RequestMapping(value = "/{projectId}/ajax/samples/copy", method = RequestMethod.POST)
+	@RequestMapping(value = "/projects/{projectId}/ajax/samples/copy", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> copySampleToProject(@PathVariable Long projectId,
 			@RequestParam(value = "sampleIds[]") List<Long> sampleIds,
@@ -345,7 +344,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return Map containing either success or errors.
 	 */
-	@RequestMapping(value = "/ajax/{projectId}/samples/delete", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@RequestMapping(value = "/projects/ajax/{projectId}/samples/delete", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> deleteProjectSamples(@PathVariable Long projectId,
 			@RequestParam List<Long> sampleIds) {
 		Project project = projectService.read(projectId);
@@ -380,7 +379,7 @@ public class ProjectSamplesController {
 	 *
 	 * @return
 	 */
-	@RequestMapping(value = "/{projectId}/ajax/samples/merge", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/projects/{projectId}/ajax/samples/merge", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> ajaxSamplesMerge(@PathVariable Long projectId,
 			@RequestParam Long mergeSampleId,
 			@RequestParam(value = "sampleIds[]") List<Long> sampleIds,
@@ -422,6 +421,42 @@ public class ProjectSamplesController {
 	}
 
 	/**
+	 * Remove the given {@link Sample}s from the given {@link Project}
+	 * 
+	 * @param projectId
+	 *            ID of the project to remove from
+	 * @param sampleIds
+	 *            {@link Sample} ids to remove
+	 * @param locale
+	 *            User's locale
+	 * @return Map with success message
+	 */
+	@RequestMapping(value = "/projects/{projectId}/ajax/samples/remove", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Map<String, Object> removeSamplesFromProject(@PathVariable Long projectId,
+			@RequestParam(value = "samples[]") List<Long> samples, Locale locale) {
+		Map<String, Object> result = new HashMap<>();
+		
+		//read the project
+		Project project = projectService.read(projectId);
+		
+		//get the samples
+		Iterable<Sample> readMultiple = sampleService.readMultiple(samples);
+		
+		//remove all samples
+		projectService.removeSamplesFromProject(project, readMultiple);
+
+		//build success message
+		result.put("result", "success");
+		result.put(
+				"message",
+				messageSource.getMessage("project.samples.remove.success",
+						new Object[] { samples.size(), project.getLabel() }, locale));
+
+		return result;
+	}
+
+	/**
 	 * Download a set of sequence files from selected samples within a project
 	 *
 	 * @param projectId
@@ -433,7 +468,7 @@ public class ProjectSamplesController {
 	 *
 	 * @throws IOException
 	 */
-	@RequestMapping(value = "/{projectId}/download/files")
+	@RequestMapping(value = "/projects/{projectId}/download/files")
 	public void downloadSamples(@PathVariable Long projectId, @RequestParam List<Long> ids,
 			HttpServletResponse response) throws IOException {
 		Project project = projectService.read(projectId);

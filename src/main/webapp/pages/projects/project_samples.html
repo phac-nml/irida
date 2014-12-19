@@ -157,7 +157,7 @@
 						</div>
 					</td>
 					<td class="sample-name">
-						<a class="btn btn-default btn-xs" data:ng-href="@{'/samples/{{sample.id}}'}" href="#">{{sample.sampleName}}</a>
+						<a class="btn btn-default btn-xs" data:ng-href="@{'/projects/' + ${project.getId()} + '/samples/{{sample.id}}/details'}" href="#">{{sample.sampleName}}</a>
 					</td>
 					<td>{{sample.organism}}</td>
 					<td>{{sample.collectedBy}}</td>
