@@ -76,8 +76,17 @@
         </div>
         <!-- /.container-fluid -->
     </nav>
+    <div ng-controller="BreadcrumbController as breadcrumb" class="breadcrumbs">
+        <div class="container ng-cloak">
+            <ol>
+                <li ng-repeat="crumb in breadcrumb.crumbs">
+                    <a href="{{ crumb.url }}">{{ crumb.text }}</a>
+                </li>
+            </ol>
+        </div>
+    </div>
     <th:block layout:fragment="subnav"></th:block>
-    <div class="container">
+    <div style="margin-top: 15px" class="container">
         <div class="row main-area" layout:fragment="page"></div>
     </div>
 </div>

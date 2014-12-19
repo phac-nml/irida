@@ -1,13 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.files;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Date;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletResponse;
-
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.service.AnalysisService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +17,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
-import ca.corefacility.bioinformatics.irida.service.AnalysisService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Date;
+import java.util.Set;
 
 /**
  * Controller for all {@link SequenceFile} related views
@@ -32,7 +30,6 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Controller
-@RequestMapping("/sequenceFiles")
 public class SequenceFileController {
 	/*
 	 * PAGES
@@ -75,7 +72,7 @@ public class SequenceFileController {
 	 * @param sequenceFileId Id for the sequence file
 	 * @return The name of the template.
 	 */
-	@RequestMapping("/{sequenceFileId}")
+	@RequestMapping(value = {"/sequenceFiles/{sequenceFileId}/summary", "/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}/summary"})
 	public String getSequenceFilePage(final Model model, @PathVariable Long sequenceFileId) {
 		logger.debug("Loading sequence files page for id: " + sequenceFileId);
 		createDefaultPageInfo(sequenceFileId, model);
@@ -91,7 +88,7 @@ public class SequenceFileController {
 	 * @param sequenceFileId Id for the sequence file.
 	 * @return The name fo the template
 	 */
-	@RequestMapping("/{sequenceFileId}/overrepresented")
+	@RequestMapping(value = {"/sequenceFiles/{sequenceFileId}/overrepresented", "/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}/overrepresented"})
 	public String getSequenceFileOverrepresentedPage(final Model model, @PathVariable Long sequenceFileId) {
 		logger.debug("Loading sequence files page for id: " + sequenceFileId);
 		createDefaultPageInfo(sequenceFileId, model);
@@ -106,7 +103,7 @@ public class SequenceFileController {
 	 * @param response       {@link HttpServletResponse}
 	 * @throws IOException
 	 */
-	@RequestMapping("/download/{sequenceFileId}")
+	@RequestMapping("/sequenceFiles/download/{sequenceFileId}")
 	public void downloadSequenceFile(@PathVariable Long sequenceFileId, HttpServletResponse response)
 			throws IOException {
 		SequenceFile sequenceFile = sequenceFileService.read(sequenceFileId);
@@ -124,7 +121,7 @@ public class SequenceFileController {
 	 * @param response       {@link HttpServletResponse}
 	 * @throws IOException
 	 */
-	@RequestMapping(value = "/img/{sequenceFileId}/{type}", produces = MediaType.IMAGE_PNG_VALUE)
+	@RequestMapping(value = "/sequenceFiles/img/{sequenceFileId}/{type}", produces = MediaType.IMAGE_PNG_VALUE)
 	public void downloadSequenceFileImages(@PathVariable Long sequenceFileId, @PathVariable String type,
 			HttpServletResponse response) throws IOException {
 		SequenceFile file = sequenceFileService.read(sequenceFileId);

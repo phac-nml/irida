@@ -10,7 +10,7 @@
 <main layout:fragment="main">
     <div class="row">
         <div class="col-md-12 wb-frmvld">
-            <form role="form" th:action="@{/samples/{sampleId}/edit(sampleId=${sample.getId()})}" method="post">
+            <form role="form" action="edit" method="post">
                 <div class="panel panel-info">
                     <div class="panel-heading">
                         <b class="panel-title" th:text="#{samples.edit.page-title(${sample.getLabel()})}">__TITLE__</b>
@@ -135,8 +135,7 @@
                         </fieldset>
                     </div>
                     <div class="panel-footer text-right">
-                        <a th:href="@{/samples/{sampleId}(sampleId=${sample.getId()})}" href="/samples/1"
-                           class="btn btn-default" th:text="#{form.btn.cancel}">Cancel</a>
+                        <a href="details" class="btn btn-default" th:text="#{form.btn.cancel}">Cancel</a>
                         <button id="submitBtn" class="btn btn-primary" th:text="#{form.btn.update}">Update</button>
                     </div>
                 </div>
