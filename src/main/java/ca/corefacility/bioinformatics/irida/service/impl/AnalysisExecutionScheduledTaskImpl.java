@@ -64,6 +64,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	@Override
 	public Set<Future<AnalysisSubmission>> prepareAnalyses() {
 		synchronized(prepareAnalysesLock) {
+			logger.trace("Running prepareAnalyses");
+			
 			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
 					.findByAnalysisState(AnalysisState.NEW);
 	
@@ -89,6 +91,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	@Override
 	public Set<Future<AnalysisSubmission>> executeAnalyses() {
 		synchronized(executeAnalysesLock) {
+			logger.trace("Running executeAnalyses");
+			
 			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
 					.findByAnalysisState(AnalysisState.PREPARED);
 	
@@ -114,6 +118,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	@Override
 	public Set<Future<AnalysisSubmission>> monitorRunningAnalyses() {
 		synchronized(monitorRunningAnalysesLock) {
+			logger.trace("Running monitorRunningAnalyses");
+
 			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
 					.findByAnalysisState(AnalysisState.RUNNING);
 	
@@ -143,6 +149,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	@Override
 	public Set<Future<AnalysisSubmission>> transferAnalysesResults() {
 		synchronized(transferAnalysesResultsLock) {
+			logger.trace("Running transferAnalysesResults");
+			
 			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
 					.findByAnalysisState(AnalysisState.FINISHED_RUNNING);
 	
