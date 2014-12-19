@@ -30,6 +30,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -158,7 +159,7 @@ public class SamplesController extends BaseController {
 	@RequestMapping(value = {"/samples/{sampleId}/edit", "/projects/{projectId}/samples/{sampleId}/edit"}, method = RequestMethod.POST)
 	public String updateSample(final Model model, @PathVariable Long sampleId,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date collectionDate,
-			@RequestParam Map<String, String> params) {
+			@RequestParam Map<String, String> params, HttpServletRequest request) {
 		logger.debug("Updating sample [" + sampleId + "]");
 		Map<String, Object> updatedValues = new HashMap<>();
 		for (String field : FIELDS) {
@@ -182,7 +183,12 @@ public class SamplesController extends BaseController {
 				return getEditSampleSpecificPage(model, sampleId);
 			}
 		}
-		return "redirect:/samples/" + sampleId;
+
+		String url = request.getRequestURI();
+		String redirectUrl = url.substring(0, url.indexOf("/edit")) + "/details";
+		logger.debug("Redirect URL: ", redirectUrl);
+
+		return "redirect:" + redirectUrl;
 	}
 
 	/**

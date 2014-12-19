@@ -10,7 +10,7 @@
 <main layout:fragment="main">
     <div class="row">
         <div class="col-md-12 wb-frmvld">
-            <form role="form" th:action="@{/samples/{sampleId}/edit(sampleId=${sample.getId()})}" method="post">
+            <form role="form" action="edit" method="post">
                 <div class="panel panel-info">
                     <div class="panel-heading">
                         <b class="panel-title" th:text="#{samples.edit.page-title(${sample.getLabel()})}">__TITLE__</b>
