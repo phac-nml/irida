@@ -39,7 +39,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.L
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxySimplified;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
@@ -76,9 +75,6 @@ public class WorkspaceServiceGalaxySimplifiedIT {
 
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
-
-	@Autowired
-	private RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics;
 
 	private Path sequenceFilePath;
 	private Path referenceFilePath;
