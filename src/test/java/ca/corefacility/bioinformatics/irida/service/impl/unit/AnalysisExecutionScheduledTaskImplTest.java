@@ -85,6 +85,44 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
+	 * Tests successfully preparing submitted analyses.
+	 * 
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 * @throws IOException 
+	 */
+	@Test
+	public void testPrepareAnalysesSuccess() throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException {
+		analysisSubmission.setAnalysisState(AnalysisState.NEW);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.NEW)).thenReturn(
+				Arrays.asList(analysisSubmission));
+
+		analysisExecutionScheduledTask.prepareAnalyses();
+
+		verify(analysisExecutionServiceSimplified).prepareSubmission(analysisSubmission);
+	}
+	
+	/**
+	 * Tests no analysis to prepare.
+	 * 
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 * @throws IOException 
+	 */
+	@Test
+	public void testPrepareAnalysesNoAnalysis() throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException {
+		analysisSubmission.setAnalysisState(AnalysisState.NEW);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.NEW)).thenReturn(
+				Arrays.asList());
+
+		analysisExecutionScheduledTask.prepareAnalyses();
+
+		verify(analysisExecutionServiceSimplified, never()).prepareSubmission(analysisSubmission);
+	}
+
+	/**
 	 * Tests successfully executing submitted analyses.
 	 * 
 	 * @throws ExecutionManagerException
