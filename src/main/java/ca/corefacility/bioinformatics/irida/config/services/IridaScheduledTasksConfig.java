@@ -23,8 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -43,42 +42,56 @@ import com.google.common.collect.Lists;
 public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 
 	@Autowired
-	private AnalysisSubmissionService analysisSubmissionService;
-
-	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
-
+	
 	@Autowired
-	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
+	private AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified;
 
 	@Autowired
 	private UserService userService;
 	
 	/**
+	 * Cycle through any newly created submissions and prepare them for
+	 * execution.
+	 */
+	@Scheduled(initialDelay = 1000, fixedRate = 15000)
+	public void prepareAnalyses() {
+		analysisExecutionScheduledTask().prepareAnalyses();
+	}
+
+	/**
 	 * Cycle through any outstanding submissions and execute them.
 	 */
-	@Scheduled(initialDelay = 5000, fixedRate = 15000)
+	@Scheduled(initialDelay = 2000, fixedRate = 15000)
 	public void executeAnalyses() {
 		analysisExecutionScheduledTask().executeAnalyses();
 	}
-	
+
+	/**
+	 * Cycle through any submissions running in Galaxy and monitor the status.
+	 */
+	@Scheduled(initialDelay = 3000, fixedRate = 15000)
+	public void monitorRunningAnalyses() {
+		analysisExecutionScheduledTask().monitorRunningAnalyses();
+	}
+
 	/**
 	 * Cycle through any completed submissions and transfer the results.
 	 */
-	@Scheduled(initialDelay = 5000, fixedRate = 15000)
+	@Scheduled(initialDelay = 4000, fixedRate = 15000)
 	public void transferAnalysesResults() {
 		analysisExecutionScheduledTask().transferAnalysesResults();
 	}
 
 	/**
-	 * Creates a new bean with a AnalysisExecutionScheduledTask for performing the analysis tasks.
-	 * @return  A AnalysisExecutionScheduledTask bean. 
+	 * Creates a new bean with a AnalysisExecutionScheduledTask for performing
+	 * the analysis tasks.
+	 * 
+	 * @return A AnalysisExecutionScheduledTask bean.
 	 */
 	@Bean
 	public AnalysisExecutionScheduledTask analysisExecutionScheduledTask() {
-		return new AnalysisExecutionScheduledTaskImpl(
-				analysisSubmissionService, analysisSubmissionRepository,
-				analysisExecutionServicePhylogenomics);
+		return new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository, analysisExecutionServiceSimplified);
 	}
 
 	/**
