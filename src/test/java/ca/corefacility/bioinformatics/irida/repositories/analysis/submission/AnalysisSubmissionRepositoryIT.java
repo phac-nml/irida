@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.repositories.analysis.submission;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -96,40 +95,6 @@ public class AnalysisSubmissionRepositoryIT {
 				referenceFile, workflowId);
 		analysisSubmission2.setRemoteAnalysisId(analysisId2);
 		analysisSubmission2.setAnalysisState(AnalysisState.SUBMITTING);
-	}
-
-	/**
-	 * Tests saving an analysis submission.
-	 */
-	@Test
-	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testSaveAnalysisSubmission() {
-		AnalysisSubmission savedSubmission = analysisSubmissionRepository
-				.save(analysisSubmission);
-
-		AnalysisSubmission loadedSubmission = analysisSubmissionRepository
-				.getByType(savedSubmission.getId(),
-						AnalysisSubmission.class);
-
-		assertEquals(analysisSubmission.getRemoteAnalysisId(),
-				loadedSubmission.getRemoteAnalysisId());
-		assertEquals(analysisSubmission.getInputFiles(),
-				loadedSubmission.getInputFiles());
-		assertEquals(analysisSubmission.getReferenceFile(),
-				loadedSubmission.getReferenceFile());
-		assertEquals(analysisSubmission.getAnalysisState(),
-				loadedSubmission.getAnalysisState());
-	}
-
-	/**
-	 * Tests failing to get an analysis submission
-	 */
-	@Test
-	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetAnalysisSubmissionFail() {
-		AnalysisSubmission savedSubmission = analysisSubmissionRepository
-				.getByType(999L, AnalysisSubmission.class);
-		assertNull(savedSubmission);
 	}
 
 	/**

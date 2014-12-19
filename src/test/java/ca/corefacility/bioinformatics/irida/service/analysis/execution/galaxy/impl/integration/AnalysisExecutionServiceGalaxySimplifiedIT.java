@@ -434,8 +434,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 				com.google.common.io.Files.equal(expectedSnpTable.toFile(), snpTable.getFile().toFile()));
 		assertEquals(expectedSnpTable.getFileName(), snpTable.getFile().getFileName());
 
-		AnalysisSubmission finalSubmission = analysisSubmissionRepository.getByType(analysisExecuted.getId(),
-				AnalysisSubmission.class);
+		AnalysisSubmission finalSubmission = analysisSubmissionRepository.findOne(analysisExecuted.getId());
 		Analysis analysis = finalSubmission.getAnalysis();
 		assertNotNull(analysis);
 

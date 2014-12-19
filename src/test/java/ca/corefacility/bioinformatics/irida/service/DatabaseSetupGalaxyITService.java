@@ -102,7 +102,7 @@ public class DatabaseSetupGalaxyITService {
 		AnalysisSubmission submission = analysisSubmissionService.create(new AnalysisSubmission("my analysis",
 				sequenceFiles, referenceFile, iridaWorkflowId));
 
-		return analysisSubmissionRepository.getByType(submission.getId(), AnalysisSubmission.class);
+		return analysisSubmissionRepository.findOne(submission.getId());
 	}
 
 	/**
