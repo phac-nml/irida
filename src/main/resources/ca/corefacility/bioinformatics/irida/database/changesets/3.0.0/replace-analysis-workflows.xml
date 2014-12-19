@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="update-analysis-workflows" author="apetkau">
+		<dropTable tableName="remote_workflow"/>
+		<dropTable tableName="remote_workflow_AUD"/>
+		
+		<dropTable tableName="remote_workflow_galaxy"/>
+		<dropTable tableName="remote_workflow_galaxy_AUD"/>
+		
+		<dropTable tableName="remote_workflow_phylogenomics"/>
+		<dropTable tableName="remote_workflow_phylogenomics_AUD"/>
+		
+		<dropTable tableName="analysis_submission_galaxy"/>
+		<dropTable tableName="analysis_submission_galaxy_AUD"/>
+		
+		<dropTable tableName="analysis_submission_phylogenomics"/>
+		<dropTable tableName="analysis_submission_phylogenomics_AUD"/>
+	</changeSet>
+</databaseChangeLog>
