@@ -13,9 +13,6 @@
 	<project />
 	<related_project />
 
-	<remote_workflow />
-	<remote_workflow_phylogenomics />
-
 	<analysis />
 	<analysis_output_file />
 	<analysis_fastqc />
@@ -35,8 +32,6 @@
 	<reference_file />
 
 	<analysis_submission />
-	<analysis_submission_galaxy />
-	<analysis_submission_phylogenomics />
 	<analysis_submission_sequence_file />
 
 	<password_reset />
@@ -77,10 +72,7 @@
 	<sequence_file_AUD />
 	<sequence_file_properties_AUD />
 	<sequencefile_sample_AUD />
-	<remote_workflow_AUD />
 	<analysis_submission_AUD />
-	<analysis_submission_galaxy_AUD />
-	<analysis_submission_phylogenomics_AUD />
 	<analysis_submission_sequence_file_AUD />
 	<system_role_AUD />
 	<user_AUD />
