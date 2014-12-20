@@ -167,7 +167,6 @@
 
 		window.dependencies = _.union(window.dependencies || [], ['ngAria', 'ngResource', 'ngAnimate', 'ngMessages', 'ui.bootstrap', 'restangular', 'irida.notifications']);
 		var app = angular.module('irida', window.dependencies)
-			.value('BASE_URL', TL.BASE_URL)
 			// This configures the base url globally for all restangular calls.
 			.config(function (RestangularProvider) {
 				RestangularProvider.setBaseUrl(TL.BASE_URL);
