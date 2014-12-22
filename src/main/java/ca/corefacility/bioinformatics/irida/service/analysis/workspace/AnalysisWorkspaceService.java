@@ -22,7 +22,7 @@ public interface AnalysisWorkspaceService {
 	 * 
 	 * @param analysisSubmission
 	 *            The submission used to perform an analysis.
-	 * @return A String identifiying the analysis workspace.
+	 * @return A String identifying the analysis workspace.
 	 * @throws ExecutionManagerException
 	 *             If there was an issue preparing the workflow workspace.
 	 */
