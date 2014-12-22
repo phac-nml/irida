@@ -95,27 +95,7 @@
 	<script src="/resources/js/services/httpInterceptor.js" th:src="@{/resources/js/services/httpInterceptor.js}"></script>
 	<script src="/resources/js/modules/utilities/irida.utilities.js" th:src="@{/resources/js/modules/utilities/irida.utilities.js}"></script>
 	<script src="/resources/js/modules/cart/irida.cart.js" th:src="@{/resources/js/modules/cart/irida.cart.js}"></script>
-	<script th:inline="javascript">
-		/*<![CDATA[*/
-		window.dependencies = _.union(window.dependencies || [], ['ngAria', 'ngResource', 'ngAnimate', 'ngMessages', 'ui.bootstrap', 'restangular', 'irida.session', 'irida.notifications', 'irida.cart']);
-		var app = angular.module('irida', window.dependencies)
-			// This configures the base url globally for all restangular calls.
-			.config(function (RestangularProvider) {
-				RestangularProvider.setBaseUrl(TL.BASE_URL);
-			})
-			.run(function (paginationConfig) {
-				paginationConfig.firstText = TL.lang.page.first;
-				paginationConfig.previousText = TL.lang.page.prev;
-				paginationConfig.nextText = TL.lang.page.next;
-				paginationConfig.lastText = TL.lang.page.last;
-				paginationConfig.boundaryLinks = true;
-				paginationConfig.directionLinks = true;
-				paginationConfig.maxSize = 8;
-				paginationConfig.rotate = false;
-			})
-				;
-		/*]]>*/
-	</script>
+	<script src="/resources/js/app.js" th:src="@{/resources/js/app.js}"></script>
 	<!-- Controllers -->
 	<script src="/resources/js/controllers/breadcrumbs/breadcrumbController.js" th:src="@{/resources/js/controllers/breadcrumbs/breadcrumbController.js}"></script>
 </th:block>
