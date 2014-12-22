@@ -8,11 +8,13 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
@@ -33,13 +35,16 @@ public class SequencingRunControllerTest {
 	private SequencingRunService sequencingRunService;
 	private SequenceFileService sequenceFileService;
 	private SequenceFileWebUtilities sequenceFileUtilities;
+	private MessageSource messageSource;
 
 	@Before
 	public void setup() {
 		sequencingRunService = mock(SequencingRunService.class);
 		sequenceFileService = mock(SequenceFileService.class);
 		sequenceFileUtilities = mock(SequenceFileWebUtilities.class);
-		controller = new SequencingRunController(sequencingRunService, sequenceFileService, sequenceFileUtilities);
+		messageSource = mock(MessageSource.class);
+		controller = new SequencingRunController(sequencingRunService, sequenceFileService, sequenceFileUtilities,
+				messageSource);
 	}
 
 	@Test
@@ -51,9 +56,9 @@ public class SequencingRunControllerTest {
 	public void testGetSequencingRuns() {
 		List<SequencingRun> runs = Lists.newArrayList(new SequencingRunEntity());
 		when(sequencingRunService.findAll()).thenReturn(runs);
-		Iterable<SequencingRun> sequencingRuns = controller.getSequencingRuns();
+		List<Map<String, Object>> sequencingRuns = controller.getSequencingRuns(Locale.ENGLISH);
 		verify(sequencingRunService).findAll();
-		assertEquals(sequencingRuns, runs);
+		assertEquals(runs.size(), sequencingRuns.size());
 	}
 
 	@Test
