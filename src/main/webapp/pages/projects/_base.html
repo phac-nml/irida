@@ -3,6 +3,8 @@
       layout:decorator="${themePath + '_page'}">
 <head lang="en">
 	<title th:text="${project.label}">Project</title>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/qtip2/jquery.qtip.min.css}"
+	      href="/resources/bower_components/qtip2/jquery.qtip.min.css"/>
 </head>
 <body>
 
@@ -63,6 +65,9 @@
 	<input th:if="${project != null}" type="hidden" id="projectId" th:value="${project.getId()}"/>
 	<script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"
 	        src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
+	<script th:src="@{/resources/bower_components/qtip2/jquery.qtip.min.js}"
+	        src="/resources/bower_components/qtip2/jquery.qtip.min.js"></script>
+
 	<th:block layout:fragment="scripts"></th:block>
 </th:block>
 </body>
