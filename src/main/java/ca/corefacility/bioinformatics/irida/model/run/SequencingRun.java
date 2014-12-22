@@ -5,8 +5,11 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,6 +30,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.enums.UploadStatus;
 
 @Entity
 @Table(name = "sequencing_run")
@@ -53,7 +57,13 @@ public abstract class SequencingRun implements IridaThing, Comparable<Sequencing
 	@OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.REMOVE, CascadeType.MERGE }, mappedBy = "sequencingRun", orphanRemoval = true)
 	private Set<SequenceFile> sequenceFiles;
 
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Column(name = "upload_status")
+	private UploadStatus uploadStatus;
+
 	public SequencingRun() {
+		uploadStatus = UploadStatus.UPLOADING;
 		createdDate = new Date();
 	}
 
@@ -122,6 +132,14 @@ public abstract class SequencingRun implements IridaThing, Comparable<Sequencing
 		}
 
 		return false;
+	}
+
+	public void setUploadStatus(UploadStatus uploadStatus) {
+		this.uploadStatus = uploadStatus;
+	}
+
+	public UploadStatus getUploadStatus() {
+		return uploadStatus;
 	}
 
 	/**
