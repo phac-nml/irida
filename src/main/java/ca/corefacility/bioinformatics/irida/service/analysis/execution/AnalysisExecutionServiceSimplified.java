@@ -1,15 +1,16 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.execution;
 
 import java.io.IOException;
+import java.util.concurrent.Future;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
- * Service for submission of analyses to an execution manager.
+ * Service for submission of {@link AnalysisSubmission}s to an execution
+ * manager.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
@@ -21,17 +22,18 @@ public interface AnalysisExecutionServiceSimplified {
 	 * 
 	 * @param analysisSubmission
 	 *            The {@link AnalysisSubmission} to prepare.
-	 * @return An {@link AnalysisSubmission} for the prepared submission.
-	 * @throws ExecutionManagerException
-	 *             If there was an issue preparing the analysis.
+	 * 
+	 * @return A {@link Future} of type {@link AnalysisSubmission} which can be
+	 *         used to access the prepared submission.
 	 * @throws IridaWorkflowNotFoundException
-	 *             If the workflow for this submission could not be found in
-	 *             IRIDA.
+	 *             If there was an issue getting a workflow.
 	 * @throws IOException
-	 *             If there was an issue reading in the workflow file.
+	 *             If there was an issue reading the workflow.
+	 * @throws ExecutionManagerException
+	 *             If there was an issue preparing a workspace for the workflow.
 	 */
-	public AnalysisSubmission prepareSubmission(AnalysisSubmission analysisSubmission)
-			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException;
+	public Future<AnalysisSubmission> prepareSubmission(AnalysisSubmission analysisSubmission)
+			throws IridaWorkflowNotFoundException, IOException, ExecutionManagerException;
 
 	/**
 	 * Executes the passed prepared {@link AnalysisSubmission} in an execution
@@ -39,15 +41,16 @@ public interface AnalysisExecutionServiceSimplified {
 	 * 
 	 * @param analysisSubmission
 	 *            The {@link AnalysisSubmission} to execute.
-	 * @return An {@link AnalysisSubmission} for the executed analysis.
+	 * @return A {@link Future} with an {@link AnalysisSubmission} for the
+	 *         analysis submitted.
 	 * @throws ExecutionManagerException
-	 *             If there was an issue executing the analysis.
+	 *             If there was an exception submitting the analysis to the
+	 *             execution manager.
 	 * @throws IridaWorkflowNotFoundException
-	 *             If the workflow for this submission could not be found in
-	 *             IRIDA.
+	 *             If the workflow for the analysis was not found.
 	 */
-	public AnalysisSubmission executeAnalysis(AnalysisSubmission analysisSubmission) throws ExecutionManagerException,
-			IridaWorkflowNotFoundException;
+	public Future<AnalysisSubmission> executeAnalysis(AnalysisSubmission analysisSubmission)
+			throws IridaWorkflowNotFoundException, ExecutionManagerException;
 
 	/**
 	 * Gets the status for the given submitted analysis.
@@ -62,13 +65,13 @@ public interface AnalysisExecutionServiceSimplified {
 	public WorkflowStatus getWorkflowStatus(AnalysisSubmission submittedAnalysis) throws ExecutionManagerException;
 
 	/**
-	 * Downloads and saves the results of an {@link Analysis} that was
+	 * Downloads and saves the results of an {@link AnalysisSubmission} that was
 	 * previously submitted from an execution manager.
 	 * 
 	 * @param submittedAnalysis
 	 *            An {@link AnalysisSubmission} that was previously submitted.
-	 * @return An {@link Analysis} object containing information about the
-	 *         particular analysis.
+	 * @return A {@link Future} with an {@link AnalysisSubmission} object
+	 *         containing information about the particular analysis.
 	 * @throws ExecutionManagerException
 	 *             If there was an issue with the execution manager.
 	 * @throws IridaWorkflowNotFoundException
@@ -78,6 +81,6 @@ public interface AnalysisExecutionServiceSimplified {
 	 *             If there was an error loading the analysis results from an
 	 *             execution manager.
 	 */
-	public Analysis transferAnalysisResults(AnalysisSubmission submittedAnalysis) throws ExecutionManagerException,
-			IridaWorkflowNotFoundException, IOException;
+	public Future<AnalysisSubmission> transferAnalysisResults(AnalysisSubmission submittedAnalysis)
+			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException;
 }

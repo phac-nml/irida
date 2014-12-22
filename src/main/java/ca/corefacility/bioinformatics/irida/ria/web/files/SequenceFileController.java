@@ -35,7 +35,6 @@ import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
-@RequestMapping("/sequenceFiles")
 public class SequenceFileController {
 	/*
 	 * PAGES
@@ -83,7 +82,7 @@ public class SequenceFileController {
 	 *            Id for the sequence file
 	 * @return The name of the template.
 	 */
-	@RequestMapping("/{sequenceFileId}")
+	@RequestMapping(value = {"/sequenceFiles/{sequenceFileId}/summary", "/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}/summary"})
 	public String getSequenceFilePage(final Model model, @PathVariable Long sequenceFileId) {
 		logger.debug("Loading sequence files page for id: " + sequenceFileId);
 		createDefaultPageInfo(sequenceFileId, model);
@@ -101,7 +100,7 @@ public class SequenceFileController {
 	 *            Id for the sequence file.
 	 * @return The name fo the template
 	 */
-	@RequestMapping("/{sequenceFileId}/overrepresented")
+	@RequestMapping(value = {"/sequenceFiles/{sequenceFileId}/overrepresented", "/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}/overrepresented"})
 	public String getSequenceFileOverrepresentedPage(final Model model, @PathVariable Long sequenceFileId) {
 		logger.debug("Loading sequence files page for id: " + sequenceFileId);
 		createDefaultPageInfo(sequenceFileId, model);
@@ -118,7 +117,7 @@ public class SequenceFileController {
 	 *            {@link HttpServletResponse}
 	 * @throws IOException
 	 */
-	@RequestMapping("/download/{sequenceFileId}")
+	@RequestMapping("/sequenceFiles/download/{sequenceFileId}")
 	public void downloadSequenceFile(@PathVariable Long sequenceFileId, HttpServletResponse response)
 			throws IOException {
 		SequenceFile sequenceFile = sequenceFileService.read(sequenceFileId);
@@ -139,7 +138,7 @@ public class SequenceFileController {
 	 *            {@link HttpServletResponse}
 	 * @throws IOException
 	 */
-	@RequestMapping(value = "/img/{sequenceFileId}/{type}", produces = MediaType.IMAGE_PNG_VALUE)
+	@RequestMapping(value = "/sequenceFiles/img/{sequenceFileId}/{type}", produces = MediaType.IMAGE_PNG_VALUE)
 	public void downloadSequenceFileImages(@PathVariable Long sequenceFileId, @PathVariable String type,
 			HttpServletResponse response) throws IOException {
 		SequenceFile file = sequenceFileService.read(sequenceFileId);

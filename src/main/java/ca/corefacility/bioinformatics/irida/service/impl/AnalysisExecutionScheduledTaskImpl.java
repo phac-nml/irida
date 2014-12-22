@@ -2,104 +2,86 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.AsyncResult;
+
+import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
 
 /**
  * Implementation of analysis execution tasks. This will scan for
- * AnalysisSubmissions and execute the analyses defined by the submissions.
+ * {@link AnalysisSubmission}s and execute the {@link Analysis} defined by the
+ * submissions.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class AnalysisExecutionScheduledTaskImpl implements
-		AnalysisExecutionScheduledTask {
+public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionScheduledTask {
+	
+	private Object prepareAnalysesLock = new Object();
+	private Object executeAnalysesLock = new Object();
+	private Object monitorRunningAnalysesLock = new Object();
+	private Object transferAnalysesResultsLock = new Object();
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(AnalysisExecutionScheduledTaskImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionScheduledTaskImpl.class);
 
-	private AnalysisSubmissionService analysisSubmissionService;
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
-	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
+	private AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified;
 
 	/**
 	 * Builds a new AnalysisExecutionScheduledTaskImpl with the given service
 	 * classes.
 	 * 
-	 * @param analysisSubmissionService
-	 *            A service for accessing AnalysisSubmissions.
 	 * @param analysisSubmissionRepository
-	 *            A repository for analysis submissions.
-	 * @param analysisExecutionServicePhylogenomics
-	 *            A service for executing analyses.
+	 *            A repository for {@link AnalysisSubmission}s.
+	 * @param analysisExecutionServiceGalaxySimplified
+	 *            A service for executing {@link AnalysisSubmission}s.
 	 */
 	@Autowired
-	public AnalysisExecutionScheduledTaskImpl(
-			AnalysisSubmissionService analysisSubmissionService,
-			AnalysisSubmissionRepository analysisSubmissionRepository,
-			AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics) {
-		this.analysisSubmissionService = analysisSubmissionService;
+	public AnalysisExecutionScheduledTaskImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
+			AnalysisExecutionServiceSimplified analysisExecutionServiceGalaxySimplified) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
-		this.analysisExecutionServicePhylogenomics = analysisExecutionServicePhylogenomics;
+		this.analysisExecutionServiceSimplified = analysisExecutionServiceGalaxySimplified;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void executeAnalyses() {
-		logger.debug("Looking for analyses with state " + AnalysisState.NEW);
-
-		List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-				.findByAnalysisState(AnalysisState.NEW);
-
-		if (analysisSubmissions.size() > 0) {
-			AnalysisSubmission analysisSubmission = analysisSubmissions
-					.get(0);
-
-			setStateForSubmission(analysisSubmission,
-					AnalysisState.PREPARING);
-
-			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
-					.getByType(analysisSubmission.getId(),
-							AnalysisSubmissionPhylogenomics.class);
-
-			try {
-				AnalysisSubmissionPhylogenomics preparedSubmission = analysisExecutionServicePhylogenomics
-						.prepareSubmission(analysisSubmissionPhylogenomics);
-
-				setStateForSubmission(preparedSubmission,
-						AnalysisState.SUBMITTING);
-
-				analysisExecutionServicePhylogenomics
-						.executeAnalysis(preparedSubmission);
-
-				setStateForSubmission(preparedSubmission,
-						AnalysisState.RUNNING);
-			} catch (ExecutionManagerException e) {
-				logger.error("Could not execute analysis "
-						+ analysisSubmissionPhylogenomics, e);
-				setStateForSubmission(analysisSubmissionPhylogenomics,
-						AnalysisState.ERROR);
-			} catch (Exception e) {
-				logger.error("Error for analysis", e);
-				setStateForSubmission(analysisSubmissionPhylogenomics,
-						AnalysisState.ERROR);
+	public Set<Future<AnalysisSubmission>> prepareAnalyses() {
+		synchronized(prepareAnalysesLock) {
+			logger.trace("Running prepareAnalyses");
+			
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
+					.findByAnalysisState(AnalysisState.NEW);
+	
+			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
+	
+			for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
+				logger.debug("Preparing " + analysisSubmission);
+	
+				try {
+					submissions.add(analysisExecutionServiceSimplified.prepareSubmission(analysisSubmission));
+				} catch (ExecutionManagerException | IridaWorkflowNotFoundException | IOException e) {
+					logger.error("Error preparing submission " + analysisSubmission, e);
+				}
 			}
+	
+			return submissions;
 		}
 	}
 
@@ -107,42 +89,84 @@ public class AnalysisExecutionScheduledTaskImpl implements
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void transferAnalysesResults() {
-		logger.debug("Looking for analyses with state "
-				+ AnalysisState.RUNNING);
-
-		List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-				.findByAnalysisState(AnalysisState.RUNNING);
-
-		if (analysisSubmissions.size() > 0) {
-			AnalysisSubmission analysisSubmission = analysisSubmissions
-					.get(0);
-
-			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics = analysisSubmissionRepository
-					.getByType(analysisSubmission.getId(),
-							AnalysisSubmissionPhylogenomics.class);
-			try {
-				WorkflowStatus workflowStatus = analysisExecutionServicePhylogenomics
-						.getWorkflowStatus(analysisSubmissionPhylogenomics);
-
-				handleWorkflowStatus(workflowStatus,
-						analysisSubmissionPhylogenomics);
-
-			} catch (ExecutionManagerException e) {
-				logger.error("Could not get status for analysis "
-						+ analysisSubmissionPhylogenomics, e);
-				setStateForSubmission(analysisSubmissionPhylogenomics,
-						AnalysisState.ERROR);
-			} catch (IOException e) {
-				logger.error("Could not transfer results for analysis "
-						+ analysisSubmissionPhylogenomics, e);
-				setStateForSubmission(analysisSubmissionPhylogenomics,
-						AnalysisState.ERROR);
-			} catch (Exception e) {
-				logger.error("Error for analysis", e);
-				setStateForSubmission(analysisSubmissionPhylogenomics,
-						AnalysisState.ERROR);
+	public Set<Future<AnalysisSubmission>> executeAnalyses() {
+		synchronized(executeAnalysesLock) {
+			logger.trace("Running executeAnalyses");
+			
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
+					.findByAnalysisState(AnalysisState.PREPARED);
+	
+			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
+	
+			for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
+				logger.debug("Executing " + analysisSubmission);
+	
+				try {
+					submissions.add(analysisExecutionServiceSimplified.executeAnalysis(analysisSubmission));
+				} catch (ExecutionManagerException | IridaWorkflowNotFoundException e) {
+					logger.error("Error executing submission " + analysisSubmission, e);
+				}
 			}
+	
+			return submissions;
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<Future<AnalysisSubmission>> monitorRunningAnalyses() {
+		synchronized(monitorRunningAnalysesLock) {
+			logger.trace("Running monitorRunningAnalyses");
+
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
+					.findByAnalysisState(AnalysisState.RUNNING);
+	
+			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
+	
+			for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
+				logger.debug("Checking state of " + analysisSubmission);
+	
+				try {
+					WorkflowStatus workflowStatus = analysisExecutionServiceSimplified
+							.getWorkflowStatus(analysisSubmission);
+					submissions.add(handleWorkflowStatus(workflowStatus, analysisSubmission));
+				} catch (ExecutionManagerException | RuntimeException e) {
+					logger.error("Error checking state for " + analysisSubmission, e);
+					analysisSubmission.setAnalysisState(AnalysisState.ERROR);
+					submissions.add(new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission)));
+				}
+			}
+	
+			return submissions;
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<Future<AnalysisSubmission>> transferAnalysesResults() {
+		synchronized(transferAnalysesResultsLock) {
+			logger.trace("Running transferAnalysesResults");
+			
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
+					.findByAnalysisState(AnalysisState.FINISHED_RUNNING);
+	
+			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
+	
+			for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
+				logger.debug("Transferring results for " + analysisSubmission);
+	
+				try {
+					submissions.add(analysisExecutionServiceSimplified.transferAnalysisResults(analysisSubmission));
+				} catch (ExecutionManagerException | IridaWorkflowNotFoundException | IOException e) {
+					logger.error("Error transferring submission " + analysisSubmission, e);
+				}
+			}
+	
+			return submissions;
 		}
 	}
 
@@ -151,68 +175,44 @@ public class AnalysisExecutionScheduledTaskImpl implements
 	 * 
 	 * @param workflowStatus
 	 *            The status of the workflow.
-	 * @param analysisSubmissionPhylogenomics
-	 *            The analysis submission.
-	 * @throws ExecutionManagerException
-	 *             If there was an issue in the execution manager.
-	 * @throws IOException
-	 *             If there was an issue saving the results on an analysis.
+	 * @param analysisSubmission
+	 *            The {@link AnalysisSubmission}.
+	 * @return A {@link Future} with an {@link AnalysisSubmission} for this
+	 *         submission.
 	 */
-	private void handleWorkflowStatus(WorkflowStatus workflowStatus,
-			AnalysisSubmissionPhylogenomics analysisSubmissionPhylogenomics)
-			throws ExecutionManagerException, IOException {
+	private Future<AnalysisSubmission> handleWorkflowStatus(WorkflowStatus workflowStatus,
+			AnalysisSubmission analysisSubmission) {
+		Future<AnalysisSubmission> returnedSubmission;
+
 		WorkflowState workflowState = workflowStatus.getState();
 		switch (workflowState) {
-			case OK:
-				setStateForSubmission(analysisSubmissionPhylogenomics,
-						AnalysisState.FINISHED_RUNNING);
+		case OK:
+			logger.debug("Analysis finished " + analysisSubmission);
 
-				Analysis analysisResults = analysisExecutionServicePhylogenomics
-						.transferAnalysisResults(analysisSubmissionPhylogenomics);
+			analysisSubmission.setAnalysisState(AnalysisState.FINISHED_RUNNING);
+			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
+			break;
 
-				logger.debug("Transfered results for analysis submission "
-						+ analysisSubmissionPhylogenomics.getRemoteAnalysisId()
-						+ " to analysis " + analysisResults.getId());
+		case NEW:
+		case UPLOAD:
+		case WAITING:
+		case QUEUED:
+		case RUNNING:
+			logger.debug("Workflow for analysis " + analysisSubmission + " is running: percent "
+					+ workflowStatus.getPercentComplete());
+			returnedSubmission = new AsyncResult<>(analysisSubmission);
 
-				setStateForSubmission(analysisSubmissionPhylogenomics,
-						AnalysisState.COMPLETED);
-				break;
+			break;
 
-			case NEW:
-			case UPLOAD:
-			case WAITING:
-			case QUEUED:
-			case RUNNING:
-				logger.debug("Workflow for analysis "
-						+ analysisSubmissionPhylogenomics
-						+ " is running: percent "
-						+ workflowStatus.getPercentComplete());
-				break;
+		default:
+			logger.error("Workflow for analysis " + analysisSubmission + " in error state " + workflowStatus);
 
-			default:
-				logger.error("Workflow for analysis "
-						+ analysisSubmissionPhylogenomics + " in error state "
-						+ workflowStatus);
-				setStateForSubmission(analysisSubmissionPhylogenomics,
-						AnalysisState.ERROR);
-				break;
+			analysisSubmission.setAnalysisState(AnalysisState.ERROR);
+			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
+
+			break;
 		}
-	}
 
-	/**
-	 * Changes the given submission to the given state.
-	 * 
-	 * @param submission
-	 *            The submission to change.
-	 * @param state
-	 *            The state to change this submission to.
-	 */
-	private void setStateForSubmission(AnalysisSubmission submission,
-			AnalysisState state) {
-		logger.debug("Changing submission to state " + state + ": "
-				+ submission);
-		analysisSubmissionService.setStateForAnalysisSubmission(
-				submission.getId(), state);
-		submission.setAnalysisState(state);
+		return returnedSubmission;
 	}
 }

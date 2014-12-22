@@ -33,8 +33,11 @@ import org.springframework.security.oauth2.provider.token.ResourceServerTokenSer
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.filter.GenericFilterBean;
 
+import ca.corefacility.bioinformatics.irida.ria.config.filters.SessionFilter;
 import ca.corefacility.bioinformatics.irida.ria.security.CredentialsExpriredAuthenticationFailureHandler;
 import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousAuthenticationFilter;
 
@@ -190,8 +193,14 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/license").permitAll()
 				.antMatchers("/resources/**").permitAll()
 				.antMatchers("/password_reset/**").permitAll()
-				.antMatchers("/**").fullyAuthenticated();
+				.antMatchers("/**").fullyAuthenticated()
+			.and().addFilterAfter(getSessionModelFilter(), SecurityContextHolderAwareRequestFilter.class);
 			// @formatter:on
+		}
+		
+		@Bean
+		public GenericFilterBean getSessionModelFilter() {
+			return new SessionFilter();
 		}
 	}
 

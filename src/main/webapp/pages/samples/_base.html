@@ -11,10 +11,10 @@
      th:with="baseLink=@{'/samples/' + ${sample.getId()}}">
 	<div class="container">
 		<ul class="nav navbar-nav">
-			<li th:class="${activeNav} == 'details' ? 'active'"><a th:href="${baseLink}" href="#"
+			<li th:class="${activeNav} == 'details' ? 'active'"><a href="details"
 			                                                       th:text="#{samples.nav.details}">Details</a>
 			</li>
-			<li th:class="${activeNav} == 'files' ? 'active'"><a th:href="${baseLink + '/files'}" href="#"
+			<li th:class="${activeNav} == 'files' ? 'active'"><a href="sequenceFiles"
 			                                                     th:text="#{samples.nav.files}">Files</a></li>
 		</ul>
 	</div>

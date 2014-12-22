@@ -25,7 +25,7 @@
     });
   }
 
-  function FileService($rootScope, $modal, BASE_URL, R, notifications) {
+  function FileService($rootScope, $modal, R, notifications) {
     "use strict";
     var svc = this,
         projectId = angular.element("#projectId").val(),
@@ -33,14 +33,14 @@
 
     svc.download = function (id) {
       var iframe = document.createElement("iframe");
-      iframe.src = BASE_URL + "referenceFiles/download/" + id;
+      iframe.src = TL.BASE_URL + "referenceFiles/download/" + id;
       iframe.style.display = "none";
       document.body.appendChild(iframe);
     };
 
     svc.deleteFile = function (file) {
       var modalInstance = $modal.open({
-        templateUrl: BASE_URL + 'projects/templates/referenceFiles/delete',
+        templateUrl: TL.BASE_URL + 'projects/templates/referenceFiles/delete',
         controller : 'DeleteCtrl as dCtrl',
         resolve    : {
           file: function () {
@@ -61,7 +61,7 @@
     }
   }
 
-  function FileUploadService($rootScope, $upload, BASE_URL, notifications) {
+  function FileUploadService($rootScope, $upload, notifications) {
     "use strict";
     var svc = this,
         projectId = $rootScope.projectId;
@@ -70,7 +70,7 @@
       // TODO: add a check to see if this file has already been upload and give a warning if it has.
       _.each($files, function (file) {
         $upload.upload({
-          url : BASE_URL + "referenceFiles/project/" + projectId + "/new",
+          url : TL.BASE_URL + "referenceFiles/project/" + projectId + "/new",
           file: file
         }).success(function (data) {
           if (data.error) {
@@ -146,8 +146,8 @@
 
   angular.module('References', ['angularFileUpload'])
     .service('ProjectFileService', ['$rootScope', 'Restangular', ProjectFileService])
-    .service('FileService', ['$rootScope', '$modal', 'BASE_URL', 'Restangular', 'notifications', FileService])
-    .service('FileUploadService', ['$rootScope', '$upload', 'BASE_URL', 'notifications', FileUploadService])
+    .service('FileService', ['$rootScope', '$modal', 'Restangular', 'notifications', FileService])
+    .service('FileUploadService', ['$rootScope', '$upload', 'notifications', FileUploadService])
     .filter('bytes', [bytes])
     .controller('FilesCtrl', ['ProjectFileService', 'FileService', FilesCtrl])
     .controller('DeleteCtrl', ['$modalInstance', 'file', DeleteCtrl])

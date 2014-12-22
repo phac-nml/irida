@@ -61,7 +61,6 @@ import com.google.common.base.Strings;
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Controller
-@RequestMapping(value = "/projects")
 public class ProjectsController {
 	// Sub Navigation Strings
 	private static final String ACTIVE_NAV = "activeNav";
@@ -113,14 +112,14 @@ public class ProjectsController {
 	 *
 	 * @return The name of the page.
 	 */
-	@RequestMapping
+	@RequestMapping("/projects")
 	public String getProjectsPage(Model model) {
 		model.addAttribute("ajaxURL", "/projects/ajax/list");
 		model.addAttribute("isAdmin", false);
 		return LIST_PROJECTS_PAGE;
 	}
 
-	@RequestMapping("/all")
+	@RequestMapping("/projects/all")
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	public String getAllProjectsPage(Model model) {
 		model.addAttribute("ajaxURL", "/projects/ajax/list/all");
@@ -138,7 +137,7 @@ public class ProjectsController {
 	 *
 	 * @return The name of the project details page.
 	 */
-	@RequestMapping(value = "/{projectId}")
+	@RequestMapping(value = "/projects/{projectId}")
 	public String getProjectSpecificPage(@PathVariable Long projectId, final Model model, final Principal principal) {
 		logger.debug("Getting project information for [Project " + projectId + "]");
 		Project project = projectService.read(projectId);
@@ -156,7 +155,7 @@ public class ProjectsController {
 	 *
 	 * @return The name of the create new project page
 	 */
-	@RequestMapping(value = "/new", method = RequestMethod.GET)
+	@RequestMapping(value = "/projects/new", method = RequestMethod.GET)
 	public String getCreateProjectPage(final Model model) {
 		if (!model.containsAttribute("errors")) {
 			model.addAttribute("errors", new HashMap<>());
@@ -180,7 +179,7 @@ public class ProjectsController {
 	 *
 	 * @return The name of the add users to project page
 	 */
-	@RequestMapping(value = "/new", method = RequestMethod.POST)
+	@RequestMapping(value = "/projects/new", method = RequestMethod.POST)
 	public String createNewProject(final Model model, @RequestParam(required = false, defaultValue = "") String name,
 			@RequestParam(required = false, defaultValue = "") String organism,
 			@RequestParam(required = false, defaultValue = "") String projectDescription,
@@ -211,7 +210,7 @@ public class ProjectsController {
 	 *
 	 * @return The name of the add users to new project page.
 	 */
-	@RequestMapping("/{projectId}/metadata")
+	@RequestMapping("/projects/{projectId}/metadata")
 	public String getProjectMetadataPage(final Model model, final Principal principal, @PathVariable long projectId)
 			throws IOException {
 		Project project = projectService.read(projectId);
@@ -222,7 +221,7 @@ public class ProjectsController {
 		return PROJECT_METADATA_PAGE;
 	}
 
-	@RequestMapping(value = "/{projectId}/metadata/edit", method = RequestMethod.GET)
+	@RequestMapping(value = "/projects/{projectId}/metadata/edit", method = RequestMethod.GET)
 	public String getProjectMetadataEditPage(final Model model, final Principal principal,
 			@PathVariable long projectId) throws IOException {
 		Project project = projectService.read(projectId);
@@ -244,7 +243,7 @@ public class ProjectsController {
 		}
 	}
 
-	@RequestMapping(value = "/{projectId}/referenceFiles", method = RequestMethod.GET)
+	@RequestMapping(value = "/projects/{projectId}/referenceFiles", method = RequestMethod.GET)
 	public String getProjectReferenceFilesPage(final Model model, final Principal principal,
 			@PathVariable long projectId) {
 		Project project = projectService.read(projectId);
@@ -255,7 +254,7 @@ public class ProjectsController {
 		return PROJECT_REFERENCE_FILES_PAGE;
 	}
 
-	@RequestMapping(value = "/{projectId}/metadata/edit", method = RequestMethod.POST)
+	@RequestMapping(value = "/projects/{projectId}/metadata/edit", method = RequestMethod.POST)
 	public String postProjectMetadataEditPage(final Model model, final Principal principal,
 			@PathVariable long projectId, @RequestParam(required = false, defaultValue = "") String name,
 			@RequestParam(required = false, defaultValue = "") String organism,
@@ -306,7 +305,7 @@ public class ProjectsController {
 	 *
 	 * @return JSON value of the page data.
 	 */
-	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/projects/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> getAjaxProjectListForUser(
 			final Principal principal,
 			@RequestParam(ProjectsDataTable.REQUEST_PARAM_START) Integer start,
@@ -349,7 +348,7 @@ public class ProjectsController {
 	 *
 	 * @return JSON value of the page data.
 	 */
-	@RequestMapping(value = "/ajax/list/all", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/projects/ajax/list/all", produces = MediaType.APPLICATION_JSON_VALUE)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	public @ResponseBody Map<String, Object> getAjaxProjectListForAdmin(
 			@RequestParam(ProjectsAdminDataTable.REQUEST_PARAM_START) Integer start,
@@ -405,7 +404,7 @@ public class ProjectsController {
 	 *
 	 * @return A List<Map<String,Object>> which will contain a taxonomic tree of matching terms
 	 */
-	@RequestMapping("/ajax/taxonomy/search")
+	@RequestMapping("/projects/ajax/taxonomy/search")
 	@ResponseBody
 	public List<Map<String, Object>> searchTaxonomy(@RequestParam String searchTerm) {
 		Collection<TreeNode<String>> search = taxonomyService.search(searchTerm);

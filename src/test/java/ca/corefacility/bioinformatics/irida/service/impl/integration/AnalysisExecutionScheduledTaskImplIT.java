@@ -1,13 +1,16 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.junit.Assume;
 import org.junit.Before;
@@ -15,7 +18,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
@@ -28,23 +30,19 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
-import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 
 /**
  * Integration tests for analysis schedulers.
@@ -55,15 +53,11 @@ import com.google.common.collect.ImmutableMap;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class })
 @ActiveProfiles("test")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-		DbUnitTestExecutionListener.class,
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExcecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisExecutionScheduledTaskImplIT {
-
-	@Autowired
-	private LocalGalaxy localGalaxy;
 
 	@Autowired
 	private DatabaseSetupGalaxyITService analysisExecutionGalaxyITService;
@@ -72,16 +66,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 
 	@Autowired
-	private AnalysisSubmissionService analysisSubmissionService;
-
-	@Autowired
-	private RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics;
-
-	@Autowired
-	private AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics;
-
-	@Autowired
-	private AuthenticationProvider authenticationProvider;
+	private AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified;
 
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
@@ -89,6 +74,9 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	private Path sequenceFilePath2;
 	private Path referenceFilePath;
 	private Path referenceFilePath2;
+
+	private UUID validIridaWorkflowId = UUID.fromString("1f9ea289-5053-4e4a-bc76-1f0c60b179f8");
+	private UUID invalidIridaWorkflowId = UUID.fromString("8ec369e8-1b39-4b9a-97a1-70ac1f6cc9e6");
 
 	/**
 	 * Sets up variables for testing.
@@ -99,17 +87,14 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	@Before
 	public void setup() throws URISyntaxException, IOException {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
-		
-		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(
-				analysisSubmissionService, analysisSubmissionRepository,
-				analysisExecutionServicePhylogenomics);
+
+		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
+				analysisExecutionServiceSimplified);
 
 		Path sequenceFilePathReal = Paths
-				.get(DatabaseSetupGalaxyITService.class.getResource(
-						"testData1.fastq").toURI());
-		Path referenceFilePathReal = Paths
-				.get(DatabaseSetupGalaxyITService.class.getResource(
-						"testReference.fasta").toURI());
+				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
+		Path referenceFilePathReal = Paths.get(DatabaseSetupGalaxyITService.class.getResource("testReference.fasta")
+				.toURI());
 
 		sequenceFilePath = Files.createTempFile("testData1", ".fastq");
 		Files.delete(sequenceFilePath);
@@ -122,152 +107,204 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		referenceFilePath = Files.createTempFile("testReference", ".fasta");
 		Files.delete(referenceFilePath);
 		Files.copy(referenceFilePathReal, referenceFilePath);
-		
+
 		referenceFilePath2 = Files.createTempFile("testReference", ".fasta");
 		Files.delete(referenceFilePath2);
 		Files.copy(referenceFilePathReal, referenceFilePath2);
 	}
 
 	/**
-	 * Tests out successfully changing an analysis from submitted to running to
-	 * getting results
+	 * Tests out successfully executing an analysis submission, from newly
+	 * created to downloading results.
 	 * 
 	 * @throws Exception
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testSubmitToExecuteToResults() throws Exception {
-		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = remoteWorkflowServicePhylogenomics
-				.getCurrentWorkflow();
+	public void testFullAnalysisRunSuccess() throws Exception {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
-		AnalysisSubmissionPhylogenomics analysisSubmission = analysisExecutionGalaxyITService
-				.setupSubmissionInDatabase(1L, sequenceFilePath,
-						referenceFilePath, remoteWorkflowUnsaved);
-		assertEquals(AnalysisState.NEW, analysisSubmission.getAnalysisState());
-
-		analysisExecutionScheduledTask.executeAnalyses();
-		AnalysisSubmissionPhylogenomics executedSubmission = analysisSubmissionRepository
-				.getByType(analysisSubmission.getId(),
-						AnalysisSubmissionPhylogenomics.class);
-
-		assertEquals(AnalysisState.RUNNING,
-				executedSubmission.getAnalysisState());
-
-		WorkflowStatus status = analysisExecutionServicePhylogenomics
-				.getWorkflowStatus(executedSubmission);
-
-		analysisExecutionGalaxyITService.assertValidStatus(status);
-
-		analysisExecutionGalaxyITService
-				.waitUntilSubmissionComplete(executedSubmission);
-
-		analysisExecutionScheduledTask.transferAnalysesResults();
-
-		AnalysisSubmissionPhylogenomics transferedSubmission = analysisSubmissionRepository
-				.getByType(executedSubmission.getId(),
-						AnalysisSubmissionPhylogenomics.class);
-
-		assertEquals(AnalysisState.COMPLETED,
-				transferedSubmission.getAnalysisState());
+		validateFullAnalysis(Sets.newHashSet(analysisSubmission), 1);
 	}
 
 	/**
-	 * Tests out successfully handling only a single submission when multiple
-	 * submissions exist.
+	 * Tests out successfully executing two analyses submissions, from newly
+	 * created to downloading results.
 	 * 
 	 * @throws Exception
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testHandleSingleSubmission() throws Exception {
-		RemoteWorkflowPhylogenomics remoteWorkflow = remoteWorkflowServicePhylogenomics
-				.getCurrentWorkflow();
+	public void testFullAnalysisRunSuccessTwoSubmissions() throws Exception {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
+		AnalysisSubmission analysisSubmission2 = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath2, referenceFilePath2, validIridaWorkflowId);
 
-		AnalysisSubmissionPhylogenomics analysisSubmission = analysisExecutionGalaxyITService
-				.setupSubmissionInDatabase(1L, sequenceFilePath,
-						referenceFilePath, remoteWorkflow);
+		validateFullAnalysis(Sets.newHashSet(analysisSubmission, analysisSubmission2), 2);
+	}
+	
+	/**
+	 * Tests out successfully executing analysis scheduled tasks with no submissions.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFullAnalysisRunSuccessNoSubmissions() throws Exception {
+		validateFullAnalysis(Sets.newHashSet(), 0);
+	}
 
-		AnalysisSubmissionPhylogenomics analysisSubmission2 = analysisExecutionGalaxyITService
-				.setupSubmissionInDatabaseNoWorkflowSave(2L, sequenceFilePath2,
-						referenceFilePath2, remoteWorkflow);
+	/**
+	 * Tests out successfully executing only one analysis when another analysis
+	 * is already in an error state.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFullAnalysisRunSuccessOneSubmissionOneError() throws Exception {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
+		AnalysisSubmission analysisSubmission2 = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath2, referenceFilePath2, validIridaWorkflowId);
+		analysisSubmission2.setAnalysisState(AnalysisState.ERROR);
+		analysisSubmissionRepository.save(analysisSubmission2);
 
-		assertEquals(AnalysisState.NEW, analysisSubmission.getAnalysisState());
-		assertEquals(AnalysisState.NEW, analysisSubmission2.getAnalysisState());
+		validateFullAnalysis(Sets.newHashSet(analysisSubmission, analysisSubmission2), 1);
 
-		analysisExecutionScheduledTask.executeAnalyses();
-		AnalysisSubmissionPhylogenomics executedSubmission1 = analysisSubmissionRepository
-				.getByType(analysisSubmission.getId(),
-						AnalysisSubmissionPhylogenomics.class);
+		AnalysisSubmission loadedSubmission2 = analysisSubmissionRepository.findOne(analysisSubmission2.getId());
+		assertEquals(AnalysisState.ERROR, loadedSubmission2.getAnalysisState());
+	}
 
-		AnalysisSubmissionPhylogenomics executedSubmission2 = analysisSubmissionRepository
-				.getByType(analysisSubmission2.getId(),
-						AnalysisSubmissionPhylogenomics.class);
+	/**
+	 * Tests out failing to prepare an analysis due to an invalid workflow.
+	 * 
+	 * @throws Throwable
+	 */
+	@Test(expected = IridaWorkflowNotFoundException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFullAnalysisRunFailInvalidWorkflow() throws Throwable {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, invalidIridaWorkflowId);
 
-		// I do not know the order the analyses will be executed
-		if (AnalysisState.NEW.equals(executedSubmission1.getAnalysisState())) {
-			assertEquals(AnalysisState.RUNNING,
-					executedSubmission2.getAnalysisState());
-		} else if (AnalysisState.NEW.equals(executedSubmission2
-				.getAnalysisState())) {
-			assertEquals(AnalysisState.RUNNING,
-					executedSubmission1.getAnalysisState());
-		} else {
-			fail("One submission should be in state " + AnalysisState.NEW
-					+ " the other in " + AnalysisState.RUNNING
-					+ "but they are in "
-					+ executedSubmission1.getAnalysisState() + " "
-					+ executedSubmission2.getAnalysisState());
+		try {
+			validateFullAnalysis(Sets.newHashSet(analysisSubmission), 1);
+		} catch (ExecutionException e) {
+			AnalysisSubmission loadedSubmission = analysisSubmissionRepository.findOne(analysisSubmission.getId());
+			assertEquals(AnalysisState.ERROR, loadedSubmission.getAnalysisState());
+
+			throw e.getCause();
 		}
 	}
 
 	/**
-	 * Tests out successfully changing an analysis to error after an error
-	 * during execution
+	 * Tests out failing to complete execution of a workflow due to an error
+	 * with the status.
+	 * 
+	 * @throws Throwable
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testErrorExecute() {
-		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = remoteWorkflowServicePhylogenomics
-				.getCurrentWorkflow();
+	public void testFullAnalysisRunFailInvalidWorkflowStatus() throws Throwable {
+		analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L, sequenceFilePath, referenceFilePath,
+				validIridaWorkflowId);
 
-		AnalysisSubmissionPhylogenomics analysisSubmission = analysisExecutionGalaxyITService
-				.setupSubmissionInDatabase(1L, sequenceFilePath,
-						referenceFilePath, remoteWorkflowUnsaved);
+		// PREPARE SUBMISSION
+		Set<Future<AnalysisSubmission>> submissionsFutureSet = analysisExecutionScheduledTask.prepareAnalyses();
+		assertEquals(1, submissionsFutureSet.size());
+		// wait until finished
+		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
+			AnalysisSubmission returnedSubmission = submissionFuture.get();
+			assertEquals(AnalysisState.PREPARED, returnedSubmission.getAnalysisState());
+		}
 
-		analysisExecutionScheduledTask.executeAnalyses();
+		// EXECUTE SUBMISSION
+		submissionsFutureSet = analysisExecutionScheduledTask.executeAnalyses();
+		assertEquals(1, submissionsFutureSet.size());
+		// wait until finished
+		AnalysisSubmission returnedSubmission = submissionsFutureSet.iterator().next().get();
+		assertEquals(AnalysisState.RUNNING, returnedSubmission.getAnalysisState());
 
-		AnalysisSubmissionPhylogenomics executedSubmission = analysisSubmissionRepository
-				.getByType(analysisSubmission.getId(),
-						AnalysisSubmissionPhylogenomics.class);
+		// Modify remoteAnalysisId so getting the status fails
+		returnedSubmission.setRemoteAnalysisId("invalid");
+		analysisSubmissionRepository.save(returnedSubmission);
 
-		// set Galaxy analysis id to invalid to force an error
-		analysisSubmissionService.update(executedSubmission.getId(),
-				ImmutableMap.of("remoteAnalysisId", "invalid"));
+		// CHECK GALAXY STATUS
+		submissionsFutureSet = analysisExecutionScheduledTask.monitorRunningAnalyses();
 
-		analysisExecutionScheduledTask.transferAnalysesResults();
-
-		AnalysisSubmissionPhylogenomics errorSubmission = analysisSubmissionRepository
-				.getByType(executedSubmission.getId(),
-						AnalysisSubmissionPhylogenomics.class);
-
-		assertEquals(AnalysisState.ERROR, errorSubmission.getAnalysisState());
+		// Should be in error state
+		assertEquals(1, submissionsFutureSet.size());
+		returnedSubmission = submissionsFutureSet.iterator().next().get();
+		assertEquals(AnalysisState.ERROR, returnedSubmission.getAnalysisState());
 	}
 
 	/**
-	 * Tests out an invalid authentication object for the schduler. during
-	 * execution
+	 * Tests out failure to run analysis due to authentication error.
+	 * 
+	 * @throws Exception
 	 */
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testInvalidAuthentication() {
-		RemoteWorkflowPhylogenomics remoteWorkflowUnsaved = remoteWorkflowServicePhylogenomics
-				.getCurrentWorkflow();
+	public void testFullAnalysisRunFailAuthentication() throws Exception {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
-		analysisExecutionGalaxyITService
-				.setupSubmissionInDatabase(1L, sequenceFilePath,
-						referenceFilePath, remoteWorkflowUnsaved);
-		
 		SecurityContextHolder.clearContext();
-		analysisExecutionScheduledTask.executeAnalyses();
+		validateFullAnalysis(Sets.newHashSet(analysisSubmission), 1);
+	}
+
+	/**
+	 * Performs a full analysis to completion on the passed submissions.
+	 * 
+	 * @param submissions
+	 *            The submission to attempt to perform and validate a full
+	 *            analysis on.
+	 * @param expectedSubmissionsToProcess
+	 *            The expected number of submissions to pick up and process.
+	 * @throws Exception
+	 *             On any exception.
+	 */
+	private void validateFullAnalysis(Set<AnalysisSubmission> submissions, int expectedSubmissionsToProcess)
+			throws Exception {		
+		// PREPARE SUBMISSION
+		Set<Future<AnalysisSubmission>> submissionsFutureSet = analysisExecutionScheduledTask.prepareAnalyses();
+		assertEquals(expectedSubmissionsToProcess, submissionsFutureSet.size());
+		// wait until finished
+		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
+			AnalysisSubmission returnedSubmission = submissionFuture.get();
+			assertEquals(AnalysisState.PREPARED, returnedSubmission.getAnalysisState());
+		}
+
+		// EXECUTE SUBMISSION
+		submissionsFutureSet = analysisExecutionScheduledTask.executeAnalyses();
+		assertEquals(expectedSubmissionsToProcess, submissionsFutureSet.size());
+		// wait until finished
+		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
+			AnalysisSubmission returnedSubmission = submissionFuture.get();
+			assertEquals(AnalysisState.RUNNING, returnedSubmission.getAnalysisState());
+			
+			// wait until Galaxy finished
+			analysisExecutionGalaxyITService.waitUntilSubmissionCompleteSimplified(returnedSubmission);
+		}
+
+		// CHECK GALAXY STATUS
+		submissionsFutureSet = analysisExecutionScheduledTask.monitorRunningAnalyses();
+		assertEquals(expectedSubmissionsToProcess, submissionsFutureSet.size());
+		// wait until finished
+		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
+			AnalysisSubmission returnedSubmission = submissionFuture.get();
+			assertEquals(AnalysisState.FINISHED_RUNNING, returnedSubmission.getAnalysisState());
+		}
+
+		// TRANSFER SUBMISSION RESULTS
+		submissionsFutureSet = analysisExecutionScheduledTask.transferAnalysesResults();
+		assertEquals(expectedSubmissionsToProcess, submissionsFutureSet.size());
+		// wait until finished
+		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
+			AnalysisSubmission returnedSubmission = submissionFuture.get();
+			assertEquals(AnalysisState.COMPLETED, returnedSubmission.getAnalysisState());
+		}
 	}
 }

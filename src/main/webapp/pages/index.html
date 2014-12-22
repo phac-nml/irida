@@ -39,21 +39,20 @@
         document.createElement("carousel");
         document.createElement("slide");
         app.controller('CarouselCtrl', CarouselCtrl);
-        function CarouselCtrl($scope, BASE_URL) {
+        function CarouselCtrl($scope) {
             'use strict';
             var carousel = this;
 
             $scope.slides = [];
             for (var i = 1; i < 5; i++) {
-                $scope.slides.push({image: BASE_URL + "resources/img/irida-logos-" + i + ".png"});
+                $scope.slides.push({image: TL.BASE_URL + "resources/img/irida-logos-" + i + ".png"});
             }
         }
         
         $(function () {
-            var eventUrl = /*[[@{/events/current_user}]]*/ '/events/current_user/';
             $.ajax({
             	method: "GET",
-            	url: eventUrl,
+            	url: TL.BASE_URL + 'events/current_user/',
             	headers: {
             		Accept: 'text/html'
             	},

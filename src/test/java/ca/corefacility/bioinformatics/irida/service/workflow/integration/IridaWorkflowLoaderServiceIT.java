@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.workflow.integration;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -74,27 +73,25 @@ public class IridaWorkflowLoaderServiceIT {
 	private Path workflowDirectoryPathNoDefinition;
 	private Path workflowDirectoryPathNoStructure;
 	private Path workflowDirectoryPathNoId;
-	
+
 	private static final UUID workflowId1v1 = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
 	private static final UUID workflowId1v2 = UUID.fromString("c5f29cb2-1b68-4d34-9b93-609266af7551");
-	private Set<UUID> workflowIds1Set = Sets.newHashSet(workflowId1v1, workflowId1v2);
+	private static final UUID workflowId1v1_invalid = UUID.fromString("d54f1780-e6c9-472a-92dd-63520ec85967");
+	private Set<UUID> workflowIds1Set = Sets.newHashSet(workflowId1v1, workflowId1v2, workflowId1v1_invalid);
 
 	@Before
 	public void setup() throws JAXBException, URISyntaxException, FileNotFoundException {
-		workflowXmlPath = Paths.get(TestAnalysis.class.getResource(
-				"workflows/TestAnalysis/1.0/irida_workflow.xml").toURI());
+		workflowXmlPath = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysis/1.0/irida_workflow.xml")
+				.toURI());
 		workflowStructurePath = Paths.get(TestAnalysis.class.getResource(
 				"workflows/TestAnalysis/1.0/irida_workflow_structure.ga").toURI());
-		workflowDirectoryPath = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysis")
-				.toURI());
-		workflowVersionDirectoryPath = Paths.get(TestAnalysis.class.getResource(
-				"workflows/TestAnalysis/1.0").toURI());
+		workflowDirectoryPath = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysis").toURI());
+		workflowVersionDirectoryPath = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysis/1.0").toURI());
 		workflowDirectoryPathNoDefinition = Paths.get(TestAnalysis.class.getResource(
 				"workflows/TestAnalysisNoDefinition").toURI());
-		workflowDirectoryPathNoStructure = Paths.get(TestAnalysis.class.getResource(
-				"workflows/TestAnalysisNoStructure").toURI());
-		workflowDirectoryPathNoId = Paths.get(TestAnalysis.class.getResource(
-				"workflows/TestAnalysisNoId").toURI());
+		workflowDirectoryPathNoStructure = Paths.get(TestAnalysis.class
+				.getResource("workflows/TestAnalysisNoStructure").toURI());
+		workflowDirectoryPathNoId = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysisNoId").toURI());
 	}
 
 	private IridaWorkflow buildTestWorkflow() throws MalformedURLException {
@@ -127,7 +124,7 @@ public class IridaWorkflowLoaderServiceIT {
 
 		return iridaWorkflow;
 	}
-	
+
 	/**
 	 * Tests successfully loading a set of workflows from the analysis class.
 	 * 
@@ -137,21 +134,22 @@ public class IridaWorkflowLoaderServiceIT {
 	@Test
 	public void testLoadWorkflowsForClassSuccess() throws IOException, IridaWorkflowLoadException {
 		Set<IridaWorkflow> iridaWorkflows = workflowLoaderService.loadWorkflowsForClass(TestAnalysis.class);
-		assertEquals(2, iridaWorkflows.size());
+		assertEquals(3, iridaWorkflows.size());
 		Iterator<IridaWorkflow> iter = iridaWorkflows.iterator();
 		UUID id1 = iter.next().getWorkflowIdentifier();
 		UUID id2 = iter.next().getWorkflowIdentifier();
+		UUID id3 = iter.next().getWorkflowIdentifier();
 
-		assertEquals(workflowIds1Set, Sets.newHashSet(id1, id2));
+		assertEquals(workflowIds1Set, Sets.newHashSet(id1, id2, id3));
 	}
-	
+
 	/**
 	 * Tests failing to load a set of workflows from the analysis class.
 	 * 
 	 * @throws IOException
 	 * @throws IridaWorkflowLoadException
 	 */
-	@Test(expected=IridaWorkflowLoadException.class)
+	@Test(expected = IridaWorkflowLoadException.class)
 	public void testLoadWorkflowsForClassFail() throws IOException, IridaWorkflowLoadException {
 		workflowLoaderService.loadWorkflowsForClass(Analysis.class);
 	}
@@ -219,19 +217,20 @@ public class IridaWorkflowLoaderServiceIT {
 		Set<IridaWorkflow> iridaWorkflowsFromFile = workflowLoaderService
 				.loadAllWorkflowImplementations(workflowDirectoryPath);
 
-		assertEquals(2, iridaWorkflowsFromFile.size());
+		assertEquals(3, iridaWorkflowsFromFile.size());
 		Iterator<IridaWorkflow> iter = iridaWorkflowsFromFile.iterator();
 		IridaWorkflow workflowA = iter.next();
 		IridaWorkflow workflowB = iter.next();
+		IridaWorkflow workflowC = iter.next();
 
 		assertEquals("TestWorkflow", workflowA.getWorkflowDescription().getName());
 		assertEquals("TestWorkflow", workflowB.getWorkflowDescription().getName());
+		assertEquals("TestWorkflow", workflowC.getWorkflowDescription().getName());
 
-		assertTrue("workflows have invalid version numbers",
-				(workflowA.getWorkflowDescription().getVersion().equals("1.0") && workflowB.getWorkflowDescription()
-						.getVersion().equals("2.0"))
-						|| (workflowA.getWorkflowDescription().getVersion().equals("2.0") && workflowB
-								.getWorkflowDescription().getVersion().equals("1.0")));
+		Set<String> actualVersionNumbers = Sets.newHashSet(workflowA.getWorkflowDescription().getVersion(), workflowB
+				.getWorkflowDescription().getVersion(), workflowC.getWorkflowDescription().getVersion());
+		Set<String> validVersionNumbers = Sets.newHashSet("1.0", "2.0", "1.0-invalid");
+		assertEquals(validVersionNumbers, actualVersionNumbers);
 	}
 
 	/**
