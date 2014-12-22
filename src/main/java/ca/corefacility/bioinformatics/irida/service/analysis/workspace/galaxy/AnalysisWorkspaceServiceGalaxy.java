@@ -31,8 +31,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowInput;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowOutput;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowInput;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowOutput;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
@@ -247,7 +247,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		checkNotNull(analysisSubmission.getRemoteWorkflowId(), "remoteWorkflowId is null");
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysisSubmission.getWorkflowId());
-		WorkflowInput workflowInput = iridaWorkflow.getWorkflowDescription().getInputs();
+		IridaWorkflowInput workflowInput = iridaWorkflow.getWorkflowDescription().getInputs();
 		String sequenceFilesLabel = workflowInput.getSequenceReadsSingle();
 		String referenceFileLabel = workflowInput.getReference();
 		checkNotNull(sequenceFilesLabel, "sequenceReadsSingleLabel is null");
@@ -355,7 +355,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 
 		AnalysisPhylogenomicsPipeline results = new AnalysisPhylogenomicsPipeline(inputFiles, analysisId);
 
-		Map<String, WorkflowOutput> outputsMap = iridaWorkflow.getWorkflowDescription().getOutputsMap();
+		Map<String, IridaWorkflowOutput> outputsMap = iridaWorkflow.getWorkflowDescription().getOutputsMap();
 
 		Dataset treeOutput = galaxyHistoriesService.getDatasetForFileInHistory(outputsMap.get("tree").getFileName(),
 				analysisId);

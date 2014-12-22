@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlAttribute;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WorkflowOutput {
+public class IridaWorkflowOutput {
 
 	@XmlAttribute(name = "name")
 	private String name;
@@ -21,11 +21,11 @@ public class WorkflowOutput {
 	@XmlAttribute(name = "fileName")
 	private String fileName;
 
-	public WorkflowOutput() {
+	public IridaWorkflowOutput() {
 	}
 
 	/**
-	 * Defines a new {@link WorkflowOutput} object for descripting the output
+	 * Defines a new {@link IridaWorkflowOutput} object for descripting the output
 	 * files of a workflow.
 	 * 
 	 * @param name
@@ -33,7 +33,7 @@ public class WorkflowOutput {
 	 * @param fileName
 	 *            The file name in Galaxy of the output.
 	 */
-	public WorkflowOutput(String name, String fileName) {
+	public IridaWorkflowOutput(String name, String fileName) {
 		this.name = name;
 		this.fileName = fileName;
 	}
@@ -55,8 +55,8 @@ public class WorkflowOutput {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		else if (obj instanceof WorkflowOutput) {
-			WorkflowOutput other = (WorkflowOutput) obj;
+		else if (obj instanceof IridaWorkflowOutput) {
+			IridaWorkflowOutput other = (IridaWorkflowOutput) obj;
 
 			return Objects.equals(name, other.name) && Objects.equals(fileName, other.fileName);
 		}

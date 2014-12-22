@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlElement;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WorkflowInput {
+public class IridaWorkflowInput {
 
 	@XmlElement(name = "sequenceReadsSingle")
 	private String sequenceReadsSingle;
@@ -21,11 +21,11 @@ public class WorkflowInput {
 	@XmlElement(name = "reference")
 	private String reference;
 
-	public WorkflowInput() {
+	public IridaWorkflowInput() {
 	}
 
 	/**
-	 * Builds a new {@link WorkflowInput} object with the given information.
+	 * Builds a new {@link IridaWorkflowInput} object with the given information.
 	 * 
 	 * @param sequenceReadsSingle
 	 *            The label to use for a collection of single-end sequence
@@ -33,7 +33,7 @@ public class WorkflowInput {
 	 * @param reference
 	 *            The label to use for a reference file.
 	 */
-	public WorkflowInput(String sequenceReadsSingle, String reference) {
+	public IridaWorkflowInput(String sequenceReadsSingle, String reference) {
 		this.sequenceReadsSingle = sequenceReadsSingle;
 		this.reference = reference;
 	}
@@ -55,8 +55,8 @@ public class WorkflowInput {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		else if (obj instanceof WorkflowInput) {
-			WorkflowInput other = (WorkflowInput) obj;
+		else if (obj instanceof IridaWorkflowInput) {
+			IridaWorkflowInput other = (IridaWorkflowInput) obj;
 
 			return Objects.equals(sequenceReadsSingle, other.sequenceReadsSingle)
 					&& Objects.equals(reference, other.reference);
