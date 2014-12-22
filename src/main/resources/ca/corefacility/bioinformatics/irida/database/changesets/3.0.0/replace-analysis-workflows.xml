@@ -6,19 +6,37 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 	<changeSet id="update-analysis-workflows" author="apetkau">
-		<dropTable tableName="remote_workflow"/>
-		<dropTable tableName="remote_workflow_AUD"/>
-		
-		<dropTable tableName="remote_workflow_galaxy"/>
-		<dropTable tableName="remote_workflow_galaxy_AUD"/>
-		
-		<dropTable tableName="remote_workflow_phylogenomics"/>
-		<dropTable tableName="remote_workflow_phylogenomics_AUD"/>
-		
-		<dropTable tableName="analysis_submission_galaxy"/>
-		<dropTable tableName="analysis_submission_galaxy_AUD"/>
-		
-		<dropTable tableName="analysis_submission_phylogenomics"/>
-		<dropTable tableName="analysis_submission_phylogenomics_AUD"/>
+
+		<dropForeignKeyConstraint baseTableName="analysis_submission_phylogenomics_AUD"
+			constraintName="FK_ANALYSIS_SUBMISSION_PHYLOGENOMICS_REVISION" />
+		<dropTable tableName="analysis_submission_phylogenomics_AUD"
+			cascadeConstraints="true" />
+		<dropForeignKeyConstraint baseTableName="analysis_submission_phylogenomics"
+			constraintName="FK_ANALYSIS_SUBMISSION_PHYLOGENOMICS_ID" />
+		<dropTable tableName="analysis_submission_phylogenomics"
+			cascadeConstraints="true" />
+
+		<dropForeignKeyConstraint baseTableName="analysis_submission_galaxy_AUD"
+			constraintName="FK_ANALYSIS_SUBMISSION_GALAXY_REVISION" />
+		<dropTable tableName="analysis_submission_galaxy_AUD"
+			cascadeConstraints="true" />
+		<dropForeignKeyConstraint baseTableName="analysis_submission_galaxy"
+			constraintName="FK_ANALYSIS_SUBMISSION_GALAXY_ID" />
+		<dropForeignKeyConstraint baseTableName="analysis_submission_galaxy"
+			constraintName="FK_ANALYSIS_SUBMISSION_REMOTE_WORKFLOW_ID" />
+		<dropTable tableName="analysis_submission_galaxy"
+			cascadeConstraints="true" />
+
+		<dropForeignKeyConstraint baseTableName="remote_workflow_phylogenomics"
+			constraintName="FK_REMOTE_WORKFLOW_ID" />
+		<dropTable tableName="remote_workflow_phylogenomics"
+			cascadeConstraints="true" />
+
+		<dropForeignKeyConstraint baseTableName="remote_workflow_AUD"
+			constraintName="FK_REMOTE_WORKFLOW_REVISION" />
+		<dropTable tableName="remote_workflow_AUD"
+			cascadeConstraints="true" />
+		<dropTable tableName="remote_workflow" cascadeConstraints="true" />
+
 	</changeSet>
 </databaseChangeLog>

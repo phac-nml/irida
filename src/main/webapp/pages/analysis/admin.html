@@ -232,6 +232,9 @@ var states = {
 // cgBusyDefaults (https://github.com/cgross/angular-busy) show busy/loading indicators on any
 // $http or $resource request, or on any promise
 /* -]*/
+
+var app = angular.module('irida');
+
 app.value('cgBusyDefaults', {
 	message    : /*[[#{analysis.table.filtering}]]*/ 'Loading Stuff',
 	backdrop   : false,
