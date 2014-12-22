@@ -28,11 +28,11 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowStructure;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyWorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
@@ -374,7 +374,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 */
 	@Test
 	public void testGetWorkflowStatusSuccess() throws ExecutionManagerException {
-		WorkflowStatus workflowStatus = new WorkflowStatus(WorkflowState.OK, 1.0f);
+		GalaxyWorkflowStatus workflowStatus = new GalaxyWorkflowStatus(GalaxyWorkflowState.OK, 1.0f);
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
 
 		when(galaxyHistoriesService.getStatusForHistory(analysisSubmission.getRemoteAnalysisId())).thenReturn(

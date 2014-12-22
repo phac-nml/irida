@@ -40,11 +40,11 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadExce
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
@@ -181,7 +181,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		assertNotNull("remoteAnalysisId is null", analysisExecuted.getRemoteAnalysisId());
 
-		WorkflowStatus status = analysisExecutionService.getWorkflowStatus(analysisExecuted);
+		GalaxyWorkflowStatus status = analysisExecutionService.getWorkflowStatus(analysisExecuted);
 		analysisExecutionGalaxyITService.assertValidStatus(status);
 
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.findOne(analysisExecuted.getId());

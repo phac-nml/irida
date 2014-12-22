@@ -21,9 +21,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyWorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
@@ -169,7 +169,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
 		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
-				new WorkflowStatus(WorkflowState.OK, 100.0f));
+				new GalaxyWorkflowStatus(GalaxyWorkflowState.OK, 100.0f));
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 
@@ -192,7 +192,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
 		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
-				new WorkflowStatus(WorkflowState.RUNNING, 50.0f));
+				new GalaxyWorkflowStatus(GalaxyWorkflowState.RUNNING, 50.0f));
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 
@@ -215,7 +215,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
 		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
-				new WorkflowStatus(WorkflowState.ERROR, 50.0f));
+				new GalaxyWorkflowStatus(GalaxyWorkflowState.ERROR, 50.0f));
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 
@@ -238,7 +238,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
 		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
-				new WorkflowStatus(WorkflowState.UNKNOWN, 50.0f));
+				new GalaxyWorkflowStatus(GalaxyWorkflowState.UNKNOWN, 50.0f));
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 

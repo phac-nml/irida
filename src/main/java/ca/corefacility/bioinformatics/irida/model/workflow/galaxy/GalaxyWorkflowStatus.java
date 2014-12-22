@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model.workflow;
+package ca.corefacility.bioinformatics.irida.model.workflow.galaxy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -7,16 +7,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class WorkflowStatus {
-	private WorkflowState state;
+public class GalaxyWorkflowStatus {
+	private GalaxyWorkflowState state;
 	private float percentComplete;
 	
 	/**
-	 * Constructs a new WorkflowStatus with the given information.
+	 * Constructs a new {@link GalaxyWorkflowStatus} with the given information.
 	 * @param state  The state of the workflow.
 	 * @param percentComplete  The percentage complete for the workflow.
 	 */
-	public WorkflowStatus(WorkflowState state, float percentComplete) {
+	public GalaxyWorkflowStatus(GalaxyWorkflowState state, float percentComplete) {
 		checkNotNull(state, "state is null");
 		
 		this.state = state;
@@ -25,9 +25,9 @@ public class WorkflowStatus {
 
 	/**
 	 * Gets the state of the workflow.
-	 * @return  The WorkflowState for this workflow.
+	 * @return  The {@link GalaxyWorkflowState} for this workflow.
 	 */
-	public WorkflowState getState() {
+	public GalaxyWorkflowState getState() {
 		return state;
 	}
 

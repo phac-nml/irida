@@ -39,8 +39,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyWorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
@@ -262,9 +262,9 @@ public class GalaxyWorkflowsIT {
 		assertNotNull(outputDataset);
 		
 		// test get workflow status
-		WorkflowStatus workflowStatus = 
+		GalaxyWorkflowStatus workflowStatus = 
 				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
-		assertFalse(WorkflowState.UNKNOWN.equals(workflowStatus.getState()));
+		assertFalse(GalaxyWorkflowState.UNKNOWN.equals(workflowStatus.getState()));
 		float percentComplete = workflowStatus.getPercentComplete();
 		assertTrue(0.0f <= percentComplete && percentComplete <= 100.0f);
 	}
@@ -389,9 +389,9 @@ public class GalaxyWorkflowsIT {
 		}
 		
 		// test get workflow status
-		WorkflowStatus workflowStatus = 
+		GalaxyWorkflowStatus workflowStatus = 
 				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
-		assertFalse(WorkflowState.UNKNOWN.equals(workflowStatus.getState()));
+		assertFalse(GalaxyWorkflowState.UNKNOWN.equals(workflowStatus.getState()));
 		float percentComplete = workflowStatus.getPercentComplete();
 		assertTrue(0.0f <= percentComplete && percentComplete <= 100.0f);
 	}

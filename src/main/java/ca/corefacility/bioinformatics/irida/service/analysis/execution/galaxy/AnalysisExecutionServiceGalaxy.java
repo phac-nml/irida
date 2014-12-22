@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -105,7 +105,7 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 	 * {@inheritDoc}
 	 */
 	@Override
-	public WorkflowStatus getWorkflowStatus(AnalysisSubmission submittedAnalysis) throws ExecutionManagerException {
+	public GalaxyWorkflowStatus getWorkflowStatus(AnalysisSubmission submittedAnalysis) throws ExecutionManagerException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
 		checkNotNull(submittedAnalysis.getRemoteAnalysisId(), "remote analysis id is null");
 

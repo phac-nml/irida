@@ -38,8 +38,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetExcep
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
-import ca.corefacility.bioinformatics.irida.model.workflow.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;

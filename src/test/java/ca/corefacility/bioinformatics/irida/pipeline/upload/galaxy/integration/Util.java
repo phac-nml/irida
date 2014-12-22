@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyWorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -51,7 +51,7 @@ public class Util {
 	 */
 	public static void waitUntilHistoryComplete(String historyId, GalaxyHistoriesService historyService, int timeout) throws TimeoutException, ExecutionManagerException, InterruptedException {
 		
-		WorkflowStatus workflowStatus;
+		GalaxyWorkflowStatus workflowStatus;
 		
 		long timeBefore = System.currentTimeMillis();
 		do {
@@ -64,6 +64,6 @@ public class Util {
 				throw new TimeoutException("Timeout for history " + historyId +
 						" " + deltaSeconds + "s > " + timeout + "s");
 			}
-		} while (!WorkflowState.OK.equals(workflowStatus.getState()));
+		} while (!GalaxyWorkflowState.OK.equals(workflowStatus.getState()));
 	}
 }

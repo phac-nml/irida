@@ -21,8 +21,8 @@ import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyWorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
@@ -143,11 +143,11 @@ public class DatabaseSetupGalaxyITService {
 
 			@Override
 			public Void call() throws Exception {
-				WorkflowStatus workflowStatus;
+				GalaxyWorkflowStatus workflowStatus;
 				do {
 					workflowStatus = analysisExecutionService.getWorkflowStatus(analysisSubmission);
 					Thread.sleep(pollingTime);
-				} while (!WorkflowState.OK.equals(workflowStatus.getState()));
+				} while (!GalaxyWorkflowState.OK.equals(workflowStatus.getState()));
 
 				return null;
 			}
@@ -166,9 +166,9 @@ public class DatabaseSetupGalaxyITService {
 	 * 
 	 * @param status
 	 */
-	public void assertValidStatus(WorkflowStatus status) {
+	public void assertValidStatus(GalaxyWorkflowStatus status) {
 		assertNotNull("WorkflowStatus is null", status);
-		assertFalse("WorkflowState is " + WorkflowState.UNKNOWN, WorkflowState.UNKNOWN.equals(status.getState()));
+		assertFalse("WorkflowState is " + GalaxyWorkflowState.UNKNOWN, GalaxyWorkflowState.UNKNOWN.equals(status.getState()));
 		float percentComplete = status.getPercentComplete();
 		assertTrue("percentComplete not in range of 0 to 100", 0.0f <= percentComplete && percentComplete <= 100.0f);
 	}

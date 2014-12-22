@@ -15,8 +15,8 @@ import com.google.common.collect.Sets;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyWorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
@@ -129,7 +129,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 				logger.debug("Checking state of " + analysisSubmission);
 	
 				try {
-					WorkflowStatus workflowStatus = analysisExecutionService
+					GalaxyWorkflowStatus workflowStatus = analysisExecutionService
 							.getWorkflowStatus(analysisSubmission);
 					submissions.add(handleWorkflowStatus(workflowStatus, analysisSubmission));
 				} catch (ExecutionManagerException | RuntimeException e) {
@@ -180,11 +180,11 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 * @return A {@link Future} with an {@link AnalysisSubmission} for this
 	 *         submission.
 	 */
-	private Future<AnalysisSubmission> handleWorkflowStatus(WorkflowStatus workflowStatus,
+	private Future<AnalysisSubmission> handleWorkflowStatus(GalaxyWorkflowStatus workflowStatus,
 			AnalysisSubmission analysisSubmission) {
 		Future<AnalysisSubmission> returnedSubmission;
 
-		WorkflowState workflowState = workflowStatus.getState();
+		GalaxyWorkflowState workflowState = workflowStatus.getState();
 		switch (workflowState) {
 		case OK:
 			logger.debug("Analysis finished " + analysisSubmission);
