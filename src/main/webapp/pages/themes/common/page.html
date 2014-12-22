@@ -17,7 +17,7 @@
 </head>
 <body vocab="http://schema.org/" typeof="WebPage" id="ng-app" ng-app="irida">
 <div toaster-container=""></div>
-<div style="height: 100%;" ng-controller="CartCtrl as cart">
+<div style="height: 100%;" ng-controller="cartController as cart">
 	<div style="height: 100%;" class="st-container" ng-class="{'cart-open':cart.show}">
 		<div class="st-content">
 			<div class="st-content-inner" layout:fragment="main-section"> </div>
@@ -38,7 +38,7 @@
 <script type="text/ng-template" id="/session-modal.html">
 	<div>
 		<div class="modal-header">
-			<b class="modal-title"><span th:text="#{session.timeout-modal.header}"></span>&nbsp;{{timeleft | moment}}</b>
+			<b class="modal-title"><span th:text="#{session.timeout-modal.header}"></span>&nbsp;{{timeleft | countdown}}</b>
 		</div>
 		<div class="modal-footer">
 			<button class="btn btn-default" ng-click="logout()" th:text="#{session.timeout-modal.logout}">Log me out</button>
@@ -59,6 +59,12 @@
 					"projects": /*[[#{bc.projects}]]*/ "Projects",
 					"samples" : /*[[#{bc.samples}]]*/ "Samples",
 					"sequenceFiles": /*[[#{bc.sequenceFiles}]]*/ "Sequence Files"
+				},
+				page: {
+					"first": /*[[#{table.first}]]*/ 'First',
+					"prev" : /*[[#{table.previous}]]*/ 'Previous',
+					"next" : /*[[#{table.next}]]*/ 'Next',
+					"last" : /*[[#{table.last}]]*/ 'Last'
 				}
 			}
 		};
@@ -66,6 +72,8 @@
 
 	<script th:src="@{/resources/bower_components/lodash/dist/lodash.min.js}"
 	        src="/resources/bower_components/lodash/dist/lodash.min.js"></script>
+	<script src="/resources/bower_components/moment/min/moment-with-langs.min.js" th:src="@{/resources/bower_components/moment/min/moment-with-langs.min.js}"></script>
+
 	<script th:src="@{/resources/bower_components/angular/angular.min.js}"
 	        src="/resources/bower_components/angular/angular.min.js"></script>
 	<script src="/resources/bower_components/angular-aria/angular-aria.min.js"
@@ -87,100 +95,11 @@
 	        src="/resources/js/services/notifications/irida-notifications-min.js"></script>
 
 	<script src="/resources/js/services/httpInterceptor.js" th:src="@{/resources/js/services/httpInterceptor.js}"></script>
-
-	<script th:inline="javascript">
-		/*<![CDATA[*/
-		window.dependencies = _.union(window.dependencies || [], ['ngAria', 'ngResource', 'ngAnimate', 'ngMessages', 'ui.bootstrap', 'restangular', 'irida.session', 'irida.notifications']);
-		var app = angular.module('irida', window.dependencies)
-			// This configures the base url globally for all restangular calls.
-			.config(function (RestangularProvider) {
-				RestangularProvider.setBaseUrl(TL.BASE_URL);
-			})
-			.run(function (paginationConfig) {
-				paginationConfig.firstText = /*[[#{table.first}]]*/ 'First';
-				paginationConfig.previousText = /*[[#{table.previous}]]*/ 'Previous';
-				paginationConfig.nextText = /*[[#{table.next}]]*/ 'Next';
-				paginationConfig.lastText = /*[[#{table.last}]]*/ 'Last';
-				paginationConfig.boundaryLinks = true;
-				paginationConfig.directionLinks = true;
-				paginationConfig.maxSize = 8;
-				paginationConfig.rotate = false;
-			})
-
-
-			.filter('moment', function () {
-				return function (timeleft) {
-					if (angular.isNumber(timeleft)) {
-						return moment.duration(timeleft, "milliseconds").humanize();
-					}
-				};
-			})
-			.directive('ngFocus', [function () {
-				var FOCUS_CLASS = "ng-focused";
-				return {
-					restrict: 'A',
-					require : 'ngModel',
-					link    : function (scope, element, attrs, ctrl) {
-						ctrl.$focused = false;
-						element.bind('focus', function (evt) {
-							element.addClass(FOCUS_CLASS);
-							scope.$apply(function () {
-								ctrl.$focused = true;
-							});
-						}).bind('blur', function (evt) {
-							element.removeClass(FOCUS_CLASS);
-							scope.$apply(function () {
-								ctrl.$focused = false;
-							});
-						});
-					}
-				}
-			}])
-
-			.controller('BreadcrumbController', ['$window', '$log', function ($window, $log) {
-				"use strict";
-				var vm = this, frags = $window.location.pathname.split("/");
-				// Need to find the start
-				var found = false;
-				while (!found && frags.length > 0) {
-					if (TL.lang.crumbs[frags[0]]) {
-						found = true;
-					}
-					else {
-						frags.shift();
-					}
-				}
-				vm.crumbs = [];
-
-					// Get root element
-					var url = TL.BASE_URL;
-					while (frags.length > 1) {
-						var name = frags.shift();
-						if (!TL.lang.crumbs[name]) {
-							break;
-						}
-
-						url += name;
-						name = TL.lang.crumbs[name] || name;
-						vm.crumbs.push({url: url, text: name});
-
-						if (frags.length) {
-							var num = frags.shift();
-							url += "/" + num;
-							vm.crumbs.push({url: url, text: num});
-						}
-						url += "/";
-					}
-			}])
-				.controller('CartCtrl', [function () {
-					"use strict";
-					var vm = this;
-					vm.show = false;
-					vm.projects = [];
-				}])
-				;
-		/*]]>*/
-	</script>
+	<script src="/resources/js/modules/utilities/irida.utilities.js" th:src="@{/resources/js/modules/utilities/irida.utilities.js}"></script>
+	<script src="/resources/js/modules/cart/irida.cart.js" th:src="@{/resources/js/modules/cart/irida.cart.js}"></script>
+	<script src="/resources/js/app.js" th:src="@{/resources/js/app.js}"></script>
+	<!-- Controllers -->
+	<script src="/resources/js/controllers/breadcrumbs/breadcrumbController.js" th:src="@{/resources/js/controllers/breadcrumbs/breadcrumbController.js}"></script>
 </th:block>
 <th:block layout:fragment="theme-scripts">
 	<!--/* This is where the main for the theme template are loaded. */-->
