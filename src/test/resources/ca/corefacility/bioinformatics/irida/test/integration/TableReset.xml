@@ -12,6 +12,7 @@
 	<user />
 	<project />
 	<related_project />
+	<library_description />
 
 	<analysis />
 	<analysis_output_file />
@@ -44,6 +45,7 @@
 	<logicalGroup />
 	<user_group />
 	<project_referencefile />
+	<project_library_description />
 
 	<project_event />
 
@@ -98,4 +100,6 @@
 	<analysis_phylogenomicspipeline_AUD />
 	<analysis_output_file_AUD />
 	<remote_related_project_AUD />
+	<library_description_AUD />
+	<project_library_description_AUD />
 </dataset>
