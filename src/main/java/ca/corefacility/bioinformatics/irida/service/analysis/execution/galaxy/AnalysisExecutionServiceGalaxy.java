@@ -30,7 +30,7 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 
 	private final AnalysisSubmissionService analysisSubmissionService;
 	private final GalaxyHistoriesService galaxyHistoriesService;
-	private final AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsyncSimplified;
+	private final AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync;
 
 	/**
 	 * Builds a new {@link AnalysisExecutionServiceGalaxy} with the
@@ -40,17 +40,17 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 	 *            A service for analysis submissions.
 	 * @param galaxyHistoriesService
 	 *            A service for Galaxy histories.
-	 * @param analysisExecutionServiceGalaxyAsyncSimplified
+	 * @param analysisExecutionServiceGalaxyAsync
 	 *            An {@link AnalysisExecutionServiceGalaxyAsync} for
 	 *            executing the tasks asynchronously.
 	 */
 	@Autowired
 	public AnalysisExecutionServiceGalaxy(AnalysisSubmissionService analysisSubmissionService,
 			GalaxyHistoriesService galaxyHistoriesService,
-			AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsyncSimplified) {
+			AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.galaxyHistoriesService = galaxyHistoriesService;
-		this.analysisExecutionServiceGalaxyAsyncSimplified = analysisExecutionServiceGalaxyAsyncSimplified;
+		this.analysisExecutionServiceGalaxyAsync = analysisExecutionServiceGalaxyAsync;
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 		AnalysisSubmission preparingAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
 				ImmutableMap.of("analysisState", AnalysisState.PREPARING));
 
-		return analysisExecutionServiceGalaxyAsyncSimplified.prepareSubmission(preparingAnalysis);
+		return analysisExecutionServiceGalaxyAsync.prepareSubmission(preparingAnalysis);
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 		AnalysisSubmission submittingAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
 				ImmutableMap.of("analysisState", AnalysisState.SUBMITTING));
 
-		return analysisExecutionServiceGalaxyAsyncSimplified.executeAnalysis(submittingAnalysis);
+		return analysisExecutionServiceGalaxyAsync.executeAnalysis(submittingAnalysis);
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 		AnalysisSubmission submittingAnalysis = analysisSubmissionService.update(submittedAnalysis.getId(),
 				ImmutableMap.of("analysisState", AnalysisState.COMPLETING));
 
-		return analysisExecutionServiceGalaxyAsyncSimplified.transferAnalysisResults(submittingAnalysis);
+		return analysisExecutionServiceGalaxyAsync.transferAnalysisResults(submittingAnalysis);
 	}
 
 	/**

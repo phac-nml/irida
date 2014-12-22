@@ -44,7 +44,7 @@ public class DatabaseSetupGalaxyITService {
 	private ReferenceFileRepository referenceFileRepository;
 	private SequenceFileService seqeunceFileService;
 	private SampleService sampleService;
-	private AnalysisExecutionService analysisExecutionServiceSimplified;
+	private AnalysisExecutionService analysisExecutionService;
 	private AnalysisSubmissionService analysisSubmissionService;
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 
@@ -55,21 +55,21 @@ public class DatabaseSetupGalaxyITService {
 	 * @param referenceFileRepository
 	 * @param seqeunceFileService
 	 * @param sampleService
-	 * @param analysisExecutionServiceSimplified
+	 * @param analysisExecutionService
 	 * @param analysisSubmissionService
 	 * @param analysisSubmissionRepsitory
 	 */
 	public DatabaseSetupGalaxyITService(ReferenceFileRepository referenceFileRepository,
 			SequenceFileService seqeunceFileService,
 			SampleService sampleService,
-			AnalysisExecutionService analysisExecutionServiceSimplified,
+			AnalysisExecutionService analysisExecutionService,
 			AnalysisSubmissionService analysisSubmissionService,
 			AnalysisSubmissionRepository analysisSubmissionRepository) {
 		super();
 		this.referenceFileRepository = referenceFileRepository;
 		this.seqeunceFileService = seqeunceFileService;
 		this.sampleService = sampleService;
-		this.analysisExecutionServiceSimplified = analysisExecutionServiceSimplified;
+		this.analysisExecutionService = analysisExecutionService;
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 	}
@@ -135,7 +135,7 @@ public class DatabaseSetupGalaxyITService {
 	 *            The analysis submission to wait for.
 	 * @throws Exception
 	 */
-	public void waitUntilSubmissionCompleteSimplified(AnalysisSubmission analysisSubmission) throws Exception {
+	public void waitUntilSubmissionComplete(AnalysisSubmission analysisSubmission) throws Exception {
 		final int totalSecondsWait = 1 * 60; // 1 minute
 		final int pollingTime = 2000; // 2 seconds
 
@@ -145,7 +145,7 @@ public class DatabaseSetupGalaxyITService {
 			public Void call() throws Exception {
 				WorkflowStatus workflowStatus;
 				do {
-					workflowStatus = analysisExecutionServiceSimplified.getWorkflowStatus(analysisSubmission);
+					workflowStatus = analysisExecutionService.getWorkflowStatus(analysisSubmission);
 					Thread.sleep(pollingTime);
 				} while (!WorkflowState.OK.equals(workflowStatus.getState()));
 

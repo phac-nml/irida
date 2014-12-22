@@ -73,14 +73,14 @@ public class AnalysisExecutionServiceConfig {
 	
 	@Lazy
 	@Bean
-	public AnalysisExecutionService analysisExecutionServiceSimplified() {
+	public AnalysisExecutionService analysisExecutionService() {
 		return new AnalysisExecutionServiceGalaxy(analysisSubmissionService, galaxyHistoriesService(),
-				analysisExecutionServiceGalaxyAsyncSimplified());
+				analysisExecutionServiceGalaxyAsync());
 	}
 
 	@Lazy
 	@Bean
-	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsyncSimplified() {
+	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
 		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
 				galaxyWorkflowService(), analysisWorkspaceService(), iridaWorkflowsService);
 	}

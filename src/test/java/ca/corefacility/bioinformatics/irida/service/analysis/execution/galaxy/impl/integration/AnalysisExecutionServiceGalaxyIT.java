@@ -96,7 +96,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	private AnalysisRepository analysisRepository;
 
 	@Autowired
-	private AnalysisExecutionService analysisExecutionServiceSimplified;
+	private AnalysisExecutionService analysisExecutionService;
 
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
@@ -169,11 +169,11 @@ public class AnalysisExecutionServiceGalaxyIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
-		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionServiceSimplified
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
 
-		Future<AnalysisSubmission> analysisExecutedFuture = analysisExecutionServiceSimplified
+		Future<AnalysisSubmission> analysisExecutedFuture = analysisExecutionService
 				.executeAnalysis(analysisSubmitted);
 		AnalysisSubmission analysisExecuted = analysisExecutedFuture.get();
 
@@ -181,7 +181,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		assertNotNull("remoteAnalysisId is null", analysisExecuted.getRemoteAnalysisId());
 
-		WorkflowStatus status = analysisExecutionServiceSimplified.getWorkflowStatus(analysisExecuted);
+		WorkflowStatus status = analysisExecutionService.getWorkflowStatus(analysisExecuted);
 		analysisExecutionGalaxyITService.assertValidStatus(status);
 
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.findOne(analysisExecuted.getId());
@@ -207,7 +207,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
-		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionServiceSimplified
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
 
@@ -215,7 +215,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		analysisSubmissionService.update(analysisSubmitted.getId(),
 				ImmutableMap.of("remoteWorkflowId", localGalaxy.getInvalidWorkflowId()));
 
-		Future<AnalysisSubmission> analysisExecutedFuture = analysisExecutionServiceSimplified
+		Future<AnalysisSubmission> analysisExecutedFuture = analysisExecutionService
 				.executeAnalysis(analysisSubmitted);
 
 		try {
@@ -241,14 +241,14 @@ public class AnalysisExecutionServiceGalaxyIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
-		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionServiceSimplified
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
 
 		analysisSubmitted.setRemoteAnalysisId("invalid");
 		analysisSubmissionService.update(analysisSubmitted.getId(), ImmutableMap.of("remoteAnalysisId", "invalid"));
 
-		Future<AnalysisSubmission> analysisExecutedFuture = analysisExecutionServiceSimplified
+		Future<AnalysisSubmission> analysisExecutedFuture = analysisExecutionService
 				.executeAnalysis(analysisSubmitted);
 
 		try {
@@ -279,11 +279,11 @@ public class AnalysisExecutionServiceGalaxyIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
-		analysisExecutionServiceSimplified.prepareSubmission(analysisSubmission);
+		analysisExecutionService.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmissionRepository.findOne(analysisSubmission.getId());
 
 		analysisSubmitted.setAnalysisState(AnalysisState.NEW);
-		analysisExecutionServiceSimplified.executeAnalysis(analysisSubmitted);
+		analysisExecutionService.executeAnalysis(analysisSubmitted);
 	}
 
 	/**
@@ -303,7 +303,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
-		Future<AnalysisSubmission> analysisSubmissionFuture = analysisExecutionServiceSimplified
+		Future<AnalysisSubmission> analysisSubmissionFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmissionFuture.get();
 		assertEquals(AnalysisState.PREPARED, analysisSubmitted.getAnalysisState());
@@ -328,7 +328,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, invalidIridaWorkflowId);
 
-		Future<AnalysisSubmission> analysisSubmissionFuture = analysisExecutionServiceSimplified
+		Future<AnalysisSubmission> analysisSubmissionFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
 		try {
 			analysisSubmissionFuture.get();
@@ -354,7 +354,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, iridaWorkflowIdInvalidWorkflowFile);
 
-		Future<AnalysisSubmission> analysisSubmissionFuture = analysisExecutionServiceSimplified
+		Future<AnalysisSubmission> analysisSubmissionFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
 		try {
 			analysisSubmissionFuture.get();
@@ -380,18 +380,18 @@ public class AnalysisExecutionServiceGalaxyIT {
 				sequenceFilePath, referenceFilePath, iridaPhylogenomicsWorkflowId);
 		SequenceFile sequenceFile = analysisSubmission.getInputFiles().iterator().next();
 
-		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionServiceSimplified
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
 
-		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionServiceSimplified
+		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
 				.executeAnalysis(analysisSubmitted);
 		AnalysisSubmission analysisExecuted = analysisExecutionFuture.get();
 
-		analysisExecutionGalaxyITService.waitUntilSubmissionCompleteSimplified(analysisExecuted);
+		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
 
 		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
-		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionServiceSimplified
+		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
 		assertEquals(1,
@@ -466,19 +466,19 @@ public class AnalysisExecutionServiceGalaxyIT {
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 		SequenceFile sequenceFile = analysisSubmission.getInputFiles().iterator().next();
 
-		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionServiceSimplified
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
 
-		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionServiceSimplified
+		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
 				.executeAnalysis(analysisSubmitted);
 		AnalysisSubmission analysisExecuted = analysisExecutionFuture.get();
 
-		analysisExecutionGalaxyITService.waitUntilSubmissionCompleteSimplified(analysisExecuted);
+		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
 
 		analysisExecuted.setId(555l);
 		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
-		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionServiceSimplified
+		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		try {
 			analysisSubmissionCompletedFuture.get();
@@ -508,19 +508,19 @@ public class AnalysisExecutionServiceGalaxyIT {
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 		SequenceFile sequenceFile = analysisSubmission.getInputFiles().iterator().next();
 
-		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionServiceSimplified
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
 
-		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionServiceSimplified
+		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
 				.executeAnalysis(analysisSubmitted);
 		AnalysisSubmission analysisExecuted = analysisExecutionFuture.get();
 
-		analysisExecutionGalaxyITService.waitUntilSubmissionCompleteSimplified(analysisExecuted);
+		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
 
 		analysisSubmissionService.update(analysisExecuted.getId(), ImmutableMap.of("remoteAnalysisId", "invalid"));
 		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
-		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionServiceSimplified
+		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		try {
 			analysisSubmissionCompletedFuture.get();

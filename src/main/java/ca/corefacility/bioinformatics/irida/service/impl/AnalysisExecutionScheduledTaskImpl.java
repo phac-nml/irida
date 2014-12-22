@@ -40,7 +40,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionScheduledTaskImpl.class);
 
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
-	private AnalysisExecutionService analysisExecutionServiceSimplified;
+	private AnalysisExecutionService analysisExecutionService;
 
 	/**
 	 * Builds a new AnalysisExecutionScheduledTaskImpl with the given service
@@ -48,14 +48,14 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 * 
 	 * @param analysisSubmissionRepository
 	 *            A repository for {@link AnalysisSubmission}s.
-	 * @param analysisExecutionServiceGalaxySimplified
+	 * @param analysisExecutionServiceGalaxy
 	 *            A service for executing {@link AnalysisSubmission}s.
 	 */
 	@Autowired
 	public AnalysisExecutionScheduledTaskImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
-			AnalysisExecutionService analysisExecutionServiceGalaxySimplified) {
+			AnalysisExecutionService analysisExecutionServiceGalaxy) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
-		this.analysisExecutionServiceSimplified = analysisExecutionServiceGalaxySimplified;
+		this.analysisExecutionService = analysisExecutionServiceGalaxy;
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 				logger.debug("Preparing " + analysisSubmission);
 	
 				try {
-					submissions.add(analysisExecutionServiceSimplified.prepareSubmission(analysisSubmission));
+					submissions.add(analysisExecutionService.prepareSubmission(analysisSubmission));
 				} catch (ExecutionManagerException | IridaWorkflowNotFoundException | IOException e) {
 					logger.error("Error preparing submission " + analysisSubmission, e);
 				}
@@ -102,7 +102,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 				logger.debug("Executing " + analysisSubmission);
 	
 				try {
-					submissions.add(analysisExecutionServiceSimplified.executeAnalysis(analysisSubmission));
+					submissions.add(analysisExecutionService.executeAnalysis(analysisSubmission));
 				} catch (ExecutionManagerException | IridaWorkflowNotFoundException e) {
 					logger.error("Error executing submission " + analysisSubmission, e);
 				}
@@ -129,7 +129,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 				logger.debug("Checking state of " + analysisSubmission);
 	
 				try {
-					WorkflowStatus workflowStatus = analysisExecutionServiceSimplified
+					WorkflowStatus workflowStatus = analysisExecutionService
 							.getWorkflowStatus(analysisSubmission);
 					submissions.add(handleWorkflowStatus(workflowStatus, analysisSubmission));
 				} catch (ExecutionManagerException | RuntimeException e) {
@@ -160,7 +160,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 				logger.debug("Transferring results for " + analysisSubmission);
 	
 				try {
-					submissions.add(analysisExecutionServiceSimplified.transferAnalysisResults(analysisSubmission));
+					submissions.add(analysisExecutionService.transferAnalysisResults(analysisSubmission));
 				} catch (ExecutionManagerException | IridaWorkflowNotFoundException | IOException e) {
 					logger.error("Error transferring submission " + analysisSubmission, e);
 				}

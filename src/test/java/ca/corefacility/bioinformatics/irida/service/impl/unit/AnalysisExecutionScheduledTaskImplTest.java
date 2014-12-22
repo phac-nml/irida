@@ -44,7 +44,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	@Mock
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	@Mock
-	private AnalysisExecutionService analysisExecutionServiceSimplified;
+	private AnalysisExecutionService analysisExecutionService;
 
 	@Mock
 	private Set<SequenceFile> sequenceFiles;
@@ -71,7 +71,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		MockitoAnnotations.initMocks(this);
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
-				analysisExecutionServiceSimplified);
+				analysisExecutionService);
 
 		analysisSubmission = new AnalysisSubmission("my analysis", sequenceFiles, referenceFile,
 				workflowId);
@@ -96,7 +96,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask.prepareAnalyses();
 
-		verify(analysisExecutionServiceSimplified).prepareSubmission(analysisSubmission);
+		verify(analysisExecutionService).prepareSubmission(analysisSubmission);
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask.prepareAnalyses();
 
-		verify(analysisExecutionServiceSimplified, never()).prepareSubmission(analysisSubmission);
+		verify(analysisExecutionService, never()).prepareSubmission(analysisSubmission);
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask.executeAnalyses();
 
-		verify(analysisExecutionServiceSimplified).executeAnalysis(analysisSubmission);
+		verify(analysisExecutionService).executeAnalysis(analysisSubmission);
 	}
 
 	/**
@@ -151,7 +151,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask.executeAnalyses();
 
-		verify(analysisExecutionServiceSimplified, never()).executeAnalysis(analysisSubmission);
+		verify(analysisExecutionService, never()).executeAnalysis(analysisSubmission);
 	}
 
 	/**
@@ -168,7 +168,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
-		when(analysisExecutionServiceSimplified.getWorkflowStatus(analysisSubmission)).thenReturn(
+		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
 				new WorkflowStatus(WorkflowState.OK, 100.0f));
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
@@ -191,7 +191,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
-		when(analysisExecutionServiceSimplified.getWorkflowStatus(analysisSubmission)).thenReturn(
+		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
 				new WorkflowStatus(WorkflowState.RUNNING, 50.0f));
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
@@ -214,7 +214,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
-		when(analysisExecutionServiceSimplified.getWorkflowStatus(analysisSubmission)).thenReturn(
+		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
 				new WorkflowStatus(WorkflowState.ERROR, 50.0f));
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
@@ -237,7 +237,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
-		when(analysisExecutionServiceSimplified.getWorkflowStatus(analysisSubmission)).thenReturn(
+		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
 				new WorkflowStatus(WorkflowState.UNKNOWN, 50.0f));
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
@@ -263,7 +263,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask.transferAnalysesResults();
 
-		verify(analysisExecutionServiceSimplified).transferAnalysisResults(analysisSubmission);
+		verify(analysisExecutionService).transferAnalysisResults(analysisSubmission);
 	}
 
 	/**
@@ -281,6 +281,6 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask.transferAnalysesResults();
 
-		verify(analysisExecutionServiceSimplified, never()).transferAnalysisResults(analysisSubmission);
+		verify(analysisExecutionService, never()).transferAnalysisResults(analysisSubmission);
 	}
 }

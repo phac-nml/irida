@@ -45,7 +45,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	
 	@Autowired
-	private AnalysisExecutionService analysisExecutionServiceSimplified;
+	private AnalysisExecutionService analysisExecutionService;
 
 	@Autowired
 	private UserService userService;
@@ -91,7 +91,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	 */
 	@Bean
 	public AnalysisExecutionScheduledTask analysisExecutionScheduledTask() {
-		return new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository, analysisExecutionServiceSimplified);
+		return new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository, analysisExecutionService);
 	}
 
 	/**
