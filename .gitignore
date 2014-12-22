@@ -8,3 +8,4 @@ target/
 irida.iml
 phantomjsdriver.log
 node_modules
+.sass-cache
