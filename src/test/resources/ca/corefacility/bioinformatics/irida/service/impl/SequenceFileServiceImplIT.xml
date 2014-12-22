@@ -26,7 +26,6 @@
 		sequencerSampleId="sample1" sampleName="sample1" />
 	<project_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		project_id="1" sample_id="1" />
-
 	<sequence_file id="1" createdDate="2013-07-18 14:20:19.0"
 		filePath="/file1" fileRevisionNumber="1" />
 	<sequence_file id="2" createdDate="2013-07-18 14:20:19.0"
@@ -47,7 +46,7 @@
 	<sequencing_run id="1" createdDate="2013-07-18 14:20:19.0" />
 	<miseq_run id="1" workflow="notnull" />
 
-	<sequence_file_pair id="1" createdDate="2013-07-18 14:20:19.0" />
+	<sequence_file_pair id="1" created_date="2013-07-18 14:20:19.0" />
 	<sequence_file_pair_files pair_id="1"
 		files_id="3" />
 	<sequence_file_pair_files pair_id="1"
