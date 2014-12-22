@@ -52,7 +52,7 @@ public class ProjectLibraryDescriptionJoin implements Join<Project, LibraryDescr
 	private final LibraryDescription libraryDescription;
 
 	@Column(name = "default_library_description", nullable = false)
-	private final Boolean defaultLibraryDescription;
+	private Boolean defaultLibraryDescription;
 
 	@CreatedDate
 	@Temporal(TemporalType.TIMESTAMP)
@@ -98,6 +98,10 @@ public class ProjectLibraryDescriptionJoin implements Join<Project, LibraryDescr
 
 	public Boolean isDefaultLibraryDescription() {
 		return this.defaultLibraryDescription;
+	}
+
+	public void setDefaultLibraryDescription(final Boolean defaultLibraryDescription) {
+		this.defaultLibraryDescription = defaultLibraryDescription;
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -392,7 +393,13 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 
 	@Transactional(readOnly = true)
 	public Join<Project, LibraryDescription> findDefaultLibraryDescriptionForProject(final Project project) {
-		return projectLibraryDescriptionRepository.findDefaultLibraryDescriptionForProject(project);
+		final Join<Project, LibraryDescription> defaultLibraryDescription = projectLibraryDescriptionRepository
+				.findDefaultLibraryDescriptionForProject(project);
+		if (defaultLibraryDescription == null) {
+			throw new EntityNotFoundException("No default library description assigned to project [" + project.getId()
+					+ "]");
+		}
+		return defaultLibraryDescription;
 	}
 
 	/**
@@ -401,9 +408,12 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	public Join<Project, LibraryDescription> addLibraryDescriptionToProject(final Project project,
-			LibraryDescription libraryDescription, final Boolean makeDefault) {
+			final LibraryDescription libraryDescription, final Boolean makeDefault) {
+		final LibraryDescription persisted;
 		if (libraryDescription.getId() == null) {
-			libraryDescription = libraryDescriptionRepository.save(libraryDescription);
+			persisted = libraryDescriptionRepository.save(libraryDescription);
+		} else {
+			persisted = libraryDescriptionRepository.findOne(libraryDescription.getId());
 		}
 
 		// only one library description should be the default, so if we're
@@ -414,11 +424,31 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		}
 
 		try {
-			return projectLibraryDescriptionRepository.save(new ProjectLibraryDescriptionJoin(project,
-					libraryDescription, makeDefault));
+			final Set<Join<Project, LibraryDescription>> libraryDescriptions = findLibraryDescriptionsForProject(project);
+
+			final Optional<Join<Project, LibraryDescription>> libraryDescriptionToAdd = libraryDescriptions.stream()
+					.filter(j -> j.getObject().equals(persisted)).findFirst();
+			if (!libraryDescriptionToAdd.isPresent()) {
+				return projectLibraryDescriptionRepository.save(new ProjectLibraryDescriptionJoin(project, persisted,
+						makeDefault));
+			} else {
+				final ProjectLibraryDescriptionJoin existingLibraryDescription = (ProjectLibraryDescriptionJoin) libraryDescriptionToAdd
+						.get();
+
+				// we may just be updating an existing relationship between project and library description by changing the default
+				// library description status. Check to see if we're changing the default library description status, if not, throw
+				// en EntityExistsException because we're just adding the same library description again.
+				if (makeDefault != existingLibraryDescription.isDefaultLibraryDescription()) {
+					existingLibraryDescription.setDefaultLibraryDescription(makeDefault);
+					return projectLibraryDescriptionRepository.save(existingLibraryDescription);
+				} else {
+					throw new EntityExistsException("Project " + project.getLabel() + " is already related to "
+							+ persisted.getLabel());
+				}
+			}
 		} catch (DataIntegrityViolationException e) {
 			throw new EntityExistsException("Project " + project.getLabel() + " is already related to "
-					+ libraryDescription.getLabel(), e);
+					+ persisted.getLabel(), e);
 		}
 
 	}

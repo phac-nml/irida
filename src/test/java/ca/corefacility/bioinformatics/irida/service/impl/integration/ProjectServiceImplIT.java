@@ -657,8 +657,8 @@ public class ProjectServiceImplIT {
 		final Join<Project, LibraryDescription> defaultLibraryDescription = projectService.findDefaultLibraryDescriptionForProject(p);
 		assertEquals("The default library description should be the second one added.", ld2, defaultLibraryDescription.getObject());
 	}
-	
-	@Test
+
+	@Test(expected = EntityNotFoundException.class)
 	@WithMockUser(username = "user1", roles = "USER")
 	public void testAddNoDefaultLibraryDescriptions() {
 		final Project p = projectService.read(2L);
@@ -668,8 +668,21 @@ public class ProjectServiceImplIT {
 		assertNotEquals("the two library descriptions should not be equal.", ld1, ld2);
 		projectService.addLibraryDescriptionToProject(p, ld1);
 		projectService.addLibraryDescriptionToProject(p, ld2);
+		projectService.findDefaultLibraryDescriptionForProject(p);
+	}
+
+	@Test
+	@WithMockUser(username = "user1", roles = "USER")
+	public void testSetAlreadyPersistedLibraryDescriptionAsDefault() {
+		final Project p = projectService.read(2L);
+		final LibraryDescription ld1 = createLibraryDescription();
+
+		final Join<Project, LibraryDescription> added = projectService.addLibraryDescriptionToProject(p, ld1);
+		projectService.addDefaultLibraryDescriptionToProject(p, added.getObject());
+
 		final Join<Project, LibraryDescription> defaultLibraryDescription = projectService.findDefaultLibraryDescriptionForProject(p);
-		
+		assertNotNull("The project should have a default library description.", defaultLibraryDescription);
+		assertEquals("The default library description should be the one we added.", ld1, defaultLibraryDescription.getObject());
 	}
 
 	private LibraryDescription createLibraryDescription() {
