@@ -2,11 +2,14 @@ package ca.corefacility.bioinformatics.irida.ria.web;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -40,16 +43,20 @@ public class SequencingRunController {
 	public static final String ACTIVE_NAV_DETAILS = "details";
 	public static final String ACTIVE_NAV_FILES = "files";
 
+	public static final String UPLOAD_STATUS_MESSAGE_BASE = "sequencingruns.status.";
+
 	private final SequencingRunService sequencingRunService;
 	private final SequenceFileService sequenceFileService;
 	private final SequenceFileWebUtilities sequenceFileUtilities;
+	private final MessageSource messageSource;
 
 	@Autowired
 	public SequencingRunController(SequencingRunService sequencingRunService, SequenceFileService sequenceFileService,
-			SequenceFileWebUtilities sequenceFileUtilities) {
+			SequenceFileWebUtilities sequenceFileUtilities, MessageSource messageSource) {
 		this.sequencingRunService = sequencingRunService;
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFileUtilities = sequenceFileUtilities;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -68,7 +75,7 @@ public class SequencingRunController {
 	 * @param runId
 	 * @param model
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@RequestMapping("/{runId}")
 	public String getDetailsPage(@PathVariable Long runId, Model model) throws IOException {
@@ -100,8 +107,19 @@ public class SequencingRunController {
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public Iterable<SequencingRun> getSequencingRuns() {
-		return sequencingRunService.findAll();
+	public List<Map<String, Object>>  getSequencingRuns(Locale locale) {
+		List<Map<String, Object>> list = new ArrayList<>();
+		for (SequencingRun run : sequencingRunService.findAll()) {
+			Map<String, Object> runMap = new HashMap<>();
+			runMap.put("id", run.getId());
+			runMap.put("createdDate", run.getCreatedDate());
+			runMap.put("sequencerType", run.getSequencerType());
+			runMap.put("uploadStatus", messageSource.getMessage(UPLOAD_STATUS_MESSAGE_BASE
+					+ run.getUploadStatus().toString(), null, locale));
+			
+			list.add(runMap);
+		}
+		return list;
 	}
 
 	private Model getPageDetails(Long runId, Model model) throws IOException {
