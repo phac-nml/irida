@@ -299,7 +299,7 @@ public class SequenceFileServiceImplIT {
 		SequenceFile file3 = sequenceFileService.read(3l);
 		SequenceFile file4 = sequenceFileService.read(4l);
 
-		SequenceFile pairForSequenceFile = sequenceFileService.getPairForSequenceFile(file3);
+		SequenceFile pairForSequenceFile = sequenceFileService.getPairedFileForSequenceFile(file3);
 		assertEquals(file4, pairForSequenceFile);
 	}
 }

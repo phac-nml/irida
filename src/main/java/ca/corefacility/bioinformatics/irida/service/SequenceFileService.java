@@ -90,7 +90,7 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *             If a pair cannot be found
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#file, 'canReadSequenceFile')")
-	public SequenceFile getPairForSequenceFile(SequenceFile file) throws EntityNotFoundException;
+	public SequenceFile getPairedFileForSequenceFile(SequenceFile file) throws EntityNotFoundException;
 
 	/**
 	 * Create a new {@link SequenceFilePair} for the given files
