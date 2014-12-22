@@ -18,12 +18,12 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
  * being submitted for analysis.
  * 
  * The {@link Order} here needs to be a value between the order of
- * {@link AnalysisExecutionServiceGalaxyAsyncSimplified} (
+ * {@link AnalysisExecutionServiceGalaxyAsync} (
  * {@link AnalysisExecutionServiceConfig.ASYNC_ORDER}) and the order of the
  * Transaction Manager (
  * {@link IridaApiRepositoriesConfig.TRANSACTION_MANAGEMENT_ORDER}). This means
  * that the order of execution is
- * {@link AnalysisExecutionServiceGalaxyAsyncSimplified} ->
+ * {@link AnalysisExecutionServiceGalaxyAsync} ->
  * {@link AnalysisExecutionServiceAspect} -> Transaction Manager.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
@@ -57,7 +57,7 @@ public class AnalysisExecutionServiceAspect {
 	 * @param execption
 	 *            The exception that was thrown.
 	 */
-	@AfterThrowing(value = "execution(* ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsyncSimplified.*(ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission)) && args(analysisSubmission)", throwing = ("exception"))
+	@AfterThrowing(value = "execution(* ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync.*(ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission)) && args(analysisSubmission)", throwing = ("exception"))
 	public void toErrorStateOnException(AnalysisSubmission analysisSubmission, Exception exception) {
 		logger.error("Error occured for submission: " + analysisSubmission + " changing to state "
 				+ AnalysisState.ERROR, exception);

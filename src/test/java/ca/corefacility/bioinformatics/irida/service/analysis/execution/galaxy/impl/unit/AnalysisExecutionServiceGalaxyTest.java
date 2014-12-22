@@ -38,8 +38,8 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistori
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsyncSimplified;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxySimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -52,7 +52,7 @@ import com.google.common.collect.Sets;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class AnalysisExecutionServiceGalaxySimplifiedTest {
+public class AnalysisExecutionServiceGalaxyTest {
 
 	@Mock
 	private AnalysisSubmissionService analysisSubmissionService;
@@ -90,7 +90,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	private static final String REMOTE_WORKFLOW_ID = "1";
 	private static final Long INTERNAL_ANALYSIS_ID = 2l;
 	private static final String ANALYSIS_ID = "2";
-	private AnalysisExecutionServiceGalaxySimplified workflowManagement;
+	private AnalysisExecutionServiceGalaxy workflowManagement;
 	private PreparedWorkflowGalaxy preparedWorkflow;
 	private WorkflowInputsGalaxy workflowInputsGalaxy;
 
@@ -120,10 +120,10 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 		analysisCompleted = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
 		analysisError = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
 
-		AnalysisExecutionServiceGalaxyAsyncSimplified workflowManagementAsync = new AnalysisExecutionServiceGalaxyAsyncSimplified(
+		AnalysisExecutionServiceGalaxyAsync workflowManagementAsync = new AnalysisExecutionServiceGalaxyAsync(
 				analysisSubmissionService, analysisService, galaxyWorkflowService, analysisWorkspaceService,
 				iridaWorkflowsService);
-		workflowManagement = new AnalysisExecutionServiceGalaxySimplified(analysisSubmissionService,
+		workflowManagement = new AnalysisExecutionServiceGalaxy(analysisSubmissionService,
 				galaxyHistoriesService, workflowManagementAsync);
 
 		when(iridaWorkflowsService.getIridaWorkflow(WORKFLOW_ID)).thenReturn(iridaWorkflow);

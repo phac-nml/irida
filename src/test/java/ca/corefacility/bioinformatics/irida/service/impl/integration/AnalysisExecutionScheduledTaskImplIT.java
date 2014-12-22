@@ -36,7 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -66,7 +66,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 
 	@Autowired
-	private AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified;
+	private AnalysisExecutionService analysisExecutionServiceSimplified;
 
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 

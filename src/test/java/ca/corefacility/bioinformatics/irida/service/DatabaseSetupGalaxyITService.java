@@ -26,7 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
@@ -44,7 +44,7 @@ public class DatabaseSetupGalaxyITService {
 	private ReferenceFileRepository referenceFileRepository;
 	private SequenceFileService seqeunceFileService;
 	private SampleService sampleService;
-	private AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified;
+	private AnalysisExecutionService analysisExecutionServiceSimplified;
 	private AnalysisSubmissionService analysisSubmissionService;
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 
@@ -62,7 +62,7 @@ public class DatabaseSetupGalaxyITService {
 	public DatabaseSetupGalaxyITService(ReferenceFileRepository referenceFileRepository,
 			SequenceFileService seqeunceFileService,
 			SampleService sampleService,
-			AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified,
+			AnalysisExecutionService analysisExecutionServiceSimplified,
 			AnalysisSubmissionService analysisSubmissionService,
 			AnalysisSubmissionRepository analysisSubmissionRepository) {
 		super();

@@ -52,7 +52,7 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -73,9 +73,9 @@ import com.google.common.collect.ImmutableMap;
 		WithSecurityContextTestExcecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class AnalysisExecutionServiceGalaxySimplifiedIT {
+public class AnalysisExecutionServiceGalaxyIT {
 
-	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxySimplifiedIT.class);
+	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxyIT.class);
 
 	@Autowired
 	private DatabaseSetupGalaxyITService analysisExecutionGalaxyITService;
@@ -96,7 +96,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedIT {
 	private AnalysisRepository analysisRepository;
 
 	@Autowired
-	private AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified;
+	private AnalysisExecutionService analysisExecutionServiceSimplified;
 
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;

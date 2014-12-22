@@ -17,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -26,14 +26,14 @@ import com.google.common.collect.ImmutableMap;
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
-public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecutionServiceSimplified {
+public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService {
 
 	private final AnalysisSubmissionService analysisSubmissionService;
 	private final GalaxyHistoriesService galaxyHistoriesService;
-	private final AnalysisExecutionServiceGalaxyAsyncSimplified analysisExecutionServiceGalaxyAsyncSimplified;
+	private final AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsyncSimplified;
 
 	/**
-	 * Builds a new {@link AnalysisExecutionServiceGalaxySimplified} with the
+	 * Builds a new {@link AnalysisExecutionServiceGalaxy} with the
 	 * given information.
 	 * 
 	 * @param analysisSubmissionService
@@ -41,13 +41,13 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 	 * @param galaxyHistoriesService
 	 *            A service for Galaxy histories.
 	 * @param analysisExecutionServiceGalaxyAsyncSimplified
-	 *            An {@link AnalysisExecutionServiceGalaxyAsyncSimplified} for
+	 *            An {@link AnalysisExecutionServiceGalaxyAsync} for
 	 *            executing the tasks asynchronously.
 	 */
 	@Autowired
-	public AnalysisExecutionServiceGalaxySimplified(AnalysisSubmissionService analysisSubmissionService,
+	public AnalysisExecutionServiceGalaxy(AnalysisSubmissionService analysisSubmissionService,
 			GalaxyHistoriesService galaxyHistoriesService,
-			AnalysisExecutionServiceGalaxyAsyncSimplified analysisExecutionServiceGalaxyAsyncSimplified) {
+			AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsyncSimplified) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.analysisExecutionServiceGalaxyAsyncSimplified = analysisExecutionServiceGalaxyAsyncSimplified;

@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 
 /**
  * Implementation of analysis execution tasks. This will scan for
@@ -40,7 +40,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionScheduledTaskImpl.class);
 
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
-	private AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified;
+	private AnalysisExecutionService analysisExecutionServiceSimplified;
 
 	/**
 	 * Builds a new AnalysisExecutionScheduledTaskImpl with the given service
@@ -53,7 +53,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 */
 	@Autowired
 	public AnalysisExecutionScheduledTaskImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
-			AnalysisExecutionServiceSimplified analysisExecutionServiceGalaxySimplified) {
+			AnalysisExecutionService analysisExecutionServiceGalaxySimplified) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.analysisExecutionServiceSimplified = analysisExecutionServiceGalaxySimplified;
 	}

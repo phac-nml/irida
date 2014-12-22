@@ -38,9 +38,9 @@ import com.google.common.collect.ImmutableMap;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
 @Async("analysisTaskExecutor")
-public class AnalysisExecutionServiceGalaxyAsyncSimplified {
+public class AnalysisExecutionServiceGalaxyAsync {
 
-	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxyAsyncSimplified.class);
+	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxyAsync.class);
 
 	private final AnalysisSubmissionService analysisSubmissionService;
 	private final AnalysisService analysisService;
@@ -49,7 +49,7 @@ public class AnalysisExecutionServiceGalaxyAsyncSimplified {
 	private final IridaWorkflowsService iridaWorkflowsService;
 
 	/**
-	 * Builds a new {@link AnalysisExecutionServiceGalaxyAsyncSimplified} with
+	 * Builds a new {@link AnalysisExecutionServiceGalaxyAsync} with
 	 * the given information.
 	 * 
 	 * @param analysisSubmissionService
@@ -64,7 +64,7 @@ public class AnalysisExecutionServiceGalaxyAsyncSimplified {
 	 *            A service for loading up {@link IridaWorkflow}s.
 	 */
 	@Autowired
-	public AnalysisExecutionServiceGalaxyAsyncSimplified(AnalysisSubmissionService analysisSubmissionService,
+	public AnalysisExecutionServiceGalaxyAsync(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisService analysisService, GalaxyWorkflowService galaxyWorkflowService,
 			AnalysisWorkspaceServiceGalaxy workspaceService, IridaWorkflowsService iridaWorkflowsService) {
 		this.analysisSubmissionService = analysisSubmissionService;
