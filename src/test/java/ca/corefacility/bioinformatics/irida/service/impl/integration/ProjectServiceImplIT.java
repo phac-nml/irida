@@ -677,12 +677,27 @@ public class ProjectServiceImplIT {
 		final Project p = projectService.read(2L);
 		final LibraryDescription ld1 = createLibraryDescription();
 
+		final Set<Join<Project, LibraryDescription>> originalLibraryDescriptions = projectService.findLibraryDescriptionsForProject(p);
+		assertEquals("Should have 1 library description assigned to the project.", 1, originalLibraryDescriptions.size());
+
 		final Join<Project, LibraryDescription> added = projectService.addLibraryDescriptionToProject(p, ld1);
 		projectService.addDefaultLibraryDescriptionToProject(p, added.getObject());
 
 		final Join<Project, LibraryDescription> defaultLibraryDescription = projectService.findDefaultLibraryDescriptionForProject(p);
 		assertNotNull("The project should have a default library description.", defaultLibraryDescription);
 		assertEquals("The default library description should be the one we added.", ld1, defaultLibraryDescription.getObject());
+		final Set<Join<Project, LibraryDescription>> libraryDescriptions = projectService.findLibraryDescriptionsForProject(p);
+		assertEquals("Should only have 2 library description for the project.", 2, libraryDescriptions.size());
+	}
+
+	@Test(expected = EntityExistsException.class)
+	@WithMockUser(username= "user1", roles =  "USER")
+	public void testSetAlreadyPersistedLibraryDescriptionTwiceAsDefault() {
+		final Project p = projectService.read(2L);
+		final LibraryDescription ld1 = createLibraryDescription();
+
+		final Join<Project, LibraryDescription> added = projectService.addDefaultLibraryDescriptionToProject(p, ld1);
+		projectService.addDefaultLibraryDescriptionToProject(p, added.getObject());
 	}
 
 	private LibraryDescription createLibraryDescription() {

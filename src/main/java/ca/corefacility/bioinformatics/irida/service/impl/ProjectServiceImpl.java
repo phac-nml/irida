@@ -415,6 +415,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		} else {
 			persisted = libraryDescriptionRepository.findOne(libraryDescription.getId());
 		}
+		final Set<Join<Project, LibraryDescription>> libraryDescriptions = findLibraryDescriptionsForProject(project);
 
 		// only one library description should be the default, so if we're
 		// setting a new default library description, we need to remove any
@@ -424,7 +425,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		}
 
 		try {
-			final Set<Join<Project, LibraryDescription>> libraryDescriptions = findLibraryDescriptionsForProject(project);
 
 			final Optional<Join<Project, LibraryDescription>> libraryDescriptionToAdd = libraryDescriptions.stream()
 					.filter(j -> j.getObject().equals(persisted)).findFirst();
