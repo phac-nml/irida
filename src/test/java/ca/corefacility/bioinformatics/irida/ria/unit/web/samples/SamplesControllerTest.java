@@ -4,10 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
@@ -63,7 +64,8 @@ public class SamplesControllerTest {
 		userService = mock(UserService.class);
 		projectService = mock(ProjectService.class);
 		sequenceFileWebUtilities = new SequenceFileWebUtilities();
-		controller = new SamplesController(sampleService, sequenceFileService, userService, projectService, sequenceFileWebUtilities);
+		controller = new SamplesController(sampleService, sequenceFileService, userService, projectService,
+				sequenceFileWebUtilities);
 	}
 
 	// ************************************************************************************************
@@ -102,8 +104,11 @@ public class SamplesControllerTest {
 		Map<String, String> update = ImmutableMap.of(SamplesController.ORGANISM, organism,
 				SamplesController.GEOGRAPHIC_LOCATION_NAME, geographicLocationName);
 		when(sampleService.update(sample.getId(), updatedValues)).thenReturn(sample);
-		String result = controller.updateSample(model, sample.getId(), null, update);
-		assertEquals("Returns the correct redirect", "redirect:/samples/" + sample.getId(), result);
+
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setRequestURI("/projects/5/samples/" + sample.getId() + "/edit");
+		String result = controller.updateSample(model, sample.getId(), null, update, request);
+		assertTrue("Returns the correct redirect", result.contains(sample.getId() + "/details"));
 		assertTrue("Model should be populated with updated attributes",
 				model.containsAttribute(SamplesController.ORGANISM));
 		assertTrue("Model should be populated with updated attributes",
