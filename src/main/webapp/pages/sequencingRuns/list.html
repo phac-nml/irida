@@ -62,7 +62,7 @@
             		$rootScope.cgPromise = null;
             	}
             
-            	function RunsService($rootScope, BASE_URL, R, filter) {
+            	function RunsService($rootScope, R, filter) {
             		var svc = this, base = R.all('sequencingRuns/ajax/list');
             		svc.runs = [];
             
@@ -176,7 +176,7 @@
             	angular.module('SequencingRuns', [ 'cgBusy' ])
             	       .run([ '$rootScope', setRootVariable ])
             	       .factory('FilterFactory', [ FilterFactory ])
-            			   .service('RunsService', [ '$rootScope', 'BASE_URL', 'Restangular', 'FilterFactory', RunsService ])
+            			   .service('RunsService', [ '$rootScope', 'Restangular', 'FilterFactory', RunsService ])
             			   .filter('PagingFilter', [ '$rootScope', 'FilterFactory', 'RunsService', PagingFilter ])
             			   .directive('sortBy', [ sortBy ]).controller('PagingCtrl', [ '$scope', 'FilterFactory', PagingCtrl ])
             			   .controller('SortCtrl', [ '$rootScope', 'FilterFactory', SortCtrl ])

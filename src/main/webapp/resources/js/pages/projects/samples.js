@@ -82,7 +82,7 @@
 // @param $rootScope The root scope for the page.
 // @param R Restangular
   /* -]*/
-  function SamplesService($rootScope, storage, BASE_URL, R, notifications, filter) {
+  function SamplesService($rootScope, storage, R, notifications, filter) {
     "use strict";
     var svc = this,
         id = angular.element("#projectId").val(),
@@ -178,7 +178,7 @@
         return "ids=" + id
       });
       var iframe = document.createElement("iframe");
-      iframe.src = BASE_URL + "projects/" + id + "/download/files?" + mapped.join("&");
+      iframe.src = TL.BASE_URL + "projects/" + id + "/download/files?" + mapped.join("&");
       iframe.style.display = "none";
       document.body.appendChild(iframe);
     };
@@ -407,7 +407,7 @@
     SamplesService.init();
   }
 
-  function SubNavCtrl($scope, $modal, BASE_URL, SamplesService) {
+  function SubNavCtrl($scope, $modal, SamplesService) {
     "use strict";
     var vm = this;
     vm.count = 0;
@@ -442,7 +442,7 @@
       linker  : function linker() {
         vm.export.open = false;
         $modal.open({
-          templateUrl: BASE_URL + 'projects/templates/samples/linker',
+          templateUrl: TL.BASE_URL + 'projects/templates/samples/linker',
           controller : 'LinkerCtrl as lCtrl',
           resolve    : {
             samples  : function () {
@@ -457,7 +457,7 @@
       galaxy  : function galaxy() {
         vm.export.open = false;
         $modal.open({
-          templateUrl: BASE_URL + 'projects/' + SamplesService.getProjectId() + '/templates/samples/galaxy',
+          templateUrl: TL.BASE_URL + 'projects/' + SamplesService.getProjectId() + '/templates/samples/galaxy',
           controller : 'GalaxyCtrl as gCtrl'
         });
       }
@@ -466,7 +466,7 @@
     vm.merge = function () {
       if (vm.count > 1) {
         $modal.open({
-          templateUrl: BASE_URL + 'projects/templates/merge',
+          templateUrl: TL.BASE_URL + 'projects/templates/merge',
           controller : 'MergeCtrl as mergeCtrl',
           resolve    : {
             samples: function () {
@@ -479,7 +479,7 @@
 
     vm.openModal = function (type) {
       $modal.open({
-        templateUrl: BASE_URL + 'projects/templates/' + type,
+        templateUrl: TL.BASE_URL + 'projects/templates/' + type,
         controller : 'CopyMoveCtrl as cmCtrl',
         resolve    : {
           samples: function () {
@@ -528,7 +528,7 @@
     }, 300));
   }
 
-  function CopyMoveCtrl($modalInstance, $rootScope, BASE_URL, SamplesService, Select2Service, samples, type) {
+  function CopyMoveCtrl($modalInstance, $rootScope, SamplesService, Select2Service, samples, type) {
     "use strict";
     var vm = this;
     vm.samples = samples;
@@ -546,7 +546,7 @@
     Select2Service.init("#projectsSelect", {
       minimumLength: 2,
       ajax         : {
-        url        : BASE_URL + "projects/ajax/samples/available_projects",
+        url        : TL.BASE_URL + "projects/ajax/samples/available_projects",
         dataType   : 'json',
         quietMillis: 250,
         data       : function (search, page) {
@@ -684,15 +684,15 @@
     .factory('FilterFactory', [FilterFactory])
     .service('StorageService', ['$sessionStorage', StorageService])
     .service('Select2Service', ['$timeout', Select2Service])
-    .service('SamplesService', ['$rootScope', 'StorageService', 'BASE_URL', 'Restangular', 'notifications', 'FilterFactory', SamplesService])
+    .service('SamplesService', ['$rootScope', 'StorageService', 'Restangular', 'notifications', 'FilterFactory', SamplesService])
     .filter('PagingFilter', ['$rootScope', 'FilterFactory', 'SamplesService', PagingFilter])
     .directive('sortBy', [sortBy])
-    .controller('SubNavCtrl', ['$scope', '$modal', 'BASE_URL', 'SamplesService', SubNavCtrl])
+    .controller('SubNavCtrl', ['$scope', '$modal', 'SamplesService', SubNavCtrl])
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
     .controller('FilterCountCtrl', ['$rootScope', 'FilterFactory', 'SamplesService', FilterCountCtrl])
     .controller('SamplesTableCtrl', ['SamplesService', 'FilterFactory', SamplesTableCtrl])
     .controller('MergeCtrl', ['$scope', '$modalInstance', 'Select2Service', 'SamplesService', 'samples', MergeCtrl])
-    .controller('CopyMoveCtrl', ['$modalInstance', '$rootScope', 'BASE_URL', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl])
+    .controller('CopyMoveCtrl', ['$modalInstance', '$rootScope', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl])
     .controller('SelectedCountCtrl', ['$scope', SelectedCountCtrl])
     .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
     .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
