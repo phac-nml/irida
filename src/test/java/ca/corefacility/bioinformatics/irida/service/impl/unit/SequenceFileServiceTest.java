@@ -78,7 +78,7 @@ public class SequenceFileServiceTest {
 
 		when(pairRepository.getPairForSequenceFile(file)).thenReturn(pair);
 
-		SequenceFile pairForSequenceFile = sequenceFileService.getPairForSequenceFile(file);
+		SequenceFile pairForSequenceFile = sequenceFileService.getPairedFileForSequenceFile(file);
 
 		assertEquals(pairFile, pairForSequenceFile);
 		verify(pairRepository).getPairForSequenceFile(file);
@@ -90,7 +90,7 @@ public class SequenceFileServiceTest {
 
 		when(pairRepository.getPairForSequenceFile(file)).thenReturn(null);
 
-		sequenceFileService.getPairForSequenceFile(file);
+		sequenceFileService.getPairedFileForSequenceFile(file);
 	}
 
 	@Test
