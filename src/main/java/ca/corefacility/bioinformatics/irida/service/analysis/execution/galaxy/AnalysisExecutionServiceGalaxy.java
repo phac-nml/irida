@@ -13,11 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -26,31 +26,31 @@ import com.google.common.collect.ImmutableMap;
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
-public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecutionServiceSimplified {
+public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService {
 
 	private final AnalysisSubmissionService analysisSubmissionService;
 	private final GalaxyHistoriesService galaxyHistoriesService;
-	private final AnalysisExecutionServiceGalaxyAsyncSimplified analysisExecutionServiceGalaxyAsyncSimplified;
+	private final AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync;
 
 	/**
-	 * Builds a new {@link AnalysisExecutionServiceGalaxySimplified} with the
+	 * Builds a new {@link AnalysisExecutionServiceGalaxy} with the
 	 * given information.
 	 * 
 	 * @param analysisSubmissionService
 	 *            A service for analysis submissions.
 	 * @param galaxyHistoriesService
 	 *            A service for Galaxy histories.
-	 * @param analysisExecutionServiceGalaxyAsyncSimplified
-	 *            An {@link AnalysisExecutionServiceGalaxyAsyncSimplified} for
+	 * @param analysisExecutionServiceGalaxyAsync
+	 *            An {@link AnalysisExecutionServiceGalaxyAsync} for
 	 *            executing the tasks asynchronously.
 	 */
 	@Autowired
-	public AnalysisExecutionServiceGalaxySimplified(AnalysisSubmissionService analysisSubmissionService,
+	public AnalysisExecutionServiceGalaxy(AnalysisSubmissionService analysisSubmissionService,
 			GalaxyHistoriesService galaxyHistoriesService,
-			AnalysisExecutionServiceGalaxyAsyncSimplified analysisExecutionServiceGalaxyAsyncSimplified) {
+			AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.galaxyHistoriesService = galaxyHistoriesService;
-		this.analysisExecutionServiceGalaxyAsyncSimplified = analysisExecutionServiceGalaxyAsyncSimplified;
+		this.analysisExecutionServiceGalaxyAsync = analysisExecutionServiceGalaxyAsync;
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 		AnalysisSubmission preparingAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
 				ImmutableMap.of("analysisState", AnalysisState.PREPARING));
 
-		return analysisExecutionServiceGalaxyAsyncSimplified.prepareSubmission(preparingAnalysis);
+		return analysisExecutionServiceGalaxyAsync.prepareSubmission(preparingAnalysis);
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 		AnalysisSubmission submittingAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
 				ImmutableMap.of("analysisState", AnalysisState.SUBMITTING));
 
-		return analysisExecutionServiceGalaxyAsyncSimplified.executeAnalysis(submittingAnalysis);
+		return analysisExecutionServiceGalaxyAsync.executeAnalysis(submittingAnalysis);
 	}
 
 	/**
@@ -98,14 +98,14 @@ public class AnalysisExecutionServiceGalaxySimplified implements AnalysisExecuti
 		AnalysisSubmission submittingAnalysis = analysisSubmissionService.update(submittedAnalysis.getId(),
 				ImmutableMap.of("analysisState", AnalysisState.COMPLETING));
 
-		return analysisExecutionServiceGalaxyAsyncSimplified.transferAnalysisResults(submittingAnalysis);
+		return analysisExecutionServiceGalaxyAsync.transferAnalysisResults(submittingAnalysis);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public WorkflowStatus getWorkflowStatus(AnalysisSubmission submittedAnalysis) throws ExecutionManagerException {
+	public GalaxyWorkflowStatus getWorkflowStatus(AnalysisSubmission submittedAnalysis) throws ExecutionManagerException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
 		checkNotNull(submittedAnalysis.getRemoteAnalysisId(), "remote analysis id is null");
 

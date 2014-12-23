@@ -5,7 +5,7 @@ import java.io.IOException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
@@ -13,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
-public interface AnalysisWorkspaceServiceSimplified {
+public interface AnalysisWorkspaceService {
 
 	/**
 	 * Prepares the workspace for an analysis given an analysis submission. This
@@ -22,7 +22,7 @@ public interface AnalysisWorkspaceServiceSimplified {
 	 * 
 	 * @param analysisSubmission
 	 *            The submission used to perform an analysis.
-	 * @return A String identifiying the analysis workspace.
+	 * @return A String identifying the analysis workspace.
 	 * @throws ExecutionManagerException
 	 *             If there was an issue preparing the workflow workspace.
 	 */

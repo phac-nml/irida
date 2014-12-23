@@ -36,10 +36,10 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsyncSimplified;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxySimplified;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxySimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -94,22 +94,22 @@ public class AnalysisExecutionServiceTestConfig {
 
 	@Lazy
 	@Bean
-	public AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified() {
-		return new AnalysisExecutionServiceGalaxySimplified(analysisSubmissionService, galaxyHistoriesService(),
-				analysisExecutionServiceGalaxyAsyncSimplified());
+	public AnalysisExecutionService analysisExecutionService() {
+		return new AnalysisExecutionServiceGalaxy(analysisSubmissionService, galaxyHistoriesService(),
+				analysisExecutionServiceGalaxyAsync());
 	}
 
 	@Lazy
 	@Bean
-	public AnalysisExecutionServiceGalaxyAsyncSimplified analysisExecutionServiceGalaxyAsyncSimplified() {
-		return new AnalysisExecutionServiceGalaxyAsyncSimplified(analysisSubmissionService, analysisService,
-				galaxyWorkflowService(), analysisWorkspaceServiceSimplified(), iridaWorkflowsService);
+	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
+		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
+				galaxyWorkflowService(), analysisWorkspaceService(), iridaWorkflowsService);
 	}
 
 	@Lazy
 	@Bean
-	public AnalysisWorkspaceServiceGalaxySimplified analysisWorkspaceServiceSimplified() {
-		return new AnalysisWorkspaceServiceGalaxySimplified(galaxyHistoriesService(), galaxyWorkflowService(),
+	public AnalysisWorkspaceServiceGalaxy analysisWorkspaceService() {
+		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService(), galaxyWorkflowService(),
 				sampleSequenceFileJoinRepository, sequenceFileRepository, galaxyLibraryBuilder(), iridaWorkflowsService);
 	}
 
@@ -187,7 +187,7 @@ public class AnalysisExecutionServiceTestConfig {
 	@Bean
 	public DatabaseSetupGalaxyITService analysisExecutionGalaxyITService() {
 		return new DatabaseSetupGalaxyITService(referenceFileRepository, seqeunceFileService,
-				sampleService, analysisExecutionServiceSimplified(),
+				sampleService, analysisExecutionService(),
 				analysisSubmissionService, analysisSubmissionRepository);
 	}
 }

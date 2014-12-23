@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model.workflow;
+package ca.corefacility.bioinformatics.irida.model.workflow.description;
 
 import java.util.HashMap;
 import java.util.List;
@@ -44,15 +44,15 @@ public class IridaWorkflowDescription {
 	private Class<? extends Analysis> analysisClass;
 
 	@XmlElement(name = "inputs")
-	private WorkflowInput inputs;
+	private IridaWorkflowInput inputs;
 
 	@XmlElementWrapper(name = "outputs")
 	@XmlElement(name = "output")
-	private List<WorkflowOutput> outputs;
+	private List<IridaWorkflowOutput> outputs;
 
 	@XmlElementWrapper(name = "tools")
 	@XmlElement(name = "tool")
-	private List<WorkflowTool> tools;
+	private List<IridaWorkflowTool> tools;
 
 	public IridaWorkflowDescription() {
 	}
@@ -81,7 +81,7 @@ public class IridaWorkflowDescription {
 	 *            The list of tools for this workflow.
 	 */
 	public IridaWorkflowDescription(UUID id, String name, String version, String author, String email,
-			Class<? extends Analysis> analysisClass, WorkflowInput inputs, List<WorkflowOutput> outputs, List<WorkflowTool> tools) {
+			Class<? extends Analysis> analysisClass, IridaWorkflowInput inputs, List<IridaWorkflowOutput> outputs, List<IridaWorkflowTool> tools) {
 		this.id = id;
 		this.name = name;
 		this.version = version;
@@ -122,32 +122,32 @@ public class IridaWorkflowDescription {
 		return getInputs().getReference() != null;
 	}
 
-	public WorkflowInput getInputs() {
+	public IridaWorkflowInput getInputs() {
 		return inputs;
 	}
 
-	public List<WorkflowOutput> getOutputs() {
+	public List<IridaWorkflowOutput> getOutputs() {
 		return outputs;
 	}
 
 	/**
 	 * Gets a {@link Map} representation of the outputs of a workflow, linking
-	 * the output name to the {@link WorkflowOutput} entry.
+	 * the output name to the {@link IridaWorkflowOutput} entry.
 	 * 
 	 * @return A {@link Map} linking the output name to the
-	 *         {@link WorkflowOutput} entry.
+	 *         {@link IridaWorkflowOutput} entry.
 	 */
-	public Map<String, WorkflowOutput> getOutputsMap() {
-		Map<String, WorkflowOutput> outputsMap = new HashMap<>();
+	public Map<String, IridaWorkflowOutput> getOutputsMap() {
+		Map<String, IridaWorkflowOutput> outputsMap = new HashMap<>();
 
-		for (WorkflowOutput entry : outputs) {
+		for (IridaWorkflowOutput entry : outputs) {
 			outputsMap.put(entry.getName(), entry);
 		}
 
 		return outputsMap;
 	}
 
-	public List<WorkflowTool> getTools() {
+	public List<IridaWorkflowTool> getTools() {
 		return tools;
 	}
 

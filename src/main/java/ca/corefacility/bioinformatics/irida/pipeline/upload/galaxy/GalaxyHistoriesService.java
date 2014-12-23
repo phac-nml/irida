@@ -27,10 +27,10 @@ import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
-import ca.corefacility.bioinformatics.irida.model.workflow.DatasetCollectionType;
-import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.ExecutionManagerSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 
@@ -117,7 +117,7 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	 * @param state  A state to search for.
 	 * @return  The number of history items in this state.
 	 */
-	private int countHistoryItemsInState(Map<String, List<String>> stateIds, WorkflowState state) {
+	private int countHistoryItemsInState(Map<String, List<String>> stateIds, GalaxyWorkflowState state) {
 		return stateIds.get(state.toString()).size();
 	}
 	
@@ -127,7 +127,7 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	 * @return  The percent of history items that are finished running.
 	 */
 	private float getPercentComplete(Map<String, List<String>> stateIds) {
-		return 100.0f*(countHistoryItemsInState(stateIds, WorkflowState.OK)/(float)countTotalHistoryItems(stateIds));
+		return 100.0f*(countHistoryItemsInState(stateIds, GalaxyWorkflowState.OK)/(float)countTotalHistoryItems(stateIds));
 	}
 	
 	/**
@@ -136,22 +136,22 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	 * @return  The WorkflowStatus for the given workflow.
 	 * @throws ExecutionManagerException If there was an exception when attempting to get the status for a history.
 	 */
-	public WorkflowStatus getStatusForHistory(String historyId) throws ExecutionManagerException {
+	public GalaxyWorkflowStatus getStatusForHistory(String historyId) throws ExecutionManagerException {
 		checkNotNull(historyId, "historyId is null");
 		
-		WorkflowStatus workflowStatus;
+		GalaxyWorkflowStatus workflowStatus;
 		
-		WorkflowState workflowState;
+		GalaxyWorkflowState workflowState;
 		float percentComplete;
 			
 		try {
 			HistoryDetails details = historiesClient.showHistory(historyId);
-			workflowState = WorkflowState.stringToState(details.getState());
+			workflowState = GalaxyWorkflowState.stringToState(details.getState());
 			
 			Map<String, List<String>> stateIds = details.getStateIds();
 			percentComplete = getPercentComplete(stateIds);
 			
-			workflowStatus = new WorkflowStatus(workflowState, percentComplete);
+			workflowStatus = new GalaxyWorkflowStatus(workflowState, percentComplete);
 			
 			logger.debug("Details for history " + details.getId() + ": state=" + details.getState());
 			

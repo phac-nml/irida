@@ -1,6 +1,8 @@
-package ca.corefacility.bioinformatics.irida.model.workflow;
+package ca.corefacility.bioinformatics.irida.model.workflow.config;
 
 import java.util.Set;
+
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 
 /**
  * Wraps around a {@link Set} of {@IridaWorkflow}s to allow it

@@ -35,13 +35,13 @@ import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultit
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowDescription;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowStructure;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowInput;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowOutput;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowTool;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowTool;
+import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -108,18 +108,18 @@ public class IridaWorkflowLoaderServiceIT {
 
 	private IridaWorkflowDescription buildTestDescription(UUID id, String name, String version)
 			throws MalformedURLException {
-		List<WorkflowOutput> outputs = new LinkedList<>();
-		outputs.add(new WorkflowOutput("output1", "output1.txt"));
-		outputs.add(new WorkflowOutput("output2", "output2.txt"));
+		List<IridaWorkflowOutput> outputs = new LinkedList<>();
+		outputs.add(new IridaWorkflowOutput("output1", "output1.txt"));
+		outputs.add(new IridaWorkflowOutput("output2", "output2.txt"));
 
-		List<WorkflowTool> tools = new LinkedList<>();
-		WorkflowTool workflowTool = new WorkflowTool("sam_to_bam",
+		List<IridaWorkflowTool> tools = new LinkedList<>();
+		IridaWorkflowTool workflowTool = new IridaWorkflowTool("sam_to_bam",
 				"toolshed.g2.bx.psu.edu/repos/devteam/sam_to_bam/sam_to_bam/1.1.4", "1.1.4", "devteam", new URL(
 						"http://toolshed.g2.bx.psu.edu/"), "8176b2575aa1");
 		tools.add(workflowTool);
 
 		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version, "Mr. Developer",
-				"developer@example.com", TestAnalysis.class, new WorkflowInput("sequence_reads", "reference"), outputs,
+				"developer@example.com", TestAnalysis.class, new IridaWorkflowInput("sequence_reads", "reference"), outputs,
 				tools);
 
 		return iridaWorkflow;

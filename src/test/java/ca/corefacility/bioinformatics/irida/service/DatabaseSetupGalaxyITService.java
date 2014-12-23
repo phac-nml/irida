@@ -20,13 +20,13 @@ import java.util.concurrent.TimeoutException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
@@ -44,7 +44,7 @@ public class DatabaseSetupGalaxyITService {
 	private ReferenceFileRepository referenceFileRepository;
 	private SequenceFileService seqeunceFileService;
 	private SampleService sampleService;
-	private AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified;
+	private AnalysisExecutionService analysisExecutionService;
 	private AnalysisSubmissionService analysisSubmissionService;
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 
@@ -55,21 +55,21 @@ public class DatabaseSetupGalaxyITService {
 	 * @param referenceFileRepository
 	 * @param seqeunceFileService
 	 * @param sampleService
-	 * @param analysisExecutionServiceSimplified
+	 * @param analysisExecutionService
 	 * @param analysisSubmissionService
 	 * @param analysisSubmissionRepsitory
 	 */
 	public DatabaseSetupGalaxyITService(ReferenceFileRepository referenceFileRepository,
 			SequenceFileService seqeunceFileService,
 			SampleService sampleService,
-			AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified,
+			AnalysisExecutionService analysisExecutionService,
 			AnalysisSubmissionService analysisSubmissionService,
 			AnalysisSubmissionRepository analysisSubmissionRepository) {
 		super();
 		this.referenceFileRepository = referenceFileRepository;
 		this.seqeunceFileService = seqeunceFileService;
 		this.sampleService = sampleService;
-		this.analysisExecutionServiceSimplified = analysisExecutionServiceSimplified;
+		this.analysisExecutionService = analysisExecutionService;
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 	}
@@ -135,7 +135,7 @@ public class DatabaseSetupGalaxyITService {
 	 *            The analysis submission to wait for.
 	 * @throws Exception
 	 */
-	public void waitUntilSubmissionCompleteSimplified(AnalysisSubmission analysisSubmission) throws Exception {
+	public void waitUntilSubmissionComplete(AnalysisSubmission analysisSubmission) throws Exception {
 		final int totalSecondsWait = 1 * 60; // 1 minute
 		final int pollingTime = 2000; // 2 seconds
 
@@ -143,11 +143,11 @@ public class DatabaseSetupGalaxyITService {
 
 			@Override
 			public Void call() throws Exception {
-				WorkflowStatus workflowStatus;
+				GalaxyWorkflowStatus workflowStatus;
 				do {
-					workflowStatus = analysisExecutionServiceSimplified.getWorkflowStatus(analysisSubmission);
+					workflowStatus = analysisExecutionService.getWorkflowStatus(analysisSubmission);
 					Thread.sleep(pollingTime);
-				} while (!WorkflowState.OK.equals(workflowStatus.getState()));
+				} while (!GalaxyWorkflowState.OK.equals(workflowStatus.getState()));
 
 				return null;
 			}
@@ -166,9 +166,9 @@ public class DatabaseSetupGalaxyITService {
 	 * 
 	 * @param status
 	 */
-	public void assertValidStatus(WorkflowStatus status) {
+	public void assertValidStatus(GalaxyWorkflowStatus status) {
 		assertNotNull("WorkflowStatus is null", status);
-		assertFalse("WorkflowState is " + WorkflowState.UNKNOWN, WorkflowState.UNKNOWN.equals(status.getState()));
+		assertFalse("WorkflowState is " + GalaxyWorkflowState.UNKNOWN, GalaxyWorkflowState.UNKNOWN.equals(status.getState()));
 		float percentComplete = status.getPercentComplete();
 		assertTrue("percentComplete not in range of 0 to 100", 0.0f <= percentComplete && percentComplete <= 100.0f);
 	}

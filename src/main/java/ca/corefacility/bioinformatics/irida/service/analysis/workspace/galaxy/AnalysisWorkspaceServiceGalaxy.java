@@ -29,16 +29,16 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
-import ca.corefacility.bioinformatics.irida.model.workflow.DatasetCollectionType;
-import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowInput;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowOutput;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.PreparedWorkflowGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
@@ -46,7 +46,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrary
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceServiceSimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
@@ -63,9 +63,9 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionR
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
-public class AnalysisWorkspaceServiceGalaxySimplified implements AnalysisWorkspaceServiceSimplified {
+public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService {
 
-	private static final Logger logger = LoggerFactory.getLogger(AnalysisWorkspaceServiceGalaxySimplified.class);
+	private static final Logger logger = LoggerFactory.getLogger(AnalysisWorkspaceServiceGalaxy.class);
 
 	private static final String COLLECTION_NAME = "irida_collection_list";
 
@@ -80,7 +80,7 @@ public class AnalysisWorkspaceServiceGalaxySimplified implements AnalysisWorkspa
 	private IridaWorkflowsService iridaWorkflowsService;
 
 	/**
-	 * Builds a new {@link AnalysisWorkspaceServiceGalaxySimplified} with the
+	 * Builds a new {@link AnalysisWorkspaceServiceGalaxy} with the
 	 * given information.
 	 * 
 	 * @param galaxyHistoriesService
@@ -95,7 +95,7 @@ public class AnalysisWorkspaceServiceGalaxySimplified implements AnalysisWorkspa
 	 * @param iridaWorkflowsService
 	 *            A service used for loading workflows from IRIDA.
 	 */
-	public AnalysisWorkspaceServiceGalaxySimplified(GalaxyHistoriesService galaxyHistoriesService,
+	public AnalysisWorkspaceServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService,
 			SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository,
 			SequenceFileRepository sequenceFileRepository, GalaxyLibraryBuilder libraryBuilder,
@@ -247,7 +247,7 @@ public class AnalysisWorkspaceServiceGalaxySimplified implements AnalysisWorkspa
 		checkNotNull(analysisSubmission.getRemoteWorkflowId(), "remoteWorkflowId is null");
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysisSubmission.getWorkflowId());
-		WorkflowInput workflowInput = iridaWorkflow.getWorkflowDescription().getInputs();
+		IridaWorkflowInput workflowInput = iridaWorkflow.getWorkflowDescription().getInputs();
 		String sequenceFilesLabel = workflowInput.getSequenceReadsSingle();
 		String referenceFileLabel = workflowInput.getReference();
 		checkNotNull(sequenceFilesLabel, "sequenceReadsSingleLabel is null");
@@ -355,7 +355,7 @@ public class AnalysisWorkspaceServiceGalaxySimplified implements AnalysisWorkspa
 
 		AnalysisPhylogenomicsPipeline results = new AnalysisPhylogenomicsPipeline(inputFiles, analysisId);
 
-		Map<String, WorkflowOutput> outputsMap = iridaWorkflow.getWorkflowDescription().getOutputsMap();
+		Map<String, IridaWorkflowOutput> outputsMap = iridaWorkflow.getWorkflowDescription().getOutputsMap();
 
 		Dataset treeOutput = galaxyHistoriesService.getDatasetForFileInHistory(outputsMap.get("tree").getFileName(),
 				analysisId);

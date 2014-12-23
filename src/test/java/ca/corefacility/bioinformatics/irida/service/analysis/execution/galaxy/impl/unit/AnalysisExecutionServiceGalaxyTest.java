@@ -27,20 +27,20 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadExce
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowStructure;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.PreparedWorkflowGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.WorkflowInputsGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsyncSimplified;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxySimplified;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxySimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.collect.ImmutableMap;
@@ -52,7 +52,7 @@ import com.google.common.collect.Sets;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class AnalysisExecutionServiceGalaxySimplifiedTest {
+public class AnalysisExecutionServiceGalaxyTest {
 
 	@Mock
 	private AnalysisSubmissionService analysisSubmissionService;
@@ -63,7 +63,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	@Mock
 	private GalaxyWorkflowService galaxyWorkflowService;
 	@Mock
-	private AnalysisWorkspaceServiceGalaxySimplified analysisWorkspaceServiceSimplified;
+	private AnalysisWorkspaceServiceGalaxy analysisWorkspaceService;
 	@Mock
 	private Analysis analysisResults;
 	@Mock
@@ -90,7 +90,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	private static final String REMOTE_WORKFLOW_ID = "1";
 	private static final Long INTERNAL_ANALYSIS_ID = 2l;
 	private static final String ANALYSIS_ID = "2";
-	private AnalysisExecutionServiceGalaxySimplified workflowManagement;
+	private AnalysisExecutionServiceGalaxy workflowManagement;
 	private PreparedWorkflowGalaxy preparedWorkflow;
 	private WorkflowInputsGalaxy workflowInputsGalaxy;
 
@@ -120,10 +120,10 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 		analysisCompleted = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
 		analysisError = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
 
-		AnalysisExecutionServiceGalaxyAsyncSimplified workflowManagementAsync = new AnalysisExecutionServiceGalaxyAsyncSimplified(
-				analysisSubmissionService, analysisService, galaxyWorkflowService, analysisWorkspaceServiceSimplified,
+		AnalysisExecutionServiceGalaxyAsync workflowManagementAsync = new AnalysisExecutionServiceGalaxyAsync(
+				analysisSubmissionService, analysisService, galaxyWorkflowService, analysisWorkspaceService,
 				iridaWorkflowsService);
-		workflowManagement = new AnalysisExecutionServiceGalaxySimplified(analysisSubmissionService,
+		workflowManagement = new AnalysisExecutionServiceGalaxy(analysisSubmissionService,
 				galaxyHistoriesService, workflowManagementAsync);
 
 		when(iridaWorkflowsService.getIridaWorkflow(WORKFLOW_ID)).thenReturn(iridaWorkflow);
@@ -140,7 +140,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 		when(
 				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID,
 						ImmutableMap.of("analysisState", AnalysisState.PREPARING))).thenReturn(analysisPreparing);
-		when(analysisWorkspaceServiceSimplified.prepareAnalysisWorkspace(analysisPreparing)).thenReturn(ANALYSIS_ID);
+		when(analysisWorkspaceService.prepareAnalysisWorkspace(analysisPreparing)).thenReturn(ANALYSIS_ID);
 
 		analysisPrepared.setId(INTERNAL_ANALYSIS_ID);
 		analysisPrepared.setAnalysisState(AnalysisState.PREPARED);
@@ -179,7 +179,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 		when(
 				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID,
 						ImmutableMap.of("analysisState", AnalysisState.COMPLETING))).thenReturn(analysisCompleting);
-		when(analysisWorkspaceServiceSimplified.getAnalysisResults(analysisCompleting)).thenReturn(analysisResults);
+		when(analysisWorkspaceService.getAnalysisResults(analysisCompleting)).thenReturn(analysisResults);
 		when(analysisService.create(analysisResults)).thenReturn(analysisResults);
 
 		analysisCompleted.setId(INTERNAL_ANALYSIS_ID);
@@ -224,7 +224,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 		assertEquals("analysisSubmission not equal to returned submission", analysisPrepared, returnedSubmission);
 
 		verify(galaxyWorkflowService).uploadGalaxyWorkflow(workflowFile);
-		verify(analysisWorkspaceServiceSimplified).prepareAnalysisWorkspace(analysisPreparing);
+		verify(analysisWorkspaceService).prepareAnalysisWorkspace(analysisPreparing);
 		verify(analysisSubmissionService).update(
 				INTERNAL_ANALYSIS_ID,
 				ImmutableMap.of("remoteWorkflowId", REMOTE_WORKFLOW_ID, "remoteAnalysisId", ANALYSIS_ID,
@@ -268,7 +268,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	@Test(expected = ExecutionManagerException.class)
 	public void testPrepareSubmissionFailWorkspace() throws ExecutionManagerException, InterruptedException,
 			IridaWorkflowNotFoundException, IOException, ExecutionException {
-		when(analysisWorkspaceServiceSimplified.prepareAnalysisWorkspace(any(AnalysisSubmission.class))).thenThrow(
+		when(analysisWorkspaceService.prepareAnalysisWorkspace(any(AnalysisSubmission.class))).thenThrow(
 				new ExecutionManagerException());
 
 		Future<AnalysisSubmission> preparedAnalysisFuture = workflowManagement.prepareSubmission(analysisSubmission);
@@ -292,7 +292,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	@Test
 	public void testExecuteAnalysisSuccess() throws ExecutionManagerException, IridaWorkflowNotFoundException,
 			NoSuchValueException, InterruptedException, ExecutionException {
-		when(analysisWorkspaceServiceSimplified.prepareAnalysisFiles(any(AnalysisSubmission.class))).thenReturn(
+		when(analysisWorkspaceService.prepareAnalysisFiles(any(AnalysisSubmission.class))).thenReturn(
 				preparedWorkflow);
 
 		Future<AnalysisSubmission> preparedAnalysisFuture = workflowManagement.executeAnalysis(analysisPrepared);
@@ -301,7 +301,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 
 		verify(analysisSubmissionService).update(INTERNAL_ANALYSIS_ID,
 				ImmutableMap.of("analysisState", AnalysisState.SUBMITTING));
-		verify(analysisWorkspaceServiceSimplified).prepareAnalysisFiles(analysisSubmitting);
+		verify(analysisWorkspaceService).prepareAnalysisFiles(analysisSubmitting);
 		verify(galaxyWorkflowService).runWorkflow(workflowInputsGalaxy);
 		verify(analysisSubmissionService).update(INTERNAL_ANALYSIS_ID,
 				ImmutableMap.of("analysisState", AnalysisState.RUNNING));
@@ -333,7 +333,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	@Test(expected = ExecutionManagerException.class)
 	public void testExecuteAnalysisFailPrepareWorkflow() throws IridaWorkflowNotFoundException,
 			ExecutionManagerException, InterruptedException, ExecutionException {
-		when(analysisWorkspaceServiceSimplified.prepareAnalysisFiles(any(AnalysisSubmission.class))).thenThrow(
+		when(analysisWorkspaceService.prepareAnalysisFiles(any(AnalysisSubmission.class))).thenThrow(
 				new ExecutionManagerException());
 
 		Future<AnalysisSubmission> submittedAnalysisFuture = workflowManagement.executeAnalysis(analysisPrepared);
@@ -355,7 +355,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	@Test(expected = WorkflowException.class)
 	public void testExecuteAnalysisFail() throws IridaWorkflowNotFoundException, ExecutionManagerException,
 			InterruptedException, ExecutionException {
-		when(analysisWorkspaceServiceSimplified.prepareAnalysisFiles(any(AnalysisSubmission.class))).thenReturn(
+		when(analysisWorkspaceService.prepareAnalysisFiles(any(AnalysisSubmission.class))).thenReturn(
 				preparedWorkflow);
 		when(galaxyWorkflowService.runWorkflow(workflowInputsGalaxy)).thenThrow(new WorkflowException());
 
@@ -374,7 +374,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	 */
 	@Test
 	public void testGetWorkflowStatusSuccess() throws ExecutionManagerException {
-		WorkflowStatus workflowStatus = new WorkflowStatus(WorkflowState.OK, 1.0f);
+		GalaxyWorkflowStatus workflowStatus = new GalaxyWorkflowStatus(GalaxyWorkflowState.OK, 1.0f);
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
 
 		when(galaxyHistoriesService.getStatusForHistory(analysisSubmission.getRemoteAnalysisId())).thenReturn(
@@ -436,7 +436,7 @@ public class AnalysisExecutionServiceGalaxySimplifiedTest {
 	public void testTransferAnalysisResultsFail() throws ExecutionManagerException, IOException,
 			IridaWorkflowNotFoundException, InterruptedException, ExecutionException {
 		when(analysisSubmissionService.exists(INTERNAL_ANALYSIS_ID)).thenReturn(true);
-		when(analysisWorkspaceServiceSimplified.getAnalysisResults(analysisCompleting)).thenThrow(
+		when(analysisWorkspaceService.getAnalysisResults(analysisCompleting)).thenThrow(
 				new ExecutionManagerException());
 
 		Future<AnalysisSubmission> actualCompletedSubmissionFuture = workflowManagement

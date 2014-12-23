@@ -5,7 +5,7 @@ import java.util.concurrent.Future;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
-public interface AnalysisExecutionServiceSimplified {
+public interface AnalysisExecutionService {
 
 	/**
 	 * Prepares the given {@link AnalysisSubmission} to be executed within an
@@ -62,7 +62,7 @@ public interface AnalysisExecutionServiceSimplified {
 	 * @throws ExecutionManagerException
 	 *             If there was an issue checking the status.
 	 */
-	public WorkflowStatus getWorkflowStatus(AnalysisSubmission submittedAnalysis) throws ExecutionManagerException;
+	public GalaxyWorkflowStatus getWorkflowStatus(AnalysisSubmission submittedAnalysis) throws ExecutionManagerException;
 
 	/**
 	 * Downloads and saves the results of an {@link AnalysisSubmission} that was

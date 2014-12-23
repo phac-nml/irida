@@ -18,15 +18,15 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.WorkflowInputsGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.PreparedWorkflowGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.WorkflowInputsGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxySimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.collect.ImmutableMap;
@@ -38,18 +38,18 @@ import com.google.common.collect.ImmutableMap;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
 @Async("analysisTaskExecutor")
-public class AnalysisExecutionServiceGalaxyAsyncSimplified {
+public class AnalysisExecutionServiceGalaxyAsync {
 
-	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxyAsyncSimplified.class);
+	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxyAsync.class);
 
 	private final AnalysisSubmissionService analysisSubmissionService;
 	private final AnalysisService analysisService;
-	private final AnalysisWorkspaceServiceGalaxySimplified workspaceService;
+	private final AnalysisWorkspaceServiceGalaxy workspaceService;
 	private final GalaxyWorkflowService galaxyWorkflowService;
 	private final IridaWorkflowsService iridaWorkflowsService;
 
 	/**
-	 * Builds a new {@link AnalysisExecutionServiceGalaxyAsyncSimplified} with
+	 * Builds a new {@link AnalysisExecutionServiceGalaxyAsync} with
 	 * the given information.
 	 * 
 	 * @param analysisSubmissionService
@@ -64,9 +64,9 @@ public class AnalysisExecutionServiceGalaxyAsyncSimplified {
 	 *            A service for loading up {@link IridaWorkflow}s.
 	 */
 	@Autowired
-	public AnalysisExecutionServiceGalaxyAsyncSimplified(AnalysisSubmissionService analysisSubmissionService,
+	public AnalysisExecutionServiceGalaxyAsync(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisService analysisService, GalaxyWorkflowService galaxyWorkflowService,
-			AnalysisWorkspaceServiceGalaxySimplified workspaceService, IridaWorkflowsService iridaWorkflowsService) {
+			AnalysisWorkspaceServiceGalaxy workspaceService, IridaWorkflowsService iridaWorkflowsService) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisService = analysisService;
 		this.galaxyWorkflowService = galaxyWorkflowService;

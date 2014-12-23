@@ -33,11 +33,11 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadExceptio
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxySimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
@@ -62,7 +62,7 @@ import com.google.common.collect.Sets;
 		WithSecurityContextTestExcecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class WorkspaceServiceGalaxySimplifiedIT {
+public class AnalysisWorkspaceServiceGalaxyIT {
 
 	@Autowired
 	private DatabaseSetupGalaxyITService analysisExecutionGalaxyITService;
@@ -71,7 +71,7 @@ public class WorkspaceServiceGalaxySimplifiedIT {
 	private LocalGalaxy localGalaxy;
 
 	@Autowired
-	private AnalysisWorkspaceServiceGalaxySimplified analysisWorkspaceServiceSimplified;
+	private AnalysisWorkspaceServiceGalaxy analysisWorkspaceService;
 
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
@@ -113,7 +113,7 @@ public class WorkspaceServiceGalaxySimplifiedIT {
 	@Test
 	public void testPrepareAnalysisWorkspaceSuccess() throws IridaWorkflowNotFoundException, ExecutionManagerException {
 		AnalysisSubmission submission = new AnalysisSubmission("Name", sequenceFilesSet, validWorkflowId);
-		assertNotNull(analysisWorkspaceServiceSimplified.prepareAnalysisWorkspace(submission));
+		assertNotNull(analysisWorkspaceService.prepareAnalysisWorkspace(submission));
 	}
 
 	/**
@@ -145,7 +145,7 @@ public class WorkspaceServiceGalaxySimplifiedIT {
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
-		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceServiceSimplified
+		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService
 				.prepareAnalysisFiles(analysisSubmission);
 		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId());
 		assertNotNull(preparedWorkflow.getWorkflowInputs());

@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model.workflow;
+package ca.corefacility.bioinformatics.irida.model.workflow.description;
 
 import java.net.URL;
 import java.util.Objects;
@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlElement;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WorkflowTool {
+public class IridaWorkflowTool {
 	@XmlElement(name = "name")
 	private String name;
 
@@ -33,11 +33,11 @@ public class WorkflowTool {
 	@XmlElement(name = "revision")
 	private String revision;
 
-	public WorkflowTool() {
+	public IridaWorkflowTool() {
 	}
 
 	/**
-	 * Builds a new {@link WorkflowTool} with the given information.
+	 * Builds a new {@link IridaWorkflowTool} with the given information.
 	 * 
 	 * @param name
 	 *            The name of the tool.
@@ -52,7 +52,7 @@ public class WorkflowTool {
 	 * @param revision
 	 *            The revision number of the tool.
 	 */
-	public WorkflowTool(String name, String id, String version, String owner, URL url, String revision) {
+	public IridaWorkflowTool(String name, String id, String version, String owner, URL url, String revision) {
 		this.name = name;
 		this.id = id;
 		this.version = version;
@@ -94,8 +94,8 @@ public class WorkflowTool {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		else if (obj instanceof WorkflowTool) {
-			WorkflowTool other = (WorkflowTool) obj;
+		else if (obj instanceof IridaWorkflowTool) {
+			IridaWorkflowTool other = (IridaWorkflowTool) obj;
 
 			return Objects.equals(name, other.name) && Objects.equals(id, other.id)
 					&& Objects.equals(version, other.version) && Objects.equals(owner, other.owner)

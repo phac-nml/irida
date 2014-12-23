@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model.workflow;
+package ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +12,7 @@ import java.util.Map;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public enum WorkflowState {
+public enum GalaxyWorkflowState {
 	NEW("new"),
 	UPLOAD("upload"),
 	WAITING("waiting"),
@@ -34,29 +34,29 @@ public enum WorkflowState {
 	 */
 	UNKNOWN("unknown");
 	
-	private static Map<String, WorkflowState> stateMap = new HashMap<>();
+	private static Map<String, GalaxyWorkflowState> stateMap = new HashMap<>();
 	private String stateString;
 	
 	/**
 	 * Sets of a Map used to convert a string to a WorkflowState
 	 */
 	static {
-		for (WorkflowState state : WorkflowState.values()) {
+		for (GalaxyWorkflowState state : GalaxyWorkflowState.values()) {
 			stateMap.put(state.toString(), state);
 		}
 	}
 	
-	private WorkflowState(String stateString){
+	private GalaxyWorkflowState(String stateString){
 		this.stateString = stateString;
 	}
 	
 	/**
-	 * Given a string defining a state, converts this to a WorkflowState.
+	 * Given a string defining a state, converts this to a {@link GalaxyWorkflowState}.
 	 * @param stateString  The string defining the state.
-	 * @return  A WorkflowState for the corresponding state.
+	 * @return  A {@link GalaxyWorkflowState} for the corresponding state.
 	 */
-	public static WorkflowState stringToState(String stateString) {
-		WorkflowState state = stateMap.get(stateString);
+	public static GalaxyWorkflowState stringToState(String stateString) {
+		GalaxyWorkflowState state = stateMap.get(stateString);
 		if (state == null) {
 			state = UNKNOWN;
 		}
