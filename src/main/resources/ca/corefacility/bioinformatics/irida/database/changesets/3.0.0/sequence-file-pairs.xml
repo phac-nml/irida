@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="sequence-file-pairs" author="tom">
+		<createTable tableName="sequence_file_pair">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="created_date" type="datetime">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="sequence_file_pair_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_SEQUENCE_FILE_PAIR_AUD" referencedColumnNames="id"
+					referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+			<column name="created_date" type="datetime" />
+		</createTable>
+
+		<createTable tableName="sequence_file_pair_files">
+			<column name="pair_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_SEQUENCE_FILE_PAIR_FILES_PAIR"
+					referencedColumnNames="id" referencedTableName="sequence_file_pair" />
+			</column>
+			<column name="files_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_SEQUENCE_FILE_PAIR_FILES_File"
+					referencedColumnNames="id" referencedTableName="sequence_file" />
+			</column>
+		</createTable>
+
+		<createTable tableName="sequence_file_pair_files_AUD">
+			<column name="pair_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="files_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_SEQUENCE_FILE_PAIR_FILES_AUD"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+
+		<addUniqueConstraint columnNames="files_id"
+			constraintName="UK_SEQUENCE_FILE_PAIR" tableName="sequence_file_pair_files" />
+
+	</changeSet>
+</databaseChangeLog>
