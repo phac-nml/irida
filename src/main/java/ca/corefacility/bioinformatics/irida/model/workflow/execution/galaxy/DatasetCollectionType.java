@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model.workflow.galaxy;
+package ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy;
 
 /**
  * The different types for a dataset collection.

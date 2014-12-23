@@ -1,8 +1,8 @@
-package ca.corefacility.bioinformatics.irida.model.workflow.galaxy;
+package ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy;
 
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowInputsGeneric;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.WorkflowInputsGeneric;
 
 /**
  * Describes a set of workflow inputs for a Galaxy workflow.

@@ -1,6 +1,6 @@
-package ca.corefacility.bioinformatics.irida.model.workflow.galaxy;
+package ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy;
 
-import ca.corefacility.bioinformatics.irida.model.workflow.PreparedWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.PreparedWorkflow;
 
 /**
  * A Galaxy workflow that has been prepared for execution.

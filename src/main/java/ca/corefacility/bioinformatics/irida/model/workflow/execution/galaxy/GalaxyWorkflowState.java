@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model.workflow.galaxy;
+package ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy;
 
 import java.util.HashMap;
 import java.util.Map;
