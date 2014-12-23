@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
-	<system_role description="Admin" name="ROLE_USER" />
+	<system_role description="User" name="ROLE_USER" />
+	<system_role description="Admin" name="ROLE_ADMIN" />
 	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
 		email="manager@nowhere.com" firstName="Mr." lastName="Manager"
 		password="$2a$10$rgdnCrrAqN11Hz03mcGCg.R9gZehmEcyLC3kUGQJ1fEBlF9ld.4v."
@@ -11,6 +12,11 @@
 		password="$2a$10$rgdnCrrAqN11Hz03mcGCg.R9gZehmEcyLC3kUGQJ1fEBlF9ld.4v."
 		phoneNumber="867-5309" username="fbristow1" enabled="true"
 		system_role="ROLE_USER" credentialsNonExpired="true" />
+	<user id="3" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+		email="admin@nowhere.com" firstName="Admin" lastName="Guy"
+		password="$2a$10$rgdnCrrAqN11Hz03mcGCg.R9gZehmEcyLC3kUGQJ1fEBlF9ld.4v."
+		phoneNumber="867-5309" username="admin" enabled="true" system_role="ROLE_ADMIN"
+		credentialsNonExpired="true" />
 
 	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
 		projectDescription="description" remoteURL="somewhere" />
@@ -21,7 +27,14 @@
 	<project_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		project_id="1" sample_id="1" />
 	<sequence_file id="1" createdDate="2013-07-18 14:20:19.0"
-		filePath="/" fileRevisionNumber="1" />
+		filePath="/file1" fileRevisionNumber="1" />
+	<sequence_file id="2" createdDate="2013-07-18 14:20:19.0"
+		filePath="/file2" fileRevisionNumber="1" />
+	<sequence_file id="3" createdDate="2013-07-18 14:20:19.0"
+		filePath="/file3" fileRevisionNumber="1" />
+	<sequence_file id="4" createdDate="2013-07-18 14:20:19.0"
+		filePath="/file4" fileRevisionNumber="1" />
+
 	<sequencefile_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		sample_id="1" sequencefile_id="1" />
 
@@ -32,4 +45,10 @@
 
 	<sequencing_run id="1" createdDate="2013-07-18 14:20:19.0" />
 	<miseq_run id="1" workflow="notnull" />
+
+	<sequence_file_pair id="1" created_date="2013-07-18 14:20:19.0" />
+	<sequence_file_pair_files pair_id="1"
+		files_id="3" />
+	<sequence_file_pair_files pair_id="1"
+		files_id="4" />
 </dataset>

@@ -19,7 +19,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepositoryImpl;
 import ca.corefacility.bioinformatics.irida.util.RecursiveDeleteVisitor;
 

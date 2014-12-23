@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.processing;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.exceptions.FileProcessorTimeoutException;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
  * A collection of {@link FileProcessor} that are executed, in order, on a

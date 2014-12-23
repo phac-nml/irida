@@ -12,7 +12,7 @@ import org.hibernate.envers.Audited;
 
 import com.google.common.collect.Sets;
 
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
  * Metadata for Core SNP Pipeline implementation in Galaxy.
