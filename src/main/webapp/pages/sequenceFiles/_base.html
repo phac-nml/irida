@@ -8,12 +8,13 @@
 <body>
 <nav class="navbar navbar-default navbar-static-top subnav" role="navigation" layout:fragment="subnav">
     <div class="container">
-        <ul class="nav navbar-nav" th:inline="text" th:with="baseLink=${'/sequenceFiles/' + file.getId()}">
+        <ul th:if="${fastQC}" class="nav navbar-nav" th:inline="text" th:with="baseLink=${'/sequenceFiles/' + file.getId()}">
             <li th:class="${activeNav} == 'dashboard' ? 'active'"><a href="summary">
                 <span th:text="#{sf.subnav.summary}"></span></a></li>
             <li th:class="${activeNav} == 'overrepresented' ? 'active'"><a
                 href="overrepresented">
-                <span th:text="#{sf.subnav.overrepresented}"></span>&nbsp;<span class="badge" th:text="${fastQC.overrepresentedSequences.size()}"></span></a></li>
+                <span th:text="#{sf.subnav.overrepresented}"></span>&nbsp;<span class="badge" th:text="${#lists.size(fastQC.overrepresentedSequences)}"></span></a>
+            </li>
         </ul>
         <div class="navbar-right">
                 <button id="fileDownload" class="btn btn-default navbar-btn"><span
@@ -24,7 +25,11 @@
     </div>
 </nav>
 <div layout:fragment="page">
-
+    <div th:if="!${fastQC}" class="alert alert-info" role="alert">
+        <h1 id="wb-cont" role="heading" th:text="${file.getLabel()}"></h1>
+        <h2 th:text="#{sf.no-results}">There is no FastQC data available for this file.</h2>
+    </div>
+    <th:block th:if="${fastQC}">
     <main class="col-md-8 col-md-push-4" layout:fragment="main">
         <!--/*/
         This is where the main content of every project page will go.
@@ -86,11 +91,12 @@
                 </ul>
             </div>
         </div>
-        <iframe id="invisible" style="display:none;"></iframe>
     </aside>
+    </th:block>
 </div>
 
 <th:block th:inline="javascript" layout:fragment="page-scripts">
+    <iframe id="invisible" style="display:none;"></iframe>
     <script th:src="@{/resources/wet-theme/js/deps/jquery.magnific-popup.min.js}"
             src="/resources/wet-theme/js/deps/jquery.magnific-popup.min.js"></script>
     <script th:src="@{/resources/wet-theme/js/deps/jquery.dataTables.min.js}"
