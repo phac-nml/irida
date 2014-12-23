@@ -21,6 +21,8 @@
                         sortdir="sCtrl.filter.sortDir" sortedBy="sCtrl.filter.sortedBy" sortValue="id">_ID_</th>
                     <th id="sortType" th:text="#{sequencingruns.type}" sort-by="" onsort="sCtrl.onSort"
                         sortdir="sCtrl.filter.sortDir" sortedBy="sCtrl.filter.sortedBy" sortValue="sequencerType">_sequencer_</th>
+                    <th id="sortStatus" th:text="#{sequencingruns.uploadStatus}" sort-by="" onsort="sCtrl.onSort"
+                        sortdir="sCtrl.filter.sortDir" sortedBy="sCtrl.filter.sortedBy" sortValue="uploadStatus">_sequencer_</th>
                     <th id="sortCreatedDate" th:text="#{iridaThing.timestamp}" sort-by="" onsort="sCtrl.onSort"
                         sortdir="sCtrl.filter.sortDir" sortedBy="sCtrl.filter.sortedBy" sortValue="createdDate">_Created
                         date_</th>
@@ -32,6 +34,7 @@
                     <td class="run-id"><a class="btn btn-default btn-xs"
                         data:ng-href="@{'/sequencingRuns/{{run.id}}'}" href="#">{{run.id}}</a></td>
                     <td>{{run.sequencerType}}</td>
+                    <td>{{run.uploadStatus}}</td>
                     <td class="createdDate" data-date="{{run.createdDate}}" tooltip-popup-delay='500'
                         tooltip-placement="left" tooltip="{{run.createdDate | date:'medium'}}"><span>{{run.createdDate
                             | date:'mediumDate'}}</span></td>

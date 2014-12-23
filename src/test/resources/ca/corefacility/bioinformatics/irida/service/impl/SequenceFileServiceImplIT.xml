@@ -43,7 +43,7 @@
 	<sequence_file_properties sequence_file_id="1"
 		property_key="sampleWell" property_value="10" />
 
-	<sequencing_run id="1" createdDate="2013-07-18 14:20:19.0" />
+	<sequencing_run id="1" createdDate="2013-07-18 14:20:19.0" upload_status="COMPLETE"/>
 	<miseq_run id="1" workflow="notnull" />
 
 	<sequence_file_pair id="1" created_date="2013-07-18 14:20:19.0" />
