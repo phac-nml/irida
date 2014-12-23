@@ -107,6 +107,10 @@ Some of the tests require downloading and setting up a version of Galaxy.  By de
 
 	mvn verify -Dtest.galaxy.repository.url=https://bitbucket.org/galaxy/galaxy-central -Dtest.galaxy.branch=default -Dtest.galaxy.revision=latest
 
+In addition, the Galaxy instance used for integration tests, by default, uses SQLite as a database.  This sometimes causes tests to fail.  To override the database used for Galaxy integration tests, the propery `-Dtest.galaxy.database.connection` can be overridden.  This defines a connection string in [SQLAlchemy format][http://sqlalchemy.readthedocs.org/en/rel_0_5/dbengine.html] which can be used to define how Galaxy connects to a database.  For example:
+
+	mvn verify -Dtest.galaxy.database.connection="mysql://test:test@localhost/irida_galaxy_test?unix_socket=/var/run/mysqld/mysqld.sock"
+
 Miscellaneous Doodads
 =====================
 Installing the API project *without* executing tests:
