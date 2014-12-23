@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.processing.impl.unit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -35,7 +37,29 @@ public class GzipFileProcessorTest {
 	@Before
 	public void setUp() {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
-		fileProcessor = new GzipFileProcessor(sequenceFileRepository);
+		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.FALSE);
+	}
+
+	@Test
+	public void testDeleteOriginalFile() throws IOException {
+		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.TRUE);
+		final SequenceFile sf = constructSequenceFile();
+
+		// compress the file, update the sequence file reference
+		Path uncompressed = sf.getFile();
+		Path compressed = Files.createTempFile(null, ".gz");
+		GZIPOutputStream out = new GZIPOutputStream(Files.newOutputStream(compressed));
+		Files.copy(uncompressed, out);
+		out.close();
+		sf.setFile(compressed);
+
+		when(sequenceFileRepository.findOne(any(Long.class))).thenReturn(sf);
+
+		fileProcessor.process(1L);
+
+		verify(sequenceFileRepository, times(1)).save(any(SequenceFile.class));
+
+		assertFalse("The original file should have been deleted.", Files.exists(compressed));
 	}
 
 	@Test
@@ -87,6 +111,7 @@ public class GzipFileProcessorTest {
 		assertEquals("uncompressed file and file in database should be the same.", FILE_CONTENTS,
 				uncompressedFileContents);
 		Files.delete(uncompressed);
+		assertTrue("Original compressed file should not have been deleted.", Files.exists(compressed));
 		Files.delete(compressed);
 	}
 

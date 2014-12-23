@@ -76,6 +76,9 @@ public class IridaApiServicesConfig {
 	@Value("${file.processing.decompress}")
 	private Boolean decompressFiles;
 
+	@Value("${file.processing.decompress.remove.compressed.file}")
+	private Boolean removeCompressedFiles;
+
 	@Bean
 	public MessageSource apiMessageSource() {
 		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
@@ -86,7 +89,7 @@ public class IridaApiServicesConfig {
 	@Bean
 	public FileProcessingChain fileProcessorChain(AnalysisRepository analysisRepository,
 			SequenceFileRepository sequenceFileRepository) {
-		final FileProcessor gzipFileProcessor = new GzipFileProcessor(sequenceFileRepository);
+		final FileProcessor gzipFileProcessor = new GzipFileProcessor(sequenceFileRepository, removeCompressedFiles);
 		final FileProcessor fastQcFileProcessor = new FastqcFileProcessor(analysisRepository, apiMessageSource(), sequenceFileRepository);
 		final List<FileProcessor> fileProcessors = Lists.newArrayList(gzipFileProcessor, fastQcFileProcessor);
 
