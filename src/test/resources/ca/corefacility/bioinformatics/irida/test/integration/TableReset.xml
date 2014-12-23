@@ -12,6 +12,7 @@
 	<user />
 	<project />
 	<related_project />
+	<library_description />
 
 	<remote_workflow />
 	<remote_workflow_phylogenomics />
