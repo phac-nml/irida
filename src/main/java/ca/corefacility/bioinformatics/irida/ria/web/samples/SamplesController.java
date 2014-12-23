@@ -1,22 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
-import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +21,30 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolationException;
-import java.io.IOException;
-import java.security.Principal;
-import java.util.*;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for all sample related views
@@ -109,7 +121,8 @@ public class SamplesController extends BaseController {
 	 *            The id for the sample
 	 * @return The name of the page.
 	 */
-	@RequestMapping(value = {"/samples/{sampleId}", "/samples/{sampleId}/details", "/projects/{projectId}/samples/{sampleId}", "/projects/{projectId}/samples/{sampleId}/details"})
+	@RequestMapping(value = { "/samples/{sampleId}", "/samples/{sampleId}/details",
+			"/projects/{projectId}/samples/{sampleId}", "/projects/{projectId}/samples/{sampleId}/details" })
 	public String getSampleSpecificPage(final Model model, @PathVariable Long sampleId) {
 		logger.debug("Getting sample page for sample [" + sampleId + "]");
 		Sample sample = sampleService.read(sampleId);
@@ -127,7 +140,7 @@ public class SamplesController extends BaseController {
 	 *            The id for the sample
 	 * @return The name of the edit page
 	 */
-	@RequestMapping(value = {"/samples/{sampleId}/edit", "/projects/{projectId}/samples/{sampleId}/edit"}, method = RequestMethod.GET)
+	@RequestMapping(value = { "/samples/{sampleId}/edit", "/projects/{projectId}/samples/{sampleId}/edit" }, method = RequestMethod.GET)
 	public String getEditSampleSpecificPage(final Model model, @PathVariable Long sampleId) {
 		logger.debug("Getting sample edit for sample [" + sampleId + "]");
 		if (!model.containsAttribute(MODEL_ERROR_ATTR)) {
@@ -152,7 +165,7 @@ public class SamplesController extends BaseController {
 	 *            Map of fields to update. See FIELDS.
 	 * @return The name of the details page.
 	 */
-	@RequestMapping(value = {"/samples/{sampleId}/edit", "/projects/{projectId}/samples/{sampleId}/edit"}, method = RequestMethod.POST)
+	@RequestMapping(value = { "/samples/{sampleId}/edit", "/projects/{projectId}/samples/{sampleId}/edit" }, method = RequestMethod.POST)
 	public String updateSample(final Model model, @PathVariable Long sampleId,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date collectionDate,
 			@RequestParam Map<String, String> params, HttpServletRequest request) {
@@ -195,7 +208,8 @@ public class SamplesController extends BaseController {
 	 * @return
 	 * @throws IOException
 	 */
-	@RequestMapping(value = {"/samples/{sampleId}/sequenceFiles", "/projects/{projectId}/samples/{sampleId}/sequenceFiles"})
+	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles",
+			"/projects/{projectId}/samples/{sampleId}/sequenceFiles" })
 	public String getSampleFiles(final Model model, @PathVariable Long sampleId, Principal principal)
 			throws IOException {
 		Sample sample = sampleService.read(sampleId);

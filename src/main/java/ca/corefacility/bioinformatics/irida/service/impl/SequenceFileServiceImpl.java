@@ -19,13 +19,15 @@ import org.springframework.transaction.annotation.Transactional;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.FileProcessorTimeoutException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
@@ -49,6 +51,8 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	private final SequenceFileRepository sequenceFileRepository;
 
+	private final SequenceFilePairRepository pairRepository;
+
 	/**
 	 * Executor for running pipelines asynchronously.
 	 */
@@ -70,12 +74,13 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 */
 	@Autowired
 	public SequenceFileServiceImpl(SequenceFileRepository sequenceFileRepository,
-			SampleSequenceFileJoinRepository ssfRepository,
+			SampleSequenceFileJoinRepository ssfRepository, SequenceFilePairRepository pairRepository,
 			@Qualifier("fileProcessingChainExecutor") TaskExecutor executor, FileProcessingChain fileProcessingChain,
 			Validator validator) {
 		super(sequenceFileRepository, validator, SequenceFile.class);
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.ssfRepository = ssfRepository;
+		this.pairRepository = pairRepository;
 		this.fileProcessingChainExecutor = executor;
 		this.fileProcessingChain = fileProcessingChain;
 	}
@@ -192,5 +197,30 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 				SecurityContextHolder.clearContext();
 			}
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SequenceFile getPairedFileForSequenceFile(SequenceFile file) throws EntityNotFoundException {
+		SequenceFilePair pairForSequenceFile = pairRepository.getPairForSequenceFile(file);
+		if (pairForSequenceFile != null) {
+			for (SequenceFile pair : pairForSequenceFile.getFiles()) {
+				if (!pair.equals(file)) {
+					return pair;
+				}
+			}
+		}
+
+		throw new EntityNotFoundException("Pair cannot be found for this sequence file");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SequenceFilePair createSequenceFilePair(SequenceFile file1, SequenceFile file2) {
+		return pairRepository.save(new SequenceFilePair(file1, file2));
 	}
 }
