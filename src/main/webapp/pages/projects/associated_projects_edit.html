@@ -178,6 +178,7 @@
         src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
 <script th:replace="remote_apis/remote_api_connect"></script>
 <script th:inline="javascript">
+	var app = angular.module('irida');
 	app.config(function (RestangularProvider) {
 		RestangularProvider.setBaseUrl(/*[[@{/projects/{id}/associated/(id=${project.getId()})}]]*/ '/projects/1/associated/');
 	});

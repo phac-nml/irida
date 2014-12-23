@@ -49,6 +49,7 @@
 	<logicalGroup />
 	<user_group />
 	<project_referencefile />
+	<project_library_description />
 
 	<project_event />
 
@@ -111,4 +112,6 @@
 	<remote_related_project_AUD />
 	<sequence_file_pair_AUD />
 	<sequence_file_pair_files_AUD />
+	<library_description_AUD />
+	<project_library_description_AUD />
 </dataset>
