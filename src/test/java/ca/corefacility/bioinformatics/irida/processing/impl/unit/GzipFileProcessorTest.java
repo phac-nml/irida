@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.GZIPOutputStream;
 
+import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -38,6 +39,23 @@ public class GzipFileProcessorTest {
 	public void setUp() {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
 		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.FALSE);
+	}
+
+	@Test(expected = FileProcessorException.class)
+	public void testExceptionBehaviours() throws IOException {
+		final SequenceFile sf = constructSequenceFile();
+
+		// compress the file, update the sequence file reference
+		Path uncompressed = sf.getFile();
+		Path compressed = Files.createTempFile(null, ".gz");
+		GZIPOutputStream out = new GZIPOutputStream(Files.newOutputStream(compressed));
+		Files.copy(uncompressed, out);
+		out.close();
+		sf.setFile(compressed);
+
+		when(sequenceFileRepository.findOne(any(Long.class))).thenReturn(sf);
+		when(sequenceFileRepository.save(any(SequenceFile.class))).thenThrow(new RuntimeException());
+		fileProcessor.process(1L);
 	}
 
 	@Test
