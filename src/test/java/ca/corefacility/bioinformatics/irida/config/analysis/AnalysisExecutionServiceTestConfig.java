@@ -207,6 +207,7 @@ public class AnalysisExecutionServiceTestConfig {
 	@Bean
 	public DatabaseSetupGalaxyITService analysisExecutionGalaxyITService() {
 		return new DatabaseSetupGalaxyITService(remoteWorkflowRepository, referenceFileRepository, seqeunceFileService,
-				sampleService, analysisExecutionServicePhylogenomics(), analysisSubmissionService, analysisSubmissionRepository);
+				sampleService, analysisExecutionServicePhylogenomics(), analysisExecutionServiceSimplified(),
+				analysisSubmissionService, analysisSubmissionRepository);
 	}
 }
