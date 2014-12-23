@@ -3,12 +3,16 @@ package ca.corefacility.bioinformatics.irida.config.services;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import javax.validation.Validator;
 
+import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -64,8 +68,13 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 		IridaCachingConfig.class, IridaWorkflowsConfig.class })
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.service")
 public class IridaApiServicesConfig {
+	private static final Logger logger = LoggerFactory.getLogger(IridaApiServicesConfig.class);
+
 	@Value("${taxonomy.location}")
 	private ClassPathResource taxonomyFileLocation;
+
+	@Value("${file.processing.decompress}")
+	private Boolean decompressFiles;
 
 	@Bean
 	public MessageSource apiMessageSource() {
@@ -77,8 +86,16 @@ public class IridaApiServicesConfig {
 	@Bean
 	public FileProcessingChain fileProcessorChain(AnalysisRepository analysisRepository,
 			SequenceFileRepository sequenceFileRepository) {
-		return new DefaultFileProcessingChain(sequenceFileRepository, new GzipFileProcessor(sequenceFileRepository),
-				new FastqcFileProcessor(analysisRepository, apiMessageSource(), sequenceFileRepository));
+		final FileProcessor gzipFileProcessor = new GzipFileProcessor(sequenceFileRepository);
+		final FileProcessor fastQcFileProcessor = new FastqcFileProcessor(analysisRepository, apiMessageSource(), sequenceFileRepository);
+		final List<FileProcessor> fileProcessors = Lists.newArrayList(gzipFileProcessor, fastQcFileProcessor);
+
+		if (!decompressFiles) {
+			logger.info("File decompression is disabled [file.processing.decompress=false]");
+			fileProcessors.remove(gzipFileProcessor);
+		}
+
+		return new DefaultFileProcessingChain(sequenceFileRepository, fileProcessors);
 	}
 
 	@Bean(name = "fileProcessingChainExecutor")
