@@ -7,5 +7,6 @@
 
 	<include file="library-description.xml" relativeToChangelogFile="true"/>
 	<include file="replace-analysis-workflows.xml" relativeToChangelogFile="true"/>
+	<include file="sequence-file-pairs.xml" relativeToChangelogFile="true"/>
 	
 </databaseChangeLog>

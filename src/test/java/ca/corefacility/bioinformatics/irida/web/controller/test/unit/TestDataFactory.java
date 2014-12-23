@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
@@ -44,9 +44,9 @@ public final class TestDataFactory {
     }
 
     /**
-     * Construct a simple {@link ca.corefacility.bioinformatics.irida.model.SequenceFile}.
+     * Construct a simple {@link ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile}.
      *
-     * @return a {@link ca.corefacility.bioinformatics.irida.model.SequenceFile} with identifier.
+     * @return a {@link ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile} with identifier.
      */
     public static SequenceFile constructSequenceFile() throws IOException {
         Path f = Files.createTempFile(null, null);

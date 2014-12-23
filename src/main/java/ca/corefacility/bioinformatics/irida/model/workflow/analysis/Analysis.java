@@ -29,7 +29,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.envers.Audited;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
  * An analysis object for storing results of an analysis execution.
