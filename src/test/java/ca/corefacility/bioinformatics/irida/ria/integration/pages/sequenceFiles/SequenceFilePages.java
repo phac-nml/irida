@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  */
 public class SequenceFilePages extends AbstractPage {
 	public static final String RELATIVE_URL = "sequenceFiles/1/summary";
+	public static final String RELATIVE_URL_NO_DATA = "sequenceFiles/2/summary";
 	public static final String OVERREPRESENTED_URL = "sequenceFiles/1/overrepresented";
 	private static final Logger logger = LoggerFactory.getLogger(SequenceFilePages.class);
 
@@ -22,6 +23,12 @@ public class SequenceFilePages extends AbstractPage {
 	public void goToDetailsPage() {
 		logger.debug("Going to Sequence File Dashboard Page.");
 		get(driver, RELATIVE_URL);
+		waitForTime(700);
+	}
+
+	public void goToDetailsPageWithNoData() {
+		logger.debug("Going to Sequence File Dashboard Page for file with no fastQC data.");
+		get(driver, RELATIVE_URL_NO_DATA);
 		waitForTime(700);
 	}
 
@@ -68,6 +75,18 @@ public class SequenceFilePages extends AbstractPage {
 
 	public String getGCContent() {
 		return driver.findElement(By.id("gcContent")).getText();
+	}
+
+	public boolean isFastQCLinksVisible() {
+		return driver.findElements(By.id("fastQC-details-nav")).size() > 0;
+	}
+
+	public boolean isFastQCDetailsVisisble() {
+		return driver.findElements(By.id("fastQC-details")).size() > 0;
+	}
+
+	public boolean isFastQCNoRunWarningDisplayed() {
+		return driver.findElements(By.id("fastQC-no-run")).size() > 0;
 	}
 
 	//***********************************************************************************************
