@@ -74,31 +74,6 @@ public class AnalysisSubmissionServiceImplIT {
 		analysisSubmissionService.getStateForAnalysisSubmission(20l);
 	}
 
-	/**
-	 * Tests successfully setting the state for an analysis submission.
-	 */
-	@Test
-	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testSetStateForAnalysisSubmissionSuccess() {
-		AnalysisSubmission submission = analysisSubmissionService.read(1l);
-		assertEquals(AnalysisState.SUBMITTING, submission.getAnalysisState());
-
-		analysisSubmissionService.setStateForAnalysisSubmission(1l,
-				AnalysisState.RUNNING);
-		submission = analysisSubmissionService.read(1l);
-		assertEquals(AnalysisState.RUNNING, submission.getAnalysisState());
-	}
-
-	/**
-	 * Tests failing to set the state for an analysis submission.
-	 */
-	@Test(expected = EntityNotFoundException.class)
-	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testSetStateForAnalysisSubmissionFailing() {
-		analysisSubmissionService.setStateForAnalysisSubmission(20l,
-				AnalysisState.RUNNING);
-	}
-
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void searchAnalyses() {

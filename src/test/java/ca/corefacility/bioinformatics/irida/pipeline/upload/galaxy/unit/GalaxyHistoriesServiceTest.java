@@ -30,9 +30,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
-import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 
@@ -163,9 +163,9 @@ public class GalaxyHistoriesServiceTest {
 		when(historyDetails.getState()).thenReturn("ok");
 		when(historyDetails.getStateIds()).thenReturn(validStateIds);
 		
-		WorkflowStatus status = galaxyHistory.getStatusForHistory(VALID_HISTORY_ID);
+		GalaxyWorkflowStatus status = galaxyHistory.getStatusForHistory(VALID_HISTORY_ID);
 		
-		assertEquals(WorkflowState.OK, status.getState());
+		assertEquals(GalaxyWorkflowState.OK, status.getState());
 		assertEquals(100.0f, status.getPercentComplete(), delta);
 	}
 	
@@ -184,9 +184,9 @@ public class GalaxyHistoriesServiceTest {
 		when(historyDetails.getState()).thenReturn("running");
 		when(historyDetails.getStateIds()).thenReturn(validStateIds);
 		
-		WorkflowStatus status = galaxyHistory.getStatusForHistory(VALID_HISTORY_ID);
+		GalaxyWorkflowStatus status = galaxyHistory.getStatusForHistory(VALID_HISTORY_ID);
 		
-		assertEquals(WorkflowState.RUNNING, status.getState());
+		assertEquals(GalaxyWorkflowState.RUNNING, status.getState());
 		assertEquals(0.0f, status.getPercentComplete(), delta);
 	}
 	
@@ -205,9 +205,9 @@ public class GalaxyHistoriesServiceTest {
 		when(historyDetails.getState()).thenReturn("running");
 		when(historyDetails.getStateIds()).thenReturn(validStateIds);
 		
-		WorkflowStatus status = galaxyHistory.getStatusForHistory(VALID_HISTORY_ID);
+		GalaxyWorkflowStatus status = galaxyHistory.getStatusForHistory(VALID_HISTORY_ID);
 		
-		assertEquals(WorkflowState.RUNNING, status.getState());
+		assertEquals(GalaxyWorkflowState.RUNNING, status.getState());
 		assertEquals(50.0f, status.getPercentComplete(), delta);
 	}
 	

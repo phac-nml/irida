@@ -36,7 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -66,7 +66,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 
 	@Autowired
-	private AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified;
+	private AnalysisExecutionService analysisExecutionService;
 
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
@@ -89,7 +89,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		Assume.assumeFalse(WindowsPlatformCondition.isWindows());
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
-				analysisExecutionServiceSimplified);
+				analysisExecutionService);
 
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
@@ -286,7 +286,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 			assertEquals(AnalysisState.RUNNING, returnedSubmission.getAnalysisState());
 			
 			// wait until Galaxy finished
-			analysisExecutionGalaxyITService.waitUntilSubmissionCompleteSimplified(returnedSubmission);
+			analysisExecutionGalaxyITService.waitUntilSubmissionComplete(returnedSubmission);
 		}
 
 		// CHECK GALAXY STATUS

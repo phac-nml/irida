@@ -32,17 +32,14 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflowRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsyncSimplified;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxySimplified;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxySimplified;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -81,9 +78,6 @@ public class AnalysisExecutionServiceTestConfig {
 	private SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository;
 
 	@Autowired
-	private RemoteWorkflowRepository remoteWorkflowRepository;
-
-	@Autowired
 	private ReferenceFileRepository referenceFileRepository;
 
 	@Autowired
@@ -100,37 +94,23 @@ public class AnalysisExecutionServiceTestConfig {
 
 	@Lazy
 	@Bean
-	public AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics() {
-		return new AnalysisExecutionServicePhylogenomics(analysisSubmissionService, analysisService,
-				galaxyWorkflowService(), galaxyHistoriesService(), workspaceServicePhylogenomics());
+	public AnalysisExecutionService analysisExecutionService() {
+		return new AnalysisExecutionServiceGalaxy(analysisSubmissionService, galaxyHistoriesService(),
+				analysisExecutionServiceGalaxyAsync());
 	}
 
 	@Lazy
 	@Bean
-	public AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified() {
-		return new AnalysisExecutionServiceGalaxySimplified(analysisSubmissionService, galaxyHistoriesService(),
-				analysisExecutionServiceGalaxyAsyncSimplified());
+	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
+		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
+				galaxyWorkflowService(), analysisWorkspaceService(), iridaWorkflowsService);
 	}
 
 	@Lazy
 	@Bean
-	public AnalysisExecutionServiceGalaxyAsyncSimplified analysisExecutionServiceGalaxyAsyncSimplified() {
-		return new AnalysisExecutionServiceGalaxyAsyncSimplified(analysisSubmissionService, analysisService,
-				galaxyWorkflowService(), analysisWorkspaceServiceSimplified(), iridaWorkflowsService);
-	}
-
-	@Lazy
-	@Bean
-	public AnalysisWorkspaceServiceGalaxySimplified analysisWorkspaceServiceSimplified() {
-		return new AnalysisWorkspaceServiceGalaxySimplified(galaxyHistoriesService(), galaxyWorkflowService(),
+	public AnalysisWorkspaceServiceGalaxy analysisWorkspaceService() {
+		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService(), galaxyWorkflowService(),
 				sampleSequenceFileJoinRepository, sequenceFileRepository, galaxyLibraryBuilder(), iridaWorkflowsService);
-	}
-
-	@Lazy
-	@Bean
-	public WorkspaceServicePhylogenomics workspaceServicePhylogenomics() {
-		return new WorkspaceServicePhylogenomics(galaxyHistoriesService(), galaxyWorkflowService(),
-				sampleSequenceFileJoinRepository, sequenceFileRepository, galaxyLibraryBuilder());
 	}
 
 	@Lazy
@@ -206,8 +186,8 @@ public class AnalysisExecutionServiceTestConfig {
 	@Lazy
 	@Bean
 	public DatabaseSetupGalaxyITService analysisExecutionGalaxyITService() {
-		return new DatabaseSetupGalaxyITService(remoteWorkflowRepository, referenceFileRepository, seqeunceFileService,
-				sampleService, analysisExecutionServicePhylogenomics(), analysisExecutionServiceSimplified(),
+		return new DatabaseSetupGalaxyITService(referenceFileRepository, seqeunceFileService,
+				sampleService, analysisExecutionService(),
 				analysisSubmissionService, analysisSubmissionRepository);
 	}
 }

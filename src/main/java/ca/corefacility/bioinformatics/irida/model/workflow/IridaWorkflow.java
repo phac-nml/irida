@@ -3,6 +3,9 @@ package ca.corefacility.bioinformatics.irida.model.workflow;
 import java.util.Objects;
 import java.util.UUID;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
+
 /**
  * Describes a workflow for IRIDA.
  * 

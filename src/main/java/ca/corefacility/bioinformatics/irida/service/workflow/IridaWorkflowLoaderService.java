@@ -24,9 +24,9 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowDescription;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 
 /**
  * Used to load up IRIDA workflows.
