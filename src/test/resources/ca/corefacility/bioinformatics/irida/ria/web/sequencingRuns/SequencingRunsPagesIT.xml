@@ -10,11 +10,11 @@
 		credentialsNonExpired="true" />
 
 	<sequencing_run id="1" createdDate="2014-07-30 08:24:33"
-		description="A cool run" />
+		description="A cool run" upload_status="COMPLETE" />
 	<miseq_run id="1" workflow="test workflow" />
 
 	<sequencing_run id="2" createdDate="2014-08-30 08:24:33"
-		description="Another cool run" />
+		description="Another cool run" upload_status="COMPLETE" />
 	<miseq_run id="2" workflow="test workflow" />
 
 	<sequence_file id="1" sequencingRun_id="1"
