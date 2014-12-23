@@ -6,6 +6,7 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 	<include file="library-description.xml" relativeToChangelogFile="true"/>
+	<include file="replace-analysis-workflows.xml" relativeToChangelogFile="true"/>
 	<include file="sequence-file-pairs.xml" relativeToChangelogFile="true"/>
 	
 </databaseChangeLog>

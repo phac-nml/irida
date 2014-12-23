@@ -14,8 +14,6 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 
-import com.google.common.collect.ImmutableMap;
-
 /**
  * Implementation of an AnalysisSubmissionService.
  * 
@@ -49,17 +47,5 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		AnalysisSubmission submission = this.read(analysisSubmissionId);
 
 		return submission.getAnalysisState();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setStateForAnalysisSubmission(Long analysisSubmissionId, AnalysisState state)
-			throws EntityNotFoundException {
-		checkNotNull(analysisSubmissionId, "analysisSubmissionId is null");
-		checkNotNull(state, "state is null");
-
-		update(analysisSubmissionId, ImmutableMap.of("analysisState", state));
 	}
 }

@@ -28,16 +28,13 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.ria.components.PipelineSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -71,7 +68,6 @@ public class PipelineController extends BaseController {
 	private SampleService sampleService;
 	private ReferenceFileService referenceFileService;
 	private SequenceFileService sequenceFileService;
-	private RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics;
 	private AnalysisSubmissionService analysisSubmissionService;
 	private MessageSource messageSource;
 
@@ -83,13 +79,11 @@ public class PipelineController extends BaseController {
 	@Autowired
 	public PipelineController(SampleService sampleService, SequenceFileService sequenceFileService,
 			ReferenceFileService referenceFileService,
-			RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics,
 			AnalysisSubmissionService analysisSubmissionService,
 			MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
 		this.referenceFileService = referenceFileService;
-		this.remoteWorkflowServicePhylogenomics = remoteWorkflowServicePhylogenomics;
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.messageSource = messageSource;
 
@@ -176,10 +170,9 @@ public class PipelineController extends BaseController {
 
 	private void startPipeline(Long pipelineId, String name) {
 		// TODO: (14-08-28 - Josh) pipelineId needs to be passed b/c front end does not need to know the details.
-		RemoteWorkflowPhylogenomics workflow = remoteWorkflowServicePhylogenomics.getCurrentWorkflow();
-		AnalysisSubmissionPhylogenomics asp = new AnalysisSubmissionPhylogenomics(name, pipelineSubmission.getSequenceFiles(),
+		AnalysisSubmission asp = new AnalysisSubmission(name, pipelineSubmission.getSequenceFiles(),
 				pipelineSubmission.getReferenceFile(),
-				workflow, UUID.randomUUID());
+				UUID.randomUUID());
 		
 		AnalysisSubmission createdSubmission = analysisSubmissionService.create(asp);
 		logger.debug("Successfully submitted analysis: " + createdSubmission);

@@ -32,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflowRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
@@ -40,9 +39,7 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsyncSimplified;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxySimplified;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxySimplified;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -81,9 +78,6 @@ public class AnalysisExecutionServiceTestConfig {
 	private SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository;
 
 	@Autowired
-	private RemoteWorkflowRepository remoteWorkflowRepository;
-
-	@Autowired
 	private ReferenceFileRepository referenceFileRepository;
 
 	@Autowired
@@ -97,13 +91,6 @@ public class AnalysisExecutionServiceTestConfig {
 
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
-
-	@Lazy
-	@Bean
-	public AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics() {
-		return new AnalysisExecutionServicePhylogenomics(analysisSubmissionService, analysisService,
-				galaxyWorkflowService(), galaxyHistoriesService(), workspaceServicePhylogenomics());
-	}
 
 	@Lazy
 	@Bean
@@ -124,13 +111,6 @@ public class AnalysisExecutionServiceTestConfig {
 	public AnalysisWorkspaceServiceGalaxySimplified analysisWorkspaceServiceSimplified() {
 		return new AnalysisWorkspaceServiceGalaxySimplified(galaxyHistoriesService(), galaxyWorkflowService(),
 				sampleSequenceFileJoinRepository, sequenceFileRepository, galaxyLibraryBuilder(), iridaWorkflowsService);
-	}
-
-	@Lazy
-	@Bean
-	public WorkspaceServicePhylogenomics workspaceServicePhylogenomics() {
-		return new WorkspaceServicePhylogenomics(galaxyHistoriesService(), galaxyWorkflowService(),
-				sampleSequenceFileJoinRepository, sequenceFileRepository, galaxyLibraryBuilder());
 	}
 
 	@Lazy
@@ -206,8 +186,8 @@ public class AnalysisExecutionServiceTestConfig {
 	@Lazy
 	@Bean
 	public DatabaseSetupGalaxyITService analysisExecutionGalaxyITService() {
-		return new DatabaseSetupGalaxyITService(remoteWorkflowRepository, referenceFileRepository, seqeunceFileService,
-				sampleService, analysisExecutionServicePhylogenomics(), analysisExecutionServiceSimplified(),
+		return new DatabaseSetupGalaxyITService(referenceFileRepository, seqeunceFileService,
+				sampleService, analysisExecutionServiceSimplified(),
 				analysisSubmissionService, analysisSubmissionRepository);
 	}
 }

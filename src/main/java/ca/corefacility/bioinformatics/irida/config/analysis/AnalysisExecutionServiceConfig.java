@@ -25,9 +25,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisE
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsyncSimplified;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxySimplified;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxySimplified;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -72,20 +70,6 @@ public class AnalysisExecutionServiceConfig {
 	
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
-
-	/**
-	 * Builds a new AnalysisExecutionServicePhylogenomics which can be used for
-	 * launching phylogenomics analyses.
-	 * 
-	 * @return A AnalysisExecutionServicePhylogenomics for launching
-	 *         phylogenomics analyeses.
-	 */
-	@Lazy
-	@Bean
-	public AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics() {
-		return new AnalysisExecutionServicePhylogenomics(analysisSubmissionService, analysisService,
-				galaxyWorkflowService(), galaxyHistoriesService(), workspaceService());
-	}
 	
 	@Lazy
 	@Bean
@@ -106,16 +90,6 @@ public class AnalysisExecutionServiceConfig {
 	public AnalysisWorkspaceServiceGalaxySimplified analysisWorkspaceServiceSimplified() {
 		return new AnalysisWorkspaceServiceGalaxySimplified(galaxyHistoriesService(), galaxyWorkflowService(),
 				sampleSequenceFileJoinRepository, sequenceFileRepository, galaxyLibraryBuilder(), iridaWorkflowsService);
-	}
-
-	/**
-	 * @return A new WorkspaceService for the phylogenomic pipeline.
-	 */
-	@Lazy
-	@Bean
-	public WorkspaceServicePhylogenomics workspaceService() {
-		return new WorkspaceServicePhylogenomics(galaxyHistoriesService(), galaxyWorkflowService(),
-				sampleSequenceFileJoinRepository, sequenceFileRepository, galaxyLibraryBuilder());
 	}
 
 	/**

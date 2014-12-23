@@ -35,12 +35,10 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxySimplified;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-import ca.corefacility.bioinformatics.irida.service.workflow.galaxy.phylogenomics.impl.RemoteWorkflowServicePhylogenomics;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
@@ -77,9 +75,6 @@ public class WorkspaceServiceGalaxySimplifiedIT {
 
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
-
-	@Autowired
-	private RemoteWorkflowServicePhylogenomics remoteWorkflowServicePhylogenomics;
 
 	private Path sequenceFilePath;
 	private Path referenceFilePath;
@@ -145,10 +140,8 @@ public class WorkspaceServiceGalaxySimplifiedIT {
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
 
-		AnalysisSubmissionPhylogenomics analysisSubmission = analysisExecutionGalaxyITService
-				.setupSubmissionInDatabase(1L, sequenceFilePath, referenceFilePath,
-						remoteWorkflowServicePhylogenomics.getCurrentWorkflow());
-		analysisSubmission.setWorkflowId(validWorkflowId);
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
+				.setupSubmissionInDatabase(1L, sequenceFilePath, referenceFilePath, validWorkflowId);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 

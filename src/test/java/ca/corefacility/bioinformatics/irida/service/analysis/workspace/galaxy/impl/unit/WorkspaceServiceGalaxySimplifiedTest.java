@@ -38,9 +38,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowTestBuilder;
 import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.PreparedWorkflowGalaxy;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
@@ -89,7 +87,6 @@ public class WorkspaceServiceGalaxySimplifiedTest {
 	private Set<SequenceFile> inputFiles;
 	private ReferenceFile referenceFile;
 	private Path refFile;
-	private RemoteWorkflowPhylogenomics remoteWorkflow;
 	private AnalysisSubmission submission;
 	private CollectionResponse collectionResponse;
 	private WorkflowDetails workflowDetails;
@@ -103,10 +100,6 @@ public class WorkspaceServiceGalaxySimplifiedTest {
 	private static final String REFERENCE_FILE_LABEL = "reference";
 	private static final String SEQUENCE_FILE_ID = "12";
 	private static final String REFERENCE_FILE_ID = "13";
-
-	private static final String TREE_LABEL = "tree";
-	private static final String MATRIX_LABEL = "snp_matrix";
-	private static final String TABLE_LABEL = "snp_table";
 
 	private Map<Path, String> datasetsMap;
 
@@ -175,13 +168,7 @@ public class WorkspaceServiceGalaxySimplifiedTest {
 		inputFiles = new HashSet<>();
 		inputFiles.addAll(Arrays.asList(sFileA, sFileB, sFileC));
 
-		String workflowChecksum = "1";
-
-		remoteWorkflow = new RemoteWorkflowPhylogenomics(WORKFLOW_ID, workflowChecksum, SEQUENCE_FILE_LABEL,
-				REFERENCE_FILE_LABEL, TREE_LABEL, MATRIX_LABEL, TABLE_LABEL);
-
-		submission = new AnalysisSubmissionPhylogenomics("my analysis", inputFiles, referenceFile, remoteWorkflow,
-				workflowId);
+		submission = new AnalysisSubmission("my analysis", inputFiles, referenceFile, workflowId);
 
 		workflowHistory = new History();
 		workflowHistory.setId(HISTORY_ID);
