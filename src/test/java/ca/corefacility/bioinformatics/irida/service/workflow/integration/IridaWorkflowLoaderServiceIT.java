@@ -35,13 +35,13 @@ import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultit
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowDescription;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowStructure;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowInput;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowOutput;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowTool;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowTool;
+import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;

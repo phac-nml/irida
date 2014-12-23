@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model.workflow;
+package ca.corefacility.bioinformatics.irida.model.workflow.description;
 
 import java.net.URL;
 import java.util.Objects;

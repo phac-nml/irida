@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model.workflow;
+package ca.corefacility.bioinformatics.irida.model.workflow.structure;
 
 import java.nio.file.Path;
 import java.util.Objects;
