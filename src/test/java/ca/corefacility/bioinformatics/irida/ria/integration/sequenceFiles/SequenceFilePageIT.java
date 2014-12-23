@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.sequenceFiles;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
@@ -37,8 +38,8 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/sequenceFiles/SequenceFileView.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class SequenceFileIT {
-	private static final Logger logger = LoggerFactory.getLogger(SequenceFileIT.class);
+public class SequenceFilePageIT {
+	private static final Logger logger = LoggerFactory.getLogger(SequenceFilePageIT.class);
 	/*
 	 * FILE ATTRIBUTES
 	 */
@@ -65,6 +66,9 @@ public class SequenceFileIT {
 	public void testSequenceFileDetailsPage() {
 		logger.debug("Testing the Sequence File Details / Chart Page");
 		page.goToDetailsPage();
+		assertTrue(page.isFastQCLinksVisible());
+		assertTrue(page.isFastQCDetailsVisisble());
+		assertFalse(page.isFastQCNoRunWarningDisplayed());
 		testPageChrome();
 		assertEquals("Should display three charts", 3, page.getChartCount());
 	}
@@ -79,6 +83,15 @@ public class SequenceFileIT {
 				page.getOverrepresentedSequencePercentage().contains("%"));
 		assertEquals("Should display the count", "1", page.getOverrepresentedSequenceCount());
 		assertEquals("Should display the source", "No Hit", page.getOverrepresentedSequenceSource());
+	}
+
+	@Test
+	public void testNoFastQCData() {
+		page.goToDetailsPageWithNoData();
+		assertEquals("sequenceFile2", page.getPageTitle());
+		assertFalse(page.isFastQCLinksVisible());
+		assertFalse(page.isFastQCDetailsVisisble());
+		assertTrue(page.isFastQCNoRunWarningDisplayed());
 	}
 
 	private void testPageChrome() {
