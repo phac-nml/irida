@@ -76,6 +76,20 @@
       clear        : clear
     });
   }
+  
+  function CartService ($http, notifications, storage) {
+    "use strict";
+    var svc = this,
+      urls = {
+        add: TL.BASE_URL + "car/" + project.id + "/samples"
+      };
+
+    svc.add = function () {
+      $http.post(urls.add, storage.getKeys());
+    };
+
+    return svc;
+  }
 
   /*[- */
 // Responsible for all server calls for samples
@@ -85,7 +99,7 @@
   function SamplesService($rootScope, storage, R, notifications, filter) {
     "use strict";
     var svc = this,
-        id = angular.element("#projectId").val(),
+        id = project.id,
         base = R.all('projects/' + id + '/ajax/samples'),
         selected = [],
         filtered = [];
@@ -684,6 +698,7 @@
     .factory('FilterFactory', [FilterFactory])
     .service('StorageService', ['$sessionStorage', StorageService])
     .service('Select2Service', ['$timeout', Select2Service])
+    .service('CartService', ['$http', 'notifications', 'storage', CartService])
     .service('SamplesService', ['$rootScope', 'StorageService', 'Restangular', 'notifications', 'FilterFactory', SamplesService])
     .filter('PagingFilter', ['$rootScope', 'FilterFactory', 'SamplesService', PagingFilter])
     .directive('sortBy', [sortBy])

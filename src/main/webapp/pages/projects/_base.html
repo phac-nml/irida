@@ -62,7 +62,11 @@
 </div>
 
 <th:block layout:fragment="page-scripts">
-	<input th:if="${project != null}" type="hidden" id="projectId" th:value="${project.getId()}"/>
+	<script th:inline="javascript">
+		var project = {
+			id: /*[[${project.getId()}]]*/ 1
+		};
+	</script>
 	<script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}"
 	        src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
 	<script th:src="@{/resources/bower_components/qtip2/jquery.qtip.min.js}"
