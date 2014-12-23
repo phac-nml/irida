@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencingru
 
 import javax.xml.bind.annotation.XmlElement;
 
-import ca.corefacility.bioinformatics.irida.model.enums.UploadStatus;
+import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.IdentifiableResource;
 
@@ -28,11 +28,11 @@ public abstract class SequencingRunResource extends IdentifiableResource<Sequenc
 		resource.setDescription(description);
 	}
 
-	public UploadStatus getUploadStatus() {
+	public SequencingRunUploadStatus getUploadStatus() {
 		return resource.getUploadStatus();
 	}
 
-	public void setUploadStatus(UploadStatus uploadStatus) {
+	public void setUploadStatus(SequencingRunUploadStatus uploadStatus) {
 		resource.setUploadStatus(uploadStatus);
 	}
 

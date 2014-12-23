@@ -3,18 +3,18 @@ package ca.corefacility.bioinformatics.irida.model.enums;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 
 /**
- * Encodes the status of an uploaded resource.
+ * Encodes the status of an uploaded {@link SequencingRun}.
  * 
  * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * @see SequencingRun
  *
  */
-public enum UploadStatus {
+public enum SequencingRunUploadStatus {
 	UPLOADING("UPLOADING"), ERROR("ERROR"), COMPLETE("COMPLETE");
 
 	private String code;
 
-	private UploadStatus(String code) {
+	private SequencingRunUploadStatus(String code) {
 		this.code = code;
 	}
 
@@ -23,7 +23,7 @@ public enum UploadStatus {
 		return code;
 	}
 
-	public static UploadStatus fromString(String code) {
+	public static SequencingRunUploadStatus fromString(String code) {
 		switch (code.toUpperCase()) {
 		case "UPLOADING":
 			return UPLOADING;

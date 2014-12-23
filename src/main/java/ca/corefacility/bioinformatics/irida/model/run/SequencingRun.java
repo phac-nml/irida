@@ -29,7 +29,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.enums.UploadStatus;
+import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 @Entity
@@ -60,10 +60,10 @@ public abstract class SequencingRun implements IridaThing, Comparable<Sequencing
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "upload_status")
-	private UploadStatus uploadStatus;
+	private SequencingRunUploadStatus uploadStatus;
 
 	public SequencingRun() {
-		uploadStatus = UploadStatus.UPLOADING;
+		uploadStatus = SequencingRunUploadStatus.UPLOADING;
 		createdDate = new Date();
 	}
 
@@ -134,11 +134,11 @@ public abstract class SequencingRun implements IridaThing, Comparable<Sequencing
 		return false;
 	}
 
-	public void setUploadStatus(UploadStatus uploadStatus) {
+	public void setUploadStatus(SequencingRunUploadStatus uploadStatus) {
 		this.uploadStatus = uploadStatus;
 	}
 
-	public UploadStatus getUploadStatus() {
+	public SequencingRunUploadStatus getUploadStatus() {
 		return uploadStatus;
 	}
 
