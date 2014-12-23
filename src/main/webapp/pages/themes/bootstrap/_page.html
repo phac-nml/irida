@@ -144,11 +144,11 @@
 						</ul>
 					</li>
 				</ul>
-				<button type="button" class="btn btn-info btn-sm navbar-btn navbar-right"
+				<button id="cart-show-btn" type="button" class="btn btn-info btn-sm navbar-btn navbar-right"
 				        ng-click="cart.show=!cart.show">
 					<span th:text="#{cart.label}"></span>
 					&nbsp;
-					<span class="badge badge-default" ng-bind="cart.projects.length">0</span>
+					<span id="cart-count" class="badge badge-default" ng-bind="cart.count">0</span>
 				</button>
 			</div>
 			<!-- /.navbar-collapse -->

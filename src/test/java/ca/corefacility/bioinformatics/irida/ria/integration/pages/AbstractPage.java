@@ -108,4 +108,21 @@ public class AbstractPage {
 		driver.manage().timeouts().implicitlyWait(TestUtilities.DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
 		return exists;
 	}
+
+	// Cart is available on all pages.
+	public int getCartCount() {
+		return Integer.parseInt(driver.findElement(By.id("cart-count")).getText());
+	}
+
+	public void showCart() {
+		driver.findElement(By.id("cart-show-btn")).click();
+	}
+
+	public boolean isCartVisible() {
+		return driver.findElements(By.className("cart-open")).size() > 0;
+	}
+
+	public int getCartProjectCount() {
+		return driver.findElements(By.cssSelector("#cart-project-list > li")).size();
+	}
 }

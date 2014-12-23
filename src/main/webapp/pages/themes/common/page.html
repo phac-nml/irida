@@ -17,23 +17,37 @@
 </head>
 <body vocab="http://schema.org/" typeof="WebPage" id="ng-app" ng-app="irida">
 <div toaster-container=""></div>
-<div style="height: 100%;" ng-controller="cartController as cart">
+<div style="height: 100%;">
 	<div style="height: 100%;" class="st-container" ng-class="{'cart-open':cart.show}">
 		<div class="st-content">
 			<div class="st-content-inner" layout:fragment="main-section"> </div>
 		</div>
-		<aside class="cart">
-			<section ng-hide="cart.projects.length">
-				<p class="lead" th:text="#{cart.empty-text}"></p>
-				<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close</button>
-			</section>
-			<section ng-show="cart.projects.length">
-				<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close</button>
-				<button class="btn btn-primary pull-right" th:text="#{cart.btn.run}">Run Pipeline</button>
-			</section>
-		</aside>
+		<cart></cart>
 	</div>
 </div>
+
+<script type="text/ng-template" id="/cart.html">
+	<aside class="cart">
+		<section ng-hide="cart.projects.length">
+			<p class="lead" th:text="#{cart.empty-text}"></p>
+			<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close</button>
+		</section>
+		<section ng-show="cart.projects.length > 0">
+			<ul id="cart-project-list" class="list-group">
+				<li class="list-group-item" ng-repeat="p in cart.projects" ng-init="cart.collapsed[p.id]=true" ng-click="cart.collapsed[p.id] = !cart.collapsed[p.id]">
+					<span class="fa fa-fw" ng-class="cart.collapsed[p.id] ? 'fa-caret-right' : 'fa-caret-down'"></span>
+					{{ p.label }}
+					<span class="badge pull-right">{{ p.samples.length }}</span>
+					<ul collapse="cart.collapsed[p.id]">
+						<li ng-repeat="s in p.samples">{{ s.label }}</li>
+					</ul>
+				</li>
+			</ul>
+			<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close</button>
+			<button class="btn btn-primary pull-right" th:text="#{cart.btn.run}">Run Pipeline</button>
+		</section>
+	</aside>
+</script>
 
 <script type="text/ng-template" id="/session-modal.html">
 	<div>

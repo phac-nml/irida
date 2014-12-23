@@ -76,20 +76,6 @@
       clear        : clear
     });
   }
-  
-  function CartService ($http, notifications, storage) {
-    "use strict";
-    var svc = this,
-      urls = {
-        add: TL.BASE_URL + "car/" + project.id + "/samples"
-      };
-
-    svc.add = function () {
-      $http.post(urls.add, storage.getKeys());
-    };
-
-    return svc;
-  }
 
   /*[- */
 // Responsible for all server calls for samples
@@ -693,12 +679,20 @@
     };
   }
 
-  angular.module('Samples', ['cgBusy', 'ngStorage'])
+  function CartController (cart, storage) {
+    "use strict";
+    var vm = this;
+
+    vm.add = function () {
+      cart.add(project.id, storage.getKeys())
+    };
+  }
+
+  angular.module('Samples', ['cgBusy', 'ngStorage', 'irida.cart'])
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
     .service('StorageService', ['$sessionStorage', StorageService])
     .service('Select2Service', ['$timeout', Select2Service])
-    .service('CartService', ['$http', 'notifications', 'storage', CartService])
     .service('SamplesService', ['$rootScope', 'StorageService', 'Restangular', 'notifications', 'FilterFactory', SamplesService])
     .filter('PagingFilter', ['$rootScope', 'FilterFactory', 'SamplesService', PagingFilter])
     .directive('sortBy', [sortBy])
@@ -713,5 +707,6 @@
     .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
     .controller('FilterCtrl', ['$scope', 'FilterFactory', FilterCtrl])
     .controller('GalaxyCtrl', ['$timeout', '$modalInstance', 'SamplesService', GalaxyCtrl])
+    .controller('CartController', ['CartService', 'StorageService', CartController])
   ;
 })(angular, $, _);
