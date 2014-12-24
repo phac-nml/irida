@@ -79,7 +79,7 @@ public abstract class Analysis implements IridaThing {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@MapKeyColumn(name = "analysis_output_file_key", nullable = false)
 	@Column(name = "analysis_output_file_value", nullable = false)
-	@CollectionTable(name = "analysis_output_files", joinColumns = @JoinColumn(name = "analysis_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
+	@CollectionTable(name = "analysis_output_file_map", joinColumns = @JoinColumn(name = "analysis_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
 			"analysis_id", "analysis_output_file_key" }, name = "UK_ANALYSIS_OUTPUT_FILE_KEY"))
 	private Map<String, AnalysisOutputFile> analysisOutputFilesMap;
 
@@ -105,6 +105,7 @@ public abstract class Analysis implements IridaThing {
 		this();
 		this.inputFiles = inputFiles;
 		this.executionManagerAnalysisId = executionManagerAnalysisId;
+		this.analysisOutputFilesMap = analysisOutputFilesMap;
 	}
 
 	/**

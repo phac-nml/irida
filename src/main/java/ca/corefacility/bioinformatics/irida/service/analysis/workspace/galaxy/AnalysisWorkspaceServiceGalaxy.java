@@ -57,6 +57,8 @@ import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 /**
  * A service for performing tasks for analysis in Galaxy.
@@ -353,23 +355,23 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			inputFiles.add(sequenceFileRepository.findOne(sf.getId()));
 		}
 
-		AnalysisPhylogenomicsPipeline results = new AnalysisPhylogenomicsPipeline(inputFiles, analysisId);
-
 		Map<String, IridaWorkflowOutput> outputsMap = iridaWorkflow.getWorkflowDescription().getOutputsMap();
 
 		Dataset treeOutput = galaxyHistoriesService.getDatasetForFileInHistory(outputsMap.get("tree").getFileName(),
 				analysisId);
+		AnalysisOutputFile treeAnalysisOutput = buildOutputFile(analysisId, treeOutput, outputDirectory);
 
 		Dataset matrixOutput = galaxyHistoriesService.getDatasetForFileInHistory(
 				outputsMap.get("matrix").getFileName(), analysisId);
+		AnalysisOutputFile matrixAnalysisOutput = buildOutputFile(analysisId, matrixOutput, outputDirectory);
 
 		Dataset tableOutput = galaxyHistoriesService.getDatasetForFileInHistory(outputsMap.get("table").getFileName(),
 				analysisId);
+		AnalysisOutputFile tableAnalysisOutput = buildOutputFile(analysisId, tableOutput, outputDirectory);
 
-		results.setPhylogeneticTree(buildOutputFile(analysisId, treeOutput, outputDirectory));
-		results.setSnpMatrix(buildOutputFile(analysisId, matrixOutput, outputDirectory));
-		results.setSnpTable(buildOutputFile(analysisId, tableOutput, outputDirectory));
+		Map<String, AnalysisOutputFile> analysisOutputFiles = Maps.newHashMap(ImmutableMap.of("tree", treeAnalysisOutput, "matrix",
+				matrixAnalysisOutput, "table", tableAnalysisOutput));
 
-		return results;
+		return new AnalysisPhylogenomicsPipeline(inputFiles, analysisId, analysisOutputFiles);
 	}
 }
