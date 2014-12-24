@@ -33,10 +33,12 @@ public class GzipFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(GzipFileProcessor.class);
 	private static final String GZIP_EXTENSION = ".gz";
 
-	private SequenceFileRepository sequenceFileRepository;
+	private final SequenceFileRepository sequenceFileRepository;
+	private final Boolean removeCompressedFile;
 
-	public GzipFileProcessor(SequenceFileRepository sequenceFileService) {
+	public GzipFileProcessor(final SequenceFileRepository sequenceFileService, final Boolean removeCompressedFile) {
 		this.sequenceFileRepository = sequenceFileService;
+		this.removeCompressedFile = removeCompressedFile;
 	}
 
 	/**
@@ -71,6 +73,17 @@ public class GzipFileProcessor implements FileProcessor {
 
 					sequenceFile.setFile(target);
 					sequenceFile = sequenceFileRepository.save(sequenceFile);
+
+					if (removeCompressedFile) {
+						logger.debug("Removing original compressed files [file.processing.decompress.remove.compressed.file=true]");
+						try {
+							Files.delete(file);
+						} catch (final Exception e) {
+							logger.error("Failed to remove the original compressed file.", e);
+							// throw the exception again to be caught by the outer try/catch block:
+							throw e;
+						}
+					}
 				}
 			}
 		} catch (Exception e) {

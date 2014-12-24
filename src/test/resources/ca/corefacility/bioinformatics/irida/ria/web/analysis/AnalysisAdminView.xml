@@ -14,7 +14,7 @@
                     project_id="1" sample_id="1"/>
 
     <sequencing_run id="1" createdDate="2013-07-18 14:20:19.0"
-                    modifiedDate="2013-07-18 14:20:19.0" description="info"/>
+                    modifiedDate="2013-07-18 14:20:19.0" description="info" upload_status="COMPLETE" />
 
     <miseq_run id="1" application="a" assay="a" chemistry="a"
                experimentName="a" investigatorName="a" projectName="a" workflow="a"/>
