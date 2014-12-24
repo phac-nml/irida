@@ -85,7 +85,7 @@
   function SamplesService($rootScope, storage, R, notifications, filter) {
     "use strict";
     var svc = this,
-        id = angular.element("#projectId").val(),
+        id = project.id,
         base = R.all('projects/' + id + '/ajax/samples'),
         selected = [],
         filtered = [];
@@ -679,7 +679,16 @@
     };
   }
 
-  angular.module('Samples', ['cgBusy', 'ngStorage'])
+  function CartController (cart, storage) {
+    "use strict";
+    var vm = this;
+
+    vm.add = function () {
+      cart.add(project.id, storage.getKeys())
+    };
+  }
+
+  angular.module('Samples', ['cgBusy', 'ngStorage', 'irida.cart'])
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
     .service('StorageService', ['$sessionStorage', StorageService])
@@ -698,5 +707,6 @@
     .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
     .controller('FilterCtrl', ['$scope', 'FilterFactory', FilterCtrl])
     .controller('GalaxyCtrl', ['$timeout', '$modalInstance', 'SamplesService', GalaxyCtrl])
+    .controller('CartController', ['CartService', 'StorageService', CartController])
   ;
 })(angular, $, _);

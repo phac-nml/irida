@@ -3,9 +3,8 @@
   function ProjectFileService($rootScope, R) {
     "use strict";
     var svc = this,
-        id = angular.element("#projectId").val(),
-        base = R.all('projects/' + id + '/ajax/reference');
-    svc.files = [];
+        base = R.all('projects/' + project.id + '/ajax/reference');
+      svc.files = [];
 
     svc.getFiles = function getFiles() {
       return base.customGET("all").then(function (data) {
@@ -28,7 +27,6 @@
   function FileService($rootScope, $modal, R, notifications) {
     "use strict";
     var svc = this,
-        projectId = angular.element("#projectId").val(),
         api = R.all('referenceFiles');
 
     svc.download = function (id) {
@@ -52,7 +50,7 @@
       modalInstance.result.then(function () {
         api.customPOST({
           fileId   : file.id,
-          projectId: projectId
+          projectId: project.id
         }, "delete").then(function (data) {
           notifications.show({msg: data.msg, type: data.result});
           $rootScope.$broadcast("FILE_DELETED", {id: file.id});
@@ -63,14 +61,13 @@
 
   function FileUploadService($rootScope, $upload, notifications) {
     "use strict";
-    var svc = this,
-        projectId = $rootScope.projectId;
+    var svc = this;
 
     svc.uploadFiles = function ($files) {
       // TODO: add a check to see if this file has already been upload and give a warning if it has.
       _.each($files, function (file) {
         $upload.upload({
-          url : TL.BASE_URL + "referenceFiles/project/" + projectId + "/new",
+          url: TL.BASE_URL + "referenceFiles/project/" + project.id + "/new",
           file: file
         }).success(function (data) {
           if (data.error) {

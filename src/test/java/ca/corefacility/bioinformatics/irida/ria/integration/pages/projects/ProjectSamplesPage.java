@@ -276,4 +276,10 @@ public class ProjectSamplesPage extends AbstractPage {
 			}
 		}
 	}
+
+	// Cart
+	public void addSamplesToGlobalCart() {
+		driver.findElement(By.id("cart-add-btn")).click();
+		waitForTime(500);
+	}
 }
