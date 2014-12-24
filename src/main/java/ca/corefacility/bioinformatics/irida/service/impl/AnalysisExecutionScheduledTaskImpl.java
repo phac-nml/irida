@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
@@ -161,7 +162,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	
 				try {
 					submissions.add(analysisExecutionService.transferAnalysisResults(analysisSubmission));
-				} catch (ExecutionManagerException | IridaWorkflowNotFoundException | IOException e) {
+				} catch (ExecutionManagerException | IridaWorkflowNotFoundException | IOException | IridaWorkflowAnalysisTypeException e) {
 					logger.error("Error transferring submission " + analysisSubmission, e);
 				}
 			}

@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
@@ -86,12 +87,12 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * {@inheritDoc} 
 	 */
 	@Override
 	@Transactional
 	public Future<AnalysisSubmission> transferAnalysisResults(AnalysisSubmission submittedAnalysis)
-			throws ExecutionManagerException, IOException, IridaWorkflowNotFoundException {
+			throws ExecutionManagerException, IOException, IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException {
 		checkArgument(AnalysisState.FINISHED_RUNNING.equals(submittedAnalysis.getAnalysisState()),
 				" analysis should be " + AnalysisState.FINISHED_RUNNING);
 

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -169,10 +170,13 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 * @throws IOException
 	 *             If there was an error loading the analysis results from an
 	 *             execution manager.
+	 * @throws IridaWorkflowAnalysisTypeException
+	 *             If there was an issue building an {@link Analysis} object.
 	 */
 	@Transactional
 	public Future<AnalysisSubmission> transferAnalysisResults(AnalysisSubmission submittedAnalysis)
-			throws ExecutionManagerException, IOException, IridaWorkflowNotFoundException {
+			throws ExecutionManagerException, IOException, IridaWorkflowNotFoundException,
+			IridaWorkflowAnalysisTypeException {
 		checkNotNull(submittedAnalysis, "submittedAnalysis is null");
 		checkNotNull(submittedAnalysis.getRemoteAnalysisId(), "remoteAnalysisId is null");
 		if (!analysisSubmissionService.exists(submittedAnalysis.getId())) {
