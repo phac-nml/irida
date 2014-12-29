@@ -112,10 +112,13 @@ public class AnalysisExecutionServiceGalaxyIT {
 	private Path expectedSnpMatrix;
 	private Path expectedSnpTable;
 	private Path expectedTree;
+	private Path expectedOutputFile1;
+	private Path expectedOutputFile2;
 
 	private UUID validIridaWorkflowId;
 	private UUID invalidIridaWorkflowId = UUID.fromString("8ec369e8-1b39-4b9a-97a1-70ac1f6cc9e6");
 	private UUID iridaPhylogenomicsWorkflowId;
+	private UUID iridaTestAnalysisWorkflowId = UUID.fromString("c5f29cb2-1b68-4d34-9b93-609266af7551");
 	private UUID iridaWorkflowIdInvalidWorkflowFile = UUID.fromString("d54f1780-e6c9-472a-92dd-63520ec85967");
 
 	/**
@@ -133,6 +136,12 @@ public class AnalysisExecutionServiceGalaxyIT {
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
 		Path referenceFilePathReal = Paths.get(DatabaseSetupGalaxyITService.class.getResource("testReference.fasta")
 				.toURI());
+		
+		expectedOutputFile1 = Paths
+				.get(DatabaseSetupGalaxyITService.class.getResource("output1.txt").toURI());
+		
+		expectedOutputFile2 = Paths
+				.get(DatabaseSetupGalaxyITService.class.getResource("output2.txt").toURI());
 
 		sequenceFilePath = Files.createTempFile("testData1", ".fastq");
 		Files.delete(sequenceFilePath);
@@ -453,6 +462,84 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals(analysisResultsPhylogenomics.getSnpMatrix().getFile(), savedPhylogenomics.getSnpMatrix().getFile());
 		assertEquals(analysisResultsPhylogenomics.getSnpTable().getFile(), savedPhylogenomics.getSnpTable().getFile());
 		assertEquals(analysisResultsPhylogenomics.getInputSequenceFiles(), savedPhylogenomics.getInputSequenceFiles());
+	}
+	
+	/**
+	 * Tests out getting analysis results successfully.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testTransferAnalysisResultsSuccessTestAnalysis() throws Exception {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowId);
+		SequenceFile sequenceFile = analysisSubmission.getInputFiles().iterator().next();
+
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+
+		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
+				.executeAnalysis(analysisSubmitted);
+		AnalysisSubmission analysisExecuted = analysisExecutionFuture.get();
+
+		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
+
+		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
+		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
+				.transferAnalysisResults(analysisExecuted);
+		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
+		assertEquals(1,
+				analysisRepository.findAnalysesForSequenceFile(sequenceFile, TestAnalysis.class)
+						.size());
+		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
+				.getId());
+		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState());
+		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompleted.getAnalysisState());
+
+		Analysis analysisResults = analysisSubmissionCompleted.getAnalysis();
+		Analysis analysisResultsDatabase = analysisSubmissionCompletedDatabase.getAnalysis();
+		assertEquals("analysis results in returned submission and from database should be the same",
+				analysisResults.getId(), analysisResultsDatabase.getId());
+
+		assertEquals(TestAnalysis.class, analysisResults.getClass());
+		TestAnalysis analysisResultsTest = (TestAnalysis) analysisResults;
+
+		String analysisId = analysisExecuted.getRemoteAnalysisId();
+		assertEquals("id should be set properly for analysis", analysisId,
+				analysisResultsTest.getExecutionManagerAnalysisId());
+
+		assertEquals("inputFiles should be the same for submission and results", analysisExecuted.getInputFiles(),
+				analysisResultsTest.getInputSequenceFiles());
+
+		assertEquals(2, analysisResultsTest.getAnalysisOutputFiles().size());
+		AnalysisOutputFile output1 = analysisResultsTest.getOutputFile1();
+		AnalysisOutputFile output2 = analysisResultsTest.getOutputFile2();
+
+		assertTrue("output files 1 should be equal",
+				com.google.common.io.Files.equal(expectedOutputFile1.toFile(), output1.getFile().toFile()));
+		assertEquals(expectedOutputFile1.getFileName(), output1.getFile().getFileName());
+
+		assertTrue("output files 2 should be equal",
+				com.google.common.io.Files.equal(expectedOutputFile2.toFile(), output2.getFile().toFile()));
+		assertEquals(expectedOutputFile2.getFileName(), output2.getFile().getFileName());
+
+		AnalysisSubmission finalSubmission = analysisSubmissionRepository.findOne(analysisExecuted.getId());
+		Analysis analysis = finalSubmission.getAnalysis();
+		assertNotNull(analysis);
+
+		Analysis savedAnalysisFromDatabase = analysisService.read(analysisResultsTest.getId());
+		assertTrue(savedAnalysisFromDatabase instanceof TestAnalysis);
+		TestAnalysis savedTest = (TestAnalysis) savedAnalysisFromDatabase;
+
+		assertEquals("Analysis from submission and from database should be the same",
+				savedAnalysisFromDatabase.getId(), analysis.getId());
+
+		assertEquals(analysisResultsTest.getId(), savedTest.getId());
+		assertEquals(analysisResultsTest.getOutputFile1().getFile(), savedTest
+				.getOutputFile1().getFile());
+		assertEquals(analysisResultsTest.getOutputFile2().getFile(), savedTest.getOutputFile2().getFile());
 	}
 
 	/**

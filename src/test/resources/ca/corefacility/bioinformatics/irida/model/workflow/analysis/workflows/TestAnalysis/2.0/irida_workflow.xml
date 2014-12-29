@@ -8,8 +8,8 @@
   <email>developer@example.com</email>
   <analysis_class>ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis</analysis_class>
   <inputs>
-    <sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
     <reference>reference</reference>
+    <sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
   </inputs>
   <outputs>
     <output name="output1" fileName="output1.txt"></output>

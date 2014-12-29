@@ -59,7 +59,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 /**
@@ -359,28 +358,23 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 
 		Map<String, IridaWorkflowOutput> outputsMap = iridaWorkflow.getWorkflowDescription().getOutputsMap();
 
-		Dataset treeOutput = galaxyHistoriesService.getDatasetForFileInHistory(outputsMap.get("tree").getFileName(),
-				analysisId);
-		AnalysisOutputFile treeAnalysisOutput = buildOutputFile(analysisId, treeOutput, outputDirectory);
+		Map<String, AnalysisOutputFile> analysisOutputFiles = Maps.newHashMap();
+		for (String analysisOutputName : outputsMap.keySet()) {
+			String outputFileName = outputsMap.get(analysisOutputName).getFileName();
+			Dataset outputDataset = galaxyHistoriesService.getDatasetForFileInHistory(outputFileName, analysisId);
+			AnalysisOutputFile analysisOutput = buildOutputFile(analysisId, outputDataset, outputDirectory);
 
-		Dataset matrixOutput = galaxyHistoriesService.getDatasetForFileInHistory(
-				outputsMap.get("matrix").getFileName(), analysisId);
-		AnalysisOutputFile matrixAnalysisOutput = buildOutputFile(analysisId, matrixOutput, outputDirectory);
+			analysisOutputFiles.put(analysisOutputName, analysisOutput);
+		}
 
-		Dataset tableOutput = galaxyHistoriesService.getDatasetForFileInHistory(outputsMap.get("table").getFileName(),
-				analysisId);
-		AnalysisOutputFile tableAnalysisOutput = buildOutputFile(analysisId, tableOutput, outputDirectory);
-
-		Map<String, AnalysisOutputFile> analysisOutputFiles = Maps.newHashMap(ImmutableMap.of("tree", treeAnalysisOutput, "matrix",
-				matrixAnalysisOutput, "table", tableAnalysisOutput));
-
-			Class<? extends Analysis> analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisClass();
-			try {
-				Constructor<? extends Analysis> analysisConstructor = analysisType.getConstructor(Set.class, String.class, Map.class);
-				return analysisConstructor.newInstance(inputFiles, analysisId, analysisOutputFiles);
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-				throw new IridaWorkflowAnalysisTypeException("Error building Analysis object of type " + analysisType, e);
-			}
+		Class<? extends Analysis> analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisClass();
+		try {
+			Constructor<? extends Analysis> analysisConstructor = analysisType.getConstructor(Set.class, String.class,
+					Map.class);
+			return analysisConstructor.newInstance(inputFiles, analysisId, analysisOutputFiles);
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			throw new IridaWorkflowAnalysisTypeException("Error building Analysis object of type " + analysisType, e);
+		}
 	}
 }
