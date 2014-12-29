@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class LoginController extends BaseController {
 	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 	private static final String LOGIN_PAGE = "login";
-	// This is set in the resources/configuration.properties file.
 
 	@RequestMapping(value = "/")
 	public String showSplash() {
