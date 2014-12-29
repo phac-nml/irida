@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+  <id>63038f49-9f2c-4850-9de3-deb9eaf57512</id>
+  <name>TestWorkflow</name>
+  <version>2.0</version>
+  <author>Mr. Developer</author>
+  <email>developer@example.com</email>
+  <analysis_class>ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis</analysis_class>
+  <inputs>
+    <reference>reference</reference>
+    <sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
+  </inputs>
+  <outputs>
+    <output name="output1" fileName="output1.txt"></output>
+    <output name="output2" fileName="output2.txt"></output>
+    <output name="output3" fileName="output3-missing.txt"></output>
+  </outputs>
+  <tools>
+    <tool>
+      <name>sam_to_bam</name>
+      <id>toolshed.g2.bx.psu.edu/repos/devteam/sam_to_bam/sam_to_bam/1.1.4</id>
+      <version>1.1.4</version>
+      <owner>devteam</owner>
+      <url>http://toolshed.g2.bx.psu.edu/</url>
+      <revision>8176b2575aa1</revision>
+    </tool>
+  </tools>
+</iridaWorkflow>
