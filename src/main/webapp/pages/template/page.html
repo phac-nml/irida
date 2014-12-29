@@ -18,21 +18,25 @@
 </head>
 <body>
 <th:block layout:fragment="content">
-	<nav th:replace="template/bootstrap :: #topnav"></nav>
-	<div ng-controller="BreadcrumbController as breadcrumb" class="breadcrumbs">
-		<div class="container ng-cloak">
-			<ol>
-				<li ng-repeat="crumb in breadcrumb.crumbs">
-					<a href="{{ crumb.url }}">{{ crumb.text }}</a>
-				</li>
-			</ol>
-		</div>
-	</div>
-	<th:block layout:fragment="subnav"></th:block>
 	<div style="height: 100%;">
-		<div style="height: 100%;" class="st-container container" ng-class="{'cart-open':cart.show}">
+		<div style="height: 100%;" class="st-container" ng-class="{'cart-open':cart.show}">
 			<div class="st-content">
-				<div class="st-content-inner" layout:fragment="page"></div>
+				<div class="st-content-inner">
+					<nav th:replace="template/bootstrap :: #topnav"></nav>
+					<div ng-controller="BreadcrumbController as breadcrumb" class="breadcrumbs">
+						<div class="container ng-cloak">
+							<ol>
+								<li ng-repeat="crumb in breadcrumb.crumbs">
+									<a href="{{ crumb.url }}">{{ crumb.text }}</a>
+								</li>
+							</ol>
+						</div>
+					</div>
+					<th:block layout:fragment="subnav"></th:block>
+					<div class="container">
+						<div class="row" layout:fragment="page"></div>
+					</div>
+				</div>
 			</div>
 			<cart></cart>
 		</div>
