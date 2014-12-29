@@ -97,10 +97,10 @@
 
 <th:block th:inline="javascript" layout:fragment="page-scripts">
     <iframe id="invisible" style="display:none;"></iframe>
-    <script th:src="@{/resources/wet-theme/js/deps/jquery.magnific-popup.min.js}"
-            src="/resources/wet-theme/js/deps/jquery.magnific-popup.min.js"></script>
-    <script th:src="@{/resources/wet-theme/js/deps/jquery.dataTables.min.js}"
-            src="/resources/wet-theme/js/deps/jquery.dataTables.min.js"></script>
+	<script src="/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js"
+	        th:src="@{/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js}"></script>
+	<script src="/resources/bower_components/magnific-popup/dist/jquery.magnific-popup.min.js"
+	        th:src="@{/resources/bower_components/magnific-popup/dist/jquery.magnific-popup.min.js}"></script>
     <script>
         $("#fileDownload").on('click', function () {
             var iframe = document.getElementById('invisible');
