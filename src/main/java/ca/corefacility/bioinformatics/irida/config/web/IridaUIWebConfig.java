@@ -4,12 +4,9 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import nz.net.ultraq.thymeleaf.LayoutDialect;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -40,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.ria.config.WebEmailConfig;
 
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 import com.google.common.collect.ImmutableMap;
+import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 /**
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
@@ -60,9 +58,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	private static final Logger logger = LoggerFactory.getLogger(IridaUIWebConfig.class);
 	public static final long MAX_UPLOAD_SIZE = 20971520L; // 20MB
 	public static final int MAX_IN_MEMORY_SIZE = 1048576; // 1MB
-
-	// This is set in the resources/configuration.properties file.
-	protected @Value("${ui.theme}") String theme;
 
 	@Autowired
 	private Environment env;
@@ -152,7 +147,7 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
 		viewResolver.setTemplateEngine(templateEngine());
 		viewResolver.setOrder(1);
-		viewResolver.setStaticVariables(ImmutableMap.of("themePath", "themes/" + theme + "/"));
+		viewResolver.setStaticVariables(ImmutableMap.of("themePath", "themes/bootstrap/"));
 		// DO NOT try to handle REST API calls.
 		viewResolver.setOrder(Ordered.LOWEST_PRECEDENCE);
 		return viewResolver;
