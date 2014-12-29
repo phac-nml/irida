@@ -2,7 +2,7 @@
     "a_galaxy_workflow": "true", 
     "annotation": "", 
     "format-version": "0.1", 
-    "name": "TestWorkflow1", 
+    "name": "TestAnalysis", 
     "steps": {
         "0": {
             "annotation": "", 
@@ -17,8 +17,8 @@
             "name": "Input dataset collection", 
             "outputs": [], 
             "position": {
-                "left": 620.5, 
-                "top": 372.5
+                "left": 200, 
+                "top": 200
             }, 
             "tool_errors": null, 
             "tool_id": null, 
@@ -40,8 +40,8 @@
             "name": "Input dataset", 
             "outputs": [], 
             "position": {
-                "left": 634.5, 
-                "top": 469.5
+                "left": 200, 
+                "top": 285
             }, 
             "tool_errors": null, 
             "tool_id": null, 
@@ -80,10 +80,25 @@
                 }
             ], 
             "position": {
-                "left": 847.5, 
-                "top": 406.5
+                "left": 462, 
+                "top": 200
             }, 
-            "post_job_actions": {}, 
+            "post_job_actions": {
+                "RenameDatasetActioncsv": {
+                    "action_arguments": {
+                        "newname": "output1.txt"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "csv"
+                }, 
+                "RenameDatasetActionoutput_tree": {
+                    "action_arguments": {
+                        "newname": "output2.txt"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "output_tree"
+                }
+            }, 
             "tool_errors": null, 
             "tool_id": "core_pipeline_outputs", 
             "tool_state": "{\"__page__\": 0, \"fasta\": \"null\", \"sequence_reads\": \"null\", \"__rerun_remap_job_id__\": null}", 
