@@ -57,6 +57,7 @@ import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
+import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
@@ -590,7 +591,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * 
 	 * @throws Throwable
 	 */
-	@Test(expected = NullPointerException.class)
+	@Test(expected = GalaxyResponseException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testTransferAnalysisResultsFailInvalidRemoteAnalysisId() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
