@@ -48,6 +48,7 @@ public class ProjectsNewPage extends AbstractPage {
 		WebElement nameField = driver.findElement(By.name("name"));
 		nameField.sendKeys(name);
 		nameField.sendKeys(Keys.TAB);
+		waitForTime(520);
 	}
 
 	public boolean isErrorNameRequiredDisplayed() {
@@ -80,5 +81,6 @@ public class ProjectsNewPage extends AbstractPage {
 		urlField.clear();
 		urlField.sendKeys(url);
 		urlField.sendKeys(Keys.TAB);
+		waitForTime(520);
 	}
 }
