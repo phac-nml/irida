@@ -49,11 +49,6 @@ public class IridaWorkflowsService {
 	private Map<AnalysisType, UUID> defaultWorkflowForAnalysis;
 
 	/**
-	 * Stores map of workflow names to types.
-	 */
-	private Map<String, AnalysisType> workflowNamesMap;
-
-	/**
 	 * Builds a new {@link IridaWorkflowService} for loading up installed
 	 * workflows.
 	 * 
@@ -75,7 +70,6 @@ public class IridaWorkflowsService {
 		allRegisteredWorkflows = new HashMap<>();
 		registeredWorkflowsForAnalysis = new HashMap<>();
 		defaultWorkflowForAnalysis = new HashMap<>();
-		workflowNamesMap = new HashMap<>();
 
 		registerWorkflows(iridaWorkflows.getIridaWorkflows());
 		setDefaultWorkflows(defaultIridaWorkflows.getIridaWorkflowIds());
@@ -155,7 +149,6 @@ public class IridaWorkflowsService {
 
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
 		UUID workflowId = iridaWorkflow.getWorkflowDescription().getId();
-		String workflowName = iridaWorkflow.getWorkflowDescription().getName();
 
 		logger.debug("Registering workflow: " + iridaWorkflow);
 		if (allRegisteredWorkflows.containsKey(workflowId)) {
@@ -163,13 +156,6 @@ public class IridaWorkflowsService {
 		} else {
 			allRegisteredWorkflows.put(workflowId, iridaWorkflow);
 			addWorkflowForAnalysis(analysisType, workflowId);
-			addWorkflowNameToAnalysis(workflowName, analysisType);
-		}
-	}
-
-	private void addWorkflowNameToAnalysis(String workflowName, AnalysisType analysisType) {
-		if (!workflowNamesMap.containsKey(workflowName)) {
-			workflowNamesMap.put(workflowName, analysisType);
 		}
 	}
 
