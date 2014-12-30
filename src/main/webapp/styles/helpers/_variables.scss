@@ -1,11 +1,34 @@
-$color-primary: rgba(37, 114, 180, 1.0);
-$color-success: #5cb85c;
-$color-info: #5bc0de;
-$color-warning: #f0ad4e;
-$color-danger: #d9534f;
+$irida-rem-base: 16px;
+
+// COLOURS
+$irida-colour-primary: #00558b !default;
+$color-primary: $irida-colour-primary;
+
+$irida-colour-secondary: #f1f1f1 !default;
+
+$irida-colour-alert: #F04124 !default;
+$color-danger: $irida-colour-alert;
+
+$irida-colour-info: #A0D3E8 !default;
+$color-info: $irida-colour-info;
+
+$irida-colour-success: #43AC6A !default;
+$color-success: $irida-colour-success;
+
+$irida-colour-warning: #F08A24 !default;
+$color-warning: $irida-colour-warning;
+
+$irida-colour-dark: #232323 !default;
+
+$irida-colour-grey: #dfdfdf !default;
+$color-grey: $irida-colour-grey;
+
+$irida-colour-grey-light: lighten($irida-colour-grey, 8) !default;
+$color-grey-light: $irida-colour-grey-light;
+
+$irida-colour-grey-dark: darken($irida-colour-grey, 8) !default;
+$color-grey-darker: $irida-colour-grey-dark;
+
 $color-grey-lighter: lighten(#000, 93.5);
-$color-grey-light: lighten(#000, 47.6);
-$color-grey: lighten(#000, 33.5);
 $color-grey-dark: lighten(#000, 20);
-$color-grey-darker: lighten(#000, 13.5);
 $color-text: $color-grey-dark;
