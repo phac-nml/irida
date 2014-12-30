@@ -277,4 +277,56 @@ public class IridaWorkflowsServiceIT {
 		Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsByName("TestWorkflow");
 		assertEquals(2, workflows.size());
 	}
+	
+	/**
+	 * Tests getting all workflow types.
+	 * 
+	 * @throws IridaWorkflowException
+	 */
+	@Test
+	public void testGetAllWorkflowTypes() throws IridaWorkflowException {
+		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
+		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
+		iridaWorkflowsService.registerWorkflow(testWorkflow2);
+
+		Set<String> workflowTypes = iridaWorkflowsService.getAllWorkflowTypes();
+		assertEquals(Sets.newHashSet("testAnalysis", "testAnalysis2"), workflowTypes);
+	}
+	
+	/**
+	 * Tests getting all workflow types when no workflows are installed.
+	 * 
+	 * @throws IridaWorkflowException
+	 */
+	@Test
+	public void testGetAllWorkflowTypesNoWorkflows() throws IridaWorkflowException {
+		Set<String> workflowTypes = iridaWorkflowsService.getAllWorkflowTypes();
+		assertEquals(Sets.newHashSet(), workflowTypes);
+	}
+	
+	/**
+	 * Tests getting all workflow names.
+	 * 
+	 * @throws IridaWorkflowException
+	 */
+	@Test
+	public void testGetAllWorkflowNames() throws IridaWorkflowException {
+		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
+		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
+		iridaWorkflowsService.registerWorkflow(testWorkflow2);
+
+		Set<String> workflowTypes = iridaWorkflowsService.getAllWorkflowNames();
+		assertEquals(Sets.newHashSet("TestWorkflow", "TestWorkflow2"), workflowTypes);
+	}
+	
+	/**
+	 * Tests getting all workflow names when no workflows are installed.
+	 * 
+	 * @throws IridaWorkflowException
+	 */
+	@Test
+	public void testGetAllWorkflowNamesNoWorkflows() throws IridaWorkflowException {
+		Set<String> workflowTypes = iridaWorkflowsService.getAllWorkflowNames();
+		assertEquals(Sets.newHashSet(), workflowTypes);
+	}
 }

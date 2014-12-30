@@ -278,6 +278,21 @@ public class IridaWorkflowsService {
 
 		return names;
 	}
+	
+	/**
+	 * Gets a list of all the types of all installed workflows.
+	 * 
+	 * @return A list of all the types of all installed workflows.
+	 */
+	public Set<String> getAllWorkflowTypes() {
+		Set<String> types = new HashSet<>();
+
+		for (IridaWorkflow workflow : getInstalledWorkflows()) {
+			types.add(workflow.getWorkflowDescription().getAnalysisType());
+		}
+
+		return types;
+	}
 
 	/**
 	 * Returns a workflow with the given id.
