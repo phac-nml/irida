@@ -51,7 +51,8 @@ public class IridaWorkflowsTestConfig {
 
 	@Bean
 	public IridaWorkflowIdSet defaultIridaWorkflows() {
-		return new IridaWorkflowIdSet(Sets.newHashSet(testAnalysisDefaultId,
-				phylogenomicsPipelineDefaultId));
+//		return new IridaWorkflowIdSet(Sets.newHashSet(testAnalysisDefaultId,
+//				phylogenomicsPipelineDefaultId));
+		return new IridaWorkflowIdSet(Sets.newHashSet());
 	}
 }

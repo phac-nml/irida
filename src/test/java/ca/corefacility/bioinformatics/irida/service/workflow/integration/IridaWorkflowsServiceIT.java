@@ -32,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis2;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
@@ -121,7 +120,7 @@ public class IridaWorkflowsServiceIT {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
 		iridaWorkflowsService.setDefaultWorkflow(workflowId1v1);
-		assertEquals(testWorkflow1v1, iridaWorkflowsService.getDefaultWorkflow(TestAnalysis.class));
+		assertEquals(testWorkflow1v1, iridaWorkflowsService.getDefaultWorkflowByType("testAnalysis"));
 	}
 
 	/**
@@ -133,7 +132,7 @@ public class IridaWorkflowsServiceIT {
 	@Test(expected = IridaWorkflowNotFoundException.class)
 	public void testGetDefaultWorkflowFail() throws IridaWorkflowException {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
-		iridaWorkflowsService.getDefaultWorkflow(TestAnalysis.class);
+		iridaWorkflowsService.getDefaultWorkflowByType("testAnalysis");
 	}
 
 	/**
@@ -144,7 +143,7 @@ public class IridaWorkflowsServiceIT {
 	 */
 	@Test(expected = IridaWorkflowNotFoundException.class)
 	public void testGetDefaultWorkflowFailNoType() throws IridaWorkflowException {
-		iridaWorkflowsService.getDefaultWorkflow(TestAnalysis.class);
+		iridaWorkflowsService.getDefaultWorkflowByType("testAnalysis");
 	}
 
 	/**
@@ -171,8 +170,8 @@ public class IridaWorkflowsServiceIT {
 		iridaWorkflowsService.registerWorkflows(Sets.newHashSet(testWorkflow1v1, testWorkflow2));
 		iridaWorkflowsService.setDefaultWorkflows(Sets.newHashSet(workflowId1v1, workflowId2));
 
-		assertEquals(testWorkflow1v1, iridaWorkflowsService.getDefaultWorkflow(TestAnalysis.class));
-		assertEquals(testWorkflow2, iridaWorkflowsService.getDefaultWorkflow(TestAnalysis2.class));
+		assertEquals(testWorkflow1v1, iridaWorkflowsService.getDefaultWorkflowByType("testAnalysis"));
+		assertEquals(testWorkflow2, iridaWorkflowsService.getDefaultWorkflowByType("testAnalysis2"));
 	}
 
 	/**
@@ -244,10 +243,10 @@ public class IridaWorkflowsServiceIT {
 		iridaWorkflowsService.setDefaultWorkflow(workflowId1v1);
 		iridaWorkflowsService.setDefaultWorkflow(workflowId2);
 
-		IridaWorkflow defaultWorkflow = iridaWorkflowsService.getDefaultWorkflow("TestWorkflow");
+		IridaWorkflow defaultWorkflow = iridaWorkflowsService.getDefaultWorkflowByName("TestWorkflow");
 		assertEquals(testWorkflow1v1, defaultWorkflow);
 
-		IridaWorkflow defaultWorkflow2 = iridaWorkflowsService.getDefaultWorkflow("TestWorkflow2");
+		IridaWorkflow defaultWorkflow2 = iridaWorkflowsService.getDefaultWorkflowByName("TestWorkflow2");
 		assertEquals(testWorkflow2, defaultWorkflow2);
 	}
 
@@ -261,7 +260,7 @@ public class IridaWorkflowsServiceIT {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
 
-		Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsByClass(TestAnalysis.class);
+		Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsByType("testAnalysis");
 		assertEquals(2, workflows.size());
 	}
 
