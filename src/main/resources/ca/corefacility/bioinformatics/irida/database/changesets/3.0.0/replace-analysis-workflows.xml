@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="update-analysis-workflows" author="apetkau">
+
+		<dropForeignKeyConstraint baseTableName="analysis_submission_phylogenomics_AUD"
+			constraintName="FK_ANALYSIS_SUBMISSION_PHYLOGENOMICS_REVISION" />
+		<dropTable tableName="analysis_submission_phylogenomics_AUD"
+			cascadeConstraints="true" />
+		<dropForeignKeyConstraint baseTableName="analysis_submission_phylogenomics"
+			constraintName="FK_ANALYSIS_SUBMISSION_PHYLOGENOMICS_ID" />
+		<dropTable tableName="analysis_submission_phylogenomics"
+			cascadeConstraints="true" />
+
+		<dropForeignKeyConstraint baseTableName="analysis_submission_galaxy_AUD"
+			constraintName="FK_ANALYSIS_SUBMISSION_GALAXY_REVISION" />
+		<dropTable tableName="analysis_submission_galaxy_AUD"
+			cascadeConstraints="true" />
+		<dropForeignKeyConstraint baseTableName="analysis_submission_galaxy"
+			constraintName="FK_ANALYSIS_SUBMISSION_GALAXY_ID" />
+		<dropForeignKeyConstraint baseTableName="analysis_submission_galaxy"
+			constraintName="FK_ANALYSIS_SUBMISSION_REMOTE_WORKFLOW_ID" />
+		<dropTable tableName="analysis_submission_galaxy"
+			cascadeConstraints="true" />
+
+		<dropForeignKeyConstraint baseTableName="remote_workflow_phylogenomics"
+			constraintName="FK_REMOTE_WORKFLOW_ID" />
+		<dropTable tableName="remote_workflow_phylogenomics"
+			cascadeConstraints="true" />
+
+		<dropForeignKeyConstraint baseTableName="remote_workflow_AUD"
+			constraintName="FK_REMOTE_WORKFLOW_REVISION" />
+		<dropTable tableName="remote_workflow_AUD"
+			cascadeConstraints="true" />
+		<dropTable tableName="remote_workflow" cascadeConstraints="true" />
+
+	</changeSet>
+</databaseChangeLog>

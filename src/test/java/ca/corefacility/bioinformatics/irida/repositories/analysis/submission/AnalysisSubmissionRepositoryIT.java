@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.repositories.analysis.submission;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -30,12 +29,9 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-import ca.corefacility.bioinformatics.irida.repositories.workflow.RemoteWorkflowRepository;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -58,9 +54,6 @@ public class AnalysisSubmissionRepositoryIT {
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 
 	@Autowired
-	private RemoteWorkflowRepository remoteWorkflowRepository;
-
-	@Autowired
 	private ReferenceFileRepository referenceFileRepository;
 
 	@Autowired
@@ -68,8 +61,8 @@ public class AnalysisSubmissionRepositoryIT {
 	
 	private UUID workflowId = UUID.randomUUID();
 
-	private AnalysisSubmissionPhylogenomics analysisSubmission;
-	private AnalysisSubmissionPhylogenomics analysisSubmission2;
+	private AnalysisSubmission analysisSubmission;
+	private AnalysisSubmission analysisSubmission2;
 	private static final String analysisId = "10";
 	private static final String analysisId2 = "11";
 	private final String analysisName = "analysis 1";
@@ -92,55 +85,16 @@ public class AnalysisSubmissionRepositoryIT {
 		
 		ReferenceFile referenceFile = referenceFileRepository.findOne(1L);
 		assertNotNull(referenceFile);
-		RemoteWorkflowPhylogenomics remoteWorkflow = remoteWorkflowRepository
-				.getByType("1", RemoteWorkflowPhylogenomics.class);
-		assertNotNull(remoteWorkflow);
 
-		analysisSubmission = new AnalysisSubmissionPhylogenomics(analysisName, sequenceFiles,
-				referenceFile, remoteWorkflow, workflowId);
+		analysisSubmission = new AnalysisSubmission(analysisName, sequenceFiles,
+				referenceFile, workflowId);
 		analysisSubmission.setRemoteAnalysisId(analysisId);
 		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTING);
 		
-		analysisSubmission2 = new AnalysisSubmissionPhylogenomics(analysisName2, sequenceFiles2,
-				referenceFile, remoteWorkflow, workflowId);
+		analysisSubmission2 = new AnalysisSubmission(analysisName2, sequenceFiles2,
+				referenceFile, workflowId);
 		analysisSubmission2.setRemoteAnalysisId(analysisId2);
 		analysisSubmission2.setAnalysisState(AnalysisState.SUBMITTING);
-	}
-
-	/**
-	 * Tests saving an analysis submission.
-	 */
-	@Test
-	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testSaveAnalysisSubmission() {
-		AnalysisSubmissionPhylogenomics savedSubmission = analysisSubmissionRepository
-				.save(analysisSubmission);
-
-		AnalysisSubmissionPhylogenomics loadedSubmission = analysisSubmissionRepository
-				.getByType(savedSubmission.getId(),
-						AnalysisSubmissionPhylogenomics.class);
-
-		assertEquals(analysisSubmission.getRemoteAnalysisId(),
-				loadedSubmission.getRemoteAnalysisId());
-		assertEquals(analysisSubmission.getRemoteWorkflow(),
-				loadedSubmission.getRemoteWorkflow());
-		assertEquals(analysisSubmission.getInputFiles(),
-				loadedSubmission.getInputFiles());
-		assertEquals(analysisSubmission.getReferenceFile(),
-				loadedSubmission.getReferenceFile());
-		assertEquals(analysisSubmission.getAnalysisState(),
-				loadedSubmission.getAnalysisState());
-	}
-
-	/**
-	 * Tests failing to get an analysis submission
-	 */
-	@Test
-	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetAnalysisSubmissionFail() {
-		AnalysisSubmissionPhylogenomics savedSubmission = analysisSubmissionRepository
-				.getByType(999L, AnalysisSubmissionPhylogenomics.class);
-		assertNull(savedSubmission);
 	}
 
 	/**

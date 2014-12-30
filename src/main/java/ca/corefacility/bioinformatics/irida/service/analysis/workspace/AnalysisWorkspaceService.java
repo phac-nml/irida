@@ -1,48 +1,65 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.model.workflow.PreparedWorkflow;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
  * Defines a service used to perform the tasks for execution of a workflow.
+ * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
- *
- * @param <S>  The AnalysisSubmission to handle.
- * @param <P>  The PreparedWorkflow to generate.
- * @param <A>  The Analysis object to return as a result.
  */
-public interface AnalysisWorkspaceService<S extends AnalysisSubmission, P extends PreparedWorkflow<?>, A extends Analysis> {
-	
+public interface AnalysisWorkspaceService {
+
 	/**
-	 * Prepares the workspace for an analysis given an analysis submission.
-	 * @param analysisSubmission  The submission used to perform an analysis.
-	 * @return  A String identifiying the analysis workspace.
-	 * @throws ExecutionManagerException If there was an issue preparing the workflow workspace.
+	 * Prepares the workspace for an analysis given an analysis submission. This
+	 * provides a remote location where files can be stored for analysis
+	 * (creates a Galaxy History).
+	 * 
+	 * @param analysisSubmission
+	 *            The submission used to perform an analysis.
+	 * @return A String identifying the analysis workspace.
+	 * @throws ExecutionManagerException
+	 *             If there was an issue preparing the workflow workspace.
 	 */
-	public String prepareAnalysisWorkspace(S analysisSubmission) throws ExecutionManagerException;
-	
+	public String prepareAnalysisWorkspace(AnalysisSubmission analysisSubmission) throws ExecutionManagerException;
+
 	/**
-	 * Prepares the files for a workflow for an analysis given an analysis submission.
-	 * @param analysisSubmission  The submission used to perform an analysis.
-	 * @return  A PreparedWorkflow which can be submitted.
-	 * @throws ExecutionManagerException If there was an issue preparing the workflow workspace.
+	 * Uploads and prepares the files and other necessary data structures of a
+	 * workflow for an analysis given an analysis submission.
+	 * 
+	 * @param analysisSubmission
+	 *            The submission used to perform an analysis.
+	 * @return A PreparedWorkflow which can be submitted.
+	 * @throws ExecutionManagerException
+	 *             If there was an issue preparing the workflow workspace.
+	 * @throws IridaWorkflowNotFoundException
+	 *             If the workflow passed to this analysis submission could not
+	 *             be found.
 	 */
-	public P prepareAnalysisFiles(S analysisSubmission) throws ExecutionManagerException;
-	
+	public PreparedWorkflowGalaxy prepareAnalysisFiles(AnalysisSubmission analysisSubmission)
+			throws ExecutionManagerException, IridaWorkflowNotFoundException;
+
 	/**
-	 * Gets an Analysis object containing the results for this analysis.  This object is not persisted
-	 *  in the database.
-	 * @param analysisSubmission  The submission to get the results for.
-	 * @param outputDirectory A directory to store output files downloaded from this analysis.
-	 * @return  An Analysis object containing the results.
-	 * @throws ExecutionManagerException  If there was an error getting the results.
-	 * @throws IOException  If there was an error when loading the results of an analysis from Galaxy 
-	 *  to a local file.
+	 * Gets an Analysis object containing the results for this analysis. This
+	 * object is not persisted in the database.
+	 * 
+	 * @param analysisSubmission
+	 *            The submission to get the results for.
+	 * @return An Analysis object containing the results.
+	 * @throws ExecutionManagerException
+	 *             If there was an error getting the results.
+	 * @throws IridaWorkflowNotFoundException
+	 *             If the workflow passed to this analysis submission could not
+	 *             be found.
+	 * @throws IOException
+	 *             If there was an error when loading the results of an analysis
+	 *             from Galaxy to a local file.
 	 */
-	public A getAnalysisResults(S analysisSubmission, Path outputDirectory) throws ExecutionManagerException, IOException;
+	public Analysis getAnalysisResults(AnalysisSubmission analysisSubmission)
+			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException;
 }

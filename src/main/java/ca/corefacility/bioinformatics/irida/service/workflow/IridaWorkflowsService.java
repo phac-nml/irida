@@ -18,9 +18,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowDefaultExcep
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowIdSet;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
+import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
 
 /**
  * Class used to load up installed workflows in IRIDA.

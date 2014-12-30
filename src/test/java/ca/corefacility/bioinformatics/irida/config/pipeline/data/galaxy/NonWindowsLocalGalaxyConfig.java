@@ -75,6 +75,11 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	private final static String GALAXY_USE_LOCAL_DATABASE = "local";
 	
 	/**
+	 * A property which stores information about a Galaxy database to connect to for testing purposes.
+	 */
+	private final static String GALAXY_DATABASE_CONNECTION_PROPERTY = "test.galaxy.database.connection";
+	
+	/**
 	 * Boolean to determine of Galaxy was successfully built the very first time.
 	 */
 	private boolean galaxyFailedToBuild = false;
@@ -173,6 +178,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 				String branchName = getGalaxyRepositoryBranch(GALAXY_BRANCH_PROPERTY);
 				String revisionHash = getGalaxyRevision(GALAXY_REVISION_PROPERTY);
 				Optional<URL> databaseURL = getGalaxyDatabaseURL(GALAXY_DATABASE_PROPERTY);
+				Optional<String> databaseConnectionString = getGalaxyDatabaseConnectionString(GALAXY_DATABASE_CONNECTION_PROPERTY);
 		
 				String randomPassword = UUID.randomUUID().toString();
 		
@@ -197,7 +203,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 				BootStrapper bootStrapper = downloadGalaxy(localGalaxy, repositoryURL, branchName, revisionHash);
 				localGalaxy.setBootStrapper(bootStrapper);
 		
-				GalaxyProperties galaxyProperties = setupGalaxyProperties(localGalaxy,revisionHash,databaseURL);
+				GalaxyProperties galaxyProperties = setupGalaxyProperties(localGalaxy,revisionHash,databaseURL, databaseConnectionString);
 				localGalaxy.setGalaxyProperties(galaxyProperties);
 		
 				buildGalaxyUsers(galaxyData, localGalaxy);
@@ -241,6 +247,20 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		}
 	}
 	
+	/**
+	 * Gets a database connection string for Galaxy.
+	 * @param galaxyDatabaseConnectionProperty  The system property for the database connection string.
+	 * @return  A database connection string for Galaxy.
+	 */
+	private Optional<String> getGalaxyDatabaseConnectionString(String galaxyDatabaseConnectionProperty) {
+		String databaseConnectionString = System.getProperty(galaxyDatabaseConnectionProperty);
+		if (databaseConnectionString == null) {
+			return Optional.absent();
+		} else {
+			return Optional.of(databaseConnectionString);
+		}
+	}
+
 	/**
 	 * Builds configuration files for extra tools in Galaxy to test.
 	 * @param galaxyRoot  The root directory to Galaxy.
@@ -385,22 +405,34 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	 * @param localGalaxy  The object describing the local running instance of Galaxy.
 	 * @param revisionHash  The mercurial revision hash of the Galaxy version to download.
 	 * @param databaseURL An (optional) URL to a pre-populated database for Galaxy.
+	 * @param databaseConnectionString An {@Optional} value giving the location to use for a Galaxy database.
 	 * @return  A GalaxyProperties object defining properties of the running instance of Galaxy.
 	 * @throws MalformedURLException  If there was an issue constructing the Galaxy URL.
 	 */
-	private GalaxyProperties setupGalaxyProperties(LocalGalaxy localGalaxy, String revisionHash, Optional<URL> databaseURL)
+	private GalaxyProperties setupGalaxyProperties(LocalGalaxy localGalaxy, String revisionHash, Optional<URL> databaseURL, Optional<String> databaseConnectionString)
 			throws MalformedURLException {
 		GalaxyProperties galaxyProperties = new GalaxyProperties()
 				.assignFreePort().configureNestedShedTools();
 		
-		if (DownloadProperties.LATEST_REVISION.equals(revisionHash)) {
-			galaxyProperties.prepopulateSqliteDatabase();
-			logger.debug("Using latest revision of Galaxy.  Pre-populating with database found within Galaxy bootstrap");
-		} else if (databaseURL.isPresent()) {
-			galaxyProperties.prepopulateSqliteDatabase(databaseURL.get());
-			logger.debug("Database located at " + databaseURL.get() + " has been set to use for Galaxy");
+		if (databaseConnectionString.isPresent()) {
+			logger.info("Setting Galaxy database to system property [" + GALAXY_DATABASE_CONNECTION_PROPERTY + "="
+					+ databaseConnectionString.get() + "]");
+			logger.info("Ignoring any value set in [" + GALAXY_DATABASE_PROPERTY
+					+ "], and proceeding through all database migration steps");
+			galaxyProperties.setAppProperty("database_connection", databaseConnectionString.get());
 		} else {
-			logger.debug("No pre-populated Galaxy database set, will proceed through all database migration steps");
+			logger.info("No Galaxy database connection defined in [" + GALAXY_DATABASE_CONNECTION_PROPERTY
+					+ "], using SQLite database");
+
+			if (DownloadProperties.LATEST_REVISION.equals(revisionHash)) {
+				galaxyProperties.prepopulateSqliteDatabase();
+				logger.debug("Using latest revision of Galaxy.  Pre-populating with database found within Galaxy bootstrap");
+			} else if (databaseURL.isPresent()) {
+				galaxyProperties.prepopulateSqliteDatabase(databaseURL.get());
+				logger.debug("Database located at " + databaseURL.get() + " has been set to use for Galaxy");
+			} else {
+				logger.debug("No pre-populated Galaxy database set, will proceed through all database migration steps");
+			}
 		}
 		
 		galaxyProperties.setAppProperty("allow_library_path_paste", "true");

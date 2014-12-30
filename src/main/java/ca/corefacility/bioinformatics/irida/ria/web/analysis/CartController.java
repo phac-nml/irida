@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -104,9 +105,9 @@ public class CartController {
 	 *            The {@link Sample} id
 	 * @return a map stating success
 	 */
-	@RequestMapping(value = "/project/{projectId}/samples", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/add/samples", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> addProjectSample(@PathVariable Long projectId, @RequestBody Set<Long> sampleIds) {
+	public Map<String, Object> addProjectSample(@RequestParam Long projectId, @RequestParam(value = "sampleIds[]") Set<Long> sampleIds) {
 		Project project = projectService.read(projectId);
 		Set<Sample> samples = loadSamplesForProject(project, sampleIds);
 

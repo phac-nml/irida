@@ -21,16 +21,14 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowState;
-import ca.corefacility.bioinformatics.irida.model.workflow.WorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.model.workflow.galaxy.phylogenomics.RemoteWorkflowPhylogenomics;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.galaxy.phylogenomics.AnalysisSubmissionPhylogenomics;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
 
 /**
@@ -46,10 +44,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	@Mock
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	@Mock
-	private AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified;
-
-	@Mock
-	private RemoteWorkflowPhylogenomics remoteWorkflow;
+	private AnalysisExecutionService analysisExecutionService;
 
 	@Mock
 	private Set<SequenceFile> sequenceFiles;
@@ -62,7 +57,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	private static final String ANALYSIS_ID = "1";
 	private static final Long INTERNAL_ID = 1L;
-	private AnalysisSubmissionPhylogenomics analysisSubmission;
+	private AnalysisSubmission analysisSubmission;
 
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
@@ -76,15 +71,12 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		MockitoAnnotations.initMocks(this);
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
-				analysisExecutionServiceSimplified);
+				analysisExecutionService);
 
-		analysisSubmission = new AnalysisSubmissionPhylogenomics("my analysis", sequenceFiles, referenceFile,
-				remoteWorkflow, workflowId);
+		analysisSubmission = new AnalysisSubmission("my analysis", sequenceFiles, referenceFile,
+				workflowId);
 		analysisSubmission.setId(INTERNAL_ID);
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
-
-		when(analysisSubmissionRepository.getByType(INTERNAL_ID, AnalysisSubmissionPhylogenomics.class)).thenReturn(
-				analysisSubmission);
 	}
 
 	/**
@@ -104,7 +96,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask.prepareAnalyses();
 
-		verify(analysisExecutionServiceSimplified).prepareSubmission(analysisSubmission);
+		verify(analysisExecutionService).prepareSubmission(analysisSubmission);
 	}
 
 	/**
@@ -123,7 +115,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask.prepareAnalyses();
 
-		verify(analysisExecutionServiceSimplified, never()).prepareSubmission(analysisSubmission);
+		verify(analysisExecutionService, never()).prepareSubmission(analysisSubmission);
 	}
 
 	/**
@@ -141,7 +133,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask.executeAnalyses();
 
-		verify(analysisExecutionServiceSimplified).executeAnalysis(analysisSubmission);
+		verify(analysisExecutionService).executeAnalysis(analysisSubmission);
 	}
 
 	/**
@@ -159,7 +151,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask.executeAnalyses();
 
-		verify(analysisExecutionServiceSimplified, never()).executeAnalysis(analysisSubmission);
+		verify(analysisExecutionService, never()).executeAnalysis(analysisSubmission);
 	}
 
 	/**
@@ -176,8 +168,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
-		when(analysisExecutionServiceSimplified.getWorkflowStatus(analysisSubmission)).thenReturn(
-				new WorkflowStatus(WorkflowState.OK, 100.0f));
+		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
+				new GalaxyWorkflowStatus(GalaxyWorkflowState.OK, 100.0f));
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 
@@ -199,8 +191,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
-		when(analysisExecutionServiceSimplified.getWorkflowStatus(analysisSubmission)).thenReturn(
-				new WorkflowStatus(WorkflowState.RUNNING, 50.0f));
+		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
+				new GalaxyWorkflowStatus(GalaxyWorkflowState.RUNNING, 50.0f));
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 
@@ -222,8 +214,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
-		when(analysisExecutionServiceSimplified.getWorkflowStatus(analysisSubmission)).thenReturn(
-				new WorkflowStatus(WorkflowState.ERROR, 50.0f));
+		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
+				new GalaxyWorkflowStatus(GalaxyWorkflowState.ERROR, 50.0f));
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 
@@ -245,8 +237,8 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
-		when(analysisExecutionServiceSimplified.getWorkflowStatus(analysisSubmission)).thenReturn(
-				new WorkflowStatus(WorkflowState.UNKNOWN, 50.0f));
+		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
+				new GalaxyWorkflowStatus(GalaxyWorkflowState.UNKNOWN, 50.0f));
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 
@@ -271,7 +263,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask.transferAnalysesResults();
 
-		verify(analysisExecutionServiceSimplified).transferAnalysisResults(analysisSubmission);
+		verify(analysisExecutionService).transferAnalysisResults(analysisSubmission);
 	}
 
 	/**
@@ -289,6 +281,6 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		analysisExecutionScheduledTask.transferAnalysesResults();
 
-		verify(analysisExecutionServiceSimplified, never()).transferAnalysisResults(analysisSubmission);
+		verify(analysisExecutionService, never()).transferAnalysisResults(analysisSubmission);
 	}
 }

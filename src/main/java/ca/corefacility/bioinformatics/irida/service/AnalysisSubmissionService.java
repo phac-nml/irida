@@ -22,18 +22,4 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *             If the corresponding analysis cannot be found.
 	 */
 	public AnalysisState getStateForAnalysisSubmission(Long analysisSubmissionId) throws EntityNotFoundException;
-
-	/**
-	 * Sets the state for an analysis submission.
-	 * 
-	 * @param analysisSubmissionId
-	 *            The id of the analysis submission.
-	 * @param state
-	 *            The state to set.
-	 * @throws EntityNotFoundException
-	 *             If the analysis submission corresponding to the given id does
-	 *             not exist.
-	 */
-	public void setStateForAnalysisSubmission(Long analysisSubmissionId, AnalysisState state)
-			throws EntityNotFoundException;
 }

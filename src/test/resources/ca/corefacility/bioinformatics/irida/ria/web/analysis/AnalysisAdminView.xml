@@ -19,14 +19,6 @@
     <miseq_run id="1" application="a" assay="a" chemistry="a"
                experimentName="a" investigatorName="a" projectName="a" workflow="a"/>
 
-    <remote_workflow workflowId="1" workflowChecksum="1"
-                     createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"/>
-
-    <remote_workflow_phylogenomics
-            workflowId="1" inputReferenceFileLabel="input_reference"
-            inputSequenceFilesLabel="input_sequences" outputPhylogeneticTreeName="tree.txt"
-            outputSnpTableName="table.tsv" outputSnpMatrixName="matrix.tsv"/>
-
     <reference_file id="1" createdDate="2013-07-18 14:20:19.0"
                     modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file.fasta"
                     fileRevisionNumber="1"/>
@@ -62,20 +54,4 @@
                          name="My Completed Running Submission" analysis_id="1" workflow_id="0x00000000000040008000000000000000"/>
     <analysis_submission id="7" analysis_state="ERROR" created_date="2014-02-06 10:01:02" name="My Really Bad Mistake!"
                          analysis_id="1" workflow_id="0x00000000000040008000000000000000"/>
-
-    <analysis_submission_galaxy id="1" remote_workflow_id="1"/>
-    <analysis_submission_galaxy id="2" remote_workflow_id="1"/>
-    <analysis_submission_galaxy id="3" remote_workflow_id="1"/>
-    <analysis_submission_galaxy id="4" remote_workflow_id="1"/>
-    <analysis_submission_galaxy id="5" remote_workflow_id="1"/>
-    <analysis_submission_galaxy id="6" remote_workflow_id="1"/>
-    <analysis_submission_galaxy id="7" remote_workflow_id="1"/>
-
-    <analysis_submission_phylogenomics id="1"/>
-    <analysis_submission_phylogenomics id="2"/>
-    <analysis_submission_phylogenomics id="3"/>
-    <analysis_submission_phylogenomics id="4"/>
-    <analysis_submission_phylogenomics id="5"/>
-    <analysis_submission_phylogenomics id="6"/>
-    <analysis_submission_phylogenomics id="7"/>
 </dataset>

@@ -479,6 +479,27 @@ public class ProjectSamplesPageIT {
 		assertEquals(10, page.getNumberOfSamplesDisplayed());
 	}
 
+	@Test
+	public void testCart() {
+		LoginPage.loginAsAdmin(driver);
+		page.goToPage();
+
+		assertFalse(page.isCartVisible());
+		assertEquals(0, page.getCartCount());
+		page.showCart();
+		assertTrue(page.isCartVisible());
+
+		selectFirstThreeSamples();
+		page.addSamplesToGlobalCart();
+		assertEquals(3, page.getCartCount());
+		assertEquals(1, page.getCartProjectCount());
+
+		// Ensure that this is persisted across pages.
+		page.goToPage("5");
+		assertEquals(3, page.getCartCount());
+		assertEquals(1, page.getCartProjectCount());
+	}
+
 	private int getSampleFlagCount(String command) {
 		Pattern pattern = Pattern.compile("-s");
 		Matcher matcher = pattern.matcher(command);

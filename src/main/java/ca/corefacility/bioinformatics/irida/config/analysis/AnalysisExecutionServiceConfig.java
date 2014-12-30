@@ -22,12 +22,10 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceAspect;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceSimplified;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsyncSimplified;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxySimplified;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.phylogenomics.impl.AnalysisExecutionServicePhylogenomics;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxySimplified;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.phylogenomics.impl.WorkspaceServicePhylogenomics;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -51,7 +49,7 @@ public class AnalysisExecutionServiceConfig {
 
 	/**
 	 * The order for asynchronous tasks. In particular, defines the order for
-	 * methods in {@link AnalysisExecutionServiceGalaxyAsyncSimplified}.
+	 * methods in {@link AnalysisExecutionServiceGalaxyAsync}.
 	 */
 	public static final int ASYNC_ORDER = AnalysisExecutionServiceAspect.ANALYSIS_EXECUTION_ASPECT_ORDER - 1;
 
@@ -72,50 +70,26 @@ public class AnalysisExecutionServiceConfig {
 	
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
-
-	/**
-	 * Builds a new AnalysisExecutionServicePhylogenomics which can be used for
-	 * launching phylogenomics analyses.
-	 * 
-	 * @return A AnalysisExecutionServicePhylogenomics for launching
-	 *         phylogenomics analyeses.
-	 */
-	@Lazy
-	@Bean
-	public AnalysisExecutionServicePhylogenomics analysisExecutionServicePhylogenomics() {
-		return new AnalysisExecutionServicePhylogenomics(analysisSubmissionService, analysisService,
-				galaxyWorkflowService(), galaxyHistoriesService(), workspaceService());
-	}
 	
 	@Lazy
 	@Bean
-	public AnalysisExecutionServiceSimplified analysisExecutionServiceSimplified() {
-		return new AnalysisExecutionServiceGalaxySimplified(analysisSubmissionService, galaxyHistoriesService(),
-				analysisExecutionServiceGalaxyAsyncSimplified());
+	public AnalysisExecutionService analysisExecutionService() {
+		return new AnalysisExecutionServiceGalaxy(analysisSubmissionService, galaxyHistoriesService(),
+				analysisExecutionServiceGalaxyAsync());
 	}
 
 	@Lazy
 	@Bean
-	public AnalysisExecutionServiceGalaxyAsyncSimplified analysisExecutionServiceGalaxyAsyncSimplified() {
-		return new AnalysisExecutionServiceGalaxyAsyncSimplified(analysisSubmissionService, analysisService,
-				galaxyWorkflowService(), analysisWorkspaceServiceSimplified(), iridaWorkflowsService);
+	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
+		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
+				galaxyWorkflowService(), analysisWorkspaceService(), iridaWorkflowsService);
 	}
 
 	@Lazy
 	@Bean
-	public AnalysisWorkspaceServiceGalaxySimplified analysisWorkspaceServiceSimplified() {
-		return new AnalysisWorkspaceServiceGalaxySimplified(galaxyHistoriesService(), galaxyWorkflowService(),
+	public AnalysisWorkspaceServiceGalaxy analysisWorkspaceService() {
+		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService(), galaxyWorkflowService(),
 				sampleSequenceFileJoinRepository, sequenceFileRepository, galaxyLibraryBuilder(), iridaWorkflowsService);
-	}
-
-	/**
-	 * @return A new WorkspaceService for the phylogenomic pipeline.
-	 */
-	@Lazy
-	@Bean
-	public WorkspaceServicePhylogenomics workspaceService() {
-		return new WorkspaceServicePhylogenomics(galaxyHistoriesService(), galaxyWorkflowService(),
-				sampleSequenceFileJoinRepository, sequenceFileRepository, galaxyLibraryBuilder());
 	}
 
 	/**
