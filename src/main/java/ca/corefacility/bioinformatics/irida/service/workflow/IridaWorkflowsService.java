@@ -282,11 +282,11 @@ public class IridaWorkflowsService {
 	}
 	
 	/**
-	 * Gets a list of all the types of all installed workflows.
+	 * Gets a {@link Set} of all registered {@link AnalysisType} for all workflows.
 	 * 
-	 * @return A list of all the types of all installed workflows.
+	 * @return A {@link Set} of all the types of all installed workflows.
 	 */
-	public Set<AnalysisType> getAllWorkflowTypes() {
+	public Set<AnalysisType> getRegisteredWorkflowTypes() {
 		Set<AnalysisType> types = new HashSet<>();
 
 		for (IridaWorkflow workflow : getInstalledWorkflows()) {

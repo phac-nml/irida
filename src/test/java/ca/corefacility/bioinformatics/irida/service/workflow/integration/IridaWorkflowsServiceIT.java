@@ -298,12 +298,12 @@ public class IridaWorkflowsServiceIT {
 	 * @throws IridaWorkflowException
 	 */
 	@Test
-	public void testGetAllWorkflowTypes() throws IridaWorkflowException {
+	public void testGetRegisteredWorkflowTypes() throws IridaWorkflowException {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
 		iridaWorkflowsService.registerWorkflow(testWorkflowPhylogenomics);
 
-		Set<AnalysisType> workflowTypes = iridaWorkflowsService.getAllWorkflowTypes();
+		Set<AnalysisType> workflowTypes = iridaWorkflowsService.getRegisteredWorkflowTypes();
 		assertEquals(Sets.newHashSet(AnalysisType.DEFAULT, AnalysisType.PHYLOGENOMICS), workflowTypes);
 	}
 	
@@ -313,8 +313,8 @@ public class IridaWorkflowsServiceIT {
 	 * @throws IridaWorkflowException
 	 */
 	@Test
-	public void testGetAllWorkflowTypesNoWorkflows() throws IridaWorkflowException {
-		Set<AnalysisType> workflowTypes = iridaWorkflowsService.getAllWorkflowTypes();
+	public void testGetRegisteredWorkflowTypesNoWorkflows() throws IridaWorkflowException {
+		Set<AnalysisType> workflowTypes = iridaWorkflowsService.getRegisteredWorkflowTypes();
 		assertEquals(Sets.newHashSet(), workflowTypes);
 	}
 	
