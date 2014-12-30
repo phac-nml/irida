@@ -40,20 +40,18 @@ public class IridaWorkflowsTestConfig {
 
 	@Bean
 	public IridaWorkflowSet iridaWorkflows() throws IOException, IridaWorkflowLoadException, URISyntaxException {
-//		Path testAnalysisPath = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysis").toURI());
-//		Path phylogenomicsAnalysisPath = Paths.get(AnalysisPhylogenomicsPipeline.class.getResource(
-//				"workflows/AnalysisPhylogenomicsPipeline").toURI());
-//
-//		Set<IridaWorkflow> workflowsSet = iridaWorkflowLoaderService.loadAllWorkflowImplementations(testAnalysisPath);
-//		workflowsSet.addAll(iridaWorkflowLoaderService.loadAllWorkflowImplementations(phylogenomicsAnalysisPath));
-//
-//		return new IridaWorkflowSet(workflowsSet);
-		return new IridaWorkflowSet(Sets.newHashSet());
+		Path testAnalysisPath = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysis").toURI());
+		Path phylogenomicsAnalysisPath = Paths.get(AnalysisPhylogenomicsPipeline.class.getResource(
+				"workflows/AnalysisPhylogenomicsPipeline").toURI());
+
+		Set<IridaWorkflow> workflowsSet = iridaWorkflowLoaderService.loadAllWorkflowImplementations(testAnalysisPath);
+		workflowsSet.addAll(iridaWorkflowLoaderService.loadAllWorkflowImplementations(phylogenomicsAnalysisPath));
+
+		return new IridaWorkflowSet(workflowsSet);
 	}
 
 	@Bean
 	public IridaWorkflowIdSet defaultIridaWorkflows() {
-//		return new IridaWorkflowIdSet(Sets.newHashSet(testAnalysisDefaultId, phylogenomicsPipelineDefaultId));
-		return new IridaWorkflowIdSet(Sets.newHashSet());
+		return new IridaWorkflowIdSet(Sets.newHashSet(testAnalysisDefaultId, phylogenomicsPipelineDefaultId));
 	}
 }
