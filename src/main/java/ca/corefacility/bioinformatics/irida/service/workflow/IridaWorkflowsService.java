@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +40,6 @@ public class IridaWorkflowsService {
 	private Map<UUID, IridaWorkflow> allRegisteredWorkflows;
 
 	/**
-	 * Stores registered workflows for a particular analysis type.
-	 */
-	private Map<AnalysisType, Set<UUID>> registeredWorkflowsForAnalysis;
-
-	/**
 	 * Stores the id of a default workflow for an analysis type.
 	 */
 	private Map<AnalysisType, UUID> defaultWorkflowForAnalysis;
@@ -68,7 +64,6 @@ public class IridaWorkflowsService {
 		checkNotNull(defaultIridaWorkflows, "defaultWorkflows is null");
 
 		allRegisteredWorkflows = new HashMap<>();
-		registeredWorkflowsForAnalysis = new HashMap<>();
 		defaultWorkflowForAnalysis = new HashMap<>();
 
 		registerWorkflows(iridaWorkflows.getIridaWorkflows());
@@ -147,7 +142,6 @@ public class IridaWorkflowsService {
 		checkNotNull(iridaWorkflow, "iridaWorkflow is null");
 		checkNotNull(iridaWorkflow.getWorkflowDescription().getAnalysisType(), "analysisType is null");
 
-		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
 		UUID workflowId = iridaWorkflow.getWorkflowDescription().getId();
 
 		logger.debug("Registering workflow: " + iridaWorkflow);
@@ -155,16 +149,7 @@ public class IridaWorkflowsService {
 			throw new IridaWorkflowException("Duplicate workflow " + workflowId);
 		} else {
 			allRegisteredWorkflows.put(workflowId, iridaWorkflow);
-			addWorkflowForAnalysis(analysisType, workflowId);
 		}
-	}
-
-	private void addWorkflowForAnalysis(AnalysisType analysisType, UUID id) {
-		if (!registeredWorkflowsForAnalysis.containsKey(analysisType)) {
-			registeredWorkflowsForAnalysis.put(analysisType, new HashSet<>());
-		}
-
-		registeredWorkflowsForAnalysis.get(analysisType).add(id);
 	}
 
 	/**
@@ -196,21 +181,13 @@ public class IridaWorkflowsService {
 	 * @throws IridaWorkflowNotFoundException
 	 *             If not corresponding workflows could be found.
 	 */
-	public Set<IridaWorkflow> getAllWorkflowsByType(AnalysisType analysisType)
-			throws IridaWorkflowNotFoundException {
+	public Set<IridaWorkflow> getAllWorkflowsByType(AnalysisType analysisType) throws IridaWorkflowNotFoundException {
 		checkNotNull(analysisType, "analysisType is null");
 
-		Set<IridaWorkflow> workflowsSet = new HashSet<>();
-
-		if (!registeredWorkflowsForAnalysis.containsKey(analysisType)) {
-			throw new IridaWorkflowNotFoundException(analysisType);
-		} else {
-			for (UUID id : registeredWorkflowsForAnalysis.get(analysisType)) {
-				workflowsSet.add(allRegisteredWorkflows.get(id));
-			}
-
-			return workflowsSet;
-		}
+		return getRegisteredWorkflows()
+				.stream()
+				.filter((iridaWorkflow) -> analysisType
+						.equals(iridaWorkflow.getWorkflowDescription().getAnalysisType())).collect(Collectors.toSet());
 	}
 	
 	/**
