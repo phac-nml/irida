@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service;
 
+import java.util.Map;
+
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
@@ -7,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -75,4 +78,9 @@ public interface SequencingRunService extends CRUDService<Long, SequencingRun> {
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void delete(Long id) throws EntityNotFoundException;
+
+	@PreAuthorize("hasRole('ROLE_SEQUENCER')")
+	@Override
+	public SequencingRun update(Long id, Map<String, Object> updatedProperties) throws EntityExistsException,
+			EntityNotFoundException, ConstraintViolationException, InvalidPropertyException;
 }
