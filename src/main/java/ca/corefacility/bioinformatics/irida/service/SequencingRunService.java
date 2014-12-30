@@ -79,6 +79,9 @@ public interface SequencingRunService extends CRUDService<Long, SequencingRun> {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void delete(Long id) throws EntityNotFoundException;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasRole('ROLE_SEQUENCER')")
 	@Override
 	public SequencingRun update(Long id, Map<String, Object> updatedProperties) throws EntityExistsException,
