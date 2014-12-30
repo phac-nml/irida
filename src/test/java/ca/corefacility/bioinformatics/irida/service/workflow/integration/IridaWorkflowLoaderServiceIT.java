@@ -35,7 +35,6 @@ import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultit
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
@@ -73,11 +72,6 @@ public class IridaWorkflowLoaderServiceIT {
 	private Path workflowDirectoryPathNoDefinition;
 	private Path workflowDirectoryPathNoStructure;
 	private Path workflowDirectoryPathNoId;
-
-	private static final UUID workflowId1v1 = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
-	private static final UUID workflowId1v2 = UUID.fromString("c5f29cb2-1b68-4d34-9b93-609266af7551");
-	private static final UUID workflowId1v1_invalid = UUID.fromString("d54f1780-e6c9-472a-92dd-63520ec85967");
-	private Set<UUID> workflowIds1Set = Sets.newHashSet(workflowId1v1, workflowId1v2, workflowId1v1_invalid);
 
 	@Before
 	public void setup() throws JAXBException, URISyntaxException, FileNotFoundException {
@@ -202,6 +196,15 @@ public class IridaWorkflowLoaderServiceIT {
 				.getWorkflowDescription().getVersion(), workflowC.getWorkflowDescription().getVersion());
 		Set<String> validVersionNumbers = Sets.newHashSet("1.0", "2.0", "1.0-invalid");
 		assertEquals(validVersionNumbers, actualVersionNumbers);
+	}
+	
+	/**
+	 * Tests failure to load up all implementations of a workflow from a
+	 * directory.
+	 */
+	@Test(expected=FileNotFoundException.class)
+	public void testLoadAllWorkflowImplementationsFail() throws IOException, IridaWorkflowLoadException {
+		workflowLoaderService.loadAllWorkflowImplementations(workflowDirectoryPathNoDefinition);
 	}
 
 	/**
