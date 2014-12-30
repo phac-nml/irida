@@ -40,12 +40,13 @@ public class IridaWorkflowsTestConfig {
 	@Bean
 	public IridaWorkflowSet iridaWorkflows() throws IOException,
 			IridaWorkflowLoadException {
-		Set<IridaWorkflow> workflowsSet = iridaWorkflowLoaderService
-				.loadWorkflowsForClass(TestAnalysis.class);
-		workflowsSet.addAll(iridaWorkflowLoaderService
-				.loadWorkflowsForClass(AnalysisPhylogenomicsPipeline.class));
-
-		return new IridaWorkflowSet(workflowsSet);
+//		Set<IridaWorkflow> workflowsSet = iridaWorkflowLoaderService
+//				.loadWorkflowsForClass(TestAnalysis.class);
+//		workflowsSet.addAll(iridaWorkflowLoaderService
+//				.loadWorkflowsForClass(AnalysisPhylogenomicsPipeline.class));
+//
+//		return new IridaWorkflowSet(workflowsSet);
+		return new IridaWorkflowSet(Sets.newHashSet());
 	}
 
 	@Bean

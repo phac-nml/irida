@@ -119,39 +119,10 @@ public class IridaWorkflowLoaderServiceIT {
 		tools.add(workflowTool);
 
 		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version, "Mr. Developer",
-				"developer@example.com", TestAnalysis.class, new IridaWorkflowInput("sequence_reads", "reference"), outputs,
+				"developer@example.com", "testAnalysis", new IridaWorkflowInput("sequence_reads", "reference"), outputs,
 				tools);
 
 		return iridaWorkflow;
-	}
-
-	/**
-	 * Tests successfully loading a set of workflows from the analysis class.
-	 * 
-	 * @throws IOException
-	 * @throws IridaWorkflowLoadException
-	 */
-	@Test
-	public void testLoadWorkflowsForClassSuccess() throws IOException, IridaWorkflowLoadException {
-		Set<IridaWorkflow> iridaWorkflows = workflowLoaderService.loadWorkflowsForClass(TestAnalysis.class);
-		assertEquals(3, iridaWorkflows.size());
-		Iterator<IridaWorkflow> iter = iridaWorkflows.iterator();
-		UUID id1 = iter.next().getWorkflowIdentifier();
-		UUID id2 = iter.next().getWorkflowIdentifier();
-		UUID id3 = iter.next().getWorkflowIdentifier();
-
-		assertEquals(workflowIds1Set, Sets.newHashSet(id1, id2, id3));
-	}
-
-	/**
-	 * Tests failing to load a set of workflows from the analysis class.
-	 * 
-	 * @throws IOException
-	 * @throws IridaWorkflowLoadException
-	 */
-	@Test(expected = IridaWorkflowLoadException.class)
-	public void testLoadWorkflowsForClassFail() throws IOException, IridaWorkflowLoadException {
-		workflowLoaderService.loadWorkflowsForClass(Analysis.class);
 	}
 
 	/**

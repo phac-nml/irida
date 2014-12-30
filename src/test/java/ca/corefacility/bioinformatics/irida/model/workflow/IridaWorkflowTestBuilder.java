@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
@@ -58,7 +57,7 @@ public class IridaWorkflowTestBuilder {
 		tools.add(workflowTool);
 
 		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version, "Mr. Developer",
-				"developer@example.com", TestAnalysis.class, new IridaWorkflowInput("sequence_reads", "reference"), outputs,
+				"developer@example.com", "testAnalysis", new IridaWorkflowInput("sequence_reads", "reference"), outputs,
 				tools);
 
 		return iridaWorkflow;

@@ -77,7 +77,7 @@ public class IridaWorkflowsService {
 		workflowNamesMap = new HashMap<>();
 
 		registerWorkflows(iridaWorkflows.getIridaWorkflows());
-		setDefaultWorkflows(defaultIridaWorkflows.getIridaWorkflowIds());
+//		setDefaultWorkflows(defaultIridaWorkflows.getIridaWorkflowIds());
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class IridaWorkflowsService {
 		checkNotNull(workflowId, "workflowId is null");
 
 		IridaWorkflow iridaWorkflow = getIridaWorkflow(workflowId);
-		Class<? extends Analysis> analysisClass = iridaWorkflow.getWorkflowDescription().getAnalysisClass();
+		Class<? extends Analysis> analysisClass = null; // iridaWorkflow.getWorkflowDescription().getAnalysisClass();
 		if (defaultWorkflowForAnalysis.containsKey(analysisClass)) {
 			throw new IridaWorkflowDefaultException("Cannot set workflow " + workflowId
 					+ " as default, already exists default workflow for " + analysisClass);
@@ -151,7 +151,7 @@ public class IridaWorkflowsService {
 	public void registerWorkflow(IridaWorkflow iridaWorkflow) throws IridaWorkflowException {
 		checkNotNull(iridaWorkflow, "iridaWorkflow is null");
 
-		Class<? extends Analysis> analysisClass = iridaWorkflow.getWorkflowDescription().getAnalysisClass();
+		Class<? extends Analysis> analysisClass = null; //iridaWorkflow.getWorkflowDescription().getAnalysisClass();
 		UUID workflowId = iridaWorkflow.getWorkflowDescription().getId();
 		String workflowName = iridaWorkflow.getWorkflowDescription().getName();
 
