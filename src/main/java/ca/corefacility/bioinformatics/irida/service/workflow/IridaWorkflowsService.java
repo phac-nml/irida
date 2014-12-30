@@ -235,7 +235,7 @@ public class IridaWorkflowsService {
 	public Set<AnalysisType> getRegisteredWorkflowTypes() {
 		Set<AnalysisType> types = new HashSet<>();
 
-		for (IridaWorkflow workflow : getInstalledWorkflows()) {
+		for (IridaWorkflow workflow : getRegisteredWorkflows()) {
 			types.add(workflow.getWorkflowDescription().getAnalysisType());
 		}
 
@@ -266,7 +266,7 @@ public class IridaWorkflowsService {
 	 * 
 	 * @return A {@link Set} of all installed workflows.
 	 */
-	public Set<IridaWorkflow> getInstalledWorkflows() {
+	public Set<IridaWorkflow> getRegisteredWorkflows() {
 		return Sets.newHashSet(allRegisteredWorkflows.values());
 	}
 }

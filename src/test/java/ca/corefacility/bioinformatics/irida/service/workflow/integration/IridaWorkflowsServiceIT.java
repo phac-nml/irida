@@ -208,21 +208,21 @@ public class IridaWorkflowsServiceIT {
 	public void testRegisterWorkflowsSuccess() throws IridaWorkflowException {
 		iridaWorkflowsService.registerWorkflows(Sets.newHashSet(testWorkflow1v1, testWorkflowPhylogenomics));
 
-		Set<IridaWorkflow> workflows = iridaWorkflowsService.getInstalledWorkflows();
+		Set<IridaWorkflow> workflows = iridaWorkflowsService.getRegisteredWorkflows();
 		assertEquals(Sets.newHashSet(testWorkflow1v1, testWorkflowPhylogenomics), workflows);
 	}
 
 	/**
-	 * Tests getting a collection of all installed workflows.
+	 * Tests getting a set of all registered workflows.
 	 * 
 	 * @throws IridaWorkflowException
 	 */
 	@Test
-	public void testGetInstalledWorkflows() throws IridaWorkflowException {
+	public void testGetRegisteredWorkflows() throws IridaWorkflowException {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
 		
-		Set<IridaWorkflow> iridaWorkflows = iridaWorkflowsService.getInstalledWorkflows();
+		Set<IridaWorkflow> iridaWorkflows = iridaWorkflowsService.getRegisteredWorkflows();
 		assertEquals(Sets.newHashSet(testWorkflow1v1, testWorkflow1v2), iridaWorkflows);
 	}
 
