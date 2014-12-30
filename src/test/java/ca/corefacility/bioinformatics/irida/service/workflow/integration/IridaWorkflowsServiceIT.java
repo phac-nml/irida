@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -39,6 +40,7 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoader
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
 /**
@@ -122,6 +124,41 @@ public class IridaWorkflowsServiceIT {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
 		iridaWorkflowsService.setDefaultWorkflow(workflowId1v1);
 		assertEquals(testWorkflow1v1, iridaWorkflowsService.getDefaultWorkflowByType(AnalysisType.DEFAULT));
+	}
+
+	/**
+	 * Tests getting all the default workflows by a set of types.
+	 * 
+	 * @throws IridaWorkflowException
+	 */
+	@Test
+	public void testGetAllDefaultWorkflowsByTypeSuccess() throws IridaWorkflowException {
+		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
+		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
+		iridaWorkflowsService.registerWorkflow(testWorkflowPhylogenomics);
+		iridaWorkflowsService.setDefaultWorkflow(workflowId1v1);
+		iridaWorkflowsService.setDefaultWorkflow(workflowIdPhylogenomics);
+
+		Map<AnalysisType, IridaWorkflow> workflowsMap = iridaWorkflowsService.getAllDefaultWorkflowsByType(Sets
+				.newHashSet(AnalysisType.DEFAULT, AnalysisType.PHYLOGENOMICS));
+		assertEquals(ImmutableMap.of(AnalysisType.DEFAULT, testWorkflow1v1, AnalysisType.PHYLOGENOMICS,
+				testWorkflowPhylogenomics), workflowsMap);
+	}
+
+	/**
+	 * Tests failure to get all default workflows for a given type.
+	 * 
+	 * @throws IridaWorkflowException
+	 */
+	@Test(expected = IridaWorkflowNotFoundException.class)
+	public void testGetAllDefaultWorkflowsByTypeFail() throws IridaWorkflowException {
+		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
+		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
+		iridaWorkflowsService.registerWorkflow(testWorkflowPhylogenomics);
+		iridaWorkflowsService.setDefaultWorkflow(workflowId1v1);
+
+		iridaWorkflowsService.getAllDefaultWorkflowsByType(Sets.newHashSet(AnalysisType.DEFAULT,
+				AnalysisType.PHYLOGENOMICS));
 	}
 
 	/**

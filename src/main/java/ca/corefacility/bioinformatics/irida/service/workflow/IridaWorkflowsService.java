@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -170,6 +171,30 @@ public class IridaWorkflowsService {
 			UUID id = defaultWorkflowForAnalysis.get(analysisType);
 			return allRegisteredWorkflows.get(id);
 		}
+	}
+
+	/**
+	 * Gets all of the default workflows for a given {@link Set} of
+	 * {@link AnalysisType}s.
+	 * 
+	 * @param analysisTypes
+	 *            A {@link Set} of {@link AnalysisType}s.
+	 * @return A {@link Map} of {@link AnalysisType} to {@link IridaWorkflow}
+	 *         all the passed analysis types.
+	 * @throws IridaWorkflowNotFoundException
+	 *             If one of the analysis types does not have any associated
+	 *             workflows.
+	 */
+	public Map<AnalysisType, IridaWorkflow> getAllDefaultWorkflowsByType(Set<AnalysisType> analysisTypes)
+			throws IridaWorkflowNotFoundException {
+		checkNotNull(analysisTypes, "analysisTypes is null");
+
+		Map<AnalysisType, IridaWorkflow> analysisTypeWorkflowsMap = Maps.newHashMap();
+		for (AnalysisType analysisType : analysisTypes) {
+			analysisTypeWorkflowsMap.put(analysisType, getDefaultWorkflowByType(analysisType));
+		}
+
+		return analysisTypeWorkflowsMap;
 	}
 
 	/**
