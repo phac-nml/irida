@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.service.workflow;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -21,6 +20,8 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
+
+import com.google.common.collect.Sets;
 
 /**
  * Class used to load up installed workflows in IRIDA.
@@ -316,11 +317,11 @@ public class IridaWorkflowsService {
 	}
 
 	/**
-	 * Gets a Collection of all installed workflows.
+	 * Gets a {@link Set} of all installed workflows.
 	 * 
-	 * @return A collection of all installed workflows.
+	 * @return A {@link Set} of all installed workflows.
 	 */
-	public Collection<IridaWorkflow> getInstalledWorkflows() {
-		return allRegisteredWorkflows.values();
+	public Set<IridaWorkflow> getInstalledWorkflows() {
+		return Sets.newHashSet(allRegisteredWorkflows.values());
 	}
 }

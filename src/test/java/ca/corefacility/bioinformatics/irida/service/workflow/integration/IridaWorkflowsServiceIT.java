@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
@@ -222,12 +221,9 @@ public class IridaWorkflowsServiceIT {
 	public void testGetInstalledWorkflows() throws IridaWorkflowException {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
-		Collection<IridaWorkflow> iridaWorkflows = iridaWorkflowsService.getInstalledWorkflows();
-		assertEquals(2, iridaWorkflows.size());
-		IridaWorkflow workflowA = iridaWorkflows.iterator().next();
-		assertNotNull(workflowA);
-		IridaWorkflow workflowB = iridaWorkflows.iterator().next();
-		assertNotNull(workflowB);
+		
+		Set<IridaWorkflow> iridaWorkflows = iridaWorkflowsService.getInstalledWorkflows();
+		assertEquals(Sets.newHashSet(testWorkflow1v1, testWorkflow1v2), iridaWorkflows);
 	}
 
 	/**
