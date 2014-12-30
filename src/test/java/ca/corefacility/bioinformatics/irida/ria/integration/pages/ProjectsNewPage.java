@@ -34,8 +34,7 @@ public class ProjectsNewPage extends AbstractPage {
 			sdf.sendKeys(organism);
 			sdf.sendKeys(Keys.RETURN);
 		}
-		WebDriverWait wait = new WebDriverWait(driver, 500);
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.name("remoteURL")));
+		waitForTime(700);
 		driver.findElement(By.name("remoteURL")).sendKeys(wiki);
 		driver.findElement(By.name("projectDescription")).sendKeys(description);
 	}
@@ -48,7 +47,7 @@ public class ProjectsNewPage extends AbstractPage {
 		WebElement nameField = driver.findElement(By.name("name"));
 		nameField.sendKeys(name);
 		nameField.sendKeys(Keys.TAB);
-		waitForTime(520);
+		waitForTime(700);
 	}
 
 	public boolean isErrorNameRequiredDisplayed() {
@@ -81,6 +80,6 @@ public class ProjectsNewPage extends AbstractPage {
 		urlField.clear();
 		urlField.sendKeys(url);
 		urlField.sendKeys(Keys.TAB);
-		waitForTime(520);
+		waitForTime(700);
 	}
 }
