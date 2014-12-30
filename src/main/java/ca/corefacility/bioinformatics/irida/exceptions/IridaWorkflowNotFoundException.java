@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.exceptions;
 
 import java.util.UUID;
 
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 
 /**
@@ -32,7 +33,7 @@ public class IridaWorkflowNotFoundException extends IridaWorkflowLoadException {
 	 * @param analysisType
 	 *            The analysis type of the workflow.
 	 */
-	public IridaWorkflowNotFoundException(Class<? extends Analysis> analysisType) {
+	public IridaWorkflowNotFoundException(AnalysisType analysisType) {
 		super("No workflows found for " + analysisType);
 	}
 	

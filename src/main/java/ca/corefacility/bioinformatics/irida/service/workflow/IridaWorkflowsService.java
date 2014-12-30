@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowDefaultException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
@@ -39,17 +40,17 @@ public class IridaWorkflowsService {
 	/**
 	 * Stores registered workflows for a particular analysis type.
 	 */
-	private Map<String, Set<UUID>> registeredWorkflowsForAnalysis;
+	private Map<AnalysisType, Set<UUID>> registeredWorkflowsForAnalysis;
 
 	/**
 	 * Stores the id of a default workflow for an analysis type.
 	 */
-	private Map<String, UUID> defaultWorkflowForAnalysis;
+	private Map<AnalysisType, UUID> defaultWorkflowForAnalysis;
 
 	/**
 	 * Stores map of workflow names to types.
 	 */
-	private Map<String, String> workflowNamesMap;
+	private Map<String, AnalysisType> workflowNamesMap;
 
 	/**
 	 * Builds a new {@link IridaWorkflowService} for loading up installed
@@ -95,7 +96,7 @@ public class IridaWorkflowsService {
 		checkNotNull(workflowId, "workflowId is null");
 
 		IridaWorkflow iridaWorkflow = getIridaWorkflow(workflowId);
-		String analysisType = null; //iridaWorkflow.getWorkflowDescription().getAnalysisType();
+		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
 		if (defaultWorkflowForAnalysis.containsKey(analysisType)) {
 			throw new IridaWorkflowDefaultException("Cannot set workflow " + workflowId
 					+ " as default, already exists default workflow for \"" + analysisType + "\"");
@@ -150,7 +151,7 @@ public class IridaWorkflowsService {
 	public void registerWorkflow(IridaWorkflow iridaWorkflow) throws IridaWorkflowException {
 		checkNotNull(iridaWorkflow, "iridaWorkflow is null");
 
-		String analysisType = null; //iridaWorkflow.getWorkflowDescription().getAnalysisType();
+		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
 		UUID workflowId = iridaWorkflow.getWorkflowDescription().getId();
 		String workflowName = iridaWorkflow.getWorkflowDescription().getName();
 
@@ -164,13 +165,13 @@ public class IridaWorkflowsService {
 		}
 	}
 
-	private void addWorkflowNameToAnalysis(String workflowName, String analysisType) {
+	private void addWorkflowNameToAnalysis(String workflowName, AnalysisType analysisType) {
 		if (!workflowNamesMap.containsKey(workflowName)) {
 			workflowNamesMap.put(workflowName, analysisType);
 		}
 	}
 
-	private void addWorkflowForAnalysis(String analysisType, UUID id) {
+	private void addWorkflowForAnalysis(AnalysisType analysisType, UUID id) {
 		if (!registeredWorkflowsForAnalysis.containsKey(analysisType)) {
 			registeredWorkflowsForAnalysis.put(analysisType, new HashSet<>());
 		}
@@ -186,7 +187,7 @@ public class IridaWorkflowsService {
 	 * @return An {@link IridaWorkflow} for this analysis type.
 	 * @throws IridaWorkflowNotFoundException
 	 */
-	public IridaWorkflow getDefaultWorkflowByType(String analysisType)
+	public IridaWorkflow getDefaultWorkflowByType(AnalysisType analysisType)
 			throws IridaWorkflowNotFoundException {
 		checkNotNull(analysisType, "analysisType is null");
 
@@ -213,7 +214,7 @@ public class IridaWorkflowsService {
 		if (!workflowNamesMap.containsKey(workflowName)) {
 			throw new IridaWorkflowNotFoundException(workflowName);
 		} else {
-			String analysisType = workflowNamesMap.get(workflowName);
+			AnalysisType analysisType = workflowNamesMap.get(workflowName);
 			return getDefaultWorkflowByType(analysisType);
 		}
 	}
@@ -233,7 +234,7 @@ public class IridaWorkflowsService {
 		if (!workflowNamesMap.containsKey(workflowName)) {
 			throw new IridaWorkflowNotFoundException(workflowName);
 		} else {
-			String analysisType = workflowNamesMap.get(workflowName);
+			AnalysisType analysisType = workflowNamesMap.get(workflowName);
 			return getAllWorkflowsByType(analysisType);
 		}
 	}
@@ -247,7 +248,7 @@ public class IridaWorkflowsService {
 	 * @throws IridaWorkflowNotFoundException
 	 *             If not corresponding workflows could be found.
 	 */
-	public Set<IridaWorkflow> getAllWorkflowsByType(String analysisType)
+	public Set<IridaWorkflow> getAllWorkflowsByType(AnalysisType analysisType)
 			throws IridaWorkflowNotFoundException {
 		checkNotNull(analysisType, "analysisType is null");
 
@@ -284,11 +285,11 @@ public class IridaWorkflowsService {
 	 * 
 	 * @return A list of all the types of all installed workflows.
 	 */
-	public Set<String> getAllWorkflowTypes() {
-		Set<String> types = new HashSet<>();
+	public Set<AnalysisType> getAllWorkflowTypes() {
+		Set<AnalysisType> types = new HashSet<>();
 
 		for (IridaWorkflow workflow : getInstalledWorkflows()) {
-			//types.add(workflow.getWorkflowDescription().getAnalysisType());
+			types.add(workflow.getWorkflowDescription().getAnalysisType());
 		}
 
 		return types;

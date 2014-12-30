@@ -41,7 +41,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryExc
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
@@ -112,9 +111,9 @@ public class AnalysisExecutionServiceGalaxyIT {
 	private Path expectedSnpTable;
 	private Path expectedTree;
 
-	private UUID validIridaWorkflowId;
+	private UUID validIridaWorkflowId = UUID.fromString("c5f29cb2-1b68-4d34-9b93-609266af7551");
 	private UUID invalidIridaWorkflowId = UUID.fromString("8ec369e8-1b39-4b9a-97a1-70ac1f6cc9e6");
-	private UUID iridaPhylogenomicsWorkflowId;
+	private UUID iridaPhylogenomicsWorkflowId = UUID.fromString("1f9ea289-5053-4e4a-bc76-1f0c60b179f8");
 	private UUID iridaWorkflowIdInvalidWorkflowFile = UUID.fromString("d54f1780-e6c9-472a-92dd-63520ec85967");
 
 	/**
@@ -144,13 +143,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		expectedSnpMatrix = localGalaxy.getWorkflowCorePipelineTestMatrix();
 		expectedSnpTable = localGalaxy.getWorkflowCorePipelineTestSnpTable();
 		expectedTree = localGalaxy.getWorkflowCorePipelineTestTree();
-
-		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getDefaultWorkflowByType("testAnalysis");
-		validIridaWorkflowId = iridaWorkflow.getWorkflowIdentifier();
-
-		IridaWorkflow iridaPhylogenomicsWorkflow = iridaWorkflowsService
-				.getDefaultWorkflowByType("phylogenomics");
-		iridaPhylogenomicsWorkflowId = iridaPhylogenomicsWorkflow.getWorkflowIdentifier();
 	}
 
 	/**
