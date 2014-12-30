@@ -29,7 +29,7 @@
                         </label>
                         <input class="form-control input-full" type="text" id="name" name="name"
                                required="required"
-                               placeholder="Required" th:placeholder="#{form.required}" ng-minlength='5' ng-model="project.name" ng-focus=""/>
+                               placeholder="Required" th:placeholder="#{form.required}" ng-minlength='5' ng-model="project.name" ng-model-options="{debounce:{'default': 500, 'blur': 0}}"/>
 
                         <div ng-show="new_project.name.$dirty &amp;&amp; !new_project.name.$focused">
                             <small id="error-name-length" ng-show="new_project.name.$error.minlength"
@@ -112,10 +112,12 @@
 
         });
 
-        var app = angular.module('irida');
-        app.controller('TestController', function ($scope) {
-            $scope.project = {};
-        });
+        (function() {
+	        var app = angular.module('irida');
+	        app.controller('TestController', function ($scope) {
+	            $scope.project = {};
+	        });
+        })();
     </script>
 </th:block>
 </body>
