@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.config.workflow;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Set;
 import java.util.UUID;
 
@@ -32,25 +35,23 @@ public class IridaWorkflowsTestConfig {
 	@Autowired
 	private IridaWorkflowLoaderService iridaWorkflowLoaderService;
 
-	private UUID testAnalysisDefaultId = UUID
-			.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
-	private UUID phylogenomicsPipelineDefaultId = UUID
-			.fromString("1f9ea289-5053-4e4a-bc76-1f0c60b179f8");
+	private UUID testAnalysisDefaultId = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
+	private UUID phylogenomicsPipelineDefaultId = UUID.fromString("1f9ea289-5053-4e4a-bc76-1f0c60b179f8");
 
 	@Bean
-	public IridaWorkflowSet iridaWorkflows() throws IOException,
-			IridaWorkflowLoadException {
-		Set<IridaWorkflow> workflowsSet = iridaWorkflowLoaderService
-				.loadWorkflowsForClass(TestAnalysis.class);
-		workflowsSet.addAll(iridaWorkflowLoaderService
-				.loadWorkflowsForClass(AnalysisPhylogenomicsPipeline.class));
+	public IridaWorkflowSet iridaWorkflows() throws IOException, IridaWorkflowLoadException, URISyntaxException {
+		Path testAnalysisPath = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysis").toURI());
+		Path phylogenomicsAnalysisPath = Paths.get(AnalysisPhylogenomicsPipeline.class.getResource(
+				"workflows/AnalysisPhylogenomicsPipeline").toURI());
+
+		Set<IridaWorkflow> workflowsSet = iridaWorkflowLoaderService.loadAllWorkflowImplementations(testAnalysisPath);
+		workflowsSet.addAll(iridaWorkflowLoaderService.loadAllWorkflowImplementations(phylogenomicsAnalysisPath));
 
 		return new IridaWorkflowSet(workflowsSet);
 	}
 
 	@Bean
 	public IridaWorkflowIdSet defaultIridaWorkflows() {
-		return new IridaWorkflowIdSet(Sets.newHashSet(testAnalysisDefaultId,
-				phylogenomicsPipelineDefaultId));
+		return new IridaWorkflowIdSet(Sets.newHashSet(testAnalysisDefaultId, phylogenomicsPipelineDefaultId));
 	}
 }

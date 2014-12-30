@@ -46,7 +46,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
@@ -158,11 +157,11 @@ public class AnalysisExecutionServiceGalaxyIT {
 		expectedSnpTable = localGalaxy.getWorkflowCorePipelineTestSnpTable();
 		expectedTree = localGalaxy.getWorkflowCorePipelineTestTree();
 
-		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getDefaultWorkflow(TestAnalysis.class);
+		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getDefaultWorkflowByType("testAnalysis");
 		validIridaWorkflowId = iridaWorkflow.getWorkflowIdentifier();
 
 		IridaWorkflow iridaPhylogenomicsWorkflow = iridaWorkflowsService
-				.getDefaultWorkflow(AnalysisPhylogenomicsPipeline.class);
+				.getDefaultWorkflowByType("phylogenomics");
 		iridaPhylogenomicsWorkflowId = iridaPhylogenomicsWorkflow.getWorkflowIdentifier();
 	}
 

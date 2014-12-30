@@ -40,8 +40,8 @@ public class IridaWorkflowDescription {
 	@XmlElement(name = "email")
 	private String email;
 
-	@XmlElement(name = "analysis_class")
-	private Class<? extends Analysis> analysisClass;
+	@XmlElement(name = "analysisType")
+	private String analysisType;
 
 	@XmlElement(name = "inputs")
 	private IridaWorkflowInput inputs;
@@ -81,13 +81,13 @@ public class IridaWorkflowDescription {
 	 *            The list of tools for this workflow.
 	 */
 	public IridaWorkflowDescription(UUID id, String name, String version, String author, String email,
-			Class<? extends Analysis> analysisClass, IridaWorkflowInput inputs, List<IridaWorkflowOutput> outputs, List<IridaWorkflowTool> tools) {
+			String analysisType, IridaWorkflowInput inputs, List<IridaWorkflowOutput> outputs, List<IridaWorkflowTool> tools) {
 		this.id = id;
 		this.name = name;
 		this.version = version;
 		this.author = author;
 		this.email = email;
-		this.analysisClass = analysisClass;
+		this.analysisType = analysisType;
 		this.inputs = inputs;
 		this.outputs = ImmutableList.copyOf(outputs);
 		this.tools = ImmutableList.copyOf(tools);
@@ -151,13 +151,13 @@ public class IridaWorkflowDescription {
 		return tools;
 	}
 
-	public Class<? extends Analysis> getAnalysisClass() {
-		return analysisClass;
+	public String getAnalysisType() {
+		return analysisType;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, name, version, author, email, analysisClass, inputs, outputs, tools);
+		return Objects.hash(id, name, version, author, email, analysisType, inputs, outputs, tools);
 	}
 
 	@Override
@@ -169,7 +169,7 @@ public class IridaWorkflowDescription {
 
 			return Objects.equals(id, other.id) && Objects.equals(name, other.name)
 					&& Objects.equals(version, other.version) && Objects.equals(author, other.author)
-					&& Objects.equals(email, other.email) && Objects.equals(analysisClass, other.analysisClass)
+					&& Objects.equals(email, other.email) && Objects.equals(analysisType, other.analysisType)
 					&& Objects.equals(inputs, other.inputs) && Objects.equals(outputs, other.outputs)
 					&& Objects.equals(tools, other.tools);
 		}
