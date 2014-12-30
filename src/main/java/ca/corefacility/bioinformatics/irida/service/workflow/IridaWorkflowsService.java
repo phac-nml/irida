@@ -202,46 +202,6 @@ public class IridaWorkflowsService {
 	}
 
 	/**
-	 * Gets the default workflow for a workflow with the given name.
-	 * 
-	 * @param workflowName
-	 *            The name of the workflow to search.
-	 * @return A default implementing workflow with this name.
-	 * @throws IridaWorkflowNotFoundException
-	 *             If no corresponding workflow was found.
-	 */
-	public IridaWorkflow getDefaultWorkflowByName(String workflowName) throws IridaWorkflowNotFoundException {
-		checkNotNull(workflowName, "workflowName is null");
-
-		if (!workflowNamesMap.containsKey(workflowName)) {
-			throw new IridaWorkflowNotFoundException(workflowName);
-		} else {
-			AnalysisType analysisType = workflowNamesMap.get(workflowName);
-			return getDefaultWorkflowByType(analysisType);
-		}
-	}
-
-	/**
-	 * Gets all the workflows for a given workflow name.
-	 * 
-	 * @param workflowName
-	 *            The name of workflow to search.
-	 * @return A Set of {@link IridaWorkflow} for this workflow name.
-	 * @throws IridaWorkflowNotFoundException
-	 *             If not corresponding workflows could be found.
-	 */
-	public Set<IridaWorkflow> getAllWorkflowsByName(String workflowName) throws IridaWorkflowNotFoundException {
-		checkNotNull(workflowName);
-
-		if (!workflowNamesMap.containsKey(workflowName)) {
-			throw new IridaWorkflowNotFoundException(workflowName);
-		} else {
-			AnalysisType analysisType = workflowNamesMap.get(workflowName);
-			return getAllWorkflowsByType(analysisType);
-		}
-	}
-
-	/**
 	 * Gets all the workflows for a given analysis type.
 	 * 
 	 * @param analysisType
@@ -265,21 +225,6 @@ public class IridaWorkflowsService {
 
 			return workflowsSet;
 		}
-	}
-
-	/**
-	 * Gets a list of all the names of all installed workflows.
-	 * 
-	 * @return A list of all the names of all installed workflows.
-	 */
-	public Set<String> getAllWorkflowNames() {
-		Set<String> names = new HashSet<>();
-
-		for (IridaWorkflow workflow : getInstalledWorkflows()) {
-			names.add(workflow.getWorkflowDescription().getName());
-		}
-
-		return names;
 	}
 	
 	/**
