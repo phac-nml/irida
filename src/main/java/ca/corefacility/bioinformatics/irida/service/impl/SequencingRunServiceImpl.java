@@ -2,8 +2,10 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import org.slf4j.Logger;
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -119,5 +123,14 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 				sampleRepository.delete(sample.getId());
 			}
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SequencingRun update(Long id, Map<String, Object> updatedFields) throws ConstraintViolationException,
+			EntityExistsException, InvalidPropertyException {
+		return super.update(id, updatedFields);
 	}
 }
