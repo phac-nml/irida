@@ -1,5 +1,7 @@
+@import "../helpers/variables";
+
 .dataTables_filter input[type='search'] {
-  background-color: $color-grey-lighter;
+  background-color: $irida-colour-grey-light;
   border: 1px solid #ccc;
   border-radius: 4px;
   box-shadow: none;

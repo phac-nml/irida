@@ -1,0 +1,17 @@
+.navbar {
+  margin-bottom: 0 !important;
+}
+
+.navbar.navbar-sm {
+  margin-bottom: 15px !important;
+}
+
+// Update z-index for submenu
+.navbar-nav>li>.dropdown-menu {
+  z-index: 10000;
+}
+
+.navbar.subnav {
+  z-index: 500;
+  margin-bottom: 1em;
+}

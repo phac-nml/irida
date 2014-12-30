@@ -1,3 +1,4 @@
+@import "../helpers/variables";
 //  FOUNDATION FOR APPS SETTINGS
 //  ----------------------------
 //
@@ -29,41 +30,41 @@
 //  24. Tabs
 //  25. Title Bar
 
-@import "helpers/functions";
+@import "../../resources/bower_components/foundation-apps/scss/helpers/functions";
 
 // 1. CSS Exports
 // - - - - - - - - - - - - - - -
 
 // Change any value in this map from "true" to "false" to disable that component's CSS class output. You'll still be able to use the component's mixins, but none of our pre-written classes will be in your CSS.
 
-// $include-css: (
-//   accordion: true,
-//   action-sheet: true,
-//   block-list: true,
-//   button: true,
-//   button-group: true,
-//   card: true,
-//   coloring: true,
-//   extras: true,
-//   forms: true,
-//   grid: true,
-//   iconic: true,
-//   label: true,
-//   badge: true,
-//   list: true,
-//   menu-bar: true,
-//   modal: true,
-//   motion: true,
-//   notification: true,
-//   off-canvas: true,
-//   panel: true,
-//   popup: true,
-//   switch: true,
-//   tabs: true,
-//   title-bar: true,
-//   typography: true,
-//   utilities: true,
-// ); 
+$include-css: (
+   accordion: false,
+   action-sheet: false,
+   block-list: false,
+   button: false,
+   button-group: false,
+   card: false,
+   coloring: false,
+   extras: false,
+   forms: true,
+   grid: true,
+   iconic: false,
+   label: false,
+   badge: false,
+   list: false,
+   menu-bar: false,
+   modal: false,
+   motion: false,
+   notification: false,
+   off-canvas: false,
+   panel: false,
+   popup: false,
+   switch: false,
+   tabs: false,
+   title-bar: false,
+   typography: true,
+   utilities: false,
+); 
 
 // 2. Global Styles
 // - - - - - - - - - - - - - - -
@@ -90,44 +91,44 @@
 // $font-weight-bold: bold;
 
 // We use these to control various global styles
-// $body-background: #fff;
-// $body-font-color: #222;
-// $body-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
-// $body-font-weight: $font-weight-normal;
-// $body-font-style: normal;
+$body-background: $irida-colour-bg;
+$body-font-color: $irida-colour-font-body;
+$body-font-family: $irida-font-body-family;
+$body-font-weight: $irida-font-body-weight;
+$body-font-style: $irida-font-body-style;
 // $body-antialiased: true;
 
 // Application Colors
-// $primary-color: #00558b;
-// $secondary-color: #f1f1f1;
-// $alert-color: #F04124;
-// $info-color: #A0D3E8;
-// $success-color: #43AC6A;
-// $warning-color: #F08A24;
-// $dark-color: #232323;
-// $gray: #dfdfdf;
-// $gray-dark: darken($gray, 8);
-// $gray-light: lighten($gray, 8);
+$primary-color: $irida-colour-primary;
+$secondary-color: $irida-colour-secondary;
+$alert-color: $irida-colour-alert;
+$info-color: $irida-colour-info;
+$success-color: $irida-colour-success;
+$warning-color: $irida-colour-warning;
+$dark-color: $irida-colour-dark;
+$gray: $irida-colour-grey;
+$gray-dark: $irida-colour-grey-dark;
+$gray-light: $irida-colour-grey-light;
 
 // We use these to make sure border radius matches unless we want it different.
-// $global-radius: 4px;
-// $global-rounded: 1000px;
+$global-radius: $irida-global-radius;
+$global-rounded: $irida-global-rounded;
 
 // We use this for default spacing
-// $global-padding: 1rem;
-// $global-spacing: rem-calc(15); 
+$global-padding: $irida-global-padding;
+$global-spacing: $irida-global-spacing;
 
 // 3. Breakpoints
 // - - - - - - - - - - - - - - -
 
 // These are our named breakpoints. You can use them in our breakpoint function like this: @include breakpoint(medium) { // Medium and larger styles }
-// $breakpoints: (
-//   small: rem-calc(0),
-//   medium: rem-calc(640),
-//   large: rem-calc(1200),
-//   xlarge: rem-calc(1440),
-//   xxlarge: rem-calc(1920),
-// );
+$breakpoints: (
+   small: $irida-breakpoint-small,
+   medium: $irida-breakpoint-medium,
+   large: $irida-breakpoint-large,
+   xlarge: $irida-breakpoint-xlarge,
+   xxlarge: $irida-breakpoint-xxlarge
+);
 
 // All of the names in this list will be output as classes in your CSS, like small-12, medium-6, and so on.
 // $breakpoint-classes: (small medium large);

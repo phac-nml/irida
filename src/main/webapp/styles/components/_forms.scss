@@ -16,14 +16,14 @@
     position: relative;
     font-size: 14px;
     cursor: pointer;
-    color: $color-grey;
+    color: $irida-colour-dark;
     &:before, &:after {
       font-family: FontAwesome;
       font-weight: 100;
       font-size: 22px;
       /*absolutely positioned*/
       position: absolute;
-      top: -14px;
+      top: -20px;
       left: 0;
     }
   }

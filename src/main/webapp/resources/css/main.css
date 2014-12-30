@@ -4,9 +4,9 @@
   padding: 3px 6px;
 }
 
-/* line 1, ../../styles/components/_datatables.scss */
+/* line 3, ../../styles/components/_datatables.scss */
 .dataTables_filter input[type='search'] {
-  background-color: #eeeeee;
+  background-color: #f3f3f3;
   border: 1px solid #ccc;
   border-radius: 4px;
   box-shadow: none;
@@ -15,7 +15,7 @@
   font-weight: normal;
   outline: none;
 }
-/* line 10, ../../styles/components/_datatables.scss */
+/* line 12, ../../styles/components/_datatables.scss */
 .dataTables_filter input[type='search']:focus {
   background-color: white;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -23,62 +23,6 @@
   -o-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
   -webkit-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
   transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
-}
-
-/* line 2, ../../styles/components/_forms.scss */
-.input-full {
-  width: 100%;
-}
-
-/* line 8, ../../styles/components/_forms.scss */
-.form-group .alert {
-  padding: 3px 6px;
-  font-weight: bold;
-  margin-bottom: 0;
-}
-
-/* line 15, ../../styles/components/_forms.scss */
-.large-checkbox label {
-  position: relative;
-  font-size: 14px;
-  cursor: pointer;
-  color: #dfdfdf;
-}
-/* line 20, ../../styles/components/_forms.scss */
-.large-checkbox label:before, .large-checkbox label:after {
-  font-family: FontAwesome;
-  font-weight: 100;
-  font-size: 22px;
-  /*absolutely positioned*/
-  position: absolute;
-  top: -14px;
-  left: 0;
-}
-/* line 30, ../../styles/components/_forms.scss */
-.large-checkbox label:before {
-  content: '\f0c8';
-  /*unchecked*/
-}
-/* line 33, ../../styles/components/_forms.scss */
-.large-checkbox label:after {
-  content: '\f14a';
-  /*checked*/
-  max-width: 0;
-  overflow: hidden;
-  opacity: 0.5;
-}
-/* line 39, ../../styles/components/_forms.scss */
-.large-checkbox input[type="checkbox"] {
-  display: none;
-}
-/* line 42, ../../styles/components/_forms.scss */
-.large-checkbox input[type="checkbox"]:checked + label:after {
-  max-width: 25px;
-  opacity: 1;
-}
-/* line 46, ../../styles/components/_forms.scss */
-.large-checkbox input[type="checkbox"]:checked + label:before {
-  display: none;
 }
 
 /* line 1, ../../styles/components/_magnific-popup.scss */
@@ -146,7 +90,7 @@
 }
 /* line 51, ../../styles/components/_magnific-popup.scss */
 .form-popup .modal-header {
-  background-color: #00558b;
+  background-color: #133B54;
   color: #ffffff;
   border-radius: 4px 4px 0 0;
 }
@@ -253,15 +197,6 @@
   right: 8px;
 }
 
-/* line 2, ../../styles/_layout.scss */
-main h1 {
-  margin-top: 15px;
-}
-/* line 5, ../../styles/_layout.scss */
-main.col-md-9 h1 {
-  margin-top: 0;
-}
-
 /* line 2, ../../styles/pages/_sequenceFile.scss */
 .sequenceFile main > div {
   margin-top: 10px;
@@ -288,41 +223,41 @@ iframe.remote-api-frame {
   height: 400px;
 }
 
-/* line 19, ../../styles/main.scss */
+/* line 17, ../../styles/main.scss */
 .login__links a {
   margin-top: 10px;
   display: block;
 }
 
-/* line 25, ../../styles/main.scss */
+/* line 23, ../../styles/main.scss */
 .clickable {
   display: block;
   cursor: pointer;
 }
-/* line 28, ../../styles/main.scss */
+/* line 26, ../../styles/main.scss */
 .clickable span {
   display: inline-block;
 }
 
-/* line 33, ../../styles/main.scss */
+/* line 31, ../../styles/main.scss */
 .nav-tabs li {
   cursor: pointer;
 }
 
-/* line 38, ../../styles/main.scss */
+/* line 36, ../../styles/main.scss */
 #table-filter {
   padding: 0;
 }
-/* line 40, ../../styles/main.scss */
+/* line 38, ../../styles/main.scss */
 #table-filter > div {
   padding: 20px;
 }
-/* line 43, ../../styles/main.scss */
+/* line 41, ../../styles/main.scss */
 #table-filter .filter-btns > button {
   margin-top: 33px;
 }
 
-/* line 48, ../../styles/main.scss */
+/* line 46, ../../styles/main.scss */
 .selected__counts {
   color: white !important;
   border-radius: 4px;
@@ -332,283 +267,7 @@ iframe.remote-api-frame {
   border-top: 1px solid rgba(0, 0, 0, 0.4);
 }
 
-/* line 57, ../../styles/main.scss */
+/* line 55, ../../styles/main.scss */
 .nav, .pagination, .carousel, .panel-title a {
   cursor: pointer;
-}
-
-/* line 59, ../../styles/main.scss */
-.irida-notifications {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 300px;
-  padding: 1rem;
-}
-
-/* line 67, ../../styles/main.scss */
-.irida-notification__item {
-  opacity: .9;
-  background-color: #96b1c4;
-  margin-bottom: 1rem;
-  padding: 1rem;
-  border-radius: 4px;
-  transition: all 500ms linear;
-}
-/* line 75, ../../styles/main.scss */
-.irida-notification__item .progress, .irida-notification__item .progress-bar {
-  height: 10px;
-  margin-bottom: 0;
-}
-/* line 80, ../../styles/main.scss */
-.irida-notification__item p {
-  color: #222;
-  font-size: .8em;
-}
-/* line 85, ../../styles/main.scss */
-.irida-notification__item:hover {
-  opacity: 1;
-  cursor: pointer;
-}
-/* line 90, ../../styles/main.scss */
-.irida-notification__item.error {
-  background-color: #F04124;
-}
-/* line 92, ../../styles/main.scss */
-.irida-notification__item.error p {
-  color: #fff;
-}
-/* line 97, ../../styles/main.scss */
-.irida-notification__item.success {
-  background-color: #43AC6A;
-}
-/* line 101, ../../styles/main.scss */
-.irida-notification__item.remove {
-  opacity: 0;
-}
-
-/* line 107, ../../styles/main.scss */
-.breadcrumbs {
-  background-color: #0065a4;
-}
-
-/* line 111, ../../styles/main.scss */
-.breadcrumbs .container {
-  padding: 0 !important;
-  margin-bottom: 0 !important;
-}
-
-/* line 116, ../../styles/main.scss */
-.breadcrumbs ol {
-  list-style: none;
-  overflow: hidden;
-  padding: 0;
-  margin-bottom: 0;
-}
-
-/* line 122, ../../styles/main.scss */
-.breadcrumbs li {
-  float: left;
-}
-
-/* line 125, ../../styles/main.scss */
-.breadcrumbs li a {
-  color: #000000;
-  text-decoration: none;
-  padding: 5px 0 5px 55px;
-  position: relative;
-  display: block;
-  float: left;
-}
-
-/* line 133, ../../styles/main.scss */
-.breadcrumbs li a:after {
-  content: " ";
-  display: block;
-  width: 0;
-  height: 0;
-  border-top: 50px solid transparent;
-  border-bottom: 50px solid transparent;
-  border-left: 30px solid #0065a4;
-  position: absolute;
-  top: 50%;
-  margin-top: -50px;
-  left: 100%;
-  z-index: 2;
-}
-
-/* line 147, ../../styles/main.scss */
-.breadcrumbs li a:before {
-  content: " ";
-  display: block;
-  width: 0;
-  height: 0;
-  border-top: 50px solid transparent;
-  border-bottom: 50px solid transparent;
-  border-left: 30px solid #ffffff;
-  position: absolute;
-  top: 50%;
-  margin-top: -50px;
-  margin-left: 0px;
-  left: 100%;
-  z-index: 1;
-}
-
-/* line 162, ../../styles/main.scss */
-.breadcrumbs li:first-child a {
-  padding-left: 2em;
-}
-
-/* line 169, ../../styles/main.scss */
-.breadcrumbs li:nth-child(2) a {
-  background-color: #0084d7;
-}
-
-/* line 170, ../../styles/main.scss */
-.breadcrumbs li:nth-child(2) a:after {
-  border-left-color: #0084d7;
-}
-
-/* line 169, ../../styles/main.scss */
-.breadcrumbs li:nth-child(3) a {
-  background-color: #0ba0ff;
-}
-
-/* line 170, ../../styles/main.scss */
-.breadcrumbs li:nth-child(3) a:after {
-  border-left-color: #0ba0ff;
-}
-
-/* line 169, ../../styles/main.scss */
-.breadcrumbs li:nth-child(4) a {
-  background-color: #3fb4ff;
-}
-
-/* line 170, ../../styles/main.scss */
-.breadcrumbs li:nth-child(4) a:after {
-  border-left-color: #3fb4ff;
-}
-
-/* line 169, ../../styles/main.scss */
-.breadcrumbs li:nth-child(5) a {
-  background-color: #72c8ff;
-}
-
-/* line 170, ../../styles/main.scss */
-.breadcrumbs li:nth-child(5) a:after {
-  border-left-color: #72c8ff;
-}
-
-/* line 173, ../../styles/main.scss */
-.breadcrumbs li:last-child a {
-  pointer-events: none;
-  cursor: default;
-  background-color: #ffffff;
-  border-color: white;
-}
-
-/* line 180, ../../styles/main.scss */
-.breadcrumbs li:last-child a:after {
-  border: 0;
-  border-left-color: #ffffff !important;
-}
-
-/* line 181, ../../styles/main.scss */
-.breadcrumbs li a:hover {
-  background: #00558b;
-}
-
-/* line 182, ../../styles/main.scss */
-.breadcrumbs li a:hover:after {
-  border-left-color: #00558b !important;
-}
-
-/* line 185, ../../styles/main.scss */
-html,
-body,
-.st-container,
-.st-pusher,
-.st-content {
-  height: 100%;
-}
-
-/* line 193, ../../styles/main.scss */
-.st-content {
-  overflow-y: scroll;
-}
-
-/* line 197, ../../styles/main.scss */
-.st-content,
-.st-content-inner {
-  position: relative;
-}
-
-/* line 202, ../../styles/main.scss */
-.st-container {
-  position: relative;
-  overflow: hidden;
-}
-
-/* line 207, ../../styles/main.scss */
-.st-pusher {
-  position: relative;
-  right: 0;
-  z-index: 99;
-  height: 100%;
-  -webkit-transition: -webkit-transform 0.5s;
-  transition: transform 0.5s;
-}
-
-/* line 216, ../../styles/main.scss */
-.st-pusher::after {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 0;
-  height: 0;
-  background: rgba(0, 0, 0, 0.2);
-  content: '';
-  opacity: 0;
-  -webkit-transition: opacity 0.5s, width 0.1s 0.5s, height 0.1s 0.5s;
-  transition: opacity 0.5s, width 0.1s 0.5s, height 0.1s 0.5s;
-}
-
-/* line 229, ../../styles/main.scss */
-.cart {
-  padding: 10px;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  z-index: 1100;
-  visibility: hidden;
-  width: 300px;
-  background: #eeeeee;
-  -webkit-transition: all 0.5s;
-  transition: all 0.5s;
-}
-
-/* line 243, ../../styles/main.scss */
-.cart-open .st-pusher {
-  -webkit-transform: translate3d(-300px, 0, 0);
-  transform: translate3d(-300px, 0, 0);
-}
-
-/* line 248, ../../styles/main.scss */
-.cart {
-  visibility: visible;
-  -webkit-transform: translate3d(100%, 0, 0);
-  transform: translate3d(100%, 0, 0);
-}
-
-/* line 254, ../../styles/main.scss */
-.cart-open .cart {
-  visibility: visible;
-  -webkit-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
-}
-
-/* line 260, ../../styles/main.scss */
-.cart::after {
-  display: none;
 }

@@ -1,7 +1,21 @@
 $irida-rem-base: 16px;
 
+// BORDER RADIUS
+$irida-global-radius: 4px;
+$irida-global-rounded: 1000px;
+
+// BREAKPOINTS
+$irida-breakpoint-small: rem-calc(0);
+$irida-breakpoint-medium: rem-calc(640);
+$irida-breakpoint-large: rem-calc(1200);
+$irida-breakpoint-xlarge: rem-calc(1440);
+$irida-breakpoint-xxlarge: rem-calc(1920);
+
 // COLOURS
-$irida-colour-primary: #00558b !default;
+$irida-colour-bg: #ffffff !default;
+$irida-colour-font-body: #222 !default;
+
+$irida-colour-primary: #133B54 !default; // PHAC Blue
 $color-primary: $irida-colour-primary;
 
 $irida-colour-secondary: #f1f1f1 !default;
@@ -9,7 +23,7 @@ $irida-colour-secondary: #f1f1f1 !default;
 $irida-colour-alert: #F04124 !default;
 $color-danger: $irida-colour-alert;
 
-$irida-colour-info: #A0D3E8 !default;
+$irida-colour-info: #C7D8E7 !default; // PHAC Light Blue
 $color-info: $irida-colour-info;
 
 $irida-colour-success: #43AC6A !default;
@@ -29,6 +43,11 @@ $color-grey-light: $irida-colour-grey-light;
 $irida-colour-grey-dark: darken($irida-colour-grey, 8) !default;
 $color-grey-darker: $irida-colour-grey-dark;
 
-$color-grey-lighter: lighten(#000, 93.5);
-$color-grey-dark: lighten(#000, 20);
-$color-text: $color-grey-dark;
+// FONTS
+$irida-font-body-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+$irida-font-body-weight: normal;
+$irida-font-body-style: normal;
+
+// SPACING
+$irida-global-padding: 1rem;
+$irida-global-spacing: rem-calc(15);
