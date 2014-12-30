@@ -93,15 +93,20 @@ public class SequencingRunIT {
 		String location = asSequencer().given().body(run).expect().response().statusCode(HttpStatus.SC_CREATED).when()
 				.post("/api/sequencingrun/miseqrun").then().extract().header("Location");
 
-		asAdmin().expect().body("resource.uploadStatus", is(SequencingRunUploadStatus.UPLOADING.toString())).when().get(location);
+		// ensure the status is UPLOADING
+		asAdmin().expect().body("resource.uploadStatus", is(SequencingRunUploadStatus.UPLOADING.toString())).when()
+				.get(location);
 
 		Map<String, String> updateProperties = ImmutableMap.of("uploadStatus",
 				SequencingRunUploadStatus.COMPLETE.toString());
 
+		// pust an update to COMPLETE
 		asSequencer().given().body(updateProperties).expect().response().statusCode(HttpStatus.SC_OK).when()
 				.patch(location);
 
-		asAdmin().expect().body("resource.uploadStatus", is(SequencingRunUploadStatus.COMPLETE.toString())).when().get(location);
+		// ensure the status is COMPLETE
+		asAdmin().expect().body("resource.uploadStatus", is(SequencingRunUploadStatus.COMPLETE.toString())).when()
+				.get(location);
 
 	}
 
