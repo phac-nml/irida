@@ -232,12 +232,25 @@ public class IridaWorkflowsServiceIT {
 	 * @throws IridaWorkflowException
 	 */
 	@Test
-	public void testGetAllWorkflowsForAnalysisType() throws IridaWorkflowException {
+	public void testGetAllWorkflowsByAnalysisType() throws IridaWorkflowException {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
 
 		Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsByType(AnalysisType.DEFAULT);
 		assertEquals(2, workflows.size());
+	}
+	
+
+	/**
+	 * Tests getting all workflows for a given analysis type where there are no workflows.
+	 * 
+	 * @throws IridaWorkflowException
+	 */
+	@Test(expected=IridaWorkflowNotFoundException.class)
+	public void testGetAllWorkflowsByAnalysisTypeFailNoWorkflows() throws IridaWorkflowException {
+		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
+
+		iridaWorkflowsService.getAllWorkflowsByType(AnalysisType.PHYLOGENOMICS);
 	}
 	
 	/**

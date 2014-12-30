@@ -173,21 +173,27 @@ public class IridaWorkflowsService {
 	}
 
 	/**
-	 * Gets all the workflows for a given analysis type.
+	 * Gets all the workflows for a given {@link AnalysisType}.
 	 * 
 	 * @param analysisType
-	 *            The type of analysis to search for workflows.
-	 * @return A Set of {@link IridaWorkflow} for this analysis type.
+	 *            The {@link AnalysisType} to search for workflows.
+	 * @return A {@link Set} of {@link IridaWorkflow}s for this analysis type.
 	 * @throws IridaWorkflowNotFoundException
-	 *             If not corresponding workflows could be found.
+	 *             If not corresponding workflows could not be found.
 	 */
 	public Set<IridaWorkflow> getAllWorkflowsByType(AnalysisType analysisType) throws IridaWorkflowNotFoundException {
 		checkNotNull(analysisType, "analysisType is null");
 
-		return getRegisteredWorkflows()
+		Set<IridaWorkflow> workflowsByType = getRegisteredWorkflows()
 				.stream()
 				.filter((iridaWorkflow) -> analysisType
 						.equals(iridaWorkflow.getWorkflowDescription().getAnalysisType())).collect(Collectors.toSet());
+
+		if (workflowsByType.isEmpty()) {
+			throw new IridaWorkflowNotFoundException("No registered workflows for type " + analysisType);
+		} else {
+			return workflowsByType;
+		}
 	}
 	
 	/**
