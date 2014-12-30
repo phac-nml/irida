@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 
 import com.google.common.collect.ImmutableList;
@@ -41,7 +42,7 @@ public class IridaWorkflowDescription {
 	private String email;
 
 	@XmlElement(name = "analysisType")
-	private String analysisType;
+	private AnalysisType analysisType;
 
 	@XmlElement(name = "inputs")
 	private IridaWorkflowInput inputs;
@@ -81,7 +82,7 @@ public class IridaWorkflowDescription {
 	 *            The list of tools for this workflow.
 	 */
 	public IridaWorkflowDescription(UUID id, String name, String version, String author, String email,
-			String analysisType, IridaWorkflowInput inputs, List<IridaWorkflowOutput> outputs, List<IridaWorkflowTool> tools) {
+			AnalysisType analysisType, IridaWorkflowInput inputs, List<IridaWorkflowOutput> outputs, List<IridaWorkflowTool> tools) {
 		this.id = id;
 		this.name = name;
 		this.version = version;
@@ -151,7 +152,7 @@ public class IridaWorkflowDescription {
 		return tools;
 	}
 
-	public String getAnalysisType() {
+	public AnalysisType getAnalysisType() {
 		return analysisType;
 	}
 

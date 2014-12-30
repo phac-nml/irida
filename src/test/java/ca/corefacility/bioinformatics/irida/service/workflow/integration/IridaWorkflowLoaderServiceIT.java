@@ -34,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
@@ -113,7 +114,7 @@ public class IridaWorkflowLoaderServiceIT {
 		tools.add(workflowTool);
 
 		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version, "Mr. Developer",
-				"developer@example.com", "testAnalysis", new IridaWorkflowInput("sequence_reads", "reference"), outputs,
+				"developer@example.com", AnalysisType.DEFAULT, new IridaWorkflowInput("sequence_reads", "reference"), outputs,
 				tools);
 
 		return iridaWorkflow;
