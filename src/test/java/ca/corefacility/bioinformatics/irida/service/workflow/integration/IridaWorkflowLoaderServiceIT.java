@@ -73,6 +73,7 @@ public class IridaWorkflowLoaderServiceIT {
 	private Path workflowDirectoryPathNoDefinition;
 	private Path workflowDirectoryPathNoStructure;
 	private Path workflowDirectoryPathNoId;
+	private Path workflowDirectoryPathInvalidType;
 
 	@Before
 	public void setup() throws JAXBException, URISyntaxException, FileNotFoundException {
@@ -86,6 +87,8 @@ public class IridaWorkflowLoaderServiceIT {
 				"workflows/TestAnalysisNoDefinition").toURI());
 		workflowDirectoryPathNoStructure = Paths.get(TestAnalysis.class
 				.getResource("workflows/TestAnalysisNoStructure").toURI());
+		workflowDirectoryPathInvalidType = Paths.get(TestAnalysis.class
+				.getResource("workflows/TestAnalysisInvalidType").toURI());
 		workflowDirectoryPathNoId = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysisNoId").toURI());
 	}
 
@@ -237,5 +240,15 @@ public class IridaWorkflowLoaderServiceIT {
 	@Test(expected = IridaWorkflowLoadException.class)
 	public void testLoadWorkflowsFromDirectoryFailNoId() throws IOException, IridaWorkflowLoadException {
 		workflowLoaderService.loadAllWorkflowImplementations(workflowDirectoryPathNoId);
+	}
+	
+	/**
+	 * Tests failing to load up a workflow with an invalid type.
+	 * 
+	 * @throws IridaWorkflowLoadException
+	 */
+	@Test(expected = IridaWorkflowLoadException.class)
+	public void testLoadIridaWorkflowFromDirectoryFailInvalidType() throws IOException, IridaWorkflowLoadException {
+		workflowLoaderService.loadIridaWorkflowFromDirectory(workflowDirectoryPathInvalidType);
 	}
 }

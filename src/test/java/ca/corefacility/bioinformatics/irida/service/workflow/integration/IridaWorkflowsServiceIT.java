@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowTestBuilder;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
@@ -185,6 +186,18 @@ public class IridaWorkflowsServiceIT {
 	public void testRegisterWorkflowDuplicateFail() throws IridaWorkflowException {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
+	}
+	
+	/**
+	 * Tests to make sure we fail to register a workflow with a null type.
+	 * 
+	 * @throws IridaWorkflowException
+	 * 
+	 */
+	@Test(expected = NullPointerException.class)
+	public void testRegisterWorkflowNullTypeFail() throws IridaWorkflowException {
+		IridaWorkflow workflowNullAnalysisType = IridaWorkflowTestBuilder.buildTestWorkflowNullAnalysisType();
+		iridaWorkflowsService.registerWorkflow(workflowNullAnalysisType);
 	}
 
 	/**
