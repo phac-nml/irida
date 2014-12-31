@@ -3,14 +3,14 @@
 @import "../../resources/bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/mixins";
 
 // Reset and dependencies
-//@import "../../resources/bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/normalize";
+@import "../../resources/bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/normalize";
 //@import "../../resources/bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/print";
 @import "../../resources/bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/glyphicons";
 
 // Core CSS
 @import "../../resources/bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/scaffolding";
-//@import "../../resources/bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/type";
-//@import "../../resources/bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/code";
+@import "../../resources/bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/type";
+@import "../../resources/bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/code";
 @import "../../resources/bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/grid";
 @import "../../resources/bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/tables";
 @import "../../resources/bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/forms";

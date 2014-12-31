@@ -23,7 +23,6 @@
     "raphael": "2.1.2",
     "bower": "*",
     "angular": "1.3.5",
-    "Bootflat": "2.0.4",
     "json2": "*",
     "html5shiv": "3.7.2",
     "respondJs": "1.4.2",
@@ -37,7 +36,6 @@
     "angular-aria": "1.3.5",
     "ngstorage": "0.3.0",
     "angular-messages": "1.3.5",
-    "foundation-apps": "1.0.2",
     "bootstrap-sass-official": "3.3.1"
   },
   "devDependencies": {},

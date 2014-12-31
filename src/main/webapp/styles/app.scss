@@ -1,5 +1,7 @@
 @import "bootstrap/bootstrap";
-@import "foundation-apps/foundation-apps";
+
+@import "helpers/variables";
+@import "helpers/mixins";
 
 // COMPONENTS
 @import "components/breadcrumbs";
@@ -7,4 +9,7 @@
 @import "components/forms";
 @import "components/navbar";
 @import "components/notifications";
-@import "components/typography";
+
+html, body {
+  height: 100%;
+}
