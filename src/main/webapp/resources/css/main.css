@@ -135,52 +135,49 @@
 
 /* line 29, ../../styles/components/_panels.scss */
 .sidebar {
-  border: 1px solid #f3f3f3;
-  border-top-color: white;
-  border-bottom-color: #989898;
+  border: 1px solid #dfdfdf;
+  border-bottom-color: #cbcbcb;
   border-radius: 4px;
-  margin-bottom: 1em;
-  -moz-box-shadow: rgba(35, 35, 35, 0.2) 0 1px 2px;
-  -webkit-box-shadow: rgba(35, 35, 35, 0.2) 0 1px 2px;
-  box-shadow: rgba(35, 35, 35, 0.2) 0 1px 2px;
+  margin-bottom: 1rem;
 }
 
-/* line 38, ../../styles/components/_panels.scss */
+/* line 36, ../../styles/components/_panels.scss */
 .sidebar__heading {
-  border-bottom: 1px solid #dfdfdf;
-  padding: 10px;
+  padding: 1rem;
 }
-/* line 41, ../../styles/components/_panels.scss */
+/* line 38, ../../styles/components/_panels.scss */
 .sidebar__heading h2 {
-  font-size: 1.6rem;
-  font-weight: 600;
+  font-weight: normal;
   margin: 0;
   padding: 0;
 }
 
-/* line 49, ../../styles/components/_panels.scss */
+/* line 45, ../../styles/components/_panels.scss */
 .sidebar__body {
   position: relative;
 }
-/* line 51, ../../styles/components/_panels.scss */
+/* line 47, ../../styles/components/_panels.scss */
 .sidebar__body > div {
   border-top: 1px solid #f3f3f3;
   padding: 6px 4px;
 }
-/* line 55, ../../styles/components/_panels.scss */
+/* line 51, ../../styles/components/_panels.scss */
 .sidebar__body .form-group {
   padding: 4px 8px;
 }
-/* line 58, ../../styles/components/_panels.scss */
-.sidebar__body input[type="text"].form-control {
-  border: 1px solid #dfdfdf;
-  -moz-box-shadow: #232323 0 1px 2px inset;
-  -webkit-box-shadow: #232323 0 1px 2px inset;
-  box-shadow: #232323 0 1px 2px inset;
+/* line 54, ../../styles/components/_panels.scss */
+.sidebar__body label {
+  font-weight: normal;
 }
-/* line 62, ../../styles/components/_panels.scss */
+/* line 57, ../../styles/components/_panels.scss */
+.sidebar__body input[type="text"].form-control {
+  border: 1px solid #cbcbcb;
+  border-right: none;
+}
+/* line 61, ../../styles/components/_panels.scss */
 .sidebar__body .input-group-btn button {
   border: 1px solid #cbcbcb !important;
+  border-left: none;
   color: #cbcbcb;
 }
 
