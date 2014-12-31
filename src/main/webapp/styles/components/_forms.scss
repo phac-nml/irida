@@ -1,3 +1,5 @@
+@import "../helpers/variables";
+
 // Inputs
 .input-full {
   width: 100%;
@@ -7,7 +9,7 @@
 //  This is for showing a server error notification to the user
 .form-group .alert {
   padding: 3px 6px;
-  font-weight: bold;
+  font-weight: $irida-font-weight-bold;
   margin-bottom: 0;
 }
 
@@ -46,4 +48,10 @@
   input[type="checkbox"]:checked + label:before {
     display: none;
   }
+}
+
+// Input Overrides
+input {
+  // TODO: This can be removed after fixing REM sizing issue with bootstraps _scaffold.scss
+  font-size: $irida-rem-base !important;
 }

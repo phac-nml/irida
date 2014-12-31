@@ -1,9 +1,15 @@
+@import "../helpers/variables";
+
 .navbar {
   margin-bottom: 0 !important;
-}
 
-.navbar.navbar-sm {
-  margin-bottom: 15px !important;
+  & + .container {
+    margin-top: $irida-global-spacing;
+  }
+
+  ul {
+    font-size: 16px;
+  }
 }
 
 // Update z-index for submenu
@@ -13,5 +19,5 @@
 
 .navbar.subnav {
   z-index: 500;
-  margin-bottom: 1em;
+  margin-bottom: $irida-global-spacing !important;
 }

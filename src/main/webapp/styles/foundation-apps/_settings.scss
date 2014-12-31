@@ -46,8 +46,8 @@ $include-css: (
    card: false,
    coloring: false,
    extras: false,
-   forms: true,
-   grid: true,
+   forms: false,
+   grid: false,
    iconic: false,
    label: false,
    badge: false,
@@ -70,7 +70,7 @@ $include-css: (
 // - - - - - - - - - - - - - - -
 
 // This sets 1rem to be 16px
-// $rem-base: 16px;
+$rem-base: $irida-rem-base;
 
 // The default font-size is set to 100% of the browser style sheet (usually 16px)
 // for compatibility with browser-based text zoom or user-set defaults.
@@ -81,22 +81,22 @@ $include-css: (
 // $base-font-size: 100%;
 
 // $base-line-height is 24px while $base-font-size is 16px
-// $base-line-height: 1.5;
+$base-line-height: $irida-base-line-height;
 
 // Text selector helpers
-// $headers: "h1,h2,h3,h4,h5,h6";
+$headers: "h1,h2,h3,h4,h5,h6";
 
 // We use these to define default font weights
-// $font-weight-normal: normal;
-// $font-weight-bold: bold;
+$font-weight-normal: $irida-font-weight-normal;
+$font-weight-bold: $irida-font-weight-bold;
 
 // We use these to control various global styles
 $body-background: $irida-colour-bg;
 $body-font-color: $irida-colour-font-body;
-$body-font-family: $irida-font-body-family;
-$body-font-weight: $irida-font-body-weight;
+$body-font-family: $irida-font-family-sans-serif;
+$body-font-weight: $font-weight-normal;
 $body-font-style: $irida-font-body-style;
-// $body-antialiased: true;
+$body-antialiased: true;
 
 // Application Colors
 $primary-color: $irida-colour-primary;
@@ -234,62 +234,62 @@ $breakpoints: (
 // - - - - - - - - - - - - - - -
 
 // We use these to control header font styles
-// $header-font-family: $body-font-family;
-// $header-font-weight: $font-weight-normal;
-// $header-font-style: $font-weight-normal;
-// $header-font-color: #222;
-// $header-line-height: 1.4;
-// $header-top-margin: .2rem;
-// $header-bottom-margin: .5rem;
-// $header-text-rendering: optimizeLegibility;
+$header-font-family: $body-font-family;
+$header-font-weight: $font-weight-normal;
+$header-font-style: $font-weight-normal;
+$header-font-color: $body-font-color;
+$header-line-height: 1.4;
+$header-top-margin: .2rem;
+$header-bottom-margin: .5rem;
+$header-text-rendering: optimizeLegibility;
 
 // We use these to control header font sizes
-// $h1-font-size: rem-calc(44);
-// $h2-font-size: rem-calc(37);
-// $h3-font-size: rem-calc(27);
-// $h4-font-size: rem-calc(23);
-// $h5-font-size: rem-calc(18);
-// $h6-font-size: 1rem;
+$h1-font-size: $irida-font-h1-size;
+$h2-font-size: $irida-font-h2-size;
+$h3-font-size: $irida-font-h3-size;
+$h4-font-size: $irida-font-h4-size;
+$h5-font-size: $irida-font-h5-size;
+$h6-font-size: $irida-font-h6-size;
 
 // We use these to control header size reduction on small screens
-// $h1-font-reduction: rem-calc(10);
-// $h2-font-reduction: rem-calc(10);
-// $h3-font-reduction: rem-calc(5);
-// $h4-font-reduction: rem-calc(5);
-// $h5-font-reduction: 0;
-// $h6-font-reduction: 0;
+$h1-font-reduction: rem-calc(10);
+$h2-font-reduction: rem-calc(10);
+$h3-font-reduction: rem-calc(5);
+$h4-font-reduction: rem-calc(5);
+$h5-font-reduction: 0;
+$h6-font-reduction: 0;
 
 // These control how subheaders are styled.
-// $subheader-line-height: 1.4;
-// $subheader-font-color: scale-color($header-font-color, $lightness: 35%);
-// $subheader-font-weight: $font-weight-normal;
-// $subheader-top-margin: .2rem;
-// $subheader-bottom-margin: .5rem;
+$subheader-line-height: 1.4;
+$subheader-font-color: scale-color($header-font-color, $lightness: 35%);
+$subheader-font-weight: $font-weight-normal;
+$subheader-top-margin: .2rem;
+$subheader-bottom-margin: .5rem;
 
 // A general <small> styling
-// $small-font-size: 60%;
-// $small-font-color: scale-color($header-font-color, $lightness: 35%);
+$small-font-size: 60%;
+$small-font-color: scale-color($header-font-color, $lightness: 35%);
 
 // We use these to style paragraphs
-// $paragraph-font-family: inherit;
-// $paragraph-font-weight: $font-weight-normal;
-// $paragraph-font-size: 1rem;
-// $paragraph-line-height: 1.6;
-// $paragraph-margin-bottom: rem-calc(20);
-// $paragraph-aside-font-size: rem-calc(14);
-// $paragraph-aside-line-height: 1.35;
-// $paragraph-aside-font-style: italic;
-// $paragraph-text-rendering: optimizeLegibility;
+$paragraph-font-family: inherit;
+$paragraph-font-weight: $font-weight-normal;
+$paragraph-font-size: $irida-font-size-base;
+$paragraph-line-height: 1.6;
+$paragraph-margin-bottom: rem-calc(20);
+$paragraph-aside-font-size: rem-calc(14);
+$paragraph-aside-line-height: 1.35;
+$paragraph-aside-font-style: italic;
+$paragraph-text-rendering: optimizeLegibility;
 
 // We use these to style <code> tags
-// $code-color: grayscale($primary-color);
-// $code-font-family: Consolas, 'Liberation Mono', Courier, monospace;
-// $code-font-weight: $font-weight-normal;
-// $code-background-color: scale-color($secondary-color, $lightness: 70%);
-// $code-border-size: 1px;
-// $code-border-style: solid;
-// $code-border-color: scale-color($code-background-color, $lightness: -10%);
-// $code-padding: rem-calc(2) rem-calc(5) rem-calc(1);
+$code-color: grayscale($primary-color);
+$code-font-family: $irida-font-family-monospace;
+$code-font-weight: $font-weight-normal;
+$code-background-color: scale-color($secondary-color, $lightness: 70%);
+$code-border-size: 1px;
+$code-border-style: solid;
+$code-border-color: scale-color($code-background-color, $lightness: -10%);
+$code-padding: rem-calc(2) rem-calc(5) rem-calc(1);
 
 // We use these to style anchors
 // $anchor-text-decoration: none;
@@ -449,15 +449,15 @@ $breakpoints: (
 // $form-padding: 0.5rem;
 
 // Text fields
-// $input-color: #000;
-// $input-color-hover: $input-color;
-// $input-color-focus: $input-color;
-// $input-background: #fff;
-// $input-background-hover: $input-background;
-// $input-background-focus: $input-background;
-// $input-border: 1px solid #ccc;
-// $input-border-hover: 1px solid #bbb;
-// $input-border-focus: 1px solid #999;
+$input-color: #000;
+$input-color-hover: $input-color;
+$input-color-focus: $input-color;
+$input-background: #fff;
+$input-background-hover: $input-background;
+$input-background-focus: $input-background;
+$input-border: 1px solid #ccc;
+$input-border-hover: 1px solid #bbb;
+$input-border-focus: 1px solid #999;
 
 // Select menus
 // $select-color: #000;
@@ -467,9 +467,9 @@ $breakpoints: (
 // $select-arrow-color: $select-color;
 
 // Labels
-// $form-label-fontsize: 0.9rem;
-// $form-label-margin: 0.5rem;
-// $form-label-color: #333;
+$form-label-fontsize: 0.9rem;
+$form-label-margin: 0.5rem;
+$form-label-color: #333;
 
 // Inline labels
 // $inlinelabel-color: #333;

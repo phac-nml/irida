@@ -1041,9 +1041,9 @@ html {
 
 /* line 27, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_scaffolding.scss */
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 14px;
-  line-height: 1.42857;
+  font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
   color: #222;
   background-color: #ffffff;
 }
@@ -1100,7 +1100,7 @@ img {
 /* line 93, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_scaffolding.scss */
 .img-thumbnail {
   padding: 4px;
-  line-height: 1.42857;
+  line-height: 1.5;
   background-color: #ffffff;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -1119,8 +1119,8 @@ img {
 
 /* line 113, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_scaffolding.scss */
 hr {
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin-top: 24px;
+  margin-bottom: 24px;
   border: 0;
   border-top: 1px solid white;
 }
@@ -2287,7 +2287,7 @@ th {
 .table {
   width: 100%;
   max-width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 /* line 31, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_tables.scss */
 .table > thead > tr > th,
@@ -2297,7 +2297,7 @@ th {
 .table > tfoot > tr > th,
 .table > tfoot > tr > td {
   padding: 8px;
-  line-height: 1.42857;
+  line-height: 1.5;
   vertical-align: top;
   border-top: 1px solid #ddd;
 }
@@ -2487,7 +2487,7 @@ table th[class*="col-"] {
   /* line 171, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_tables.scss */
   .table-responsive {
     width: 100%;
-    margin-bottom: 15px;
+    margin-bottom: 18px;
     overflow-y: hidden;
     -ms-overflow-style: -ms-autohiding-scrollbar;
     border: 1px solid #ddd;
@@ -2549,8 +2549,8 @@ legend {
   display: block;
   width: 100%;
   padding: 0;
-  margin-bottom: 20px;
-  font-size: 21px;
+  margin-bottom: 24px;
+  font-size: 24px;
   line-height: inherit;
   color: #565656;
   border: 0;
@@ -2610,8 +2610,8 @@ input[type="checkbox"]:focus {
 output {
   display: block;
   padding-top: 7px;
-  font-size: 14px;
-  line-height: 1.42857;
+  font-size: 16px;
+  line-height: 1.5;
   color: #787878;
 }
 
@@ -2619,10 +2619,10 @@ output {
 .form-control {
   display: block;
   width: 100%;
-  height: 34px;
+  height: 38px;
   padding: 6px 12px;
-  font-size: 14px;
-  line-height: 1.42857;
+  font-size: 16px;
+  line-height: 1.5;
   color: #787878;
   background-color: #fff;
   background-image: none;
@@ -2677,7 +2677,7 @@ input[type="search"] {
   input[type="time"],
   input[type="datetime-local"],
   input[type="month"] {
-    line-height: 34px;
+    line-height: 38px;
   }
 
   /* line 184, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_forms.scss */
@@ -2696,7 +2696,7 @@ input[type="search"] {
   .input-group-sm > input[type="month"].form-control,
   .input-group-sm > input[type="month"].input-group-addon,
   .input-group-sm > .input-group-btn > input[type="month"].btn {
-    line-height: 30px;
+    line-height: 33px;
   }
 
   /* line 190, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_forms.scss */
@@ -2715,7 +2715,7 @@ input[type="search"] {
   .input-group-lg > input[type="month"].form-control,
   .input-group-lg > input[type="month"].input-group-addon,
   .input-group-lg > .input-group-btn > input[type="month"].btn {
-    line-height: 46px;
+    line-height: 49px;
   }
 }
 /* line 204, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_forms.scss */
@@ -2734,7 +2734,7 @@ input[type="search"] {
 /* line 220, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_forms.scss */
 .radio label,
 .checkbox label {
-  min-height: 20px;
+  min-height: 24px;
   padding-left: 20px;
   margin-bottom: 0;
   font-weight: normal;
@@ -2817,9 +2817,9 @@ input[type="checkbox"] {
 .input-sm, .input-group-sm > .form-control,
 .input-group-sm > .input-group-addon,
 .input-group-sm > .input-group-btn > .btn, .form-group-sm .form-control {
-  height: 30px;
+  height: 33px;
   padding: 5px 10px;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.5;
   border-radius: 3px;
 }
@@ -2828,8 +2828,8 @@ input[type="checkbox"] {
 select.input-sm, .input-group-sm > select.form-control,
 .input-group-sm > select.input-group-addon,
 .input-group-sm > .input-group-btn > select.btn, .form-group-sm .form-control {
-  height: 30px;
-  line-height: 30px;
+  height: 33px;
+  line-height: 33px;
 }
 
 /* line 84, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/mixins/_forms.scss */
@@ -2847,9 +2847,9 @@ select[multiple].input-sm,
 .input-lg, .input-group-lg > .form-control,
 .input-group-lg > .input-group-addon,
 .input-group-lg > .input-group-btn > .btn, .form-group-lg .form-control {
-  height: 46px;
+  height: 49px;
   padding: 10px 16px;
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1.33;
   border-radius: 6px;
 }
@@ -2858,8 +2858,8 @@ select[multiple].input-sm,
 select.input-lg, .input-group-lg > select.form-control,
 .input-group-lg > select.input-group-addon,
 .input-group-lg > .input-group-btn > select.btn, .form-group-lg .form-control {
-  height: 46px;
-  line-height: 46px;
+  height: 49px;
+  line-height: 49px;
 }
 
 /* line 84, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/mixins/_forms.scss */
@@ -2879,7 +2879,7 @@ select[multiple].input-lg,
 }
 /* line 329, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_forms.scss */
 .has-feedback .form-control {
-  padding-right: 42.5px;
+  padding-right: 47.5px;
 }
 
 /* line 334, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_forms.scss */
@@ -2889,9 +2889,9 @@ select[multiple].input-lg,
   right: 0;
   z-index: 2;
   display: block;
-  width: 34px;
-  height: 34px;
-  line-height: 34px;
+  width: 38px;
+  height: 38px;
+  line-height: 38px;
   text-align: center;
   pointer-events: none;
 }
@@ -2900,18 +2900,18 @@ select[multiple].input-lg,
 .input-lg + .form-control-feedback, .input-group-lg > .form-control + .form-control-feedback,
 .input-group-lg > .input-group-addon + .form-control-feedback,
 .input-group-lg > .input-group-btn > .btn + .form-control-feedback {
-  width: 46px;
-  height: 46px;
-  line-height: 46px;
+  width: 49px;
+  height: 49px;
+  line-height: 49px;
 }
 
 /* line 351, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_forms.scss */
 .input-sm + .form-control-feedback, .input-group-sm > .form-control + .form-control-feedback,
 .input-group-sm > .input-group-addon + .form-control-feedback,
 .input-group-sm > .input-group-btn > .btn + .form-control-feedback {
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
+  width: 33px;
+  height: 33px;
+  line-height: 33px;
 }
 
 /* line 8, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/mixins/_forms.scss */
@@ -3012,7 +3012,7 @@ select[multiple].input-lg,
 
 /* line 371, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_forms.scss */
 .has-feedback label ~ .form-control-feedback {
-  top: 25px;
+  top: 29px;
 }
 /* line 374, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_forms.scss */
 .has-feedback label.sr-only ~ .form-control-feedback {
@@ -3101,7 +3101,7 @@ select[multiple].input-lg,
 /* line 502, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_forms.scss */
 .form-horizontal .radio,
 .form-horizontal .checkbox {
-  min-height: 27px;
+  min-height: 31px;
 }
 /* line 508, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_forms.scss */
 .form-horizontal .form-group {
@@ -3155,8 +3155,8 @@ select[multiple].input-lg,
   border: 1px solid transparent;
   white-space: nowrap;
   padding: 6px 12px;
-  font-size: 14px;
-  line-height: 1.42857;
+  font-size: 16px;
+  line-height: 1.5;
   border-radius: 4px;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -3384,7 +3384,7 @@ select[multiple].input-lg,
 /* line 127, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_buttons.scss */
 .btn-lg, .btn-group-lg > .btn {
   padding: 10px 16px;
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1.33;
   border-radius: 6px;
 }
@@ -3392,7 +3392,7 @@ select[multiple].input-lg,
 /* line 131, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_buttons.scss */
 .btn-sm, .btn-group-sm > .btn {
   padding: 5px 10px;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.5;
   border-radius: 3px;
 }
@@ -3400,7 +3400,7 @@ select[multiple].input-lg,
 /* line 135, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_buttons.scss */
 .btn-xs, .btn-group-xs > .btn {
   padding: 1px 5px;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.5;
   border-radius: 3px;
 }
@@ -3503,7 +3503,7 @@ tbody.collapse.in {
   padding: 5px 0;
   margin: 2px 0 0;
   list-style: none;
-  font-size: 14px;
+  font-size: 16px;
   text-align: left;
   background-color: #fff;
   border: 1px solid #ccc;
@@ -3521,7 +3521,7 @@ tbody.collapse.in {
 /* line 58, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_dropdowns.scss */
 .dropdown-menu .divider {
   height: 1px;
-  margin: 9px 0;
+  margin: 11px 0;
   overflow: hidden;
   background-color: #e5e5e5;
 }
@@ -3531,7 +3531,7 @@ tbody.collapse.in {
   padding: 3px 20px;
   clear: both;
   font-weight: normal;
-  line-height: 1.42857;
+  line-height: 1.5;
   color: #565656;
   white-space: nowrap;
 }
@@ -3589,8 +3589,8 @@ tbody.collapse.in {
 .dropdown-header {
   display: block;
   padding: 3px 20px;
-  font-size: 12px;
-  line-height: 1.42857;
+  font-size: 14px;
+  line-height: 1.5;
   color: #9a9a9a;
   white-space: nowrap;
 }
@@ -3927,7 +3927,7 @@ tbody.collapse.in {
 /* line 73, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_input-groups.scss */
 .input-group-addon {
   padding: 6px 12px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: normal;
   line-height: 1;
   color: #787878;
@@ -3941,7 +3941,7 @@ tbody.collapse.in {
 .input-group-sm > .input-group-addon,
 .input-group-sm > .input-group-btn > .input-group-addon.btn {
   padding: 5px 10px;
-  font-size: 12px;
+  font-size: 14px;
   border-radius: 3px;
 }
 /* line 90, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_input-groups.scss */
@@ -3949,7 +3949,7 @@ tbody.collapse.in {
 .input-group-lg > .input-group-addon,
 .input-group-lg > .input-group-btn > .input-group-addon.btn {
   padding: 10px 16px;
-  font-size: 18px;
+  font-size: 20px;
   border-radius: 6px;
 }
 /* line 97, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_input-groups.scss */
@@ -4071,7 +4071,7 @@ tbody.collapse.in {
 /* line 59, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_navs.scss */
 .nav .nav-divider {
   height: 1px;
-  margin: 9px 0;
+  margin: 11px 0;
   overflow: hidden;
   background-color: #e5e5e5;
 }
@@ -4092,7 +4092,7 @@ tbody.collapse.in {
 /* line 84, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_navs.scss */
 .nav-tabs > li > a {
   margin-right: 2px;
-  line-height: 1.42857;
+  line-height: 1.5;
   border: 1px solid transparent;
   border-radius: 4px 4px 0 0;
 }
@@ -4222,7 +4222,7 @@ tbody.collapse.in {
 .navbar {
   position: relative;
   min-height: 50px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   border: 1px solid transparent;
 }
 /* line 14, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/mixins/_clearfix.scss */
@@ -4381,9 +4381,9 @@ tbody.collapse.in {
 /* line 164, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_navbar.scss */
 .navbar-brand {
   float: left;
-  padding: 15px 15px;
-  font-size: 18px;
-  line-height: 20px;
+  padding: 13px 15px;
+  font-size: 20px;
+  line-height: 24px;
   height: 50px;
 }
 /* line 171, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_navbar.scss */
@@ -4438,13 +4438,13 @@ tbody.collapse.in {
 
 /* line 233, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_navbar.scss */
 .navbar-nav {
-  margin: 7.5px -15px;
+  margin: 6.5px -15px;
 }
 /* line 236, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_navbar.scss */
 .navbar-nav > li > a {
   padding-top: 10px;
   padding-bottom: 10px;
-  line-height: 20px;
+  line-height: 24px;
 }
 @media (max-width: 767px) {
   /* line 244, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_navbar.scss */
@@ -4464,7 +4464,7 @@ tbody.collapse.in {
   }
   /* line 256, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_navbar.scss */
   .navbar-nav .open .dropdown-menu > li > a {
-    line-height: 20px;
+    line-height: 24px;
   }
   /* line 258, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_navbar.scss */
   .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-nav .open .dropdown-menu > li > a:focus {
@@ -4483,8 +4483,8 @@ tbody.collapse.in {
   }
   /* line 273, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_navbar.scss */
   .navbar-nav > li > a {
-    padding-top: 15px;
-    padding-bottom: 15px;
+    padding-top: 13px;
+    padding-bottom: 13px;
   }
 }
 
@@ -4497,8 +4497,8 @@ tbody.collapse.in {
   border-bottom: 1px solid transparent;
   -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
-  margin-top: 8px;
-  margin-bottom: 8px;
+  margin-top: 6px;
+  margin-bottom: 6px;
 }
 @media (min-width: 768px) {
   /* line 410, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_forms.scss */
@@ -4602,13 +4602,13 @@ tbody.collapse.in {
 
 /* line 343, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_navbar.scss */
 .navbar-btn {
-  margin-top: 8px;
-  margin-bottom: 8px;
+  margin-top: 6px;
+  margin-bottom: 6px;
 }
 /* line 346, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_navbar.scss */
 .navbar-btn.btn-sm, .btn-group-sm > .navbar-btn.btn {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 8.5px;
+  margin-bottom: 8.5px;
 }
 /* line 349, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_navbar.scss */
 .navbar-btn.btn-xs, .btn-group-xs > .navbar-btn.btn {
@@ -4618,8 +4618,8 @@ tbody.collapse.in {
 
 /* line 359, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_navbar.scss */
 .navbar-text {
-  margin-top: 15px;
-  margin-bottom: 15px;
+  margin-top: 13px;
+  margin-bottom: 13px;
 }
 @media (min-width: 768px) {
   /* line 359, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_navbar.scss */
@@ -4859,7 +4859,7 @@ tbody.collapse.in {
 /* line 6, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_breadcrumbs.scss */
 .breadcrumb {
   padding: 8px 15px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   list-style: none;
   background-color: #f5f5f5;
   border-radius: 4px;
@@ -4883,7 +4883,7 @@ tbody.collapse.in {
 .pagination {
   display: inline-block;
   padding-left: 0;
-  margin: 20px 0;
+  margin: 24px 0;
   border-radius: 4px;
 }
 /* line 10, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_pagination.scss */
@@ -4896,7 +4896,7 @@ tbody.collapse.in {
   position: relative;
   float: left;
   padding: 6px 12px;
-  line-height: 1.42857;
+  line-height: 1.5;
   text-decoration: none;
   color: #133B54;
   background-color: #fff;
@@ -4952,7 +4952,7 @@ tbody.collapse.in {
 .pagination-lg > li > a,
 .pagination-lg > li > span {
   padding: 10px 16px;
-  font-size: 18px;
+  font-size: 20px;
 }
 /* line 11, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/mixins/_pagination.scss */
 .pagination-lg > li:first-child > a,
@@ -4971,7 +4971,7 @@ tbody.collapse.in {
 .pagination-sm > li > a,
 .pagination-sm > li > span {
   padding: 5px 10px;
-  font-size: 12px;
+  font-size: 14px;
 }
 /* line 11, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/mixins/_pagination.scss */
 .pagination-sm > li:first-child > a,
@@ -5075,7 +5075,7 @@ a.label:hover, a.label:focus {
   display: inline-block;
   min-width: 10px;
   padding: 3px 7px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
   color: #fff;
   line-height: 1;
@@ -5124,45 +5124,10 @@ a.badge:hover, a.badge:focus {
   cursor: pointer;
 }
 
-/* line 7, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_thumbnails.scss */
-.thumbnail {
-  display: block;
-  padding: 4px;
-  margin-bottom: 20px;
-  line-height: 1.42857;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  -webkit-transition: border 0.2s ease-in-out;
-  -o-transition: border 0.2s ease-in-out;
-  transition: border 0.2s ease-in-out;
-}
-/* line 17, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_thumbnails.scss */
-.thumbnail > img,
-.thumbnail a > img {
-  display: block;
-  max-width: 100%;
-  height: auto;
-  margin-left: auto;
-  margin-right: auto;
-}
-/* line 27, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_thumbnails.scss */
-.thumbnail .caption {
-  padding: 9px;
-  color: #222;
-}
-
-/* line 34, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_thumbnails.scss */
-a.thumbnail:hover,
-a.thumbnail:focus,
-a.thumbnail.active {
-  border-color: #133B54;
-}
-
 /* line 9, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_alerts.scss */
 .alert {
   padding: 15px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   border: 1px solid transparent;
   border-radius: 4px;
 }
@@ -5278,8 +5243,8 @@ a.thumbnail.active {
 /* line 26, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_progress-bars.scss */
 .progress {
   overflow: hidden;
-  height: 20px;
-  margin-bottom: 20px;
+  height: 24px;
+  margin-bottom: 24px;
   background-color: #f5f5f5;
   border-radius: 4px;
   -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -5291,8 +5256,8 @@ a.thumbnail.active {
   float: left;
   width: 0%;
   height: 100%;
-  font-size: 12px;
-  line-height: 20px;
+  font-size: 14px;
+  line-height: 24px;
   color: #fff;
   text-align: center;
   background-color: #133B54;
@@ -5362,57 +5327,6 @@ a.thumbnail.active {
   background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
   background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
   background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
-}
-
-/* line 1, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_media.scss */
-.media {
-  margin-top: 15px;
-}
-/* line 5, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_media.scss */
-.media:first-child {
-  margin-top: 0;
-}
-
-/* line 10, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_media.scss */
-.media-right,
-.media > .pull-right {
-  padding-left: 10px;
-}
-
-/* line 15, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_media.scss */
-.media-left,
-.media > .pull-left {
-  padding-right: 10px;
-}
-
-/* line 20, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_media.scss */
-.media-left,
-.media-right,
-.media-body {
-  display: table-cell;
-  vertical-align: top;
-}
-
-/* line 27, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_media.scss */
-.media-middle {
-  vertical-align: middle;
-}
-
-/* line 31, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_media.scss */
-.media-bottom {
-  vertical-align: bottom;
-}
-
-/* line 36, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_media.scss */
-.media-heading {
-  margin-top: 0;
-  margin-bottom: 5px;
-}
-
-/* line 44, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_media.scss */
-.media-list {
-  padding-left: 0;
-  list-style: none;
 }
 
 /* line 10, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_list-group.scss */
@@ -5611,7 +5525,7 @@ a.list-group-item-danger.active, a.list-group-item-danger.active:hover, a.list-g
 
 /* line 7, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_panels.scss */
 .panel {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   background-color: #fff;
   border: 1px solid transparent;
   border-radius: 4px;
@@ -5649,7 +5563,7 @@ a.list-group-item-danger.active, a.list-group-item-danger.active:hover, a.list-g
 .panel-title {
   margin-top: 0;
   margin-bottom: 0;
-  font-size: 16px;
+  font-size: 18px;
   color: inherit;
 }
 /* line 39, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_panels.scss */
@@ -5864,7 +5778,7 @@ a.list-group-item-danger.active, a.list-group-item-danger.active:hover, a.list-g
 
 /* line 212, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_panels.scss */
 .panel-group {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 /* line 216, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_panels.scss */
 .panel-group .panel {
@@ -6037,39 +5951,10 @@ a.list-group-item-danger.active, a.list-group-item-danger.active:hover, a.list-g
   border-bottom-color: #ebccd1;
 }
 
-/* line 7, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_wells.scss */
-.well {
-  min-height: 20px;
-  padding: 19px;
-  margin-bottom: 20px;
-  background-color: #f5f5f5;
-  border: 1px solid #e3e3e3;
-  border-radius: 4px;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
-}
-/* line 15, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_wells.scss */
-.well blockquote {
-  border-color: #ddd;
-  border-color: rgba(0, 0, 0, 0.15);
-}
-
-/* line 22, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_wells.scss */
-.well-lg {
-  padding: 24px;
-  border-radius: 6px;
-}
-
-/* line 26, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_wells.scss */
-.well-sm {
-  padding: 9px;
-  border-radius: 3px;
-}
-
 /* line 6, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_close.scss */
 .close {
   float: right;
-  font-size: 21px;
+  font-size: 24px;
   font-weight: bold;
   line-height: 1;
   color: #000;
@@ -6181,7 +6066,7 @@ button.close {
 .modal-header {
   padding: 15px;
   border-bottom: 1px solid #e5e5e5;
-  min-height: 16.42857px;
+  min-height: 16.5px;
 }
 
 /* line 83, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_modals.scss */
@@ -6192,7 +6077,7 @@ button.close {
 /* line 88, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_modals.scss */
 .modal-title {
   margin: 0;
-  line-height: 1.42857;
+  line-height: 1.5;
 }
 
 /* line 95, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_modals.scss */
@@ -6269,8 +6154,8 @@ button.close {
   z-index: 1070;
   display: block;
   visibility: visible;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 12px;
+  font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+  font-size: 14px;
   font-weight: normal;
   line-height: 1.4;
   opacity: 0;
@@ -6385,151 +6270,6 @@ button.close {
   margin-top: -5px;
   border-width: 0 5px 5px;
   border-bottom-color: #000;
-}
-
-/* line 6, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_popovers.scss */
-.popover {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1060;
-  display: none;
-  max-width: 276px;
-  padding: 1px;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 14px;
-  font-weight: normal;
-  line-height: 1.42857;
-  text-align: left;
-  background-color: #fff;
-  background-clip: padding-box;
-  border: 1px solid #ccc;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 6px;
-  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  white-space: normal;
-}
-/* line 31, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_popovers.scss */
-.popover.top {
-  margin-top: -10px;
-}
-/* line 32, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_popovers.scss */
-.popover.right {
-  margin-left: 10px;
-}
-/* line 33, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_popovers.scss */
-.popover.bottom {
-  margin-top: 10px;
-}
-/* line 34, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_popovers.scss */
-.popover.left {
-  margin-left: -10px;
-}
-
-/* line 37, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_popovers.scss */
-.popover-title {
-  margin: 0;
-  padding: 8px 14px;
-  font-size: 14px;
-  background-color: #f7f7f7;
-  border-bottom: 1px solid #ebebeb;
-  border-radius: 5px 5px 0 0;
-}
-
-/* line 46, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_popovers.scss */
-.popover-content {
-  padding: 9px 14px;
-}
-
-/* line 55, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_popovers.scss */
-.popover > .arrow, .popover > .arrow:after {
-  position: absolute;
-  display: block;
-  width: 0;
-  height: 0;
-  border-color: transparent;
-  border-style: solid;
-}
-
-/* line 65, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_popovers.scss */
-.popover > .arrow {
-  border-width: 11px;
-}
-
-/* line 68, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_popovers.scss */
-.popover > .arrow:after {
-  border-width: 10px;
-  content: "";
-}
-
-/* line 74, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_popovers.scss */
-.popover.top > .arrow {
-  left: 50%;
-  margin-left: -11px;
-  border-bottom-width: 0;
-  border-top-color: #999999;
-  border-top-color: rgba(0, 0, 0, 0.25);
-  bottom: -11px;
-}
-/* line 81, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_popovers.scss */
-.popover.top > .arrow:after {
-  content: " ";
-  bottom: 1px;
-  margin-left: -10px;
-  border-bottom-width: 0;
-  border-top-color: #fff;
-}
-/* line 89, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_popovers.scss */
-.popover.right > .arrow {
-  top: 50%;
-  left: -11px;
-  margin-top: -11px;
-  border-left-width: 0;
-  border-right-color: #999999;
-  border-right-color: rgba(0, 0, 0, 0.25);
-}
-/* line 96, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_popovers.scss */
-.popover.right > .arrow:after {
-  content: " ";
-  left: 1px;
-  bottom: -10px;
-  border-left-width: 0;
-  border-right-color: #fff;
-}
-/* line 104, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_popovers.scss */
-.popover.bottom > .arrow {
-  left: 50%;
-  margin-left: -11px;
-  border-top-width: 0;
-  border-bottom-color: #999999;
-  border-bottom-color: rgba(0, 0, 0, 0.25);
-  top: -11px;
-}
-/* line 111, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_popovers.scss */
-.popover.bottom > .arrow:after {
-  content: " ";
-  top: 1px;
-  margin-left: -10px;
-  border-top-width: 0;
-  border-bottom-color: #fff;
-}
-/* line 120, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_popovers.scss */
-.popover.left > .arrow {
-  top: 50%;
-  right: -11px;
-  margin-top: -11px;
-  border-right-width: 0;
-  border-left-color: #999999;
-  border-left-color: rgba(0, 0, 0, 0.25);
-}
-/* line 127, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_popovers.scss */
-.popover.left > .arrow:after {
-  content: " ";
-  right: 1px;
-  border-right-width: 0;
-  border-left-color: #fff;
-  bottom: -10px;
 }
 
 /* line 7, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_carousel.scss */
@@ -7580,70 +7320,18 @@ meta.foundation-mq {
 }
 
 /*
-  GLOBAL
-  ------
+  ACTION SHEET
+  ------------
 
-  Global styles and settings for Foundation for Apps are stored here. This file must always
-  be imported, no matter what.
-
-  Includes:
-   -
+  A dropdown menu that sticks to the bottom of the screen on small devices, and becomes a dropdown menu on larger devices.
 */
-/* line 75, ../bower_components/foundation-apps/scss/_global.scss */
-html, body {
-  height: 100%;
-  font-size: 100%;
-}
-
-/* line 80, ../bower_components/foundation-apps/scss/_global.scss */
-html {
-  box-sizing: border-box;
-}
-
-/* line 83, ../bower_components/foundation-apps/scss/_global.scss */
-*, *:before, *:after {
-  box-sizing: inherit;
-}
-
-/* line 88, ../bower_components/foundation-apps/scss/_global.scss */
-body {
-  background: #fff;
-  color: #222;
-  padding: 0;
-  margin: 0;
-  font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
-  font-weight: normal;
-  font-style: normal;
-  line-height: 1;
-  position: relative;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* line 105, ../bower_components/foundation-apps/scss/_global.scss */
-img {
-  max-width: 100%;
-  height: auto;
-  -ms-interpolation-mode: bicubic;
-  display: inline-block;
-  vertical-align: middle;
-}
-
-/* line 118, ../bower_components/foundation-apps/scss/_global.scss */
-#map_canvas img,
-#map_canvas embed,
-#map_canvas object,
-.map_canvas img,
-.map_canvas embed,
-.map_canvas object {
-  max-width: none !important;
-}
-
-/* line 123, ../bower_components/foundation-apps/scss/_global.scss */
-.padding {
-  padding: 1rem;
-}
-
+/*
+  Styles for the list inside an action sheet.
+  Don't include this mixin if you want to build custom controls inside the sheet.
+*/
+/*
+  Styles for the action sheet container. Action sheets pin to the top or bottom of the screen.
+*/
 /*
   BLOCK LIST
   ----------
@@ -7742,10 +7430,10 @@ img {
   width: 100%;
   padding: 0.5rem;
   margin: 0 0 1rem 0;
-  border: #ccc;
+  border: 1px solid #ccc;
   border-radius: 0;
   background: #fff;
-  color: #787878;
+  color: #000;
   font-size: 1rem;
   line-height: 1;
   -webkit-font-smoothing: antialiased;
@@ -7754,14 +7442,14 @@ img {
 [type="text"]:hover, input[type="password"]:hover, input[type="date"]:hover, input[type="datetime"]:hover, input[type="datetime-local"]:hover, input[type="month"]:hover, input[type="week"]:hover, input[type="email"]:hover, input[type="number"]:hover, input[type="search"]:hover, input[type="tel"]:hover, input[type="time"]:hover, input[type="url"]:hover, input[type="color"]:hover, textarea:hover {
   border: 1px solid #bbb;
   background: #fff;
-  color: #787878;
+  color: #000;
 }
 /* line 95, ../bower_components/foundation-apps/scss/components/_forms.scss */
 [type="text"]:focus, input[type="password"]:focus, input[type="date"]:focus, input[type="datetime"]:focus, input[type="datetime-local"]:focus, input[type="month"]:focus, input[type="week"]:focus, input[type="email"]:focus, input[type="number"]:focus, input[type="search"]:focus, input[type="tel"]:focus, input[type="time"]:focus, input[type="url"]:focus, input[type="color"]:focus, textarea:focus {
   outline: 0;
-  border: #66afe9;
+  border: 1px solid #999;
   background: #fff;
-  color: #787878;
+  color: #000;
 }
 /* line 102, ../bower_components/foundation-apps/scss/components/_forms.scss */
 label > [type="text"], label > input[type="password"], label > input[type="date"], label > input[type="datetime"], label > input[type="datetime-local"], label > input[type="month"], label > input[type="week"], label > input[type="email"], label > input[type="number"], label > input[type="search"], label > input[type="tel"], label > input[type="time"], label > input[type="url"], label > input[type="color"], label > textarea {
@@ -7819,7 +7507,7 @@ label > .inline-label {
   flex: 0 0 auto;
   background: #eee;
   color: #333;
-  border: #ccc;
+  border: 1px solid #ccc;
   padding: 0 0.5rem;
   display: flex;
   align-items: center;
@@ -8056,6 +7744,14 @@ meter:-moz-meter-sub-sub-optimum::-moz-meter-bar {
 /*
   CSS output
 */
+/*
+  MODAL
+  -----
+
+  The humble modal hides off-canvas until summoned with an fa-open directive. Modals appear over an overlay that darkens the rest of the page, and have a maxmimum width. You can construct a grid inside a modal, or attach panels to it.
+
+  Note that the modal overlay is hardcoded into the CSS, because whether or not you build your modal semantically, the overlay is always required and will always look the same.
+*/
 @keyframes shake {
   0%, 10%, 20%, 30%, 40%, 50%, 60%, 70%, 80%, 90% {
     transform: translateX(7%);
@@ -8094,6 +7790,29 @@ meter:-moz-meter-sub-sub-optimum::-moz-meter-bar {
     transform: rotate(0);
   }
 }
+/*
+  NOTIFICATION
+  ------------
+
+  An alert that pins to the corner of the screen when triggered by JavaScript. It can be set to disappear after a certain period of time, or to stay put until the user clicks on it. A custom action can be asigned to a notification as well.
+
+  Optionally, the notifications directive can also tap into the browser's native notification support, if it exists.
+*/
+/*
+  CSS Output
+*/
+/*
+	Off-canvas menu
+  ---------------
+
+  A generic container that stays fixed to the left, top, right, or bottom of the screen, and is summoned when needed. When an off-canvas panel is open, the app frame shifts over to reveal the menu.
+*/
+/*
+  POPUP
+  -----
+
+  A floating container that can anchor to any other on-screen element, and contain any content, including grid blocks or panels.
+*/
 /*
   SWITCH
   ------
@@ -8287,9 +8006,9 @@ small {
 
 /* line 246, ../bower_components/foundation-apps/scss/components/_typography.scss */
 code {
-  font-family: Consolas, "Liberation Mono", Courier, monospace;
+  font-family: "Liberation Mono", Courier, monospace;
   font-weight: normal;
-  color: #c7254e;
+  color: #343434;
   background-color: #fbfbfb;
   border-width: 1px;
   border-style: solid;
@@ -8443,25 +8162,31 @@ blockquote p {
 }
 
 /* line 8, ../../styles/components/_breadcrumbs.scss */
+.breadcrumbs + .container {
+  margin-top: 0.9375rem;
+}
+
+/* line 12, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs .container {
   padding: 0 !important;
   margin-bottom: 0 !important;
 }
 
-/* line 13, ../../styles/components/_breadcrumbs.scss */
+/* line 17, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs ol {
+  font-size: 16px;
   list-style: none;
   overflow: hidden;
   padding: 0;
   margin-bottom: 0;
 }
 
-/* line 19, ../../styles/components/_breadcrumbs.scss */
+/* line 24, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs li {
   float: left;
 }
 
-/* line 22, ../../styles/components/_breadcrumbs.scss */
+/* line 27, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs li a {
   color: #ffffff;
   text-decoration: none;
@@ -8471,7 +8196,7 @@ blockquote p {
   float: left;
 }
 
-/* line 30, ../../styles/components/_breadcrumbs.scss */
+/* line 35, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs li a:after {
   content: " ";
   display: block;
@@ -8487,7 +8212,7 @@ blockquote p {
   z-index: 2;
 }
 
-/* line 44, ../../styles/components/_breadcrumbs.scss */
+/* line 49, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs li a:before {
   content: " ";
   display: block;
@@ -8504,52 +8229,52 @@ blockquote p {
   z-index: 1;
 }
 
-/* line 59, ../../styles/components/_breadcrumbs.scss */
+/* line 64, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs li:first-child a {
   padding-left: 2em;
 }
 
-/* line 66, ../../styles/components/_breadcrumbs.scss */
+/* line 71, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs li:nth-child(2) a {
   background-color: #184a69;
 }
 
-/* line 67, ../../styles/components/_breadcrumbs.scss */
+/* line 72, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs li:nth-child(2) a:after {
   border-left-color: #184a69;
 }
 
-/* line 66, ../../styles/components/_breadcrumbs.scss */
+/* line 71, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs li:nth-child(3) a {
   background-color: #1c587e;
 }
 
-/* line 67, ../../styles/components/_breadcrumbs.scss */
+/* line 72, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs li:nth-child(3) a:after {
   border-left-color: #1c587e;
 }
 
-/* line 66, ../../styles/components/_breadcrumbs.scss */
+/* line 71, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs li:nth-child(4) a {
   background-color: #216792;
 }
 
-/* line 67, ../../styles/components/_breadcrumbs.scss */
+/* line 72, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs li:nth-child(4) a:after {
   border-left-color: #216792;
 }
 
-/* line 66, ../../styles/components/_breadcrumbs.scss */
+/* line 71, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs li:nth-child(5) a {
   background-color: #2675a7;
 }
 
-/* line 67, ../../styles/components/_breadcrumbs.scss */
+/* line 72, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs li:nth-child(5) a:after {
   border-left-color: #2675a7;
 }
 
-/* line 70, ../../styles/components/_breadcrumbs.scss */
+/* line 75, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs li:last-child a {
   pointer-events: none;
   color: #222;
@@ -8558,18 +8283,18 @@ blockquote p {
   border-color: #ffffff;
 }
 
-/* line 78, ../../styles/components/_breadcrumbs.scss */
+/* line 83, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs li:last-child a:after {
   border: 0;
   border-left-color: #ffffff !important;
 }
 
-/* line 79, ../../styles/components/_breadcrumbs.scss */
+/* line 84, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs li a:hover {
   background: #133B54;
 }
 
-/* line 80, ../../styles/components/_breadcrumbs.scss */
+/* line 85, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs li a:hover:after {
   border-left-color: #133B54 !important;
 }
@@ -8662,26 +8387,26 @@ blockquote p {
   display: none;
 }
 
-/* line 2, ../../styles/components/_forms.scss */
+/* line 4, ../../styles/components/_forms.scss */
 .input-full {
   width: 100%;
 }
 
-/* line 8, ../../styles/components/_forms.scss */
+/* line 10, ../../styles/components/_forms.scss */
 .form-group .alert {
   padding: 3px 6px;
   font-weight: bold;
   margin-bottom: 0;
 }
 
-/* line 15, ../../styles/components/_forms.scss */
+/* line 17, ../../styles/components/_forms.scss */
 .large-checkbox label {
   position: relative;
   font-size: 14px;
   cursor: pointer;
   color: #232323;
 }
-/* line 20, ../../styles/components/_forms.scss */
+/* line 22, ../../styles/components/_forms.scss */
 .large-checkbox label:before, .large-checkbox label:after {
   font-family: FontAwesome;
   font-weight: 100;
@@ -8691,12 +8416,12 @@ blockquote p {
   top: -20px;
   left: 0;
 }
-/* line 30, ../../styles/components/_forms.scss */
+/* line 32, ../../styles/components/_forms.scss */
 .large-checkbox label:before {
   content: '\f0c8';
   /*unchecked*/
 }
-/* line 33, ../../styles/components/_forms.scss */
+/* line 35, ../../styles/components/_forms.scss */
 .large-checkbox label:after {
   content: '\f14a';
   /*checked*/
@@ -8704,39 +8429,47 @@ blockquote p {
   overflow: hidden;
   opacity: 0.5;
 }
-/* line 39, ../../styles/components/_forms.scss */
+/* line 41, ../../styles/components/_forms.scss */
 .large-checkbox input[type="checkbox"] {
   display: none;
 }
-/* line 42, ../../styles/components/_forms.scss */
+/* line 44, ../../styles/components/_forms.scss */
 .large-checkbox input[type="checkbox"]:checked + label:after {
   max-width: 25px;
   opacity: 1;
 }
-/* line 46, ../../styles/components/_forms.scss */
+/* line 48, ../../styles/components/_forms.scss */
 .large-checkbox input[type="checkbox"]:checked + label:before {
   display: none;
 }
 
-/* line 1, ../../styles/components/_navbar.scss */
+/* line 54, ../../styles/components/_forms.scss */
+input {
+  font-size: 16px !important;
+}
+
+/* line 3, ../../styles/components/_navbar.scss */
 .navbar {
   margin-bottom: 0 !important;
 }
-
-/* line 5, ../../styles/components/_navbar.scss */
-.navbar.navbar-sm {
-  margin-bottom: 15px !important;
+/* line 6, ../../styles/components/_navbar.scss */
+.navbar + .container {
+  margin-top: 0.9375rem;
+}
+/* line 10, ../../styles/components/_navbar.scss */
+.navbar ul {
+  font-size: 16px;
 }
 
-/* line 10, ../../styles/components/_navbar.scss */
+/* line 16, ../../styles/components/_navbar.scss */
 .navbar-nav > li > .dropdown-menu {
   z-index: 10000;
 }
 
-/* line 14, ../../styles/components/_navbar.scss */
+/* line 20, ../../styles/components/_navbar.scss */
 .navbar.subnav {
   z-index: 500;
-  margin-bottom: 1em;
+  margin-bottom: 0.9375rem !important;
 }
 
 /* line 1, ../../styles/components/_notifications.scss */
@@ -8787,4 +8520,9 @@ blockquote p {
 /* line 43, ../../styles/components/_notifications.scss */
 .irida-notification__item.remove {
   opacity: 0;
+}
+
+/* line 1, ../../styles/components/_typography.scss */
+p {
+  font-size: 16px;
 }

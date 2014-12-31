@@ -5,6 +5,7 @@
 // Licensed under MIT Open Source
 
 $foundation-version: '1.0.2';
+@import "../helpers/variables";
 
 // Make sure the charset is set appropriately
 
@@ -19,12 +20,12 @@ $foundation-version: '1.0.2';
 "../../resources/bower_components/foundation-apps/scss/helpers/images";
 
 // Global styles
-@import "../../resources/bower_components/foundation-apps/scss/global";
-@import "foundation-apps-settings";
+//@import "global";
+@import "settings";
 
 // Components
-//@import "../../resources/bower_components/foundation-apps/scss/components/iconic";
-//@import "../../resources/bower_components/foundation-apps/scss/components/action-sheet";
+@import "../../resources/bower_components/foundation-apps/scss/components/iconic";
+@import "../../resources/bower_components/foundation-apps/scss/components/action-sheet";
 @import "../../resources/bower_components/foundation-apps/scss/components/block-list";
 @import "../../resources/bower_components/foundation-apps/scss/components/button";
 @import "../../resources/bower_components/foundation-apps/scss/components/button-group";
@@ -36,11 +37,11 @@ $foundation-version: '1.0.2';
 @import "../../resources/bower_components/foundation-apps/scss/components/label";
 @import "../../resources/bower_components/foundation-apps/scss/components/list";
 @import "../../resources/bower_components/foundation-apps/scss/components/menu-bar";
-//@import "../../resources/bower_components/foundation-apps/scss/components/modal";
+@import "../../resources/bower_components/foundation-apps/scss/components/modal";
 @import "../../resources/bower_components/foundation-apps/scss/components/motion";
-//@import "../../resources/bower_components/foundation-apps/scss/components/notification";
-//@import "../../resources/bower_components/foundation-apps/scss/components/off-canvas";
-//@import "../../resources/bower_components/foundation-apps/scss/components/popup";
+@import "../../resources/bower_components/foundation-apps/scss/components/notification";
+@import "../../resources/bower_components/foundation-apps/scss/components/off-canvas";
+@import "../../resources/bower_components/foundation-apps/scss/components/popup";
 @import "../../resources/bower_components/foundation-apps/scss/components/switch";
 @import "../../resources/bower_components/foundation-apps/scss/components/tabs";
 @import "../../resources/bower_components/foundation-apps/scss/components/accordion";
