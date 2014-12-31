@@ -15,7 +15,7 @@
     <div class="col-md-8 col-md-offset-2 mrgn-tp-lg">
         <form name="new_project" class="ng-cloak" th:action="@{/projects/new}" method="post" role="form"
               novalidate="novalidate"
-              ng-controller="TestController">
+              ng-controller="NewProjectController as vm">
             <section class="panel panel-default">
                 <div class="panel-heading">
                     <h2 class="panel-title" th:text="#{projects.create.heading}">Create a New Project</h2>
@@ -29,7 +29,7 @@
                         </label>
                         <input class="form-control input-full" type="text" id="name" name="name"
                                required="required"
-                               placeholder="Required" th:placeholder="#{form.required}" ng-minlength='5' ng-model="project.name" ng-focus=""/>
+                               placeholder="Required" th:placeholder="#{form.required}" ng-minlength='5' ng-model="vm.project.name" ng-model-options="{debounce:{'default': 500, 'blur': 0}}"/>
 
                         <div ng-show="new_project.name.$dirty &amp;&amp; !new_project.name.$focused">
                             <small id="error-name-length" ng-show="new_project.name.$error.minlength"
@@ -67,7 +67,8 @@
                         <label class="control-label" for="remoteURL" th:text="#{projects.create.form.wiki}">Project Wiki
                             URL</label>
                         <input class="form-control input-full" name="remoteURL" type="url" id="remoteURL"
-                               placeholder="http://www.google.com" th:placeholder="#{form.placeholder.url}" ng-focus="" ng-model="project.remoteURL"/>
+                               placeholder="http://www.google.com" th:placeholder="#{form.placeholder.url}" ng-focus="" ng-model="vm.project.remoteURL"
+                               ng-model-options="{debounce:{'default': 500, 'blur': 0}}"/>
                         <small id="error-url" th:text="#{form.valid.url}"
                                ng-show="new_project.remoteURL.$invalid &amp;&amp; !new_project.remoteURL.$focused">
                             __THIS IS A REQUIRED FIELD__
@@ -112,9 +113,15 @@
 
         });
 
-        app.controller('TestController', function ($scope) {
-            $scope.project = {};
-        });
+        (function() {
+	        "use strict";
+
+	        var app = angular.module('irida');
+	        app.controller('NewProjectController', function () {
+		        var vm = this;
+	            vm.project = {};
+	        });
+        })();
     </script>
 </th:block>
 </body>

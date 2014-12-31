@@ -73,7 +73,7 @@ public class SequencingRunServiceImplIT {
 	private SampleService sampleService;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	private AnalysisService analysisService;
 
@@ -118,7 +118,7 @@ public class SequencingRunServiceImplIT {
 		SequenceFile savedFile = sequenceFileService.read(1l);
 		Set<SequenceFile> sequenceFilesForMiseqRun = sequenceFileService.getSequenceFilesForSequencingRun(saved);
 		assertTrue("Saved miseq run should have seqence file", sequenceFilesForMiseqRun.contains(savedFile));
-		
+
 		Set<AnalysisFastQC> analyses = analysisService.getAnalysesForSequenceFile(sf, AnalysisFastQC.class);
 		assertEquals("Wrong number of analyses created for sequence file.", 1, analyses.size());
 	}
@@ -138,7 +138,7 @@ public class SequencingRunServiceImplIT {
 	}
 
 	@Test
-	@WithMockUser(username = "fbristow", password = "password1", roles = "SEQUENCER")
+	@WithMockUser(username = "sequencer", password = "password1", roles = "SEQUENCER")
 	public void testCreateMiseqRunAsSequencer() {
 		MiseqRun mr = new MiseqRun();
 		mr.setWorkflow("Workflow name.");
@@ -147,10 +147,34 @@ public class SequencingRunServiceImplIT {
 	}
 
 	@Test
-	@WithMockUser(username = "fbristow", password = "password1", roles = "SEQUENCER")
+	@WithMockUser(username = "sequencer", password = "password1", roles = "SEQUENCER")
 	public void testReadMiseqRunAsSequencer() {
 		SequencingRun mr = miseqRunService.read(1L);
 		assertNotNull("Created run was not assigned an ID.", mr.getId());
+	}
+
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "user", password = "password1", roles = "USER")
+	public void testCreateMiseqRunAsUserFail() {
+		MiseqRun mr = new MiseqRun();
+		mr.setWorkflow("Workflow name.");
+		miseqRunService.create(mr);
+	}
+
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "user", password = "password1", roles = "USER")
+	public void testUpdateMiseqRunAsUserFail() {
+		SequencingRun mr = miseqRunService.read(1L);
+		miseqRunService.update(mr.getId(), ImmutableMap.of("description", "a different description"));
+	}
+
+	@Test
+	@WithMockUser(username = "sequencer", password = "password1", roles = "SEQUENCER")
+	public void testUpdateMiseqRunAsSequencer() {
+		String newDescription = "a different description";
+		SequencingRun mr = miseqRunService.read(1L);
+		SequencingRun update = miseqRunService.update(mr.getId(), ImmutableMap.of("description", newDescription));
+		assertEquals(update.getDescription(), newDescription);
 	}
 
 	@Test
@@ -225,7 +249,7 @@ public class SequencingRunServiceImplIT {
 		sequenceFileService.createSequenceFileInSample(sf, sample);
 
 		miseqRunService.addSequenceFileToSequencingRun(run, sf);
-		
+
 		Set<AnalysisFastQC> analyses = analysisService.getAnalysesForSequenceFile(sf, AnalysisFastQC.class);
 		assertEquals("Wrong number of analyses created for sequence file.", 1, analyses.size());
 	}
