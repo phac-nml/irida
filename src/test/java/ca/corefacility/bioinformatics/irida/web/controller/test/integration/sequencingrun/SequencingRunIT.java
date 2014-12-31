@@ -21,10 +21,12 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Integration tests for users.
@@ -39,8 +41,9 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/sequencingrun/SequencingRunIntegrationTest.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class SequencingRunIT {
-	
-	//TODO: When more run types are available test that they are represented in listing and reading
+
+	// TODO: When more run types are available test that they are represented in
+	// listing and reading
 
 	@Test
 	public void testListRuns() {
@@ -51,9 +54,8 @@ public class SequencingRunIT {
 
 	@Test
 	public void testGetRun() {
-		asAdmin().expect().body("resource.links.rel", hasItems("self")).and()
-				.body("resource.description", is("run 2")).and().body("resource.workflow", is("Test workflow 2"))
-				.when().get("/api/sequencingrun/2");
+		asAdmin().expect().body("resource.links.rel", hasItems("self")).and().body("resource.description", is("run 2"))
+				.and().body("resource.workflow", is("Test workflow 2")).when().get("/api/sequencingrun/2");
 	}
 
 	@Test
@@ -82,6 +84,30 @@ public class SequencingRunIT {
 		Map<String, String> run = createRun();
 		asSequencer().given().body(run).expect().response().statusCode(HttpStatus.SC_BAD_REQUEST).when()
 				.post("/api/sequencingrun");
+	}
+
+	@Test
+	public void testUpdateSequencingRunStatus() {
+		Map<String, String> run = createRun();
+		// create the run and get the location
+		String location = asSequencer().given().body(run).expect().response().statusCode(HttpStatus.SC_CREATED).when()
+				.post("/api/sequencingrun/miseqrun").then().extract().header("Location");
+
+		// ensure the status is UPLOADING
+		asAdmin().expect().body("resource.uploadStatus", is(SequencingRunUploadStatus.UPLOADING.toString())).when()
+				.get(location);
+
+		Map<String, String> updateProperties = ImmutableMap.of("uploadStatus",
+				SequencingRunUploadStatus.COMPLETE.toString());
+
+		// pust an update to COMPLETE
+		asSequencer().given().body(updateProperties).expect().response().statusCode(HttpStatus.SC_OK).when()
+				.patch(location);
+
+		// ensure the status is COMPLETE
+		asAdmin().expect().body("resource.uploadStatus", is(SequencingRunUploadStatus.COMPLETE.toString())).when()
+				.get(location);
+
 	}
 
 	private Map<String, String> createRun() {
