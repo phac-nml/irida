@@ -119,7 +119,7 @@ public class IridaWorkflowsServiceIT {
 	 * @throws IridaWorkflowException
 	 */
 	@Test
-	public void testGetDefaultWorkflowSuccess() throws IridaWorkflowException {
+	public void testGetDefaultWorkflowByTypeSuccess() throws IridaWorkflowException {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
 		iridaWorkflowsService.setDefaultWorkflow(workflowId1v1);
@@ -168,7 +168,7 @@ public class IridaWorkflowsServiceIT {
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test(expected = IridaWorkflowNotFoundException.class)
-	public void testGetDefaultWorkflowFail() throws IridaWorkflowException {
+	public void testGetDefaultWorkflowByTypeFail() throws IridaWorkflowException {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 		iridaWorkflowsService.getDefaultWorkflowByType(AnalysisType.DEFAULT);
 	}
@@ -180,7 +180,7 @@ public class IridaWorkflowsServiceIT {
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test(expected = IridaWorkflowNotFoundException.class)
-	public void testGetDefaultWorkflowFailNoType() throws IridaWorkflowException {
+	public void testGetDefaultWorkflowByTypeFailNoType() throws IridaWorkflowException {
 		iridaWorkflowsService.getDefaultWorkflowByType(AnalysisType.DEFAULT);
 	}
 
@@ -269,7 +269,7 @@ public class IridaWorkflowsServiceIT {
 	 * @throws IridaWorkflowException
 	 */
 	@Test
-	public void testGetAllWorkflowsByAnalysisType() throws IridaWorkflowException {
+	public void testGetAllWorkflowsByType() throws IridaWorkflowException {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
 
@@ -284,7 +284,7 @@ public class IridaWorkflowsServiceIT {
 	 * @throws IridaWorkflowException
 	 */
 	@Test(expected=IridaWorkflowNotFoundException.class)
-	public void testGetAllWorkflowsByAnalysisTypeFailNoWorkflows() throws IridaWorkflowException {
+	public void testGetAllWorkflowsByTypeFailNoWorkflows() throws IridaWorkflowException {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 
 		iridaWorkflowsService.getAllWorkflowsByType(AnalysisType.PHYLOGENOMICS);
