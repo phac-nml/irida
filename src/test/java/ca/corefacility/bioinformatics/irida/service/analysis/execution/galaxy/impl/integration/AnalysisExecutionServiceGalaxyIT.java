@@ -55,6 +55,7 @@ import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
+import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
@@ -160,7 +161,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testExecuteAnalysisSuccess() throws InterruptedException, NoSuchValueException,
 			IridaWorkflowNotFoundException, ExecutionManagerException, IOException, ExecutionException {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
+				sequenceFilePath, referenceFilePath, iridaPhylogenomicsWorkflowId);
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -456,7 +457,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testTransferAnalysisResultsFailInvalidId() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
+				sequenceFilePath, referenceFilePath, iridaPhylogenomicsWorkflowId);
 		SequenceFile sequenceFile = analysisSubmission.getInputFiles().iterator().next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
@@ -494,11 +495,11 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * 
 	 * @throws Throwable
 	 */
-	@Test(expected = NullPointerException.class)
+	@Test(expected = GalaxyResponseException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testTransferAnalysisResultsFailInvalidRemoteAnalysisId() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
+				sequenceFilePath, referenceFilePath, iridaPhylogenomicsWorkflowId);
 		SequenceFile sequenceFile = analysisSubmission.getInputFiles().iterator().next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
