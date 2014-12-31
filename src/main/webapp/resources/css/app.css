@@ -7935,6 +7935,15 @@ input {
   font-size: 16px !important;
 }
 
+/* line 1, ../../styles/components/_modals.scss */
+.modal-backdrop {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
 /* line 3, ../../styles/components/_navbar.scss */
 .navbar {
   margin-bottom: 0 !important;
@@ -8009,7 +8018,7 @@ input {
   opacity: 0;
 }
 
-/* line 13, ../../styles/app.scss */
+/* line 14, ../../styles/app.scss */
 html, body {
   height: 100%;
 }
