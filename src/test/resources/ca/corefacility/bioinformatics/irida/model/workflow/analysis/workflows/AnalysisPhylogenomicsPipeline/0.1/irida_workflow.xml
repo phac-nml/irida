@@ -6,7 +6,7 @@
   <version>0.1</version>
   <author>Aaron Petkau</author>
   <email>aaron.petkau@phac-aspc.gc.ca</email>
-  <analysisType>PHYLOGENOMICS</analysisType>
+  <analysisType>phylogenomics</analysisType>
   <inputs>
     <sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
     <reference>reference</reference>
