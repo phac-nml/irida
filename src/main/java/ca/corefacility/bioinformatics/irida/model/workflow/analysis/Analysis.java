@@ -45,7 +45,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 @Table(name = "analysis")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Audited
-public abstract class Analysis implements IridaThing {
+public class Analysis implements IridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
