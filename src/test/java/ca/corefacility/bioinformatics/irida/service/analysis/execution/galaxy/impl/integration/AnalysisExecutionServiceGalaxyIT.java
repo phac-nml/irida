@@ -45,7 +45,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
@@ -485,9 +484,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
-		assertEquals(1,
-				analysisRepository.findAnalysesForSequenceFile(sequenceFile, TestAnalysis.class)
-						.size());
+		assertEquals(1, analysisRepository.findAnalysesForSequenceFile(sequenceFile, Analysis.class).size());
 		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
 				.getId());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState());
@@ -498,19 +495,18 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("analysis results in returned submission and from database should be the same",
 				analysisResults.getId(), analysisResultsDatabase.getId());
 
-		assertEquals(TestAnalysis.class, analysisResults.getClass());
-		TestAnalysis analysisResultsTest = (TestAnalysis) analysisResults;
+		assertEquals(Analysis.class, analysisResults.getClass());
 
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
-				analysisResultsTest.getExecutionManagerAnalysisId());
+				analysisResults.getExecutionManagerAnalysisId());
 
 		assertEquals("inputFiles should be the same for submission and results", analysisExecuted.getInputFiles(),
-				analysisResultsTest.getInputSequenceFiles());
+				analysisResults.getInputSequenceFiles());
 
-		assertEquals(2, analysisResultsTest.getAnalysisOutputFiles().size());
-		AnalysisOutputFile output1 = analysisResultsTest.getOutputFile1();
-		AnalysisOutputFile output2 = analysisResultsTest.getOutputFile2();
+		assertEquals(2, analysisResults.getAnalysisOutputFiles().size());
+		AnalysisOutputFile output1 = analysisResults.getAnalysisOutputFile("output1");
+		AnalysisOutputFile output2 = analysisResults.getAnalysisOutputFile("output2");
 
 		assertTrue("output files 1 should be equal",
 				com.google.common.io.Files.equal(expectedOutputFile1.toFile(), output1.getFile().toFile()));
@@ -524,17 +520,18 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Analysis analysis = finalSubmission.getAnalysis();
 		assertNotNull(analysis);
 
-		Analysis savedAnalysisFromDatabase = analysisService.read(analysisResultsTest.getId());
-		assertTrue(savedAnalysisFromDatabase instanceof TestAnalysis);
-		TestAnalysis savedTest = (TestAnalysis) savedAnalysisFromDatabase;
+		Analysis savedAnalysisFromDatabase = analysisService.read(analysisResults.getId());
+		assertTrue(savedAnalysisFromDatabase instanceof Analysis);
+		Analysis savedTest = (Analysis) savedAnalysisFromDatabase;
 
 		assertEquals("Analysis from submission and from database should be the same",
 				savedAnalysisFromDatabase.getId(), analysis.getId());
 
-		assertEquals(analysisResultsTest.getId(), savedTest.getId());
-		assertEquals(analysisResultsTest.getOutputFile1().getFile(), savedTest
-				.getOutputFile1().getFile());
-		assertEquals(analysisResultsTest.getOutputFile2().getFile(), savedTest.getOutputFile2().getFile());
+		assertEquals(analysisResults.getId(), savedTest.getId());
+		assertEquals(analysisResults.getAnalysisOutputFile("output1").getFile(),
+				savedTest.getAnalysisOutputFile("output1").getFile());
+		assertEquals(analysisResults.getAnalysisOutputFile("output2").getFile(),
+				savedTest.getAnalysisOutputFile("output2").getFile());
 	}
 	
 	/**
@@ -568,7 +565,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 			assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
 					.getAnalysisState());
 			assertEquals(0,
-					analysisRepository.findAnalysesForSequenceFile(sequenceFile, TestAnalysis.class)
+					analysisRepository.findAnalysesForSequenceFile(sequenceFile, Analysis.class)
 							.size());
 
 			// pull out real exception
