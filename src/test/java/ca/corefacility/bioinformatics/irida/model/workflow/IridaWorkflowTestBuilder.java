@@ -32,11 +32,12 @@ public class IridaWorkflowTestBuilder {
 	public static IridaWorkflow buildTestWorkflow() {
 		return buildTestWorkflow(DEFAULT_ID);
 	}
-	
+
 	/**
 	 * Builds a test {@link IridaWorkflow} with the given id.
 	 * 
-	 * @param workflowId  The workflow id.
+	 * @param workflowId
+	 *            The workflow id.
 	 * @return A test workflow.
 	 * @throws MalformedURLException
 	 */
@@ -47,7 +48,7 @@ public class IridaWorkflowTestBuilder {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	/**
 	 * Builds a default test {@link IridaWorkflow} with a null analysis type.
 	 * 
@@ -71,8 +72,22 @@ public class IridaWorkflowTestBuilder {
 		return buildTestDescription(workflowId, "TestWorkflow", "1.0", AnalysisType.DEFAULT);
 	}
 
-	private static IridaWorkflowDescription buildTestDescription(UUID id, String name, String version, AnalysisType analysisType)
-			throws MalformedURLException {
+	/**
+	 * Builds a {@link IridaWorkflowDescription} with the following information.
+	 * 
+	 * @param id
+	 *            The id of the workflow.
+	 * @param name
+	 *            The name of the workflow.
+	 * @param version
+	 *            The version of the workflow.
+	 * @param analysisType
+	 *            The {@link AnalysisType} of the workflow.
+	 * @return An {@link IridaWorkflowDescription} with the given information.
+	 * @throws MalformedURLException
+	 */
+	public static IridaWorkflowDescription buildTestDescription(UUID id, String name, String version,
+			AnalysisType analysisType) throws MalformedURLException {
 		List<IridaWorkflowOutput> outputs = new LinkedList<>();
 		outputs.add(new IridaWorkflowOutput("output1", "output1.txt"));
 		outputs.add(new IridaWorkflowOutput("output2", "output2.txt"));
