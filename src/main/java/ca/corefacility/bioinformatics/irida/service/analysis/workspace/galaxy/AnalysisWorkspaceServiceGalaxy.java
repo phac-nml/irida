@@ -4,6 +4,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -33,7 +35,6 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectNam
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
@@ -366,6 +367,15 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			analysisOutputFiles.put(analysisOutputName, analysisOutput);
 		}
 
-		return new AnalysisPhylogenomicsPipeline(inputFiles, analysisId, analysisOutputFiles);
+		Class<? extends Analysis> analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType()
+				.getAnalysisClass();
+		try {
+			Constructor<? extends Analysis> analysisConstructor = analysisType.getConstructor(Set.class, String.class,
+					Map.class);
+			return analysisConstructor.newInstance(inputFiles, analysisId, analysisOutputFiles);
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			throw new IridaWorkflowAnalysisTypeException("Error building Analysis object of type " + analysisType, e);
+		}
 	}
 }
