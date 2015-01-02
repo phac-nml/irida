@@ -5,11 +5,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 
@@ -38,8 +35,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkfl
 public class IridaWorkflowLoaderService {
 
 	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowLoaderService.class);
-
-	private static final String WORKFLOWS_DIR = "workflows";
 
 	private static final String WORKFLOW_DEFINITION_FILE = "irida_workflow.xml";
 	private static final String WORKFLOW_STRUCTURE_FILE = "irida_workflow_structure.ga";
@@ -56,41 +51,6 @@ public class IridaWorkflowLoaderService {
 	@Autowired
 	public IridaWorkflowLoaderService(Unmarshaller workflowDescriptionUnmarshaller) {
 		this.workflowDescriptionUnmarshaller = workflowDescriptionUnmarshaller;
-	}
-
-	/**
-	 * Loads workflows that are stored as resources belonging to the passed
-	 * Analysis class.
-	 * 
-	 * @param analysisClass
-	 *            The class defining the type of analysis.
-	 * @return A Set of {@link IridaWorkflow}s that implement the given analysis
-	 *         class type.
-	 * @throws IOException
-	 *             If there was a problem reading a workflow.
-	 * @throws IridaWorkflowLoadException
-	 *             If there was a problem loading a workflow.
-	 */
-	public Set<IridaWorkflow> loadWorkflowsForClass(Class<? extends Analysis> analysisClass) throws IOException,
-			IridaWorkflowLoadException {
-		checkNotNull(analysisClass, "analysisClass is null");
-
-		String analysisName = analysisClass.getSimpleName();
-		URL workflowsDirResourceURL = analysisClass.getResource(WORKFLOWS_DIR);
-		if (workflowsDirResourceURL == null) {
-			throw new IridaWorkflowLoadException("Missing directory " + WORKFLOWS_DIR + " for class " + analysisClass);
-		} else {
-			Path workflowsResourcePath = Paths.get(workflowsDirResourceURL.getFile());
-			Path workflowPath = workflowsResourcePath.resolve(analysisName);
-			logger.debug("Loading Workflows for: " + analysisClass + " from " + workflowPath);
-
-			if (!Files.isDirectory(workflowPath)) {
-				throw new IridaWorkflowLoadException("Missing directory " + workflowPath + " for class "
-						+ analysisClass);
-			} else {
-				return loadAllWorkflowImplementations(workflowPath);
-			}
-		}
 	}
 
 	/**
@@ -194,7 +154,10 @@ public class IridaWorkflowLoaderService {
 
 		if (workflowDescription.getId() == null) {
 			throw new IridaWorkflowLoadException("No id for workflow description from file " + descriptionFile);
-		} else {
+		} else if (workflowDescription.getAnalysisType() == null) {
+			throw new IridaWorkflowLoadException("Invalid analysisType for workflow description from file " + descriptionFile);
+		}
+		else {
 			return workflowDescription;
 		}
 	}

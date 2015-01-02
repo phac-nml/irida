@@ -6,7 +6,7 @@
   <version>0.1</version>
   <author>Aaron Petkau</author>
   <email>aaron.petkau@phac-aspc.gc.ca</email>
-  <analysis_class>ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline</analysis_class>
+  <analysisType>phylogenomics</analysisType>
   <inputs>
     <sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
     <reference>reference</reference>
