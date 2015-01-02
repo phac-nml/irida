@@ -154,7 +154,10 @@ public class IridaWorkflowLoaderService {
 
 		if (workflowDescription.getId() == null) {
 			throw new IridaWorkflowLoadException("No id for workflow description from file " + descriptionFile);
-		} else {
+		} else if (workflowDescription.getAnalysisType() == null) {
+			throw new IridaWorkflowLoadException("Invalid analysisType for workflow description from file " + descriptionFile);
+		}
+		else {
 			return workflowDescription;
 		}
 	}

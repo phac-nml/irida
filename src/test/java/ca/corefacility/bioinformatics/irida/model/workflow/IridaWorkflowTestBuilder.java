@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
@@ -35,16 +36,31 @@ public class IridaWorkflowTestBuilder {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	/**
+	 * Builds a default test {@link IridaWorkflow} with a null analysis type.
+	 * 
+	 * @return A test workflow.
+	 * @throws MalformedURLException
+	 */
+	public static IridaWorkflow buildTestWorkflowNullAnalysisType() {
+		try {
+			return new IridaWorkflow(buildTestDescription(DEFAULT_ID, "TestWorkflow", "1.0", null),
+					buildTestStructure());
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	private static IridaWorkflowStructure buildTestStructure() {
 		return new IridaWorkflowStructure(Paths.get("/tmp"));
 	}
 
 	private static IridaWorkflowDescription buildTestDescription() throws MalformedURLException {
-		return buildTestDescription(DEFAULT_ID, "TestWorkflow", "1.0");
+		return buildTestDescription(DEFAULT_ID, "TestWorkflow", "1.0", AnalysisType.DEFAULT);
 	}
 
-	private static IridaWorkflowDescription buildTestDescription(UUID id, String name, String version)
+	private static IridaWorkflowDescription buildTestDescription(UUID id, String name, String version, AnalysisType analysisType)
 			throws MalformedURLException {
 		List<IridaWorkflowOutput> outputs = new LinkedList<>();
 		outputs.add(new IridaWorkflowOutput("output1", "output1.txt"));
@@ -57,7 +73,7 @@ public class IridaWorkflowTestBuilder {
 		tools.add(workflowTool);
 
 		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version, "Mr. Developer",
-				"developer@example.com", "testAnalysis", new IridaWorkflowInput("sequence_reads", "reference"), outputs,
+				"developer@example.com", analysisType, new IridaWorkflowInput("sequence_reads", "reference"), outputs,
 				tools);
 
 		return iridaWorkflow;
