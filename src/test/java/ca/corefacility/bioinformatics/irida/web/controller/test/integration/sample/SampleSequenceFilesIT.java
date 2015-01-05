@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -29,11 +30,13 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.Lists;
 import com.google.common.net.HttpHeaders;
 import com.jayway.restassured.response.Response;
 
@@ -179,5 +182,19 @@ public class SampleSequenceFilesIT {
 
 		assertNotNull(sampleLocation);
 		assertEquals(sampleUri, sampleLocation);
+	}
+	
+	@Test
+	public void testAddSequenceFilePair() {
+		String filePairURI = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1/sequenceFiles/pair";
+
+		String file1URI = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1/sequenceFiles/1";
+
+		List<Long> files = Lists.newArrayList(1l,2l);
+
+		asAdmin().body(files).expect().response().statusCode(HttpStatus.CREATED.value()).when().post(filePairURI);
+
+		asAdmin().expect().body("resource.links.rel", hasItems(RESTSampleSequenceFilesController.REL_PAIR)).when()
+				.get(file1URI);
 	}
 }
