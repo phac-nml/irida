@@ -3,6 +3,9 @@
 @import "helpers/variables";
 @import "helpers/mixins";
 
+// LAYOUTS
+@import "layouts/all";
+
 // COMPONENTS
 @import "components/breadcrumbs";
 @import "components/cart";
@@ -11,6 +14,3 @@
 @import "components/navbar";
 @import "components/notifications";
 
-html, body {
-  height: 100%;
-}

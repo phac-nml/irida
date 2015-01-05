@@ -7643,6 +7643,11 @@ button.close {
     display: none !important;
   }
 }
+/* line 1, ../../styles/layouts/_all.scss */
+html, body {
+  height: 100%;
+}
+
 /* line 4, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs {
   background-color: #133B54;
@@ -8016,9 +8021,4 @@ input {
 /* line 43, ../../styles/components/_notifications.scss */
 .irida-notification__item.remove {
   opacity: 0;
-}
-
-/* line 14, ../../styles/app.scss */
-html, body {
-  height: 100%;
 }
