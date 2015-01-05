@@ -199,9 +199,10 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequenceFileService.read(sf.getId())).thenReturn(sf);
 		when(sequenceFileService.read(pairFile.getId())).thenReturn(pairFile);
+		
+		List<Long> content = Lists.newArrayList(sf.getId(), pairFile.getId());
 
-		ResponseEntity<String> addSequenceFilePair = controller.addSequenceFilePair(p.getId(), s.getId(), sf.getId(),
-				pairFile.getId());
+		ResponseEntity<String> addSequenceFilePair = controller.addSequenceFilePair(p.getId(), s.getId(), content);
 
 		verify(sequenceFileService).createSequenceFilePair(sf, pairFile);
 
