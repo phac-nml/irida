@@ -6,6 +6,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -386,18 +386,25 @@ public class RESTSampleSequenceFilesController {
 	 *            the project ID for the files
 	 * @param sampleId
 	 *            the sample ID for the files
-	 * @param file1Id
-	 *            The first file of the pair
-	 * @param file2Id
-	 *            The second file of the pair
+	 * @param pairIds
+	 *            the pair ids
 	 * @return A success message
 	 */
-	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles/pair", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles/pair", method = RequestMethod.POST, consumes = {
+			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<String> addSequenceFilePair(@PathVariable Long projectId, @PathVariable Long sampleId,
-			@RequestParam Long file1Id, @RequestParam Long file2Id) {
+			@RequestBody List<Long> pairIds) {
 		projectService.read(projectId);
 		sampleService.read(sampleId);
 
+		if (pairIds.size() != 2) {
+			throw new IllegalArgumentException("Request must contain 2 keys");
+		}
+
+		Iterator<Long> iterator = pairIds.iterator();
+		Long file1Id = iterator.next();
+		Long file2Id = iterator.next();
+		
 		SequenceFile file1 = sequenceFileService.read(file1Id);
 		SequenceFile file2 = sequenceFileService.read(file2Id);
 
