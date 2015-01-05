@@ -1,10 +1,12 @@
+@import "../helpers/variables";
+
 .project-details {
   li {
-    border-bottom: 1px solid $color-grey-lighter;
+    border-bottom: 1px solid $irida-colour-grey-light;
     line-height: 2em;
   }
   i.glyphicon {
-    color: $color-grey-light;
+    color: $irida-colour-grey-dark;
     margin-right: .5em;
   }
   em {
@@ -25,20 +27,16 @@
 }
 
 .sidebar {
-  border: 1px solid $color-grey-lighter;
-  border-top-color: lighten($color-grey-lighter, 5);
-  border-bottom-color: darken($color-grey-lighter, 20);
-  border-radius: 4px;
-  margin-bottom: 1em;
-  @include box-shadow(rgba(0, 0, 0, .2) 0 1px 2px); // Mimics bootstrap box-shadow
+  border: 1px solid $irida-colour-grey;
+  border-bottom-color: $irida-colour-grey-dark;
+  border-radius: $irida-global-radius;
+  margin-bottom: $irida-global-padding;
 }
 
 .sidebar__heading {
-  border-bottom: 1px solid $color-grey-lighter;
-  padding: 10px;
+  padding: $irida-global-padding;
   h2 {
-    font-size: 1.6rem;
-    font-weight: 600;
+    font-weight: $irida-font-weight-normal;
     margin: 0;
     padding: 0;
   }
@@ -47,29 +45,33 @@
 .sidebar__body {
   position: relative;
   >div {
-    border-top: 1px solid lighten($color-grey-lighter, 3);
+    border-top: 1px solid $irida-colour-grey-light;
     padding: 6px 4px;
   }
   .form-group {
     padding: 4px 8px;
   }
+  label {
+    font-weight: $irida-font-weight-normal;
+  }
   input[type="text"].form-control {
-    border: 1px solid darken($color-grey-lighter, 5);
-    @include box-shadow(rgba(0, 0, 0, .1) 0 1px 2px inset)
+    border: 1px solid $irida-colour-grey-dark;
+    border-right: none;
   }
   .input-group-btn button {
-    border: 1px solid darken($color-grey-lighter, 5) !important;
-    color: darken($color-grey-lighter, 20);
+    border: 1px solid $irida-colour-grey-dark !important;
+    border-left: none;
+    color: $irida-colour-grey-dark
   }
 }
 
 .sidebar__icon {
-  color: $color-grey-light;
+  color: $irida-colour-grey-dark;
   width: 15%;
 }
 
 .sidebar__value {
-  color: $color-grey-darker;
+  color: $irida-colour-dark;
   position: absolute;
   right: 8px;
 }
