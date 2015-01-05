@@ -6,10 +6,12 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowPreprationException;
@@ -36,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowTestBuilder;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -54,6 +58,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
+import com.google.common.collect.Sets;
 
 /**
  * Tests out preparing a Galaxy Phylogenomics Pipeline workflow for execution.
@@ -110,6 +115,11 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	private Dataset datasetA;
 	private Dataset datasetB;
 	private Dataset datasetC;
+	
+	private Dataset output1Dataset;
+	private Dataset output2Dataset;
+	private String output1Filename = "output1.txt";
+	private String output2Filename = "output2.txt";
 
 	private Join<Sample, SequenceFile> sampleAJoin;
 	private Join<Sample, SequenceFile> sampleBJoin;
@@ -185,6 +195,14 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		workflowPreparation = new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService,
 				galaxyWorkflowService, sampleSequenceFileJoinRepository, sequenceFileRepository, libraryBuilder,
 				iridaWorkflowsService);
+		
+		output1Dataset = new Dataset();
+		output1Dataset.setId("1");
+		output1Dataset.setName("output1.txt");
+
+		output2Dataset = new Dataset();
+		output2Dataset.setId("2");
+		output2Dataset.setName("output2.txt");
 	}
 
 	private Path createTempFile(String prefix, String suffix) throws IOException {
@@ -310,5 +328,35 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(sampleSequenceFileJoinRepository.getSampleForSequenceFile(sFileC)).thenReturn(sampleCJoin);
 
 		workflowPreparation.prepareAnalysisFiles(submission);
+	}
+	
+	/**
+	 * Tests successfully getting analysis results from Galaxy.
+	 * 
+	 * @throws IridaWorkflowNotFoundException
+	 * @throws IOException
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowAnalysisTypeException
+	 */
+	@Test
+	public void testGetAnalysisResultsSuccess() throws IridaWorkflowNotFoundException,
+			IridaWorkflowAnalysisTypeException, ExecutionManagerException, IOException {
+		submission = new AnalysisSubmission("my analysis", Sets.newHashSet(), referenceFile, workflowId);
+		submission.setRemoteWorkflowId(WORKFLOW_ID);
+		submission.setRemoteAnalysisId(HISTORY_ID);
+
+		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflow);
+		when(galaxyHistoriesService.getDatasetForFileInHistory(output1Filename, HISTORY_ID)).thenReturn(output1Dataset);
+		when(galaxyHistoriesService.getDatasetForFileInHistory(output2Filename, HISTORY_ID)).thenReturn(output2Dataset);
+
+		Analysis analysis = workflowPreparation.getAnalysisResults(submission);
+
+		assertNotNull(analysis);
+		assertEquals(2, analysis.getAnalysisOutputFiles().size());
+		assertEquals(Paths.get("output1.txt"), analysis.getAnalysisOutputFile("output1").getFile().getFileName());
+		assertEquals(Paths.get("output2.txt"), analysis.getAnalysisOutputFile("output2").getFile().getFileName());
+
+		verify(galaxyHistoriesService).getDatasetForFileInHistory("output1.txt", HISTORY_ID);
+		verify(galaxyHistoriesService).getDatasetForFileInHistory("output2.txt", HISTORY_ID);
 	}
 }
