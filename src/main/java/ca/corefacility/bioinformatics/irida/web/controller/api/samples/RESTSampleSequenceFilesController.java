@@ -23,15 +23,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
@@ -57,6 +60,10 @@ public class RESTSampleSequenceFilesController {
 	 * Rel to get back to the {@link Sample}.
 	 */
 	public static final String REL_SAMPLE = "sample";
+	/**
+	 * Rel to the {@link SequenceFile} pair
+	 */
+	public static final String REL_PAIR = "pair";
 	/**
 	 * Rel to get to the new location of the {@link SequenceFile}.
 	 */
@@ -351,10 +358,54 @@ public class RESTSampleSequenceFilesController {
 						sequenceFileId)).withSelfRel());
 		sfr.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(
 				REL_SAMPLE));
+		
+		/**
+		 * if a SequenceFilePair exists for this file, add the rel
+		 */
+		try{
+			logger.trace("Getting paired file for " + sequenceFileId);
+			SequenceFile pairedFileForSequenceFile = sequenceFileService.getPairedFileForSequenceFile(sf);
+			sfr.add(linkTo(
+					methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
+							pairedFileForSequenceFile.getId())).withRel(REL_PAIR));
+		}
+		catch(EntityNotFoundException ex){
+			logger.trace("No pair for file " + sequenceFileId);
+		}
+		
 		// add the resource to the response
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sfr);
 
 		return modelMap;
+	}
+	
+	/**
+	 * Add a {@link SequenceFilePair} for the given files
+	 * 
+	 * @param projectId
+	 *            the project ID for the files
+	 * @param sampleId
+	 *            the sample ID for the files
+	 * @param file1Id
+	 *            The first file of the pair
+	 * @param file2Id
+	 *            The second file of the pair
+	 * @return A success message
+	 */
+	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles/pair", method = RequestMethod.POST)
+	public ResponseEntity<String> addSequenceFilePair(@PathVariable Long projectId, @PathVariable Long sampleId,
+			@RequestParam Long file1Id, @RequestParam Long file2Id) {
+		projectService.read(projectId);
+		sampleService.read(sampleId);
+
+		SequenceFile file1 = sequenceFileService.read(file1Id);
+		SequenceFile file2 = sequenceFileService.read(file2Id);
+
+		logger.debug("Adding sequence file pair for " + file1 + " and " + file2);
+
+		sequenceFileService.createSequenceFilePair(file1, file2);
+
+		return new ResponseEntity<>("success", HttpStatus.CREATED);
 	}
 	
 	/**
