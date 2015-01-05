@@ -190,12 +190,12 @@ public class SampleSequenceFilesIT {
 
 		String file1URI = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1/sequenceFiles/1";
 
-		List<Long> files = Lists.newArrayList(1l,2l);
-		
-		//add the pair
+		List<Long> files = Lists.newArrayList(1l, 2l);
+
+		// add the pair
 		asAdmin().body(files).expect().response().statusCode(HttpStatus.CREATED.value()).when().post(filePairURI);
 
-		//check that it's there in the list
+		// check that it's there in the list
 		asAdmin().expect().body("resource.links.rel", hasItems(RESTSampleSequenceFilesController.REL_PAIR)).when()
 				.get(file1URI);
 	}
