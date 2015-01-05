@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.After;
@@ -54,7 +53,6 @@ public class ProjectDetailsPageIT {
 	public static final String PROJECT_OWNER = "Mr. Manager";
 	public static final String PROJECT_CREATED_DATE = "12 Jul 2013";
 	public static final String PROJECT_ORGANISM = "E. coli";
-	public static final int MODIFIED_DATE_DB_YEAR = 2013;
 
 	private WebDriver driver;
 	private ProjectDetailsPage detailsPage;
@@ -83,8 +81,6 @@ public class ProjectDetailsPageIT {
 		assertEquals("Should have the organism displayed", PROJECT_ORGANISM, detailsPage.getOrganism());
 		assertEquals("Should have the correct date format for creation date", PROJECT_CREATED_DATE,
 				detailsPage.getCreatedDate());
-		assertEquals("Should have the correct date format for modified date", getFormattedModifiedDate(),
-				detailsPage.getModifiedDate());
 	}
 
 	@Test
@@ -94,24 +90,5 @@ public class ProjectDetailsPageIT {
 		WebElement next = events.iterator().next();
 		String className = next.getAttribute("class");
 		assertTrue(className.contains("user-role-event"));
-	}
-
-	/**
-	 * The modified date for a project is expressed in time since modification.
-	 * This will return the correct format for the displayed date.
-	 *
-	 * @return the format for the modified year
-	 */
-	private String getFormattedModifiedDate() {
-		// Need to format the expected modified date
-		LocalDateTime time = LocalDateTime.now();
-		int years = time.getYear() - MODIFIED_DATE_DB_YEAR;
-		String modifiedDate;
-		if (years == 1) {
-			modifiedDate = "a year ago";
-		} else {
-			modifiedDate = years + "years ago";
-		}
-		return modifiedDate;
 	}
 }
