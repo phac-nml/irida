@@ -90,6 +90,11 @@ public class PipelineController extends BaseController {
 		this.pipelineSubmission = new PipelineSubmission();
 	}
 
+	@RequestMapping(value = "")
+	public String getPipelineLaunchPage() {
+		return "pipelines/pipeline_launch";
+	}
+
 	// ************************************************************************************************
 	// AJAX
 	// ************************************************************************************************
