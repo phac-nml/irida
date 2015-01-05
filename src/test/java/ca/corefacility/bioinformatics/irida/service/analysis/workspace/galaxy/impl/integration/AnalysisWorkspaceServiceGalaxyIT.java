@@ -31,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCon
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.PreparedWorkflowGalaxy;
@@ -110,10 +111,27 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		sequenceFilesSet = Sets.newHashSet(new SequenceFile(sequenceFilePath));
 	}
 
+	/**
+	 * Tests successfully preparing a workspace for analysis.
+	 * @throws IridaWorkflowNotFoundException
+	 * @throws ExecutionManagerException
+	 */
 	@Test
 	public void testPrepareAnalysisWorkspaceSuccess() throws IridaWorkflowNotFoundException, ExecutionManagerException {
 		AnalysisSubmission submission = new AnalysisSubmission("Name", sequenceFilesSet, validWorkflowId);
 		assertNotNull(analysisWorkspaceService.prepareAnalysisWorkspace(submission));
+	}
+	
+	/**
+	 * Tests failure to prepare a workspace for analysis.
+	 * @throws IridaWorkflowNotFoundException
+	 * @throws ExecutionManagerException
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void testPrepareAnalysisWorkspaceFail() throws IridaWorkflowNotFoundException, ExecutionManagerException {
+		AnalysisSubmission submission = new AnalysisSubmission("Name", sequenceFilesSet, validWorkflowId);
+		submission.setRemoteAnalysisId("1");
+		analysisWorkspaceService.prepareAnalysisWorkspace(submission);
 	}
 
 	/**
@@ -144,6 +162,35 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				.setupSubmissionInDatabase(1L, sequenceFilePath, referenceFilePath, validWorkflowId);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
+
+		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService
+				.prepareAnalysisFiles(analysisSubmission);
+		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId());
+		assertNotNull(preparedWorkflow.getWorkflowInputs());
+	}
+	
+	/**
+	 * Tests out failure to prepare workflow input files for execution.
+	 * 
+	 * @throws InterruptedException
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 * @throws IOException
+	 */
+	@Test(expected=WorkflowException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testPrepareAnalysisFilesFail() throws InterruptedException, ExecutionManagerException,
+			IridaWorkflowNotFoundException, IOException {
+
+		History history = new History();
+		history.setName("testPrepareAnalysisFilesFail");
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
+		History createdHistory = historiesClient.create(history);
+
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
+				.setupSubmissionInDatabase(1L, sequenceFilePath, referenceFilePath, validWorkflowId);
+		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
+		analysisSubmission.setRemoteWorkflowId("invalid");
 
 		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService
 				.prepareAnalysisFiles(analysisSubmission);
