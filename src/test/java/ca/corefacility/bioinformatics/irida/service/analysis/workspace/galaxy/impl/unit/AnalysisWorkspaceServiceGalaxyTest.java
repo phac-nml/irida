@@ -5,8 +5,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
@@ -358,5 +358,26 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 		verify(galaxyHistoriesService).getDatasetForFileInHistory("output1.txt", HISTORY_ID);
 		verify(galaxyHistoriesService).getDatasetForFileInHistory("output2.txt", HISTORY_ID);
+	}
+	
+	/**
+	 * Tests failure to get analysis results from Galaxy due to failure to get a dataset
+	 * 
+	 * @throws IridaWorkflowNotFoundException
+	 * @throws IOException
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowAnalysisTypeException
+	 */
+	@Test(expected=GalaxyDatasetException.class)
+	public void testGetAnalysisResultsFail() throws IridaWorkflowNotFoundException,
+			IridaWorkflowAnalysisTypeException, ExecutionManagerException, IOException {
+		submission = new AnalysisSubmission("my analysis", Sets.newHashSet(), referenceFile, workflowId);
+		submission.setRemoteWorkflowId(WORKFLOW_ID);
+		submission.setRemoteAnalysisId(HISTORY_ID);
+
+		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflow);
+		when(galaxyHistoriesService.getDatasetForFileInHistory(output1Filename, HISTORY_ID)).thenThrow(new GalaxyDatasetException());
+
+		workflowPreparation.getAnalysisResults(submission);
 	}
 }
