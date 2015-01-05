@@ -479,7 +479,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * @throws IridaWorkflowAnalysisTypeException 
 	 */
 	@Test(expected = EntityNotFoundException.class)
-	public void testGetAnalysisResultsFailAnalysisIdInvalid() throws ExecutionManagerException, IOException,
+	public void testTransferAnalysisResultsFailAnalysisIdInvalid() throws ExecutionManagerException, IOException,
 			IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException {
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
 		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_RUNNING);
@@ -495,7 +495,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * @throws Throwable
 	 */
 	@Test(expected = IridaWorkflowAnalysisTypeException.class)
-	public void testGetAnalysisResultsFailAnalysisTypeInvalid() throws Throwable {
+	public void testTransferAnalysisResultsFailAnalysisTypeInvalid() throws Throwable {
 		when(analysisSubmissionService.exists(INTERNAL_ANALYSIS_ID)).thenReturn(true);
 		when(analysisWorkspaceService.getAnalysisResults(analysisCompleting)).thenThrow(
 				new IridaWorkflowAnalysisTypeException(null));
