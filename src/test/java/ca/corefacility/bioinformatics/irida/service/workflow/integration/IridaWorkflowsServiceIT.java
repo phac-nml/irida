@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -30,15 +30,17 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowDefaultException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowTestBuilder;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis2;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowSet;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
 /**
@@ -63,11 +65,11 @@ public class IridaWorkflowsServiceIT {
 	private IridaWorkflow testWorkflow1v1;
 	private IridaWorkflow testWorkflow1v2;
 
-	private IridaWorkflow testWorkflow2;
+	private IridaWorkflow testWorkflowPhylogenomics;
 
 	private static final UUID workflowId1v1 = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
 	private static final UUID workflowId1v2 = UUID.fromString("c5f29cb2-1b68-4d34-9b93-609266af7551");
-	private static final UUID workflowId2 = UUID.fromString("ee59af98-16c8-4337-a49b-8ecf7378dc65");
+	private static final UUID workflowIdPhylogenomics = UUID.fromString("1f9ea289-5053-4e4a-bc76-1f0c60b179f8");
 	private static final UUID invalidWorkflowId = UUID.fromString("dca0bcc1-cc02-4c08-bd13-c6937d56cf70");
 
 	@Before
@@ -76,14 +78,14 @@ public class IridaWorkflowsServiceIT {
 				"workflows/TestAnalysis/1.0").toURI());
 		Path workflowVersion2DirectoryPath = Paths.get(TestAnalysis.class.getResource(
 				"workflows/TestAnalysis/2.0").toURI());
-		Path workflow2DirectoryPath = Paths.get(TestAnalysis.class.getResource(
-				"workflows/TestAnalysis2/1.0").toURI());
+		Path workflowPhylogenomicsDirectoryPath = Paths.get(TestAnalysis.class.getResource(
+				"workflows/AnalysisPhylogenomicsPipeline/0.1").toURI());
 
 		iridaWorkflowsService = new IridaWorkflowsService(new IridaWorkflowSet(Sets.newHashSet()), new IridaWorkflowIdSet(Sets.newHashSet()));
 
 		testWorkflow1v1 = iridaWorkflowLoaderService.loadIridaWorkflowFromDirectory(workflowVersion1DirectoryPath);
 		testWorkflow1v2 = iridaWorkflowLoaderService.loadIridaWorkflowFromDirectory(workflowVersion2DirectoryPath);
-		testWorkflow2 = iridaWorkflowLoaderService.loadIridaWorkflowFromDirectory(workflow2DirectoryPath);
+		testWorkflowPhylogenomics = iridaWorkflowLoaderService.loadIridaWorkflowFromDirectory(workflowPhylogenomicsDirectoryPath);
 	}
 
 	/**
@@ -117,11 +119,46 @@ public class IridaWorkflowsServiceIT {
 	 * @throws IridaWorkflowException
 	 */
 	@Test
-	public void testGetDefaultWorkflowSuccess() throws IridaWorkflowException {
+	public void testGetDefaultWorkflowByTypeSuccess() throws IridaWorkflowException {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
 		iridaWorkflowsService.setDefaultWorkflow(workflowId1v1);
-		assertEquals(testWorkflow1v1, iridaWorkflowsService.getDefaultWorkflow(TestAnalysis.class));
+		assertEquals(testWorkflow1v1, iridaWorkflowsService.getDefaultWorkflowByType(AnalysisType.DEFAULT));
+	}
+
+	/**
+	 * Tests getting all the default workflows by a set of types.
+	 * 
+	 * @throws IridaWorkflowException
+	 */
+	@Test
+	public void testGetAllDefaultWorkflowsByTypeSuccess() throws IridaWorkflowException {
+		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
+		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
+		iridaWorkflowsService.registerWorkflow(testWorkflowPhylogenomics);
+		iridaWorkflowsService.setDefaultWorkflow(workflowId1v1);
+		iridaWorkflowsService.setDefaultWorkflow(workflowIdPhylogenomics);
+
+		Map<AnalysisType, IridaWorkflow> workflowsMap = iridaWorkflowsService.getAllDefaultWorkflowsByType(Sets
+				.newHashSet(AnalysisType.DEFAULT, AnalysisType.PHYLOGENOMICS));
+		assertEquals(ImmutableMap.of(AnalysisType.DEFAULT, testWorkflow1v1, AnalysisType.PHYLOGENOMICS,
+				testWorkflowPhylogenomics), workflowsMap);
+	}
+
+	/**
+	 * Tests failure to get all default workflows for a given type.
+	 * 
+	 * @throws IridaWorkflowException
+	 */
+	@Test(expected = IridaWorkflowNotFoundException.class)
+	public void testGetAllDefaultWorkflowsByTypeFail() throws IridaWorkflowException {
+		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
+		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
+		iridaWorkflowsService.registerWorkflow(testWorkflowPhylogenomics);
+		iridaWorkflowsService.setDefaultWorkflow(workflowId1v1);
+
+		iridaWorkflowsService.getAllDefaultWorkflowsByType(Sets.newHashSet(AnalysisType.DEFAULT,
+				AnalysisType.PHYLOGENOMICS));
 	}
 
 	/**
@@ -131,9 +168,9 @@ public class IridaWorkflowsServiceIT {
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test(expected = IridaWorkflowNotFoundException.class)
-	public void testGetDefaultWorkflowFail() throws IridaWorkflowException {
+	public void testGetDefaultWorkflowByTypeFail() throws IridaWorkflowException {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
-		iridaWorkflowsService.getDefaultWorkflow(TestAnalysis.class);
+		iridaWorkflowsService.getDefaultWorkflowByType(AnalysisType.DEFAULT);
 	}
 
 	/**
@@ -143,8 +180,8 @@ public class IridaWorkflowsServiceIT {
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	@Test(expected = IridaWorkflowNotFoundException.class)
-	public void testGetDefaultWorkflowFailNoType() throws IridaWorkflowException {
-		iridaWorkflowsService.getDefaultWorkflow(TestAnalysis.class);
+	public void testGetDefaultWorkflowByTypeFailNoType() throws IridaWorkflowException {
+		iridaWorkflowsService.getDefaultWorkflowByType(AnalysisType.DEFAULT);
 	}
 
 	/**
@@ -168,11 +205,11 @@ public class IridaWorkflowsServiceIT {
 	 */
 	@Test
 	public void testsetDefaultWorkflowsSuccess() throws IridaWorkflowException {
-		iridaWorkflowsService.registerWorkflows(Sets.newHashSet(testWorkflow1v1, testWorkflow2));
-		iridaWorkflowsService.setDefaultWorkflows(Sets.newHashSet(workflowId1v1, workflowId2));
+		iridaWorkflowsService.registerWorkflows(Sets.newHashSet(testWorkflow1v1, testWorkflowPhylogenomics));
+		iridaWorkflowsService.setDefaultWorkflows(Sets.newHashSet(workflowId1v1, workflowIdPhylogenomics));
 
-		assertEquals(testWorkflow1v1, iridaWorkflowsService.getDefaultWorkflow(TestAnalysis.class));
-		assertEquals(testWorkflow2, iridaWorkflowsService.getDefaultWorkflow(TestAnalysis2.class));
+		assertEquals(testWorkflow1v1, iridaWorkflowsService.getDefaultWorkflowByType(AnalysisType.DEFAULT));
+		assertEquals(testWorkflowPhylogenomics, iridaWorkflowsService.getDefaultWorkflowByType(AnalysisType.PHYLOGENOMICS));
 	}
 
 	/**
@@ -186,6 +223,18 @@ public class IridaWorkflowsServiceIT {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 	}
+	
+	/**
+	 * Tests to make sure we fail to register a workflow with a null type.
+	 * 
+	 * @throws IridaWorkflowException
+	 * 
+	 */
+	@Test(expected = NullPointerException.class)
+	public void testRegisterWorkflowNullTypeFail() throws IridaWorkflowException {
+		IridaWorkflow workflowNullAnalysisType = IridaWorkflowTestBuilder.buildTestWorkflowNullAnalysisType();
+		iridaWorkflowsService.registerWorkflow(workflowNullAnalysisType);
+	}
 
 	/**
 	 * Tests registering a set of workflows.
@@ -194,61 +243,24 @@ public class IridaWorkflowsServiceIT {
 	 */
 	@Test
 	public void testRegisterWorkflowsSuccess() throws IridaWorkflowException {
-		iridaWorkflowsService.registerWorkflows(Sets.newHashSet(testWorkflow1v1, testWorkflow2));
+		iridaWorkflowsService.registerWorkflows(Sets.newHashSet(testWorkflow1v1, testWorkflowPhylogenomics));
 
-		Set<String> workflows = iridaWorkflowsService.getAllWorkflowNames();
-		assertEquals(Sets.newHashSet("TestWorkflow", "TestWorkflow2"), workflows);
+		Set<IridaWorkflow> workflows = iridaWorkflowsService.getRegisteredWorkflows();
+		assertEquals(Sets.newHashSet(testWorkflow1v1, testWorkflowPhylogenomics), workflows);
 	}
 
 	/**
-	 * Tests getting a collection of all installed workflows.
+	 * Tests getting a set of all registered workflows.
 	 * 
 	 * @throws IridaWorkflowException
 	 */
 	@Test
-	public void testGetInstalledWorkflows() throws IridaWorkflowException {
+	public void testGetRegisteredWorkflows() throws IridaWorkflowException {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
-		Collection<IridaWorkflow> iridaWorkflows = iridaWorkflowsService.getInstalledWorkflows();
-		assertEquals(2, iridaWorkflows.size());
-		IridaWorkflow workflowA = iridaWorkflows.iterator().next();
-		assertNotNull(workflowA);
-		IridaWorkflow workflowB = iridaWorkflows.iterator().next();
-		assertNotNull(workflowB);
-	}
-
-	/**
-	 * Tests getting a list of all installed workflows by name.
-	 * 
-	 * @throws IridaWorkflowException
-	 */
-	@Test
-	public void testGetAllWorkflowsByName() throws IridaWorkflowException {
-		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
-		iridaWorkflowsService.registerWorkflow(testWorkflow2);
-
-		Set<String> workflows = iridaWorkflowsService.getAllWorkflowNames();
-		assertEquals(Sets.newHashSet("TestWorkflow", "TestWorkflow2"), workflows);
-	}
-
-	/**
-	 * Tests getting a default workflow by the name.
-	 * 
-	 * @throws IridaWorkflowException
-	 */
-	@Test
-	public void testGetDefaultWorkflowByName() throws IridaWorkflowException {
-		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
-		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
-		iridaWorkflowsService.registerWorkflow(testWorkflow2);
-		iridaWorkflowsService.setDefaultWorkflow(workflowId1v1);
-		iridaWorkflowsService.setDefaultWorkflow(workflowId2);
-
-		IridaWorkflow defaultWorkflow = iridaWorkflowsService.getDefaultWorkflow("TestWorkflow");
-		assertEquals(testWorkflow1v1, defaultWorkflow);
-
-		IridaWorkflow defaultWorkflow2 = iridaWorkflowsService.getDefaultWorkflow("TestWorkflow2");
-		assertEquals(testWorkflow2, defaultWorkflow2);
+		
+		Set<IridaWorkflow> iridaWorkflows = iridaWorkflowsService.getRegisteredWorkflows();
+		assertEquals(Sets.newHashSet(testWorkflow1v1, testWorkflow1v2), iridaWorkflows);
 	}
 
 	/**
@@ -257,25 +269,50 @@ public class IridaWorkflowsServiceIT {
 	 * @throws IridaWorkflowException
 	 */
 	@Test
-	public void testGetAllWorkflowsForAnalysisType() throws IridaWorkflowException {
+	public void testGetAllWorkflowsByType() throws IridaWorkflowException {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
 
-		Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsByClass(TestAnalysis.class);
+		Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsByType(AnalysisType.DEFAULT);
 		assertEquals(2, workflows.size());
 	}
+	
 
 	/**
-	 * Tests getting all workflows for a given workflow name.
+	 * Tests getting all workflows for a given analysis type where there are no workflows.
+	 * 
+	 * @throws IridaWorkflowException
+	 */
+	@Test(expected=IridaWorkflowNotFoundException.class)
+	public void testGetAllWorkflowsByTypeFailNoWorkflows() throws IridaWorkflowException {
+		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
+
+		iridaWorkflowsService.getAllWorkflowsByType(AnalysisType.PHYLOGENOMICS);
+	}
+	
+	/**
+	 * Tests getting all workflow types.
 	 * 
 	 * @throws IridaWorkflowException
 	 */
 	@Test
-	public void testGetAllWorkflowsForWorkflowName() throws IridaWorkflowException {
+	public void testGetRegisteredWorkflowTypes() throws IridaWorkflowException {
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v1);
 		iridaWorkflowsService.registerWorkflow(testWorkflow1v2);
+		iridaWorkflowsService.registerWorkflow(testWorkflowPhylogenomics);
 
-		Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsByName("TestWorkflow");
-		assertEquals(2, workflows.size());
+		Set<AnalysisType> workflowTypes = iridaWorkflowsService.getRegisteredWorkflowTypes();
+		assertEquals(Sets.newHashSet(AnalysisType.DEFAULT, AnalysisType.PHYLOGENOMICS), workflowTypes);
+	}
+	
+	/**
+	 * Tests getting all workflow types when no workflows are installed.
+	 * 
+	 * @throws IridaWorkflowException
+	 */
+	@Test
+	public void testGetRegisteredWorkflowTypesNoWorkflows() throws IridaWorkflowException {
+		Set<AnalysisType> workflowTypes = iridaWorkflowsService.getRegisteredWorkflowTypes();
+		assertEquals(Sets.newHashSet(), workflowTypes);
 	}
 }

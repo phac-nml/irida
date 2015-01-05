@@ -5,7 +5,7 @@
   <version>1.0</version>
   <author>Mr. Developer</author>
   <email>developer@example.com</email>
-  <analysis_class>ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis</analysis_class>
+  <analysisType>default</analysisType>
   <inputs>
     <sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
     <reference>reference</reference>

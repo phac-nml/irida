@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 
 import com.google.common.collect.ImmutableList;
@@ -40,8 +41,8 @@ public class IridaWorkflowDescription {
 	@XmlElement(name = "email")
 	private String email;
 
-	@XmlElement(name = "analysis_class")
-	private Class<? extends Analysis> analysisClass;
+	@XmlElement(name = "analysisType")
+	private AnalysisType analysisType;
 
 	@XmlElement(name = "inputs")
 	private IridaWorkflowInput inputs;
@@ -81,13 +82,13 @@ public class IridaWorkflowDescription {
 	 *            The list of tools for this workflow.
 	 */
 	public IridaWorkflowDescription(UUID id, String name, String version, String author, String email,
-			Class<? extends Analysis> analysisClass, IridaWorkflowInput inputs, List<IridaWorkflowOutput> outputs, List<IridaWorkflowTool> tools) {
+			AnalysisType analysisType, IridaWorkflowInput inputs, List<IridaWorkflowOutput> outputs, List<IridaWorkflowTool> tools) {
 		this.id = id;
 		this.name = name;
 		this.version = version;
 		this.author = author;
 		this.email = email;
-		this.analysisClass = analysisClass;
+		this.analysisType = analysisType;
 		this.inputs = inputs;
 		this.outputs = ImmutableList.copyOf(outputs);
 		this.tools = ImmutableList.copyOf(tools);
@@ -151,13 +152,13 @@ public class IridaWorkflowDescription {
 		return tools;
 	}
 
-	public Class<? extends Analysis> getAnalysisClass() {
-		return analysisClass;
+	public AnalysisType getAnalysisType() {
+		return analysisType;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, name, version, author, email, analysisClass, inputs, outputs, tools);
+		return Objects.hash(id, name, version, author, email, analysisType, inputs, outputs, tools);
 	}
 
 	@Override
@@ -169,11 +170,18 @@ public class IridaWorkflowDescription {
 
 			return Objects.equals(id, other.id) && Objects.equals(name, other.name)
 					&& Objects.equals(version, other.version) && Objects.equals(author, other.author)
-					&& Objects.equals(email, other.email) && Objects.equals(analysisClass, other.analysisClass)
+					&& Objects.equals(email, other.email) && Objects.equals(analysisType, other.analysisType)
 					&& Objects.equals(inputs, other.inputs) && Objects.equals(outputs, other.outputs)
 					&& Objects.equals(tools, other.tools);
 		}
 
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		return "IridaWorkflowDescription [id=" + id + ", name=" + name + ", version=" + version + ", author=" + author
+				+ ", email=" + email + ", analysisType=" + analysisType + ", inputs=" + inputs + ", outputs=" + outputs
+				+ ", tools=" + tools + "]";
 	}
 }

@@ -64,4 +64,10 @@ public class IridaWorkflow {
 
 		return false;
 	}
+
+	@Override
+	public String toString() {
+		return "IridaWorkflow [workflowDescription=" + workflowDescription + ", workflowStructure=" + workflowStructure
+				+ "]";
+	}
 }
