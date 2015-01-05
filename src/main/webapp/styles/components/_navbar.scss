@@ -1,0 +1,23 @@
+@import "../helpers/variables";
+
+.navbar {
+  margin-bottom: 0 !important;
+
+  & + .container {
+    margin-top: $irida-global-spacing;
+  }
+
+  ul {
+    font-size: 16px;
+  }
+}
+
+// Update z-index for submenu
+.navbar-nav>li>.dropdown-menu {
+  z-index: 10000;
+}
+
+.navbar.subnav {
+  z-index: 500;
+  margin-bottom: $irida-global-spacing !important;
+}
