@@ -2,11 +2,23 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="template/page">
 <head lang="en">
-	<title th:text="#{pipeline.launch.title}">Pipelines - Launch</title>
+	<title th:text="#{pipeline.launch.page-title}">Pipelines - Launch</title>
 </head>
 <body>
 <div layout:fragment="page">
-	<h1>Hey let's launch a Pipeline</h1>
+	<h1><span th:text="#{pipeline.launch.title}">Select a Pipeline</span></h1>
+	<ul class="card-container">
+		<li class="card" th:each="flow : ${workflows}">
+			<div class="card_wrapper">
+				<div class="card_colour" th:style="'background-color:' + ${flow.colour}"></div>
+				<div class="card_title" th:text="${flow.title}"></div>
+				<div class="card_desc" th:text="${flow.description}"></div>
+				<div class="card_footer">
+					<a th:href="@{'/pipelines/' + ${flow.name}}" class="btn btn-primary btn-xs pull-right">Select</a>
+				</div>
+			</div>
+		</li>
+	</ul>
 </div>
 </body>
 </html>
