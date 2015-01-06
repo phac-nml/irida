@@ -141,7 +141,7 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(file, modifiedDate, executionManagerFileId, fileRevisionNumber);
+		return Objects.hash(file, executionManagerFileId, fileRevisionNumber);
 	}
 
 	/**
@@ -155,7 +155,7 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 
 		if (o instanceof AnalysisOutputFile) {
 			AnalysisOutputFile a = (AnalysisOutputFile) o;
-			return Objects.equals(file, a.file) && Objects.equals(modifiedDate, a.modifiedDate)
+			return Objects.equals(file, a.file)
 					&& Objects.equals(executionManagerFileId, a.executionManagerFileId)
 					&& Objects.equals(fileRevisionNumber, a.fileRevisionNumber);
 		}
