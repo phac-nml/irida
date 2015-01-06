@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -168,8 +169,49 @@ public class RESTSampleSequenceFilesController {
 		// load the sample from the database
 		Sample sample = sampleService.read(sampleId);
 		logger.trace("Read sample " + sampleId);
+
+		// prepare a new sequence file using the multipart file supplied by the
+		// caller
+		Path temp = Files.createTempDirectory(null);
+		Path target = temp.resolve(file.getOriginalFilename());
 		
-		Join<Sample, SequenceFile> sampleSequenceFileRelationship = addSequenceFileToSample(file, fileResource, sample);
+		//Changed to MultipartFile.transerTo(File) because it was truncating large files to 1039956336 bytes
+		//target = Files.write(target, file.getBytes());
+		file.transferTo(target.toFile());
+		
+		logger.trace("Wrote temp file to " + target);
+		
+		SequenceFile sf;
+		SequencingRun miseqRun = null;
+		
+		if(fileResource != null){
+			sf = fileResource.getResource();
+			
+			Long miseqRunId = fileResource.getMiseqRunId();
+			if(miseqRunId != null){
+				miseqRun = miseqRunService.read(miseqRunId);
+				logger.trace("Read miseq run " + miseqRunId);
+			}
+		}
+		else{
+			sf = new SequenceFile();
+		}
+		sf.setFile(target);
+		
+		if(miseqRun != null){
+			sf.setSequencingRun(miseqRun);
+			logger.trace("Added seqfile to miseqrun");
+		}
+
+		// persist the changes by calling the sample service
+		Join<Sample, SequenceFile> sampleSequenceFileRelationship = sequenceFileService.createSequenceFileInSample(sf,
+				sample);
+		logger.trace("Created seqfile in sample " + sampleSequenceFileRelationship.getObject().getId());
+
+		// clean up the temporary files.
+		Files.deleteIfExists(target);
+		Files.deleteIfExists(temp);
+		logger.trace("Deleted temp file");
 
 		// prepare a link to the sequence file itself (on the sequence file
 		// controller)
@@ -200,9 +242,9 @@ public class RESTSampleSequenceFilesController {
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFilePairs", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Map<String, String>> addNewSequenceFilePairToSample(@PathVariable Long projectId,
 			@PathVariable Long sampleId, @RequestPart("file1") MultipartFile file1,
-			@RequestPart(value = "parameters1", required = false) SequenceFileResource fileResource1,
+			@RequestPart(value = "parameters1") SequenceFileResource fileResource1,
 			@RequestPart("file2") MultipartFile file2,
-			@RequestPart(value = "parameters2", required = false) SequenceFileResource fileResource2)
+			@RequestPart(value = "parameters2") SequenceFileResource fileResource2)
 			throws IOException {
 		logger.debug("Adding pair of sequence files to sample " + sampleId + " in project " + projectId);
 		logger.trace("First uploaded file size: " + file1.getSize() + " bytes");
@@ -212,13 +254,50 @@ public class RESTSampleSequenceFilesController {
 		logger.trace("Read project " + projectId);
 		// confirm that a relationship exists between the project and the sample
 		Sample sample = sampleService.getSampleForProject(p, sampleId);
-
 		logger.trace("Read sample " + sampleId);
+		
+		//create temp files
+		Path temp1 = Files.createTempDirectory(null);
+		Path target1 = temp1.resolve(file1.getOriginalFilename());
+		Path temp2 = Files.createTempDirectory(null);
+		Path target2 = temp2.resolve(file2.getOriginalFilename());
+		
+		//transfer the files to temp directories
+		file1.transferTo(target1.toFile());
+		file2.transferTo(target2.toFile());
+		
+		//create the model objects
+		SequenceFile sf1 = fileResource1.getResource();
+		SequenceFile sf2 = fileResource2.getResource();
+		sf1.setFile(target1);
+		sf2.setFile(target2);
+		
+		//get the sequencing run
+		SequencingRun sequencingRun = null;
+		Long runId = fileResource1.getMiseqRunId();
+		if(runId != fileResource2.getMiseqRunId()){
+			throw new IllegalArgumentException("Cannot upload a pair of files from different sequencing runs");
+		}
+		
+		if(runId != null){
+			sequencingRun = miseqRunService.read(runId);
+			sf1.setSequencingRun(sequencingRun);
+			sf2.setSequencingRun(sequencingRun);
+			logger.trace("Added sequencing run to files" + runId);
+		}
 
-		Join<Sample, SequenceFile> join1 = addSequenceFileToSample(file1, fileResource1, sample);
-		Join<Sample, SequenceFile> join2 = addSequenceFileToSample(file2, fileResource2, sample);
+		List<Join<Sample, SequenceFile>> createSequenceFilePairInSample = sequenceFileService.createSequenceFilePairInSample(sf1, sf2, sample);
+		Iterator<Join<Sample, SequenceFile>> iterator = createSequenceFilePairInSample.iterator();
 
-		sequenceFileService.createSequenceFilePair(join1.getObject(), join2.getObject());
+		Join<Sample, SequenceFile> join1 = iterator.next();
+		Join<Sample, SequenceFile> join2 = iterator.next();
+		
+		// clean up the temporary files.
+		Files.deleteIfExists(target1);
+		Files.deleteIfExists(temp1);
+		Files.deleteIfExists(target2);
+		Files.deleteIfExists(temp2);
+		logger.trace("Deleted temp files");
 
 		Map<String, String> response = new HashMap<>();
 		String location1 = linkTo(
@@ -238,65 +317,6 @@ public class RESTSampleSequenceFilesController {
 
 		// respond to the client
 		return new ResponseEntity<>(response,responseHeaders, HttpStatus.CREATED);
-	}
-	
-	/**
-	 * Add a {@link SequenceFile} to a {@link Sample}
-	 * 
-	 * @param file
-	 *            The multipart file to save
-	 * @param fileResource
-	 *            The file metadata resource
-	 * @param sample
-	 *            the {@link Sample} to add to
-	 * @return A {@link Join} between the file and sample
-	 * @throws IOException
-	 *             If the file is not successfully saved
-	 */
-	private Join<Sample, SequenceFile> addSequenceFileToSample(MultipartFile file, SequenceFileResource fileResource,
-			Sample sample) throws IOException {
-		// prepare a new sequence file using the multipart file supplied by the
-		// caller
-		Path temp = Files.createTempDirectory(null);
-		Path target = temp.resolve(file.getOriginalFilename());
-
-		//transfer the file to the temp location
-		file.transferTo(target.toFile());
-
-		logger.trace("Wrote temp file to " + target);
-
-		SequenceFile sf;
-		SequencingRun miseqRun = null;
-
-		if (fileResource != null) {
-			sf = fileResource.getResource();
-
-			Long miseqRunId = fileResource.getMiseqRunId();
-			if (miseqRunId != null) {
-				miseqRun = miseqRunService.read(miseqRunId);
-				logger.trace("Read miseq run " + miseqRunId);
-			}
-		} else {
-			sf = new SequenceFile();
-		}
-		sf.setFile(target);
-
-		if (miseqRun != null) {
-			sf.setSequencingRun(miseqRun);
-			logger.trace("Added seqfile to miseqrun");
-		}
-
-		// persist the changes by calling the sample service
-		Join<Sample, SequenceFile> sampleSequenceFileRelationship = sequenceFileService.createSequenceFileInSample(sf,
-				sample);
-		logger.trace("Created seqfile in sample " + sampleSequenceFileRelationship.getObject().getId());
-
-		// clean up the temporary files.
-		Files.deleteIfExists(target);
-		Files.deleteIfExists(temp);
-		logger.trace("Deleted temp file");
-
-		return sampleSequenceFileRelationship;
 	}
 
 	/**
