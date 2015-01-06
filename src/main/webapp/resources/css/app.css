@@ -7791,6 +7791,61 @@ html, body {
   border-left-color: #133B54 !important;
 }
 
+/* line 3, ../../styles/components/_card.scss */
+.card-container {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+/* line 13, ../../styles/components/_card.scss */
+.card {
+  background-color: transparent;
+  padding: .8rem;
+  width: 33.333333%;
+}
+
+/* line 19, ../../styles/components/_card.scss */
+.card_wrapper {
+  background-color: #f9f9f9;
+  box-shadow: 1px 2px 4px #cbcbcb;
+  height: 250px;
+}
+/* line 23, ../../styles/components/_card.scss */
+.card_wrapper > div {
+  padding: .3rem .6rem;
+}
+
+/* line 28, ../../styles/components/_card.scss */
+.card_colour {
+  height: 5px;
+}
+
+/* line 32, ../../styles/components/_card.scss */
+.card_title {
+  height: 50px;
+  line-height: 22px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #cbcbcb;
+  overflow: hidden;
+}
+
+/* line 40, ../../styles/components/_card.scss */
+.card_desc {
+  font-size: .9em;
+  margin-bottom: .3rem;
+  height: 160px;
+  overflow: scroll;
+}
+
+/* line 47, ../../styles/components/_card.scss */
+.card_footer {
+  height: 35px;
+}
+
 /* line 1, ../../styles/components/_cart.scss */
 .st-container,
 .st-pusher,

@@ -1,0 +1,49 @@
+@import "../helpers/variables";
+
+.card-container {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.card {
+  background-color: transparent;
+  padding: .8rem;
+  width: 33.333333%;
+}
+
+.card_wrapper {
+  background-color: #f9f9f9;
+  box-shadow: 1px 2px 4px rgba($irida-colour-grey-dark, 40);
+  height: 250px;
+  > div {
+    padding: .3rem .6rem;
+  }
+}
+
+.card_colour {
+  height: 5px;
+}
+
+.card_title {
+  height: 50px;
+  line-height: 22px;
+  text-transform: uppercase;
+  border-bottom: 1px solid $color-grey-darker;
+  overflow: hidden;
+}
+
+.card_desc {
+  font-size: .9em;
+  margin-bottom: .3rem;
+  height: 160px;
+  overflow: scroll;
+}
+
+.card_footer {
+  height: 35px;
+}
