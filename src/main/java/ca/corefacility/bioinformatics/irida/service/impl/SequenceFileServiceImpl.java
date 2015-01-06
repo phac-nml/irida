@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.validation.Validator;
@@ -35,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
  * Implementation for managing {@link SequenceFile}.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Service
 public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile> implements SequenceFileService {
@@ -222,5 +224,19 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	@Override
 	public SequenceFilePair createSequenceFilePair(SequenceFile file1, SequenceFile file2) {
 		return pairRepository.save(new SequenceFilePair(file1, file2));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SequenceFile getSequenceFileForSample(Sample sample, Long identifier) throws EntityNotFoundException {
+		Optional<SequenceFile> file = getSequenceFilesForSample(sample).stream()
+				.filter(j -> j.getObject().getId().equals(identifier)).findFirst().map(j -> j.getObject());
+		if (file.isPresent()) {
+			return file.get();
+		}
+
+		throw new EntityNotFoundException("Sequence file " + identifier + " does not exist in sample " + sample);
 	}
 }
