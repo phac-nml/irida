@@ -100,9 +100,7 @@ public class PipelineController extends BaseController {
 
 	@RequestMapping
 	public String getPipelineLaunchPage(final Model model, Locale locale) {
-		Set<AnalysisType> workflows = Sets.newHashSet(AnalysisType.values());
-		workflows.remove(AnalysisType.DEFAULT);
-		//workflowsService.getRegisteredWorkflowTypes();
+		Set<AnalysisType> workflows = workflowsService.getRegisteredWorkflowTypes();
 
 		List<Map<String, String>> flows = new ArrayList<>(workflows.size());
 		workflows.stream().forEach(type -> {
