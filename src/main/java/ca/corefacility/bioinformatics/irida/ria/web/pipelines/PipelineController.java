@@ -98,13 +98,14 @@ public class PipelineController extends BaseController {
 		this.pipelineSubmission = new PipelineSubmission();
 	}
 
-	@RequestMapping(value = "")
+	@RequestMapping
 	public String getPipelineLaunchPage(final Model model, Locale locale) {
 		Set<AnalysisType> workflows = Sets.newHashSet(AnalysisType.values());
+		workflows.remove(AnalysisType.DEFAULT);
 		//workflowsService.getRegisteredWorkflowTypes();
 
 		List<Map<String, String>> flows = new ArrayList<>(workflows.size());
-		workflows.stream().filter(type -> !type.toString().equals("default")).forEach(type -> {
+		workflows.stream().forEach(type -> {
 			String name = type.toString();
 			String key = "workflow." + name;
 			flows.add(ImmutableMap.of(
