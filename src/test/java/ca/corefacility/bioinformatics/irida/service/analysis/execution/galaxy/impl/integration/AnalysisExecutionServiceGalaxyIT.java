@@ -156,6 +156,31 @@ public class AnalysisExecutionServiceGalaxyIT {
 		expectedSnpTable = localGalaxy.getWorkflowCorePipelineTestSnpTable();
 		expectedTree = localGalaxy.getWorkflowCorePipelineTestTree();
 	}
+	
+	/**
+	 * Tests out failing to get a workflow status.
+	 * 
+	 * @throws InterruptedException
+	 * @throws NoSuchValueException
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 * @throws IOException
+	 * @throws ExecutionException
+	 */
+	@Test(expected=ExecutionManagerException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testGetWorkflowStatusFail() throws InterruptedException, NoSuchValueException,
+			IridaWorkflowNotFoundException, ExecutionManagerException, IOException, ExecutionException {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
+
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+		analysisSubmitted.setRemoteAnalysisId("invalid");
+
+		analysisExecutionService.getWorkflowStatus(analysisSubmitted);
+	}
 
 	/**
 	 * Tests out successfully submitting a workflow for execution.
