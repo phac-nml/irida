@@ -27,6 +27,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.FileCopyUtils;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -63,9 +64,10 @@ public class SampleSequenceFilesControllerTest {
 		sampleService = mock(SampleService.class);
 		sequenceFileService = mock(SequenceFileService.class);
 		projectService = mock(ProjectService.class);
-		miseqRunService= mock(SequencingRunService.class);
+		miseqRunService = mock(SequencingRunService.class);
 
-		controller = new RESTSampleSequenceFilesController(sequenceFileService, sampleService, projectService,miseqRunService);
+		controller = new RESTSampleSequenceFilesController(sequenceFileService, sampleService, projectService,
+				miseqRunService);
 	}
 
 	@Test
@@ -152,13 +154,13 @@ public class SampleSequenceFilesControllerTest {
 
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
-		when(sequenceFileService.getSequenceFileForSample(s,sf.getId())).thenReturn(sf);
+		when(sequenceFileService.getSequenceFileForSample(s, sf.getId())).thenReturn(sf);
 
 		ModelMap modelMap = controller.getSequenceFileForSample(p.getId(), s.getId(), sf.getId());
 
 		verify(projectService).read(p.getId());
 		verify(sampleService).read(s.getId());
-		verify(sequenceFileService).getSequenceFileForSample(s,sf.getId());
+		verify(sequenceFileService).getSequenceFileForSample(s, sf.getId());
 
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertNotNull(o);
@@ -180,41 +182,21 @@ public class SampleSequenceFilesControllerTest {
 		assertNotNull(sample);
 		assertEquals(sampleLocation, sample.getHref());
 	}
-	
-	public void testCantReadSequenceFileFromOtherSample() throws IOException{
+
+	@Test(expected = EntityNotFoundException.class)
+	public void testCantGetSequenceFileForOtherSample() {
 		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
-		SequenceFile sf = TestDataFactory.constructSequenceFile();
+		SequenceFile sf = new SequenceFile();
+		sf.setId(5l);
 
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
-		when(sequenceFileService.read(sf.getId())).thenReturn(sf);
+		when(sequenceFileService.getSequenceFileForSample(s, sf.getId())).thenThrow(
+				new EntityNotFoundException("not in sample"));
 
-		ModelMap modelMap = controller.getSequenceFileForSample(p.getId(), s.getId(), sf.getId());
+		controller.getSequenceFileForSample(p.getId(), s.getId(), sf.getId());
 
-		verify(projectService).read(p.getId());
-		verify(sampleService).read(s.getId());
-		verify(sequenceFileService).read(sf.getId());
-
-		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
-		assertNotNull(o);
-		assertTrue(o instanceof SequenceFileResource);
-		SequenceFileResource sfr = (SequenceFileResource) o;
-		assertEquals(sf.getFile().toString(), sfr.getFile());
-
-		Link self = sfr.getLink(Link.REL_SELF);
-		Link sampleSequenceFiles = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
-		Link sample = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
-
-		String sampleLocation = "http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId();
-		String sequenceFileLocation = sampleLocation + "/sequenceFiles/" + sf.getId();
-
-		assertNotNull(self);
-		assertEquals(sequenceFileLocation, self.getHref());
-		assertNotNull(sampleSequenceFiles);
-		assertEquals(sampleLocation + "/sequenceFiles", sampleSequenceFiles.getHref());
-		assertNotNull(sample);
-		assertEquals(sampleLocation, sample.getHref());
 	}
 
 	@Test
@@ -233,8 +215,8 @@ public class SampleSequenceFilesControllerTest {
 		when(sequenceFileService.createSequenceFileInSample(Matchers.any(SequenceFile.class), Matchers.eq(s)))
 				.thenReturn(r);
 		when(projectService.read(p.getId())).thenReturn(p);
-		
-		ResponseEntity<String> response = controller.addNewSequenceFileToSample(p.getId(), s.getId(), mmf,resource);
+
+		ResponseEntity<String> response = controller.addNewSequenceFileToSample(p.getId(), s.getId(), mmf, resource);
 
 		verify(sampleService).getSampleForProject(p, s.getId());
 		verify(projectService).read(p.getId());
