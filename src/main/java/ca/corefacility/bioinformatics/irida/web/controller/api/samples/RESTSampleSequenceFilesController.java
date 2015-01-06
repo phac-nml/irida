@@ -197,36 +197,48 @@ public class RESTSampleSequenceFilesController {
 		return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
 	}
 	
-	private Join<Sample, SequenceFile> addSequenceFileToSample(MultipartFile file, SequenceFileResource fileResource, Sample sample) throws IOException{
+	/**
+	 * Add a {@link SequenceFile} to a {@link Sample}
+	 * 
+	 * @param file
+	 *            The multipart file to save
+	 * @param fileResource
+	 *            The file metadata resource
+	 * @param sample
+	 *            the {@link Sample} to add to
+	 * @return A {@link Join} between the file and sample
+	 * @throws IOException
+	 *             If the file is not successfully saved
+	 */
+	private Join<Sample, SequenceFile> addSequenceFileToSample(MultipartFile file, SequenceFileResource fileResource,
+			Sample sample) throws IOException {
 		// prepare a new sequence file using the multipart file supplied by the
 		// caller
 		Path temp = Files.createTempDirectory(null);
 		Path target = temp.resolve(file.getOriginalFilename());
-		
-		//Changed to MultipartFile.transerTo(File) because it was truncating large files to 1039956336 bytes
-		//target = Files.write(target, file.getBytes());
+
+		//transfer the file to the temp location
 		file.transferTo(target.toFile());
-		
+
 		logger.trace("Wrote temp file to " + target);
-		
+
 		SequenceFile sf;
 		SequencingRun miseqRun = null;
-		
-		if(fileResource != null){
+
+		if (fileResource != null) {
 			sf = fileResource.getResource();
-			
+
 			Long miseqRunId = fileResource.getMiseqRunId();
-			if(miseqRunId != null){
+			if (miseqRunId != null) {
 				miseqRun = miseqRunService.read(miseqRunId);
 				logger.trace("Read miseq run " + miseqRunId);
 			}
-		}
-		else{
+		} else {
 			sf = new SequenceFile();
 		}
 		sf.setFile(target);
-		
-		if(miseqRun != null){
+
+		if (miseqRun != null) {
 			sf.setSequencingRun(miseqRun);
 			logger.trace("Added seqfile to miseqrun");
 		}
@@ -240,7 +252,7 @@ public class RESTSampleSequenceFilesController {
 		Files.deleteIfExists(target);
 		Files.deleteIfExists(temp);
 		logger.trace("Deleted temp file");
-		
+
 		return sampleSequenceFileRelationship;
 	}
 
