@@ -122,7 +122,7 @@ public class PipelineController extends BaseController {
 			));
 		});
 		model.addAttribute("workflows", flows);
-		return "pipelines/pipeline_launch";
+		return "pipelines/pipeline_selection";
 	}
 
 	// ************************************************************************************************
