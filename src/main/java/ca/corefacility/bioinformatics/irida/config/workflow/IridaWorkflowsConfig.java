@@ -9,8 +9,6 @@ import java.nio.file.Paths;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.validation.Validator;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,9 +42,6 @@ public class IridaWorkflowsConfig {
 
 	@Autowired
 	private Environment environment;
-
-	@Autowired
-	private Validator validator;
 
 	@Autowired
 	private IridaWorkflowLoaderService iridaWorkflowLoaderService;
