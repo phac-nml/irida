@@ -7838,7 +7838,7 @@ html, body {
   font-size: .9em;
   margin-bottom: .3rem;
   height: 160px;
-  overflow: scroll;
+  overflow-y: scroll;
 }
 
 /* line 47, ../../styles/components/_card.scss */
