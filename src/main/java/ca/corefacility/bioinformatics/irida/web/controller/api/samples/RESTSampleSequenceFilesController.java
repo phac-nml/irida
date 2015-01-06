@@ -175,6 +175,34 @@ public class RESTSampleSequenceFilesController {
 		Path temp = Files.createTempDirectory(null);
 		Path target = temp.resolve(file.getOriginalFilename());
 		
+		Join<Sample, SequenceFile> sampleSequenceFileRelationship = addSequenceFileToSample(file, fileResource, sample);
+
+		// clean up the temporary files.
+		Files.deleteIfExists(target);
+		Files.deleteIfExists(temp);
+		logger.trace("Deleted temp file");
+
+		// prepare a link to the sequence file itself (on the sequence file
+		// controller)
+		Long sequenceFileId = sampleSequenceFileRelationship.getObject().getId();
+		String location = linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
+						sequenceFileId)).withSelfRel().getHref();
+
+		// prepare the headers
+		MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
+		responseHeaders.add(HttpHeaders.LOCATION, location);
+
+		// respond to the client
+		return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
+	}
+	
+	private Join<Sample, SequenceFile> addSequenceFileToSample(MultipartFile file, SequenceFileResource fileResource, Sample sample) throws IOException{
+		// prepare a new sequence file using the multipart file supplied by the
+		// caller
+		Path temp = Files.createTempDirectory(null);
+		Path target = temp.resolve(file.getOriginalFilename());
+		
 		//Changed to MultipartFile.transerTo(File) because it was truncating large files to 1039956336 bytes
 		//target = Files.write(target, file.getBytes());
 		file.transferTo(target.toFile());
@@ -212,20 +240,8 @@ public class RESTSampleSequenceFilesController {
 		Files.deleteIfExists(target);
 		Files.deleteIfExists(temp);
 		logger.trace("Deleted temp file");
-
-		// prepare a link to the sequence file itself (on the sequence file
-		// controller)
-		Long sequenceFileId = sampleSequenceFileRelationship.getObject().getId();
-		String location = linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
-						sequenceFileId)).withSelfRel().getHref();
-
-		// prepare the headers
-		MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
-		responseHeaders.add(HttpHeaders.LOCATION, location);
-
-		// respond to the client
-		return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
+		
+		return sampleSequenceFileRelationship;
 	}
 
 	/**
