@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -135,6 +136,25 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		SequenceFile created = create(sequenceFile);
 		SampleSequenceFileJoin join = ssfRepository.save(new SampleSequenceFileJoin(sample, created));
 		return join;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public List<Join<Sample, SequenceFile>> createSequenceFilePairInSample(SequenceFile file1, SequenceFile file2,
+			Sample sample) {
+		file1 = create(file1);
+		file2 = create(file2);
+
+		List<Join<Sample, SequenceFile>> list = new ArrayList<>();
+		list.add(ssfRepository.save(new SampleSequenceFileJoin(sample, file1)));
+		list.add(ssfRepository.save(new SampleSequenceFileJoin(sample, file2)));
+
+		createSequenceFilePair(file1, file2);
+
+		return list;
 	}
 
 	/**

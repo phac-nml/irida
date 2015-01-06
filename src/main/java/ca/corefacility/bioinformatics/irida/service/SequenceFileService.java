@@ -52,6 +52,21 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	public Join<Sample, SequenceFile> createSequenceFileInSample(SequenceFile sequenceFile, Sample sample);
 
 	/**
+	 * Create a pair of {@link SequenceFile}s in a {@link Sample}
+	 * 
+	 * @param file1
+	 *            First {@link SequenceFile}
+	 * @param file2
+	 *            Second {@link SequenceFile}
+	 * @param sample
+	 *            The {@link Sample} to add to
+	 * @return The created {@link Join}s
+	 */
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
+	public List<Join<Sample, SequenceFile>> createSequenceFilePairInSample(SequenceFile file1, SequenceFile file2,
+			Sample sample);
+
+	/**
 	 * Get a {@link List} of {@link SequenceFile} references for a specific
 	 * {@link Sample}.
 	 * 
