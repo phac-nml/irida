@@ -339,7 +339,8 @@ public class RESTSampleSequenceFilesController {
 
 		// if the relationships exist, load the sequence file from the database
 		// and prepare for serialization.
-		SequenceFile sf = sequenceFileService.getSequenceFileForSample(sample, sequenceFileId);
+		Join<Sample, SequenceFile> sequenceFileForSample = sequenceFileService.getSequenceFileForSample(sample, sequenceFileId);
+		SequenceFile sf = sequenceFileForSample.getObject();
 		SequenceFileResource sfr = new SequenceFileResource();
 		sfr.setResource(sf);
 

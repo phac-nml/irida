@@ -75,7 +75,8 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *             if the file doesn't exist in the sample
 	 */
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#sample, 'canReadSample')")
-	public SequenceFile getSequenceFileForSample(Sample sample, Long identifier) throws EntityNotFoundException;
+	public Join<Sample, SequenceFile> getSequenceFileForSample(Sample sample, Long identifier)
+			throws EntityNotFoundException;
 
 	/**
 	 * Get a {@link List} of {@link SequenceFile} references for a specific

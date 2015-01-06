@@ -151,10 +151,11 @@ public class SampleSequenceFilesControllerTest {
 		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
 		SequenceFile sf = TestDataFactory.constructSequenceFile();
+		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s, sf);
 
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
-		when(sequenceFileService.getSequenceFileForSample(s, sf.getId())).thenReturn(sf);
+		when(sequenceFileService.getSequenceFileForSample(s, sf.getId())).thenReturn(join);
 
 		ModelMap modelMap = controller.getSequenceFileForSample(p.getId(), s.getId(), sf.getId());
 

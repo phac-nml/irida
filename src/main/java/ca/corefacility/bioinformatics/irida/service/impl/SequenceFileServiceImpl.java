@@ -230,9 +230,10 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SequenceFile getSequenceFileForSample(Sample sample, Long identifier) throws EntityNotFoundException {
-		Optional<SequenceFile> file = getSequenceFilesForSample(sample).stream()
-				.filter(j -> j.getObject().getId().equals(identifier)).findFirst().map(j -> j.getObject());
+	public Join<Sample, SequenceFile> getSequenceFileForSample(Sample sample, Long identifier)
+			throws EntityNotFoundException {
+		Optional<Join<Sample, SequenceFile>> file = getSequenceFilesForSample(sample).stream()
+				.filter(j -> j.getObject().getId().equals(identifier)).findFirst();
 		if (file.isPresent()) {
 			return file.get();
 		}
