@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
 import java.nio.file.Path;
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Objects;
 
@@ -60,7 +59,7 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 	private Long fileRevisionNumber; // the filesystem file revision number
 	
 	private AnalysisOutputFile() {
-		this.createdDate = new Timestamp((new Date()).getTime());
+		this.createdDate = new Date();
 		this.fileRevisionNumber = 0L;
 	}
 
@@ -142,7 +141,7 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(file, createdDate, modifiedDate, executionManagerFileId, fileRevisionNumber);
+		return Objects.hash(file, modifiedDate, executionManagerFileId, fileRevisionNumber);
 	}
 
 	/**
@@ -156,8 +155,7 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 
 		if (o instanceof AnalysisOutputFile) {
 			AnalysisOutputFile a = (AnalysisOutputFile) o;
-			return Objects.equals(file, a.file) &&
-					Objects.equals(createdDate, a.createdDate) && Objects.equals(modifiedDate, a.modifiedDate)
+			return Objects.equals(file, a.file) && Objects.equals(modifiedDate, a.modifiedDate)
 					&& Objects.equals(executionManagerFileId, a.executionManagerFileId)
 					&& Objects.equals(fileRevisionNumber, a.fileRevisionNumber);
 		}
