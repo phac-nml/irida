@@ -7643,6 +7643,11 @@ button.close {
     display: none !important;
   }
 }
+/* line 1, ../../styles/layouts/_all.scss */
+html, body {
+  height: 100%;
+}
+
 /* line 4, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs {
   background-color: #133B54;
@@ -7935,6 +7940,15 @@ input {
   font-size: 16px !important;
 }
 
+/* line 1, ../../styles/components/_modals.scss */
+.modal-backdrop {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
 /* line 3, ../../styles/components/_navbar.scss */
 .navbar {
   margin-bottom: 0 !important;
@@ -8007,9 +8021,4 @@ input {
 /* line 43, ../../styles/components/_notifications.scss */
 .irida-notification__item.remove {
   opacity: 0;
-}
-
-/* line 13, ../../styles/app.scss */
-html, body {
-  height: 100%;
 }
