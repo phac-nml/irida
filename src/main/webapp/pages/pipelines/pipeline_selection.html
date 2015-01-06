@@ -3,6 +3,11 @@
       layout:decorator="template/page">
 <head lang="en">
 	<title th:text="#{pipeline.launch.page-title}">Pipelines - Launch</title>
+	<style>
+		.phylogenomics {
+			background-color: rgba(39, 85, 108, 1.0);
+		}
+	</style>
 </head>
 <body>
 <div layout:fragment="page">
@@ -10,7 +15,7 @@
 	<ul class="card-container">
 		<li class="card" th:each="flow : ${workflows}">
 			<div class="card_wrapper">
-				<div class="card_colour" th:style="'background-color:' + ${flow.colour}"></div>
+				<div class="card_colour" th:classappend="${flow.name}"></div>
 				<div class="card_title" th:text="${flow.title}"></div>
 				<div class="card_desc" th:text="${flow.description}"></div>
 				<div class="card_footer">

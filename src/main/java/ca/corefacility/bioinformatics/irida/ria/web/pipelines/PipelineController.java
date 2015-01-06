@@ -58,9 +58,6 @@ public class PipelineController extends BaseController {
 	/*
 	 * CONSTANTS
 	 */
-	public static final Map<String, String> WORKFLOW_COLOURS = ImmutableMap.of(
-			"phylogenomics", "rgba(39, 85, 108, 1.0)"
-	);
 
 	// URI's
 	public static final String URI_LIST_PIPELINES = "/ajax/list.json";
@@ -117,8 +114,7 @@ public class PipelineController extends BaseController {
 							.getMessage(key + ".title", new Object[] { }, locale),
 					"description",
 					messageSource
-							.getMessage(key + ".description", new Object[] { }, locale),
-					"colour", WORKFLOW_COLOURS.get(name)
+							.getMessage(key + ".description", new Object[] { }, locale)
 			));
 		});
 		model.addAttribute("workflows", flows);
