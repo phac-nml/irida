@@ -6,6 +6,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -169,18 +170,8 @@ public class RESTSampleSequenceFilesController {
 		// load the sample from the database
 		Sample sample = sampleService.read(sampleId);
 		logger.trace("Read sample " + sampleId);
-
-		// prepare a new sequence file using the multipart file supplied by the
-		// caller
-		Path temp = Files.createTempDirectory(null);
-		Path target = temp.resolve(file.getOriginalFilename());
 		
 		Join<Sample, SequenceFile> sampleSequenceFileRelationship = addSequenceFileToSample(file, fileResource, sample);
-
-		// clean up the temporary files.
-		Files.deleteIfExists(target);
-		Files.deleteIfExists(temp);
-		logger.trace("Deleted temp file");
 
 		// prepare a link to the sequence file itself (on the sequence file
 		// controller)
@@ -195,6 +186,60 @@ public class RESTSampleSequenceFilesController {
 
 		// respond to the client
 		return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
+	}
+	
+	/**
+	 * Add a pair of {@link SequenceFile}s to a {@link Sample}
+	 * @param projectId The {@link Project} id to add to
+	 * @param sampleId The {@link Sample} id to add to
+	 * @param file1 The first multipart file
+	 * @param fileResource1 The metadata for the first file
+	 * @param file2 The second multipart file
+	 * @param fileResource2 the metadata for the second file 
+	 * @return Response containing the locations for the created files
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFilePairs", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<Map<String, String>> addNewSequenceFilePairToSample(@PathVariable Long projectId,
+			@PathVariable Long sampleId, @RequestPart("file1") MultipartFile file1,
+			@RequestPart(value = "parameters1", required = false) SequenceFileResource fileResource1,
+			@RequestPart("file2") MultipartFile file2,
+			@RequestPart(value = "parameters2", required = false) SequenceFileResource fileResource2)
+			throws IOException {
+		logger.debug("Adding pair of sequence files to sample " + sampleId + " in project " + projectId);
+		logger.trace("First uploaded file size: " + file1.getSize() + " bytes");
+		logger.trace("Second uploaded file size: " + file2.getSize() + " bytes");
+
+		Project p = projectService.read(projectId);
+		logger.trace("Read project " + projectId);
+		// confirm that a relationship exists between the project and the sample
+		Sample sample = sampleService.getSampleForProject(p, sampleId);
+
+		logger.trace("Read sample " + sampleId);
+
+		Join<Sample, SequenceFile> join1 = addSequenceFileToSample(file1, fileResource1, sample);
+		Join<Sample, SequenceFile> join2 = addSequenceFileToSample(file2, fileResource2, sample);
+
+		sequenceFileService.createSequenceFilePair(join1.getObject(), join2.getObject());
+
+		Map<String, String> response = new HashMap<>();
+		String location1 = linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
+						join1.getObject().getId())).withSelfRel().getHref();
+		String location2 = linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
+						join2.getObject().getId())).withSelfRel().getHref();
+
+		response.put("file1", location1);
+		response.put("file2", location2);
+
+		// prepare the headers
+		MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
+		responseHeaders.add(HttpHeaders.LOCATION, location1);
+		responseHeaders.add(HttpHeaders.LOCATION, location2);
+
+		// respond to the client
+		return new ResponseEntity<>(response,responseHeaders, HttpStatus.CREATED);
 	}
 	
 	/**

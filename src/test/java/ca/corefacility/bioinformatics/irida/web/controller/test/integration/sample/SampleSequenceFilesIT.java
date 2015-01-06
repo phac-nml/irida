@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.HttpResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.http.HttpStatus;
@@ -84,6 +86,45 @@ public class SampleSequenceFilesIT {
 		asUser().expect().body("resource.resources.fileName",hasItem(sequenceFile.getFileName().toString()))
 			.and().body("resource.resources.links[0].rel",hasItems("self"))
 			.when().get(sequenceFileUri);
+
+		// clean up
+		Files.delete(sequenceFile);
+	}
+	
+	@Test
+	public void testAddSequenceFilePairToSample() throws IOException {
+		String sampleUri = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1";
+		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
+		String sampleBody = response.getBody().asString();
+		String sequenceFileUri = from(sampleBody).getString(
+				"resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
+
+		String sequenceFilePairUri = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1/sequenceFilePairs";
+
+		Path sequenceFile = Files.createTempFile(null, null);
+		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
+
+		Map<String, String> fileParams = new HashMap<>();
+		fileParams.put("description", "some file");
+
+		Response r = asAdmin().given().contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+				.multiPart("file1", sequenceFile.toFile())
+				.multiPart("parameters1", fileParams, MediaType.APPLICATION_JSON_VALUE)
+				.multiPart("file2", sequenceFile.toFile())
+				.multiPart("parameters2", fileParams, MediaType.APPLICATION_JSON_VALUE).expect()
+				.statusCode(HttpStatus.CREATED.value()).when().post(sequenceFilePairUri);
+
+		String location1 = r.body().jsonPath().get("file1").toString();
+		String location2 = r.body().jsonPath().get("file2").toString();
+
+		assertTrue(location1.matches(sequenceFileUri + "/[0-9]+"));
+		assertTrue(location2.matches(sequenceFileUri + "/[0-9]+"));
+
+		assertNotEquals(location1, location2);
+
+		// confirm the resource exist
+		asUser().expect().body("resource.links.rel", hasItem("self")).when().get(location1);
+		asUser().expect().body("resource.links.rel", hasItem("self")).when().get(location2);
 
 		// clean up
 		Files.delete(sequenceFile);
