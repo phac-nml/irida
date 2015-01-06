@@ -109,16 +109,16 @@ public class AnalysisServiceImplIT {
 	public void testGetAnalysesForSequenceFile() throws IOException {
 		SequenceFile sf = sequenceFileService.read(1L);
 
-		Path treePath = Files.createTempFile(null, null);
-		Path tablePath = Files.createTempFile(null, null);
-		Path matrixPath = Files.createTempFile(null, null);
+		Path treePath = Files.createTempFile("tree", ".txt");
+		Path tablePath = Files.createTempFile("table", ".tsv");
+		Path matrixPath = Files.createTempFile("matrix", ".tsv");
 
 		AnalysisOutputFile tree = new AnalysisOutputFile(treePath, "internal-galaxy-tree-identifier");
 		AnalysisOutputFile table = new AnalysisOutputFile(tablePath, "internal-galaxy-table-identifier");
 		AnalysisOutputFile matrix = new AnalysisOutputFile(matrixPath, "internal-galaxy-matrix-identifier");
 		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
 				.put("tree", tree).put("matrix", matrix).put("table", table).build();
-		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(),
+		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(sf),
 				EXECUTION_MANAGER_ID, analysisOutputFiles);
 
 		Analysis created = analysisService.create(pipeline);
