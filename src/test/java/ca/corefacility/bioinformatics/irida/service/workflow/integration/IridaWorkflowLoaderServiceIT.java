@@ -186,19 +186,22 @@ public class IridaWorkflowLoaderServiceIT {
 		Set<IridaWorkflow> iridaWorkflowsFromFile = workflowLoaderService
 				.loadAllWorkflowImplementations(workflowDirectoryPath);
 
-		assertEquals(3, iridaWorkflowsFromFile.size());
+		assertEquals(4, iridaWorkflowsFromFile.size());
 		Iterator<IridaWorkflow> iter = iridaWorkflowsFromFile.iterator();
 		IridaWorkflow workflowA = iter.next();
 		IridaWorkflow workflowB = iter.next();
 		IridaWorkflow workflowC = iter.next();
+		IridaWorkflow workflowD = iter.next();
 
 		assertEquals("TestWorkflow", workflowA.getWorkflowDescription().getName());
 		assertEquals("TestWorkflow", workflowB.getWorkflowDescription().getName());
 		assertEquals("TestWorkflow", workflowC.getWorkflowDescription().getName());
+		assertEquals("TestWorkflow", workflowD.getWorkflowDescription().getName());
 
 		Set<String> actualVersionNumbers = Sets.newHashSet(workflowA.getWorkflowDescription().getVersion(), workflowB
-				.getWorkflowDescription().getVersion(), workflowC.getWorkflowDescription().getVersion());
-		Set<String> validVersionNumbers = Sets.newHashSet("1.0", "2.0", "1.0-invalid");
+				.getWorkflowDescription().getVersion(), workflowC.getWorkflowDescription().getVersion(), workflowD
+				.getWorkflowDescription().getVersion());
+		Set<String> validVersionNumbers = Sets.newHashSet("1.0", "2.0", "1.0-invalid", "2.0-missing-output");
 		assertEquals(validVersionNumbers, actualVersionNumbers);
 	}
 	
