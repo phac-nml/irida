@@ -335,11 +335,11 @@ public class RESTSampleSequenceFilesController {
 			@PathVariable Long sequenceFileId) {
 		ModelMap modelMap = new ModelMap();
 		projectService.read(projectId);
-		sampleService.read(sampleId);
+		Sample sample = sampleService.read(sampleId);
 
 		// if the relationships exist, load the sequence file from the database
 		// and prepare for serialization.
-		SequenceFile sf = sequenceFileService.read(sequenceFileId);
+		SequenceFile sf = sequenceFileService.getSequenceFileForSample(sample, sequenceFileId);
 		SequenceFileResource sfr = new SequenceFileResource();
 		sfr.setResource(sf);
 
