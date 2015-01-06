@@ -7,6 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
+import java.util.UUID;
+
+import javax.validation.Validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
@@ -35,6 +39,14 @@ import com.google.common.collect.Sets;
 public class IridaWorkflowsConfig {
 
 	private static final Logger logger = LoggerFactory.getLogger(IridaWorkflowsConfig.class);
+
+	private static final String IRIDA_DEFAULT_WORKFLOW_PREFIX = "irida.workflow.default";
+
+	@Autowired
+	private Environment environment;
+
+	@Autowired
+	private Validator validator;
 
 	@Autowired
 	private IridaWorkflowLoaderService iridaWorkflowLoaderService;
@@ -88,6 +100,27 @@ public class IridaWorkflowsConfig {
 	 */
 	@Bean
 	public IridaWorkflowIdSet defaultIridaWorkflows() {
-		return new IridaWorkflowIdSet(Sets.newHashSet());
+		Set<UUID> defaultWorkflowIds = Sets.newHashSet();
+
+		for (AnalysisType analysisType : AnalysisType.values()) {
+			String analysisDefaultProperyName = IRIDA_DEFAULT_WORKFLOW_PREFIX + "." + analysisType;
+
+			logger.trace("Getting default workflow id from property '" + analysisDefaultProperyName + "'");
+			String analysisDefaultId = environment.getProperty(analysisDefaultProperyName);
+			if (analysisDefaultId == null) {
+				logger.warn("No default workflow id associated with property '" + analysisDefaultProperyName + "'");
+			} else {
+				try {
+					UUID id = UUID.fromString(analysisDefaultId);
+					logger.debug("Adding default workflow " + analysisDefaultProperyName + "=" + analysisDefaultId);
+					defaultWorkflowIds.add(id);
+				} catch (IllegalArgumentException e) {
+					logger.error("Default workflow id for " + analysisDefaultProperyName + "=" + analysisDefaultId
+							+ " is not a valid workflow id");
+				}
+			}
+		}
+
+		return new IridaWorkflowIdSet(defaultWorkflowIds);
 	}
 }
