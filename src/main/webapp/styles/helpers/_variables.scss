@@ -24,7 +24,7 @@ $irida-colour-secondary: #f1f1f1 !default;
 $irida-colour-alert: #F04124 !default;
 $color-danger: $irida-colour-alert;
 
-$irida-colour-info: #C7D8E7 !default; // PHAC Light Blue
+$irida-colour-info: lighten($irida-colour-primary, 30);
 $color-info: $irida-colour-info;
 
 $irida-colour-success: #43AC6A !default;
