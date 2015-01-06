@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +34,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
@@ -450,42 +448,6 @@ public class RESTSampleSequenceFilesController {
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sfr);
 
 		return modelMap;
-	}
-	
-	/**
-	 * Add a {@link SequenceFilePair} for the given files
-	 * 
-	 * @param projectId
-	 *            the project ID for the files
-	 * @param sampleId
-	 *            the sample ID for the files
-	 * @param pairIds
-	 *            the pair ids
-	 * @return A success message
-	 */
-	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles/pair", method = RequestMethod.POST, consumes = {
-			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<String> addSequenceFilePair(@PathVariable Long projectId, @PathVariable Long sampleId,
-			@RequestBody List<Long> pairIds) {
-		projectService.read(projectId);
-		sampleService.read(sampleId);
-
-		if (pairIds.size() != 2) {
-			throw new IllegalArgumentException("Request must contain 2 keys");
-		}
-
-		Iterator<Long> iterator = pairIds.iterator();
-		Long file1Id = iterator.next();
-		Long file2Id = iterator.next();
-		
-		SequenceFile file1 = sequenceFileService.read(file1Id);
-		SequenceFile file2 = sequenceFileService.read(file2Id);
-
-		logger.debug("Adding sequence file pair for " + file1 + " and " + file2);
-
-		sequenceFileService.createSequenceFilePair(file1, file2);
-
-		return new ResponseEntity<>("success", HttpStatus.CREATED);
 	}
 	
 	/**

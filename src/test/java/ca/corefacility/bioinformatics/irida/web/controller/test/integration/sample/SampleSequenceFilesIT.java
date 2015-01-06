@@ -1,24 +1,22 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.sample;
 
-import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asAdmin;
+import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.asUser;
 import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotEquals;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.http.HttpResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.http.HttpStatus;
@@ -32,13 +30,11 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestSystemProperties;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.Lists;
 import com.google.common.net.HttpHeaders;
 import com.jayway.restassured.response.Response;
 
@@ -225,19 +221,4 @@ public class SampleSequenceFilesIT {
 		assertEquals(sampleUri, sampleLocation);
 	}
 	
-	@Test
-	public void testAddSequenceFilePair() {
-		String filePairURI = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1/sequenceFiles/pair";
-
-		String file1URI = ITestSystemProperties.BASE_URL + "/api/projects/5/samples/1/sequenceFiles/1";
-
-		List<Long> files = Lists.newArrayList(1l, 2l);
-
-		// add the pair
-		asAdmin().body(files).expect().response().statusCode(HttpStatus.CREATED.value()).when().post(filePairURI);
-
-		// check that it's there in the list
-		asAdmin().expect().body("resource.links.rel", hasItems(RESTSampleSequenceFilesController.REL_PAIR)).when()
-				.get(file1URI);
-	}
 }

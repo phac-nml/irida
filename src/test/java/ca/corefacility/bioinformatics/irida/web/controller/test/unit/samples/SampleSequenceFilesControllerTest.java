@@ -188,28 +188,6 @@ public class SampleSequenceFilesControllerTest {
 	}
 
 	@Test
-	public void testAddSequenceFilePair() throws IOException {
-		Project p = TestDataFactory.constructProject();
-		Sample s = TestDataFactory.constructSample();
-		SequenceFile sf = TestDataFactory.constructSequenceFile();
-		SequenceFile pairFile = TestDataFactory.constructSequenceFile();
-		pairFile.setId(sf.getId() + 1);
-
-		when(projectService.read(p.getId())).thenReturn(p);
-		when(sampleService.read(s.getId())).thenReturn(s);
-		when(sequenceFileService.read(sf.getId())).thenReturn(sf);
-		when(sequenceFileService.read(pairFile.getId())).thenReturn(pairFile);
-		
-		List<Long> content = Lists.newArrayList(sf.getId(), pairFile.getId());
-
-		ResponseEntity<String> addSequenceFilePair = controller.addSequenceFilePair(p.getId(), s.getId(), content);
-
-		verify(sequenceFileService).createSequenceFilePair(sf, pairFile);
-
-		assertEquals("success", addSequenceFilePair.getBody());
-	}
-
-	@Test
 	public void testAddNewSequenceFileToSample() throws IOException {
 		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
