@@ -39,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
@@ -100,11 +101,19 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	private Set<SequenceFile> sequenceFilesSet;
 
 	private static final UUID validWorkflowId = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
+	private static final UUID phylogenomicsWorkflowId = UUID.fromString("1f9ea289-5053-4e4a-bc76-1f0c60b179f8");
 
 	private static final String OUTPUT1_LABEL = "output1";
 	private static final String OUTPUT2_LABEL = "output2";
 	private static final String OUTPUT1_NAME = "output1.txt";
 	private static final String OUTPUT2_NAME = "output2.txt";
+
+	private static final String MATRIX_NAME = "snpMatrix.tsv";
+	private static final String MATRIX_LABEL = "matrix";
+	private static final String TREE_NAME = "phylogeneticTree.txt";
+	private static final String TREE_LABEL = "tree";
+	private static final String TABLE_NAME = "snpTable.tsv";
+	private static final String TABLE_LABEL = "table";
 
 	/**
 	 * Sets up variables for testing.
@@ -235,7 +244,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	}
 
 	/**
-	 * Tests out successfully getting results for an analysis.
+	 * Tests out successfully getting results for an analysis (TestAnalysis).
 	 * 
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
@@ -250,7 +259,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 			IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException, TimeoutException {
 
 		History history = new History();
-		history.setName("testGetAnalysisResultsSuccess");
+		history.setName("testGetAnalysisResultsTestAnalysisSuccess");
 		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
 		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
 		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getToolsClient();
@@ -285,6 +294,58 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	}
 
 	/**
+	 * Tests out successfully getting results for an analysis (phylogenomics).
+	 * 
+	 * @throws InterruptedException
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 * @throws IOException
+	 * @throws IridaWorkflowAnalysisTypeException
+	 * @throws TimeoutException
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testGetAnalysisResultsPhylogenomicsSuccess() throws InterruptedException, ExecutionManagerException,
+			IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException, TimeoutException {
+
+		History history = new History();
+		history.setName("testGetAnalysisResultsPhylogenomicsSuccess");
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
+		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getToolsClient();
+
+		History createdHistory = historiesClient.create(history);
+
+		// upload test outputs
+		uploadFileToHistory(sequenceFilePath, TABLE_NAME, createdHistory.getId(), toolsClient);
+		uploadFileToHistory(sequenceFilePath, MATRIX_NAME, createdHistory.getId(), toolsClient);
+		uploadFileToHistory(sequenceFilePath, TREE_NAME, createdHistory.getId(), toolsClient);
+
+		// wait for history
+		Util.waitUntilHistoryComplete(createdHistory.getId(), galaxyHistoriesService, 60);
+
+		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(phylogenomicsWorkflowId);
+		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
+		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+				sequenceFilePath, referenceFilePath, phylogenomicsWorkflowId);
+		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
+		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
+		analysisSubmission.setAnalysisState(AnalysisState.COMPLETING);
+		analysisSubmissionRepository.save(analysisSubmission);
+
+		Analysis analysis = analysisWorkspaceService.getAnalysisResults(analysisSubmission);
+		assertNotNull(analysis);
+		assertEquals(AnalysisPhylogenomicsPipeline.class, analysis.getClass());
+		assertEquals(3, analysis.getAnalysisOutputFiles().size());
+		assertEquals(Paths.get(TABLE_NAME), analysis.getAnalysisOutputFile(TABLE_LABEL).getFile().getFileName());
+		assertEquals(Paths.get(MATRIX_NAME), analysis.getAnalysisOutputFile(MATRIX_LABEL).getFile().getFileName());
+		assertEquals(Paths.get(TREE_NAME), analysis.getAnalysisOutputFile(TREE_LABEL).getFile().getFileName());
+	}
+
+	/**
 	 * Tests out failing to get results for an analysis (missing output file).
 	 * 
 	 * @throws InterruptedException
@@ -300,7 +361,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 			IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException, TimeoutException {
 
 		History history = new History();
-		history.setName("testGetAnalysisResultsSuccess");
+		history.setName("testGetAnalysisResultsTestAnalysisFail");
 		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
 		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
 		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getToolsClient();
