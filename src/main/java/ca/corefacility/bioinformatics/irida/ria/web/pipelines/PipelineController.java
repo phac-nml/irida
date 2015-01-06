@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.pipelines;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -18,6 +19,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -35,10 +38,12 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Controller for pipeline related views
@@ -69,6 +74,7 @@ public class PipelineController extends BaseController {
 	private ReferenceFileService referenceFileService;
 	private SequenceFileService sequenceFileService;
 	private AnalysisSubmissionService analysisSubmissionService;
+	private IridaWorkflowsService workflowsService;
 	private MessageSource messageSource;
 
 	/*
@@ -80,14 +86,40 @@ public class PipelineController extends BaseController {
 	public PipelineController(SampleService sampleService, SequenceFileService sequenceFileService,
 			ReferenceFileService referenceFileService,
 			AnalysisSubmissionService analysisSubmissionService,
+			IridaWorkflowsService iridaWorkflowsService,
 			MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
 		this.referenceFileService = referenceFileService;
 		this.analysisSubmissionService = analysisSubmissionService;
+		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 
 		this.pipelineSubmission = new PipelineSubmission();
+	}
+
+	@RequestMapping
+	public String getPipelineLaunchPage(final Model model, Locale locale) {
+		Set<AnalysisType> workflows = Sets.newHashSet(AnalysisType.values());
+		workflows.remove(AnalysisType.DEFAULT);
+		//workflowsService.getRegisteredWorkflowTypes();
+
+		List<Map<String, String>> flows = new ArrayList<>(workflows.size());
+		workflows.stream().forEach(type -> {
+			String name = type.toString();
+			String key = "workflow." + name;
+			flows.add(ImmutableMap.of(
+					"name", name,
+					"title",
+					messageSource
+							.getMessage(key + ".title", new Object[] { }, locale),
+					"description",
+					messageSource
+							.getMessage(key + ".description", new Object[] { }, locale)
+			));
+		});
+		model.addAttribute("workflows", flows);
+		return "pipelines/pipeline_selection";
 	}
 
 	// ************************************************************************************************
