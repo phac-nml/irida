@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhyl
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -89,13 +91,13 @@ public class TestDataFactory {
 	}
 
 	public static Analysis constructAnalysis() {
-		Set<SequenceFile> files = ImmutableSet.of(
-				constructSequenceFile()
-		);
-		AnalysisPhylogenomicsPipeline analysis = new AnalysisPhylogenomicsPipeline(files, FAKE_EXECUTION_MANAGER_ID);
-		analysis.setPhylogeneticTree(constructAnalysisOutputFile("snp_tree.tree"));
-		analysis.setSnpMatrix(constructAnalysisOutputFile("test_file_1.fastq"));
-		analysis.setSnpTable(constructAnalysisOutputFile("test_file_2.fastq"));
+		Set<SequenceFile> files = ImmutableSet.of(constructSequenceFile());
+		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
+				.put("tree", constructAnalysisOutputFile("snp_tree.tree"))
+				.put("matrix", constructAnalysisOutputFile("test_file_1.fastq"))
+				.put("table", constructAnalysisOutputFile("test_file_2.fastq")).build();
+		AnalysisPhylogenomicsPipeline analysis = new AnalysisPhylogenomicsPipeline(files, FAKE_EXECUTION_MANAGER_ID,
+				analysisOutputFiles);
 		return analysis;
 	}
 

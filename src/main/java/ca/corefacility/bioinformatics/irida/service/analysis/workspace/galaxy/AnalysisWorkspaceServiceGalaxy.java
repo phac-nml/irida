@@ -4,6 +4,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -19,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerDownloadException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
@@ -32,7 +35,6 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectNam
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
@@ -57,6 +59,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
+import com.google.common.collect.Maps;
 
 /**
  * A service for performing tasks for analysis in Galaxy.
@@ -336,7 +339,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 */
 	@Override
 	public Analysis getAnalysisResults(AnalysisSubmission analysisSubmission) throws ExecutionManagerException,
-			IridaWorkflowNotFoundException, IOException {
+			IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getInputFiles(), "input sequence files is null");
 		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
@@ -353,23 +356,26 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			inputFiles.add(sequenceFileRepository.findOne(sf.getId()));
 		}
 
-		AnalysisPhylogenomicsPipeline results = new AnalysisPhylogenomicsPipeline(inputFiles, analysisId);
-
 		Map<String, IridaWorkflowOutput> outputsMap = iridaWorkflow.getWorkflowDescription().getOutputsMap();
 
-		Dataset treeOutput = galaxyHistoriesService.getDatasetForFileInHistory(outputsMap.get("tree").getFileName(),
-				analysisId);
+		Map<String, AnalysisOutputFile> analysisOutputFiles = Maps.newHashMap();
+		for (String analysisOutputName : outputsMap.keySet()) {
+			String outputFileName = outputsMap.get(analysisOutputName).getFileName();
+			Dataset outputDataset = galaxyHistoriesService.getDatasetForFileInHistory(outputFileName, analysisId);
+			AnalysisOutputFile analysisOutput = buildOutputFile(analysisId, outputDataset, outputDirectory);
 
-		Dataset matrixOutput = galaxyHistoriesService.getDatasetForFileInHistory(
-				outputsMap.get("matrix").getFileName(), analysisId);
+			analysisOutputFiles.put(analysisOutputName, analysisOutput);
+		}
 
-		Dataset tableOutput = galaxyHistoriesService.getDatasetForFileInHistory(outputsMap.get("table").getFileName(),
-				analysisId);
-
-		results.setPhylogeneticTree(buildOutputFile(analysisId, treeOutput, outputDirectory));
-		results.setSnpMatrix(buildOutputFile(analysisId, matrixOutput, outputDirectory));
-		results.setSnpTable(buildOutputFile(analysisId, tableOutput, outputDirectory));
-
-		return results;
+		Class<? extends Analysis> analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType()
+				.getAnalysisClass();
+		try {
+			Constructor<? extends Analysis> analysisConstructor = analysisType.getConstructor(Set.class, String.class,
+					Map.class);
+			return analysisConstructor.newInstance(inputFiles, analysisId, analysisOutputFiles);
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			throw new IridaWorkflowAnalysisTypeException("Error building Analysis object of type " + analysisType, e);
+		}
 	}
 }

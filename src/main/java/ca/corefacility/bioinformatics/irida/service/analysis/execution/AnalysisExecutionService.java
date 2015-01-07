@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.Future;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -80,7 +81,9 @@ public interface AnalysisExecutionService {
 	 * @throws IOException
 	 *             If there was an error loading the analysis results from an
 	 *             execution manager.
+	 * @throws IridaWorkflowAnalysisTypeException
 	 */
 	public Future<AnalysisSubmission> transferAnalysisResults(AnalysisSubmission submittedAnalysis)
-			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException;
+			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException,
+			IridaWorkflowAnalysisTypeException;
 }

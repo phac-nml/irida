@@ -9,6 +9,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
+
 /**
  * Defines a specific type of an analysis.
  * 
@@ -22,13 +25,13 @@ public enum AnalysisType {
 	 * A phylogenomics analysis type for generating phylogenomic trees.
 	 */
 	@XmlEnumValue("phylogenomics")
-	PHYLOGENOMICS("phylogenomics"),
+	PHYLOGENOMICS("phylogenomics", AnalysisPhylogenomicsPipeline.class),
 
 	/**
 	 * A default analysis type.
 	 */
 	@XmlEnumValue("default")
-	DEFAULT("default");
+	DEFAULT("default", Analysis.class);
 
 	/**
 	 * Creates an {@link AnalysisType} from the corresponding String.
@@ -47,6 +50,7 @@ public enum AnalysisType {
 	private static Map<String, AnalysisType> typeMap = new HashMap<>();
 
 	private String type;
+	private Class<? extends Analysis> analysisClass;
 
 	/**
 	 * Sets of a Map used to convert a string to an AnalysisType
@@ -57,8 +61,17 @@ public enum AnalysisType {
 		}
 	}
 
-	private AnalysisType(String type) {
+	private AnalysisType(String type, Class<? extends Analysis> analysisClass) {
 		this.type = type;
+		this.analysisClass = analysisClass;
+	}
+	
+	/**
+	 * Gets the particular {@link Analysis} class corresponding to this type.
+	 * @return  An {@link Analysis} class for this type.
+	 */
+	public Class<? extends Analysis> getAnalysisClass() {
+		return analysisClass;
 	}
 
 	/**

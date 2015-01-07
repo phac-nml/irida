@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 
 import javax.validation.Validator;
 
@@ -23,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisReposi
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisServiceImpl;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
 public class AnalysisServiceTest {
@@ -59,16 +61,16 @@ public class AnalysisServiceTest {
 	@Test
 	public void testCreateAnalysisWithMultipleOutputFile() throws IOException {
 		SequenceFile sf = new SequenceFile();
-		AnalysisPhylogenomicsPipeline analysis = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(sf), "something");
 		Path outputFile1 = Files.createTempFile(null, null);
 		Path outputFile2 = Files.createTempFile(null, null);
 		Path outputFile3 = Files.createTempFile(null, null);
 		AnalysisOutputFile report1 = new AnalysisOutputFile(outputFile1, "");
 		AnalysisOutputFile report2 = new AnalysisOutputFile(outputFile2, "");
 		AnalysisOutputFile report3 = new AnalysisOutputFile(outputFile3, "");
-		analysis.setPhylogeneticTree(report1);
-		analysis.setSnpMatrix(report2);
-		analysis.setSnpTable(report3);
+		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
+				.put("tree", report1).put("matrix", report2).put("table", report3).build();
+		AnalysisPhylogenomicsPipeline analysis = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(sf), "something",
+				analysisOutputFiles);
 
 		analysisService.create(analysis);
 

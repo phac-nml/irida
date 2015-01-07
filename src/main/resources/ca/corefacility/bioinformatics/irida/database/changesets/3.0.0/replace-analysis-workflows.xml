@@ -38,5 +38,56 @@
 			cascadeConstraints="true" />
 		<dropTable tableName="remote_workflow" cascadeConstraints="true" />
 
+		<!-- Remove Phylogenomics Analysis file columns -->
+		<dropForeignKeyConstraint baseTableName="analysis_phylogenomicspipeline"
+			constraintName="FK_ANALYSIS_PHYLOGENOMICSPIPELINE_MATRIX" />
+		<dropForeignKeyConstraint baseTableName="analysis_phylogenomicspipeline"
+			constraintName="FK_ANALYSIS_PHYLOGENOMICSPIPELINE_TREE" />
+		<dropForeignKeyConstraint baseTableName="analysis_phylogenomicspipeline"
+			constraintName="FK_ANALYSIS_PHYLOGENOMICSPIPELINE_TABLE" />
+		<dropColumn columnName="phylogeneticTree_id" tableName="analysis_phylogenomicspipeline" />
+		<dropColumn columnName="snpMatrix_id" tableName="analysis_phylogenomicspipeline" />
+		<dropColumn columnName="snpTable_id" tableName="analysis_phylogenomicspipeline" />
+
+		<dropColumn columnName="phylogeneticTree_id" tableName="analysis_phylogenomicspipeline_AUD" />
+		<dropColumn columnName="snpMatrix_id" tableName="analysis_phylogenomicspipeline_AUD" />
+		<dropColumn columnName="snpTable_id" tableName="analysis_phylogenomicspipeline_AUD" />
+
+		<createTable tableName="analysis_output_file_map">
+			<column name="analysis_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_ANALYSIS_OUTPUT_FILE_MAP_ANALYSIS_ID"
+					referencedColumnNames="id" referencedTableName="analysis" />
+			</column>
+			<column name="analysisOutputFilesMap_id" type="bigint(20)">
+				<constraints nullable="false" unique="true"
+					foreignKeyName="FK_ANALYSIS_OUTPUT_FILE_MAP_ANALYSISOUTPUTFILESMAP_ID"
+					referencedColumnNames="id" referencedTableName="analysis_output_file" />
+			</column>
+			<column name="analysis_output_file_key" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="analysis_output_file_map_AUD">
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_ANALYSIS_OUTPUT_FILE_MAP_AUD_REV"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="analysis_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="analysisOutputFilesMap_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="analysis_output_file_key" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)">
+				<constraints nullable="true" />
+			</column>
+		</createTable>
+
 	</changeSet>
 </databaseChangeLog>

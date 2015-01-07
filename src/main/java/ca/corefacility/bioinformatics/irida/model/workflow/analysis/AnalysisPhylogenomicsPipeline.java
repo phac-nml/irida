@@ -1,16 +1,12 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
+import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.envers.Audited;
-
-import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
@@ -24,19 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 @Table(name = "analysis_phylogenomicspipeline")
 @Audited
 public class AnalysisPhylogenomicsPipeline extends Analysis {
-
-	// newick formatted phylogenetic tree file
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private AnalysisOutputFile phylogeneticTree;
-
-	// SNP matrix file
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private AnalysisOutputFile snpMatrix;
-
-	// SNP table file
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private AnalysisOutputFile snpTable;
-
+	
 	/**
 	 * required for hibernate, marked as private so nobody else uses it.
 	 */
@@ -44,38 +28,20 @@ public class AnalysisPhylogenomicsPipeline extends Analysis {
 		super(null, null);
 	}
 
-	public AnalysisPhylogenomicsPipeline(Set<SequenceFile> inputFiles, String executionManagerAnalysisId) {
-		super(inputFiles, executionManagerAnalysisId);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public Set<AnalysisOutputFile> getAnalysisOutputFiles() {
-		return Sets.newHashSet(phylogeneticTree, snpMatrix, snpTable);
+	public AnalysisPhylogenomicsPipeline(Set<SequenceFile> inputFiles, String executionManagerAnalysisId,
+			Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
+		super(inputFiles, executionManagerAnalysisId, analysisOutputFilesMap);
 	}
 
 	public AnalysisOutputFile getPhylogeneticTree() {
-		return phylogeneticTree;
-	}
-
-	public void setPhylogeneticTree(AnalysisOutputFile phylogeneticTree) {
-		this.phylogeneticTree = phylogeneticTree;
+		return getAnalysisOutputFile("tree");
 	}
 
 	public AnalysisOutputFile getSnpMatrix() {
-		return snpMatrix;
+		return getAnalysisOutputFile("matrix");
 	}
-
-	public void setSnpMatrix(AnalysisOutputFile snpMatrix) {
-		this.snpMatrix = snpMatrix;
-	}
-
+	
 	public AnalysisOutputFile getSnpTable() {
-		return snpTable;
-	}
-
-	public void setSnpTable(AnalysisOutputFile snpTable) {
-		this.snpTable = snpTable;
+		return getAnalysisOutputFile("table");
 	}
 }

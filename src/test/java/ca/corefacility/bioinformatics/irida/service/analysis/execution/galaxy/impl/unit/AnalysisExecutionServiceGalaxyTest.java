@@ -20,6 +20,7 @@ import org.mockito.MockitoAnnotations;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
@@ -101,10 +102,11 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * @throws IOException
 	 * @throws ExecutionManagerException
 	 * @throws NoSuchValueException
+	 * @throws IridaWorkflowAnalysisTypeException 
 	 */
 	@Before
 	public void setup() throws IridaWorkflowNotFoundException, IOException, ExecutionManagerException,
-			NoSuchValueException {
+			NoSuchValueException, IridaWorkflowAnalysisTypeException {
 		MockitoAnnotations.initMocks(this);
 
 		String submissionName = "name";
@@ -406,10 +408,11 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws ExecutionException
 	 * @throws InterruptedException
+	 * @throws IridaWorkflowAnalysisTypeException 
 	 */
 	@Test
 	public void testTransferAnalysisResultsSuccess() throws ExecutionManagerException, IOException,
-			IridaWorkflowNotFoundException, InterruptedException, ExecutionException {
+			IridaWorkflowNotFoundException, InterruptedException, ExecutionException, IridaWorkflowAnalysisTypeException {
 		when(analysisSubmissionService.exists(INTERNAL_ANALYSIS_ID)).thenReturn(true);
 
 		Future<AnalysisSubmission> actualCompletedSubmissionFuture = workflowManagement
@@ -431,10 +434,11 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws ExecutionException
 	 * @throws InterruptedException
+	 * @throws IridaWorkflowAnalysisTypeException 
 	 */
 	@Test(expected = ExecutionManagerException.class)
 	public void testTransferAnalysisResultsFail() throws ExecutionManagerException, IOException,
-			IridaWorkflowNotFoundException, InterruptedException, ExecutionException {
+			IridaWorkflowNotFoundException, InterruptedException, ExecutionException, IridaWorkflowAnalysisTypeException {
 		when(analysisSubmissionService.exists(INTERNAL_ANALYSIS_ID)).thenReturn(true);
 		when(analysisWorkspaceService.getAnalysisResults(analysisCompleting)).thenThrow(
 				new ExecutionManagerException());
@@ -453,10 +457,11 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws ExecutionException
 	 * @throws InterruptedException
+	 * @throws IridaWorkflowAnalysisTypeException 
 	 */
 	@Test(expected = NullPointerException.class)
 	public void testTransferAnalysisResultsFailNotSubmittedNullId() throws ExecutionManagerException, IOException,
-			IridaWorkflowNotFoundException, InterruptedException, ExecutionException {
+			IridaWorkflowNotFoundException, InterruptedException, ExecutionException, IridaWorkflowAnalysisTypeException {
 		when(analysisSubmissionService.exists(INTERNAL_ANALYSIS_ID)).thenReturn(true);
 		analysisCompleting.setRemoteAnalysisId(null);
 
@@ -471,14 +476,36 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * @throws ExecutionManagerException
 	 * @throws IOException
 	 * @throws IridaWorkflowNotFoundException
+	 * @throws IridaWorkflowAnalysisTypeException 
 	 */
 	@Test(expected = EntityNotFoundException.class)
-	public void testGetAnalysisResultsFailAnalysisIdInvalid() throws ExecutionManagerException, IOException,
-			IridaWorkflowNotFoundException {
+	public void testTransferAnalysisResultsFailAnalysisIdInvalid() throws ExecutionManagerException, IOException,
+			IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException {
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
 		analysisSubmission.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 		when(analysisSubmissionService.exists(INTERNAL_ANALYSIS_ID)).thenReturn(false);
 
 		workflowManagement.transferAnalysisResults(analysisSubmission);
+	}
+	
+	/**
+	 * Tests failing to get analysis results due the type of analysis object
+	 * being invalid.
+	 * 
+	 * @throws Throwable
+	 */
+	@Test(expected = IridaWorkflowAnalysisTypeException.class)
+	public void testTransferAnalysisResultsFailAnalysisTypeInvalid() throws Throwable {
+		when(analysisSubmissionService.exists(INTERNAL_ANALYSIS_ID)).thenReturn(true);
+		when(analysisWorkspaceService.getAnalysisResults(analysisCompleting)).thenThrow(
+				new IridaWorkflowAnalysisTypeException(null));
+
+		Future<AnalysisSubmission> actualCompletedSubmissionFuture = workflowManagement
+				.transferAnalysisResults(analysisFinishedRunning);
+		try {
+			actualCompletedSubmissionFuture.get();
+		} catch (ExecutionException e) {
+			throw e.getCause();
+		}
 	}
 }

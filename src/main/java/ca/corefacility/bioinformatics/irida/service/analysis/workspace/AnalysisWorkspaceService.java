@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.analysis.workspace;
 import java.io.IOException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.PreparedWorkflowGalaxy;
@@ -59,7 +60,9 @@ public interface AnalysisWorkspaceService {
 	 * @throws IOException
 	 *             If there was an error when loading the results of an analysis
 	 *             from Galaxy to a local file.
+	 * @throws IridaWorkflowAnalysisTypeException
+	 *             If there was an issue building an {@link Analysis} object.
 	 */
-	public Analysis getAnalysisResults(AnalysisSubmission analysisSubmission)
-			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException;
+	public Analysis getAnalysisResults(AnalysisSubmission analysisSubmission) throws ExecutionManagerException,
+			IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException;
 }

@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
@@ -40,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -67,9 +69,6 @@ public class AnalysisServiceImplIT {
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testCreatePhylogenomicsAnalysis() throws IOException {
-		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(),
-				EXECUTION_MANAGER_ID);
-
 		Path treePath = Files.createTempFile(null, null);
 		Path tablePath = Files.createTempFile(null, null);
 		Path matrixPath = Files.createTempFile(null, null);
@@ -77,10 +76,10 @@ public class AnalysisServiceImplIT {
 		AnalysisOutputFile tree = new AnalysisOutputFile(treePath, "internal-galaxy-tree-identifier");
 		AnalysisOutputFile table = new AnalysisOutputFile(tablePath, "internal-galaxy-table-identifier");
 		AnalysisOutputFile matrix = new AnalysisOutputFile(matrixPath, "internal-galaxy-matrix-identifier");
-
-		pipeline.setPhylogeneticTree(tree);
-		pipeline.setSnpMatrix(matrix);
-		pipeline.setSnpTable(table);
+		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
+				.put("tree", tree).put("matrix", matrix).put("table", table).build();
+		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(),
+				EXECUTION_MANAGER_ID, analysisOutputFiles);
 
 		// make sure that we're not falsely putting the files into the correct
 		// directory in the first place.
@@ -109,20 +108,18 @@ public class AnalysisServiceImplIT {
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testGetAnalysesForSequenceFile() throws IOException {
 		SequenceFile sf = sequenceFileService.read(1L);
-		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(sf),
-				EXECUTION_MANAGER_ID);
 
-		Path treePath = Files.createTempFile(null, null);
-		Path tablePath = Files.createTempFile(null, null);
-		Path matrixPath = Files.createTempFile(null, null);
+		Path treePath = Files.createTempFile("tree", ".txt");
+		Path tablePath = Files.createTempFile("table", ".tsv");
+		Path matrixPath = Files.createTempFile("matrix", ".tsv");
 
 		AnalysisOutputFile tree = new AnalysisOutputFile(treePath, "internal-galaxy-tree-identifier");
 		AnalysisOutputFile table = new AnalysisOutputFile(tablePath, "internal-galaxy-table-identifier");
 		AnalysisOutputFile matrix = new AnalysisOutputFile(matrixPath, "internal-galaxy-matrix-identifier");
-
-		pipeline.setPhylogeneticTree(tree);
-		pipeline.setSnpMatrix(matrix);
-		pipeline.setSnpTable(table);
+		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
+				.put("tree", tree).put("matrix", matrix).put("table", table).build();
+		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(sf),
+				EXECUTION_MANAGER_ID, analysisOutputFiles);
 
 		Analysis created = analysisService.create(pipeline);
 

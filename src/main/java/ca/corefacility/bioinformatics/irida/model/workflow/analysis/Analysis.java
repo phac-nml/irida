@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -28,6 +29,9 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
@@ -41,7 +45,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 @Table(name = "analysis")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Audited
-public abstract class Analysis implements IridaThing {
+public class Analysis implements IridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -71,27 +75,54 @@ public abstract class Analysis implements IridaThing {
 	@NotNull
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	private Set<SequenceFile> inputFiles;
-
-	/**
-	 * Get all output files produced by this {@link Analysis}.
-	 * 
-	 * @return the set of all output files produced by the {@link Analysis}.
-	 */
-	public abstract Set<AnalysisOutputFile> getAnalysisOutputFiles();
+	
+	@ElementCollection(fetch = FetchType.EAGER)
+	@MapKeyColumn(name = "analysis_output_file_key", nullable = false)
+	@Column(name = "analysis_output_file_value", nullable = false)
+	@CollectionTable(name = "analysis_output_file_map", joinColumns = @JoinColumn(name = "analysis_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
+			"analysis_id", "analysis_output_file_key" }, name = "UK_ANALYSIS_OUTPUT_FILE_KEY"))
+	private Map<String, AnalysisOutputFile> analysisOutputFilesMap;
 
 	private Analysis() {
 		this.createdDate = new Date();
 		this.modifiedDate = createdDate;
+		this.analysisOutputFilesMap = new HashMap<>(); 
 	}
 
-	public Analysis(Set<SequenceFile> inputFiles, String executionManagerAnalysisId) {
+	/**
+	 * Builds a new {@link Analysis} object with the given information.
+	 * 
+	 * @param inputFiles
+	 *            The input {@link SequenceFile}s for this analysis.
+	 * @param executionManagerAnalysisId
+	 *            The id for an execution manager used with this analysis.
+	 * @param analysisOutputFilesMap
+	 *            A {@link Map} of output file keys and
+	 *            {@link AnalysisOutputFile}s.
+	 */
+	public Analysis(Set<SequenceFile> inputFiles, String executionManagerAnalysisId,
+			Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
 		this();
 		this.inputFiles = inputFiles;
 		this.executionManagerAnalysisId = executionManagerAnalysisId;
+		this.analysisOutputFilesMap = analysisOutputFilesMap;
+	}
+
+	/**
+	 * Builds a new {@link Analysis} object with the given information and an
+	 * empty set of output files.
+	 * 
+	 * @param inputFiles
+	 *            The input {@link SequenceFile}s for this analysis.
+	 * @param executionManagerAnalysisId
+	 *            The id for an execution manager used with this analysis.
+	 */
+	public Analysis(Set<SequenceFile> inputFiles, String executionManagerAnalysisId) {
+		this(inputFiles, executionManagerAnalysisId, Maps.newHashMap());
 	}
 
 	public int hashCode() {
-		return Objects.hash(createdDate, modifiedDate, description, executionManagerAnalysisId);
+		return Objects.hash(createdDate, modifiedDate, description, executionManagerAnalysisId, analysisOutputFilesMap);
 	}
 
 	public boolean equals(Object o) {
@@ -103,10 +134,20 @@ public abstract class Analysis implements IridaThing {
 			Analysis a = (Analysis) o;
 			return Objects.equals(createdDate, a.createdDate) && Objects.equals(modifiedDate, a.modifiedDate)
 					&& Objects.equals(description, a.description)
-					&& Objects.equals(executionManagerAnalysisId, a.executionManagerAnalysisId);
+					&& Objects.equals(executionManagerAnalysisId, a.executionManagerAnalysisId)
+					&& Objects.equals(analysisOutputFilesMap,a.analysisOutputFilesMap);
 		}
 
 		return false;
+	}
+	
+	/**
+	 * Get all output files produced by this {@link Analysis}.
+	 * 
+	 * @return the set of all output files produced by the {@link Analysis}.
+	 */
+	public Set<AnalysisOutputFile> getAnalysisOutputFiles() {
+		return Sets.newHashSet(analysisOutputFilesMap.values());
 	}
 
 	public Set<SequenceFile> getInputSequenceFiles() {
@@ -135,6 +176,10 @@ public abstract class Analysis implements IridaThing {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public AnalysisOutputFile getAnalysisOutputFile(String key) {
+		return this.analysisOutputFilesMap.get(key);
 	}
 
 	@Override
