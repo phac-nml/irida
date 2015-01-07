@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.enums.analysis.integration;
 
+import static org.junit.Assert.*;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -26,6 +28,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsGalaxyIntegrationTestConfig;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
@@ -131,5 +134,6 @@ public class SNVPhylAnalysisIT {
 		completeSubmittedAnalyses();
 
 		submission = analysisSubmissionRepository.findOne(submission.getId());
+		assertEquals(AnalysisState.COMPLETED, submission.getAnalysisState());
 	}
 }
