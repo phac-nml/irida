@@ -239,4 +239,13 @@ public class CartController {
 		return selected.get(project);
 	}
 
+	/**
+	 * Allows access to the cart from other controllers
+	 *
+	 * @return {@link Map} Cart map.
+	 */
+	public Map<Project, Set<Sample>> getCart() {
+		return this.selected;
+	}
+
 }
