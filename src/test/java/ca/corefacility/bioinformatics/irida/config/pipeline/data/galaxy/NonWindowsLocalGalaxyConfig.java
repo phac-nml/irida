@@ -208,6 +208,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		
 				buildGalaxyUsers(galaxyData, localGalaxy);
 				
+				setupTestToolSheds(localGalaxy.getGalaxyPath(), galaxyProperties);
 				buildTestTools(localGalaxy.getGalaxyPath(), galaxyProperties, localGalaxy);
 		
 				GalaxyDaemon galaxyDaemon = runGalaxy(galaxyData, localGalaxy);
@@ -246,7 +247,30 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 			}
 		}
 	}
-	
+
+	/**
+	 * Sets up tool sheds for this test Galaxy instance.
+	 * 
+	 * @param galaxyPath
+	 *            The path to the Galaxy root directory.
+	 * @param galaxyProperties
+	 *            The GalaxyProperties object.
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 */
+	private void setupTestToolSheds(Path galaxyPath, GalaxyProperties galaxyProperties) throws URISyntaxException,
+			IOException {
+		Path sourceToolShedsConf = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource("tool_sheds_conf.xml")
+				.toURI());
+		Path destinationToolShedsConf = galaxyPath.resolve("tool_sheds_conf.xml");
+		Files.copy(sourceToolShedsConf, destinationToolShedsConf);
+
+		Path toolDependencyDir = galaxyPath.resolve("tool_dependencies");
+		Files.createDirectory(toolDependencyDir);
+
+		galaxyProperties.setAppProperty("tool_dependency_dir", toolDependencyDir.toString());
+	}
+
 	/**
 	 * Gets a database connection string for Galaxy.
 	 * @param galaxyDatabaseConnectionProperty  The system property for the database connection string.
