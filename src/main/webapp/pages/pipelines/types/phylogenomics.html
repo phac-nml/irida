@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="template/page">
+<head lang="en">
+	<title th:text="#{pipeline.phylogenomics.page-title}">Pipelines - Launch</title>
+</head>
+<body>
+<div layout:fragment="page">
+	<h1 th:text="#{workflow.phylogenomics.title}">Phylogenomics Pipeline</h1>
+	<div th:replace="pipelines/fragments/i18n :: cart-summary(${counts})"></div>
+</div>
+</body>
+</html>

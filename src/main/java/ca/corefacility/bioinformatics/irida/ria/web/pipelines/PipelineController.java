@@ -29,11 +29,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.components.PipelineSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
@@ -43,7 +45,6 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 /**
  * Controller for pipeline related views
@@ -78,6 +79,11 @@ public class PipelineController extends BaseController {
 	private MessageSource messageSource;
 
 	/*
+	 * CONTROLLERS
+	 */
+	private CartController cartController;
+
+	/*
 	 * COMPONENTS
 	 */
 	private PipelineSubmission pipelineSubmission;
@@ -87,17 +93,29 @@ public class PipelineController extends BaseController {
 			ReferenceFileService referenceFileService,
 			AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService,
+			CartController cartController,
 			MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
 		this.referenceFileService = referenceFileService;
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
+		this.cartController = cartController;
 		this.messageSource = messageSource;
 
 		this.pipelineSubmission = new PipelineSubmission();
 	}
 
+	/**
+	 * Get the Pipeline Selection Page
+	 *
+	 * @param model
+	 * 		{@link Model}
+	 * @param locale
+	 * 		Current users {@link Locale}
+	 *
+	 * @return location of the pipeline selection page.
+	 */
 	@RequestMapping
 	public String getPipelineLaunchPage(final Model model, Locale locale) {
 		Set<AnalysisType> workflows = workflowsService.getRegisteredWorkflowTypes();
@@ -116,8 +134,15 @@ public class PipelineController extends BaseController {
 							.getMessage(key + ".description", new Object[] { }, locale)
 			));
 		});
+		model.addAttribute("counts", getCartSummaryMap());
 		model.addAttribute("workflows", flows);
 		return "pipelines/pipeline_selection";
+	}
+
+	@RequestMapping(value = "/phylogenomics")
+	public String getPhylogenomicsPage(final Model model) {
+		model.addAttribute("counts", getCartSummaryMap());
+		return "pipelines/types/phylogenomics";
 	}
 
 	// ************************************************************************************************
@@ -209,5 +234,23 @@ public class PipelineController extends BaseController {
 
 		// Reset the pipeline submission
 		pipelineSubmission.clear();
+	}
+
+	/**
+	 * Get details about the contents of the cart.
+	 *
+	 * @return {@link Map} containing the counts of the projects and samples in the cart.
+	 */
+	private Map<String, Integer> getCartSummaryMap() {
+		Map<Project, Set<Sample>> cart = cartController.getCart();
+		Map<String, Integer> counts = new HashMap<>();
+		int projectCount = cart.keySet().size();
+		int sampleCount = 0;
+		for (Project project : cart.keySet()) {
+			sampleCount += cart.get(project).size();
+		}
+		counts.put("projects", projectCount);
+		counts.put("samples", sampleCount);
+		return counts;
 	}
 }

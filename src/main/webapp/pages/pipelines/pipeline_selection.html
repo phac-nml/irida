@@ -12,6 +12,7 @@
 <body>
 <div layout:fragment="page">
 	<h1><span th:text="#{pipeline.launch.title}">Select a Pipeline</span></h1>
+	<div th:replace="pipelines/fragments/i18n :: cart-summary(${counts})"></div>
 	<ul class="card-container">
 		<li class="card" th:each="flow : ${workflows}">
 			<div class="card_wrapper">
