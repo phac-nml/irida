@@ -3,7 +3,7 @@
 <iridaWorkflow>
   <id>ccca532d-b0be-4f2c-bd6d-9886aa722571</id>
   <name>SNVPhylTest</name>
-  <version>0.1</version>
+  <version>0.1-dev</version>
   <author>Aaron Petkau</author>
   <email>aaron.petkau@phac-aspc.gc.ca</email>
   <analysisType>phylogenomics</analysisType>
