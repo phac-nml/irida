@@ -44,7 +44,7 @@
     <tool>
       <name>core_pipeline</name>
       <id>irida.corefacility.ca/galaxy-shed/repos/irida/core_pipeline/vcf2pseudoalignment/0.0.10</id>
-      <version>0.0.10</version>
+      <version>1.1</version>
       <owner>irida</owner>
       <url>https://irida.corefacility.ca/galaxy-shed</url>
       <revision>0737c0310cab</revision>
