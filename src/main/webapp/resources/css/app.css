@@ -4045,14 +4045,14 @@ select[multiple].input-lg,
 /* line 71, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_buttons.scss */
 .btn-info {
   color: #fff;
-  background-color: #C7D8E7;
-  border-color: #b5ccdf;
+  background-color: #3092d0;
+  border-color: #2b84bc;
 }
 /* line 11, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/mixins/_buttons.scss */
 .btn-info:hover, .btn-info:focus, .btn-info.focus, .btn-info:active, .btn-info.active, .open > .btn-info.dropdown-toggle {
   color: #fff;
-  background-color: #a3bfd8;
-  border-color: #8aaecd;
+  background-color: #2675a7;
+  border-color: #1f618a;
 }
 /* line 21, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/mixins/_buttons.scss */
 .btn-info:active, .btn-info.active, .open > .btn-info.dropdown-toggle {
@@ -4060,12 +4060,12 @@ select[multiple].input-lg,
 }
 /* line 29, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/mixins/_buttons.scss */
 .btn-info.disabled, .btn-info.disabled:hover, .btn-info.disabled:focus, .btn-info.disabled.focus, .btn-info.disabled:active, .btn-info.disabled.active, .btn-info[disabled], .btn-info[disabled]:hover, .btn-info[disabled]:focus, .btn-info[disabled].focus, .btn-info[disabled]:active, .btn-info[disabled].active, fieldset[disabled] .btn-info, fieldset[disabled] .btn-info:hover, fieldset[disabled] .btn-info:focus, fieldset[disabled] .btn-info.focus, fieldset[disabled] .btn-info:active, fieldset[disabled] .btn-info.active {
-  background-color: #C7D8E7;
-  border-color: #b5ccdf;
+  background-color: #3092d0;
+  border-color: #2b84bc;
 }
 /* line 40, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/mixins/_buttons.scss */
 .btn-info .badge {
-  color: #C7D8E7;
+  color: #3092d0;
   background-color: #fff;
 }
 
@@ -5815,11 +5815,11 @@ a.label:hover, a.label:focus {
 
 /* line 56, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_labels.scss */
 .label-info {
-  background-color: #C7D8E7;
+  background-color: #3092d0;
 }
 /* line 7, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/mixins/_labels.scss */
 .label-info[href]:hover, .label-info[href]:focus {
-  background-color: #a3bfd8;
+  background-color: #2675a7;
 }
 
 /* line 60, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_labels.scss */
@@ -6068,7 +6068,7 @@ a.badge:hover, a.badge:focus {
 
 /* line 77, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/_progress-bars.scss */
 .progress-bar-info {
-  background-color: #C7D8E7;
+  background-color: #3092d0;
 }
 /* line 7, ../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/mixins/_progress-bar.scss */
 .progress-striped .progress-bar-info {
@@ -8040,7 +8040,7 @@ input {
 /* line 9, ../../styles/components/_notifications.scss */
 .irida-notification__item {
   opacity: .9;
-  background-color: #C7D8E7;
+  background-color: #3092d0;
   margin-bottom: 1rem;
   padding: 1rem;
   border-radius: 4px;
