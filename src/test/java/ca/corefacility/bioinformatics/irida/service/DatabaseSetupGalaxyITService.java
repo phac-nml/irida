@@ -104,6 +104,32 @@ public class DatabaseSetupGalaxyITService {
 
 		return analysisSubmissionRepository.findOne(submission.getId());
 	}
+	
+	/**
+	 * Sets up an AnalysisSubmission and saves all dependencies in database.
+	 * 
+	 * @param sampleId
+	 *            The id of the sample to associate with the given sequence
+	 *            file.
+	 * @param sequenceFileSet
+	 *            A set of sequence files to use for this submission.
+	 * @param referenceFilePath
+	 *            The path to an input reference file for this test.
+	 * @param iridaWorkflowID
+	 *            The id of an irida workflow.
+	 * @return An AnalysisSubmissionPhylogenomics which has been saved to the
+	 *         database.
+	 */
+	public AnalysisSubmission setupSubmissionInDatabase(long sampleId, Set<SequenceFile> sequenceFileSet,
+			Path referenceFilePath, UUID iridaWorkflowId) {
+
+		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
+
+		AnalysisSubmission submission = analysisSubmissionService.create(new AnalysisSubmission("my analysis",
+				sequenceFileSet, referenceFile, iridaWorkflowId));
+
+		return analysisSubmissionRepository.findOne(submission.getId());
+	}
 
 	/**
 	 * Attaches the given sequence file paths to a particular sample id.
