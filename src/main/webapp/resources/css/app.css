@@ -8094,13 +8094,12 @@ input {
 }
 /* line 15, ../../styles/components/_typography.scss */
 .description a:hover {
-  font-weight: 300;
   border-color: #133B54;
   background-color: #133B54;
   color: #ffffff;
 }
 
-/* line 24, ../../styles/components/_typography.scss */
+/* line 23, ../../styles/components/_typography.scss */
 .description-detail {
   color: #232323;
 }
