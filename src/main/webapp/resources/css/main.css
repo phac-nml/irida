@@ -112,7 +112,7 @@
 }
 /* line 8, ../../styles/components/_panels.scss */
 .project-details i.glyphicon {
-  color: #cbcbcb;
+  color: #939393;
   margin-right: .5em;
 }
 /* line 12, ../../styles/components/_panels.scss */
@@ -136,7 +136,7 @@
 /* line 29, ../../styles/components/_panels.scss */
 .sidebar {
   border: 1px solid #dfdfdf;
-  border-bottom-color: #cbcbcb;
+  border-bottom-color: #939393;
   border-radius: 4px;
   margin-bottom: 1rem;
 }
@@ -147,7 +147,7 @@
 }
 /* line 38, ../../styles/components/_panels.scss */
 .sidebar__heading h2 {
-  font-weight: normal;
+  font-weight: 300;
   margin: 0;
   padding: 0;
 }
@@ -167,23 +167,23 @@
 }
 /* line 54, ../../styles/components/_panels.scss */
 .sidebar__body label {
-  font-weight: normal;
+  font-weight: 300;
 }
 /* line 57, ../../styles/components/_panels.scss */
 .sidebar__body input[type="text"].form-control {
-  border: 1px solid #cbcbcb;
+  border: 1px solid #939393;
   border-right: none;
 }
 /* line 61, ../../styles/components/_panels.scss */
 .sidebar__body .input-group-btn button {
-  border: 1px solid #cbcbcb !important;
+  border: 1px solid #939393 !important;
   border-left: none;
-  color: #cbcbcb;
+  color: #939393;
 }
 
 /* line 68, ../../styles/components/_panels.scss */
 .sidebar__icon {
-  color: #cbcbcb;
+  color: #939393;
   width: 15%;
 }
 

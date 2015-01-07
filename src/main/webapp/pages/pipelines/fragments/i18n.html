@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div class="description" th:fragment="cart-summary (counts)" th:switch="${counts.projects}"
+      th:with="cartLink='&lt;a href=' + @{/pipelines/cart} + '&gt;' +  #{pipelines.summary.cart} + '&lt;/a&gt;',
+      sampleCount=${'&lt;span class=description-detail&gt;' + counts.samples + '&lt;/span&gt;'},
+      projectCount=${'&lt;span class=description-detail&gt;' + counts.projects + '&lt;/span&gt;'}">
+	<p th:case="0"
+		th:with="projectsLink='&lt;a href=' + @{/projects} + '&gt;' +  #{pipelines.summary.projects} + '&lt;/a&gt;'"
+		th:utext="#{pipelines.cart-summary-empty(${cartLink}, ${projectsLink})}">Empty cart</p>
+	<p th:case="1"
+		th:utext="#{pipelines.cart-summary-singular(${projectCount}, ${sampleCount}, ${cartLink})}">One project to play with.</p>
+	<p th:case="*"
+	    th:utext="#{pipelines.cart-summary-plural(${projectCount}, ${sampleCount}, ${cartLink})}">Multiple Projects in Cart.</p>
+</div>
+</body>
+</html>
