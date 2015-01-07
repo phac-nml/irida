@@ -1412,7 +1412,7 @@ hr {
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
   font-family: inherit;
-  font-weight: normal;
+  font-weight: 300;
   line-height: 1.1;
   color: inherit;
 }
@@ -7811,7 +7811,7 @@ html, body {
 /* line 19, ../../styles/components/_card.scss */
 .card_wrapper {
   background-color: #f9f9f9;
-  box-shadow: 1px 2px 4px #cbcbcb;
+  box-shadow: 1px 2px 4px #939393;
   height: 250px;
 }
 /* line 23, ../../styles/components/_card.scss */
@@ -7829,7 +7829,7 @@ html, body {
   height: 50px;
   line-height: 22px;
   text-transform: uppercase;
-  border-bottom: 1px solid #cbcbcb;
+  border-bottom: 1px solid #939393;
   overflow: hidden;
 }
 
@@ -8076,4 +8076,31 @@ input {
 /* line 43, ../../styles/components/_notifications.scss */
 .irida-notification__item.remove {
   opacity: 0;
+}
+
+/* line 4, ../../styles/components/_typography.scss */
+.description {
+  color: #939393;
+  font-size: 2rem;
+  font-weight: 300;
+}
+/* line 9, ../../styles/components/_typography.scss */
+.description a {
+  border: 1px solid #dfdfdf;
+  border-radius: 4px;
+  padding: 0.125rem 0.375rem;
+  transition: all 0.3s ease-in;
+  text-decoration: none;
+}
+/* line 15, ../../styles/components/_typography.scss */
+.description a:hover {
+  font-weight: 300;
+  border-color: #133B54;
+  background-color: #133B54;
+  color: #ffffff;
+}
+
+/* line 24, ../../styles/components/_typography.scss */
+.description-detail {
+  color: #232323;
 }
