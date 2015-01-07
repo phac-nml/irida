@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
-import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
@@ -42,14 +41,11 @@ public class IridaWorkflowsTestConfig {
 	@Bean
 	public IridaWorkflowSet iridaWorkflows() throws IOException, IridaWorkflowLoadException, URISyntaxException {
 		Path testAnalysisPath = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysis").toURI());
-		Path phylogenomicsProductionPath = Paths.get(AnalysisType.class.getResource("workflows/SNVPhyl").toURI());
-		
 		Path phylogenomicsAnalysisPath = Paths.get(AnalysisPhylogenomicsPipeline.class.getResource(
 				"workflows/AnalysisPhylogenomicsPipeline").toURI());
 
 		Set<IridaWorkflow> workflowsSet = iridaWorkflowLoaderService.loadAllWorkflowImplementations(testAnalysisPath);
 		workflowsSet.addAll(iridaWorkflowLoaderService.loadAllWorkflowImplementations(phylogenomicsAnalysisPath));
-		workflowsSet.addAll(iridaWorkflowLoaderService.loadAllWorkflowImplementations(phylogenomicsProductionPath));
 
 		return new IridaWorkflowSet(workflowsSet);
 	}

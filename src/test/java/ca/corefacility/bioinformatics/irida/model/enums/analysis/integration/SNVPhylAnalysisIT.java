@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -26,6 +25,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
+import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsGalaxyIntegrationTestConfig;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
@@ -44,7 +45,8 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class })
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class,
+		IridaWorkflowsGalaxyIntegrationTestConfig.class })
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExcecutionListener.class })
@@ -60,14 +62,15 @@ public class SNVPhylAnalysisIT {
 
 	@Autowired
 	private AnalysisExecutionService analysisExecutionService;
+	
+	@Autowired
+	private IridaWorkflow snvPhylWorkflow;
 
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
 	private Path sequenceFilePath;
 	private Path sequenceFilePath2;
 	private Path referenceFilePath;
-
-	private UUID snvPhylWorkflowId = UUID.fromString("ccca532d-b0be-4f2c-bd6d-9886aa722571");
 
 	/**
 	 * Sets up variables for testing.
@@ -106,7 +109,7 @@ public class SNVPhylAnalysisIT {
 			submissionFuture.get();
 		}
 	}
-	
+
 	private void completeSubmittedAnalyses() throws InterruptedException, ExecutionException {
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.prepareAnalyses());
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.executeAnalyses());
@@ -123,10 +126,10 @@ public class SNVPhylAnalysisIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSNVPhylSuccess() throws Exception {
 		AnalysisSubmission submission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
-				sequenceFilePath, referenceFilePath, snvPhylWorkflowId);
+				sequenceFilePath, referenceFilePath, snvPhylWorkflow.getWorkflowIdentifier());
 
 		completeSubmittedAnalyses();
-		
+
 		submission = analysisSubmissionRepository.findOne(submission.getId());
 	}
 }
