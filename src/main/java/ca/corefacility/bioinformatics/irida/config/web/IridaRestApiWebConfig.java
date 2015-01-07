@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -47,14 +48,15 @@ import com.google.common.collect.ImmutableMap;
 @Import(IridaScheduledTasksConfig.class)
 public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 
-	private static final long TEN_GIGABYTES = 10737418240l;
-	
+	@Value("${file.upload.max_size}")
+	private Long MAX_UPLOAD_SIZE;
+
 	private static final Logger logger = LoggerFactory.getLogger(IridaRestApiWebConfig.class);
 
 	@Bean
 	public MultipartResolver multipartResolver() {
 		CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-		resolver.setMaxUploadSize(TEN_GIGABYTES);
+		resolver.setMaxUploadSize(MAX_UPLOAD_SIZE);
 		return resolver;
 	}
 
@@ -67,7 +69,7 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 		resolver.setOrder(Ordered.HIGHEST_PRECEDENCE);
 		return resolver;
 	}
-	
+
 	private List<View> defaultViews() {
 		List<View> views = new ArrayList<>();
 		MappingJackson2JsonView jsonView = new MappingJackson2JsonView();
