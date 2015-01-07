@@ -240,12 +240,25 @@ public class CartController {
 	}
 
 	/**
-	 * Allows access to the cart from other controllers
+	 * Get the number of projects contained in the cart.
 	 *
-	 * @return {@link Map} Cart map.
+	 * @return {@link Integer} number of projects in the cart.
 	 */
-	public Map<Project, Set<Sample>> getCart() {
-		return this.selected;
+	public int getNumberOfProjects() {
+		return this.selected.keySet().size();
+	}
+
+	/**
+	 * Get the number of samples contained in the cart.
+	 *
+	 * @return {@link Integer} number of samples in the cart.
+	 */
+	public int getNumberOfSamples() {
+		int count = 0;
+		for (Project project : selected.keySet()) {
+			count += selected.get(project).size();
+		}
+		return count;
 	}
 
 }

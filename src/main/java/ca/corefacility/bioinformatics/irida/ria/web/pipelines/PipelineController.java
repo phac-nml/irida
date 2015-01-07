@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -242,15 +241,9 @@ public class PipelineController extends BaseController {
 	 * @return {@link Map} containing the counts of the projects and samples in the cart.
 	 */
 	private Map<String, Integer> getCartSummaryMap() {
-		Map<Project, Set<Sample>> cart = cartController.getCart();
-		Map<String, Integer> counts = new HashMap<>();
-		int projectCount = cart.keySet().size();
-		int sampleCount = 0;
-		for (Project project : cart.keySet()) {
-			sampleCount += cart.get(project).size();
-		}
-		counts.put("projects", projectCount);
-		counts.put("samples", sampleCount);
-		return counts;
+		return ImmutableMap.of(
+				"projects", cartController.getNumberOfProjects(),
+				"samples", cartController.getNumberOfSamples()
+		);
 	}
 }
