@@ -134,9 +134,12 @@ public class SNVPhylAnalysisIT {
 		}
 	}
 
-	private void completeSubmittedAnalyses(AnalysisSubmission submission) throws Exception {
+	private void completeSubmittedAnalyses(Long submissionId) throws Exception {
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.prepareAnalyses());
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.executeAnalyses());
+		
+		AnalysisSubmission submission = analysisSubmissionRepository.findOne(submissionId);
+		
 		databaseSetupGalaxyITService.waitUntilSubmissionComplete(submission);
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.monitorRunningAnalyses());
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.transferAnalysesResults());
@@ -161,7 +164,7 @@ public class SNVPhylAnalysisIT {
 				Sets.newHashSet(sequenceFileA, sequenceFileB, sequenceFileC), referenceFilePath,
 				snvPhylWorkflow.getWorkflowIdentifier());
 
-		completeSubmittedAnalyses(submission);
+		completeSubmittedAnalyses(submission.getId());
 
 		submission = analysisSubmissionRepository.findOne(submission.getId());
 		assertEquals(AnalysisState.COMPLETED, submission.getAnalysisState());
