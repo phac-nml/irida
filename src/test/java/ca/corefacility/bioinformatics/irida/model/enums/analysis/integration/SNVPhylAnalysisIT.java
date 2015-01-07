@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.model.enums.analysis.integration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -62,7 +64,7 @@ import com.google.common.collect.Sets;
 public class SNVPhylAnalysisIT {
 
 	@Autowired
-	private DatabaseSetupGalaxyITService analysisExecutionGalaxyITService;
+	private DatabaseSetupGalaxyITService databaseSetupGalaxyITService;
 
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
@@ -132,9 +134,10 @@ public class SNVPhylAnalysisIT {
 		}
 	}
 
-	private void completeSubmittedAnalyses() throws InterruptedException, ExecutionException {
+	private void completeSubmittedAnalyses(AnalysisSubmission submission) throws Exception {
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.prepareAnalyses());
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.executeAnalyses());
+		databaseSetupGalaxyITService.waitUntilSubmissionComplete(submission);
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.monitorRunningAnalyses());
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.transferAnalysesResults());
 	}
@@ -147,18 +150,18 @@ public class SNVPhylAnalysisIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSNVPhylSuccess() throws Exception {
-		SequenceFile sequenceFileA = analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+		SequenceFile sequenceFileA = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(1L,
 				sequenceFilePathA).get(0);
-		SequenceFile sequenceFileB = analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(2L,
+		SequenceFile sequenceFileB = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(2L,
 				sequenceFilePathB).get(0);
-		SequenceFile sequenceFileC = analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(3L,
+		SequenceFile sequenceFileC = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(3L,
 				sequenceFilePathC).get(0);
 
-		AnalysisSubmission submission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
+		AnalysisSubmission submission = databaseSetupGalaxyITService.setupSubmissionInDatabase(1L,
 				Sets.newHashSet(sequenceFileA, sequenceFileB, sequenceFileC), referenceFilePath,
 				snvPhylWorkflow.getWorkflowIdentifier());
 
-		completeSubmittedAnalyses();
+		completeSubmittedAnalyses(submission);
 
 		submission = analysisSubmissionRepository.findOne(submission.getId());
 		assertEquals(AnalysisState.COMPLETED, submission.getAnalysisState());
