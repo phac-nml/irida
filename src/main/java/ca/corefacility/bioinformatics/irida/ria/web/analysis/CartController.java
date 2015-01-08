@@ -239,4 +239,26 @@ public class CartController {
 		return selected.get(project);
 	}
 
+	/**
+	 * Get the number of projects contained in the cart.
+	 *
+	 * @return {@link Integer} number of projects in the cart.
+	 */
+	public int getNumberOfProjects() {
+		return this.selected.keySet().size();
+	}
+
+	/**
+	 * Get the number of samples contained in the cart.
+	 *
+	 * @return {@link Integer} number of samples in the cart.
+	 */
+	public int getNumberOfSamples() {
+		int count = 0;
+		for (Project project : selected.keySet()) {
+			count += selected.get(project).size();
+		}
+		return count;
+	}
+
 }
