@@ -3,11 +3,71 @@
       layout:decorator="template/page">
 <head lang="en">
 	<title th:text="#{pipeline.phylogenomics.page-title}">Pipelines - Launch</title>
+	<style>
+		.affix-top {
+			position: fixed;
+			top: 150;
+		}
+	</style>
 </head>
 <body>
 <div layout:fragment="page">
-	<h1 th:text="#{workflow.phylogenomics.title}">Phylogenomics Pipeline</h1>
-	<div th:replace="pipelines/fragments/i18n :: cart-summary(${counts})"></div>
+	<form th:action="@{/pipelines/submit}" class="form-horizontal" method="post">
+		<div class="row">
+			<div class="col-md-10">
+				<h1 th:text="#{workflow.phylogenomics.title}"></h1>
+				<div class="form-group alert alert-info">
+					<label for="referenceFiles" class="col-sm-2 control-label" th:text="#{workflow.label.reference-file}">Reference File</label>
+
+					<div class="col-sm-10">
+						<select class="form-control" name="referenceFiles" id="referenceFiles">
+							<option th:each="ref : ${referenceFiles}" th:value="${ref.file.getId()}"
+							        th:text="${ref.file.getLabel() + ' (' + ref.project.getLabel() + ')'}"></option>
+						</select>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="col-sm-2 control-label" th:text="#{workflow.label.files}">Files</label>
+
+					<div class="col-sm-10" style="overflow: scroll">
+						<div th:each="project : ${files}">
+							<div th:each="sample : ${project.samples}">
+								<h3>
+									<a href="#" th:href="@{/projects/{id}/samples(id=${project.id})}" th:text="${project.name + ' / ' + sample.name}"></a>
+									<button type="button" class="btn btn-xs btn-default pull-right remove">Remove</button>
+								</h3>
+								<table class="table">
+									<tr th:each="file : ${sample.files}">
+										<td><input type="checkbox" th:value="${file.getId()}" checked="checked" th:name="${project.id}"/></td>
+										<td th:text="${file.getLabel()}"></td>
+										<td th:text="${#dates.format(file.getCreatedDate())}"></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-2">
+				<div class="text-center" data-spy="affix" data-offset-top="200">
+					<h2 th:text="#{workflow.launch.btn}">Ready to Launch?</h2>
+					<button class="btn btn-xl btn-danger round"><span class="fa fa-rocket"></span></button>
+				</div>
+			</div>
+		</div>
+	</form>
 </div>
+<th:block layout:fragment="page-scripts">
+	<script src="/resources/bower_components/bootstrap/js/affix.js"
+	        th:src="@{/resources/bower_components/bootstrap/js/affix.js}"></script>
+	<script>
+		$(function() {
+			$("button.remove").on('click', function () {
+			   alert("not yet implemented!");
+			});
+		});
+	</script>
+</th:block>
 </body>
 </html>
