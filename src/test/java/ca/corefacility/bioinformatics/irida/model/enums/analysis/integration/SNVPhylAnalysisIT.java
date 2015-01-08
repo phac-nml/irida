@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.enums.analysis.integration;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -137,9 +136,9 @@ public class SNVPhylAnalysisIT {
 	private void completeSubmittedAnalyses(Long submissionId) throws Exception {
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.prepareAnalyses());
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.executeAnalyses());
-		
+
 		AnalysisSubmission submission = analysisSubmissionRepository.findOne(submissionId);
-		
+
 		databaseSetupGalaxyITService.waitUntilSubmissionComplete(submission);
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.monitorRunningAnalyses());
 		waitUntilAnalysisStageComplete(analysisExecutionScheduledTask.transferAnalysesResults());
@@ -182,6 +181,9 @@ public class SNVPhylAnalysisIT {
 				"snpTable should be the same",
 				com.google.common.io.Files.equal(outputSnpTable.toFile(), analysisPhylogenomics.getSnpTable().getFile()
 						.toFile()));
-		assertNotNull(analysisPhylogenomics.getPhylogeneticTree().getFile());
+
+		// only test to make sure the file has a valid size since PhyML uses a
+		// random seed to generate the tree (and so changes results)
+		assertTrue(Files.size(analysisPhylogenomics.getPhylogeneticTree().getFile()) > 0);
 	}
 }
