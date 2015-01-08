@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import nz.net.ultraq.thymeleaf.LayoutDialect;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
@@ -37,7 +38,6 @@ import ca.corefacility.bioinformatics.irida.ria.config.WebEmailConfig;
 
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
 import com.google.common.collect.ImmutableMap;
-import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 /**
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
@@ -57,7 +57,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 	private static final String[] RESOURCE_LOCATIONS = { "classpath:/i18n/messages", "classpath:/i18n/mobile" };
 	private static final Logger logger = LoggerFactory.getLogger(IridaUIWebConfig.class);
 	public static final long MAX_UPLOAD_SIZE = 20971520L; // 20MB
-	public static final int MAX_IN_MEMORY_SIZE = 1048576; // 1MB
 
 	@Autowired
 	private Environment env;
@@ -151,14 +150,6 @@ public class IridaUIWebConfig extends WebMvcConfigurerAdapter {
 		// DO NOT try to handle REST API calls.
 		viewResolver.setOrder(Ordered.LOWEST_PRECEDENCE);
 		return viewResolver;
-	}
-
-	@Bean
-	public CommonsMultipartResolver multipartResolver() {
-		CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-		resolver.setMaxUploadSize(MAX_UPLOAD_SIZE);
-		resolver.setMaxInMemorySize(MAX_IN_MEMORY_SIZE);
-		return resolver;
 	}
 
 	@Override
