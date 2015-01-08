@@ -10,7 +10,7 @@ The IRIDA API project depends on FastQC and a custom version of Galaxy Bootstrap
     cd $IRIDA_API_ROOT/lib
     ./install-libs.sh
 
-In addition, some of the integration tests requires setting up an instance of [Galaxy](https://wiki.galaxyproject.org/Admin/GetGalaxy), as well as the necessary tools in Galaxy to run the installed IRIDA workflows.  This is handled automatically using Galaxy Bootstrap, but requires [Mecurial](http://mercurial.selenic.com/) and [Python](http://www.python.org/) to be installed.  In addition, any dependencies to download and build all the Galaxy tools need to be installed, such as [Subversion](https://subversion.apache.org/), [Git](http://git-scm.com/) and the Linux build essentials (gcc, g++, ...). On Ubuntu, these can be installed with `sudo apt-get install mercurial python subversion build-essential git`.
+In addition, some of the integration tests requires setting up an instance of [Galaxy](https://wiki.galaxyproject.org/Admin/GetGalaxy), as well as the necessary tools in Galaxy to run the installed IRIDA workflows.  This is handled automatically using Galaxy Bootstrap, but requires [Mecurial](http://mercurial.selenic.com/) and [Python](http://www.python.org/) to be installed.  In addition, any dependencies to download and build all the Galaxy tools need to be installed, such as [Subversion](https://subversion.apache.org/), [Git](http://git-scm.com/), [MUMmer](http://mummer.sourceforge.net/), [SAMtools](http://samtools.sourceforge.net/), and the Linux build essentials (gcc, g++, ...). On Ubuntu, these can be installed with `sudo apt-get install mercurial python subversion build-essential git mummer samtools`.
 
 Setting Up MySQL for IRIDA
 ==========================
