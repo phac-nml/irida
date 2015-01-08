@@ -12,12 +12,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.Ordered;
 import org.springframework.http.MediaType;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.accept.ContentNegotiationManager;
-import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
@@ -49,14 +53,25 @@ import com.google.common.collect.ImmutableMap;
 public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 
 	@Value("${file.upload.max_size}")
-	private Long MAX_UPLOAD_SIZE;
+	private static Long REST_MAX_UPLOAD_SIZE;
+
+	public static final int MAX_IN_MEMORY_SIZE = 1048576; // 1MB
 
 	private static final Logger logger = LoggerFactory.getLogger(IridaRestApiWebConfig.class);
 
 	@Bean
-	public MultipartResolver multipartResolver() {
+	@Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
+	public CommonsMultipartResolver multipartResolver() {
 		CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-		resolver.setMaxUploadSize(MAX_UPLOAD_SIZE);
+
+		resolver.setMaxInMemorySize(MAX_IN_MEMORY_SIZE);
+
+		if (isRestUser()) {
+			resolver.setMaxUploadSize(REST_MAX_UPLOAD_SIZE);
+		} else {
+			resolver.setMaxUploadSize(IridaUIWebConfig.MAX_UPLOAD_SIZE);
+		}
+
 		return resolver;
 	}
 
@@ -103,5 +118,20 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 		source.setBasenames(resources);
 		source.setDefaultEncoding("UTF-8");
 		return source;
+	}
+
+	/**
+	 * Test if a user is logged in via the REST API
+	 * 
+	 * @return true/false
+	 */
+	private boolean isRestUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		if (authentication != null && authentication.getClass().equals(OAuth2Authentication.class)) {
+			logger.trace("Detecting OAuth2 authentication.  User is a REST user.");
+			return true;
+		}
+		return false;
 	}
 }
