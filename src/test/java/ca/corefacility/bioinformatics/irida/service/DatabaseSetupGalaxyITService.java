@@ -173,7 +173,8 @@ public class DatabaseSetupGalaxyITService {
 				do {
 					workflowStatus = analysisExecutionService.getWorkflowStatus(analysisSubmission);
 					Thread.sleep(pollingTime);
-				} while (!GalaxyWorkflowState.OK.equals(workflowStatus.getState()));
+				} while (!(GalaxyWorkflowState.OK.equals(workflowStatus.getState()) || GalaxyWorkflowState.ERROR
+						.equals(workflowStatus.getState())));
 
 				return null;
 			}
