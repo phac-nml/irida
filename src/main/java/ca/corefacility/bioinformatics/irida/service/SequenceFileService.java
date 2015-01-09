@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 
@@ -131,4 +132,22 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 */
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or (hasPermission(#file1, 'canReadSequenceFile') and hasPermission(#file2, 'canReadSequenceFile'))")
 	public SequenceFilePair createSequenceFilePair(SequenceFile file1, SequenceFile file2);
+
+	/**
+	 * Get the {@link SequenceFilePair}s associated with a {@link Sample}
+	 * 
+	 * @param sample
+	 * @return a List of {@link SequenceFilePair}s
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	public List<SequenceFilePair> getSequenceFilePairsForSample(Sample sample);
+
+	/**
+	 * Get the {@link SequenceFile}s that do not have pairs for a {@link Sample}
+	 * 
+	 * @param sample
+	 * @return A List of {@link SampleSequenceFileJoin}s
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	public List<Join<Sample, SequenceFile>> getUnpairedSequenceFilesForSample(Sample sample);
 }
