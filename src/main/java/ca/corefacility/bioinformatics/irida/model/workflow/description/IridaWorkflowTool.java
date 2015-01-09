@@ -104,4 +104,10 @@ public class IridaWorkflowTool {
 
 		return false;
 	}
+
+	@Override
+	public String toString() {
+		return "IridaWorkflowTool [name=" + name + ", id=" + id + ", version=" + version + ", owner=" + owner
+				+ ", url=" + url + ", revision=" + revision + "]";
+	}
 }
