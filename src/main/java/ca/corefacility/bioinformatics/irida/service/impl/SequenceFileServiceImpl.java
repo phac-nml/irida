@@ -268,4 +268,9 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	public List<SequenceFilePair> getSequenceFilePairsForSample(Sample sample) {
 		return pairRepository.getSequenceFilePairsForSample(sample);
 	}
+
+	@Override
+	public List<Join<Sample, SequenceFile>> getUnpairedSequenceFilesForSample(Sample sample) {
+		return ssfRepository.getUnpairedSequenceFilesForSample(sample);
+	}
 }

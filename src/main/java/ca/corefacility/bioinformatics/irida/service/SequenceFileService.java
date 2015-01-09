@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 
@@ -136,7 +137,15 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 * Get the {@link SequenceFilePair}s associated with a {@link Sample}
 	 * 
 	 * @param sample
-	 * @return
+	 * @return a List of {@link SequenceFilePair}s
 	 */
 	public List<SequenceFilePair> getSequenceFilePairsForSample(Sample sample);
+
+	/**
+	 * Get the {@link SequenceFile}s that do not have pairs for a {@link Sample}
+	 * 
+	 * @param sample
+	 * @return A List of {@link SampleSequenceFileJoin}s
+	 */
+	public List<Join<Sample, SequenceFile>> getUnpairedSequenceFilesForSample(Sample sample);
 }
