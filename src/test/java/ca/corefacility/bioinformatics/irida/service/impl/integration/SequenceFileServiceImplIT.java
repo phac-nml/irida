@@ -302,4 +302,13 @@ public class SequenceFileServiceImplIT {
 		SequenceFile pairForSequenceFile = sequenceFileService.getPairedFileForSequenceFile(file3);
 		assertEquals(file4, pairForSequenceFile);
 	}
+	
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetSequenceFilePairForSample(){
+		Sample s = sampleService.read(2L);
+		
+		List<SequenceFilePair> sequenceFilePairsForSample = sequenceFileService.getSequenceFilePairsForSample(s);
+		logger.debug(sequenceFilePairsForSample.toString());
+	}
 }
