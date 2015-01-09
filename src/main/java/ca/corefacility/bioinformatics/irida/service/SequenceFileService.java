@@ -139,6 +139,7 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 * @param sample
 	 * @return a List of {@link SequenceFilePair}s
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public List<SequenceFilePair> getSequenceFilePairsForSample(Sample sample);
 
 	/**
@@ -147,5 +148,6 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 * @param sample
 	 * @return A List of {@link SampleSequenceFileJoin}s
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public List<Join<Sample, SequenceFile>> getUnpairedSequenceFilesForSample(Sample sample);
 }
