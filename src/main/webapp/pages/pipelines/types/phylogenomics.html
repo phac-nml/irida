@@ -32,7 +32,7 @@
 
 					<div class="col-sm-10" style="overflow: scroll">
 						<div th:each="project : ${files}">
-							<div th:each="sample : ${project.samples}">
+							<div class="sample-container" th:each="sample : ${project.samples}">
 								<h3>
 									<a href="#" th:href="@{/projects/{id}/samples(id=${project.id})}" th:text="${project.name + ' / ' + sample.name}"></a>
 									<button type="button" class="btn btn-xs btn-default pull-right remove">Remove</button>
