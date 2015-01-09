@@ -88,8 +88,8 @@ public class AnalysisSubmission implements IridaThing {
 	private String remoteWorkflowId;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinTable(name = "analysis_submission_sequence_file", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequence_file_id", nullable = false))
-	private Set<SequenceFile> inputFiles;
+	@JoinTable(name = "analysis_submission_sequence_file_single", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequence_file_id", nullable = false))
+	private Set<SequenceFile> inputFilesSingle;
 
 	@CreatedDate
 	@NotNull
@@ -137,7 +137,7 @@ public class AnalysisSubmission implements IridaThing {
 		checkNotNull(workflowId, "workflowId is null");
 		
 		this.name = name;
-		this.inputFiles = inputFiles;
+		this.inputFilesSingle = inputFiles;
 		this.workflowId = workflowId;
 		this.referenceFile = null;
 	}
@@ -192,12 +192,12 @@ public class AnalysisSubmission implements IridaThing {
 	}
 
 	/**
-	 * Gets the set of input sequence files.
+	 * Gets the set of single-end input sequence files.
 	 * 
-	 * @return The set of input sequence files.
+	 * @return The set of single-end input sequence files.
 	 */
-	public Set<SequenceFile> getInputFiles() {
-		return inputFiles;
+	public Set<SequenceFile> getSingleInputFiles() {
+		return inputFilesSingle;
 	}
 
 	/**
@@ -298,7 +298,7 @@ public class AnalysisSubmission implements IridaThing {
 	@Override
 	public String toString() {
 		return "AnalysisSubmission [id=" + id + ", name=" + name + ", workflowId=" + workflowId + ", remoteAnalysisId="
-				+ remoteAnalysisId + ", remoteWorkflowId=" + remoteWorkflowId + ", inputFiles=" + inputFiles
+				+ remoteAnalysisId + ", remoteWorkflowId=" + remoteWorkflowId + ", inputFilesSingle=" + inputFilesSingle
 				+ ", createdDate=" + createdDate + ", modifiedDate=" + modifiedDate + ", analysisState="
 				+ analysisState + ", analysis=" + analysis + "]";
 	}
