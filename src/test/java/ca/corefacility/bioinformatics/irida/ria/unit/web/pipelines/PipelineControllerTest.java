@@ -69,7 +69,7 @@ public class PipelineControllerTest {
 	public void testGetPhylogenomicsPageWithEmptyCart() {
 		ExtendedModelMap model = new ExtendedModelMap();
 		String response = controller.getPhylogenomicsPage(model);
-		assertEquals(PipelineController.URL_EMPTY_CART_REDIRECT, response);
+		assertEquals("If cart is empty user should be redirected.", PipelineController.URL_EMPTY_CART_REDIRECT, response);
 	}
 
 	@Test
@@ -79,8 +79,8 @@ public class PipelineControllerTest {
 		when(sequenceFileService.getSequenceFilesForSample(any(Sample.class)))
 				.thenReturn(TestDataFactory.generateSequenceFilesForSample(TestDataFactory.constructSample()));
 		String response = controller.getPhylogenomicsPage(model);
-		assertEquals(PipelineController.URL_PHYLOGENOMICS, response);
-		assertTrue(model.containsKey("referenceFiles"));
-		assertTrue(model.containsKey("files"));
+		assertEquals("Response should be the path to the phylogenomics template", PipelineController.URL_PHYLOGENOMICS, response);
+		assertTrue("Model should contain the reference files.", model.containsKey("referenceFiles"));
+		assertTrue("Model should contain a list of files.", model.containsKey("files"));
 	}
 }
