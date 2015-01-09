@@ -42,13 +42,17 @@
 		filePath="/file3" fileRevisionNumber="1" />
 	<sequence_file id="4" createdDate="2013-07-18 14:20:19.0"
 		filePath="/file4" fileRevisionNumber="1" />
+    <sequence_file id="5" createdDate="2013-07-18 14:20:19.0"
+        filePath="/file5" fileRevisionNumber="1" />		
 
 	<sequencefile_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		sample_id="1" sequencefile_id="1" />
 	<sequencefile_sample id="2" createdDate="2013-07-18 14:20:19.0"
         sample_id="2" sequencefile_id="3" />
     <sequencefile_sample id="3" createdDate="2013-07-18 14:20:19.0"
-        sample_id="2" sequencefile_id="4" />        
+        sample_id="2" sequencefile_id="4" />    
+    <sequencefile_sample id="4" createdDate="2013-07-18 14:20:19.0"
+        sample_id="2" sequencefile_id="5" /> 
 
 	<sequence_file_properties sequence_file_id="1"
 		property_key="samplePlate" property_value="5" />

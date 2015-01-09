@@ -62,6 +62,7 @@ import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
@@ -302,13 +303,36 @@ public class SequenceFileServiceImplIT {
 		SequenceFile pairForSequenceFile = sequenceFileService.getPairedFileForSequenceFile(file3);
 		assertEquals(file4, pairForSequenceFile);
 	}
+
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetSequenceFilePairForSample() {
+		Sample s = sampleService.read(2L);
+
+		Set<Long> fileIds = Sets.newHashSet(3l, 4l);
+
+		List<SequenceFilePair> sequenceFilePairsForSample = sequenceFileService.getSequenceFilePairsForSample(s);
+		assertEquals(1, sequenceFilePairsForSample.size());
+		SequenceFilePair pair = sequenceFilePairsForSample.iterator().next();
+
+		for (SequenceFile file : pair.getFiles()) {
+			assertTrue("file id should be in set", fileIds.contains(file.getId()));
+			fileIds.remove(file.getId());
+		}
+
+		assertTrue("all file ids should have been found", fileIds.isEmpty());
+	}
 	
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
-	public void testGetSequenceFilePairForSample(){
+	public void testGetUnpairedFilesForSample() {
 		Sample s = sampleService.read(2L);
-		
-		List<SequenceFilePair> sequenceFilePairsForSample = sequenceFileService.getSequenceFilePairsForSample(s);
-		logger.debug(sequenceFilePairsForSample.toString());
+
+		List<Join<Sample, SequenceFile>> unpairedSequenceFilesForSample = sequenceFileService
+				.getUnpairedSequenceFilesForSample(s);
+		assertEquals(1, unpairedSequenceFilesForSample.size());
+		Join<Sample, SequenceFile> join = unpairedSequenceFilesForSample.iterator().next();
+
+		assertEquals(new Long(5), join.getObject().getId());
 	}
 }
