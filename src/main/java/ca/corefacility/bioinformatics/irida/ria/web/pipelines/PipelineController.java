@@ -55,7 +55,7 @@ import com.google.common.collect.ImmutableSet;
  */
 @Controller
 @Scope("session")
-@RequestMapping(value = "/pipelines")
+@RequestMapping(PipelineController.BASE_URL)
 public class PipelineController extends BaseController {
 	private static final Logger logger = LoggerFactory.getLogger(PipelineController.class);
 	/*
@@ -63,6 +63,11 @@ public class PipelineController extends BaseController {
 	 */
 
 	// URI's
+	public static final String BASE_URL = "/pipelines";
+	public static final String URL_EMPTY_CART_REDIRECT = "redirect:/pipelines";
+	public static final String URL_LAUNCH ="pipelines/pipeline_selection";
+	public static final String URL_PHYLOGENOMICS = "pipelines/types/phylogenomics";
+
 	public static final String URI_LIST_PIPELINES = "/ajax/list.json";
 	public static final String URI_AJAX_START_PIPELINE = "/ajax/start.json";
 	public static final String URI_AJAX_CART_LIST = "/ajax/cart_list.json";
@@ -139,47 +144,52 @@ public class PipelineController extends BaseController {
 		});
 		model.addAttribute("counts", getCartSummaryMap());
 		model.addAttribute("workflows", flows);
-		return "pipelines/pipeline_selection";
+		return URL_LAUNCH;
 	}
 
 	@RequestMapping(value = "/phylogenomics")
 	public String getPhylogenomicsPage(final Model model) {
+		String response = URL_EMPTY_CART_REDIRECT;
+
 		Map<Project, Set<Sample>> cartMap = cartController.getSelected();
+		// Cannot run a pipeline on an empty cart!
+		if (!cartMap.isEmpty()) {
+			// Get all the reference files that could be used for this pipeline.
+			List<Map<String, Object>> referenceFileList = new ArrayList<>();
+			List<Map<String, Object>> fileList = new ArrayList<>();
+			for (Project project : cartMap.keySet()) {
+				List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
+				for (Join<Project, ReferenceFile> join : joinList) {
+					referenceFileList.add(ImmutableMap.of(
+							"project", project,
+							"file", join.getObject()
+					));
+				}
 
-		// Get all the reference files that could be used for this pipeline.
-		List<Map<String, Object>> referenceFileList = new ArrayList<>();
-		List<Map<String, Object>> fileList = new ArrayList<>();
-		for (Project project : cartMap.keySet()) {
-			List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
-			for (Join<Project, ReferenceFile> join : joinList) {
-				referenceFileList.add(ImmutableMap.of(
-						"project", project,
-						"file", join.getObject()
-				));
+				Set<Sample> samples = cartMap.get(project);
+				Map<String, Object> projectMap = new HashMap<>();
+				List<Map<String, Object>> sampleList = new ArrayList<>();
+				for (Sample sample : samples) {
+					Map<String, Object> sampleMap = new HashMap<>();
+					sampleMap.put("name", sample.getLabel());
+					sampleMap.put("id", sample.getId().toString());
+					List<Join<Sample, SequenceFile>> sfJoin = sequenceFileService.getSequenceFilesForSample(sample);
+					sampleMap.put("files", sfJoin.stream().map(Join::getObject)
+							.collect(Collectors.toList()));
+					sampleList.add(sampleMap);
+				}
+
+				projectMap.put("id", project.getId().toString());
+				projectMap.put("name", project.getLabel());
+				projectMap.put("samples", sampleList);
+				fileList.add(projectMap);
 			}
-
-			Set<Sample> samples = cartMap.get(project);
-			Map<String, Object> projectMap = new HashMap<>();
-			List<Map<String, Object>> sampleList = new ArrayList<>();
-			for (Sample sample : samples) {
-				Map<String, Object> sampleMap = new HashMap<>();
-				sampleMap.put("name", sample.getLabel());
-				sampleMap.put("id", sample.getId().toString());
-				List<Join<Sample, SequenceFile>> sfJoin = sequenceFileService.getSequenceFilesForSample(sample);
-				sampleMap.put("files", sfJoin.stream().map(Join::getObject)
-						.collect(Collectors.toList()));
-				sampleList.add(sampleMap);
-			}
-
-			projectMap.put("id", project.getId().toString());
-			projectMap.put("name", project.getLabel());
-			projectMap.put("samples", sampleList);
-			fileList.add(projectMap);
+			model.addAttribute("referenceFiles", referenceFileList);
+			model.addAttribute("files", fileList);
+			response = URL_PHYLOGENOMICS;
 		}
-		model.addAttribute("referenceFiles", referenceFileList);
-		model.addAttribute("files", fileList);
 
-		return "pipelines/types/phylogenomics";
+		return response;
 	}
 
 	// ************************************************************************************************
