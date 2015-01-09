@@ -13,7 +13,24 @@
 <body>
 <div layout:fragment="page">
 	<form th:action="@{/pipelines/submit}" class="form-horizontal" method="post">
-		<div class="row">
+		<div class="row" th:if="${#lists.size(referenceFiles)} == 0">
+			<h1 th:text="#{workflow.phylogenomics.title}"></h1>
+
+			<div class="alert alert-danger col-md-12">
+				<b th:text="#{pipeline.phylogenomics.no-reference-heading}">The Phylogenomics Pipeline Requires a reference file to run.</b><br/><br/>
+				<th:block th:if="${#lists.size(addRefProjects) > 0}">
+					<p th:text="#{pipeline.phylogenomics.no-reference.link-heading}">Projects You can Upload a Reference File to:</p>
+					<ul class="nav nav-pills nav-stacked col-md-3">
+						<li th:each="project : ${addRefProjects}">
+							<a th:href="@{/projects/{id}/referenceFiles(id=${project.id})}" href="#" th:text="${project.name}"></a></li>
+					</ul>
+				</th:block>
+				<th:block th:if="${#lists.size(addRefProjects)} == 0">
+					<p th:text="#{pipeline.phylogenomics.no-reference.no-permissions}">You do not have permission to upload a reference file to these projects.  Please contact a project manager to add a reference file.</p>
+				</th:block>
+			</div>
+		</div>
+		<div class="row" th:if="${#lists.size(referenceFiles)} &gt; 0">
 			<div class="col-md-10">
 				<h1 th:text="#{workflow.phylogenomics.title}"></h1>
 				<div class="form-group alert alert-info">
