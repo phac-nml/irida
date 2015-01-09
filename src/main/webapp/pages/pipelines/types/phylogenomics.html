@@ -35,7 +35,7 @@
 							<div class="sample-container" th:each="sample : ${project.samples}">
 								<h3>
 									<a href="#" th:href="@{/projects/{id}/samples(id=${project.id})}" th:text="${project.name + ' / ' + sample.name}"></a>
-									<button type="button" class="btn btn-xs btn-default pull-right remove">Remove</button>
+									<button type="button" class="btn btn-xs btn-default pull-right remove" th:text="#{form.btn.remove}">Remove</button>
 								</h3>
 								<table class="table">
 									<tr th:each="file : ${sample.files}">
