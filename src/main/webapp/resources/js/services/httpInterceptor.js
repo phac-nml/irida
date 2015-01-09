@@ -87,9 +87,6 @@
                 if (config.url.indexOf("/template") > -1) {
                     config.headers.Accept = "text/html";
                 }
-                if (config.method === "POST") {
-                    config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
-                }
                 return config;
             },
             response: function (response) {
