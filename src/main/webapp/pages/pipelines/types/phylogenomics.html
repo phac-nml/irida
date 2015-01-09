@@ -30,7 +30,7 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label" th:text="#{workflow.label.files}">Files</label>
 
-					<div class="col-sm-10" style="overflow: scroll">
+					<div class="col-sm-10">
 						<div th:each="project : ${files}">
 							<div class="sample-container" th:each="sample : ${project.samples}">
 								<h3>
