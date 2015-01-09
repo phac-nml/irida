@@ -260,4 +260,12 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 
 		throw new EntityNotFoundException("Sequence file " + identifier + " does not exist in sample " + sample);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<SequenceFilePair> getSequenceFilePairsForSample(Sample sample) {
+		return pairRepository.getSequenceFilePairsForSample(sample);
+	}
 }

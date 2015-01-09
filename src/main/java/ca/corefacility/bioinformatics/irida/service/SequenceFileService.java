@@ -131,4 +131,12 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 */
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or (hasPermission(#file1, 'canReadSequenceFile') and hasPermission(#file2, 'canReadSequenceFile'))")
 	public SequenceFilePair createSequenceFilePair(SequenceFile file1, SequenceFile file2);
+
+	/**
+	 * Get the {@link SequenceFilePair}s associated with a {@link Sample}
+	 * 
+	 * @param sample
+	 * @return
+	 */
+	public List<SequenceFilePair> getSequenceFilePairsForSample(Sample sample);
 }
