@@ -67,8 +67,8 @@ public class PipelinesPhylogenomicsPageIT {
 		samplesPage.addSamplesToGlobalCart();
 		page.goToPage();
 		logger.info("Checking Phylogenomics Page Setup.");
-		assertTrue(driver.getCurrentUrl().contains(PipelinesPhylogenomicsPage.RELATIVE_URL));
-		assertEquals(2, page.getReferenceFileCount());
-		assertEquals(2, page.getNumberofSamplesDisplayed());
+		assertTrue("Should be on the phylogenomics page.", driver.getCurrentUrl().contains(PipelinesPhylogenomicsPage.RELATIVE_URL));
+		assertEquals("Should display the correct number of reference files in the select input.", 2, page.getReferenceFileCount());
+		assertEquals("Should display the correct number of samples.", 2, page.getNumberofSamplesDisplayed());
 	}
 }
