@@ -8,9 +8,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
- * Defines a repository containing dependency tools for a workflow.
+ * Defines a Galaxy ToolShed repository containing dependency tools for a workflow.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ * @see <a href="https://wiki.galaxyproject.org/ToolShed">https://wiki.galaxyproject.org/ToolShed</a>
+ * @see <a href="https://wiki.galaxyproject.org/Tools">https://wiki.galaxyproject.org/Tools</a>
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
