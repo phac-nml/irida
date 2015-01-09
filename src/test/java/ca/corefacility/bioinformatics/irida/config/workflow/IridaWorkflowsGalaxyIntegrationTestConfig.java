@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Profile;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowTool;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowToolRepository;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -83,7 +83,7 @@ public class IridaWorkflowsGalaxyIntegrationTestConfig {
 	 *            The workflow to import all tools for.
 	 */
 	private void importAllTools(GalaxyInstance galaxyInstance, IridaWorkflow iridaWorkflow) {
-		for (IridaWorkflowTool workflowTool : iridaWorkflow.getWorkflowDescription().getTools()) {
+		for (IridaWorkflowToolRepository workflowTool : iridaWorkflow.getWorkflowDescription().getToolRepositories()) {
 			ToolShedRepositoriesClient toolRepositoriesClient = galaxyInstance.getRepositoriesClient();
 
 			RepositoryInstall toolInstall = new RepositoryInstall();
