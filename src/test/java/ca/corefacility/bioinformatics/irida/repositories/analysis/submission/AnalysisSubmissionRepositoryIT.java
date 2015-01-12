@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.analysis.submission;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -29,8 +28,10 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -59,10 +60,17 @@ public class AnalysisSubmissionRepositoryIT {
 	@Autowired
 	private SequenceFileRepository sequenceFileRepository;
 	
+	@Autowired
+	private SequenceFilePairRepository sequenceFilePairRepository;
+	
 	private UUID workflowId = UUID.randomUUID();
 
 	private AnalysisSubmission analysisSubmission;
 	private AnalysisSubmission analysisSubmission2;
+	private AnalysisSubmission analysisSubmissionPaired;
+	private AnalysisSubmission analysisSubmissionPaired2;
+	private SequenceFilePair sequenceFilePair;
+	
 	private static final String analysisId = "10";
 	private static final String analysisId2 = "11";
 	private final String analysisName = "analysis 1";
@@ -83,6 +91,9 @@ public class AnalysisSubmissionRepositoryIT {
 		assertNotNull(sequenceFile2);
 		Set<SequenceFile> sequenceFiles2 = Sets.newHashSet(sequenceFile2);
 		
+		sequenceFilePair = sequenceFilePairRepository.findOne(1L);
+		assertNotNull(sequenceFilePair);
+				
 		ReferenceFile referenceFile = referenceFileRepository.findOne(1L);
 		assertNotNull(referenceFile);
 
@@ -95,6 +106,9 @@ public class AnalysisSubmissionRepositoryIT {
 				referenceFile, workflowId);
 		analysisSubmission2.setRemoteAnalysisId(analysisId2);
 		analysisSubmission2.setAnalysisState(AnalysisState.SUBMITTING);
+		
+		analysisSubmissionPaired = AnalysisSubmission.
+				createSubmissionPaired("submission paired 1", Sets.newHashSet(sequenceFilePair), referenceFile, workflowId);
 	}
 
 	/**
@@ -134,5 +148,16 @@ public class AnalysisSubmissionRepositoryIT {
 		List<AnalysisSubmission> submittedAnalyses = analysisSubmissionRepository
 				.findByAnalysisState(AnalysisState.RUNNING);
 		assertEquals(Collections.EMPTY_LIST, submittedAnalyses);
+	}
+
+	/**
+	 * Tests creating an analysis with only paired files
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCreateAnalysisPaired() {
+		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
+		assertNull(savedSubmission.getSingleInputFiles());
+		assertEquals(Sets.newHashSet(sequenceFilePair), savedSubmission.getPairedInputFiles());
 	}
 }
