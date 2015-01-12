@@ -314,15 +314,13 @@ public class AnalysisSubmission implements IridaThing {
 		this.analysis = analysis;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString() {
 		return "AnalysisSubmission [id=" + id + ", name=" + name + ", workflowId=" + workflowId + ", remoteAnalysisId="
-				+ remoteAnalysisId + ", remoteWorkflowId=" + remoteWorkflowId + ", inputFilesSingle=" + inputFilesSingle
-				+ ", createdDate=" + createdDate + ", modifiedDate=" + modifiedDate + ", analysisState="
-				+ analysisState + ", analysis=" + analysis + "]";
+				+ remoteAnalysisId + ", remoteWorkflowId=" + remoteWorkflowId + ", inputFilesSingle="
+				+ inputFilesSingle + ", inputFilesPaired=" + inputFilesPaired + ", createdDate=" + createdDate
+				+ ", modifiedDate=" + modifiedDate + ", analysisState=" + analysisState + ", analysis=" + analysis
+				+ ", referenceFile=" + referenceFile + "]";
 	}
 
 	/**
