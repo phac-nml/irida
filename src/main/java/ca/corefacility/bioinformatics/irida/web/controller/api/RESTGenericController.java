@@ -192,7 +192,9 @@ public abstract class RESTGenericController<Type extends IridaThing & Comparable
 	 */
 	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<String> create(@RequestBody ResourceType representation) {
+	//public ResponseEntity<String> create(@RequestBody ResourceType representation) {
+	public ModelMap create(@RequestBody ResourceType representation) {
+		/*
 		// ask the subclass to map the de-serialized request to a concrete
 		// instance of the type managed by this controller.
 		Type resource = representation.getResource();
@@ -218,6 +220,43 @@ public abstract class RESTGenericController<Type extends IridaThing & Comparable
 
 		// send the response back to the client.
 		return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
+		*/
+		
+		
+		ModelMap model = new ModelMap();
+		
+		
+		// ask the subclass to map the de-serialized request to a concrete
+		// instance of the type managed by this controller.
+		Type t = representation.getResource();
+		
+		// persist the resource to the database.
+		t = crudService.create(t);
+		
+		// the persisted resource is assigned an identifier by the
+		// service/database
+		// layer. We'll use this identifier to tell the client where to find the
+		// persisted resource.
+		Long id = t.getId();
+		logger.debug("Created resource with ID [" + t.getId() + "]");
+		
+		ResourceType resource;
+		try {
+			resource = getResourceInstance(t);
+		}
+		catch (InstantiationException | IllegalAccessException e){
+			throw new GenericsException("Failed to construct an instance of ResourceType for [" + getClass() + "]");
+		}
+		
+		// the location of the new resource is relative to this class (i.e.,
+		// linkTo(getClass())) with the identifier appended.
+		resource.add(linkTo(getClass()).slash(id).withSelfRel());
+		
+		// add the resource to the model
+		model.addAttribute(RESOURCE_NAME,resource);
+		
+		// send the response back to the client.
+		return model;
 	}
 
 	/**
