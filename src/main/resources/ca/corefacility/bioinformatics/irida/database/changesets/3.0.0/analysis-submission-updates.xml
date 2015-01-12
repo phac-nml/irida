@@ -9,9 +9,37 @@
 
 		<renameTable newTableName="analysis_submission_sequence_file_single"
 			oldTableName="analysis_submission_sequence_file" />
-			
+
 		<renameTable newTableName="analysis_submission_sequence_file_single_AUD"
 			oldTableName="analysis_submission_sequence_file_AUD" />
+
+		<createTable tableName="analysis_submission_sequence_file_pair">
+			<column name="analysis_submission_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"
+					foreignKeyName="FK_ANALYSIS_SUBMISSION_SEQUENCE_FILE_PAIR_SUBMISSION_ID"
+					referencedColumnNames="id" referencedTableName="analysis_submission" />
+			</column>
+			<column name="sequence_file_pair_id" type="BIGINT(20)">
+				<constraints nullable="false" primaryKey="true"
+					foreignKeyName="FK_ANALYSIS_SUBMISSION_SEQUENCE_FILE_PAIR_FILE_ID"
+					referencedColumnNames="id" referencedTableName="sequence_file_pair" />
+			</column>
+		</createTable>
+
+		<createTable tableName="analysis_submission_sequence_file_pair_AUD">
+			<column name="REV" type="INT(11)">
+				<constraints nullable="false" primaryKey="true"
+					foreignKeyName="FK_ANALYSIS_SUBMISSION_SEQUENCE_FILE_PAIR_ID_REV"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="analysis_submission_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="sequence_file_pair_id" type="BIGINT(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REVTYPE" type="TINYINT(4)" />
+		</createTable>
 
 	</changeSet>
 </databaseChangeLog>
