@@ -50,8 +50,8 @@
       storage.$default({projects : projects});
     }
 
-    function addSample(id) {
-      storage.projects[project.id][id] = true;
+    function addSample(sample) {
+      storage.projects[project.id][sample.id] = JSON.stringify(sample);
     }
 
     function removeSample(id) {
@@ -67,11 +67,21 @@
       addProject(project.id);
     }
 
+    function getSamples() {
+      var samples = [];
+      var p = storage.projects[project.id];
+      _.forEach(getKeys(), function(key) {
+        samples.push($.parseJSON(p[key]));
+      });
+      return samples;
+    }
+
     addProject();
     return ({
       addSample    : addSample,
       removeSample : removeSample,
       getKeys      : getKeys,
+      getSamples   : getSamples,
       clear        : clear
     });
   }
@@ -98,7 +108,7 @@
 
     svc.updateSample = function (s) {
       if (s.selected) {
-        storage.addSample(s.id);
+        storage.addSample(s);
       }
       else {
         storage.removeSample(s.id);
@@ -107,7 +117,7 @@
     };
 
     svc.getSelectedSampleNames = function () {
-
+      return storage.getSamples();
     };
 
     svc.merge = function (params) {
@@ -135,7 +145,7 @@
       _.each(filtered.slice(begin, begin + filter.count), function (s) {
         if (!s.selected) {
           s.selected = true;
-          storage.addSample(s.id);
+          storage.addSample(s);
         }
       });
       updateSelectedCount();
@@ -145,7 +155,7 @@
       _.each(filtered, function (s) {
         s.selected = true;
         if (!_.contains(selected, s)) {
-          storage.addSample(s.id);
+          storage.addSample(s);
         }
       });
       updateSelectedCount();
