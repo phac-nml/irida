@@ -67,9 +67,9 @@ public class AnalysisSubmissionRepositoryIT {
 
 	private AnalysisSubmission analysisSubmission;
 	private AnalysisSubmission analysisSubmission2;
-	private AnalysisSubmission analysisSubmissionPaired;
-	private AnalysisSubmission analysisSubmissionPaired2;
 	private SequenceFilePair sequenceFilePair;
+	private SequenceFile sequenceFile;
+	private ReferenceFile referenceFile;
 	
 	private static final String analysisId = "10";
 	private static final String analysisId2 = "11";
@@ -83,7 +83,7 @@ public class AnalysisSubmissionRepositoryIT {
 	 */
 	@Before
 	public void setup() throws IOException {
-		SequenceFile sequenceFile = sequenceFileRepository.findOne(1L);
+		sequenceFile = sequenceFileRepository.findOne(1L);
 		assertNotNull(sequenceFile);
 		Set<SequenceFile> sequenceFiles = Sets.newHashSet(sequenceFile);
 		
@@ -94,7 +94,7 @@ public class AnalysisSubmissionRepositoryIT {
 		sequenceFilePair = sequenceFilePairRepository.findOne(1L);
 		assertNotNull(sequenceFilePair);
 				
-		ReferenceFile referenceFile = referenceFileRepository.findOne(1L);
+		referenceFile = referenceFileRepository.findOne(1L);
 		assertNotNull(referenceFile);
 
 		analysisSubmission = AnalysisSubmission.createSubmissionSingleReference(analysisName, sequenceFiles,
@@ -106,9 +106,6 @@ public class AnalysisSubmissionRepositoryIT {
 				referenceFile, workflowId);
 		analysisSubmission2.setRemoteAnalysisId(analysisId2);
 		analysisSubmission2.setAnalysisState(AnalysisState.SUBMITTING);
-		
-		analysisSubmissionPaired = AnalysisSubmission.
-				createSubmissionPaired("submission paired 1", Sets.newHashSet(sequenceFilePair), referenceFile, workflowId);
 	}
 
 	/**
@@ -123,7 +120,7 @@ public class AnalysisSubmissionRepositoryIT {
 		assertEquals(1, submittedAnalyses.size());
 		assertEquals(analysisId, submittedAnalyses.get(0).getRemoteAnalysisId());
 	}
-	
+
 	/**
 	 * Tests getting multiple analyses by a state and succeeding.
 	 */
@@ -151,13 +148,64 @@ public class AnalysisSubmissionRepositoryIT {
 	}
 
 	/**
-	 * Tests creating an analysis with only paired files
+	 * Tests creating an analysis with only paired files, no reference
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateAnalysisPaired() {
+		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.createSubmissionPaired("submission paired 1",
+				Sets.newHashSet(sequenceFilePair), workflowId);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
 		assertNull(savedSubmission.getSingleInputFiles());
 		assertEquals(Sets.newHashSet(sequenceFilePair), savedSubmission.getPairedInputFiles());
+		assertFalse(savedSubmission.getReferenceFile().isPresent());
+	}
+
+	/**
+	 * Tests creating an analysis with only paired files, with reference
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCreateAnalysisPairedReference() {
+		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.createSubmissionPairedReference(
+				"submission paired 1", Sets.newHashSet(sequenceFilePair), referenceFile, workflowId);
+		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
+
+		assertNull(savedSubmission.getSingleInputFiles());
+		assertEquals(Sets.newHashSet(sequenceFilePair), savedSubmission.getPairedInputFiles());
+		assertEquals(referenceFile, savedSubmission.getReferenceFile().get());
+	}
+
+	/**
+	 * Tests creating an analysis with both single and paired files and a
+	 * reference genome.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCreateAnalysisSingleAndPairedAndReference() {
+		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.createSubmissionSingleAndPairedReference(
+				"submission paired 1", Sets.newHashSet(sequenceFile), Sets.newHashSet(sequenceFilePair), referenceFile,
+				workflowId);
+		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
+
+		assertEquals(Sets.newHashSet(sequenceFile), savedSubmission.getSingleInputFiles());
+		assertEquals(Sets.newHashSet(sequenceFilePair), savedSubmission.getPairedInputFiles());
+		assertEquals(referenceFile, savedSubmission.getReferenceFile().get());
+	}
+
+	/**
+	 * Tests creating an analysis with both single and paired files and no
+	 * reference genome.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCreateAnalysisSingleAndPaired() {
+		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.createSubmissionSingleAndPaired(
+				"submission paired 1", Sets.newHashSet(sequenceFile), Sets.newHashSet(sequenceFilePair), workflowId);
+		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
+
+		assertEquals(Sets.newHashSet(sequenceFile), savedSubmission.getSingleInputFiles());
+		assertEquals(Sets.newHashSet(sequenceFilePair), savedSubmission.getPairedInputFiles());
+		assertFalse(savedSubmission.getReferenceFile().isPresent());
 	}
 }
