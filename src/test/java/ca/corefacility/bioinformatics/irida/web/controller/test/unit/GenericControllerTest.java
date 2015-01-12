@@ -87,10 +87,10 @@ public class GenericControllerTest {
 	public void testCreateGoodEntity() {
 		IdentifiableTestResource resource = new IdentifiableTestResource(entity);
 		when(crudService.create(entity)).thenReturn(entity);
-
-		ResponseEntity<String> mav = controller.create(resource);
-		assertEquals(HttpStatus.CREATED, mav.getStatusCode());
-		assertTrue(mav.getHeaders().getFirst(HttpHeaders.LOCATION).endsWith(identifier.toString()));
+		ModelMap model = controller.create(resource);
+		assertTrue(model.containsKey("resource"));
+		IdentifiableTestResource testResource = (IdentifiableTestResource) model.get("resource");
+		assertTrue(testResource.getLink(Link.REL_SELF).getHref().endsWith(identifier.toString()));
 	}
 
 	@Test
