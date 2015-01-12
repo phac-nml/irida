@@ -34,7 +34,8 @@
 	<reference_file />
 
 	<analysis_submission />
-	<analysis_submission_sequence_file />
+	<analysis_submission_sequence_file_single />
+	<analysis_submission_sequence_file_pair />
 
 	<password_reset />
 	<remote_api />
@@ -79,7 +80,8 @@
 	<sequence_file_properties_AUD />
 	<sequencefile_sample_AUD />
 	<analysis_submission_AUD />
-	<analysis_submission_sequence_file_AUD />
+	<analysis_submission_sequence_file_single_AUD />
+	<analysis_submission_sequence_file_pair_AUD />
 	<system_role_AUD />
 	<user_AUD />
 	<sample_AUD />
