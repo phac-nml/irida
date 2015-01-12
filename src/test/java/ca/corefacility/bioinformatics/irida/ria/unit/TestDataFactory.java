@@ -172,4 +172,16 @@ public class TestDataFactory {
 			}
 		};
 	}
+
+	public static Map<Project, Set<Sample>> constructCart() {
+		Project project = constructProject();
+		Set<Sample> samples = new HashSet<>();
+		for (int i = 0; i < 10; i++) {
+			samples.add(constructSample());
+		}
+		return ImmutableMap.of(
+				project, samples
+		);
+	}
+
 }

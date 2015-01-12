@@ -4,6 +4,18 @@
   padding: 3px 6px;
 }
 
+/* line 6, ../../styles/components/_buttons.scss */
+.btn-xl {
+  padding: 20px 35px !important;
+  font-size: 5rem !important;
+  line-height: 3;
+}
+
+/* line 12, ../../styles/components/_buttons.scss */
+.btn.round {
+  border-radius: 50%;
+}
+
 /* line 3, ../../styles/components/_datatables.scss */
 .dataTables_filter input[type='search'] {
   background-color: #f3f3f3;

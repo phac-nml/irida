@@ -22,6 +22,6 @@ public class PipelinesSelectionPage extends AbstractPage {
 	}
 
 	public boolean arePipelinesDisplayed() {
-		return driver.findElements(By.className("cart")).size() > 0;
+		return driver.findElements(By.className("card")).size() > 0;
 	}
 }

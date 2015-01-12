@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
@@ -29,6 +30,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -52,7 +55,7 @@ import com.google.common.collect.ImmutableSet;
  */
 @Controller
 @Scope("session")
-@RequestMapping(value = "/pipelines")
+@RequestMapping(PipelineController.BASE_URL)
 public class PipelineController extends BaseController {
 	private static final Logger logger = LoggerFactory.getLogger(PipelineController.class);
 	/*
@@ -60,8 +63,14 @@ public class PipelineController extends BaseController {
 	 */
 
 	// URI's
+	public static final String BASE_URL = "/pipelines";
+	public static final String URL_EMPTY_CART_REDIRECT = "redirect:/pipelines";
+	public static final String URL_LAUNCH ="pipelines/pipeline_selection";
+	public static final String URL_PHYLOGENOMICS = "pipelines/types/phylogenomics";
+
 	public static final String URI_LIST_PIPELINES = "/ajax/list.json";
 	public static final String URI_AJAX_START_PIPELINE = "/ajax/start.json";
+	public static final String URI_AJAX_CART_LIST = "/ajax/cart_list.json";
 
 	// JSON KEYS
 	public static final String JSON_KEY_SAMPLE_ID = "id";
@@ -135,13 +144,52 @@ public class PipelineController extends BaseController {
 		});
 		model.addAttribute("counts", getCartSummaryMap());
 		model.addAttribute("workflows", flows);
-		return "pipelines/pipeline_selection";
+		return URL_LAUNCH;
 	}
 
 	@RequestMapping(value = "/phylogenomics")
 	public String getPhylogenomicsPage(final Model model) {
-		model.addAttribute("counts", getCartSummaryMap());
-		return "pipelines/types/phylogenomics";
+		String response = URL_EMPTY_CART_REDIRECT;
+
+		Map<Project, Set<Sample>> cartMap = cartController.getSelected();
+		// Cannot run a pipeline on an empty cart!
+		if (!cartMap.isEmpty()) {
+			// Get all the reference files that could be used for this pipeline.
+			List<Map<String, Object>> referenceFileList = new ArrayList<>();
+			List<Map<String, Object>> fileList = new ArrayList<>();
+			for (Project project : cartMap.keySet()) {
+				List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
+				for (Join<Project, ReferenceFile> join : joinList) {
+					referenceFileList.add(ImmutableMap.of(
+							"project", project,
+							"file", join.getObject()
+					));
+				}
+
+				Set<Sample> samples = cartMap.get(project);
+				Map<String, Object> projectMap = new HashMap<>();
+				List<Map<String, Object>> sampleList = new ArrayList<>();
+				for (Sample sample : samples) {
+					Map<String, Object> sampleMap = new HashMap<>();
+					sampleMap.put("name", sample.getLabel());
+					sampleMap.put("id", sample.getId().toString());
+					List<Join<Sample, SequenceFile>> sfJoin = sequenceFileService.getSequenceFilesForSample(sample);
+					sampleMap.put("files", sfJoin.stream().map(Join::getObject)
+							.collect(Collectors.toList()));
+					sampleList.add(sampleMap);
+				}
+
+				projectMap.put("id", project.getId().toString());
+				projectMap.put("name", project.getLabel());
+				projectMap.put("samples", sampleList);
+				fileList.add(projectMap);
+			}
+			model.addAttribute("referenceFiles", referenceFileList);
+			model.addAttribute("files", fileList);
+			response = URL_PHYLOGENOMICS;
+		}
+
+		return response;
 	}
 
 	// ************************************************************************************************
