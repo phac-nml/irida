@@ -14,7 +14,10 @@ import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.pipelines.PipelineController;
@@ -83,7 +86,11 @@ public class PipelineControllerTest {
 	@Test
 	public void testGetPhylogenomicsPageWithCart() {
 		ExtendedModelMap model = new ExtendedModelMap();
-		Principal principal = () -> "FRED";
+		String username = "FRED";
+		Principal principal = () -> username;
+		User user = TestDataFactory.constructUser();
+		when(userService.getUserByUsername(username)).thenReturn(user);
+		when(projectService.userHasProjectRole(any(User.class), any(Project.class), any(ProjectRole.class))).thenReturn(true);
 		when(cartController.getSelected()).thenReturn(TestDataFactory.constructCart());
 		when(sequenceFileService.getSequenceFilesForSample(any(Sample.class)))
 				.thenReturn(TestDataFactory.generateSequenceFilesForSample(TestDataFactory.constructSample()));
