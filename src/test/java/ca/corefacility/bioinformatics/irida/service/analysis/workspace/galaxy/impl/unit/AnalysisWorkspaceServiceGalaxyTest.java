@@ -178,7 +178,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		inputFiles = new HashSet<>();
 		inputFiles.addAll(Arrays.asList(sFileA, sFileB, sFileC));
 
-		submission = new AnalysisSubmission("my analysis", inputFiles, referenceFile, workflowId);
+		submission = AnalysisSubmission.createSubmissionSingleReference("my analysis", inputFiles, referenceFile, workflowId);
 
 		workflowHistory = new History();
 		workflowHistory.setId(HISTORY_ID);
@@ -341,7 +341,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Test
 	public void testGetAnalysisResultsSuccess() throws IridaWorkflowNotFoundException,
 			IridaWorkflowAnalysisTypeException, ExecutionManagerException, IOException {
-		submission = new AnalysisSubmission("my analysis", Sets.newHashSet(), referenceFile, workflowId);
+		submission = AnalysisSubmission.createSubmissionSingleReference("my analysis", Sets.newHashSet(), referenceFile, workflowId);
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
 		submission.setRemoteAnalysisId(HISTORY_ID);
 
@@ -371,7 +371,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Test(expected=GalaxyDatasetException.class)
 	public void testGetAnalysisResultsFail() throws IridaWorkflowNotFoundException,
 			IridaWorkflowAnalysisTypeException, ExecutionManagerException, IOException {
-		submission = new AnalysisSubmission("my analysis", Sets.newHashSet(), referenceFile, workflowId);
+		submission = AnalysisSubmission.createSubmissionSingleReference("my analysis", Sets.newHashSet(), referenceFile, workflowId);
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
 		submission.setRemoteAnalysisId(HISTORY_ID);
 

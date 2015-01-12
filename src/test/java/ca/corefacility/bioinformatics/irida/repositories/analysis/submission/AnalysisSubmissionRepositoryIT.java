@@ -86,12 +86,12 @@ public class AnalysisSubmissionRepositoryIT {
 		ReferenceFile referenceFile = referenceFileRepository.findOne(1L);
 		assertNotNull(referenceFile);
 
-		analysisSubmission = new AnalysisSubmission(analysisName, sequenceFiles,
+		analysisSubmission = AnalysisSubmission.createSubmissionSingleReference(analysisName, sequenceFiles,
 				referenceFile, workflowId);
 		analysisSubmission.setRemoteAnalysisId(analysisId);
 		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTING);
 		
-		analysisSubmission2 = new AnalysisSubmission(analysisName2, sequenceFiles2,
+		analysisSubmission2 = AnalysisSubmission.createSubmissionSingleReference(analysisName2, sequenceFiles2,
 				referenceFile, workflowId);
 		analysisSubmission2.setRemoteAnalysisId(analysisId2);
 		analysisSubmission2.setAnalysisState(AnalysisState.SUBMITTING);
