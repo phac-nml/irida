@@ -40,6 +40,8 @@
                   projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" />
     <project_user id="8" project_id="2" user_id="3"
                   projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" />
+    <project_user id="9" project_id="2" user_id="2"
+                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0" />
 
     <related_project />
 
@@ -104,9 +106,9 @@
     <project_sample id="16" project_id="1" sample_id="16" createdDate="2013-07-18 14:37:19.0" />
     <project_sample id="17" project_id="1" sample_id="17" createdDate="2013-07-18 14:38:19.0" />
     <project_sample id="18" project_id="1" sample_id="18" createdDate="2013-07-18 14:39:19.0" />
-    <project_sample id="19" project_id="1" sample_id="19" createdDate="2013-07-18 14:40:19.0" />
-    <project_sample id="20" project_id="1" sample_id="20" createdDate="2013-07-18 14:41:19.0" />
-    <project_sample id="21" project_id="1" sample_id="21" createdDate="2013-07-18 14:42:19.0" />
+    <project_sample id="19" project_id="2" sample_id="19" createdDate="2013-07-18 14:40:19.0" />
+    <project_sample id="20" project_id="2" sample_id="20" createdDate="2013-07-18 14:41:19.0" />
+    <project_sample id="21" project_id="2" sample_id="21" createdDate="2013-07-18 14:42:19.0" />
 
 
     <sequence_file id="1" createdDate="2013-07-18 14:20:19.0"

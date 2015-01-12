@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
@@ -70,5 +71,41 @@ public class PipelinesPhylogenomicsPageIT {
 		assertTrue("Should be on the phylogenomics page.", driver.getCurrentUrl().contains(PipelinesPhylogenomicsPage.RELATIVE_URL));
 		assertEquals("Should display the correct number of reference files in the select input.", 2, page.getReferenceFileCount());
 		assertEquals("Should display the correct number of samples.", 2, page.getNumberofSamplesDisplayed());
+	}
+
+	@Test
+	public void testNoRefFileNoPermissions() {
+		LoginPage.loginAsUser(driver);
+
+		// Add sample from a project that user is a "Project User" and has no reference files.
+		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver);
+		samplesPage.goToPage("2");
+		samplesPage.selectSampleByRow(1);
+		samplesPage.addSamplesToGlobalCart();
+
+		page.goToPage();
+		assertTrue("Should display a warning to the user that there are no reference files.",
+				page.isNoReferenceWarningDisplayed());
+		assertTrue(
+				"Should display a message saying that the user cannot upload reference files to their selected projects.",
+				page.isNoRightsMessageDisplayed());
+		assertFalse("Should show the user which projects they can upload files to.",
+				page.isAddReferenceFileLinksDisplayed());
+	}
+
+	@Test
+	public void testNoRefFileWithPermissions() {
+		LoginPage.loginAsAdmin(driver);
+		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver);
+		samplesPage.goToPage("2");
+		samplesPage.selectSampleByRow(1);
+		samplesPage.selectSampleByRow(2);
+		samplesPage.addSamplesToGlobalCart();
+		page.goToPage();
+
+		assertTrue("Should display a warning to the user that there are no reference files.",
+				page.isNoReferenceWarningDisplayed());
+		assertTrue("User should be told that they can upload files", page.isAddReferenceFileLinksDisplayed());
+		assertEquals("There should be a link to one project to upload a reference file", 1, page.getAddReferenceFileToProjectLinkCount());
 	}
 }

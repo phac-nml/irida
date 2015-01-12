@@ -28,4 +28,20 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 	public int getNumberofSamplesDisplayed() {
 		return driver.findElements(By.className("sample-container")).size();
 	}
+
+	public boolean isNoReferenceWarningDisplayed() {
+		return  driver.findElements(By.id("no-ref-warning")).size() > 0;
+	}
+
+	public boolean isNoRightsMessageDisplayed() {
+		return driver.findElements(By.id("has-no-rights")).size() > 0;
+	}
+
+	public boolean isAddReferenceFileLinksDisplayed() {
+		return driver.findElements(By.id("has-rights")).size() > 0;
+	}
+
+	public int getAddReferenceFileToProjectLinkCount() {
+		return driver.findElements(By.className("add-ref-file")).size();
+	}
 }
