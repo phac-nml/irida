@@ -86,9 +86,10 @@ public class PipelineControllerTest {
 	@Test
 	public void testGetPhylogenomicsPageWithCart() {
 		ExtendedModelMap model = new ExtendedModelMap();
-		Principal principal = () -> "FRED";
+		String username = "FRED";
+		Principal principal = () -> username;
 		User user = TestDataFactory.constructUser();
-		when(userService.getUserByUsername("FRED")).thenReturn(user);
+		when(userService.getUserByUsername(username)).thenReturn(user);
 		when(projectService.userHasProjectRole(any(User.class), any(Project.class), any(ProjectRole.class))).thenReturn(true);
 		when(cartController.getSelected()).thenReturn(TestDataFactory.constructCart());
 		when(sequenceFileService.getSequenceFilesForSample(any(Sample.class)))
