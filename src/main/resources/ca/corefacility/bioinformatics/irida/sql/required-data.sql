@@ -328,7 +328,7 @@ INSERT INTO `reference_file` (id, createdDate, filePath, fileRevisionNumber, mod
 INSERT INTO `project_referencefile` (id, createdDate, project_id, referenceFile_id) VALUES (1, '2014-08-06 10:01:02', 4, 1);
 
 -- analysis_phylogenomicspipeline
-INSERT INTO `analysis_phylogenomicspipeline` (id, phylogeneticTree_id, snpMatrix_id, snpTable_id) VALUES (13, 1, 2, 3);
+INSERT INTO `analysis_phylogenomicspipeline` (id) VALUES (13);
 
 -- analysis_submission
 INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id) VALUES ('NEW', 'Analysis-1', '2014-08-06 10:01:02', 13, 0x00000000000040008000000000000000);
@@ -431,32 +431,3 @@ INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_
 INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id) VALUES ('PREPARING', 'Analysis-99', '2014-02-06 10:01:02', 13, 0x00000000000040008000000000000000);
 INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id) VALUES ('PREPARING', 'Analysis-100', '2014-02-06 10:01:02', 13, 0x00000000000040008000000000000000);
 
--- remote_workflow
-INSERT INTO `remote_workflow` (workflowId, createdDate, workflowChecksum) VALUES  ('1', '2014-02-06 10:01:02', '1');
-
--- remote_workflow_phylogenomics
-INSERT INTO `remote_workflow_phylogenomics` (inputReferenceFileLabel, inputSequenceFilesLabel, outputPhylogeneticTreeName, outputSnpMatrixName, outputSnpTableName, workflowId) VALUES ('inputReferenceFileLabel', 'inputSequenceFilesLabel', 'outputPhylogeneticTreeName', 'outputSnpMatrixName', 'outputSnpTableName', '1');
-
--- analysis_submission_galaxy
-INSERT INTO `analysis_submission_galaxy` (id, remote_workflow_id) VALUES ('1', '1');
-INSERT INTO `analysis_submission_galaxy` (id, remote_workflow_id) VALUES ('2', '1');
-INSERT INTO `analysis_submission_galaxy` (id, remote_workflow_id) VALUES ('3', '1');
-INSERT INTO `analysis_submission_galaxy` (id, remote_workflow_id) VALUES ('4', '1');
-INSERT INTO `analysis_submission_galaxy` (id, remote_workflow_id) VALUES ('5', '1');
-INSERT INTO `analysis_submission_galaxy` (id, remote_workflow_id) VALUES ('6', '1');
-INSERT INTO `analysis_submission_galaxy` (id, remote_workflow_id) VALUES ('7', '1');
-INSERT INTO `analysis_submission_galaxy` (id, remote_workflow_id) VALUES ('8', '1');
-INSERT INTO `analysis_submission_galaxy` (id, remote_workflow_id) VALUES ('9', '1');
-INSERT INTO `analysis_submission_galaxy` (id, remote_workflow_id) VALUES ('10', '1');
-
--- analysis_submission_phylogenomics
-INSERT INTO `analysis_submission_phylogenomics` (id) VALUES ('1');
-INSERT INTO `analysis_submission_phylogenomics` (id) VALUES ('2');
-INSERT INTO `analysis_submission_phylogenomics` (id) VALUES ('3');
-INSERT INTO `analysis_submission_phylogenomics` (id) VALUES ('4');
-INSERT INTO `analysis_submission_phylogenomics` (id) VALUES ('5');
-INSERT INTO `analysis_submission_phylogenomics` (id) VALUES ('6');
-INSERT INTO `analysis_submission_phylogenomics` (id) VALUES ('7');
-INSERT INTO `analysis_submission_phylogenomics` (id) VALUES ('8');
-INSERT INTO `analysis_submission_phylogenomics` (id) VALUES ('9');
-INSERT INTO `analysis_submission_phylogenomics` (id) VALUES ('10');
