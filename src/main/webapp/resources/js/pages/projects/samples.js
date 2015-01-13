@@ -154,9 +154,7 @@
     svc.selectAll = function () {
       _.each(filtered, function (s) {
         s.selected = true;
-        if (!_.contains(selected, s)) {
-          storage.addSample(s);
-        }
+        storage.addSample(s);
       });
       updateSelectedCount();
     };

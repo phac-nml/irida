@@ -500,6 +500,27 @@ public class ProjectSamplesPageIT {
 		assertEquals(1, page.getCartProjectCount());
 	}
 
+	@Test
+	public void testCopyFileWhenReturningToProject() {
+		LoginPage.loginAsAdmin(driver);
+		page.goToPage();
+
+		selectFirstThreeSamples();
+
+		// This is the key part, leaving the page and coming back.  Using storage the samples should
+		// still be selected when you return.
+		page.goToPage("2");
+		page.goToPage();
+
+		page.clickBtn("samplesOptionsBtn");
+		page.clickBtn("copyBtn");
+		assertTrue(page.isItemVisible("copy-samples-modal"));
+		page.selectProjectByName("5", "confirm-copy-samples");
+		assertTrue(page.isBtnEnabled("confirm-copy-samples"));
+		page.clickBtn("confirm-copy-samples");
+		page.checkSuccessNotification();
+	}
+
 	private int getSampleFlagCount(String command) {
 		Pattern pattern = Pattern.compile("-s");
 		Matcher matcher = pattern.matcher(command);
