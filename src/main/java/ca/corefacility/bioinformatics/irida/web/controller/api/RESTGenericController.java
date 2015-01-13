@@ -6,9 +6,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.Link;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -23,6 +26,10 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.exception.GenericsException;
+
+import com.google.common.net.HttpHeaders;
+
+
 
 /**
  * A controller that can serve any model from the database.
@@ -186,37 +193,7 @@ public abstract class RESTGenericController<Type extends IridaThing & Comparable
 	 */
 	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
-	//public ResponseEntity<String> create(@RequestBody ResourceType representation) {
-	public ModelMap create(@RequestBody ResourceType representation) {
-		/*
-		// ask the subclass to map the de-serialized request to a concrete
-		// instance of the type managed by this controller.
-		Type resource = representation.getResource();
-
-		// persist the resource to the database.
-		resource = crudService.create(resource);
-
-		// the persisted resource is assigned an identifier by the
-		// service/database
-		// layer. We'll use this identifier to tell the client where to find the
-		// persisted resource.
-		Long id = resource.getId();
-		logger.debug("Created resource with ID [" + resource.getId() + "]");
-
-		// the location of the new resource is relative to this class (i.e.,
-		// linkTo(getClass())) with the identifier appended.
-		String location = linkTo(getClass()).slash(id).withSelfRel().getHref();
-
-		// construct a set of headers that we can add to the response,
-		// including the location header.
-		MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
-		responseHeaders.add(HttpHeaders.LOCATION, location);
-
-		// send the response back to the client.
-		return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
-		*/
-		
-		
+	public ModelMap create(@RequestBody ResourceType representation,HttpServletResponse response) {		
 		ModelMap model = new ModelMap();
 		
 		
@@ -234,20 +211,19 @@ public abstract class RESTGenericController<Type extends IridaThing & Comparable
 		Long id = t.getId();
 		logger.debug("Created resource with ID [" + t.getId() + "]");
 		
-		ResourceType resource;
-		try {
-			resource = getResourceInstance(t);
-		}
-		catch (InstantiationException | IllegalAccessException e){
-			throw new GenericsException("Failed to construct an instance of ResourceType for [" + getClass() + "]");
-		}
-		
 		// the location of the new resource is relative to this class (i.e.,
 		// linkTo(getClass())) with the identifier appended.
-		resource.add(linkTo(getClass()).slash(id).withSelfRel());
+		String location = linkTo(getClass()).slash(id).withSelfRel().getHref();
+		
+		//add a self reference
+		representation.add(linkTo(getClass()).slash(id).withSelfRel());
 		
 		// add the resource to the model
-		model.addAttribute(RESOURCE_NAME,resource);
+		model.addAttribute(RESOURCE_NAME,representation);
+		
+		//set the response status and add a location header
+		response.setStatus(HttpStatus.CREATED.value());
+		response.addHeader(HttpHeaders.LOCATION, location);
 		
 		// send the response back to the client.
 		return model;

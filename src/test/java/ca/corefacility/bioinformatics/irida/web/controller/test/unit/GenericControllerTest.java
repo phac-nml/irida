@@ -25,6 +25,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ModelMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -75,7 +76,7 @@ public class GenericControllerTest {
 				new ConstraintViolationException(new HashSet<ConstraintViolation<?>>()));
 
 		try {
-			controller.create(r);
+			controller.create(r,new MockHttpServletResponse());
 			fail();
 		} catch (ConstraintViolationException ex) {
 		} catch (Exception ex) {
@@ -87,10 +88,11 @@ public class GenericControllerTest {
 	public void testCreateGoodEntity() {
 		IdentifiableTestResource resource = new IdentifiableTestResource(entity);
 		when(crudService.create(entity)).thenReturn(entity);
-		ModelMap model = controller.create(resource);
-		assertTrue(model.containsKey("resource"));
+		ModelMap model = controller.create(resource,new MockHttpServletResponse());
+		assertTrue("Model should contain resource",model.containsKey("resource"));
 		IdentifiableTestResource testResource = (IdentifiableTestResource) model.get("resource");
-		assertTrue(testResource.getLink(Link.REL_SELF).getHref().endsWith(identifier.toString()));
+		assertTrue("Resource from model should be equivalent to resource added to model",testResource.equals(resource));
+		assertTrue("Model should contain a self-reference",testResource.getLink(Link.REL_SELF).getHref().endsWith(identifier.toString()));
 	}
 
 	@Test

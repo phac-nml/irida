@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +55,8 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 
 	@RequestMapping(value = "/miseqrun", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
-	public ModelMap createMiseqRun(@RequestBody MiseqRunResource representation) {
-		return create(representation);
+	public ModelMap createMiseqRun(@RequestBody MiseqRunResource representation,HttpServletResponse response) {
+		return create(representation,response);
 	}
 
 	/**

@@ -79,8 +79,15 @@ public class ProjectIT {
 				.post(PROJECTS);
 		String location = r.getHeader(HttpHeaders.LOCATION);
 		assertNotNull(location);
+		
+		System.out.println(r.asString());
+		
 		assertTrue(location.startsWith(ITestSystemProperties.BASE_URL + "/api/projects/"));
 		String responseBody = asUser().get(location).asString();
+		System.out.println(responseBody);
+		
+		
+		
 		String projectUsersLocation = from(responseBody).get("resource.links.find{it.rel=='project/users'}.href");
 		// confirm that the current user was added to the project.
 		asUser().expect().body("resource.resources.username", hasItem("fbristow")).when().get(projectUsersLocation);
