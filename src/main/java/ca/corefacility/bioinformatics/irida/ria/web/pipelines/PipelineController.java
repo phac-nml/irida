@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.pipelines;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,19 +30,24 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.components.PipelineSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.base.Strings;
@@ -83,6 +89,8 @@ public class PipelineController extends BaseController {
 	private ReferenceFileService referenceFileService;
 	private SequenceFileService sequenceFileService;
 	private AnalysisSubmissionService analysisSubmissionService;
+	private ProjectService projectService;
+	private UserService userService;
 	private IridaWorkflowsService workflowsService;
 	private MessageSource messageSource;
 
@@ -101,6 +109,8 @@ public class PipelineController extends BaseController {
 			ReferenceFileService referenceFileService,
 			AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService,
+			ProjectService projectService,
+			UserService userService,
 			CartController cartController,
 			MessageSource messageSource) {
 		this.sampleService = sampleService;
@@ -108,6 +118,8 @@ public class PipelineController extends BaseController {
 		this.referenceFileService = referenceFileService;
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
+		this.projectService = projectService;
+		this.userService = userService;
 		this.cartController = cartController;
 		this.messageSource = messageSource;
 
@@ -148,15 +160,17 @@ public class PipelineController extends BaseController {
 	}
 
 	@RequestMapping(value = "/phylogenomics")
-	public String getPhylogenomicsPage(final Model model) {
+	public String getPhylogenomicsPage(final Model model, Principal principal) {
 		String response = URL_EMPTY_CART_REDIRECT;
 
 		Map<Project, Set<Sample>> cartMap = cartController.getSelected();
 		// Cannot run a pipeline on an empty cart!
 		if (!cartMap.isEmpty()) {
+			User user = userService.getUserByUsername(principal.getName());
 			// Get all the reference files that could be used for this pipeline.
 			List<Map<String, Object>> referenceFileList = new ArrayList<>();
 			List<Map<String, Object>> fileList = new ArrayList<>();
+			List<Map<String, Object>> addRefList = new ArrayList<>();
 			for (Project project : cartMap.keySet()) {
 				List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
 				for (Join<Project, ReferenceFile> join : joinList) {
@@ -164,6 +178,16 @@ public class PipelineController extends BaseController {
 							"project", project,
 							"file", join.getObject()
 					));
+				}
+
+				if (referenceFileList.size() == 0) {
+					if (user.getSystemRole().equals(Role.ROLE_ADMIN) || projectService
+							.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER)) {
+						addRefList.add(ImmutableMap.of(
+								"name", project.getLabel(),
+								"id", project.getId()
+						));
+					}
 				}
 
 				Set<Sample> samples = cartMap.get(project);
@@ -185,6 +209,7 @@ public class PipelineController extends BaseController {
 				fileList.add(projectMap);
 			}
 			model.addAttribute("referenceFiles", referenceFileList);
+			model.addAttribute("addRefProjects", addRefList);
 			model.addAttribute("files", fileList);
 			response = URL_PHYLOGENOMICS;
 		}
