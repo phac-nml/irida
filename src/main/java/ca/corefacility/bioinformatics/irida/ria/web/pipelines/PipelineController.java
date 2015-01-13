@@ -272,7 +272,7 @@ public class PipelineController extends BaseController {
 
 	private void startPipeline(Long pipelineId, String name) {
 		// TODO: (14-08-28 - Josh) pipelineId needs to be passed b/c front end does not need to know the details.
-		AnalysisSubmission asp = new AnalysisSubmission(name, pipelineSubmission.getSequenceFiles(),
+		AnalysisSubmission asp = AnalysisSubmission.createSubmissionSingleReference(name, pipelineSubmission.getSequenceFiles(),
 				pipelineSubmission.getReferenceFile(),
 				UUID.randomUUID());
 		
