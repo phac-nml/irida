@@ -81,7 +81,7 @@ public class ProjectIT {
 		assertNotNull(location);
 		assertTrue(location.startsWith(ITestSystemProperties.BASE_URL + "/api/projects/"));
 		String responseBody = asUser().get(location).asString();
-		assertTrue(r.asString().equals(responseBody));
+		assertTrue("Result of POST must equal result of GET",r.asString().equals(responseBody));
 		String projectUsersLocation = from(responseBody).get("resource.links.find{it.rel=='project/users'}.href");
 		// confirm that the current user was added to the project.
 		asUser().expect().body("resource.resources.username", hasItem("fbristow")).when().get(projectUsersLocation);
