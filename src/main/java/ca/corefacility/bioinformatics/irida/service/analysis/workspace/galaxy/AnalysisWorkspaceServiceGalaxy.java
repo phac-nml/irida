@@ -117,7 +117,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	@Override
 	public String prepareAnalysisWorkspace(AnalysisSubmission analysisSubmission) throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
-		checkNotNull(analysisSubmission.getInputFiles(), "inputFiles are null");
+		checkNotNull(analysisSubmission.getSingleInputFiles(), "inputFiles are null");
 		checkArgument(analysisSubmission.getRemoteAnalysisId() == null, "analysis id should be null");
 
 		History workflowHistory = galaxyHistoriesService.newHistoryForWorkflow();
@@ -245,7 +245,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			throws ExecutionManagerException, IridaWorkflowNotFoundException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getRemoteAnalysisId(), "analysisId is null");
-		checkNotNull(analysisSubmission.getInputFiles(), "inputFiles are null");
+		checkNotNull(analysisSubmission.getSingleInputFiles(), "inputFiles are null");
 		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
 		checkNotNull(analysisSubmission.getRemoteWorkflowId(), "remoteWorkflowId is null");
 
@@ -271,7 +271,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		Library workflowLibrary = libraryBuilder.buildEmptyLibrary(new GalaxyProjectName(temporaryLibraryName));
 
 		List<Join<Sample, SequenceFile>> sampleSequenceFiles = getSequenceFileSamples(analysisSubmission
-				.getInputFiles());
+				.getSingleInputFiles());
 
 		CollectionResponse collectionResponse = uploadSequenceFiles(sampleSequenceFiles, workflowHistory,
 				workflowLibrary);
@@ -341,7 +341,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	public Analysis getAnalysisResults(AnalysisSubmission analysisSubmission) throws ExecutionManagerException,
 			IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
-		checkNotNull(analysisSubmission.getInputFiles(), "input sequence files is null");
+		checkNotNull(analysisSubmission.getSingleInputFiles(), "input sequence files is null");
 		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
 		checkNotNull(analysisSubmission.getRemoteWorkflowId(), "remoteWorkflowId is null");
 
@@ -352,7 +352,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		String analysisId = analysisSubmission.getRemoteAnalysisId();
 
 		Set<SequenceFile> inputFiles = new HashSet<>();
-		for (SequenceFile sf : analysisSubmission.getInputFiles()) {
+		for (SequenceFile sf : analysisSubmission.getSingleInputFiles()) {
 			inputFiles.add(sequenceFileRepository.findOne(sf.getId()));
 		}
 
