@@ -219,7 +219,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals(analysisExecuted.getRemoteAnalysisId(), savedSubmission.getRemoteAnalysisId());
 		assertEquals(analysisExecuted.getRemoteWorkflowId(), savedSubmission.getRemoteWorkflowId());
 		assertEquals(analysisExecuted.getWorkflowId(), savedSubmission.getWorkflowId());
-		assertEquals(analysisExecuted.getInputFiles(), savedSubmission.getInputFiles());
+		assertEquals(analysisExecuted.getSingleInputFiles(), savedSubmission.getSingleInputFiles());
 		assertEquals(analysisExecuted.getReferenceFile(), savedSubmission.getReferenceFile());
 		assertEquals(analysisExecuted.getAnalysisState(), savedSubmission.getAnalysisState());
 	}
@@ -408,7 +408,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsSuccessPhylogenomics() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, iridaPhylogenomicsWorkflowId);
-		SequenceFile sequenceFile = analysisSubmission.getInputFiles().iterator().next();
+		SequenceFile sequenceFile = analysisSubmission.getSingleInputFiles().iterator().next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -444,7 +444,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("id should be set properly for analysis", analysisId,
 				analysisResultsPhylogenomics.getExecutionManagerAnalysisId());
 
-		assertEquals("inputFiles should be the same for submission and results", analysisExecuted.getInputFiles(),
+		assertEquals("inputFiles should be the same for submission and results", analysisExecuted.getSingleInputFiles(),
 				analysisResultsPhylogenomics.getInputSequenceFiles());
 
 		assertEquals(3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
@@ -493,7 +493,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsSuccessTestAnalysis() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowId);
-		SequenceFile sequenceFile = analysisSubmission.getInputFiles().iterator().next();
+		SequenceFile sequenceFile = analysisSubmission.getSingleInputFiles().iterator().next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -526,7 +526,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("id should be set properly for analysis", analysisId,
 				analysisResults.getExecutionManagerAnalysisId());
 
-		assertEquals("inputFiles should be the same for submission and results", analysisExecuted.getInputFiles(),
+		assertEquals("inputFiles should be the same for submission and results", analysisExecuted.getSingleInputFiles(),
 				analysisResults.getInputSequenceFiles());
 
 		assertEquals(2, analysisResults.getAnalysisOutputFiles().size());
@@ -568,7 +568,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsFailTestAnalysisMissingOutput() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowIdMissingOutput);
-		SequenceFile sequenceFile = analysisSubmission.getInputFiles().iterator().next();
+		SequenceFile sequenceFile = analysisSubmission.getSingleInputFiles().iterator().next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -609,7 +609,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsFailInvalidId() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
-		SequenceFile sequenceFile = analysisSubmission.getInputFiles().iterator().next();
+		SequenceFile sequenceFile = analysisSubmission.getSingleInputFiles().iterator().next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -651,7 +651,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsFailInvalidRemoteAnalysisId() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
-		SequenceFile sequenceFile = analysisSubmission.getInputFiles().iterator().next();
+		SequenceFile sequenceFile = analysisSubmission.getSingleInputFiles().iterator().next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);

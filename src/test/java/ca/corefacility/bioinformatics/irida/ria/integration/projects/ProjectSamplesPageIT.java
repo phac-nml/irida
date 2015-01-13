@@ -268,6 +268,36 @@ public class ProjectSamplesPageIT {
 	}
 
 	@Test
+	public void testRenameMergeWithPageChange() {
+		LoginPage.loginAsAdmin(driver);
+		page.goToPage();
+		assertEquals(0, page.getTotalSelectedSamplesCount());
+		assertFalse(page.isBtnEnabled("samplesOptionsBtn"));
+		page.selectSampleByRow(0);
+		page.selectSampleByRow(1);
+		assertEquals(2, page.getTotalSelectedSamplesCount());
+
+		page.goToPage("2");
+		page.goToPage();
+		page.clickBtn("samplesOptionsBtn");
+		page.clickBtn("mergeBtn");
+		assertTrue(page.isItemVisible("merge-samples-modal"));
+
+		// Try to enter a proper name name
+		String oriName = page.getSampleNameByRow(0);
+		String newLongName = "LONGERNAME";
+		page.enterNewMergeSampleName(newLongName);
+		assertFalse(page.isItemVisible("merge-length-error"));
+		assertFalse(page.isItemVisible("merge-format-error"));
+		assertTrue(page.isBtnEnabled("confirmMergeBtn"));
+		page.clickBtn("confirmMergeBtn");
+		assertTrue(page.checkSuccessNotification());
+		String updatedName = page.getSampleNameByRow(0);
+		assertFalse(oriName.equals(updatedName));
+		assertTrue(updatedName.equals(newLongName));
+	}
+
+	@Test
 	public void testProjectUserCannotCopyOrMoveFilesToAnotherProject() {
 		LoginPage.loginAsUser(driver);
 		page.goToPage();
@@ -498,6 +528,27 @@ public class ProjectSamplesPageIT {
 		page.goToPage("5");
 		assertEquals(3, page.getCartCount());
 		assertEquals(1, page.getCartProjectCount());
+	}
+
+	@Test
+	public void testCopyFileWhenReturningToProject() {
+		LoginPage.loginAsAdmin(driver);
+		page.goToPage();
+
+		selectFirstThreeSamples();
+
+		// This is the key part, leaving the page and coming back.  Using storage the samples should
+		// still be selected when you return.
+		page.goToPage("2");
+		page.goToPage();
+
+		page.clickBtn("samplesOptionsBtn");
+		page.clickBtn("copyBtn");
+		assertTrue(page.isItemVisible("copy-samples-modal"));
+		page.selectProjectByName("5", "confirm-copy-samples");
+		assertTrue(page.isBtnEnabled("confirm-copy-samples"));
+		page.clickBtn("confirm-copy-samples");
+		page.checkSuccessNotification();
 	}
 
 	private int getSampleFlagCount(String command) {
