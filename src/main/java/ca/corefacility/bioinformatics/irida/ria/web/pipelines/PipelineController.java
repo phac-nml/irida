@@ -166,6 +166,7 @@ public class PipelineController extends BaseController {
 		Map<Project, Set<Sample>> cartMap = cartController.getSelected();
 		// Cannot run a pipeline on an empty cart!
 		if (!cartMap.isEmpty()) {
+			User user = userService.getUserByUsername(principal.getName());
 			// Get all the reference files that could be used for this pipeline.
 			List<Map<String, Object>> referenceFileList = new ArrayList<>();
 			List<Map<String, Object>> fileList = new ArrayList<>();
@@ -180,7 +181,6 @@ public class PipelineController extends BaseController {
 				}
 
 				if (referenceFileList.size() == 0) {
-					User user = userService.getUserByUsername(principal.getName());
 					if (user.getSystemRole().equals(Role.ROLE_ADMIN) || projectService
 							.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER)) {
 						addRefList.add(ImmutableMap.of(
