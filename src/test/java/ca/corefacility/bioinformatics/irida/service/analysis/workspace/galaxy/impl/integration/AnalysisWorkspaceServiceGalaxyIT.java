@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
@@ -98,6 +99,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 	private Path sequenceFilePath;
 	private Path sequenceFilePath2;
+	private Path sequenceFilePath3;
 	private Path referenceFilePath;
 
 	private Set<SequenceFile> sequenceFilesSet;
@@ -140,6 +142,10 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		sequenceFilePath2 = Files.createTempFile("testData2", ".fastq");
 		Files.delete(sequenceFilePath2);
 		Files.copy(sequenceFilePathReal, sequenceFilePath2);
+		
+		sequenceFilePath3 = Files.createTempFile("testData3", ".fastq");
+		Files.delete(sequenceFilePath3);
+		Files.copy(sequenceFilePathReal, sequenceFilePath3);
 
 		referenceFilePath = Files.createTempFile("testReference", ".fasta");
 		Files.delete(referenceFilePath);
@@ -286,7 +292,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validWorkflowId);
-		assertNull(analysisSubmission.getPairedInputFiles());
+		assertEquals(0, analysisSubmission.getPairedInputFiles().size());
 		Set<SequenceFile> submittedSf = analysisSubmission.getSingleInputFiles();
 		assertEquals(1, submittedSf.size());
 		
@@ -346,7 +352,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				Lists.newArrayList(sequenceFilePath), Lists.newArrayList(sequenceFilePath2), referenceFilePath,
 				validWorkflowId);
-		assertNull(analysisSubmission.getSingleInputFiles());
+		assertEquals(0, analysisSubmission.getSingleInputFiles().size());
 		Set<SequenceFilePair> pairedFiles = analysisSubmission.getPairedInputFiles();
 		assertEquals(1, pairedFiles.size());
 		SequenceFilePair submittedSp = pairedFiles.iterator().next();
@@ -367,6 +373,76 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		
 		// make sure files stored in analysis are same as those in analysis submission
 		assertEquals(submittedSf, analysis.getInputSequenceFiles());
+	}
+	
+	/**
+	 * Tests out successfully getting results for an analysis (TestAnalysis)
+	 * consisting of both single and paired sequence reads.
+	 * 
+	 * @throws InterruptedException
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 * @throws IOException
+	 * @throws IridaWorkflowAnalysisTypeException
+	 * @throws TimeoutException
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testGetAnalysisResultsTestAnalysisSinglePairedSuccess() throws InterruptedException,
+			ExecutionManagerException, IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException,
+			TimeoutException {
+
+		History history = new History();
+		history.setName("testGetAnalysisResultsTestAnalysisSinglePairedSuccess");
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
+		ToolsClient toolsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getToolsClient();
+
+		History createdHistory = historiesClient.create(history);
+
+		// upload test outputs
+		uploadFileToHistory(sequenceFilePath, OUTPUT1_NAME, createdHistory.getId(), toolsClient);
+		uploadFileToHistory(sequenceFilePath, OUTPUT2_NAME, createdHistory.getId(), toolsClient);
+
+		// wait for history
+		Util.waitUntilHistoryComplete(createdHistory.getId(), galaxyHistoriesService, 60);
+
+		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowId);
+		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
+		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSinglePairSubmissionInDatabase(
+				1L, Lists.newArrayList(sequenceFilePath), Lists.newArrayList(sequenceFilePath2), sequenceFilePath3,
+				referenceFilePath, validWorkflowId);
+
+		Set<SequenceFile> singleFiles = analysisSubmission.getSingleInputFiles();
+		assertEquals(1, singleFiles.size());
+		SequenceFile singleFile = singleFiles.iterator().next();
+		Set<SequenceFilePair> pairedFiles = analysisSubmission.getPairedInputFiles();
+		assertEquals(1, pairedFiles.size());
+		SequenceFilePair submittedSp = pairedFiles.iterator().next();
+		Set<SequenceFile> submittedSf = submittedSp.getFiles();
+		assertEquals(2, submittedSf);
+		Iterator<SequenceFile> sfIter = submittedSf.iterator();
+		SequenceFile pair1 = sfIter.next();
+		SequenceFile pair2 = sfIter.next();
+
+		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
+		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
+		analysisSubmission.setAnalysisState(AnalysisState.COMPLETING);
+		analysisSubmissionRepository.save(analysisSubmission);
+
+		Analysis analysis = analysisWorkspaceService.getAnalysisResults(analysisSubmission);
+		assertNotNull(analysis);
+		assertEquals(Analysis.class, analysis.getClass());
+		assertEquals(2, analysis.getAnalysisOutputFiles().size());
+		assertEquals(Paths.get(OUTPUT1_NAME), analysis.getAnalysisOutputFile(OUTPUT1_LABEL).getFile().getFileName());
+		assertEquals(Paths.get(OUTPUT2_NAME), analysis.getAnalysisOutputFile(OUTPUT2_LABEL).getFile().getFileName());
+
+		// make sure files stored in analysis are same as those in analysis
+		// submission
+		assertEquals(Sets.newHashSet(pair1, pair2, singleFile), analysis.getInputSequenceFiles());
 	}
 
 	/**
