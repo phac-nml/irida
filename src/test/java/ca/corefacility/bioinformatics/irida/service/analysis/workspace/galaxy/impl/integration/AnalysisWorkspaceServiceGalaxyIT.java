@@ -8,7 +8,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
@@ -62,7 +64,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.Workflow;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -348,16 +349,20 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		List<Path> paths1 = new ArrayList<>();
+		paths1.add(sequenceFilePath);
+		List<Path> paths2 = new ArrayList<>();
+		paths2.add(sequenceFilePath2);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
-				Lists.newArrayList(sequenceFilePath), Lists.newArrayList(sequenceFilePath2), referenceFilePath,
+				paths1, paths2, referenceFilePath,
 				validWorkflowId);
 		assertEquals(0, analysisSubmission.getSingleInputFiles().size());
 		Set<SequenceFilePair> pairedFiles = analysisSubmission.getPairedInputFiles();
 		assertEquals(1, pairedFiles.size());
 		SequenceFilePair submittedSp = pairedFiles.iterator().next();
 		Set<SequenceFile> submittedSf = submittedSp.getFiles();
-		assertEquals(2, submittedSf);
+		assertEquals(2, submittedSf.size());
 		
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
@@ -412,8 +417,13 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
 
+		List<Path> paths1 = new ArrayList<>();
+		paths1.add(sequenceFilePath);
+		List<Path> paths2 = new ArrayList<>();
+		paths2.add(sequenceFilePath2);
+		
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSinglePairSubmissionInDatabase(
-				1L, Lists.newArrayList(sequenceFilePath), Lists.newArrayList(sequenceFilePath2), sequenceFilePath3,
+				1L, paths1, paths2, sequenceFilePath3,
 				referenceFilePath, validWorkflowId);
 
 		Set<SequenceFile> singleFiles = analysisSubmission.getSingleInputFiles();
@@ -423,7 +433,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		assertEquals(1, pairedFiles.size());
 		SequenceFilePair submittedSp = pairedFiles.iterator().next();
 		Set<SequenceFile> submittedSf = submittedSp.getFiles();
-		assertEquals(2, submittedSf);
+		assertEquals(2, submittedSf.size());
 		Iterator<SequenceFile> sfIter = submittedSf.iterator();
 		SequenceFile pair1 = sfIter.next();
 		SequenceFile pair2 = sfIter.next();

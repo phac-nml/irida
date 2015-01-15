@@ -70,7 +70,8 @@ public class DatabaseSetupGalaxyITService {
 			SampleService sampleService,
 			AnalysisExecutionService analysisExecutionService,
 			AnalysisSubmissionService analysisSubmissionService,
-			AnalysisSubmissionRepository analysisSubmissionRepository) {
+			AnalysisSubmissionRepository analysisSubmissionRepository,
+			SequenceFilePairRepository sequenceFilePairRepository) {
 		super();
 		this.referenceFileRepository = referenceFileRepository;
 		this.seqeunceFileService = seqeunceFileService;
@@ -78,6 +79,7 @@ public class DatabaseSetupGalaxyITService {
 		this.analysisExecutionService = analysisExecutionService;
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
+		this.sequenceFilePairRepository = sequenceFilePairRepository;
 	}
 
 	/**
