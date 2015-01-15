@@ -74,11 +74,11 @@ public class ProjectIT {
 	public void testCreateProject() {
 		Map<String, String> project = new HashMap<>();
 		project.put("name", "new project");
-
+		
 		Response r = asUser().and().body(project).expect().response().statusCode(HttpStatus.CREATED.value()).when()
 				.post(PROJECTS);
 		String location = r.getHeader(HttpHeaders.LOCATION);
-		assertNotNull(location);
+		assertNotNull("Project location must not be null",location);
 		assertTrue(location.startsWith(ITestSystemProperties.BASE_URL + "/api/projects/"));
 		String responseBody = asUser().get(location).asString();
 		assertTrue("Result of POST must equal result of GET",r.asString().equals(responseBody));

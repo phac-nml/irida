@@ -25,8 +25,12 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
@@ -86,12 +90,16 @@ public class GenericControllerTest {
 
 	@Test
 	public void testCreateGoodEntity() {
-		IdentifiableTestResource resource = new IdentifiableTestResource(entity);
+		RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
+        RequestContextHolder.setRequestAttributes(ra);
+        IdentifiableTestResource resource = new IdentifiableTestResource(entity);
 		when(crudService.create(entity)).thenReturn(entity);
+		when(crudService.read(identifier)).thenReturn(entity);
 		ModelMap model = controller.create(resource,new MockHttpServletResponse());
 		assertTrue("Model should contain resource",model.containsKey("resource"));
 		IdentifiableTestResource testResource = (IdentifiableTestResource) model.get("resource");
-		assertTrue("Resource from model should be equivalent to resource added to model",testResource.equals(resource));
+		assertNotNull("Resource should not be null",testResource.getResource());
+		assertTrue("Resource from model should be equivalent to resource added to model",testResource.getResource().equals(entity));
 		assertTrue("Model should contain a self-reference",testResource.getLink(Link.REL_SELF).getHref().endsWith(identifier.toString()));
 	}
 

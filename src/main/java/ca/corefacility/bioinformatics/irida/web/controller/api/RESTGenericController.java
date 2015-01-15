@@ -195,36 +195,54 @@ public abstract class RESTGenericController<Type extends IridaThing & Comparable
 			MediaType.APPLICATION_XML_VALUE })
 	public ModelMap create(@RequestBody ResourceType representation,HttpServletResponse response) {		
 		ModelMap model = new ModelMap();
-		
-		
+
 		// ask the subclass to map the de-serialized request to a concrete
 		// instance of the type managed by this controller.
-		Type t = representation.getResource();
+		Type resource = representation.getResource();
 		
 		// persist the resource to the database.
-		t = crudService.create(t);
+		resource = crudService.create(resource);
 		
 		// the persisted resource is assigned an identifier by the
 		// service/database
 		// layer. We'll use this identifier to tell the client where to find the
 		// persisted resource.
-		Long id = t.getId();
-		logger.debug("Created resource with ID [" + t.getId() + "]");
+		Long id = resource.getId();
+		logger.debug("Created resource with ID [" + resource.getId() + "]");
+		
+		// In order to obtain a correct created date, the persisted resource is
+		// accessed from the service/database layer.
+		Type readType = crudService.read(id);
+		
+		ResourceType readResourceType = null;
+		try {
+			readResourceType = getResourceInstance(readType);
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new GenericsException("Failed to construct an instance of ResourceType for [" + getClass() + "]");
+		}
+		readResourceType.setResource(readType);
 		
 		// the location of the new resource is relative to this class (i.e.,
 		// linkTo(getClass())) with the identifier appended.
 		String location = linkTo(getClass()).slash(id).withSelfRel().getHref();
+
+		// add any custom links for the specific resource type that we're
+		// serving
+		// right now (implemented in the class that extends GenericController).
+		readResourceType.add(constructCustomResourceLinks(resource));
 		
 		//add a self reference
-		representation.add(linkTo(getClass()).slash(id).withSelfRel());
+		readResourceType.add(linkTo(getClass()).slash(id).withSelfRel());
 		
 		// add the resource to the model
-		model.addAttribute(RESOURCE_NAME,representation);
+		model.addAttribute(RESOURCE_NAME,readResourceType);
 		
-		//set the response status and add a location header
-		response.setStatus(HttpStatus.CREATED.value());
+		// add a location header.
 		response.addHeader(HttpHeaders.LOCATION, location);
 		
+		// set the response status.
+		response.setStatus(HttpStatus.CREATED.value());
+
 		// send the response back to the client.
 		return model;
 	}
