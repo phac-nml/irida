@@ -204,8 +204,8 @@ public class DatabaseSetupGalaxyITService {
 
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
-		AnalysisSubmission submission = analysisSubmissionService.create(new AnalysisSubmission("my analysis",
-				sequenceFileSet, null, referenceFile, iridaWorkflowId));
+		AnalysisSubmission submission = analysisSubmissionService.create(AnalysisSubmission.createSubmissionSingleReference("my analysis",
+				sequenceFileSet, referenceFile, iridaWorkflowId));
 
 		return analysisSubmissionRepository.findOne(submission.getId());
 	}
