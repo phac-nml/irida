@@ -304,6 +304,12 @@ public class PipelineController extends BaseController {
 		return result;
 	}
 
+	@RequestMapping(value = "/ajax/phylogenomics/start", method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> ajaxStartPipelinePhylogenomics(@RequestParam(value = "files[]") List<Long> files, @RequestParam Long ref) {
+//		AnalysisSubmission analysisSubmission = AnalysisSubmission.create
+		return ImmutableMap.of("result", "success");
+	}
+
 	// ************************************************************************************************
 	// RUNNING PIPELINE INTERNAL METHODS
 	// ************************************************************************************************

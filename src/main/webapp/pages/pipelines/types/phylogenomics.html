@@ -10,10 +10,11 @@
 			top: 50px;
 		}
 	</style>
+	<script>window.dependencies = ['irida.pipelines.phylogenomics'];</script>
 </head>
 <body>
-<div layout:fragment="page">
-	<form th:action="@{/pipelines/submit}" class="form-horizontal" method="post">
+<div layout:fragment="page" ng-app="irida.pipelines.phylogenomics">
+	<form class="form-horizontal" method="post" ng-controller="PhylogenomicsController as phylCtrl">
 		<div id="no-ref-warning" class="row" th:if="${#lists.size(referenceFiles)} == 0">
 			<h1 th:text="#{workflow.phylogenomics.title}"></h1>
 
@@ -39,7 +40,7 @@
 
 					<div class="col-sm-10">
 						<select class="form-control" name="referenceFiles" id="referenceFiles">
-							<option th:each="ref : ${referenceFiles}" th:value="${ref.file.getId()}"
+							<option th:each="ref : ${referenceFiles}" th:value="${ref.file.getId()}" data:project="${ref.project.id}"
 							        th:text="${ref.file.getLabel() + ' (' + ref.project.getLabel() + ')'}"></option>
 						</select>
 					</div>
@@ -97,7 +98,7 @@
 			<div class="col-md-2">
 				<div class="text-center" data-spy="affix">
 					<h2 th:text="#{workflow.launch.btn}">Ready to Launch?</h2>
-					<button class="btn btn-xl btn-danger round"><span class="fa fa-rocket"></span></button>
+					<button class="btn btn-xl btn-danger round" ng-click="phylCtrl.launch()"><span class="fa fa-rocket"></span></button>
 				</div>
 			</div>
 		</div>
@@ -106,6 +107,8 @@
 <th:block layout:fragment="page-scripts">
 	<script src="/resources/bower_components/bootstrap/js/affix.js"
 	        th:src="@{/resources/bower_components/bootstrap/js/affix.js}"></script>
+	<script src="/resources/js/pages/pipelines/phylogenomics.js"
+	        th:src="@{/resources/js/pages/pipelines/phylogenomics.js}"></script>
 </th:block>
 </body>
 </html>
