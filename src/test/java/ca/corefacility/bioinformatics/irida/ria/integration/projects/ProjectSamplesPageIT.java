@@ -528,6 +528,9 @@ public class ProjectSamplesPageIT {
 		page.goToPage("5");
 		assertEquals(3, page.getCartCount());
 		assertEquals(1, page.getCartProjectCount());
+		page.clickBtn("cart-show-btn");
+		page.clickBtn("go-to-pipeline-btn");
+		assertTrue(driver.getCurrentUrl().contains("/pipelines"));
 	}
 
 	@Test
