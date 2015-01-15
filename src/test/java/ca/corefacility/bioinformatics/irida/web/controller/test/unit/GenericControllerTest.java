@@ -90,8 +90,6 @@ public class GenericControllerTest {
 
 	@Test
 	public void testCreateGoodEntity() {
-		RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
-        RequestContextHolder.setRequestAttributes(ra);
         IdentifiableTestResource resource = new IdentifiableTestResource(entity);
 		when(crudService.create(entity)).thenReturn(entity);
 		when(crudService.read(identifier)).thenReturn(entity);
