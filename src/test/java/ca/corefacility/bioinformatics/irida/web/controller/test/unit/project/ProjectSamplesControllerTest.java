@@ -249,15 +249,11 @@ public class ProjectSamplesControllerTest {
 
 	@Test
 	public void testCopySampleToProject() {
-		
 		final Project p = TestDataFactory.constructProject();
 		final Sample s = TestDataFactory.constructSample();
-		
 		MockHttpServletResponse response = new MockHttpServletResponse();
-
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
-
 		ModelMap modelMap = controller
 				.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()), response);
 		
