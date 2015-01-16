@@ -1,10 +1,16 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.projects;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,6 +43,7 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.Sample
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
+import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
 
 /**
@@ -91,22 +98,45 @@ public class RESTProjectSamplesController {
 	 *         project.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "application/idcollection+json")
-	public ResponseEntity<String> copySampleToProject(final @PathVariable Long projectId,
-			final @RequestBody List<Long> sampleIds) {
-		final Project p = projectService.read(projectId);
-		final MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
-
-		for (final Long sampleId : sampleIds) {
-			final Sample s = sampleService.read(sampleId);
-			projectService.addSampleToProject(p, s);
+	public ModelMap copySampleToProject(final @PathVariable Long projectId,
+			final @RequestBody List<Long> sampleIds, HttpServletResponse response) {
+		ModelMap modelMap = new ModelMap();
+		Project p = projectService.read(projectId);
+		ResourceCollection<SampleResource> sampleResources = new ResourceCollection<>(sampleIds.size());
+		for (final long sampleId : sampleIds) {
+			Sample sample = sampleService.read(sampleId);
+			projectService.addSampleToProject(p, sample);
+			
+			//add a sample resource to the resource collection that will fill the body of the response.
+			SampleResource sr = new SampleResource();
+			sr.setResource(sample);
+			sr.setSequenceFileCount(getSequenceFileCountForSampleResource(sr));
+			sr.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sample.getId()))
+					.withSelfRel());
+			sr.add(linkTo(
+					methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sample.getId()))
+					.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
+			sr.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
+			sampleResources.add(sr);
+			
 			final String location = linkTo(
 					methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel()
 					.getHref();
-			responseHeaders.add(HttpHeaders.LOCATION, location);
+			response.addHeader(HttpHeaders.LOCATION, location);
 		}
+		//add a link to the project that was copied to.
+		sampleResources
+				.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
 
-		return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sampleResources);
+		response.setStatus(HttpStatus.CREATED.value());
+		return modelMap;
 	}
+	
+	
+	
+	
+	
 
 	/**
 	 * Create a new sample resource and create a relationship between the sample
