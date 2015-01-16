@@ -121,31 +121,6 @@ public class RESTProjectSamplesController {
 	 *         location information.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "!application/idcollection+json")
-	
-	/*
-	public ResponseEntity<String> addSampleToProject(@PathVariable Long projectId, @RequestBody SampleResource sample) {
-		// load the project that we're adding to
-		Project p = projectService.read(projectId);
-
-		// construct the sample that we're going to create
-		Sample s = sample.getResource();
-
-		// add the sample to the project
-		Join<Project, Sample> r = projectService.addSampleToProject(p, s);
-
-		// construct a link to the sample itself on the samples controller
-		Long sampleId = r.getObject().getId();
-		String location = linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId))
-				.withSelfRel().getHref();
-
-		// construct a set of headers to add to the response
-		MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
-		responseHeaders.add(HttpHeaders.LOCATION, location);
-
-		// respond to the request
-		return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
-		*/
-	
 	public ModelMap addSampleToProject(@PathVariable Long projectId, @RequestBody SampleResource sample, HttpServletResponse response) {
 		ModelMap model = new ModelMap();
 		
@@ -163,7 +138,6 @@ public class RESTProjectSamplesController {
 		String location = linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId))
 				.withSelfRel().getHref();
 		
-		// as in getProjectSample:
 		// add a link to: 1) self, 2) sequenceFiles, 3) project
 		sample.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel());
 		sample.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
