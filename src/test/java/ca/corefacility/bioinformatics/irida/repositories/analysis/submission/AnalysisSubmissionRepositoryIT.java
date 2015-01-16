@@ -156,7 +156,7 @@ public class AnalysisSubmissionRepositoryIT {
 		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.createSubmissionPaired("submission paired 1",
 				Sets.newHashSet(sequenceFilePair), workflowId);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
-		assertNull(savedSubmission.getSingleInputFiles());
+		assertEquals(0, savedSubmission.getSingleInputFiles().size());
 		assertEquals(Sets.newHashSet(sequenceFilePair), savedSubmission.getPairedInputFiles());
 		assertFalse(savedSubmission.getReferenceFile().isPresent());
 	}
@@ -171,7 +171,7 @@ public class AnalysisSubmissionRepositoryIT {
 				"submission paired 1", Sets.newHashSet(sequenceFilePair), referenceFile, workflowId);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
 
-		assertNull(savedSubmission.getSingleInputFiles());
+		assertEquals(0, savedSubmission.getSingleInputFiles().size());
 		assertEquals(Sets.newHashSet(sequenceFilePair), savedSubmission.getPairedInputFiles());
 		assertEquals(referenceFile, savedSubmission.getReferenceFile().get());
 	}
