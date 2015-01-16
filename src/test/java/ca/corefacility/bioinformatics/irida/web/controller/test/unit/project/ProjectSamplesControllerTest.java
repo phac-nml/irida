@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.project;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -15,12 +14,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import mx4j.log.Logger;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -65,31 +71,40 @@ public class ProjectSamplesControllerTest {
 
 	@Test
 	public void testAddSampleToProject() {
-		Sample s = TestDataFactory.constructSample();
-		Project p = TestDataFactory.constructProject();
-		Long projectId = p.getId();
-
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        Sample s = TestDataFactory.constructSample();
+        Project p = TestDataFactory.constructProject();
 		SampleResource sr = new SampleResource();
 		sr.setResource(s);
 		Join<Project, Sample> r = new ProjectSampleJoin(p, s);
-
+		
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(projectService.addSampleToProject(p, s)).thenReturn(r);
-
-		ResponseEntity<String> response = controller.addSampleToProject(p.getId(), sr);
-
-		verify(projectService, times(1)).read(p.getId());
-		verify(projectService, times(1)).addSampleToProject(p, s);
-
-		assertEquals(HttpStatus.CREATED, response.getStatusCode());
-
-		// the location header should correspond to the created sample URL under
-		// the samples controller.
-		List<String> locations = response.getHeaders().get(HttpHeaders.LOCATION);
-		assertNotNull(locations);
-		assertFalse(locations.isEmpty());
-		assertEquals(1, locations.size());
-		assertEquals("http://localhost/api/projects/" + projectId + "/samples/" + s.getId(), locations.iterator().next());
+        
+        ModelMap modelMap = controller.addSampleToProject(p.getId(), sr, response);
+        
+        Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
+        
+		assertTrue("ModelMap should contan a SampleResource",o instanceof SampleResource);
+		 
+        verify(projectService, times(1)).read(p.getId());
+        verify(projectService, times(1)).addSampleToProject(p, s);
+        
+        Link selfLink = sr.getLink(Link.REL_SELF);
+        Link sequenceFilesLink = sr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
+        Link projectLink = sr.getLink(RESTProjectSamplesController.REL_PROJECT);
+        String projectLocation = "http://localhost/api/projects/" + p.getId();
+        String sampleLocation = projectLocation + "/samples/" + s.getId();
+        assertNotNull("Sample resource's self link should not be null",selfLink);
+        assertEquals("Sample resource's sample location should equal [" + sampleLocation + "]",
+                        sampleLocation, selfLink.getHref());
+        assertNotNull("Sequence files link must not be null",sequenceFilesLink);
+        assertEquals("Sequence files link must be well formed",sampleLocation + "/sequenceFiles",
+                        sequenceFilesLink.getHref());
+        assertNotNull("Project link must not be null",projectLink); 
+        assertEquals("Project link must be well formed",projectLocation, projectLink.getHref());
+        
+		assertEquals("response should have CREATED status", HttpStatus.CREATED.value(), response.getStatus());
 	}
 
 	@Test

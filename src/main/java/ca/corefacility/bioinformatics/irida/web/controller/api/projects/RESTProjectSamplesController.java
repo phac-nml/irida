@@ -6,6 +6,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
@@ -119,6 +121,8 @@ public class RESTProjectSamplesController {
 	 *         location information.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "!application/idcollection+json")
+	
+	/*
 	public ResponseEntity<String> addSampleToProject(@PathVariable Long projectId, @RequestBody SampleResource sample) {
 		// load the project that we're adding to
 		Project p = projectService.read(projectId);
@@ -140,7 +144,42 @@ public class RESTProjectSamplesController {
 
 		// respond to the request
 		return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
+		*/
+	
+	public ModelMap addSampleToProject(@PathVariable Long projectId, @RequestBody SampleResource sample, HttpServletResponse response) {
+		ModelMap model = new ModelMap();
+		
+		// load the project that we're adding to
+		Project p = projectService.read(projectId);
+
+		// construct the sample that we're going to create
+		Sample s = sample.getResource();
+
+		// add the sample to the project
+		Join<Project, Sample> r = projectService.addSampleToProject(p, s);
+
+		// construct a link to the sample itself on the samples controller
+		Long sampleId = r.getObject().getId();
+		String location = linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId))
+				.withSelfRel().getHref();
+		
+		// as in getProjectSample:
+		// add a link to: 1) self, 2) sequenceFiles, 3) project
+		sample.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel());
+		sample.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
+				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
+		sample.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
+		
+		// add the resource to the model
+		model.addAttribute(RESTGenericController.RESOURCE_NAME,sample);
+		
+		//set the response status and add a location header
+		response.setStatus(HttpStatus.CREATED.value());
+		response.addHeader(HttpHeaders.LOCATION, location);
+		
+		return model;
 	}
+	
 
 	/**
 	 * Get the list of {@link Sample} associated with this {@link Project}.
