@@ -3,10 +3,11 @@
       layout:decorator="template/page">
 <head lang="en">
 	<title th:text="#{pipeline.phylogenomics.page-title}">Pipelines - Launch</title>
+	<link rel="stylesheet" href="/resources/css/pages/pipelines.css" th:href="@{/resources/css/pages/pipelines.css}"/>
 	<style>
 		.affix-top {
 			position: fixed;
-			top: 150;
+			top: 50px;
 		}
 	</style>
 </head>
@@ -55,10 +56,37 @@
 									<button type="button" class="btn btn-xs btn-default pull-right remove" th:text="#{form.btn.remove}">Remove</button>
 								</h3>
 								<table class="table">
-									<tr th:each="file : ${sample.files}">
-										<td><input type="checkbox" th:value="${file.getId()}" checked="checked" th:name="${project.id}"/></td>
-										<td th:text="${file.getLabel()}"></td>
-										<td th:text="${#dates.format(file.getCreatedDate())}"></td>
+									<tr th:if="${#lists.size(sample.pairs)} > 0">
+										<td><h4 th:text="#{samples.files.paired-end-data}">Paired End Data</h4></td>
+									</tr>
+									<tr th:each="sample : ${sample.pairs}">
+										<td>
+											<div class="layout-flex">
+												<div class="file_checkbox paired_end"><input type="checkbox" th:value="${sample.id}"/></div>
+												<div class="file_names">
+													<div data:file="${file.id}" th:each="file : ${sample.files}" th:text="${file.label}"></div>
+												</div>
+												<div class="file_date">
+													<div th:text="${#dates.format(sample.createdDate)}"></div>
+												</div>
+											</div>
+										</td>
+									</tr>
+									<tr th:if="${#lists.size(sample.singles)} > 0">
+										<td><h4 th:text="#{samples.files.single-end-data}">Single End Data</h4></td>
+									</tr>
+									<tr class="single-file" th:each="file : ${sample.singles}">
+										<td>
+											<div class="layout-flex">
+												<div class="file_checkbox single_end"><input type="checkbox" th:value="${file.id}"/></div>
+												<div class="file_names">
+													<div th:text="${file.getLabel()}"></div>
+												</div>
+												<div class="file_date">
+													<div th:text="${#dates.format(file.getCreatedDate())}"></div>
+												</div>
+											</div>
+										</td>
 									</tr>
 								</table>
 							</div>
@@ -67,7 +95,7 @@
 				</div>
 			</div>
 			<div class="col-md-2">
-				<div class="text-center" data-spy="affix" data-offset-top="200">
+				<div class="text-center" data-spy="affix">
 					<h2 th:text="#{workflow.launch.btn}">Ready to Launch?</h2>
 					<button class="btn btn-xl btn-danger round"><span class="fa fa-rocket"></span></button>
 				</div>

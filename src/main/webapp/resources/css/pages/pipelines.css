@@ -1,0 +1,34 @@
+/* line 3, ../../../styles/pages/pipelines.scss */
+.file_checkbox {
+  border-left: 1rem solid;
+  width: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* line 12, ../../../styles/pages/pipelines.scss */
+.single_end {
+  border-color: #3092d0;
+}
+
+/* line 16, ../../../styles/pages/pipelines.scss */
+.paired_end {
+  border-color: #133B54;
+}
+
+/* line 20, ../../../styles/pages/pipelines.scss */
+.file_names {
+  flex-grow: 2;
+}
+
+/* line 24, ../../../styles/pages/pipelines.scss */
+.file_date {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  width: 20%;
+}
