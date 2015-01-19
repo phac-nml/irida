@@ -23,6 +23,7 @@ import org.mockito.Matchers;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.FileCopyUtils;
@@ -215,29 +216,43 @@ public class SampleSequenceFilesControllerTest {
 		Path f = Files.createTempFile(null, null);
 		MockMultipartFile mmf = new MockMultipartFile("filename", "filename", "blurgh", FileCopyUtils.copyToByteArray(f
 				.toFile()));
-
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequenceFileService.createSequenceFileInSample(Matchers.any(SequenceFile.class), Matchers.eq(s)))
 				.thenReturn(r);
 		when(projectService.read(p.getId())).thenReturn(p);
+		
+		when(sequenceFileService.read(sf.getId())).thenReturn(sf);
 
-		ResponseEntity<String> response = controller.addNewSequenceFileToSample(p.getId(), s.getId(), mmf, resource);
+		ModelMap modelMap = controller.addNewSequenceFileToSample(p.getId(), s.getId(), mmf, resource,response);
 
 		verify(sampleService).getSampleForProject(p, s.getId());
 		verify(projectService).read(p.getId());
 		verify(sampleService, times(1)).read(s.getId());
 		verify(sequenceFileService).createSequenceFileInSample(Matchers.any(SequenceFile.class), Matchers.eq(s));
+		
+		assertEquals(HttpStatus.CREATED.value(), response.getStatus());
+		
+		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
+		assertNotNull(o);
+		assertTrue(o instanceof SequenceFileResource);
+		SequenceFileResource sfr = (SequenceFileResource) o;
 
-		assertEquals(HttpStatus.CREATED, response.getStatusCode());
+		Link self = sfr.getLink(Link.REL_SELF);
+		Link sampleSequenceFiles = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
+		Link sample = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
 
-		List<String> locations = response.getHeaders().get(HttpHeaders.LOCATION);
-		assertNotNull(locations);
-		assertFalse(locations.isEmpty());
-		assertEquals(1, locations.size());
-		assertEquals(
-				"http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId() + "/sequenceFiles/" + sf.getId(),
-				locations.iterator().next());
+		String sampleLocation = "http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId();
+		String sequenceFileLocation = sampleLocation + "/sequenceFiles/" + sf.getId();
 
+		assertNotNull(self);
+		assertEquals(sequenceFileLocation, self.getHref());
+		assertNotNull(sampleSequenceFiles);
+		assertEquals(sampleLocation + "/sequenceFiles", sampleSequenceFiles.getHref());
+		assertNotNull(sample);
+		assertEquals(sampleLocation, sample.getHref());
+		
 		Files.delete(f);
 	}
 

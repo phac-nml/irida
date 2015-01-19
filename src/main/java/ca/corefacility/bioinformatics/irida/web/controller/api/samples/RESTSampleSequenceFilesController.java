@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,9 +158,11 @@ public class RESTSampleSequenceFilesController {
 	 * @return a response indicating the success of the submission.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<String> addNewSequenceFileToSample(@PathVariable Long projectId, @PathVariable Long sampleId,
+	public ModelMap addNewSequenceFileToSample(@PathVariable Long projectId, @PathVariable Long sampleId,
 			@RequestPart("file") MultipartFile file,
-			@RequestPart(value = "parameters", required = false) SequenceFileResource fileResource) throws IOException {
+			@RequestPart(value = "parameters", required = false) SequenceFileResource fileResource, HttpServletResponse response) throws IOException {
+		ModelMap modelMap = new ModelMap();
+		
 		logger.debug("Adding sequence file to sample " + sampleId + " in project " + projectId);
 		logger.trace("Uploaded file size: " + file.getSize() + " bytes");
 
@@ -221,12 +225,27 @@ public class RESTSampleSequenceFilesController {
 				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
 						sequenceFileId)).withSelfRel().getHref();
 
-		// prepare the headers
-		MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
-		responseHeaders.add(HttpHeaders.LOCATION, location);
+		SequenceFileResource sfr = new SequenceFileResource();
+		sfr.setResource(sf);
+
+		// add links to the resource
+		sfr.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
+				.withRel(REL_SAMPLE_SEQUENCE_FILES));
+		sfr.add(linkTo(
+				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
+						sequenceFileId)).withSelfRel());
+		sfr.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(
+				REL_SAMPLE));
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sfr);
+		
+		// add a location header.
+		response.addHeader(HttpHeaders.LOCATION, location);
+		
+		// set the response status.
+		response.setStatus(HttpStatus.CREATED.value());
 
 		// respond to the client
-		return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
+		return modelMap;
 	}
 	
 	/**
