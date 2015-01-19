@@ -133,7 +133,7 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 	 */
 	@Bean
 	@Profile("it")
-	public String testConfig(OltuAuthorizationController oltuController) {
+	public String setITJettyPortForOAuth(OltuAuthorizationController oltuController) {
 		String applicationPort = Strings.isNullOrEmpty(System.getProperty("jetty.port")) ? "8080" : System
 				.getProperty("jetty.port");
 
