@@ -74,6 +74,8 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 					.permitAll();
 			httpSecurity.antMatcher("/api/oauth/authorize*").authorizeRequests().antMatchers("/api/oauth/authorize*")
 					.fullyAuthenticated();
+			httpSecurity.antMatcher("/api/oauth/authorize*").authorizeRequests().antMatchers("/api/oauth/authorization/token*")
+				.fullyAuthenticated();
 			httpSecurity.regexMatcher("/api.*").authorizeRequests().regexMatchers(HttpMethod.GET, "/api.*")
 					.access("#oauth2.hasScope('read')");
 			httpSecurity.regexMatcher("/api.*").authorizeRequests().regexMatchers("/api.*")
