@@ -6,13 +6,12 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import java.util.Collection;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -117,9 +116,10 @@ public class RESTProjectUsersController {
      * @return a response indicating that the collection was modified.
      */
     @RequestMapping(value = "/api/projects/{projectId}/users", method = RequestMethod.POST)
-    public ResponseEntity<String> addUserToProject(@PathVariable Long projectId,
-                                                   @RequestBody Map<String, String> representation) {
-        // first, get the project
+    public ModelMap addUserToProject(@PathVariable Long projectId,
+                                                   @RequestBody Map<String, String> representation,
+                                                   HttpServletResponse response) throws ProjectWithoutOwnerException {
+    	// first, get the project
         Project p = projectService.read(projectId);
 
         String username = representation.get(USER_ID_KEY);
@@ -130,13 +130,35 @@ public class RESTProjectUsersController {
 
         // then add the user to the project with the specified role.
         projectService.addUserToProject(p, u, r);
+        
+        UserResource ur = new UserResource(u);
+        
+        // prepare a link to the user 
+        ur.add(linkTo(RESTUsersController.class).slash(u.getUsername()).withSelfRel());
+        
+        // prepare a link to the user as added to the project
+        ur.add(linkTo(methodOn(RESTProjectUsersController.class).removeUserFromProject(projectId,
+                u.getUsername())).withRel(RESTGenericController.REL_RELATIONSHIP));
+        
+        // prepare a link back to the user collection of the project
+        ur.add(linkTo(methodOn(RESTProjectUsersController.class).getUsersForProject(projectId))
+                .withRel(REL_PROJECT_USERS));
+        
+        // prepare a link back to the project
+        ur.add(linkTo(RESTProjectsController.class).slash(projectId)
+                .withRel(RESTProjectsController.REL_PROJECT));
 
         String location = linkTo(RESTProjectsController.class).slash(projectId).slash("users").slash(username).withSelfRel().getHref();
 
-        MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
-        responseHeaders.add(HttpHeaders.LOCATION, location);
-
-        return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
+		// add a location header and set the response status.
+		response.addHeader(HttpHeaders.LOCATION, location);
+		response.setStatus(HttpStatus.CREATED.value());
+        
+		// prepare the response for the client
+		ModelMap modelMap = new ModelMap();
+        modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, ur);
+        
+        return modelMap;
     }
 
     /**

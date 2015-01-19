@@ -16,7 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ModelMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
@@ -88,9 +88,10 @@ public class ProjectUsersControllerTest {
     }
 
     @Test
-    public void testAddUserToProject() {
+    public void testAddUserToProject() throws ProjectWithoutOwnerException {
         Project p = TestDataFactory.constructProject();
         User u = TestDataFactory.constructUser();
+        MockHttpServletResponse response = new MockHttpServletResponse();
 
         when(projectService.read(p.getId())).thenReturn(p);
         when(userService.getUserByUsername(u.getUsername())).thenReturn(u);
@@ -99,7 +100,7 @@ public class ProjectUsersControllerTest {
         Map<String, String> user = ImmutableMap.of(RESTProjectUsersController.USER_ID_KEY, u.getUsername());
 
         // add the user to the project
-        ResponseEntity<String> response = controller.addUserToProject(p.getId(), user);
+        ModelMap map = controller.addUserToProject(p.getId(), user,response);
 
         // confirm that the service method was called
         verify(projectService, times(1)).addUserToProject(p, u, ProjectRole.PROJECT_USER);
@@ -107,12 +108,35 @@ public class ProjectUsersControllerTest {
         verify(userService, times(1)).getUserByUsername(u.getUsername());
 
         // check that the response is as expected:
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        List<String> locations = response.getHeaders().get(HttpHeaders.LOCATION);
-        assertNotNull(locations);
-        assertFalse(locations.isEmpty());
-        assertEquals(1, locations.size());
-        assertEquals("http://localhost/api/projects/" + p.getId() + "/users/" + u.getUsername(), locations.iterator().next());
+        assertEquals(HttpStatus.CREATED.value(), response.getStatus());
+        
+        //check for a correct user link
+        String location = response.getHeader(HttpHeaders.LOCATION);
+        assertNotNull(location);
+        assertFalse(location.isEmpty());
+        assertEquals("http://localhost/api/projects/" + p.getId() + "/users/" + u.getUsername(), location);
+    
+        //check the ModelMap's resource type 
+        Object o = map.get(RESTGenericController.RESOURCE_NAME);
+        assertNotNull(o);
+        assertTrue(o instanceof UserResource);
+        UserResource ur = (UserResource) o;
+        
+        //check for a correct relationship link
+        assertTrue(ur.getLink("self").getHref().endsWith(u.getUsername()));
+        Link relationship = ur.getLink(RESTGenericController.REL_RELATIONSHIP);
+        assertNotNull(relationship);
+        assertEquals("http://localhost/api/projects/" + p.getId() + "/users/" + u.getUsername(), relationship.getHref());
+        
+        // confirm that a project link exists
+        Link projectLink = ur.getLink(RESTProjectsController.REL_PROJECT);
+        assertNotNull(projectLink);
+        assertEquals("http://localhost/api/projects/" + p.getId(), projectLink.getHref());
+
+        // confirm that a project users link exists
+        Link projectUsersLink = ur.getLink(RESTProjectUsersController.REL_PROJECT_USERS);
+        assertNotNull(projectUsersLink);
+        assertEquals("http://localhost/api/projects/" + p.getId() + "/users", projectUsersLink.getHref());
     }
 
     @Test
