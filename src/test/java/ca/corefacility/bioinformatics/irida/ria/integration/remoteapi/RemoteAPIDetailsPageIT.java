@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -49,7 +49,7 @@ public class RemoteAPIDetailsPageIT {
 
 	@Before
 	public void setup() {
-		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
+		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
 		LoginPage.loginAsAdmin(driver);
 
 		page = new RemoteAPIDetailsPage(driver, id);
