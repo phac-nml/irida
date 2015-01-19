@@ -239,6 +239,7 @@ public class SampleSequenceFilesControllerTest {
 		assertTrue(o instanceof SequenceFileResource);
 		SequenceFileResource sfr = (SequenceFileResource) o;
 
+		assertEquals(HttpStatus.CREATED.value(), response.getStatus());
 		Link self = sfr.getLink(Link.REL_SELF);
 		Link sampleSequenceFiles = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
 		Link sample = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
