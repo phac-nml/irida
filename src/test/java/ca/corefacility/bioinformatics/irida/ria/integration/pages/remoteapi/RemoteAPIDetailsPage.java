@@ -29,24 +29,14 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		get(driver, RELATIVE_URL + clientId);
 	}
 
-	public boolean verifyRemoteAPI(Long id, String apiName) {
-		logger.trace("Getting table size");
-		WebElement idSpan = driver.findElement(By.id("remoteapi-id"));
+	public String getClientName() {
 		WebElement clientIdSpan = driver.findElement(By.id("remoteapi-name"));
+		return clientIdSpan.getText();
+	}
 
-		String idtext = idSpan.getText();
-		if (!idtext.equals(id.toString())) {
-			logger.error("id not equal.  Found: " + idtext);
-			return false;
-		}
-
-		String clientIdText = clientIdSpan.getText();
-		if (!clientIdText.equals(apiName)) {
-			logger.error("clientId not equal.  Found: " + clientIdText);
-			return false;
-		}
-
-		return true;
+	public String getClientId() {
+		WebElement clientIdSpan = driver.findElement(By.id("remoteapi-clientid"));
+		return clientIdSpan.getText();
 	}
 
 	public void clickDeleteButton() {
@@ -60,6 +50,13 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		WebElement confirmButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
 				.className("confirm-delete")));
 		confirmButton.click();
+	}
+
+	public String getRemoteApiStatus() {
+		WebElement connectionStatus = (new WebDriverWait(driver, 10)).until(ExpectedConditions
+				.visibilityOfElementLocated(By.className("connection-status")));
+
+		return connectionStatus.getText();
 	}
 
 	public boolean checkDeleteSuccess() {
