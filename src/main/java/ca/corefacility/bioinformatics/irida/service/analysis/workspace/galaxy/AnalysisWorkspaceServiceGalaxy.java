@@ -8,6 +8,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerDownloadE
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowPreprationException;
@@ -163,7 +165,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 *            The set of sequence files.
 	 * @return A list of joins between sample and sequence files.
 	 */
-	private List<Join<Sample, SequenceFile>> getSequenceFileSamples(Set<SequenceFile> sequenceFiles) {
+	private List<Join<Sample, SequenceFile>> getSequenceFileSingleSamples(Set<SequenceFile> sequenceFiles) {
 		List<Join<Sample, SequenceFile>> sampleSequenceFiles = new LinkedList<>();
 
 		for (SequenceFile file : sequenceFiles) {
@@ -174,6 +176,35 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		}
 
 		return sampleSequenceFiles;
+	}
+	
+	/**
+	 * Gets a map of sequence file pairs and corresponding samples.
+	 * 
+	 * @param pairedInputFiles
+	 *            A {@link Set} of {@link SequenceFilePair}s.
+	 * @return A {@link Map} of between {@link SequenceFilePair} and
+	 *         {@link Sample}.
+	 * @throws SampleAnalysisDuplicateException
+	 *             If there is a duplicate sample.
+	 */
+	private Map<SequenceFilePair, Sample> getSequenceFilePairedSamples(Set<SequenceFilePair> pairedInputFiles)
+			throws SampleAnalysisDuplicateException {
+		Map<SequenceFilePair, Sample> sequenceFilePairsSampleMap = new HashMap<>();
+
+		for (SequenceFilePair filePair : pairedInputFiles) {
+			SequenceFile pair1 = filePair.getFiles().iterator().next();
+			Join<Sample, SequenceFile> pair1Join = sampleSequenceFileJoinRepository.getSampleForSequenceFile(pair1);
+			Sample sample = pair1Join.getSubject();
+			if (sequenceFilePairsSampleMap.containsKey(filePair)) {
+				throw new SampleAnalysisDuplicateException("Sample " + sample
+						+ " already exists in set for sequence file " + pairedInputFiles);
+			} else {
+				sequenceFilePairsSampleMap.put(filePair, pair1Join.getSubject());
+			}
+		}
+
+		return sequenceFilePairsSampleMap;
 	}
 
 	/**
@@ -272,10 +303,11 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		History workflowHistory = galaxyHistoriesService.findById(analysisSubmission.getRemoteAnalysisId());
 		Library workflowLibrary = libraryBuilder.buildEmptyLibrary(new GalaxyProjectName(temporaryLibraryName));
 
-		List<Join<Sample, SequenceFile>> sampleSequenceFiles = getSequenceFileSamples(analysisSubmission
+		List<Join<Sample, SequenceFile>> sampleSequenceFilesSingle = getSequenceFileSingleSamples(analysisSubmission
 				.getSingleInputFiles());
+		Map<SequenceFilePair, Sample> sampleSequenceFilesPaired = getSequenceFilePairedSamples(analysisSubmission.getPairedInputFiles());
 
-		CollectionResponse collectionResponse = uploadSequenceFiles(sampleSequenceFiles, workflowHistory,
+		CollectionResponse collectionResponse = uploadSequenceFiles(sampleSequenceFilesSingle, workflowHistory,
 				workflowLibrary);
 
 		String workflowId = analysisSubmission.getRemoteWorkflowId();
