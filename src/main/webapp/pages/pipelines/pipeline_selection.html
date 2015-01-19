@@ -20,7 +20,7 @@
 				<div class="card_title" th:text="${flow.title}"></div>
 				<div class="card_desc" th:text="${flow.description}"></div>
 				<div th:if="${counts.projects>0}" class="card_footer">
-					<a th:href="@{'/pipelines/' + ${flow.name}}" class="btn btn-primary btn-xs pull-right">Select</a>
+					<a th:href="@{'/pipelines/' + ${flow.name} + '/' + ${flow.id}}" class="btn btn-primary btn-xs pull-right">Select</a>
 				</div>
 			</div>
 		</li>

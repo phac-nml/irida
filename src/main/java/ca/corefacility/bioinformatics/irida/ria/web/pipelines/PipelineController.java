@@ -3,12 +3,12 @@ package ca.corefacility.bioinformatics.irida.ria.web.pipelines;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
@@ -22,6 +22,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -39,6 +41,8 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.components.PipelineSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
@@ -147,10 +151,18 @@ public class PipelineController extends BaseController {
 
 		List<Map<String, String>> flows = new ArrayList<>(workflows.size());
 		workflows.stream().forEach(type -> {
+			IridaWorkflow flow = null;
+			try {
+				flow = workflowsService.getDefaultWorkflowByType(type);
+			} catch (IridaWorkflowNotFoundException e) {
+				e.printStackTrace();
+			}
+			IridaWorkflowDescription description = flow.getWorkflowDescription();
 			String name = type.toString();
 			String key = "workflow." + name;
 			flows.add(ImmutableMap.of(
 					"name", name,
+					"id", description.getId().toString(),
 					"title",
 					messageSource
 							.getMessage(key + ".title", new Object[] { }, locale),
@@ -164,8 +176,8 @@ public class PipelineController extends BaseController {
 		return URL_LAUNCH;
 	}
 
-	@RequestMapping(value = "/phylogenomics")
-	public String getPhylogenomicsPage(final Model model, Principal principal) {
+	@RequestMapping(value = "/phylogenomics/{pipelineId}")
+	public String getPhylogenomicsPage(final Model model, Principal principal, @PathVariable UUID pipelineId) {
 		String response = URL_EMPTY_CART_REDIRECT;
 
 		Map<Project, Set<Sample>> cartMap = cartController.getSelected();
@@ -174,7 +186,7 @@ public class PipelineController extends BaseController {
 			User user = userService.getUserByUsername(principal.getName());
 			// Get all the reference files that could be used for this pipeline.
 			List<Map<String, Object>> referenceFileList = new ArrayList<>();
-			List<Map<String, Object>> fileList = new ArrayList<>();
+			List<Map<String, Object>> projectList = new ArrayList<>();
 			List<Map<String, Object>> addRefList = new ArrayList<>();
 			for (Project project : cartMap.keySet()) {
 				List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
@@ -202,28 +214,45 @@ public class PipelineController extends BaseController {
 					Map<String, Object> sampleMap = new HashMap<>();
 					sampleMap.put("name", sample.getLabel());
 					sampleMap.put("id", sample.getId().toString());
-
-					// Singe end reads
-					List<Join<Sample, SequenceFile>> sfJoin = sequenceFileService.getSequenceFilesForSample(sample);
-					sampleMap.put("singles", sfJoin.stream().map(Join::getObject)
-							.collect(Collectors.toList()));
+					List<Map<String, Object>> fileList = new ArrayList<>();
 
 					// Paired end reads
 					List<SequenceFilePair> sequenceFilePairs = sequenceFilePairService
 							.getSequenceFilePairsForSample(sample);
-					sampleMap.put("pairs", sequenceFilePairs);
+					for (SequenceFilePair pair : sequenceFilePairs) {
+						fileList.add(ImmutableMap.of(
+								"id", pair.getId(),
+								"type", "paired_end",
+								"files", pair.getFiles(),
+								"createdDate", pair.getCreatedDate()
+						));
+					}
 
+					// Singe end reads
+					List<Join<Sample, SequenceFile>> sfJoin = sequenceFileService.getSequenceFilesForSample(sample);
+					for (Join<Sample, SequenceFile> join : sfJoin) {
+						SequenceFile file = join.getObject();
+						fileList.add(ImmutableMap.of(
+								"type", "single_end",
+								"id", file.getId(),
+								"label", file.getLabel(),
+								"createdDate", file.getCreatedDate()
+						));
+					}
+
+					sampleMap.put("files", fileList);
 					sampleList.add(sampleMap);
 				}
 
 				projectMap.put("id", project.getId().toString());
 				projectMap.put("name", project.getLabel());
 				projectMap.put("samples", sampleList);
-				fileList.add(projectMap);
+				projectList.add(projectMap);
 			}
+			model.addAttribute("pipelienId", pipelineId.toString());
 			model.addAttribute("referenceFiles", referenceFileList);
 			model.addAttribute("addRefProjects", addRefList);
-			model.addAttribute("files", fileList);
+			model.addAttribute("files", projectList);
 			response = URL_PHYLOGENOMICS;
 		}
 
@@ -304,9 +333,28 @@ public class PipelineController extends BaseController {
 		return result;
 	}
 
-	@RequestMapping(value = "/ajax/phylogenomics/start", method = RequestMethod.POST)
-	public @ResponseBody Map<String, Object> ajaxStartPipelinePhylogenomics(@RequestParam(value = "files[]") List<Long> files, @RequestParam Long ref) {
-//		AnalysisSubmission analysisSubmission = AnalysisSubmission.create
+	@RequestMapping(value = "/ajax/start/{pipelineId}", method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> ajaxStartPipelinePhylogenomics(@PathVariable UUID pipelineId,
+			@RequestParam(value = "single[]") List<Long> single, @RequestParam(value = "paired[]") List<Long> paired,
+			@RequestParam Long ref) {
+
+		Set<SequenceFile> sequenceFiles = new HashSet<>();
+		Set<SequenceFilePair> sequenceFilePairs = new HashSet<>();
+
+		for (Long id : single) {
+			sequenceFiles.add(sequenceFileService.read(id));
+		}
+
+		for (Long id : paired) {
+//			sequenceFilePairs.add(sequenceFileService.)
+		}
+
+		AnalysisSubmission analysisSubmission;
+
+		if (sequenceFiles.size() > 0 && sequenceFilePairs.size() > 0) {
+
+		}
+
 		return ImmutableMap.of("result", "success");
 	}
 

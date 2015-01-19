@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.security.Principal;
 import java.util.Locale;
+import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -82,7 +83,8 @@ public class PipelineControllerTest {
 	public void testGetPhylogenomicsPageWithEmptyCart() {
 		ExtendedModelMap model = new ExtendedModelMap();
 		Principal principal = () -> "FRED";
-		String response = controller.getPhylogenomicsPage(model, principal);
+		UUID id = UUID.randomUUID();
+		String response = controller.getPhylogenomicsPage(model, principal, id);
 		assertEquals("If cart is empty user should be redirected.", PipelineController.URL_EMPTY_CART_REDIRECT, response);
 	}
 
@@ -92,12 +94,13 @@ public class PipelineControllerTest {
 		String username = "FRED";
 		Principal principal = () -> username;
 		User user = TestDataFactory.constructUser();
+		UUID id = UUID.randomUUID();
 		when(userService.getUserByUsername(username)).thenReturn(user);
 		when(projectService.userHasProjectRole(any(User.class), any(Project.class), any(ProjectRole.class))).thenReturn(true);
 		when(cartController.getSelected()).thenReturn(TestDataFactory.constructCart());
 		when(sequenceFileService.getSequenceFilesForSample(any(Sample.class)))
 				.thenReturn(TestDataFactory.generateSequenceFilesForSample(TestDataFactory.constructSample()));
-		String response = controller.getPhylogenomicsPage(model, principal);
+		String response = controller.getPhylogenomicsPage(model, principal, id);
 		assertEquals("Response should be the path to the phylogenomics template", PipelineController.URL_PHYLOGENOMICS, response);
 		assertTrue("Model should contain the reference files.", model.containsKey("referenceFiles"));
 		assertTrue("Model should contain a list of files.", model.containsKey("files"));

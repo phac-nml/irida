@@ -5,15 +5,21 @@
 
     vm.launch = function () {
       var ref = Number(angular.element('option:selected').val()),
-          cbs = angular.element("input[type='checkbox']:checked"),
-          files = [];
+          radioBtns = angular.element("input[type='radio']:checked"),
+          single = [],
+          paired = [];
 
-      _.forEach(cbs, function (c) {
+      _.forEach(radioBtns, function (c) {
         c = $(c);
-        files.push(Number(c.val()));
+        if(c.attr('data-type') === 'single_end'){
+          single.push(Number(c.val()));
+        }
+        else {
+          paired.push(Number(c.val()));
+        }
       });
 
-      $http.post("/pipelines/ajax/phylogenomics/start", {ref: ref, files: files});
+      $http.post(PIPELINE.url, {ref: ref, single: single, paired: paired});
     };
   }
 

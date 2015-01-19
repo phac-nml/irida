@@ -56,39 +56,39 @@
 									<a href="#" th:href="@{/projects/{id}/samples(id=${project.id})}" th:text="${project.name + ' / ' + sample.name}"></a>
 									<button type="button" class="btn btn-xs btn-default pull-right remove" th:text="#{form.btn.remove}">Remove</button>
 								</h3>
-								<table class="table">
-									<tr th:if="${#lists.size(sample.pairs)} > 0">
-										<td><h4 th:text="#{samples.files.paired-end-data}">Paired End Data</h4></td>
-									</tr>
-									<tr th:each="sample : ${sample.pairs}">
-										<td>
-											<div class="layout-flex">
-												<div class="file_checkbox paired_end"><input type="checkbox" th:value="${sample.id}"/></div>
+								<table class="table" th:with="dateFormat=#{date.long}">
+									<th:block th:each="s, iterStat : ${sample.files}">
+										<tr th:if="${s.type == 'paired_end'}">
+											<td>
+												<div class="layout-flex">
+													<div class="file_checkbox paired_end">
+														<input th:name="${sample.id}" type="radio" data:type="${s.type}" th:checked="${iterStat.first}" th:value="${s.id}"/></div>
 												<div class="file_names">
-													<div data:file="${file.id}" th:each="file : ${sample.files}" th:text="${file.label}"></div>
+													<div data:file="${file.id}" th:each="file : ${s.files}" th:text="${file.label}"></div>
 												</div>
 												<div class="file_date">
-													<div th:text="${#dates.format(sample.createdDate)}"></div>
+												<div th:text="${#dates.format(s.createdDate, dateFormat)}"></div>
 												</div>
-											</div>
-										</td>
-									</tr>
-									<tr th:if="${#lists.size(sample.singles)} > 0">
-										<td><h4 th:text="#{samples.files.single-end-data}">Single End Data</h4></td>
-									</tr>
-									<tr class="single-file" th:each="file : ${sample.singles}">
-										<td>
-											<div class="layout-flex">
-												<div class="file_checkbox single_end"><input type="checkbox" th:value="${file.id}"/></div>
-												<div class="file_names">
-													<div th:text="${file.getLabel()}"></div>
 												</div>
-												<div class="file_date">
-													<div th:text="${#dates.format(file.getCreatedDate())}"></div>
+											</td>
+										</tr>
+										<tr th:if="${s.type == 'single_end'}">
+											<td>
+												<div class="layout-flex">
+													<div class="file_checkbox single_end">
+														<input th:name="${sample.id}" data:type="${s.type}" data:sample="${sample.id}" type="radio" th:value="${s.id}" th:checked="${iterStat.first}"/>
+													</div>
+													<div class="file_names">
+														<div th:text="${s.label}"></div>
+													</div>
+													<div class="file_date">
+														<div
+															th:text="${#dates.format(s.createdDate, dateFormat)}"></div>
+													</div>
 												</div>
-											</div>
-										</td>
-									</tr>
+											</td>
+										</tr>
+									</th:block>
 								</table>
 							</div>
 						</div>
@@ -105,6 +105,13 @@
 	</form>
 </div>
 <th:block layout:fragment="page-scripts">
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		var PIPELINE = {
+			url: /*[[@{/pipelines/ajax/start/{id}(id=${pipelineId})}]]*/ '/ajax/pipelines/ccca532d-b0be-4f2c-bd6d-9886aa722571'
+		};
+		/*]]>*/
+	</script>
 	<script src="/resources/bower_components/bootstrap/js/affix.js"
 	        th:src="@{/resources/bower_components/bootstrap/js/affix.js}"></script>
 	<script src="/resources/js/pages/pipelines/phylogenomics.js"
