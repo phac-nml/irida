@@ -16,9 +16,9 @@
       <p th:text="#{auth.approvalmessage(${auth_request.clientId},${scopes})}">_The client clientId is requesting access to your data on this IRIDA site.  Approving this request will allow 
       	clientId allowedScopes access to the following resources on this site:_</p>  
       <ul>
-      	<li>Projects</li>
-      	<li>Samples</li>
-        <li>Sequence files</li>
+      	<li th:text="#{auth.projects}">Projects</li>
+      	<li th:text="#{auth.samples}">Samples</li>
+        <li th:text="#{auth.sequenceFiles}">Sequence files</li>
       </ul>
       <p th:text="#{auth.adminmessage(${auth_request.clientId})}">_Note: clientId has been authorized as part of the IRIDA network by the site's administrators._</p>
 
