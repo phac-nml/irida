@@ -73,7 +73,8 @@
     	
     	$.ajax({
     		url: urlBase + apiId,
-    		type: "POST",
+    		type: "GET",
+    		dataType: "text",
     		success: function(data, textStatus, jqXHR){
     			if(data == "valid"){
     				span.className="label label-success";
