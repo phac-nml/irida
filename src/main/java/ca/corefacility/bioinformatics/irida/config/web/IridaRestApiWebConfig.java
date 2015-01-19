@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -33,10 +34,12 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.xml.MarshallingView;
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaScheduledTasksConfig;
+import ca.corefacility.bioinformatics.irida.ria.web.oauth.OltuAuthorizationController;
 import ca.corefacility.bioinformatics.irida.web.spring.view.FastaView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.FastqView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.GenbankView;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -118,6 +121,26 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 		source.setBasenames(resources);
 		source.setDefaultEncoding("UTF-8");
 		return source;
+	}
+
+	/**
+	 * {@link OltuAuthorizationController} needs to have the base URL of the
+	 * server set for it to redirect properly. In IT tests the port is randomly
+	 * set so we can't configure it. This method will set the port
+	 * 
+	 * @param oltuController
+	 * @return
+	 */
+	@Bean
+	@Profile("it")
+	public String testConfig(OltuAuthorizationController oltuController) {
+		String applicationPort = Strings.isNullOrEmpty(System.getProperty("jetty.port")) ? "8080" : System
+				.getProperty("jetty.port");
+
+		String baseURL = "http://localhost:" + applicationPort;
+		oltuController.setServerBase(baseURL);
+
+		return applicationPort;
 	}
 
 	/**
