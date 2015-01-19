@@ -30,6 +30,10 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		get(driver, RELATIVE_URL + clientId);
 	}
 
+	public RemoteAPIDetailsPage(WebDriver driver) {
+		super(driver);
+	}
+
 	public String getClientName() {
 		WebElement clientIdSpan = driver.findElement(By.id("remoteapi-name"));
 		return clientIdSpan.getText();
@@ -67,6 +71,25 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		}
 
 		throw new ElementNotVisibleException("Coudldn't get api status");
+	}
+
+	public void clickConnect() {
+		WebElement connectButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
+				.className("oauth-connect-link ")));
+		connectButton.click();
+
+		waitForAjax();
+
+	}
+
+	public void clickAuthorize() {
+		driver.switchTo().frame("oauth-connect-frame");
+		WebElement authorizeButton = driver.findElement(By.id("authorize-btn"));
+		authorizeButton.click();
+		
+		driver.switchTo().defaultContent();
+		
+		waitForTime(5000);
 	}
 
 	public boolean checkDeleteSuccess() {
