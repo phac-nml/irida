@@ -25,7 +25,7 @@
 	  <form id='confirmationForm' name='confirmationForm' th:action='@{/api/oauth/authorize}' method='post'>
         <input th:each="scope : ${scopes}" type="hidden" th:name="${'scope.'+ scope}" value="true"/>
 	  	<input name='user_oauth_approval' value='true' type='hidden'/>
-	  	<input class="btn btn-default" name='authorize' th:value="#{auth.authorize}" value='_Authorize_' type='submit'/>
+	  	<input class="btn btn-default" name='authorize' id="authorize-btn" th:value="#{auth.authorize}" value='_Authorize_' type='submit'/>
 	  </form>
 	  <form id='denialForm' name='denialForm' th:action='@{/api/oauth/authorize}' method='post'>
 	  	<input th:each="scope : ${scopes}" type="hidden" th:name="${'scope.'+ scope}" value="false"/>
