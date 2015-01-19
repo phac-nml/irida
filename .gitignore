@@ -9,3 +9,4 @@ irida.iml
 phantomjsdriver.log
 node_modules
 .sass-cache
+/src/main/java/a
