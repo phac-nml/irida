@@ -89,7 +89,7 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		
 		driver.switchTo().defaultContent();
 		
-		waitForTime(5000);
+		waitForTime(8000);
 	}
 
 	public boolean checkDeleteSuccess() {
