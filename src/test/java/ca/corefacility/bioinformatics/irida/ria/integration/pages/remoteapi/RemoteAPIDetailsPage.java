@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -52,11 +53,20 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		confirmButton.click();
 	}
 
-	public String getRemoteApiStatus() {
+	public ApiStatus getRemoteApiStatus() {
 		WebElement connectionStatus = (new WebDriverWait(driver, 10)).until(ExpectedConditions
-				.visibilityOfElementLocated(By.className("connection-status")));
+				.presenceOfElementLocated(By.className("status-label")));
 
-		return connectionStatus.getText();
+		String labelClass = connectionStatus.getAttribute("class");
+		if (labelClass.contains("api-connected")) {
+			return ApiStatus.CONNECTED;
+		} else if (labelClass.contains("api-invalid")) {
+			return ApiStatus.INVALID;
+		} else if (labelClass.contains("api-error")) {
+			return ApiStatus.ERROR;
+		}
+
+		throw new ElementNotVisibleException("Coudldn't get api status");
 	}
 
 	public boolean checkDeleteSuccess() {
@@ -83,5 +93,9 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 	private void waitForAjax() {
 		Wait<WebDriver> wait = new WebDriverWait(driver, 60);
 		wait.until(Ajax.waitForAjax(60000));
+	}
+
+	public enum ApiStatus {
+		CONNECTED, INVALID, ERROR;
 	}
 }

@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.RemoteAPIDetailsPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.RemoteAPIDetailsPage.ApiStatus;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -69,6 +70,10 @@ public class RemoteAPIDetailsPageIT {
 
 		String clientId = page.getClientId();
 		assertEquals(apiClient, clientId);
+
+		ApiStatus remoteApiStatus = page.getRemoteApiStatus();
+		assertEquals(ApiStatus.INVALID, remoteApiStatus);
+
 	}
 
 	@Test
