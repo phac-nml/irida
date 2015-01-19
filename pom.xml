@@ -590,6 +590,7 @@
 								<jetty.port>${jetty.port}</jetty.port>
 								<spring.profiles.active>it</spring.profiles.active>
 								<jetty.port>${jetty.port}</jetty.port>
+								<server.base.url>http://localhost:${jetty.port}</server.base.url>
 							</systemPropertyVariables>
 						</configuration>
 					</execution>
@@ -760,6 +761,10 @@
 								<systemProperty>
 									<name>jetty.port.stop</name>
 									<value>${jetty.port.stop}</value>
+								</systemProperty>
+								<systemProperty>
+								    <name>server.base.url</name>
+								    <value>http://localhost:${jetty.port}</value>
 								</systemProperty>
 							</systemProperties>
 						</configuration>
