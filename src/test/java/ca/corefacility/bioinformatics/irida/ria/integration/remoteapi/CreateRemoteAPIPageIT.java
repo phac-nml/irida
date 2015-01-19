@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.remoteapi;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -20,6 +21,8 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.CreateRemoteAPIPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.RemoteAPIDetailsPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.RemoteAPIDetailsPage.ApiStatus;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -68,5 +71,24 @@ public class CreateRemoteAPIPageIT {
 	public void testCreateClientWithDuplicateURI() {
 		page.createRemoteAPIWithDetails("new name", "http://nowhere", "newClient", "newSecret");
 		assertFalse(page.checkSuccess());
+	}
+
+	@Test
+	public void testAndConnectToClient() {
+		String applicationPort = page.getApplicationPort();
+		String url = "http://localhost:" + applicationPort + "/api";
+
+		page.createRemoteAPIWithDetails("new name", url, "testClient", "testClientSecret");
+		assertTrue(page.checkSuccess());
+
+		RemoteAPIDetailsPage remoteAPIDetailsPage = new RemoteAPIDetailsPage(driver);
+
+		ApiStatus remoteApiStatus = remoteAPIDetailsPage.getRemoteApiStatus();
+		assertEquals(ApiStatus.INVALID, remoteApiStatus);
+		remoteAPIDetailsPage.clickConnect();
+		remoteAPIDetailsPage.clickAuthorize();
+
+		remoteApiStatus = remoteAPIDetailsPage.getRemoteApiStatus();
+		assertEquals(ApiStatus.CONNECTED, remoteApiStatus);
 	}
 }
