@@ -11,9 +11,20 @@
 		phoneNumber="867-5309" username="mrtest" enabled="true" system_role="ROLE_ADMIN"
 		credentialsNonExpired="true" />
 
-	<remote_api id="1" name="a client" serviceURI="http://localhost:8080/api" clientId="client"
-		clientSecret="secret" createdDate="2013-07-18 14:20:19.0" />
-	<remote_api id="2" name="another client" serviceURI="http://nowhere2" clientId="client2"
-		clientSecret="secret2" createdDate="2013-07-18 14:20:19.0" />
+	<remote_api id="1" name="a client" serviceURI="http://localhost:8080/api"
+		clientId="client" clientSecret="secret" createdDate="2013-07-18 14:20:19.0" />
+	<remote_api id="2" name="another client" serviceURI="http://nowhere2"
+		clientId="client2" clientSecret="secret2" createdDate="2013-07-18 14:20:19.0" />
+
+
+	<client_details id="1" clientId="testClient"
+		clientSecret="testClientSecret" token_validity="100000" createdDate="2013-07-18 14:20:19.0" />
+	<client_details_authorities
+		client_details_id="1" authority_name="ROLE_CLIENT" />
+	<client_details_grant_types
+		client_details_id="1" grant_value="authorization_code" />
+	<client_details_resource_ids
+		client_details_id="1" resource_id="NmlIrida" />
+	<client_details_scope client_details_id="1" scope="read" />
 
 </dataset>
