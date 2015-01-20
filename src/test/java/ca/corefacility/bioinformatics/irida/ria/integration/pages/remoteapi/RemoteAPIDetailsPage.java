@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -29,24 +30,18 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		get(driver, RELATIVE_URL + clientId);
 	}
 
-	public boolean verifyRemoteAPI(Long id, String apiName) {
-		logger.trace("Getting table size");
-		WebElement idSpan = driver.findElement(By.id("remoteapi-id"));
+	public RemoteAPIDetailsPage(WebDriver driver) {
+		super(driver);
+	}
+
+	public String getClientName() {
 		WebElement clientIdSpan = driver.findElement(By.id("remoteapi-name"));
+		return clientIdSpan.getText();
+	}
 
-		String idtext = idSpan.getText();
-		if (!idtext.equals(id.toString())) {
-			logger.error("id not equal.  Found: " + idtext);
-			return false;
-		}
-
-		String clientIdText = clientIdSpan.getText();
-		if (!clientIdText.equals(apiName)) {
-			logger.error("clientId not equal.  Found: " + clientIdText);
-			return false;
-		}
-
-		return true;
+	public String getClientId() {
+		WebElement clientIdSpan = driver.findElement(By.id("remoteapi-clientid"));
+		return clientIdSpan.getText();
 	}
 
 	public void clickDeleteButton() {
@@ -60,6 +55,41 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		WebElement confirmButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
 				.className("confirm-delete")));
 		confirmButton.click();
+	}
+
+	public ApiStatus getRemoteApiStatus() {
+		WebElement connectionStatus = (new WebDriverWait(driver, 10)).until(ExpectedConditions
+				.presenceOfElementLocated(By.className("status-label")));
+
+		String labelClass = connectionStatus.getAttribute("class");
+		if (labelClass.contains("api-connected")) {
+			return ApiStatus.CONNECTED;
+		} else if (labelClass.contains("api-invalid")) {
+			return ApiStatus.INVALID;
+		} else if (labelClass.contains("api-error")) {
+			return ApiStatus.ERROR;
+		}
+
+		throw new ElementNotVisibleException("Coudldn't get api status");
+	}
+
+	public void clickConnect() {
+		WebElement connectButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
+				.className("oauth-connect-link ")));
+		connectButton.click();
+
+		waitForAjax();
+
+	}
+
+	public void clickAuthorize() {
+		driver.switchTo().frame("oauth-connect-frame");
+		WebElement authorizeButton = driver.findElement(By.id("authorize-btn"));
+		authorizeButton.click();
+		
+		driver.switchTo().defaultContent();
+		
+		waitForTime(8000);
 	}
 
 	public boolean checkDeleteSuccess() {
@@ -86,5 +116,9 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 	private void waitForAjax() {
 		Wait<WebDriver> wait = new WebDriverWait(driver, 60);
 		wait.until(Ajax.waitForAjax(60000));
+	}
+
+	public enum ApiStatus {
+		CONNECTED, INVALID, ERROR;
 	}
 }

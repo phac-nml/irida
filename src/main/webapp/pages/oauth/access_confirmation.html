@@ -1,38 +1,39 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="template/base">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
-  <title>IRIDA OAuth2 Approval Page</title>
+    <title th:text="#{auth.title}">IRIDA OAuth2 Approval Page</title>
 </head>
-
 <body>
+<main layout:fragment="content" class="container main-area" role="main" property="mainContentOfPage">
 
   <h1 th:text="#{auth.title}">_IRIDA OAuth2 Approval Page_</h1>
 
   <div id="content">
-
       <h2 th:text="#{auth.subtitle(${auth_request.clientId})}">_Confirm access for clientID_</h2>
 	  <p th:text="#{auth.usermessage(${principal.name})}">_You are logged in as userName._</p>
       <p th:text="#{auth.approvalmessage(${auth_request.clientId},${scopes})}">_The client clientId is requesting access to your data on this IRIDA site.  Approving this request will allow 
       	clientId allowedScopes access to the following resources on this site:_</p>  
-      	<ul>
-      		<li>Projects</li>
-      		<li>Samples</li>
-      		<li>Sequence files</li>
-      	</ul>
-      	<p th:text="#{auth.adminmessage(${auth_request.clientId})}">_Note: clientId has been authorized as part of the IRIDA network by the site's administrators._</p>
+      <ul>
+      	<li th:text="#{auth.projects}">Projects</li>
+      	<li th:text="#{auth.samples}">Samples</li>
+        <li th:text="#{auth.sequenceFiles}">Sequence files</li>
+      </ul>
+      <p th:text="#{auth.adminmessage(${auth_request.clientId})}">_Note: clientId has been authorized as part of the IRIDA network by the site's administrators._</p>
 
 	  <form id='confirmationForm' name='confirmationForm' th:action='@{/api/oauth/authorize}' method='post'>
         <input th:each="scope : ${scopes}" type="hidden" th:name="${'scope.'+ scope}" value="true"/>
 	  	<input name='user_oauth_approval' value='true' type='hidden'/>
-	  	<input name='authorize' th:value="#{auth.authorize}" value='_Authorize_' type='submit'/>
+	  	<input class="btn btn-default" name='authorize' id="authorize-btn" th:value="#{auth.authorize}" value='_Authorize_' type='submit'/>
 	  </form>
 	  <form id='denialForm' name='denialForm' th:action='@{/api/oauth/authorize}' method='post'>
 	  	<input th:each="scope : ${scopes}" type="hidden" th:name="${'scope.'+ scope}" value="false"/>
 	  	<input name='user_oauth_approval' value='false' type='hidden'/>
-	  	<input name='deny' th:value="#{auth.deny}" value='_Deny_' type='submit'/>
+	  	<input class="btn btn-danger" name='deny' th:value="#{auth.deny}" value='_Deny_' type='submit'/>
 	  </form>
   </div>
 
+</main>
 </body>
 </html>
