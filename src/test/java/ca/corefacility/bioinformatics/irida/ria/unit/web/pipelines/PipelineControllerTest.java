@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.pipelines.PipelineController
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -37,6 +38,7 @@ public class PipelineControllerTest {
 	private SampleService sampleService;
 	private ReferenceFileService referenceFileService;
 	private SequenceFileService sequenceFileService;
+	private SequenceFilePairService sequenceFilePairService;
 	private AnalysisSubmissionService analysisSubmissionService;
 	private IridaWorkflowsService workflowsService;
 	private ProjectService projectService;
@@ -55,6 +57,7 @@ public class PipelineControllerTest {
 		sampleService = mock(SampleService.class);
 		referenceFileService = mock(ReferenceFileService.class);
 		sequenceFileService = mock(SequenceFileService.class);
+		sequenceFilePairService = mock(SequenceFilePairService.class);
 		analysisSubmissionService = mock(AnalysisSubmissionService.class);
 		workflowsService = mock(IridaWorkflowsService.class);
 		projectService = mock(ProjectService.class);
@@ -62,7 +65,7 @@ public class PipelineControllerTest {
 		messageSource = mock(MessageSource.class);
 		cartController = mock(CartController.class);
 
-		controller = new PipelineController(sampleService, sequenceFileService, referenceFileService,
+		controller = new PipelineController(sampleService, sequenceFileService, sequenceFilePairService, referenceFileService,
 				analysisSubmissionService, workflowsService, projectService, userService, cartController, messageSource);
 	}
 
