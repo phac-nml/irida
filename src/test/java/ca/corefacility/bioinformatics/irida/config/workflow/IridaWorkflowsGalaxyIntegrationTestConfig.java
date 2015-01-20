@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
@@ -60,6 +61,7 @@ public class IridaWorkflowsGalaxyIntegrationTestConfig {
 	 * @throws URISyntaxException
 	 * @throws IridaWorkflowException
 	 */
+	@Lazy
 	@Bean
 	public IridaWorkflow snvPhylWorkflow() throws IOException, URISyntaxException, IridaWorkflowException {
 		Path snvPhylProductionPath = Paths.get(AnalysisType.class.getResource("workflows/SNVPhyl").toURI());

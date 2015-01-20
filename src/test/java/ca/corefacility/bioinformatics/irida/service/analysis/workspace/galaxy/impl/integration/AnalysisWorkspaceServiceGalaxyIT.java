@@ -267,7 +267,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	}
 	
 	/**
-	 * Tests out successfully preparing paired and single workflow input files for execution.
+	 * Tests out successfully preparing paired and single workflow input files
+	 * for execution.
 	 * 
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
@@ -290,8 +291,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
 
-		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSinglePairSubmissionInDatabase(1L,
-				pairSequenceFiles1, pairSequenceFiles2, sequenceFilePath, referenceFilePath, validWorkflowId);
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
+				.setupSinglePairSubmissionInDatabaseDifferentSample(1L, 2L, pairSequenceFiles1, pairSequenceFiles2,
+						sequenceFilePath3, referenceFilePath, validWorkflowId);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
@@ -501,7 +503,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		List<Path> paths2 = new ArrayList<>();
 		paths2.add(sequenceFilePath2);
 		
-		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSinglePairSubmissionInDatabase(
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSinglePairSubmissionInDatabaseSameSample(
 				1L, paths1, paths2, sequenceFilePath3,
 				referenceFilePath, validWorkflowId);
 
