@@ -9,6 +9,8 @@
 	      href="/resources/bower_components/select2/select2.css"/>
 	<link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}"
 	      href="/resources/bower_components/select2/select2-bootstrap.css"/>
+    <link rel="stylesheet" th:href="@{/resources/css/vendor/dropdowns-enhancement.min.css}"
+          href="/resources/css/vendor/dropdowns-enhancement.min.css"/>
 	<script>window.dependencies = ['Samples'];</script>
 </head>
 <body>
@@ -64,7 +66,7 @@
 		</div>
 	</div>
 	<div class="row mrgn-bttm-md">
-		<div class="col-md-7" ng-controller="SubNavCtrl as subnav">
+		<div class="col-md-8" ng-controller="SubNavCtrl as subnav">
 			<div class="btn-toolbar">
 				<!-- Sample Selection (Page, All, None) -->
 				<div class="btn-group" dropdown="" is-open="subnav.selection.isopen">
@@ -94,6 +96,35 @@
 						</li>
 					</ul>
 				</div>
+                
+                <div class="btn-group drop-check" dropdown="" is-open="subnav.display.isopen">
+                    <button id="displayBtn" type="button" class="btn btn-default btn-sm dropdown-toggle">
+                        <span th:text="#{project.samples.display.title}">_Display_</span>
+                        &nbsp;
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu noclose" role="menu">
+                        <li>
+                            <label>
+                                <input type="checkbox"/>
+                                <span th:text="#{project.samples.display.local}">_Local Samples_</span>
+                            </label>
+                            
+                        </li>
+                        <li>
+                            <label>
+                                <input type="checkbox"/>
+                                <span th:text="#{project.samples.display.associated}">_Associated Samples_</span>
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="checkbox"/>
+                                <span th:text="#{project.samples.display.remote}">_Remote Project Samples_</span>
+                            </label>
+                        </li>
+                    </ul>
+                </div>
 
 				<!-- Samples Options (Download, Copy, Merge, Move)-->
 				<div class="btn-group" dropdown="" is-open="subnav.samplesOptions.open">
@@ -245,6 +276,8 @@
 	<script th:src="@{/resources/js/directives/datatables/irida-datatable.js}"
 	        src="/resources/js/directives/datatables/irida-datatable.js"></script>
 	<script th:src="@{/resources/js/pages/projects/samples.js}" src="/resources/js/pages/projects/samples.js"></script>
+    <script th:src="@{/resources/js/vendor/dropdowns-enhancement.js}" 
+            src="/resources/js/vendor/dropdowns-enhancement.js"></script>
 </th:block>
 </body>
 </html>
