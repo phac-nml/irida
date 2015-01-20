@@ -10,7 +10,9 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 
 /**
- * Created by josh on 15-01-19.
+ * Service for managing {@link SequenceFilePair} entities.
+ *
+ * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
 public interface SequenceFilePairService extends CRUDService<Long, SequenceFilePair> {
 

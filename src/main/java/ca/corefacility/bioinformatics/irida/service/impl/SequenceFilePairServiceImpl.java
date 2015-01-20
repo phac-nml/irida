@@ -25,8 +25,6 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 public class SequenceFilePairServiceImpl extends CRUDServiceImpl<Long, SequenceFilePair> implements
 		SequenceFilePairService {
 
-	private static final Logger logger = LoggerFactory.getLogger(SequenceFilePairServiceImpl.class);
-
 	private final SequenceFilePairRepository pairRepository;
 
 	@Autowired
