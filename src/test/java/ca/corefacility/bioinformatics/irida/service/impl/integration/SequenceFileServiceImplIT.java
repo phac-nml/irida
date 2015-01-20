@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -48,7 +47,6 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
@@ -62,7 +60,6 @@ import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
@@ -271,56 +268,6 @@ public class SequenceFileServiceImplIT {
 		Sample s = sampleService.read(1L);
 		List<Join<Sample, SequenceFile>> sequenceFilesForSample = sequenceFileService.getSequenceFilesForSample(s);
 		assertEquals(1, sequenceFilesForSample.size());
-	}
-
-	@Test
-	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
-	public void testAddSequenceFilePairAsSequencer() {
-		SequenceFile file1 = sequenceFileService.read(1l);
-		SequenceFile file2 = sequenceFileService.read(2l);
-
-		SequenceFilePair createSequenceFilePair = sequenceFileService.createSequenceFilePair(file1, file2);
-		assertTrue(createSequenceFilePair.getFiles().contains(file1));
-		assertTrue(createSequenceFilePair.getFiles().contains(file2));
-	}
-
-	@Test(expected = DataIntegrityViolationException.class)
-	@WithMockUser(username = "fbristow", roles = "SEQUENCER")
-	public void testAddSequenceFileWithExistingPair() {
-		SequenceFile file1 = sequenceFileService.read(1l);
-		SequenceFile file3 = sequenceFileService.read(3l);
-
-		sequenceFileService.createSequenceFilePair(file1, file3);
-
-	}
-
-	@Test
-	@WithMockUser(username = "admin", roles = "ADMIN")
-	public void testGetSequenceFilePair() {
-		SequenceFile file3 = sequenceFileService.read(3l);
-		SequenceFile file4 = sequenceFileService.read(4l);
-
-		SequenceFile pairForSequenceFile = sequenceFileService.getPairedFileForSequenceFile(file3);
-		assertEquals(file4, pairForSequenceFile);
-	}
-
-	@Test
-	@WithMockUser(username = "admin", roles = "ADMIN")
-	public void testGetSequenceFilePairForSample() {
-		Sample s = sampleService.read(2L);
-
-		Set<Long> fileIds = Sets.newHashSet(3l, 4l);
-
-		List<SequenceFilePair> sequenceFilePairsForSample = sequenceFileService.getSequenceFilePairsForSample(s);
-		assertEquals(1, sequenceFilePairsForSample.size());
-		SequenceFilePair pair = sequenceFilePairsForSample.iterator().next();
-
-		for (SequenceFile file : pair.getFiles()) {
-			assertTrue("file id should be in set", fileIds.contains(file.getId()));
-			fileIds.remove(file.getId());
-		}
-
-		assertTrue("all file ids should have been found", fileIds.isEmpty());
 	}
 	
 	@Test
