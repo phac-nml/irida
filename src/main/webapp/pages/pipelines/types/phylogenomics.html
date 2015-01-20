@@ -44,7 +44,7 @@
 
 				<div class="alert alert-info">
 					<div class="form-group">
-						<label class="col-sm-2 control-label" for="pipeline-name">Name</label>
+						<label class="col-sm-2 control-label" for="pipeline-name" th:text="#{workflow.label.name}">Name</label>
 						<div class="col-md-10">
 							<input id="pipeline-name" class="form-control" type="text" th:value="${name}" />
 						</div>

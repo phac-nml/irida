@@ -5,6 +5,7 @@
 
     vm.launch = function () {
       var ref = Number(angular.element('option:selected').val()),
+          name = angular.element('#pipeline-name').val(),
           radioBtns = angular.element("input[type='radio']:checked"),
           single = [],
           paired = [];
@@ -19,7 +20,7 @@
         }
       });
 
-      $http.post(PIPELINE.url, {ref: ref, single: single, paired: paired});
+      $http.post(PIPELINE.url, {ref: ref, single: single, paired: paired, name: name});
     };
   }
 

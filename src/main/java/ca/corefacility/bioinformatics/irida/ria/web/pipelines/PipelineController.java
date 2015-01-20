@@ -63,6 +63,7 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 
 /**
  * Controller for pipeline related views
@@ -354,19 +355,22 @@ public class PipelineController extends BaseController {
 
 	@RequestMapping(value = "/ajax/start/{pipelineId}", method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> ajaxStartPipelinePhylogenomics(@PathVariable UUID pipelineId,
-			@RequestParam(value = "single[]") List<Long> single, @RequestParam(value = "paired[]") List<Long> paired,
-			@RequestParam Long ref) {
+			@RequestParam(value = "single[]", required = false) List<Long> single, @RequestParam(value = "paired[]", required = false) List<Long> paired,
+			@RequestParam Long ref, @RequestParam String name) {
 
 		Set<SequenceFile> sequenceFiles = new HashSet<>();
 		Set<SequenceFilePair> sequenceFilePairs = new HashSet<>();
 
-		String name = "WHAT IS THIS SUPPOSED TO BE????";
-		for (Long id : single) {
-			sequenceFiles.add(sequenceFileService.read(id));
+		if (single != null) {
+			for (Long id : single) {
+				sequenceFiles.add(sequenceFileService.read(id));
+			}
 		}
 
-		for (Long id : paired) {
-			sequenceFilePairs.add(sequenceFilePairService.read(id));
+		if (paired != null) {
+			for (Long id : paired) {
+				sequenceFilePairs.add(sequenceFilePairService.read(id));
+			}
 		}
 
 		AnalysisSubmission analysisSubmission;
