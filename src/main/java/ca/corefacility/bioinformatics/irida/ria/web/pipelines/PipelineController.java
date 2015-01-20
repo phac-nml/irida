@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.pipelines;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,12 +14,15 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
+import org.omg.PortableInterceptor.AdapterNameHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.format.Formatter;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -111,6 +115,11 @@ public class PipelineController extends BaseController {
 	 */
 	private PipelineSubmission pipelineSubmission;
 
+	/*
+	 * Converters
+	 */
+	Formatter<Date> dateFormatter;
+
 	@Autowired
 	public PipelineController(SampleService sampleService, SequenceFileService sequenceFileService,
 			SequenceFilePairService sequenceFilePairService,
@@ -133,6 +142,7 @@ public class PipelineController extends BaseController {
 		this.messageSource = messageSource;
 
 		this.pipelineSubmission = new PipelineSubmission();
+		this.dateFormatter = new DateFormatter();
 	}
 
 	/**
@@ -177,12 +187,20 @@ public class PipelineController extends BaseController {
 	}
 
 	@RequestMapping(value = "/phylogenomics/{pipelineId}")
-	public String getPhylogenomicsPage(final Model model, Principal principal, @PathVariable UUID pipelineId) {
+	public String getPhylogenomicsPage(final Model model, Principal principal, Locale locale, @PathVariable UUID pipelineId) {
 		String response = URL_EMPTY_CART_REDIRECT;
 
 		Map<Project, Set<Sample>> cartMap = cartController.getSelected();
 		// Cannot run a pipeline on an empty cart!
 		if (!cartMap.isEmpty()) {
+
+			IridaWorkflow iridaWorkflow = null;
+			try {
+				iridaWorkflow = workflowsService.getIridaWorkflow(pipelineId);
+			} catch (IridaWorkflowNotFoundException e) {
+				e.printStackTrace();
+			}
+
 			User user = userService.getUserByUsername(principal.getName());
 			// Get all the reference files that could be used for this pipeline.
 			List<Map<String, Object>> referenceFileList = new ArrayList<>();
@@ -249,6 +267,7 @@ public class PipelineController extends BaseController {
 				projectMap.put("samples", sampleList);
 				projectList.add(projectMap);
 			}
+			model.addAttribute("name", iridaWorkflow.getWorkflowDescription().getName() + " (" + dateFormatter.print(new Date(), locale) + ")");
 			model.addAttribute("pipelienId", pipelineId.toString());
 			model.addAttribute("referenceFiles", referenceFileList);
 			model.addAttribute("addRefProjects", addRefList);
@@ -341,19 +360,29 @@ public class PipelineController extends BaseController {
 		Set<SequenceFile> sequenceFiles = new HashSet<>();
 		Set<SequenceFilePair> sequenceFilePairs = new HashSet<>();
 
+		String name = "WHAT IS THIS SUPPOSED TO BE????";
 		for (Long id : single) {
 			sequenceFiles.add(sequenceFileService.read(id));
 		}
 
 		for (Long id : paired) {
-//			sequenceFilePairs.add(sequenceFileService.)
+			sequenceFilePairs.add(sequenceFilePairService.read(id));
 		}
 
 		AnalysisSubmission analysisSubmission;
 
 		if (sequenceFiles.size() > 0 && sequenceFilePairs.size() > 0) {
-
+			analysisSubmission = AnalysisSubmission
+					.createSubmissionSingleAndPaired(name, sequenceFiles, sequenceFilePairs, pipelineId);
 		}
+		else if (sequenceFiles.size() > 0 && sequenceFilePairs.size() == 0) {
+			analysisSubmission = AnalysisSubmission.createSubmissionSingle(name, sequenceFiles, pipelineId);
+		}
+		else {
+			analysisSubmission = AnalysisSubmission.createSubmissionPaired(name, sequenceFilePairs, pipelineId);
+		}
+
+		AnalysisSubmission submission = analysisSubmissionService.create(analysisSubmission);
 
 		return ImmutableMap.of("result", "success");
 	}

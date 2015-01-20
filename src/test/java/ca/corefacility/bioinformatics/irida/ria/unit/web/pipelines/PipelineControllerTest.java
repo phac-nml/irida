@@ -84,7 +84,7 @@ public class PipelineControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		Principal principal = () -> "FRED";
 		UUID id = UUID.randomUUID();
-		String response = controller.getPhylogenomicsPage(model, principal, id);
+		String response = controller.getPhylogenomicsPage(model, principal, Locale.US, id);
 		assertEquals("If cart is empty user should be redirected.", PipelineController.URL_EMPTY_CART_REDIRECT, response);
 	}
 
@@ -100,7 +100,7 @@ public class PipelineControllerTest {
 		when(cartController.getSelected()).thenReturn(TestDataFactory.constructCart());
 		when(sequenceFileService.getSequenceFilesForSample(any(Sample.class)))
 				.thenReturn(TestDataFactory.generateSequenceFilesForSample(TestDataFactory.constructSample()));
-		String response = controller.getPhylogenomicsPage(model, principal, id);
+		String response = controller.getPhylogenomicsPage(model, principal, Locale.US, id);
 		assertEquals("Response should be the path to the phylogenomics template", PipelineController.URL_PHYLOGENOMICS, response);
 		assertTrue("Model should contain the reference files.", model.containsKey("referenceFiles"));
 		assertTrue("Model should contain a list of files.", model.containsKey("files"));

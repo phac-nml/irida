@@ -88,11 +88,11 @@ public class ProjectsController {
 	private final UserService userService;
 	private final ProjectControllerUtils projectControllerUtils;
 	private final TaxonomyService taxonomyService;
-
 	/*
 	 * Converters
 	 */
 	Formatter<Date> dateFormatter;
+
 	FileSizeConverter fileSizeConverter;
 
 	@Autowired

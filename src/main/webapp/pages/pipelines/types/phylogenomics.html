@@ -19,42 +19,62 @@
 			<h1 th:text="#{workflow.phylogenomics.title}"></h1>
 
 			<div class="alert alert-danger col-md-12">
-				<b th:text="#{pipeline.phylogenomics.no-reference-heading}">The Phylogenomics Pipeline Requires a reference file to run.</b><br/><br/>
+				<b th:text="#{pipeline.phylogenomics.no-reference-heading}">The Phylogenomics Pipeline Requires a
+					reference file to run.</b><br/><br/>
 				<th:block th:if="${#lists.size(addRefProjects) > 0}">
-					<p id="has-rights" th:text="#{pipeline.phylogenomics.no-reference.link-heading}">Projects You can Upload a Reference File to:</p>
+					<p id="has-rights" th:text="#{pipeline.phylogenomics.no-reference.link-heading}">Projects You can
+						Upload a Reference File to:</p>
 					<ul class="nav nav-pills nav-stacked col-md-3">
 						<li th:each="project : ${addRefProjects}">
-							<a class="add-ref-file" th:href="@{/projects/{id}/referenceFiles(id=${project.id})}" href="#" th:text="${project.name}"></a></li>
+							<a class="add-ref-file" th:href="@{/projects/{id}/referenceFiles(id=${project.id})}"
+							   href="#" th:text="${project.name}"></a>
+						</li>
 					</ul>
 				</th:block>
 				<th:block th:if="${#lists.size(addRefProjects)} == 0">
-					<p id="has-no-rights" th:text="#{pipeline.phylogenomics.no-reference.no-permissions}">You do not have permission to upload a reference file to these projects.  Please contact a project manager to add a reference file.</p>
+					<p id="has-no-rights" th:text="#{pipeline.phylogenomics.no-reference.no-permissions}">You do not
+						have permission to upload a reference file to these projects. Please contact a project manager
+						to add a reference file.</p>
 				</th:block>
 			</div>
 		</div>
 		<div class="row" th:if="${#lists.size(referenceFiles)} &gt; 0">
 			<div class="col-md-10">
 				<h1 th:text="#{workflow.phylogenomics.title}"></h1>
-				<div class="form-group alert alert-info">
-					<label for="referenceFiles" class="col-sm-2 control-label" th:text="#{workflow.label.reference-file}">Reference File</label>
 
-					<div class="col-sm-10">
-						<select class="form-control" name="referenceFiles" id="referenceFiles">
-							<option th:each="ref : ${referenceFiles}" th:value="${ref.file.getId()}" data:project="${ref.project.id}"
-							        th:text="${ref.file.getLabel() + ' (' + ref.project.getLabel() + ')'}"></option>
-						</select>
+				<div class="alert alert-info">
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="pipeline-name">Name</label>
+						<div class="col-md-10">
+							<input id="pipeline-name" class="form-control" type="text" th:value="${name}" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="referenceFiles" class="col-sm-2 control-label"
+						       th:text="#{workflow.label.reference-file}">Reference File</label>
+
+						<div class="col-sm-10">
+							<select class="form-control" name="referenceFiles" id="referenceFiles">
+								<option th:each="ref : ${referenceFiles}" th:value="${ref.file.getId()}"
+								        data:project="${ref.project.id}"
+								        th:text="${ref.file.getLabel() + ' (' + ref.project.getLabel() + ')'}"></option>
+							</select>
+						</div>
 					</div>
 				</div>
 
-				<div class="form-group">
+				<div class="form-group alert">
 					<label class="col-sm-2 control-label" th:text="#{workflow.label.files}">Files</label>
 
 					<div class="col-sm-10">
 						<div th:each="project : ${files}">
 							<div class="sample-container" th:each="sample : ${project.samples}">
 								<h3>
-									<a href="#" th:href="@{/projects/{id}/samples(id=${project.id})}" th:text="${project.name + ' / ' + sample.name}"></a>
-									<button type="button" class="btn btn-xs btn-default pull-right remove" th:text="#{form.btn.remove}">Remove</button>
+									<a href="#" th:href="@{/projects/{id}/samples(id=${project.id})}"
+									   th:text="${project.name + ' / ' + sample.name}"></a>
+									<button type="button" class="btn btn-xs btn-default pull-right remove"
+									        th:text="#{form.btn.remove}">Remove
+									</button>
 								</h3>
 								<table class="table" th:with="dateFormat=#{date.long}">
 									<th:block th:each="s, iterStat : ${sample.files}">
@@ -62,13 +82,16 @@
 											<td>
 												<div class="layout-flex">
 													<div class="file_checkbox paired_end">
-														<input th:name="${sample.id}" type="radio" data:type="${s.type}" th:checked="${iterStat.first}" th:value="${s.id}"/></div>
-												<div class="file_names">
-													<div data:file="${file.id}" th:each="file : ${s.files}" th:text="${file.label}"></div>
-												</div>
-												<div class="file_date">
-												<div th:text="${#dates.format(s.createdDate, dateFormat)}"></div>
-												</div>
+														<input th:name="${sample.id}" type="radio" data:type="${s.type}"
+														       th:checked="${iterStat.first}" th:value="${s.id}"/></div>
+													<div class="file_names">
+														<div data:file="${file.id}" th:each="file : ${s.files}"
+														     th:text="${file.label}"></div>
+													</div>
+													<div class="file_date">
+														<div
+															th:text="${#dates.format(s.createdDate, dateFormat)}"></div>
+													</div>
 												</div>
 											</td>
 										</tr>
@@ -76,7 +99,9 @@
 											<td>
 												<div class="layout-flex">
 													<div class="file_checkbox single_end">
-														<input th:name="${sample.id}" data:type="${s.type}" data:sample="${sample.id}" type="radio" th:value="${s.id}" th:checked="${iterStat.first}"/>
+														<input th:name="${sample.id}" data:type="${s.type}"
+														       data:sample="${sample.id}" type="radio"
+														       th:value="${s.id}" th:checked="${iterStat.first}"/>
 													</div>
 													<div class="file_names">
 														<div th:text="${s.label}"></div>
@@ -98,7 +123,9 @@
 			<div class="col-md-2">
 				<div class="text-center" data-spy="affix">
 					<h2 th:text="#{workflow.launch.btn}">Ready to Launch?</h2>
-					<button class="btn btn-xl btn-danger round" ng-click="phylCtrl.launch()"><span class="fa fa-rocket"></span></button>
+					<button class="btn btn-xl btn-danger round" ng-click="phylCtrl.launch()">
+						<span class="fa fa-rocket"></span>
+					</button>
 				</div>
 			</div>
 		</div>
