@@ -8,12 +8,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -61,6 +58,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.google.common.collect.Maps;
@@ -74,7 +72,11 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisWorkspaceServiceGalaxy.class);
 
-	private static final String COLLECTION_NAME = "irida_collection_list";
+	private static final String COLLECTION_NAME_SINGLE = "irida_sequence_files_single";
+	private static final String COLLECTION_NAME_PAIRED = "irida_sequence_files_paired";
+	
+	private static final String FORWARD_NAME = "forward";
+	private static final String REVERSE_NAME = "reverse";
 
 	private GalaxyWorkflowService galaxyWorkflowService;
 
@@ -158,21 +160,33 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	}
 
 	/**
-	 * Given a set of sequence files, gets a join between these sequence files
-	 * and the corresponding samples.
+	 * Given a set of sequence files, constructs a map between the sequence
+	 * files and the corresponding samples.
 	 * 
 	 * @param sequenceFiles
 	 *            The set of sequence files.
-	 * @return A list of joins between sample and sequence files.
+	 * @return A map linking a sample and the sequence files to run.
+	 * @throws SampleAnalysisDuplicateException
+	 *             If there was more than one sequence file with the same
+	 *             sample.
 	 */
-	private List<Join<Sample, SequenceFile>> getSequenceFileSingleSamples(Set<SequenceFile> sequenceFiles) {
-		List<Join<Sample, SequenceFile>> sampleSequenceFiles = new LinkedList<>();
+	private Map<Sample, SequenceFile> getSequenceFileSingleSamples(Set<SequenceFile> sequenceFiles)
+			throws SampleAnalysisDuplicateException {
+		Map<Sample, SequenceFile> sampleSequenceFiles = new HashMap<>();
 
 		for (SequenceFile file : sequenceFiles) {
 			Join<Sample, SequenceFile> sampleSequenceFile = sampleSequenceFileJoinRepository
 					.getSampleForSequenceFile(file);
+			Sample sample = sampleSequenceFile.getSubject();
+			SequenceFile sequenceFile = sampleSequenceFile.getObject();
 
-			sampleSequenceFiles.add(sampleSequenceFile);
+			if (sampleSequenceFiles.containsKey(sample)) {
+				SequenceFile previousFile = sampleSequenceFiles.get(sample);
+				throw new SampleAnalysisDuplicateException("Sequence files " + sequenceFile + ", " + previousFile
+						+ " both have the same sample " + sample);
+			} else {
+				sampleSequenceFiles.put(sample, sequenceFile);
+			}
 		}
 
 		return sampleSequenceFiles;
@@ -183,24 +197,24 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 * 
 	 * @param pairedInputFiles
 	 *            A {@link Set} of {@link SequenceFilePair}s.
-	 * @return A {@link Map} of between {@link SequenceFilePair} and
-	 *         {@link Sample}.
+	 * @return A {@link Map} of between {@link Sample} and
+	 *         {@link SequenceFilePair}.
 	 * @throws SampleAnalysisDuplicateException
 	 *             If there is a duplicate sample.
 	 */
-	private Map<SequenceFilePair, Sample> getSequenceFilePairedSamples(Set<SequenceFilePair> pairedInputFiles)
+	private Map<Sample, SequenceFilePair> getSequenceFilePairedSamples(Set<SequenceFilePair> pairedInputFiles)
 			throws SampleAnalysisDuplicateException {
-		Map<SequenceFilePair, Sample> sequenceFilePairsSampleMap = new HashMap<>();
+		Map<Sample, SequenceFilePair> sequenceFilePairsSampleMap = new HashMap<>();
 
 		for (SequenceFilePair filePair : pairedInputFiles) {
 			SequenceFile pair1 = filePair.getFiles().iterator().next();
 			Join<Sample, SequenceFile> pair1Join = sampleSequenceFileJoinRepository.getSampleForSequenceFile(pair1);
 			Sample sample = pair1Join.getSubject();
-			if (sequenceFilePairsSampleMap.containsKey(filePair)) {
-				throw new SampleAnalysisDuplicateException("Sample " + sample
-						+ " already exists in set for sequence file " + pairedInputFiles);
+			if (sequenceFilePairsSampleMap.containsKey(sample)) {
+				SequenceFilePair previousPair = sequenceFilePairsSampleMap.get(sample);
+				throw new SampleAnalysisDuplicateException("Sequence file pairs " + pair1 + ", " + previousPair + " have the same sample " + sample);
 			} else {
-				sequenceFilePairsSampleMap.put(filePair, pair1Join.getSubject());
+				sequenceFilePairsSampleMap.put(sample, filePair);
 			}
 		}
 
@@ -208,13 +222,11 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	}
 
 	/**
-	 * Uploads a list of sequence files belonging to the given samples to
-	 * Galaxy. TODO Only supports one sequence file per sample right now and
-	 * throws an exception if more than one sequence file shares the same
-	 * sample. This will be fixed in a future release.
+	 * Uploads a list of single sequence files belonging to the given samples to
+	 * Galaxy.
 	 * 
 	 * @param sampleSequenceFiles
-	 *            A join between sequence files and samples.
+	 *            A map between {@link Sample} and {@link SequenceFile}.
 	 * @param workflowHistory
 	 *            The history to upload the sequence files into.
 	 * @param workflowLibrary
@@ -224,27 +236,16 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 * @throws ExecutionManagerException
 	 *             If there was an error uploading the files.
 	 */
-	private CollectionResponse uploadSequenceFiles(List<Join<Sample, SequenceFile>> sampleSequenceFiles,
-			History workflowHistory, Library workflowLibrary) throws ExecutionManagerException {
+	private CollectionResponse uploadSequenceFilesSingle(Map<Sample, SequenceFile> sampleSequenceFiles, History workflowHistory, Library workflowLibrary) throws ExecutionManagerException {
 
 		CollectionDescription description = new CollectionDescription();
 		description.setCollectionType(DatasetCollectionType.LIST.toString());
-		description.setName(COLLECTION_NAME);
+		description.setName(COLLECTION_NAME_SINGLE);
 
-		// TODO Only supports one sequence file per sample right now and
-		// throws an exception if more than one sequence file shares the same
-		// sample. This will be fixed in a future release.
 		Map<Path, Sample> samplesMap = new HashMap<>();
-		for (Join<Sample, SequenceFile> sampleSequenceJoin : sampleSequenceFiles) {
-			SequenceFile sequenceFile = sampleSequenceJoin.getObject();
-			Sample sample = sampleSequenceJoin.getSubject();
-
-			if (samplesMap.containsValue(sample)) {
-				throw new WorkflowPreprationException("Sequence file: " + sequenceFile.getFile()
-						+ " belongs to sample " + sample + " but there is another sequence file with this sample");
-			} else {
-				samplesMap.put(sequenceFile.getFile(), sample);
-			}
+		for (Sample sample : sampleSequenceFiles.keySet()) {
+			SequenceFile sequenceFile = sampleSequenceFiles.get(sample);
+			samplesMap.put(sequenceFile.getFile(), sample);
 		}
 
 		// upload files to library and then to a history
@@ -269,6 +270,79 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 
 		return galaxyHistoriesService.constructCollection(description, workflowHistory);
 	}
+	
+	/**
+	 * Uploads a list of paired sequence files belonging to the given samples to
+	 * Galaxy.
+	 * 
+	 * @param sampleSequenceFilesPaired
+	 *            A map between {@link Sample} and {@link SequenceFilePair}.
+	 * @param workflowHistory
+	 *            The history to upload the sequence files into.
+	 * @param workflowLibrary
+	 *            A temporary library to upload files into.
+	 * @return A CollectionResponse for the dataset collection constructed from
+	 *         the given files.
+	 * @throws ExecutionManagerException
+	 *             If there was an error uploading the files.
+	 */
+	private CollectionResponse uploadSequenceFilesPaired(Map<Sample, SequenceFilePair> sampleSequenceFilesPaired, History workflowHistory, Library workflowLibrary) throws ExecutionManagerException {
+
+		CollectionDescription description = new CollectionDescription();
+		description.setCollectionType(DatasetCollectionType.LIST_PAIRED.toString());
+		description.setName(COLLECTION_NAME_PAIRED);
+
+		Map<Sample, Path> samplesMapPair1 = new HashMap<>();
+		Map<Sample, Path> samplesMapPair2 = new HashMap<>();
+		Set<Path> pathsToUpload = new HashSet<>();
+		for (Sample sample : sampleSequenceFilesPaired.keySet()) {
+			SequenceFilePair sequenceFilePair = sampleSequenceFilesPaired.get(sample);
+			Iterator<SequenceFile> fileIter = sequenceFilePair.getFiles().iterator();
+			SequenceFile file1 = fileIter.next();
+			SequenceFile file2 = fileIter.next();
+			
+			samplesMapPair1.put(sample, file1.getFile());
+			samplesMapPair2.put(sample, file2.getFile());
+			pathsToUpload.add(file1.getFile());
+			pathsToUpload.add(file2.getFile());
+		}
+
+		// upload files to library and then to a history
+		Map<Path, String> pathHistoryDatasetId = galaxyHistoriesService.filesToLibraryToHistory(pathsToUpload,
+				InputFileType.FASTQ_SANGER, workflowHistory, workflowLibrary, DataStorage.LOCAL);
+
+		for (Sample sample : sampleSequenceFilesPaired.keySet()) {
+			Path file1 = samplesMapPair1.get(sample);
+			Path file2 = samplesMapPair2.get(sample);
+			
+			if (!pathHistoryDatasetId.containsKey(file1)) {
+				throw new UploadException("Error, no corresponding history item found for " + file1);
+			} else if (!pathHistoryDatasetId.containsKey(file2)) {
+				throw new UploadException("Error, no corresponding history item found for " + file2);
+			} else {
+				String datasetHistoryId1 = pathHistoryDatasetId.get(file1);
+				String datasetHistoryId2 = pathHistoryDatasetId.get(file2);
+				
+				CollectionElement pairedElement = new CollectionElement();
+				pairedElement.setName(sample.getSampleName());
+				pairedElement.setCollectionType(DatasetCollectionType.PAIRED.toString());
+	
+				HistoryDatasetElement datasetElement1 = new HistoryDatasetElement();
+				datasetElement1.setId(datasetHistoryId1);
+				datasetElement1.setName(FORWARD_NAME);
+				pairedElement.addCollectionElement(datasetElement1);
+				
+				HistoryDatasetElement datasetElement2 = new HistoryDatasetElement();
+				datasetElement2.setId(datasetHistoryId2);
+				datasetElement2.setName(REVERSE_NAME);
+				pairedElement.addCollectionElement(datasetElement2);
+	
+				description.addDatasetElement(pairedElement);
+			}
+		}
+
+		return galaxyHistoriesService.constructCollection(description, workflowHistory);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -284,9 +358,9 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysisSubmission.getWorkflowId());
 		IridaWorkflowInput workflowInput = iridaWorkflow.getWorkflowDescription().getInputs();
-		String sequenceFilesLabel = workflowInput.getSequenceReadsSingle();
+		String sequenceFilesLabelSingle = workflowInput.getSequenceReadsSingle();
 		String referenceFileLabel = workflowInput.getReference();
-		checkNotNull(sequenceFilesLabel, "sequenceReadsSingleLabel is null");
+		checkNotNull(sequenceFilesLabelSingle, "sequenceReadsSingleLabel is null");
 		checkNotNull(referenceFileLabel, "referenceFileLabel is null");
 
 		if (iridaWorkflow.getWorkflowDescription().requiresReference()) {
@@ -297,30 +371,45 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 					"workflow does not require a reference and a reference file is set in the submission");
 		}
 
-		String temporaryLibraryName = AnalysisSubmission.class.getSimpleName() + "-"
-				+ UUID.randomUUID().toString();
+		String temporaryLibraryName = AnalysisSubmission.class.getSimpleName() + "-" + UUID.randomUUID().toString();
 
 		History workflowHistory = galaxyHistoriesService.findById(analysisSubmission.getRemoteAnalysisId());
 		Library workflowLibrary = libraryBuilder.buildEmptyLibrary(new GalaxyProjectName(temporaryLibraryName));
 
-		List<Join<Sample, SequenceFile>> sampleSequenceFilesSingle = getSequenceFileSingleSamples(analysisSubmission
+		Map<Sample, SequenceFile> sampleSequenceFilesSingle = getSequenceFileSingleSamples(analysisSubmission
 				.getSingleInputFiles());
-		Map<SequenceFilePair, Sample> sampleSequenceFilesPaired = getSequenceFilePairedSamples(analysisSubmission.getPairedInputFiles());
-
-		CollectionResponse collectionResponse = uploadSequenceFiles(sampleSequenceFilesSingle, workflowHistory,
-				workflowLibrary);
+		Map<Sample, SequenceFilePair> sampleSequenceFilesPaired = getSequenceFilePairedSamples(analysisSubmission
+				.getPairedInputFiles());
+		if (samplesInCommon(sampleSequenceFilesSingle, sampleSequenceFilesPaired)) {
+			throw new WorkflowPreprationException("Single and paired input files share a common sample for submission "
+					+ analysisSubmission);
+		}
 
 		String workflowId = analysisSubmission.getRemoteWorkflowId();
 		WorkflowDetails workflowDetails = galaxyWorkflowService.getWorkflowDetails(workflowId);
 
 		String workflowSequenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
-				sequenceFilesLabel);
+				sequenceFilesLabelSingle);
 
 		WorkflowInputs inputs = new WorkflowInputs();
 		inputs.setDestination(new WorkflowInputs.ExistingHistory(workflowHistory.getId()));
 		inputs.setWorkflowId(workflowDetails.getId());
-		inputs.setInput(workflowSequenceFileInputId, new WorkflowInputs.WorkflowInput(collectionResponse.getId(),
-				WorkflowInputs.InputSourceType.HDCA));
+
+		if (!sampleSequenceFilesSingle.isEmpty()) {
+			CollectionResponse collectionResponseSingle = uploadSequenceFilesSingle(sampleSequenceFilesSingle,
+					workflowHistory, workflowLibrary);
+			inputs.setInput(workflowSequenceFileInputId,
+					new WorkflowInputs.WorkflowInput(collectionResponseSingle.getId(),
+							WorkflowInputs.InputSourceType.HDCA));
+		}
+
+		if (!sampleSequenceFilesPaired.isEmpty()) {
+			CollectionResponse collectionResponsePaired = uploadSequenceFilesPaired(sampleSequenceFilesPaired,
+					workflowHistory, workflowLibrary);
+			inputs.setInput(workflowSequenceFileInputId,
+					new WorkflowInputs.WorkflowInput(collectionResponsePaired.getId(),
+							WorkflowInputs.InputSourceType.HDCA));
+		}
 
 		String analysisId = workflowHistory.getId();
 
@@ -330,6 +419,29 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		}
 
 		return new PreparedWorkflowGalaxy(analysisId, new WorkflowInputsGalaxy(inputs));
+	}
+
+	/**
+	 * Determines if the two data structures of samples/sequence files share a
+	 * common sample.
+	 * 
+	 * @param sampleSequenceFilesSingle
+	 *            A map of single sequence files and samples.
+	 * @param sampleSequenceFilesPaired
+	 *            A map of sequence file pairs and samples.
+	 * @return True if the two data structures share a common sample, false
+	 *         otherwise.
+	 */
+	private boolean samplesInCommon(Map<Sample, SequenceFile> sampleSequenceFilesSingle,
+			Map<Sample, SequenceFilePair> sampleSequenceFilesPaired) {
+		for (Sample sampleSingle : sampleSequenceFilesSingle.keySet()) {
+			
+			if (sampleSequenceFilesPaired.containsKey(sampleSingle)) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	/**

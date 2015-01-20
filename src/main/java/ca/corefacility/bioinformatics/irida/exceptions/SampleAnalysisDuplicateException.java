@@ -1,13 +1,11 @@
 package ca.corefacility.bioinformatics.irida.exceptions;
 
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
-
 /**
  * If there is a duplicate {@link Sample} which is being sent for analysis.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
-public class SampleAnalysisDuplicateException extends WorkflowUploadException {
+public class SampleAnalysisDuplicateException extends WorkflowPreprationException {
 	
 	private static final long serialVersionUID = -432490135272603894L;
 
