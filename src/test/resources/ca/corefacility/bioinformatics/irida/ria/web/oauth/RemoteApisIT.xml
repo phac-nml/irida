@@ -13,7 +13,7 @@
 
 	<remote_api id="1" name="a client" serviceURI="http://localhost:8080/api"
 		clientId="client" clientSecret="secret" createdDate="2013-07-18 14:20:19.0" />
-	<remote_api id="2" name="another client" serviceURI="http://nowhere2"
+	<remote_api id="2" name="another client" serviceURI="http://nowhere"
 		clientId="client2" clientSecret="secret2" createdDate="2013-07-18 14:20:19.0" />
 
     <client_role name="ROLE_CLIENT" description="A client"/>

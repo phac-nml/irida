@@ -64,13 +64,13 @@ public class CreateRemoteAPIPageIT {
 	@Test
 	public void testCreateGoodClient() {
 		page.createRemoteAPIWithDetails("new name", "http://newuri", "newClient", "newSecret");
-		assertTrue(page.checkSuccess());
+		assertTrue("client should be created", page.checkSuccess());
 	}
 
 	@Test
 	public void testCreateClientWithDuplicateURI() {
 		page.createRemoteAPIWithDetails("new name", "http://nowhere", "newClient", "newSecret");
-		assertFalse(page.checkSuccess());
+		assertFalse("client should not have been created", page.checkSuccess());
 	}
 
 	@Test
@@ -79,16 +79,16 @@ public class CreateRemoteAPIPageIT {
 		String url = "http://localhost:" + applicationPort + "/api";
 
 		page.createRemoteAPIWithDetails("new name", url, "testClient", "testClientSecret");
-		assertTrue(page.checkSuccess());
+		assertTrue("client should have been created", page.checkSuccess());
 
 		RemoteAPIDetailsPage remoteAPIDetailsPage = new RemoteAPIDetailsPage(driver);
 
 		ApiStatus remoteApiStatus = remoteAPIDetailsPage.getRemoteApiStatus();
-		assertEquals(ApiStatus.INVALID, remoteApiStatus);
+		assertEquals("api status should be invalid", ApiStatus.INVALID, remoteApiStatus);
 		remoteAPIDetailsPage.clickConnect();
 		remoteAPIDetailsPage.clickAuthorize();
 
 		remoteApiStatus = remoteAPIDetailsPage.getRemoteApiStatus();
-		assertEquals(ApiStatus.CONNECTED, remoteApiStatus);
+		assertEquals("api status should be connected", ApiStatus.CONNECTED, remoteApiStatus);
 	}
 }
