@@ -60,7 +60,9 @@
 				<!-- Sample Selection (Page, All, None) -->
 				<div class="btn-group" dropdown="" is-open="subnav.selection.isopen">
 					<button id="selectBtn" type="button" class="btn btn-default btn-sm dropdown-toggle">
-						<span th:text="#{lists.select-title}">Select</span>&nbsp;<span class="caret"></span>
+                        <span ng-controller="SelectedCountCtrl as countCtrl" id="selected-count"
+                            class="label label-default" ng-bind="countCtrl.count">0</span> 
+                        <span th:text="#{lists.select-title}">Select</span>&nbsp;<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" role="menu">
 						<li><a id="selectPageBtn" href="#" th:text="#{lists.select-page}" ng-click="subnav.selection.selectPage()">Select
@@ -121,11 +123,6 @@
 					<button id="cart-add-btn" ng-controller="CartController as cart" ng-click="cart.add()" type="button" class="btn btn-default btn-sm" th:text="#{project.samples.nav.add-to-cart}">Add to Cart</button>
 				</div>
 			</div>
-		</div>
-		<div class="col-md-5">
-			<span class="pull-right selected__counts" ng-controller="SelectedCountCtrl as countCtrl">
-			<span th:text="#{project.samples.table.select-count}"></span>&nbsp;<span id="selected-count" class="badge" ng-bind="countCtrl.count">0</span>
-		</span>
 		</div>
 	</div>
 	<div class="row" data:cg-busy="'{promise: cgPromise,templateUrl:\'' + @{/resources/bower_components/angular-busy/angular-busy.html} + '\', delay: 250, backdrop:true, message: \'' + #{cg-busy.samples.table} +  '\'}'">
