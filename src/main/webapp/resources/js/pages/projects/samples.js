@@ -42,37 +42,46 @@
 
   function StorageService($sessionStorage) {
     "use strict";
-    var projectId;
     var storage = $sessionStorage;
-    function addProject(id) {
-      projectId = id;
+
+    function addProject() {
       var projects = storage.projects || {};
-      projects[id] = projects[id] || {};
+      projects[project.id] = projects[project.id] || {};
       storage.$default({projects : projects});
     }
 
-    function addSample(id) {
-      storage.projects[projectId][id] = true;
+    function addSample(sample) {
+      storage.projects[project.id][sample.id] = JSON.stringify(sample);
     }
 
     function removeSample(id) {
-      delete storage.projects[projectId][id];
+      delete storage.projects[project.id][id];
     }
 
     function getKeys() {
-      return Object.keys(storage.projects[projectId]);
+      return Object.keys(storage.projects[project.id]);
     }
 
     function clear() {
-      delete storage.projects[projectId];
-      addProject(projectId);
+      delete storage.projects[project.id];
+      addProject(project.id);
     }
 
+    function getSamples() {
+      var samples = [];
+      var p = storage.projects[project.id];
+      _.forEach(getKeys(), function(key) {
+        samples.push($.parseJSON(p[key]));
+      });
+      return samples;
+    }
+
+    addProject();
     return ({
-      addProject   : addProject,
       addSample    : addSample,
       removeSample : removeSample,
       getKeys      : getKeys,
+      getSamples   : getSamples,
       clear        : clear
     });
   }
@@ -85,9 +94,7 @@
   function SamplesService($rootScope, storage, R, notifications, filter) {
     "use strict";
     var svc = this,
-        id = project.id,
-        base = R.all('projects/' + id + '/ajax/samples'),
-        selected = [],
+        base = R.all('projects/' + project.id + '/ajax/samples'),
         filtered = [];
     svc.samples = [];
 
@@ -101,22 +108,16 @@
 
     svc.updateSample = function (s) {
       if (s.selected) {
-        selected.push(s)
-        storage.addSample(s.id);
+        storage.addSample(s);
       }
       else {
-        selected = _.without(selected, s);
         storage.removeSample(s.id);
       }
       updateSelectedCount()
     };
 
     svc.getSelectedSampleNames = function () {
-      return selected;
-    };
-
-    svc.getProjectId = function () {
-      return id;
+      return storage.getSamples();
     };
 
     svc.merge = function (params) {
@@ -124,7 +125,6 @@
       return base.customPOST(params, 'merge').then(function (data) {
         if (data.result === 'success') {
           getSamples();
-          selected = [];
           storage.clear();
           updateSelectedCount();
           notifications.show({type: data.result, msg: data.message});
@@ -145,8 +145,7 @@
       _.each(filtered.slice(begin, begin + filter.count), function (s) {
         if (!s.selected) {
           s.selected = true;
-          storage.addSample(s.id);
-          selected.push(s);
+          storage.addSample(s);
         }
       });
       updateSelectedCount();
@@ -155,10 +154,7 @@
     svc.selectAll = function () {
       _.each(filtered, function (s) {
         s.selected = true;
-        if (!_.contains(selected, s)) {
-          selected.push(s);
-          storage.addSample(s.id);
-        }
+        storage.addSample(s);
       });
       updateSelectedCount();
     };
@@ -167,7 +163,6 @@
       _.each(svc.samples, function (s) {
         s.selected = false
       });
-      selected = [];
       storage.clear();
       updateSelectedCount();
     };
@@ -197,7 +192,7 @@
     };
 
     function getSelectedSampleIds() {
-      return _.map(selected, 'id');
+      return storage.getKeys();
     }
 
     function copyMoveSamples(projectId, move) {
@@ -221,14 +216,13 @@
             }
             return true;
           }), svc.samples);
-          selected = 0;
           updateSelectedCount();
         }
       });
     }
 
     function updateSelectedCount() {
-      $rootScope.$broadcast('COUNT', {count: selected.length});
+      $rootScope.$broadcast('COUNT', {count: storage.getKeys().length});
     }
 
     function getSamples(f) {
@@ -248,7 +242,6 @@
 
     svc.init = function () {
       getSamples();
-      storage.addProject(id);
     };
   }
 
@@ -447,9 +440,6 @@
           resolve    : {
             samples  : function () {
               return SamplesService.getSelectedSampleNames();
-            },
-            projectId: function () {
-              return SamplesService.getProjectId();
             }
           }
         });
@@ -457,7 +447,7 @@
       galaxy  : function galaxy() {
         vm.export.open = false;
         $modal.open({
-          templateUrl: TL.BASE_URL + 'projects/' + SamplesService.getProjectId() + '/templates/samples/galaxy',
+          templateUrl: TL.BASE_URL + 'projects/' + project.id + '/templates/samples/galaxy',
           controller : 'GalaxyCtrl as gCtrl'
         });
       }
@@ -590,7 +580,7 @@
     "use strict";
     var vm = this;
     vm.samples = SamplesService.getSelectedSampleNames();
-    vm.projectId = SamplesService.getProjectId();
+    vm.projectId = project.id;
     vm.total = SamplesService.samples.length;
 
     vm.close = function () {

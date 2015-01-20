@@ -35,6 +35,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.google.common.collect.Sets;
+
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -145,6 +147,8 @@ public class AnalysisSubmission implements IridaThing {
 			UUID workflowId) {
 		this();
 		checkNotNull(workflowId, "workflowId is null");
+		checkNotNull(inputFilesSingle, "inputFilesSingle is null");
+		checkNotNull(inputFilesPaired, "inputFilesPaired is null");
 
 		this.name = name;
 		this.inputFilesSingle = inputFilesSingle;
@@ -372,7 +376,7 @@ public class AnalysisSubmission implements IridaThing {
 	 */
 	public static AnalysisSubmission createSubmissionSingleReference(String name, Set<SequenceFile> inputFilesSingle,
 			ReferenceFile referenceFile, UUID workflowId) {
-		return new AnalysisSubmission(name, inputFilesSingle, null, referenceFile, workflowId);
+		return new AnalysisSubmission(name, inputFilesSingle, Sets.newHashSet(), referenceFile, workflowId);
 	}
 
 	/**
@@ -388,7 +392,7 @@ public class AnalysisSubmission implements IridaThing {
 	 */
 	public static AnalysisSubmission createSubmissionSingle(String name, Set<SequenceFile> inputFilesSingle,
 			UUID workflowId) {
-		return new AnalysisSubmission(name, inputFilesSingle, null, workflowId);
+		return new AnalysisSubmission(name, inputFilesSingle, Sets.newHashSet(), workflowId);
 	}
 
 	/**
@@ -407,7 +411,7 @@ public class AnalysisSubmission implements IridaThing {
 	 */
 	public static AnalysisSubmission createSubmissionPairedReference(String name,
 			Set<SequenceFilePair> inputFilesPaired, ReferenceFile referenceFile, UUID workflowId) {
-		return new AnalysisSubmission(name, null, inputFilesPaired, referenceFile, workflowId);
+		return new AnalysisSubmission(name, Sets.newHashSet(), inputFilesPaired, referenceFile, workflowId);
 	}
 
 	/**
@@ -426,7 +430,7 @@ public class AnalysisSubmission implements IridaThing {
 	 */
 	public static AnalysisSubmission createSubmissionPaired(String name, Set<SequenceFilePair> inputFilesPaired,
 			UUID workflowId) {
-		return new AnalysisSubmission(name, null, inputFilesPaired, workflowId);
+		return new AnalysisSubmission(name, Sets.newHashSet(), inputFilesPaired, workflowId);
 	}
 
 	/**

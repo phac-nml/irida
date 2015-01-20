@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -197,9 +198,17 @@ public class PipelineController extends BaseController {
 					Map<String, Object> sampleMap = new HashMap<>();
 					sampleMap.put("name", sample.getLabel());
 					sampleMap.put("id", sample.getId().toString());
+
+					// Singe end reads
 					List<Join<Sample, SequenceFile>> sfJoin = sequenceFileService.getSequenceFilesForSample(sample);
-					sampleMap.put("files", sfJoin.stream().map(Join::getObject)
+					sampleMap.put("singles", sfJoin.stream().map(Join::getObject)
 							.collect(Collectors.toList()));
+
+					// Paired end reads
+					List<SequenceFilePair> sequenceFilePairs = sequenceFileService
+							.getSequenceFilePairsForSample(sample);
+					sampleMap.put("pairs", sequenceFilePairs);
+
 					sampleList.add(sampleMap);
 				}
 

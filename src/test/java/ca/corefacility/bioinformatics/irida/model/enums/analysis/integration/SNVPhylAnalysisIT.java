@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -171,12 +172,19 @@ public class SNVPhylAnalysisIT {
 		AnalysisPhylogenomicsPipeline analysisPhylogenomics = (AnalysisPhylogenomicsPipeline) analysis;
 
 		assertEquals(3, analysisPhylogenomics.getAnalysisOutputFiles().size());
+		@SuppressWarnings("resource")
+		String matrixContent = new Scanner(analysisPhylogenomics.getSnpMatrix()
+				.getFile().toFile()).useDelimiter("\\Z").next();
 		assertTrue(
-				"snpMatrix should be the same",
+				"snpMatrix should be the same but is \"" + matrixContent + "\"",
 				com.google.common.io.Files.equal(outputSnpMatrix.toFile(), analysisPhylogenomics.getSnpMatrix()
 						.getFile().toFile()));
+		
+		@SuppressWarnings("resource")
+		String snpTableContent = new Scanner(analysisPhylogenomics.getSnpMatrix()
+				.getFile().toFile()).useDelimiter("\\Z").next();
 		assertTrue(
-				"snpTable should be the same",
+				"snpTable should be the same but is \"" + snpTableContent + "\"",
 				com.google.common.io.Files.equal(outputSnpTable.toFile(), analysisPhylogenomics.getSnpTable().getFile()
 						.toFile()));
 

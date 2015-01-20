@@ -7648,6 +7648,15 @@ html, body {
   height: 100%;
 }
 
+/* line 5, ../../styles/layouts/_all.scss */
+.layout-flex {
+  display: flex;
+}
+/* line 8, ../../styles/layouts/_all.scss */
+.layout-flex > div {
+  padding: 1rem;
+}
+
 /* line 4, ../../styles/components/_breadcrumbs.scss */
 .breadcrumbs {
   background-color: #133B54;

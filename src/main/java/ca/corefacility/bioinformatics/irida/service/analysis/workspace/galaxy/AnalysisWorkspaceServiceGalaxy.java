@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -333,6 +335,32 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		inputs.setInput(workflowReferenceFileInputId, new WorkflowInputs.WorkflowInput(referenceDataset.getId(),
 				WorkflowInputs.InputSourceType.HDA));
 	}
+	
+	/**
+	 * Creates a set of {@link SequenceFile} from the given input files in the
+	 * submission.
+	 * 
+	 * @param analysisSubmission
+	 *            The submission containing the input files.
+	 * @return A {@link Set} of {@link SequenceFile} for any input files in the
+	 *         submission.
+	 */
+	private Set<SequenceFile> createInputSequenceFilesSet(AnalysisSubmission analysisSubmission) {
+		Set<SequenceFile> inputFiles = new HashSet<>();
+		for (SequenceFile sf : analysisSubmission.getSingleInputFiles()) {
+			inputFiles.add(sequenceFileRepository.findOne(sf.getId()));
+		}
+
+		for (SequenceFilePair sfp : analysisSubmission.getPairedInputFiles()) {
+			Iterator<SequenceFile> sfpIter = sfp.getFiles().iterator();
+			SequenceFile sf1 = sfpIter.next();
+			SequenceFile sf2 = sfpIter.next();
+			inputFiles.add(sequenceFileRepository.findOne(sf1.getId()));
+			inputFiles.add(sequenceFileRepository.findOne(sf2.getId()));
+		}
+
+		return inputFiles;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -351,10 +379,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysisSubmission.getWorkflowId());
 		String analysisId = analysisSubmission.getRemoteAnalysisId();
 
-		Set<SequenceFile> inputFiles = new HashSet<>();
-		for (SequenceFile sf : analysisSubmission.getSingleInputFiles()) {
-			inputFiles.add(sequenceFileRepository.findOne(sf.getId()));
-		}
+		Set<SequenceFile> inputFiles = createInputSequenceFilesSet(analysisSubmission);
 
 		Map<String, IridaWorkflowOutput> outputsMap = iridaWorkflow.getWorkflowDescription().getOutputsMap();
 
