@@ -151,8 +151,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		List<Join<Sample, SequenceFile>> list = new ArrayList<>();
 		list.add(ssfRepository.save(new SampleSequenceFileJoin(sample, file1)));
 		list.add(ssfRepository.save(new SampleSequenceFileJoin(sample, file2)));
-
-		createSequenceFilePair(file1, file2);
+		pairRepository.save(new SequenceFilePair(file1, file2));
 
 		return list;
 	}
@@ -225,31 +224,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SequenceFile getPairedFileForSequenceFile(SequenceFile file) throws EntityNotFoundException {
-		SequenceFilePair pairForSequenceFile = pairRepository.getPairForSequenceFile(file);
-		if (pairForSequenceFile != null) {
-			for (SequenceFile pair : pairForSequenceFile.getFiles()) {
-				if (!pair.equals(file)) {
-					return pair;
-				}
-			}
-		}
-
-		throw new EntityNotFoundException("Pair cannot be found for this sequence file");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public SequenceFilePair createSequenceFilePair(SequenceFile file1, SequenceFile file2) {
-		return pairRepository.save(new SequenceFilePair(file1, file2));
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public Join<Sample, SequenceFile> getSequenceFileForSample(Sample sample, Long identifier)
 			throws EntityNotFoundException {
 		Optional<Join<Sample, SequenceFile>> file = getSequenceFilesForSample(sample).stream()
@@ -259,14 +233,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		}
 
 		throw new EntityNotFoundException("Sequence file " + identifier + " does not exist in sample " + sample);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public List<SequenceFilePair> getSequenceFilePairsForSample(Sample sample) {
-		return pairRepository.getSequenceFilePairsForSample(sample);
 	}
 
 	@Override

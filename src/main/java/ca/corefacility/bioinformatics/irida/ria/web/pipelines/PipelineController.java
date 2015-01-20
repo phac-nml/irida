@@ -46,6 +46,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -89,6 +90,7 @@ public class PipelineController extends BaseController {
 	private SampleService sampleService;
 	private ReferenceFileService referenceFileService;
 	private SequenceFileService sequenceFileService;
+	private SequenceFilePairService sequenceFilePairService;
 	private AnalysisSubmissionService analysisSubmissionService;
 	private ProjectService projectService;
 	private UserService userService;
@@ -107,6 +109,7 @@ public class PipelineController extends BaseController {
 
 	@Autowired
 	public PipelineController(SampleService sampleService, SequenceFileService sequenceFileService,
+			SequenceFilePairService sequenceFilePairService,
 			ReferenceFileService referenceFileService,
 			AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService,
@@ -116,6 +119,7 @@ public class PipelineController extends BaseController {
 			MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
+		this.sequenceFilePairService = sequenceFilePairService;
 		this.referenceFileService = referenceFileService;
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
@@ -205,7 +209,7 @@ public class PipelineController extends BaseController {
 							.collect(Collectors.toList()));
 
 					// Paired end reads
-					List<SequenceFilePair> sequenceFilePairs = sequenceFileService
+					List<SequenceFilePair> sequenceFilePairs = sequenceFilePairService
 							.getSequenceFilePairsForSample(sample);
 					sampleMap.put("pairs", sequenceFilePairs);
 
