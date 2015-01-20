@@ -381,7 +381,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		Map<Sample, SequenceFilePair> sampleSequenceFilesPaired = getSequenceFilePairedSamples(analysisSubmission
 				.getPairedInputFiles());
 		if (samplesInCommon(sampleSequenceFilesSingle, sampleSequenceFilesPaired)) {
-			throw new WorkflowPreprationException("Single and paired input files share a common sample for submission "
+			throw new SampleAnalysisDuplicateException("Single and paired input files share a common sample for submission "
 					+ analysisSubmission);
 		}
 
