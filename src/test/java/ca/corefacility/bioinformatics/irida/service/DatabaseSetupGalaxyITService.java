@@ -206,8 +206,8 @@ public class DatabaseSetupGalaxyITService {
 			long sampleIdSingle, List<Path> sequenceFilePaths1, List<Path> sequenceFilePaths2, Path singleSequenceFile,
 			Path referenceFilePath, UUID iridaWorkflowId) {
 
-		SequenceFile sequenceFile = setupSampleSequenceFileInDatabase(sampleIdPaired, singleSequenceFile).get(0);
-		List<SequenceFilePair> sequenceFilePairs = setupSampleSequenceFileInDatabase(sampleIdSingle,
+		SequenceFile sequenceFile = setupSampleSequenceFileInDatabase(sampleIdSingle, singleSequenceFile).get(0);
+		List<SequenceFilePair> sequenceFilePairs = setupSampleSequenceFileInDatabase(sampleIdPaired,
 				sequenceFilePaths1, sequenceFilePaths2);
 
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));

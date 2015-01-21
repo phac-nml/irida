@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.impl.integration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -11,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
@@ -39,11 +42,13 @@ import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateEx
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -52,6 +57,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrari
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.Util;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -62,10 +68,15 @@ import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.Workflow;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionElementResponse;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
+import com.github.jmchilton.blend4j.galaxy.beans.collection.response.ElementResponse;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -97,6 +108,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
+	
+	@Autowired
+	private SampleRepository sampleRepository;
 
 	private GalaxyHistoriesService galaxyHistoriesService;
 
@@ -129,6 +143,12 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	private static final String TREE_LABEL = "tree";
 	private static final String TABLE_NAME = "snpTable.tsv";
 	private static final String TABLE_LABEL = "table";
+	
+	private static final String INPUTS_SINGLE_NAME = "irida_sequence_files_single";
+	private static final String INPUTS_PAIRED_NAME = "irida_sequence_files_paired";
+	private static final String HISTORY_DATASET_NAME = "hda";
+	private static final String FORWARD_NAME = "forward";
+	private static final String REVERSE_NAME = "reverse";
 
 	/**
 	 * Sets up variables for testing.
@@ -223,7 +243,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	}
 
 	/**
-	 * Tests out successfully preparing single workflow input files for execution.
+	 * Tests out successfully preparing single workflow input files for
+	 * execution.
 	 * 
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
@@ -250,10 +271,39 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				sequenceFilePathA, referenceFilePath, validWorkflowId);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
+		Sample sample1 = sampleRepository.findOne(1L);
 
 		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
 		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId());
 		assertNotNull(preparedWorkflow.getWorkflowInputs());
+
+		// verify correct files have been uploaded
+		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
+		assertEquals(3, historyContents.size());
+		Map<String, HistoryContents> contentsMap = historyContentsAsMap(historyContents);
+		assertTrue(contentsMap.containsKey(sequenceFilePathA.toFile().getName()));
+		assertTrue(contentsMap.containsKey(referenceFilePath.toFile().getName()));
+		assertTrue(contentsMap.containsKey(INPUTS_SINGLE_NAME));
+
+		// verify correct collection has been created
+		HistoryContents collectionContents = contentsMap.get(INPUTS_SINGLE_NAME);
+		CollectionResponse collectionResponse = historiesClient.showDatasetCollection(createdHistory.getId(),
+				collectionContents.getId());
+		assertEquals(DatasetCollectionType.LIST.toString(), collectionResponse.getCollectionType());
+		List<CollectionElementResponse> collectionElements = collectionResponse.getElements();
+		assertEquals(1, collectionElements.size());
+		Map<String, CollectionElementResponse> collectionElementsMap = collectionElementsAsMap(collectionElements);
+		assertTrue(collectionElementsMap.containsKey(sample1.getSampleName()));
+		CollectionElementResponse sample1Response = collectionElementsMap.get(sample1.getSampleName());
+		assertEquals(HISTORY_DATASET_NAME, sample1Response.getElementType());
+	}
+	
+	private Map<String, HistoryContents> historyContentsAsMap(List<HistoryContents> historyContents) {
+		return Maps.uniqueIndex(historyContents, historyContent -> historyContent.getName()); 
+	}
+	
+	private Map<String, CollectionElementResponse> collectionElementsAsMap(List<CollectionElementResponse> collectionElements) {
+		return Maps.uniqueIndex(collectionElements, collectionElement -> collectionElement.getElementIdentifier());
 	}
 	
 	/**
@@ -290,7 +340,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	}
 	
 	/**
-	 * Tests out successfully preparing paired workflow input files for execution.
+	 * Tests out successfully preparing paired workflow input files for
+	 * execution.
 	 * 
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
@@ -317,11 +368,49 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, validWorkflowId);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
+		Sample sample1 = sampleRepository.findOne(1L);
 
 		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
 		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId());
 		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
 		assertNotNull(workflowInputsGalaxy);
+
+		// verify correct files have been uploaded
+		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
+		assertEquals(4, historyContents.size());
+		Map<String, HistoryContents> contentsMap = historyContentsAsMap(historyContents);
+		assertTrue(contentsMap.containsKey(sequenceFilePathA.toFile().getName()));
+		assertTrue(contentsMap.containsKey(sequenceFilePath2A.toFile().getName()));
+		assertTrue(contentsMap.containsKey(referenceFilePath.toFile().getName()));
+		assertTrue(contentsMap.containsKey(INPUTS_PAIRED_NAME));
+
+		// verify correct collection has been created
+		HistoryContents collectionContents = contentsMap.get(INPUTS_PAIRED_NAME);
+		CollectionResponse collectionResponse = historiesClient.showDatasetCollection(createdHistory.getId(),
+				collectionContents.getId());
+		assertEquals(DatasetCollectionType.LIST_PAIRED.toString(), collectionResponse.getCollectionType());
+		List<CollectionElementResponse> collectionElements = collectionResponse.getElements();
+		assertEquals(1, collectionElements.size());
+		Map<String, CollectionElementResponse> collectionElementsMap = collectionElementsAsMap(collectionElements);
+		assertTrue(collectionElementsMap.containsKey(sample1.getSampleName()));
+		CollectionElementResponse sample1Response = collectionElementsMap.get(sample1.getSampleName());
+
+		// verify collection has 2 files (paired end data)
+		ElementResponse subElements = sample1Response.getResponseElement();
+		assertEquals(CollectionResponse.class, subElements.getClass());
+		CollectionResponse subElementsCollection = (CollectionResponse) subElements;
+		assertEquals(DatasetCollectionType.PAIRED.toString(), subElementsCollection.getCollectionType());
+		List<CollectionElementResponse> subCollectionElements = subElementsCollection.getElements();
+		assertEquals(2, subCollectionElements.size());
+		Map<String, CollectionElementResponse> subCollectionElementsMap = collectionElementsAsMap(subCollectionElements);
+		assertTrue(subCollectionElementsMap.containsKey(FORWARD_NAME));
+		assertTrue(subCollectionElementsMap.containsKey(REVERSE_NAME));
+
+		// verify paired-end files are correct type in collection
+		CollectionElementResponse sequenceFile1 = subCollectionElementsMap.get(FORWARD_NAME);
+		CollectionElementResponse sequenceFile2 = subCollectionElementsMap.get(REVERSE_NAME);
+		assertEquals(HISTORY_DATASET_NAME, sequenceFile1.getElementType());
+		assertEquals(HISTORY_DATASET_NAME, sequenceFile2.getElementType());
 	}
 	
 	/**
@@ -387,11 +476,64 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 						sequenceFilePath3, referenceFilePath, validWorkflowId);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
+		Sample sample1 = sampleRepository.findOne(1L);
+		Sample sample2 = sampleRepository.findOne(2L);
 
 		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
 		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId());
 		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
 		assertNotNull(workflowInputsGalaxy);
+
+		// verify correct files have been uploaded
+		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
+		assertEquals(6, historyContents.size());
+		Map<String, HistoryContents> contentsMap = historyContentsAsMap(historyContents);
+		assertTrue(contentsMap.containsKey(sequenceFilePathA.toFile().getName()));
+		assertTrue(contentsMap.containsKey(sequenceFilePath2A.toFile().getName()));
+		assertTrue(contentsMap.containsKey(sequenceFilePath3.toFile().getName()));
+		assertTrue(contentsMap.containsKey(referenceFilePath.toFile().getName()));
+		assertTrue(contentsMap.containsKey(INPUTS_SINGLE_NAME));
+		assertTrue(contentsMap.containsKey(INPUTS_PAIRED_NAME));
+
+		// verify correct (paired) collection has been created
+		HistoryContents collectionContentsPair = contentsMap.get(INPUTS_PAIRED_NAME);
+		CollectionResponse collectionResponsePair = historiesClient.showDatasetCollection(createdHistory.getId(),
+				collectionContentsPair.getId());
+		assertEquals(DatasetCollectionType.LIST_PAIRED.toString(), collectionResponsePair.getCollectionType());
+		List<CollectionElementResponse> collectionElementsPair = collectionResponsePair.getElements();
+		assertEquals(1, collectionElementsPair.size());
+		Map<String, CollectionElementResponse> collectionElementsMapPair = collectionElementsAsMap(collectionElementsPair);
+		assertTrue(collectionElementsMapPair.containsKey(sample1.getSampleName()));
+		CollectionElementResponse sample1ResponsePair = collectionElementsMapPair.get(sample1.getSampleName());
+
+		// verify collection has 2 files (paired end data)
+		ElementResponse subElementsPair = sample1ResponsePair.getResponseElement();
+		assertEquals(CollectionResponse.class, subElementsPair.getClass());
+		CollectionResponse subElementsCollectionPair = (CollectionResponse) subElementsPair;
+		assertEquals(DatasetCollectionType.PAIRED.toString(), subElementsCollectionPair.getCollectionType());
+		List<CollectionElementResponse> subCollectionElementsPair = subElementsCollectionPair.getElements();
+		assertEquals(2, subCollectionElementsPair.size());
+		Map<String, CollectionElementResponse> subCollectionElementsMapPair = collectionElementsAsMap(subCollectionElementsPair);
+		assertTrue(subCollectionElementsMapPair.containsKey(FORWARD_NAME));
+		assertTrue(subCollectionElementsMapPair.containsKey(REVERSE_NAME));
+
+		// verify paired-end files are correct type in collection
+		CollectionElementResponse sequenceFile1Pair = subCollectionElementsMapPair.get(FORWARD_NAME);
+		CollectionElementResponse sequenceFile2Pair = subCollectionElementsMapPair.get(REVERSE_NAME);
+		assertEquals(HISTORY_DATASET_NAME, sequenceFile1Pair.getElementType());
+		assertEquals(HISTORY_DATASET_NAME, sequenceFile2Pair.getElementType());
+
+		// verify correct collection (single) has been created
+		HistoryContents collectionContentsSingle = contentsMap.get(INPUTS_SINGLE_NAME);
+		CollectionResponse collectionResponseSingle = historiesClient.showDatasetCollection(createdHistory.getId(),
+				collectionContentsSingle.getId());
+		assertEquals(DatasetCollectionType.LIST.toString(), collectionResponseSingle.getCollectionType());
+		List<CollectionElementResponse> collectionElementsSingle = collectionResponseSingle.getElements();
+		assertEquals(1, collectionElementsSingle.size());
+		Map<String, CollectionElementResponse> collectionElementsMapSingle = collectionElementsAsMap(collectionElementsSingle);
+		assertTrue(collectionElementsMapSingle.containsKey(sample2.getSampleName()));
+		CollectionElementResponse sample2ResponseSingle = collectionElementsMapSingle.get(sample2.getSampleName());
+		assertEquals(HISTORY_DATASET_NAME, sample2ResponseSingle.getElementType());
 	}
 	
 	/**

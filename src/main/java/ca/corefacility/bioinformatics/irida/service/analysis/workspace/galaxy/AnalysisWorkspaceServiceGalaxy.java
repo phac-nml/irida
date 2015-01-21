@@ -25,7 +25,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
-import ca.corefacility.bioinformatics.irida.exceptions.WorkflowPreprationException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
