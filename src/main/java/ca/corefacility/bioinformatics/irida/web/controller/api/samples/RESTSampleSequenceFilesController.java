@@ -6,7 +6,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -45,12 +44,9 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile.SequenceFileResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectSamplesController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectUsersController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
 
 import com.google.common.net.HttpHeaders;
 
