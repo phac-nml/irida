@@ -309,8 +309,13 @@ public class SampleSequenceFilesControllerTest {
 		
 		String sequenceFileLocation1 = sampleLocation + "/sequenceFiles/" + sf1.getId();
 		String sequenceFileLocation2 = sampleLocation + "/sequenceFiles/" + sf2.getId();
-		String[] sequenceFileLocs = new String[] {sequenceFileLocation1,sequenceFileLocation2};
-		for(int i = 0; i < 2; i++) {
+		String[] sequenceFileLocs = new String[] {sequenceFileLocation1,sequenceFileLocation2};	
+		List<String> locations = response.getHeaders(HttpHeaders.LOCATION);
+		assertNotNull(locations);
+		assertFalse(locations.isEmpty());
+		assertEquals(2, locations.size());
+		SequenceFile[] sequences = new SequenceFile[] {sf1,sf2};
+		for(int i = 0; i< 2; i++) {
 			LabelledRelationshipResource<Sample,SequenceFile> lrr = rc.getResources().get(i);
 			Link self = lrr.getLink(Link.REL_SELF);
 			Link sampleSequenceFiles = lrr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
@@ -321,6 +326,8 @@ public class SampleSequenceFilesControllerTest {
 			assertEquals("Sequence file location should be correct",sampleLocation + "/sequenceFiles", sampleSequenceFiles.getHref());
 			assertNotNull("Sample location should not be null",sample);
 			assertEquals("Sample location should be correct",sampleLocation, sample.getHref());
+			assertEquals("http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId() +
+					"/sequenceFiles/" + sequences[i].getId(), locations.get(i));
 		}
 		assertEquals("HTTP status must be CREATED",HttpStatus.CREATED.value(), response.getStatus());
 		Files.delete(f1);

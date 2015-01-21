@@ -109,12 +109,12 @@ public class SampleSequenceFilesIT {
 				.multiPart("file2", sequenceFile.toFile())
 				.multiPart("parameters2", fileParams, MediaType.APPLICATION_JSON_VALUE).expect()
 				.statusCode(HttpStatus.CREATED.value()).when().post(sequenceFilePairUri);
+		
+		String location1 = r.body().jsonPath().get("resource.resources[0].links.find{it.rel == 'self'}.href");
+		String location2 = r.body().jsonPath().get("resource.resources[1].links.find{it.rel == 'self'}.href");
 
-		String location1 = r.body().jsonPath().get("file1").toString();
-		String location2 = r.body().jsonPath().get("file2").toString();
-
-		assertTrue(location1.matches(sequenceFileUri + "/[0-9]+"));
-		assertTrue(location2.matches(sequenceFileUri + "/[0-9]+"));
+		assertTrue("Response body must contain 1st sequence reference",location1.matches(sequenceFileUri + "/[0-9]+"));
+		assertTrue("Response body must contain 2nd sequence reference",location2.matches(sequenceFileUri + "/[0-9]+"));
 
 		assertNotEquals(location1, location2);
 

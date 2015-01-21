@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -328,13 +329,16 @@ public class RESTSampleSequenceFilesController {
 		sequenceResources.add(lrr1);
 		sequenceResources.add(lrr2);
 		// add links to each labeled relationship resource
-		for(LabelledRelationshipResource<Sample,SequenceFile> lrr : sequenceResources) {
+		for(int i = 0; i < 2; i++) {
+			LabelledRelationshipResource<Sample,SequenceFile> lrr = sequenceResources.getResources().get(i);
 			lrr.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
 					.withRel(REL_SAMPLE_SEQUENCE_FILES));
 			lrr.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(
 					REL_SAMPLE));
-			lrr.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(
-					projectId, sampleId,lrr.getResource().getObject().getId())).withSelfRel());
+			Link selfLink = linkTo(methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(
+					projectId, sampleId,lrr.getResource().getObject().getId())).withSelfRel();
+			lrr.add(selfLink);
+			response.addHeader(HttpHeaders.LOCATION, selfLink.getHref());
 		}	
 		// add a link back to the sample
 		sequenceResources.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(
