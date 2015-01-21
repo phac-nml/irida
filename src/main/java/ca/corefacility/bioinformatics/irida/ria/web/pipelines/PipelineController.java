@@ -10,32 +10,25 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.ConstraintViolationException;
 
-import org.omg.PortableInterceptor.AdapterNameHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.format.Formatter;
 import org.springframework.format.datetime.DateFormatter;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -50,9 +43,9 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.ria.components.PipelineSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
+import ca.corefacility.bioinformatics.irida.ria.web.components.SubmissionIds;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
@@ -62,10 +55,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 
 /**
  * Controller for pipeline related views
@@ -111,10 +101,6 @@ public class PipelineController extends BaseController {
 	 * CONTROLLERS
 	 */
 	private CartController cartController;
-	/*
-	 * COMPONENTS
-	 */
-	private PipelineSubmission pipelineSubmission;
 
 	@Autowired
 	public PipelineController(SampleService sampleService, SequenceFileService sequenceFileService,
@@ -136,8 +122,6 @@ public class PipelineController extends BaseController {
 		this.userService = userService;
 		this.cartController = cartController;
 		this.messageSource = messageSource;
-
-		this.pipelineSubmission = new PipelineSubmission();
 		this.dateFormatter = new DateFormatter();
 	}
 
@@ -298,35 +282,40 @@ public class PipelineController extends BaseController {
 		Set<SequenceFilePair> sequenceFilePairs = new HashSet<>();
 
 		if (single != null) {
-			for (Long id : single) {
-				sequenceFiles.add(sequenceFileService.read(id));
-			}
+			sequenceFiles.addAll(single.stream().map(sequenceFileService::read).collect(Collectors.toList()));
 		}
 
 		if (paired != null) {
-			for (Long id : paired) {
-				sequenceFilePairs.add(sequenceFilePairService.read(id));
-			}
+			sequenceFilePairs.addAll(paired.stream().map(sequenceFilePairService::read).collect(Collectors.toList()));
 		}
 
+		ReferenceFile referenceFile = referenceFileService.read(ref);
 		AnalysisSubmission analysisSubmission;
+
 
 		if (sequenceFiles.size() > 0 && sequenceFilePairs.size() > 0) {
 			analysisSubmission = AnalysisSubmission
-					.createSubmissionSingleAndPaired(name, sequenceFiles, sequenceFilePairs, pipelineId);
+					.createSubmissionSingleAndPairedReference(name, sequenceFiles, sequenceFilePairs, referenceFile,
+							pipelineId);
 		}
 		else if (sequenceFiles.size() > 0 && sequenceFilePairs.size() == 0) {
-			analysisSubmission = AnalysisSubmission.createSubmissionSingle(name, sequenceFiles, pipelineId);
+			analysisSubmission = AnalysisSubmission.createSubmissionSingleReference(name, sequenceFiles, referenceFile,
+					pipelineId);
 		}
 		else {
-			analysisSubmission = AnalysisSubmission.createSubmissionPaired(name, sequenceFilePairs, pipelineId);
+			analysisSubmission = AnalysisSubmission.createSubmissionPairedReference(name, sequenceFilePairs,
+					referenceFile, pipelineId);
 		}
 
 		AnalysisSubmission submission = analysisSubmissionService.create(analysisSubmission);
 
-//		Map<Long, AnalysisSubmission> submissionMap = session.getAttribute("submissionMap") |= new HashMap<>();
-//		submissionMap.put(submission.getId(), submission);
-//		session.setAttribute("submissionMap", submissionMap);
+		// TODO [15-01-21] (Josh): This should be replaced by storing the values into the database.
+		SubmissionIds submissionIds = (SubmissionIds) session.getAttribute("submissionIds");
+		if (submissionIds == null) {
+			submissionIds = new SubmissionIds();
+		}
+		submissionIds.addId(submission.getId());
+		session.setAttribute("submissionIds", submissionIds);
 
 		return ImmutableMap.of("result", "success", "submissionId", submission.getId());
 	}
