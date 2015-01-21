@@ -121,10 +121,10 @@
 				</div>
 			</div>
 			<div class="col-md-2">
-				<div class="text-center" data-spy="affix">
+				<div class="ng-cloak text-center" data-spy="affix">
 					<h2 th:text="#{workflow.launch.btn}">Ready to Launch?</h2>
 					<button class="btn btn-xl btn-danger round" ng-click="phylCtrl.launch()">
-						<span class="fa fa-rocket"></span>
+						<span class="fa" ng-class="{'fa-rocket' : !phylCtrl.loading, 'fa-spin fa-spinner' : phylCtrl.loading}"></span>
 					</button>
 				</div>
 			</div>
