@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.ExtendedModelMap;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -89,7 +90,7 @@ public class PipelineControllerTest {
 	}
 
 	@Test
-	public void testGetPhylogenomicsPageWithCart() {
+	public void testGetPhylogenomicsPageWithCart() throws IridaWorkflowNotFoundException {
 		ExtendedModelMap model = new ExtendedModelMap();
 		String username = "FRED";
 		Principal principal = () -> username;
@@ -100,6 +101,7 @@ public class PipelineControllerTest {
 		when(cartController.getSelected()).thenReturn(TestDataFactory.constructCart());
 		when(sequenceFileService.getSequenceFilesForSample(any(Sample.class)))
 				.thenReturn(TestDataFactory.generateSequenceFilesForSample(TestDataFactory.constructSample()));
+		when(workflowsService.getIridaWorkflow(id)).thenReturn(TestDataFactory.getIridaWorkflow(id));
 		String response = controller.getPhylogenomicsPage(model, principal, Locale.US, id);
 		assertEquals("Response should be the path to the phylogenomics template", PipelineController.URL_PHYLOGENOMICS, response);
 		assertTrue("Model should contain the reference files.", model.containsKey("referenceFiles"));
