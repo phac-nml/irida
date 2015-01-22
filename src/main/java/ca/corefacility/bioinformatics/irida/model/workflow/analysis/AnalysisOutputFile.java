@@ -41,24 +41,27 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@Column(name = "filePath", unique = true)
+	@Column(name = "file_path", unique = true)
 	@NotNull(message = "{analysis.output.file.file.notnull}")
 	private Path file;
 
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
+	@Column(name = "created_date", nullable = false)
 	private final Date createdDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "modified_date")
 	private Date modifiedDate;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private Analysis analysis;
 
 	@NotNull(message = "{analysis.output.file.execution.manager.file.id}")
+	@Column(name = "execution_manager_file_id")
 	private String executionManagerFileId;
 
+	@Column(name = "file_revision_number")
 	private Long fileRevisionNumber; // the filesystem file revision number
 
 	@NotNull
