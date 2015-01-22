@@ -279,8 +279,6 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		assertTrue(contentsMap.containsKey(sequenceFilePathA.toFile().getName()));
 		assertTrue(contentsMap.containsKey(referenceFilePath.toFile().getName()));
 		assertTrue(contentsMap.containsKey(INPUTS_SINGLE_NAME));
-		HistoryContents historyContentsSingle = contentsMap.get(INPUTS_SINGLE_NAME);
-		HistoryContents historyContentsReference = contentsMap.get(referenceFilePath.toFile().getName());
 		
 		// make sure workflow inputs contains correct information
 		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject().getInputs();
@@ -370,8 +368,6 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		assertTrue(contentsMap.containsKey(sequenceFilePath2A.toFile().getName()));
 		assertTrue(contentsMap.containsKey(referenceFilePath.toFile().getName()));
 		assertTrue(contentsMap.containsKey(INPUTS_PAIRED_NAME));
-		HistoryContents historyContentsPaired = contentsMap.get(INPUTS_PAIRED_NAME);
-		HistoryContents historyContentsReference = contentsMap.get(referenceFilePath.toFile().getName());
 		
 		// make sure workflow inputs contains correct information
 		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject().getInputs();
@@ -460,9 +456,6 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		assertTrue(contentsMap.containsKey(referenceFilePath.toFile().getName()));
 		assertTrue(contentsMap.containsKey(INPUTS_SINGLE_NAME));
 		assertTrue(contentsMap.containsKey(INPUTS_PAIRED_NAME));
-		HistoryContents historyContentsSingle = contentsMap.get(INPUTS_SINGLE_NAME);
-		HistoryContents historyContentsPaired = contentsMap.get(INPUTS_PAIRED_NAME);
-		HistoryContents historyContentsReference = contentsMap.get(referenceFilePath.toFile().getName());
 		
 		// make sure workflow inputs contains correct information
 		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject().getInputs();
