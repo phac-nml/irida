@@ -17,6 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
@@ -51,26 +52,27 @@ public class ToolExecution implements IridaThing {
 
 	@NotNull
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable(name = "tool_execution_prev_steps", joinColumns = @JoinColumn(name = "tool_execution_id"), inverseJoinColumns = @JoinColumn(name = "tool_execution_prev_id"))
 	private final Set<ToolExecution> previousSteps;
 
 	@NotNull
 	@Column(name = "tool_name")
 	private final String toolName;
-	
+
 	@NotNull
 	@Column(name = "tool_version")
 	private final String toolVersion;
-	
+
 	@NotNull
 	@Lob
 	@Column(name = "command_line")
 	private final String commandLine;
-	
+
 	@NotNull
 	@Lob
 	@Column(name = "execution_manager_identifier")
 	private final Object executionManagerIdentifier;
-	
+
 	@NotNull
 	@ElementCollection(fetch = FetchType.EAGER)
 	@MapKeyColumn(name = "execution_parameter_key", nullable = false)
@@ -81,6 +83,7 @@ public class ToolExecution implements IridaThing {
 
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "created_date")
 	private final Date createdDate;
 
 	private ToolExecution(final Long id, final Set<ToolExecution> previousSteps, final String toolName,
