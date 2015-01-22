@@ -2,4 +2,6 @@
 <toolbox>
   <tool file="irida/collection_list_paired.xml" />
   <tool file="irida/core_pipeline_outputs.xml" />
+  <tool file="irida/core_pipeline_outputs_paired.xml" />
+  <tool file="irida/core_pipeline_outputs_single_paired.xml" />
 </toolbox>

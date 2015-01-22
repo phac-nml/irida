@@ -1,4 +1,4 @@
-<tool id="core_pipeline_outputs" name="core_pipeline_outputs" version="0.1.0">
+<tool id="core_pipeline_outputs_paired" name="core_pipeline_outputs_paired" version="0.1.0">
   <command>
     echo "csv" > $csv; echo "output_tree" > $output_tree; echo "positions" > $positions;
   </command>
