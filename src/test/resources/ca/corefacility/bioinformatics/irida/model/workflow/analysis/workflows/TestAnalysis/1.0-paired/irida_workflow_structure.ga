@@ -22,7 +22,7 @@
             }, 
             "tool_errors": null, 
             "tool_id": null, 
-            "tool_state": "{\"collection_type\": \"list\", \"name\": \"sequence_reads\"}", 
+            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads\"}", 
             "tool_version": null, 
             "type": "data_collection_input", 
             "user_outputs": []
@@ -64,7 +64,7 @@
                 }
             }, 
             "inputs": [], 
-            "name": "core_pipeline_outputs", 
+            "name": "core_pipeline_outputs_paired", 
             "outputs": [
                 {
                     "name": "csv", 
@@ -83,24 +83,9 @@
                 "left": 462, 
                 "top": 200
             }, 
-            "post_job_actions": {
-                "RenameDatasetActioncsv": {
-                    "action_arguments": {
-                        "newname": "output1.txt"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
-                    "output_name": "csv"
-                }, 
-                "RenameDatasetActionoutput_tree": {
-                    "action_arguments": {
-                        "newname": "output2.txt"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
-                    "output_name": "output_tree"
-                }
-            }, 
+            "post_job_actions": {}, 
             "tool_errors": null, 
-            "tool_id": "core_pipeline_outputs", 
+            "tool_id": "core_pipeline_outputs_paired", 
             "tool_state": "{\"__page__\": 0, \"fasta\": \"null\", \"sequence_reads\": \"null\", \"__rerun_remap_job_id__\": null}", 
             "tool_version": "0.1.0", 
             "type": "tool", 

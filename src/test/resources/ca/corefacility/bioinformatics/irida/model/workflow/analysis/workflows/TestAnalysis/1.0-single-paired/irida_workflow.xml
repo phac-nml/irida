@@ -9,7 +9,7 @@
   <analysisType>default</analysisType>
   <inputs>
     <sequenceReadsSingle>sequence_reads_single</sequenceReadsSingle>
-    <sequenceReadsPair>sequence_reads_paired</sequenceReadsPair>
+    <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
     <reference>reference</reference>
   </inputs>
   <outputs>

@@ -11,7 +11,7 @@
             "inputs": [
                 {
                     "description": "", 
-                    "name": "sequence_reads"
+                    "name": "sequence_reads_single"
                 }
             ], 
             "name": "Input dataset collection", 
@@ -22,7 +22,7 @@
             }, 
             "tool_errors": null, 
             "tool_id": null, 
-            "tool_state": "{\"collection_type\": \"list\", \"name\": \"sequence_reads\"}", 
+            "tool_state": "{\"collection_type\": \"list\", \"name\": \"sequence_reads_single\"}", 
             "tool_version": null, 
             "type": "data_collection_input", 
             "user_outputs": []
@@ -34,6 +34,29 @@
             "inputs": [
                 {
                     "description": "", 
+                    "name": "sequence_reads_paired"
+                }
+            ], 
+            "name": "Input dataset collection", 
+            "outputs": [], 
+            "position": {
+                "left": 200, 
+                "top": 285
+            }, 
+            "tool_errors": null, 
+            "tool_id": null, 
+            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads_paired\"}", 
+            "tool_version": null, 
+            "type": "data_collection_input", 
+            "user_outputs": []
+        }, 
+        "2": {
+            "annotation": "", 
+            "id": 2, 
+            "input_connections": {}, 
+            "inputs": [
+                {
+                    "description": "", 
                     "name": "reference"
                 }
             ], 
@@ -41,7 +64,7 @@
             "outputs": [], 
             "position": {
                 "left": 200, 
-                "top": 285
+                "top": 370
             }, 
             "tool_errors": null, 
             "tool_id": null, 
@@ -50,21 +73,25 @@
             "type": "data_input", 
             "user_outputs": []
         }, 
-        "2": {
+        "3": {
             "annotation": "", 
-            "id": 2, 
+            "id": 3, 
             "input_connections": {
                 "fasta": {
-                    "id": 1, 
+                    "id": 2, 
                     "output_name": "output"
                 }, 
                 "sequence_reads": {
                     "id": 0, 
                     "output_name": "output"
+                }, 
+                "sequence_reads_paired": {
+                    "id": 1, 
+                    "output_name": "output"
                 }
             }, 
             "inputs": [], 
-            "name": "core_pipeline_outputs", 
+            "name": "core_pipeline_outputs_single_paired", 
             "outputs": [
                 {
                     "name": "csv", 
@@ -83,25 +110,10 @@
                 "left": 462, 
                 "top": 200
             }, 
-            "post_job_actions": {
-                "RenameDatasetActioncsv": {
-                    "action_arguments": {
-                        "newname": "output1.txt"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
-                    "output_name": "csv"
-                }, 
-                "RenameDatasetActionoutput_tree": {
-                    "action_arguments": {
-                        "newname": "output2.txt"
-                    }, 
-                    "action_type": "RenameDatasetAction", 
-                    "output_name": "output_tree"
-                }
-            }, 
+            "post_job_actions": {}, 
             "tool_errors": null, 
-            "tool_id": "core_pipeline_outputs", 
-            "tool_state": "{\"__page__\": 0, \"fasta\": \"null\", \"sequence_reads\": \"null\", \"__rerun_remap_job_id__\": null}", 
+            "tool_id": "core_pipeline_outputs_single_paired", 
+            "tool_state": "{\"__page__\": 0, \"fasta\": \"null\", \"sequence_reads\": \"null\", \"sequence_reads_paired\": \"null\", \"__rerun_remap_job_id__\": null}", 
             "tool_version": "0.1.0", 
             "type": "tool", 
             "user_outputs": []

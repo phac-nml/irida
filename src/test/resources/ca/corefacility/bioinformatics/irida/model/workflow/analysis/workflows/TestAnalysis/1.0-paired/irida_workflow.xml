@@ -8,7 +8,7 @@
   <email>developer@example.com</email>
   <analysisType>default</analysisType>
   <inputs>
-    <sequenceReadsPair>sequence_reads</sequenceReadsPair>
+    <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
     <reference>reference</reference>
   </inputs>
   <outputs>
