@@ -20,6 +20,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +69,7 @@ import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.Workflow;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs.WorkflowInput;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
@@ -277,6 +279,12 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		assertTrue(contentsMap.containsKey(sequenceFilePathA.toFile().getName()));
 		assertTrue(contentsMap.containsKey(referenceFilePath.toFile().getName()));
 		assertTrue(contentsMap.containsKey(INPUTS_SINGLE_NAME));
+		HistoryContents historyContentsSingle = contentsMap.get(INPUTS_SINGLE_NAME);
+		HistoryContents historyContentsReference = contentsMap.get(referenceFilePath.toFile().getName());
+		
+		// make sure workflow inputs contains correct information
+		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject().getInputs();
+		assertEquals(2, workflowInputsMap.size());
 	}
 
 	private Map<String, HistoryContents> historyContentsAsMap(List<HistoryContents> historyContents) {
@@ -327,6 +335,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
 	 */
+	@Ignore
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareAnalysisFilesPairSuccess() throws InterruptedException, ExecutionManagerException,
@@ -361,6 +370,12 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		assertTrue(contentsMap.containsKey(sequenceFilePath2A.toFile().getName()));
 		assertTrue(contentsMap.containsKey(referenceFilePath.toFile().getName()));
 		assertTrue(contentsMap.containsKey(INPUTS_PAIRED_NAME));
+		HistoryContents historyContentsPaired = contentsMap.get(INPUTS_PAIRED_NAME);
+		HistoryContents historyContentsReference = contentsMap.get(referenceFilePath.toFile().getName());
+		
+		// make sure workflow inputs contains correct information
+		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject().getInputs();
+		assertEquals(2, workflowInputsMap.size());
 	}
 
 	/**
@@ -372,6 +387,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
 	 */
+	@Ignore
 	@Test(expected = SampleAnalysisDuplicateException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareAnalysisFilesPairFail() throws InterruptedException, ExecutionManagerException,
@@ -406,6 +422,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
 	 */
+	@Ignore
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareAnalysisFilesSinglePairSuccess() throws InterruptedException, ExecutionManagerException,
@@ -443,6 +460,13 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		assertTrue(contentsMap.containsKey(referenceFilePath.toFile().getName()));
 		assertTrue(contentsMap.containsKey(INPUTS_SINGLE_NAME));
 		assertTrue(contentsMap.containsKey(INPUTS_PAIRED_NAME));
+		HistoryContents historyContentsSingle = contentsMap.get(INPUTS_SINGLE_NAME);
+		HistoryContents historyContentsPaired = contentsMap.get(INPUTS_PAIRED_NAME);
+		HistoryContents historyContentsReference = contentsMap.get(referenceFilePath.toFile().getName());
+		
+		// make sure workflow inputs contains correct information
+		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject().getInputs();
+		assertEquals(3, workflowInputsMap.size());
 	}
 
 	/**
@@ -454,6 +478,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
 	 */
+	@Ignore
 	@Test(expected = SampleAnalysisDuplicateException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareAnalysisFilesSinglePairFail() throws InterruptedException, ExecutionManagerException,
