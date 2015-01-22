@@ -213,7 +213,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Test
 	public void testPrepareAnalysisWorkspaceSuccess() throws ExecutionManagerException {
 		when(galaxyHistoriesService.newHistoryForWorkflow()).thenReturn(workflowHistory);
-		assertEquals(HISTORY_ID, workflowPreparation.prepareAnalysisWorkspace(submission));
+		assertEquals("history id is invalid", HISTORY_ID, workflowPreparation.prepareAnalysisWorkspace(submission));
 	}
 
 	/**
@@ -224,7 +224,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Test(expected = RuntimeException.class)
 	public void testPrepareAnalysisWorkspaceFail() throws ExecutionManagerException {
 		when(galaxyHistoriesService.newHistoryForWorkflow()).thenThrow(new RuntimeException());
-		assertEquals(HISTORY_ID, workflowPreparation.prepareAnalysisWorkspace(submission));
+		assertEquals("history id is invalid", HISTORY_ID, workflowPreparation.prepareAnalysisWorkspace(submission));
 	}
 
 	/**
@@ -280,10 +280,12 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		assertNotNull("workflowInputs in preparedWorkflow is null", preparedWorkflow.getWorkflowInputs());
 		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
 				.getInputs();
-		assertEquals(3, workflowInputsMap.size());
-		assertTrue(workflowInputsMap.containsKey(REFERENCE_FILE_ID));
-		assertTrue(workflowInputsMap.containsKey(SEQUENCE_FILE_SINGLE_ID));
-		assertTrue(workflowInputsMap.containsKey(SEQUENCE_FILE_PAIRED_ID));
+		assertEquals("invalid number of workflow inputs", 3, workflowInputsMap.size());
+		assertTrue("workflow inputs should contain reference entry", workflowInputsMap.containsKey(REFERENCE_FILE_ID));
+		assertTrue("workflow inputs should contain sequence file single entry",
+				workflowInputsMap.containsKey(SEQUENCE_FILE_SINGLE_ID));
+		assertTrue("workflow inputs should contain sequence file paired entry",
+				workflowInputsMap.containsKey(SEQUENCE_FILE_PAIRED_ID));
 		verify(analysisCollectionServiceGalaxy).uploadSequenceFilesSingle(any(Map.class), any(History.class),
 				any(Library.class));
 		verify(analysisCollectionServiceGalaxy).uploadSequenceFilesPaired(any(Map.class), any(History.class),
@@ -335,9 +337,11 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		assertNotNull("workflowInputs in preparedWorkflow is null", preparedWorkflow.getWorkflowInputs());
 		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
 				.getInputs();
-		assertEquals(2, workflowInputsMap.size());
-		assertTrue(workflowInputsMap.containsKey(REFERENCE_FILE_ID));
-		assertTrue(workflowInputsMap.containsKey(SEQUENCE_FILE_SINGLE_ID));
+		assertEquals("workflow inputs has invalid size", 2, workflowInputsMap.size());
+		assertTrue("workflow inputs should contain reference file entry",
+				workflowInputsMap.containsKey(REFERENCE_FILE_ID));
+		assertTrue("workflow inputs should contain sequence file single entry",
+				workflowInputsMap.containsKey(SEQUENCE_FILE_SINGLE_ID));
 		verify(analysisCollectionServiceGalaxy).uploadSequenceFilesSingle(any(Map.class), any(History.class),
 				any(Library.class));
 		verify(analysisCollectionServiceGalaxy, never()).uploadSequenceFilesPaired(any(Map.class), any(History.class),
@@ -390,9 +394,11 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		assertNotNull("workflowInputs in preparedWorkflow is null", preparedWorkflow.getWorkflowInputs());
 		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
 				.getInputs();
-		assertEquals(2, workflowInputsMap.size());
-		assertTrue(workflowInputsMap.containsKey(REFERENCE_FILE_ID));
-		assertTrue(workflowInputsMap.containsKey(SEQUENCE_FILE_PAIRED_ID));
+		assertEquals("workflow inputs has invalid size", 2, workflowInputsMap.size());
+		assertTrue("workflow inputs should contain reference file entry",
+				workflowInputsMap.containsKey(REFERENCE_FILE_ID));
+		assertTrue("workflow inputs should contain sequence file paired entry",
+				workflowInputsMap.containsKey(SEQUENCE_FILE_PAIRED_ID));
 		verify(analysisCollectionServiceGalaxy, never()).uploadSequenceFilesSingle(any(Map.class), any(History.class),
 				any(Library.class));
 		verify(analysisCollectionServiceGalaxy).uploadSequenceFilesPaired(any(Map.class), any(History.class),
@@ -539,10 +545,12 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 		Analysis analysis = workflowPreparation.getAnalysisResults(submission);
 
-		assertNotNull(analysis);
-		assertEquals(2, analysis.getAnalysisOutputFiles().size());
-		assertEquals(Paths.get("output1.txt"), analysis.getAnalysisOutputFile("output1").getFile().getFileName());
-		assertEquals(Paths.get("output2.txt"), analysis.getAnalysisOutputFile("output2").getFile().getFileName());
+		assertNotNull("analysis is not valid", analysis);
+		assertEquals("invalid number of output files", 2, analysis.getAnalysisOutputFiles().size());
+		assertEquals("missing output file for analysis", Paths.get("output1.txt"),
+				analysis.getAnalysisOutputFile("output1").getFile().getFileName());
+		assertEquals("missing output file for analysis", Paths.get("output2.txt"),
+				analysis.getAnalysisOutputFile("output2").getFile().getFileName());
 
 		verify(galaxyHistoriesService).getDatasetForFileInHistory("output1.txt", HISTORY_ID);
 		verify(galaxyHistoriesService).getDatasetForFileInHistory("output2.txt", HISTORY_ID);

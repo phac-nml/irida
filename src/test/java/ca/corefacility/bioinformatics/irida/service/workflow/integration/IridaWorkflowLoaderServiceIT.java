@@ -149,7 +149,7 @@ public class IridaWorkflowLoaderServiceIT {
 		IridaWorkflowDescription iridaWorkflowDescription = buildTestDescriptionSingle();
 		IridaWorkflowDescription iridaWorkflowFromFile = workflowLoaderService.loadWorkflowDescription(workflowSingleXmlPath);
 
-		assertEquals(iridaWorkflowFromFile, iridaWorkflowDescription);
+		assertEquals("irida workflow description is invalid", iridaWorkflowFromFile, iridaWorkflowDescription);
 	}
 	
 	/**
@@ -163,7 +163,7 @@ public class IridaWorkflowLoaderServiceIT {
 		IridaWorkflowDescription iridaWorkflowDescription = buildTestDescriptionPaired();
 		IridaWorkflowDescription iridaWorkflowFromFile = workflowLoaderService.loadWorkflowDescription(workflowPairedXmlPath);
 
-		assertEquals(iridaWorkflowFromFile, iridaWorkflowDescription);
+		assertEquals("irida workflow description is invalid", iridaWorkflowFromFile, iridaWorkflowDescription);
 	}
 	
 	/**
@@ -177,7 +177,7 @@ public class IridaWorkflowLoaderServiceIT {
 		IridaWorkflowDescription iridaWorkflowDescription = buildTestDescriptionSinglePaired();
 		IridaWorkflowDescription iridaWorkflowFromFile = workflowLoaderService.loadWorkflowDescription(workflowSinglePairedXmlPath);
 
-		assertEquals(iridaWorkflowFromFile, iridaWorkflowDescription);
+		assertEquals("irida workflow description is invalid", iridaWorkflowFromFile, iridaWorkflowDescription);
 	}
 
 	/**
@@ -192,7 +192,7 @@ public class IridaWorkflowLoaderServiceIT {
 		IridaWorkflow iridaWorkflowFromFile = workflowLoaderService.loadIridaWorkflow(workflowSingleXmlPath,
 				workflowStructurePath);
 
-		assertEquals(iridaWorkflowFromFile, iridaWorkflow);
+		assertEquals("irida workflow is invalid", iridaWorkflowFromFile, iridaWorkflow);
 	}
 
 	/**
@@ -206,7 +206,7 @@ public class IridaWorkflowLoaderServiceIT {
 		IridaWorkflowStructure iridaWorkflowStructureFromFile = workflowLoaderService
 				.loadWorkflowStructure(workflowStructurePath);
 
-		assertEquals(iridaWorkflowStructure, iridaWorkflowStructureFromFile);
+		assertEquals("irida workflow structure invalid", iridaWorkflowStructure, iridaWorkflowStructureFromFile);
 	}
 
 	/**
@@ -217,7 +217,7 @@ public class IridaWorkflowLoaderServiceIT {
 		IridaWorkflow iridaWorkflowFromFile = workflowLoaderService
 				.loadIridaWorkflowFromDirectory(workflowVersionDirectoryPath);
 
-		assertEquals(buildTestWorkflowSingle(), iridaWorkflowFromFile);
+		assertEquals("irida workflow is invalid", buildTestWorkflowSingle(), iridaWorkflowFromFile);
 	}
 
 	/**
@@ -238,12 +238,12 @@ public class IridaWorkflowLoaderServiceIT {
 		IridaWorkflow workflowE = iter.next();
 		IridaWorkflow workflowF = iter.next();
 
-		assertEquals("TestWorkflow", workflowA.getWorkflowDescription().getName());
-		assertEquals("TestWorkflow", workflowB.getWorkflowDescription().getName());
-		assertEquals("TestWorkflow", workflowC.getWorkflowDescription().getName());
-		assertEquals("TestWorkflow", workflowD.getWorkflowDescription().getName());
-		assertEquals("TestWorkflow", workflowE.getWorkflowDescription().getName());
-		assertEquals("TestWorkflow", workflowF.getWorkflowDescription().getName());
+		assertEquals("irida workflow name is invalid", "TestWorkflow", workflowA.getWorkflowDescription().getName());
+		assertEquals("irida workflow name is invalid", "TestWorkflow", workflowB.getWorkflowDescription().getName());
+		assertEquals("irida workflow name is invalid", "TestWorkflow", workflowC.getWorkflowDescription().getName());
+		assertEquals("irida workflow name is invalid", "TestWorkflow", workflowD.getWorkflowDescription().getName());
+		assertEquals("irida workflow name is invalid", "TestWorkflow", workflowE.getWorkflowDescription().getName());
+		assertEquals("irida workflow name is invalid", "TestWorkflow", workflowF.getWorkflowDescription().getName());
 
 		Set<String> actualVersionNumbers = Sets.newHashSet(workflowA.getWorkflowDescription().getVersion(), workflowB
 				.getWorkflowDescription().getVersion(), workflowC.getWorkflowDescription().getVersion(), workflowD
@@ -251,7 +251,7 @@ public class IridaWorkflowLoaderServiceIT {
 				.getWorkflowDescription().getVersion());
 		Set<String> validVersionNumbers = Sets.newHashSet("1.0", "2.0", "1.0-invalid", "2.0-missing-output",
 				"1.0-paired", "1.0-single-paired");
-		assertEquals(validVersionNumbers, actualVersionNumbers);
+		assertEquals("irida workflow versions are invalid", validVersionNumbers, actualVersionNumbers);
 	}
 	
 	/**

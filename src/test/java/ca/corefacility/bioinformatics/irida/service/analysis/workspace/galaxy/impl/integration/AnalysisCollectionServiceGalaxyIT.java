@@ -161,8 +161,9 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		Map<Sample, SequenceFile> sampleSequenceFiles = analysisCollectionServiceGalaxy
 				.getSequenceFileSingleSamples(sequenceFiles);
-		assertEquals(1, sampleSequenceFiles.size());
-		assertEquals(sequenceFile, sampleSequenceFiles.get(sample));
+		assertEquals("sampleSequenceFiles map has size != 1", 1, sampleSequenceFiles.size());
+		assertEquals("sampleSequenceFiles map does not have sequenceFile " + sequenceFile + " corresponding to sample "
+				+ sample, sequenceFile, sampleSequenceFiles.get(sample));
 	}
 
 	/**
@@ -194,8 +195,9 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = analysisCollectionServiceGalaxy
 				.getSequenceFilePairedSamples(sequenceFiles);
-		assertEquals(1, sampleSequenceFilePairs.size());
-		assertEquals(sequenceFilePair, sampleSequenceFilePairs.get(sample));
+		assertEquals("sampleSequenceFiles map has size != 1", 1, sampleSequenceFilePairs.size());
+		assertEquals("sampleSequenceFiles map does not have sequenceFilePair " + sequenceFilePair
+				+ " corresponding to sample " + sample, sequenceFilePair, sampleSequenceFilePairs.get(sample));
 	}
 
 	/**
@@ -242,19 +244,24 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
-		assertEquals(2, historyContents.size());
+		assertEquals("historyContents should have size 2", 2, historyContents.size());
 		Map<String, HistoryContents> contentsMap = historyContentsAsMap(historyContents);
-		assertTrue(contentsMap.containsKey(sequenceFilePathA.toFile().getName()));
-		assertTrue(contentsMap.containsKey(INPUTS_SINGLE_NAME));
+		assertTrue("sequenceFile should have been uploaded to history",
+				contentsMap.containsKey(sequenceFilePathA.toFile().getName()));
+		assertTrue("dataset collection with name " + INPUTS_SINGLE_NAME + " should have been created in history",
+				contentsMap.containsKey(INPUTS_SINGLE_NAME));
 
 		// verify correct collection has been created
-		assertEquals(DatasetCollectionType.LIST.toString(), collectionResponse.getCollectionType());
+		assertEquals("constructed dataset collection should have been " + DatasetCollectionType.LIST
+				+ " but is instead " + collectionResponse.getCollectionType(), DatasetCollectionType.LIST.toString(),
+				collectionResponse.getCollectionType());
 		List<CollectionElementResponse> collectionElements = collectionResponse.getElements();
-		assertEquals(1, collectionElements.size());
+		assertEquals("dataset collection should have only 1 element", 1, collectionElements.size());
 		Map<String, CollectionElementResponse> collectionElementsMap = collectionElementsAsMap(collectionElements);
-		assertTrue(collectionElementsMap.containsKey(sample1.getSampleName()));
+		assertTrue("dataset collection should have an element with the name " + sample1.getSampleName(),
+				collectionElementsMap.containsKey(sample1.getSampleName()));
 		CollectionElementResponse sample1Response = collectionElementsMap.get(sample1.getSampleName());
-		assertEquals(HISTORY_DATASET_NAME, sample1Response.getElementType());
+		assertEquals("invalid type for dataset element", HISTORY_DATASET_NAME, sample1Response.getElementType());
 	}
 
 	/**
@@ -288,36 +295,47 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
-		assertEquals(3, historyContents.size());
+		assertEquals("history does not have correct number of files", 3, historyContents.size());
 		Map<String, HistoryContents> contentsMap = historyContentsAsMap(historyContents);
-		assertTrue(contentsMap.containsKey(sequenceFilePathA.toFile().getName()));
-		assertTrue(contentsMap.containsKey(sequenceFilePath2A.toFile().getName()));
-		assertTrue(contentsMap.containsKey(INPUTS_PAIRED_NAME));
+		assertTrue("the history should have a sequence file with name " + sequenceFilePathA.toFile().getName(),
+				contentsMap.containsKey(sequenceFilePathA.toFile().getName()));
+		assertTrue("the history should have a file with name " + sequenceFilePath2A.toFile().getName(),
+				contentsMap.containsKey(sequenceFilePath2A.toFile().getName()));
+		assertTrue("the history should have a dataset collection with name " + INPUTS_PAIRED_NAME,
+				contentsMap.containsKey(INPUTS_PAIRED_NAME));
 
 		// verify correct collection has been created
-		assertEquals(DatasetCollectionType.LIST_PAIRED.toString(), collectionResponse.getCollectionType());
+		assertEquals("invalid type of dataset collection created", DatasetCollectionType.LIST_PAIRED.toString(),
+				collectionResponse.getCollectionType());
 		List<CollectionElementResponse> collectionElements = collectionResponse.getElements();
-		assertEquals(1, collectionElements.size());
+		assertEquals("invalid number of elements in the dataset collection", 1, collectionElements.size());
 		Map<String, CollectionElementResponse> collectionElementsMap = collectionElementsAsMap(collectionElements);
-		assertTrue(collectionElementsMap.containsKey(sample1.getSampleName()));
+		assertTrue("the dataset collection element should have name " + sample1.getSampleName(),
+				collectionElementsMap.containsKey(sample1.getSampleName()));
 		CollectionElementResponse sample1Response = collectionElementsMap.get(sample1.getSampleName());
 
 		// verify collection has 2 files (paired end data)
 		ElementResponse subElements = sample1Response.getResponseElement();
-		assertEquals(CollectionResponse.class, subElements.getClass());
+		assertEquals("invalid class for sub-element in dataset collection", CollectionResponse.class,
+				subElements.getClass());
 		CollectionResponse subElementsCollection = (CollectionResponse) subElements;
-		assertEquals(DatasetCollectionType.PAIRED.toString(), subElementsCollection.getCollectionType());
+		assertEquals("invalid type for sub-element in dataset collection", DatasetCollectionType.PAIRED.toString(),
+				subElementsCollection.getCollectionType());
 		List<CollectionElementResponse> subCollectionElements = subElementsCollection.getElements();
-		assertEquals(2, subCollectionElements.size());
+		assertEquals("invalid number of files for paired dataset collection element", 2, subCollectionElements.size());
 		Map<String, CollectionElementResponse> subCollectionElementsMap = collectionElementsAsMap(subCollectionElements);
-		assertTrue(subCollectionElementsMap.containsKey(FORWARD_NAME));
-		assertTrue(subCollectionElementsMap.containsKey(REVERSE_NAME));
+		assertTrue("dataset collection should have a sub-element with name " + FORWARD_NAME,
+				subCollectionElementsMap.containsKey(FORWARD_NAME));
+		assertTrue("dataset collection should have a sub-element with name " + REVERSE_NAME,
+				subCollectionElementsMap.containsKey(REVERSE_NAME));
 
 		// verify paired-end files are correct type in collection
 		CollectionElementResponse sequenceFile1 = subCollectionElementsMap.get(FORWARD_NAME);
 		CollectionElementResponse sequenceFile2 = subCollectionElementsMap.get(REVERSE_NAME);
-		assertEquals(HISTORY_DATASET_NAME, sequenceFile1.getElementType());
-		assertEquals(HISTORY_DATASET_NAME, sequenceFile2.getElementType());
+		assertEquals("the " + FORWARD_NAME + " sub-element should be a history dataset", HISTORY_DATASET_NAME,
+				sequenceFile1.getElementType());
+		assertEquals("the " + REVERSE_NAME + " sub-element should be a history dataset", HISTORY_DATASET_NAME,
+				sequenceFile2.getElementType());
 	}
 
 	private Map<String, HistoryContents> historyContentsAsMap(List<HistoryContents> historyContents) {

@@ -222,7 +222,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	public void testPrepareAnalysisWorkspaceSuccess() throws IridaWorkflowNotFoundException, ExecutionManagerException {
 		AnalysisSubmission submission = AnalysisSubmission.createSubmissionSingle("Name", sequenceFilesSet,
 				validWorkflowIdSingle);
-		assertNotNull(analysisWorkspaceService.prepareAnalysisWorkspace(submission));
+		assertNotNull("preparing an analysis workspace should not return null",
+				analysisWorkspaceService.prepareAnalysisWorkspace(submission));
 	}
 
 	/**
@@ -270,20 +271,25 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
 		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
-		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId());
-		assertNotNull(preparedWorkflow.getWorkflowInputs());
+		assertEquals("the response history id should match the input history id", createdHistory.getId(),
+				preparedWorkflow.getRemoteAnalysisId());
+		assertNotNull("the returned workflow inputs should not be null", preparedWorkflow.getWorkflowInputs());
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
-		assertEquals(3, historyContents.size());
+		assertEquals("the created history should contain 3 entries", 3, historyContents.size());
 		Map<String, HistoryContents> contentsMap = historyContentsAsMap(historyContents);
-		assertTrue(contentsMap.containsKey(sequenceFilePathA.toFile().getName()));
-		assertTrue(contentsMap.containsKey(referenceFilePath.toFile().getName()));
-		assertTrue(contentsMap.containsKey(INPUTS_SINGLE_NAME));
-		
+		assertTrue("the created history should contain the file " + sequenceFilePathA.toFile().getName(),
+				contentsMap.containsKey(sequenceFilePathA.toFile().getName()));
+		assertTrue("the created history should contain the file " + referenceFilePath.toFile().getName(),
+				contentsMap.containsKey(referenceFilePath.toFile().getName()));
+		assertTrue("the created history should contain the collection with name " + INPUTS_SINGLE_NAME,
+				contentsMap.containsKey(INPUTS_SINGLE_NAME));
+
 		// make sure workflow inputs contains correct information
-		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject().getInputs();
-		assertEquals(2, workflowInputsMap.size());
+		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
+				.getInputs();
+		assertEquals("the created workflow inputs has an invalid number of elements", 2, workflowInputsMap.size());
 	}
 
 	private Map<String, HistoryContents> historyContentsAsMap(List<HistoryContents> historyContents) {
@@ -356,22 +362,28 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
 		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
-		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId());
+		assertEquals("the response history id should match the input history id", createdHistory.getId(),
+				preparedWorkflow.getRemoteAnalysisId());
 		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
-		assertNotNull(workflowInputsGalaxy);
+		assertNotNull("the returned workflow inputs should not be null", workflowInputsGalaxy);
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
-		assertEquals(4, historyContents.size());
+		assertEquals("the created history has an invalid number of elements", 4, historyContents.size());
 		Map<String, HistoryContents> contentsMap = historyContentsAsMap(historyContents);
-		assertTrue(contentsMap.containsKey(sequenceFilePathA.toFile().getName()));
-		assertTrue(contentsMap.containsKey(sequenceFilePath2A.toFile().getName()));
-		assertTrue(contentsMap.containsKey(referenceFilePath.toFile().getName()));
-		assertTrue(contentsMap.containsKey(INPUTS_PAIRED_NAME));
-		
+		assertTrue("the created history should contain the file " + sequenceFilePathA.toFile().getName(),
+				contentsMap.containsKey(sequenceFilePathA.toFile().getName()));
+		assertTrue("the created history should contain the file " + sequenceFilePath2A.toFile().getName(),
+				contentsMap.containsKey(sequenceFilePath2A.toFile().getName()));
+		assertTrue("the created history should contain the file " + referenceFilePath.toFile().getName(),
+				contentsMap.containsKey(referenceFilePath.toFile().getName()));
+		assertTrue("the created history should contain the collection with name " + INPUTS_PAIRED_NAME,
+				contentsMap.containsKey(INPUTS_PAIRED_NAME));
+
 		// make sure workflow inputs contains correct information
-		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject().getInputs();
-		assertEquals(2, workflowInputsMap.size());
+		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
+				.getInputs();
+		assertEquals("the created workflow inputs has an invalid number of elements", 2, workflowInputsMap.size());
 	}
 
 	/**
@@ -440,24 +452,32 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
 		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
-		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId());
+		assertEquals("the response history id should match the input history id", createdHistory.getId(),
+				preparedWorkflow.getRemoteAnalysisId());
 		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
-		assertNotNull(workflowInputsGalaxy);
+		assertNotNull("the returned workflow inputs should not be null", workflowInputsGalaxy);
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
-		assertEquals(6, historyContents.size());
+		assertEquals("the created history has an invalid number of elements", 6, historyContents.size());
 		Map<String, HistoryContents> contentsMap = historyContentsAsMap(historyContents);
-		assertTrue(contentsMap.containsKey(sequenceFilePathA.toFile().getName()));
-		assertTrue(contentsMap.containsKey(sequenceFilePath2A.toFile().getName()));
-		assertTrue(contentsMap.containsKey(sequenceFilePath3.toFile().getName()));
-		assertTrue(contentsMap.containsKey(referenceFilePath.toFile().getName()));
-		assertTrue(contentsMap.containsKey(INPUTS_SINGLE_NAME));
-		assertTrue(contentsMap.containsKey(INPUTS_PAIRED_NAME));
-		
+		assertTrue("the created history should contain the file " + sequenceFilePathA.toFile().getName(),
+				contentsMap.containsKey(sequenceFilePathA.toFile().getName()));
+		assertTrue("the created history should contain the file " + sequenceFilePath2A.toFile().getName(),
+				contentsMap.containsKey(sequenceFilePath2A.toFile().getName()));
+		assertTrue("the created history should contain the file " + sequenceFilePath3.toFile().getName(),
+				contentsMap.containsKey(sequenceFilePath3.toFile().getName()));
+		assertTrue("the created history should contain the file " + referenceFilePath.toFile().getName(),
+				contentsMap.containsKey(referenceFilePath.toFile().getName()));
+		assertTrue("the created history should contain a dataset collection with the name " + INPUTS_SINGLE_NAME,
+				contentsMap.containsKey(INPUTS_SINGLE_NAME));
+		assertTrue("the created history should contain a dataset collection with the name " + INPUTS_PAIRED_NAME,
+				contentsMap.containsKey(INPUTS_PAIRED_NAME));
+
 		// make sure workflow inputs contains correct information
-		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject().getInputs();
-		assertEquals(3, workflowInputsMap.size());
+		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
+				.getInputs();
+		assertEquals("the created workflow inputs has an invalid number of elements", 3, workflowInputsMap.size());
 	}
 
 	/**
@@ -517,9 +537,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId("invalid");
 
-		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
-		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId());
-		assertNotNull(preparedWorkflow.getWorkflowInputs());
+		analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
 	}
 
 	private void uploadFileToHistory(Path filePath, String fileName, String historyId, ToolsClient toolsClient) {
@@ -567,9 +585,10 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle);
-		assertEquals(0, analysisSubmission.getPairedInputFiles().size());
+		assertEquals("the created submission should have no paired input files", 0, analysisSubmission
+				.getPairedInputFiles().size());
 		Set<SequenceFile> submittedSf = analysisSubmission.getSingleInputFiles();
-		assertEquals(1, submittedSf.size());
+		assertEquals("the created submission should have 1 single input file", 1, submittedSf.size());
 
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
@@ -577,15 +596,19 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmissionRepository.save(analysisSubmission);
 
 		Analysis analysis = analysisWorkspaceService.getAnalysisResults(analysisSubmission);
-		assertNotNull(analysis);
-		assertEquals(Analysis.class, analysis.getClass());
-		assertEquals(2, analysis.getAnalysisOutputFiles().size());
-		assertEquals(Paths.get(OUTPUT1_NAME), analysis.getAnalysisOutputFile(OUTPUT1_LABEL).getFile().getFileName());
-		assertEquals(Paths.get(OUTPUT2_NAME), analysis.getAnalysisOutputFile(OUTPUT2_LABEL).getFile().getFileName());
+		assertNotNull("the analysis results were not properly created", analysis);
+		assertEquals("the Analysis results class is invalid", Analysis.class, analysis.getClass());
+		assertEquals("the analysis results has an invalid number of output files", 2, analysis.getAnalysisOutputFiles()
+				.size());
+		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT1_NAME), analysis
+				.getAnalysisOutputFile(OUTPUT1_LABEL).getFile().getFileName());
+		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
+				.getAnalysisOutputFile(OUTPUT2_LABEL).getFile().getFileName());
 
 		// make sure files stored in analysis are same as those in analysis
 		// submission
-		assertEquals(submittedSf, analysis.getInputSequenceFiles());
+		assertEquals("the analysis results input files is set incorrectly", submittedSf,
+				analysis.getInputSequenceFiles());
 	}
 
 	/**
@@ -631,12 +654,13 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				paths1, paths2, referenceFilePath, validWorkflowIdSingle);
-		assertEquals(0, analysisSubmission.getSingleInputFiles().size());
+		assertEquals("the created submission should have no single input files", 0, analysisSubmission
+				.getSingleInputFiles().size());
 		Set<SequenceFilePair> pairedFiles = analysisSubmission.getPairedInputFiles();
-		assertEquals(1, pairedFiles.size());
+		assertEquals("the created submission has an invalid number of paired input files", 1, pairedFiles.size());
 		SequenceFilePair submittedSp = pairedFiles.iterator().next();
 		Set<SequenceFile> submittedSf = submittedSp.getFiles();
-		assertEquals(2, submittedSf.size());
+		assertEquals("the paired input should have 2 files", 2, submittedSf.size());
 
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
@@ -644,15 +668,19 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmissionRepository.save(analysisSubmission);
 
 		Analysis analysis = analysisWorkspaceService.getAnalysisResults(analysisSubmission);
-		assertNotNull(analysis);
-		assertEquals(Analysis.class, analysis.getClass());
-		assertEquals(2, analysis.getAnalysisOutputFiles().size());
-		assertEquals(Paths.get(OUTPUT1_NAME), analysis.getAnalysisOutputFile(OUTPUT1_LABEL).getFile().getFileName());
-		assertEquals(Paths.get(OUTPUT2_NAME), analysis.getAnalysisOutputFile(OUTPUT2_LABEL).getFile().getFileName());
+		assertNotNull("the analysis results were not properly created", analysis);
+		assertEquals("the Analysis results class is invalid", Analysis.class, analysis.getClass());
+		assertEquals("the analysis results has an invalid number of output files", 2, analysis.getAnalysisOutputFiles()
+				.size());
+		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT1_NAME), analysis
+				.getAnalysisOutputFile(OUTPUT1_LABEL).getFile().getFileName());
+		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
+				.getAnalysisOutputFile(OUTPUT2_LABEL).getFile().getFileName());
 
 		// make sure files stored in analysis are same as those in analysis
 		// submission
-		assertEquals(submittedSf, analysis.getInputSequenceFiles());
+		assertEquals("the analysis results input files is set incorrectly", submittedSf,
+				analysis.getInputSequenceFiles());
 	}
 
 	/**
@@ -702,13 +730,13 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 						referenceFilePath, validWorkflowIdSingle);
 
 		Set<SequenceFile> singleFiles = analysisSubmission.getSingleInputFiles();
-		assertEquals(1, singleFiles.size());
+		assertEquals("invalid number of single end input files", 1, singleFiles.size());
 		SequenceFile singleFile = singleFiles.iterator().next();
 		Set<SequenceFilePair> pairedFiles = analysisSubmission.getPairedInputFiles();
-		assertEquals(1, pairedFiles.size());
+		assertEquals("invalid number of paired end inputs", 1, pairedFiles.size());
 		SequenceFilePair submittedSp = pairedFiles.iterator().next();
 		Set<SequenceFile> submittedSf = submittedSp.getFiles();
-		assertEquals(2, submittedSf.size());
+		assertEquals("invalid number of files for paired input", 2, submittedSf.size());
 		Iterator<SequenceFile> sfIter = submittedSf.iterator();
 		SequenceFile pair1 = sfIter.next();
 		SequenceFile pair2 = sfIter.next();
@@ -719,15 +747,19 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmissionRepository.save(analysisSubmission);
 
 		Analysis analysis = analysisWorkspaceService.getAnalysisResults(analysisSubmission);
-		assertNotNull(analysis);
-		assertEquals(Analysis.class, analysis.getClass());
-		assertEquals(2, analysis.getAnalysisOutputFiles().size());
-		assertEquals(Paths.get(OUTPUT1_NAME), analysis.getAnalysisOutputFile(OUTPUT1_LABEL).getFile().getFileName());
-		assertEquals(Paths.get(OUTPUT2_NAME), analysis.getAnalysisOutputFile(OUTPUT2_LABEL).getFile().getFileName());
+		assertNotNull("the analysis results were not properly created", analysis);
+		assertEquals("the Analysis results class is invalid", Analysis.class, analysis.getClass());
+		assertEquals("the analysis results has an invalid number of output files", 2, analysis.getAnalysisOutputFiles()
+				.size());
+		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT1_NAME), analysis
+				.getAnalysisOutputFile(OUTPUT1_LABEL).getFile().getFileName());
+		assertEquals("the analysis results output file has an invalid name", Paths.get(OUTPUT2_NAME), analysis
+				.getAnalysisOutputFile(OUTPUT2_LABEL).getFile().getFileName());
 
 		// make sure files stored in analysis are same as those in analysis
 		// submission
-		assertEquals(Sets.newHashSet(pair1, pair2, singleFile), analysis.getInputSequenceFiles());
+		assertEquals("the analysis results input files is set incorrectly", Sets.newHashSet(pair1, pair2, singleFile),
+				analysis.getInputSequenceFiles());
 	}
 
 	/**
@@ -774,12 +806,16 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmissionRepository.save(analysisSubmission);
 
 		Analysis analysis = analysisWorkspaceService.getAnalysisResults(analysisSubmission);
-		assertNotNull(analysis);
-		assertEquals(AnalysisPhylogenomicsPipeline.class, analysis.getClass());
-		assertEquals(3, analysis.getAnalysisOutputFiles().size());
-		assertEquals(Paths.get(TABLE_NAME), analysis.getAnalysisOutputFile(TABLE_LABEL).getFile().getFileName());
-		assertEquals(Paths.get(MATRIX_NAME), analysis.getAnalysisOutputFile(MATRIX_LABEL).getFile().getFileName());
-		assertEquals(Paths.get(TREE_NAME), analysis.getAnalysisOutputFile(TREE_LABEL).getFile().getFileName());
+		assertNotNull("the analysis results were not properly created", analysis);
+		assertEquals("the Analysis results class is invalid", AnalysisPhylogenomicsPipeline.class, analysis.getClass());
+		assertEquals("the analysis results has an invalid number of output files", 3, analysis.getAnalysisOutputFiles()
+				.size());
+		assertEquals("the analysis results output file has an invalid name", Paths.get(TABLE_NAME), analysis
+				.getAnalysisOutputFile(TABLE_LABEL).getFile().getFileName());
+		assertEquals("the analysis results output file has an invalid name", Paths.get(MATRIX_NAME), analysis
+				.getAnalysisOutputFile(MATRIX_LABEL).getFile().getFileName());
+		assertEquals("the analysis results output file has an invalid name", Paths.get(TREE_NAME), analysis
+				.getAnalysisOutputFile(TREE_LABEL).getFile().getFileName());
 	}
 
 	/**
@@ -807,8 +843,6 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		// upload test outputs
 		uploadFileToHistory(sequenceFilePathA, OUTPUT1_NAME, createdHistory.getId(), toolsClient);
-		// uploadFileToHistory(sequenceFilePath, OUTPUT2_NAME,
-		// createdHistory.getId(), toolsClient);
 
 		// wait for history
 		Util.waitUntilHistoryComplete(createdHistory.getId(), galaxyHistoriesService, 60);
