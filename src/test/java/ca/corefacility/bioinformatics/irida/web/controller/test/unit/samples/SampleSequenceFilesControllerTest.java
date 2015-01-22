@@ -327,7 +327,7 @@ public class SampleSequenceFilesControllerTest {
 	}
 	
 	@Test (expected = IllegalArgumentException.class)
-	public void testAddNewSequenceFilePairToSampleMissingPairMember() throws IOException {
+	public void testAddNewSequenceFilePairToSampleMismatchedRunIDs() throws IOException {
 		Project p = TestDataFactory.constructProject();
 		Sample s = TestDataFactory.constructSample();
 		SequenceFile sf1 = TestDataFactory.constructSequenceFile();
