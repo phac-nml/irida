@@ -159,6 +159,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysisSubmission.getWorkflowId());
 		IridaWorkflowInput workflowInput = iridaWorkflow.getWorkflowDescription().getInputs();
 		String sequenceFilesLabelSingle = workflowInput.getSequenceReadsSingle();
+		String sequenceFilesLabelPaired = workflowInput.getSequenceReadsPaired();
 		String referenceFileLabel = workflowInput.getReference();
 		checkNotNull(sequenceFilesLabelSingle, "sequenceReadsSingleLabel is null");
 		checkNotNull(referenceFileLabel, "referenceFileLabel is null");
@@ -188,25 +189,26 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		String workflowId = analysisSubmission.getRemoteWorkflowId();
 		WorkflowDetails workflowDetails = galaxyWorkflowService.getWorkflowDetails(workflowId);
 
-		String workflowSequenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
-				sequenceFilesLabelSingle);
-
 		WorkflowInputs inputs = new WorkflowInputs();
 		inputs.setDestination(new WorkflowInputs.ExistingHistory(workflowHistory.getId()));
 		inputs.setWorkflowId(workflowDetails.getId());
 
 		if (!sampleSequenceFilesSingle.isEmpty()) {
+			String workflowSequenceFileSingleInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
+					sequenceFilesLabelSingle);
 			CollectionResponse collectionResponseSingle = analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(sampleSequenceFilesSingle,
 					workflowHistory, workflowLibrary);
-			inputs.setInput(workflowSequenceFileInputId,
+			inputs.setInput(workflowSequenceFileSingleInputId,
 					new WorkflowInputs.WorkflowInput(collectionResponseSingle.getId(),
 							WorkflowInputs.InputSourceType.HDCA));
 		}
 
 		if (!sampleSequenceFilesPaired.isEmpty()) {
+			String workflowSequenceFilePairedInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
+					sequenceFilesLabelPaired);
 			CollectionResponse collectionResponsePaired = analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilesPaired,
 					workflowHistory, workflowLibrary);
-			inputs.setInput(workflowSequenceFileInputId,
+			inputs.setInput(workflowSequenceFilePairedInputId,
 					new WorkflowInputs.WorkflowInput(collectionResponsePaired.getId(),
 							WorkflowInputs.InputSourceType.HDCA));
 		}

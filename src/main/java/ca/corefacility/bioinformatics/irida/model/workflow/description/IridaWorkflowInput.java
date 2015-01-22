@@ -64,4 +64,8 @@ public class IridaWorkflowInput {
 
 		return false;
 	}
+
+	public String getSequenceReadsPaired() {
+		return "sequence_reads_paired";
+	}
 }
