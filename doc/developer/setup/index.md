@@ -127,3 +127,8 @@ IRIDA uses Maven for build and dependency management. You can check to see that 
 You can run the complete test suite like so:
 
     mvn clean verify
+
+Setting up Galaxy
+-----------------
+
+Please see the article on [setting up Galaxy](galaxy).
