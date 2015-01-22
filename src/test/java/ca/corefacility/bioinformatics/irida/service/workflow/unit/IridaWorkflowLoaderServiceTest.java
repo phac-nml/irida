@@ -51,7 +51,7 @@ public class IridaWorkflowLoaderServiceTest {
 		MockitoAnnotations.initMocks(this);
 
 		iridaWorkflowLoaderService = new IridaWorkflowLoaderService(workflowDescriptionUnmarshellar);
-		iridaWorkflow = IridaWorkflowTestBuilder.buildTestWorkflow(iridaWorkflowId);
+		iridaWorkflow = IridaWorkflowTestBuilder.buildTestWorkflow(iridaWorkflowId, IridaWorkflowTestBuilder.Input.SINGLE);
 
 		workflowDescriptionPath = Files.createTempFile("workflowLoaderTest", "tmp");
 		workflowStructurePath = Files.createTempFile("workflowLoaderTest", "tmp");
@@ -83,7 +83,7 @@ public class IridaWorkflowLoaderServiceTest {
 	@Test(expected = IridaWorkflowLoadException.class)
 	public void testLoadWorkflowDescriptionFail() throws XmlMappingException, IOException, IridaWorkflowLoadException {
 		IridaWorkflowDescription description = IridaWorkflowTestBuilder.buildTestDescription(iridaWorkflowId, "name",
-				"version", null);
+				"version", null, IridaWorkflowTestBuilder.Input.SINGLE);
 		when(workflowDescriptionUnmarshellar.unmarshal(any(Source.class))).thenReturn(description);
 
 		iridaWorkflowLoaderService.loadWorkflowDescription(workflowDescriptionPath);
