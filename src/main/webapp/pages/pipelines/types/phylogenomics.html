@@ -8,6 +8,7 @@
 		.affix-top {
 			position: fixed;
 			top: 50px;
+			max-width: 100px;
 		}
 	</style>
 	<script>window.dependencies = ['irida.pipelines.phylogenomics'];</script>
@@ -44,9 +45,13 @@
 
 				<div class="alert alert-info">
 					<div class="form-group">
-						<label class="col-sm-2 control-label" for="pipeline-name" th:text="#{workflow.label.name}">Name</label>
+						<label class="col-sm-2 control-label" for="pipeline-name"
+						       th:text="#{workflow.label.name}">Name</label>
+
 						<div class="col-md-10">
-							<input id="pipeline-name" class="form-control" type="text" th:value="${name}" />
+							<input id="pipeline-name" class="form-control" type="text" th:value="${name}"/>
+
+							<div ng-show="phylCtrl.error" class="label label-danger">{{phylCtrl.error}}</div>
 						</div>
 					</div>
 					<div class="form-group">
@@ -76,7 +81,7 @@
 									        th:text="#{form.btn.remove}">Remove
 									</button>
 								</h3>
-								<table class="table" th:with="dateFormat=#{date.long}">
+								<table class="table" th:with="dateFormat=#{locale.date.long}">
 									<th:block th:each="s, iterStat : ${sample.files}">
 										<tr th:if="${s.type == 'paired_end'}">
 											<td>
@@ -120,12 +125,31 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-md-2">
-				<div class="ng-cloak text-center" data-spy="affix">
+			<div class="col-md-2" ng-switch="phylCtrl.loading">
+				<div data-spy="affix" style="width: 200px;">
+					<div ng-switch-when="false" class="ng-cloak text-center">
 					<h2 th:text="#{workflow.launch.btn}">Ready to Launch?</h2>
-					<button class="btn btn-xl btn-danger round" ng-click="phylCtrl.launch()">
-						<span class="fa" ng-class="{'fa-rocket' : !phylCtrl.loading, 'fa-spin fa-spinner' : phylCtrl.loading}"></span>
-					</button>
+						<div>
+							<button id="btn-launch" class="btn btn-xl btn-danger btn-action" th:title="#{workflow.launch.btn.title}"
+							        ng-click="phylCtrl.launch()">
+								<span class="fa fa-rocket"></span>
+							</button>
+						</div>
+					</div>
+					<div id="pipeline-submitted" ng-switch-when="true">
+						<div ng-hide="phylCtrl.success" class="alert alert-info">
+							<strong class="fa fa-2x fa-fw fa-coffee"></strong>&nbsp;
+							<span th:text="#{workflow.pipeline-kickoff-message}"></span>
+						</div>
+						<div id="pipeline-submitted-success" ng-show="phylCtrl.success" class="alert alert-success">
+							<strong class="fa fa-2x fa-smile-o text-center"></strong>&nbsp;
+							<span th:text="#{workflow.submitted-success}">You must be awesome!  All your files looked good and the pipeline has been launched and the pedal should hit the metal soon.</span>
+							<br/><br/>
+							<button id="btn-see-pipeline" class="btn btn-success btn-affixed" th:text="#{workflow.submitted-view-btn}">Let's see how this pipeline is doing.</button>
+							<br/><br/>
+							<button id="btn-clear-pipeline" class="btn btn-warning btn-affixed" th:text="#{workflow.submitted-clear-btn}">Clear the cart and start over!</button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -135,7 +159,9 @@
 	<script th:inline="javascript">
 		/*<![CDATA[*/
 		var PIPELINE = {
-			url: /*[[@{/pipelines/ajax/start/{id}(id=${pipelineId})}]]*/ '/ajax/pipelines/ccca532d-b0be-4f2c-bd6d-9886aa722571'
+			url     : /*[[@{/pipelines/ajax/start/{id}(id=${pipelineId})}]]*/ '/ajax/pipelines/ccca532d-b0be-4f2c-bd6d-9886aa722571',
+			redirect: /*[[@{/analysis/admin}]]*/ '/analysis/admin', // TODO: This should be the page for this specific pipeline.
+			required: /*[[#{workflow.no-name-provided}]]*/ 'Name Required'
 		};
 		/*]]>*/
 	</script>

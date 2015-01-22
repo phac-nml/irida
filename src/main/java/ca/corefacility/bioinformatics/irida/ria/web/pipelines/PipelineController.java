@@ -55,6 +55,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -273,51 +274,57 @@ public class PipelineController extends BaseController {
 	 * @return a JSON response with the status and any messages.
 	 */
 	@RequestMapping(value = "/ajax/start/{pipelineId}", method = RequestMethod.POST)
-	public @ResponseBody Map<String, Object> ajaxStartPipelinePhylogenomics(HttpSession session,
+	public @ResponseBody Map<String, Object> ajaxStartPipelinePhylogenomics(HttpSession session, Locale locale,
 			@PathVariable UUID pipelineId,
 			@RequestParam(value = "single[]", required = false) List<Long> single, @RequestParam(value = "paired[]", required = false) List<Long> paired,
 			@RequestParam Long ref, @RequestParam String name) {
+		Map<String, Object> result;
 
-		Set<SequenceFile> sequenceFiles = new HashSet<>();
-		Set<SequenceFilePair> sequenceFilePairs = new HashSet<>();
+		if (!Strings.isNullOrEmpty(name)) {
+			Set<SequenceFile> sequenceFiles = new HashSet<>();
+			Set<SequenceFilePair> sequenceFilePairs = new HashSet<>();
 
-		if (single != null) {
-			sequenceFiles.addAll(single.stream().map(sequenceFileService::read).collect(Collectors.toList()));
+			if (single != null) {
+				sequenceFiles.addAll(single.stream().map(sequenceFileService::read).collect(Collectors.toList()));
+			}
+
+			if (paired != null) {
+				sequenceFilePairs.addAll(paired.stream().map(sequenceFilePairService::read).collect(Collectors.toList()));
+			}
+
+			ReferenceFile referenceFile = referenceFileService.read(ref);
+			AnalysisSubmission analysisSubmission;
+
+			if (sequenceFiles.size() > 0 && sequenceFilePairs.size() > 0) {
+				analysisSubmission = AnalysisSubmission
+						.createSubmissionSingleAndPairedReference(name, sequenceFiles, sequenceFilePairs, referenceFile,
+								pipelineId);
+			}
+			else if (sequenceFiles.size() > 0 && sequenceFilePairs.size() == 0) {
+				analysisSubmission = AnalysisSubmission.createSubmissionSingleReference(name, sequenceFiles, referenceFile,
+						pipelineId);
+			}
+			else {
+				analysisSubmission = AnalysisSubmission.createSubmissionPairedReference(name, sequenceFilePairs,
+						referenceFile, pipelineId);
+			}
+
+			AnalysisSubmission submission = analysisSubmissionService.create(analysisSubmission);
+
+			// TODO [15-01-21] (Josh): This should be replaced by storing the values into the database.
+			SubmissionIds submissionIds = (SubmissionIds) session.getAttribute("submissionIds");
+			if (submissionIds == null) {
+				submissionIds = new SubmissionIds();
+			}
+			submissionIds.addId(submission.getId());
+			session.setAttribute("submissionIds", submissionIds);
+
+			result = ImmutableMap.of("result", "success", "submissionId", submission.getId());
+		} else {
+			result = ImmutableMap.of("error", messageSource.getMessage("workflow.no-name-provided", new Object[]{}, locale));
 		}
 
-		if (paired != null) {
-			sequenceFilePairs.addAll(paired.stream().map(sequenceFilePairService::read).collect(Collectors.toList()));
-		}
-
-		ReferenceFile referenceFile = referenceFileService.read(ref);
-		AnalysisSubmission analysisSubmission;
-
-
-		if (sequenceFiles.size() > 0 && sequenceFilePairs.size() > 0) {
-			analysisSubmission = AnalysisSubmission
-					.createSubmissionSingleAndPairedReference(name, sequenceFiles, sequenceFilePairs, referenceFile,
-							pipelineId);
-		}
-		else if (sequenceFiles.size() > 0 && sequenceFilePairs.size() == 0) {
-			analysisSubmission = AnalysisSubmission.createSubmissionSingleReference(name, sequenceFiles, referenceFile,
-					pipelineId);
-		}
-		else {
-			analysisSubmission = AnalysisSubmission.createSubmissionPairedReference(name, sequenceFilePairs,
-					referenceFile, pipelineId);
-		}
-
-		AnalysisSubmission submission = analysisSubmissionService.create(analysisSubmission);
-
-		// TODO [15-01-21] (Josh): This should be replaced by storing the values into the database.
-		SubmissionIds submissionIds = (SubmissionIds) session.getAttribute("submissionIds");
-		if (submissionIds == null) {
-			submissionIds = new SubmissionIds();
-		}
-		submissionIds.addId(submission.getId());
-		session.setAttribute("submissionIds", submissionIds);
-
-		return ImmutableMap.of("result", "success", "submissionId", submission.getId());
+		return result;
 	}
 
 	/**

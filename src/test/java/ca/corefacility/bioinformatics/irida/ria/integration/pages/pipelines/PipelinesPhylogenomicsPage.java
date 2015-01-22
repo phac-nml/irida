@@ -44,4 +44,17 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 	public int getAddReferenceFileToProjectLinkCount() {
 		return driver.findElements(By.className("add-ref-file")).size();
 	}
+
+	public boolean isPipelineSubmittedMessageShown() {
+		return driver.findElements(By.id("pipeline-submitted")).size() > 0;
+	}
+
+	public boolean isPipelineSubmittedSuccessMessageShown() {
+		waitForElementVisible(By.id("pipeline-submitted-success"));
+		return true;
+	}
+
+	public void clickLaunchPipelineBtn() {
+		driver.findElement(By.id("btn-launch")).click();
+	}
 }

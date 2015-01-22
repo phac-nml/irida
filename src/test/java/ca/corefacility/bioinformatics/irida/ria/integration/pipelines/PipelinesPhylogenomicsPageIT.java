@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesPhylogenomicsPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.PipelinesSelectionPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
@@ -66,7 +67,7 @@ public class PipelinesPhylogenomicsPageIT {
 		samplesPage.selectSampleByRow(1);
 		samplesPage.selectSampleByRow(2);
 		samplesPage.addSamplesToGlobalCart();
-		page.goToPage();
+		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
 		logger.info("Checking Phylogenomics Page Setup.");
 		assertTrue("Should be on the phylogenomics page.", driver.getCurrentUrl().contains(PipelinesPhylogenomicsPage.RELATIVE_URL));
 		assertEquals("Should display the correct number of reference files in the select input.", 2, page.getReferenceFileCount());
@@ -83,7 +84,7 @@ public class PipelinesPhylogenomicsPageIT {
 		samplesPage.selectSampleByRow(1);
 		samplesPage.addSamplesToGlobalCart();
 
-		page.goToPage();
+		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
 		assertTrue("Should display a warning to the user that there are no reference files.",
 				page.isNoReferenceWarningDisplayed());
 		assertTrue(
@@ -101,11 +102,28 @@ public class PipelinesPhylogenomicsPageIT {
 		samplesPage.selectSampleByRow(1);
 		samplesPage.selectSampleByRow(2);
 		samplesPage.addSamplesToGlobalCart();
-		page.goToPage();
+		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
 
 		assertTrue("Should display a warning to the user that there are no reference files.",
 				page.isNoReferenceWarningDisplayed());
 		assertTrue("User should be told that they can upload files", page.isAddReferenceFileLinksDisplayed());
 		assertEquals("There should be a link to one project to upload a reference file", 1, page.getAddReferenceFileToProjectLinkCount());
+	}
+
+	@Test
+	public void testPipelineSubmission() {
+		LoginPage.loginAsUser(driver);
+		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver);
+		samplesPage.goToPage();
+		samplesPage.selectSampleByRow(1);
+		samplesPage.selectSampleByRow(2);
+		samplesPage.addSamplesToGlobalCart();
+		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
+		assertTrue("Should be on the phylogenomics page.",
+				driver.getCurrentUrl().contains(PipelinesPhylogenomicsPage.RELATIVE_URL));
+
+		page.clickLaunchPipelineBtn();
+		assertTrue("Message should be displayed when the pipeline is submitted", page.isPipelineSubmittedMessageShown());
+		assertTrue("Message should be displayed once the pipeline finished submitting", page.isPipelineSubmittedSuccessMessageShown());
 	}
 }
