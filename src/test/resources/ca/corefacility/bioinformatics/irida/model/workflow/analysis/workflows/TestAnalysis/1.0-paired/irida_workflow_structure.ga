@@ -1,0 +1,110 @@
+{
+    "a_galaxy_workflow": "true", 
+    "annotation": "", 
+    "format-version": "0.1", 
+    "name": "TestAnalysis", 
+    "steps": {
+        "0": {
+            "annotation": "", 
+            "id": 0, 
+            "input_connections": {}, 
+            "inputs": [
+                {
+                    "description": "", 
+                    "name": "sequence_reads"
+                }
+            ], 
+            "name": "Input dataset collection", 
+            "outputs": [], 
+            "position": {
+                "left": 200, 
+                "top": 200
+            }, 
+            "tool_errors": null, 
+            "tool_id": null, 
+            "tool_state": "{\"collection_type\": \"list\", \"name\": \"sequence_reads\"}", 
+            "tool_version": null, 
+            "type": "data_collection_input", 
+            "user_outputs": []
+        }, 
+        "1": {
+            "annotation": "", 
+            "id": 1, 
+            "input_connections": {}, 
+            "inputs": [
+                {
+                    "description": "", 
+                    "name": "reference"
+                }
+            ], 
+            "name": "Input dataset", 
+            "outputs": [], 
+            "position": {
+                "left": 200, 
+                "top": 285
+            }, 
+            "tool_errors": null, 
+            "tool_id": null, 
+            "tool_state": "{\"name\": \"reference\"}", 
+            "tool_version": null, 
+            "type": "data_input", 
+            "user_outputs": []
+        }, 
+        "2": {
+            "annotation": "", 
+            "id": 2, 
+            "input_connections": {
+                "fasta": {
+                    "id": 1, 
+                    "output_name": "output"
+                }, 
+                "sequence_reads": {
+                    "id": 0, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [], 
+            "name": "core_pipeline_outputs", 
+            "outputs": [
+                {
+                    "name": "csv", 
+                    "type": "csv"
+                }, 
+                {
+                    "name": "output_tree", 
+                    "type": "txt"
+                }, 
+                {
+                    "name": "positions", 
+                    "type": "tabular"
+                }
+            ], 
+            "position": {
+                "left": 462, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActioncsv": {
+                    "action_arguments": {
+                        "newname": "output1.txt"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "csv"
+                }, 
+                "RenameDatasetActionoutput_tree": {
+                    "action_arguments": {
+                        "newname": "output2.txt"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "output_tree"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "core_pipeline_outputs", 
+            "tool_state": "{\"__page__\": 0, \"fasta\": \"null\", \"sequence_reads\": \"null\", \"__rerun_remap_job_id__\": null}", 
+            "tool_version": "0.1.0", 
+            "type": "tool", 
+            "user_outputs": []
+        }
+    }
+}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+  <id>d92e9918-1e3d-4dea-b2b9-089f1256ac1b</id>
+  <name>TestWorkflow</name>
+  <version>1.0-single-paired</version>
+  <author>Mr. Developer</author>
+  <email>developer@example.com</email>
+  <analysisType>default</analysisType>
+  <inputs>
+    <sequenceReadsSingle>sequence_reads_single</sequenceReadsSingle>
+    <sequenceReadsPair>sequence_reads_paired</sequenceReadsPair>
+    <reference>reference</reference>
+  </inputs>
+  <outputs>
+    <output name="output1" fileName="output1.txt"></output>
+    <output name="output2" fileName="output2.txt"></output>
+  </outputs>
+  <toolRepositories>
+    <repository>
+      <name>sam_to_bam</name>
+      <owner>devteam</owner>
+      <url>http://toolshed.g2.bx.psu.edu/</url>
+      <revision>8176b2575aa1</revision>
+    </repository>
+  </toolRepositories>
+</iridaWorkflow>
