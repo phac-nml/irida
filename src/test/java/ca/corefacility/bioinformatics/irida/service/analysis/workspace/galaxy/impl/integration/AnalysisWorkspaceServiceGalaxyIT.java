@@ -20,7 +20,6 @@ import java.util.concurrent.TimeoutException;
 
 import org.junit.Assume;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -384,7 +383,6 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
 	 */
-	@Ignore
 	@Test(expected = SampleAnalysisDuplicateException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareAnalysisFilesPairFail() throws InterruptedException, ExecutionManagerException,
@@ -419,7 +417,6 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
 	 */
-	@Ignore
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareAnalysisFilesSinglePairSuccess() throws InterruptedException, ExecutionManagerException,
@@ -472,7 +469,6 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
 	 */
-	@Ignore
 	@Test(expected = SampleAnalysisDuplicateException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareAnalysisFilesSinglePairFail() throws InterruptedException, ExecutionManagerException,

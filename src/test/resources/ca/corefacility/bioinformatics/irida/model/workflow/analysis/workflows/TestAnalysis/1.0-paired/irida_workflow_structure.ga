@@ -11,7 +11,7 @@
             "inputs": [
                 {
                     "description": "", 
-                    "name": "sequence_reads"
+                    "name": "sequence_reads_paired"
                 }
             ], 
             "name": "Input dataset collection", 
@@ -22,7 +22,7 @@
             }, 
             "tool_errors": null, 
             "tool_id": null, 
-            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads\"}", 
+            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads_paired\"}", 
             "tool_version": null, 
             "type": "data_collection_input", 
             "user_outputs": []
