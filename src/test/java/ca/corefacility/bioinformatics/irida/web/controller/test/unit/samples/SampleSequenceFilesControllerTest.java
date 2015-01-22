@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ModelMap;
@@ -366,6 +365,7 @@ public class SampleSequenceFilesControllerTest {
 		Sample s = TestDataFactory.constructSample();
 		SequenceFile sf = TestDataFactory.constructSequenceFile();
 		Join<Sample, SequenceFile> r = new SampleSequenceFileJoin(s, sf);
+		MockHttpServletResponse response = new MockHttpServletResponse();
 
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(s);
@@ -375,31 +375,44 @@ public class SampleSequenceFilesControllerTest {
 		Map<String, String> requestBody = ImmutableMap.of(RESTSampleSequenceFilesController.SEQUENCE_FILE_ID_KEY, sf
 				.getId().toString());
 
-		ResponseEntity<String> response = controller.addExistingSequenceFileToSample(p.getId(), s.getId(), requestBody);
+		ModelMap modelMap = controller.addExistingSequenceFileToSample(p.getId(), s.getId(), requestBody,response);
 
 		verify(projectService).read(p.getId());
 		verify(sampleService).getSampleForProject(p, s.getId());
 		verify(sequenceFileService).read(sf.getId());
 		verify(sampleService).addSequenceFileToSample(s, sf);
-
-		assertEquals(HttpStatus.CREATED, response.getStatusCode());
-
-		List<String> locations = response.getHeaders().get(HttpHeaders.LOCATION);
+		
+		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
+		assertNotNull("Object should not be null",o);
+		assertTrue("Object should be an instance of LabelledRelationshipResource",o instanceof LabelledRelationshipResource);
+		@SuppressWarnings("unchecked")
+		LabelledRelationshipResource<Sample,SequenceFile> lrr = (LabelledRelationshipResource<Sample,SequenceFile>) o;
+		String seqFileLoc = "http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId() + "/sequenceFiles/" + sf.getId();
+		List<String> locations = response.getHeaders(HttpHeaders.LOCATION);
 		assertNotNull(locations);
 		assertFalse(locations.isEmpty());
 		assertEquals(1, locations.size());
 		// the sequence file location is still the same, but we've added a new
 		// relationship
-		assertEquals(
-				"http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId() + "/sequenceFiles/" + sf.getId(),
-				locations.iterator().next());
+		assertEquals("Sequence file location must be correct",seqFileLoc,locations.iterator().next());
+		Link self = lrr.getLink(Link.REL_SELF);
+		Link sampleSequenceFiles = lrr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
+		Link sample = lrr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
+		String sampleLocation = "http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId();
+		assertNotNull("Self link should not be null",self);
+		assertEquals("Self reference should be correct",seqFileLoc, self.getHref());
+		assertNotNull("Sequence file location should not be null",sampleSequenceFiles);
+		assertEquals("Sequence file location should be correct",sampleLocation + "/sequenceFiles", sampleSequenceFiles.getHref());
+		assertNotNull("Sample location should not be null",sample);
+		assertEquals("Sample location should be correct",sampleLocation, sample.getHref());
+		assertEquals("HTTP status must be CREATED",HttpStatus.CREATED.value(), response.getStatus());
 	}
 
 	@Test
 	public void testAddExistingSequenceFileToSampleBadRequest() {
 		Map<String, String> requestBody = new HashMap<>();
 		try {
-			controller.addExistingSequenceFileToSample(1L, 1L, requestBody);
+			controller.addExistingSequenceFileToSample(1L, 1L, requestBody,new MockHttpServletResponse());
 			fail();
 		} catch (InvalidPropertyException e) {
 

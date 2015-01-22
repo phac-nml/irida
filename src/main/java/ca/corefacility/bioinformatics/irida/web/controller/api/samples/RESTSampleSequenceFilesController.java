@@ -18,11 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -368,38 +365,41 @@ public class RESTSampleSequenceFilesController {
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST, consumes = {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<String> addExistingSequenceFileToSample(@PathVariable Long projectId,
-			@PathVariable Long sampleId, @RequestBody Map<String, String> requestBody) {
+	public ModelMap addExistingSequenceFileToSample(@PathVariable Long projectId,
+			@PathVariable Long sampleId, @RequestBody Map<String, String> requestBody, HttpServletResponse response) {
+		ModelMap modelMap = new ModelMap();
 		// sanity checking, does the correct key exist in the request body?
 		if (!requestBody.containsKey(SEQUENCE_FILE_ID_KEY)) {
 			throw new InvalidPropertyException("Required property [" + SEQUENCE_FILE_ID_KEY + "] not found in request.");
 		}
-
 		Long sequenceFileIdentifier = Long.valueOf(requestBody.get(SEQUENCE_FILE_ID_KEY));
 		logger.debug("Adding sequence file reference " + sequenceFileIdentifier + " to sample " + sampleId);
 		Project p = projectService.read(projectId);
 		// confirm the relationship between the sample and the project.
 		Sample s = sampleService.getSampleForProject(p, sampleId);
-
 		// load the sample and sequence file from the database.
 		SequenceFile sf = sequenceFileService.read(sequenceFileIdentifier);
-
 		// persist the changes by calling the sample service
 		Join<Sample, SequenceFile> sampleSequenceFileRelationship = sampleService.addSequenceFileToSample(s, sf);
-
-		// prepare a link to the sequence file itself (on the sequence file
-		// controller)
+		// add a link to the sequence file itself (on the sequence file
+		// controller), and to the sequence files and sample file
 		Long sequenceFileId = sampleSequenceFileRelationship.getObject().getId();
-		String location = linkTo(
-				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
-						sequenceFileId)).withSelfRel().getHref();
-
-		// prepare the headers
-		MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
-		responseHeaders.add(HttpHeaders.LOCATION, location);
-
+		LabelledRelationshipResource<Sample,SequenceFile> resource = new LabelledRelationshipResource<Sample,SequenceFile>(
+				sampleSequenceFileRelationship.getLabel(),sampleSequenceFileRelationship);
+		resource.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
+				.withRel(REL_SAMPLE_SEQUENCE_FILES));
+		resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(
+				REL_SAMPLE));
+		Link selfLink = linkTo(methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(
+				projectId, sampleId,sequenceFileId)).withSelfRel();
+		resource.add(selfLink);
+		// prepare the header
+		response.addHeader(HttpHeaders.LOCATION, selfLink.getHref());
+		// add the resource to the ModelMap, and set the HTTP status.
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resource);
+		response.setStatus(HttpStatus.CREATED.value());
 		// respond to the client
-		return new ResponseEntity<>("success", responseHeaders, HttpStatus.CREATED);
+		return modelMap;
 	}
 
 	/**
