@@ -11,13 +11,16 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
@@ -57,7 +60,13 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 	private String executionManagerFileId;
 
 	private Long fileRevisionNumber; // the filesystem file revision number
-	
+
+	@NotNull
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
+	@JoinColumn(name = "tool_execution_id")
+	@NotAudited
+	private ToolExecution createdByTool;
+
 	private AnalysisOutputFile() {
 		this.createdDate = new Date();
 		this.fileRevisionNumber = 0L;
@@ -111,7 +120,7 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 	public void setFile(Path file) {
 		this.file = file;
 	}
-	
+
 	public Analysis getAnalysis() {
 		return analysis;
 	}
@@ -136,6 +145,14 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 		this.fileRevisionNumber = fileRevisionNumber;
 	}
 
+	public final ToolExecution getCreatedByTool() {
+		return createdByTool;
+	}
+
+	public final void setCreatedByTool(ToolExecution createdByTool) {
+		this.createdByTool = createdByTool;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -155,8 +172,7 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 
 		if (o instanceof AnalysisOutputFile) {
 			AnalysisOutputFile a = (AnalysisOutputFile) o;
-			return Objects.equals(file, a.file)
-					&& Objects.equals(executionManagerFileId, a.executionManagerFileId)
+			return Objects.equals(file, a.file) && Objects.equals(executionManagerFileId, a.executionManagerFileId)
 					&& Objects.equals(fileRevisionNumber, a.fileRevisionNumber);
 		}
 
