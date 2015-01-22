@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="workflow-provenance" author="fbristow">
+		<createTable tableName="tool_execution">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="command_line" type="longtext">
+				<constraints nullable="false" />
+			</column>
+			<column name="created_date" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="execution_manager_identifier" type="longblob">
+				<constraints nullable="false" />
+			</column>
+			<column name="tool_name" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="tool_version" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="tool_execution_parameters">
+			<column name="tool_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_TOOL_EXECUTION_PARAMETERS" referencedTableName="tool_execution"
+					referencedColumnNames="id" />
+			</column>
+			<column name="execution_parameter_key" type="varchar(255)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="execution_parameter_value" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="tool_execution_prev_steps">
+			<column name="tool_execution_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_TOOL_EXECUTION_PREV_STEPS_OWNER_ID"
+					referencedTableName="tool_execution" referencedColumnNames="id" />
+			</column>
+			<column name="tool_execution_prev_id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false" unique="true"
+					foreignKeyName="FK_TOOL_EXECUTION_PREV_STEPS_PREV_ID"
+					referencedTableName="tool_execution" referencedColumnNames="id" />
+			</column>
+		</createTable>
+
+		<!-- rename columns in analysis_output_file to use underscores instead 
+			of camelCase -->
+		<renameColumn tableName="analysis_output_file"
+			columnDataType="datetime" oldColumnName="createdDate" newColumnName="created_date" />
+		<addNotNullConstraint tableName="analysis_output_file"
+			columnName="created_date" columnDataType="datetime" />
+		<renameColumn tableName="analysis_output_file_AUD"
+			columnDataType="datetime" oldColumnName="createdDate" newColumnName="created_date" />
+		<renameColumn tableName="analysis_output_file"
+			columnDataType="varchar(255)" oldColumnName="executionManagerFileId"
+			newColumnName="execution_manager_file_id" />
+		<addNotNullConstraint tableName="analysis_output_file"
+			columnName="execution_manager_file_id" columnDataType="varchar(255)" />
+		<renameColumn tableName="analysis_output_file_AUD"
+			columnDataType="varchar(255)" oldColumnName="executionManagerFileId"
+			newColumnName="execution_manager_file_id" />
+		<renameColumn tableName="analysis_output_file"
+			columnDataType="varchar(255)" oldColumnName="filePath" newColumnName="file_path" />
+		<addNotNullConstraint tableName="analysis_output_file"
+			columnName="file_path" columnDataType="varchar(255)" />
+		<renameColumn tableName="analysis_output_file_AUD"
+			columnDataType="varchar(255)" oldColumnName="filePath" newColumnName="file_path" />
+		<renameColumn tableName="analysis_output_file"
+			columnDataType="bigint(20)" oldColumnName="fileRevisionNumber"
+			newColumnName="file_revision_number" />
+		<renameColumn tableName="analysis_output_file_AUD"
+			columnDataType="bigint(20)" oldColumnName="fileRevisionNumber"
+			newColumnName="file_revision_number" />
+		<renameColumn tableName="analysis_output_file"
+			columnDataType="datetime" oldColumnName="modifiedDate" newColumnName="modified_date" />
+		<renameColumn tableName="analysis_output_file_AUD"
+			columnDataType="datetime" oldColumnName="modifiedDate" newColumnName="modified_date" />
+
+		<!-- we only need to add this new column to analysis_output_file (and not 
+			analysis_output_file_AUD) because we're explicitly not auditing the relationship 
+			with tool_execution; an analysis output file *must* be created with a tool 
+			execution, and it cannot change after it's been created. -->
+		<addColumn tableName="analysis_output_file">
+			<column name="tool_execution_id" type="bigint(20)">
+				<constraints unique="true" nullable="false"
+					foreignKeyName="FK_OUTPUT_FILE_TOOL_EXECUTION" referencedTableName="tool_execution"
+					referencedColumnNames="id" />
+			</column>
+		</addColumn>
+	</changeSet>
+</databaseChangeLog>
