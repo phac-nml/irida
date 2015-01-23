@@ -213,9 +213,8 @@
      * Load a set of samples from the server.  Fires a SAMPLES_READY event on complete
      * @param getLocal Load local samples
      * @param getAssociated Load associated samples
-     * @param getRemote Load remote associated samples
      */
-    svc.loadSamples = function (getLocal, getAssociated, getRemote) {
+    svc.loadSamples = function (getLocal, getAssociated) {
       var samplePromises = [];
       svc.samples = [];
 
@@ -453,10 +452,9 @@
     //set the initial display options
     vm.displayLocal = true;
     vm.displayAssociated = false;
-    vm.displayRemote = false;
 
     vm.displaySamples = function () {
-      SamplesService.loadSamples(vm.displayLocal, vm.displayAssociated, vm.displayRemote);
+      SamplesService.loadSamples(vm.displayLocal, vm.displayAssociated);
     };
 
     $rootScope.$on("SAMPLE_CONTENT_MODIFIED", function () {
@@ -741,16 +739,14 @@
     var vm = this;
 
     vm.add = function () {
-      //var samples = storage.getKeys();
-      _.forEach(storage.getSamples(), function(s){
-        if(s.project){
-          cart.add(s.project.id,[s.id]);
+      _.forEach(storage.getSamples(), function (s) {
+        if (s.project) {
+          cart.add(s.project.id, [s.id]);
         }
-        else{
-          cart.add(project.id,[s.id]);
+        else {
+          cart.add(project.id, [s.id]);
         }
       });
-      //cart.add(project.id, storage.getKeys())
     };
   }
 
