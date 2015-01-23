@@ -173,4 +173,13 @@ public class ToolExecution implements IridaThing {
 	public void setId(Long id) {
 		this.id = id;
 	}
+
+	/**
+	 * Indicates whether or not this tool is an input tool or data source.
+	 * 
+	 * @return true if the tool execution is an input tool, false otherwise.
+	 */
+	public boolean isInputTool() {
+		return this.previousSteps.isEmpty();
+	}
 }
