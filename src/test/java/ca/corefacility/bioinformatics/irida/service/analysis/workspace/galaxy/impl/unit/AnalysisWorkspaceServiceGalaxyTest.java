@@ -495,6 +495,34 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	}
 	
 	/**
+	 * Tests out failing to preparing an analysis with no files in the submission.
+	 * 
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 */
+	@SuppressWarnings("unchecked")
+	@Test(expected = IllegalArgumentException.class)
+	public void testPrepareAnalysisFilesNoSubmittedFilesFail() throws ExecutionManagerException,
+			IridaWorkflowNotFoundException {
+		submission = AnalysisSubmission.createSubmissionSingleReference("my analysis",
+				Sets.newHashSet(), referenceFile, workflowId);
+		submission.setRemoteAnalysisId(HISTORY_ID);
+		submission.setRemoteWorkflowId(WORKFLOW_ID);
+
+		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflowPaired);
+
+		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
+		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
+
+		when(analysisCollectionServiceGalaxy.getSequenceFileSingleSamples(any(Set.class))).thenReturn(
+				sampleSequenceFileMap);
+		when(analysisCollectionServiceGalaxy.getSequenceFilePairedSamples(any(Set.class)))
+				.thenReturn(ImmutableMap.of());
+
+		workflowPreparation.prepareAnalysisFiles(submission);
+	}
+	
+	/**
 	 * Tests out failing to preparing an analysis which requires a reference but no reference found in submission.
 	 * 
 	 * @throws ExecutionManagerException

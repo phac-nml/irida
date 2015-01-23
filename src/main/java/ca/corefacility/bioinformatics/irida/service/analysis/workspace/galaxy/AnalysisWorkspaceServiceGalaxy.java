@@ -155,6 +155,10 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		checkNotNull(analysisSubmission.getSingleInputFiles(), "inputFiles are null");
 		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
 		checkNotNull(analysisSubmission.getRemoteWorkflowId(), "remoteWorkflowId is null");
+		checkArgument(!(analysisSubmission.getSingleInputFiles().isEmpty()
+				&& analysisSubmission.getPairedInputFiles().isEmpty()),
+				"no single or paired sequence files passed to submission " + analysisSubmission
+						+ " . At least one type of file must be available");
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysisSubmission.getWorkflowId());
 		IridaWorkflowInput workflowInput = iridaWorkflow.getWorkflowDescription().getInputs();
