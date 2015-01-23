@@ -252,7 +252,7 @@ public class PipelineController extends BaseController {
 			model.addAttribute("pipelienId", pipelineId.toString());
 			model.addAttribute("referenceFiles", referenceFileList);
 			model.addAttribute("addRefProjects", addRefList);
-			model.addAttribute("files", projectList);
+			model.addAttribute("projects", projectList);
 			response = URL_PHYLOGENOMICS;
 		}
 
