@@ -71,7 +71,7 @@ public class ToolExecution implements IridaThing {
 	@NotNull
 	@Lob
 	@Column(name = "execution_manager_identifier")
-	private final Object executionManagerIdentifier;
+	private final String executionManagerIdentifier;
 
 	@NotNull
 	@ElementCollection(fetch = FetchType.EAGER)
@@ -87,7 +87,7 @@ public class ToolExecution implements IridaThing {
 	private final Date createdDate;
 
 	private ToolExecution(final Long id, final Set<ToolExecution> previousSteps, final String toolName,
-			final String toolVersion, final String commandLine, final Object executionManagerIdentifier,
+			final String toolVersion, final String commandLine, final String executionManagerIdentifier,
 			final Map<String, String> executionTimeParameters) {
 		this.id = id;
 		this.toolName = toolName;

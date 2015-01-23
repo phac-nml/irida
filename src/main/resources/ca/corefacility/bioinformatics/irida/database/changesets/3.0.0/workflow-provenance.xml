@@ -16,7 +16,7 @@
 			<column name="created_date" type="datetime">
 				<constraints nullable="false" />
 			</column>
-			<column name="execution_manager_identifier" type="longblob">
+			<column name="execution_manager_identifier" type="longtext">
 				<constraints nullable="false" />
 			</column>
 			<column name="tool_name" type="varchar(255)">
