@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 /**
  * Defines the input labels for a workflow.
@@ -55,7 +55,7 @@ public class IridaWorkflowInput {
 	 *         such label exists.
 	 */
 	public Optional<String> getSequenceReadsSingle() {
-		return Optional.fromNullable(sequenceReadsSingle);
+		return Optional.ofNullable(sequenceReadsSingle);
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class IridaWorkflowInput {
 	 *         exists.
 	 */
 	public Optional<String> getReference() {
-		return Optional.fromNullable(reference);
+		return Optional.ofNullable(reference);
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class IridaWorkflowInput {
 	 *         such label exists.
 	 */
 	public Optional<String> getSequenceReadsPaired() {
-		return Optional.fromNullable(sequenceReadsPaired);
+		return Optional.ofNullable(sequenceReadsPaired);
 	}
 
 	@Override
