@@ -10,7 +10,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
 
@@ -281,15 +280,15 @@ public class PipelineController extends BaseController {
 		Map<String, Object> result;
 
 		if (!Strings.isNullOrEmpty(name)) {
-			Set<SequenceFile> sequenceFiles = new HashSet<>();
-			Set<SequenceFilePair> sequenceFilePairs = new HashSet<>();
+			List<SequenceFile> sequenceFiles = new ArrayList<>();
+			List<SequenceFilePair> sequenceFilePairs = new ArrayList<>();
 
 			if (single != null) {
-				sequenceFiles.addAll(single.stream().map(sequenceFileService::read).collect(Collectors.toList()));
+				sequenceFiles = (List<SequenceFile>) sequenceFileService.readMultiple(single);
 			}
 
 			if (paired != null) {
-				sequenceFilePairs.addAll(paired.stream().map(sequenceFilePairService::read).collect(Collectors.toList()));
+				sequenceFilePairs = (List<SequenceFilePair>) sequenceFilePairService.readMultiple(paired);
 			}
 
 			ReferenceFile referenceFile = referenceFileService.read(ref);
@@ -297,15 +296,18 @@ public class PipelineController extends BaseController {
 
 			if (sequenceFiles.size() > 0 && sequenceFilePairs.size() > 0) {
 				analysisSubmission = AnalysisSubmission
-						.createSubmissionSingleAndPairedReference(name, sequenceFiles, sequenceFilePairs, referenceFile,
+						.createSubmissionSingleAndPairedReference(name, new HashSet<>(sequenceFiles),
+								new HashSet<>(sequenceFilePairs), referenceFile,
 								pipelineId);
 			}
 			else if (sequenceFiles.size() > 0 && sequenceFilePairs.size() == 0) {
-				analysisSubmission = AnalysisSubmission.createSubmissionSingleReference(name, sequenceFiles, referenceFile,
+				analysisSubmission = AnalysisSubmission
+						.createSubmissionSingleReference(name, new HashSet<>(sequenceFiles), referenceFile,
 						pipelineId);
 			}
 			else {
-				analysisSubmission = AnalysisSubmission.createSubmissionPairedReference(name, sequenceFilePairs,
+				analysisSubmission = AnalysisSubmission
+						.createSubmissionPairedReference(name, new HashSet<>(sequenceFilePairs),
 						referenceFile, pipelineId);
 			}
 
