@@ -20,7 +20,9 @@
 				<div class="card_title" th:text="${flow.title}"></div>
 				<div class="card_desc" th:text="${flow.description}"></div>
 				<div th:if="${counts.projects>0}" class="card_footer">
-					<a th:id="${flow.name + '_btn'}" th:href="@{'/pipelines/' + ${flow.name} + '/' + ${flow.id}}" class="btn btn-primary btn-xs pull-right">Select</a>
+					<a th:id="${flow.name + '_btn'}" th:href="@{'/pipelines/' + ${flow.name} + '/' + ${flow.id}}"
+					   class="btn btn-primary btn-xs pull-right" th:text="#{form.btn.select}">Select
+					</a>
 				</div>
 			</div>
 		</li>
