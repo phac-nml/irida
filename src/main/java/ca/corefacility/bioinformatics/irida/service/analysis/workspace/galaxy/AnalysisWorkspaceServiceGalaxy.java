@@ -158,8 +158,6 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysisSubmission.getWorkflowId());
 		IridaWorkflowInput workflowInput = iridaWorkflow.getWorkflowDescription().getInputs();
-		String referenceFileLabel = workflowInput.getReference();
-		checkNotNull(referenceFileLabel, "referenceFileLabel is null");
 
 		if (iridaWorkflow.getWorkflowDescription().requiresReference()) {
 			checkArgument(analysisSubmission.getReferenceFile().isPresent(),
@@ -199,7 +197,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		inputs.setWorkflowId(workflowDetails.getId());
 
 		if (!sampleSequenceFilesSingle.isEmpty()) {
-			String sequenceFilesLabelSingle = workflowInput.getSequenceReadsSingle();
+			String sequenceFilesLabelSingle = workflowInput.getSequenceReadsSingle().get();
 			String workflowSequenceFileSingleInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
 					sequenceFilesLabelSingle);
 			CollectionResponse collectionResponseSingle = analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(sampleSequenceFilesSingle,
@@ -210,7 +208,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		}
 
 		if (!sampleSequenceFilesPaired.isEmpty()) {
-			String sequenceFilesLabelPaired = workflowInput.getSequenceReadsPaired();
+			String sequenceFilesLabelPaired = workflowInput.getSequenceReadsPaired().get();
 			String workflowSequenceFilePairedInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
 					sequenceFilesLabelPaired);
 			CollectionResponse collectionResponsePaired = analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilesPaired,
@@ -223,6 +221,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		String analysisId = workflowHistory.getId();
 
 		if (iridaWorkflow.getWorkflowDescription().requiresReference()) {
+			String referenceFileLabel = workflowInput.getReference().get();
 			prepareReferenceFile(analysisSubmission.getReferenceFile().get(), workflowHistory, referenceFileLabel,
 					workflowDetails, inputs);
 		}

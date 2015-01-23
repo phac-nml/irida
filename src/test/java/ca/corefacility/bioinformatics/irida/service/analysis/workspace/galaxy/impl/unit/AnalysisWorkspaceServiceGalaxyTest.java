@@ -122,6 +122,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 	private UUID workflowId = IridaWorkflowTestBuilder.DEFAULT_ID;
 	private IridaWorkflow iridaWorkflowSingle = IridaWorkflowTestBuilder.buildTestWorkflowSingle();
+	private IridaWorkflow iridaWorkflowSingleNoReference = IridaWorkflowTestBuilder.buildTestWorkflowSingleNoReference();
 	private IridaWorkflow iridaWorkflowPaired = IridaWorkflowTestBuilder.buildTestWorkflowPaired();
 	private IridaWorkflow iridaWorkflowSinglePaired = IridaWorkflowTestBuilder.buildTestWorkflowSinglePaired();
 
@@ -489,6 +490,44 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 				sampleSequenceFileMap);
 		when(analysisCollectionServiceGalaxy.getSequenceFilePairedSamples(any(Set.class)))
 				.thenReturn(ImmutableMap.of());
+
+		workflowPreparation.prepareAnalysisFiles(submission);
+	}
+	
+	/**
+	 * Tests out failing to preparing an analysis which requires a reference but no reference found in submission.
+	 * 
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testPrepareAnalysisFilesRequiresReferenceFail() throws ExecutionManagerException,
+			IridaWorkflowNotFoundException {
+		submission = AnalysisSubmission.createSubmissionSingle("my analysis",
+				Sets.newHashSet(sampleSequenceFileMap.values()), workflowId);
+		submission.setRemoteAnalysisId(HISTORY_ID);
+		submission.setRemoteWorkflowId(WORKFLOW_ID);
+
+		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflowSingle);
+
+		workflowPreparation.prepareAnalysisFiles(submission);
+	}
+	
+	/**
+	 * Tests out failing to preparing an analysis which does not require a reference but a reference is found in submission.
+	 * 
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testPrepareAnalysisFilesNoRequiresReferenceFail() throws ExecutionManagerException,
+			IridaWorkflowNotFoundException {
+		submission = AnalysisSubmission.createSubmissionSingleReference("my analysis",
+				Sets.newHashSet(sampleSequenceFileMap.values()), referenceFile, workflowId);
+		submission.setRemoteAnalysisId(HISTORY_ID);
+		submission.setRemoteWorkflowId(WORKFLOW_ID);
+
+		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflowSingleNoReference);
 
 		workflowPreparation.prepareAnalysisFiles(submission);
 	}

@@ -31,7 +31,18 @@ public class IridaWorkflowTestBuilder {
 	 * @throws MalformedURLException
 	 */
 	public static IridaWorkflow buildTestWorkflowSingle() {
-		return buildTestWorkflow(DEFAULT_ID, Input.SINGLE);
+		return buildTestWorkflow(DEFAULT_ID, Input.SINGLE, "reference");
+	}
+	
+	/**
+	 * Builds a default test {@link IridaWorkflow} which accepts single input
+	 * files and has no reference.
+	 * 
+	 * @return A test workflow.
+	 * @throws MalformedURLException
+	 */
+	public static IridaWorkflow buildTestWorkflowSingleNoReference() {
+		return buildTestWorkflow(DEFAULT_ID, Input.SINGLE, null);
 	}
 
 	/**
@@ -41,7 +52,7 @@ public class IridaWorkflowTestBuilder {
 	 * @throws MalformedURLException
 	 */
 	public static IridaWorkflow buildTestWorkflowPaired() {
-		return buildTestWorkflow(DEFAULT_ID, Input.PAIRED);
+		return buildTestWorkflow(DEFAULT_ID, Input.PAIRED, "reference");
 	}
 
 	/**
@@ -52,7 +63,7 @@ public class IridaWorkflowTestBuilder {
 	 * @throws MalformedURLException
 	 */
 	public static IridaWorkflow buildTestWorkflowSinglePaired() {
-		return buildTestWorkflow(DEFAULT_ID, Input.SINGLE_PAIRED);
+		return buildTestWorkflow(DEFAULT_ID, Input.SINGLE_PAIRED, "reference");
 	}
 
 	/**
@@ -60,12 +71,16 @@ public class IridaWorkflowTestBuilder {
 	 * 
 	 * @param workflowId
 	 *            The workflow id.
+	 * @param input
+	 *            The input type.
+	 * @param reference
+	 *            The reference label.
 	 * @return A test workflow.
 	 * @throws MalformedURLException
 	 */
-	public static IridaWorkflow buildTestWorkflow(UUID workflowId, Input input) {
+	public static IridaWorkflow buildTestWorkflow(UUID workflowId, Input input, String reference) {
 		try {
-			return new IridaWorkflow(buildTestDescription(workflowId, input), buildTestStructure());
+			return new IridaWorkflow(buildTestDescription(workflowId, input, reference), buildTestStructure());
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
@@ -79,7 +94,7 @@ public class IridaWorkflowTestBuilder {
 	 */
 	public static IridaWorkflow buildTestWorkflowNullAnalysisType() {
 		try {
-			return new IridaWorkflow(buildTestDescription(DEFAULT_ID, "TestWorkflow", "1.0", null, Input.SINGLE),
+			return new IridaWorkflow(buildTestDescription(DEFAULT_ID, "TestWorkflow", "1.0", null, Input.SINGLE, "reference"),
 					buildTestStructure());
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
@@ -90,9 +105,9 @@ public class IridaWorkflowTestBuilder {
 		return new IridaWorkflowStructure(Paths.get("/tmp"));
 	}
 
-	private static IridaWorkflowDescription buildTestDescription(UUID workflowId, Input input)
+	private static IridaWorkflowDescription buildTestDescription(UUID workflowId, Input input, String reference)
 			throws MalformedURLException {
-		return buildTestDescription(workflowId, "TestWorkflow", "1.0", AnalysisType.DEFAULT, input);
+		return buildTestDescription(workflowId, "TestWorkflow", "1.0", AnalysisType.DEFAULT, input, reference);
 	}
 
 	/**
@@ -106,11 +121,13 @@ public class IridaWorkflowTestBuilder {
 	 *            The version of the workflow.
 	 * @param analysisType
 	 *            The {@link AnalysisType} of the workflow.
+	 * @param reference
+	 *            The reference label for the workflow.
 	 * @return An {@link IridaWorkflowDescription} with the given information.
 	 * @throws MalformedURLException
 	 */
 	public static IridaWorkflowDescription buildTestDescription(UUID id, String name, String version,
-			AnalysisType analysisType, Input input) throws MalformedURLException {
+			AnalysisType analysisType, Input input, String reference) throws MalformedURLException {
 		List<IridaWorkflowOutput> outputs = new LinkedList<>();
 		outputs.add(new IridaWorkflowOutput("output1", "output1.txt"));
 		outputs.add(new IridaWorkflowOutput("output2", "output2.txt"));
@@ -123,13 +140,13 @@ public class IridaWorkflowTestBuilder {
 		IridaWorkflowInput workflowInput = null;
 		switch (input) {
 		case SINGLE:
-			workflowInput = new IridaWorkflowInput("sequence_reads", null,"reference");
+			workflowInput = new IridaWorkflowInput("sequence_reads", null, reference);
 			break;
 		case PAIRED:
-			workflowInput = new IridaWorkflowInput(null, "sequence_reads_paired", "reference");
+			workflowInput = new IridaWorkflowInput(null, "sequence_reads_paired", reference);
 			break;
 		case SINGLE_PAIRED:
-			workflowInput = new IridaWorkflowInput("sequence_reads", "sequence_reads_paired", "reference");
+			workflowInput = new IridaWorkflowInput("sequence_reads", "sequence_reads_paired", reference);
 			break;
 		}
 

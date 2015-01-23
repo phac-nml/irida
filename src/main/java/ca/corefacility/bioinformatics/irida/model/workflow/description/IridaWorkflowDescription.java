@@ -120,7 +120,7 @@ public class IridaWorkflowDescription {
 	 * @return True if this workflow requires a reference file, false otherwise.
 	 */
 	public boolean requiresReference() {
-		return getInputs().getReference() != null;
+		return getInputs().getReference().isPresent();
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class IridaWorkflowDescription {
 	 *         otherwise.
 	 */
 	public boolean acceptsSingleSequenceFiles() {
-		return inputs.getSequenceReadsSingle() != null;
+		return inputs.getSequenceReadsSingle().isPresent();
 	}
 
 	/**
@@ -140,7 +140,7 @@ public class IridaWorkflowDescription {
 	 *         otherwise.
 	 */
 	public boolean acceptsPairedSequenceFiles() {
-		return inputs.getSequenceReadsPaired() != null;
+		return inputs.getSequenceReadsPaired().isPresent();
 	}
 
 	public IridaWorkflowInput getInputs() {

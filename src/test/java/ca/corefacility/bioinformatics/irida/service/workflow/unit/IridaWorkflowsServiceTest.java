@@ -44,9 +44,9 @@ public class IridaWorkflowsServiceTest {
 
 	@Before
 	public void setup() throws IridaWorkflowException {
-		iridaWorkflow = IridaWorkflowTestBuilder.buildTestWorkflow(iridaWorkflowId, IridaWorkflowTestBuilder.Input.SINGLE);
-		iridaWorkflow2 = IridaWorkflowTestBuilder.buildTestWorkflow(iridaWorkflowId2, IridaWorkflowTestBuilder.Input.SINGLE);
-		iridaWorkflow3 = IridaWorkflowTestBuilder.buildTestWorkflow(iridaWorkflowId3, IridaWorkflowTestBuilder.Input.SINGLE);
+		iridaWorkflow = IridaWorkflowTestBuilder.buildTestWorkflow(iridaWorkflowId, IridaWorkflowTestBuilder.Input.SINGLE, "reference");
+		iridaWorkflow2 = IridaWorkflowTestBuilder.buildTestWorkflow(iridaWorkflowId2, IridaWorkflowTestBuilder.Input.SINGLE, "reference");
+		iridaWorkflow3 = IridaWorkflowTestBuilder.buildTestWorkflow(iridaWorkflowId3, IridaWorkflowTestBuilder.Input.SINGLE, "reference");
 
 		iridaWorkflowSet = new IridaWorkflowSet(Sets.newHashSet(iridaWorkflow, iridaWorkflow2));
 		defaultIridaWorkflowIdSet = new IridaWorkflowIdSet(Sets.newHashSet());

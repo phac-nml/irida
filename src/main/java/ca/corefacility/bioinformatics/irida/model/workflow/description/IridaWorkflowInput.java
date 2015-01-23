@@ -6,6 +6,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
+import com.google.common.base.Optional;
+
 /**
  * Defines the input labels for a workflow.
  * 
@@ -46,16 +48,34 @@ public class IridaWorkflowInput {
 		this.reference = reference;
 	}
 
-	public String getSequenceReadsSingle() {
-		return sequenceReadsSingle;
+	/**
+	 * Gets the sequence reads single label.
+	 * 
+	 * @return The sequence reads single label, or {@link Optional.Absent} if no
+	 *         such label exists.
+	 */
+	public Optional<String> getSequenceReadsSingle() {
+		return Optional.fromNullable(sequenceReadsSingle);
 	}
 
-	public String getReference() {
-		return reference;
+	/**
+	 * Gets the reference label.
+	 * 
+	 * @return The reference label, or {@link Optional.Absent} if no such label
+	 *         exists.
+	 */
+	public Optional<String> getReference() {
+		return Optional.fromNullable(reference);
 	}
 
-	public String getSequenceReadsPaired() {
-		return sequenceReadsPaired;
+	/**
+	 * Gets the sequence reads paired label.
+	 * 
+	 * @return The sequence reads paired label, or {@link Optional.Absent} if no
+	 *         such label exists.
+	 */
+	public Optional<String> getSequenceReadsPaired() {
+		return Optional.fromNullable(sequenceReadsPaired);
 	}
 
 	@Override
