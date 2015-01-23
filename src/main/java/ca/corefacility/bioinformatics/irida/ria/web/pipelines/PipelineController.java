@@ -85,7 +85,7 @@ public class PipelineController extends BaseController {
 	/*
 	 * Converters
 	 */
-	Formatter<Date> dateFormatter;
+	private Formatter<Date> dateFormatter;
 	/*
 	 * SERVICES
 	 */
