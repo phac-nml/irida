@@ -279,7 +279,10 @@ public class PipelineController extends BaseController {
 			@RequestParam Long ref, @RequestParam String name) {
 		Map<String, Object> result;
 
-		if (!Strings.isNullOrEmpty(name)) {
+		if (Strings.isNullOrEmpty(name)) {
+			result = ImmutableMap
+					.of("error", messageSource.getMessage("workflow.no-name-provided", new Object[] { }, locale));
+		} else {
 			List<SequenceFile> sequenceFiles = new ArrayList<>();
 			List<SequenceFilePair> sequenceFilePairs = new ArrayList<>();
 
@@ -322,8 +325,6 @@ public class PipelineController extends BaseController {
 			session.setAttribute("submissionIds", submissionIds);
 
 			result = ImmutableMap.of("result", "success", "submissionId", submission.getId());
-		} else {
-			result = ImmutableMap.of("error", messageSource.getMessage("workflow.no-name-provided", new Object[]{}, locale));
 		}
 
 		return result;
