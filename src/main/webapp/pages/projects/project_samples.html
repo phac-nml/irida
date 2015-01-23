@@ -250,7 +250,13 @@
 					</td>
 					<td>{{sample.organism}}</td>
 					<td>{{sample.collectedBy}}</td>
-					<td>{{sample.project.label}}</td>
+					<td>
+						<a class="btn btn-default btn-xs"
+						   data:ng-href="@{'/projects/{{sample.project.id}}'}"
+						   ng-if="sample.project"
+						   href="#">{{sample.project.label}}
+						</a>
+					</td>
 					<td class="createdDate" data-date="{{sample.createdDate}}" tooltip-popup-delay='500'
 					    tooltip-placement="left" tooltip="{{sample.createdDate | date:'medium'}}">
 						<span>{{sample.createdDate | date:'mediumDate'}}</span>
