@@ -51,9 +51,9 @@ public class IridaWorkflowDescription {
 	@XmlElement(name = "output")
 	private List<IridaWorkflowOutput> outputs;
 
-	@XmlElementWrapper(name = "tools")
-	@XmlElement(name = "tool")
-	private List<IridaWorkflowTool> tools;
+	@XmlElementWrapper(name = "toolRepositories")
+	@XmlElement(name = "repository")
+	private List<IridaWorkflowToolRepository> repository;
 
 	public IridaWorkflowDescription() {
 	}
@@ -78,11 +78,11 @@ public class IridaWorkflowDescription {
 	 *            The inputs to the workflow.
 	 * @param outputs
 	 *            The outputs to the workflow.
-	 * @param tools
-	 *            The list of tools for this workflow.
+	 * @param toolRepositories
+	 *            The list of tools repositories for this workflow.
 	 */
 	public IridaWorkflowDescription(UUID id, String name, String version, String author, String email,
-			AnalysisType analysisType, IridaWorkflowInput inputs, List<IridaWorkflowOutput> outputs, List<IridaWorkflowTool> tools) {
+			AnalysisType analysisType, IridaWorkflowInput inputs, List<IridaWorkflowOutput> outputs, List<IridaWorkflowToolRepository> toolRepositories) {
 		this.id = id;
 		this.name = name;
 		this.version = version;
@@ -91,7 +91,7 @@ public class IridaWorkflowDescription {
 		this.analysisType = analysisType;
 		this.inputs = inputs;
 		this.outputs = ImmutableList.copyOf(outputs);
-		this.tools = ImmutableList.copyOf(tools);
+		this.repository = ImmutableList.copyOf(toolRepositories);
 	}
 
 	public UUID getId() {
@@ -148,8 +148,8 @@ public class IridaWorkflowDescription {
 		return outputsMap;
 	}
 
-	public List<IridaWorkflowTool> getTools() {
-		return tools;
+	public List<IridaWorkflowToolRepository> getToolRepositories() {
+		return repository;
 	}
 
 	public AnalysisType getAnalysisType() {
@@ -158,7 +158,7 @@ public class IridaWorkflowDescription {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, name, version, author, email, analysisType, inputs, outputs, tools);
+		return Objects.hash(id, name, version, author, email, analysisType, inputs, outputs, repository);
 	}
 
 	@Override
@@ -172,7 +172,7 @@ public class IridaWorkflowDescription {
 					&& Objects.equals(version, other.version) && Objects.equals(author, other.author)
 					&& Objects.equals(email, other.email) && Objects.equals(analysisType, other.analysisType)
 					&& Objects.equals(inputs, other.inputs) && Objects.equals(outputs, other.outputs)
-					&& Objects.equals(tools, other.tools);
+					&& Objects.equals(repository, other.repository);
 		}
 
 		return false;
@@ -182,6 +182,6 @@ public class IridaWorkflowDescription {
 	public String toString() {
 		return "IridaWorkflowDescription [id=" + id + ", name=" + name + ", version=" + version + ", author=" + author
 				+ ", email=" + email + ", analysisType=" + analysisType + ", inputs=" + inputs + ", outputs=" + outputs
-				+ ", tools=" + tools + "]";
+				+ ", tools=" + repository + "]";
 	}
 }

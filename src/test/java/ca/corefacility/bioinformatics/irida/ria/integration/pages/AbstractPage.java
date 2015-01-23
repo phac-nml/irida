@@ -22,7 +22,8 @@ import com.google.common.base.Strings;
  */
 public class AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractPage.class);
-	private static final String APPLICATION_PORT = Strings.isNullOrEmpty(System.getProperty("jetty.port")) ? "8080" : System.getProperty("jetty.port");
+	private static final String APPLICATION_PORT = Strings.isNullOrEmpty(System.getProperty("jetty.port")) ? "8080"
+			: System.getProperty("jetty.port");
 	protected static final String BASE_URL = "http://localhost:" + APPLICATION_PORT + "/";
 	private static final Long TIME_OUT_IN_SECONDS = 10L;
 
@@ -84,8 +85,8 @@ public class AbstractPage {
 	}
 
 	public void waitForElementInvisible(By locator) {
-		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS))
-				.until(ExpectedConditions.invisibilityOfElementLocated(locator));
+		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(ExpectedConditions
+				.invisibilityOfElementLocated(locator));
 	}
 
 	public static void waitForTime(int length) {
@@ -124,5 +125,14 @@ public class AbstractPage {
 
 	public int getCartProjectCount() {
 		return driver.findElements(By.cssSelector("#cart-project-list > li")).size();
+	}
+
+	/**
+	 * Get the current JETTY port
+	 * 
+	 * @return
+	 */
+	public String getApplicationPort() {
+		return APPLICATION_PORT;
 	}
 }

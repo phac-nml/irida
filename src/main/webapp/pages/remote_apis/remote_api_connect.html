@@ -12,7 +12,7 @@
 		<div class="panel-body">
 			<p th:text="#{remoteapi.connect.info}">_The content below is from another website_</p>
 			<hr/>
-			<iframe class="remote-api-frame" src="{{url}}"></iframe>
+			<iframe id="oauth-connect-frame" class="remote-api-frame" src="{{url}}"></iframe>
 		</div>
 	</script>
     
@@ -73,10 +73,11 @@
     	
     	$.ajax({
     		url: urlBase + apiId,
-    		type: "POST",
+    		type: "GET",
+    		dataType: "text",
     		success: function(data, textStatus, jqXHR){
     			if(data == "valid"){
-    				span.className="label label-success";
+    				span.className="status-label api-connected label label-success";
     				span.innerHTML = validTokenText;
     				resultContainer.html(span);
     				if(typeof successCallback === 'function'){
@@ -84,7 +85,7 @@
     				}
     			}
     			else if(data == "invalid_token" || data == "inactive"){
-    				span.className="label label-warning";
+    				span.className="status-label api-invalid label label-warning";
     				span.innerHTML = invalidTokenText;
     				
     				// display the connect button
@@ -94,7 +95,7 @@
     			}
     		},
     		error: function(data, textStatus, jqXHR){
-    			span.className="label label-danger";
+    			span.className="status-label api-error label label-danger";
     			span.innerHTML = errorText;
     			resultContainer.html(span);
     		}

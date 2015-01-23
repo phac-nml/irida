@@ -36,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -57,6 +58,7 @@ import com.google.common.net.HttpHeaders;
 public class SampleSequenceFilesControllerTest {
 	private RESTSampleSequenceFilesController controller;
 	private SequenceFileService sequenceFileService;
+	private SequenceFilePairService sequenceFilePairService;
 	private SampleService sampleService;
 	private ProjectService projectService;
 	private SequencingRunService miseqRunService;
@@ -65,10 +67,11 @@ public class SampleSequenceFilesControllerTest {
 	public void setUp() {
 		sampleService = mock(SampleService.class);
 		sequenceFileService = mock(SequenceFileService.class);
+		sequenceFilePairService = mock(SequenceFilePairService.class);
 		projectService = mock(ProjectService.class);
 		miseqRunService= mock(SequencingRunService.class);
 
-		controller = new RESTSampleSequenceFilesController(sequenceFileService, sampleService, projectService,miseqRunService);
+		controller = new RESTSampleSequenceFilesController(sequenceFileService, sequenceFilePairService, sampleService, projectService,miseqRunService);
 	}
 
 	@Test
@@ -158,14 +161,14 @@ public class SampleSequenceFilesControllerTest {
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
 		when(sequenceFileService.getSequenceFileForSample(s, sf.getId())).thenReturn(join);
-		when(sequenceFileService.getPairedFileForSequenceFile(sf)).thenReturn(pairFile);
+		when(sequenceFilePairService.getPairedFileForSequenceFile(sf)).thenReturn(pairFile);
 
 		ModelMap modelMap = controller.getSequenceFileForSample(p.getId(), s.getId(), sf.getId());
 
 		verify(projectService).read(p.getId());
 		verify(sampleService).read(s.getId());
 		verify(sequenceFileService).getSequenceFileForSample(s, sf.getId());
-		verify(sequenceFileService).getPairedFileForSequenceFile(sf);
+		verify(sequenceFilePairService).getPairedFileForSequenceFile(sf);
 
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertNotNull(o);

@@ -35,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -78,6 +79,10 @@ public class RESTSampleSequenceFilesController {
 	 */
 	private SequenceFileService sequenceFileService;
 	/**
+	 * Reference to the {@link SequenceFilePairService}
+	 */
+	private SequenceFilePairService  sequenceFilePairService;
+	/**
 	 * Reference to the {@link SampleService}.
 	 */
 	private SampleService sampleService;
@@ -94,9 +99,10 @@ public class RESTSampleSequenceFilesController {
 	}
 
 	@Autowired
-	public RESTSampleSequenceFilesController(SequenceFileService sequenceFileService, SampleService sampleService,
+	public RESTSampleSequenceFilesController(SequenceFileService sequenceFileService, SequenceFilePairService sequenceFilePairService, SampleService sampleService,
 			ProjectService projectService, SequencingRunService miseqRunService) {
 		this.sequenceFileService = sequenceFileService;
+		this.sequenceFilePairService = sequenceFilePairService;
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.miseqRunService = miseqRunService;
@@ -486,7 +492,7 @@ public class RESTSampleSequenceFilesController {
 		 */
 		try{
 			logger.trace("Getting paired file for " + sequenceFileId);
-			SequenceFile pairedFileForSequenceFile = sequenceFileService.getPairedFileForSequenceFile(sf);
+			SequenceFile pairedFileForSequenceFile = sequenceFilePairService.getPairedFileForSequenceFile(sf);
 			sfr.add(linkTo(
 					methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
 							pairedFileForSequenceFile.getId())).withRel(REL_PAIR));

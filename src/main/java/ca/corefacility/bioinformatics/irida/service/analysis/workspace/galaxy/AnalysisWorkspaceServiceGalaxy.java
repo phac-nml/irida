@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -117,7 +119,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	@Override
 	public String prepareAnalysisWorkspace(AnalysisSubmission analysisSubmission) throws ExecutionManagerException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
-		checkNotNull(analysisSubmission.getInputFiles(), "inputFiles are null");
+		checkNotNull(analysisSubmission.getSingleInputFiles(), "inputFiles are null");
 		checkArgument(analysisSubmission.getRemoteAnalysisId() == null, "analysis id should be null");
 
 		History workflowHistory = galaxyHistoriesService.newHistoryForWorkflow();
@@ -245,7 +247,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			throws ExecutionManagerException, IridaWorkflowNotFoundException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getRemoteAnalysisId(), "analysisId is null");
-		checkNotNull(analysisSubmission.getInputFiles(), "inputFiles are null");
+		checkNotNull(analysisSubmission.getSingleInputFiles(), "inputFiles are null");
 		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
 		checkNotNull(analysisSubmission.getRemoteWorkflowId(), "remoteWorkflowId is null");
 
@@ -271,7 +273,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		Library workflowLibrary = libraryBuilder.buildEmptyLibrary(new GalaxyProjectName(temporaryLibraryName));
 
 		List<Join<Sample, SequenceFile>> sampleSequenceFiles = getSequenceFileSamples(analysisSubmission
-				.getInputFiles());
+				.getSingleInputFiles());
 
 		CollectionResponse collectionResponse = uploadSequenceFiles(sampleSequenceFiles, workflowHistory,
 				workflowLibrary);
@@ -333,6 +335,32 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		inputs.setInput(workflowReferenceFileInputId, new WorkflowInputs.WorkflowInput(referenceDataset.getId(),
 				WorkflowInputs.InputSourceType.HDA));
 	}
+	
+	/**
+	 * Creates a set of {@link SequenceFile} from the given input files in the
+	 * submission.
+	 * 
+	 * @param analysisSubmission
+	 *            The submission containing the input files.
+	 * @return A {@link Set} of {@link SequenceFile} for any input files in the
+	 *         submission.
+	 */
+	private Set<SequenceFile> createInputSequenceFilesSet(AnalysisSubmission analysisSubmission) {
+		Set<SequenceFile> inputFiles = new HashSet<>();
+		for (SequenceFile sf : analysisSubmission.getSingleInputFiles()) {
+			inputFiles.add(sequenceFileRepository.findOne(sf.getId()));
+		}
+
+		for (SequenceFilePair sfp : analysisSubmission.getPairedInputFiles()) {
+			Iterator<SequenceFile> sfpIter = sfp.getFiles().iterator();
+			SequenceFile sf1 = sfpIter.next();
+			SequenceFile sf2 = sfpIter.next();
+			inputFiles.add(sequenceFileRepository.findOne(sf1.getId()));
+			inputFiles.add(sequenceFileRepository.findOne(sf2.getId()));
+		}
+
+		return inputFiles;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -341,7 +369,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	public Analysis getAnalysisResults(AnalysisSubmission analysisSubmission) throws ExecutionManagerException,
 			IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
-		checkNotNull(analysisSubmission.getInputFiles(), "input sequence files is null");
+		checkNotNull(analysisSubmission.getSingleInputFiles(), "input sequence files is null");
 		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
 		checkNotNull(analysisSubmission.getRemoteWorkflowId(), "remoteWorkflowId is null");
 
@@ -351,10 +379,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysisSubmission.getWorkflowId());
 		String analysisId = analysisSubmission.getRemoteAnalysisId();
 
-		Set<SequenceFile> inputFiles = new HashSet<>();
-		for (SequenceFile sf : analysisSubmission.getInputFiles()) {
-			inputFiles.add(sequenceFileRepository.findOne(sf.getId()));
-		}
+		Set<SequenceFile> inputFiles = createInputSequenceFilesSet(analysisSubmission);
 
 		Map<String, IridaWorkflowOutput> outputsMap = iridaWorkflow.getWorkflowDescription().getOutputsMap();
 

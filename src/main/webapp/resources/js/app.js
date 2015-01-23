@@ -17,6 +17,17 @@
         .config(function (RestangularProvider) {
             RestangularProvider.setBaseUrl(TL.BASE_URL);
         })
+        .config(function ($httpProvider) {
+          $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
+          // Make sure that all ajax form data is sent in the correct format.
+          $httpProvider.defaults.transformRequest = function (data) {
+            if (data === undefined) {
+              return data;
+            }
+            return $.param(data);
+          };
+        })
         .run(function (paginationConfig) {
             paginationConfig.firstText = TL.lang.page.first;
             paginationConfig.previousText = TL.lang.page.prev;

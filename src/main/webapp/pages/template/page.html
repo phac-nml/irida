@@ -60,7 +60,7 @@
 					</li>
 				</ul>
 				<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close</button>
-				<button class="btn btn-primary pull-right" th:text="#{cart.btn.run}">Run Pipeline</button>
+				<a id="go-to-pipeline-btn" href="#" th:href="@{/pipelines}" class="btn btn-primary pull-right" th:text="#{cart.btn.run}">Run Pipeline</a>
 			</section>
 		</aside>
 	</script>

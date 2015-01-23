@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.remoteapi;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
@@ -19,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.RemoteAPIDetailsPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.RemoteAPIDetailsPage.ApiStatus;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -43,6 +45,7 @@ public class RemoteAPIDetailsPageIT {
 
 	Long id = 1l;
 	String apiName = "a client";
+	String apiClient = "client";
 
 	@Before
 	public void setup() {
@@ -61,8 +64,15 @@ public class RemoteAPIDetailsPageIT {
 	}
 
 	@Test
-	public void testCheckClientsPageNumber() {
-		assertTrue(page.verifyRemoteAPI(id, apiName));
+	public void testVerifyClient() {
+		String clientName = page.getClientName();
+		assertEquals(apiName, clientName);
+
+		String clientId = page.getClientId();
+		assertEquals(apiClient, clientId);
+
+		ApiStatus remoteApiStatus = page.getRemoteApiStatus();
+		assertEquals(ApiStatus.INVALID, remoteApiStatus);
 
 	}
 

@@ -35,6 +35,20 @@
 		modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file.fastq2"
 		fileRevisionNumber="1" sequencingRun_id="1" />
 
+	<sequence_file id="3" createdDate="2013-07-18 14:20:19.0"
+		modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file.fastq3"
+		fileRevisionNumber="1" sequencingRun_id="1" />
+
+	<sequence_file id="4" createdDate="2013-07-18 14:20:19.0"
+		modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file.fastq4"
+		fileRevisionNumber="1" sequencingRun_id="1" />
+
+	<sequence_file_pair id="1" created_date="2013-07-18 14:20:19.0" />
+	<sequence_file_pair_files pair_id="1"
+		files_id="3" />
+	<sequence_file_pair_files pair_id="1"
+		files_id="4" />
+
 	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
 		email="aaron@nowhere.com" firstName="Aaron" lastName="Petkau"
 		password="$2a$10$yvzFLxWA9m2wNQmHpJtWT.MRZv8qV8Mo3EMB6HTkDnUbi9aBrbWWW"

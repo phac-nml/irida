@@ -83,7 +83,7 @@ public class TestDataFactory {
 		Set<SequenceFile> files = new HashSet<>();
 		files.add(constructSequenceFile());
 		Long id = 5L;
-		AnalysisSubmission analysisSubmission = new AnalysisSubmission("submission-" + id, files, UUID.randomUUID());
+		AnalysisSubmission analysisSubmission = AnalysisSubmission.createSubmissionSingle("submission-" + id, files, UUID.randomUUID());
 		analysisSubmission.setId(id);
 		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
 		analysisSubmission.setAnalysis(constructAnalysis());
@@ -172,4 +172,16 @@ public class TestDataFactory {
 			}
 		};
 	}
+
+	public static Map<Project, Set<Sample>> constructCart() {
+		Project project = constructProject();
+		Set<Sample> samples = new HashSet<>();
+		for (int i = 0; i < 10; i++) {
+			samples.add(constructSample());
+		}
+		return ImmutableMap.of(
+				project, samples
+		);
+	}
+
 }

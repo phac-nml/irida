@@ -5,21 +5,26 @@
 	<title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
 	<link rel="stylesheet" th:href="@{/resources/bower_components/angular-busy/angular-busy.css}"
 	      href="/resources/bower_components/angular-busy/angular-busy.css"/>
-	<link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2.css}" href="/resources/bower_components/select2/select2.css"/>
-	<link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}" href="/resources/bower_components/select2/select2-bootstrap.css"/>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2.css}"
+	      href="/resources/bower_components/select2/select2.css"/>
+	<link rel="stylesheet" th:href="@{/resources/bower_components/select2/select2-bootstrap.css}"
+	      href="/resources/bower_components/select2/select2-bootstrap.css"/>
 	<script>window.dependencies = ['Samples'];</script>
 </head>
 <body>
 <aside class="sidebar ng-cloak" layout:fragment="filter" ng-controller="FilterCtrl as sf">
 	<div class="sidebar__heading clearfix">
 		<h2 class="pull-left" th:text="#{project.sample.filter-title}">Samples Filter</h2>
-		<span ng-show="sf.total === 0 || sf.count !== sf.total" class="badge badge-primary pull-right ng-cloak"><span id="samples-filtered" ng-bind="sf.count">0</span> <span th:text="#{grammar.of}"></span> <span id="samples-total" ng-bind="sf.total">0</span></span>
+		<span ng-show="sf.total === 0 || sf.count !== sf.total" class="badge badge-primary pull-right ng-cloak"><span
+			id="samples-filtered" ng-bind="sf.count">0</span> <span th:text="#{grammar.of}"></span> <span
+			id="samples-total" ng-bind="sf.total">0</span></span>
 	</div>
 	<div class="sidebar__body">
 
 		<div class="form-group" ng-controller="FilterCountCtrl as filterCountCtrl">
 			<label for="count" th:text="#{table.filter.count}">Page Size</label>
-			<select id="count" class="form-control" style="width: 100%;" ng-model="filterCountCtrl.count" ng-change="filterCountCtrl.updateCount()">
+			<select id="count" class="form-control" style="width: 100%;" ng-model="filterCountCtrl.count"
+			        ng-change="filterCountCtrl.updateCount()">
 				<option value="10">10</option>
 				<option value="25">25</option>
 				<option value="50">50</option>
@@ -32,7 +37,9 @@
 			<div class="input-group">
 				<input type="text" class="form-control" id="sample-name-filter" ng-model="sf.name"/>
 				<span class="input-group-btn">
-					<button class="btn btn-default" ng-click="sf.name=''"><span class="fa fa-fw fa-remove"></span></button>
+					<button class="btn btn-default" ng-click="sf.name=''">
+						<span class="fa fa-fw fa-remove"></span>
+					</button>
 				</span>
 			</div>
 		</div>
@@ -42,7 +49,9 @@
 			<div class="input-group">
 				<input type="text" class="form-control" id="sample-organism-filter" ng-model="sf.organism"/>
 				<span class="input-group-btn">
-					<button class="btn btn-default" ng-click="sf.organism=''"><span class="fa fa-fw fa-remove"></span></button>
+					<button class="btn btn-default" ng-click="sf.organism=''">
+						<span class="fa fa-fw fa-remove"></span>
+					</button>
 				</span>
 			</div>
 		</div>
@@ -60,115 +69,163 @@
 				<!-- Sample Selection (Page, All, None) -->
 				<div class="btn-group" dropdown="" is-open="subnav.selection.isopen">
 					<button id="selectBtn" type="button" class="btn btn-default btn-sm dropdown-toggle">
-						<span th:text="#{lists.select-title}">Select</span>&nbsp;<span class="caret"></span>
+                        <span ng-controller="SelectedCountCtrl as countCtrl" id="selected-count"
+                              class="label label-default" ng-bind="countCtrl.count">0</span>
+						<span th:text="#{lists.select-title}">Select</span>
+						&nbsp;
+						<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" role="menu">
-						<li><a id="selectPageBtn" href="#" th:text="#{lists.select-page}" ng-click="subnav.selection.selectPage()">Select
-							Page</a></li>
-						<li><a id="selectAllBtn" href="#" th:text="#{lists.select-all}" ng-click="subnav.selection.selectAll()">Select
-							All</a></li>
+						<li>
+							<a id="selectPageBtn" href="#" th:text="#{lists.select-page}"
+							   ng-click="subnav.selection.selectPage()">Select Page
+							</a>
+						</li>
+						<li>
+							<a id="selectAllBtn" href="#" th:text="#{lists.select-all}"
+							   ng-click="subnav.selection.selectAll()">Select All
+							</a>
+						</li>
 						<li class="divider"></li>
-						<li><a id="selectNoneBtn" href="#" th:text="#{lists.select-none}" ng-click="subnav.selection.selectNone()">Select
-							None</a></li>
+						<li>
+							<a id="selectNoneBtn" href="#" th:text="#{lists.select-none}"
+							   ng-click="subnav.selection.selectNone()">Select None
+							</a>
+						</li>
 					</ul>
 				</div>
 
 				<!-- Samples Options (Download, Copy, Merge, Move)-->
 				<div class="btn-group" dropdown="" is-open="subnav.samplesOptions.open">
-					<button id="samplesOptionsBtn" class="btn btn-default btn-sm dropdown-toggle" ng-disabled="subnav.count&lt;1">
-						<span>Samples</span>&nbsp;<span class="caret"></span>
+					<button id="samplesOptionsBtn" class="btn btn-default btn-sm dropdown-toggle"
+					        ng-disabled="subnav.count&lt;1">
+						<span>Samples</span>
+						&nbsp;
+						<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" role="menu">
-						<li ng-class="{disabled:subnav.count&lt;2}"><a id="mergeBtn" href="#" ng-click="subnav.merge()">
-							<span class="fa fa-fw fa-compress"></span>&nbsp; <span th:text="#{project.samples.nav.merge}">Merge</span>
-						</a>
-						</li>
-						<li th:if="${isOwner} or ${isAdmin}">
-							<a id="copyBtn" href="" ng-click="subnav.openModal('copy')">
-								<span class="fa fa-fw fa-copy"></span>&nbsp;<span th:text="#{project.samples.nav.copy}">_COPY_</span>
+						<li ng-class="{disabled:subnav.count&lt;2}">
+							<a id="mergeBtn" href="#" ng-click="subnav.merge()">
+								<span class="fa fa-fw fa-compress"></span>
+								&nbsp;
+								<span th:text="#{project.samples.nav.merge}">Merge</span>
 							</a>
 						</li>
 						<li th:if="${isOwner} or ${isAdmin}">
-							<a id="moveBtn" href="#" ng-click="subnav.openModal('move')"><span class="fa fa-truck fa-fw"></span>
-								<span th:text="#{project.samples.nav.move}"></span></a>
+							<a id="copyBtn" href="" ng-click="subnav.openModal('copy')">
+								<span class="fa fa-fw fa-copy"></span>
+								&nbsp;
+								<span th:text="#{project.samples.nav.copy}">_COPY_</span>
+							</a>
+						</li>
+						<li th:if="${isOwner} or ${isAdmin}">
+							<a id="moveBtn" href="#" ng-click="subnav.openModal('move')">
+								<span class="fa fa-truck fa-fw"></span>
+								<span th:text="#{project.samples.nav.move}"></span>
+							</a>
 						</li>
 					</ul>
 				</div>
 
 				<div class="btn-group" dropdown="" is-open="subnav.export.open">
-					<button id="exportOptionsBtn" class="btn btn-default btn-sm dropdown-toggle" ng-disabled="subnav.count&lt;1">
-						<span th:text="#{project.samples.export.label}">Export</span>&nbsp;<span class="caret"></span>
+					<button id="exportOptionsBtn" class="btn btn-default btn-sm dropdown-toggle"
+					        ng-disabled="subnav.count&lt;1">
+						<span th:text="#{project.samples.export.label}">Export</span>
+						&nbsp;
+						<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" role="menu">
 						<li>
 							<a id="exportDownloadBtn" href="#" ng-click="subnav.export.download()">
-								<span class="fa fa-fw fa-download"></span>&nbsp; <span th:text="#{form.download}">_Download</span> </a>
+								<span class="fa fa-fw fa-download"></span>
+								&nbsp;
+								<span th:text="#{form.download}">_Download</span>
+							</a>
 						</li>
 						<li th:if="${linkerAvailable}">
-							<a id="exportLinkerBtn" href="#" ng-click="subnav.export.linker()"><span class="fa fa-fw fa-terminal"></span>&nbsp;<span th:text="#{project.samples.export.linker}"></span></a>
+							<a id="exportLinkerBtn" href="#" ng-click="subnav.export.linker()">
+								<span class="fa fa-fw fa-terminal"></span>
+								&nbsp;
+								<span th:text="#{project.samples.export.linker}"></span>
+							</a>
 						</li>
 						<li th:if="${galaxyConnected}">
-							<a href="#" ng-click="subnav.export.galaxy()"><span class="fa fa-fw fa-cloud"></span>&nbsp;<span th:text="#{project.samples.export.galaxy}"></span></a>
+							<a href="#" ng-click="subnav.export.galaxy()">
+								<span class="fa fa-fw fa-cloud"></span>
+								&nbsp;
+								<span th:text="#{project.samples.export.galaxy}"></span>
+							</a>
 						</li>
 						<li th:if="!${galaxyConnected}" class="disabled">
-							<a href="#"><span class="fa fa-fw fa-cloud"></span>&nbsp;<span th:text="#{project.samples.export.galaxy-offline}"></span></a>
+							<a href="#">
+								<span class="fa fa-fw fa-cloud"></span>
+								&nbsp;
+								<span th:text="#{project.samples.export.galaxy-offline}"></span>
+							</a>
 						</li>
 					</ul>
 				</div>
 
-				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-default btn-sm" th:text="#{project.samples.nav.run-pipeline}">Run Pipeline</button>
-					<button id="cart-add-btn" ng-controller="CartController as cart" ng-click="cart.add()" type="button" class="btn btn-default btn-sm" th:text="#{project.samples.nav.add-to-cart}">Add to Cart</button>
-				</div>
+				<button id="cart-add-btn" ng-controller="CartController as cart" ng-click="cart.add()" type="button"
+				        class="btn btn-default btn-sm" th:text="#{project.samples.nav.add-to-cart}">Add to Cart
+				</button>
 			</div>
 		</div>
-		<div class="col-md-5">
-			<span class="pull-right selected__counts" ng-controller="SelectedCountCtrl as countCtrl">
-			<span th:text="#{project.samples.table.select-count}"></span>&nbsp;<span id="selected-count" class="badge" ng-bind="countCtrl.count">0</span>
-		</span>
-		</div>
 	</div>
-	<div class="row" data:cg-busy="'{promise: cgPromise,templateUrl:\'' + @{/resources/bower_components/angular-busy/angular-busy.html} + '\', delay: 250, backdrop:true, message: \'' + #{cg-busy.samples.table} +  '\'}'">
+	<div class="row"
+	     data:cg-busy="'{promise: cgPromise,templateUrl:\'' + @{/resources/bower_components/angular-busy/angular-busy.html} + '\', delay: 250, backdrop:true, message: \'' + #{cg-busy.samples.table} +  '\'}'">
 		<div class="col-md-12" ng-controller="SamplesTableCtrl as table">
 			<table id="samplesTable" class="table ng-cloak">
 				<thead>
 				<tr ng-controller="SortCtrl as sCtrl">
 					<th></th>
-					<th id="sortName" th:text="#{project.samples.table.name}" sort-by="" onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
+					<th id="sortName" th:text="#{project.samples.table.name}" sort-by="" onsort="sCtrl.onSort"
+					    sortdir="sCtrl.filter.sortDir"
 					    sortedBy="sCtrl.filter.sortedBy" sortValue="sampleName">__NAME__
 					</th>
-					<th id="sortOrganism" th:text="#{project.samples.table.organism}" sort-by="" onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
+					<th id="sortOrganism" th:text="#{project.samples.table.organism}" sort-by="" onsort="sCtrl.onSort"
+					    sortdir="sCtrl.filter.sortDir"
 					    sortedBy="sCtrl.filter.sortedBy" sortValue="organism">__ORGANISM__
 					</th>
-					<th id="sortCollectedBy" th:text="#{project.samples.table.collectedBy}" sort-by="" onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
+					<th id="sortCollectedBy" th:text="#{project.samples.table.collectedBy}" sort-by=""
+					    onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
 					    sortedBy="sCtrl.filter.sortedBy" sortValue="collectedBy">Collected By
 					</th>
-					<th id="sortCreatedDate" th:text="#{project.samples.table.created}" sort-by="" onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
+					<th id="sortCreatedDate" th:text="#{project.samples.table.created}" sort-by="" onsort="sCtrl.onSort"
+					    sortdir="sCtrl.filter.sortDir"
 					    sortedBy="sCtrl.filter.sortedBy" sortValue="createdDate">__CREATED__
 					</th>
 				</tr>
 				</thead>
 				<tbody>
-				<tr class="sample-row" ng-class="{'selected': sample.selected}" ng-repeat="sample in table.samples | filter:{sampleName:table.filter.name, organism:table.filter.organism} | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
+				<tr class="sample-row" ng-class="{'selected': sample.selected}"
+				    ng-repeat="sample in table.samples | filter:{sampleName:table.filter.name, organism:table.filter.organism} | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
 					<td>
 						<div class="large-checkbox">
-							<input class="sample-select" id="s-{{sample.id}}" name="s-{{sample.id}}" type="checkbox" ng-model="sample.selected"
+							<input class="sample-select" id="s-{{sample.id}}" name="s-{{sample.id}}" type="checkbox"
+							       ng-model="sample.selected"
 							       ng-change="table.updateSample(sample)"/> <label for="s-{{sample.id}}"></label>
 						</div>
 					</td>
 					<td class="sample-name">
-						<a class="btn btn-default btn-xs" data:ng-href="@{'/projects/' + ${project.getId()} + '/samples/{{sample.id}}/details'}" href="#">{{sample.sampleName}}</a>
+						<a class="btn btn-default btn-xs"
+						   data:ng-href="@{'/projects/' + ${project.getId()} + '/samples/{{sample.id}}/details'}"
+						   href="#">{{sample.sampleName}}
+						</a>
 					</td>
 					<td>{{sample.organism}}</td>
 					<td>{{sample.collectedBy}}</td>
-					<td class="createdDate" data-date="{{sample.createdDate}}" tooltip-popup-delay='500' tooltip-placement="left" tooltip="{{sample.createdDate | date:'medium'}}">
-						<span>{{sample.createdDate | date:'mediumDate'}}</span></td>
+					<td class="createdDate" data-date="{{sample.createdDate}}" tooltip-popup-delay='500'
+					    tooltip-placement="left" tooltip="{{sample.createdDate | date:'medium'}}">
+						<span>{{sample.createdDate | date:'mediumDate'}}</span>
+					</td>
 				</tr>
 				</tbody>
 				<tfoot>
 				<tr>
 					<td colspan="5" class="text-center">
-						<div pagination="" ng-controller="PagingCtrl as paging" ng-model="paging.page" items-per-page="paging.count"
+						<div pagination="" ng-controller="PagingCtrl as paging" ng-model="paging.page"
+						     items-per-page="paging.count"
 						     total-items="paging.total" ng-change="paging.update()"></div>
 					</td>
 				</tr>
@@ -179,7 +236,8 @@
 </main>
 
 <th:block layout:fragment="scripts" th:inline="javascript">
-	<script th:src="@{/resources/bower_components/select2/select2.min.js}" src="/resources/bower_components/select2/select2.min.js"></script>
+	<script th:src="@{/resources/bower_components/select2/select2.min.js}"
+	        src="/resources/bower_components/select2/select2.min.js"></script>
 	<script th:src="@{/resources/bower_components/angular-busy/angular-busy.js}"
 	        src="/resources/bower_components/angular-busy/angular-busy.js"></script>
 	<script src="/resources/bower_components/ngstorage/ngStorage.min.js"

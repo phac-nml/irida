@@ -1,3 +1,12 @@
 html, body {
   height: 100%;
 }
+
+.layout-flex {
+  display: flex;
+
+  > div {
+    padding: 1rem;
+  }
+}
+

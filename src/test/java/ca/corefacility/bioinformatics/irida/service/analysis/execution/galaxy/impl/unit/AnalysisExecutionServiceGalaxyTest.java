@@ -112,15 +112,15 @@ public class AnalysisExecutionServiceGalaxyTest {
 		String submissionName = "name";
 		Set<SequenceFile> submissionInputFiles = Sets.newHashSet();
 
-		analysisSubmission = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisPreparing = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisPrepared = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisSubmitting = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisRunning = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisFinishedRunning = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisCompleting = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisCompleted = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisError = new AnalysisSubmission(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisSubmission = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisPreparing = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisPrepared = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisSubmitting = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisRunning = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisFinishedRunning = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisCompleting = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisCompleted = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisError = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
 
 		AnalysisExecutionServiceGalaxyAsync workflowManagementAsync = new AnalysisExecutionServiceGalaxyAsync(
 				analysisSubmissionService, analysisService, galaxyWorkflowService, analysisWorkspaceService,

@@ -11,7 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
-import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowTool;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowToolRepository;
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 
 /**
@@ -92,10 +92,9 @@ public class IridaWorkflowTestBuilder {
 		outputs.add(new IridaWorkflowOutput("output1", "output1.txt"));
 		outputs.add(new IridaWorkflowOutput("output2", "output2.txt"));
 
-		List<IridaWorkflowTool> tools = new LinkedList<>();
-		IridaWorkflowTool workflowTool = new IridaWorkflowTool("sam_to_bam",
-				"toolshed.g2.bx.psu.edu/repos/devteam/sam_to_bam/sam_to_bam/1.1.4", "1.1.4", "devteam", new URL(
-						"http://toolshed.g2.bx.psu.edu/"), "8176b2575aa1");
+		List<IridaWorkflowToolRepository> tools = new LinkedList<>();
+		IridaWorkflowToolRepository workflowTool = new IridaWorkflowToolRepository("sam_to_bam", "devteam", new URL(
+				"http://toolshed.g2.bx.psu.edu/"), "8176b2575aa1");
 		tools.add(workflowTool);
 
 		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version, "Mr. Developer",

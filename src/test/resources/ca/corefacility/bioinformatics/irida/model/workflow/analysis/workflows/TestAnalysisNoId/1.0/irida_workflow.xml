@@ -14,14 +14,12 @@
     <output name="output1" fileName="output1.txt"></output>
     <output name="output2" fileName="output2.txt"></output>
   </outputs>
-  <tools>
-    <tool>
+  <toolRepositories>
+    <repository>
       <name>sam_to_bam</name>
-      <id>toolshed.g2.bx.psu.edu/repos/devteam/sam_to_bam/sam_to_bam/1.1.4</id>
-      <version>1.1.4</version>
       <owner>devteam</owner>
       <url>http://toolshed.g2.bx.psu.edu/</url>
       <revision>8176b2575aa1</revision>
-    </tool>
-  </tools>
+    </repository>
+  </toolRepositories>
 </iridaWorkflow>

@@ -26,7 +26,7 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 	 * Constant reference for administrative role.
 	 */
 	public static final Role ROLE_ANONYMOUS = new Role("ROLE_ANONYMOUS");
-	
+
 	/**
 	 * Constant reference for administrative role.
 	 */
@@ -48,7 +48,7 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 
 	@Id
 	private String name;
-	
+
 	@NotNull
 	private String description;
 
@@ -115,6 +115,11 @@ public class Role implements Comparable<Role>, GrantedAuthority {
 	 */
 	public static Role valueOf(String value) {
 		return new Role(value);
+	}
+
+	@Override
+	public String toString() {
+		return name;
 	}
 
 }

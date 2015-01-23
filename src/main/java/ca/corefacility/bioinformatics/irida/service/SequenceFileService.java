@@ -15,8 +15,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 
 /**
  * Service for managing {@link SequenceFile} entities.
@@ -111,24 +111,11 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	public SequenceFile update(Long id, Map<String, Object> updatedFields) throws InvalidPropertyException;
 
 	/**
-	 * Get the paired {@link SequenceFile} for the given {@link SequenceFile}
+	 * Get the {@link SequenceFile}s that do not have pairs for a {@link Sample}
 	 * 
-	 * @param file
-	 *            One side of the file pair
-	 * @return The other side of the file pair
-	 * @throws EntityNotFoundException
-	 *             If a pair cannot be found
+	 * @param sample
+	 * @return A List of {@link SampleSequenceFileJoin}s
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#file, 'canReadSequenceFile')")
-	public SequenceFile getPairedFileForSequenceFile(SequenceFile file) throws EntityNotFoundException;
-
-	/**
-	 * Create a new {@link SequenceFilePair} for the given files
-	 * 
-	 * @param file1
-	 * @param file2
-	 * @return A new {@link SequenceFilePair} object
-	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or (hasPermission(#file1, 'canReadSequenceFile') and hasPermission(#file2, 'canReadSequenceFile'))")
-	public SequenceFilePair createSequenceFilePair(SequenceFile file1, SequenceFile file2);
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
+	public List<Join<Sample, SequenceFile>> getUnpairedSequenceFilesForSample(Sample sample);
 }

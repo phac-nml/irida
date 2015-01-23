@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.remoteapi;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -20,6 +21,8 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.CreateRemoteAPIPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.RemoteAPIDetailsPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.RemoteAPIDetailsPage.ApiStatus;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -61,12 +64,31 @@ public class CreateRemoteAPIPageIT {
 	@Test
 	public void testCreateGoodClient() {
 		page.createRemoteAPIWithDetails("new name", "http://newuri", "newClient", "newSecret");
-		assertTrue(page.checkSuccess());
+		assertTrue("client should be created", page.checkSuccess());
 	}
 
 	@Test
 	public void testCreateClientWithDuplicateURI() {
 		page.createRemoteAPIWithDetails("new name", "http://nowhere", "newClient", "newSecret");
-		assertFalse(page.checkSuccess());
+		assertFalse("client should not have been created", page.checkSuccess());
+	}
+
+	@Test
+	public void testAndConnectToClient() {
+		String applicationPort = page.getApplicationPort();
+		String url = "http://localhost:" + applicationPort + "/api";
+
+		page.createRemoteAPIWithDetails("new name", url, "testClient", "testClientSecret");
+		assertTrue("client should have been created", page.checkSuccess());
+
+		RemoteAPIDetailsPage remoteAPIDetailsPage = new RemoteAPIDetailsPage(driver);
+
+		ApiStatus remoteApiStatus = remoteAPIDetailsPage.getRemoteApiStatus();
+		assertEquals("api status should be invalid", ApiStatus.INVALID, remoteApiStatus);
+		remoteAPIDetailsPage.clickConnect();
+		remoteAPIDetailsPage.clickAuthorize();
+
+		remoteApiStatus = remoteAPIDetailsPage.getRemoteApiStatus();
+		assertEquals("api status should be connected", ApiStatus.CONNECTED, remoteApiStatus);
 	}
 }

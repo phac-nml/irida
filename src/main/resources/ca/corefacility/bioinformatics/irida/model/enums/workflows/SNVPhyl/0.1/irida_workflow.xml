@@ -2,7 +2,7 @@
 
 <iridaWorkflow>
   <id>ccca532d-b0be-4f2c-bd6d-9886aa722571</id>
-  <name>SNVPhylTest</name>
+  <name>SNVPhyl</name>
   <version>0.1-dev</version>
   <author>Aaron Petkau</author>
   <email>aaron.petkau@phac-aspc.gc.ca</email>
@@ -12,18 +12,52 @@
     <reference>reference</reference>
   </inputs>
   <outputs>
-    <output name="tree" fileName="phylogeneticTree.txt"/>
+    <output name="tree" fileName="phylogeneticTree.tre"/>
     <output name="matrix" fileName="snpMatrix.tsv"/>
     <output name="table" fileName="snpTable.tsv"/>
   </outputs>
-  <tools>
-    <tool>
+  <toolRepositories>
+    <repository>
+      <name>smalt_collection</name>
+      <owner>irida</owner>
+      <url>https://irida.corefacility.ca/galaxy-shed</url>
+      <revision>de3e46eaf5ba</revision>
+    </repository>
+    <repository>
+      <name>phyml</name>
+      <owner>irida</owner>
+      <url>https://irida.corefacility.ca/galaxy-shed</url>
+      <revision>b5867c5c7674</revision>
+    </repository>
+    <repository>
+      <name>freebayes</name>
+      <owner>irida</owner>
+      <url>https://irida.corefacility.ca/galaxy-shed</url>
+      <revision>386bc6e45b68</revision>
+    </repository>
+    <repository>
+      <name>core_pipeline</name>
+      <owner>irida</owner>
+      <url>https://irida.corefacility.ca/galaxy-shed</url>
+      <revision>0737c0310cab</revision>
+    </repository>
+    <repository>
       <name>sam_to_bam</name>
-      <id>toolshed.g2.bx.psu.edu/repos/devteam/sam_to_bam/sam_to_bam/1.1.4</id>
-      <version>1.1.4</version>
       <owner>devteam</owner>
       <url>http://toolshed.g2.bx.psu.edu/</url>
       <revision>8176b2575aa1</revision>
-    </tool>
-  </tools>
+    </repository>
+    <repository>
+      <name>samtools_mpileup</name>
+      <owner>devteam</owner>
+      <url>http://toolshed.g2.bx.psu.edu/</url>
+      <revision>973fea5b4bdf</revision>
+    </repository>
+    <repository>
+      <name>bcftools_view</name>
+      <owner>gregory-minevich</owner>
+      <url>http://toolshed.g2.bx.psu.edu/</url>
+      <revision>6572c40a8505</revision>
+    </repository>
+  </toolRepositories>
 </iridaWorkflow>

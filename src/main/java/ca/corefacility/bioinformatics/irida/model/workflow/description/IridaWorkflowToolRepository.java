@@ -8,21 +8,17 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
- * Defines a tool within a workflow.
+ * Defines a Galaxy ToolShed repository containing dependency tools for a workflow.
  * 
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ * @see <a href="https://wiki.galaxyproject.org/ToolShed">https://wiki.galaxyproject.org/ToolShed</a>
+ * @see <a href="https://wiki.galaxyproject.org/Tools">https://wiki.galaxyproject.org/Tools</a>
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class IridaWorkflowTool {
+public class IridaWorkflowToolRepository {
 	@XmlElement(name = "name")
 	private String name;
-
-	@XmlElement(name = "id")
-	private String id;
-
-	@XmlElement(name = "version")
-	private String version;
 
 	@XmlElement(name = "owner")
 	private String owner;
@@ -33,18 +29,16 @@ public class IridaWorkflowTool {
 	@XmlElement(name = "revision")
 	private String revision;
 
-	public IridaWorkflowTool() {
+	public IridaWorkflowToolRepository() {
 	}
 
 	/**
-	 * Builds a new {@link IridaWorkflowTool} with the given information.
+	 * Builds a new {@link IridaWorkflowToolRepository} with the given information.
 	 * 
 	 * @param name
 	 *            The name of the tool.
 	 * @param id
 	 *            The id of the tool
-	 * @param version
-	 *            The version of the tool.
 	 * @param owner
 	 *            The owner of the tool.
 	 * @param url
@@ -52,10 +46,8 @@ public class IridaWorkflowTool {
 	 * @param revision
 	 *            The revision number of the tool.
 	 */
-	public IridaWorkflowTool(String name, String id, String version, String owner, URL url, String revision) {
+	public IridaWorkflowToolRepository(String name, String owner, URL url, String revision) {
 		this.name = name;
-		this.id = id;
-		this.version = version;
 		this.owner = owner;
 		this.url = url;
 		this.revision = revision;
@@ -63,14 +55,6 @@ public class IridaWorkflowTool {
 
 	public String getName() {
 		return name;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public String getVersion() {
-		return version;
 	}
 
 	public String getOwner() {
@@ -87,21 +71,25 @@ public class IridaWorkflowTool {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, id, version, owner, url, revision);
+		return Objects.hash(name, owner, url, revision);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		else if (obj instanceof IridaWorkflowTool) {
-			IridaWorkflowTool other = (IridaWorkflowTool) obj;
+		else if (obj instanceof IridaWorkflowToolRepository) {
+			IridaWorkflowToolRepository other = (IridaWorkflowToolRepository) obj;
 
-			return Objects.equals(name, other.name) && Objects.equals(id, other.id)
-					&& Objects.equals(version, other.version) && Objects.equals(owner, other.owner)
+			return Objects.equals(name, other.name) && Objects.equals(owner, other.owner)
 					&& Objects.equals(url, other.url) && Objects.equals(revision, other.revision);
 		}
 
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		return "IridaWorkflowTool [name=" + name + ", owner=" + owner + ", url=" + url + ", revision=" + revision + "]";
 	}
 }
