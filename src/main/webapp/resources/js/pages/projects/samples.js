@@ -741,7 +741,16 @@
     var vm = this;
 
     vm.add = function () {
-      cart.add(project.id, storage.getKeys())
+      //var samples = storage.getKeys();
+      _.forEach(storage.getSamples(), function(s){
+        if(s.project){
+          cart.add(s.project.id,[s.id]);
+        }
+        else{
+          cart.add(project.id,[s.id]);
+        }
+      });
+      //cart.add(project.id, storage.getKeys())
     };
   }
 
