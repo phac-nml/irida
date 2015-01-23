@@ -145,9 +145,6 @@ public class PipelineController extends BaseController {
 			IridaWorkflow flow = null;
 			try {
 				flow = workflowsService.getDefaultWorkflowByType(type);
-			} catch (IridaWorkflowNotFoundException e) {
-				e.printStackTrace();
-			}
 			IridaWorkflowDescription description = flow.getWorkflowDescription();
 			String name = type.toString();
 			String key = "workflow." + name;
@@ -161,6 +158,9 @@ public class PipelineController extends BaseController {
 					messageSource
 							.getMessage(key + ".description", new Object[] { }, locale)
 			));
+			} catch (IridaWorkflowNotFoundException e) {
+				logger.error("Workflow not found - See stack:", e.getMessage());
+			}
 		});
 		model.addAttribute("counts", getCartSummaryMap());
 		model.addAttribute("workflows", flows);
