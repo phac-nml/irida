@@ -50,7 +50,6 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -88,7 +87,6 @@ public class PipelineController extends BaseController {
 	/*
 	 * SERVICES
 	 */
-	private SampleService sampleService;
 	private ReferenceFileService referenceFileService;
 	private SequenceFileService sequenceFileService;
 	private SequenceFilePairService sequenceFilePairService;
@@ -103,7 +101,7 @@ public class PipelineController extends BaseController {
 	private CartController cartController;
 
 	@Autowired
-	public PipelineController(SampleService sampleService, SequenceFileService sequenceFileService,
+	public PipelineController(SequenceFileService sequenceFileService,
 			SequenceFilePairService sequenceFilePairService,
 			ReferenceFileService referenceFileService,
 			AnalysisSubmissionService analysisSubmissionService,
@@ -112,7 +110,6 @@ public class PipelineController extends BaseController {
 			UserService userService,
 			CartController cartController,
 			MessageSource messageSource) {
-		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
 		this.referenceFileService = referenceFileService;

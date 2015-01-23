@@ -28,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -36,8 +35,9 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
  * Created by josh on 15-01-09.
  */
 public class PipelineControllerTest {
+	// Constants
+	public static final Locale LOCALE = Locale.US;
 	// Dependencies to mock
-	private SampleService sampleService;
 	private ReferenceFileService referenceFileService;
 	private SequenceFileService sequenceFileService;
 	private SequenceFilePairService sequenceFilePairService;
@@ -47,16 +47,11 @@ public class PipelineControllerTest {
 	private UserService userService;
 	private MessageSource messageSource;
 	private CartController cartController;
-
 	// Controller to test
 	private PipelineController controller;
 
-	// Constants
-	public static final Locale LOCALE = Locale.US;
-
 	@Before
 	public void setUp() {
-		sampleService = mock(SampleService.class);
 		referenceFileService = mock(ReferenceFileService.class);
 		sequenceFileService = mock(SequenceFileService.class);
 		sequenceFilePairService = mock(SequenceFilePairService.class);
@@ -67,7 +62,7 @@ public class PipelineControllerTest {
 		messageSource = mock(MessageSource.class);
 		cartController = mock(CartController.class);
 
-		controller = new PipelineController(sampleService, sequenceFileService, sequenceFilePairService, referenceFileService,
+		controller = new PipelineController(sequenceFileService, sequenceFilePairService, referenceFileService,
 				analysisSubmissionService, workflowsService, projectService, userService, cartController, messageSource);
 	}
 
@@ -105,6 +100,6 @@ public class PipelineControllerTest {
 		String response = controller.getPhylogenomicsPage(model, principal, Locale.US, id);
 		assertEquals("Response should be the path to the phylogenomics template", PipelineController.URL_PHYLOGENOMICS, response);
 		assertTrue("Model should contain the reference files.", model.containsKey("referenceFiles"));
-		assertTrue("Model should contain a list of files.", model.containsKey("files"));
+		assertTrue("Model should contain a list of files.", model.containsKey("projects"));
 	}
 }
