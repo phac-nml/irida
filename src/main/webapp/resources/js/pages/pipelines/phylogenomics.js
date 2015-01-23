@@ -31,7 +31,10 @@
       if (name === null || name.length === 0) {
         vm.error = PIPELINE.required;
       } else {
+        // Hide the launch buttons and display a message that it has been sent.
         vm.loading = true;
+
+        // Get a list of paired and single end files to run.
         _.forEach(radioBtns, function (c) {
           c = $(c);
           if (c.attr('data-type') === 'single_end') {
@@ -43,16 +46,13 @@
         });
 
         $http.post(PIPELINE.url, {ref: ref, single: single, paired: paired, name: name})
-          .success(function (data, status, headers, config) {
+          .success(function (data) {
             if (data.result === 'success') {
               vm.success = true;
             }
             else {
               vm.error = data.error;
             }
-          })
-          .error(function (data, status, headers, config) {
-
           });
       }
     };
