@@ -179,7 +179,7 @@ public class PipelineController extends BaseController {
 			try {
 				iridaWorkflow = workflowsService.getIridaWorkflow(pipelineId);
 			} catch (IridaWorkflowNotFoundException e) {
-				e.printStackTrace();
+				logger.error("Workflow not found - See stack:", e.getMessage());
 			}
 
 			User user = userService.getUserByUsername(principal.getName());
