@@ -39,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
@@ -54,6 +55,7 @@ public class AssociatedProjectControllerTest {
 	private RemoteRelatedProjectService remoteRelatedProjectService;
 	private RemoteAPIService apiService;
 	private ProjectRemoteService projectRemoteService;
+	private SampleService sampleService;
 	private RemoteObjectCache<RemoteProject> remoteProjectCache;
 
 	@Before
@@ -66,7 +68,7 @@ public class AssociatedProjectControllerTest {
 		remoteRelatedProjectService = mock(RemoteRelatedProjectService.class);
 		remoteProjectCache = new RemoteObjectCache<>();
 		controller = new AssociatedProjectsController(remoteRelatedProjectService, projectService, projectUtils,
-				userService, apiService, projectRemoteService, remoteProjectCache);
+				userService, apiService, projectRemoteService, sampleService, remoteProjectCache);
 	}
 
 	@Test

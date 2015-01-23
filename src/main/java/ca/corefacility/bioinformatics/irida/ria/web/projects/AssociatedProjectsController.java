@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -38,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
@@ -49,6 +51,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
@@ -70,6 +73,8 @@ public class AssociatedProjectsController {
 	private final UserService userService;
 	private final ProjectRemoteService projectRemoteService;
 
+	private final SampleService sampleService;
+
 	private final Formatter<Date> dateFormatter;
 
 	private RemoteObjectCache<RemoteProject> remoteProjectCache;
@@ -77,7 +82,7 @@ public class AssociatedProjectsController {
 	@Autowired
 	public AssociatedProjectsController(RemoteRelatedProjectService remoteRelatedProjectService,
 			ProjectService projectService, ProjectControllerUtils projectControllerUtils, UserService userService,
-			RemoteAPIService apiService, ProjectRemoteService projectRemoteService,
+			RemoteAPIService apiService, ProjectRemoteService projectRemoteService, SampleService sampleService,
 			RemoteObjectCache<RemoteProject> remoteProjectCache) {
 
 		this.remoteRelatedProjectService = remoteRelatedProjectService;
@@ -87,6 +92,7 @@ public class AssociatedProjectsController {
 		this.apiService = apiService;
 		this.projectRemoteService = projectRemoteService;
 		this.remoteProjectCache = remoteProjectCache;
+		this.sampleService = sampleService;
 		dateFormatter = new DateFormatter();
 	}
 
@@ -298,8 +304,8 @@ public class AssociatedProjectsController {
 	 * 
 	 * @param projectId
 	 *            The ID of the owning project
-	 * @param associatedProjectId>
-	 *            The Cache ID of the {@link RemoteProject}
+	 * @param associatedProjectId
+	 *            > The Cache ID of the {@link RemoteProject}
 	 * @param apiId
 	 *            The ID of the api this project resides on
 	 * @return
@@ -342,6 +348,41 @@ public class AssociatedProjectsController {
 		remoteRelatedProjectService.delete(remoteRelatedProjectForProjectAndURI.getId());
 
 		return ImmutableMap.of("result", "success");
+	}
+
+	@RequestMapping(value = "/{projectId}/associated/samples")
+	@ResponseBody
+	public Map<String,Object> getAssociatedSamplesForProject(@PathVariable Long projectId, Model model,
+			Principal principal) {
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+
+		User loggedInUser = userService.getUserByUsername(principal.getName());
+
+		// Determine if the user is an owner or admin.
+		boolean isAdmin = loggedInUser.getSystemRole().equals(Role.ROLE_ADMIN);
+
+		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(project);
+
+		// get the projects the user can read
+		List<RelatedProjectJoin> authorizedRelaedProjectsForUser = getAuthorizedRelaedProjectsForUser(
+				relatedProjectJoins, loggedInUser, isAdmin);
+
+		List<Map<String, Object>> sampleList = new ArrayList<>();
+		// for each project
+		for (RelatedProjectJoin rp : authorizedRelaedProjectsForUser) {
+			Project object = rp.getObject();
+			// get the samples in the project
+			List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(object);
+
+			List<Map<String, Object>> collect = samplesForProject.stream()
+					.map((j) -> getSampleMap(j.getObject(), j.getSubject())).collect(Collectors.toList());
+			sampleList.addAll(collect);
+		}
+		
+		Map<String,Object> response = ImmutableMap.of("samples",sampleList);
+
+		return response;
 	}
 
 	/**
@@ -397,15 +438,10 @@ public class AssociatedProjectsController {
 			boolean isAdmin) {
 		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(currentProject);
 
-		// Need to know if the user has rights to view the project
-		List<Join<Project, User>> userProjectJoin = projectService.getProjectsForUser(currentUser);
+		List<RelatedProjectJoin> authorizedRelaedProjectsForUser = getAuthorizedRelaedProjectsForUser(
+				relatedProjectJoins, currentUser, isAdmin);
 
 		List<Map<String, String>> projects = new ArrayList<>();
-		// Create a quick lookup list
-		Map<Long, Boolean> usersProjects = new HashMap<>(userProjectJoin.size());
-		for (Join<Project, User> join : userProjectJoin) {
-			usersProjects.put(join.getSubject().getId(), true);
-		}
 
 		for (RelatedProjectJoin rpj : relatedProjectJoins) {
 			Project project = rpj.getObject();
@@ -413,13 +449,29 @@ public class AssociatedProjectsController {
 			Map<String, String> map = new HashMap<>();
 			map.put("name", project.getLabel());
 			map.put("id", project.getId().toString());
-			map.put("auth", isAdmin || usersProjects.containsKey(project.getId()) ? "authorized" : "");
+			map.put("auth", authorizedRelaedProjectsForUser.contains(rpj) ? "authorized" : "");
 
-			// TODO: (Josh - 2014-07-07) Will need to add remote location
-			// information here.
 			projects.add(map);
 		}
 		return projects;
+	}
+
+	private List<RelatedProjectJoin> getAuthorizedRelaedProjectsForUser(List<RelatedProjectJoin> relatedProjectJoins,
+			User currentUser, boolean isAdmin) {
+		// Need to know if the user has rights to view the project
+		List<Join<Project, User>> userProjectJoin = projectService.getProjectsForUser(currentUser);
+
+		// Create a quick lookup list
+		Map<Long, Boolean> usersProjects = new HashMap<>(userProjectJoin.size());
+		for (Join<Project, User> join : userProjectJoin) {
+			usersProjects.put(join.getSubject().getId(), true);
+		}
+
+		List<RelatedProjectJoin> authorizedProjects = relatedProjectJoins.stream()
+				.filter((j) -> usersProjects.containsKey(j.getObject().getId()) || isAdmin)
+				.collect(Collectors.toList());
+
+		return authorizedProjects;
 	}
 
 	/**
@@ -489,6 +541,17 @@ public class AssociatedProjectsController {
 		}
 		map.put("associated", projectsData);
 		return map;
+	}
+
+	public static Map<String, Object> getSampleMap(Sample sample, Project project) {
+		Map<String, Object> sampleMap = new HashMap<>();
+		sampleMap.put("id", sample.getId());
+		sampleMap.put("sampleName", sample.getSampleName());
+		sampleMap.put("organism", sample.getOrganism());
+		sampleMap.put("project", project);
+		sampleMap.put("createdDate", sample.getCreatedDate());
+
+		return sampleMap;
 	}
 
 	/**

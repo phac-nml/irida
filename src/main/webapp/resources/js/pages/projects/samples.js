@@ -47,7 +47,7 @@
     function addProject() {
       var projects = storage.projects || {};
       projects[project.id] = projects[project.id] || {};
-      storage.$default({projects : projects});
+      storage.$default({projects: projects});
     }
 
     function addSample(sample) {
@@ -70,7 +70,7 @@
     function getSamples() {
       var samples = [];
       var p = storage.projects[project.id];
-      _.forEach(getKeys(), function(key) {
+      _.forEach(getKeys(), function (key) {
         samples.push($.parseJSON(p[key]));
       });
       return samples;
@@ -78,11 +78,11 @@
 
     addProject();
     return ({
-      addSample    : addSample,
-      removeSample : removeSample,
-      getKeys      : getKeys,
-      getSamples   : getSamples,
-      clear        : clear
+      addSample   : addSample,
+      removeSample: removeSample,
+      getKeys     : getKeys,
+      getSamples  : getSamples,
+      clear       : clear
     });
   }
 
@@ -91,10 +91,10 @@
 // @param $rootScope The root scope for the page.
 // @param R Restangular
   /* -]*/
-  function SamplesService($rootScope, storage, R, notifications, filter) {
+  function SamplesService($rootScope, storage, R, notifications, filter, $q) {
     "use strict";
     var svc = this,
-        base = R.all('projects/' + project.id + '/ajax/samples'),
+        base = R.all('projects/' + project.id),
         filtered = [];
     svc.samples = [];
 
@@ -122,9 +122,9 @@
 
     svc.merge = function (params) {
       params.sampleIds = getSelectedSampleIds();
-      return base.customPOST(params, 'merge').then(function (data) {
+      return base.customPOST(params, 'ajax/samples/merge').then(function (data) {
         if (data.result === 'success') {
-          getSamples();
+          $rootScope.$broadcast("SAMPLE_CONTENT_MODIFIED");
           storage.clear();
           updateSelectedCount();
           notifications.show({type: data.result, msg: data.message});
@@ -191,6 +191,50 @@
       })
     };
 
+    /**
+     * Get the currently loaded samples
+     * @returns {Array} of samples
+     */
+    svc.getSamples = function () {
+      var selectedKeys = storage.getKeys();
+      $rootScope.$broadcast('COUNT', {count: selectedKeys.length});
+
+      _.each(svc.samples, function (s) {
+        if (_.contains(selectedKeys, s.id + "")) {
+          s.selected = true;
+        }
+      });
+
+      $rootScope.$broadcast('SAMPLES_INIT', {total: svc.samples.length});
+      return svc.samples;
+    }
+
+    /**
+     * Load a set of samples from the server.  Fires a SAMPLES_READY event on complete
+     * @param getLocal Load local samples
+     * @param getAssociated Load associated samples
+     * @param getRemote Load remote associated samples
+     */
+    svc.loadSamples = function (getLocal, getAssociated, getRemote) {
+      var samplePromises = [];
+      svc.samples = [];
+
+      if (getLocal) {
+        samplePromises.push(getLocalSamples());
+      }
+      if (getAssociated) {
+        samplePromises.push(getAssociatedSamples());
+      }
+
+      return $q.all(samplePromises).then(function (response) {
+        _.forEach(response, function (p) {
+          svc.samples = svc.samples.concat(p);
+        });
+
+        $rootScope.$broadcast('SAMPLES_READY', true);
+      });
+    }
+
     function getSelectedSampleIds() {
       return storage.getKeys();
     }
@@ -201,7 +245,7 @@
         sampleIds         : getSelectedSampleIds(),
         newProjectId      : projectId,
         removeFromOriginal: move
-      }, "copy").then(function (data) {
+      }, "/ajax/samples/copy").then(function (data) {
         updateSelectedCount(data.count);
         if (data.result === 'success') {
           notifications.show({msg: data.message});
@@ -225,24 +269,20 @@
       $rootScope.$broadcast('COUNT', {count: storage.getKeys().length});
     }
 
-    function getSamples(f) {
+
+    function getLocalSamples(f) {
       _.extend(svc.filter, f || {});
-      $rootScope.cgPromise = base.customGET("").then(function (data) {
-        var selectedKeys = storage.getKeys();
-        $rootScope.$broadcast('COUNT', {count: selectedKeys.length});
-        _.each(data.samples, function(s) {
-            if(_.contains(selectedKeys, s.id + "")) {
-              s.selected = true;
-            }
-        });
-        angular.copy(data.samples, svc.samples);
-        $rootScope.$broadcast('SAMPLES_INIT', {total: data.samples.length});
+      return base.customGET('ajax/samples').then(function (data) {
+        return data.samples;
       });
     }
 
-    svc.init = function () {
-      getSamples();
-    };
+    function getAssociatedSamples(f) {
+      _.extend(svc.filter, f || {});
+      return base.customGET('associated/samples').then(function (data) {
+        return data.samples;
+      });
+    }
   }
 
   function sortBy() {
@@ -384,20 +424,47 @@
 // Responsible for all samples within the table
 // @param SamplesService Server handler for samples.
   /* -]*/
-  function SamplesTableCtrl(SamplesService, FilterFactory) {
+  function SamplesTableCtrl($rootScope, SamplesService, FilterFactory) {
     "use strict";
     var vm = this;
     vm.open = [];
     vm.filter = FilterFactory;
 
-    vm.samples = SamplesService.samples;
+    vm.samples = [];
 
     vm.updateSample = function (s) {
       SamplesService.updateSample(s);
     };
 
-    // Initial call to get the samples
-    SamplesService.init();
+    $rootScope.$on("SAMPLES_READY", function () {
+      vm.samples = SamplesService.getSamples();
+    });
+
+  }
+
+  /*[- */
+// Controller for the samples display checkboxes.  This controller will ask SamplesService to load a set of samples
+// @param SamplesService Server handler for samples.
+  /* -]*/
+  function SampleDisplayCtrl($rootScope, SamplesService) {
+    "use strict";
+    var vm = this;
+
+    //set the initial display options
+    vm.displayLocal = true;
+    vm.displayAssociated = false;
+    vm.displayRemote = false;
+
+    vm.displaySamples = function () {
+      SamplesService.loadSamples(vm.displayLocal, vm.displayAssociated, vm.displayRemote);
+    };
+
+    $rootScope.$on("SAMPLE_CONTENT_MODIFIED", function () {
+      vm.displaySamples();
+    });
+
+    //make initial samples load call
+    vm.displaySamples();
   }
 
   function SubNavCtrl($scope, $modal, SamplesService) {
@@ -438,7 +505,7 @@
           templateUrl: TL.BASE_URL + 'projects/templates/samples/linker',
           controller : 'LinkerCtrl as lCtrl',
           resolve    : {
-            samples  : function () {
+            samples: function () {
               return SamplesService.getSelectedSampleNames();
             }
           }
@@ -669,7 +736,7 @@
     };
   }
 
-  function CartController (cart, storage) {
+  function CartController(cart, storage) {
     "use strict";
     var vm = this;
 
@@ -683,13 +750,13 @@
     .factory('FilterFactory', [FilterFactory])
     .service('StorageService', ['$sessionStorage', StorageService])
     .service('Select2Service', ['$timeout', Select2Service])
-    .service('SamplesService', ['$rootScope', 'StorageService', 'Restangular', 'notifications', 'FilterFactory', SamplesService])
+    .service('SamplesService', ['$rootScope', 'StorageService', 'Restangular', 'notifications', 'FilterFactory', '$q', SamplesService])
     .filter('PagingFilter', ['$rootScope', 'FilterFactory', 'SamplesService', PagingFilter])
     .directive('sortBy', [sortBy])
     .controller('SubNavCtrl', ['$scope', '$modal', 'SamplesService', SubNavCtrl])
     .controller('PagingCtrl', ['$scope', 'FilterFactory', PagingCtrl])
     .controller('FilterCountCtrl', ['$rootScope', 'FilterFactory', 'SamplesService', FilterCountCtrl])
-    .controller('SamplesTableCtrl', ['SamplesService', 'FilterFactory', SamplesTableCtrl])
+    .controller('SamplesTableCtrl', ['$rootScope', 'SamplesService', 'FilterFactory', SamplesTableCtrl])
     .controller('MergeCtrl', ['$scope', '$modalInstance', 'Select2Service', 'SamplesService', 'samples', MergeCtrl])
     .controller('CopyMoveCtrl', ['$modalInstance', '$rootScope', 'SamplesService', 'Select2Service', 'samples', 'type', CopyMoveCtrl])
     .controller('SelectedCountCtrl', ['$scope', SelectedCountCtrl])
@@ -698,5 +765,7 @@
     .controller('FilterCtrl', ['$scope', 'FilterFactory', FilterCtrl])
     .controller('GalaxyCtrl', ['$timeout', '$modalInstance', 'SamplesService', GalaxyCtrl])
     .controller('CartController', ['CartService', 'StorageService', CartController])
+    .controller('SampleDisplayCtrl', ['$rootScope', 'SamplesService', SampleDisplayCtrl])
   ;
-})(angular, $, _);
+})
+(angular, $, _);
