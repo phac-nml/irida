@@ -11,13 +11,16 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
@@ -38,26 +41,38 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@Column(name = "filePath", unique = true)
+	@Column(name = "file_path", unique = true)
 	@NotNull(message = "{analysis.output.file.file.notnull}")
 	private Path file;
 
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
+	@Column(name = "created_date", nullable = false)
 	private final Date createdDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "modified_date")
 	private Date modifiedDate;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private Analysis analysis;
 
 	@NotNull(message = "{analysis.output.file.execution.manager.file.id}")
+	@Column(name = "execution_manager_file_id")
 	private String executionManagerFileId;
 
+	@Column(name = "file_revision_number")
 	private Long fileRevisionNumber; // the filesystem file revision number
-	
+
+	// TODO: needs to be uncommented when tool execution metadata is populated
+	// from Galaxy. Likewise, the @OneToOne annotation needs to be updated.
+	// @NotNull
+	// @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "tool_execution_id")
+	@NotAudited
+	private ToolExecution createdByTool;
+
 	private AnalysisOutputFile() {
 		this.createdDate = new Date();
 		this.fileRevisionNumber = 0L;
@@ -111,7 +126,7 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 	public void setFile(Path file) {
 		this.file = file;
 	}
-	
+
 	public Analysis getAnalysis() {
 		return analysis;
 	}
@@ -136,6 +151,14 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 		this.fileRevisionNumber = fileRevisionNumber;
 	}
 
+	public final ToolExecution getCreatedByTool() {
+		return createdByTool;
+	}
+
+	public final void setCreatedByTool(ToolExecution createdByTool) {
+		this.createdByTool = createdByTool;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -155,8 +178,7 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 
 		if (o instanceof AnalysisOutputFile) {
 			AnalysisOutputFile a = (AnalysisOutputFile) o;
-			return Objects.equals(file, a.file)
-					&& Objects.equals(executionManagerFileId, a.executionManagerFileId)
+			return Objects.equals(file, a.file) && Objects.equals(executionManagerFileId, a.executionManagerFileId)
 					&& Objects.equals(fileRevisionNumber, a.fileRevisionNumber);
 		}
 
