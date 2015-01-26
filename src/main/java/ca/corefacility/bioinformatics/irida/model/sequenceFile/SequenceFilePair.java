@@ -61,6 +61,24 @@ public class SequenceFilePair implements IridaThing {
 		files.add(file1);
 		files.add(file2);
 	}
+	
+	/**
+	 * Gets the forward {@link SequenceFile} from the pair.
+	 * 
+	 * @return The forward {@link SequenceFile} from the pair.
+	 */
+	public SequenceFile getForwardSequenceFile() {
+		return files.stream().filter(f -> f.getFile().getFileName().toString().contains("_R1_")).findFirst().get();
+	}
+
+	/**
+	 * Gets the reverse {@link SequenceFile} from the pair.
+	 * 
+	 * @return The reverse {@link SequenceFile} from the pair.
+	 */
+	public SequenceFile getReverseSequenceFile() {
+		return files.stream().filter(f -> f.getFile().getFileName().toString().contains("_R2_")).findFirst().get();
+	}
 
 	public Long getId() {
 		return id;
