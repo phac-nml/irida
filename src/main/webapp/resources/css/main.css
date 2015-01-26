@@ -12,8 +12,14 @@
 }
 
 /* line 12, ../../styles/components/_buttons.scss */
-.btn.round {
-  border-radius: 50%;
+.btn-action {
+  border: 1rem solid #dfdfdf !important;
+}
+
+/* line 16, ../../styles/components/_buttons.scss */
+.btn-affixed {
+  width: 100%;
+  white-space: normal !important;
 }
 
 /* line 3, ../../styles/components/_datatables.scss */

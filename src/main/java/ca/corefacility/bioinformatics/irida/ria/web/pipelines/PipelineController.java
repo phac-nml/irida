@@ -2,33 +2,33 @@ package ca.corefacility.bioinformatics.irida.ria.web.pipelines;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.ConstraintViolationException;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.MediaType;
+import org.springframework.format.Formatter;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -39,22 +39,22 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.ria.components.PipelineSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
+import ca.corefacility.bioinformatics.irida.ria.web.components.SubmissionIds;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Controller for pipeline related views
@@ -65,29 +65,28 @@ import com.google.common.collect.ImmutableSet;
 @Scope("session")
 @RequestMapping(PipelineController.BASE_URL)
 public class PipelineController extends BaseController {
-	private static final Logger logger = LoggerFactory.getLogger(PipelineController.class);
+	// URI's
+	public static final String BASE_URL = "/pipelines";
 	/*
 	 * CONSTANTS
 	 */
-
-	// URI's
-	public static final String BASE_URL = "/pipelines";
 	public static final String URL_EMPTY_CART_REDIRECT = "redirect:/pipelines";
 	public static final String URL_LAUNCH ="pipelines/pipeline_selection";
 	public static final String URL_PHYLOGENOMICS = "pipelines/types/phylogenomics";
-
 	public static final String URI_LIST_PIPELINES = "/ajax/list.json";
 	public static final String URI_AJAX_START_PIPELINE = "/ajax/start.json";
 	public static final String URI_AJAX_CART_LIST = "/ajax/cart_list.json";
-
 	// JSON KEYS
 	public static final String JSON_KEY_SAMPLE_ID = "id";
 	public static final String JSON_KEY_SAMPLE_OMIT_FILES_LIST = "omit";
-
+	private static final Logger logger = LoggerFactory.getLogger(PipelineController.class);
+	/*
+	 * Converters
+	 */
+	private Formatter<Date> dateFormatter;
 	/*
 	 * SERVICES
 	 */
-	private SampleService sampleService;
 	private ReferenceFileService referenceFileService;
 	private SequenceFileService sequenceFileService;
 	private SequenceFilePairService sequenceFilePairService;
@@ -96,19 +95,13 @@ public class PipelineController extends BaseController {
 	private UserService userService;
 	private IridaWorkflowsService workflowsService;
 	private MessageSource messageSource;
-
 	/*
 	 * CONTROLLERS
 	 */
 	private CartController cartController;
 
-	/*
-	 * COMPONENTS
-	 */
-	private PipelineSubmission pipelineSubmission;
-
 	@Autowired
-	public PipelineController(SampleService sampleService, SequenceFileService sequenceFileService,
+	public PipelineController(SequenceFileService sequenceFileService,
 			SequenceFilePairService sequenceFilePairService,
 			ReferenceFileService referenceFileService,
 			AnalysisSubmissionService analysisSubmissionService,
@@ -117,7 +110,6 @@ public class PipelineController extends BaseController {
 			UserService userService,
 			CartController cartController,
 			MessageSource messageSource) {
-		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
 		this.referenceFileService = referenceFileService;
@@ -127,8 +119,7 @@ public class PipelineController extends BaseController {
 		this.userService = userService;
 		this.cartController = cartController;
 		this.messageSource = messageSource;
-
-		this.pipelineSubmission = new PipelineSubmission();
+		this.dateFormatter = new DateFormatter();
 	}
 
 	/**
@@ -147,10 +138,15 @@ public class PipelineController extends BaseController {
 
 		List<Map<String, String>> flows = new ArrayList<>(workflows.size());
 		workflows.stream().forEach(type -> {
+			IridaWorkflow flow = null;
+			try {
+				flow = workflowsService.getDefaultWorkflowByType(type);
+			IridaWorkflowDescription description = flow.getWorkflowDescription();
 			String name = type.toString();
 			String key = "workflow." + name;
 			flows.add(ImmutableMap.of(
 					"name", name,
+					"id", description.getId().toString(),
 					"title",
 					messageSource
 							.getMessage(key + ".title", new Object[] { }, locale),
@@ -158,23 +154,35 @@ public class PipelineController extends BaseController {
 					messageSource
 							.getMessage(key + ".description", new Object[] { }, locale)
 			));
+			} catch (IridaWorkflowNotFoundException e) {
+				logger.error("Workflow not found - See stack:", e);
+			}
 		});
 		model.addAttribute("counts", getCartSummaryMap());
 		model.addAttribute("workflows", flows);
 		return URL_LAUNCH;
 	}
 
-	@RequestMapping(value = "/phylogenomics")
-	public String getPhylogenomicsPage(final Model model, Principal principal) {
+	@RequestMapping(value = "/phylogenomics/{pipelineId}")
+	public String getPhylogenomicsPage(final Model model, Principal principal, Locale locale, @PathVariable UUID pipelineId) {
 		String response = URL_EMPTY_CART_REDIRECT;
 
 		Map<Project, Set<Sample>> cartMap = cartController.getSelected();
 		// Cannot run a pipeline on an empty cart!
 		if (!cartMap.isEmpty()) {
+
+			IridaWorkflow iridaWorkflow = null;
+			try {
+				iridaWorkflow = workflowsService.getIridaWorkflow(pipelineId);
+			} catch (IridaWorkflowNotFoundException e) {
+				logger.error("Workflow not found - See stack:", e);
+				return "redirect:errors/not_found";
+			}
+
 			User user = userService.getUserByUsername(principal.getName());
 			// Get all the reference files that could be used for this pipeline.
 			List<Map<String, Object>> referenceFileList = new ArrayList<>();
-			List<Map<String, Object>> fileList = new ArrayList<>();
+			List<Map<String, Object>> projectList = new ArrayList<>();
 			List<Map<String, Object>> addRefList = new ArrayList<>();
 			for (Project project : cartMap.keySet()) {
 				List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
@@ -202,28 +210,46 @@ public class PipelineController extends BaseController {
 					Map<String, Object> sampleMap = new HashMap<>();
 					sampleMap.put("name", sample.getLabel());
 					sampleMap.put("id", sample.getId().toString());
-
-					// Singe end reads
-					List<Join<Sample, SequenceFile>> sfJoin = sequenceFileService.getSequenceFilesForSample(sample);
-					sampleMap.put("singles", sfJoin.stream().map(Join::getObject)
-							.collect(Collectors.toList()));
+					List<Map<String, Object>> fileList = new ArrayList<>();
 
 					// Paired end reads
 					List<SequenceFilePair> sequenceFilePairs = sequenceFilePairService
 							.getSequenceFilePairsForSample(sample);
-					sampleMap.put("pairs", sequenceFilePairs);
+					for (SequenceFilePair pair : sequenceFilePairs) {
+						fileList.add(ImmutableMap.of(
+								"id", pair.getId(),
+								"type", "paired_end",
+								"files", pair.getFiles(),
+								"createdDate", pair.getCreatedDate()
+						));
+					}
 
+					// Singe end reads
+					List<Join<Sample, SequenceFile>> sfJoin = sequenceFileService.getSequenceFilesForSample(sample);
+					for (Join<Sample, SequenceFile> join : sfJoin) {
+						SequenceFile file = join.getObject();
+						fileList.add(ImmutableMap.of(
+								"type", "single_end",
+								"id", file.getId(),
+								"label", file.getLabel(),
+								"createdDate", file.getCreatedDate()
+						));
+					}
+
+					sampleMap.put("files", fileList);
 					sampleList.add(sampleMap);
 				}
 
 				projectMap.put("id", project.getId().toString());
 				projectMap.put("name", project.getLabel());
 				projectMap.put("samples", sampleList);
-				fileList.add(projectMap);
+				projectList.add(projectMap);
 			}
+			model.addAttribute("name", iridaWorkflow.getWorkflowDescription().getName() + " (" + dateFormatter.print(new Date(), locale) + ")");
+			model.addAttribute("pipelienId", pipelineId.toString());
 			model.addAttribute("referenceFiles", referenceFileList);
 			model.addAttribute("addRefProjects", addRefList);
-			model.addAttribute("files", fileList);
+			model.addAttribute("projects", projectList);
 			response = URL_PHYLOGENOMICS;
 		}
 
@@ -235,90 +261,71 @@ public class PipelineController extends BaseController {
 	// ************************************************************************************************
 
 	/**
-	 * Get a list of pipelines that can be run on the dataset provided
-	 * @return  A list of pipeline types and names that can be run on the provided dataset.
+	 * Launch a phylogenomics pipeline
+	 * @param session the current {@link HttpSession}
+	 * @param pipelineId the id for the {@link IridaWorkflow}
+	 * @param single a list of {@link SequenceFile} id's
+	 * @param paired a list of {@link SequenceFilePair} id's
+	 * @param ref the id for a {@link ReferenceFile}
+	 * @param name a user provided name for the {@link IridaWorkflow}
+	 * @return a JSON response with the status and any messages.
 	 */
-	@RequestMapping(value = URI_LIST_PIPELINES, method = RequestMethod.POST,
-			produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Map<String, String>> ajaxCreateNewPipelineFromProject(
-			@RequestBody List<Map<String, Object>> json) {
+	@RequestMapping(value = "/ajax/start/{pipelineId}", method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> ajaxStartPipelinePhylogenomics(HttpSession session, Locale locale,
+			@PathVariable UUID pipelineId,
+			@RequestParam(value = "single[]", required = false) List<Long> single, @RequestParam(value = "paired[]", required = false) List<Long> paired,
+			@RequestParam Long ref, @RequestParam String name) {
+		Map<String, Object> result;
 
-		// Since the UI only knows about sample id's (unless the files view is expanded) only a list
-		// of sample id's are passed to the server.  If the user opens the sample files view, they can
-		// deselect specific files.  These are added to an omit files list.
-		ArrayList<Long> fileIds = new ArrayList<>();
-		for (Map<String, Object> map : json) {
-			Long id = Long.parseLong((String) map.get(JSON_KEY_SAMPLE_ID));
-			@SuppressWarnings("unchecked")
-			Set<String> omit = ImmutableSet.copyOf((List<String>) map.get(JSON_KEY_SAMPLE_OMIT_FILES_LIST));
-
-			Sample sample = sampleService.read(id);
-			List<Join<Sample, SequenceFile>> fileList = sequenceFileService.getSequenceFilesForSample(sample);
-			for(Join<Sample, SequenceFile> join : fileList) {
-				Long fileId = join.getObject().getId();
-				if (!omit.contains(fileId.toString())) {
-					fileIds.add(fileId);
-				}
-			}
-		}
-		// TODO: (14-08-28 - Josh) Need to determine what pipelines can be run with these files.
-		Iterable<SequenceFile> files = sequenceFileService.readMultiple(fileIds);
-		pipelineSubmission.setSequenceFiles(files);
-
-		// TODO: (14-08-13 - Josh) Get real data from Aaron's stuff
-		List<Map<String, String>> response = new ArrayList<>();
-		Map<String, String> map = new HashMap<>();
-		map.put("id", "1");
-		map.put("text", "Whole Genome Phylogenomics Pipeline");
-		response.add(map);
-		return response;
-	}
-
-	/**
-	 * Start a new pipeline based on the pipeline id
-	 *
-	 * @param pId      Id for the type of pipeline
-	 * @param rId      Id for the reference file
-	 * @param response {@link HttpServletResponse}
-	 * @return  A response defining the status of the pipeline submission (success or failure).
-	 */
-	@RequestMapping(value = URI_AJAX_START_PIPELINE, produces = MediaType.APPLICATION_JSON_VALUE,
-			method = RequestMethod.POST)
-	public @ResponseBody List<Map<String, String>> ajaxStartNewPipelines(@RequestParam Long pId,
-			@RequestParam Long rId, @RequestParam String name, HttpServletResponse response) {
-		pipelineSubmission.setReferenceFile(referenceFileService.read(rId));
 		if (Strings.isNullOrEmpty(name)) {
-			// TODO: (14-09-02 - Josh) This needs be be found from the repository based on the ID.
-			name = "Whole Genome Phylogenomcis Pipeline";
+			result = ImmutableMap
+					.of("error", messageSource.getMessage("workflow.no-name-provided", new Object[] { }, locale));
+		} else {
+			List<SequenceFile> sequenceFiles = new ArrayList<>();
+			List<SequenceFilePair> sequenceFilePairs = new ArrayList<>();
+
+			if (single != null) {
+				sequenceFiles = (List<SequenceFile>) sequenceFileService.readMultiple(single);
+			}
+
+			if (paired != null) {
+				sequenceFilePairs = (List<SequenceFilePair>) sequenceFilePairService.readMultiple(paired);
+			}
+
+			ReferenceFile referenceFile = referenceFileService.read(ref);
+			AnalysisSubmission analysisSubmission;
+
+			if (sequenceFiles.size() > 0 && sequenceFilePairs.size() > 0) {
+				analysisSubmission = AnalysisSubmission
+						.createSubmissionSingleAndPairedReference(name, new HashSet<>(sequenceFiles),
+								new HashSet<>(sequenceFilePairs), referenceFile,
+								pipelineId);
+			}
+			else if (sequenceFiles.size() > 0 && sequenceFilePairs.size() == 0) {
+				analysisSubmission = AnalysisSubmission
+						.createSubmissionSingleReference(name, new HashSet<>(sequenceFiles), referenceFile,
+						pipelineId);
+			}
+			else {
+				analysisSubmission = AnalysisSubmission
+						.createSubmissionPairedReference(name, new HashSet<>(sequenceFilePairs),
+						referenceFile, pipelineId);
+			}
+
+			AnalysisSubmission submission = analysisSubmissionService.create(analysisSubmission);
+
+			// TODO [15-01-21] (Josh): This should be replaced by storing the values into the database.
+			SubmissionIds submissionIds = (SubmissionIds) session.getAttribute("submissionIds");
+			if (submissionIds == null) {
+				submissionIds = new SubmissionIds();
+			}
+			submissionIds.addId(submission.getId());
+			session.setAttribute("submissionIds", submissionIds);
+
+			result = ImmutableMap.of("result", "success", "submissionId", submission.getId());
 		}
-		List<Map<String, String>> result = new ArrayList<>();
-		try {
-			startPipeline(pId, name);
-			result.add(ImmutableMap.of("success", "success"));
-		} catch (EntityExistsException | ConstraintViolationException e) {
-			logger.error("Error submitting pipeline (id = " + pId + ") [" + e.getMessage() + "]");
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			result.add(ImmutableMap.of("error", messageSource.getMessage("pipelines.start.failure", null,
-					LocaleContextHolder.getLocale())));
-		}
+
 		return result;
-	}
-
-	// ************************************************************************************************
-	// RUNNING PIPELINE INTERNAL METHODS
-	// ************************************************************************************************
-
-	private void startPipeline(Long pipelineId, String name) {
-		// TODO: (14-08-28 - Josh) pipelineId needs to be passed b/c front end does not need to know the details.
-		AnalysisSubmission asp = AnalysisSubmission.createSubmissionSingleReference(name, pipelineSubmission.getSequenceFiles(),
-				pipelineSubmission.getReferenceFile(),
-				UUID.randomUUID());
-		
-		AnalysisSubmission createdSubmission = analysisSubmissionService.create(asp);
-		logger.debug("Successfully submitted analysis: " + createdSubmission);
-
-		// Reset the pipeline submission
-		pipelineSubmission.clear();
 	}
 
 	/**
