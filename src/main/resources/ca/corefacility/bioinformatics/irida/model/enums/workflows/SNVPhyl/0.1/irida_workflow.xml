@@ -8,7 +8,7 @@
   <email>aaron.petkau@phac-aspc.gc.ca</email>
   <analysisType>phylogenomics</analysisType>
   <inputs>
-    <sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
+    <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
     <reference>reference</reference>
   </inputs>
   <outputs>
@@ -58,6 +58,12 @@
       <owner>gregory-minevich</owner>
       <url>http://toolshed.g2.bx.psu.edu/</url>
       <revision>6572c40a8505</revision>
+    </repository>
+    <repository>
+      <name>msa_datatypes</name>
+      <owner>iuc</owner>
+      <url>http://toolshed.g2.bx.psu.edu/</url>
+      <revision>70227007b991</revision>
     </repository>
   </toolRepositories>
 </iridaWorkflow>
