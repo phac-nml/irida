@@ -51,7 +51,7 @@ public class IridaWorkflowLoaderServiceTest {
 		MockitoAnnotations.initMocks(this);
 
 		iridaWorkflowLoaderService = new IridaWorkflowLoaderService(workflowDescriptionUnmarshellar);
-		iridaWorkflow = IridaWorkflowTestBuilder.buildTestWorkflow(iridaWorkflowId);
+		iridaWorkflow = IridaWorkflowTestBuilder.buildTestWorkflow(iridaWorkflowId, IridaWorkflowTestBuilder.Input.SINGLE, "reference");
 
 		workflowDescriptionPath = Files.createTempFile("workflowLoaderTest", "tmp");
 		workflowStructurePath = Files.createTempFile("workflowLoaderTest", "tmp");
@@ -70,7 +70,7 @@ public class IridaWorkflowLoaderServiceTest {
 		when(workflowDescriptionUnmarshellar.unmarshal(any(Source.class))).thenReturn(
 				iridaWorkflow.getWorkflowDescription());
 
-		assertNotNull(iridaWorkflowLoaderService.loadWorkflowDescription(workflowDescriptionPath));
+		assertNotNull("invalid workflow description", iridaWorkflowLoaderService.loadWorkflowDescription(workflowDescriptionPath));
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class IridaWorkflowLoaderServiceTest {
 	@Test(expected = IridaWorkflowLoadException.class)
 	public void testLoadWorkflowDescriptionFail() throws XmlMappingException, IOException, IridaWorkflowLoadException {
 		IridaWorkflowDescription description = IridaWorkflowTestBuilder.buildTestDescription(iridaWorkflowId, "name",
-				"version", null);
+				"version", null, IridaWorkflowTestBuilder.Input.SINGLE, "reference");
 		when(workflowDescriptionUnmarshellar.unmarshal(any(Source.class))).thenReturn(description);
 
 		iridaWorkflowLoaderService.loadWorkflowDescription(workflowDescriptionPath);
@@ -94,7 +94,7 @@ public class IridaWorkflowLoaderServiceTest {
 	 */
 	@Test
 	public void testLoadWorkflowStructureSuccess() throws XmlMappingException, IOException, IridaWorkflowLoadException {
-		assertNotNull(iridaWorkflowLoaderService.loadWorkflowStructure(workflowStructurePath));
+		assertNotNull("invalid workflow structure", iridaWorkflowLoaderService.loadWorkflowStructure(workflowStructurePath));
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class IridaWorkflowLoaderServiceTest {
 		when(workflowDescriptionUnmarshellar.unmarshal(any(Source.class))).thenReturn(
 				iridaWorkflow.getWorkflowDescription());
 
-		assertNotNull(iridaWorkflowLoaderService.loadIridaWorkflow(workflowDescriptionPath, workflowStructurePath));
+		assertNotNull("invalid workflow", iridaWorkflowLoaderService.loadIridaWorkflow(workflowDescriptionPath, workflowStructurePath));
 	}
 
 	/**
@@ -132,7 +132,7 @@ public class IridaWorkflowLoaderServiceTest {
 		Files.createFile(workflowDirectory.resolve("irida_workflow.xml"));
 		Files.createFile(workflowDirectory.resolve("irida_workflow_structure.ga"));
 
-		assertNotNull(iridaWorkflowLoaderService.loadIridaWorkflowFromDirectory(workflowDirectory));
+		assertNotNull("invalid workflow", iridaWorkflowLoaderService.loadIridaWorkflowFromDirectory(workflowDirectory));
 	}
 
 	/**
@@ -169,7 +169,8 @@ public class IridaWorkflowLoaderServiceTest {
 		Files.createFile(workflowDirectory2.resolve("irida_workflow.xml"));
 		Files.createFile(workflowDirectory2.resolve("irida_workflow_structure.ga"));
 
-		assertEquals(2, iridaWorkflowLoaderService.loadAllWorkflowImplementations(workflowsDirectory).size());
+		assertEquals("invalid number of workflows loaded", 2, iridaWorkflowLoaderService
+				.loadAllWorkflowImplementations(workflowsDirectory).size());
 	}
 
 	/**
@@ -190,6 +191,7 @@ public class IridaWorkflowLoaderServiceTest {
 		Files.createFile(workflowDirectory2.resolve("irida_workflow.xml"));
 		Files.createFile(workflowDirectory2.resolve("irida_workflow_structure.ga"));
 
-		assertEquals(2, iridaWorkflowLoaderService.loadAllWorkflowImplementations(workflowsDirectory).size());
+		assertEquals("invalid number of workflows loaded", 2, iridaWorkflowLoaderService
+				.loadAllWorkflowImplementations(workflowsDirectory).size());
 	}
 }
