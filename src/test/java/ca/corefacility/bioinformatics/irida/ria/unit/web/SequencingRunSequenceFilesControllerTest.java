@@ -16,25 +16,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import ca.corefacility.bioinformatics.irida.model.SequencingRunEntity;
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencingrun.MiseqRunResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
-import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.sequencingrun.RESTSequencingRunSequenceFilesController;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
@@ -44,23 +36,14 @@ import com.google.common.net.HttpHeaders;
  * Tests for {@link RESTSequencingRunSequenceFilesController}.
  */
 public class SequencingRunSequenceFilesControllerTest {
-	private RESTSampleSequenceFilesController controllerOld;
 	private RESTSequencingRunSequenceFilesController controller;
 	private SequenceFileService sequenceFileService;
-	private SequenceFilePairService sequenceFilePairService;
-	private SampleService sampleService;
-	private ProjectService projectService;
 	private SequencingRunService miseqRunService;
 
 	@Before
 	public void setUp() {
-		sampleService = mock(SampleService.class);
 		sequenceFileService = mock(SequenceFileService.class);
-		sequenceFilePairService = mock(SequenceFilePairService.class);
-		projectService = mock(ProjectService.class);
 		miseqRunService= mock(SequencingRunService.class);
-
-		controllerOld = new RESTSampleSequenceFilesController(sequenceFileService, sequenceFilePairService, sampleService, projectService,miseqRunService);
 		controller = new RESTSequencingRunSequenceFilesController(miseqRunService, sequenceFileService);
 	}
 	
