@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.List;
-import java.util.Set;
-
-import javax.transaction.Transactional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
@@ -19,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.model.project.library.LibraryDescription;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -274,78 +270,4 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public void removeReferenceFileFromProject(Project project, ReferenceFile referenceFile);
-
-	/**
-	 * Create a new {@link LibraryDescription} and add it to the specified
-	 * {@link Project}.
-	 * 
-	 * @param project
-	 *            the {@link Project} to add the {@link LibraryDescription} to
-	 * @param libraryDescription
-	 *            the {@link LibraryDescription} to add.
-	 * @return the persisted {@link LibraryDescription}
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
-	@Transactional
-	public default Join<Project, LibraryDescription> addLibraryDescriptionToProject(Project project,
-			LibraryDescription libraryDescription) {
-		return addLibraryDescriptionToProject(project, libraryDescription, Boolean.FALSE);
-	}
-	
-	/**
-	 * Create a new {@link LibraryDescription} and add it to the specified
-	 * {@link Project}.
-	 * 
-	 * @param project
-	 *            the {@link Project} to add the {@link LibraryDescription} to
-	 * @param libraryDescription
-	 *            the {@link LibraryDescription} to add.
-	 * @return the persisted {@link LibraryDescription}
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
-	@Transactional
-	public default Join<Project, LibraryDescription> addDefaultLibraryDescriptionToProject(Project project,
-			LibraryDescription libraryDescription) {
-		return addLibraryDescriptionToProject(project, libraryDescription, Boolean.TRUE);
-	}
-
-	/**
-	 * Create a new {@link LibraryDescription} and add it to the specified
-	 * {@link Project}, optionally making it the default
-	 * {@link LibraryDescription}.
-	 * 
-	 * @param project
-	 *            the {@link Project} to add the {@link LibraryDescription} to
-	 * @param libraryDescription
-	 *            The {@link LibraryDescription} to add.
-	 * @param makeDefault
-	 *            if {@link Boolean#TRUE}, the specified
-	 *            {@link LibraryDescription} is set as default for the specified
-	 *            {@link Project}.
-	 * @return the persisted {@link LibraryDescription}
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
-	public Join<Project, LibraryDescription> addLibraryDescriptionToProject(Project project,
-			LibraryDescription libraryDescription, Boolean makeDefault);
-
-	/**
-	 * Retrieve all {@link LibraryDescription} attached to a {@link Project}.
-	 * 
-	 * @param project
-	 *            the {@link Project} to get {@link LibraryDescription} for.
-	 * @return the {@link LibraryDescription} attached to a {@link Project}.
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
-	public Set<Join<Project, LibraryDescription>> findLibraryDescriptionsForProject(Project project);
-	
-	/**
-	 * Retrieve all {@link LibraryDescription} attached to a {@link Project}.
-	 * 
-	 * @param project
-	 *            the {@link Project} to get {@link LibraryDescription} for.
-	 * @return the {@link LibraryDescription} attached to a {@link Project}.
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
-	public Join<Project, LibraryDescription> findDefaultLibraryDescriptionForProject(Project project);
-	
 }
