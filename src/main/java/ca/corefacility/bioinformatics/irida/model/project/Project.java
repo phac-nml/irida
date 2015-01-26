@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.model.project;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -30,7 +29,6 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaProject;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
-import ca.corefacility.bioinformatics.irida.model.project.library.ProjectLibraryDescriptionJoin;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.model.user.Organization;
 
@@ -46,17 +44,14 @@ import ca.corefacility.bioinformatics.irida.model.user.Organization;
 @EntityListeners(AuditingEntityListener.class)
 public class Project implements IridaThing, IridaProject, Comparable<Project> {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-
-	private String name;
-
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
-
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+	private String name;
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
@@ -86,9 +81,6 @@ public class Project implements IridaThing, IridaProject, Comparable<Project> {
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	private Organization organization;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, mappedBy = "project")
-	private Set<ProjectLibraryDescriptionJoin> libraryDescriptions;
 
 	private String organism;
 
