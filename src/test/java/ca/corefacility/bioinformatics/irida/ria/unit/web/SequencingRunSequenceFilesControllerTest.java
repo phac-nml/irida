@@ -62,18 +62,6 @@ public class SequencingRunSequenceFilesControllerTest {
 
 		controllerOld = new RESTSampleSequenceFilesController(sequenceFileService, sequenceFilePairService, sampleService, projectService,miseqRunService);
 		controller = new RESTSequencingRunSequenceFilesController(miseqRunService, sequenceFileService);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-        RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
-        RequestContextHolder.setRequestAttributes(ra);
 	}
 	
 	@Test
