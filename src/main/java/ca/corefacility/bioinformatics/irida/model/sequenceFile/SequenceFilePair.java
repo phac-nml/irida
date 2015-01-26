@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -36,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 @EntityListeners(AuditingEntityListener.class)
 @Audited
 public class SequenceFilePair implements IridaThing {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -61,14 +63,16 @@ public class SequenceFilePair implements IridaThing {
 		files.add(file1);
 		files.add(file2);
 	}
-	
+
 	/**
 	 * Gets the forward {@link SequenceFile} from the pair.
 	 * 
 	 * @return The forward {@link SequenceFile} from the pair.
 	 */
 	public SequenceFile getForwardSequenceFile() {
-		return files.stream().filter(f -> f.getFile().getFileName().toString().contains("_R1_")).findFirst().get();
+		return files.stream()
+				.filter(f -> Pattern.matches(".*_R1_\\d\\d\\d\\.fastq$", f.getFile().getFileName().toString()))
+				.findFirst().get();
 	}
 
 	/**
@@ -77,7 +81,9 @@ public class SequenceFilePair implements IridaThing {
 	 * @return The reverse {@link SequenceFile} from the pair.
 	 */
 	public SequenceFile getReverseSequenceFile() {
-		return files.stream().filter(f -> f.getFile().getFileName().toString().contains("_R2_")).findFirst().get();
+		return files.stream()
+				.filter(f -> Pattern.matches(".*_R2_\\d\\d\\d\\.fastq$", f.getFile().getFileName().toString()))
+				.findFirst().get();
 	}
 
 	public Long getId() {

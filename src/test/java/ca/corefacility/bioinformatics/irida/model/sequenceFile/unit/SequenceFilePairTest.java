@@ -1,10 +1,10 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile.unit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.NoSuchElementException;
 
 import org.junit.Before;
@@ -42,11 +42,13 @@ public class SequenceFilePairTest {
 	 */
 	@Before
 	public void setup() throws IOException {
-		forwardPathGood = Files.createTempFile("Test_R1_", ".fastq");
-		forwardPathBad = Files.createTempFile("Test_RS1_", ".fastq");
+		Path tempDir = Paths.get("/tmp");
 
-		reversePathGood = Files.createTempFile("Test_R2_", ".fastq");
-		reversePathBad = Files.createTempFile("Test_RS2_", ".fastq");
+		forwardPathGood = tempDir.resolve("Test_R1_001.fastq");
+		forwardPathBad = tempDir.resolve("Test_RS1_001.fastq");
+
+		reversePathGood = tempDir.resolve("Test_R2_001.fastq");
+		reversePathBad = tempDir.resolve("Test_RS2_001.fastq");
 
 		sequenceFileForwardGood = new SequenceFile(forwardPathGood);
 		sequenceFileForwardBad = new SequenceFile(forwardPathBad);
