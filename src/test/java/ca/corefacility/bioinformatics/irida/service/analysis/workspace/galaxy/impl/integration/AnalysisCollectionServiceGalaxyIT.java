@@ -12,6 +12,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.junit.Assume;
@@ -44,6 +45,7 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.An
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
+import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
@@ -84,11 +86,13 @@ public class AnalysisCollectionServiceGalaxyIT {
 	private SampleRepository sampleRepository;
 
 	private Path sequenceFilePathA;
+	private Path sequenceFilePathAInvalidName;
 	private Path sequenceFilePath2A;
 	private Path sequenceFilePathB;
 	private Path sequenceFilePath2B;
 
 	private List<Path> pairSequenceFiles1A;
+	private List<Path> pairSequenceFiles1AInvalidName;
 	private List<Path> pairSequenceFiles2A;
 
 	private List<Path> pairSequenceFiles1AB;
@@ -118,6 +122,9 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		sequenceFilePathA = tempDir.resolve("testDataA_R1_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePathA, StandardCopyOption.REPLACE_EXISTING);
+		
+		sequenceFilePathAInvalidName = tempDir.resolve("testDataA_R_INVALID_1_001.fastq");
+		Files.copy(sequenceFilePathReal, sequenceFilePathAInvalidName, StandardCopyOption.REPLACE_EXISTING);
 
 		sequenceFilePath2A = tempDir.resolve("testData2A_R2_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePath2A, StandardCopyOption.REPLACE_EXISTING);
@@ -132,6 +139,9 @@ public class AnalysisCollectionServiceGalaxyIT {
 		pairSequenceFiles1A.add(sequenceFilePathA);
 		pairSequenceFiles2A = new ArrayList<>();
 		pairSequenceFiles2A.add(sequenceFilePath2A);
+		
+		pairSequenceFiles1AInvalidName = new ArrayList<>();
+		pairSequenceFiles1AInvalidName.add(sequenceFilePathAInvalidName);
 
 		pairSequenceFiles1AB = new ArrayList<>();
 		pairSequenceFiles1AB.add(sequenceFilePathA);
@@ -331,6 +341,49 @@ public class AnalysisCollectionServiceGalaxyIT {
 				sequenceFile1.getElementType());
 		assertEquals("the " + REVERSE_NAME + " sub-element should be a history dataset", HISTORY_DATASET_NAME,
 				sequenceFile2.getElementType());
+
+		// verify paired-end files are in correct order in collection
+		ElementResponse sequenceFile1Response = sequenceFile1.getResponseElement();
+		assertEquals("the " + FORWARD_NAME + " element is not of the correct type", Dataset.class,
+				sequenceFile1Response.getClass());
+		ElementResponse sequenceFile2Response = sequenceFile2.getResponseElement();
+		assertEquals("the " + REVERSE_NAME + " element is not of the correct type", Dataset.class,
+				sequenceFile2Response.getClass());
+		Dataset sequenceFile1Dataset = (Dataset) sequenceFile1Response;
+		assertEquals("forward file in Galaxy is named incorrectly", sequenceFilePathA.getFileName().toString(),
+				sequenceFile1Dataset.getName());
+		Dataset sequenceFile2Dataset = (Dataset) sequenceFile2Response;
+		assertEquals("reverse file in Galaxy is named incorrectly", sequenceFilePath2A.getFileName().toString(),
+				sequenceFile2Dataset.getName());
+	}
+	
+	/**
+	 * Tests failing to upload a paired-end sequence file to Galaxy and
+	 * constructing a collection due to no found forward file.
+	 * 
+	 * @throws ExecutionManagerException
+	 */
+	@Test(expected = NoSuchElementException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testUploadSequenceFilesPairedFailForward() throws ExecutionManagerException {
+
+		History history = new History();
+		history.setName("testUploadSequenceFilesPairedFailForward");
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
+		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
+		History createdHistory = historiesClient.create(history);
+
+		Library library = new Library();
+		library.setName("testUploadSequenceFilesPairedFailForward");
+		Library createdLibrary = librariesClient.createLibrary(library);
+
+		Set<SequenceFilePair> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
+				.setupSampleSequenceFileInDatabase(1L, pairSequenceFiles1AInvalidName, pairSequenceFiles2A));
+		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = analysisCollectionServiceGalaxy
+				.getSequenceFilePairedSamples(sequenceFiles);
+
+		analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilePairs, createdHistory,
+				createdLibrary);
 	}
 
 	private Map<String, HistoryContents> historyContentsAsMap(List<HistoryContents> historyContents) {
