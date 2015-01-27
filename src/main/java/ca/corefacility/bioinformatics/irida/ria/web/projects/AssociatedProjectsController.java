@@ -469,6 +469,18 @@ public class AssociatedProjectsController {
 		return projects;
 	}
 
+	/**
+	 * Get a list of the {@link RelatedProjectJoin}s a {@link User} is
+	 * authorized to read
+	 * 
+	 * @param relatedProjectJoins
+	 *            The joins to test
+	 * @param currentUser
+	 *            The logged in {@link User}
+	 * @param isAdmin
+	 *            whether the user is an admin
+	 * @return A list of {@link Project}s the {@link User} can read
+	 */
 	private List<RelatedProjectJoin> getAuthorizedRelaedProjectsForUser(List<RelatedProjectJoin> relatedProjectJoins,
 			User currentUser, boolean isAdmin) {
 		// Need to know if the user has rights to view the project
