@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -36,12 +35,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.model.project.library.LibraryDescription;
-import ca.corefacility.bioinformatics.irida.model.project.library.ProjectLibraryDescriptionJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.LibraryDescriptionRepository;
-import ca.corefacility.bioinformatics.irida.repositories.ProjectLibraryDescriptionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
@@ -72,17 +67,13 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final ReferenceFileRepository referenceFileRepository;
 	private final ProjectReferenceFileJoinRepository prfjRepository;
 	private final SequenceFileUtilities sequenceFileUtilities;
-	private final ProjectLibraryDescriptionRepository projectLibraryDescriptionRepository;
-	private final LibraryDescriptionRepository libraryDescriptionRepository;
 
 	@Autowired
 	public ProjectServiceImpl(ProjectRepository projectRepository, SampleRepository sampleRepository,
 			UserRepository userRepository, ProjectUserJoinRepository pujRepository,
 			ProjectSampleJoinRepository psjRepository, RelatedProjectRepository relatedProjectRepository,
 			ReferenceFileRepository referenceFileRepository, ProjectReferenceFileJoinRepository prfjRepository,
-			SequenceFileUtilities sequenceFileUtilities,
-			ProjectLibraryDescriptionRepository projectLibraryDescriptionRepository,
-			LibraryDescriptionRepository libraryDescriptionRepository, Validator validator) {
+			SequenceFileUtilities sequenceFileUtilities, Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.sampleRepository = sampleRepository;
 		this.userRepository = userRepository;
@@ -92,8 +83,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.referenceFileRepository = referenceFileRepository;
 		this.prfjRepository = prfjRepository;
 		this.sequenceFileUtilities = sequenceFileUtilities;
-		this.projectLibraryDescriptionRepository = projectLibraryDescriptionRepository;
-		this.libraryDescriptionRepository = libraryDescriptionRepository;
 	}
 
 	@Override
@@ -380,76 +369,5 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			throw new EntityNotFoundException("Cannot find a join for project [" + project.getName()
 					+ "] and reference file [" + file.getLabel() + "].");
 		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public Set<Join<Project, LibraryDescription>> findLibraryDescriptionsForProject(final Project project) {
-		return projectLibraryDescriptionRepository.findByProject(project);
-	}
-
-	@Transactional(readOnly = true)
-	public Join<Project, LibraryDescription> findDefaultLibraryDescriptionForProject(final Project project) {
-		final Join<Project, LibraryDescription> defaultLibraryDescription = projectLibraryDescriptionRepository
-				.findDefaultLibraryDescriptionForProject(project);
-		if (defaultLibraryDescription == null) {
-			throw new EntityNotFoundException("No default library description assigned to project [" + project.getId()
-					+ "]");
-		}
-		return defaultLibraryDescription;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional
-	public Join<Project, LibraryDescription> addLibraryDescriptionToProject(final Project project,
-			final LibraryDescription libraryDescription, final Boolean makeDefault) {
-		final LibraryDescription persisted;
-		if (libraryDescription.getId() == null) {
-			persisted = libraryDescriptionRepository.save(libraryDescription);
-		} else {
-			persisted = libraryDescriptionRepository.findOne(libraryDescription.getId());
-		}
-		final Set<Join<Project, LibraryDescription>> libraryDescriptions = findLibraryDescriptionsForProject(project);
-
-		// only one library description should be the default, so if we're
-		// setting a new default library description, we need to remove any
-		// existing default library descriptions first.
-		if (makeDefault) {
-			projectLibraryDescriptionRepository.unsetDefaultLibraryDescriptionForProject(project);
-		}
-
-		try {
-
-			final Optional<Join<Project, LibraryDescription>> libraryDescriptionToAdd = libraryDescriptions.stream()
-					.filter(j -> j.getObject().equals(persisted)).findFirst();
-			if (!libraryDescriptionToAdd.isPresent()) {
-				return projectLibraryDescriptionRepository.save(new ProjectLibraryDescriptionJoin(project, persisted,
-						makeDefault));
-			} else {
-				final ProjectLibraryDescriptionJoin existingLibraryDescription = (ProjectLibraryDescriptionJoin) libraryDescriptionToAdd
-						.get();
-
-				// we may just be updating an existing relationship between project and library description by changing the default
-				// library description status. Check to see if we're changing the default library description status, if not, throw
-				// en EntityExistsException because we're just adding the same library description again.
-				if (makeDefault != existingLibraryDescription.isDefaultLibraryDescription()) {
-					existingLibraryDescription.setDefaultLibraryDescription(makeDefault);
-					return projectLibraryDescriptionRepository.save(existingLibraryDescription);
-				} else {
-					throw new EntityExistsException("Project " + project.getLabel() + " is already related to "
-							+ persisted.getLabel());
-				}
-			}
-		} catch (DataIntegrityViolationException e) {
-			throw new EntityExistsException("Project " + project.getLabel() + " is already related to "
-					+ persisted.getLabel(), e);
-		}
-
 	}
 }
