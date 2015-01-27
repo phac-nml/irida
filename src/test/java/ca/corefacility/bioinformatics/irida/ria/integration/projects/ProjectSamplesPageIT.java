@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -35,7 +36,9 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
 
 /**
- * <p> Integration test to ensure that the Project Details Page. </p>
+ * <p>
+ * Integration test to ensure that the Project Details Page.
+ * </p>
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
@@ -205,7 +208,8 @@ public class ProjectSamplesPageIT {
 		page.clickLastPageButton();
 		assertEquals(1, page.getTotalSelectedSamplesCount());
 
-		// If you go to another page and come back samples should still be selected
+		// If you go to another page and come back samples should still be
+		// selected
 		page.goToPage("3");
 		page.goToPage();
 		assertEquals(1, page.getTotalSelectedSamplesCount());
@@ -376,7 +380,7 @@ public class ProjectSamplesPageIT {
 		page.goToPage();
 
 		selectFirstThreeSamples();
-		//Admin is not on project5
+		// Admin is not on project5
 		page.clickBtn("samplesOptionsBtn");
 		page.clickBtn("copyBtn");
 		assertTrue(page.isItemVisible("copy-samples-modal"));
@@ -540,7 +544,8 @@ public class ProjectSamplesPageIT {
 
 		selectFirstThreeSamples();
 
-		// This is the key part, leaving the page and coming back.  Using storage the samples should
+		// This is the key part, leaving the page and coming back. Using storage
+		// the samples should
 		// still be selected when you return.
 		page.goToPage("2");
 		page.goToPage();
@@ -552,6 +557,19 @@ public class ProjectSamplesPageIT {
 		assertTrue(page.isBtnEnabled("confirm-copy-samples"));
 		page.clickBtn("confirm-copy-samples");
 		page.checkSuccessNotification();
+	}
+
+	@Test
+	public void testShowAssociatedSamples() throws InterruptedException {
+		LoginPage.loginAsAdmin(driver);
+		page.goToPage("6");
+		int initialNumber = page.getNumberOfSamplesDisplayed();
+
+		page.enableAssociatedProjects();
+
+		int laterNumber = page.getNumberOfSamplesDisplayed();
+
+		assertNotEquals("page should have associated samples displayed", initialNumber, laterNumber);
 	}
 
 	private int getSampleFlagCount(String command) {

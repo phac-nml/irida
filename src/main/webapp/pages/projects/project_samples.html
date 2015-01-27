@@ -106,14 +106,15 @@
 					</button>
 					<ul class="dropdown-menu noclose" role="menu">
 						<li>
-							<label> <input type="checkbox" ng-change="displayCtrl.displaySamples()"
+							<label> <input id="displayLocal" type="checkbox" ng-change="displayCtrl.displaySamples()"
 							               ng-model="displayCtrl.displayLocal"/>
 								<span th:text="#{project.samples.display.local}">_Local Samples_</span>
 							</label>
 
 						</li>
 						<li>
-							<label> <input type="checkbox" ng-change="displayCtrl.displaySamples()"
+							<label> <input id="displayAssociated" type="checkbox"
+							               ng-change="displayCtrl.displaySamples()"
 							               ng-model="displayCtrl.displayAssociated"/>
 								<span th:text="#{project.samples.display.associated}">_Associated Samples_</span>
 							</label>
