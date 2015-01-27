@@ -160,7 +160,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		sequenceFilePath = tempDir.resolve("testData1_R1_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePath, StandardCopyOption.REPLACE_EXISTING);
 		
-		sequenceFilePath2 = tempDir.resolve("testData1_R1_001.fastq");
+		sequenceFilePath2 = tempDir.resolve("testData1_R2_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePath2, StandardCopyOption.REPLACE_EXISTING);
 
 		referenceFilePath = Files.createTempFile("testReference", ".fasta");
