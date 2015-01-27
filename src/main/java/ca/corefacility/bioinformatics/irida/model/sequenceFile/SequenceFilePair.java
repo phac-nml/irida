@@ -37,6 +37,16 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 @EntityListeners(AuditingEntityListener.class)
 @Audited
 public class SequenceFilePair implements IridaThing {
+	
+	/**
+	 * Pattern for matching forward {@link SequenceFile}s from a file name.
+	 */
+	private static final Pattern FORWARD_PATTERN = Pattern.compile(".*_R1_\\d\\d\\d\\.fastq$");
+	
+	/**
+	 * Pattern for matching reverse {@link SequenceFile}s from a file name.
+	 */
+	private static final Pattern REVERSE_PATTERN = Pattern.compile(".*_R2_\\d\\d\\d\\.fastq$");
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -71,7 +81,7 @@ public class SequenceFilePair implements IridaThing {
 	 */
 	public SequenceFile getForwardSequenceFile() {
 		return files.stream()
-				.filter(f -> Pattern.matches(".*_R1_\\d\\d\\d\\.fastq$", f.getFile().getFileName().toString()))
+				.filter(f -> FORWARD_PATTERN.matcher(f.getFile().getFileName().toString()).matches())
 				.findFirst().get();
 	}
 
@@ -82,7 +92,7 @@ public class SequenceFilePair implements IridaThing {
 	 */
 	public SequenceFile getReverseSequenceFile() {
 		return files.stream()
-				.filter(f -> Pattern.matches(".*_R2_\\d\\d\\d\\.fastq$", f.getFile().getFileName().toString()))
+				.filter(f -> REVERSE_PATTERN.matcher(f.getFile().getFileName().toString()).matches())
 				.findFirst().get();
 	}
 
