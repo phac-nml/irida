@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -363,10 +364,8 @@ public class AssociatedProjectsController {
 	 */
 	@RequestMapping(value = "/{projectId}/associated/samples")
 	@ResponseBody
-	public Map<String, Object> getAssociatedSamplesForProject(@PathVariable Long projectId, Model model,
-			Principal principal) {
+	public Map<String, Object> getAssociatedSamplesForProject(@PathVariable Long projectId, Principal principal) {
 		Project project = projectService.read(projectId);
-		model.addAttribute("project", project);
 
 		User loggedInUser = userService.getUserByUsername(principal.getName());
 
@@ -476,14 +475,10 @@ public class AssociatedProjectsController {
 		List<Join<Project, User>> userProjectJoin = projectService.getProjectsForUser(currentUser);
 
 		// Create a quick lookup list
-		Map<Long, Boolean> usersProjects = new HashMap<>(userProjectJoin.size());
-		for (Join<Project, User> join : userProjectJoin) {
-			usersProjects.put(join.getSubject().getId(), true);
-		}
+		Set<Project> usersProjects = userProjectJoin.stream().map((j) -> j.getSubject()).collect(Collectors.toSet());
 
 		List<RelatedProjectJoin> authorizedProjects = relatedProjectJoins.stream()
-				.filter((j) -> usersProjects.containsKey(j.getObject().getId()) || isAdmin)
-				.collect(Collectors.toList());
+				.filter((j) -> usersProjects.contains((j.getObject())) || isAdmin).collect(Collectors.toList());
 
 		return authorizedProjects;
 	}

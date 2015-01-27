@@ -24,12 +24,14 @@ import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLinks;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.RemoteObjectCache;
@@ -66,6 +68,7 @@ public class AssociatedProjectControllerTest {
 		apiService = mock(RemoteAPIService.class);
 		projectRemoteService = mock(ProjectRemoteService.class);
 		remoteRelatedProjectService = mock(RemoteRelatedProjectService.class);
+		sampleService = mock(SampleService.class);
 		remoteProjectCache = new RemoteObjectCache<>();
 		controller = new AssociatedProjectsController(remoteRelatedProjectService, projectService, projectUtils,
 				userService, apiService, projectRemoteService, sampleService, remoteProjectCache);
@@ -354,5 +357,46 @@ public class AssociatedProjectControllerTest {
 		controller.removeRemoteAssociatedProject(projectId, associatedProjectId);
 
 		verify(remoteRelatedProjectService).delete(rrp.getId());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testGetSamplesForAssociatedProject() {
+		Long projectId = 1l;
+		Project project = new Project();
+
+		Project allowedProject = new Project("allowed");
+		Project notAllowedProject = new Project("not allowed");
+
+		Principal principal = () -> USER_NAME;
+
+		when(projectService.read(projectId)).thenReturn(project);
+
+		User user = new User();
+		user.setSystemRole(Role.ROLE_USER);
+		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
+
+		when(projectService.getRelatedProjects(project)).thenReturn(
+				Lists.newArrayList(new RelatedProjectJoin(project, allowedProject), new RelatedProjectJoin(project,
+						notAllowedProject)));
+
+		when(projectService.getProjectsForUser(user)).thenReturn(
+				Lists.newArrayList(new ProjectUserJoin(allowedProject, user, ProjectRole.PROJECT_USER)));
+
+		Sample sample = new Sample("test");
+		when(sampleService.getSamplesForProject(allowedProject)).thenReturn(
+				Lists.newArrayList(new ProjectSampleJoin(allowedProject, sample)));
+
+		Map<String, Object> associatedSamplesForProject = controller.getAssociatedSamplesForProject(projectId,
+				principal);
+
+		assertTrue("should have samples", associatedSamplesForProject.containsKey("samples"));
+
+		List<Object> object = (List<Object>) associatedSamplesForProject.get("samples");
+		assertEquals("should have 1 sample", 1, object.size());
+
+		Map<String, Object> sampleMap = (Map<String, Object>) object.iterator().next();
+		assertEquals("sample should be equal", sample, sampleMap.get("sample"));
+		assertEquals("project should be equal", allowedProject, sampleMap.get("project"));
 	}
 }
