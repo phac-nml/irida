@@ -30,14 +30,34 @@
     }
   }
 
+  function SamplesFilter(filter) {
+    function _filterEntry(sample) {
+      var result = true;
+      _.forOwn(filter.sample, function (value, key) {
+        if(sample[key] === null || sample[key].toLowerCase().indexOf(value.toLowerCase()) < 0) {
+          result = false ;
+        }
+      });
+      return result;
+    }
+
+    return function (entries) {
+      return _.filter(entries, function (entry) {
+        var filtered = _filterEntry(entry.sample);
+
+        return filtered;
+      });
+    }
+  }
+
   function FilterFactory() {
     "use strict";
     return {
       page    : 0,
       sortDir : false,
       sortedBy: 'sample.createdDate',
-      count   : 10
-
+      count   : 10,
+      sample: {}
     }
   }
 
@@ -673,10 +693,10 @@
     vm.name = "";
 
     $scope.$watch(function () {
-      return vm.name;
+      return vm.sampleName;
     }, _.debounce(function (n, o) {
       if (n !== o) {
-        filter.name = vm.name;
+        filter.sample.sampleName = vm.sampleName;
         $scope.$apply();
       }
     }, 500));
@@ -686,10 +706,10 @@
     }, _.debounce(function (n, o) {
       if (n !== o) {
         if (vm.organism.length > 0) {
-          filter.organism = vm.organism;
+          filter.sample.organism = vm.organism;
         }
         else {
-          delete filter.organism;
+          delete filter.sample.organism;
         }
         $scope.$apply();
       }
@@ -757,6 +777,7 @@
     .service('StorageService', ['$sessionStorage', StorageService])
     .service('Select2Service', ['$timeout', Select2Service])
     .service('SamplesService', ['$rootScope', 'StorageService', 'Restangular', 'notifications', 'FilterFactory', '$q', SamplesService])
+    .filter('SamplesFilter', ['FilterFactory', SamplesFilter])
     .filter('PagingFilter', ['$rootScope', 'FilterFactory', 'SamplesService', PagingFilter])
     .directive('sortBy', [sortBy])
     .controller('SubNavCtrl', ['$scope', '$modal', 'SamplesService', SubNavCtrl])

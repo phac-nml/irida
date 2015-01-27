@@ -37,7 +37,7 @@
 			<label for="sample-name-filter" th:text="#{project.sample.filter-name}">_Sample Name</label>
 
 			<div class="input-group">
-				<input type="text" class="form-control" id="sample-name-filter" ng-model="sf.name"/>
+				<input type="text" class="form-control" id="sample-name-filter" ng-model="sf.sampleName"/>
 				<span class="input-group-btn">
 					<button class="btn btn-default" ng-click="sf.name=''">
 						<span class="fa fa-fw fa-remove"></span>
@@ -227,8 +227,8 @@
 				</tr>
 				</thead>
 				<tbody>
-				<tr class="sample-row" ng-class="{'selected': sample.selected}"
-				    ng-repeat="entry in table.samples | filter:{sampleName:table.filter.name, organism:table.filter.organism} | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
+				<tr class="sample-row" ng-class="{'selected': entry.selected}"
+				    ng-repeat="(sample, entry) in table.samples | SamplesFilter | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
 					<td>
 						<div class="large-checkbox">
 							<input class="sample-select" id="s-{{entry.sample.id}}" name="s-{{entry.sample.id}}"
