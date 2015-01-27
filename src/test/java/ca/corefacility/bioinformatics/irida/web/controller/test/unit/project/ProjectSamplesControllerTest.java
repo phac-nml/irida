@@ -31,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
@@ -244,32 +245,39 @@ public class ProjectSamplesControllerTest {
 	public void testCopySampleToProject() {
 		final Project p = TestDataFactory.constructProject();
 		final Sample s = TestDataFactory.constructSample();
+		final ProjectSampleJoin r = new ProjectSampleJoin(p,s);
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
+		when(projectService.addSampleToProject(p, s)).thenReturn(r);
 		ModelMap modelMap = controller
 				.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()), response);
 		
 		verify(projectService).addSampleToProject(p, s);
-
 		assertEquals("response should have CREATED status", HttpStatus.CREATED.value(), response.getStatus());
 		final String location = response.getHeader(HttpHeaders.LOCATION);
 		assertEquals("location should include sample and project IDs", "http://localhost/api/projects/" + p.getId()
 				+ "/samples/" + s.getId(), location);
-		
 		//test that the modelMap contains a correct resource collection.
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
 		assertTrue(o instanceof ResourceCollection);
 		@SuppressWarnings("unchecked")
-		ResourceCollection<SampleResource> samples = (ResourceCollection<SampleResource>) o;
-		assertEquals(1, samples.size());
-		List<Link> resourceLinks = samples.getLinks();
-		assertEquals(1, resourceLinks.size());
+		ResourceCollection<LabelledRelationshipResource<Project,Sample>> labeledRRs =
+		(ResourceCollection<LabelledRelationshipResource<Project,Sample>>) o;
+		assertEquals("There should be one item in the resource collection",1, labeledRRs.size());
+		List<Link> resourceLinks = labeledRRs.getLinks();
+		assertEquals("There should be one link",1, resourceLinks.size());
 		Link self = resourceLinks.iterator().next();
-		assertEquals("self", self.getRel());
+		assertEquals("Self link should be correct","self", self.getRel());
 		assertEquals("http://localhost/api/projects/" + p.getId() + "/samples", self.getHref());
-		SampleResource resource = samples.iterator().next();
-		assertEquals(s.getSampleName(), resource.getSampleName());
+		LabelledRelationshipResource<Project,Sample> resource = labeledRRs.iterator().next();
+		Object o2 = resource.getResource();
+		assertTrue("Object should be an instance of ProjectSampleJoin",o2 instanceof ProjectSampleJoin);
+		ProjectSampleJoin join = (ProjectSampleJoin)o2;
+		Object o3 = join.getObject();
+		assertTrue("Object should be an instance of Sample",o3 instanceof Sample);
+		Sample sample = (Sample)o3;
+		assertEquals("Sample name should be correct",s.getSampleName(), sample.getSampleName());
 		List<Link> links = resource.getLinks();
 		Set<String> rels = Sets.newHashSet(Link.REL_SELF, RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES,
 				RESTProjectSamplesController.REL_PROJECT);

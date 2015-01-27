@@ -28,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
@@ -92,41 +93,34 @@ public class RESTProjectSamplesController {
 			final @RequestBody List<Long> sampleIds, HttpServletResponse response) {
 		ModelMap modelMap = new ModelMap();
 		Project p = projectService.read(projectId);
-		ResourceCollection<SampleResource> sampleResources = new ResourceCollection<>(sampleIds.size());
+		ResourceCollection<LabelledRelationshipResource<Project,Sample>> labeledProjectSampleResources = new ResourceCollection
+				<>(sampleIds.size());
 		for (final long sampleId : sampleIds) {
 			Sample sample = sampleService.read(sampleId);
-			projectService.addSampleToProject(p, sample);
-			
-			//add a sample resource to the resource collection that will fill the body of the response.
-			SampleResource sr = new SampleResource();
-			sr.setResource(sample);
-			sr.setSequenceFileCount(getSequenceFileCountForSampleResource(sr));
-			sr.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sample.getId()))
+			Join<Project, Sample> r = projectService.addSampleToProject(p, sample);
+			LabelledRelationshipResource<Project, Sample> resource = new LabelledRelationshipResource
+					<Project, Sample>(r.getLabel(),r);
+			//add a labeled relationship resource to the resource collection that will fill the body of the response.
+			resource.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sample.getId()))
 					.withSelfRel());
-			sr.add(linkTo(
+			resource.add(linkTo(
 					methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sample.getId()))
 					.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
-			sr.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
-			sampleResources.add(sr);
-			
+			resource.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
+			labeledProjectSampleResources.add(resource);
 			final String location = linkTo(
 					methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel()
 					.getHref();
 			response.addHeader(HttpHeaders.LOCATION, location);
 		}
 		//add a link to the project that was copied to.
-		sampleResources
+		labeledProjectSampleResources
 				.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSamples(projectId)).withSelfRel());
-
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sampleResources);
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, labeledProjectSampleResources);
 		response.setStatus(HttpStatus.CREATED.value());
+		
 		return modelMap;
 	}
-	
-	
-	
-	
-	
 
 	/**
 	 * Create a new sample resource and create a relationship between the sample
@@ -212,7 +206,6 @@ public class RESTProjectSamplesController {
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sampleResources);
 
 		return modelMap;
-
 	}
 
 	@RequestMapping(value = "/api/projects/{projectId}/samples/bySequencerId/{seqeuncerId}", method = RequestMethod.GET)
