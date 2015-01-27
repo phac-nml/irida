@@ -74,15 +74,14 @@ public class SampleSequenceFilesIT {
 
 		// check that the location and link headers were created:
 		String location = r.getHeader(HttpHeaders.LOCATION);
-
-		assertNotNull(location);
-		assertTrue(location.matches(sequenceFileUri + "/[0-9]+"));
-		
+		assertNotNull("location must exist",location);
+		assertTrue("location must be correct",location.matches(sequenceFileUri + "/[0-9]+"));
 		// confirm that the sequence file was added to the sample sequence files list
 		asUser().expect().body("resource.resources.fileName",hasItem(sequenceFile.getFileName().toString()))
 			.and().body("resource.resources.links[0].rel",hasItems("self"))
 			.when().get(sequenceFileUri);
-
+		String responseBody = asUser().get(location).asString();
+		assertTrue("Result of POST must equal result of GET",r.asString().equals(responseBody));
 		// clean up
 		Files.delete(sequenceFile);
 	}

@@ -169,31 +169,25 @@ public class RESTSampleSequenceFilesController {
 		
 		logger.debug("Adding sequence file to sample " + sampleId + " in project " + projectId);
 		logger.trace("Uploaded file size: " + file.getSize() + " bytes");
-
 		Project p = projectService.read(projectId);
 		logger.trace("Read project " + projectId);
 		// confirm that a relationship exists between the project and the sample
 		sampleService.getSampleForProject(p, sampleId);
-
 		// load the sample from the database
 		Sample sample = sampleService.read(sampleId);
 		logger.trace("Read sample " + sampleId);
-
 		// prepare a new sequence file using the multipart file supplied by the
 		// caller
 		Path temp = Files.createTempDirectory(null);
 		Path target = temp.resolve(file.getOriginalFilename());
-
 		// Changed to MultipartFile.transerTo(File) because it was truncating
 		// large files to 1039956336 bytes
 		// target = Files.write(target, file.getBytes());
 		file.transferTo(target.toFile());
-
 		logger.trace("Wrote temp file to " + target);
 
 		SequenceFile sf;
 		SequencingRun miseqRun = null;
-
 		if (fileResource != null) {
 			sf = fileResource.getResource();
 
@@ -206,7 +200,6 @@ public class RESTSampleSequenceFilesController {
 			sf = new SequenceFile();
 		}
 		sf.setFile(target);
-
 		if (miseqRun != null) {
 			sf.setSequencingRun(miseqRun);
 			logger.trace("Added seqfile to miseqrun");
@@ -216,22 +209,23 @@ public class RESTSampleSequenceFilesController {
 		Join<Sample, SequenceFile> sampleSequenceFileRelationship = sequenceFileService.createSequenceFileInSample(sf,
 				sample);
 		logger.trace("Created seqfile in sample " + sampleSequenceFileRelationship.getObject().getId());
-
 		// clean up the temporary files.
 		Files.deleteIfExists(target);
 		Files.deleteIfExists(temp);
 		logger.trace("Deleted temp file");
-
 		// prepare a link to the sequence file itself (on the sequence file
 		// controller)
 		Long sequenceFileId = sampleSequenceFileRelationship.getObject().getId();
 		String location = linkTo(
 				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
 						sequenceFileId)).withSelfRel().getHref();
-
 		SequenceFileResource sfr = new SequenceFileResource();
-		sfr.setResource(sf);
-
+		
+		// Changed, because sfr.setResource(sf) 
+		// and sfr.setResource(sampleSequenceFileRelationship.getObject())
+		// both will not pass a GET-POST comparison integration test.
+		sfr.setResource(sequenceFileService.read(sequenceFileId));
+		
 		// add links to the resource
 		sfr.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
 				.withRel(REL_SAMPLE_SEQUENCE_FILES));
@@ -241,10 +235,8 @@ public class RESTSampleSequenceFilesController {
 		sfr.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(
 				REL_SAMPLE));
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sfr);
-		
 		// add a location header.
 		response.addHeader(HttpHeaders.LOCATION, location);
-		
 		// set the response status.
 		response.setStatus(HttpStatus.CREATED.value());
 

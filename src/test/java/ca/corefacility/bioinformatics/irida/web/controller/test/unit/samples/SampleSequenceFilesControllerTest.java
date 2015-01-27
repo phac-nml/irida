@@ -23,10 +23,14 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
@@ -231,25 +235,24 @@ public class SampleSequenceFilesControllerTest {
 		verify(sampleService, times(1)).read(s.getId());
 		verify(sequenceFileService).createSequenceFileInSample(Matchers.any(SequenceFile.class), Matchers.eq(s));
 		
-		assertEquals(HttpStatus.CREATED.value(), response.getStatus());
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
-		assertNotNull(o);
-		assertTrue(o instanceof SequenceFileResource);
+		assertNotNull("object must not be null",o);
+		assertTrue("object must be a SequenceFileResource",o instanceof SequenceFileResource);
 		SequenceFileResource sfr = (SequenceFileResource) o;
 
-		assertEquals(HttpStatus.CREATED.value(), response.getStatus());
+		assertEquals("response must have CREATED status",HttpStatus.CREATED.value(), response.getStatus());
 		Link self = sfr.getLink(Link.REL_SELF);
 		Link sampleSequenceFiles = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
 		Link sample = sfr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE);
 		
 		String sampleLocation = "http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId();
 		String sequenceFileLocation = sampleLocation + "/sequenceFiles/" + sf.getId();
-		assertNotNull(self);
-		assertEquals(sequenceFileLocation, self.getHref());
-		assertNotNull(sampleSequenceFiles);
-		assertEquals(sampleLocation + "/sequenceFiles", sampleSequenceFiles.getHref());
-		assertNotNull(sample);
-		assertEquals(sampleLocation, sample.getHref());
+		assertNotNull("self reference must exist",self);
+		assertEquals("self reference must be correct",sequenceFileLocation, self.getHref());
+		assertNotNull("sequence files link must exist",sampleSequenceFiles);
+		assertEquals("sequence files location must be correct",sampleLocation + "/sequenceFiles", sampleSequenceFiles.getHref());
+		assertNotNull("sample link must exist",sample);
+		assertEquals("sample location must be correct",sampleLocation, sample.getHref());
 		
 		Files.delete(f);
 	}
