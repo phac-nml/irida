@@ -352,7 +352,7 @@ public class AssociatedProjectsController {
 
 	@RequestMapping(value = "/{projectId}/associated/samples")
 	@ResponseBody
-	public Map<String,Object> getAssociatedSamplesForProject(@PathVariable Long projectId, Model model,
+	public Map<String, Object> getAssociatedSamplesForProject(@PathVariable Long projectId, Model model,
 			Principal principal) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
@@ -375,12 +375,14 @@ public class AssociatedProjectsController {
 			// get the samples in the project
 			List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(object);
 
-			List<Map<String, Object>> collect = samplesForProject.stream()
-					.map((j) -> getSampleMap(j.getObject(), j.getSubject())).collect(Collectors.toList());
+			List<Map<String, Object>> collect = samplesForProject
+					.stream()
+					.map((j) -> ProjectSamplesController.getSampleMap(j.getObject(), j.getSubject(),
+							ProjectSamplesController.SampleType.ASSOCIATED, j.getObject().getId())).collect(Collectors.toList());
 			sampleList.addAll(collect);
 		}
-		
-		Map<String,Object> response = ImmutableMap.of("samples",sampleList);
+
+		Map<String, Object> response = ImmutableMap.of("samples", sampleList);
 
 		return response;
 	}

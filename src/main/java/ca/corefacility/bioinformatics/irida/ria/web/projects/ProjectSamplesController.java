@@ -196,9 +196,9 @@ public class ProjectSamplesController {
 		Map<String, Object> result = new HashMap<>();
 		Project project = projectService.read(projectId);
 		List<Join<Project, Sample>> joinList = sampleService.getSamplesForProject(project);
-		List<Sample> samples = new ArrayList<>(joinList.size());
+		List<Map<String,Object>> samples = new ArrayList<>(joinList.size());
 		for (Join<Project, Sample> join : joinList) {
-			samples.add(join.getObject());
+			samples.add(getSampleMap(join.getObject(), join.getSubject(), SampleType.LOCAL, join.getObject().getId()));
 		}
 		result.put("samples", samples);
 		return result;
@@ -552,6 +552,16 @@ public class ProjectSamplesController {
 		}
 		return result;
 	}
+	
+	public static Map<String,Object> getSampleMap(Sample sample, Project project, SampleType type, Number identifier){
+		Map<String,Object> sampleMap = new HashMap<>();
+		sampleMap.put("sample", sample);
+		sampleMap.put("project", project);
+		sampleMap.put("sampleType", type);
+		sampleMap.put("id", identifier);
+		
+		return sampleMap;
+	}
 
 	/**
 	 * Changes a {@link ConstraintViolationException} to a usable map of strings for displaing in the UI.
@@ -569,5 +579,10 @@ public class ProjectSamplesController {
 			errors.put(field, message);
 		}
 		return errors;
+	}
+	
+	public enum SampleType{
+		LOCAL,
+		ASSOCIATED;
 	}
 }

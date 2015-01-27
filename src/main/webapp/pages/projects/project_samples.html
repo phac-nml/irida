@@ -207,53 +207,54 @@
 					<th></th>
 					<th id="sortName" th:text="#{project.samples.table.name}" sort-by="" onsort="sCtrl.onSort"
 					    sortdir="sCtrl.filter.sortDir"
-					    sortedBy="sCtrl.filter.sortedBy" sortValue="sampleName">__NAME__
+					    sortedBy="sCtrl.filter.sortedBy" sortValue="sample.sampleName">__NAME__
 					</th>
 					<th id="sortOrganism" th:text="#{project.samples.table.organism}" sort-by="" onsort="sCtrl.onSort"
 					    sortdir="sCtrl.filter.sortDir"
-					    sortedBy="sCtrl.filter.sortedBy" sortValue="organism">__ORGANISM__
+					    sortedBy="sCtrl.filter.sortedBy" sortValue="sample.organism">__ORGANISM__
 					</th>
 					<th id="sortCollectedBy" th:text="#{project.samples.table.collectedBy}" sort-by=""
 					    onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
-					    sortedBy="sCtrl.filter.sortedBy" sortValue="collectedBy">Collected By
+					    sortedBy="sCtrl.filter.sortedBy" sortValue="sample.collectedBy">Collected By
 					</th>
 					<th id="sortProject" sort-by="" onsort="sCtrl.onSort" sortdir="sCtrl.filter.sortDir"
 					    sortedBy="sCtrl.filter.sortedBy" sortValue="project">Project
 					</th>
 					<th id="sortCreatedDate" th:text="#{project.samples.table.created}" sort-by="" onsort="sCtrl.onSort"
 					    sortdir="sCtrl.filter.sortDir"
-					    sortedBy="sCtrl.filter.sortedBy" sortValue="createdDate">__CREATED__
+					    sortedBy="sCtrl.filter.sortedBy" sortValue="sample.createdDate">__CREATED__
 					</th>
 				</tr>
 				</thead>
 				<tbody>
 				<tr class="sample-row" ng-class="{'selected': sample.selected}"
-				    ng-repeat="sample in table.samples | filter:{sampleName:table.filter.name, organism:table.filter.organism} | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
+				    ng-repeat="entry in table.samples | filter:{sampleName:table.filter.name, organism:table.filter.organism} | orderBy: table.filter.sortedBy : table.filter.sortDir | PagingFilter">
 					<td>
 						<div class="large-checkbox">
-							<input class="sample-select" id="s-{{sample.id}}" name="s-{{sample.id}}" type="checkbox"
-							       ng-model="sample.selected"
-							       ng-change="table.updateSample(sample)"/> <label for="s-{{sample.id}}"></label>
+							<input class="sample-select" id="s-{{entry.sample.id}}" name="s-{{entry.sample.id}}"
+							       type="checkbox"
+							       ng-model="entry.selected"
+							       ng-change="table.updateSample(entry)"/> <label for="s-{{entry.sample.id}}"></label>
 						</div>
 					</td>
 					<td class="sample-name">
 						<a class="btn btn-default btn-xs"
-						   data:ng-href="@{'/projects/' + ${project.getId()} + '/samples/{{sample.id}}/details'}"
-						   href="#">{{sample.sampleName}}
+						   data:ng-href="@{'/projects/' + ${project.getId()} + '/samples/{{entry.sample.id}}/details'}"
+						   href="#">{{entry.sample.sampleName}}
 						</a>
 					</td>
-					<td>{{sample.organism}}</td>
-					<td>{{sample.collectedBy}}</td>
+					<td>{{entry.sample.organism}}</td>
+					<td>{{entry.sample.collectedBy}}</td>
 					<td>
 						<a class="btn btn-default btn-xs"
-						   data:ng-href="@{'/projects/{{sample.project.id}}'}"
-						   ng-if="sample.project"
-						   href="#">{{sample.project.label}}
+						   data:ng-href="@{'/projects/{{entry.project.id}}'}"
+						   ng-if="entry.sampleType != 'LOCAL'"
+						   href="#">{{entry.project.label}}
 						</a>
 					</td>
-					<td class="createdDate" data-date="{{sample.createdDate}}" tooltip-popup-delay='500'
-					    tooltip-placement="left" tooltip="{{sample.createdDate | date:'medium'}}">
-						<span>{{sample.createdDate | date:'mediumDate'}}</span>
+					<td class="createdDate" data-date="{{entry.sample.createdDate}}" tooltip-popup-delay='500'
+					    tooltip-placement="left" tooltip="{{entry.sample.createdDate | date:'medium'}}">
+						<span>{{entry.sample.createdDate | date:'mediumDate'}}</span>
 					</td>
 				</tr>
 				</tbody>

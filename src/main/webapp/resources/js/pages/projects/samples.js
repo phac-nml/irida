@@ -35,8 +35,9 @@
     return {
       page    : 0,
       sortDir : false,
-      sortedBy: 'createdDate',
+      sortedBy: 'sample.createdDate',
       count   : 10
+
     }
   }
 
