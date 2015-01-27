@@ -108,6 +108,8 @@ public class SNVPhylAnalysisIT {
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService);
+		
+		Path tempDir = Files.createTempDirectory("snvphylTest");
 
 		Path sequenceFilePathRealA1 = Paths.get(SNVPhylAnalysisIT.class.getResource(
 				"SNVPhyl/test1/input/fastq/a_1.fastq").toURI());
@@ -124,19 +126,19 @@ public class SNVPhylAnalysisIT {
 		Path referenceFilePathReal = Paths.get(SNVPhylAnalysisIT.class.getResource(
 				"SNVPhyl/test1/input/reference.fasta").toURI());
 
-		sequenceFilePathA1 = Files.createTempFile("a_1", ".fastq");
+		sequenceFilePathA1 = tempDir.resolve("a_R1_001.fastq");
 		Files.copy(sequenceFilePathRealA1, sequenceFilePathA1, StandardCopyOption.REPLACE_EXISTING);
-		sequenceFilePathA2 = Files.createTempFile("a_2", ".fastq");
+		sequenceFilePathA2 = tempDir.resolve("a_R2_001.fastq");
 		Files.copy(sequenceFilePathRealA2, sequenceFilePathA2, StandardCopyOption.REPLACE_EXISTING);
 
-		sequenceFilePathB1 = Files.createTempFile("b_1", ".fastq");
+		sequenceFilePathB1 = tempDir.resolve("b_R1_001.fastq");
 		Files.copy(sequenceFilePathRealB1, sequenceFilePathB1, StandardCopyOption.REPLACE_EXISTING);
-		sequenceFilePathB2 = Files.createTempFile("b_2", ".fastq");
+		sequenceFilePathB2 = tempDir.resolve("b_R2_001.fastq");
 		Files.copy(sequenceFilePathRealB2, sequenceFilePathB2, StandardCopyOption.REPLACE_EXISTING);
 
-		sequenceFilePathC1 = Files.createTempFile("c_1", ".fastq");
+		sequenceFilePathC1 = tempDir.resolve("c_R1_001.fastq");
 		Files.copy(sequenceFilePathRealC1, sequenceFilePathC1, StandardCopyOption.REPLACE_EXISTING);
-		sequenceFilePathC2 = Files.createTempFile("c_2", ".fastq");
+		sequenceFilePathC2 = tempDir.resolve("c_R2_001.fastq");
 		Files.copy(sequenceFilePathRealC2, sequenceFilePathC2, StandardCopyOption.REPLACE_EXISTING);
 
 		sequenceFilePathsA1List = new LinkedList<>();

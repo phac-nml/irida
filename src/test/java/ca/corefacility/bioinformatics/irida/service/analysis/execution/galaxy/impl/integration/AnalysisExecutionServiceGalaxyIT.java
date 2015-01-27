@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -154,17 +155,16 @@ public class AnalysisExecutionServiceGalaxyIT {
 		expectedOutputFile2 = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("output2.txt").toURI());
 
-		sequenceFilePath = Files.createTempFile("testData1", ".fastq");
-		Files.delete(sequenceFilePath);
-		Files.copy(sequenceFilePathReal, sequenceFilePath);
+		Path tempDir = Files.createTempDirectory("analysisExecutionTest");
 		
-		sequenceFilePath2 = Files.createTempFile("testData1", ".fastq");
-		Files.delete(sequenceFilePath2);
-		Files.copy(sequenceFilePathReal, sequenceFilePath2);
+		sequenceFilePath = tempDir.resolve("testData1_R1_001.fastq");
+		Files.copy(sequenceFilePathReal, sequenceFilePath, StandardCopyOption.REPLACE_EXISTING);
+		
+		sequenceFilePath2 = tempDir.resolve("testData1_R1_001.fastq");
+		Files.copy(sequenceFilePathReal, sequenceFilePath2, StandardCopyOption.REPLACE_EXISTING);
 
 		referenceFilePath = Files.createTempFile("testReference", ".fasta");
-		Files.delete(referenceFilePath);
-		Files.copy(referenceFilePathReal, referenceFilePath);
+		Files.copy(referenceFilePathReal, referenceFilePath, StandardCopyOption.REPLACE_EXISTING);
 
 		expectedSnpMatrix = localGalaxy.getWorkflowCorePipelineTestMatrix();
 		expectedSnpTable = localGalaxy.getWorkflowCorePipelineTestSnpTable();

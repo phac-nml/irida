@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -112,26 +113,20 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
+		
+		Path tempDir = Files.createTempDirectory("analysisCollectionTest");
 
-		sequenceFilePathA = Files.createTempFile("testData1", ".fastq");
-		Files.delete(sequenceFilePathA);
-		Files.copy(sequenceFilePathReal, sequenceFilePathA);
+		sequenceFilePathA = tempDir.resolve("testDataA_R1_001.fastq");
+		Files.copy(sequenceFilePathReal, sequenceFilePathA, StandardCopyOption.REPLACE_EXISTING);
 
-		sequenceFilePath2A = Files.createTempFile("testData2", ".fastq");
-		Files.delete(sequenceFilePath2A);
-		Files.copy(sequenceFilePathReal, sequenceFilePath2A);
+		sequenceFilePath2A = tempDir.resolve("testData2A_R2_001.fastq");
+		Files.copy(sequenceFilePathReal, sequenceFilePath2A, StandardCopyOption.REPLACE_EXISTING);
 
-		sequenceFilePathB = Files.createTempFile("testData1", ".fastq");
-		Files.delete(sequenceFilePathB);
-		Files.copy(sequenceFilePathReal, sequenceFilePathB);
+		sequenceFilePathB = tempDir.resolve("testDataB_R1_001.fastq");
+		Files.copy(sequenceFilePathReal, sequenceFilePathB, StandardCopyOption.REPLACE_EXISTING);
 
-		sequenceFilePath2B = Files.createTempFile("testData2", ".fastq");
-		Files.delete(sequenceFilePath2B);
-		Files.copy(sequenceFilePathReal, sequenceFilePath2B);
-
-		sequenceFilePath2A = Files.createTempFile("testData2", ".fastq");
-		Files.delete(sequenceFilePath2A);
-		Files.copy(sequenceFilePathReal, sequenceFilePath2A);
+		sequenceFilePath2B = tempDir.resolve("testData2B_R2_001.fastq");
+		Files.copy(sequenceFilePathReal, sequenceFilePath2B, StandardCopyOption.REPLACE_EXISTING);
 
 		pairSequenceFiles1A = new ArrayList<>();
 		pairSequenceFiles1A.add(sequenceFilePathA);
