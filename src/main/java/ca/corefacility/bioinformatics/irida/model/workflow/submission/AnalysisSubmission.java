@@ -322,6 +322,10 @@ public class AnalysisSubmission implements IridaThing {
 		return analysis;
 	}
 
+	public User getSubmitter() {
+		return submitter;
+	}
+
 	/**
 	 * @param analysis
 	 *            the analysis to set
@@ -332,7 +336,7 @@ public class AnalysisSubmission implements IridaThing {
 
 	@Override
 	public String toString() {
-		return "AnalysisSubmission [id=" + id + ", name=" + name + ", workflowId=" + workflowId + ", remoteAnalysisId="
+		return "AnalysisSubmission [id=" + id + ", name=" + name + ",submitterId=" + submitter.getId() + ", workflowId=" + workflowId + ", remoteAnalysisId="
 				+ remoteAnalysisId + ", remoteWorkflowId=" + remoteWorkflowId + ", inputFilesSingle="
 				+ inputFilesSingle + ", inputFilesPaired=" + inputFilesPaired + ", createdDate=" + createdDate
 				+ ", modifiedDate=" + modifiedDate + ", analysisState=" + analysisState + ", analysis=" + analysis

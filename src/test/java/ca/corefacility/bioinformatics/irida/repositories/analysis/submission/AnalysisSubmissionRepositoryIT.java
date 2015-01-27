@@ -82,6 +82,7 @@ public class AnalysisSubmissionRepositoryIT {
 	private final String analysisName2 = "analysis 2";
 	
 	private User submitter;
+	private User nonSubmitter;
 
 	/**
 	 * Sets up objects for test.
@@ -105,6 +106,7 @@ public class AnalysisSubmissionRepositoryIT {
 		assertNotNull(referenceFile);
 		
 		submitter = userRepository.findOne(1L);
+		nonSubmitter = userRepository.findOne(2L);
 
 		analysisSubmission = AnalysisSubmission.createSubmissionSingleReference(submitter, analysisName, sequenceFiles,
 				referenceFile, workflowId);
@@ -216,5 +218,33 @@ public class AnalysisSubmissionRepositoryIT {
 		assertEquals(Sets.newHashSet(sequenceFile), savedSubmission.getSingleInputFiles());
 		assertEquals(Sets.newHashSet(sequenceFilePair), savedSubmission.getPairedInputFiles());
 		assertFalse(savedSubmission.getReferenceFile().isPresent());
+	}
+	
+	/**
+	 * Tests successfully finding an analysis submission by the submitter.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFindBySubmitterSuccess() {
+		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmission);
+
+		Set<AnalysisSubmission> submissions = analysisSubmissionRepository.findBySubmitter(submitter);
+		assertNotNull("submissions should not be null", submissions);
+		assertEquals("there are an invalid number of submissions found", 1, submissions.size());
+		AnalysisSubmission returnedSubmission = submissions.iterator().next();
+		assertEquals("the id of the submission returned is incorrect", savedSubmission.getId(), returnedSubmission.getId());
+		assertEquals("the submitter of the submission returned is incorrect", savedSubmission.getSubmitter().getId(), submitter.getId());
+	}
+
+	/**
+	 * Tests failing to find an analysis submission by the submitter.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFindBySubmitterFail() {
+		analysisSubmissionRepository.save(analysisSubmission);
+
+		Set<AnalysisSubmission> submissions = analysisSubmissionRepository.findBySubmitter(nonSubmitter);
+		assertEquals("there should be no submissions found", 0, submissions.size());
 	}
 }
