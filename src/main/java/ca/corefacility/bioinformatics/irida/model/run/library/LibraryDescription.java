@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.model.project.library;
+package ca.corefacility.bioinformatics.irida.model.run.library;
 
 import java.util.Date;
 import java.util.Objects;
