@@ -44,14 +44,17 @@ import ca.corefacility.bioinformatics.irida.model.user.Organization;
 @EntityListeners(AuditingEntityListener.class)
 public class Project implements IridaThing, IridaProject, Comparable<Project> {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+
+	private String name;
+
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-	private String name;
+
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
