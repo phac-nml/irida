@@ -65,7 +65,8 @@ public class SequenceFilePairTest {
 	 */
 	@Test
 	public void testGetForwardSuccess() {
-		assertEquals(sequenceFileForwardGood, sequenceFilePairGood.getForwardSequenceFile());
+		assertEquals("forward sequence file not properly identified", sequenceFileForwardGood,
+				sequenceFilePairGood.getForwardSequenceFile());
 	}
 
 	/**
@@ -73,7 +74,8 @@ public class SequenceFilePairTest {
 	 */
 	@Test
 	public void testGetReverseSuccess() {
-		assertEquals(sequenceFileReverseGood, sequenceFilePairGood.getReverseSequenceFile());
+		assertEquals("reverse sequence file not properly identified", sequenceFileReverseGood,
+				sequenceFilePairGood.getReverseSequenceFile());
 	}
 
 	/**
