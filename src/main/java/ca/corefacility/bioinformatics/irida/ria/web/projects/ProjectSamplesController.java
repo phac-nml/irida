@@ -597,7 +597,8 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Type of sample being returned
+	 * Type of sample being displayed in the project/samples page. This will be
+	 * used to determine how to link to resources and add them to the cart.
 	 * 
 	 * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
 	 *
