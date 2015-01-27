@@ -1,6 +1,6 @@
 {
     "a_galaxy_workflow": "true", 
-    "annotation": "", 
+    "annotation": "SNVPhyl Pipeline", 
     "format-version": "0.1", 
     "name": "SNVPhyl Pipeline", 
     "steps": {
@@ -28,13 +28,13 @@
             "user_outputs": []
         }, 
         "1": {
-            "annotation": "A list of single-end fastq files.", 
+            "annotation": "A list of paired-end fastq files.", 
             "id": 1, 
             "input_connections": {}, 
             "inputs": [
                 {
-                    "description": "A list of single-end fastq files.", 
-                    "name": "sequence_reads"
+                    "description": "A list of paired-end fastq files.", 
+                    "name": "sequence_reads_paired"
                 }
             ], 
             "name": "Input dataset collection", 
@@ -45,7 +45,7 @@
             }, 
             "tool_errors": null, 
             "tool_id": null, 
-            "tool_state": "{\"collection_type\": \"list\", \"name\": \"sequence_reads\"}", 
+            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads_paired\"}", 
             "tool_version": null, 
             "type": "data_collection_input", 
             "user_outputs": []
@@ -147,7 +147,7 @@
             "annotation": "", 
             "id": 4, 
             "input_connections": {
-                "singlePaired|sInput1": {
+                "singlePaired|fastq_collection": {
                     "id": 1, 
                     "output_name": "output"
                 }, 
@@ -181,7 +181,7 @@
             }, 
             "tool_errors": null, 
             "tool_id": "irida.corefacility.ca/galaxy-shed/repos/irida/smalt_collection/smalt_map/0.0.3", 
-            "tool_state": "{\"minbasq\": \"\\\"\\\"\", \"__page__\": 0, \"insertmin\": \"\\\"\\\"\", \"mincover\": \"\\\"\\\"\", \"insfil\": \"null\", \"scordiff\": \"\\\"\\\"\", \"insertmax\": \"\\\"\\\"\", \"singlePaired\": \"{\\\"sInput1\\\": null, \\\"sPaired\\\": \\\"single\\\", \\\"__current_case__\\\": 0}\", \"minid\": \"\\\"0.5\\\"\", \"__rerun_remap_job_id__\": null, \"search_harder\": \"\\\"False\\\"\", \"seed\": \"\\\"-1\\\"\", \"threads\": \"\\\"8\\\"\", \"sw_weighted\": \"\\\"False\\\"\", \"smi\": \"null\", \"outformat\": \"\\\"sam\\\"\", \"pairtype\": \"\\\"se\\\"\", \"minscor\": \"\\\"\\\"\", \"sma\": \"null\"}", 
+            "tool_state": "{\"minbasq\": \"\\\"\\\"\", \"__page__\": 0, \"insertmin\": \"\\\"20\\\"\", \"mincover\": \"\\\"\\\"\", \"insfil\": \"null\", \"scordiff\": \"\\\"\\\"\", \"insertmax\": \"\\\"1000\\\"\", \"singlePaired\": \"{\\\"fastq_collection\\\": null, \\\"sPaired\\\": \\\"collections\\\", \\\"__current_case__\\\": 3}\", \"minid\": \"\\\"0.5\\\"\", \"__rerun_remap_job_id__\": null, \"search_harder\": \"\\\"False\\\"\", \"seed\": \"\\\"-1\\\"\", \"threads\": \"\\\"2\\\"\", \"sw_weighted\": \"\\\"False\\\"\", \"smi\": \"null\", \"outformat\": \"\\\"sam\\\"\", \"pairtype\": \"\\\"pe\\\"\", \"minscor\": \"\\\"\\\"\", \"sma\": \"null\"}", 
             "tool_version": "0.0.3", 
             "type": "tool", 
             "user_outputs": []

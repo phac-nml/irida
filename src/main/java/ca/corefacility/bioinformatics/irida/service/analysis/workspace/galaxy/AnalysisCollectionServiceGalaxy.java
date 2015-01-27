@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -198,19 +197,18 @@ public class AnalysisCollectionServiceGalaxy {
 		description.setCollectionType(DatasetCollectionType.LIST_PAIRED.toString());
 		description.setName(COLLECTION_NAME_PAIRED);
 
-		Map<Sample, Path> samplesMapPair1 = new HashMap<>();
-		Map<Sample, Path> samplesMapPair2 = new HashMap<>();
+		Map<Sample, Path> samplesMapPairForward = new HashMap<>();
+		Map<Sample, Path> samplesMapPairReverse = new HashMap<>();
 		Set<Path> pathsToUpload = new HashSet<>();
 		for (Sample sample : sampleSequenceFilesPaired.keySet()) {
 			SequenceFilePair sequenceFilePair = sampleSequenceFilesPaired.get(sample);
-			Iterator<SequenceFile> fileIter = sequenceFilePair.getFiles().iterator();
-			SequenceFile file1 = fileIter.next();
-			SequenceFile file2 = fileIter.next();
+			SequenceFile fileForward = sequenceFilePair.getForwardSequenceFile();
+			SequenceFile fileReverse = sequenceFilePair.getReverseSequenceFile();
 
-			samplesMapPair1.put(sample, file1.getFile());
-			samplesMapPair2.put(sample, file2.getFile());
-			pathsToUpload.add(file1.getFile());
-			pathsToUpload.add(file2.getFile());
+			samplesMapPairForward.put(sample, fileForward.getFile());
+			samplesMapPairReverse.put(sample, fileReverse.getFile());
+			pathsToUpload.add(fileForward.getFile());
+			pathsToUpload.add(fileReverse.getFile());
 		}
 
 		// upload files to library and then to a history
@@ -218,30 +216,30 @@ public class AnalysisCollectionServiceGalaxy {
 				InputFileType.FASTQ_SANGER, workflowHistory, workflowLibrary, DataStorage.LOCAL);
 
 		for (Sample sample : sampleSequenceFilesPaired.keySet()) {
-			Path file1 = samplesMapPair1.get(sample);
-			Path file2 = samplesMapPair2.get(sample);
+			Path fileForward = samplesMapPairForward.get(sample);
+			Path fileReverse = samplesMapPairReverse.get(sample);
 
-			if (!pathHistoryDatasetId.containsKey(file1)) {
-				throw new UploadException("Error, no corresponding history item found for " + file1);
-			} else if (!pathHistoryDatasetId.containsKey(file2)) {
-				throw new UploadException("Error, no corresponding history item found for " + file2);
+			if (!pathHistoryDatasetId.containsKey(fileForward)) {
+				throw new UploadException("Error, no corresponding history item found for " + fileForward);
+			} else if (!pathHistoryDatasetId.containsKey(fileReverse)) {
+				throw new UploadException("Error, no corresponding history item found for " + fileReverse);
 			} else {
-				String datasetHistoryId1 = pathHistoryDatasetId.get(file1);
-				String datasetHistoryId2 = pathHistoryDatasetId.get(file2);
+				String datasetHistoryIdForward = pathHistoryDatasetId.get(fileForward);
+				String datasetHistoryIdReverse = pathHistoryDatasetId.get(fileReverse);
 
 				CollectionElement pairedElement = new CollectionElement();
 				pairedElement.setName(sample.getSampleName());
 				pairedElement.setCollectionType(DatasetCollectionType.PAIRED.toString());
 
-				HistoryDatasetElement datasetElement1 = new HistoryDatasetElement();
-				datasetElement1.setId(datasetHistoryId1);
-				datasetElement1.setName(FORWARD_NAME);
-				pairedElement.addCollectionElement(datasetElement1);
+				HistoryDatasetElement datasetElementForward = new HistoryDatasetElement();
+				datasetElementForward.setId(datasetHistoryIdForward);
+				datasetElementForward.setName(FORWARD_NAME);
+				pairedElement.addCollectionElement(datasetElementForward);
 
-				HistoryDatasetElement datasetElement2 = new HistoryDatasetElement();
-				datasetElement2.setId(datasetHistoryId2);
-				datasetElement2.setName(REVERSE_NAME);
-				pairedElement.addCollectionElement(datasetElement2);
+				HistoryDatasetElement datasetElementReverse = new HistoryDatasetElement();
+				datasetElementReverse.setId(datasetHistoryIdReverse);
+				datasetElementReverse.setName(REVERSE_NAME);
+				pairedElement.addCollectionElement(datasetElementReverse);
 
 				description.addDatasetElement(pairedElement);
 			}
