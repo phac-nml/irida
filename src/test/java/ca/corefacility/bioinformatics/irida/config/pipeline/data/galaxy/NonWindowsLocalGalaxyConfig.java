@@ -296,8 +296,12 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	private void buildTestTools(Path galaxyRoot, GalaxyProperties galaxyProperties, LocalGalaxy localGalaxy) throws URISyntaxException, IOException {
 		Path collectionExampleToolSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
 				"collection_list_paired.xml").toURI());
-		Path corePipelineOutputsToolSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
+		Path corePipelineOutputsSingleToolSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
 				"core_pipeline_outputs.xml").toURI());
+		Path corePipelineOutputsPairedToolSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
+				"core_pipeline_outputs_paired.xml").toURI());
+		Path corePipelineOutputsSinglePairedToolSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
+				"core_pipeline_outputs_single_paired.xml").toURI());
 		Path iridaToolConfigSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
 				"tool_conf_irida.xml").toURI());
 
@@ -308,8 +312,14 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 				exampleToolDirectory.resolve("collection_list_paired.xml");
 		Path corePipelineExampleToolDestination = 
 				exampleToolDirectory.resolve("core_pipeline_outputs.xml");
+		Path corePipelinePairedExampleToolDestination = 
+				exampleToolDirectory.resolve("core_pipeline_outputs_paired.xml");
+		Path corePipelineSinglePairedExampleToolDestination = 
+				exampleToolDirectory.resolve("core_pipeline_outputs_single_paired.xml");
 		Files.copy(collectionExampleToolSource, collectionExampleToolDestination);
-		Files.copy(corePipelineOutputsToolSource, corePipelineExampleToolDestination);
+		Files.copy(corePipelineOutputsSingleToolSource, corePipelineExampleToolDestination);
+		Files.copy(corePipelineOutputsPairedToolSource, corePipelinePairedExampleToolDestination);
+		Files.copy(corePipelineOutputsSinglePairedToolSource, corePipelineSinglePairedExampleToolDestination);
 		
 		Path iridaToolConfigDestination = galaxyRoot.resolve("tool_conf_irida.xml");
 		Files.copy(iridaToolConfigSource, iridaToolConfigDestination);

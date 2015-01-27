@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+  <id>b8c3916c-846e-4a78-96a9-9630911257cd</id>
+  <name>SNVPhylTestPaired</name>
+  <version>0.1-paired</version>
+  <author>Aaron Petkau</author>
+  <email>aaron.petkau@phac-aspc.gc.ca</email>
+  <analysisType>phylogenomics</analysisType>
+  <inputs>
+    <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+    <reference>reference</reference>
+  </inputs>
+  <outputs>
+    <output name="tree" fileName="phylogeneticTree.txt"/>
+    <output name="matrix" fileName="snpMatrix.tsv"/>
+    <output name="table" fileName="snpTable.tsv"/>
+  </outputs>
+  <toolRepositories>
+    <repository>
+      <name>sam_to_bam</name>
+      <owner>devteam</owner>
+      <url>http://toolshed.g2.bx.psu.edu/</url>
+      <revision>8176b2575aa1</revision>
+    </repository>
+  </toolRepositories>
+</iridaWorkflow>

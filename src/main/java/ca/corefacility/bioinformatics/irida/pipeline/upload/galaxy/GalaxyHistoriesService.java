@@ -233,7 +233,7 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	 *            The library to initially upload the file into.
 	 * @param dataStorage
 	 *            The type of DataStorage strategy to use.
-	 * @return An @{link Map} of paths and ids for each dataset object in this
+	 * @return An {@link Map} of paths and ids for each dataset object in this
 	 *         history.
 	 * @throws UploadException
 	 *             If there was an issue uploading the file to Galaxy.

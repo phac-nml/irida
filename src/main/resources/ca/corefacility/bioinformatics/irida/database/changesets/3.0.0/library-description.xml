@@ -60,45 +60,6 @@
 			<column name="protocol" type="longtext" />
 		</createTable>
 
-		<createTable tableName="project_library_description">
-			<column name="id" type="bigint(20)" autoIncrement="true">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="created_date" type="datetime">
-				<constraints nullable="false" />
-			</column>
-			<column name="default_library_description" type="bit(1)">
-				<constraints nullable="false" />
-			</column>
-			<column name="library_description_id" type="bigint(20)">
-				<constraints nullable="false" foreignKeyName="FK_PROJECT_LIB_DESC_LIB_DESC"
-					referencedTableName="library_description" referencedColumnNames="id" />
-			</column>
-			<column name="project_id" type="bigint(20)">
-				<constraints nullable="false" foreignKeyName="FK_PROJECT_LIB_DESC_PROJECT"
-					referencedTableName="project" referencedColumnNames="id" />
-			</column>
-		</createTable>
-
-		<addUniqueConstraint constraintName="UK_PROJECT_LIBRARY_DESCRIPTION"
-			tableName="project_library_description" columnNames="project_id,library_description_id" />
-
-		<createTable tableName="project_library_description_AUD">
-			<column name="id" type="bigint(20)">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="REV" type="int(11)">
-				<constraints primaryKey="true" nullable="false"
-					foreignKeyName="FK_PROJECT_LIB_DESC_REVISION"
-					referencedColumnNames="id" referencedTableName="Revisions" />
-			</column>
-			<column name="REVTYPE" type="tinyint(4)" />
-			<column name="created_date" type="datetime" />
-			<column name="default_library_description" type="bit(1)" />
-			<column name="library_description_id" type="bigint(20)" />
-			<column name="project_id" type="bigint(20)" />
-		</createTable>
-
 		<addColumn tableName="sequence_file">
 			<column name="library_description_id" type="bigint(20)">
 				<constraints referencedTableName="library_description"

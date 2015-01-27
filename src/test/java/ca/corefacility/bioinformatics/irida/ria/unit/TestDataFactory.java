@@ -13,6 +13,7 @@ import java.util.UUID;
 import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -22,12 +23,19 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
 import ca.corefacility.bioinformatics.irida.model.upload.UploadResult;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowToolRepository;
+import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -171,6 +179,17 @@ public class TestDataFactory {
 
 			}
 		};
+	}
+
+	public static IridaWorkflow getIridaWorkflow(UUID id) {
+		IridaWorkflowInput input = new IridaWorkflowInput();
+		List<IridaWorkflowOutput> outputs = ImmutableList.of(new IridaWorkflowOutput());
+		List<IridaWorkflowToolRepository> tools = ImmutableList.of();
+		IridaWorkflowDescription description = new IridaWorkflowDescription(id, "My Workflow", "V1", "Test User",
+				"me@me.com",
+				AnalysisType.DEFAULT, input, outputs, tools);
+		IridaWorkflowStructure structure = new IridaWorkflowStructure(null);
+		return new IridaWorkflow(description, structure);
 	}
 
 	public static Map<Project, Set<Sample>> constructCart() {

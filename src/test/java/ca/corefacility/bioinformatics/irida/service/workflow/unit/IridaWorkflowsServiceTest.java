@@ -44,9 +44,9 @@ public class IridaWorkflowsServiceTest {
 
 	@Before
 	public void setup() throws IridaWorkflowException {
-		iridaWorkflow = IridaWorkflowTestBuilder.buildTestWorkflow(iridaWorkflowId);
-		iridaWorkflow2 = IridaWorkflowTestBuilder.buildTestWorkflow(iridaWorkflowId2);
-		iridaWorkflow3 = IridaWorkflowTestBuilder.buildTestWorkflow(iridaWorkflowId3);
+		iridaWorkflow = IridaWorkflowTestBuilder.buildTestWorkflow(iridaWorkflowId, IridaWorkflowTestBuilder.Input.SINGLE, "reference");
+		iridaWorkflow2 = IridaWorkflowTestBuilder.buildTestWorkflow(iridaWorkflowId2, IridaWorkflowTestBuilder.Input.SINGLE, "reference");
+		iridaWorkflow3 = IridaWorkflowTestBuilder.buildTestWorkflow(iridaWorkflowId3, IridaWorkflowTestBuilder.Input.SINGLE, "reference");
 
 		iridaWorkflowSet = new IridaWorkflowSet(Sets.newHashSet(iridaWorkflow, iridaWorkflow2));
 		defaultIridaWorkflowIdSet = new IridaWorkflowIdSet(Sets.newHashSet());
@@ -194,7 +194,7 @@ public class IridaWorkflowsServiceTest {
 		iridaWorkflowsService.setDefaultWorkflow(iridaWorkflowId);
 		Map<AnalysisType, IridaWorkflow> defaultWorkflowsMap = iridaWorkflowsService.getAllDefaultWorkflowsByType(Sets
 				.newHashSet(AnalysisType.DEFAULT));
-		assertEquals(ImmutableMap.of(AnalysisType.DEFAULT, iridaWorkflow), defaultWorkflowsMap);
+		assertEquals("invalid type of workflow", ImmutableMap.of(AnalysisType.DEFAULT, iridaWorkflow), defaultWorkflowsMap);
 	}
 
 	/**
@@ -204,7 +204,7 @@ public class IridaWorkflowsServiceTest {
 	 */
 	@Test
 	public void testGetAllWorkflowsByTypeSuccess() throws IridaWorkflowException {
-		assertEquals(Sets.newHashSet(iridaWorkflow, iridaWorkflow2),
+		assertEquals("invalid workflows by type " + AnalysisType.DEFAULT, Sets.newHashSet(iridaWorkflow, iridaWorkflow2),
 				iridaWorkflowsService.getAllWorkflowsByType(AnalysisType.DEFAULT));
 	}
 
@@ -225,7 +225,7 @@ public class IridaWorkflowsServiceTest {
 	 */
 	@Test
 	public void testGetRegisteredWorkflowTypes() throws IridaWorkflowException {
-		assertEquals(Sets.newHashSet(AnalysisType.DEFAULT), iridaWorkflowsService.getRegisteredWorkflowTypes());
+		assertEquals("invalid registered workflow types", Sets.newHashSet(AnalysisType.DEFAULT), iridaWorkflowsService.getRegisteredWorkflowTypes());
 	}
 
 	/**
@@ -235,7 +235,7 @@ public class IridaWorkflowsServiceTest {
 	 */
 	@Test
 	public void testGetIridaWorkflowSuccess() throws IridaWorkflowException {
-		assertEquals(iridaWorkflow, iridaWorkflowsService.getIridaWorkflow(iridaWorkflowId));
+		assertEquals("invalid workflow", iridaWorkflow, iridaWorkflowsService.getIridaWorkflow(iridaWorkflowId));
 	}
 
 	/**
@@ -253,6 +253,6 @@ public class IridaWorkflowsServiceTest {
 	 */
 	@Test
 	public void testGetRegisteredWorkflows() {
-		assertEquals(Sets.newHashSet(iridaWorkflow, iridaWorkflow2), iridaWorkflowsService.getRegisteredWorkflows());
+		assertEquals("invalid registered workflows", Sets.newHashSet(iridaWorkflow, iridaWorkflow2), iridaWorkflowsService.getRegisteredWorkflows());
 	}
 }

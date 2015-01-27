@@ -9,6 +9,9 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -42,6 +45,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryExc
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
@@ -61,6 +65,8 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Tests out the analysis service for the Galaxy analyses.
@@ -107,7 +113,11 @@ public class AnalysisExecutionServiceGalaxyIT {
 	private ExecutorService analysisTaskExecutor;
 
 	private Path sequenceFilePath;
+	private Path sequenceFilePath2;
 	private Path referenceFilePath;
+	
+	private List<Path> pairedPaths1;
+	private List<Path> pairedPaths2;
 
 	private Path expectedSnpMatrix;
 	private Path expectedSnpTable;
@@ -118,6 +128,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	private UUID validIridaWorkflowId = UUID.fromString("c5f29cb2-1b68-4d34-9b93-609266af7551");
 	private UUID invalidIridaWorkflowId = UUID.fromString("8ec369e8-1b39-4b9a-97a1-70ac1f6cc9e6");
 	private UUID iridaPhylogenomicsWorkflowId = UUID.fromString("1f9ea289-5053-4e4a-bc76-1f0c60b179f8");
+	private UUID iridaPhylogenomicsPairedWorkflowId = UUID.fromString("b8c3916c-846e-4a78-96a9-9630911257cd");
 	private UUID iridaTestAnalysisWorkflowId = UUID.fromString("c5f29cb2-1b68-4d34-9b93-609266af7551");
 	private UUID iridaWorkflowIdInvalidWorkflowFile = UUID.fromString("d54f1780-e6c9-472a-92dd-63520ec85967");
 	private UUID iridaTestAnalysisWorkflowIdMissingOutput = UUID.fromString("63038f49-9f2c-4850-9de3-deb9eaf57512");
@@ -144,17 +155,25 @@ public class AnalysisExecutionServiceGalaxyIT {
 		expectedOutputFile2 = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("output2.txt").toURI());
 
-		sequenceFilePath = Files.createTempFile("testData1", ".fastq");
-		Files.delete(sequenceFilePath);
-		Files.copy(sequenceFilePathReal, sequenceFilePath);
+		Path tempDir = Files.createTempDirectory("analysisExecutionTest");
+		
+		sequenceFilePath = tempDir.resolve("testData1_R1_001.fastq");
+		Files.copy(sequenceFilePathReal, sequenceFilePath, StandardCopyOption.REPLACE_EXISTING);
+		
+		sequenceFilePath2 = tempDir.resolve("testData1_R2_001.fastq");
+		Files.copy(sequenceFilePathReal, sequenceFilePath2, StandardCopyOption.REPLACE_EXISTING);
 
 		referenceFilePath = Files.createTempFile("testReference", ".fasta");
-		Files.delete(referenceFilePath);
-		Files.copy(referenceFilePathReal, referenceFilePath);
+		Files.copy(referenceFilePathReal, referenceFilePath, StandardCopyOption.REPLACE_EXISTING);
 
 		expectedSnpMatrix = localGalaxy.getWorkflowCorePipelineTestMatrix();
 		expectedSnpTable = localGalaxy.getWorkflowCorePipelineTestSnpTable();
 		expectedTree = localGalaxy.getWorkflowCorePipelineTestTree();
+		
+		pairedPaths1 = Lists.newArrayList();
+		pairedPaths1.add(sequenceFilePath);
+		pairedPaths2 = Lists.newArrayList();
+		pairedPaths2.add(sequenceFilePath2);
 	}
 	
 	/**
@@ -481,6 +500,106 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals(analysisResultsPhylogenomics.getSnpMatrix().getFile(), savedPhylogenomics.getSnpMatrix().getFile());
 		assertEquals(analysisResultsPhylogenomics.getSnpTable().getFile(), savedPhylogenomics.getSnpTable().getFile());
 		assertEquals(analysisResultsPhylogenomics.getInputSequenceFiles(), savedPhylogenomics.getInputSequenceFiles());
+	}
+	
+	/**
+	 * Tests out getting analysis results successfully for phylogenomics
+	 * pipeline (paired test version).
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testTransferAnalysisResultsSuccessPhylogenomicsPaired() throws Exception {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
+				pairedPaths1, pairedPaths2, referenceFilePath, iridaPhylogenomicsPairedWorkflowId);
+		SequenceFilePair sequenceFilePair = analysisSubmission.getPairedInputFiles().iterator().next();
+		Iterator<SequenceFile> sequenceFilePairIter = sequenceFilePair.getFiles().iterator();
+		SequenceFile sequenceFile1 = sequenceFilePairIter.next();
+		SequenceFile sequenceFile2 = sequenceFilePairIter.next();
+
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+
+		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
+				.executeAnalysis(analysisSubmitted);
+		AnalysisSubmission analysisExecuted = analysisExecutionFuture.get();
+
+		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
+
+		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
+		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
+				.transferAnalysisResults(analysisExecuted);
+		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
+		assertEquals("invalid number of analyses for input sequence file in database", 1, analysisRepository
+				.findAnalysesForSequenceFile(sequenceFile1, AnalysisPhylogenomicsPipeline.class).size());
+		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
+				.getId());
+		assertEquals("analysis state is not completed", AnalysisState.COMPLETED,
+				analysisSubmissionCompletedDatabase.getAnalysisState());
+		assertEquals("analysis state is not completed", AnalysisState.COMPLETED,
+				analysisSubmissionCompleted.getAnalysisState());
+
+		Analysis analysisResults = analysisSubmissionCompleted.getAnalysis();
+		Analysis analysisResultsDatabase = analysisSubmissionCompletedDatabase.getAnalysis();
+		assertEquals("analysis results in returned submission and from database should be the same",
+				analysisResults.getId(), analysisResultsDatabase.getId());
+
+		assertEquals("analysis results is an invalid class", AnalysisPhylogenomicsPipeline.class,
+				analysisResults.getClass());
+		AnalysisPhylogenomicsPipeline analysisResultsPhylogenomics = (AnalysisPhylogenomicsPipeline) analysisResults;
+
+		String analysisId = analysisExecuted.getRemoteAnalysisId();
+		assertEquals("id should be set properly for analysis", analysisId,
+				analysisResultsPhylogenomics.getExecutionManagerAnalysisId());
+
+		assertEquals("inputFiles for the analysis should be set correctly",
+				Sets.newHashSet(sequenceFile1, sequenceFile2), analysisResultsPhylogenomics.getInputSequenceFiles());
+
+		assertEquals("invalid number of output files", 3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
+		AnalysisOutputFile phylogeneticTree = analysisResultsPhylogenomics.getPhylogeneticTree();
+		AnalysisOutputFile snpMatrix = analysisResultsPhylogenomics.getSnpMatrix();
+		AnalysisOutputFile snpTable = analysisResultsPhylogenomics.getSnpTable();
+
+		assertTrue("phylogenetic trees should be equal",
+				com.google.common.io.Files.equal(expectedTree.toFile(), phylogeneticTree.getFile().toFile()));
+		assertEquals("invalid file name for snp tree", expectedTree.getFileName(), phylogeneticTree.getFile()
+				.getFileName());
+
+		assertTrue("snp matrices should be correct",
+				com.google.common.io.Files.equal(expectedSnpMatrix.toFile(), snpMatrix.getFile().toFile()));
+		assertEquals("invalid file name for snp matrix", expectedSnpMatrix.getFileName(), snpMatrix.getFile()
+				.getFileName());
+
+		assertTrue("snpTable should be correct",
+				com.google.common.io.Files.equal(expectedSnpTable.toFile(), snpTable.getFile().toFile()));
+		assertEquals("invalid file name for snp table", expectedSnpTable.getFileName(), snpTable.getFile()
+				.getFileName());
+
+		AnalysisSubmission finalSubmission = analysisSubmissionRepository.findOne(analysisExecuted.getId());
+		Analysis analysis = finalSubmission.getAnalysis();
+		assertNotNull("analysis should not be null in submission", analysis);
+
+		Analysis savedAnalysisFromDatabase = analysisService.read(analysisResultsPhylogenomics.getId());
+		assertTrue("saved analysis in submission is not correct class",
+				savedAnalysisFromDatabase instanceof AnalysisPhylogenomicsPipeline);
+		AnalysisPhylogenomicsPipeline savedPhylogenomics = (AnalysisPhylogenomicsPipeline) savedAnalysisFromDatabase;
+
+		assertEquals("Analysis from submission and from database should be the same",
+				savedAnalysisFromDatabase.getId(), analysis.getId());
+
+		assertEquals("analysis results from database and from submission should have correct id",
+				analysisResultsPhylogenomics.getId(), savedPhylogenomics.getId());
+		assertEquals("analysis results from database and from submission should have correct tree output file",
+				analysisResultsPhylogenomics.getPhylogeneticTree().getFile(), savedPhylogenomics.getPhylogeneticTree()
+						.getFile());
+		assertEquals("analysis results from database and from submission should have correct matrix output file",
+				analysisResultsPhylogenomics.getSnpMatrix().getFile(), savedPhylogenomics.getSnpMatrix().getFile());
+		assertEquals("analysis results from database and from submission should have correct table output file",
+				analysisResultsPhylogenomics.getSnpTable().getFile(), savedPhylogenomics.getSnpTable().getFile());
+		assertEquals("analysis results from database and from submission should have correct input sequence files",
+				analysisResultsPhylogenomics.getInputSequenceFiles(), savedPhylogenomics.getInputSequenceFiles());
 	}
 	
 	/**

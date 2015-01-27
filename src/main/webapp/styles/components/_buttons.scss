@@ -9,6 +9,11 @@
   line-height: 3;
 }
 
-.btn.round {
-  border-radius: 50%;
+.btn-action {
+  border: 1rem solid $irida-colour-grey !important;
+}
+
+.btn-affixed {
+  width: 100%;
+  white-space: normal !important;
 }

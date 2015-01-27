@@ -8,6 +8,9 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -30,7 +33,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
@@ -75,10 +78,20 @@ public class SNVPhylAnalysisIT {
 
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
-	private Path sequenceFilePathA;
-	private Path sequenceFilePathB;
-	private Path sequenceFilePathC;
+	private Path sequenceFilePathA1;
+	private Path sequenceFilePathA2;
+	private Path sequenceFilePathB1;
+	private Path sequenceFilePathB2;
+	private Path sequenceFilePathC1;
+	private Path sequenceFilePathC2;
 	private Path referenceFilePath;
+	
+	private List<Path> sequenceFilePathsA1List;
+	private List<Path> sequenceFilePathsA2List;
+	private List<Path> sequenceFilePathsB1List;
+	private List<Path> sequenceFilePathsB2List;
+	private List<Path> sequenceFilePathsC1List;
+	private List<Path> sequenceFilePathsC2List;
 
 	private Path outputSnpTable;
 	private Path outputSnpMatrix;
@@ -95,31 +108,56 @@ public class SNVPhylAnalysisIT {
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService);
+		
+		Path tempDir = Files.createTempDirectory("snvphylTest");
 
-		Path sequenceFilePathRealA = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/input/fastq/a.fastq")
-				.toURI());
-		Path sequenceFilePathRealB = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/input/fastq/b.fastq")
-				.toURI());
-		Path sequenceFilePathRealC = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/input/fastq/c.fastq")
-				.toURI());
+		Path sequenceFilePathRealA1 = Paths.get(SNVPhylAnalysisIT.class.getResource(
+				"SNVPhyl/test1/input/fastq/a_1.fastq").toURI());
+		Path sequenceFilePathRealA2 = Paths.get(SNVPhylAnalysisIT.class.getResource(
+				"SNVPhyl/test1/input/fastq/a_2.fastq").toURI());
+		Path sequenceFilePathRealB1 = Paths.get(SNVPhylAnalysisIT.class.getResource(
+				"SNVPhyl/test1/input/fastq/b_1.fastq").toURI());
+		Path sequenceFilePathRealB2 = Paths.get(SNVPhylAnalysisIT.class.getResource(
+				"SNVPhyl/test1/input/fastq/b_2.fastq").toURI());
+		Path sequenceFilePathRealC1 = Paths.get(SNVPhylAnalysisIT.class.getResource(
+				"SNVPhyl/test1/input/fastq/c_1.fastq").toURI());
+		Path sequenceFilePathRealC2 = Paths.get(SNVPhylAnalysisIT.class.getResource(
+				"SNVPhyl/test1/input/fastq/c_2.fastq").toURI());
 		Path referenceFilePathReal = Paths.get(SNVPhylAnalysisIT.class.getResource(
 				"SNVPhyl/test1/input/reference.fasta").toURI());
 
-		sequenceFilePathA = Files.createTempFile("a", ".fastq");
-		Files.delete(sequenceFilePathA);
-		Files.copy(sequenceFilePathRealA, sequenceFilePathA);
+		sequenceFilePathA1 = tempDir.resolve("a_R1_001.fastq");
+		Files.copy(sequenceFilePathRealA1, sequenceFilePathA1, StandardCopyOption.REPLACE_EXISTING);
+		sequenceFilePathA2 = tempDir.resolve("a_R2_001.fastq");
+		Files.copy(sequenceFilePathRealA2, sequenceFilePathA2, StandardCopyOption.REPLACE_EXISTING);
 
-		sequenceFilePathB = Files.createTempFile("b", ".fastq");
-		Files.delete(sequenceFilePathB);
-		Files.copy(sequenceFilePathRealB, sequenceFilePathB);
+		sequenceFilePathB1 = tempDir.resolve("b_R1_001.fastq");
+		Files.copy(sequenceFilePathRealB1, sequenceFilePathB1, StandardCopyOption.REPLACE_EXISTING);
+		sequenceFilePathB2 = tempDir.resolve("b_R2_001.fastq");
+		Files.copy(sequenceFilePathRealB2, sequenceFilePathB2, StandardCopyOption.REPLACE_EXISTING);
 
-		sequenceFilePathC = Files.createTempFile("c", ".fastq");
-		Files.delete(sequenceFilePathC);
-		Files.copy(sequenceFilePathRealC, sequenceFilePathC);
+		sequenceFilePathC1 = tempDir.resolve("c_R1_001.fastq");
+		Files.copy(sequenceFilePathRealC1, sequenceFilePathC1, StandardCopyOption.REPLACE_EXISTING);
+		sequenceFilePathC2 = tempDir.resolve("c_R2_001.fastq");
+		Files.copy(sequenceFilePathRealC2, sequenceFilePathC2, StandardCopyOption.REPLACE_EXISTING);
+
+		sequenceFilePathsA1List = new LinkedList<>();
+		sequenceFilePathsA1List.add(sequenceFilePathA1);
+		sequenceFilePathsA2List = new LinkedList<>();
+		sequenceFilePathsA2List.add(sequenceFilePathA2);
+
+		sequenceFilePathsB1List = new LinkedList<>();
+		sequenceFilePathsB1List.add(sequenceFilePathB1);
+		sequenceFilePathsB2List = new LinkedList<>();
+		sequenceFilePathsB2List.add(sequenceFilePathB2);
+
+		sequenceFilePathsC1List = new LinkedList<>();
+		sequenceFilePathsC1List.add(sequenceFilePathC1);
+		sequenceFilePathsC2List = new LinkedList<>();
+		sequenceFilePathsC2List.add(sequenceFilePathC2);
 
 		referenceFilePath = Files.createTempFile("reference", ".fasta");
-		Files.delete(referenceFilePath);
-		Files.copy(referenceFilePathReal, referenceFilePath);
+		Files.copy(referenceFilePathReal, referenceFilePath, StandardCopyOption.REPLACE_EXISTING);
 
 		outputSnpTable = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output/snpTable.tsv").toURI());
 		outputSnpMatrix = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output/snpMatrix.tsv").toURI());
@@ -151,15 +189,15 @@ public class SNVPhylAnalysisIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSNVPhylSuccess() throws Exception {
-		SequenceFile sequenceFileA = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(1L,
-				sequenceFilePathA).get(0);
-		SequenceFile sequenceFileB = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(2L,
-				sequenceFilePathB).get(0);
-		SequenceFile sequenceFileC = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(3L,
-				sequenceFilePathC).get(0);
+		SequenceFilePair sequenceFilePairA = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePathsA1List, sequenceFilePathsA2List).get(0);
+		SequenceFilePair sequenceFilePairB = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(2L,
+				sequenceFilePathsB1List, sequenceFilePathsB2List).get(0);
+		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(3L,
+				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
 
-		AnalysisSubmission submission = databaseSetupGalaxyITService.setupSubmissionInDatabase(1L,
-				Sets.newHashSet(sequenceFileA, sequenceFileB, sequenceFileC), referenceFilePath,
+		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
+				Sets.newHashSet(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC), referenceFilePath,
 				snvPhylWorkflow.getWorkflowIdentifier());
 
 		completeSubmittedAnalyses(submission.getId());
@@ -173,16 +211,16 @@ public class SNVPhylAnalysisIT {
 
 		assertEquals(3, analysisPhylogenomics.getAnalysisOutputFiles().size());
 		@SuppressWarnings("resource")
-		String matrixContent = new Scanner(analysisPhylogenomics.getSnpMatrix()
-				.getFile().toFile()).useDelimiter("\\Z").next();
+		String matrixContent = new Scanner(analysisPhylogenomics.getSnpMatrix().getFile().toFile()).useDelimiter("\\Z")
+				.next();
 		assertTrue(
 				"snpMatrix should be the same but is \"" + matrixContent + "\"",
 				com.google.common.io.Files.equal(outputSnpMatrix.toFile(), analysisPhylogenomics.getSnpMatrix()
 						.getFile().toFile()));
-		
+
 		@SuppressWarnings("resource")
-		String snpTableContent = new Scanner(analysisPhylogenomics.getSnpMatrix()
-				.getFile().toFile()).useDelimiter("\\Z").next();
+		String snpTableContent = new Scanner(analysisPhylogenomics.getSnpMatrix().getFile().toFile()).useDelimiter(
+				"\\Z").next();
 		assertTrue(
 				"snpTable should be the same but is \"" + snpTableContent + "\"",
 				com.google.common.io.Files.equal(outputSnpTable.toFile(), analysisPhylogenomics.getSnpTable().getFile()
