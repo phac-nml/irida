@@ -350,6 +350,17 @@ public class AssociatedProjectsController {
 		return ImmutableMap.of("result", "success");
 	}
 
+	/**
+	 * Get the associated {@link Sample}s for a given {@link Project}
+	 * 
+	 * @param projectId
+	 *            the ID of the local project
+	 * @param model
+	 *            Model for the view
+	 * @param principal
+	 *            logged in user
+	 * @return Map<String, Object> containing samples: list of samples
+	 */
 	@RequestMapping(value = "/{projectId}/associated/samples")
 	@ResponseBody
 	public Map<String, Object> getAssociatedSamplesForProject(@PathVariable Long projectId, Model model,
@@ -375,16 +386,17 @@ public class AssociatedProjectsController {
 			// get the samples in the project
 			List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(object);
 
+			// get the sample map marking the sample type as ASSOCIATED
 			List<Map<String, Object>> collect = samplesForProject
 					.stream()
 					.map((j) -> ProjectSamplesController.getSampleMap(j.getObject(), j.getSubject(),
-							ProjectSamplesController.SampleType.ASSOCIATED, j.getObject().getId())).collect(Collectors.toList());
+							ProjectSamplesController.SampleType.ASSOCIATED, j.getObject().getId()))
+					.collect(Collectors.toList());
+
 			sampleList.addAll(collect);
 		}
 
-		Map<String, Object> response = ImmutableMap.of("samples", sampleList);
-
-		return response;
+		return ImmutableMap.of("samples", sampleList);
 	}
 
 	/**
@@ -543,17 +555,6 @@ public class AssociatedProjectsController {
 		}
 		map.put("associated", projectsData);
 		return map;
-	}
-
-	public static Map<String, Object> getSampleMap(Sample sample, Project project) {
-		Map<String, Object> sampleMap = new HashMap<>();
-		sampleMap.put("id", sample.getId());
-		sampleMap.put("sampleName", sample.getSampleName());
-		sampleMap.put("organism", sample.getOrganism());
-		sampleMap.put("project", project);
-		sampleMap.put("createdDate", sample.getCreatedDate());
-
-		return sampleMap;
 	}
 
 	/**

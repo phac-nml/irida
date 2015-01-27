@@ -553,13 +553,28 @@ public class ProjectSamplesController {
 		return result;
 	}
 	
-	public static Map<String,Object> getSampleMap(Sample sample, Project project, SampleType type, Number identifier){
-		Map<String,Object> sampleMap = new HashMap<>();
+	/**
+	 * Get the Map format of {@link Sample}s to return for the project/samples
+	 * page
+	 * 
+	 * @param sample
+	 *            The sample to display
+	 * @param project
+	 *            The originating project
+	 * @param type
+	 *            The {@link SampleType} of the sample (LOCAL, ASSOCIATED)
+	 * @param identifier
+	 *            Number to identify the {@link Sample}. NOTE: This will be
+	 *            different for remote samples
+	 * @return
+	 */
+	public static Map<String, Object> getSampleMap(Sample sample, Project project, SampleType type, Number identifier) {
+		Map<String, Object> sampleMap = new HashMap<>();
 		sampleMap.put("sample", sample);
 		sampleMap.put("project", project);
 		sampleMap.put("sampleType", type);
 		sampleMap.put("id", identifier);
-		
+
 		return sampleMap;
 	}
 
@@ -580,9 +595,17 @@ public class ProjectSamplesController {
 		}
 		return errors;
 	}
-	
-	public enum SampleType{
+
+	/**
+	 * Type of sample being returned
+	 * 
+	 * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+	 *
+	 */
+	public enum SampleType {
+		// samples in the local project
 		LOCAL,
+		// samples in associated projects
 		ASSOCIATED;
 	}
 }
