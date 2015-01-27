@@ -70,8 +70,8 @@ public class AnalysisSubmission implements IridaThing {
 	@Column(name="name")
 	private String name;
 	
-	@NotNull
-	@Column(name="submitter")
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, optional=false)
+	@JoinColumn(name="submitter", nullable=false)
 	private User submitter;
 	
 	/**
