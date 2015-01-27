@@ -297,18 +297,18 @@ public class PipelineController extends BaseController {
 
 			if (sequenceFiles.size() > 0 && sequenceFilePairs.size() > 0) {
 				analysisSubmission = AnalysisSubmission
-						.createSubmissionSingleAndPairedReference(name, new HashSet<>(sequenceFiles),
+						.createSubmissionSingleAndPairedReference(null, name, new HashSet<>(sequenceFiles),
 								new HashSet<>(sequenceFilePairs), referenceFile,
 								pipelineId);
 			}
 			else if (sequenceFiles.size() > 0 && sequenceFilePairs.size() == 0) {
 				analysisSubmission = AnalysisSubmission
-						.createSubmissionSingleReference(name, new HashSet<>(sequenceFiles), referenceFile,
+						.createSubmissionSingleReference(null, name, new HashSet<>(sequenceFiles), referenceFile,
 						pipelineId);
 			}
 			else {
 				analysisSubmission = AnalysisSubmission
-						.createSubmissionPairedReference(name, new HashSet<>(sequenceFilePairs),
+						.createSubmissionPairedReference(null, name, new HashSet<>(sequenceFilePairs),
 						referenceFile, pipelineId);
 			}
 

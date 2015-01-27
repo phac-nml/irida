@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
@@ -76,6 +77,9 @@ public class AnalysisExecutionServiceGalaxyTest {
 	private IridaWorkflowStructure iridaWorkflowStructure;
 	@Mock
 	private Path workflowFile;
+	
+	@Mock
+	private User submitter;
 
 	private AnalysisSubmission analysisSubmission;
 	private AnalysisSubmission analysisPreparing;
@@ -112,15 +116,15 @@ public class AnalysisExecutionServiceGalaxyTest {
 		String submissionName = "name";
 		Set<SequenceFile> submissionInputFiles = Sets.newHashSet();
 
-		analysisSubmission = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisPreparing = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisPrepared = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisSubmitting = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisRunning = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisFinishedRunning = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisCompleting = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisCompleted = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisError = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisSubmission = AnalysisSubmission.createSubmissionSingle(submitter, submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisPreparing = AnalysisSubmission.createSubmissionSingle(submitter, submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisPrepared = AnalysisSubmission.createSubmissionSingle(submitter, submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisSubmitting = AnalysisSubmission.createSubmissionSingle(submitter, submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisRunning = AnalysisSubmission.createSubmissionSingle(submitter, submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisFinishedRunning = AnalysisSubmission.createSubmissionSingle(submitter, submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisCompleting = AnalysisSubmission.createSubmissionSingle(submitter, submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisCompleted = AnalysisSubmission.createSubmissionSingle(submitter, submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisError = AnalysisSubmission.createSubmissionSingle(submitter, submissionName, submissionInputFiles, WORKFLOW_ID);
 
 		AnalysisExecutionServiceGalaxyAsync workflowManagementAsync = new AnalysisExecutionServiceGalaxyAsync(
 				analysisSubmissionService, analysisService, galaxyWorkflowService, analysisWorkspaceService,

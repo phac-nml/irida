@@ -35,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflowTestBuilder;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
@@ -88,6 +89,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 	@Mock
 	private AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy;
+	
+	@Mock
+	private User submitter;
 
 	private AnalysisWorkspaceServiceGalaxy workflowPreparation;
 
@@ -170,7 +174,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		inputFiles = new HashSet<>();
 		inputFiles.addAll(Arrays.asList(sFileA, sFileB, sFileC));
 
-		submission = AnalysisSubmission.createSubmissionSingleReference("my analysis", inputFiles, referenceFile,
+		submission = AnalysisSubmission.createSubmissionSingleReference(submitter, "my analysis", inputFiles, referenceFile,
 				workflowId);
 
 		workflowHistory = new History();
@@ -239,7 +243,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Test
 	public void testPrepareAnalysisFilesSinglePairedSuccess() throws ExecutionManagerException,
 			IridaWorkflowNotFoundException {
-		submission = AnalysisSubmission.createSubmissionSingleAndPairedReference("my analysis",
+		submission = AnalysisSubmission.createSubmissionSingleAndPairedReference(submitter, "my analysis",
 				Sets.newHashSet(sampleSequenceFileMap.values()), Sets.newHashSet(sampleSequenceFilePairMap.values()),
 				referenceFile, workflowId);
 
@@ -303,7 +307,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Test
 	public void testPrepareAnalysisFilesSingleSuccess() throws ExecutionManagerException,
 			IridaWorkflowNotFoundException {
-		submission = AnalysisSubmission.createSubmissionSingleReference("my analysis",
+		submission = AnalysisSubmission.createSubmissionSingleReference(submitter, "my analysis",
 				Sets.newHashSet(sampleSequenceFileMap.values()), referenceFile, workflowId);
 		submission.setRemoteAnalysisId(HISTORY_ID);
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
@@ -359,7 +363,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Test
 	public void testPrepareAnalysisFilesPairedSuccess() throws ExecutionManagerException,
 			IridaWorkflowNotFoundException {
-		submission = AnalysisSubmission.createSubmissionPairedReference("my analysis",
+		submission = AnalysisSubmission.createSubmissionPairedReference(submitter, "my analysis",
 				Sets.newHashSet(sampleSequenceFilePairMap.values()), referenceFile, workflowId);
 
 		submission.setRemoteAnalysisId(HISTORY_ID);
@@ -417,7 +421,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Test(expected = SampleAnalysisDuplicateException.class)
 	public void testPrepareAnalysisFilesSinglePairedDuplicateFail() throws ExecutionManagerException,
 			IridaWorkflowNotFoundException {
-		submission = AnalysisSubmission.createSubmissionSingleAndPairedReference("my analysis",
+		submission = AnalysisSubmission.createSubmissionSingleAndPairedReference(submitter, "my analysis",
 				Sets.newHashSet(sampleSequenceFileMap.values()),
 				Sets.newHashSet(sampleSequenceFilePairMapSampleA.values()), referenceFile, workflowId);
 		submission.setRemoteAnalysisId(HISTORY_ID);
@@ -447,7 +451,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareAnalysisFilesPairedNoAcceptFail() throws ExecutionManagerException,
 			IridaWorkflowNotFoundException {
-		submission = AnalysisSubmission.createSubmissionPairedReference("my analysis",
+		submission = AnalysisSubmission.createSubmissionPairedReference(submitter, "my analysis",
 				Sets.newHashSet(sampleSequenceFilePairMap.values()), referenceFile, workflowId);
 		submission.setRemoteAnalysisId(HISTORY_ID);
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
@@ -476,7 +480,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareAnalysisFilesSingleNoAcceptFail() throws ExecutionManagerException,
 			IridaWorkflowNotFoundException {
-		submission = AnalysisSubmission.createSubmissionSingleReference("my analysis",
+		submission = AnalysisSubmission.createSubmissionSingleReference(submitter, "my analysis",
 				Sets.newHashSet(sampleSequenceFileMap.values()), referenceFile, workflowId);
 		submission.setRemoteAnalysisId(HISTORY_ID);
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
@@ -504,7 +508,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareAnalysisFilesNoSubmittedFilesFail() throws ExecutionManagerException,
 			IridaWorkflowNotFoundException {
-		submission = AnalysisSubmission.createSubmissionSingleReference("my analysis",
+		submission = AnalysisSubmission.createSubmissionSingleReference(submitter, "my analysis",
 				Sets.newHashSet(), referenceFile, workflowId);
 		submission.setRemoteAnalysisId(HISTORY_ID);
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
@@ -531,7 +535,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareAnalysisFilesRequiresReferenceFail() throws ExecutionManagerException,
 			IridaWorkflowNotFoundException {
-		submission = AnalysisSubmission.createSubmissionSingle("my analysis",
+		submission = AnalysisSubmission.createSubmissionSingle(submitter, "my analysis",
 				Sets.newHashSet(sampleSequenceFileMap.values()), workflowId);
 		submission.setRemoteAnalysisId(HISTORY_ID);
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
@@ -550,7 +554,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareAnalysisFilesNoRequiresReferenceFail() throws ExecutionManagerException,
 			IridaWorkflowNotFoundException {
-		submission = AnalysisSubmission.createSubmissionSingleReference("my analysis",
+		submission = AnalysisSubmission.createSubmissionSingleReference(submitter, "my analysis",
 				Sets.newHashSet(sampleSequenceFileMap.values()), referenceFile, workflowId);
 		submission.setRemoteAnalysisId(HISTORY_ID);
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
@@ -571,7 +575,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareAnalysisFilesSinglePairedNoAcceptFail() throws ExecutionManagerException,
 			IridaWorkflowNotFoundException {
-		submission = AnalysisSubmission.createSubmissionSingleAndPairedReference("my analysis",
+		submission = AnalysisSubmission.createSubmissionSingleAndPairedReference(submitter, "my analysis",
 				Sets.newHashSet(sampleSequenceFileMap.values()), Sets.newHashSet(sampleSequenceFilePairMap.values()),
 				referenceFile, workflowId);
 		submission.setRemoteAnalysisId(HISTORY_ID);
@@ -601,7 +605,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Test
 	public void testGetAnalysisResultsSuccess() throws IridaWorkflowNotFoundException,
 			IridaWorkflowAnalysisTypeException, ExecutionManagerException, IOException {
-		submission = AnalysisSubmission.createSubmissionSingleReference("my analysis", Sets.newHashSet(),
+		submission = AnalysisSubmission.createSubmissionSingleReference(submitter, "my analysis", Sets.newHashSet(),
 				referenceFile, workflowId);
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
 		submission.setRemoteAnalysisId(HISTORY_ID);
@@ -635,7 +639,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Test(expected = GalaxyDatasetException.class)
 	public void testGetAnalysisResultsFail() throws IridaWorkflowNotFoundException, IridaWorkflowAnalysisTypeException,
 			ExecutionManagerException, IOException {
-		submission = AnalysisSubmission.createSubmissionSingleReference("my analysis", Sets.newHashSet(),
+		submission = AnalysisSubmission.createSubmissionSingleReference(submitter, "my analysis", Sets.newHashSet(),
 				referenceFile, workflowId);
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
 		submission.setRemoteAnalysisId(HISTORY_ID);

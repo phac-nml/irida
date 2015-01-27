@@ -29,10 +29,12 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -63,6 +65,9 @@ public class AnalysisSubmissionRepositoryIT {
 	@Autowired
 	private SequenceFilePairRepository sequenceFilePairRepository;
 	
+	@Autowired
+	private UserRepository userRepository;
+	
 	private UUID workflowId = UUID.randomUUID();
 
 	private AnalysisSubmission analysisSubmission;
@@ -75,6 +80,8 @@ public class AnalysisSubmissionRepositoryIT {
 	private static final String analysisId2 = "11";
 	private final String analysisName = "analysis 1";
 	private final String analysisName2 = "analysis 2";
+	
+	private User submitter;
 
 	/**
 	 * Sets up objects for test.
@@ -96,13 +103,15 @@ public class AnalysisSubmissionRepositoryIT {
 				
 		referenceFile = referenceFileRepository.findOne(1L);
 		assertNotNull(referenceFile);
+		
+		submitter = userRepository.findOne(1L);
 
-		analysisSubmission = AnalysisSubmission.createSubmissionSingleReference(analysisName, sequenceFiles,
+		analysisSubmission = AnalysisSubmission.createSubmissionSingleReference(submitter, analysisName, sequenceFiles,
 				referenceFile, workflowId);
 		analysisSubmission.setRemoteAnalysisId(analysisId);
 		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTING);
 		
-		analysisSubmission2 = AnalysisSubmission.createSubmissionSingleReference(analysisName2, sequenceFiles2,
+		analysisSubmission2 = AnalysisSubmission.createSubmissionSingleReference(submitter, analysisName2, sequenceFiles2,
 				referenceFile, workflowId);
 		analysisSubmission2.setRemoteAnalysisId(analysisId2);
 		analysisSubmission2.setAnalysisState(AnalysisState.SUBMITTING);
@@ -153,7 +162,7 @@ public class AnalysisSubmissionRepositoryIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateAnalysisPaired() {
-		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.createSubmissionPaired("submission paired 1",
+		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.createSubmissionPaired(submitter, "submission paired 1",
 				Sets.newHashSet(sequenceFilePair), workflowId);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
 		assertEquals(0, savedSubmission.getSingleInputFiles().size());
@@ -168,7 +177,7 @@ public class AnalysisSubmissionRepositoryIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateAnalysisPairedReference() {
 		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.createSubmissionPairedReference(
-				"submission paired 1", Sets.newHashSet(sequenceFilePair), referenceFile, workflowId);
+				submitter, "submission paired 1", Sets.newHashSet(sequenceFilePair), referenceFile, workflowId);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
 
 		assertEquals(0, savedSubmission.getSingleInputFiles().size());
@@ -184,7 +193,7 @@ public class AnalysisSubmissionRepositoryIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateAnalysisSingleAndPairedAndReference() {
 		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.createSubmissionSingleAndPairedReference(
-				"submission paired 1", Sets.newHashSet(sequenceFile), Sets.newHashSet(sequenceFilePair), referenceFile,
+				submitter, "submission paired 1", Sets.newHashSet(sequenceFile), Sets.newHashSet(sequenceFilePair), referenceFile,
 				workflowId);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
 
@@ -201,7 +210,7 @@ public class AnalysisSubmissionRepositoryIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateAnalysisSingleAndPaired() {
 		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.createSubmissionSingleAndPaired(
-				"submission paired 1", Sets.newHashSet(sequenceFile), Sets.newHashSet(sequenceFilePair), workflowId);
+				submitter, "submission paired 1", Sets.newHashSet(sequenceFile), Sets.newHashSet(sequenceFilePair), workflowId);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
 
 		assertEquals(Sets.newHashSet(sequenceFile), savedSubmission.getSingleInputFiles());
