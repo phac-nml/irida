@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
@@ -89,54 +90,62 @@ public class ProjectUsersControllerTest {
 
     @Test
     public void testAddUserToProject() throws ProjectWithoutOwnerException {
-        Project p = TestDataFactory.constructProject();
+    	Project p = TestDataFactory.constructProject();
         User u = TestDataFactory.constructUser();
+        ProjectRole r = ProjectRole.PROJECT_USER;
+        ProjectUserJoin j = new ProjectUserJoin(p,u, r);
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         when(projectService.read(p.getId())).thenReturn(p);
         when(userService.getUserByUsername(u.getUsername())).thenReturn(u);
-
+        when(projectService.addUserToProject(p, u, r)).thenReturn(j);
         // prepare the "user" for addition to the project, just a map of userId and a username.
-        Map<String, String> user = ImmutableMap.of(RESTProjectUsersController.USER_ID_KEY, u.getUsername());
+        Map<String, String> userMap = ImmutableMap.of(RESTProjectUsersController.USER_ID_KEY, u.getUsername());
 
         // add the user to the project
-        ModelMap map = controller.addUserToProject(p.getId(), user,response);
+        ModelMap map = controller.addUserToProject(p.getId(), userMap,response);
 
         // confirm that the service method was called
         verify(projectService, times(1)).addUserToProject(p, u, ProjectRole.PROJECT_USER);
         verify(projectService, times(1)).read(p.getId());
         verify(userService, times(1)).getUserByUsername(u.getUsername());
-
         // check that the response is as expected:
-        assertEquals(HttpStatus.CREATED.value(), response.getStatus());
-        
+        assertEquals("Response must be CREATED",HttpStatus.CREATED.value(), response.getStatus());
         //check for a correct user link
         String location = response.getHeader(HttpHeaders.LOCATION);
-        assertNotNull(location);
-        assertFalse(location.isEmpty());
+        assertNotNull("location must not be null",location);
+        assertFalse("location must not be empty",location.isEmpty());
         assertEquals("http://localhost/api/projects/" + p.getId() + "/users/" + u.getUsername(), location);
-    
         //check the ModelMap's resource type 
         Object o = map.get(RESTGenericController.RESOURCE_NAME);
-        assertNotNull(o);
-        assertTrue(o instanceof UserResource);
-        UserResource ur = (UserResource) o;
-        
+        assertNotNull("object must not be null",o);
+        assertTrue("object must be an instance of LabelledRelationshipResource",o instanceof LabelledRelationshipResource);
+        @SuppressWarnings("unchecked")
+		LabelledRelationshipResource<Project, User> lrr = (LabelledRelationshipResource<Project, User>) o;
+        Object o2 = lrr.getResource();
+        assertNotNull("object must not be null",o2);
+        assertTrue("object must be an instance of ProjectUserJoin",o2 instanceof ProjectUserJoin);
+        ProjectUserJoin pj = (ProjectUserJoin) o2;
+        Object o3 = pj.getObject();
+        assertNotNull("object must not be null",o3);
+        assertTrue("object must be an instance of User",o3 instanceof User);
+        User user = (User) o3;
+        assertEquals("Username must be correct",user.getUsername(),u.getUsername());
         //check for a correct relationship link
-        assertTrue(ur.getLink("self").getHref().endsWith(u.getUsername()));
-        Link relationship = ur.getLink(RESTGenericController.REL_RELATIONSHIP);
-        assertNotNull(relationship);
-        assertEquals("http://localhost/api/projects/" + p.getId() + "/users/" + u.getUsername(), relationship.getHref());
-        
+        assertTrue("relationship link must be correct",lrr.getLink("self").getHref().endsWith(u.getUsername()));
+        Link relationship = lrr.getLink(RESTGenericController.REL_RELATIONSHIP);
+        assertNotNull("relationship link must exist",relationship);
+        assertEquals("relationship link must be correct","http://localhost/api/projects/" + p.getId() +
+        		"/users/" + u.getUsername(), relationship.getHref());
         // confirm that a project link exists
-        Link projectLink = ur.getLink(RESTProjectsController.REL_PROJECT);
-        assertNotNull(projectLink);
-        assertEquals("http://localhost/api/projects/" + p.getId(), projectLink.getHref());
-
+        Link projectLink = lrr.getLink(RESTProjectsController.REL_PROJECT);
+        assertNotNull("project link must exist",projectLink);
+        assertEquals("project link must be correct","http://localhost/api/projects/" + p.getId(), projectLink.getHref());
         // confirm that a project users link exists
-        Link projectUsersLink = ur.getLink(RESTProjectUsersController.REL_PROJECT_USERS);
-        assertNotNull(projectUsersLink);
-        assertEquals("http://localhost/api/projects/" + p.getId() + "/users", projectUsersLink.getHref());
+        Link projectUsersLink = lrr.getLink(RESTProjectUsersController.REL_PROJECT_USERS);
+        assertNotNull("project users link must exist",projectUsersLink);
+        assertEquals("project users link must be correct","http://localhost/api/projects/" + p.getId() +
+        		"/users", projectUsersLink.getHref());
     }
 
     @Test

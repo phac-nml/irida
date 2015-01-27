@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
@@ -121,42 +122,32 @@ public class RESTProjectUsersController {
                                                    HttpServletResponse response) throws ProjectWithoutOwnerException {
     	// first, get the project
         Project p = projectService.read(projectId);
-
         String username = representation.get(USER_ID_KEY);
-
         // then, get the user
         User u = userService.getUserByUsername(username);
         ProjectRole r = ProjectRole.PROJECT_USER;
-
         // then add the user to the project with the specified role.
-        projectService.addUserToProject(p, u, r);
-        
-        UserResource ur = new UserResource(u);
-        
+        Join<Project,User> joined = projectService.addUserToProject(p, u, r);
+        LabelledRelationshipResource<Project,User>  lrr = new LabelledRelationshipResource
+        		<Project,User> (joined.getLabel(),joined);
         // prepare a link to the user 
-        ur.add(linkTo(RESTUsersController.class).slash(u.getUsername()).withSelfRel());
-        
+        lrr.add(linkTo(RESTUsersController.class).slash(u.getUsername()).withSelfRel());
         // prepare a link to the user as added to the project
-        ur.add(linkTo(methodOn(RESTProjectUsersController.class).removeUserFromProject(projectId,
+        lrr.add(linkTo(methodOn(RESTProjectUsersController.class).removeUserFromProject(projectId,
                 u.getUsername())).withRel(RESTGenericController.REL_RELATIONSHIP));
-        
         // prepare a link back to the user collection of the project
-        ur.add(linkTo(methodOn(RESTProjectUsersController.class).getUsersForProject(projectId))
+        lrr.add(linkTo(methodOn(RESTProjectUsersController.class).getUsersForProject(projectId))
                 .withRel(REL_PROJECT_USERS));
-        
         // prepare a link back to the project
-        ur.add(linkTo(RESTProjectsController.class).slash(projectId)
+        lrr.add(linkTo(RESTProjectsController.class).slash(projectId)
                 .withRel(RESTProjectsController.REL_PROJECT));
-
         String location = linkTo(RESTProjectsController.class).slash(projectId).slash("users").slash(username).withSelfRel().getHref();
-
 		// add a location header and set the response status.
 		response.addHeader(HttpHeaders.LOCATION, location);
 		response.setStatus(HttpStatus.CREATED.value());
-        
 		// prepare the response for the client
 		ModelMap modelMap = new ModelMap();
-        modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, ur);
+        modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, lrr);
         
         return modelMap;
     }
