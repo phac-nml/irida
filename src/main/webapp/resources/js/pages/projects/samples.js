@@ -30,12 +30,16 @@
     }
   }
 
+
+  /*[- */
+  //Handles filtering of samples via the sidebar
+  /* -]*/
   function SamplesFilter(filter) {
     function _filterEntry(sample) {
       var result = true;
       _.forOwn(filter.sample, function (value, key) {
-        if(sample[key] === null || sample[key].toLowerCase().indexOf(value.toLowerCase()) < 0) {
-          result = false ;
+        if (sample[key] === null || sample[key].toLowerCase().indexOf(value.toLowerCase()) < 0) {
+          result = false;
         }
       });
       return result;
@@ -57,7 +61,7 @@
       sortDir : false,
       sortedBy: 'sample.createdDate',
       count   : 10,
-      sample: {}
+      sample  : {}
     }
   }
 
@@ -764,7 +768,7 @@
         if (s.sampleType == "ASSOCIATED") {
           cart.add(s.project.id, [s.id]);
         }
-        else if(s.sampleType == "LOCAL"){
+        else if (s.sampleType == "LOCAL") {
           cart.add(project.id, [s.id]);
         }
       });
