@@ -761,10 +761,10 @@
 
     vm.add = function () {
       _.forEach(storage.getSamples(), function (s) {
-        if (s.project) {
+        if (s.sampleType == "ASSOCIATED") {
           cart.add(s.project.id, [s.id]);
         }
-        else {
+        else if(s.sampleType == "LOCAL"){
           cart.add(project.id, [s.id]);
         }
       });
