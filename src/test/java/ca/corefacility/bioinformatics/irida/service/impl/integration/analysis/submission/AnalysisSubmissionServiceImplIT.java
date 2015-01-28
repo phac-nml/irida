@@ -176,4 +176,22 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testFindAllAdminUser() {
 		assertNotNull("Should find submissions", analysisSubmissionService.findAll());
 	}
+	
+	/**
+	 * Tests checking for existence of an {@link AnalysisSubmission} as a regular user.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testExistsRegularUser() {
+		assertTrue("Submission should exist", analysisSubmissionService.exists(1L));
+	}
+	
+	/**
+	 * Tests checking for existence of an {@link AnalysisSubmission} as a regular non-owner user.
+	 */
+	@Test
+	@WithMockUser(username = "otheraaron", roles = "USER")
+	public void testExistsRegularNonOwnerUser() {
+		assertTrue("Submission should exist", analysisSubmissionService.exists(1L));
+	}
 }

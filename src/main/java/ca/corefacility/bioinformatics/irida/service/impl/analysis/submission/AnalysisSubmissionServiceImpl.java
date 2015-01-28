@@ -72,4 +72,12 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public Iterable<AnalysisSubmission> findAll() {
 		return super.findAll();
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Boolean exists(Long id) {
+		return super.exists(id);
+	}
 }

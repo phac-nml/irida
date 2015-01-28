@@ -88,7 +88,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public Boolean exists(Long id);
 
 	/**
