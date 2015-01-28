@@ -56,4 +56,12 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public AnalysisSubmission read(Long id) throws EntityNotFoundException {
 		return super.read(id);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Iterable<AnalysisSubmission> readMultiple(Iterable<Long> idents) {
+		return super.readMultiple(idents);
+	}
 }

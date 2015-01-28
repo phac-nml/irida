@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration.analysis.s
 import static org.junit.Assert.*;
 
 import java.util.Date;
+import java.util.Iterator;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +24,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
@@ -134,5 +136,26 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testReadSuccessAdmin() {
 		AnalysisSubmission submission = analysisSubmissionService.read(1L);
 		assertNotNull("submission was not properly returned", submission);
+	}
+	
+	/**
+	 * Tests reading multiple submissions as a regular user
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testReadMultipleGrantedRegularUser() {
+		Iterable<AnalysisSubmission> submissions = analysisSubmissionService.readMultiple(Sets.newHashSet(1L, 2L));
+		Iterator<AnalysisSubmission> submissionIter = submissions.iterator();
+		assertNotNull("Should have one submission", submissionIter.next());
+		assertNotNull("Should have two submissions", submissionIter.next());
+	}
+	
+	/**
+	 * Tests reading multiple submissions as a regular user and being denied.
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "otheraaron", roles = "USER")
+	public void testReadMultipleDeniedRegularUser() {
+		analysisSubmissionService.readMultiple(Sets.newHashSet(1L, 2L));
 	}
 }
