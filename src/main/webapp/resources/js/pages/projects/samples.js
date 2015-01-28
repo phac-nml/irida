@@ -767,14 +767,17 @@
     var vm = this;
 
     vm.add = function () {
+      var samples = [];
       _.forEach(storage.getSamples(), function (s) {
         if (s.sampleType == "ASSOCIATED") {
-          cart.add(s.project.id, [s.id]);
+          samples.push({"sample" : s.id, "project" : s.project.id});
         }
         else if (s.sampleType == "LOCAL") {
-          cart.add(project.id, [s.id]);
+          samples.push({"sample" : s.id, "project" : project.id});
         }
       });
+
+      cart.add(samples);
     };
   }
 
