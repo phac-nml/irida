@@ -375,12 +375,12 @@ public class AssociatedProjectsController {
 		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(project);
 
 		// get the projects the user can read
-		List<RelatedProjectJoin> authorizedRelaedProjectsForUser = getAuthorizedRelaedProjectsForUser(
+		List<RelatedProjectJoin> authorizedRelatedProjectsForUser = getAuthorizedRelatedProjectsForUser(
 				relatedProjectJoins, loggedInUser, isAdmin);
 
 		List<Map<String, Object>> sampleList = new ArrayList<>();
 		// for each project
-		for (RelatedProjectJoin rp : authorizedRelaedProjectsForUser) {
+		for (RelatedProjectJoin rp : authorizedRelatedProjectsForUser) {
 			Project object = rp.getObject();
 			// get the samples in the project
 			List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(object);
@@ -451,7 +451,7 @@ public class AssociatedProjectsController {
 			boolean isAdmin) {
 		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(currentProject);
 
-		List<RelatedProjectJoin> authorizedRelaedProjectsForUser = getAuthorizedRelaedProjectsForUser(
+		List<RelatedProjectJoin> authorizedRelatedProjectsForUser = getAuthorizedRelatedProjectsForUser(
 				relatedProjectJoins, currentUser, isAdmin);
 
 		List<Map<String, String>> projects = new ArrayList<>();
@@ -462,7 +462,7 @@ public class AssociatedProjectsController {
 			Map<String, String> map = new HashMap<>();
 			map.put("name", project.getLabel());
 			map.put("id", project.getId().toString());
-			map.put("auth", authorizedRelaedProjectsForUser.contains(rpj) ? "authorized" : "");
+			map.put("auth", authorizedRelatedProjectsForUser.contains(rpj) ? "authorized" : "");
 
 			projects.add(map);
 		}
@@ -481,7 +481,7 @@ public class AssociatedProjectsController {
 	 *            whether the user is an admin
 	 * @return A list of {@link Project}s the {@link User} can read
 	 */
-	private List<RelatedProjectJoin> getAuthorizedRelaedProjectsForUser(List<RelatedProjectJoin> relatedProjectJoins,
+	private List<RelatedProjectJoin> getAuthorizedRelatedProjectsForUser(List<RelatedProjectJoin> relatedProjectJoins,
 			User currentUser, boolean isAdmin) {
 		// Need to know if the user has rights to view the project
 		List<Join<Project, User>> userProjectJoin = projectService.getProjectsForUser(currentUser);
