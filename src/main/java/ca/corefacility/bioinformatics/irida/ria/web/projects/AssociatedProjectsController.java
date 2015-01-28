@@ -306,7 +306,7 @@ public class AssociatedProjectsController {
 	 * @param projectId
 	 *            The ID of the owning project
 	 * @param associatedProjectId
-	 *            > The Cache ID of the {@link RemoteProject}
+	 *            The Cache ID of the {@link RemoteProject}
 	 * @param apiId
 	 *            The ID of the api this project resides on
 	 * @return
