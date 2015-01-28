@@ -31,9 +31,10 @@
   }
 
 
-  /*[- */
-  //Handles filtering of samples via the sidebar
-  /* -]*/
+  /**
+   * Handles filtering of samples via the sidebar
+   * @param filter current filter value
+   */
   function SamplesFilter(filter) {
     function _filterEntry(sample) {
       var result = true;
@@ -466,10 +467,12 @@
 
   }
 
-  /*[- */
-// Controller for the samples display checkboxes.  This controller will ask SamplesService to load a set of samples
-// @param SamplesService Server handler for samples.
-  /* -]*/
+
+  /**
+   * Controller for the samples display checkboxes.  This controller will ask SamplesService to load a set of samples
+   * @param $rootScope page scope for sending/recieving events
+   * @param SamplesService Server handler for samples.
+   */
   function SampleDisplayCtrl($rootScope, SamplesService) {
     "use strict";
     var vm = this;
