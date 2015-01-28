@@ -283,7 +283,7 @@ public class PipelineController extends BaseController {
 		} else {
 			List<SequenceFile> sequenceFiles = new ArrayList<>();
 			List<SequenceFilePair> sequenceFilePairs = new ArrayList<>();
-			
+
 			if (single != null) {
 				sequenceFiles = (List<SequenceFile>) sequenceFileService.readMultiple(single);
 			}
