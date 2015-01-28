@@ -203,6 +203,6 @@ public class AnalysisExecutionServiceTestConfig {
 	public DatabaseSetupGalaxyITService analysisExecutionGalaxyITService() {
 		return new DatabaseSetupGalaxyITService(referenceFileRepository, seqeunceFileService,
 				sampleService, analysisExecutionService(),
-				analysisSubmissionService, analysisSubmissionRepository, sequenceFilePairRepository, userRepository);
+				analysisSubmissionService, analysisSubmissionRepository, sequenceFilePairRepository);
 	}
 }

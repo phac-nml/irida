@@ -116,15 +116,15 @@ public class AnalysisExecutionServiceGalaxyTest {
 		String submissionName = "name";
 		Set<SequenceFile> submissionInputFiles = Sets.newHashSet();
 
-		analysisSubmission = AnalysisSubmission.createSubmissionSingle(submitter, submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisPreparing = AnalysisSubmission.createSubmissionSingle(submitter, submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisPrepared = AnalysisSubmission.createSubmissionSingle(submitter, submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisSubmitting = AnalysisSubmission.createSubmissionSingle(submitter, submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisRunning = AnalysisSubmission.createSubmissionSingle(submitter, submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisFinishedRunning = AnalysisSubmission.createSubmissionSingle(submitter, submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisCompleting = AnalysisSubmission.createSubmissionSingle(submitter, submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisCompleted = AnalysisSubmission.createSubmissionSingle(submitter, submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisError = AnalysisSubmission.createSubmissionSingle(submitter, submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisSubmission = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisPreparing = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisPrepared = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisSubmitting = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisRunning = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisFinishedRunning = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisCompleting = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisCompleted = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisError = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
 
 		AnalysisExecutionServiceGalaxyAsync workflowManagementAsync = new AnalysisExecutionServiceGalaxyAsync(
 				analysisSubmissionService, analysisService, galaxyWorkflowService, analysisWorkspaceService,

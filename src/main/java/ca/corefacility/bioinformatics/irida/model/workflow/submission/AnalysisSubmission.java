@@ -150,15 +150,13 @@ public class AnalysisSubmission implements IridaThing {
 	 *            id of the workflow for this submission.
 	 * 
 	 */
-	public AnalysisSubmission(User submitter, String name, Set<SequenceFile> inputFilesSingle,
+	public AnalysisSubmission(String name, Set<SequenceFile> inputFilesSingle,
 			Set<SequenceFilePair> inputFilesPaired, UUID workflowId) {
 		this();
-		checkNotNull(submitter, "submitter is null");
 		checkNotNull(workflowId, "workflowId is null");
 		checkNotNull(inputFilesSingle, "inputFilesSingle is null");
 		checkNotNull(inputFilesPaired, "inputFilesPaired is null");
 
-		this.submitter = submitter;
 		this.name = name;
 		this.inputFilesSingle = inputFilesSingle;
 		this.inputFilesPaired = inputFilesPaired;
@@ -168,9 +166,6 @@ public class AnalysisSubmission implements IridaThing {
 
 	/**
 	 * Builds a new AnalysisSubmission object with the given information.
-	 * 
-	 * @param submitter
-	 *            The {@link User} who submitted the analysis.
 	 * 
 	 * @param name
 	 *            The name of the workflow submission.
@@ -184,9 +179,9 @@ public class AnalysisSubmission implements IridaThing {
 	 *            id of the workflow for this submission.
 	 * 
 	 */
-	public AnalysisSubmission(User submitter, String name, Set<SequenceFile> inputFilesSingle,
+	public AnalysisSubmission(String name, Set<SequenceFile> inputFilesSingle,
 			Set<SequenceFilePair> inputFilesPaired, ReferenceFile referenceFile, UUID workflowId) {
-		this(submitter, name, inputFilesSingle, inputFilesPaired, workflowId);
+		this(name, inputFilesSingle, inputFilesPaired, workflowId);
 		checkNotNull(referenceFile, "referenceFile is null");
 
 		this.referenceFile = referenceFile;
@@ -347,11 +342,11 @@ public class AnalysisSubmission implements IridaThing {
 
 	@Override
 	public String toString() {
-		return "AnalysisSubmission [id=" + id + ", name=" + name + ",submitterId=" + submitter.getId() + ", workflowId=" + workflowId + ", remoteAnalysisId="
-				+ remoteAnalysisId + ", remoteWorkflowId=" + remoteWorkflowId + ", inputFilesSingle="
-				+ inputFilesSingle + ", inputFilesPaired=" + inputFilesPaired + ", createdDate=" + createdDate
-				+ ", modifiedDate=" + modifiedDate + ", analysisState=" + analysisState + ", analysis=" + analysis
-				+ ", referenceFile=" + referenceFile + "]";
+		return "AnalysisSubmission [id=" + id + ", name=" + name + ", submitter=" + submitter + ", workflowId="
+				+ workflowId + ", remoteAnalysisId=" + remoteAnalysisId + ", remoteWorkflowId=" + remoteWorkflowId
+				+ ", inputFilesSingle=" + inputFilesSingle + ", inputFilesPaired=" + inputFilesPaired
+				+ ", createdDate=" + createdDate + ", modifiedDate=" + modifiedDate + ", analysisState="
+				+ analysisState + ", analysis=" + analysis + ", referenceFile=" + referenceFile + "]";
 	}
 
 	/**
@@ -391,8 +386,6 @@ public class AnalysisSubmission implements IridaThing {
 	/**
 	 * Builds a new {@link AnalysisSubmission} from only single-end input files.
 	 * 
-	 * @param submitter
-	 *            The {@link User} who submitted the analysis.
 	 * @param name
 	 *            The name of the submission.
 	 * @param inputFilesSingle
@@ -403,16 +396,14 @@ public class AnalysisSubmission implements IridaThing {
 	 *            The id of the workflow to run.
 	 * @return A new {@link AnalysisSubmission}.
 	 */
-	public static AnalysisSubmission createSubmissionSingleReference(User submitter, String name,
+	public static AnalysisSubmission createSubmissionSingleReference(String name,
 			Set<SequenceFile> inputFilesSingle, ReferenceFile referenceFile, UUID workflowId) {
-		return new AnalysisSubmission(submitter, name, inputFilesSingle, Sets.newHashSet(), referenceFile, workflowId);
+		return new AnalysisSubmission(name, inputFilesSingle, Sets.newHashSet(), referenceFile, workflowId);
 	}
 
 	/**
 	 * Builds a new {@link AnalysisSubmission} from only single-end input files.
 	 * 
-	 * @param submitter
-	 *            The {@link User} who submitted the analysis.
 	 * @param name
 	 *            The name of the submission.
 	 * @param inputFilesSingle
@@ -421,17 +412,15 @@ public class AnalysisSubmission implements IridaThing {
 	 *            The id of the workflow to run.
 	 * @return A new {@link AnalysisSubmission}.
 	 */
-	public static AnalysisSubmission createSubmissionSingle(User submitter, String name,
+	public static AnalysisSubmission createSubmissionSingle(String name,
 			Set<SequenceFile> inputFilesSingle, UUID workflowId) {
-		return new AnalysisSubmission(submitter, name, inputFilesSingle, Sets.newHashSet(), workflowId);
+		return new AnalysisSubmission(name, inputFilesSingle, Sets.newHashSet(), workflowId);
 	}
 
 	/**
 	 * Builds a new {@link AnalysisSubmission} from only paired-end input files
 	 * with a reference genome.
 	 * 
-	 * @param submitter
-	 *            The {@link User} who submitted the analysis.
 	 * @param name
 	 *            The name of the submission.
 	 * @param inputFilesPaired
@@ -442,17 +431,15 @@ public class AnalysisSubmission implements IridaThing {
 	 *            The id of the workflow to run.
 	 * @return A new {@link AnalysisSubmission}.
 	 */
-	public static AnalysisSubmission createSubmissionPairedReference(User submitter, String name,
+	public static AnalysisSubmission createSubmissionPairedReference(String name,
 			Set<SequenceFilePair> inputFilesPaired, ReferenceFile referenceFile, UUID workflowId) {
-		return new AnalysisSubmission(submitter, name, Sets.newHashSet(), inputFilesPaired, referenceFile, workflowId);
+		return new AnalysisSubmission(name, Sets.newHashSet(), inputFilesPaired, referenceFile, workflowId);
 	}
 
 	/**
 	 * Builds a new {@link AnalysisSubmission} from only paired-end input files
 	 * and no reference genome.
 	 * 
-	 * @param submitter
-	 *            The {@link User} who submitted the analysis.
 	 * @param name
 	 *            The name of the submission.
 	 * @param inputFilesPaired
@@ -463,17 +450,15 @@ public class AnalysisSubmission implements IridaThing {
 	 *            The id of the workflow to run.
 	 * @return A new {@link AnalysisSubmission}.
 	 */
-	public static AnalysisSubmission createSubmissionPaired(User submitter, String name,
+	public static AnalysisSubmission createSubmissionPaired(String name,
 			Set<SequenceFilePair> inputFilesPaired, UUID workflowId) {
-		return new AnalysisSubmission(submitter, name, Sets.newHashSet(), inputFilesPaired, workflowId);
+		return new AnalysisSubmission(name, Sets.newHashSet(), inputFilesPaired, workflowId);
 	}
 
 	/**
 	 * Builds a new {@link AnalysisSubmission} with both paired-end and
 	 * single-end input files and no reference genome.
 	 * 
-	 * @param submitter
-	 *            The {@link User} who submitted the analysis.
 	 * @param name
 	 *            The name of the submission.
 	 * @param inputFilesSingle
@@ -484,17 +469,15 @@ public class AnalysisSubmission implements IridaThing {
 	 *            The id of the workflow to run.
 	 * @return A new {@link AnalysisSubmission}.
 	 */
-	public static AnalysisSubmission createSubmissionSingleAndPaired(User submitter, String name,
+	public static AnalysisSubmission createSubmissionSingleAndPaired(String name,
 			Set<SequenceFile> inputFilesSingle, Set<SequenceFilePair> inputFilesPaired, UUID workflowId) {
-		return new AnalysisSubmission(submitter, name, inputFilesSingle, inputFilesPaired, workflowId);
+		return new AnalysisSubmission(name, inputFilesSingle, inputFilesPaired, workflowId);
 	}
 
 	/**
 	 * Builds a new {@link AnalysisSubmission} with both paired-end and
 	 * single-end input files and a reference genome.
 	 * 
-	 * @param submitter
-	 *            The {@link User} who submitted the analysis.
 	 * @param name
 	 *            The name of the submission.
 	 * @param inputFilesSingle
@@ -507,9 +490,9 @@ public class AnalysisSubmission implements IridaThing {
 	 *            The id of the workflow to run.
 	 * @return A new {@link AnalysisSubmission}.
 	 */
-	public static AnalysisSubmission createSubmissionSingleAndPairedReference(User submitter, String name,
+	public static AnalysisSubmission createSubmissionSingleAndPairedReference(String name,
 			Set<SequenceFile> inputFilesSingle, Set<SequenceFilePair> inputFilesPaired, ReferenceFile referenceFile,
 			UUID workflowId) {
-		return new AnalysisSubmission(submitter, name, inputFilesSingle, inputFilesPaired, referenceFile, workflowId);
+		return new AnalysisSubmission(name, inputFilesSingle, inputFilesPaired, referenceFile, workflowId);
 	}
 }

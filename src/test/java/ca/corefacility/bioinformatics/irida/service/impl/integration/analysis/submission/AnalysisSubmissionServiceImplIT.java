@@ -33,10 +33,8 @@ import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultit
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
-import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -63,9 +61,6 @@ public class AnalysisSubmissionServiceImplIT {
 
 	@Autowired
 	private AnalysisSubmissionService analysisSubmissionService;
-
-	@Autowired
-	private UserRepository userRepository;
 
 	private UUID workflowId = UUID.randomUUID();
 
@@ -371,8 +366,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testCreateRegularUser() {
-		User submitter = userRepository.findOne(1L);
-		AnalysisSubmission submission = AnalysisSubmission.createSubmissionSingle(submitter, "test", Sets.newHashSet(),
+		AnalysisSubmission submission = AnalysisSubmission.createSubmissionSingle("test", Sets.newHashSet(),
 				workflowId);
 		AnalysisSubmission createdSubmission = analysisSubmissionService.create(submission);
 		assertNotNull("Submission should have been created", createdSubmission);
@@ -385,8 +379,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testCreateRegularUser2() {
-		User submitter = userRepository.findOne(1L);
-		AnalysisSubmission submission = AnalysisSubmission.createSubmissionSingle(submitter, "test", Sets.newHashSet(),
+		AnalysisSubmission submission = AnalysisSubmission.createSubmissionSingle("test", Sets.newHashSet(),
 				workflowId);
 		AnalysisSubmission createdSubmission = analysisSubmissionService.create(submission);
 		assertNotNull("Submission should have been created", createdSubmission);

@@ -22,7 +22,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
@@ -56,9 +55,6 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	@Mock
 	private AnalysisPhylogenomicsPipeline analysis;
-	
-	@Mock
-	private User submitter;
 
 	private static final String ANALYSIS_ID = "1";
 	private static final Long INTERNAL_ID = 1L;
@@ -78,7 +74,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService);
 
-		analysisSubmission = AnalysisSubmission.createSubmissionSingleReference(submitter, "my analysis", sequenceFiles, referenceFile,
+		analysisSubmission = AnalysisSubmission.createSubmissionSingleReference("my analysis", sequenceFiles, referenceFile,
 				workflowId);
 		analysisSubmission.setId(INTERNAL_ID);
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);

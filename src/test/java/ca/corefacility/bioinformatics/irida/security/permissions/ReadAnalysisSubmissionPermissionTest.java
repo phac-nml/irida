@@ -69,8 +69,9 @@ public class ReadAnalysisSubmissionPermissionTest {
 		u.setUsername(username);
 		Authentication auth = new UsernamePasswordAuthenticationToken("aaron", "password1");
 
-		AnalysisSubmission analysisSubmission = AnalysisSubmission.createSubmissionSingleReference(u, "test",
+		AnalysisSubmission analysisSubmission = AnalysisSubmission.createSubmissionSingleReference("test",
 				Sets.newHashSet(), referenceFile, workflowId);
+		analysisSubmission.setSubmitter(u);
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(analysisSubmissionRepository.findOne(1L)).thenReturn(analysisSubmission);
@@ -92,8 +93,9 @@ public class ReadAnalysisSubmissionPermissionTest {
 		u.setUsername(username);
 		Authentication auth = new UsernamePasswordAuthenticationToken("aaron", "password1");
 
-		AnalysisSubmission analysisSubmission = AnalysisSubmission.createSubmissionSingleReference(u, "test",
+		AnalysisSubmission analysisSubmission = AnalysisSubmission.createSubmissionSingleReference("test",
 				Sets.newHashSet(), referenceFile, workflowId);
+		analysisSubmission.setSubmitter(u);
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(analysisSubmissionRepository.findOne(1L)).thenReturn(analysisSubmission);
@@ -115,8 +117,9 @@ public class ReadAnalysisSubmissionPermissionTest {
 		u.setUsername(username);
 		Authentication auth = new UsernamePasswordAuthenticationToken("aaron", "password1");
 
-		AnalysisSubmission analysisSubmission = AnalysisSubmission.createSubmissionSingleReference(new User(), "test",
+		AnalysisSubmission analysisSubmission = AnalysisSubmission.createSubmissionSingleReference("test",
 				Sets.newHashSet(), referenceFile, workflowId);
+		analysisSubmission.setSubmitter(new User());
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(analysisSubmissionRepository.findOne(1L)).thenReturn(analysisSubmission);

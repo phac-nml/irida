@@ -45,7 +45,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFo
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
@@ -58,7 +57,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.L
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.Util;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -110,9 +108,6 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 	@Autowired
 	private SampleRepository sampleRepository;
-	
-	@Autowired
-	private UserRepository userRepository;
 
 	private GalaxyHistoriesService galaxyHistoriesService;
 
@@ -220,8 +215,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareAnalysisWorkspaceSuccess() throws IridaWorkflowNotFoundException, ExecutionManagerException {
-		User submitter = userRepository.findOne(1L);
-		AnalysisSubmission submission = AnalysisSubmission.createSubmissionSingle(submitter, "Name", sequenceFilesSet,
+		AnalysisSubmission submission = AnalysisSubmission.createSubmissionSingle("Name", sequenceFilesSet,
 				validWorkflowIdSingle);
 		assertNotNull("preparing an analysis workspace should not return null",
 				analysisWorkspaceService.prepareAnalysisWorkspace(submission));
@@ -235,9 +229,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareAnalysisWorkspaceFail() throws IridaWorkflowNotFoundException, ExecutionManagerException {
-		User submitter = userRepository.findOne(1L);
-		
-		AnalysisSubmission submission = AnalysisSubmission.createSubmissionSingle(submitter, "Name", sequenceFilesSet,
+		AnalysisSubmission submission = AnalysisSubmission.createSubmissionSingle("Name", sequenceFilesSet,
 				validWorkflowIdSingle);
 		submission.setRemoteAnalysisId("1");
 		analysisWorkspaceService.prepareAnalysisWorkspace(submission);
