@@ -9,6 +9,11 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.UUID;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -366,23 +371,55 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testCreateRegularUser() {
-		AnalysisSubmission submission = AnalysisSubmission.createSubmissionSingle("test", Sets.newHashSet(),
-				workflowId);
+		AnalysisSubmission submission = AnalysisSubmission
+				.createSubmissionSingle("test", Sets.newHashSet(), workflowId);
 		AnalysisSubmission createdSubmission = analysisSubmissionService.create(submission);
 		assertNotNull("Submission should have been created", createdSubmission);
 		assertEquals("submitter should be set properly", Long.valueOf(1L), createdSubmission.getSubmitter().getId());
 	}
-	
+
 	/**
 	 * Tests creating a submission as a second regular user.
 	 */
 	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testCreateRegularUser2() {
-		AnalysisSubmission submission = AnalysisSubmission.createSubmissionSingle("test", Sets.newHashSet(),
-				workflowId);
+		AnalysisSubmission submission = AnalysisSubmission
+				.createSubmissionSingle("test", Sets.newHashSet(), workflowId);
 		AnalysisSubmission createdSubmission = analysisSubmissionService.create(submission);
 		assertNotNull("Submission should have been created", createdSubmission);
 		assertEquals("submitter should be set properly", Long.valueOf(2L), createdSubmission.getSubmitter().getId());
+	}
+
+	/**
+	 * Tests searching as a regular user and being dened.
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testSearchRegularUserDenied() {
+		analysisSubmissionService.search(new AnalysisSubmissionTestSpecification(), 1, 1, Direction.ASC, "createdDate");
+	}
+
+	/**
+	 * Tests searching as an admin user.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testSearchAdminUser() {
+		assertNotNull("search should succeed", analysisSubmissionService.search(
+				new AnalysisSubmissionTestSpecification(), 1, 1, Direction.ASC, "createdDate"));
+	}
+
+	/**
+	 * Test specification.
+	 * 
+	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+	 *
+	 */
+	private class AnalysisSubmissionTestSpecification implements Specification<AnalysisSubmission> {
+		@Override
+		public Predicate toPredicate(Root<AnalysisSubmission> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+			return null;
+		}
 	}
 }

@@ -103,6 +103,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Page<AnalysisSubmission> search(Specification<AnalysisSubmission> specification, int page, int size, Direction order,
 			String... sortProperties);
 
