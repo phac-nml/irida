@@ -272,6 +272,7 @@ public class PipelineController extends BaseController {
 	 */
 	@RequestMapping(value = "/ajax/start/{pipelineId}", method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> ajaxStartPipelinePhylogenomics(HttpSession session, Locale locale,
+			Principal principal,
 			@PathVariable UUID pipelineId,
 			@RequestParam(value = "single[]", required = false) List<Long> single, @RequestParam(value = "paired[]", required = false) List<Long> paired,
 			@RequestParam Long ref, @RequestParam String name) {
@@ -283,6 +284,8 @@ public class PipelineController extends BaseController {
 		} else {
 			List<SequenceFile> sequenceFiles = new ArrayList<>();
 			List<SequenceFilePair> sequenceFilePairs = new ArrayList<>();
+			
+			User user = userService.getUserByUsername(principal.getName());
 
 			if (single != null) {
 				sequenceFiles = (List<SequenceFile>) sequenceFileService.readMultiple(single);
@@ -297,18 +300,18 @@ public class PipelineController extends BaseController {
 
 			if (sequenceFiles.size() > 0 && sequenceFilePairs.size() > 0) {
 				analysisSubmission = AnalysisSubmission
-						.createSubmissionSingleAndPairedReference(null, name, new HashSet<>(sequenceFiles),
+						.createSubmissionSingleAndPairedReference(user, name, new HashSet<>(sequenceFiles),
 								new HashSet<>(sequenceFilePairs), referenceFile,
 								pipelineId);
 			}
 			else if (sequenceFiles.size() > 0 && sequenceFilePairs.size() == 0) {
 				analysisSubmission = AnalysisSubmission
-						.createSubmissionSingleReference(null, name, new HashSet<>(sequenceFiles), referenceFile,
+						.createSubmissionSingleReference(user, name, new HashSet<>(sequenceFiles), referenceFile,
 						pipelineId);
 			}
 			else {
 				analysisSubmission = AnalysisSubmission
-						.createSubmissionPairedReference(null, name, new HashSet<>(sequenceFilePairs),
+						.createSubmissionPairedReference(user, name, new HashSet<>(sequenceFilePairs),
 						referenceFile, pipelineId);
 			}
 
