@@ -14,6 +14,8 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -21,8 +23,10 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 
@@ -35,18 +39,24 @@ import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 @Service
 public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, AnalysisSubmission> implements
 		AnalysisSubmissionService {
+	
+	private UserRepository userRepository;
 
 	/**
 	 * Builds a new AnalysisSubmissionServiceImpl with the given information.
 	 * 
 	 * @param analysisSubmissionRepository
 	 *            A repository for accessing analysis submissions.
+	 * @param userRepository
+	 *            A repository for accessing user information.
 	 * @param validator
 	 *            A validator.
 	 */
 	@Autowired
-	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository, Validator validator) {
+	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
+			UserRepository userRepository, Validator validator) {
 		super(analysisSubmissionRepository, validator, AnalysisSubmission.class);
+		this.userRepository = userRepository;
 	}
 
 	/**
@@ -156,9 +166,13 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
-	public AnalysisSubmission create(AnalysisSubmission object) throws ConstraintViolationException,
+	public AnalysisSubmission create(AnalysisSubmission analysisSubmission) throws ConstraintViolationException,
 			EntityExistsException {
-		return super.create(object);
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		User user = userRepository.loadUserByUsername(userDetails.getUsername());
+		analysisSubmission.setSubmitter(user);
+		
+		return super.create(analysisSubmission);
 	}
 
 	/**

@@ -374,18 +374,22 @@ public class AnalysisSubmissionServiceImplIT {
 		User submitter = userRepository.findOne(1L);
 		AnalysisSubmission submission = AnalysisSubmission.createSubmissionSingle(submitter, "test", Sets.newHashSet(),
 				workflowId);
-		assertNotNull("Submission should have been created", analysisSubmissionService.create(submission));
+		AnalysisSubmission createdSubmission = analysisSubmissionService.create(submission);
+		assertNotNull("Submission should have been created", createdSubmission);
+		assertEquals("submitter should be set properly", Long.valueOf(1L), createdSubmission.getSubmitter().getId());
 	}
-
+	
 	/**
-	 * Tests creating a submission as an admin user.
+	 * Tests creating a submission as a second regular user.
 	 */
 	@Test
-	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testCreateAdminUser() {
+	@WithMockUser(username = "otheraaron", roles = "USER")
+	public void testCreateRegularUser2() {
 		User submitter = userRepository.findOne(1L);
 		AnalysisSubmission submission = AnalysisSubmission.createSubmissionSingle(submitter, "test", Sets.newHashSet(),
 				workflowId);
-		assertNotNull("Submission should have been created", analysisSubmissionService.create(submission));
+		AnalysisSubmission createdSubmission = analysisSubmissionService.create(submission);
+		assertNotNull("Submission should have been created", createdSubmission);
+		assertEquals("submitter should be set properly", Long.valueOf(2L), createdSubmission.getSubmitter().getId());
 	}
 }

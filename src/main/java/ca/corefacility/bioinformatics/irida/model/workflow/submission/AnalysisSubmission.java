@@ -325,6 +325,17 @@ public class AnalysisSubmission implements IridaThing {
 	public User getSubmitter() {
 		return submitter;
 	}
+	
+	/**
+	 * Sets the {@link User} who is submitting this analysis.
+	 * 
+	 * @param submitter
+	 *            The {@link User} who is submitting this analysis.
+	 */
+	public void setSubmitter(User submitter) {
+		checkNotNull(submitter, "the submitter is null");
+		this.submitter = submitter;
+	}
 
 	/**
 	 * @param analysis
