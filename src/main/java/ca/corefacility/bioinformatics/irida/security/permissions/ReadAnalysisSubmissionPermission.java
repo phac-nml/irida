@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -16,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
+@Component
 public class ReadAnalysisSubmissionPermission extends BasePermission<AnalysisSubmission, Long> {
 
 	private static final Logger logger = LoggerFactory.getLogger(ReadAnalysisSubmissionPermission.class);

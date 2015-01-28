@@ -48,4 +48,12 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 		return submission.getAnalysisState();
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public AnalysisSubmission read(Long id) throws EntityNotFoundException {
+		return super.read(id);
+	}
 }

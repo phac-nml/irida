@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration.analysis.submission;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.Date;
 
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -31,7 +32,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
-import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 
 /**
  * Tests for an analysis service.
@@ -40,19 +41,17 @@ import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.Ana
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
-		IridaApiNoGalaxyTestConfig.class, IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class,
-		IridaApiTestMultithreadingConfig.class })
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiNoGalaxyTestConfig.class,
+		IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-		DbUnitTestExecutionListener.class,
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExcecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/analysis/submission/AnalysisSubmissionServiceIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisSubmissionServiceImplIT {
 
 	@Autowired
-	private AnalysisSubmissionServiceImpl analysisSubmissionService;
+	private AnalysisSubmissionService analysisSubmissionService;
 
 	/**
 	 * Tests successfully getting a state for an analysis submission.
@@ -60,8 +59,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetStateForAnalysisSubmissionSuccess() {
-		AnalysisState state = analysisSubmissionService
-				.getStateForAnalysisSubmission(1l);
+		AnalysisState state = analysisSubmissionService.getStateForAnalysisSubmission(1l);
 		assertEquals(AnalysisState.SUBMITTING, state);
 	}
 
@@ -80,13 +78,13 @@ public class AnalysisSubmissionServiceImplIT {
 
 		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification.searchAnalysis(null, null,
 				null, null);
-		Page<AnalysisSubmission> paged = analysisSubmissionService.search(specification, 0, 10, Sort.Direction.ASC, "createdDate");
+		Page<AnalysisSubmission> paged = analysisSubmissionService.search(specification, 0, 10, Sort.Direction.ASC,
+				"createdDate");
 		assertEquals(8, paged.getContent().size());
 
 		// Try filtering a by names
 		String name = "My";
-		specification = AnalysisSubmissionSpecification.searchAnalysis(name, null,
-				null, null);
+		specification = AnalysisSubmissionSpecification.searchAnalysis(name, null, null, null);
 		paged = analysisSubmissionService.search(specification, 0, 10, Sort.Direction.ASC, "createdDate");
 		assertEquals(7, paged.getContent().size());
 
@@ -107,6 +105,34 @@ public class AnalysisSubmissionServiceImplIT {
 		specification = AnalysisSubmissionSpecification.searchAnalysis(name, state, minDate, maxDate);
 		paged = analysisSubmissionService.search(specification, 0, 10, Sort.Direction.ASC, "createdDate");
 		assertEquals(2, paged.getContent().size());
+	}
 
+	/**
+	 * Tests reading a submission as a regular user
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testReadGrantedRegularUser() {
+		AnalysisSubmission submission = analysisSubmissionService.read(1L);
+		assertNotNull("submission was not properly returned", submission);
+	}
+
+	/**
+	 * Tests being denied to read a submission as a regular user
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "otheraaron", roles = "USER")
+	public void testReadDeniedRegularUser() {
+		analysisSubmissionService.read(1L);
+	}
+
+	/**
+	 * Tests reading a submission as an admin user
+	 */
+	@Test
+	@WithMockUser(username = "otheraaron", roles = "ADMIN")
+	public void testReadSuccessAdmin() {
+		AnalysisSubmission submission = analysisSubmissionService.read(1L);
+		assertNotNull("submission was not properly returned", submission);
 	}
 }
