@@ -213,7 +213,6 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws ExecutionManagerException
 	 */
 	@Test
-	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareAnalysisWorkspaceSuccess() throws IridaWorkflowNotFoundException, ExecutionManagerException {
 		AnalysisSubmission submission = AnalysisSubmission.createSubmissionSingle("Name", sequenceFilesSet,
 				validWorkflowIdSingle);
@@ -260,7 +259,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
 
-		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L, 1L,
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
@@ -318,7 +317,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		List<SequenceFile> sequenceFiles = analysisExecutionGalaxyITService.setupSampleSequenceFileInDatabase(1L,
 				sequenceFilePathA, sequenceFilePath2A);
-		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L, 1L,
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				Sets.newHashSet(sequenceFiles), referenceFilePath, validWorkflowIdSingle);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
@@ -351,7 +350,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
 
-		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L, 1L,
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, validWorkflowIdPaired);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
@@ -407,7 +406,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
 
 		// construct two pairs of sequence files with same sample (1L)
-		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L, 1L,
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				pairSequenceFiles1AB, pairSequenceFiles2AB, referenceFilePath, validWorkflowIdPaired);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
@@ -441,7 +440,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
-				.setupSinglePairSubmissionInDatabaseDifferentSample(1L, 1L, 2L, pairSequenceFiles1A, pairSequenceFiles2A,
+				.setupSinglePairSubmissionInDatabaseDifferentSample(1L, 2L, pairSequenceFiles1A, pairSequenceFiles2A,
 						sequenceFilePath3, referenceFilePath, validWorkflowIdSinglePaired);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
@@ -501,7 +500,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
-				.setupSinglePairSubmissionInDatabaseSameSample(1L, 1L, pairSequenceFiles1A, pairSequenceFiles2A,
+				.setupSinglePairSubmissionInDatabaseSameSample(1L, pairSequenceFiles1A, pairSequenceFiles2A,
 						sequenceFilePath3, referenceFilePath, validWorkflowIdSinglePaired);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
@@ -527,7 +526,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
 		History createdHistory = historiesClient.create(history);
 
-		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L, 1L,
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId("invalid");
@@ -578,7 +577,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
 
-		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L, 1L,
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle);
 		assertEquals("the created submission should have no paired input files", 0, analysisSubmission
 				.getPairedInputFiles().size());
@@ -647,7 +646,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		List<Path> paths2 = new ArrayList<>();
 		paths2.add(sequenceFilePath2A);
 
-		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L, 1L,
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				paths1, paths2, referenceFilePath, validWorkflowIdSingle);
 		assertEquals("the created submission should have no single input files", 0, analysisSubmission
 				.getSingleInputFiles().size());
@@ -721,7 +720,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		paths2.add(sequenceFilePath2A);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
-				.setupSinglePairSubmissionInDatabaseSameSample(1L, 1L, paths1, paths2, sequenceFilePath3,
+				.setupSinglePairSubmissionInDatabaseSameSample(1L, paths1, paths2, sequenceFilePath3,
 						referenceFilePath, validWorkflowIdSingle);
 
 		Set<SequenceFile> singleFiles = analysisSubmission.getSingleInputFiles();
@@ -793,7 +792,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
 
-		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L, 1L,
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePathA, referenceFilePath, phylogenomicsWorkflowId);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
@@ -847,7 +846,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
 
-		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L, 1L,
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePathA, referenceFilePath, validWorkflowIdSingle);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());

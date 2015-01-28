@@ -196,7 +196,7 @@ public class SNVPhylAnalysisIT {
 		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(3L,
 				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
 
-		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(1L, 
+		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
 				Sets.newHashSet(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC), referenceFilePath,
 				snvPhylWorkflow.getWorkflowIdentifier());
 
