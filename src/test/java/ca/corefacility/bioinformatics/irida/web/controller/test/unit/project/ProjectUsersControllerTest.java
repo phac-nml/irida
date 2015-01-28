@@ -115,7 +115,7 @@ public class ProjectUsersControllerTest {
         String location = response.getHeader(HttpHeaders.LOCATION);
         assertNotNull("location must not be null",location);
         assertFalse("location must not be empty",location.isEmpty());
-        assertEquals("http://localhost/api/projects/" + p.getId() + "/users/" + u.getUsername(), location);
+        assertEquals("location must be correct","http://localhost/api/projects/" + p.getId() + "/users/" + u.getUsername(), location);
         //check the ModelMap's resource type 
         Object o = map.get(RESTGenericController.RESOURCE_NAME);
         assertNotNull("object must not be null",o);

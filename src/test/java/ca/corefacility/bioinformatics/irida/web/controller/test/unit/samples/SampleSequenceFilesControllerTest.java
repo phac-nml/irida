@@ -308,9 +308,9 @@ public class SampleSequenceFilesControllerTest {
 		String sequenceFileLocation2 = sampleLocation + "/sequenceFiles/" + sf2.getId();
 		String[] sequenceFileLocs = new String[] {sequenceFileLocation1,sequenceFileLocation2};	
 		List<String> locations = response.getHeaders(HttpHeaders.LOCATION);
-		assertNotNull(locations);
-		assertFalse(locations.isEmpty());
-		assertEquals(2, locations.size());
+		assertNotNull("Header sequence file locations should not be null",locations);
+		assertFalse("Header sequence file locations should not be empty",locations.isEmpty());
+		assertEquals("The header should have 2 sequence file locations",2, locations.size());
 		SequenceFile[] sequences = new SequenceFile[] {sf1,sf2};
 		for(int i = 0; i< 2; i++) {
 			LabelledRelationshipResource<Sample,SequenceFile> lrr = rc.getResources().get(i);
@@ -323,8 +323,8 @@ public class SampleSequenceFilesControllerTest {
 			assertEquals("Sequence file location should be correct",sampleLocation + "/sequenceFiles", sampleSequenceFiles.getHref());
 			assertNotNull("Sample location should not be null",sample);
 			assertEquals("Sample location should be correct",sampleLocation, sample.getHref());
-			assertEquals("http://localhost/api/projects/" + p.getId() + "/samples/" + s.getId() +
-					"/sequenceFiles/" + sequences[i].getId(), locations.get(i));
+			assertEquals("Header sequence file location should be correct","http://localhost/api/projects/" + p.getId() +
+					"/samples/" + s.getId() + "/sequenceFiles/" + sequences[i].getId(), locations.get(i));
 		}
 		assertEquals("HTTP status must be CREATED",HttpStatus.CREATED.value(), response.getStatus());
 		Files.delete(f1);
@@ -358,11 +358,8 @@ public class SampleSequenceFilesControllerTest {
 		when(sampleService.getSampleForProject(p, s.getId())).thenReturn(s);
 		when(sequenceFileService.createSequenceFilePairInSample(any(SequenceFile.class),
 				any(SequenceFile.class),any(Sample.class))).thenReturn(relationships);
-		ModelMap modelMap = controller.addNewSequenceFilePairToSample(p.getId(), s.getId(),
+		controller.addNewSequenceFilePairToSample(p.getId(), s.getId(),
 				mmf1, resource1, mmf2, resource2, response);
-		modelMap.clear();
-		Files.delete(f1);
-		Files.delete(f2);
 	}
 
 	@Test

@@ -86,7 +86,6 @@ public class SequencingRunSequenceFilesControllerTest {
 		representation.put(RESTSequencingRunSequenceFilesController.SEQUENCEFILE_ID_KEY, ""+seqId);
 		when(sequenceFileService.read(seqId)).thenReturn(file);
 		when(miseqRunService.read(sequencingrunId)).thenReturn(run);
-		ModelMap modelMap = controller.addSequenceFileToMiseqRun(sequencingrunId,representation, response);
-		modelMap.clear();
+		controller.addSequenceFileToMiseqRun(sequencingrunId,representation, response);
 	}
 }

@@ -260,7 +260,7 @@ public class ProjectSamplesControllerTest {
 				+ "/samples/" + s.getId(), location);
 		//test that the modelMap contains a correct resource collection.
 		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
-		assertTrue(o instanceof ResourceCollection);
+		assertTrue("Object should be an instance of ResourceCollection",o instanceof ResourceCollection);
 		@SuppressWarnings("unchecked")
 		ResourceCollection<LabelledRelationshipResource<Project,Sample>> labeledRRs =
 		(ResourceCollection<LabelledRelationshipResource<Project,Sample>>) o;
@@ -282,8 +282,8 @@ public class ProjectSamplesControllerTest {
 		Set<String> rels = Sets.newHashSet(Link.REL_SELF, RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES,
 				RESTProjectSamplesController.REL_PROJECT);
 		for (Link link : links) {
-			assertTrue("rels should contain link [" + link + "]", rels.contains(link.getRel()));
-			assertNotNull("rels should remove link [" + link + "]", rels.remove(link.getRel()));
+			assertTrue("Rels should contain link [" + link + "]", rels.contains(link.getRel()));
+			assertNotNull("Rels should remove link [" + link + "]", rels.remove(link.getRel()));
 		}
 		assertTrue("Rels should be empty after removing expected links", rels.isEmpty());
 	}
