@@ -130,5 +130,6 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @throws EntityNotFoundException
 	 *             If the corresponding analysis cannot be found.
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#analysisSubmissionId, 'canReadAnalysisSubmission')")
 	public AnalysisState getStateForAnalysisSubmission(Long analysisSubmissionId) throws EntityNotFoundException;
 }

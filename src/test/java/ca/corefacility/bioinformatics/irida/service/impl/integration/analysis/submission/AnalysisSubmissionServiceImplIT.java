@@ -231,4 +231,22 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testFindRevisionsPageDeniedUser() {
 		analysisSubmissionService.findRevisions(1L, new PageRequest(1,1));
 	}
+	
+	/**
+	 * Tests getting state for a {@link AnalysisSubmission} as a regular user.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testGetStateForAnalysisSubmissionRegularUser() {
+		assertNotNull("state should return successfully", analysisSubmissionService.getStateForAnalysisSubmission(1L));
+	}
+	
+	/**
+	 * Tests being denied to get the state for a {@link AnalysisSubmission} as a regular user.
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "otheraaron", roles = "USER")
+	public void testGetStateForAnalysisSubmissionDeniedUser() {
+		analysisSubmissionService.getStateForAnalysisSubmission(1L);
+	}
 }
