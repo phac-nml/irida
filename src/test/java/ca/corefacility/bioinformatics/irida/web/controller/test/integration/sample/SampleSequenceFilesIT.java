@@ -74,15 +74,14 @@ public class SampleSequenceFilesIT {
 
 		// check that the location and link headers were created:
 		String location = r.getHeader(HttpHeaders.LOCATION);
-
-		assertNotNull(location);
-		assertTrue(location.matches(sequenceFileUri + "/[0-9]+"));
-		
+		assertNotNull("location must exist",location);
+		assertTrue("location must be correct",location.matches(sequenceFileUri + "/[0-9]+"));
 		// confirm that the sequence file was added to the sample sequence files list
 		asUser().expect().body("resource.resources.fileName",hasItem(sequenceFile.getFileName().toString()))
 			.and().body("resource.resources.links[0].rel",hasItems("self"))
 			.when().get(sequenceFileUri);
-
+		String responseBody = asUser().get(location).asString();
+		assertTrue("Result of POST must equal result of GET",r.asString().equals(responseBody));
 		// clean up
 		Files.delete(sequenceFile);
 	}
@@ -109,12 +108,12 @@ public class SampleSequenceFilesIT {
 				.multiPart("file2", sequenceFile.toFile())
 				.multiPart("parameters2", fileParams, MediaType.APPLICATION_JSON_VALUE).expect()
 				.statusCode(HttpStatus.CREATED.value()).when().post(sequenceFilePairUri);
+		
+		String location1 = r.body().jsonPath().get("resource.resources[0].links.find{it.rel == 'self'}.href");
+		String location2 = r.body().jsonPath().get("resource.resources[1].links.find{it.rel == 'self'}.href");
 
-		String location1 = r.body().jsonPath().get("file1").toString();
-		String location2 = r.body().jsonPath().get("file2").toString();
-
-		assertTrue(location1.matches(sequenceFileUri + "/[0-9]+"));
-		assertTrue(location2.matches(sequenceFileUri + "/[0-9]+"));
+		assertTrue("Response body must contain 1st sequence reference",location1.matches(sequenceFileUri + "/[0-9]+"));
+		assertTrue("Response body must contain 2nd sequence reference",location2.matches(sequenceFileUri + "/[0-9]+"));
 
 		assertNotEquals(location1, location2);
 
