@@ -120,4 +120,12 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public Page<AnalysisSubmission> list(int page, int size, Direction order) {
 		return super.list(page, size, order);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public long count() {
+		return super.count();
+	}
 }

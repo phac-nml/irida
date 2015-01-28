@@ -286,4 +286,22 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testListSortPropertiesAdminUser() {
 		assertNotNull("Should list submissions", analysisSubmissionService.list(1,1,Direction.ASC, "submitter"));
 	}
+	
+	/**
+	 * Tests counting analysis submissions as regular user and being denied.
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testCountRegularUser() {
+		analysisSubmissionService.count();
+	}
+	
+	/**
+	 * Tests counting analysis submissions as an admin user.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCountAdminUser() {
+		assertNotNull("Should count submissions", analysisSubmissionService.count());
+	}
 }
