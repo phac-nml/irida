@@ -27,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
@@ -77,9 +76,6 @@ public class AnalysisExecutionServiceGalaxyTest {
 	private IridaWorkflowStructure iridaWorkflowStructure;
 	@Mock
 	private Path workflowFile;
-	
-	@Mock
-	private User submitter;
 
 	private AnalysisSubmission analysisSubmission;
 	private AnalysisSubmission analysisPreparing;
