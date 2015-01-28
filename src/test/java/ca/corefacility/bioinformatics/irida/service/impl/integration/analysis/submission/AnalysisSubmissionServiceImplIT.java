@@ -158,4 +158,22 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testReadMultipleDeniedRegularUser() {
 		analysisSubmissionService.readMultiple(Sets.newHashSet(1L, 2L));
 	}
+	
+	/**
+	 * Tests finding all as a regular user and being denied.
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testFindAllDeniedRegularUser() {
+		analysisSubmissionService.findAll();
+	}
+	
+	/**
+	 * Tests finding all as an admin user.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFindAllAdminUser() {
+		assertNotNull("Should find submissions", analysisSubmissionService.findAll());
+	}
 }

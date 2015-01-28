@@ -64,4 +64,12 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public Iterable<AnalysisSubmission> readMultiple(Iterable<Long> idents) {
 		return super.readMultiple(idents);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Iterable<AnalysisSubmission> findAll() {
+		return super.findAll();
+	}
 }
