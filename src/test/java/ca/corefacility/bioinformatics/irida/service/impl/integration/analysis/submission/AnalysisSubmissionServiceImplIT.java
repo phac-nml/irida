@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -248,5 +249,41 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testGetStateForAnalysisSubmissionDeniedUser() {
 		analysisSubmissionService.getStateForAnalysisSubmission(1L);
+	}
+	
+	/**
+	 * Tests listing submissions as the regular user and being denied.
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testListDeniedRegularUser() {
+		analysisSubmissionService.list(1,1,Direction.ASC);
+	}
+	
+	/**
+	 * Tests listing submissions as an admin user.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testListAdminUser() {
+		assertNotNull("Should list submissions", analysisSubmissionService.list(1,1,Direction.ASC));
+	}
+	
+	/**
+	 * Tests listing submissions as the regular user with sort properties and being denied.
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testListSortPropertiesDeniedRegularUser() {
+		analysisSubmissionService.list(1,1,Direction.ASC, "");
+	}
+	
+	/**
+	 * Tests listing submissions with sort properties as an admin user.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testListSortPropertiesAdminUser() {
+		assertNotNull("Should list submissions", analysisSubmissionService.list(1,1,Direction.ASC, "submitter"));
 	}
 }

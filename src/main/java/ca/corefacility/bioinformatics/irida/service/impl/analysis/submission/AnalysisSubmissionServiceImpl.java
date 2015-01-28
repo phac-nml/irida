@@ -7,6 +7,7 @@ import javax.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
 import org.springframework.stereotype.Service;
@@ -101,5 +102,22 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public Page<Revision<Integer, AnalysisSubmission>> findRevisions(Long id, Pageable pageable)
 			throws EntityRevisionDeletedException {
 		return super.findRevisions(id, pageable);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Page<AnalysisSubmission> list(int page, int size, Direction order, String... sortProperties)
+			throws IllegalArgumentException {
+		return super.list(page, size, order, sortProperties);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Page<AnalysisSubmission> list(int page, int size, Direction order) {
+		return super.list(page, size, order);
 	}
 }
