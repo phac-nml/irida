@@ -1,9 +1,13 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration.analysis.submission;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.UUID;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,20 +27,23 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.google.common.collect.Sets;
-
 import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 
 /**
  * Tests for an analysis service.
@@ -56,6 +63,11 @@ public class AnalysisSubmissionServiceImplIT {
 
 	@Autowired
 	private AnalysisSubmissionService analysisSubmissionService;
+
+	@Autowired
+	private UserRepository userRepository;
+
+	private UUID workflowId = UUID.randomUUID();
 
 	/**
 	 * Tests successfully getting a state for an analysis submission.
@@ -139,7 +151,7 @@ public class AnalysisSubmissionServiceImplIT {
 		AnalysisSubmission submission = analysisSubmissionService.read(1L);
 		assertNotNull("submission was not properly returned", submission);
 	}
-	
+
 	/**
 	 * Tests reading multiple submissions as a regular user
 	 */
@@ -151,7 +163,7 @@ public class AnalysisSubmissionServiceImplIT {
 		assertNotNull("Should have one submission", submissionIter.next());
 		assertNotNull("Should have two submissions", submissionIter.next());
 	}
-	
+
 	/**
 	 * Tests reading multiple submissions as a regular user and being denied.
 	 */
@@ -160,7 +172,7 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testReadMultipleDeniedRegularUser() {
 		analysisSubmissionService.readMultiple(Sets.newHashSet(1L, 2L));
 	}
-	
+
 	/**
 	 * Tests finding all as a regular user and being denied.
 	 */
@@ -169,7 +181,7 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testFindAllDeniedRegularUser() {
 		analysisSubmissionService.findAll();
 	}
-	
+
 	/**
 	 * Tests finding all as an admin user.
 	 */
@@ -178,61 +190,68 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testFindAllAdminUser() {
 		assertNotNull("Should find submissions", analysisSubmissionService.findAll());
 	}
-	
+
 	/**
-	 * Tests checking for existence of an {@link AnalysisSubmission} as a regular user.
+	 * Tests checking for existence of an {@link AnalysisSubmission} as a
+	 * regular user.
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testExistsRegularUser() {
 		assertTrue("Submission should exist", analysisSubmissionService.exists(1L));
 	}
-	
+
 	/**
-	 * Tests checking for existence of an {@link AnalysisSubmission} as a regular non-owner user.
+	 * Tests checking for existence of an {@link AnalysisSubmission} as a
+	 * regular non-owner user.
 	 */
 	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testExistsRegularNonOwnerUser() {
 		assertTrue("Submission should exist", analysisSubmissionService.exists(1L));
 	}
-	
+
 	/**
-	 * Tests finding revisions for a {@link AnalysisSubmission} as a regular user.
+	 * Tests finding revisions for a {@link AnalysisSubmission} as a regular
+	 * user.
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testFindRevisionsRegularUser() {
 		assertNotNull("should return revisions exist", analysisSubmissionService.findRevisions(1L));
 	}
-	
+
 	/**
-	 * Tests being denied to find revisions for a {@link AnalysisSubmission} as a regular user.
+	 * Tests being denied to find revisions for a {@link AnalysisSubmission} as
+	 * a regular user.
 	 */
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testFindRevisionsDeniedUser() {
 		analysisSubmissionService.findRevisions(1L);
 	}
-	
+
 	/**
-	 * Tests finding pageable revisions for a {@link AnalysisSubmission} as a regular user.
+	 * Tests finding pageable revisions for a {@link AnalysisSubmission} as a
+	 * regular user.
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testFindRevisionsPageRegularUser() {
-		assertNotNull("should return revisions exist", analysisSubmissionService.findRevisions(1L, new PageRequest(1,1)));
+		assertNotNull("should return revisions exist",
+				analysisSubmissionService.findRevisions(1L, new PageRequest(1, 1)));
 	}
-	
+
 	/**
-	 * Tests being denied to find revisions for a {@link AnalysisSubmission} as a regular user.
+	 * Tests being denied to find revisions for a {@link AnalysisSubmission} as
+	 * a regular user.
 	 */
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testFindRevisionsPageDeniedUser() {
-		analysisSubmissionService.findRevisions(1L, new PageRequest(1,1));
+		analysisSubmissionService.findRevisions(1L, new PageRequest(1, 1));
 	}
-	
+
 	/**
 	 * Tests getting state for a {@link AnalysisSubmission} as a regular user.
 	 */
@@ -241,52 +260,54 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testGetStateForAnalysisSubmissionRegularUser() {
 		assertNotNull("state should return successfully", analysisSubmissionService.getStateForAnalysisSubmission(1L));
 	}
-	
+
 	/**
-	 * Tests being denied to get the state for a {@link AnalysisSubmission} as a regular user.
+	 * Tests being denied to get the state for a {@link AnalysisSubmission} as a
+	 * regular user.
 	 */
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testGetStateForAnalysisSubmissionDeniedUser() {
 		analysisSubmissionService.getStateForAnalysisSubmission(1L);
 	}
-	
+
 	/**
 	 * Tests listing submissions as the regular user and being denied.
 	 */
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testListDeniedRegularUser() {
-		analysisSubmissionService.list(1,1,Direction.ASC);
+		analysisSubmissionService.list(1, 1, Direction.ASC);
 	}
-	
+
 	/**
 	 * Tests listing submissions as an admin user.
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testListAdminUser() {
-		assertNotNull("Should list submissions", analysisSubmissionService.list(1,1,Direction.ASC));
+		assertNotNull("Should list submissions", analysisSubmissionService.list(1, 1, Direction.ASC));
 	}
-	
+
 	/**
-	 * Tests listing submissions as the regular user with sort properties and being denied.
+	 * Tests listing submissions as the regular user with sort properties and
+	 * being denied.
 	 */
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testListSortPropertiesDeniedRegularUser() {
-		analysisSubmissionService.list(1,1,Direction.ASC, "");
+		analysisSubmissionService.list(1, 1, Direction.ASC, "");
 	}
-	
+
 	/**
 	 * Tests listing submissions with sort properties as an admin user.
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testListSortPropertiesAdminUser() {
-		assertNotNull("Should list submissions", analysisSubmissionService.list(1,1,Direction.ASC, "submitter"));
+		assertNotNull("Should list submissions", analysisSubmissionService.list(1, 1, Direction.ASC, "submitter"));
 	}
-	
+
 	/**
 	 * Tests counting analysis submissions as regular user and being denied.
 	 */
@@ -295,7 +316,7 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testCountRegularUser() {
 		analysisSubmissionService.count();
 	}
-	
+
 	/**
 	 * Tests counting analysis submissions as an admin user.
 	 */
@@ -303,5 +324,68 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCountAdminUser() {
 		assertNotNull("Should count submissions", analysisSubmissionService.count());
+	}
+
+	/**
+	 * Tests deleting as a regular user and being denied.
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testDeleteRegularUser() {
+		analysisSubmissionService.delete(1L);
+	}
+
+	/**
+	 * Tests deleting an analysis submission as an admin user.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testDeleteAdminUser() {
+		assertTrue("submission should exists", analysisSubmissionService.exists(1L));
+		analysisSubmissionService.delete(1L);
+		assertFalse("submission should have been deleted", analysisSubmissionService.exists(1L));
+	}
+
+	/**
+	 * Tests updating a submission as a non admin and being denied.
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testUpdateRegularUser() {
+		analysisSubmissionService.update(1L, ImmutableMap.of("analysisState", AnalysisState.COMPLETED));
+	}
+
+	/**
+	 * Tests updating the analysis as the admin user.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testUpdateAdminUser() {
+		assertNotNull("submission should be updated",
+				analysisSubmissionService.update(1L, ImmutableMap.of("analysisState", AnalysisState.COMPLETED)));
+	}
+
+	/**
+	 * Tests creating a submission as a regular user.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testCreateRegularUser() {
+		User submitter = userRepository.findOne(1L);
+		AnalysisSubmission submission = AnalysisSubmission.createSubmissionSingle(submitter, "test", Sets.newHashSet(),
+				workflowId);
+		assertNotNull("Submission should have been created", analysisSubmissionService.create(submission));
+	}
+
+	/**
+	 * Tests creating a submission as an admin user.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCreateAdminUser() {
+		User submitter = userRepository.findOne(1L);
+		AnalysisSubmission submission = AnalysisSubmission.createSubmissionSingle(submitter, "test", Sets.newHashSet(),
+				workflowId);
+		assertNotNull("Submission should have been created", analysisSubmissionService.create(submission));
 	}
 }

@@ -32,7 +32,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public AnalysisSubmission create(@Valid AnalysisSubmission analysisSubmission) throws EntityExistsException, ConstraintViolationException;
 
 	/**
@@ -53,7 +53,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_USER')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public AnalysisSubmission update(Long id, Map<String, Object> updatedProperties) throws EntityExistsException,
 			EntityNotFoundException, ConstraintViolationException, InvalidPropertyException;
 
@@ -61,7 +61,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_USER')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void delete(Long id) throws EntityNotFoundException;
 
 	/**

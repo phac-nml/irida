@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.service.impl.analysis.submission;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
+
+import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +13,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
@@ -127,5 +133,40 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Override
 	public long count() {
 		return super.count();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void delete(Long id) throws EntityNotFoundException {
+		super.delete(id);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public AnalysisSubmission update(Long id, Map<String, Object> updatedFields) throws ConstraintViolationException,
+			EntityExistsException, InvalidPropertyException {
+		return super.update(id, updatedFields);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public AnalysisSubmission create(AnalysisSubmission object) throws ConstraintViolationException,
+			EntityExistsException {
+		return super.create(object);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Page<AnalysisSubmission> search(Specification<AnalysisSubmission> specification, int page, int size,
+			Direction order, String... sortProperties) {
+		return super.search(specification, page, size, order, sortProperties);
 	}
 }
