@@ -43,6 +43,24 @@
   transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.5s ease-in-out;
 }
 
+/* line 1, ../../styles/components/_tables.scss */
+.boards {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-top: 1px solid #f3f3f3;
+}
+
+/* line 8, ../../styles/components/_tables.scss */
+.board {
+  border-bottom: 1px solid #f3f3f3;
+}
+/* line 11, ../../styles/components/_tables.scss */
+.board > div {
+  margin: .5rem;
+  padding: .5rem;
+}
+
 /* line 1, ../../styles/components/_magnific-popup.scss */
 .image-link {
   cursor: -webkit-zoom-in;

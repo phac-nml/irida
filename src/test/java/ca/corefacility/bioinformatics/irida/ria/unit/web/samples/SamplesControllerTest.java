@@ -37,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -53,6 +54,7 @@ public class SamplesControllerTest {
 	private SamplesController controller;
 	private SampleService sampleService;
 	private SequenceFileService sequenceFileService;
+	private SequenceFilePairService sequenceFilePairService;
 	private UserService userService;
 	private ProjectService projectService;
 	private SequenceFileWebUtilities sequenceFileWebUtilities;
@@ -61,10 +63,11 @@ public class SamplesControllerTest {
 	public void setUp() {
 		sampleService = mock(SampleService.class);
 		sequenceFileService = mock(SequenceFileService.class);
+		sequenceFilePairService = mock(SequenceFilePairService.class);
 		userService = mock(UserService.class);
 		projectService = mock(ProjectService.class);
 		sequenceFileWebUtilities = new SequenceFileWebUtilities();
-		controller = new SamplesController(sampleService, sequenceFileService, userService, projectService,
+		controller = new SamplesController(sampleService, sequenceFileService, sequenceFilePairService, userService, projectService,
 				sequenceFileWebUtilities);
 	}
 

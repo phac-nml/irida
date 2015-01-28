@@ -15,8 +15,6 @@ import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.converter.Converter;
-import org.springframework.format.Formatter;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -38,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -93,16 +92,14 @@ public class SamplesController extends BaseController {
 	private final ProjectService projectService;
 	private final UserService userService;
 	private final SequenceFileWebUtilities sequenceFileUtilities;
-
-	// Converters
-	Formatter<Date> dateFormatter;
-	Converter<Long, String> fileSizeConverter;
+	private final SequenceFilePairService sequenceFilePairService;
 
 	@Autowired
-	public SamplesController(SampleService sampleService, SequenceFileService sequenceFileService,
+	public SamplesController(SampleService sampleService, SequenceFileService sequenceFileService, SequenceFilePairService sequenceFilePairService,
 			UserService userService, ProjectService projectService, SequenceFileWebUtilities sequenceFileUtilities) {
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
+		this.sequenceFilePairService = sequenceFilePairService;
 		this.userService = userService;
 		this.projectService = projectService;
 		this.sequenceFileUtilities = sequenceFileUtilities;
@@ -215,7 +212,9 @@ public class SamplesController extends BaseController {
 		Sample sample = sampleService.read(sampleId);
 		List<Map<String, Object>> files = getFilesForSample(sampleId);
 		boolean projectManagerForSample = isProjectManagerForSample(sample, principal);
+		model.addAttribute("sampleId", sampleId);
 		model.addAttribute(MODEL_ATTR_FILES, files);
+		model.addAttribute("pairs", sequenceFilePairService.getSequenceFilePairsForSample(sample));
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
 		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, projectManagerForSample);
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
@@ -236,6 +235,7 @@ public class SamplesController extends BaseController {
 	@RequestMapping(value = "/samples/ajax/{sampleId}/files", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Map<String, Object>> getFilesForSample(@PathVariable Long sampleId) throws IOException {
 		Sample sample = sampleService.read(sampleId);
+
 		List<Join<Sample, SequenceFile>> joinList = sequenceFileService.getSequenceFilesForSample(sample);
 
 		List<Map<String, Object>> response = new ArrayList<>();

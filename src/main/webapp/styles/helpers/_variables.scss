@@ -44,6 +44,10 @@ $color-grey-light: $irida-colour-grey-light;
 $irida-colour-grey-dark: darken($irida-colour-grey, 30) !default;
 $color-grey-darker: $irida-colour-grey-dark;
 
+// SPECIFIC
+$colour-paired-end: $irida-colour-primary;
+$colour-single-end: $irida-colour-info;
+
 // FONTS
 $irida-font-family-sans-serif: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
 $irida-font-family-serif: Georgia, "Times New Roman", Times, serif !default;

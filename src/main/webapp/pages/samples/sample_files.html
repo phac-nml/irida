@@ -5,8 +5,9 @@
 <head lang="en">
 	<meta charset="UTF-8"/>
 	<title th:text="#{samples.files.title(${sample.label})}">THIS IS SOMETHING WRONG</title>
-	<link rel="stylesheet" th:href="@{/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css}"
-	      href="/resources/bower_components/DataTables/media/css/jquery.dataTables.min.css"/>
+	<link rel="stylesheet" href="/resources/css/pages/sample_files.css"
+	      th:href="@{/resources/css/pages/sample_files.css}"/>
+	<script>window.dependencies = ['irida.sample.files'];</script>
 </head>
 <body>
 <main layout:fragment="main">
@@ -18,128 +19,191 @@
 	</div>
 	<div class="row">
 		<div class="col-md-12">
-			<table id="filesTable">
-				<thead>
-				<tr role="row">
-					<th th:text="#{samples.files.id}">ID</th>
-					<th th:text="#{samples.files.name}">Name</th>
-					<th th:text="#{samples.files.uploaded}">Uploaded</th>
-					<th th:text="#{samples.files.size}">Size</th>
-					<th></th>
-				</tr>
-				</thead>
-				<tbody>
-				<tr role="row" th:each="file : ${files}" th:with="dateFormat=#{locale.date.long}, url=@{${#httpServletRequest.requestURI}}"
-				    th:id="${'file-row-' + file.id}">
-					<td class="file-id" th:text="${file.id}">ID</td>
-					<td>
-						<a class="file-name btn btn-default btn-xs" th:href="${#strings.contains(url, 'projects')} ? ${'sequenceFiles/' + file.id + '/summary'} : @{/sequenceFiles/{id}/summary(id=${file.id})}"
-						   href="#"
-						   th:text="${file.label}"></a>
-					</td>
-					<td data:order="${file.realCreatedDate}"
-					    th:title="${#dates.format(file.realCreatedDate, dateFormat)}" th:text="${file.createdDate}">Date
-					</td>
-					<td data:order="${file.realSize}" th:text="${file.size}"></td>
-					<td class="file-buttons">
-                        <span th:if="${canManageSample}">
-                            <div class="btn-toolbar pull-right">
-	                            <button class="btn btn-primary btn-xs download-file"
-	                                    th:attr="data-file-id=${file.id}">
-		                            <span class="fa fa-fw fa-download"></span>
-	                            </button>
-	                            <button class="btn btn-default btn-xs remove-file"
-	                                    data:tooltip="#{form.btn.remove}"
-	                                    th:attr="data-file-id=${file.id}">
-		                            <span class="fa fa-fw fa-trash"></span>
-	                            </button>
-                            </div>
-                            </span>
-					</td>
-				</tr>
-				</tbody>
-			</table>
+			<ul class="boards" th:with="dateFormat=#{locale.date.short}, url=@{${#httpServletRequest.requestURI}}"
+			    ng-controller="FileController as fileCtrl">
+				<li class="board" th:each="pair : ${pairs}">
+					<div class="row paired_end">
+						<div class="col-md-6">
+							<a href="#"
+							   th:href="${#strings.contains(url, 'projects')} ? ${'sequenceFiles/' + file.getId() + '/summary'} : @{/sequenceFiles/{id}/summary(id=${file.id})}"
+							   class="board-name btn btn-default btn-sm" th:each="file : ${pair.files}"
+							   th:text="${file.getLabel()}"></a>
+						</div>
+						<div class="col-md-3">
+							<div th:text="${#dates.format(pair.createdDate, dateFormat)}"></div>
+							<div class="small text-muted">Created Date</div>
+						</div>
+						<div class="col-md-3">
+							<div th:each="file : ${pair.files}">
+								<div class="btn-group btn-group-sm" role="group">
+									<button class="btn btn-default"
+									        data:ng-click="${'fileCtrl.download(' + file.getId() + ')'}">
+										<span class="fa fa-fw fa-download"></span>
+									</button>
+									<button class="btn btn-default"
+									        data:ng-click="${'fileCtrl.deleteFile(' + file.getId() + ')'}">
+										<span class="fa fa-fw fa-trash"></span>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</li>
+				<li class="board" th:each="file : ${files}">
+					<div class="row single_end">
+						<div class="col-md-6">
+							<a href="#"
+							   th:href="${#strings.contains(url, 'projects')} ? ${'sequenceFiles/' + file.id + '/summary'} : @{/sequenceFiles/{id}/summary(id=${file.id})}"
+							   class="board-name btn btn-default btn-sm" th:text="${file.label}"></a>
+						</div>
+						<div class="col-md-3">
+							<div th:text="${#dates.format(file.createdDate, dateFormat)}"></div>
+							<div class="small text-muted">Created Date</div>
+						</div>
+						<div class="col-md-3">
+							<div class="btn-group btn-group-sm" role="group">
+								<button class="btn btn-default"
+								        data:ng-click="${'fileCtrl.download(' + file.id + ')'}">
+									<span class="fa fa-fw fa-download"></span>
+								</button>
+								<button class="btn btn-default"
+								        data:ng-click="${'fileCtrl.deleteFile(' + file.id + ')'}">
+									<span class="fa fa-fw fa-trash"></span>
+								</button>
+							</div>
+						</div>
+					</div>
+				</li>
+			</ul>
 		</div>
 	</div>
+
 </main>
-<th:block layout:fragment="pageScripts" th:inline="javascript">
-	<script th:src="@{/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js}"
-	        src="/resources/bower_components/DataTables/media/js/jquery.dataTables.min.js"></script>
-	<script th:src="@{/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js}"
-	        src="/resources/bower_components/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
-	<script>
-		/*<![CDATA[*/
-		$(document).ready(function () {
-			'use strict';
-			var table = $("#filesTable").DataTable();
-
-			$("button.remove-file").on("click", function () {
-				var that = $(this);
-				var fileId = that.data("file-id");
-				var sampleId = /*[[${sample.id}]]*/ 0;
-
-				showRemoveFile(fileId, sampleId, $("#file-row-" + fileId), table);
-			});
-
-			$("button.download-file").on("click", function () {
-				var that = $(this);
-				var fileId = that.data("file-id");
-				var url = /*[[@{/sequenceFiles/download/}]]*/ '/sequenceFiles/download/';
-				var iframe = document.createElement("iframe");
-				iframe.src = url + fileId;
-				iframe.style.display = "none";
-				document.body.appendChild(iframe);
-			});
-		});
-
-		function showRemoveFile(fileId, sampleId, fileRow, table) {
-			var urlBase = /*[[@{/samples/ajax/}]]*/ "/samples/ajax/";
-			var removeURL = urlBase + sampleId + "/files/" + fileId;
-
-			noty({
-				layout : "center",
-				type   : "confirmation",
-				text   : /*[[#{samples.files.remove.confirmation}]]*/ "_Remove sequence file from sample?_",
-				modal  : true,
-				buttons: [
-					{
-						addClass: 'btn btn-primary btn-sm remove-file-confirm',
-						text    : [[#{form.btn.confim}]],
-						onClick : function ($noty) {
-							$noty.close();
-							$.ajax({
-								url    : removeURL,
-								method : "DELETE",
-								success: function () {
-									noty({
-										text   : /*[[#{samples.files.remove.complete}]]*/ '_File removed_',
-										layout : "topCenter",
-										type   : "success",
-										timeout: 5000
-									});
-									table.row(fileRow).remove().draw();
-								},
-								error  : function () {
-									text: /*[[#{samples.files.remove.error}]]*/ '',
-										noty({
-											layout : "topCenter",
-											type   : "error",
-											timeout: 10000
-										})
-								}
-							});
-						}
-					},
-					{
-						addClass: 'btn btn-danger btn-sm', text: [[#{form.btn.cancel}]], onClick: function ($noty) {
-						$noty.close();
-					}
-					}
-				]
-			});
-		}
-		/*]]>*/
+<th:block layout:fragment="page-scripts" th:inline="javascript">
+	<script type="text/ng-template" id="/confirm.html">
+		<div class="modal-header">
+			Confirm Deletion
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-default" ng-click="deleteCtrl.cancel()">Cancel</button>
+			<button class="btn btn-primary" ng-click="deleteCtrl.deleteFile()">OK</button>
+		</div>
 	</script>
+	<script th:inline="javascript">
+		var URLS = {
+			download: /*[[@{/sequenceFiles/download/}]]*/ 'sequenceFiles/download',
+			deleteFile: /*[[@{/samples/ajax/{sId}/files/(sId=${sampleId})}]]*/ '/samples/ajax/1/files/1'
+		};
+	</script>
+	<script>
+		(function () {
+			"use strict";
+
+			function FileService($http) {
+				var svc = this;
+
+				svc.download = function (id) {
+					var iframe = document.createElement("iframe");
+					iframe.src = URLS.download + id;
+					iframe.style.display = "none";
+					document.body.appendChild(iframe);
+				};
+
+				svc.deleteFile = function (id) {
+					$http.delete(URLS.deleteFile + id)
+						.success(function (data) {
+							console.log("DELETED")
+						})
+						.error(function (data, status) {
+							console.log("ERROR")
+						});
+				};
+			}
+
+			function FileDeletionController($modalInstance) {
+				var vm = this;
+
+				vm.deleteFile = function () {
+				    $modalInstance.close();
+				};
+
+				vm.cancel = function () {
+				    $modalInstance.dismiss();
+				};
+			}
+
+			function FileController(fileService, $modal) {
+				var vm = this;
+
+				vm.download = function (id) {
+					fileService.download(id);
+				};
+
+				vm.deleteFileFromPair = function () {
+
+				};
+
+				vm.deleteFile = function(id){
+					var modal = $modal.open({
+						templateUrl: '/confirm.html',
+						controller: 'FileDeletionController as deleteCtrl',
+						size: 'sm'
+					});
+
+					modal.result.then(function() {
+						fileService.deleteFile(id);
+					});
+				};
+
+
+			}
+
+			angular.module('irida.sample.files', [])
+				.controller('FileController', ['FileService', '$modal', FileController])
+				.controller('FileDeletionController', ['$modalInstance', FileDeletionController])
+				.service('FileService', ['$http', FileService])
+			;
+		})();
+	</script>
+	<!--<script>-->		<!--/*<![CDATA[*/-->		<!--$(document).ready(function () {-->
+	<!--'use strict';-->			<!--var table = $("#filesTable").DataTable();-->
+
+	<!--$("button.remove-file").on("click", function () {-->				<!--var that = $(this);-->
+	<!--var fileId = that.data("file-id");-->				<!--var sampleId = /*[[${sample.id}]]*/ 0;-->
+
+	<!--showRemoveFile(fileId, sampleId, $("#file-row-" + fileId), table);-->			<!--});-->
+
+	<!--$("button.download-file").on("click", function () {-->				<!--var that = $(this);-->
+	<!--var fileId = that.data("file-id");-->
+	<!--var url = /*[[@{/sequenceFiles/download/}]]*/ '/sequenceFiles/download/';-->
+	<!--var iframe = document.createElement("iframe");-->				<!--iframe.src = url + fileId;-->
+	<!--iframe.style.display = "none";-->				<!--document.body.appendChild(iframe);-->			<!--});-->
+	<!--});-->
+
+	<!--function showRemoveFile(fileId, sampleId, fileRow, table) {-->
+	<!--var urlBase = /*[[@{/samples/ajax/}]]*/ "/samples/ajax/";-->
+	<!--var removeURL = urlBase + sampleId + "/files/" + fileId;-->
+
+	<!--noty({-->				<!--layout : "center",-->				<!--type   : "confirmation",-->
+	<!--text   : /*[[#{samples.files.remove.confirmation}]]*/ "_Remove sequence file from sample?_",-->
+	<!--modal  : true,-->				<!--buttons: [-->					<!--{-->
+	<!--addClass: 'btn btn-primary btn-sm remove-file-confirm',-->
+	<!--text    : [[#{form.btn.confim}]],-->						<!--onClick : function ($noty) {-->
+	<!--$noty.close();-->							<!--$.ajax({-->
+	<!--url    : removeURL,-->								<!--method : "DELETE",-->
+	<!--success: function () {-->									<!--noty({-->
+	<!--text   : /*[[#{samples.files.remove.complete}]]*/ '_File removed_',-->
+	<!--layout : "topCenter",-->										<!--type   : "success",-->
+	<!--timeout: 5000-->									<!--});-->
+	<!--table.row(fileRow).remove().draw();-->								<!--},-->
+	<!--error  : function () {-->
+	<!--text: /*[[#{samples.files.remove.error}]]*/ '',-->										<!--noty({-->
+	<!--layout : "topCenter",-->											<!--type   : "error",-->
+	<!--timeout: 10000-->										<!--})-->								<!--}-->
+	<!--});-->						<!--}-->					<!--},-->					<!--{-->
+	<!--addClass: 'btn btn-danger btn-sm', text: [[#{form.btn.cancel}]], onClick: function ($noty) {-->
+	<!--$noty.close();-->					<!--}-->					<!--}-->				<!--]-->
+	<!--});-->		<!--}-->		<!--/*]]>*/-->	<!--</script>-->
 </th:block>
 </body>
 </html>

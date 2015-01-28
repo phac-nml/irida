@@ -1,0 +1,9 @@
+@import "../helpers/variables";
+
+.paired_end {
+  border-left: 1rem solid $colour-paired-end;
+}
+
+.single_end {
+  border-left: 1rem solid $colour-single-end;
+}
