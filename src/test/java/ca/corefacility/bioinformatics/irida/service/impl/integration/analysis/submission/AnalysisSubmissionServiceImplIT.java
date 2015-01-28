@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
@@ -193,5 +194,41 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testExistsRegularNonOwnerUser() {
 		assertTrue("Submission should exist", analysisSubmissionService.exists(1L));
+	}
+	
+	/**
+	 * Tests finding revisions for a {@link AnalysisSubmission} as a regular user.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testFindRevisionsRegularUser() {
+		assertNotNull("should return revisions exist", analysisSubmissionService.findRevisions(1L));
+	}
+	
+	/**
+	 * Tests being denied to find revisions for a {@link AnalysisSubmission} as a regular user.
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "otheraaron", roles = "USER")
+	public void testFindRevisionsDeniedUser() {
+		analysisSubmissionService.findRevisions(1L);
+	}
+	
+	/**
+	 * Tests finding pageable revisions for a {@link AnalysisSubmission} as a regular user.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testFindRevisionsPageRegularUser() {
+		assertNotNull("should return revisions exist", analysisSubmissionService.findRevisions(1L, new PageRequest(1,1)));
+	}
+	
+	/**
+	 * Tests being denied to find revisions for a {@link AnalysisSubmission} as a regular user.
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "otheraaron", roles = "USER")
+	public void testFindRevisionsPageDeniedUser() {
+		analysisSubmissionService.findRevisions(1L, new PageRequest(1,1));
 	}
 }

@@ -5,9 +5,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.history.Revision;
+import org.springframework.data.history.Revisions;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
@@ -79,5 +84,22 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Override
 	public Boolean exists(Long id) {
 		return super.exists(id);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Revisions<Integer, AnalysisSubmission> findRevisions(Long id) throws EntityRevisionDeletedException {
+		return super.findRevisions(id);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Page<Revision<Integer, AnalysisSubmission>> findRevisions(Long id, Pageable pageable)
+			throws EntityRevisionDeletedException {
+		return super.findRevisions(id, pageable);
 	}
 }

@@ -45,6 +45,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#idents, 'canReadAnalysisSubmission')")
 	public Iterable<AnalysisSubmission> readMultiple(Iterable<Long> idents);
 
@@ -109,13 +110,14 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_USER')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
 	public Revisions<Integer, AnalysisSubmission> findRevisions(Long id) throws EntityRevisionDeletedException;
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
 	public Page<Revision<Integer, AnalysisSubmission>> findRevisions(Long id, Pageable pageable)
 			throws EntityRevisionDeletedException;
 
