@@ -24,6 +24,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -147,7 +148,7 @@ public class SamplesControllerTest {
 		when(userService.getUsersForProject(project)).thenReturn(
 				(Lists.newArrayList(new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER))));
 
-		String sampleFiles = controller.getSampleFiles(model, sampleId, null, principal, Locale.US);
+		String sampleFiles = controller.getSampleFiles(model, sampleId, principal);
 
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
@@ -175,7 +176,7 @@ public class SamplesControllerTest {
 		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(files);
 		when(userService.getUserByUsername(userName)).thenReturn(user);
 
-		String sampleFiles = controller.getSampleFiles(model, sampleId, null, principal, Locale.US);
+		String sampleFiles = controller.getSampleFiles(model, sampleId, principal);
 
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
@@ -208,7 +209,7 @@ public class SamplesControllerTest {
 		when(userService.getUsersForProject(project)).thenReturn(
 				(Lists.newArrayList(new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER))));
 
-		String sampleFiles = controller.getSampleFiles(model, sampleId, null, principal, Locale.US);
+		String sampleFiles = controller.getSampleFiles(model, sampleId, principal);
 
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertFalse((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
@@ -227,7 +228,8 @@ public class SamplesControllerTest {
 		when(sampleService.read(sampleId)).thenReturn(sample);
 		when(sequenceFileService.read(fileId)).thenReturn(file);
 
-		controller.removeFileFromSample(sampleId, fileId, Locale.US);
+		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+		controller.removeFileFromSample(attributes, sampleId, fileId, "/returnURL", Locale.US);
 
 		verify(sampleService).removeSequenceFileFromSample(sample, file);
 	}

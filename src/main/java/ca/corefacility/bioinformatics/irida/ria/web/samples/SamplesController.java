@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -45,7 +46,6 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for all sample related views
@@ -212,23 +212,16 @@ public class SamplesController extends BaseController {
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles",
 			"/projects/{projectId}/samples/{sampleId}/sequenceFiles" })
-	public String getSampleFiles(final Model model, @PathVariable Long sampleId, @RequestParam(required = false) String deletedFileName, Principal principal, Locale locale)
+	public String getSampleFiles(final Model model, @PathVariable Long sampleId, Principal principal)
 			throws IOException {
 		Sample sample = sampleService.read(sampleId);
 		List<Map<String, Object>> files = getFilesForSample(sampleId);
-		boolean projectManagerForSample = isProjectManagerForSample(sample, principal);
-
-		if (!Strings.isNullOrEmpty(deletedFileName)) {
-			model.addAttribute("fileDeleted", true);
-			model.addAttribute("fileDeletedMessage", messageSource
-					.getMessage("samples.files.removed.message", new Object[] { deletedFileName }, locale));
-		}
 
 		model.addAttribute("sampleId", sampleId);
 		model.addAttribute(MODEL_ATTR_FILES, files);
 		model.addAttribute("pairs", sequenceFilePairService.getSequenceFilePairsForSample(sample));
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
-		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, projectManagerForSample);
+		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample, principal));
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
 		return SAMPLE_FILES_PAGE;
 	}
@@ -266,19 +259,24 @@ public class SamplesController extends BaseController {
 	 *            The {@link SequenceFile} id
 	 * @return map stating the request was successful
 	 */
-	@RequestMapping(value = "/samples/ajax/{sampleId}/files/{fileId}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
-	@ResponseBody
-	public Map<String, String> removeFileFromSample(@PathVariable Long sampleId, @PathVariable Long fileId, Locale locale) {
+	@RequestMapping(value = "/samples/{sampleId}/files/delete", method = RequestMethod.POST)
+	public String removeFileFromSample(RedirectAttributes attributes, @PathVariable Long sampleId, @RequestParam Long fileId, @RequestParam String returnUrl, Locale locale) {
 		Sample sample = sampleService.read(sampleId);
 		SequenceFile sequenceFile = sequenceFileService.read(fileId);
 
 		try {
 			sampleService.removeSequenceFileFromSample(sample, sequenceFile);
-			return ImmutableMap.of("response", "success");
+			attributes.addFlashAttribute("fileDeleted", true);
+			attributes.addFlashAttribute("fileDeletedMessage", messageSource
+					.getMessage("samples.files.removed.message", new Object[] { sequenceFile.getLabel() }, locale));
 		} catch (Exception e) {
 			logger.error("Could not remove sequence file from sample: ", e);
-			return ImmutableMap.of("error", messageSource.getMessage("samples.files.remove.error", new Object[]{sequenceFile.getLabel()}, locale));
+			attributes.addFlashAttribute("fileDeleted", true);
+			attributes.addFlashAttribute("fileDeletedError", messageSource
+					.getMessage("samples.files.remove.error", new Object[] { sequenceFile.getLabel() }, locale));
 		}
+
+		return "redirect:" + returnUrl;
 	}
 
 	/**

@@ -18,8 +18,11 @@
 		</div>
 	</div>
 	<div class="row" th:if="${fileDeleted}">
-		<div class="col-md-12 alert alert-success" role="alert">
+		<div th:if="${fileDeletedMessage}" class="col-md-12 alert alert-success" role="alert">
 			<strong th:text="${fileDeletedMessage}"></strong>
+		</div>
+		<div th:if="${fileDeletedError}" class="col-md-12 alert alert-error" role="alert">
+			<strong th:text="${fileDeletedError}"></strong>
 		</div>
 	</div>
 	<div class="row">
@@ -86,132 +89,26 @@
 </main>
 <th:block layout:fragment="page-scripts" th:inline="javascript">
 	<script type="text/ng-template" id="/confirm.html">
-		<div class="modal-header">
+		<form method="post" th:action="@{/samples/{sId}/files/delete(sId=${sampleId})}">
+			<div class="modal-header">
 			<h3 class="modal-title" th:text="#{samples.files.remove.confirmation}"></h3>
 		</div>
 		<div class="modal-body">
 			<h4>{{ ::deleteCtrl.label }}</h4>
+			<input type="hidden" name="fileId" value="{{ deleteCtrl.fileId }}"/> <input type="hidden" name="returnUrl" th:value="@{${#httpServletRequest.requestURI}}"/>
 		</div>
 		<div class="modal-footer">
-			<button class="btn btn-default" ng-click="deleteCtrl.cancel()">Cancel</button>
-			<button class="btn btn-primary remove-file-confirm" ng-click="deleteCtrl.deleteFile()">OK</button>
+			<button type="button" class="btn btn-default" ng-click="deleteCtrl.cancel()" th:text="#{form.btn.cancel}">Cancel</button>
+			<button type="submit" class="btn btn-warning remove-file-confirm" th:text="#{form.btn.remove}">OK</button>
 		</div>
+		</form>
 	</script>
 	<script th:inline="javascript">
 		var URLS = {
-			base: /*[[@{${#httpServletRequest.requestURI}}]]*/ '/sequenceFiles',
-			download: /*[[@{/sequenceFiles/download/}]]*/ 'sequenceFiles/download',
-			deleteFile: /*[[@{/samples/ajax/{sId}/files/(sId=${sampleId})}]]*/ '/samples/ajax/1/files/1'
+			base: /*[[@{${#httpServletRequest.requestURI}}]]*/ '/sequenceFiles'
 		};
 	</script>
-	<script>
-		(function () {
-			"use strict";
-
-			/**
-			 * Services to call API for SequenceFile
-			 * @param $http Angular http service
-			 * @param notifications IRIDA notification service
-			 * @constructor
-			 */
-			function FileService($http, notifications) {
-				var svc = this;
-
-				/**
-				 * Creates a new iFrame to download a file into.
-				 * @param id Id for the sequenceFile to download
-				 */
-				svc.download = function (id) {
-					var iframe = document.createElement("iframe");
-					iframe.src = URLS.download + id;
-					iframe.style.display = "none";
-					document.body.appendChild(iframe);
-				};
-
-				/**
-				 * Calls API to remove a sequence file from the sample.
-				 *  On success it refreshes the page and displays a success notification.
-				 *  On error it shows a notification of the error.
-				 * @param id
-				 * @param label
-				 */
-				svc.deleteFile = function (id, label) {
-					$http.delete(URLS.deleteFile + id)
-						.success(function () {
-							window.location = URLS.base + "?deletedFileName=" + encodeURIComponent(label);
-						})
-						.error(function (data) {
-							notifications.show({msg: data.error, type: 'error'});
-						});
-				};
-			}
-
-			/**
-			 * Controller for the modal to confirm removing a sequenceFile
-			 * @param $modalInstance Handle on the current modal
-			 * @param label Name of the file to remove from the Sample.
-			 * @constructor
-			 */
-			function FileDeletionController($modalInstance, label) {
-				var vm = this;
-				vm.label = label;
-
-				vm.deleteFile = function () {
-				    $modalInstance.close();
-				};
-
-				vm.cancel = function () {
-				    $modalInstance.dismiss();
-				};
-			}
-
-			/**
-			 * Controller for the Buttons in the list of sequence files.
-			 * @param fileService Service for API calls for sequenceFiles
-			 * @param $modal Angular modal
-			 * @constructor
-			 */
-			function FileController(fileService, $modal) {
-				var vm = this;
-
-				/**
-				 * Click handler for the download button for a sequenceFile
-				 * @param id Id for the sequenceFile to download
-				 */
-				vm.download = function (id) {
-					fileService.download(id);
-				};
-
-				/**
-				 * Click handler for teh delete button for a sequenceFile
-				 *  Displays a confirmation modal
-				 * @param id Id for the sequenceFile to delete
-				 * @param label Name of the sequenceFile to delete
-				 */
-				vm.deleteFile = function(id, label){
-					var modal = $modal.open({
-						templateUrl: '/confirm.html',
-						controller: 'FileDeletionController as deleteCtrl',
-						resolve: {
-							label: function() {
-								return label;
-							}
-						}
-					});
-
-					modal.result.then(function() {
-						fileService.deleteFile(id, label);
-					});
-				};
-			}
-
-			angular.module('irida.sample.files', [])
-				.controller('FileController', ['FileService', '$modal', FileController])
-				.controller('FileDeletionController', ['$modalInstance', 'label', FileDeletionController])
-				.service('FileService', ['$http', 'notifications', FileService])
-			;
-		})();
-	</script>
+	<script src="/resources/js/pages/samples/files.js" th:src="@{/resources/js/pages/samples/files.js}"></script>
 </th:block>
 </body>
 </html>
