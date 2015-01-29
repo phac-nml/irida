@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -94,15 +96,18 @@ public class SamplesController extends BaseController {
 	private final SequenceFileWebUtilities sequenceFileUtilities;
 	private final SequenceFilePairService sequenceFilePairService;
 
+	private final MessageSource messageSource;
+
 	@Autowired
 	public SamplesController(SampleService sampleService, SequenceFileService sequenceFileService, SequenceFilePairService sequenceFilePairService,
-			UserService userService, ProjectService projectService, SequenceFileWebUtilities sequenceFileUtilities) {
+			UserService userService, ProjectService projectService, SequenceFileWebUtilities sequenceFileUtilities, MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
 		this.userService = userService;
 		this.projectService = projectService;
 		this.sequenceFileUtilities = sequenceFileUtilities;
+		this.messageSource = messageSource;
 	}
 
 	/************************************************************************************************
@@ -207,11 +212,18 @@ public class SamplesController extends BaseController {
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles",
 			"/projects/{projectId}/samples/{sampleId}/sequenceFiles" })
-	public String getSampleFiles(final Model model, @PathVariable Long sampleId, Principal principal)
+	public String getSampleFiles(final Model model, @PathVariable Long sampleId, @RequestParam(required = false) String deletedFileName, Principal principal, Locale locale)
 			throws IOException {
 		Sample sample = sampleService.read(sampleId);
 		List<Map<String, Object>> files = getFilesForSample(sampleId);
 		boolean projectManagerForSample = isProjectManagerForSample(sample, principal);
+
+		if (!Strings.isNullOrEmpty(deletedFileName)) {
+			model.addAttribute("fileDeleted", true);
+			model.addAttribute("fileDeletedMessage", messageSource
+					.getMessage("samples.files.removed.message", new Object[] { deletedFileName }, locale));
+		}
+
 		model.addAttribute("sampleId", sampleId);
 		model.addAttribute(MODEL_ATTR_FILES, files);
 		model.addAttribute("pairs", sequenceFilePairService.getSequenceFilePairsForSample(sample));
@@ -256,13 +268,17 @@ public class SamplesController extends BaseController {
 	 */
 	@RequestMapping(value = "/samples/ajax/{sampleId}/files/{fileId}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
 	@ResponseBody
-	public Map<String, String> removeFileFromSample(@PathVariable Long sampleId, @PathVariable Long fileId) {
+	public Map<String, String> removeFileFromSample(@PathVariable Long sampleId, @PathVariable Long fileId, Locale locale) {
 		Sample sample = sampleService.read(sampleId);
 		SequenceFile sequenceFile = sequenceFileService.read(fileId);
 
-		sampleService.removeSequenceFileFromSample(sample, sequenceFile);
-
-		return ImmutableMap.of("response", "success");
+		try {
+			sampleService.removeSequenceFileFromSample(sample, sequenceFile);
+			return ImmutableMap.of("response", "success");
+		} catch (Exception e) {
+			logger.error("Could not remove sequence file from sample: ", e);
+			return ImmutableMap.of("error", messageSource.getMessage("samples.files.remove.error", new Object[]{sequenceFile.getLabel()}, locale));
+		}
 	}
 
 	/**

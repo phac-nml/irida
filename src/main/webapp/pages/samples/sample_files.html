@@ -17,6 +17,11 @@
 				__TITLE__</h1>
 		</div>
 	</div>
+	<div class="row" th:if="${fileDeleted}">
+		<div class="col-md-12 alert alert-success" role="alert">
+			<strong th:text="${fileDeletedMessage}"></strong>
+		</div>
+	</div>
 	<div class="row">
 		<div class="col-md-12">
 			<ul class="boards" th:with="dateFormat=#{locale.date.short}, url=@{${#httpServletRequest.requestURI}}"
@@ -40,8 +45,8 @@
 									        data:ng-click="${'fileCtrl.download(' + file.getId() + ')'}">
 										<span class="fa fa-fw fa-download"></span>
 									</button>
-									<button class="btn btn-default"
-									        data:ng-click="${'fileCtrl.deleteFile(' + file.getId() + ')'}">
+									<button th:if="${canManageSample}" class="btn btn-default remove-file" th:with="fId=${file.getId() + ', &#39;'' + file.getLabel() + ''&#39;'}"
+									        data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
 										<span class="fa fa-fw fa-trash"></span>
 									</button>
 								</div>
@@ -66,8 +71,8 @@
 								        data:ng-click="${'fileCtrl.download(' + file.id + ')'}">
 									<span class="fa fa-fw fa-download"></span>
 								</button>
-								<button class="btn btn-default"
-								        data:ng-click="${'fileCtrl.deleteFile(' + file.id + ')'}">
+								<button th:if="${canManageSample}" class="btn btn-default remove-file" th:with="fId=${file.id + ', &#39;'' + file.label + ''&#39;'}"
+								        data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
 									<span class="fa fa-fw fa-trash"></span>
 								</button>
 							</div>
@@ -82,15 +87,19 @@
 <th:block layout:fragment="page-scripts" th:inline="javascript">
 	<script type="text/ng-template" id="/confirm.html">
 		<div class="modal-header">
-			Confirm Deletion
+			<h3 class="modal-title" th:text="#{samples.files.remove.confirmation}"></h3>
+		</div>
+		<div class="modal-body">
+			<h4>{{ ::deleteCtrl.label }}</h4>
 		</div>
 		<div class="modal-footer">
 			<button class="btn btn-default" ng-click="deleteCtrl.cancel()">Cancel</button>
-			<button class="btn btn-primary" ng-click="deleteCtrl.deleteFile()">OK</button>
+			<button class="btn btn-primary remove-file-confirm" ng-click="deleteCtrl.deleteFile()">OK</button>
 		</div>
 	</script>
 	<script th:inline="javascript">
 		var URLS = {
+			base: /*[[@{${#httpServletRequest.requestURI}}]]*/ '/sequenceFiles',
 			download: /*[[@{/sequenceFiles/download/}]]*/ 'sequenceFiles/download',
 			deleteFile: /*[[@{/samples/ajax/{sId}/files/(sId=${sampleId})}]]*/ '/samples/ajax/1/files/1'
 		};
@@ -99,7 +108,7 @@
 		(function () {
 			"use strict";
 
-			function FileService($http) {
+			function FileService($http, notifications) {
 				var svc = this;
 
 				svc.download = function (id) {
@@ -109,19 +118,20 @@
 					document.body.appendChild(iframe);
 				};
 
-				svc.deleteFile = function (id) {
+				svc.deleteFile = function (id, label) {
 					$http.delete(URLS.deleteFile + id)
-						.success(function (data) {
-							console.log("DELETED")
+						.success(function () {
+							window.location = URLS.base + "?deletedFileName=" + encodeURIComponent(label);
 						})
-						.error(function (data, status) {
-							console.log("ERROR")
+						.error(function (data) {
+							notifications.show({msg: data.error, type: 'error'});
 						});
 				};
 			}
 
-			function FileDeletionController($modalInstance) {
+			function FileDeletionController($modalInstance, label) {
 				var vm = this;
+				vm.label = label;
 
 				vm.deleteFile = function () {
 				    $modalInstance.close();
@@ -139,19 +149,19 @@
 					fileService.download(id);
 				};
 
-				vm.deleteFileFromPair = function () {
-
-				};
-
-				vm.deleteFile = function(id){
+				vm.deleteFile = function(id, label){
 					var modal = $modal.open({
 						templateUrl: '/confirm.html',
 						controller: 'FileDeletionController as deleteCtrl',
-						size: 'sm'
+						resolve: {
+							label: function() {
+								return label;
+							}
+						}
 					});
 
 					modal.result.then(function() {
-						fileService.deleteFile(id);
+						fileService.deleteFile(id, label);
 					});
 				};
 
@@ -160,8 +170,8 @@
 
 			angular.module('irida.sample.files', [])
 				.controller('FileController', ['FileService', '$modal', FileController])
-				.controller('FileDeletionController', ['$modalInstance', FileDeletionController])
-				.service('FileService', ['$http', FileService])
+				.controller('FileDeletionController', ['$modalInstance', 'label', FileDeletionController])
+				.service('FileService', ['$http', 'notifications', FileService])
 			;
 		})();
 	</script>
