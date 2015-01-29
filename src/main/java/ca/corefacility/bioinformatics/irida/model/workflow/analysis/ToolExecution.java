@@ -63,10 +63,12 @@ public class ToolExecution implements IridaThing {
 	@Column(name = "tool_version")
 	private final String toolVersion;
 
-	@NotNull
+	// TODO: add command-line requirement back *after* Galaxy and blend4j have
+	// been updated.
+	// @NotNull
 	@Lob
 	@Column(name = "command_line")
-	private final String commandLine;
+	private String commandLine;
 
 	@NotNull
 	@Lob
@@ -87,12 +89,11 @@ public class ToolExecution implements IridaThing {
 	private final Date createdDate;
 
 	private ToolExecution(final Long id, final Set<ToolExecution> previousSteps, final String toolName,
-			final String toolVersion, final String commandLine, final String executionManagerIdentifier,
+			final String toolVersion, final String executionManagerIdentifier,
 			final Map<String, String> executionTimeParameters) {
 		this.id = id;
 		this.toolName = toolName;
 		this.toolVersion = toolVersion;
-		this.commandLine = commandLine;
 		this.executionManagerIdentifier = executionManagerIdentifier;
 
 		if (previousSteps == null) {
