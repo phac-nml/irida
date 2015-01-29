@@ -175,45 +175,6 @@
 			;
 		})();
 	</script>
-	<!--<script>-->		<!--/*<![CDATA[*/-->		<!--$(document).ready(function () {-->
-	<!--'use strict';-->			<!--var table = $("#filesTable").DataTable();-->
-
-	<!--$("button.remove-file").on("click", function () {-->				<!--var that = $(this);-->
-	<!--var fileId = that.data("file-id");-->				<!--var sampleId = /*[[${sample.id}]]*/ 0;-->
-
-	<!--showRemoveFile(fileId, sampleId, $("#file-row-" + fileId), table);-->			<!--});-->
-
-	<!--$("button.download-file").on("click", function () {-->				<!--var that = $(this);-->
-	<!--var fileId = that.data("file-id");-->
-	<!--var url = /*[[@{/sequenceFiles/download/}]]*/ '/sequenceFiles/download/';-->
-	<!--var iframe = document.createElement("iframe");-->				<!--iframe.src = url + fileId;-->
-	<!--iframe.style.display = "none";-->				<!--document.body.appendChild(iframe);-->			<!--});-->
-	<!--});-->
-
-	<!--function showRemoveFile(fileId, sampleId, fileRow, table) {-->
-	<!--var urlBase = /*[[@{/samples/ajax/}]]*/ "/samples/ajax/";-->
-	<!--var removeURL = urlBase + sampleId + "/files/" + fileId;-->
-
-	<!--noty({-->				<!--layout : "center",-->				<!--type   : "confirmation",-->
-	<!--text   : /*[[#{samples.files.remove.confirmation}]]*/ "_Remove sequence file from sample?_",-->
-	<!--modal  : true,-->				<!--buttons: [-->					<!--{-->
-	<!--addClass: 'btn btn-primary btn-sm remove-file-confirm',-->
-	<!--text    : [[#{form.btn.confim}]],-->						<!--onClick : function ($noty) {-->
-	<!--$noty.close();-->							<!--$.ajax({-->
-	<!--url    : removeURL,-->								<!--method : "DELETE",-->
-	<!--success: function () {-->									<!--noty({-->
-	<!--text   : /*[[#{samples.files.remove.complete}]]*/ '_File removed_',-->
-	<!--layout : "topCenter",-->										<!--type   : "success",-->
-	<!--timeout: 5000-->									<!--});-->
-	<!--table.row(fileRow).remove().draw();-->								<!--},-->
-	<!--error  : function () {-->
-	<!--text: /*[[#{samples.files.remove.error}]]*/ '',-->										<!--noty({-->
-	<!--layout : "topCenter",-->											<!--type   : "error",-->
-	<!--timeout: 10000-->										<!--})-->								<!--}-->
-	<!--});-->						<!--}-->					<!--},-->					<!--{-->
-	<!--addClass: 'btn btn-danger btn-sm', text: [[#{form.btn.cancel}]], onClick: function ($noty) {-->
-	<!--$noty.close();-->					<!--}-->					<!--}-->				<!--]-->
-	<!--});-->		<!--}-->		<!--/*]]>*/-->	<!--</script>-->
 </th:block>
 </body>
 </html>
