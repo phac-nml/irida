@@ -65,7 +65,8 @@ public class SampleFilesPageIT {
 		page.gotoPage(SAMPLE_ID);
 		
 		page.deleteFirstFile();
-		assertTrue(page.notySuccessDisplayed());
+		page.gotoPage(SAMPLE_ID);
+		assertEquals("Displays the correct number of sequence files", 2, page.getSequenceFileCount());
 	}
 
 	@After

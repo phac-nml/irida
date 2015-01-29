@@ -15,10 +15,12 @@ import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
@@ -46,7 +48,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 /**
- * Created by josh on 14-07-30.
+ * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
 public class SamplesControllerTest {
 
@@ -58,6 +60,7 @@ public class SamplesControllerTest {
 	private UserService userService;
 	private ProjectService projectService;
 	private SequenceFileWebUtilities sequenceFileWebUtilities;
+	private MessageSource messageSource;
 
 	@Before
 	public void setUp() {
@@ -67,8 +70,9 @@ public class SamplesControllerTest {
 		userService = mock(UserService.class);
 		projectService = mock(ProjectService.class);
 		sequenceFileWebUtilities = new SequenceFileWebUtilities();
+		messageSource = mock(MessageSource.class);
 		controller = new SamplesController(sampleService, sequenceFileService, sequenceFilePairService, userService, projectService,
-				sequenceFileWebUtilities);
+				sequenceFileWebUtilities, messageSource);
 	}
 
 	// ************************************************************************************************
@@ -143,7 +147,7 @@ public class SamplesControllerTest {
 		when(userService.getUsersForProject(project)).thenReturn(
 				(Lists.newArrayList(new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER))));
 
-		String sampleFiles = controller.getSampleFiles(model, sampleId, principal);
+		String sampleFiles = controller.getSampleFiles(model, sampleId, null, principal, Locale.US);
 
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
@@ -171,7 +175,7 @@ public class SamplesControllerTest {
 		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(files);
 		when(userService.getUserByUsername(userName)).thenReturn(user);
 
-		String sampleFiles = controller.getSampleFiles(model, sampleId, principal);
+		String sampleFiles = controller.getSampleFiles(model, sampleId, null, principal, Locale.US);
 
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
@@ -204,7 +208,7 @@ public class SamplesControllerTest {
 		when(userService.getUsersForProject(project)).thenReturn(
 				(Lists.newArrayList(new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER))));
 
-		String sampleFiles = controller.getSampleFiles(model, sampleId, principal);
+		String sampleFiles = controller.getSampleFiles(model, sampleId, null, principal, Locale.US);
 
 		assertEquals(SamplesController.SAMPLE_FILES_PAGE, sampleFiles);
 		assertFalse((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
@@ -223,7 +227,7 @@ public class SamplesControllerTest {
 		when(sampleService.read(sampleId)).thenReturn(sample);
 		when(sequenceFileService.read(fileId)).thenReturn(file);
 
-		controller.removeFileFromSample(sampleId, fileId);
+		controller.removeFileFromSample(sampleId, fileId, Locale.US);
 
 		verify(sampleService).removeSequenceFileFromSample(sample, file);
 	}
