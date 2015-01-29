@@ -108,9 +108,19 @@
 		(function () {
 			"use strict";
 
+			/**
+			 * Services to call API for SequenceFile
+			 * @param $http Angular http service
+			 * @param notifications IRIDA notification service
+			 * @constructor
+			 */
 			function FileService($http, notifications) {
 				var svc = this;
 
+				/**
+				 * Creates a new iFrame to download a file into.
+				 * @param id Id for the sequenceFile to download
+				 */
 				svc.download = function (id) {
 					var iframe = document.createElement("iframe");
 					iframe.src = URLS.download + id;
@@ -118,6 +128,13 @@
 					document.body.appendChild(iframe);
 				};
 
+				/**
+				 * Calls API to remove a sequence file from the sample.
+				 *  On success it refreshes the page and displays a success notification.
+				 *  On error it shows a notification of the error.
+				 * @param id
+				 * @param label
+				 */
 				svc.deleteFile = function (id, label) {
 					$http.delete(URLS.deleteFile + id)
 						.success(function () {
@@ -129,6 +146,12 @@
 				};
 			}
 
+			/**
+			 * Controller for the modal to confirm removing a sequenceFile
+			 * @param $modalInstance Handle on the current modal
+			 * @param label Name of the file to remove from the Sample.
+			 * @constructor
+			 */
 			function FileDeletionController($modalInstance, label) {
 				var vm = this;
 				vm.label = label;
@@ -142,13 +165,29 @@
 				};
 			}
 
+			/**
+			 * Controller for the Buttons in the list of sequence files.
+			 * @param fileService Service for API calls for sequenceFiles
+			 * @param $modal Angular modal
+			 * @constructor
+			 */
 			function FileController(fileService, $modal) {
 				var vm = this;
 
+				/**
+				 * Click handler for the download button for a sequenceFile
+				 * @param id Id for the sequenceFile to download
+				 */
 				vm.download = function (id) {
 					fileService.download(id);
 				};
 
+				/**
+				 * Click handler for teh delete button for a sequenceFile
+				 *  Displays a confirmation modal
+				 * @param id Id for the sequenceFile to delete
+				 * @param label Name of the sequenceFile to delete
+				 */
 				vm.deleteFile = function(id, label){
 					var modal = $modal.open({
 						templateUrl: '/confirm.html',
@@ -164,8 +203,6 @@
 						fileService.deleteFile(id, label);
 					});
 				};
-
-
 			}
 
 			angular.module('irida.sample.files', [])
