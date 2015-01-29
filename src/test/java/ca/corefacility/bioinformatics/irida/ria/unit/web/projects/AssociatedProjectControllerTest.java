@@ -368,27 +368,17 @@ public class AssociatedProjectControllerTest {
 		Project allowedProject = new Project("allowed");
 		Project notAllowedProject = new Project("not allowed");
 
-		Principal principal = () -> USER_NAME;
-
 		when(projectService.read(projectId)).thenReturn(project);
-
-		User user = new User();
-		user.setSystemRole(Role.ROLE_USER);
-		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
 
 		when(projectService.getRelatedProjects(project)).thenReturn(
 				Lists.newArrayList(new RelatedProjectJoin(project, allowedProject), new RelatedProjectJoin(project,
 						notAllowedProject)));
 
-		when(projectService.getProjectsForUser(user)).thenReturn(
-				Lists.newArrayList(new ProjectUserJoin(allowedProject, user, ProjectRole.PROJECT_USER)));
-
 		Sample sample = new Sample("test");
 		when(sampleService.getSamplesForProject(allowedProject)).thenReturn(
 				Lists.newArrayList(new ProjectSampleJoin(allowedProject, sample)));
 
-		Map<String, Object> associatedSamplesForProject = controller.getAssociatedSamplesForProject(projectId,
-				principal);
+		Map<String, Object> associatedSamplesForProject = controller.getAssociatedSamplesForProject(projectId);
 
 		assertTrue("should have samples", associatedSamplesForProject.containsKey("samples"));
 

@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -364,19 +363,10 @@ public class AssociatedProjectsController {
 	 */
 	@RequestMapping(value = "/{projectId}/associated/samples")
 	@ResponseBody
-	public Map<String, Object> getAssociatedSamplesForProject(@PathVariable Long projectId, Principal principal) {
+	public Map<String, Object> getAssociatedSamplesForProject(@PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
 
-		User loggedInUser = userService.getUserByUsername(principal.getName());
-
-		// Determine if the user is an owner or admin.
-		boolean isAdmin = loggedInUser.getSystemRole().equals(Role.ROLE_ADMIN);
-
-		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(project);
-
-		// get the projects the user can read
-		List<RelatedProjectJoin> authorizedRelatedProjectsForUser = getAuthorizedRelatedProjectsForUser(
-				relatedProjectJoins, loggedInUser, isAdmin);
+		List<RelatedProjectJoin> authorizedRelatedProjectsForUser = projectService.getRelatedProjects(project);
 
 		List<Map<String, Object>> sampleList = new ArrayList<>();
 		// for each project
@@ -451,9 +441,6 @@ public class AssociatedProjectsController {
 			boolean isAdmin) {
 		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(currentProject);
 
-		List<RelatedProjectJoin> authorizedRelatedProjectsForUser = getAuthorizedRelatedProjectsForUser(
-				relatedProjectJoins, currentUser, isAdmin);
-
 		List<Map<String, String>> projects = new ArrayList<>();
 
 		for (RelatedProjectJoin rpj : relatedProjectJoins) {
@@ -462,37 +449,11 @@ public class AssociatedProjectsController {
 			Map<String, String> map = new HashMap<>();
 			map.put("name", project.getLabel());
 			map.put("id", project.getId().toString());
-			map.put("auth", authorizedRelatedProjectsForUser.contains(rpj) ? "authorized" : "");
+			map.put("auth", "authorized");
 
 			projects.add(map);
 		}
 		return projects;
-	}
-
-	/**
-	 * Get a list of the {@link RelatedProjectJoin}s a {@link User} is
-	 * authorized to read
-	 * 
-	 * @param relatedProjectJoins
-	 *            The joins to test
-	 * @param currentUser
-	 *            The logged in {@link User}
-	 * @param isAdmin
-	 *            whether the user is an admin
-	 * @return A list of {@link Project}s the {@link User} can read
-	 */
-	private List<RelatedProjectJoin> getAuthorizedRelatedProjectsForUser(List<RelatedProjectJoin> relatedProjectJoins,
-			User currentUser, boolean isAdmin) {
-		// Need to know if the user has rights to view the project
-		List<Join<Project, User>> userProjectJoin = projectService.getProjectsForUser(currentUser);
-
-		// Create a quick lookup list
-		Set<Project> usersProjects = userProjectJoin.stream().map((j) -> j.getSubject()).collect(Collectors.toSet());
-
-		List<RelatedProjectJoin> authorizedProjects = relatedProjectJoins.stream()
-				.filter((j) -> usersProjects.contains((j.getObject())) || isAdmin).collect(Collectors.toList());
-
-		return authorizedProjects;
 	}
 
 	/**
