@@ -15,7 +15,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -434,7 +433,6 @@ public class AnalysisSubmissionServiceImplIT {
 	 */
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "otheraaron", roles = "USER")
-	@Ignore
 	public void testGetAnalysisSubmissionsForUserAsRegularUserDenied() {
 		User user = userRepository.findOne(1L);
 		analysisSubmissionService.getAnalysisSubmissionsForUser(user);
