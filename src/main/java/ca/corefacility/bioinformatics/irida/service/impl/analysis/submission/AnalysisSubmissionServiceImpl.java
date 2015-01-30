@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.analysis.submission;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -41,6 +42,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		AnalysisSubmissionService {
 	
 	private UserRepository userRepository;
+	private AnalysisSubmissionRepository analysisSubmissionRepository;
 
 	/**
 	 * Builds a new AnalysisSubmissionServiceImpl with the given information.
@@ -57,6 +59,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			UserRepository userRepository, Validator validator) {
 		super(analysisSubmissionRepository, validator, AnalysisSubmission.class);
 		this.userRepository = userRepository;
+		this.analysisSubmissionRepository = analysisSubmissionRepository;
 	}
 
 	/**
@@ -182,5 +185,15 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public Page<AnalysisSubmission> search(Specification<AnalysisSubmission> specification, int page, int size,
 			Direction order, String... sortProperties) {
 		return super.search(specification, page, size, order, sortProperties);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<AnalysisSubmission> getAnalysisSubmissionsForUser(User user) {
+		checkNotNull(user, "user is null");
+
+		return analysisSubmissionRepository.findBySubmitter(user);
 	}
 }

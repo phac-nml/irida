@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -14,6 +15,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +40,10 @@ import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultit
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -66,6 +70,9 @@ public class AnalysisSubmissionServiceImplIT {
 
 	@Autowired
 	private AnalysisSubmissionService analysisSubmissionService;
+	
+	@Autowired
+	private UserRepository userRepository;
 
 	private UUID workflowId = UUID.randomUUID();
 
@@ -96,19 +103,19 @@ public class AnalysisSubmissionServiceImplIT {
 				null, null);
 		Page<AnalysisSubmission> paged = analysisSubmissionService.search(specification, 0, 10, Sort.Direction.ASC,
 				"createdDate");
-		assertEquals(8, paged.getContent().size());
+		assertEquals(9, paged.getContent().size());
 
 		// Try filtering a by names
 		String name = "My";
 		specification = AnalysisSubmissionSpecification.searchAnalysis(name, null, null, null);
 		paged = analysisSubmissionService.search(specification, 0, 10, Sort.Direction.ASC, "createdDate");
-		assertEquals(7, paged.getContent().size());
+		assertEquals(8, paged.getContent().size());
 
 		// Add a minDate filter
 		Date minDate = new Date(1378479662000L);
 		specification = AnalysisSubmissionSpecification.searchAnalysis(name, null, minDate, null);
 		paged = analysisSubmissionService.search(specification, 0, 10, Sort.Direction.ASC, "createdDate");
-		assertEquals(6, paged.getContent().size());
+		assertEquals(7, paged.getContent().size());
 
 		// Add a maxDate filter
 		Date maxDate = new Date(1389024062000L);
@@ -408,6 +415,41 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testSearchAdminUser() {
 		assertNotNull("search should succeed", analysisSubmissionService.search(
 				new AnalysisSubmissionTestSpecification(), 1, 1, Direction.ASC, "createdDate"));
+	}
+
+	/**
+	 * Tests getting a set of submissions as a regular user for the user.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testGetAnalysisSubmissionsForUserAsRegularUser() {
+		User user = userRepository.findOne(1L);
+		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForUser(user);
+		assertNotNull("should get submissions for the user", submissions);
+		assertEquals("submissions should have correct number", 8, submissions.size());
+	}
+
+	/**
+	 * Tests being denied getting submissions for a different user.
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "otheraaron", roles = "USER")
+	@Ignore
+	public void testGetAnalysisSubmissionsForUserAsRegularUserDenied() {
+		User user = userRepository.findOne(1L);
+		analysisSubmissionService.getAnalysisSubmissionsForUser(user);
+	}
+
+	/**
+	 * Tests getting a set of submissions as an admin user for a different user.
+	 */
+	@Test
+	@WithMockUser(username = "otheraaron", roles = "ADMIN")
+	public void testGetAnalysisSubmissionsForUserAsAdminUser() {
+		User user = userRepository.findOne(1L);
+		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForUser(user);
+		assertNotNull("should get submissions for the user", submissions);
+		assertEquals("submissions should have correct number", 8, submissions.size());
 	}
 
 	/**

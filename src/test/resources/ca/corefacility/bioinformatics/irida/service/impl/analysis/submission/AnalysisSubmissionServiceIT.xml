@@ -54,4 +54,6 @@
                          name="My Completed Running Submission" analysis_id="1" workflow_id="0x00000000000040008000000000000000" submitter="1"/>
     <analysis_submission id="7" analysis_state="ERROR" created_date="2014-02-06 10:01:02" name="My Really Bad Mistake!"
                          analysis_id="1" workflow_id="0x00000000000040008000000000000000" submitter="1"/>
+   	<analysis_submission id="9" analysis_state="ERROR" created_date="2014-02-06 10:01:02" name="My Really Bad Mistake!"
+                         analysis_id="1" workflow_id="0x00000000000040008000000000000000" submitter="2"/>
 </dataset>

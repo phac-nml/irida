@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
@@ -18,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
@@ -133,4 +135,13 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#analysisSubmissionId, 'canReadAnalysisSubmission')")
 	public AnalysisState getStateForAnalysisSubmission(Long analysisSubmissionId) throws EntityNotFoundException;
+	
+	/**
+	 * Gets a {@link Set} of {@link AnalysisSubmission}s for a {@link User}.
+	 * 
+	 * @param user
+	 *            The {@link User} to find all submissions for.
+	 * @return A {@link Set} of {@link AnalysisSubmission}s for a user.
+	 */
+	public Set<AnalysisSubmission> getAnalysisSubmissionsForUser(User user);
 }
