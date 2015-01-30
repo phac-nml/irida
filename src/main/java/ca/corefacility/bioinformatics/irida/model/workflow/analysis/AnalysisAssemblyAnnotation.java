@@ -1,0 +1,55 @@
+package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
+
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.envers.Audited;
+
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+
+/**
+ * Metadata for an assembly and annotation analysis.
+ * 
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
+@Entity
+@Table(name = "analysis_assemblyannotation")
+@Audited
+public class AnalysisAssemblyAnnotation extends Analysis {
+
+	private AnalysisAssemblyAnnotation() {
+		super(null, null);
+	}
+
+	/**
+	 * Builds a new {@link AnalysisAssemblyAnnotation} with the given
+	 * information.
+	 * 
+	 * @param inputFiles
+	 *            The files used as input for this analysis.
+	 * @param executionManagerAnalysisId
+	 *            The execution manager id for this analysis.
+	 * @param analysisOutputFilesMap
+	 *            A {@link Map} of output files for this analysis.
+	 */
+	public AnalysisAssemblyAnnotation(Set<SequenceFile> inputFiles, String executionManagerAnalysisId,
+			Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
+		super(inputFiles, executionManagerAnalysisId, analysisOutputFilesMap);
+	}
+
+	public AnalysisOutputFile getContigs() {
+		return getAnalysisOutputFile("assembled-contigs");
+	}
+	
+	public AnalysisOutputFile getAssemblyStatistics() {
+		return getAnalysisOutputFile("assembly-statistics");
+	}
+	
+	public AnalysisOutputFile getAnnotatedAssembly() {
+		return getAnalysisOutputFile("annotated-assembly");
+	}
+}
