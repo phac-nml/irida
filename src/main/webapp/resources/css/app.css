@@ -8090,10 +8090,27 @@ input {
 .board {
   border-bottom: 1px solid #f3f3f3;
 }
-/* line 11, ../../styles/components/_tables.scss */
-.board > div {
+
+/* line 12, ../../styles/components/_tables.scss */
+.board_inner {
   margin: .5rem;
   padding: .5rem;
+}
+
+/* line 17, ../../styles/components/_tables.scss */
+.board_paired:first-child {
+  padding-bottom: 1rem;
+}
+
+/* line 21, ../../styles/components/_tables.scss */
+.board_detail--value {
+  line-height: 1.8rem;
+}
+
+/* line 25, ../../styles/components/_tables.scss */
+.board_detail--desc {
+  line-height: 1rem;
+  padding: .2rem 0 0 0;
 }
 
 /* line 4, ../../styles/components/_typography.scss */

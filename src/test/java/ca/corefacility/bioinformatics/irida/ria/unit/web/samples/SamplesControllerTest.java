@@ -154,7 +154,8 @@ public class SamplesControllerTest {
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
 
 		verify(sampleService, times(2)).read(sampleId);
-		verify(sequenceFileService).getSequenceFilesForSample(sample);
+		verify(sequenceFileService).getUnpairedSequenceFilesForSample(sample);
+		verify(sequenceFilePairService).getSequenceFilePairsForSample(sample);
 	}
 
 	@Test
@@ -182,7 +183,8 @@ public class SamplesControllerTest {
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
 
 		verify(sampleService, times(2)).read(sampleId);
-		verify(sequenceFileService).getSequenceFilesForSample(sample);
+		verify(sequenceFileService).getUnpairedSequenceFilesForSample(sample);
+		verify(sequenceFilePairService).getSequenceFilePairsForSample(sample);
 		verifyZeroInteractions(projectService);
 	}
 
@@ -215,7 +217,8 @@ public class SamplesControllerTest {
 		assertFalse((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
 
 		verify(sampleService, times(2)).read(sampleId);
-		verify(sequenceFileService).getSequenceFilesForSample(sample);
+		verify(sequenceFileService).getUnpairedSequenceFilesForSample(sample);
+		verify(sequenceFilePairService).getSequenceFilePairsForSample(sample);
 	}
 
 	@Test
@@ -249,7 +252,7 @@ public class SamplesControllerTest {
 			joinList.add(new SampleSequenceFileJoin(sample, file));
 		}
 		when(sampleService.read(1L)).thenReturn(sample);
-		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(joinList);
+		when(sequenceFileService.getUnpairedSequenceFilesForSample(sample)).thenReturn(joinList);
 		List<Map<String, Object>> result = controller.getFilesForSample(1L);
 		assertEquals("Should have the correct number of sequence file records.", joinList.size(), result.size());
 

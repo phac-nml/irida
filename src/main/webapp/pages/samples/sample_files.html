@@ -30,45 +30,61 @@
 			<ul class="boards" th:with="dateFormat=#{locale.date.short}, url=@{${#httpServletRequest.requestURI}}"
 			    ng-controller="FileController as fileCtrl">
 				<li class="board" th:each="pair : ${pairs}">
-					<div class="row paired_end">
-						<div class="col-md-6">
-							<a href="#"
-							   th:href="${#strings.contains(url, 'projects')} ? ${'sequenceFiles/' + file.getId() + '/summary'} : @{/sequenceFiles/{id}/summary(id=${file.id})}"
-							   class="board-name btn btn-default btn-sm" th:each="file : ${pair.files}"
-							   th:text="${file.getLabel()}"></a>
-						</div>
-						<div class="col-md-3">
-							<div th:text="${#dates.format(pair.createdDate, dateFormat)}"></div>
-							<div class="small text-muted">Created Date</div>
-						</div>
-						<div class="col-md-3">
-							<div th:each="file : ${pair.files}">
-								<div class="btn-group btn-group-sm" role="group">
-									<button class="btn btn-default"
-									        data:ng-click="${'fileCtrl.download(' + file.getId() + ')'}">
-										<span class="fa fa-fw fa-download"></span>
-									</button>
-									<button th:if="${canManageSample}" class="btn btn-default remove-file" th:with="fId=${file.getId() + ', &#39;'' + file.getLabel() + ''&#39;'}"
-									        data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
-										<span class="fa fa-fw fa-trash"></span>
-									</button>
+					<div class="paired_end board_inner">
+						<div class="row board_paired" th:each="file : ${pair.files}">
+							<div class="col-md-5">
+								<a href="#"
+								   th:href="${#strings.contains(url, 'projects')} ? ${'sequenceFiles/' + file.id + '/summary'} : @{/sequenceFiles/{id}/summary(id=${file.id})}"
+								   class="board-name btn btn-default btn-sm" th:text="${file.label}"></a>
+							</div>
+							<div class="col-md-2">
+								<div class="board_detail">
+									<div class="board_detail--value" th:text="${file.size}"></div>
+									<div class="small text-muted board_detail--desc" th:text="#{samples.files.fileSize}">File Size</div>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<th:block th:if="${fileStat.first}">
+									<div class="board_detail--value"
+									     th:text="${#dates.format(pair.createdDate, dateFormat)}"></div>
+									<div class="small text-muted board_detail--desc" th:text="#{samples.files.createdDate}">Created Date</div>
+								</th:block>
+							</div>
+							<div class="col-md-2">
+								<div>
+									<div class="btn-group btn-group-sm" role="group">
+										<button class="btn btn-default"
+										        data:ng-click="${'fileCtrl.download(' + file.id + ')'}">
+											<span class="fa fa-fw fa-download"></span>
+										</button>
+										<button th:if="${canManageSample}" class="btn btn-default remove-file"
+										        th:with="fId=${file.id + ', &#39;'' + file.label + ''&#39;'}"
+										        data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
+											<span class="fa fa-fw fa-trash"></span>
+										</button>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</li>
 				<li class="board" th:each="file : ${files}">
-					<div class="row single_end">
-						<div class="col-md-6">
+					<div class="single_end board_inner">
+						<div class="row">
+							<div class="col-md-5">
 							<a href="#"
 							   th:href="${#strings.contains(url, 'projects')} ? ${'sequenceFiles/' + file.id + '/summary'} : @{/sequenceFiles/{id}/summary(id=${file.id})}"
 							   class="board-name btn btn-default btn-sm" th:text="${file.label}"></a>
 						</div>
+							<div class="col-md-2">
+								<div class="board-detail__value" th:text="${file.size}"></div>
+								<div class="small text-muted board_detail--desc" th:text="#{samples.files.fileSize}">File Size</div>
+							</div>
 						<div class="col-md-3">
-							<div th:text="${#dates.format(file.createdDate, dateFormat)}"></div>
-							<div class="small text-muted">Created Date</div>
+							<div class="board-detail__value" th:text="${#dates.format(file.createdDate, dateFormat)}"></div>
+							<div class="small text-muted board-detail__desc" th:text="#{samples.files.createdDate}">Created Date</div>
 						</div>
-						<div class="col-md-3">
+							<div class="col-md-2">
 							<div class="btn-group btn-group-sm" role="group">
 								<button class="btn btn-default"
 								        data:ng-click="${'fileCtrl.download(' + file.id + ')'}">
@@ -78,6 +94,7 @@
 								        data:ng-click="${'fileCtrl.deleteFile(' + fId + ')'}">
 									<span class="fa fa-fw fa-trash"></span>
 								</button>
+							</div>
 							</div>
 						</div>
 					</div>

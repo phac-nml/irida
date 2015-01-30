@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
@@ -34,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
@@ -46,6 +49,7 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.hp.hpl.jena.rdf.model.Seq;
 
 /**
  * Controller for all sample related views
@@ -219,7 +223,25 @@ public class SamplesController extends BaseController {
 
 		model.addAttribute("sampleId", sampleId);
 		model.addAttribute(MODEL_ATTR_FILES, files);
-		model.addAttribute("pairs", sequenceFilePairService.getSequenceFilePairsForSample(sample));
+
+		// SequenceFilePairs
+		List<SequenceFilePair> pairList = sequenceFilePairService.getSequenceFilePairsForSample(sample);
+		List<Map<String, Object>> pairs = new ArrayList<>();
+		for (SequenceFilePair pair : pairList) {
+			Map<String, Object> map = new HashMap<>();
+
+			// Get the file info
+			Set<SequenceFile> fileSet = pair.getFiles();
+			List<Map<String, Object>> pairedFiles = new ArrayList<>();
+			for (SequenceFile file : fileSet) {
+				pairedFiles.add(sequenceFileUtilities.getFileDataMap(file));
+			}
+			map.put("files", pairedFiles);
+			map.put("createdDate", pair.getCreatedDate());
+			pairs.add(map);
+		}
+		model.addAttribute("pairs", pairs);
+
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
 		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample, principal));
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
@@ -241,7 +263,7 @@ public class SamplesController extends BaseController {
 	public @ResponseBody List<Map<String, Object>> getFilesForSample(@PathVariable Long sampleId) throws IOException {
 		Sample sample = sampleService.read(sampleId);
 
-		List<Join<Sample, SequenceFile>> joinList = sequenceFileService.getSequenceFilesForSample(sample);
+		List<Join<Sample, SequenceFile>> joinList = sequenceFileService.getUnpairedSequenceFilesForSample(sample);
 
 		List<Map<String, Object>> response = new ArrayList<>();
 		for (Join<Sample, SequenceFile> join : joinList) {
