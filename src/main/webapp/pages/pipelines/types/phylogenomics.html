@@ -91,7 +91,7 @@
 														       th:checked="${iterStat.first}" th:value="${s.id}"/></div>
 													<div class="file_names">
 														<div data:file="${file.id}" th:each="file : ${s.files}"
-														     th:text="${file.label}"></div>
+														     th:text="${file.getLabel()}"></div>
 													</div>
 													<div class="file_date">
 														<div
