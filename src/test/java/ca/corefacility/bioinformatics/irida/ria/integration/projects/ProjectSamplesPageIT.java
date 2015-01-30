@@ -35,7 +35,9 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableList;
 
 /**
- * <p> Integration test to ensure that the Project Details Page. </p>
+ * <p>
+ * Integration test to ensure that the Project Details Page.
+ * </p>
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
@@ -205,7 +207,8 @@ public class ProjectSamplesPageIT {
 		page.clickLastPageButton();
 		assertEquals(1, page.getTotalSelectedSamplesCount());
 
-		// If you go to another page and come back samples should still be selected
+		// If you go to another page and come back samples should still be
+		// selected
 		page.goToPage("3");
 		page.goToPage();
 		assertEquals(1, page.getTotalSelectedSamplesCount());
@@ -348,6 +351,9 @@ public class ProjectSamplesPageIT {
 		assertTrue(page.isBtnEnabled("confirm-move-samples"));
 		page.clickBtn("confirm-move-samples");
 		page.checkSuccessNotification();
+		
+		int numberOfSamplesSelected = page.getTotalNumberOfSamplesSelected();
+		assertEquals("no samples shold be selected after move", 0, numberOfSamplesSelected);
 
 		// Check to make sure the samples where copied there
 		page.goToPage("2");
@@ -376,7 +382,7 @@ public class ProjectSamplesPageIT {
 		page.goToPage();
 
 		selectFirstThreeSamples();
-		//Admin is not on project5
+		// Admin is not on project5
 		page.clickBtn("samplesOptionsBtn");
 		page.clickBtn("copyBtn");
 		assertTrue(page.isItemVisible("copy-samples-modal"));
@@ -540,7 +546,8 @@ public class ProjectSamplesPageIT {
 
 		selectFirstThreeSamples();
 
-		// This is the key part, leaving the page and coming back.  Using storage the samples should
+		// This is the key part, leaving the page and coming back. Using storage
+		// the samples should
 		// still be selected when you return.
 		page.goToPage("2");
 		page.goToPage();

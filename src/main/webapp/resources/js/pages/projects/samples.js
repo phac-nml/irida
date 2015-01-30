@@ -216,6 +216,9 @@
             }
             return true;
           }), svc.samples);
+
+          //clear storage after moving
+          storage.clear();
           updateSelectedCount();
         }
       });
