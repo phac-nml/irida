@@ -145,4 +145,14 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or authentication.name == #user.username")
 	public Set<AnalysisSubmission> getAnalysisSubmissionsForUser(User user);
+
+	/**
+	 * Gets a {@link Set} of {@link AnalysisSubmission}s for the current
+	 * {@link User}.
+	 * 
+	 * @return A {@link Set} of {@link AnalysisSubmission}s for the current
+	 *         user.
+	 */
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public Set<AnalysisSubmission> getAnalysisSubmissionsForCurrentUser();
 }

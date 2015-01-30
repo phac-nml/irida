@@ -449,6 +449,48 @@ public class AnalysisSubmissionServiceImplIT {
 		assertNotNull("should get submissions for the user", submissions);
 		assertEquals("submissions should have correct number", 8, submissions.size());
 	}
+	
+	/**
+	 * Tests getting a set of submissions for the current user as a regular user.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testGetAnalysisSubmissionsForCurrentUserAsRegularUser() {
+		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
+		assertNotNull("should get submissions for the user", submissions);
+		assertEquals("submissions should have correct number", 8, submissions.size());
+	}
+
+	/**
+	 * Tests getting a set of submissions for the current user as a 2nd regular user.
+	 */
+	@Test
+	@WithMockUser(username = "otheraaron", roles = "USER")
+	public void testGetAnalysisSubmissionsForCurrentUserAsRegularUser2() {
+		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
+		assertNotNull("should get submissions for the user", submissions);
+		assertEquals("submissions should have correct number", 1, submissions.size());
+	}
+	
+	/**
+	 * Tests getting a set of submissions for the current user with an admin role
+	 */
+	@Test
+	@WithMockUser(username = "otheraaron", roles = "ADMIN")
+	public void testGetAnalysisSubmissionsForCurrentUserAsAdminUser() {
+		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
+		assertNotNull("should get submissions for the user", submissions);
+		assertEquals("submissions should have correct number", 1, submissions.size());
+	}
+	
+	/**
+	 * Tests failing to get a set of submissions for the current user when there is no current user.
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "aaron", roles = "")
+	public void testGetAnalysisSubmissionsForCurrentUserAsRegularUserFail() {
+		analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
+	}
 
 	/**
 	 * Test specification.

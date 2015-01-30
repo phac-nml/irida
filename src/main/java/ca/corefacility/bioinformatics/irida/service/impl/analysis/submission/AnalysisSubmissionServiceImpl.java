@@ -196,4 +196,14 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 		return analysisSubmissionRepository.findBySubmitter(user);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<AnalysisSubmission> getAnalysisSubmissionsForCurrentUser() {
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		User user = userRepository.loadUserByUsername(userDetails.getUsername());
+		return getAnalysisSubmissionsForUser(user);
+	}
 }
