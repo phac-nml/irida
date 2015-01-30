@@ -77,12 +77,12 @@
 							   class="board-name btn btn-default btn-sm" th:text="${file.label}"></a>
 						</div>
 							<div class="col-md-2">
-								<div class="board-detail__value" th:text="${file.size}"></div>
+								<div class="board_detail--value" th:text="${file.size}"></div>
 								<div class="small text-muted board_detail--desc" th:text="#{samples.files.fileSize}">File Size</div>
 							</div>
 						<div class="col-md-3">
-							<div class="board-detail__value" th:text="${#dates.format(file.createdDate, dateFormat)}"></div>
-							<div class="small text-muted board-detail__desc" th:text="#{samples.files.createdDate}">Created Date</div>
+							<div class="board_detail--value" th:text="${#dates.format(file.createdDate, dateFormat)}"></div>
+							<div class="small text-muted board_detail--desc" th:text="#{samples.files.createdDate}">Created Date</div>
 						</div>
 							<div class="col-md-2">
 							<div class="btn-group btn-group-sm" role="group">
