@@ -44,7 +44,7 @@
 		<addColumn tableName="analysis_submission">
 			<column name="submitter" type="bigint(20)">
 				<constraints nullable="false" referencedTableName="user"
-					referencedColumnNames="id" foreignKeyName="FK_ANALYIS_SUBMISSION_OWNER_ID" />
+					referencedColumnNames="id" foreignKeyName="FK_ANALYIS_SUBMISSION_SUBMITTER_ID" />
 			</column>
 		</addColumn>
 	
