@@ -351,9 +351,8 @@ public class ProjectSamplesPageIT {
 		assertTrue(page.isBtnEnabled("confirm-move-samples"));
 		page.clickBtn("confirm-move-samples");
 		page.checkSuccessNotification();
-		
-		int numberOfSamplesSelected = page.getTotalNumberOfSamplesSelected();
-		assertEquals("no samples shold be selected after move", 0, numberOfSamplesSelected);
+
+		assertEquals("no samples shold be selected after move", 0, page.getTotalNumberOfSamplesSelected());
 
 		// Check to make sure the samples where copied there
 		page.goToPage("2");
