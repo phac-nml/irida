@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -29,10 +30,12 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -40,12 +43,10 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.Sets;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = {
-		IridaApiServicesConfig.class, IridaApiNoGalaxyTestConfig.class, IridaApiTestDataSourceConfig.class,
-		IridaApiTestMultithreadingConfig.class })
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
+		IridaApiNoGalaxyTestConfig.class, IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class })
 @ActiveProfiles("test")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-		DbUnitTestExecutionListener.class,
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExcecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
@@ -59,10 +60,13 @@ public class AnalysisSubmissionRepositoryIT {
 
 	@Autowired
 	private SequenceFileRepository sequenceFileRepository;
-	
+
 	@Autowired
 	private SequenceFilePairRepository sequenceFilePairRepository;
-	
+
+	@Autowired
+	private UserRepository userRepository;
+
 	private UUID workflowId = UUID.randomUUID();
 
 	private AnalysisSubmission analysisSubmission;
@@ -70,11 +74,14 @@ public class AnalysisSubmissionRepositoryIT {
 	private SequenceFilePair sequenceFilePair;
 	private SequenceFile sequenceFile;
 	private ReferenceFile referenceFile;
-	
+
 	private static final String analysisId = "10";
 	private static final String analysisId2 = "11";
 	private final String analysisName = "analysis 1";
 	private final String analysisName2 = "analysis 2";
+
+	private User submitter1;
+	private User submitter2;
 
 	/**
 	 * Sets up objects for test.
@@ -86,26 +93,31 @@ public class AnalysisSubmissionRepositoryIT {
 		sequenceFile = sequenceFileRepository.findOne(1L);
 		assertNotNull(sequenceFile);
 		Set<SequenceFile> sequenceFiles = Sets.newHashSet(sequenceFile);
-		
+
 		SequenceFile sequenceFile2 = sequenceFileRepository.findOne(2L);
 		assertNotNull(sequenceFile2);
 		Set<SequenceFile> sequenceFiles2 = Sets.newHashSet(sequenceFile2);
-		
+
 		sequenceFilePair = sequenceFilePairRepository.findOne(1L);
 		assertNotNull(sequenceFilePair);
-				
+
 		referenceFile = referenceFileRepository.findOne(1L);
 		assertNotNull(referenceFile);
+
+		submitter1 = userRepository.findOne(1L);
+		submitter2 = userRepository.findOne(2L);
 
 		analysisSubmission = AnalysisSubmission.createSubmissionSingleReference(analysisName, sequenceFiles,
 				referenceFile, workflowId);
 		analysisSubmission.setRemoteAnalysisId(analysisId);
 		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTING);
-		
+		analysisSubmission.setSubmitter(submitter1);
+
 		analysisSubmission2 = AnalysisSubmission.createSubmissionSingleReference(analysisName2, sequenceFiles2,
 				referenceFile, workflowId);
 		analysisSubmission2.setRemoteAnalysisId(analysisId2);
 		analysisSubmission2.setAnalysisState(AnalysisState.SUBMITTING);
+		analysisSubmission2.setSubmitter(submitter2);
 	}
 
 	/**
@@ -155,6 +167,7 @@ public class AnalysisSubmissionRepositoryIT {
 	public void testCreateAnalysisPaired() {
 		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.createSubmissionPaired("submission paired 1",
 				Sets.newHashSet(sequenceFilePair), workflowId);
+		analysisSubmissionPaired.setSubmitter(submitter1);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
 		assertEquals(0, savedSubmission.getSingleInputFiles().size());
 		assertEquals(Sets.newHashSet(sequenceFilePair), savedSubmission.getPairedInputFiles());
@@ -169,6 +182,7 @@ public class AnalysisSubmissionRepositoryIT {
 	public void testCreateAnalysisPairedReference() {
 		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.createSubmissionPairedReference(
 				"submission paired 1", Sets.newHashSet(sequenceFilePair), referenceFile, workflowId);
+		analysisSubmissionPaired.setSubmitter(submitter1);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
 
 		assertEquals(0, savedSubmission.getSingleInputFiles().size());
@@ -186,6 +200,7 @@ public class AnalysisSubmissionRepositoryIT {
 		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.createSubmissionSingleAndPairedReference(
 				"submission paired 1", Sets.newHashSet(sequenceFile), Sets.newHashSet(sequenceFilePair), referenceFile,
 				workflowId);
+		analysisSubmissionPaired.setSubmitter(submitter1);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
 
 		assertEquals(Sets.newHashSet(sequenceFile), savedSubmission.getSingleInputFiles());
@@ -202,10 +217,67 @@ public class AnalysisSubmissionRepositoryIT {
 	public void testCreateAnalysisSingleAndPaired() {
 		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.createSubmissionSingleAndPaired(
 				"submission paired 1", Sets.newHashSet(sequenceFile), Sets.newHashSet(sequenceFilePair), workflowId);
+		analysisSubmissionPaired.setSubmitter(submitter1);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
 
 		assertEquals(Sets.newHashSet(sequenceFile), savedSubmission.getSingleInputFiles());
 		assertEquals(Sets.newHashSet(sequenceFilePair), savedSubmission.getPairedInputFiles());
 		assertFalse(savedSubmission.getReferenceFile().isPresent());
+	}
+
+	/**
+	 * Tests creating an analysis with no set submitter and failing.
+	 */
+	@Test(expected = DataIntegrityViolationException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCreateAnalysisNoSubmitterFail() {
+		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.createSubmissionPaired("submission paired 1",
+				Sets.newHashSet(sequenceFilePair), workflowId);
+		analysisSubmissionRepository.save(analysisSubmissionPaired);
+	}
+
+	/**
+	 * Tests successfully finding an analysis submission by the submitter.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFindBySubmitterSuccess() {
+		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmission);
+
+		Set<AnalysisSubmission> submissions = analysisSubmissionRepository.findBySubmitter(submitter1);
+		assertNotNull("submissions should not be null", submissions);
+		assertEquals("there are an invalid number of submissions found", 1, submissions.size());
+		AnalysisSubmission returnedSubmission = submissions.iterator().next();
+		assertEquals("the id of the submission returned is incorrect", savedSubmission.getId(),
+				returnedSubmission.getId());
+		assertEquals("the submitter of the submission returned is incorrect", savedSubmission.getSubmitter().getId(),
+				submitter1.getId());
+	}
+
+	/**
+	 * Tests successfully finding multiple analyses submissions by the
+	 * submitter.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFindBySubmitterMultipleSuccess() {
+		analysisSubmission2.setSubmitter(submitter1);
+		analysisSubmissionRepository.save(analysisSubmission);
+		analysisSubmissionRepository.save(analysisSubmission2);
+
+		Set<AnalysisSubmission> submissions = analysisSubmissionRepository.findBySubmitter(submitter1);
+		assertEquals("there are an invalid number of submissions found", 2, submissions.size());
+	}
+
+	/**
+	 * Tests failing to find an analysis submission by the submitter.
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFindBySubmitterFail() {
+		analysisSubmissionRepository.save(analysisSubmission);
+
+		Set<AnalysisSubmission> submissions = analysisSubmissionRepository.findBySubmitter(submitter2);
+		assertEquals("there should be no submissions found", 0, submissions.size());
 	}
 }
