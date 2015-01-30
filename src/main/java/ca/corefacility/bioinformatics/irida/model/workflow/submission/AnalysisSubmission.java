@@ -138,8 +138,6 @@ public class AnalysisSubmission implements IridaThing {
 	/**
 	 * Builds a new AnalysisSubmission object with the given information.
 	 * 
-	 * @param submitter
-	 *            The {@link User} who is submitting this analysis.
 	 * @param name
 	 *            The name of the workflow submission.
 	 * @param inputFilesSingle
