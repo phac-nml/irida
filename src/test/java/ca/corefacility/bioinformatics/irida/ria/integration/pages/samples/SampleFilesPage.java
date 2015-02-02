@@ -42,7 +42,7 @@ public class SampleFilesPage extends AbstractPage {
 		WebElement removeButton = driver.findElements(By.className("remove-file")).iterator().next();
 		removeButton.click();
 		WebElement confirmRemoveButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.className("remove-file-confirm")));
+				.id("remove-file-confirm")));
 		confirmRemoveButton.click();
 	}
 }
