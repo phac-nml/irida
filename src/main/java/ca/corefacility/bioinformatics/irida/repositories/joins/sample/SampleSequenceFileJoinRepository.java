@@ -52,10 +52,13 @@ public interface SampleSequenceFileJoinRepository extends CrudRepository<SampleS
 	public void removeFileFromSample(Sample sample, SequenceFile file);
 
 	/**
-	 * Get {@link SequenceFile}s for a {@link Sample} that do not have a {@link SequenceFilePair}
-	 * @param sample The Sample to get files for
+	 * Get {@link SequenceFile}s for a {@link Sample} that do not have a
+	 * {@link SequenceFilePair}
+	 * 
+	 * @param sample
+	 *            The Sample to get files for
 	 * @return a List of Join<Sample,SequenceFile>
 	 */
-	@Query("SELECT j FROM SampleSequenceFileJoin j, SequenceFilePair p where j.sample=?1 AND j.sequenceFile not in elements(p.files)")
+	@Query("FROM SampleSequenceFileJoin j WHERE j.sample=?1 AND not exists (FROM SequenceFilePair p WHERE j.sequenceFile in elements(p.files))")
 	public List<Join<Sample, SequenceFile>> getUnpairedSequenceFilesForSample(Sample sample);
 }
