@@ -217,13 +217,17 @@
       })
     };
 
+    svc.updateSampleCount = function () {
+      $rootScope.sampleCount = svc.samples.length;
+    }
+
     /**
      * Get the currently loaded samples
      * @returns {Array} of samples
      */
     svc.getSamples = function () {
       var selectedKeys = storage.getKeys();
-      $rootScope.$broadcast('COUNT', {count: selectedKeys.length});
+      $rootScope.$broadcast('SELECTED_COUNT', {count: selectedKeys.length});
 
       _.each(svc.samples, function (s) {
         if (_.contains(selectedKeys, s.id + "")) {
@@ -254,6 +258,7 @@
       return $q.all(samplePromises).then(function (response) {
         _.forEach(response, function (p) {
           svc.samples = svc.samples.concat(p);
+          svc.updateSampleCount();
         });
 
         $rootScope.$broadcast('SAMPLES_READY', true);
@@ -285,13 +290,17 @@
             }
             return true;
           }), svc.samples);
+
+          //clear storage after moving
+          storage.clear();
           updateSelectedCount();
+          svc.updateSampleCount();
         }
       });
     }
 
     function updateSelectedCount() {
-      $rootScope.$broadcast('COUNT', {count: storage.getKeys().length});
+      $rootScope.$broadcast('SELECTED_COUNT', {count: storage.getKeys().length});
     }
 
 
@@ -575,7 +584,7 @@
       });
     };
 
-    $scope.$on('COUNT', function (e, a) {
+    $scope.$on('SELECTED_COUNT', function (e, a) {
       vm.count = a.count;
     });
   }
@@ -664,7 +673,7 @@
     var vm = this;
     vm.count = 0;
 
-    $scope.$on('COUNT', function (e, a) {
+    $scope.$on('SELECTED_COUNT', function (e, a) {
       vm.count = a.count;
     });
   }
@@ -722,10 +731,6 @@
       }
     }, 500));
 
-    $scope.$on('SAMPLES_INIT', function (e, args) {
-      vm.total = args.total;
-    });
-
     $scope.$on('PAGING_UPDATE', function (e, args) {
       vm.count = args.total;
     });
@@ -770,10 +775,10 @@
       var samples = [];
       _.forEach(storage.getSamples(), function (s) {
         if (s.sampleType == "ASSOCIATED") {
-          samples.push({"sample" : s.id, "project" : s.project.id});
+          samples.push({"sample": s.id, "project": s.project.id});
         }
         else if (s.sampleType == "LOCAL") {
-          samples.push({"sample" : s.id, "project" : project.id});
+          samples.push({"sample": s.id, "project": project.id});
         }
       });
 
