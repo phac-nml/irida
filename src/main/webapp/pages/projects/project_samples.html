@@ -17,9 +17,9 @@
 <aside class="sidebar ng-cloak" layout:fragment="filter" ng-controller="FilterCtrl as sf">
 	<div class="sidebar__heading clearfix">
 		<h2 class="pull-left" th:text="#{project.sample.filter-title}">Samples Filter</h2>
-		<span ng-show="sf.total === 0 || sf.count !== sf.total" class="badge badge-primary pull-right ng-cloak"><span
+		<span ng-show="sampleCount === 0 || sf.count !== sampleCount" class="badge badge-primary pull-right ng-cloak"><span
 			id="samples-filtered" ng-bind="sf.count">0</span> <span th:text="#{grammar.of}"></span> <span
-			id="samples-total" ng-bind="sf.total">0</span></span>
+			id="samples-total" ng-bind="sampleCount">0</span></span>
 	</div>
 	<div class="sidebar__body">
 
