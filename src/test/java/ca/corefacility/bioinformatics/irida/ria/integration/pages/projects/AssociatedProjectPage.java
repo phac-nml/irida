@@ -28,12 +28,6 @@ public class AssociatedProjectPage extends AbstractPage {
 		return divs.stream().map(WebElement::getText).collect(Collectors.toList());
 	}
 
-	public String getProjectWithNoRights() {
-		logger.debug("Getting unauthorized projects");
-		WebElement unauthorized = driver.findElement(By.cssSelector(".unauthorized.project-name"));
-		return unauthorized.getText();
-	}
-
 	public List<String> getProjectsWithRights() {
 		logger.debug("Getting authorized projects");
 		List<WebElement> authorized = driver.findElements(By.cssSelector(".authorized.project-name"));
