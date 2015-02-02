@@ -37,7 +37,7 @@
         }
     }
 
-    function CartService(scope, $http) {
+    function CartService(scope, $http, $q) {
         var svc = this,
             urls = {
                 all: TL.BASE_URL + "cart",
@@ -56,20 +56,23 @@
               });
         };
 
-        svc.add = function (projectId, sampleIds) {
-            if (sampleIds.length) {
-                $http.post(urls.add, {projectId: projectId, sampleIds: sampleIds})
-                  .success(function () {
-                      scope.$broadcast("cart.add", {});
-                  });
-            }
+        svc.add = function (samples) {
+          var promises = [];
+
+          _.forEach(samples, function(s) {
+            promises.push($http.post(urls.add, {projectId: s.project, sampleIds: [s.sample]}));
+          });
+
+          $q.all(promises).then(function(){
+            scope.$broadcast("cart.add", {});
+          });
         };
 
     }
 
     angular
       .module('irida.cart', [])
-      .service('CartService', ['$rootScope', '$http', CartService])
+      .service('CartService', ['$rootScope', '$http', '$q', CartService])
       .directive('cart', [CartDirective])
     ;
 })();

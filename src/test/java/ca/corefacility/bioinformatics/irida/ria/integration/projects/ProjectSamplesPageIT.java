@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -558,6 +559,19 @@ public class ProjectSamplesPageIT {
 		assertTrue(page.isBtnEnabled("confirm-copy-samples"));
 		page.clickBtn("confirm-copy-samples");
 		page.checkSuccessNotification();
+	}
+
+	@Test
+	public void testShowAssociatedSamples() throws InterruptedException {
+		LoginPage.loginAsAdmin(driver);
+		page.goToPage("6");
+		int initialNumber = page.getNumberOfSamplesDisplayed();
+
+		page.enableAssociatedProjects();
+
+		int laterNumber = page.getNumberOfSamplesDisplayed();
+
+		assertNotEquals("page should have associated samples displayed", initialNumber, laterNumber);
 	}
 
 	private int getSampleFlagCount(String command) {

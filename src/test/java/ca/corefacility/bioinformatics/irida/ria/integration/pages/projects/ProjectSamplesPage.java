@@ -16,7 +16,9 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilit
 import com.google.common.collect.Ordering;
 
 /**
- * <p> Page Object to represent the project samples page. </p>
+ * <p>
+ * Page Object to represent the project samples page.
+ * </p>
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
@@ -63,8 +65,7 @@ public class ProjectSamplesPage extends AbstractPage {
 		for (WebElement link : links) {
 			if (link.getText().equals("1")) {
 				break;
-			}
-			else {
+			} else {
 				pageNum++;
 			}
 		}
@@ -215,7 +216,10 @@ public class ProjectSamplesPage extends AbstractPage {
 	public void sortTableByName() {
 		driver.findElement(By.cssSelector("#sortName a")).click();
 	}
-	public void sortTableByCreatedDate() { driver.findElement(By.id("sortCreatedDate")).click();}
+
+	public void sortTableByCreatedDate() {
+		driver.findElement(By.id("sortCreatedDate")).click();
+	}
 
 	public boolean isTableSortedAscByCreationDate() {
 		List<WebElement> elms = driver.findElements(By.className("createdDate"));
@@ -239,9 +243,14 @@ public class ProjectSamplesPage extends AbstractPage {
 
 	public boolean isTableSortedDescBySampleName() {
 		List<WebElement> elms = driver.findElements(By.className("sample-name"));
-		List<String> names = elms.stream().map(element -> element.getText())
-				.collect(Collectors.toList());
+		List<String> names = elms.stream().map(element -> element.getText()).collect(Collectors.toList());
 		return Ordering.natural().reverse().isOrdered(names);
+	}
+
+	public void enableAssociatedProjects() throws InterruptedException {
+		driver.findElement(By.id("displayBtn")).click();
+		driver.findElement(By.id("displayAssociated")).click();
+		waitForTime(500);
 	}
 
 	// Filtering

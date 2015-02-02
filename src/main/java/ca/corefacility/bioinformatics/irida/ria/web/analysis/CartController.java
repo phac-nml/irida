@@ -231,7 +231,7 @@ public class CartController {
 		return sampleList;
 	}
 
-	private Set<Sample> getSelectedSamplesForProject(Project project) {
+	private synchronized Set<Sample> getSelectedSamplesForProject(Project project) {
 		if (!selected.containsKey(project)) {
 			selected.put(project, new HashSet<>());
 		}
