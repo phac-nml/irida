@@ -32,8 +32,10 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
@@ -67,6 +69,9 @@ public class AnalysisExecutionScheduledTaskImplIT {
 
 	@Autowired
 	private AnalysisExecutionService analysisExecutionService;
+	
+	@Autowired
+	private UserRepository userRepository;
 
 	private AnalysisExecutionScheduledTask analysisExecutionScheduledTask;
 
@@ -77,6 +82,8 @@ public class AnalysisExecutionScheduledTaskImplIT {
 
 	private UUID validIridaWorkflowId = UUID.fromString("1f9ea289-5053-4e4a-bc76-1f0c60b179f8");
 	private UUID invalidIridaWorkflowId = UUID.fromString("8ec369e8-1b39-4b9a-97a1-70ac1f6cc9e6");
+	
+	private User analysisSubmitter;
 
 	/**
 	 * Sets up variables for testing.
@@ -111,6 +118,8 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		referenceFilePath2 = Files.createTempFile("testReference", ".fasta");
 		Files.delete(referenceFilePath2);
 		Files.copy(referenceFilePathReal, referenceFilePath2);
+		
+		analysisSubmitter = userRepository.findOne(1L);
 	}
 
 	/**
@@ -305,6 +314,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
 			AnalysisSubmission returnedSubmission = submissionFuture.get();
 			assertEquals(AnalysisState.COMPLETED, returnedSubmission.getAnalysisState());
+			assertEquals(analysisSubmitter, returnedSubmission.getSubmitter());
 		}
 	}
 }

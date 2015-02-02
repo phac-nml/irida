@@ -41,5 +41,16 @@
 			<column name="REVTYPE" type="TINYINT(4)" />
 		</createTable>
 
+		<addColumn tableName="analysis_submission">
+			<column name="submitter" type="bigint(20)">
+				<constraints nullable="false" referencedTableName="user"
+					referencedColumnNames="id" foreignKeyName="FK_ANALYIS_SUBMISSION_SUBMITTER_ID" />
+			</column>
+		</addColumn>
+	
+		<addColumn tableName="analysis_submission_AUD">
+			<column name="submitter" type="bigint(20)" />
+		</addColumn>
+
 	</changeSet>
 </databaseChangeLog>

@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.project;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -19,7 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ModelMap;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -32,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
@@ -65,31 +65,40 @@ public class ProjectSamplesControllerTest {
 
 	@Test
 	public void testAddSampleToProject() {
-		Sample s = TestDataFactory.constructSample();
-		Project p = TestDataFactory.constructProject();
-		Long projectId = p.getId();
-
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        Sample s = TestDataFactory.constructSample();
+        Project p = TestDataFactory.constructProject();
 		SampleResource sr = new SampleResource();
 		sr.setResource(s);
 		Join<Project, Sample> r = new ProjectSampleJoin(p, s);
-
+		
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(projectService.addSampleToProject(p, s)).thenReturn(r);
-
-		ResponseEntity<String> response = controller.addSampleToProject(p.getId(), sr);
-
-		verify(projectService, times(1)).read(p.getId());
-		verify(projectService, times(1)).addSampleToProject(p, s);
-
-		assertEquals(HttpStatus.CREATED, response.getStatusCode());
-
-		// the location header should correspond to the created sample URL under
-		// the samples controller.
-		List<String> locations = response.getHeaders().get(HttpHeaders.LOCATION);
-		assertNotNull(locations);
-		assertFalse(locations.isEmpty());
-		assertEquals(1, locations.size());
-		assertEquals("http://localhost/api/projects/" + projectId + "/samples/" + s.getId(), locations.iterator().next());
+        
+        ModelMap modelMap = controller.addSampleToProject(p.getId(), sr, response);
+        
+        Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
+        
+		assertTrue("ModelMap should contan a SampleResource",o instanceof SampleResource);
+		 
+        verify(projectService, times(1)).read(p.getId());
+        verify(projectService, times(1)).addSampleToProject(p, s);
+        
+        Link selfLink = sr.getLink(Link.REL_SELF);
+        Link sequenceFilesLink = sr.getLink(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES);
+        Link projectLink = sr.getLink(RESTProjectSamplesController.REL_PROJECT);
+        String projectLocation = "http://localhost/api/projects/" + p.getId();
+        String sampleLocation = projectLocation + "/samples/" + s.getId();
+        assertNotNull("Sample resource's self link should not be null",selfLink);
+        assertEquals("Sample resource's sample location should equal [" + sampleLocation + "]",
+                        sampleLocation, selfLink.getHref());
+        assertNotNull("Sequence files link must not be null",sequenceFilesLink);
+        assertEquals("Sequence files link must be well formed",sampleLocation + "/sequenceFiles",
+                        sequenceFilesLink.getHref());
+        assertNotNull("Project link must not be null",projectLink); 
+        assertEquals("Project link must be well formed",projectLocation, projectLink.getHref());
+        
+		assertEquals("response should have CREATED status", HttpStatus.CREATED.value(), response.getStatus());
 	}
 
 	@Test
@@ -236,19 +245,47 @@ public class ProjectSamplesControllerTest {
 	public void testCopySampleToProject() {
 		final Project p = TestDataFactory.constructProject();
 		final Sample s = TestDataFactory.constructSample();
-
+		final ProjectSampleJoin r = new ProjectSampleJoin(p,s);
+		MockHttpServletResponse response = new MockHttpServletResponse();
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(sampleService.read(s.getId())).thenReturn(s);
-
-		final ResponseEntity<String> response = controller
-				.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()));
-
+		when(projectService.addSampleToProject(p, s)).thenReturn(r);
+		ModelMap modelMap = controller
+				.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()), response);
+		
 		verify(projectService).addSampleToProject(p, s);
-
-		assertEquals("response should have CREATED status", HttpStatus.CREATED, response.getStatusCode());
-		final String location = response.getHeaders().getFirst(HttpHeaders.LOCATION);
+		assertEquals("response should have CREATED status", HttpStatus.CREATED.value(), response.getStatus());
+		final String location = response.getHeader(HttpHeaders.LOCATION);
 		assertEquals("location should include sample and project IDs", "http://localhost/api/projects/" + p.getId()
 				+ "/samples/" + s.getId(), location);
+		//test that the modelMap contains a correct resource collection.
+		Object o = modelMap.get(RESTGenericController.RESOURCE_NAME);
+		assertTrue("Object should be an instance of ResourceCollection",o instanceof ResourceCollection);
+		@SuppressWarnings("unchecked")
+		ResourceCollection<LabelledRelationshipResource<Project,Sample>> labeledRRs =
+		(ResourceCollection<LabelledRelationshipResource<Project,Sample>>) o;
+		assertEquals("There should be one item in the resource collection",1, labeledRRs.size());
+		List<Link> resourceLinks = labeledRRs.getLinks();
+		assertEquals("There should be one link",1, resourceLinks.size());
+		Link self = resourceLinks.iterator().next();
+		assertEquals("Self link should be correct","self", self.getRel());
+		assertEquals("http://localhost/api/projects/" + p.getId() + "/samples", self.getHref());
+		LabelledRelationshipResource<Project,Sample> resource = labeledRRs.iterator().next();
+		Object o2 = resource.getResource();
+		assertTrue("Object should be an instance of ProjectSampleJoin",o2 instanceof ProjectSampleJoin);
+		ProjectSampleJoin join = (ProjectSampleJoin)o2;
+		Object o3 = join.getObject();
+		assertTrue("Object should be an instance of Sample",o3 instanceof Sample);
+		Sample sample = (Sample)o3;
+		assertEquals("Sample name should be correct",s.getSampleName(), sample.getSampleName());
+		List<Link> links = resource.getLinks();
+		Set<String> rels = Sets.newHashSet(Link.REL_SELF, RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES,
+				RESTProjectSamplesController.REL_PROJECT);
+		for (Link link : links) {
+			assertTrue("Rels should contain link [" + link + "]", rels.contains(link.getRel()));
+			assertNotNull("Rels should remove link [" + link + "]", rels.remove(link.getRel()));
+		}
+		assertTrue("Rels should be empty after removing expected links", rels.isEmpty());
 	}
 
 	@Test(expected = EntityExistsException.class)
@@ -261,7 +298,7 @@ public class ProjectSamplesControllerTest {
 
 		when(projectService.addSampleToProject(p, s)).thenThrow(new EntityExistsException("sample already exists!"));
 
-		controller.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()));
+		controller.copySampleToProject(p.getId(), Lists.newArrayList(s.getId()),new MockHttpServletResponse());
 	}
 
 	private Map<String, String> linksToMap(List<Link> links) {

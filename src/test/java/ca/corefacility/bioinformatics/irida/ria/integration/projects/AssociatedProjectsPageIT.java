@@ -41,7 +41,6 @@ public class AssociatedProjectsPageIT {
 	private static final Logger logger = LoggerFactory.getLogger(AssociatedProjectsPageIT.class);
 	public static final ImmutableList<String> ASSOCIATED_PROJECTS_WITH_RIGHTS = ImmutableList
 			.of("project2", "project3");
-	public static final String ASSOCIATED_PROJECT_NO_RIGHTS = "project5";
 
 	AssociatedProjectPage page;
 
@@ -58,9 +57,8 @@ public class AssociatedProjectsPageIT {
 	public void hasTheCorrectAssociatedProjects() {
 		logger.debug("Testing: hasTheCorrectAssociatedProjects");
 		List<String> projectsDiv = page.getAssociatedProjects();
-		assertEquals("Has the correct number of associated projects", 3, projectsDiv.size());
+		assertEquals("Has the correct number of associated projects", 2, projectsDiv.size());
 
-		assertEquals("Has project with no rights", ASSOCIATED_PROJECT_NO_RIGHTS, page.getProjectWithNoRights());
 		List<String> projectsWithRights = page.getProjectsWithRights();
 		for (String project : ASSOCIATED_PROJECTS_WITH_RIGHTS) {
 			assertTrue("Contains projects with authorization (" + project + ")", projectsWithRights.contains(project));

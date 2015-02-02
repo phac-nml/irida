@@ -205,6 +205,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * @return A list of {@link RelatedProjectJoin}
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	@PostFilter("hasPermission(filterObject.object, 'canReadProject')")
 	public List<RelatedProjectJoin> getRelatedProjects(Project project);
 
 	/**

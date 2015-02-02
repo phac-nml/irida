@@ -24,12 +24,14 @@ import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLinks;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.RemoteObjectCache;
@@ -39,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
@@ -54,6 +57,7 @@ public class AssociatedProjectControllerTest {
 	private RemoteRelatedProjectService remoteRelatedProjectService;
 	private RemoteAPIService apiService;
 	private ProjectRemoteService projectRemoteService;
+	private SampleService sampleService;
 	private RemoteObjectCache<RemoteProject> remoteProjectCache;
 
 	@Before
@@ -64,9 +68,10 @@ public class AssociatedProjectControllerTest {
 		apiService = mock(RemoteAPIService.class);
 		projectRemoteService = mock(ProjectRemoteService.class);
 		remoteRelatedProjectService = mock(RemoteRelatedProjectService.class);
+		sampleService = mock(SampleService.class);
 		remoteProjectCache = new RemoteObjectCache<>();
 		controller = new AssociatedProjectsController(remoteRelatedProjectService, projectService, projectUtils,
-				userService, apiService, projectRemoteService, remoteProjectCache);
+				userService, apiService, projectRemoteService, sampleService, remoteProjectCache);
 	}
 
 	@Test
@@ -352,5 +357,36 @@ public class AssociatedProjectControllerTest {
 		controller.removeRemoteAssociatedProject(projectId, associatedProjectId);
 
 		verify(remoteRelatedProjectService).delete(rrp.getId());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testGetSamplesForAssociatedProject() {
+		Long projectId = 1l;
+		Project project = new Project();
+
+		Project allowedProject = new Project("allowed");
+		Project notAllowedProject = new Project("not allowed");
+
+		when(projectService.read(projectId)).thenReturn(project);
+
+		when(projectService.getRelatedProjects(project)).thenReturn(
+				Lists.newArrayList(new RelatedProjectJoin(project, allowedProject), new RelatedProjectJoin(project,
+						notAllowedProject)));
+
+		Sample sample = new Sample("test");
+		when(sampleService.getSamplesForProject(allowedProject)).thenReturn(
+				Lists.newArrayList(new ProjectSampleJoin(allowedProject, sample)));
+
+		Map<String, Object> associatedSamplesForProject = controller.getAssociatedSamplesForProject(projectId);
+
+		assertTrue("should have samples", associatedSamplesForProject.containsKey("samples"));
+
+		List<Object> object = (List<Object>) associatedSamplesForProject.get("samples");
+		assertEquals("should have 1 sample", 1, object.size());
+
+		Map<String, Object> sampleMap = (Map<String, Object>) object.iterator().next();
+		assertEquals("sample should be equal", sample, sampleMap.get("sample"));
+		assertEquals("project should be equal", allowedProject, sampleMap.get("project"));
 	}
 }
