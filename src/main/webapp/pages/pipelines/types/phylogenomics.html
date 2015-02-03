@@ -120,7 +120,7 @@
 										<div class="single_end board_inner" th:if="${s.type == 'single_end'}">
 											<div class="row board_paired">
 												<div class="col-md-1 text-center">
-													<input th:name="${s.id}" type="radio"
+													<input th:name="${sample.id}" type="radio"
 													       data:type="${s.type}"
 													       th:checked="${iterStat.first}" th:value="${s.id}"/>
 												</div>
