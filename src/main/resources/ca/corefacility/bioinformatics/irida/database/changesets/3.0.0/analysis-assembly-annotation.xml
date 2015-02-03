@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="analysis-assembly-annotation" author="aaron">
+
+		<!-- Remote Workflow Tables -->
+
+		<createTable tableName="analysis_assemblyannotation">
+			<column name="id" type="bigint(20)">
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="FK_ANALYSIS_ASSEMBLYANNOTATION_ID"
+					referencedColumnNames="id" referencedTableName="analysis" />
+			</column>
+		</createTable>
+
+		<createTable tableName="analysis_assemblyannotation_AUD">
+			<column name="id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="REV" type="INT(11)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseColumnNames="id, REV"
+			baseTableName="analysis_assemblyannotation_AUD" constraintName="FK_ANALYSIS_ASSEMBLYANNOTATION_REVISION"
+			referencedTableName="analysis_AUD" referencedColumnNames="id, REV" />
+	</changeSet>
+</databaseChangeLog>
