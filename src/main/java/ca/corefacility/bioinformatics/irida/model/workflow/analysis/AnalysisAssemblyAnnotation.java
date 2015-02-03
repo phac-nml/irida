@@ -42,14 +42,14 @@ public class AnalysisAssemblyAnnotation extends Analysis {
 	}
 
 	public AnalysisOutputFile getContigs() {
-		return getAnalysisOutputFile("assembled-contigs");
+		return getAnalysisOutputFile("contigs");
 	}
 	
-	public AnalysisOutputFile getAssemblyStatistics() {
-		return getAnalysisOutputFile("assembly-statistics");
+	public AnalysisOutputFile getAnnotations() {
+		return getAnalysisOutputFile("annotations-genbank");
 	}
 	
-	public AnalysisOutputFile getAnnotatedAssembly() {
-		return getAnalysisOutputFile("annotated-assembly");
+	public AnalysisOutputFile getAnnotationLog() {
+		return getAnalysisOutputFile("annotations-log");
 	}
 }

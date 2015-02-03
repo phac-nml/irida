@@ -302,6 +302,8 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 				"core_pipeline_outputs_paired.xml").toURI());
 		Path corePipelineOutputsSinglePairedToolSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
 				"core_pipeline_outputs_single_paired.xml").toURI());
+		Path assemblyAnnotationPipelineOutputsSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
+				"assembly_annotation_pipeline_outputs.xml").toURI());
 		Path iridaToolConfigSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
 				"tool_conf_irida.xml").toURI());
 
@@ -316,10 +318,13 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 				exampleToolDirectory.resolve("core_pipeline_outputs_paired.xml");
 		Path corePipelineSinglePairedExampleToolDestination = 
 				exampleToolDirectory.resolve("core_pipeline_outputs_single_paired.xml");
+		Path assemblyAnnotationPipelinOutputsDestination = 
+				exampleToolDirectory.resolve("assembly_annotation_pipeline_outputs.xml");
 		Files.copy(collectionExampleToolSource, collectionExampleToolDestination);
 		Files.copy(corePipelineOutputsSingleToolSource, corePipelineExampleToolDestination);
 		Files.copy(corePipelineOutputsPairedToolSource, corePipelinePairedExampleToolDestination);
 		Files.copy(corePipelineOutputsSinglePairedToolSource, corePipelineSinglePairedExampleToolDestination);
+		Files.copy(assemblyAnnotationPipelineOutputsSource, assemblyAnnotationPipelinOutputsDestination);
 		
 		Path iridaToolConfigDestination = galaxyRoot.resolve("tool_conf_irida.xml");
 		Files.copy(iridaToolConfigSource, iridaToolConfigDestination);

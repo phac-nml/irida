@@ -1,0 +1,90 @@
+{
+    "a_galaxy_workflow": "true", 
+    "annotation": "", 
+    "format-version": "0.1", 
+    "name": "Assembly and Annotation", 
+    "steps": {
+        "0": {
+            "annotation": "", 
+            "id": 0, 
+            "input_connections": {}, 
+            "inputs": [
+                {
+                    "description": "", 
+                    "name": "sequence_reads_paired"
+                }
+            ], 
+            "name": "Input dataset collection", 
+            "outputs": [], 
+            "position": {
+                "left": 200, 
+                "top": 200
+            }, 
+            "tool_errors": null, 
+            "tool_id": null, 
+            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads_paired\"}", 
+            "tool_version": null, 
+            "type": "data_collection_input", 
+            "user_outputs": []
+        }, 
+        "1": {
+            "annotation": "", 
+            "id": 1, 
+            "input_connections": {
+                "sequence_reads_paired": {
+                    "id": 0, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [], 
+            "name": "assembly_annotation_pipeline_outputs", 
+            "outputs": [
+                {
+                    "name": "contigs", 
+                    "type": "fasta"
+                }, 
+                {
+                    "name": "genome", 
+                    "type": "txt"
+                }, 
+                {
+                    "name": "log", 
+                    "type": "txt"
+                }
+            ], 
+            "position": {
+                "left": 462, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActioncontigs": {
+                    "action_arguments": {
+                        "newname": "contigs.fasta"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "contigs"
+                }, 
+                "RenameDatasetActiongenome": {
+                    "action_arguments": {
+                        "newname": "genome.gbk"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "genome"
+                }, 
+                "RenameDatasetActionlog": {
+                    "action_arguments": {
+                        "newname": "prokka.log"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "log"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "assembly_annotation_pipeline_outputs", 
+            "tool_state": "{\"__page__\": 0, \"sequence_reads_paired\": \"null\", \"__rerun_remap_job_id__\": null}", 
+            "tool_version": "0.1.0", 
+            "type": "tool", 
+            "user_outputs": []
+        }
+    }
+}
