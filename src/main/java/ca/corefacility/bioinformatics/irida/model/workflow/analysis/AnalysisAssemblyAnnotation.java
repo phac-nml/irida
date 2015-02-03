@@ -6,8 +6,6 @@ import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.hibernate.envers.Audited;
-
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
@@ -18,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
  */
 @Entity
 @Table(name = "analysis_assemblyannotation")
-@Audited
 public class AnalysisAssemblyAnnotation extends Analysis {
 
 	private AnalysisAssemblyAnnotation() {

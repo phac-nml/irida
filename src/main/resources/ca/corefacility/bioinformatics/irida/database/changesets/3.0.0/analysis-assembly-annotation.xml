@@ -16,18 +16,5 @@
 					referencedColumnNames="id" referencedTableName="analysis" />
 			</column>
 		</createTable>
-
-		<createTable tableName="analysis_assemblyannotation_AUD">
-			<column name="id" type="bigint(20)">
-				<constraints nullable="false" primaryKey="true" />
-			</column>
-			<column name="REV" type="INT(11)">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-		</createTable>
-
-		<addForeignKeyConstraint baseColumnNames="id, REV"
-			baseTableName="analysis_assemblyannotation_AUD" constraintName="FK_ANALYSIS_ASSEMBLYANNOTATION_REVISION"
-			referencedTableName="analysis_AUD" referencedColumnNames="id, REV" />
 	</changeSet>
 </databaseChangeLog>
