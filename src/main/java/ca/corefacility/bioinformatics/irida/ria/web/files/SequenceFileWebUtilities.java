@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.Formatter;
@@ -24,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeCon
  */
 @Component
 public class SequenceFileWebUtilities {
+	private static final Logger logger = LoggerFactory.getLogger(SequenceFileWebUtilities.class);
 	// Converters
 	Formatter<Date> dateFormatter;
 	Converter<Long, String> fileSizeConverter;
@@ -42,12 +45,16 @@ public class SequenceFileWebUtilities {
 	 * @throws IOException
 	 *             if reading the file fails
 	 */
-	public Map<String, Object> getFileDataMap(SequenceFile file) throws IOException {
+	public Map<String, Object> getFileDataMap(SequenceFile file) {
 		Path path = file.getFile();
 		Long realSize = 0L;
 
 		if (Files.exists(path)) {
-			realSize = Files.size(path);
+			try {
+				realSize = Files.size(path);
+			} catch (IOException e) {
+				logger.error("Cannot get file size for: ", file.getLabel());
+			}
 		}
 		String size = fileSizeConverter.convert(realSize);
 		Map<String, Object> m = new HashMap<>();

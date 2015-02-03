@@ -1,31 +1,31 @@
 @import "../helpers/variables";
 
-.file_checkbox {
-  border-left: 1rem solid;
-  width: 60px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.single_end {
-  border-color: $colour-single-end;
-}
-
-.paired_end {
-  border-color: $colour-paired-end;
-}
-
-.file_names {
-  flex-grow: 2;
-}
-
-.file_date {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: center;
-  width: 20%;
-}
+//.file_checkbox {
+//  border-left: 1rem solid;
+//  width: 60px;
+//  display: flex;
+//  flex-direction: column;
+//  align-items: center;
+//  justify-content: center;
+//}
+//
+//.single_end {
+//  border-color: $colour-single-end;
+//}
+//
+//.paired_end {
+//  border-color: $colour-paired-end;
+//}
+//
+//.file_names {
+//  flex-grow: 2;
+//}
+//
+//.file_date {
+//  flex-grow: 1;
+//  display: flex;
+//  flex-direction: column;
+//  align-items: flex-end;
+//  justify-content: center;
+//  width: 20%;
+//}

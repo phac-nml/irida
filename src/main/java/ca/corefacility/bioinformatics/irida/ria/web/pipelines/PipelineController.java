@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
 
@@ -45,6 +46,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.components.SubmissionIds;
+import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
@@ -184,6 +186,7 @@ public class PipelineController extends BaseController {
 			List<Map<String, Object>> referenceFileList = new ArrayList<>();
 			List<Map<String, Object>> projectList = new ArrayList<>();
 			List<Map<String, Object>> addRefList = new ArrayList<>();
+			SequenceFileWebUtilities sequenceFileWebUtilities = new SequenceFileWebUtilities();
 			for (Project project : cartMap.keySet()) {
 				List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
 				for (Join<Project, ReferenceFile> join : joinList) {
@@ -216,10 +219,12 @@ public class PipelineController extends BaseController {
 					List<SequenceFilePair> sequenceFilePairs = sequenceFilePairService
 							.getSequenceFilePairsForSample(sample);
 					for (SequenceFilePair pair : sequenceFilePairs) {
+						List<Map<String, Object>> fileMap = pair.getFiles().stream()
+								.map(sequenceFileWebUtilities::getFileDataMap).collect(Collectors.toList());
 						fileList.add(ImmutableMap.of(
 								"id", pair.getId(),
 								"type", "paired_end",
-								"files", pair.getFiles(),
+								"files", fileMap,
 								"createdDate", pair.getCreatedDate()
 						));
 					}
@@ -227,13 +232,9 @@ public class PipelineController extends BaseController {
 					// Singe end reads
 					List<Join<Sample, SequenceFile>> sfJoin = sequenceFileService.getSequenceFilesForSample(sample);
 					for (Join<Sample, SequenceFile> join : sfJoin) {
-						SequenceFile file = join.getObject();
-						fileList.add(ImmutableMap.of(
-								"type", "single_end",
-								"id", file.getId(),
-								"label", file.getLabel(),
-								"createdDate", file.getCreatedDate()
-						));
+						Map<String, Object> fileMap = sequenceFileWebUtilities.getFileDataMap(join.getObject());
+						fileMap.put("type", "single_end");
+						fileList.add(fileMap);
 					}
 
 					sampleMap.put("files", fileList);
@@ -246,7 +247,7 @@ public class PipelineController extends BaseController {
 				projectList.add(projectMap);
 			}
 			model.addAttribute("name", iridaWorkflow.getWorkflowDescription().getName() + " (" + dateFormatter.print(new Date(), locale) + ")");
-			model.addAttribute("pipelienId", pipelineId.toString());
+			model.addAttribute("pipelineId", pipelineId.toString());
 			model.addAttribute("referenceFiles", referenceFileList);
 			model.addAttribute("addRefProjects", addRefList);
 			model.addAttribute("projects", projectList);
