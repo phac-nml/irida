@@ -19,6 +19,7 @@
 			background-color: #101010;
 			color: #e0e0e0;
 			margin-right: 1rem;
+			padding: .5rem;
 		}
 
 		.content {
@@ -58,14 +59,15 @@
 <body>
 <div layout:fragment="page">
 	<div class="main-container">
-		<aside class="side-nav">
+		<aside class="side-nav" ng-controller="filterController as filter">
 			<h2>Filter</h2>
+			<input class="form-control input-full" type="search" placeholder="search" ng-model="filter.search" ng-model-options="{ debounce: 350 }" ng-change="filter.doSearch()"/>
 		</aside>
-		<div class="content ng-cloak" ng-controller="AnalysisController as ctrl">
+		<div class="content ng-cloak" ng-controller="analysisController as ctrl">
 			<ul class="boards">
-				<li class="board" ng-repeat="analysis in ctrl.analyses">
+				<li class="board" ng-repeat="analysis in ctrl.analyses | analysesFilter">
 					<a href="#" class="button board_inner row">
-						<div ng-class="'analysis__state--' + analysis.analysisState" class="analysis__state col-md-2">{{analysis.analysisState|StateFilter}}</div>
+						<div ng-class="'analysis__state--' + analysis.analysisState" class="analysis__state col-md-2">{{analysis.analysisState|stateFilter}}</div>
 						<div class="col-md-4">
 							<div class="board_detail--value">{{analysis.label}}</div>
 							<div class="board_detail--desc">Analysis Name</div>
@@ -78,45 +80,8 @@
 	</div>
 </div>
 <th:block layout:fragment="page-scripts" th:inline="javascript">
-
-	<script>
-		(function () {
-			"use strict";
-			var STATE_MAP = /*[[${states}]]*/ {};
-
-			function StateFilter () {
-			    return function(state) {
-				    return STATE_MAP[state];
-			    }
-			}
-
-			function AnalysisService ($http) {
-				function _loadData () {
-					return $http.get(TL.BASE_URL + "analysis/ajax/list");
-				}
-
-				return {
-					load: _loadData
-				}
-			}
-
-			function AnalysisController(svc) {
-				var vm = this;
-				vm.analyses = [];
-
-				svc.load()
-					.success(function (data) {
-						vm.analyses = data.analyses;
-					});
-			}
-
-			angular.module('irida.analysis.user', [])
-				.filter('StateFilter', [StateFilter])
-				.service('AnalysisService',['$http', AnalysisService])
-				.controller('AnalysisController', ['AnalysisService', AnalysisController])
-			;
-		})();
-	</script>
+	<script src="/resources/js/pages/analyses/analyses_user.js"
+	        th:src="@{/resources/js/pages/analyses/analyses_user.js}"></script>
 </th:block>
 </body>
 </html>

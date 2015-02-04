@@ -1,0 +1,67 @@
+(function () {
+  "use strict";
+  var STATE_MAP = /*[[${states}]]*/ {};
+
+  function StateFilter() {
+    return function (state) {
+      return STATE_MAP[state];
+    }
+  }
+
+  function AnalysisFilterService() {
+    return {
+      search: ""
+    }
+  }
+
+  function AnalysesFilter(filter) {
+    return function (analyses) {
+      var filtered = [];
+      analyses.forEach(function (analysis) {
+        console.log(analysis);
+        if (filter.search.length === 0 || analysis['label'].indexOf(filter.search) > 0) {
+          filtered.push(analysis);
+        }
+      });
+      return filtered;
+    }
+  }
+
+  function AnalysisService($http) {
+    function _loadData() {
+      return $http.get(TL.BASE_URL + "analysis/ajax/list");
+    }
+
+    return {
+      load: _loadData
+    }
+  }
+
+  function FilterController(filter) {
+    var vm = this;
+    vm.search = filter.search;
+
+    vm.doSearch = function () {
+      filter.search = vm.search;
+    };
+  }
+
+  function AnalysisController(svc) {
+    var vm = this;
+    vm.analyses = [];
+
+    svc.load()
+      .success(function (data) {
+        vm.analyses = data.analyses;
+      });
+  }
+
+  angular.module('irida.analysis.user', [])
+    .filter('stateFilter', [StateFilter])
+    .filter('analysesFilter', ['analysisFilterService', AnalysesFilter])
+    .service('analysisService', ['$http', AnalysisService])
+    .service('analysisFilterService', [AnalysisFilterService])
+    .controller('analysisController', ['analysisService', AnalysisController])
+    .controller('filterController', ['analysisFilterService', FilterController])
+  ;
+})();
