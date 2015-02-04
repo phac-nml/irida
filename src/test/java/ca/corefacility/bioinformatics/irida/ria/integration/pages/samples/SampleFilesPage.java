@@ -45,4 +45,8 @@ public class SampleFilesPage extends AbstractPage {
 				.id("remove-file-confirm")));
 		confirmRemoveButton.click();
 	}
+
+	public boolean isDeleteConfirmationMessageDisplayed() {
+		return driver.findElements(By.id("file-deleted-success")).size() > 0;
+	}
 }

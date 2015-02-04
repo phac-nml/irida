@@ -18,7 +18,7 @@
 		</div>
 	</div>
 	<div class="row" th:if="${fileDeleted}">
-		<div th:if="${fileDeletedMessage}" class="col-md-12 alert alert-success" role="alert">
+		<div id="file-deleted-success" th:if="${fileDeletedMessage}" class="col-md-12 alert alert-success" role="alert">
 			<strong th:text="${fileDeletedMessage}"></strong>
 		</div>
 		<div th:if="${fileDeletedError}" class="col-md-12 alert alert-error" role="alert">
