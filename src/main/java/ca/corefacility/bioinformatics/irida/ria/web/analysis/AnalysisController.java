@@ -236,7 +236,7 @@ public class AnalysisController {
 			map.put("remoteAnalysisId", Strings.isNullOrEmpty(remoteAnalysisId) ? "NOT SET" : remoteAnalysisId);
 			map.put("analysisState", analysisState);
 			map.put("createdDate", sub.getCreatedDate().toString());
-			if (analysisState.equals(AnalysisState.RUNNING.toString())) {
+			if (analysisState.equals(AnalysisState.RUNNING.toString())  && !Strings.isNullOrEmpty(remoteAnalysisId)) {
 				try {
 					GalaxyWorkflowStatus status = analysisExecutionService.getWorkflowStatus(sub);
 				} catch (ExecutionManagerException e) {
