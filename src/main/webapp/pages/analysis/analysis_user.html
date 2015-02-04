@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="template/page">
+<head lang="en">
+	<meta charset="UTF-8"/>
+	<title>My Title Goes Here</title>
+	<link rel="stylesheet" href="/resources/css/app.css" th:href="@{/resources/css/app.css}"/>
+	<style>
+		.ng-cloak {display: none !important;}
+		.main-container {
+			display: flex;
+			flex-direction: row;
+			height: 100%;
+		}
+
+		.side-nav {
+			width: 200px;
+		}
+
+		.content {
+			flex-grow: 1;
+		}
+	</style>
+	<script>window.dependencies = ['irida.analysis.user'];</script>
+</head>
+<body>
+<div layout:fragment="page">
+	<div class="main-container">
+		<aside class="side-nav">Hello</aside>
+		<div class="content ng-cloak" ng-controller="AnalysisController as ctrl">
+			<ul>
+				<li ng-repeat="analysis in ctrl.analyses">
+					<div>{{analysis.label}}</div>
+					<div>{{analysis.createdDate | date}}</div>
+					<div>{{analysis.analysisState|StateFilter}}</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+<th:block layout:fragment="page-scripts" th:inline="javascript">
+
+	<script>
+		(function () {
+			"use strict";
+			var STATE_MAP = /*[[${states}]]*/ {};
+
+			function StateFilter () {
+			    return function(state) {
+				    return STATE_MAP[state];
+			    }
+			}
+
+			function AnalysisService ($http) {
+				function _loadData () {
+					return $http.get(TL.BASE_URL + "analysis/ajax/list");
+				}
+
+				return {
+					load: _loadData
+				}
+			}
+
+			function AnalysisController(svc) {
+				var vm = this;
+				vm.analyses = [];
+
+				svc.load()
+					.success(function (data) {
+						vm.analyses = data.analyses;
+					});
+			}
+
+			angular.module('irida.analysis.user', [])
+				.filter('StateFilter', [StateFilter])
+				.service('AnalysisService',['$http', AnalysisService])
+				.controller('AnalysisController', ['AnalysisService', AnalysisController])
+			;
+		})();
+	</script>
+</th:block>
+</body>
+</html>

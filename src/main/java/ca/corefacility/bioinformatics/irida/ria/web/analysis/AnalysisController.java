@@ -2,10 +2,12 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,14 +30,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -53,23 +60,31 @@ public class AnalysisController {
 	private static final Map<Class<? extends AnalysisSubmission>, String> ANALYSIS_TYPE_IDS = ImmutableMap.of(
 			AnalysisSubmission.class, "1");
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
-	/*
-	 * CONSTANTS
-	 */
 
 	// PAGES
 	private static final String BASE = "analysis/";
 	public static final String PAGE_ADMIN_ANALYSIS = BASE + "admin";
+	public static final String PAGE_USER_ANALYSIS = BASE + "analysis_user";
 	public static final String PAGE_TREE_ANALYSIS_PREVIEW = BASE + "preview/tree";
 
 	/*
 	 * SERVICES
 	 */
 	private AnalysisSubmissionService analysisSubmissionService;
+	private AnalysisExecutionService analysisExecutionService;
+	private UserService userService;
+	private MessageSource messageSource;
 
 	@Autowired
-	public AnalysisController(AnalysisSubmissionService analysisSubmissionService, MessageSource messageSource) {
+	public AnalysisController(AnalysisSubmissionService analysisSubmissionService, AnalysisExecutionService analysisExecutionService, UserService userService,
+			MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
+		this.analysisExecutionService = analysisExecutionService;
+		this.userService = userService;
+		this.messageSource = messageSource;
+
+		// Initialize the analysis state messages
+
 	}
 
 	// ************************************************************************************************
@@ -91,6 +106,20 @@ public class AnalysisController {
 		return PAGE_ADMIN_ANALYSIS;
 	}
 
+	@RequestMapping("/list")
+	public String getPageUserAnalysis(Model model, Principal principal, Locale locale) {
+		User user = userService.getUserByUsername(principal.getName());
+		logger.trace("Retrieving analysis page for: [ " + user.getLabel() + "]");
+
+		Map<String, String> stateMap = new HashMap<>();
+		for (AnalysisState state : AnalysisState.values()) {
+			stateMap.put(state.toString(),
+					messageSource.getMessage("analysis.state." + state.toString().toLowerCase(), new Object[] { }, locale));
+		}
+		model.addAttribute("states", stateMap);
+		return PAGE_USER_ANALYSIS;
+	}
+
 	/**
 	 * Get the page for previewing a tree result
 	 *
@@ -98,6 +127,7 @@ public class AnalysisController {
 	 * 		Id for the {@link AnalysisSubmission}
 	 * @param model
 	 * 		{@link Model}
+	 *
 	 * @return Name of the page
 	 * @throws IOException
 	 */
@@ -137,6 +167,7 @@ public class AnalysisController {
 	 * 		date to filter out anything previous
 	 * @param maxDateFilter
 	 * 		date to filter out anything after
+	 *
 	 * @return JSON object with analysis, total pages, and total analysis
 	 * @throws IOException
 	 */
@@ -189,6 +220,34 @@ public class AnalysisController {
 		return result;
 	}
 
+	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Object> ajaxGetAnalysesListForUser() {
+		Set<AnalysisSubmission> analyses = analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
+		List<Map<String, String>> analysesMap = new ArrayList<>();
+		for (AnalysisSubmission sub : analyses) {
+			String remoteAnalysisId = sub.getRemoteAnalysisId();
+			String remoteWorkflowId = sub.getRemoteWorkflowId();
+			String analysisState = sub.getAnalysisState().toString();
+
+			Map<String, String> map = new HashMap<>();
+			map.put("id", sub.getId().toString());
+			map.put("label", sub.getLabel());
+			map.put("workflowId", Strings.isNullOrEmpty(remoteWorkflowId) ? "NOT SET" : remoteWorkflowId);
+			map.put("remoteAnalysisId", Strings.isNullOrEmpty(remoteAnalysisId) ? "NOT SET" : remoteAnalysisId);
+			map.put("analysisState", analysisState);
+			map.put("createdDate", sub.getCreatedDate().toString());
+			if (analysisState.equals(AnalysisState.RUNNING.toString())) {
+				try {
+					GalaxyWorkflowStatus status = analysisExecutionService.getWorkflowStatus(sub);
+				} catch (ExecutionManagerException e) {
+					logger.error("Error finding workflow status");
+				}
+			}
+			analysesMap.add(map);
+		}
+		return ImmutableMap.of("analyses", analysesMap);
+	}
+
 	/**
 	 * Download all output files from an {@link AnalysisSubmission}
 	 *
@@ -196,6 +255,7 @@ public class AnalysisController {
 	 * 		Id for a {@link AnalysisSubmission}
 	 * @param response
 	 * 		{@link HttpServletResponse}
+	 *
 	 * @throws IOException
 	 */
 	@RequestMapping(value = "/ajax/download/{analysisSubmissionId}", produces = MediaType.APPLICATION_JSON_VALUE)
