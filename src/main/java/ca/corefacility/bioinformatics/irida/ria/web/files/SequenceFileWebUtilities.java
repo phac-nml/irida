@@ -53,7 +53,7 @@ public class SequenceFileWebUtilities {
 			try {
 				realSize = Files.size(path);
 			} catch (IOException e) {
-				logger.error("Cannot get file size for: ", file.getLabel());
+				logger.error("Cannot get file size for: ", file.getLabel(), e);
 			}
 		}
 		String size = fileSizeConverter.convert(realSize);
