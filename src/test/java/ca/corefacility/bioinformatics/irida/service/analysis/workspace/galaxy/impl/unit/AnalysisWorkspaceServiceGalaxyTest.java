@@ -47,6 +47,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflo
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisCollectionServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -89,6 +90,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Mock
 	private AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy;
 
+	@Mock
+	private AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy;
+
 	private AnalysisWorkspaceServiceGalaxy workflowPreparation;
 
 	private Set<SequenceFile> inputFiles;
@@ -122,7 +126,8 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 	private UUID workflowId = IridaWorkflowTestBuilder.DEFAULT_ID;
 	private IridaWorkflow iridaWorkflowSingle = IridaWorkflowTestBuilder.buildTestWorkflowSingle();
-	private IridaWorkflow iridaWorkflowSingleNoReference = IridaWorkflowTestBuilder.buildTestWorkflowSingleNoReference();
+	private IridaWorkflow iridaWorkflowSingleNoReference = IridaWorkflowTestBuilder
+			.buildTestWorkflowSingleNoReference();
 	private IridaWorkflow iridaWorkflowPaired = IridaWorkflowTestBuilder.buildTestWorkflowPaired();
 	private IridaWorkflow iridaWorkflowSinglePaired = IridaWorkflowTestBuilder.buildTestWorkflowSinglePaired();
 
@@ -183,7 +188,8 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		workflowDetails.setId(WORKFLOW_ID);
 
 		workflowPreparation = new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
-				sequenceFileRepository, libraryBuilder, iridaWorkflowsService, analysisCollectionServiceGalaxy);
+				sequenceFileRepository, libraryBuilder, iridaWorkflowsService, analysisCollectionServiceGalaxy,
+				analysisProvenanceServiceGalaxy);
 
 		output1Dataset = new Dataset();
 		output1Dataset.setId("1");
@@ -493,9 +499,10 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 		workflowPreparation.prepareAnalysisFiles(submission);
 	}
-	
+
 	/**
-	 * Tests out failing to preparing an analysis with no files in the submission.
+	 * Tests out failing to preparing an analysis with no files in the
+	 * submission.
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -504,8 +511,8 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareAnalysisFilesNoSubmittedFilesFail() throws ExecutionManagerException,
 			IridaWorkflowNotFoundException {
-		submission = AnalysisSubmission.createSubmissionSingleReference("my analysis",
-				Sets.newHashSet(), referenceFile, workflowId);
+		submission = AnalysisSubmission.createSubmissionSingleReference("my analysis", Sets.newHashSet(),
+				referenceFile, workflowId);
 		submission.setRemoteAnalysisId(HISTORY_ID);
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
 
@@ -521,9 +528,10 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 		workflowPreparation.prepareAnalysisFiles(submission);
 	}
-	
+
 	/**
-	 * Tests out failing to preparing an analysis which requires a reference but no reference found in submission.
+	 * Tests out failing to preparing an analysis which requires a reference but
+	 * no reference found in submission.
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -540,9 +548,10 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 		workflowPreparation.prepareAnalysisFiles(submission);
 	}
-	
+
 	/**
-	 * Tests out failing to preparing an analysis which does not require a reference but a reference is found in submission.
+	 * Tests out failing to preparing an analysis which does not require a
+	 * reference but a reference is found in submission.
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException

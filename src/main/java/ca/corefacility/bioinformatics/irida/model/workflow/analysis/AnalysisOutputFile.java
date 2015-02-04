@@ -64,11 +64,8 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 	@Column(name = "file_revision_number")
 	private Long fileRevisionNumber; // the filesystem file revision number
 
-	// TODO: needs to be uncommented when tool execution metadata is populated
-	// from Galaxy. Likewise, the @OneToOne annotation needs to be updated.
-	// @NotNull
-	// @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@NotNull
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
 	@JoinColumn(name = "tool_execution_id")
 	@NotAudited
 	private ToolExecution createdByTool;
