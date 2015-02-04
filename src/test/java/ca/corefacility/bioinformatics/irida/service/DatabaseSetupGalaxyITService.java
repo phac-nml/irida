@@ -148,6 +148,36 @@ public class DatabaseSetupGalaxyITService {
 	}
 	
 	/**
+	 * Sets up an {@link AnalysisSubmission} with a list of paired sequence
+	 * files and saves all dependencies in database.
+	 * 
+	 * @param sampleId
+	 *            The id of the sample to associate with the given sequence
+	 *            file.
+	 * @param sequenceFilePaths1
+	 *            A list of paths for the first part of the pair.
+	 * @param sequenceFilePaths2
+	 *            A list of paths for the second part of the pair. The path to
+	 *            an input sequence file for this test.
+	 * @param iridaWorkflowID
+	 *            The id of an irida workflow.
+	 * @return An {@link AnalysisSubmission} which has been saved to the
+	 *         database.
+	 */
+	public AnalysisSubmission setupPairSubmissionInDatabase(long sampleId, List<Path> sequenceFilePaths1,
+			List<Path> sequenceFilePaths2, UUID iridaWorkflowId) {
+
+		List<SequenceFilePair> sequenceFilePairs = setupSampleSequenceFileInDatabase(sampleId, sequenceFilePaths1,
+				sequenceFilePaths2);
+
+		AnalysisSubmission submission = analysisSubmissionService.create(AnalysisSubmission
+				.createSubmissionPaired("paired analysis", Sets.newHashSet(sequenceFilePairs),
+						iridaWorkflowId));
+
+		return analysisSubmissionRepository.findOne(submission.getId());
+	}
+	
+	/**
 	 * Sets up an {@link AnalysisSubmission} with a set of
 	 * {@link SequenceFilePair}s that have already been setup with samples.
 	 * 

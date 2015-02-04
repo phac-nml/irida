@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 
 /**
@@ -26,6 +27,12 @@ public enum AnalysisType {
 	 */
 	@XmlEnumValue("phylogenomics")
 	PHYLOGENOMICS("phylogenomics", AnalysisPhylogenomicsPipeline.class),
+	
+	/**
+	 * An assembly and annotation analysis type.
+	 */
+	@XmlEnumValue("assembly-annotation")
+	ASSEMBLY_ANNOTATION("assembly-annotation", AnalysisAssemblyAnnotation.class),
 
 	/**
 	 * A default analysis type.
