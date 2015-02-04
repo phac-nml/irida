@@ -93,7 +93,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	 * URL to a local database file.
 	 */
 	private static final URL LOCAL_DATABASE_URL = NonWindowsLocalGalaxyConfig.class
-			.getResource("db_gx_rev_0120.sqlite");
+			.getResource("db_gx_rev_0124.sqlite");
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(NonWindowsLocalGalaxyConfig.class);
