@@ -51,11 +51,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
-import ca.corefacility.bioinformatics.irida.model.run.library.Layout;
-import ca.corefacility.bioinformatics.irida.model.run.library.Layout.LayoutType;
-import ca.corefacility.bioinformatics.irida.model.run.library.LibraryDescription;
-import ca.corefacility.bioinformatics.irida.model.run.library.LibraryDescription.Source;
-import ca.corefacility.bioinformatics.irida.model.run.library.Strategy;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
@@ -577,15 +572,6 @@ public class ProjectServiceImplIT {
 		projectService.delete(1L);
 
 		projectService.findRevisions(1L, new PageRequest(1, 1));
-	}
-
-	private LibraryDescription createLibraryDescription() {
-		final Strategy s = new Strategy(1, 1, 1, "protocol");
-		final Layout l = new Layout(1, LayoutType.PAIRED_END);
-		final LibraryDescription ld = new LibraryDescription(Source.AMPLICON, s, l);
-		ld.setComment("This is a comment.");
-
-		return ld;
 	}
 
 	private Project p() {
