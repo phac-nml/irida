@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,7 +48,6 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.hp.hpl.jena.rdf.model.Seq;
 
 /**
  * Controller for all sample related views

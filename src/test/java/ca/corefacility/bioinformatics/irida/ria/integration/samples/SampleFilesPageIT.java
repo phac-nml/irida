@@ -65,7 +65,7 @@ public class SampleFilesPageIT {
 		page.gotoPage(SAMPLE_ID);
 		
 		page.deleteFirstFile();
-		page.gotoPage(SAMPLE_ID);
+		assertTrue("Should display a confirmation message that the file was deleted", page.isDeleteConfirmationMessageDisplayed());
 		assertEquals("Displays the correct number of sequence files", 2, page.getSequenceFileCount());
 	}
 
