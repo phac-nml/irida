@@ -1,9 +1,9 @@
 (function () {
   "use strict";
-  var STATE_MAP = /*[[${states}]]*/ {};
 
   function StateFilter() {
     return function (state) {
+      console.log(STATE_MAP[state]);
       return STATE_MAP[state];
     }
   }
@@ -18,7 +18,6 @@
     return function (analyses) {
       var filtered = [];
       analyses.forEach(function (analysis) {
-        console.log(analysis);
         if (filter.search.length === 0 || analysis['label'].indexOf(filter.search) > 0) {
           filtered.push(analysis);
         }

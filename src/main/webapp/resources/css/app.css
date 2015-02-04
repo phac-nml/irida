@@ -7681,6 +7681,8 @@ html, body {
 .board_detail--desc {
   line-height: 1rem;
   padding: .2rem 0 0 0;
+  font-size: 1.3rem;
+  color: #939393;
 }
 
 /* line 4, ../../styles/components/_breadcrumbs.scss */
