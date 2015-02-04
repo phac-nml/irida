@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Profile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
@@ -37,21 +38,25 @@ public class IridaWorkflowsTestConfig {
 
 	private UUID testAnalysisDefaultId = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
 	private UUID phylogenomicsPipelineDefaultId = UUID.fromString("1f9ea289-5053-4e4a-bc76-1f0c60b179f8");
+	private UUID assemblyAnnotationPipelineDefaultId = UUID.fromString("8c438951-484a-48da-be2b-93b7d29aa2a3");
 
 	@Bean
 	public IridaWorkflowSet iridaWorkflows() throws IOException, IridaWorkflowLoadException, URISyntaxException {
 		Path testAnalysisPath = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysis").toURI());
 		Path phylogenomicsAnalysisPath = Paths.get(AnalysisPhylogenomicsPipeline.class.getResource(
 				"workflows/AnalysisPhylogenomicsPipeline").toURI());
+		Path assemblyAnnotationPath = Paths.get(AnalysisAssemblyAnnotation.class.getResource(
+				"workflows/AnalysisAssemblyAnnotation").toURI());
 
 		Set<IridaWorkflow> workflowsSet = iridaWorkflowLoaderService.loadAllWorkflowImplementations(testAnalysisPath);
 		workflowsSet.addAll(iridaWorkflowLoaderService.loadAllWorkflowImplementations(phylogenomicsAnalysisPath));
+		workflowsSet.addAll(iridaWorkflowLoaderService.loadAllWorkflowImplementations(assemblyAnnotationPath));
 
 		return new IridaWorkflowSet(workflowsSet);
 	}
 
 	@Bean
 	public IridaWorkflowIdSet defaultIridaWorkflows() {
-		return new IridaWorkflowIdSet(Sets.newHashSet(testAnalysisDefaultId, phylogenomicsPipelineDefaultId));
+		return new IridaWorkflowIdSet(Sets.newHashSet(testAnalysisDefaultId, phylogenomicsPipelineDefaultId, assemblyAnnotationPipelineDefaultId));
 	}
 }
