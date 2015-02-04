@@ -88,7 +88,22 @@ public class ToolExecution implements IridaThing {
 	@Column(name = "created_date")
 	private final Date createdDate;
 
-	private ToolExecution(final Long id, final Set<ToolExecution> previousSteps, final String toolName,
+	/**
+	 * for hibernate.
+	 */
+	@SuppressWarnings("unused")
+	private ToolExecution() {
+		this.id = null;
+		this.previousSteps = null;
+		this.toolName = null;
+		this.toolVersion = null;
+		this.commandLine = null;
+		this.executionManagerIdentifier = null;
+		this.executionTimeParameters = null;
+		this.createdDate = null;
+	}
+
+	public ToolExecution(final Long id, final Set<ToolExecution> previousSteps, final String toolName,
 			final String toolVersion, final String executionManagerIdentifier,
 			final Map<String, String> executionTimeParameters) {
 		this.id = id;
