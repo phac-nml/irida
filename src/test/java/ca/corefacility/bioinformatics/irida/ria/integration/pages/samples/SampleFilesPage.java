@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.samples;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -32,31 +31,22 @@ public class SampleFilesPage extends AbstractPage {
 	}
 
 	public String getSequenceFileName() {
-		return driver.findElement(By.cssSelector("#filesTable tr:nth-child(1) .file-name")).getText();
+		return driver.findElements(By.className("board-name")).get(0).getText();
 	}
 
 	public int getSequenceFileCount() {
-		return driver.findElements(By.cssSelector("#filesTable tbody tr")).size();
+		return driver.findElements(By.className("board")).size();
 	}
 	
 	public void deleteFirstFile(){
 		WebElement removeButton = driver.findElements(By.className("remove-file")).iterator().next();
 		removeButton.click();
 		WebElement confirmRemoveButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.className("remove-file-confirm")));
+				.id("remove-file-confirm")));
 		confirmRemoveButton.click();
 	}
-	
-	public boolean notySuccessDisplayed() {
-		boolean present = false;
-		try {
-			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
-					.className("noty_type_success")));
-			present = true;
-		} catch (NoSuchElementException e) {
-			present = false;
-		}
 
-		return present;
+	public boolean isDeleteConfirmationMessageDisplayed() {
+		return driver.findElements(By.id("file-deleted-success")).size() > 0;
 	}
 }

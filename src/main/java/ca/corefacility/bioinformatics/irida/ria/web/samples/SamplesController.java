@@ -7,7 +7,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
@@ -15,8 +17,7 @@ import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.converter.Converter;
-import org.springframework.format.Formatter;
+import org.springframework.context.MessageSource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -33,18 +35,19 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for all sample related views
@@ -93,19 +96,20 @@ public class SamplesController extends BaseController {
 	private final ProjectService projectService;
 	private final UserService userService;
 	private final SequenceFileWebUtilities sequenceFileUtilities;
+	private final SequenceFilePairService sequenceFilePairService;
 
-	// Converters
-	Formatter<Date> dateFormatter;
-	Converter<Long, String> fileSizeConverter;
+	private final MessageSource messageSource;
 
 	@Autowired
-	public SamplesController(SampleService sampleService, SequenceFileService sequenceFileService,
-			UserService userService, ProjectService projectService, SequenceFileWebUtilities sequenceFileUtilities) {
+	public SamplesController(SampleService sampleService, SequenceFileService sequenceFileService, SequenceFilePairService sequenceFilePairService,
+			UserService userService, ProjectService projectService, SequenceFileWebUtilities sequenceFileUtilities, MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.sequenceFileService = sequenceFileService;
+		this.sequenceFilePairService = sequenceFilePairService;
 		this.userService = userService;
 		this.projectService = projectService;
 		this.sequenceFileUtilities = sequenceFileUtilities;
+		this.messageSource = messageSource;
 	}
 
 	/************************************************************************************************
@@ -214,10 +218,30 @@ public class SamplesController extends BaseController {
 			throws IOException {
 		Sample sample = sampleService.read(sampleId);
 		List<Map<String, Object>> files = getFilesForSample(sampleId);
-		boolean projectManagerForSample = isProjectManagerForSample(sample, principal);
+
+		model.addAttribute("sampleId", sampleId);
 		model.addAttribute(MODEL_ATTR_FILES, files);
+
+		// SequenceFilePairs
+		List<SequenceFilePair> pairList = sequenceFilePairService.getSequenceFilePairsForSample(sample);
+		List<Map<String, Object>> pairs = new ArrayList<>();
+		for (SequenceFilePair pair : pairList) {
+			Map<String, Object> map = new HashMap<>();
+
+			// Get the file info
+			Set<SequenceFile> fileSet = pair.getFiles();
+			List<Map<String, Object>> pairedFiles = new ArrayList<>();
+			for (SequenceFile file : fileSet) {
+				pairedFiles.add(sequenceFileUtilities.getFileDataMap(file));
+			}
+			map.put("files", pairedFiles);
+			map.put("createdDate", pair.getCreatedDate());
+			pairs.add(map);
+		}
+		model.addAttribute("pairs", pairs);
+
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
-		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, projectManagerForSample);
+		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample, principal));
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
 		return SAMPLE_FILES_PAGE;
 	}
@@ -236,7 +260,8 @@ public class SamplesController extends BaseController {
 	@RequestMapping(value = "/samples/ajax/{sampleId}/files", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<Map<String, Object>> getFilesForSample(@PathVariable Long sampleId) throws IOException {
 		Sample sample = sampleService.read(sampleId);
-		List<Join<Sample, SequenceFile>> joinList = sequenceFileService.getSequenceFilesForSample(sample);
+
+		List<Join<Sample, SequenceFile>> joinList = sequenceFileService.getUnpairedSequenceFilesForSample(sample);
 
 		List<Map<String, Object>> response = new ArrayList<>();
 		for (Join<Sample, SequenceFile> join : joinList) {
@@ -254,15 +279,24 @@ public class SamplesController extends BaseController {
 	 *            The {@link SequenceFile} id
 	 * @return map stating the request was successful
 	 */
-	@RequestMapping(value = "/samples/ajax/{sampleId}/files/{fileId}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
-	@ResponseBody
-	public Map<String, String> removeFileFromSample(@PathVariable Long sampleId, @PathVariable Long fileId) {
+	@RequestMapping(value = "/samples/{sampleId}/files/delete", method = RequestMethod.POST)
+	public String removeFileFromSample(RedirectAttributes attributes, @PathVariable Long sampleId, @RequestParam Long fileId, @RequestParam String returnUrl, Locale locale) {
 		Sample sample = sampleService.read(sampleId);
 		SequenceFile sequenceFile = sequenceFileService.read(fileId);
 
-		sampleService.removeSequenceFileFromSample(sample, sequenceFile);
+		try {
+			sampleService.removeSequenceFileFromSample(sample, sequenceFile);
+			attributes.addFlashAttribute("fileDeleted", true);
+			attributes.addFlashAttribute("fileDeletedMessage", messageSource
+					.getMessage("samples.files.removed.message", new Object[] { sequenceFile.getLabel() }, locale));
+		} catch (Exception e) {
+			logger.error("Could not remove sequence file from sample: ", e);
+			attributes.addFlashAttribute("fileDeleted", true);
+			attributes.addFlashAttribute("fileDeletedError", messageSource
+					.getMessage("samples.files.remove.error", new Object[] { sequenceFile.getLabel() }, locale));
+		}
 
-		return ImmutableMap.of("response", "success");
+		return "redirect:" + returnUrl;
 	}
 
 	/**
