@@ -674,17 +674,17 @@ public class AnalysisExecutionServiceGalaxyIT {
 		AnalysisOutputFile annotations = analysisResultsAssembly.getAnnotations();
 		AnalysisOutputFile prokkaLog = analysisResultsAssembly.getAnnotationLog();
 
-		assertTrue("phylogenetic trees should be equal",
+		assertTrue("contigs should be equal",
 				com.google.common.io.Files.equal(expectedContigs.toFile(), contigs.getFile().toFile()));
 		assertEquals("invalid file name for contigs", expectedContigs.getFileName(), contigs.getFile()
 				.getFileName());
 
-		assertTrue("snp matrices should be correct",
+		assertTrue("annotations should be correct",
 				com.google.common.io.Files.equal(expectedAnnotations.toFile(), annotations.getFile().toFile()));
 		assertEquals("invalid file name for annotations", expectedAnnotations.getFileName(), annotations.getFile()
 				.getFileName());
 
-		assertTrue("snpTable should be correct",
+		assertTrue("annotations log should be correct",
 				com.google.common.io.Files.equal(expectedAnnotationsLog.toFile(), prokkaLog.getFile().toFile()));
 		assertEquals("invalid file name for annotations log", expectedAnnotationsLog.getFileName(), prokkaLog.getFile()
 				.getFileName());
