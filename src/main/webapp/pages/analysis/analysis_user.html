@@ -18,10 +18,6 @@
 			height: 100%;
 		}
 
-		.affix-top input {
-			width: 170px;
-		}
-
 		.content {
 			flex-grow: 1;
 		}
@@ -30,6 +26,10 @@
 			position: fixed;
 			top: 50px;
 			max-width: 100px;
+		}
+
+		.affix-top input {
+			width: 170px;
 		}
 	</style>
 	<script>window.dependencies = ['irida.analysis.user'];</script>
@@ -52,8 +52,8 @@
 		</aside>
 		<div class="content ng-cloak" ng-controller="analysisController as ctrl">
 			<ul class="boards">
-				<li class="board" ng-repeat="analysis in ctrl.analyses | analysesFilter" ng-animate=" 'animate' ">
-					<a href="#" class="button board_inner row">
+				<li class="board" ng-repeat="analysis in ctrl.analyses | analysesFilter">
+					<div class="button board_inner row">
 						<div ng-class="'analysis__state--' + analysis.analysisState" class="analysis__state col-md-2">
 							<div class="board_detail--value">{{::analysis.analysisState | stateFilter}}</div>
 							<div class="board_detail--desc" th:text="#{analyses.state}">State</div>
@@ -63,10 +63,12 @@
 							<div class="board_detail--desc" th:text="#{analyses.analysis-name}">Analysis Name</div>
 						</div>
 						<div class="col-md-4">
-							<span class="pull-right"><div class="board_detail--value">{{::analysis.createdDate | date:'medium'}}</div>
-							<div class="board_detail--desc" th:text="#{analysis.date-created}">Date Created</div></span>
+							<span class="pull-right">
+								<div class="board_detail--value">{{::analysis.createdDate | date:'medium'}}</div>
+								<div class="board_detail--desc" th:text="#{analysis.date-created}">Date Created</div>
+							</span>
 						</div>
-					</a>
+					</div>
 				</li>
 			</ul>
 		</div>
