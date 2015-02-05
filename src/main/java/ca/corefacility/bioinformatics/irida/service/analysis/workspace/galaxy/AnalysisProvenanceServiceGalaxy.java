@@ -250,6 +250,13 @@ public class AnalysisProvenanceServiceGalaxy {
 						// if we already have a map, straight up recurse on the
 						// map.
 						paramStrings.putAll(buildParamMap((Map<String, Object>) value, prefixes));
+					} else if (value instanceof List) {
+						// if it's a list, the contents are *probably*
+						// Map<String, Object>.
+						final List<Map<String, Object>> valueList = (List<Map<String, Object>>) value;
+						for (final Map<String, Object> listMap : valueList) {
+							paramStrings.putAll(buildParamMap(listMap, prefixes));
+						}
 					} else if (value.toString().startsWith(JSON_TEXT_MAP_INDICATOR)) {
 						// if we have a JSON Map (something that has '{' as the
 						// first character in the String), then parse it with
@@ -271,7 +278,9 @@ public class AnalysisProvenanceServiceGalaxy {
 						paramStrings.put(key, value.toString());
 					}
 				} catch (final IOException e) {
-					logger.debug("Ignoring key [" + key + "], unable to parse with Jackson");
+					logger.debug("Unable to parse key [" + key + "] with value (" + value
+							+ ") using Jackson, defaulting to calling toString() on this parameter branch.");
+					paramStrings.put(key, value.toString());
 				}
 			}
 		}
