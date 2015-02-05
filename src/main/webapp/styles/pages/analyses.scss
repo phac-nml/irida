@@ -1,0 +1,23 @@
+@import "../helpers/variables";
+
+$states: (
+        'NEW': $irida-colour-info,
+        'PREPARING': darken($irida-colour-info, 10),
+        'PREPARED': darken($irida-colour-info, 20),
+        'SUBMITTING': darken($irida-colour-info, 30),
+        'RUNNING': $irida-colour-primary,
+        'FINISHED_RUNNING': $irida-colour-success,
+        'COMPLETING': lighten($irida-colour-success, 10),
+        'COMPLETED': #00FF00,
+        'ERROR': $irida-colour-alert
+);
+
+.analysis__state {
+  border-left: 1rem solid $color-grey-light;
+}
+
+@each $state, $bColor in $states {
+  .analysis__state--#{$state} {
+    border-color: $bColor;
+  }
+}
