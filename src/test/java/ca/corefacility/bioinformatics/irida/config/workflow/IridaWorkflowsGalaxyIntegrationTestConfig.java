@@ -83,8 +83,9 @@ public class IridaWorkflowsGalaxyIntegrationTestConfig {
 	 *            The instance of Galaxy to import tools into.
 	 * @param iridaWorkflow
 	 *            The workflow to import all tools for.
+	 * @throws IridaWorkflowException
 	 */
-	private void importAllTools(GalaxyInstance galaxyInstance, IridaWorkflow iridaWorkflow) {
+	private void importAllTools(GalaxyInstance galaxyInstance, IridaWorkflow iridaWorkflow) throws IridaWorkflowException {
 		for (IridaWorkflowToolRepository workflowTool : iridaWorkflow.getWorkflowDescription().getToolRepositories()) {
 			ToolShedRepositoriesClient toolRepositoriesClient = galaxyInstance.getRepositoriesClient();
 
