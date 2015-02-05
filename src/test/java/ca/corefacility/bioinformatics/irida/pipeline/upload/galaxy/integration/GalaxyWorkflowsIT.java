@@ -54,6 +54,7 @@ import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryContentsProvenance;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.ToolParameter;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
@@ -426,16 +427,17 @@ public class GalaxyWorkflowsIT {
 	}
 	
 	/**
-	 * Tests executing a single workflow in Galaxy and changing a single parameter.
+	 * Tests executing a single workflow in Galaxy and changing a single tool parameter.
 	 * @throws ExecutionManagerException
 	 */
 	@Test
-	public void testExecuteWorkflowChangeParameter() throws ExecutionManagerException {
+	public void testExecuteWorkflowChangeToolParameter() throws ExecutionManagerException {
+		String toolId = "Grep1";
 		
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
 		
-		Map<String, ToolParameter> toolParameters = ImmutableMap.of("Grep1", new ToolParameter("pattern", "^#"));
+		Map<String, ToolParameter> toolParameters = ImmutableMap.of(toolId, new ToolParameter("pattern", "^#"));
 		WorkflowOutputs workflowOutput = 
 				runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel, toolParameters);
 		assertNotNull(workflowOutput);
@@ -453,6 +455,12 @@ public class GalaxyWorkflowsIT {
 		for (String outputId : workflowOutput.getOutputIds()) {
 			Dataset dataset = historiesClient.showDataset(workflowOutput.getHistoryId(), outputId);
 			assertNotNull(dataset);
+			
+			HistoryContentsProvenance provenance = historiesClient.showProvenance(workflowOutput.getHistoryId(), dataset.getId());
+			if (toolId.equals(provenance.getToolId())) {
+				Map<String, Object> parametersMap = provenance.getParameters();
+				assertEquals("pattern parameter is correct", "\"^#\"", parametersMap.get("pattern"));
+			}
 		}
 		
 		// test get workflow status
