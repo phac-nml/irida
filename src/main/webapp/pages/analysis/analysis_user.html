@@ -62,7 +62,8 @@
 				<h2 th:text="#{form.filter}">Filter</h2>
 
 				<div class="form-group">
-					<label class="sidenav__label" th:text="#{analysis.filter.name}">Name</label> <input
+					<label class="sidenav__label" th:text="#{analysis.filter.name}">Name</label>
+					<input id="filter-name"
 					class="form-control input-full" type="search"
 					ng-model="filter.search"
 					ng-model-options="{ debounce: 350 }" ng-change="filter.doSearch()"/>
@@ -77,13 +78,13 @@
 							<div class="board_detail--value">{{::analysis.analysisState | stateFilter}}</div>
 							<div class="board_detail--desc" th:text="#{analyses.state}">State</div>
 						</div>
-						<div class="col-md-4">
+						<div class="col-md-6">
 							<div class="board_detail--value">{{analysis.label}}</div>
 							<div class="board_detail--desc" th:text="#{analyses.analysis-name}">Analysis Name</div>
 						</div>
 						<div class="col-md-4">
-							<div class="board_detail--value">{{::analysis.createdDate | date:'medium'}}</div>
-							<div class="board_detail--desc" th:text="#{analysis.date-created}">Date Created</div>
+							<span class="pull-right"><div class="board_detail--value">{{::analysis.createdDate | date:'medium'}}</div>
+							<div class="board_detail--desc" th:text="#{analysis.date-created}">Date Created</div></span>
 						</div>
 					</a>
 				</li>
