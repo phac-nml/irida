@@ -30,18 +30,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Strings;
@@ -71,15 +68,13 @@ public class AnalysisController {
 	 * SERVICES
 	 */
 	private AnalysisSubmissionService analysisSubmissionService;
-	private AnalysisExecutionService analysisExecutionService;
 	private UserService userService;
 	private MessageSource messageSource;
 
 	@Autowired
-	public AnalysisController(AnalysisSubmissionService analysisSubmissionService, AnalysisExecutionService analysisExecutionService, UserService userService,
+	public AnalysisController(AnalysisSubmissionService analysisSubmissionService, UserService userService,
 			MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
-		this.analysisExecutionService = analysisExecutionService;
 		this.userService = userService;
 		this.messageSource = messageSource;
 
@@ -236,13 +231,6 @@ public class AnalysisController {
 			map.put("remoteAnalysisId", Strings.isNullOrEmpty(remoteAnalysisId) ? "NOT SET" : remoteAnalysisId);
 			map.put("analysisState", analysisState);
 			map.put("createdDate", String.valueOf(sub.getCreatedDate().getTime()));
-			if (analysisState.equals(AnalysisState.RUNNING.toString())  && !Strings.isNullOrEmpty(remoteAnalysisId)) {
-				try {
-					GalaxyWorkflowStatus status = analysisExecutionService.getWorkflowStatus(sub);
-				} catch (ExecutionManagerException e) {
-					logger.error("Error finding workflow status");
-				}
-			}
 			analysesMap.add(map);
 		}
 		return ImmutableMap.of("analyses", analysesMap);
