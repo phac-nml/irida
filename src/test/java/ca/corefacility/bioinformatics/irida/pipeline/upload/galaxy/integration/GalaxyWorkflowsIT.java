@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assume;
 import org.junit.Before;
@@ -54,11 +55,13 @@ import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
+import com.github.jmchilton.blend4j.galaxy.beans.ToolParameter;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Integration tests for managing workflows in Galaxy.
@@ -278,8 +281,22 @@ public class GalaxyWorkflowsIT {
 	 * @param workflowInputLabel The label of a workflow input in Galaxy.
 	 * @throws ExecutionManagerException If there was an error executing the workflow.
 	 */
-	public WorkflowOutputs runSingleFileWorkflow(Path inputFile, InputFileType inputFileType,
-			String workflowId, String workflowInputLabel)
+	private WorkflowOutputs runSingleFileWorkflow(Path inputFile, InputFileType inputFileType,
+			String workflowId, String workflowInputLabel) throws ExecutionManagerException {
+		return runSingleFileWorkflow(inputFile, inputFileType, workflowId, workflowInputLabel, null);
+	}
+	
+	/**
+	 * Starts the execution of a workflow with a single fastq file and the given workflow id.
+	 * @param inputFile  An input file to start the workflow.
+	 * @param inputFileType The file type of the input file.
+	 * @param workflowId  The id of the workflow to start.
+	 * @param workflowInputLabel The label of a workflow input in Galaxy.
+	 * @param toolParameters  A map of tool parameters to set.
+	 * @throws ExecutionManagerException If there was an error executing the workflow.
+	 */
+	private WorkflowOutputs runSingleFileWorkflow(Path inputFile, InputFileType inputFileType,
+			String workflowId, String workflowInputLabel, Map<String, ToolParameter> toolParameters)
 			throws ExecutionManagerException {
 		checkNotNull(inputFile, "file is null");
 		checkNotNull(inputFileType, "inputFileType is null");
@@ -302,6 +319,13 @@ public class GalaxyWorkflowsIT {
 		inputs.setDestination(new WorkflowInputs.ExistingHistory(workflowHistory.getId()));
 		inputs.setWorkflowId(workflowDetails.getId());
 		inputs.setInput(workflowInputId, new WorkflowInputs.WorkflowInput(inputDataset.getId(), WorkflowInputs.InputSourceType.HDA));
+		
+		if (toolParameters != null) {
+			for (String toolId : toolParameters.keySet()) {
+				ToolParameter toolParameter = toolParameters.get(toolId);
+				inputs.setToolParameter(toolId, toolParameter);
+			}
+		}
 		
 		// execute workflow
 		WorkflowOutputs output = workflowsClient.runWorkflow(inputs);
@@ -376,6 +400,44 @@ public class GalaxyWorkflowsIT {
 		
 		WorkflowOutputs workflowOutput = 
 				runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel);
+		assertNotNull(workflowOutput);
+		assertNotNull(workflowOutput.getHistoryId());
+		
+		// history should exist
+		HistoryDetails historyDetails = historiesClient.showHistory(workflowOutput.getHistoryId());
+		assertNotNull(historyDetails);
+		
+		// outputs should exist
+		assertNotNull(workflowOutput.getOutputIds());
+		assertTrue(workflowOutput.getOutputIds().size() > 0);
+		
+		// each output dataset should exist
+		for (String outputId : workflowOutput.getOutputIds()) {
+			Dataset dataset = historiesClient.showDataset(workflowOutput.getHistoryId(), outputId);
+			assertNotNull(dataset);
+		}
+		
+		// test get workflow status
+		GalaxyWorkflowStatus workflowStatus = 
+				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
+		assertFalse(GalaxyWorkflowState.UNKNOWN.equals(workflowStatus.getState()));
+		float percentComplete = workflowStatus.getPercentComplete();
+		assertTrue(0.0f <= percentComplete && percentComplete <= 100.0f);
+	}
+	
+	/**
+	 * Tests executing a single workflow in Galaxy and changing a single parameter.
+	 * @throws ExecutionManagerException
+	 */
+	@Test
+	public void testExecuteWorkflowChangeParameter() throws ExecutionManagerException {
+		
+		String workflowId = localGalaxy.getSingleInputWorkflowId();
+		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
+		
+		Map<String, ToolParameter> toolParameters = ImmutableMap.of("Grep1", new ToolParameter("pattern", "^#"));
+		WorkflowOutputs workflowOutput = 
+				runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel, toolParameters);
 		assertNotNull(workflowOutput);
 		assertNotNull(workflowOutput.getHistoryId());
 		
