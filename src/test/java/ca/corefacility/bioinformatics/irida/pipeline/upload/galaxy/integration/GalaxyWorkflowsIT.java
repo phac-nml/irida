@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -315,6 +316,7 @@ public class GalaxyWorkflowsIT {
 	 * @throws WorkflowException 
 	 */
 	@Test
+	@Ignore
 	public void testGetWorkflowChecksumSuccess() throws WorkflowException {
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		
@@ -329,6 +331,7 @@ public class GalaxyWorkflowsIT {
 	 * @throws WorkflowException 
 	 */
 	@Test(expected=WorkflowException.class)
+	@Ignore
 	public void testGetWorkflowChecksumFail() throws WorkflowException {
 		String workflowId = localGalaxy.getInvalidWorkflowId();
 
@@ -340,6 +343,7 @@ public class GalaxyWorkflowsIT {
 	 * @throws WorkflowException 
 	 */
 	@Test
+	@Ignore
 	public void testValidateWorkflowByChecksumSuccess() throws WorkflowException {
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String workflowChecksum = localGalaxy.getSingleInputWorkflowChecksum();
@@ -352,6 +356,7 @@ public class GalaxyWorkflowsIT {
 	 * @throws WorkflowException 
 	 */
 	@Test
+	@Ignore
 	public void testValidateWorkflowByChecksumFail() throws WorkflowException {
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String workflowChecksum = localGalaxy.getSingleInputWorkflowChecksumInvalid();
