@@ -19,7 +19,8 @@
    */
   function AnalysisFilterService() {
     return {
-      search: ""
+      label: "",
+      analysisState : ""
     }
   }
 
@@ -30,14 +31,25 @@
    * @constructor
    */
   function AnalysesFilter(filter) {
-    return function (analyses) {
-      var filtered = [];
-      analyses.forEach(function (analysis) {
-        if (filter.search.length === 0 || analysis['label'].toLowerCase().indexOf(filter.search.toLowerCase()) > 0) {
-          filtered.push(analysis);
+    function _filterAnalysis(analysis) {
+      var result = true;
+      _.forOwn(filter, function (value, key) {
+        var item = analysis[key];
+        if(item === null) return;
+        if(key === 'analysisState' && value.length > 0 && item !== value) {
+          result = false;
+        }
+        else if (item.toLowerCase().indexOf(value.toLowerCase()) < 0) {
+          result = false;
         }
       });
-      return filtered;
+      return result;
+    }
+
+    return function (analyses) {
+      return _.filter(analyses, function (analysis) {
+        return _filterAnalysis(analysis)
+      });
     }
   }
 
@@ -64,10 +76,28 @@
    */
   function FilterController(filter) {
     var vm = this;
-    vm.search = filter.search;
+    vm.search = "";
+    vm.states = [{value: "", text: "All"}];
+    vm.state = vm.states[0];
+
+    _.forOwn(STATE_MAP, function (value, key) {
+      vm.states.push({value: key, text: value});
+    });
+
+    vm.clear = function () {
+      _.forOwn(filter, function (value, key) {
+        filter[key] = "";
+      });
+      vm.search = "";
+      vm.state = vm.states[0];
+    };
 
     vm.doSearch = function () {
-      filter.search = vm.search;
+      filter.label = vm.search;
+    };
+
+    vm.doState = function () {
+      filter.analysisState = vm.state.value;
     };
   }
 
