@@ -101,6 +101,10 @@ public class IridaWorkflowsGalaxyIntegrationTestConfig {
 			for (InstalledRepository installedRepository : installedRepositories) {
 				InstallationStatus status = installedRepository.getInstallationStatus();
 				logger.debug("Installation status=" + status + " for tool " + workflowTool);
+				if (status.equals(InstallationStatus.ERROR)) {
+					// don't even try to proceed with tests if you can't install the required tools.
+					throw new IridaWorkflowException("Failed to install tool [" + workflowTool + "]");
+				}
 			}
 		}
 	}
