@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.enums.analysis.integration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -203,13 +204,15 @@ public class SNVPhylAnalysisIT {
 		completeSubmittedAnalyses(submission.getId());
 
 		submission = analysisSubmissionRepository.findOne(submission.getId());
-		assertEquals(AnalysisState.COMPLETED, submission.getAnalysisState());
+		assertEquals("analysis state should be completed.", AnalysisState.COMPLETED, submission.getAnalysisState());
 
 		Analysis analysis = submission.getAnalysis();
-		assertEquals(AnalysisPhylogenomicsPipeline.class, analysis.getClass());
+		assertEquals("Should have generated a phylogenomics pipeline analysis type.",
+				AnalysisPhylogenomicsPipeline.class, analysis.getClass());
 		AnalysisPhylogenomicsPipeline analysisPhylogenomics = (AnalysisPhylogenomicsPipeline) analysis;
 
-		assertEquals(3, analysisPhylogenomics.getAnalysisOutputFiles().size());
+		assertEquals("the phylogenomics pipeline should have 3 output files.", 3, analysisPhylogenomics
+				.getAnalysisOutputFiles().size());
 		@SuppressWarnings("resource")
 		String matrixContent = new Scanner(analysisPhylogenomics.getSnpMatrix().getFile().toFile()).useDelimiter("\\Z")
 				.next();
@@ -217,7 +220,8 @@ public class SNVPhylAnalysisIT {
 				"snpMatrix should be the same but is \"" + matrixContent + "\"",
 				com.google.common.io.Files.equal(outputSnpMatrix.toFile(), analysisPhylogenomics.getSnpMatrix()
 						.getFile().toFile()));
-
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpMatrix()
+				.getCreatedByTool());
 		@SuppressWarnings("resource")
 		String snpTableContent = new Scanner(analysisPhylogenomics.getSnpMatrix().getFile().toFile()).useDelimiter(
 				"\\Z").next();
@@ -225,9 +229,14 @@ public class SNVPhylAnalysisIT {
 				"snpTable should be the same but is \"" + snpTableContent + "\"",
 				com.google.common.io.Files.equal(outputSnpTable.toFile(), analysisPhylogenomics.getSnpTable().getFile()
 						.toFile()));
-
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpTable()
+				.getCreatedByTool());
 		// only test to make sure the file has a valid size since PhyML uses a
 		// random seed to generate the tree (and so changes results)
-		assertTrue(Files.size(analysisPhylogenomics.getPhylogeneticTree().getFile()) > 0);
+		assertTrue("the phylogenetic tree file should not be empty.",
+				Files.size(analysisPhylogenomics.getPhylogeneticTree().getFile()) > 0);
+
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getPhylogeneticTree()
+				.getCreatedByTool());
 	}
 }
