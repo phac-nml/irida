@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -42,6 +41,7 @@ public class AnalysisProvenanceServiceGalaxy {
 	private static final Joiner KEY_JOINER = Joiner.on('.').skipNulls();
 	private static final String JSON_TEXT_MAP_INDICATOR = "{";
 	private static final String JSON_TEXT_ARRAY_INDICATOR = "[";
+	private static final String EMPTY_VALUE_PLACEHOLDER = "<empty>";
 	private static final ObjectMapper mapper = new ObjectMapper();
 
 	private final GalaxyHistoriesService galaxyHistoriesService;
@@ -51,6 +51,10 @@ public class AnalysisProvenanceServiceGalaxy {
 			final ToolsClient toolsClient) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.toolsClient = toolsClient;
+	}
+	
+	public static String emptyValuePlaceholder() {
+		return EMPTY_VALUE_PLACEHOLDER;
 	}
 
 	/**
@@ -66,30 +70,32 @@ public class AnalysisProvenanceServiceGalaxy {
 	 * @throws ExecutionManagerException
 	 *             if the history contents could not be shown for the specified
 	 *             file.
-	 * @throws IridaWorkflowNotFoundException
-	 *             if we couldn't find the workflow that was used to run the
-	 *             analysis.
-	 * @throws IOException
-	 *             if we couldn't parse a response from Galaxy.
 	 */
 	public ToolExecution buildToolExecutionForOutputFile(final AnalysisSubmission submission,
-			final AnalysisOutputFile analysisOutputFile) throws ExecutionManagerException,
-			IridaWorkflowNotFoundException, IOException {
+			final AnalysisOutputFile analysisOutputFile) throws ExecutionManagerException {
 		final List<HistoryContents> historyContents = galaxyHistoriesService.showHistoryContents(submission
 				.getRemoteAnalysisId());
 		// group the history contents by name. The names that we're interested
-		// in starting from should match the filenames from the workflow
-		// definitions (outputsByFilename, above).
+		// in starting from should match the filename of the output file.
 		final Map<String, List<HistoryContents>> historyContentsByName = historyContents.stream().collect(
 				Collectors.groupingBy(HistoryContents::getName));
 		final String filename = analysisOutputFile.getFile().getFileName().toString();
-		final HistoryContents currentContents = historyContentsByName.get(filename).get(0);
+
+		final List<HistoryContents> currentContents = historyContentsByName.get(filename);
+		if (currentContents == null || currentContents.isEmpty() || currentContents.size() > 1) {
+			throw new ExecutionManagerException("Could not load a unique history contents for the specified filename ["
+					+ filename + "] in history with id [" + submission.getRemoteAnalysisId() + "]");
+		}
 		final HistoryContentsProvenance currentProvenance = galaxyHistoriesService.showProvenance(
-				submission.getRemoteAnalysisId(), currentContents.getId());
+				submission.getRemoteAnalysisId(), currentContents.get(0).getId());
 
-		final Tool toolDetails = toolsClient.showTool(currentProvenance.getToolId());
-
-		return buildToolExecutionForHistoryStep(toolDetails, currentProvenance, submission.getRemoteAnalysisId());
+		try {
+			final Tool toolDetails = toolsClient.showTool(currentProvenance.getToolId());
+	
+			return buildToolExecutionForHistoryStep(toolDetails, currentProvenance, submission.getRemoteAnalysisId());
+		} catch (final RuntimeException e) {
+			throw new ExecutionManagerException("Failed to build tool execution provenance.", e);
+		}
 	}
 
 	/**
@@ -243,7 +249,7 @@ public class AnalysisProvenanceServiceGalaxy {
 				// if the string is empty, put a pre-defined "empty" value into
 				// the map.
 				logger.trace("There's a key with a null value [" + key + "]");
-				paramStrings.put(key, "<empty>");
+				paramStrings.put(key, EMPTY_VALUE_PLACEHOLDER);
 			} else {
 				try {
 					if (value instanceof Map) {
