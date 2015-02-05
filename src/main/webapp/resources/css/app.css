@@ -8115,6 +8115,29 @@ input {
   opacity: 0;
 }
 
+/* line 3, ../../styles/components/_sidenav.scss */
+.sidenav {
+  width: 200px;
+  margin-right: 1rem;
+  padding: .5rem;
+}
+
+/* line 9, ../../styles/components/_sidenav.scss */
+.sidenav__inner--fixed {
+  position: fixed;
+  top: 50px;
+  width: 180px;
+}
+
+/* line 15, ../../styles/components/_sidenav.scss */
+.sidenav__label {
+  color: #939393;
+  font-weight: normal;
+  font-size: 1.3rem;
+  margin: 0;
+  padding: 0;
+}
+
 /* line 4, ../../styles/components/_typography.scss */
 .description {
   color: #939393;
