@@ -69,10 +69,10 @@ public class AnalysisExecutionServiceConfig {
 
 	@Autowired
 	private SequenceFileRepository sequenceFileRepository;
-
+	
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
-
+	
 	@Lazy
 	@Bean
 	public AnalysisExecutionService analysisExecutionService() {

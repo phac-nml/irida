@@ -94,7 +94,7 @@ public class AnalysisExecutionServiceTestConfig {
 
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
-
+	
 	@Autowired
 	private SequenceFilePairRepository sequenceFilePairRepository;
 
@@ -119,7 +119,7 @@ public class AnalysisExecutionServiceTestConfig {
 				sequenceFileRepository, galaxyLibraryBuilder(), iridaWorkflowsService,
 				analysisCollectionServiceGalaxy(), analysisProvenanceServiceGalaxy());
 	}
-
+	
 	@Lazy
 	@Bean
 	public AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy() {
@@ -167,7 +167,7 @@ public class AnalysisExecutionServiceTestConfig {
 	 * 
 	 * @return A new Executor for analysis tasks.
 	 */
-	@Profile({ "test", "it" })
+	@Profile({"test", "it"})
 	@Bean
 	public Executor analysisTaskExecutor() {
 		ScheduledExecutorService delegateExecutor = Executors.newSingleThreadScheduledExecutor();
@@ -206,8 +206,8 @@ public class AnalysisExecutionServiceTestConfig {
 	@Lazy
 	@Bean
 	public DatabaseSetupGalaxyITService analysisExecutionGalaxyITService() {
-		return new DatabaseSetupGalaxyITService(referenceFileRepository, seqeunceFileService, sampleService,
-				analysisExecutionService(), analysisSubmissionService, analysisSubmissionRepository,
-				sequenceFilePairRepository);
+		return new DatabaseSetupGalaxyITService(referenceFileRepository, seqeunceFileService,
+				sampleService, analysisExecutionService(),
+				analysisSubmissionService, analysisSubmissionRepository, sequenceFilePairRepository);
 	}
 }

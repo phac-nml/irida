@@ -126,8 +126,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 	private UUID workflowId = IridaWorkflowTestBuilder.DEFAULT_ID;
 	private IridaWorkflow iridaWorkflowSingle = IridaWorkflowTestBuilder.buildTestWorkflowSingle();
-	private IridaWorkflow iridaWorkflowSingleNoReference = IridaWorkflowTestBuilder
-			.buildTestWorkflowSingleNoReference();
+	private IridaWorkflow iridaWorkflowSingleNoReference = IridaWorkflowTestBuilder.buildTestWorkflowSingleNoReference();
 	private IridaWorkflow iridaWorkflowPaired = IridaWorkflowTestBuilder.buildTestWorkflowPaired();
 	private IridaWorkflow iridaWorkflowSinglePaired = IridaWorkflowTestBuilder.buildTestWorkflowSinglePaired();
 
@@ -499,10 +498,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 		workflowPreparation.prepareAnalysisFiles(submission);
 	}
-
+	
 	/**
-	 * Tests out failing to preparing an analysis with no files in the
-	 * submission.
+	 * Tests out failing to preparing an analysis with no files in the submission.
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -511,8 +509,8 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareAnalysisFilesNoSubmittedFilesFail() throws ExecutionManagerException,
 			IridaWorkflowNotFoundException {
-		submission = AnalysisSubmission.createSubmissionSingleReference("my analysis", Sets.newHashSet(),
-				referenceFile, workflowId);
+		submission = AnalysisSubmission.createSubmissionSingleReference("my analysis",
+				Sets.newHashSet(), referenceFile, workflowId);
 		submission.setRemoteAnalysisId(HISTORY_ID);
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
 
@@ -528,10 +526,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 		workflowPreparation.prepareAnalysisFiles(submission);
 	}
-
+	
 	/**
-	 * Tests out failing to preparing an analysis which requires a reference but
-	 * no reference found in submission.
+	 * Tests out failing to preparing an analysis which requires a reference but no reference found in submission.
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -548,10 +545,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 		workflowPreparation.prepareAnalysisFiles(submission);
 	}
-
+	
 	/**
-	 * Tests out failing to preparing an analysis which does not require a
-	 * reference but a reference is found in submission.
+	 * Tests out failing to preparing an analysis which does not require a reference but a reference is found in submission.
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException

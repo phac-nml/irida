@@ -63,7 +63,7 @@ import com.google.common.collect.Maps;
 public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService {
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisWorkspaceServiceGalaxy.class);
-
+	
 	private GalaxyWorkflowService galaxyWorkflowService;
 
 	private SequenceFileRepository sequenceFileRepository;
@@ -72,7 +72,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	private GalaxyHistoriesService galaxyHistoriesService;
 
 	private IridaWorkflowsService iridaWorkflowsService;
-
+	
 	private AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy;
 
 	private AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy;
@@ -160,9 +160,10 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		checkNotNull(analysisSubmission.getSingleInputFiles(), "inputFiles are null");
 		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
 		checkNotNull(analysisSubmission.getRemoteWorkflowId(), "remoteWorkflowId is null");
-		checkArgument(!(analysisSubmission.getSingleInputFiles().isEmpty() && analysisSubmission.getPairedInputFiles()
-				.isEmpty()), "no single or paired sequence files passed to submission " + analysisSubmission
-				+ " . At least one type of file must be available");
+		checkArgument(!(analysisSubmission.getSingleInputFiles().isEmpty()
+				&& analysisSubmission.getPairedInputFiles().isEmpty()),
+				"no single or paired sequence files passed to submission " + analysisSubmission
+						+ " . At least one type of file must be available");
 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysisSubmission.getWorkflowId());
 		IridaWorkflowInput workflowInput = iridaWorkflow.getWorkflowDescription().getInputs();
@@ -174,17 +175,13 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			checkArgument(!analysisSubmission.getReferenceFile().isPresent(),
 					"workflow does not require a reference and a reference file is set in the submission");
 		}
-
+		
 		if (!iridaWorkflow.getWorkflowDescription().acceptsSingleSequenceFiles()) {
-			checkArgument(analysisSubmission.getSingleInputFiles().isEmpty(),
-					"workflow does not accept single sequence files, but single sequence files are passed as input to "
-							+ analysisSubmission);
+			checkArgument(analysisSubmission.getSingleInputFiles().isEmpty(), "workflow does not accept single sequence files, but single sequence files are passed as input to " + analysisSubmission);
 		}
-
+		
 		if (!iridaWorkflow.getWorkflowDescription().acceptsPairedSequenceFiles()) {
-			checkArgument(analysisSubmission.getPairedInputFiles().isEmpty(),
-					"workflow does not accept paired sequence files, but paired sequence files are passed as input to "
-							+ analysisSubmission);
+			checkArgument(analysisSubmission.getPairedInputFiles().isEmpty(), "workflow does not accept paired sequence files, but paired sequence files are passed as input to " + analysisSubmission);
 		}
 
 		String temporaryLibraryName = AnalysisSubmission.class.getSimpleName() + "-" + UUID.randomUUID().toString();
@@ -192,13 +189,13 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		History workflowHistory = galaxyHistoriesService.findById(analysisSubmission.getRemoteAnalysisId());
 		Library workflowLibrary = libraryBuilder.buildEmptyLibrary(new GalaxyProjectName(temporaryLibraryName));
 
-		Map<Sample, SequenceFile> sampleSequenceFilesSingle = analysisCollectionServiceGalaxy
-				.getSequenceFileSingleSamples(analysisSubmission.getSingleInputFiles());
-		Map<Sample, SequenceFilePair> sampleSequenceFilesPaired = analysisCollectionServiceGalaxy
-				.getSequenceFilePairedSamples(analysisSubmission.getPairedInputFiles());
+		Map<Sample, SequenceFile> sampleSequenceFilesSingle = analysisCollectionServiceGalaxy.getSequenceFileSingleSamples(analysisSubmission
+				.getSingleInputFiles());
+		Map<Sample, SequenceFilePair> sampleSequenceFilesPaired = analysisCollectionServiceGalaxy.getSequenceFilePairedSamples(analysisSubmission
+				.getPairedInputFiles());
 		if (samplesInCommon(sampleSequenceFilesSingle, sampleSequenceFilesPaired)) {
-			throw new SampleAnalysisDuplicateException(
-					"Single and paired input files share a common sample for submission " + analysisSubmission);
+			throw new SampleAnalysisDuplicateException("Single and paired input files share a common sample for submission "
+					+ analysisSubmission);
 		}
 
 		String workflowId = analysisSubmission.getRemoteWorkflowId();
@@ -212,20 +209,22 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			String sequenceFilesLabelSingle = workflowInput.getSequenceReadsSingle().get();
 			String workflowSequenceFileSingleInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
 					sequenceFilesLabelSingle);
-			CollectionResponse collectionResponseSingle = analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(
-					sampleSequenceFilesSingle, workflowHistory, workflowLibrary);
-			inputs.setInput(workflowSequenceFileSingleInputId, new WorkflowInputs.WorkflowInput(
-					collectionResponseSingle.getId(), WorkflowInputs.InputSourceType.HDCA));
+			CollectionResponse collectionResponseSingle = analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(sampleSequenceFilesSingle,
+					workflowHistory, workflowLibrary);
+			inputs.setInput(workflowSequenceFileSingleInputId,
+					new WorkflowInputs.WorkflowInput(collectionResponseSingle.getId(),
+							WorkflowInputs.InputSourceType.HDCA));
 		}
 
 		if (!sampleSequenceFilesPaired.isEmpty()) {
 			String sequenceFilesLabelPaired = workflowInput.getSequenceReadsPaired().get();
 			String workflowSequenceFilePairedInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
 					sequenceFilesLabelPaired);
-			CollectionResponse collectionResponsePaired = analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(
-					sampleSequenceFilesPaired, workflowHistory, workflowLibrary);
-			inputs.setInput(workflowSequenceFilePairedInputId, new WorkflowInputs.WorkflowInput(
-					collectionResponsePaired.getId(), WorkflowInputs.InputSourceType.HDCA));
+			CollectionResponse collectionResponsePaired = analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilesPaired,
+					workflowHistory, workflowLibrary);
+			inputs.setInput(workflowSequenceFilePairedInputId,
+					new WorkflowInputs.WorkflowInput(collectionResponsePaired.getId(),
+							WorkflowInputs.InputSourceType.HDCA));
 		}
 
 		String analysisId = workflowHistory.getId();
@@ -253,12 +252,12 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	private boolean samplesInCommon(Map<Sample, SequenceFile> sampleSequenceFilesSingle,
 			Map<Sample, SequenceFilePair> sampleSequenceFilesPaired) {
 		for (Sample sampleSingle : sampleSequenceFilesSingle.keySet()) {
-
+			
 			if (sampleSequenceFilesPaired.containsKey(sampleSingle)) {
 				return true;
 			}
 		}
-
+		
 		return false;
 	}
 
@@ -297,7 +296,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		inputs.setInput(workflowReferenceFileInputId, new WorkflowInputs.WorkflowInput(referenceDataset.getId(),
 				WorkflowInputs.InputSourceType.HDA));
 	}
-
+	
 	/**
 	 * Creates a set of {@link SequenceFile} from the given input files in the
 	 * submission.
