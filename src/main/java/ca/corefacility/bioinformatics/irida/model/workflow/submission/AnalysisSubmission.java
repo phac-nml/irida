@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.submission;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Date;
 import java.util.Optional;
@@ -133,6 +134,27 @@ public class AnalysisSubmission implements IridaThing {
 	protected AnalysisSubmission() {
 		this.createdDate = new Date();
 		this.analysisState = AnalysisState.NEW;
+	}
+	
+	/**
+	 * Builds a new {@link AnalysisSubmission} with the given
+	 * {@link AnalysisSubmission.Builder}.
+	 * 
+	 * @param builder
+	 *            The {@link AnalyisSubmission.Builder} to build the
+	 *            {@link AnalysisSubmission}.
+	 */
+	public AnalysisSubmission(Builder builder) {
+		this();
+		checkNotNull(builder.workflowId, "workflowId is null");
+		checkArgument(builder.inputFilesSingle != null || builder.inputFilesPaired == null,
+				"both inputFilesSingle and inputFilesPaired are null.  You must supply at least one set of input files");
+
+		this.name = (builder.name != null) ? builder.name : "Unknown";
+		this.inputFilesSingle = builder.inputFilesSingle;
+		this.inputFilesPaired = builder.inputFilesPaired;
+		this.referenceFile = builder.referenceFile;
+		this.workflowId = builder.workflowId;
 	}
 
 	/**
@@ -379,6 +401,83 @@ public class AnalysisSubmission implements IridaThing {
 	 */
 	public void setWorkflowId(UUID workflowId) {
 		this.workflowId = workflowId;
+	}
+	
+	/**
+	 * Used to build up an {@link AnalysisSubmission}.
+	 * 
+	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+	 */
+	public static class Builder {
+		private String name;
+		private Set<SequenceFile> inputFilesSingle;
+		private Set<SequenceFilePair> inputFilesPaired;
+		private ReferenceFile referenceFile;
+		private UUID workflowId;
+
+		/**
+		 * Sets a name for this submission.
+		 * 
+		 * @param name
+		 *            A name for this submission.
+		 * @return An {@link AnalysisSubmission.Builder}.
+		 */
+		public Builder name(String name) {
+			this.name = name;
+			return this;
+		}
+
+		/**
+		 * Sets the inputFilesSingle for this submission.
+		 * 
+		 * @param inputFilesSingle
+		 *            The inputFilesSingle for this submission.
+		 * @return An {@link AnalysisSubmission.Builder}.
+		 */
+		public Builder inputFilesSingle(Set<SequenceFile> inputFilesSingle) {
+			this.inputFilesSingle = inputFilesSingle;
+			return this;
+		}
+
+		/**
+		 * Sets the inputFilesPaired for this submission.
+		 * 
+		 * @param inputFilesSingle
+		 *            The inputFilesPaired for this submission.
+		 * @return An {@link AnalysisSubmission.Builder}.
+		 */
+		public Builder inputFilesPaired(Set<SequenceFilePair> inputFilesPaired) {
+			this.inputFilesPaired = inputFilesPaired;
+			return this;
+		}
+
+		/**
+		 * Sets the referenceFile for this submission.
+		 * 
+		 * @param inputFilesSingle
+		 *            The referenceFile for this submission.
+		 * @return An {@link AnalysisSubmission.Builder}.
+		 */
+		public Builder referenceFile(ReferenceFile referenceFile) {
+			this.referenceFile = referenceFile;
+			return this;
+		}
+
+		/**
+		 * Sets the workflowId for this submission.
+		 * 
+		 * @param inputFilesSingle
+		 *            The workflowId for this submission.
+		 * @return An {@link AnalysisSubmission.Builder}.
+		 */
+		public Builder workflowId(UUID workflowId) {
+			this.workflowId = workflowId;
+			return this;
+		}
+
+		public AnalysisSubmission build() {
+			return new AnalysisSubmission(this);
+		}
 	}
 
 	/**
