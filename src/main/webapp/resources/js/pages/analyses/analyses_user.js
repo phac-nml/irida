@@ -2,17 +2,6 @@
   "use strict";
 
   /**
-   * Filter for transforming the galaxy generated state value into a readable value.
-   * @returns {Function}
-   * @constructor
-   */
-  function StateFilter() {
-    return function (state) {
-      return STATE_MAP[state];
-    }
-  }
-
-  /**
    * Service to hold the current state of the analyses filter
    * @returns {{search: string}}
    * @constructor
@@ -83,14 +72,8 @@
   function FilterController(filter) {
     var vm = this;
     vm.search = "";
-    vm.states = [{value: "", text: "All"}];
-    vm.state = vm.states[0];
     vm.max = new Date();
     vm.opened = {};
-
-    _.forOwn(STATE_MAP, function (value, key) {
-      vm.states.push({value: key, text: value});
-    });
 
     vm.clear = function () {
       _.forOwn(filter, function (value, key) {
@@ -107,7 +90,7 @@
     };
 
     vm.doState = function () {
-      filter.analysisState = vm.state.value;
+      filter.analysisState = vm.state;
     };
 
     vm.open = function (e, value) {
@@ -146,7 +129,6 @@
   }
 
   angular.module('irida.analysis.user', [])
-    .filter('stateFilter', [StateFilter])
     .filter('analysesFilter', ['analysisFilterService', AnalysesFilter])
     .service('analysisService', ['$http', AnalysisService])
     .service('analysisFilterService', [AnalysisFilterService])
