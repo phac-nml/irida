@@ -2,17 +2,6 @@
   "use strict";
 
   /**
-   * Filter for transforming the galaxy generated state value into a readable value.
-   * @returns {Function}
-   * @constructor
-   */
-  function StateFilter() {
-    return function (state) {
-      return STATE_MAP[state];
-    }
-  }
-
-  /**
    * Service to hold the current state of the analyses filter
    * @returns {{search: string}}
    * @constructor
@@ -87,7 +76,6 @@
   }
 
   angular.module('irida.analysis.user', [])
-    .filter('stateFilter', [StateFilter])
     .filter('analysesFilter', ['analysisFilterService', AnalysesFilter])
     .service('analysisService', ['$http', AnalysisService])
     .service('analysisFilterService', [AnalysisFilterService])
