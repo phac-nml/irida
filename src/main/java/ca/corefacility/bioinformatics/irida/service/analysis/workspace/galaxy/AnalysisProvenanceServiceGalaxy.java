@@ -228,24 +228,9 @@ public class AnalysisProvenanceServiceGalaxy {
 			// for the flattened map using all of the prefixes.
 			final String[] prefixes = Arrays.copyOf(prefix, prefix.length + 1);
 			prefixes[prefix.length] = valueMapKey;
-			String key = KEY_JOINER.join(prefixes);
-
-			// This is a MySQL- and BCFtools-specific hack. BCFtools uses two
-			// parameters (g and G) that are the same character in different
-			// cases. MySQL primary keys are case insensitive, so you would
-			// otherwise get duplicated key errors when persisting a map that
-			// has two keys 'g' and 'G'. So we're forcing the key value to be
-			// unique by wrapping it with UPPER and LOWER, only when the key is
-			// a single character.
-			if (key.length() == 1) {
-				if (Character.isUpperCase(key.charAt(0))) {
-					key = "UPPER(" + key + ")";
-				} else {
-					key = "LOWER(" + key + ")";
-				}
-			}
-
+			final String key = KEY_JOINER.join(prefixes);
 			final Object value = valueMap.get(valueMapKey);
+			
 			if (value == null) {
 				// if the string is empty, put a pre-defined "empty" value into
 				// the map.

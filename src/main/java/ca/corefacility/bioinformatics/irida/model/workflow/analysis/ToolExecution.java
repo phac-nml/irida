@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -30,10 +31,9 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * A historical record of how a tool was executed by a workflow execution
@@ -117,11 +117,8 @@ public class ToolExecution implements IridaThing {
 		} else {
 			this.previousSteps = previousSteps;
 		}
-		if (executionTimeParameters == null) {
-			this.executionTimeParameters = new HashMap<>();
-		} else {
-			this.executionTimeParameters = executionTimeParameters;
-		}
+		this.executionTimeParameters = new HashMap<>();
+		addExecutionTimeParameters(executionTimeParameters);
 		this.createdDate = new Date();
 	}
 
@@ -150,15 +147,23 @@ public class ToolExecution implements IridaThing {
 	}
 
 	public final Map<String, String> getExecutionTimeParameters() {
-		return Collections.unmodifiableMap(executionTimeParameters);
+		final Map<String, String> unescapedKeys = new HashMap<>();
+		for (final Entry<String, String> param : executionTimeParameters.entrySet()) {
+			final String unescapedKey = param.getKey().replaceAll("\\\\([A-Z])", "$1");
+			unescapedKeys.put(unescapedKey, param.getValue());
+		}
+		return Collections.unmodifiableMap(unescapedKeys);
 	}
 
 	public final void addExecutionTimeParameter(final String paramName, final String paramValue) {
-		this.executionTimeParameters.put(paramName, paramValue);
+		final String escapedKey = paramName.replaceAll("([A-Z])", "\\\\$1");
+		this.executionTimeParameters.put(escapedKey, paramValue);
 	}
 
 	public final void addExecutionTimeParameters(final Map<String, String> parameters) {
-		this.executionTimeParameters.putAll(parameters);
+		for (final Entry<String, String> param : parameters.entrySet()) {
+			addExecutionTimeParameter(param.getKey(), param.getValue());
+		}
 	}
 
 	@Override

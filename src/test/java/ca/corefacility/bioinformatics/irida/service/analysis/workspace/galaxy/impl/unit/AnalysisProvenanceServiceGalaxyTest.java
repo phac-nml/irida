@@ -164,10 +164,10 @@ public class AnalysisProvenanceServiceGalaxyTest {
 				params.get("abadkey"));
 		assertTrue("tool execution should have the specified parameter.", params.containsKey("listKey.key"));
 		assertEquals("tool execution parameter should be specified value.", "value", params.get("listKey.key"));
-		assertTrue("tool execution should have the specified parameter.", params.containsKey("LOWER(k)"));
-		assertEquals("tool execution parameter should be specified value.", "value-lower", params.get("LOWER(k)"));
-		assertTrue("tool execution should have the specified parameter.", params.containsKey("UPPER(K)"));
-		assertEquals("tool execution parameter should be specified value.", "value-upper", params.get("UPPER(K)"));
+		assertTrue("tool execution should have the specified parameter.", params.containsKey("k"));
+		assertEquals("tool execution parameter should be specified value.", "value-lower", params.get("k"));
+		assertTrue("tool execution should have the specified parameter.", params.containsKey("K"));
+		assertEquals("tool execution parameter should be specified value.", "value-upper", params.get("K"));
 
 		assertTrue("Tool execution should be considered input step, no predecessors.", toolExecution.isInputTool());
 	}
