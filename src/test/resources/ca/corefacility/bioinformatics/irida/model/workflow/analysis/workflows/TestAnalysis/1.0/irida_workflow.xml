@@ -12,13 +12,13 @@
 		<reference>reference</reference>
 	</inputs>
 	<parameters>
-		<parameter name="test-parameter">
+		<parameter name="test-parameter" defaultValue="1">
 			<toolParameter
 				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/test-tool/0.1"
-				parameterName="a" defaultValue="1" />
+				parameterName="a" />
 			<toolParameter
 				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/test-tool/0.1"
-				parameterName="b" defaultValue="2" />
+				parameterName="b" />
 		</parameter>
 	</parameters>
 	<outputs>

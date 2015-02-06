@@ -155,9 +155,9 @@ public class IridaWorkflowTestBuilder {
 		}
 		
 		List<IridaWorkflowParameter> parameters = new LinkedList<>();
-		IridaToolParameter tool1 = new IridaToolParameter("irida.corefacility.ca/galaxy-shed/repos/irida/test-tool/0.1", "a", "1");
-		IridaToolParameter tool2 = new IridaToolParameter("irida.corefacility.ca/galaxy-shed/repos/irida/test-tool/0.1", "b", "2");
-		IridaWorkflowParameter parameter1 = new IridaWorkflowParameter("test-parameter", Lists.newArrayList(tool1, tool2));
+		IridaToolParameter tool1 = new IridaToolParameter("irida.corefacility.ca/galaxy-shed/repos/irida/test-tool/0.1", "a");
+		IridaToolParameter tool2 = new IridaToolParameter("irida.corefacility.ca/galaxy-shed/repos/irida/test-tool/0.1", "b");
+		IridaWorkflowParameter parameter1 = new IridaWorkflowParameter("test-parameter", "1", Lists.newArrayList(tool1, tool2));
 		parameters.add(parameter1);
 
 		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version, "Mr. Developer",

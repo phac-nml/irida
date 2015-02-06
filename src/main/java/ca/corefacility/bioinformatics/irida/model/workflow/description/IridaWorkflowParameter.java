@@ -19,6 +19,9 @@ public class IridaWorkflowParameter {
 	
 	@XmlAttribute(name = "name")
 	private String name;
+	
+	@XmlAttribute(name = "defaultValue")
+	private String defaultValue;
 
 	@XmlElement(name = "toolParameter")
 	private List<IridaToolParameter> toolParameters;
@@ -32,11 +35,13 @@ public class IridaWorkflowParameter {
 	 * 
 	 * @param name
 	 *            The name of the parameter.
+	 * @param defaultValue  The default value of this parameter.
 	 * @param toolParameters
 	 *            The tool parameters corresponding to this named parameter.
 	 */
-	public IridaWorkflowParameter(String name, List<IridaToolParameter> toolParameters) {
+	public IridaWorkflowParameter(String name, String defaultValue, List<IridaToolParameter> toolParameters) {
 		this.name = name;
+		this.defaultValue = defaultValue;
 		this.toolParameters = toolParameters;
 	}
 
@@ -61,7 +66,7 @@ public class IridaWorkflowParameter {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, toolParameters);
+		return Objects.hash(name, defaultValue, toolParameters);
 	}
 
 	@Override
@@ -71,7 +76,8 @@ public class IridaWorkflowParameter {
 		else if (obj instanceof IridaWorkflowParameter) {
 			IridaWorkflowParameter other = (IridaWorkflowParameter) obj;
 
-			return Objects.equals(name, other.name) && Objects.equals(toolParameters, other.toolParameters);
+			return Objects.equals(name, other.name) && Objects.equals(defaultValue, other.defaultValue) &&
+					Objects.equals(toolParameters, other.toolParameters);
 		}
 
 		return false;
@@ -79,6 +85,7 @@ public class IridaWorkflowParameter {
 
 	@Override
 	public String toString() {
-		return "IridaWorkflowParameter [name=" + name + ", toolParameters=" + toolParameters + "]";
+		return "IridaWorkflowParameter [name=" + name + ", defaultValue=" + defaultValue + ", toolParameters="
+				+ toolParameters + "]";
 	}
 }

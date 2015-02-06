@@ -21,9 +21,6 @@ public class IridaToolParameter {
 	
 	@XmlAttribute(name = "parameterName")
 	private String parameterName;
-	
-	@XmlAttribute(name = "defaultValue")
-	private String defaultValue;
 
 	public IridaToolParameter() {
 	}
@@ -36,13 +33,10 @@ public class IridaToolParameter {
 	 *            The id of the tool to adjust the parameter.
 	 * @param parameterName
 	 *            The name of the parameter.
-	 * @param defaultValue
-	 *            The default value of this parameter.
 	 */
-	public IridaToolParameter(String toolId, String parameterName, String defaultValue) {
+	public IridaToolParameter(String toolId, String parameterName) {
 		this.toolId = toolId;
 		this.parameterName = parameterName;
-		this.defaultValue = defaultValue;
 	}
 
 	/**
@@ -63,18 +57,9 @@ public class IridaToolParameter {
 		return parameterName;
 	}
 
-	/**
-	 * A default value for the parameter.
-	 * 
-	 * @return A default value for the parameter.
-	 */
-	public String getDefaultValue() {
-		return defaultValue;
-	}
-
 	@Override
 	public int hashCode() {
-		return Objects.hash(toolId, parameterName, defaultValue);
+		return Objects.hash(toolId, parameterName);
 	}
 
 	@Override
@@ -84,8 +69,7 @@ public class IridaToolParameter {
 		else if (obj instanceof IridaToolParameter) {
 			IridaToolParameter other = (IridaToolParameter) obj;
 
-			return Objects.equals(toolId, other.toolId) && Objects.equals(parameterName, other.parameterName)
-					&& Objects.equals(defaultValue, other.defaultValue);
+			return Objects.equals(toolId, other.toolId) && Objects.equals(parameterName, other.parameterName);
 		}
 
 		return false;
@@ -93,7 +77,6 @@ public class IridaToolParameter {
 
 	@Override
 	public String toString() {
-		return "IridaToolParameter [toolId=" + toolId + ", parameterName=" + parameterName + ", defaultValue="
-				+ defaultValue + "]";
+		return "IridaToolParameter [toolId=" + toolId + ", parameterName=" + parameterName + "]";
 	}
 }
