@@ -7,10 +7,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import com.google.common.collect.Lists;
+
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaToolParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowToolRepository;
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 
@@ -149,9 +153,15 @@ public class IridaWorkflowTestBuilder {
 			workflowInput = new IridaWorkflowInput("sequence_reads", "sequence_reads_paired", reference);
 			break;
 		}
+		
+		List<IridaWorkflowParameter> parameters = new LinkedList<>();
+		IridaToolParameter tool1 = new IridaToolParameter("irida.corefacility.ca/galaxy-shed/repos/irida/test-tool/0.1", "a", "1");
+		IridaToolParameter tool2 = new IridaToolParameter("irida.corefacility.ca/galaxy-shed/repos/irida/test-tool/0.1", "b", "2");
+		IridaWorkflowParameter parameter1 = new IridaWorkflowParameter("test-parameter", Lists.newArrayList(tool1, tool2));
+		parameters.add(parameter1);
 
 		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version, "Mr. Developer",
-				"developer@example.com", analysisType, workflowInput, outputs, tools);
+				"developer@example.com", analysisType, workflowInput, outputs, tools, parameters);
 
 		return iridaWorkflow;
 	}

@@ -5,8 +5,8 @@ import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 
 /**
  * Defines input parameters for a workflow which can be adjusted.
@@ -16,11 +16,15 @@ import javax.xml.bind.annotation.XmlElementWrapper;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IridaWorkflowParameter {
+	
+	@XmlAttribute(name = "name")
 	private String name;
 
-	@XmlElementWrapper(name = "toolParameters")
 	@XmlElement(name = "toolParameter")
 	private List<IridaToolParameter> toolParameters;
+	
+	public IridaWorkflowParameter() {
+	}
 
 	/**
 	 * Creates a new {@link IridaWorkflowParameter} which maps to the given tool
@@ -71,5 +75,10 @@ public class IridaWorkflowParameter {
 		}
 
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		return "IridaWorkflowParameter [name=" + name + ", toolParameters=" + toolParameters + "]";
 	}
 }

@@ -13,12 +13,15 @@ import javax.xml.bind.annotation.XmlAttribute;
  *
  */
 
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class IridaToolParameter {
+	
 	@XmlAttribute(name = "toolId")
 	private String toolId;
+	
 	@XmlAttribute(name = "parameterName")
 	private String parameterName;
+	
 	@XmlAttribute(name = "defaultValue")
 	private String defaultValue;
 
@@ -86,5 +89,11 @@ public class IridaToolParameter {
 		}
 
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		return "IridaToolParameter [toolId=" + toolId + ", parameterName=" + parameterName + ", defaultValue="
+				+ defaultValue + "]";
 	}
 }

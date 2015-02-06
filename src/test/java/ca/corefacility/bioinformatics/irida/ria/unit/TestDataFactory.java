@@ -30,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhyl
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowToolRepository;
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -185,9 +186,10 @@ public class TestDataFactory {
 		IridaWorkflowInput input = new IridaWorkflowInput();
 		List<IridaWorkflowOutput> outputs = ImmutableList.of(new IridaWorkflowOutput());
 		List<IridaWorkflowToolRepository> tools = ImmutableList.of();
+		List<IridaWorkflowParameter> parameters = ImmutableList.of();
 		IridaWorkflowDescription description = new IridaWorkflowDescription(id, "My Workflow", "V1", "Test User",
 				"me@me.com",
-				AnalysisType.DEFAULT, input, outputs, tools);
+				AnalysisType.DEFAULT, input, outputs, tools, parameters);
 		IridaWorkflowStructure structure = new IridaWorkflowStructure(null);
 		return new IridaWorkflow(description, structure);
 	}
