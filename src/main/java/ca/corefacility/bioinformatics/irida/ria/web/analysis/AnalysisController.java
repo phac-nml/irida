@@ -77,9 +77,6 @@ public class AnalysisController {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.userService = userService;
 		this.messageSource = messageSource;
-
-		// Initialize the analysis state messages
-
 	}
 
 	// ************************************************************************************************
