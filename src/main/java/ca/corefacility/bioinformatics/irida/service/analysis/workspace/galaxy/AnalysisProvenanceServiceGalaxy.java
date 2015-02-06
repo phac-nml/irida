@@ -284,8 +284,16 @@ public class AnalysisProvenanceServiceGalaxy {
 						paramStrings.put(key, value.toString());
 					}
 				} catch (final IOException e) {
-					logger.debug("Unable to parse key [" + key + "] with value (" + value
-							+ ") using Jackson, defaulting to calling toString() on this parameter branch.");
+					logger.error("Unable to parse key [" + key + "] with value (" + value
+							+ ") using Jackson, defaulting to calling toString() on this parameter branch.", e);
+					paramStrings.put(key, value.toString());
+				} catch (final ClassCastException e) {
+					logger.error("Unable to cast key [" + key + "] with value (" + value
+							+ "), defaulting to calling toString() on this parameter branch.", e);
+					paramStrings.put(key, value.toString());
+				} catch (final RuntimeException e) {
+					logger.error("Unable to handle key [" + key + "] with value (" + value
+							+ ") for unknown reasons. defaulting to calling toString() on this parameter branch.", e);
 					paramStrings.put(key, value.toString());
 				}
 			}
