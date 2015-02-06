@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.workflow.integration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -81,6 +81,9 @@ public class IridaWorkflowLoaderServiceIT {
 	private Path workflowDirectoryPathNoStructure;
 	private Path workflowDirectoryPathNoId;
 	private Path workflowDirectoryPathInvalidType;
+	private Path workflowDirectoryPathNoParameters;
+	private Path workflowDirectoryPathWithParameters;
+	private Path workflowDirectoryPathWithParametersNoDefault;
 
 	@Before
 	public void setup() throws JAXBException, URISyntaxException, FileNotFoundException {
@@ -100,6 +103,12 @@ public class IridaWorkflowLoaderServiceIT {
 				.getResource("workflows/TestAnalysisNoStructure").toURI());
 		workflowDirectoryPathInvalidType = Paths.get(TestAnalysis.class
 				.getResource("workflows/TestAnalysisInvalidType").toURI());
+		workflowDirectoryPathNoParameters = Paths.get(TestAnalysis.class
+				.getResource("workflows/TestAnalysisNoParameters/1.0").toURI());
+		workflowDirectoryPathWithParameters = Paths.get(TestAnalysis.class
+				.getResource("workflows/TestAnalysisWithParameters/1.0").toURI());
+		workflowDirectoryPathWithParametersNoDefault = Paths.get(TestAnalysis.class
+				.getResource("workflows/TestAnalysisWithParametersNoDefault/1.0").toURI());
 		workflowDirectoryPathNoId = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysisNoId").toURI());
 	}
 
@@ -261,6 +270,62 @@ public class IridaWorkflowLoaderServiceIT {
 		Set<String> validVersionNumbers = Sets.newHashSet("1.0", "2.0", "1.0-invalid", "2.0-missing-output",
 				"1.0-paired", "1.0-single-paired");
 		assertEquals("irida workflow versions are invalid", validVersionNumbers, actualVersionNumbers);
+	}
+
+	/**
+	 * Test to make sure we can load a workflow with no parameters.
+	 * 
+	 * @throws IridaWorkflowLoadException
+	 * @throws IOException
+	 */
+	@Test
+	public void testLoadWorkflowNoParameters() throws IridaWorkflowLoadException, IOException {
+		IridaWorkflow iridaWorkflowFromFile = workflowLoaderService
+				.loadIridaWorkflowFromDirectory(workflowDirectoryPathNoParameters);
+		assertFalse("workflow loaded with no parameters", iridaWorkflowFromFile.getWorkflowDescription()
+				.acceptsParameters());
+		assertNull("parameters should be null", iridaWorkflowFromFile.getWorkflowDescription().getParameters());
+	}
+
+	/**
+	 * Test to make sure we can load a workflow with parameters.
+	 * 
+	 * @throws IridaWorkflowLoadException
+	 * @throws IOException
+	 */
+	@Test
+	public void testLoadWorkflowWithParameters() throws IridaWorkflowLoadException, IOException {
+		IridaWorkflow iridaWorkflowFromFile = workflowLoaderService
+				.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParameters);
+		assertTrue("workflow loaded with no parameters", iridaWorkflowFromFile.getWorkflowDescription()
+				.acceptsParameters());
+		List<IridaWorkflowParameter> parameters = iridaWorkflowFromFile.getWorkflowDescription().getParameters();
+		assertNotNull("parameters should not be null", parameters);
+		assertEquals("parameters does not have the correct size", 1, parameters.size());
+		IridaWorkflowParameter parameter = parameters.get(0);
+		assertEquals("parameter does not have the correct name", "test-parameter", parameter.getName());
+		assertTrue("no default value", parameter.hasDefaultValue());
+		assertEquals("default value is not correct", "1", parameter.getDefaultValue());
+		assertEquals("parameter does not have correct number of tool parameters", 1, parameter.getToolParameters()
+				.size());
+	}
+
+	/**
+	 * Test to make sure we can load a workflow with a parameter with no default
+	 * value.
+	 * 
+	 * @throws IridaWorkflowLoadException
+	 * @throws IOException
+	 */
+	@Test
+	public void testLoadWorkflowWithParametersNoDefaultValue() throws IridaWorkflowLoadException, IOException {
+		IridaWorkflow iridaWorkflowFromFile = workflowLoaderService
+				.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParametersNoDefault);
+		List<IridaWorkflowParameter> parameters = iridaWorkflowFromFile.getWorkflowDescription().getParameters();
+		assertEquals("parameters does not have the correct size", 1, parameters.size());
+		IridaWorkflowParameter parameter = parameters.get(0);
+		assertFalse("has a default vaule", parameter.hasDefaultValue());
+		assertNull("default value is not null", parameter.getDefaultValue());
 	}
 	
 	/**

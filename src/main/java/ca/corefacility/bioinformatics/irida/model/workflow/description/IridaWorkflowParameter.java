@@ -16,16 +16,16 @@ import javax.xml.bind.annotation.XmlElement;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IridaWorkflowParameter {
-	
+
 	@XmlAttribute(name = "name")
 	private String name;
-	
+
 	@XmlAttribute(name = "defaultValue")
 	private String defaultValue;
 
 	@XmlElement(name = "toolParameter")
 	private List<IridaToolParameter> toolParameters;
-	
+
 	public IridaWorkflowParameter() {
 	}
 
@@ -35,7 +35,8 @@ public class IridaWorkflowParameter {
 	 * 
 	 * @param name
 	 *            The name of the parameter.
-	 * @param defaultValue  The default value of this parameter.
+	 * @param defaultValue
+	 *            The default value of this parameter.
 	 * @param toolParameters
 	 *            The tool parameters corresponding to this named parameter.
 	 */
@@ -64,6 +65,24 @@ public class IridaWorkflowParameter {
 		return toolParameters;
 	}
 
+	/**
+	 * Gets the default value for this parameter.
+	 * 
+	 * @return The default value for this parameter.
+	 */
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+	/**
+	 * Whether or not this parameter has a default value.
+	 * 
+	 * @return True if this parameter has a default value, false otherwise.
+	 */
+	public boolean hasDefaultValue() {
+		return defaultValue != null;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(name, defaultValue, toolParameters);
@@ -76,8 +95,8 @@ public class IridaWorkflowParameter {
 		else if (obj instanceof IridaWorkflowParameter) {
 			IridaWorkflowParameter other = (IridaWorkflowParameter) obj;
 
-			return Objects.equals(name, other.name) && Objects.equals(defaultValue, other.defaultValue) &&
-					Objects.equals(toolParameters, other.toolParameters);
+			return Objects.equals(name, other.name) && Objects.equals(defaultValue, other.defaultValue)
+					&& Objects.equals(toolParameters, other.toolParameters);
 		}
 
 		return false;

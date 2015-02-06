@@ -188,6 +188,15 @@ public class IridaWorkflowDescription {
 	public AnalysisType getAnalysisType() {
 		return analysisType;
 	}
+	
+	/**
+	 * Determines if this workflow accepts parameters.
+	 * 
+	 * @return True if this workflow accepts, false otherwise.
+	 */
+	public boolean acceptsParameters() {
+		return parameters != null;
+	}
 
 	@Override
 	public int hashCode() {
