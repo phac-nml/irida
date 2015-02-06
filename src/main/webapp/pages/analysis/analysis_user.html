@@ -7,17 +7,6 @@
 	<title>My Title Goes Here</title>
 	<link rel="stylesheet" href="/resources/css/app.css" th:href="@{/resources/css/app.css}"/>
 	<link rel="stylesheet" href="/resources/css/pages/analyses.css" th:href="@{/resources/css/pages/analyses.css}"/>
-	<style>
-		.affix-top {
-			position: fixed;
-			top: 50px;
-			max-width: 100px;
-		}
-
-		.affix-top input {
-			width: 170px;
-		}
-	</style>
 	<script>window.dependencies = ['irida.analysis.user'];</script>
 </head>
 <body>
@@ -55,8 +44,8 @@
 			<ul class="boards">
 				<li class="board" ng-repeat="analysis in ctrl.analyses | analysesFilter | orderBy:'createdDate':true">
 					<div class="button board_inner row">
-						<div ng-class="'analysis__state--' + analysis.analysisState" class="analysis__state col-md-3">
-							<div class="board_detail--value">{{::analysis.analysisState | stateFilter}}</div>
+						<div ng-class="'analysis__state--' + analysis.analysisState.toLowerCase()" class="analysis__state col-md-3">
+							<div class="board_detail--value">{{::analysis.analysisState}}</div>
 							<div class="board_detail--desc" th:text="#{analyses.state}">State</div>
 						</div>
 						<div class="col-md-5">
@@ -74,10 +63,6 @@
 	</div>
 </div>
 <th:block layout:fragment="page-scripts">
-	<script th:inline="javascript">
-		// Internationalized map of states an analysis can be in.
-		var STATE_MAP = /*[[${states}]]*/ {};
-	</script>
 	<script src="/resources/js/pages/analyses/analyses_user.js"
 	        th:src="@{/resources/js/pages/analyses/analyses_user.js}"></script>
 </th:block>
