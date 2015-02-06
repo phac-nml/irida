@@ -219,4 +219,11 @@ public class IridaWorkflowDescription {
 
 		return false;
 	}
+
+	@Override
+	public String toString() {
+		return "IridaWorkflowDescription [id=" + id + ", name=" + name + ", version=" + version + ", author=" + author
+				+ ", email=" + email + ", analysisType=" + analysisType + ", inputs=" + inputs + ", outputs=" + outputs
+				+ ", parameters=" + parameters + ", repository=" + repository + "]";
+	}
 }
