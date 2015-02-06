@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecutio
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
@@ -39,8 +40,8 @@ public class AnalysisProvenanceServiceGalaxy {
 			"paramfile", "uuid", "__current_case__", "__index__");
 	private static final String ID_PARAM_KEY = "id";
 	private static final Joiner KEY_JOINER = Joiner.on('.').skipNulls();
-	private static final String JSON_TEXT_MAP_INDICATOR = "{";
-	private static final String JSON_TEXT_ARRAY_INDICATOR = "[";
+	private static final String JSON_TEXT_MAP_INDICATOR = JsonToken.START_OBJECT.asString(); // "{"
+	private static final String JSON_TEXT_ARRAY_INDICATOR = JsonToken.START_ARRAY.asString(); // "["
 	private static final String EMPTY_VALUE_PLACEHOLDER = "<empty>";
 	private static final ObjectMapper mapper = new ObjectMapper();
 
