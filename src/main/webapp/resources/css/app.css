@@ -7648,6 +7648,18 @@ html, body {
   height: 100%;
 }
 
+/* line 5, ../../styles/layouts/_all.scss */
+.main-container {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+/* line 11, ../../styles/layouts/_all.scss */
+.content {
+  flex-grow: 1;
+}
+
 /* line 1, ../../styles/components/_board.scss */
 .boards {
   list-style: none;

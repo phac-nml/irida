@@ -77,9 +77,6 @@ public class AnalysisController {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.userService = userService;
 		this.messageSource = messageSource;
-
-		// Initialize the analysis state messages
-
 	}
 
 	// ************************************************************************************************
@@ -109,7 +106,7 @@ public class AnalysisController {
 		Map<String, String> stateMap = new HashMap<>();
 		for (AnalysisState state : AnalysisState.values()) {
 			stateMap.put(state.toString(),
-					messageSource.getMessage("analysis.state." + state.toString().toLowerCase(), new Object[] { }, locale));
+					messageSource.getMessage("analysis.state." + state.toString().toLowerCase(), null, locale));
 		}
 		model.addAttribute("states", stateMap);
 		return PAGE_USER_ANALYSIS;
