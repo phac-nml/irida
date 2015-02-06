@@ -32,9 +32,10 @@
 					</div>
 					<div class="form-group">
 						<label class="sidenav__label">State</label>
-						<select class="form-control input-full" id="filter-state"
-						        ng-options="state.text for state in filter.states" ng-model="filter.state"
+						<select class="form-control input-full" id="filter-state" ng-model="filter.state"
 						        ng-change="filter.doState()">
+							<option value="" selected="selected" th:text="#{analysis.select.all}"></option>
+							<option th:each="state : ${states}" th:value="${state}" th:text="${state}"></option>
 						</select>
 					</div>
 				</div>

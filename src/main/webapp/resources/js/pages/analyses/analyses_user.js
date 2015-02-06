@@ -66,19 +66,12 @@
   function FilterController(filter) {
     var vm = this;
     vm.search = "";
-    vm.states = [{value: "", text: "All"}];
-    vm.state = vm.states[0];
-
-    _.forOwn(STATE_MAP, function (value, key) {
-      vm.states.push({value: key, text: value});
-    });
 
     vm.clear = function () {
       _.forOwn(filter, function (value, key) {
         filter[key] = "";
       });
       vm.search = "";
-      vm.state = vm.states[0];
     };
 
     vm.doSearch = function () {
@@ -86,7 +79,7 @@
     };
 
     vm.doState = function () {
-      filter.analysisState = vm.state.value;
+      filter.analysisState = vm.state;
     };
   }
 
