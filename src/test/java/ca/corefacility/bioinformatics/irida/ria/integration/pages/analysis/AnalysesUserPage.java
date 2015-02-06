@@ -14,6 +14,9 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
 public class AnalysesUserPage extends AbstractPage {
+	@FindBy(id = "filter-clear")
+	private WebElement filterClear;
+
 	@FindBy(id = "filter-name")
 	private WebElement filterName;
 
@@ -30,6 +33,11 @@ public class AnalysesUserPage extends AbstractPage {
 	public static AnalysesUserPage initializePage(WebDriver driver) {
 		get(driver, "analysis/list");
 		return PageFactory.initElements(driver, AnalysesUserPage.class);
+	}
+
+	public void clearFilter() {
+		filterClear.click();
+		waitForTime(100);
 	}
 
 	public void filterByName(String name) {
