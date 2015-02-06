@@ -377,8 +377,11 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testCreateRegularUser() {
-		AnalysisSubmission submission = AnalysisSubmission
-				.createSubmissionSingle("test", Sets.newHashSet(), workflowId);
+		AnalysisSubmission submission = AnalysisSubmission.builder()
+				.name("test")
+				.inputFilesSingle(Sets.newHashSet())
+				.workflowId(workflowId)
+				.build();
 		AnalysisSubmission createdSubmission = analysisSubmissionService.create(submission);
 		assertNotNull("Submission should have been created", createdSubmission);
 		assertEquals("submitter should be set properly", Long.valueOf(1L), createdSubmission.getSubmitter().getId());
@@ -390,8 +393,11 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testCreateRegularUser2() {
-		AnalysisSubmission submission = AnalysisSubmission
-				.createSubmissionSingle("test", Sets.newHashSet(), workflowId);
+		AnalysisSubmission submission = AnalysisSubmission.builder()
+				.name("test")
+				.inputFilesSingle(Sets.newHashSet())
+				.workflowId(workflowId)
+				.build();
 		AnalysisSubmission createdSubmission = analysisSubmissionService.create(submission);
 		assertNotNull("Submission should have been created", createdSubmission);
 		assertEquals("submitter should be set properly", Long.valueOf(2L), createdSubmission.getSubmitter().getId());

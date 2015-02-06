@@ -4,7 +4,6 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -57,6 +56,7 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 
 /**
  * Controller for pipeline related views
@@ -294,24 +294,12 @@ public class PipelineController extends BaseController {
 			}
 
 			ReferenceFile referenceFile = referenceFileService.read(ref);
-			AnalysisSubmission analysisSubmission;
-
-			if (sequenceFiles.size() > 0 && sequenceFilePairs.size() > 0) {
-				analysisSubmission = AnalysisSubmission
-						.createSubmissionSingleAndPairedReference(name, new HashSet<>(sequenceFiles),
-								new HashSet<>(sequenceFilePairs), referenceFile,
-								pipelineId);
-			}
-			else if (sequenceFiles.size() > 0 && sequenceFilePairs.size() == 0) {
-				analysisSubmission = AnalysisSubmission
-						.createSubmissionSingleReference(name, new HashSet<>(sequenceFiles), referenceFile,
-						pipelineId);
-			}
-			else {
-				analysisSubmission = AnalysisSubmission
-						.createSubmissionPairedReference(name, new HashSet<>(sequenceFilePairs),
-						referenceFile, pipelineId);
-			}
+			AnalysisSubmission analysisSubmission = AnalysisSubmission.builder()
+					.inputFilesSingle(Sets.newHashSet(sequenceFiles))
+					.inputFilesPaired(Sets.newHashSet(sequenceFilePairs))
+					.referenceFile(referenceFile)
+					.workflowId(pipelineId)
+					.build();
 
 			AnalysisSubmission submission = analysisSubmissionService.create(analysisSubmission);
 
