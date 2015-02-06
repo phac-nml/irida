@@ -1,8 +1,11 @@
 .boards {
   list-style: none;
   padding: 0;
-  margin: 0;
-  border-top: 1px solid $irida-colour-grey-light;
+  background-color: #FFFFFF;
+  border: 1px solid $irida-colour-grey;
+  border-bottom-color: $irida-colour-grey-dark;
+  border-radius: $irida-global-radius;
+  margin-bottom: $irida-global-padding;
 }
 
 .board {

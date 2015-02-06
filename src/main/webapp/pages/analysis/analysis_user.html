@@ -38,20 +38,30 @@
 <div layout:fragment="page">
 	<div class="main-container">
 		<aside class="sidenav" ng-controller="filterController as filter">
-			<div class="sidenav__inner--fixed">
-				<h2><span th:text="#{form.filter}">Filter</span><button class="pull-right btn btn-default btn-sm" ng-click="filter.clear()" th:text="#{form.btn.clear}">Clear</button></h2>
-
-				<div class="form-group">
-					<label class="sidenav__label" th:text="#{analysis.filter.name}">Name</label>
-					<input id="filter-name"
-					class="form-control input-full" type="search"
-					ng-model="filter.search"
-					ng-model-options="{ debounce: 350 }" ng-change="filter.doSearch()"/>
+			<div class="sidenav__inner--fixed sidebar">
+				<div class="sidebar__heading">
+					<h2>
+						<span th:text="#{form.filter}">Filter</span>
+						<button class="pull-right btn btn-default btn-sm" ng-click="filter.clear()"
+						        th:text="#{form.btn.clear}">Clear
+						</button>
+					</h2>
 				</div>
-				<div class="form-group">
-					<label class="sidenav__label">State</label>
-					<select class="form-control input-full" id="filter-state" ng-options="state.text for state in filter.states" ng-model="filter.state" ng-change="filter.doState()">
-					</select>
+				<div class="sidebar__body">
+					<div class="form-group">
+						<label class="sidenav__label" th:text="#{analysis.filter.name}">Name</label> <input
+						id="filter-name"
+						class="form-control input-full" type="search"
+						ng-model="filter.search"
+						ng-model-options="{ debounce: 350 }" ng-change="filter.doSearch()"/>
+					</div>
+					<div class="form-group">
+						<label class="sidenav__label">State</label>
+						<select class="form-control input-full" id="filter-state"
+						        ng-options="state.text for state in filter.states" ng-model="filter.state"
+						        ng-change="filter.doState()">
+						</select>
+					</div>
 				</div>
 			</div>
 		</aside>

@@ -53,6 +53,15 @@ public class AnalysesUserPageIT {
 				page.getNumberOfAnalyses());
 	}
 
+	@Test
+	public void testAdvancedFilters() {
+		AnalysesUserPage page = AnalysesUserPage.initializePage(driver);
+		page.filterByType("New");
+		assertEquals("Should be 1 analysis in the state of 'NEW'", 1, page.getNumberOfAnalyses());
+		page.filterByType("Completed");
+		assertEquals("Should be 2 analysis in the state of 'COMPLETED'", 2, page.getNumberOfAnalyses());
+	}
+
 	@After
 	public void destroy() {
 		driver.quit();

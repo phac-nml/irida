@@ -1,15 +1,15 @@
 @import "../helpers/variables";
 
 .sidenav {
-  width: 200px;
+  width: 290px;
   margin-right: 1rem;
   padding: .5rem;
 }
 
 .sidenav__inner--fixed {
   position: fixed;
-  top: 50px;
-  width: 180px;
+  top: 60px;
+  width: 290px;
 }
 
 .sidenav__label {
