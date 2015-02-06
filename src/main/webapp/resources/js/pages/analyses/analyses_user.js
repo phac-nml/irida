@@ -18,10 +18,7 @@
    * @constructor
    */
   function AnalysisFilterService() {
-    return {
-      label: "",
-      analysisState : ""
-    }
+    return {}
   }
 
   /**
@@ -35,11 +32,20 @@
       var result = true;
       _.forOwn(filter, function (value, key) {
         var item = analysis[key];
-        if(item === null) return;
-        if(key === 'analysisState' && value.length > 0 && item !== value) {
+        if (key === 'minDate' || key == 'maxDate') {
+          item = analysis['createdDate'];
+        }
+        if (item === null || item === undefined) return;
+        if (key === 'analysisState' && value.length > 0 && item !== value) {
           result = false;
         }
-        else if (item.toLowerCase().indexOf(value.toLowerCase()) < 0) {
+        else if (key === 'minDate' && item < value) {
+          result = false;
+        }
+        else if (key === 'maxDate' && item > value) {
+          result = false;
+        }
+        else if (angular.isString(value) && item.toLowerCase().indexOf(value.toLowerCase()) < 0) {
           result = false;
         }
       });
@@ -79,6 +85,8 @@
     vm.search = "";
     vm.states = [{value: "", text: "All"}];
     vm.state = vm.states[0];
+    vm.max = new Date();
+    vm.opened = {};
 
     _.forOwn(STATE_MAP, function (value, key) {
       vm.states.push({value: key, text: value});
@@ -86,9 +94,11 @@
 
     vm.clear = function () {
       _.forOwn(filter, function (value, key) {
-        filter[key] = "";
+        delete filter[key];
       });
       vm.search = "";
+      vm.maxDate = "";
+      vm.minDate = "";
       vm.state = vm.states[0];
     };
 
@@ -99,6 +109,25 @@
     vm.doState = function () {
       filter.analysisState = vm.state.value;
     };
+
+    vm.open = function (e, value) {
+      e.preventDefault();
+      e.stopPropagation();
+      vm.opened[value] = true;
+    };
+
+    vm.doDateFilter = function (key) {
+      var value = vm[key];
+      if (value === null) {
+        delete filter[key];
+        return;
+      }
+      var date = new Date(value);
+      if (key === 'maxDate') {
+        date.setDate(date.getDate() + 1);
+      }
+      filter[key] = date.getTime();
+    }
   }
 
   /**
