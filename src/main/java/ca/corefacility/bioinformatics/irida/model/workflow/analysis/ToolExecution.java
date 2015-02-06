@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -149,7 +150,7 @@ public class ToolExecution implements IridaThing {
 	}
 
 	public final Map<String, String> getExecutionTimeParameters() {
-		return ImmutableMap.copyOf(executionTimeParameters);
+		return Collections.unmodifiableMap(executionTimeParameters);
 	}
 
 	public final void addExecutionTimeParameter(final String paramName, final String paramValue) {

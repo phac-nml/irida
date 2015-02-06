@@ -42,7 +42,7 @@ public class AnalysisProvenanceServiceGalaxy {
 	private static final Joiner KEY_JOINER = Joiner.on('.').skipNulls();
 	private static final String JSON_TEXT_MAP_INDICATOR = JsonToken.START_OBJECT.asString(); // "{"
 	private static final String JSON_TEXT_ARRAY_INDICATOR = JsonToken.START_ARRAY.asString(); // "["
-	private static final String EMPTY_VALUE_PLACEHOLDER = "<empty>";
+	private static final String EMPTY_VALUE_PLACEHOLDER = null;
 	private static final ObjectMapper mapper = new ObjectMapper();
 
 	private final GalaxyHistoriesService galaxyHistoriesService;
