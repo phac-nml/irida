@@ -151,8 +151,8 @@ public class AnalysisSubmission implements IridaThing {
 				"both inputFilesSingle and inputFilesPaired are null.  You must supply at least one set of input files");
 
 		this.name = (builder.name != null) ? builder.name : "Unknown";
-		this.inputFilesSingle = builder.inputFilesSingle;
-		this.inputFilesPaired = builder.inputFilesPaired;
+		this.inputFilesSingle = (builder.inputFilesSingle != null) ? builder.inputFilesSingle : Sets.newHashSet();
+		this.inputFilesPaired = (builder.inputFilesPaired != null) ? builder.inputFilesPaired : Sets.newHashSet();
 		this.referenceFile = builder.referenceFile;
 		this.workflowId = builder.workflowId;
 	}
