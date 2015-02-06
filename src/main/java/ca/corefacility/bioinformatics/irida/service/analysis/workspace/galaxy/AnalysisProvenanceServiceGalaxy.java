@@ -264,13 +264,13 @@ public class AnalysisProvenanceServiceGalaxy {
 						for (final Map<String, Object> listMap : valueList) {
 							paramStrings.putAll(buildParamMap(listMap, prefixes));
 						}
-					} else if (value.toString().startsWith(JSON_TEXT_MAP_INDICATOR)) {
+					} else if (value.toString().trim().startsWith(JSON_TEXT_MAP_INDICATOR)) {
 						// if we have a JSON Map (something that has '{' as the
 						// first character in the String), then parse it with
 						// Jackson and then recurse on the parsed map.
 						Map<String, Object> jsonValueMap = mapper.readValue(value.toString(), Map.class);
 						paramStrings.putAll(buildParamMap(jsonValueMap, prefixes));
-					} else if (value.toString().startsWith(JSON_TEXT_ARRAY_INDICATOR)) {
+					} else if (value.toString().trim().startsWith(JSON_TEXT_ARRAY_INDICATOR)) {
 						// if we have a JSON Array (something that has '[' as
 						// the first character in the String), then parse it
 						// with Jackson, then recurse on *each* of the parsed
