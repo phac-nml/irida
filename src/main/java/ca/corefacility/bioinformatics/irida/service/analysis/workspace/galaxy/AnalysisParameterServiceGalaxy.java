@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowParameterException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -26,6 +27,7 @@ import com.google.common.collect.Sets;
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
+@Service
 public class AnalysisParameterServiceGalaxy implements AnalysisParameterService<WorkflowInputsGalaxy> {
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisParameterServiceGalaxy.class);
