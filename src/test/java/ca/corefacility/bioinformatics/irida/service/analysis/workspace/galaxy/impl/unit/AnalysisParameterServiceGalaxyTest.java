@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowParameterException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaToolParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
@@ -52,9 +53,11 @@ public class AnalysisParameterServiceGalaxyTest {
 	/**
 	 * Tests preparing workflow parameters and overriding with custom value
 	 * successfully.
+	 * 
+	 * @throws IridaWorkflowParameterException
 	 */
 	@Test
-	public void testPrepareParametersOverrideSuccess() {
+	public void testPrepareParametersOverrideSuccess() throws IridaWorkflowParameterException {
 		Map<String, String> parameters = Maps.newHashMap();
 		parameters.put("parameter1", "1");
 
@@ -73,9 +76,11 @@ public class AnalysisParameterServiceGalaxyTest {
 
 	/**
 	 * Tests preparing workflow parameters and using the default value defined.
+	 * 
+	 * @throws IridaWorkflowParameterException
 	 */
 	@Test
-	public void testPrepareParametersDefaultSuccess() {
+	public void testPrepareParametersDefaultSuccess() throws IridaWorkflowParameterException {
 		Map<String, String> parameters = Maps.newHashMap();
 
 		WorkflowInputsGalaxy workflowInputsGalaxy = analysisParameterService.prepareAnalysisParameters(parameters,
@@ -88,5 +93,52 @@ public class AnalysisParameterServiceGalaxyTest {
 		assertNotNull("parameters for galaxy-tool1 should not be null", tool1Parameters);
 
 		assertEquals("galaxy-tool1,parameter1 is not valid", "0", tool1Parameters.get("parameter1"));
+	}
+
+	/**
+	 * Tests preparing workflow parameters and overriding with custom value
+	 * successfully in two tools.
+	 * 
+	 * @throws IridaWorkflowParameterException
+	 */
+	@Test
+	public void testPrepareParametersOverrideSuccessTwoTools() throws IridaWorkflowParameterException {
+		Map<String, String> parameters = Maps.newHashMap();
+		parameters.put("parameter1", "1");
+
+		IridaToolParameter iridaToolParameter = new IridaToolParameter("galaxy-tool1", "parameter1");
+		IridaToolParameter iridaToolParameter2 = new IridaToolParameter("galaxy-tool1", "parameter2");
+		IridaWorkflowParameter parameter1 = new IridaWorkflowParameter("parameter1", "0", Lists.newArrayList(
+				iridaToolParameter, iridaToolParameter2));
+		List<IridaWorkflowParameter> iridaWorkflowParameters = Lists.newArrayList(parameter1);
+
+		when(iridaWorkflowDescription.getParameters()).thenReturn(iridaWorkflowParameters);
+
+		WorkflowInputsGalaxy workflowInputsGalaxy = analysisParameterService.prepareAnalysisParameters(parameters,
+				iridaWorkflow);
+
+		assertNotNull("workflowInputsGalaxy is null", workflowInputsGalaxy);
+
+		WorkflowInputs workflowInputs = workflowInputsGalaxy.getInputsObject();
+		Map<Object, Map<String, Object>> workflowParameters = workflowInputs.getParameters();
+
+		Map<String, Object> tool1Parameters = workflowParameters.get("galaxy-tool1");
+		assertNotNull("parameters for galaxy-tool1 should not be null", tool1Parameters);
+		assertEquals("galaxy-tool1,parameter1 is not valid", "1", tool1Parameters.get("parameter1"));
+		assertEquals("galaxy-tool1,parameter2 is not valid", "1", tool1Parameters.get("parameter2"));
+	}
+
+	/**
+	 * Tests preparing workflow parameters and failing due to parameters not
+	 * defined within the IRIDA workflow.
+	 * 
+	 * @throws IridaWorkflowParameterException
+	 */
+	@Test(expected = IridaWorkflowParameterException.class)
+	public void testPrepareParametersOverrideFail() throws IridaWorkflowParameterException {
+		Map<String, String> parameters = Maps.newHashMap();
+		parameters.put("parameter-invalid", "1");
+
+		analysisParameterService.prepareAnalysisParameters(parameters, iridaWorkflow);
 	}
 }
