@@ -7,10 +7,7 @@
    * @constructor
    */
   function AnalysisFilterService() {
-    return {
-      label: "",
-      analysisState : ""
-    }
+    return {}
   }
 
   /**
@@ -25,10 +22,10 @@
       _.forOwn(filter, function (value, key) {
         var item = analysis[key];
         if(item === null) return;
-        if(key === 'analysisState' && value.length > 0 && item !== value) {
-          if(value !== 'ALL') result = false;
+        if(key === 'analysisState') {
+          if(value.length > 0 && value !== 'ALL' && item !== value) result = false;
         }
-        else if (item.toLowerCase().indexOf(value.toLowerCase()) === -1) {
+        else if (angular.isString(value) && item.toLowerCase().indexOf(value.toLowerCase()) !== -1) {
           result = false;
         }
       });
@@ -73,7 +70,7 @@
 
     vm.clear = function () {
       _.forOwn(filter, function (value, key) {
-        filter[key] = "";
+        delete filter[key];
       });
       _setDefaults();
     };
