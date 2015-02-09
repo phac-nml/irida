@@ -34,7 +34,7 @@
         else if (key === 'maxDate' && item > value) {
           result = false;
         }
-        else if (angular.isString(value) && item.toLowerCase().indexOf(value.toLowerCase()) < 0) {
+        else if (angular.isString(value) && item.toLowerCase().indexOf(value.toLowerCase()) !== -1) {
           result = false;
         }
       });
@@ -71,18 +71,19 @@
    */
   function FilterController(filter) {
     var vm = this;
-    vm.search = "";
-    vm.max = new Date();
-    vm.opened = {};
+
+    function _setDefaults() {
+      vm.search = "";
+      vm.state = "ALL";
+      vm.min = "";
+      vm.max = new Date();
+    }
 
     vm.clear = function () {
       _.forOwn(filter, function (value, key) {
         delete filter[key];
       });
-      vm.search = "";
-      vm.maxDate = "";
-      vm.minDate = "";
-      vm.state = "ALL"
+      _setDefaults();
     };
 
     vm.doSearch = function () {
@@ -111,6 +112,8 @@
       }
       filter[key] = date.getTime();
     }
+
+    _setDefaults();
   }
 
   /**
