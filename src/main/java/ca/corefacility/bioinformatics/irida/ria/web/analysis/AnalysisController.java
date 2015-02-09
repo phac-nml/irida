@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,7 +30,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
@@ -99,7 +97,7 @@ public class AnalysisController {
 	}
 
 	@RequestMapping("/list")
-	public String getPageUserAnalysis(Locale locale) {
+	public String getPageUserAnalysis(Model model, Locale locale) {
 		Map<String, String> stateMap = new HashMap<>();
 		for (AnalysisState state : AnalysisState.values()) {
 			stateMap.put(state.toString(),
@@ -216,14 +214,15 @@ public class AnalysisController {
 		for (AnalysisSubmission sub : analyses) {
 			String remoteAnalysisId = sub.getRemoteAnalysisId();
 			String remoteWorkflowId = sub.getRemoteWorkflowId();
-			String analysisState = sub.getAnalysisState().toString().toLowerCase();
+			String analysisState = sub.getAnalysisState().toString();
 
 			Map<String, String> map = new HashMap<>();
 			map.put("id", sub.getId().toString());
 			map.put("label", sub.getLabel());
 			map.put("workflowId", Strings.isNullOrEmpty(remoteWorkflowId) ? "NOT SET" : remoteWorkflowId);
 			map.put("remoteAnalysisId", Strings.isNullOrEmpty(remoteAnalysisId) ? "NOT SET" : remoteAnalysisId);
-			map.put("analysisState", messageSource.getMessage("analysis.state." + analysisState, null, locale));
+			map.put("state", messageSource.getMessage("analysis.state." + analysisState, null, locale));
+			map.put("analysisState", analysisState.toUpperCase());
 			map.put("createdDate", String.valueOf(sub.getCreatedDate().getTime()));
 			analysesMap.add(map);
 		}
