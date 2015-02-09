@@ -425,50 +425,54 @@ public class GalaxyWorkflowsIT {
 		float percentComplete = workflowStatus.getPercentComplete();
 		assertTrue(0.0f <= percentComplete && percentComplete <= 100.0f);
 	}
-	
+
 	/**
-	 * Tests executing a single workflow in Galaxy and changing a single tool parameter.
+	 * Tests executing a single workflow in Galaxy and changing a single tool
+	 * parameter.
+	 * 
 	 * @throws ExecutionManagerException
 	 */
 	@Test
 	public void testExecuteWorkflowChangeToolParameter() throws ExecutionManagerException {
 		String toolId = "Grep1";
-		
+
 		String workflowId = localGalaxy.getSingleInputWorkflowId();
 		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
-		
+
 		Map<String, ToolParameter> toolParameters = ImmutableMap.of(toolId, new ToolParameter("pattern", "^#"));
-		WorkflowOutputs workflowOutput = 
-				runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel, toolParameters);
-		assertNotNull(workflowOutput);
-		assertNotNull(workflowOutput.getHistoryId());
-		
+		WorkflowOutputs workflowOutput = runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel,
+				toolParameters);
+		assertNotNull("workflowOutput should not be null", workflowOutput);
+		assertNotNull("workflowOutput history id should not be null", workflowOutput.getHistoryId());
+
 		// history should exist
 		HistoryDetails historyDetails = historiesClient.showHistory(workflowOutput.getHistoryId());
-		assertNotNull(historyDetails);
-		
+		assertNotNull("historyDetails for the history for the workflow should not be null", historyDetails);
+
 		// outputs should exist
-		assertNotNull(workflowOutput.getOutputIds());
-		assertTrue(workflowOutput.getOutputIds().size() > 0);
-		
+		assertNotNull("outputIds for the workflow should not be null", workflowOutput.getOutputIds());
+		assertTrue("there should exist output dataset ids for the workflow", workflowOutput.getOutputIds().size() > 0);
+
 		// each output dataset should exist
 		for (String outputId : workflowOutput.getOutputIds()) {
 			Dataset dataset = historiesClient.showDataset(workflowOutput.getHistoryId(), outputId);
-			assertNotNull(dataset);
-			
-			HistoryContentsProvenance provenance = historiesClient.showProvenance(workflowOutput.getHistoryId(), dataset.getId());
+			assertNotNull("the output dataset should exist", dataset);
+
+			HistoryContentsProvenance provenance = historiesClient.showProvenance(workflowOutput.getHistoryId(),
+					dataset.getId());
 			if (toolId.equals(provenance.getToolId())) {
 				Map<String, Object> parametersMap = provenance.getParameters();
 				assertEquals("pattern parameter is correct", "\"^#\"", parametersMap.get("pattern"));
 			}
 		}
-		
+
 		// test get workflow status
-		GalaxyWorkflowStatus workflowStatus = 
-				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
-		assertFalse(GalaxyWorkflowState.UNKNOWN.equals(workflowStatus.getState()));
+		GalaxyWorkflowStatus workflowStatus = galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
+		assertFalse("the workflow should not be in an " + GalaxyWorkflowState.UNKNOWN + " state",
+				GalaxyWorkflowState.UNKNOWN.equals(workflowStatus.getState()));
 		float percentComplete = workflowStatus.getPercentComplete();
-		assertTrue(0.0f <= percentComplete && percentComplete <= 100.0f);
+		assertTrue("the workflow percent complete should be between 0 and 100", 0.0f <= percentComplete
+				&& percentComplete <= 100.0f);
 	}
 	
 	/**
