@@ -22,7 +22,7 @@
     return function (analyses) {
       var filtered = [];
       analyses.forEach(function (analysis) {
-        if (filter.search.length === 0 || analysis['label'].toLowerCase().indexOf(filter.search.toLowerCase()) > 0) {
+        if (filter.search.length === 0 || analysis['label'].toLowerCase().indexOf(filter.search.toLowerCase()) != -1) {
           filtered.push(analysis);
         }
       });
