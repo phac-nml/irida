@@ -196,7 +196,7 @@ public class AnalysisController {
 			// TODO: (14-09-05- Josh) How to actual get this?
 			map.put("type", type);
 			map.put("typeId", typeId);
-			map.put("status", analysisSubmission.getAnalysisState().toString());
+			map.put("status", analysisSubmission.getAnalysisState().toString().toUpperCase());
 			map.put("createdDate", String.valueOf(analysisSubmission.getCreatedDate().getTime()));
 			analysisList.add(map);
 		}
