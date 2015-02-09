@@ -31,7 +31,7 @@
 						ng-model-options="{ debounce: 350 }" ng-change="filter.doSearch()"/>
 					</div>
 					<div class="form-group">
-						<label class="sidenav__label">State</label>
+						<label class="sidenav__label" th:text="#{analysis.filter.state}">State</label>
 						<select class="form-control input-full" id="filter-state" ng-model="filter.state"
 						        ng-change="filter.doState()">
 							<option value="ALL" selected="selected" th:text="#{analysis.select.all}"></option>
