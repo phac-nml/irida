@@ -72,6 +72,7 @@
         filter[key] = "";
       });
       vm.search = "";
+      vm.state = "ALL"
     };
 
     vm.doSearch = function () {

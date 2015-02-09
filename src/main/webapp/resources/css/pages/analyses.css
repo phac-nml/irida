@@ -4,46 +4,46 @@
 }
 
 /* line 20, ../../../styles/pages/analyses.scss */
-.analysis__state--new {
+.analysis__state--NEW {
   border-color: #3092d0;
 }
 
 /* line 20, ../../../styles/pages/analyses.scss */
-.analysis__state--preparing {
+.analysis__state--PREPARING {
   border-color: #2675a7;
 }
 
 /* line 20, ../../../styles/pages/analyses.scss */
-.analysis__state--prepared {
+.analysis__state--PREPARED {
   border-color: #1c587e;
 }
 
 /* line 20, ../../../styles/pages/analyses.scss */
-.analysis__state--submitting {
+.analysis__state--SUBMITTING {
   border-color: #133b54;
 }
 
 /* line 20, ../../../styles/pages/analyses.scss */
-.analysis__state--running {
+.analysis__state--RUNNING {
   border-color: #133B54;
 }
 
 /* line 20, ../../../styles/pages/analyses.scss */
-.analysis__state--finished_running {
+.analysis__state--FINISHED_RUNNING {
   border-color: #43AC6A;
 }
 
 /* line 20, ../../../styles/pages/analyses.scss */
-.analysis__state--completing {
+.analysis__state--COMPLETING {
   border-color: #61c185;
 }
 
 /* line 20, ../../../styles/pages/analyses.scss */
-.analysis__state--completed {
+.analysis__state--COMPLETED {
   border-color: #00FF00;
 }
 
 /* line 20, ../../../styles/pages/analyses.scss */
-.analysis__state--error {
+.analysis__state--ERROR {
   border-color: #F04124;
 }
