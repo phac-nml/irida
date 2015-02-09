@@ -25,7 +25,7 @@
         if(key === 'analysisState') {
           if(value.length > 0 && value !== 'ALL' && item !== value) result = false;
         }
-        else if (angular.isString(value) && item.toLowerCase().indexOf(value.toLowerCase()) !== -1) {
+        else if (angular.isString(value) && item.toLowerCase().indexOf(value.toLowerCase()) === -1) {
           result = false;
         }
       });
