@@ -20,7 +20,7 @@ public class IridaWorkflowParameter {
 	@XmlAttribute(name = "name")
 	private String name;
 
-	@XmlAttribute(name = "defaultValue")
+	@XmlAttribute(name = "defaultValue", required=true)
 	private String defaultValue;
 
 	@XmlElement(name = "toolParameter")
@@ -72,15 +72,6 @@ public class IridaWorkflowParameter {
 	 */
 	public String getDefaultValue() {
 		return defaultValue;
-	}
-
-	/**
-	 * Whether or not this parameter has a default value.
-	 * 
-	 * @return True if this parameter has a default value, false otherwise.
-	 */
-	public boolean hasDefaultValue() {
-		return defaultValue != null;
 	}
 
 	@Override

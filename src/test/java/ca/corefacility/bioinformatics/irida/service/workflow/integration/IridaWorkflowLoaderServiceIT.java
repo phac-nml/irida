@@ -304,28 +304,21 @@ public class IridaWorkflowLoaderServiceIT {
 		assertEquals("parameters does not have the correct size", 1, parameters.size());
 		IridaWorkflowParameter parameter = parameters.get(0);
 		assertEquals("parameter does not have the correct name", "test-parameter", parameter.getName());
-		assertTrue("no default value", parameter.hasDefaultValue());
 		assertEquals("default value is not correct", "1", parameter.getDefaultValue());
 		assertEquals("parameter does not have correct number of tool parameters", 1, parameter.getToolParameters()
 				.size());
 	}
 
 	/**
-	 * Test to make sure we can load a workflow with a parameter with no default
-	 * value.
+	 * Test to make sure we fail to load a workflow with no default value.
 	 * 
 	 * @throws IridaWorkflowLoadException
 	 * @throws IOException
 	 */
-	@Test
-	public void testLoadWorkflowWithParametersNoDefaultValue() throws IridaWorkflowLoadException, IOException {
-		IridaWorkflow iridaWorkflowFromFile = workflowLoaderService
+	@Test(expected=IridaWorkflowLoadException.class)
+	public void testLoadWorkflowWithParametersNoDefaultValueFail() throws IridaWorkflowLoadException, IOException {
+		workflowLoaderService
 				.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParametersNoDefault);
-		List<IridaWorkflowParameter> parameters = iridaWorkflowFromFile.getWorkflowDescription().getParameters();
-		assertEquals("parameters does not have the correct size", 1, parameters.size());
-		IridaWorkflowParameter parameter = parameters.get(0);
-		assertFalse("has a default vaule", parameter.hasDefaultValue());
-		assertNull("default value is not null", parameter.getDefaultValue());
 	}
 	
 	/**
