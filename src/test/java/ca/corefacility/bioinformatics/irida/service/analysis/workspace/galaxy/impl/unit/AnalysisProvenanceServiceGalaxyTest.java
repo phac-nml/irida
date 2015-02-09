@@ -121,9 +121,17 @@ public class AnalysisProvenanceServiceGalaxyTest {
 		final HistoryContentsProvenance hcp = new HistoryContentsProvenance();
 		final Map<String, Object> mapWithNullValue = new HashMap<>();
 		mapWithNullValue.put("key", null);
-		hcp.setParameters(ImmutableMap.of("akey", (Object) "avalue", "anotherKey", (Object) "{\"key\": \"value\"}",
-				"thirdKey", (Object) ImmutableMap.of("key", "{\"key\":\"value\"}"), "fourthKey",
-				(Object) "[{\"key\":\"value\"}]", "fifthKey", (Object) mapWithNullValue));
+		final ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
+		builder.put("akey", (Object) "avalue").put("anotherKey", (Object) "{\"key\": \"value\"}")
+				.put("thirdKey", (Object) ImmutableMap.of("key", "{\"key\":\"value\"}"))
+				.put("fourthKey", (Object) "[{\"key\":\"value\"}]").put("fifthKey", (Object) mapWithNullValue)
+				.put("abadkey", (Object) "[{\"key\":\"value\"]")
+				.put("listKey", (Object) ImmutableList.of(ImmutableMap.of("key", "value")))
+				.put("k", (Object) "value-lower").put("K", (Object) "value-upper")
+				.put("\\\\keyWithBackslash", (Object) "value-backslash-lower")
+				.put("\\\\KeyWithBackslash", (Object) "value-backslash-upper")
+				.put("MULTIPLE_UPPER_case", (Object) "upper-case-values!");
+		hcp.setParameters(builder.build());
 		when(galaxyHistoriesService.showHistoryContents(any(String.class))).thenReturn(Lists.newArrayList(hc));
 		when(galaxyHistoriesService.showProvenance(any(String.class), any(String.class))).thenReturn(hcp);
 		when(toolsClient.showTool(any(String.class))).thenReturn(new Tool());
@@ -141,24 +149,6 @@ public class AnalysisProvenanceServiceGalaxyTest {
 		assertTrue("tool execution should have the specified parameter.", params.containsKey("fifthKey.key"));
 		assertEquals("tool execution parameter should be specified value.",
 				AnalysisProvenanceServiceGalaxy.emptyValuePlaceholder(), params.get("fifthKey.key"));
-
-		assertTrue("Tool execution should be considered input step, no predecessors.", toolExecution.isInputTool());
-	}
-
-	@Test
-	public void testBuildSingleStepToolExecutionMoreComplexParameters() throws ExecutionManagerException {
-		final HistoryContents hc = new HistoryContents();
-		hc.setName(FILENAME);
-		final HistoryContentsProvenance hcp = new HistoryContentsProvenance();
-		hcp.setParameters(ImmutableMap.of("abadkey", (Object) "[{\"key\":\"value\"]", "listKey",
-				(Object) ImmutableList.of(ImmutableMap.of("key", "value")), "k", (Object) "value-lower", "K",
-				(Object) "value-upper"));
-		when(galaxyHistoriesService.showHistoryContents(any(String.class))).thenReturn(Lists.newArrayList(hc));
-		when(galaxyHistoriesService.showProvenance(any(String.class), any(String.class))).thenReturn(hcp);
-		when(toolsClient.showTool(any(String.class))).thenReturn(new Tool());
-		final ToolExecution toolExecution = provenanceService.buildToolExecutionForOutputFile(analysisSubmission(),
-				analysisOutputFile());
-		final Map<String, String> params = toolExecution.getExecutionTimeParameters();
 		assertTrue("tool execution should have the specified parameter.", params.containsKey("abadkey"));
 		assertEquals("tool execution parameter should be specified value.", "[{\"key\":\"value\"]",
 				params.get("abadkey"));
@@ -168,6 +158,15 @@ public class AnalysisProvenanceServiceGalaxyTest {
 		assertEquals("tool execution parameter should be specified value.", "value-lower", params.get("k"));
 		assertTrue("tool execution should have the specified parameter.", params.containsKey("K"));
 		assertEquals("tool execution parameter should be specified value.", "value-upper", params.get("K"));
+		assertTrue("tool execution should have the specified parameter.", params.containsKey("\\\\keyWithBackslash"));
+		assertEquals("tool execution parameter should be specified value.", "value-backslash-lower",
+				params.get("\\\\keyWithBackslash"));
+		assertTrue("tool execution should have the specified parameter.", params.containsKey("\\\\KeyWithBackslash"));
+		assertEquals("tool execution parameter should be specified value.", "value-backslash-upper",
+				params.get("\\\\KeyWithBackslash"));
+		assertTrue("tool execution should have the specified parameter.", params.containsKey("MULTIPLE_UPPER_case"));
+		assertEquals("tool execution parameter should be specified value.", "upper-case-values!",
+				params.get("MULTIPLE_UPPER_case"));
 
 		assertTrue("Tool execution should be considered input step, no predecessors.", toolExecution.isInputTool());
 	}
