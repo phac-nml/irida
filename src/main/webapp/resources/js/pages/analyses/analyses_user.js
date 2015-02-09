@@ -26,9 +26,9 @@
         var item = analysis[key];
         if(item === null) return;
         if(key === 'analysisState' && value.length > 0 && item !== value) {
-          result = false;
+          if(value !== 'ALL') result = false;
         }
-        else if (item.toLowerCase().indexOf(value.toLowerCase()) < 0) {
+        else if (item.toLowerCase().indexOf(value.toLowerCase()) === -1) {
           result = false;
         }
       });
@@ -65,14 +65,17 @@
    */
   function FilterController(filter) {
     var vm = this;
-    vm.search = "";
+
+    function _setDefaults() {
+      vm.search = "";
+      vm.state = "ALL";
+    }
 
     vm.clear = function () {
       _.forOwn(filter, function (value, key) {
         filter[key] = "";
       });
-      vm.search = "";
-      vm.state = "ALL"
+      _setDefaults();
     };
 
     vm.doSearch = function () {
@@ -82,6 +85,8 @@
     vm.doState = function () {
       filter.analysisState = vm.state;
     };
+
+    _setDefaults();
   }
 
   /**
