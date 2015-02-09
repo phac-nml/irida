@@ -2,3 +2,12 @@ html, body {
   height: 100%;
 }
 
+.main-container {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.content {
+  flex-grow: 1;
+}
