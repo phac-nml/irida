@@ -82,7 +82,7 @@
       vm.search = "";
       vm.maxDate = "";
       vm.minDate = "";
-      vm.state = vm.states[0];
+      vm.state = "ALL"
     };
 
     vm.doSearch = function () {

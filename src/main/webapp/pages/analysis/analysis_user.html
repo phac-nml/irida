@@ -34,8 +34,8 @@
 						<label class="sidenav__label">State</label>
 						<select class="form-control input-full" id="filter-state" ng-model="filter.state"
 						        ng-change="filter.doState()">
-							<option value="" selected="selected" th:text="#{analysis.select.all}"></option>
-							<option th:each="state : ${states}" th:value="${state}" th:text="${state}"></option>
+							<option value="ALL" selected="selected" th:text="#{analysis.select.all}"></option>
+							<option th:each="state : ${states}" th:value="${state.key}" th:text="${state.value}"></option>
 						</select>
 					</div>
 					<div class="form-group">
@@ -67,8 +67,8 @@
 			<ul class="boards">
 				<li class="board" ng-repeat="analysis in ctrl.analyses | analysesFilter | orderBy:'createdDate':true">
 					<div class="button board_inner row">
-						<div ng-class="'analysis__state--' + analysis.analysisState.toLowerCase()" class="analysis__state col-md-3">
-							<div class="board_detail--value">{{::analysis.analysisState}}</div>
+						<div ng-class="'analysis__state--' + analysis.analysisState" class="analysis__state col-md-2">
+							<div class="board_detail--value">{{::analysis.state}}</div>
 							<div class="board_detail--desc" th:text="#{analyses.state}">State</div>
 						</div>
 						<div class="col-md-5">
