@@ -1,7 +1,6 @@
-(function () {
+(function ($) {
     "use strict";
     function ngFocus() {
-        // TODO (Josh - 14-12-22) Refactor to directive
         var FOCUS_CLASS = "ng-focused";
         return {
             restrict: 'A',
@@ -25,7 +24,7 @@
 
     function countdownFilter () {
         return function(timeleft) {
-            if($.isNumberic(timeleft)){
+            if($.isNumeric(timeleft)){
                 return moment.duration(timeleft, "milliseconds").humanize();
             }
         };
@@ -36,4 +35,4 @@
         .directive('ngFocus', ngFocus)
         .filter('countdown', countdownFilter)
     ;
-})();
+})(jQuery);
