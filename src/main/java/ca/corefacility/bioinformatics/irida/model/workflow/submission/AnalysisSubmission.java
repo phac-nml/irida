@@ -166,7 +166,8 @@ public class AnalysisSubmission implements IridaThing {
 		this.name = (builder.name != null) ? builder.name : "Unknown";
 		this.inputFilesSingle = (builder.inputFilesSingle != null) ? builder.inputFilesSingle : Sets.newHashSet();
 		this.inputFilesPaired = (builder.inputFilesPaired != null) ? builder.inputFilesPaired : Sets.newHashSet();
-		this.inputParameters = ImmutableMap.copyOf(builder.inputParameters);
+		this.inputParameters = (builder.inputParameters != null) ? ImmutableMap.copyOf(builder.inputParameters)
+				: ImmutableMap.of();
 		this.referenceFile = builder.referenceFile;
 		this.workflowId = builder.workflowId;
 	}
@@ -467,6 +468,9 @@ public class AnalysisSubmission implements IridaThing {
 		 * @return An {@link AnalysisSubmission.Builder}.
 		 */
 		public Builder inputParameters(Map<String, String> inputParameters) {
+			checkNotNull(inputParameters, "inputParameters is null");
+			checkArgument(!inputParameters.isEmpty(), "inputParameters is empty");
+			
 			this.inputParameters = inputParameters;
 			return this;
 		}

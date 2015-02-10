@@ -2,10 +2,12 @@ package ca.corefacility.bioinformatics.irida.model.workflow.submission.unit;
 
 import static org.junit.Assert.*;
 
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -22,6 +24,7 @@ public class AnalysisSubmissionTest {
 
 	private static final SequenceFile sequenceFile = new SequenceFile();
 	private static final ReferenceFile referenceFile = new ReferenceFile();
+	private static final Map<String, String> inputParameters = ImmutableMap.of("test", "test");
 
 	private static final UUID workflowId = UUID.randomUUID();
 
@@ -30,7 +33,7 @@ public class AnalysisSubmissionTest {
 		assertNotNull(
 				"analysis submission is null",
 				AnalysisSubmission.builder(workflowId).name("name").referenceFile(referenceFile)
-						.inputFilesSingle(Sets.newHashSet(sequenceFile)).build());
+						.inputFilesSingle(Sets.newHashSet(sequenceFile)).inputParameters(inputParameters).build());
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -71,5 +74,17 @@ public class AnalysisSubmissionTest {
 	@Test(expected = NullPointerException.class)
 	public void testNullName() {
 		AnalysisSubmission.builder(workflowId).name(null).build();
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void testNullInputParameters() {
+		AnalysisSubmission.builder(workflowId).inputFilesSingle(Sets.newHashSet(sequenceFile)).inputParameters(null)
+				.build();
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testEmptyInputParameters() {
+		AnalysisSubmission.builder(workflowId).inputFilesSingle(Sets.newHashSet(sequenceFile))
+				.inputParameters(ImmutableMap.of()).build();
 	}
 }
