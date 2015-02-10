@@ -214,10 +214,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	public void testPrepareAnalysisWorkspaceSuccess() throws IridaWorkflowNotFoundException, ExecutionManagerException {
-		AnalysisSubmission submission = AnalysisSubmission.builder()
+		AnalysisSubmission submission = AnalysisSubmission.builder(validWorkflowIdSingle)
 				.name("Name")
 				.inputFilesSingle(sequenceFilesSet)
-				.workflowId(validWorkflowIdSingle)
 				.build();
 		assertNotNull("preparing an analysis workspace should not return null",
 				analysisWorkspaceService.prepareAnalysisWorkspace(submission));
@@ -231,10 +230,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testPrepareAnalysisWorkspaceFail() throws IridaWorkflowNotFoundException, ExecutionManagerException {
-		AnalysisSubmission submission = AnalysisSubmission.builder()
+		AnalysisSubmission submission = AnalysisSubmission.builder(validWorkflowIdSingle)
 				.name("Name")
 				.inputFilesSingle(sequenceFilesSet)
-				.workflowId(validWorkflowIdSingle)
 				.build();
 		submission.setRemoteAnalysisId("1");
 		analysisWorkspaceService.prepareAnalysisWorkspace(submission);

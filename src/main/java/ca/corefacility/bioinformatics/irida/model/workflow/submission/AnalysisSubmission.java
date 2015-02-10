@@ -388,6 +388,18 @@ public class AnalysisSubmission implements IridaThing {
 		private ReferenceFile referenceFile;
 		private UUID workflowId;
 		private Map<String,String> inputParameters;
+		
+		/**
+		 * Creates a new {@link AnalysisSubmission.Builder} with a workflow id.
+		 * 
+		 * @param workflowId
+		 *            The workflow id for this submission.
+		 */
+		public Builder(UUID workflowId) {
+			checkNotNull(workflowId, "workflowId is null");
+
+			this.workflowId = workflowId;
+		}
 
 		/**
 		 * Sets a name for this submission.
@@ -397,6 +409,8 @@ public class AnalysisSubmission implements IridaThing {
 		 * @return An {@link AnalysisSubmission.Builder}.
 		 */
 		public Builder name(String name) {
+			checkNotNull(name, "name is null");
+			
 			this.name = name;
 			return this;
 		}
@@ -409,6 +423,9 @@ public class AnalysisSubmission implements IridaThing {
 		 * @return An {@link AnalysisSubmission.Builder}.
 		 */
 		public Builder inputFilesSingle(Set<SequenceFile> inputFilesSingle) {
+			checkNotNull(inputFilesSingle, "inputFilesSingle is null");
+			checkArgument(!inputFilesSingle.isEmpty(), "inputFilesSingle is empty");
+			
 			this.inputFilesSingle = inputFilesSingle;
 			return this;
 		}
@@ -421,6 +438,9 @@ public class AnalysisSubmission implements IridaThing {
 		 * @return An {@link AnalysisSubmission.Builder}.
 		 */
 		public Builder inputFilesPaired(Set<SequenceFilePair> inputFilesPaired) {
+			checkNotNull(inputFilesPaired, "inputFilesPaired is null");
+			checkArgument(!inputFilesPaired.isEmpty(), "inputFilesPaired is empty");
+			
 			this.inputFilesPaired = inputFilesPaired;
 			return this;
 		}
@@ -433,22 +453,12 @@ public class AnalysisSubmission implements IridaThing {
 		 * @return An {@link AnalysisSubmission.Builder}.
 		 */
 		public Builder referenceFile(ReferenceFile referenceFile) {
+			checkNotNull(referenceFile, "referenceFile is null");
+			
 			this.referenceFile = referenceFile;
 			return this;
 		}
 
-		/**
-		 * Sets the workflowId for this submission.
-		 * 
-		 * @param inputFilesSingle
-		 *            The workflowId for this submission.
-		 * @return An {@link AnalysisSubmission.Builder}.
-		 */
-		public Builder workflowId(UUID workflowId) {
-			this.workflowId = workflowId;
-			return this;
-		}
-		
 		/**
 		 * Sets the input parameters for this submission.
 		 * 
@@ -462,6 +472,9 @@ public class AnalysisSubmission implements IridaThing {
 		}
 
 		public AnalysisSubmission build() {
+			checkArgument(inputFilesSingle != null || inputFilesPaired != null,
+					"both inputFilesSingle and inputFilesPaired are null.  You must supply at least one set of input files");
+
 			return new AnalysisSubmission(this);
 		}
 	}
@@ -469,9 +482,12 @@ public class AnalysisSubmission implements IridaThing {
 	/**
 	 * Gets an {@link AnalysisSubmission.Builder}.
 	 * 
+	 * @param workflowId
+	 *            The id of the workflow to submit.
+	 * 
 	 * @return An {@link AnalysisSubmission.Builder}.
 	 */
-	public static Builder builder() {
-		return new AnalysisSubmission.Builder();
+	public static Builder builder(UUID workflowId) {
+		return new AnalysisSubmission.Builder(workflowId);
 	}
 }

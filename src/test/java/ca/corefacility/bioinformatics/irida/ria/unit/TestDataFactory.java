@@ -92,10 +92,9 @@ public class TestDataFactory {
 		Set<SequenceFile> files = new HashSet<>();
 		files.add(constructSequenceFile());
 		Long id = 5L;
-		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder()
+		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(UUID.randomUUID())
 				.name("submission-" + id)
 				.inputFilesSingle(files)
-				.workflowId(UUID.randomUUID())
 				.build();
 		analysisSubmission.setId(id);
 		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);

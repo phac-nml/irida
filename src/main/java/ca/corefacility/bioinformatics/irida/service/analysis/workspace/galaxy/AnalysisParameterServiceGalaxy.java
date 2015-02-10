@@ -51,7 +51,7 @@ public class AnalysisParameterServiceGalaxy implements AnalysisParameterService<
 			parameterNamesUsed.add(parameterName);
 
 			if (value == null) {
-				if (iridaParameter.hasDefaultValue()) {
+				if (iridaParameter.getDefaultValue() == null) {
 					value = iridaParameter.getDefaultValue();
 					logger.debug("Parameter with name=" + parameterName + ", for workflow=" + iridaWorkflow
 							+ ", has no value set, using defaultValue=" + value);
