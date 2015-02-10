@@ -43,7 +43,8 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/pipelines/PipelinePhylogenomicsView.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class PipelinesPhylogenomicsPageIT {
+public class
+		PipelinesPhylogenomicsPageIT {
 	private static final Logger logger = LoggerFactory.getLogger(PipelinesPhylogenomicsPageIT.class);
 	private WebDriver driver;
 	private PipelinesPhylogenomicsPage page;
@@ -97,7 +98,11 @@ public class PipelinesPhylogenomicsPageIT {
 	@Test
 	public void testNoRefFileWithPermissions() {
 		LoginPage.loginAsAdmin(driver);
-		addSamplesToCart();
+		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver);
+		samplesPage.goToPage("2");
+		samplesPage.selectSampleByRow(1);
+		samplesPage.selectSampleByRow(2);
+		samplesPage.addSamplesToGlobalCart();
 		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
 
 		assertTrue("Should display a warning to the user that there are no reference files.",
@@ -108,8 +113,7 @@ public class PipelinesPhylogenomicsPageIT {
 
 	@Test
 	public void testPipelineSubmission() {
-		LoginPage.loginAsUser(driver);
-		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
+		addSamplesToCart();
 		assertTrue("Should be on the phylogenomics page.",
 				driver.getCurrentUrl().contains(PipelinesPhylogenomicsPage.RELATIVE_URL));
 
@@ -120,19 +124,19 @@ public class PipelinesPhylogenomicsPageIT {
 
 	@Test
 	public void testModifyParameters() {
-		LoginPage.loginAsUser(driver);
 		addSamplesToCart();
-		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
 		page.clickPipelineParametersBtn();
 		assertEquals("Should have the proper pipeline name in title", "Phylogenomics Pipeline Parameters",
 				page.getParametersModalTitle());
 	}
 
 	private void addSamplesToCart() {
+		LoginPage.loginAsUser(driver);
 		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver);
-		samplesPage.goToPage();
+		samplesPage.goToPage("1");
+		samplesPage.selectSampleByRow(0);
 		samplesPage.selectSampleByRow(1);
-		samplesPage.selectSampleByRow(2);
 		samplesPage.addSamplesToGlobalCart();
+		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
 	}
 }

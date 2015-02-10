@@ -60,7 +60,7 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 
 	public void clickPipelineParametersBtn() {
 		driver.findElement(By.id("pipeline-parameters-btn")).click();
-		waitForElementVisible(By.id("/parameters.html"));
+		waitForTime(200);
 	}
 
 	public String getParametersModalTitle() {
