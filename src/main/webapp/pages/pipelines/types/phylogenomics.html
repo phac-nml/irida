@@ -155,7 +155,7 @@
 				<div data-spy="affix" style="width: 200px;">
 					<div ng-switch-when="false" class="ng-cloak text-center">
 						<h2 th:text="#{pipeline.phylogenomics.parameters.section-title}">Have you checked the pipeline parameters?</h2>
-						<button ng-controller="ParameterController as para" class="btn btn-default" ng-click="para.openModal()" th:text="#{pipeline.phylogenomics.parameters.section-button}">Pipeline Parameters</button>
+						<button id="pipeline-parameters-btn" ng-controller="ParameterController as para" class="btn btn-default" ng-click="para.openModal()" th:text="#{pipeline.phylogenomics.parameters.section-button}">Pipeline Parameters</button>
 						<h2 th:text="#{workflow.launch.btn}">Ready to Launch?</h2>
 						<div>
 							<button id="btn-launch" class="btn btn-xl btn-danger btn-action"
@@ -189,18 +189,7 @@
 	</form>
 </div>
 <th:block layout:fragment="page-scripts">
-	<script type="text/ng-template" id="/parameters.html">
-		<div class="modal-header">
-			<h2 class="modal-title" th:text="#{pipeline.phylogenomics.parameters.modal-title}">Phylogenomics Pipeline Parameters</h2>
-		</div>
-		<div class="modal-body">
-			This is where we will add the pipeline parameters.
-		</div>
-		<div class="modal-footer">
-			<button class="btn btn-default" th:text="#{pipeline.phylogenomics.parameters.modal-button-cancel}">Cancel</button>
-			<button class="btn btn-primary" th:text="#{pipeline.phylogenomics.parameters.modal-button-good}">These work for me!</button>
-		</div>
-	</script>
+	<th:block th:replace="analysis/templates/parameters :: modal (#{pipeline.phylogenomics.parameters.modal-title}, '')"></th:block>
 	<script th:inline="javascript">
 		/*<![CDATA[*/
 		var PIPELINE = {

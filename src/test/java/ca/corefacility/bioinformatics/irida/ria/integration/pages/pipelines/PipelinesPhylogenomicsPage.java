@@ -57,4 +57,13 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 	public void clickLaunchPipelineBtn() {
 		driver.findElement(By.id("btn-launch")).click();
 	}
+
+	public void clickPipelineParametersBtn() {
+		driver.findElement(By.id("pipeline-parameters-btn")).click();
+		waitForElementVisible(By.id("/parameters.html"));
+	}
+
+	public String getParametersModalTitle() {
+		return driver.findElement(By.className("modal-title")).getText();
+	}
 }

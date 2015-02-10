@@ -97,11 +97,7 @@ public class PipelinesPhylogenomicsPageIT {
 	@Test
 	public void testNoRefFileWithPermissions() {
 		LoginPage.loginAsAdmin(driver);
-		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver);
-		samplesPage.goToPage("2");
-		samplesPage.selectSampleByRow(1);
-		samplesPage.selectSampleByRow(2);
-		samplesPage.addSamplesToGlobalCart();
+		addSamplesToCart();
 		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
 
 		assertTrue("Should display a warning to the user that there are no reference files.",
@@ -113,11 +109,6 @@ public class PipelinesPhylogenomicsPageIT {
 	@Test
 	public void testPipelineSubmission() {
 		LoginPage.loginAsUser(driver);
-		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver);
-		samplesPage.goToPage();
-		samplesPage.selectSampleByRow(1);
-		samplesPage.selectSampleByRow(2);
-		samplesPage.addSamplesToGlobalCart();
 		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
 		assertTrue("Should be on the phylogenomics page.",
 				driver.getCurrentUrl().contains(PipelinesPhylogenomicsPage.RELATIVE_URL));
@@ -125,5 +116,23 @@ public class PipelinesPhylogenomicsPageIT {
 		page.clickLaunchPipelineBtn();
 		assertTrue("Message should be displayed when the pipeline is submitted", page.isPipelineSubmittedMessageShown());
 		assertTrue("Message should be displayed once the pipeline finished submitting", page.isPipelineSubmittedSuccessMessageShown());
+	}
+
+	@Test
+	public void testModifyParameters() {
+		LoginPage.loginAsUser(driver);
+		addSamplesToCart();
+		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
+		page.clickPipelineParametersBtn();
+		assertEquals("Should have the proper pipeline name in title", "Phylogenomics Pipeline Parameters",
+				page.getParametersModalTitle());
+	}
+
+	private void addSamplesToCart() {
+		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver);
+		samplesPage.goToPage();
+		samplesPage.selectSampleByRow(1);
+		samplesPage.selectSampleByRow(2);
+		samplesPage.addSamplesToGlobalCart();
 	}
 }
