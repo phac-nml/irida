@@ -137,12 +137,10 @@
 								Account
 							</a>
 						</li>
-						<li>
-							<a th:href="@{/logout}" href="/logout" th:text="#{nav.main.logout}">
-								Logout
-							</a>
-						</li>
 					</ul>
+				</li>
+				<li>
+					<a th:href="@{/logout}" th:title="#{nav.main.logout}" href="/logout"><i class="fa fa-power-off"></i> </a>
 				</li>
 			</ul>
 			<button id="cart-show-btn" type="button" class="btn btn-info btn-sm navbar-btn navbar-right"
