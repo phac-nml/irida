@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -120,6 +121,29 @@ public class ToolExecution implements IridaThing {
 		this.executionTimeParameters = new HashMap<>();
 		addExecutionTimeParameters(executionTimeParameters);
 		this.createdDate = new Date();
+	}
+
+	@Override
+	public String toString() {
+		return "ToolExecution [toolName=" + this.toolName + ", toolVersion=" + toolVersion + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(toolName, toolVersion, executionTimeParameters);
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (this == o) {
+			return true;
+		} else if (o instanceof ToolExecution) {
+			final ToolExecution t = (ToolExecution) o;
+			return Objects.equals(toolName, t.toolName) && Objects.equals(toolVersion, t.toolVersion)
+					&& Objects.equals(executionTimeParameters, t.executionTimeParameters);
+		}
+
+		return false;
 	}
 
 	public final void addPreviousStep(final ToolExecution toolExecution) {
