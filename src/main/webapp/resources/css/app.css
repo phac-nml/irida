@@ -7664,32 +7664,35 @@ html, body {
 .boards {
   list-style: none;
   padding: 0;
-  margin: 0;
-  border-top: 1px solid #f3f3f3;
+  background-color: #FFFFFF;
+  border: 1px solid #dfdfdf;
+  border-bottom-color: #939393;
+  border-radius: 4px;
+  margin-bottom: 1rem;
 }
 
-/* line 8, ../../styles/components/_board.scss */
+/* line 11, ../../styles/components/_board.scss */
 .board {
   border-bottom: 1px solid #f3f3f3;
 }
 
-/* line 12, ../../styles/components/_board.scss */
+/* line 15, ../../styles/components/_board.scss */
 .board_inner {
   margin: .5rem;
   padding: .5rem;
 }
 
-/* line 17, ../../styles/components/_board.scss */
+/* line 20, ../../styles/components/_board.scss */
 .board_paired:first-child {
   padding-bottom: 1rem;
 }
 
-/* line 21, ../../styles/components/_board.scss */
+/* line 24, ../../styles/components/_board.scss */
 .board_detail--value {
   line-height: 1.8rem;
 }
 
-/* line 25, ../../styles/components/_board.scss */
+/* line 28, ../../styles/components/_board.scss */
 .board_detail--desc {
   line-height: 1rem;
   padding: .2rem 0 0 0;
@@ -8129,7 +8132,7 @@ input {
 
 /* line 3, ../../styles/components/_sidenav.scss */
 .sidenav {
-  width: 200px;
+  width: 290px;
   margin-right: 1rem;
   padding: .5rem;
 }
@@ -8137,8 +8140,8 @@ input {
 /* line 9, ../../styles/components/_sidenav.scss */
 .sidenav__inner--fixed {
   position: fixed;
-  top: 50px;
-  width: 180px;
+  top: 60px;
+  width: 290px;
 }
 
 /* line 15, ../../styles/components/_sidenav.scss */

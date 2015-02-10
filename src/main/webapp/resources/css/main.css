@@ -153,59 +153,60 @@
 
 /* line 29, ../../styles/components/_panels.scss */
 .sidebar {
+  background-color: #FFFFFF;
   border: 1px solid #dfdfdf;
   border-bottom-color: #939393;
   border-radius: 4px;
   margin-bottom: 1rem;
 }
 
-/* line 36, ../../styles/components/_panels.scss */
+/* line 37, ../../styles/components/_panels.scss */
 .sidebar__heading {
   padding: 1rem;
 }
-/* line 38, ../../styles/components/_panels.scss */
+/* line 39, ../../styles/components/_panels.scss */
 .sidebar__heading h2 {
   font-weight: 300;
   margin: 0;
   padding: 0;
 }
 
-/* line 45, ../../styles/components/_panels.scss */
+/* line 46, ../../styles/components/_panels.scss */
 .sidebar__body {
   position: relative;
 }
-/* line 47, ../../styles/components/_panels.scss */
+/* line 48, ../../styles/components/_panels.scss */
 .sidebar__body > div {
   border-top: 1px solid #f3f3f3;
   padding: 6px 4px;
 }
-/* line 51, ../../styles/components/_panels.scss */
+/* line 52, ../../styles/components/_panels.scss */
 .sidebar__body .form-group {
   padding: 4px 8px;
 }
-/* line 54, ../../styles/components/_panels.scss */
+/* line 55, ../../styles/components/_panels.scss */
 .sidebar__body label {
   font-weight: 300;
 }
-/* line 57, ../../styles/components/_panels.scss */
+/* line 58, ../../styles/components/_panels.scss */
 .sidebar__body input[type="text"].form-control {
   border: 1px solid #939393;
   border-right: none;
 }
-/* line 61, ../../styles/components/_panels.scss */
+/* line 62, ../../styles/components/_panels.scss */
 .sidebar__body .input-group-btn button {
   border: 1px solid #939393 !important;
   border-left: none;
   color: #939393;
 }
 
-/* line 68, ../../styles/components/_panels.scss */
+/* line 69, ../../styles/components/_panels.scss */
 .sidebar__icon {
   color: #939393;
   width: 15%;
 }
 
-/* line 73, ../../styles/components/_panels.scss */
+/* line 74, ../../styles/components/_panels.scss */
 .sidebar__value {
   color: #232323;
   position: absolute;

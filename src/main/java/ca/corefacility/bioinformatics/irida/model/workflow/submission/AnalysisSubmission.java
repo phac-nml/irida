@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.submission;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Date;
 import java.util.Optional;
@@ -134,55 +135,26 @@ public class AnalysisSubmission implements IridaThing {
 		this.createdDate = new Date();
 		this.analysisState = AnalysisState.NEW;
 	}
-
+	
 	/**
-	 * Builds a new AnalysisSubmission object with the given information.
+	 * Builds a new {@link AnalysisSubmission} with the given
+	 * {@link AnalysisSubmission.Builder}.
 	 * 
-	 * @param name
-	 *            The name of the workflow submission.
-	 * @param inputFilesSingle
-	 *            The set of input files to perform an analysis on.
-	 * @param inputFilesPaired
-	 *            The set of paired input files to perform an analysis on.
-	 * @param The
-	 *            id of the workflow for this submission.
-	 * 
+	 * @param builder
+	 *            The {@link AnalyisSubmission.Builder} to build the
+	 *            {@link AnalysisSubmission}.
 	 */
-	public AnalysisSubmission(String name, Set<SequenceFile> inputFilesSingle,
-			Set<SequenceFilePair> inputFilesPaired, UUID workflowId) {
+	public AnalysisSubmission(Builder builder) {
 		this();
-		checkNotNull(workflowId, "workflowId is null");
-		checkNotNull(inputFilesSingle, "inputFilesSingle is null");
-		checkNotNull(inputFilesPaired, "inputFilesPaired is null");
+		checkNotNull(builder.workflowId, "workflowId is null");
+		checkArgument(builder.inputFilesSingle != null || builder.inputFilesPaired != null,
+				"both inputFilesSingle and inputFilesPaired are null.  You must supply at least one set of input files");
 
-		this.name = name;
-		this.inputFilesSingle = inputFilesSingle;
-		this.inputFilesPaired = inputFilesPaired;
-		this.workflowId = workflowId;
-		this.referenceFile = null;
-	}
-
-	/**
-	 * Builds a new AnalysisSubmission object with the given information.
-	 * 
-	 * @param name
-	 *            The name of the workflow submission.
-	 * @param inputFilesSingle
-	 *            The set of single input files to perform an analysis on.
-	 * @param inputFilesPaired
-	 *            The set of paired input files to perform an analysis on.
-	 * @param referenceFile
-	 *            The reference file to use for the analysis.
-	 * @param The
-	 *            id of the workflow for this submission.
-	 * 
-	 */
-	public AnalysisSubmission(String name, Set<SequenceFile> inputFilesSingle,
-			Set<SequenceFilePair> inputFilesPaired, ReferenceFile referenceFile, UUID workflowId) {
-		this(name, inputFilesSingle, inputFilesPaired, workflowId);
-		checkNotNull(referenceFile, "referenceFile is null");
-
-		this.referenceFile = referenceFile;
+		this.name = (builder.name != null) ? builder.name : "Unknown";
+		this.inputFilesSingle = (builder.inputFilesSingle != null) ? builder.inputFilesSingle : Sets.newHashSet();
+		this.inputFilesPaired = (builder.inputFilesPaired != null) ? builder.inputFilesPaired : Sets.newHashSet();
+		this.referenceFile = builder.referenceFile;
+		this.workflowId = builder.workflowId;
 	}
 
 	/**
@@ -380,117 +352,106 @@ public class AnalysisSubmission implements IridaThing {
 	public void setWorkflowId(UUID workflowId) {
 		this.workflowId = workflowId;
 	}
-
+	
 	/**
-	 * Builds a new {@link AnalysisSubmission} from only single-end input files.
+	 * Used to build up an {@link AnalysisSubmission}.
 	 * 
-	 * @param name
-	 *            The name of the submission.
-	 * @param inputFilesSingle
-	 *            The set of input single-end files.
-	 * @param referenceFile
-	 *            The reference file for this submission.
-	 * @param workflowId
-	 *            The id of the workflow to run.
-	 * @return A new {@link AnalysisSubmission}.
+	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
 	 */
-	public static AnalysisSubmission createSubmissionSingleReference(String name,
-			Set<SequenceFile> inputFilesSingle, ReferenceFile referenceFile, UUID workflowId) {
-		return new AnalysisSubmission(name, inputFilesSingle, Sets.newHashSet(), referenceFile, workflowId);
+	public static class Builder {
+		private String name;
+		private Set<SequenceFile> inputFilesSingle;
+		private Set<SequenceFilePair> inputFilesPaired;
+		private ReferenceFile referenceFile;
+		private UUID workflowId;
+		
+		/**
+		 * Creates a new {@link AnalysisSubmission.Builder} with a workflow id.
+		 * 
+		 * @param workflowId
+		 *            The workflow id for this submission.
+		 */
+		public Builder(UUID workflowId) {
+			checkNotNull(workflowId, "workflowId is null");
+
+			this.workflowId = workflowId;
+		}
+
+		/**
+		 * Sets a name for this submission.
+		 * 
+		 * @param name
+		 *            A name for this submission.
+		 * @return An {@link AnalysisSubmission.Builder}.
+		 */
+		public Builder name(String name) {
+			checkNotNull(name, "name is null");
+			
+			this.name = name;
+			return this;
+		}
+
+		/**
+		 * Sets the inputFilesSingle for this submission.
+		 * 
+		 * @param inputFilesSingle
+		 *            The inputFilesSingle for this submission.
+		 * @return An {@link AnalysisSubmission.Builder}.
+		 */
+		public Builder inputFilesSingle(Set<SequenceFile> inputFilesSingle) {
+			checkNotNull(inputFilesSingle, "inputFilesSingle is null");
+			checkArgument(!inputFilesSingle.isEmpty(), "inputFilesSingle is empty");
+			
+			this.inputFilesSingle = inputFilesSingle;
+			return this;
+		}
+
+		/**
+		 * Sets the inputFilesPaired for this submission.
+		 * 
+		 * @param inputFilesSingle
+		 *            The inputFilesPaired for this submission.
+		 * @return An {@link AnalysisSubmission.Builder}.
+		 */
+		public Builder inputFilesPaired(Set<SequenceFilePair> inputFilesPaired) {
+			checkNotNull(inputFilesPaired, "inputFilesPaired is null");
+			checkArgument(!inputFilesPaired.isEmpty(), "inputFilesPaired is empty");
+			
+			this.inputFilesPaired = inputFilesPaired;
+			return this;
+		}
+
+		/**
+		 * Sets the referenceFile for this submission.
+		 * 
+		 * @param inputFilesSingle
+		 *            The referenceFile for this submission.
+		 * @return An {@link AnalysisSubmission.Builder}.
+		 */
+		public Builder referenceFile(ReferenceFile referenceFile) {
+			checkNotNull(referenceFile, "referenceFile is null");
+			
+			this.referenceFile = referenceFile;
+			return this;
+		}
+
+		public AnalysisSubmission build() {
+			checkArgument(inputFilesSingle != null || inputFilesPaired != null,
+					"both inputFilesSingle and inputFilesPaired are null.  You must supply at least one set of input files");
+
+			return new AnalysisSubmission(this);
+		}
 	}
-
+	
 	/**
-	 * Builds a new {@link AnalysisSubmission} from only single-end input files.
+	 * Gets an {@link AnalysisSubmission.Builder}.
 	 * 
-	 * @param name
-	 *            The name of the submission.
-	 * @param inputFilesSingle
-	 *            The set of input single-end files.
 	 * @param workflowId
-	 *            The id of the workflow to run.
-	 * @return A new {@link AnalysisSubmission}.
-	 */
-	public static AnalysisSubmission createSubmissionSingle(String name,
-			Set<SequenceFile> inputFilesSingle, UUID workflowId) {
-		return new AnalysisSubmission(name, inputFilesSingle, Sets.newHashSet(), workflowId);
-	}
-
-	/**
-	 * Builds a new {@link AnalysisSubmission} from only paired-end input files
-	 * with a reference genome.
+	 *            The id of the workflow to submit.
 	 * 
-	 * @param name
-	 *            The name of the submission.
-	 * @param inputFilesPaired
-	 *            The set of input paired-end files.
-	 * @param referenceFile
-	 *            The reference file for this submission.
-	 * @param workflowId
-	 *            The id of the workflow to run.
-	 * @return A new {@link AnalysisSubmission}.
+	 * @return An {@link AnalysisSubmission.Builder}.
 	 */
-	public static AnalysisSubmission createSubmissionPairedReference(String name,
-			Set<SequenceFilePair> inputFilesPaired, ReferenceFile referenceFile, UUID workflowId) {
-		return new AnalysisSubmission(name, Sets.newHashSet(), inputFilesPaired, referenceFile, workflowId);
-	}
-
-	/**
-	 * Builds a new {@link AnalysisSubmission} from only paired-end input files
-	 * and no reference genome.
-	 * 
-	 * @param name
-	 *            The name of the submission.
-	 * @param inputFilesPaired
-	 *            The set of input paired-end files.
-	 * @param referenceFile
-	 *            The reference file for this submission.
-	 * @param workflowId
-	 *            The id of the workflow to run.
-	 * @return A new {@link AnalysisSubmission}.
-	 */
-	public static AnalysisSubmission createSubmissionPaired(String name,
-			Set<SequenceFilePair> inputFilesPaired, UUID workflowId) {
-		return new AnalysisSubmission(name, Sets.newHashSet(), inputFilesPaired, workflowId);
-	}
-
-	/**
-	 * Builds a new {@link AnalysisSubmission} with both paired-end and
-	 * single-end input files and no reference genome.
-	 * 
-	 * @param name
-	 *            The name of the submission.
-	 * @param inputFilesSingle
-	 *            The set of input single-end files.
-	 * @param inputFilesPaired
-	 *            The set of input paired-end files.
-	 * @param workflowId
-	 *            The id of the workflow to run.
-	 * @return A new {@link AnalysisSubmission}.
-	 */
-	public static AnalysisSubmission createSubmissionSingleAndPaired(String name,
-			Set<SequenceFile> inputFilesSingle, Set<SequenceFilePair> inputFilesPaired, UUID workflowId) {
-		return new AnalysisSubmission(name, inputFilesSingle, inputFilesPaired, workflowId);
-	}
-
-	/**
-	 * Builds a new {@link AnalysisSubmission} with both paired-end and
-	 * single-end input files and a reference genome.
-	 * 
-	 * @param name
-	 *            The name of the submission.
-	 * @param inputFilesSingle
-	 *            The set of input single-end files.
-	 * @param inputFilesPaired
-	 *            The set of input paired-end files.
-	 * @param referenceFile
-	 *            The reference file for this submission.
-	 * @param workflowId
-	 *            The id of the workflow to run.
-	 * @return A new {@link AnalysisSubmission}.
-	 */
-	public static AnalysisSubmission createSubmissionSingleAndPairedReference(String name,
-			Set<SequenceFile> inputFilesSingle, Set<SequenceFilePair> inputFilesPaired, ReferenceFile referenceFile,
-			UUID workflowId) {
-		return new AnalysisSubmission(name, inputFilesSingle, inputFilesPaired, referenceFile, workflowId);
+	public static Builder builder(UUID workflowId) {
+		return new AnalysisSubmission.Builder(workflowId);
 	}
 }

@@ -39,8 +39,10 @@ import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultit
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -72,6 +74,9 @@ public class AnalysisSubmissionServiceImplIT {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private SequenceFileRepository sequenceFileRepository;
 
 	private UUID workflowId = UUID.randomUUID();
 
@@ -377,8 +382,12 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testCreateRegularUser() {
-		AnalysisSubmission submission = AnalysisSubmission
-				.createSubmissionSingle("test", Sets.newHashSet(), workflowId);
+		SequenceFile sequenceFile = sequenceFileRepository.findOne(1L);
+		
+		AnalysisSubmission submission = AnalysisSubmission.builder(workflowId)
+				.name("test")
+				.inputFilesSingle(Sets.newHashSet(sequenceFile))
+				.build();
 		AnalysisSubmission createdSubmission = analysisSubmissionService.create(submission);
 		assertNotNull("Submission should have been created", createdSubmission);
 		assertEquals("submitter should be set properly", Long.valueOf(1L), createdSubmission.getSubmitter().getId());
@@ -390,8 +399,12 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testCreateRegularUser2() {
-		AnalysisSubmission submission = AnalysisSubmission
-				.createSubmissionSingle("test", Sets.newHashSet(), workflowId);
+		SequenceFile sequenceFile = sequenceFileRepository.findOne(1L);
+		
+		AnalysisSubmission submission = AnalysisSubmission.builder(workflowId)
+				.name("test")
+				.inputFilesSingle(Sets.newHashSet(sequenceFile))
+				.build();
 		AnalysisSubmission createdSubmission = analysisSubmissionService.create(submission);
 		assertNotNull("Submission should have been created", createdSubmission);
 		assertEquals("submitter should be set properly", Long.valueOf(2L), createdSubmission.getSubmitter().getId());
