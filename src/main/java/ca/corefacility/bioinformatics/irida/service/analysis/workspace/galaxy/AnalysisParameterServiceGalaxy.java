@@ -51,15 +51,9 @@ public class AnalysisParameterServiceGalaxy implements AnalysisParameterService<
 			parameterNamesUsed.add(parameterName);
 
 			if (value == null) {
-				if (iridaParameter.getDefaultValue() == null) {
-					value = iridaParameter.getDefaultValue();
-					logger.debug("Parameter with name=" + parameterName + ", for workflow=" + iridaWorkflow
-							+ ", has no value set, using defaultValue=" + value);
-				} else {
-					logger.warn("Parameter with name=" + parameterName + ", for workflow=" + iridaWorkflow
-							+ ", has no value set and no default value defined, skipping.");
-					continue;
-				}
+				value = iridaParameter.getDefaultValue();
+				logger.debug("Parameter with name=" + parameterName + ", for workflow=" + iridaWorkflow
+						+ ", has no value set, using defaultValue=" + value);
 			}
 
 			for (IridaToolParameter iridaToolParameter : iridaParameter.getToolParameters()) {
@@ -71,10 +65,11 @@ public class AnalysisParameterServiceGalaxy implements AnalysisParameterService<
 				inputs.setToolParameter(toolId, new ToolParameter(galaxyParameterName, value));
 			}
 		}
-		
+
 		Set<String> parameterNamesUnused = Sets.difference(parameters.keySet(), parameterNamesUsed);
 		if (!parameterNamesUnused.isEmpty()) {
-			throw new IridaWorkflowParameterException("The set of parameters " + parameterNamesUnused + " are not defined in " + iridaWorkflow);
+			throw new IridaWorkflowParameterException("The set of parameters " + parameterNamesUnused
+					+ " are not defined in " + iridaWorkflow);
 		} else {
 			return new WorkflowInputsGalaxy(inputs);
 		}

@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.description;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -41,6 +43,10 @@ public class IridaWorkflowParameter {
 	 *            The tool parameters corresponding to this named parameter.
 	 */
 	public IridaWorkflowParameter(String name, String defaultValue, List<IridaToolParameter> toolParameters) {
+		checkNotNull(name, "name is null");
+		checkNotNull(defaultValue, "defaultValue is null");
+		checkNotNull(toolParameters, "toolParameters is null");
+		
 		this.name = name;
 		this.defaultValue = defaultValue;
 		this.toolParameters = toolParameters;
@@ -71,7 +77,11 @@ public class IridaWorkflowParameter {
 	 * @return The default value for this parameter.
 	 */
 	public String getDefaultValue() {
-		return defaultValue;
+		if (defaultValue == null) {
+			throw new NullPointerException("defaultVaule is null");
+		} else {
+			return defaultValue;
+		}
 	}
 
 	@Override
