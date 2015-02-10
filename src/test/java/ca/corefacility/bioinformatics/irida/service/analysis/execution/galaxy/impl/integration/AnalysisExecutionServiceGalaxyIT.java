@@ -47,6 +47,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
@@ -124,11 +125,16 @@ public class AnalysisExecutionServiceGalaxyIT {
 	private Path expectedTree;
 	private Path expectedOutputFile1;
 	private Path expectedOutputFile2;
+	
+	private Path expectedContigs;
+	private Path expectedAnnotations;
+	private Path expectedAnnotationsLog;
 
 	private UUID validIridaWorkflowId = UUID.fromString("c5f29cb2-1b68-4d34-9b93-609266af7551");
 	private UUID invalidIridaWorkflowId = UUID.fromString("8ec369e8-1b39-4b9a-97a1-70ac1f6cc9e6");
 	private UUID iridaPhylogenomicsWorkflowId = UUID.fromString("1f9ea289-5053-4e4a-bc76-1f0c60b179f8");
 	private UUID iridaPhylogenomicsPairedWorkflowId = UUID.fromString("b8c3916c-846e-4a78-96a9-9630911257cd");
+	private UUID iridaAssemblyAnnotationWorkflowId = UUID.fromString("8c438951-484a-48da-be2b-93b7d29aa2a3");
 	private UUID iridaTestAnalysisWorkflowId = UUID.fromString("c5f29cb2-1b68-4d34-9b93-609266af7551");
 	private UUID iridaWorkflowIdInvalidWorkflowFile = UUID.fromString("d54f1780-e6c9-472a-92dd-63520ec85967");
 	private UUID iridaTestAnalysisWorkflowIdMissingOutput = UUID.fromString("63038f49-9f2c-4850-9de3-deb9eaf57512");
@@ -169,6 +175,13 @@ public class AnalysisExecutionServiceGalaxyIT {
 		expectedSnpMatrix = localGalaxy.getWorkflowCorePipelineTestMatrix();
 		expectedSnpTable = localGalaxy.getWorkflowCorePipelineTestSnpTable();
 		expectedTree = localGalaxy.getWorkflowCorePipelineTestTree();
+		
+		expectedContigs = Paths
+				.get(DatabaseSetupGalaxyITService.class.getResource("contigs.fasta").toURI());
+		expectedAnnotations = Paths
+				.get(DatabaseSetupGalaxyITService.class.getResource("genome.gbk").toURI());
+		expectedAnnotationsLog = Paths
+				.get(DatabaseSetupGalaxyITService.class.getResource("prokka.log").toURI());
 		
 		pairedPaths1 = Lists.newArrayList();
 		pairedPaths1.add(sequenceFilePath);
@@ -600,6 +613,81 @@ public class AnalysisExecutionServiceGalaxyIT {
 				analysisResultsPhylogenomics.getSnpTable().getFile(), savedPhylogenomics.getSnpTable().getFile());
 		assertEquals("analysis results from database and from submission should have correct input sequence files",
 				analysisResultsPhylogenomics.getInputSequenceFiles(), savedPhylogenomics.getInputSequenceFiles());
+	}
+	
+	/**
+	 * Tests out getting analysis results successfully for assembly and annotation pipeline (test version).
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testTransferAnalysisResultsSuccessAssemblyAnnotation() throws Exception {
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
+				pairedPaths1, pairedPaths2, iridaAssemblyAnnotationWorkflowId);
+		SequenceFilePair sequenceFilePair = analysisSubmission.getPairedInputFiles().iterator().next();
+		Iterator<SequenceFile> sequenceFilePairIter = sequenceFilePair.getFiles().iterator();
+		SequenceFile sequenceFile1 = sequenceFilePairIter.next();
+		SequenceFile sequenceFile2 = sequenceFilePairIter.next();
+
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+
+		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
+				.executeAnalysis(analysisSubmitted);
+		AnalysisSubmission analysisExecuted = analysisExecutionFuture.get();
+
+		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
+
+		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
+		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
+				.transferAnalysisResults(analysisExecuted);
+		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
+		assertEquals("invalid number of analyses for input sequence file in database", 1, analysisRepository
+				.findAnalysesForSequenceFile(sequenceFile1, AnalysisAssemblyAnnotation.class).size());
+		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
+				.getId());
+		assertEquals("analysis state is not completed", AnalysisState.COMPLETED,
+				analysisSubmissionCompletedDatabase.getAnalysisState());
+		assertEquals("analysis state is not completed", AnalysisState.COMPLETED,
+				analysisSubmissionCompleted.getAnalysisState());
+
+		Analysis analysisResults = analysisSubmissionCompleted.getAnalysis();
+		Analysis analysisResultsDatabase = analysisSubmissionCompletedDatabase.getAnalysis();
+		assertEquals("analysis results in returned submission and from database should be the same",
+				analysisResults.getId(), analysisResultsDatabase.getId());
+
+		assertEquals("analysis results is an invalid class", AnalysisAssemblyAnnotation.class,
+				analysisResults.getClass());
+		AnalysisAssemblyAnnotation analysisResultsAssembly = (AnalysisAssemblyAnnotation) analysisResults;
+
+		String analysisId = analysisExecuted.getRemoteAnalysisId();
+		assertEquals("id should be set properly for analysis", analysisId,
+				analysisResultsAssembly.getExecutionManagerAnalysisId());
+
+		assertEquals("inputFiles for the analysis should be set correctly",
+				Sets.newHashSet(sequenceFile1, sequenceFile2), analysisResultsAssembly.getInputSequenceFiles());
+
+		assertEquals("invalid number of output files", 3, analysisResultsAssembly.getAnalysisOutputFiles().size());
+		AnalysisOutputFile contigs = analysisResultsAssembly.getContigs();
+		AnalysisOutputFile annotations = analysisResultsAssembly.getAnnotations();
+		AnalysisOutputFile prokkaLog = analysisResultsAssembly.getAnnotationLog();
+
+		assertTrue("contigs should be equal",
+				com.google.common.io.Files.equal(expectedContigs.toFile(), contigs.getFile().toFile()));
+		assertEquals("invalid file name for contigs", expectedContigs.getFileName(), contigs.getFile()
+				.getFileName());
+
+		assertTrue("annotations should be correct",
+				com.google.common.io.Files.equal(expectedAnnotations.toFile(), annotations.getFile().toFile()));
+		assertEquals("invalid file name for annotations", expectedAnnotations.getFileName(), annotations.getFile()
+				.getFileName());
+
+		assertTrue("annotations log should be correct",
+				com.google.common.io.Files.equal(expectedAnnotationsLog.toFile(), prokkaLog.getFile().toFile()));
+		assertEquals("invalid file name for annotations log", expectedAnnotationsLog.getFileName(), prokkaLog.getFile()
+				.getFileName());
 	}
 	
 	/**

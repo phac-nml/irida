@@ -269,7 +269,7 @@ public class SequenceFileServiceImplIT {
 		List<Join<Sample, SequenceFile>> sequenceFilesForSample = sequenceFileService.getSequenceFilesForSample(s);
 		assertEquals(1, sequenceFilesForSample.size());
 	}
-	
+
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetUnpairedFilesForSample() {
@@ -281,5 +281,18 @@ public class SequenceFileServiceImplIT {
 		Join<Sample, SequenceFile> join = unpairedSequenceFilesForSample.iterator().next();
 
 		assertEquals(new Long(5), join.getObject().getId());
+	}
+
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	public void testGetUnpairedFilesForSampleWithNoPairs() {
+		Sample s = sampleService.read(1L);
+
+		List<Join<Sample, SequenceFile>> unpairedSequenceFilesForSample = sequenceFileService
+				.getUnpairedSequenceFilesForSample(s);
+		assertEquals(1, unpairedSequenceFilesForSample.size());
+		Join<Sample, SequenceFile> join = unpairedSequenceFilesForSample.iterator().next();
+
+		assertEquals(new Long(1), join.getObject().getId());
 	}
 }

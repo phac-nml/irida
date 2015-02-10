@@ -1,0 +1,9 @@
+/* line 3, ../../../styles/pages/sample_files.scss */
+.paired_end {
+  border-left: 1rem solid #133B54;
+}
+
+/* line 7, ../../../styles/pages/sample_files.scss */
+.single_end {
+  border-left: 1rem solid #3092d0;
+}

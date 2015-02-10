@@ -15,13 +15,16 @@ import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -37,6 +40,7 @@ import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -45,7 +49,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 /**
- * Created by josh on 14-07-30.
+ * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
 public class SamplesControllerTest {
 
@@ -53,19 +57,23 @@ public class SamplesControllerTest {
 	private SamplesController controller;
 	private SampleService sampleService;
 	private SequenceFileService sequenceFileService;
+	private SequenceFilePairService sequenceFilePairService;
 	private UserService userService;
 	private ProjectService projectService;
 	private SequenceFileWebUtilities sequenceFileWebUtilities;
+	private MessageSource messageSource;
 
 	@Before
 	public void setUp() {
 		sampleService = mock(SampleService.class);
 		sequenceFileService = mock(SequenceFileService.class);
+		sequenceFilePairService = mock(SequenceFilePairService.class);
 		userService = mock(UserService.class);
 		projectService = mock(ProjectService.class);
 		sequenceFileWebUtilities = new SequenceFileWebUtilities();
-		controller = new SamplesController(sampleService, sequenceFileService, userService, projectService,
-				sequenceFileWebUtilities);
+		messageSource = mock(MessageSource.class);
+		controller = new SamplesController(sampleService, sequenceFileService, sequenceFilePairService, userService, projectService,
+				sequenceFileWebUtilities, messageSource);
 	}
 
 	// ************************************************************************************************
@@ -146,7 +154,8 @@ public class SamplesControllerTest {
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
 
 		verify(sampleService, times(2)).read(sampleId);
-		verify(sequenceFileService).getSequenceFilesForSample(sample);
+		verify(sequenceFileService).getUnpairedSequenceFilesForSample(sample);
+		verify(sequenceFilePairService).getSequenceFilePairsForSample(sample);
 	}
 
 	@Test
@@ -174,7 +183,8 @@ public class SamplesControllerTest {
 		assertTrue((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
 
 		verify(sampleService, times(2)).read(sampleId);
-		verify(sequenceFileService).getSequenceFilesForSample(sample);
+		verify(sequenceFileService).getUnpairedSequenceFilesForSample(sample);
+		verify(sequenceFilePairService).getSequenceFilePairsForSample(sample);
 		verifyZeroInteractions(projectService);
 	}
 
@@ -207,7 +217,8 @@ public class SamplesControllerTest {
 		assertFalse((boolean) model.get(SamplesController.MODEL_ATTR_CAN_MANAGE_SAMPLE));
 
 		verify(sampleService, times(2)).read(sampleId);
-		verify(sequenceFileService).getSequenceFilesForSample(sample);
+		verify(sequenceFileService).getUnpairedSequenceFilesForSample(sample);
+		verify(sequenceFilePairService).getSequenceFilePairsForSample(sample);
 	}
 
 	@Test
@@ -220,7 +231,8 @@ public class SamplesControllerTest {
 		when(sampleService.read(sampleId)).thenReturn(sample);
 		when(sequenceFileService.read(fileId)).thenReturn(file);
 
-		controller.removeFileFromSample(sampleId, fileId);
+		RedirectAttributesModelMap attributes = new RedirectAttributesModelMap();
+		controller.removeFileFromSample(attributes, sampleId, fileId, "/returnURL", Locale.US);
 
 		verify(sampleService).removeSequenceFileFromSample(sample, file);
 	}
@@ -240,7 +252,7 @@ public class SamplesControllerTest {
 			joinList.add(new SampleSequenceFileJoin(sample, file));
 		}
 		when(sampleService.read(1L)).thenReturn(sample);
-		when(sequenceFileService.getSequenceFilesForSample(sample)).thenReturn(joinList);
+		when(sequenceFileService.getUnpairedSequenceFilesForSample(sample)).thenReturn(joinList);
 		List<Map<String, Object>> result = controller.getFilesForSample(1L);
 		assertEquals("Should have the correct number of sequence file records.", joinList.size(), result.size());
 

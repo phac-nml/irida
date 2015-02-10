@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.workflow.integration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -37,14 +37,17 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadExceptio
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaToolParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowToolRepository;
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -78,6 +81,9 @@ public class IridaWorkflowLoaderServiceIT {
 	private Path workflowDirectoryPathNoStructure;
 	private Path workflowDirectoryPathNoId;
 	private Path workflowDirectoryPathInvalidType;
+	private Path workflowDirectoryPathNoParameters;
+	private Path workflowDirectoryPathWithParameters;
+	private Path workflowDirectoryPathWithParametersNoDefault;
 
 	@Before
 	public void setup() throws JAXBException, URISyntaxException, FileNotFoundException {
@@ -97,6 +103,12 @@ public class IridaWorkflowLoaderServiceIT {
 				.getResource("workflows/TestAnalysisNoStructure").toURI());
 		workflowDirectoryPathInvalidType = Paths.get(TestAnalysis.class
 				.getResource("workflows/TestAnalysisInvalidType").toURI());
+		workflowDirectoryPathNoParameters = Paths.get(TestAnalysis.class
+				.getResource("workflows/TestAnalysisNoParameters/1.0").toURI());
+		workflowDirectoryPathWithParameters = Paths.get(TestAnalysis.class
+				.getResource("workflows/TestAnalysisWithParameters/1.0").toURI());
+		workflowDirectoryPathWithParametersNoDefault = Paths.get(TestAnalysis.class
+				.getResource("workflows/TestAnalysisWithParametersNoDefault/1.0").toURI());
 		workflowDirectoryPathNoId = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysisNoId").toURI());
 	}
 
@@ -130,10 +142,16 @@ public class IridaWorkflowLoaderServiceIT {
 		IridaWorkflowToolRepository workflowTool = new IridaWorkflowToolRepository("sam_to_bam", "devteam", new URL(
 				"http://toolshed.g2.bx.psu.edu/"), "8176b2575aa1");
 		tools.add(workflowTool);
+		
+		List<IridaWorkflowParameter> parameters = new LinkedList<>();
+		IridaToolParameter tool1 = new IridaToolParameter("irida.corefacility.ca/galaxy-shed/repos/irida/test-tool/0.1", "a");
+		IridaToolParameter tool2 = new IridaToolParameter("irida.corefacility.ca/galaxy-shed/repos/irida/test-tool/0.1", "b");
+		IridaWorkflowParameter parameter1 = new IridaWorkflowParameter("test-parameter", "1", Lists.newArrayList(tool1, tool2));
+		parameters.add(parameter1);
 
 		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version, "Mr. Developer",
 				"developer@example.com", AnalysisType.DEFAULT, new IridaWorkflowInput(sequenceReadsSingle, sequenceReadsPaired, "reference"),
-				outputs, tools);
+				outputs, tools, parameters);
 
 		return iridaWorkflow;
 	}
@@ -252,6 +270,55 @@ public class IridaWorkflowLoaderServiceIT {
 		Set<String> validVersionNumbers = Sets.newHashSet("1.0", "2.0", "1.0-invalid", "2.0-missing-output",
 				"1.0-paired", "1.0-single-paired");
 		assertEquals("irida workflow versions are invalid", validVersionNumbers, actualVersionNumbers);
+	}
+
+	/**
+	 * Test to make sure we can load a workflow with no parameters.
+	 * 
+	 * @throws IridaWorkflowLoadException
+	 * @throws IOException
+	 */
+	@Test
+	public void testLoadWorkflowNoParameters() throws IridaWorkflowLoadException, IOException {
+		IridaWorkflow iridaWorkflowFromFile = workflowLoaderService
+				.loadIridaWorkflowFromDirectory(workflowDirectoryPathNoParameters);
+		assertFalse("workflow loaded with no parameters", iridaWorkflowFromFile.getWorkflowDescription()
+				.acceptsParameters());
+		assertNull("parameters should be null", iridaWorkflowFromFile.getWorkflowDescription().getParameters());
+	}
+
+	/**
+	 * Test to make sure we can load a workflow with parameters.
+	 * 
+	 * @throws IridaWorkflowLoadException
+	 * @throws IOException
+	 */
+	@Test
+	public void testLoadWorkflowWithParameters() throws IridaWorkflowLoadException, IOException {
+		IridaWorkflow iridaWorkflowFromFile = workflowLoaderService
+				.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParameters);
+		assertTrue("workflow loaded with no parameters", iridaWorkflowFromFile.getWorkflowDescription()
+				.acceptsParameters());
+		List<IridaWorkflowParameter> parameters = iridaWorkflowFromFile.getWorkflowDescription().getParameters();
+		assertNotNull("parameters should not be null", parameters);
+		assertEquals("parameters does not have the correct size", 1, parameters.size());
+		IridaWorkflowParameter parameter = parameters.get(0);
+		assertEquals("parameter does not have the correct name", "test-parameter", parameter.getName());
+		assertEquals("default value is not correct", "1", parameter.getDefaultValue());
+		assertEquals("parameter does not have correct number of tool parameters", 1, parameter.getToolParameters()
+				.size());
+	}
+
+	/**
+	 * Test to make sure we fail to load a workflow with no default value.
+	 * 
+	 * @throws IridaWorkflowLoadException
+	 * @throws IOException
+	 */
+	@Test(expected=IridaWorkflowLoadException.class)
+	public void testLoadWorkflowWithParametersNoDefaultValueFail() throws IridaWorkflowLoadException, IOException {
+		workflowLoaderService
+				.loadIridaWorkflowFromDirectory(workflowDirectoryPathWithParametersNoDefault);
 	}
 	
 	/**

@@ -2,11 +2,12 @@ html, body {
   height: 100%;
 }
 
-.layout-flex {
+.main-container {
   display: flex;
-
-  > div {
-    padding: 1rem;
-  }
+  flex-direction: row;
+  height: 100%;
 }
 
+.content {
+  flex-grow: 1;
+}

@@ -3,13 +3,9 @@
       layout:decorator="template/page">
 <head lang="en">
 	<title th:text="#{pipeline.phylogenomics.page-title}">Pipelines - Launch</title>
-	<link rel="stylesheet" href="/resources/css/pages/pipelines.css" th:href="@{/resources/css/pages/pipelines.css}"/>
+	<link rel="stylesheet" href="/resources/css/pages/sample_files.css"
+	      th:href="@{/resources/css/pages/sample_files.css}"/>
 	<style>
-		.affix-top {
-			position: fixed;
-			top: 50px;
-			max-width: 100px;
-		}
 	</style>
 	<script>window.dependencies = ['irida.pipelines.phylogenomics'];</script>
 </head>
@@ -71,8 +67,9 @@
 				<div class="form-group alert">
 					<label class="col-sm-2 control-label" th:text="#{workflow.label.files}">Files</label>
 
-					<div class="col-sm-10">
+					<div class="col-sm-10" th:with="dateFormat=#{locale.date.short}">
 						<div th:each="project : ${projects}">
+
 							<div class="sample-container" th:each="sample : ${project.samples}">
 								<h3>
 									<a href="#" th:href="@{/projects/{id}/samples(id=${project.id})}"
@@ -81,45 +78,74 @@
 									        th:text="#{form.btn.remove}">Remove
 									</button>
 								</h3>
-								<table class="table" th:with="dateFormat=#{locale.date.long}">
-									<th:block th:each="s, iterStat : ${sample.files}">
-										<tr th:if="${s.type == 'paired_end'}">
-											<td>
-												<div class="layout-flex">
-													<div class="file_checkbox paired_end">
-														<input th:name="${sample.id}" type="radio" data:type="${s.type}"
-														       th:checked="${iterStat.first}" th:value="${s.id}"/></div>
-													<div class="file_names">
-														<div data:file="${file.id}" th:each="file : ${s.files}"
-														     th:text="${file.label}"></div>
-													</div>
-													<div class="file_date">
-														<div
-															th:text="${#dates.format(s.createdDate, dateFormat)}"></div>
+								<ul class="boards">
+									<li class="board" th:each="s, iterStat : ${sample.files}">
+										<div class="paired_end board_inner" th:if="${s.type == 'paired_end'}">
+											<div class="row board_paired" th:each="file : ${s.files}">
+												<div class="col-md-1 text-center">
+													<input th:if="${fileStat.first}" th:name="${sample.id}" type="radio"
+													       data:type="${s.type}"
+													       th:checked="${iterStat.first}" th:value="${s.id}"/>
+												</div>
+												<div class="col-md-6">
+													<a href="#"
+													   th:href="@{/sequenceFiles/{id}/summary(id=${file.id})}"
+													   class="board-name btn btn-default btn-sm"
+													   th:text="${file.label}"></a>
+												</div>
+												<div class="col-md-2">
+													<div class="board_detail">
+														<div class="board_detail--value" th:text="${file.size}"></div>
+														<div class="small text-muted board_detail--desc"
+														     th:text="#{samples.files.fileSize}">File Size
+														</div>
 													</div>
 												</div>
-											</td>
-										</tr>
-										<tr th:if="${s.type == 'single_end'}">
-											<td>
-												<div class="layout-flex">
-													<div class="file_checkbox single_end">
-														<input th:name="${sample.id}" data:type="${s.type}"
-														       data:sample="${sample.id}" type="radio"
-														       th:value="${s.id}" th:checked="${iterStat.first}"/>
-													</div>
-													<div class="file_names">
-														<div th:text="${s.label}"></div>
-													</div>
-													<div class="file_date">
-														<div
-															th:text="${#dates.format(s.createdDate, dateFormat)}"></div>
+												<div class="col-md-3">
+													<span class="pull-right" th:if="${fileStat.first}">
+														<div class="board_detail--value"
+														     th:text="${#dates.format(s.createdDate, dateFormat)}"></div>
+														<div class="small text-muted board_detail--desc"
+														     th:text="#{samples.files.createdDate}">Created Date
+														</div>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="single_end board_inner" th:if="${s.type == 'single_end'}">
+											<div class="row board_paired">
+												<div class="col-md-1 text-center">
+													<input th:name="${sample.id}" type="radio"
+													       data:type="${s.type}"
+													       th:checked="${iterStat.first}" th:value="${s.id}"/>
+												</div>
+												<div class="col-md-6">
+													<a href="#"
+													   th:href="@{/sequenceFiles/{id}/summary(id=${s.id})}"
+													   class="board-name btn btn-default btn-sm"
+													   th:text="${s.label}"></a>
+												</div>
+												<div class="col-md-2">
+													<div class="board_detail">
+														<div class="board_detail--value" th:text="${s.size}"></div>
+														<div class="small text-muted board_detail--desc"
+														     th:text="#{samples.files.fileSize}">File Size
+														</div>
 													</div>
 												</div>
-											</td>
-										</tr>
-									</th:block>
-								</table>
+												<div class="col-md-3">
+													<span class="pull-right">
+														<div class="board_detail--value"
+														     th:text="${#dates.format(s.createdDate, dateFormat)}"></div>
+														<div class="small text-muted board_detail--desc"
+														     th:text="#{samples.files.createdDate}">Created Date
+														</div>
+													</span>
+												</div>
+											</div>
+										</div>
+									</li>
+								</ul>
 							</div>
 						</div>
 					</div>
@@ -128,9 +154,11 @@
 			<div class="col-md-2" ng-switch="phylCtrl.loading">
 				<div data-spy="affix" style="width: 200px;">
 					<div ng-switch-when="false" class="ng-cloak text-center">
-					<h2 th:text="#{workflow.launch.btn}">Ready to Launch?</h2>
+						<h2 th:text="#{workflow.launch.btn}">Ready to Launch?</h2>
+
 						<div>
-							<button id="btn-launch" class="btn btn-xl btn-danger btn-action" th:title="#{workflow.launch.btn.title}"
+							<button id="btn-launch" class="btn btn-xl btn-danger btn-action"
+							        th:title="#{workflow.launch.btn.title}"
 							        ng-click="phylCtrl.launch()">
 								<span class="fa fa-rocket"></span>
 							</button>
@@ -145,9 +173,13 @@
 							<strong class="fa fa-2x fa-smile-o text-center"></strong>&nbsp;
 							<span th:text="#{workflow.submitted-success}">You must be awesome!  All your files looked good and the pipeline has been launched and the pedal should hit the metal soon.</span>
 							<br/><br/>
-							<button id="btn-see-pipeline" class="btn btn-success btn-affixed" th:text="#{workflow.submitted-view-btn}">Let's see how this pipeline is doing.</button>
+							<button id="btn-see-pipeline" class="btn btn-success btn-affixed"
+							        th:text="#{workflow.submitted-view-btn}">Let's see how this pipeline is doing.
+							</button>
 							<br/><br/>
-							<button id="btn-clear-pipeline" class="btn btn-warning btn-affixed" th:text="#{workflow.submitted-clear-btn}">Clear the cart and start over!</button>
+							<button id="btn-clear-pipeline" class="btn btn-warning btn-affixed"
+							        th:text="#{workflow.submitted-clear-btn}">Clear the cart and start over!
+							</button>
 						</div>
 					</div>
 				</div>

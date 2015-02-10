@@ -1,25 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <iridaWorkflow>
-  <name>TestWorkflow</name>
-  <version>1.0</version>
-  <author>Mr. Developer</author>
-  <email>developer@example.com</email>
-  <analysisType>default</analysisType>
-  <inputs>
-    <sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
-    <reference>reference</reference>
-  </inputs>
-  <outputs>
-    <output name="output1" fileName="output1.txt"></output>
-    <output name="output2" fileName="output2.txt"></output>
-  </outputs>
-  <toolRepositories>
-    <repository>
-      <name>sam_to_bam</name>
-      <owner>devteam</owner>
-      <url>http://toolshed.g2.bx.psu.edu/</url>
-      <revision>8176b2575aa1</revision>
-    </repository>
-  </toolRepositories>
+	<name>TestWorkflow</name>
+	<version>1.0</version>
+	<author>Mr. Developer</author>
+	<email>developer@example.com</email>
+	<analysisType>default</analysisType>
+	<inputs>
+		<sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
+		<reference>reference</reference>
+	</inputs>
+	<parameters>
+		<parameter name="test-parameter" defaultValue="1">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/test-tool/0.1"
+				parameterName="a" />
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/test-tool/0.1"
+				parameterName="b" />
+		</parameter>
+	</parameters>
+	<outputs>
+		<output name="output1" fileName="output1.txt"></output>
+		<output name="output2" fileName="output2.txt"></output>
+	</outputs>
+	<toolRepositories>
+		<repository>
+			<name>sam_to_bam</name>
+			<owner>devteam</owner>
+			<url>http://toolshed.g2.bx.psu.edu/</url>
+			<revision>8176b2575aa1</revision>
+		</repository>
+	</toolRepositories>
 </iridaWorkflow>

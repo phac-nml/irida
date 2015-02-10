@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+	<id>bac44f4b-46f9-4393-b247-de11a751410e</id>
+	<name>AssemblyAnnotation</name>
+	<version>0.1-dev</version>
+	<author>Aaron Petkau</author>
+	<email>aaron.petkau@phac-aspc.gc.ca</email>
+	<analysisType>assembly-annotation</analysisType>
+	<inputs>
+		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+	</inputs>
+	<outputs>
+		<output name="contigs" fileName="contigs.fasta" />
+		<output name="annotations-genbank" fileName="genome.gbk" />
+		<output name="annotations-log" fileName="prokka.log" />
+	</outputs>
+	<toolRepositories>
+		<repository>
+			<name>spades</name>
+			<owner>lionelguy</owner>
+			<url>http://toolshed.g2.bx.psu.edu/</url>
+			<revision>89004d4f8dd3</revision>
+		</repository>
+		<repository>
+			<name>prokka</name>
+			<owner>crs4</owner>
+			<url>http://toolshed.g2.bx.psu.edu/</url>
+			<revision>3ad7ef0ba385</revision>
+		</repository>
+	</toolRepositories>
+</iridaWorkflow>

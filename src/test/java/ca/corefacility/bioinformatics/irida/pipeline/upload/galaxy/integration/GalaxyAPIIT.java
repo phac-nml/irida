@@ -585,7 +585,7 @@ public class GalaxyAPIIT {
 						.get("/illumina_reads/testData/testData1.fastq")
 						.getId());
 		
-		assertEquals("fastqsanger",datasetData1.getDataType());
+		assertEquals("fastqsanger",datasetData1.getDataTypeExt());
 
 		// admin should have access to files
 		Library actualLibraryAdmin = findLibraryByName(libraryName,
@@ -688,7 +688,7 @@ public class GalaxyAPIIT {
 						.get("/illumina_reads/testData/testData1.fastq")
 						.getId());
 		
-		assertEquals("fastqsanger",datasetData1.getDataType());
+		assertEquals("fastqsanger",datasetData1.getDataTypeExt());
 
 		// regular user should not have access to files
 		actualLibrary = findLibraryByName(libraryName,
@@ -767,7 +767,7 @@ public class GalaxyAPIIT {
 						.get("/illumina_reads/testData/testData1.fastq")
 						.getId());
 		
-		assertEquals("fastqsanger",datasetData1.getDataType());
+		assertEquals("fastqsanger",datasetData1.getDataTypeExt());
 
 		// download file from Galaxy
 		String galaxyFileContents = getGalaxyFileContents(
@@ -850,7 +850,7 @@ public class GalaxyAPIIT {
 						.get("/illumina_reads/testData/testData1.fastq")
 						.getId());
 		
-		assertEquals("fastqsanger",datasetData1.getDataType());
+		assertEquals("fastqsanger",datasetData1.getDataTypeExt());
 
 		// download file from Galaxy
 		String galaxyFileContents = getGalaxyFileContents(
@@ -1170,14 +1170,14 @@ public class GalaxyAPIIT {
 						.get("/illumina_reads/testData/testData1.fastq")
 						.getId());
 		
-		assertEquals("fastqsanger",datasetData1.getDataType());
+		assertEquals("fastqsanger",datasetData1.getDataTypeExt());
 		
 		Dataset datasetData2 = moveLibraryDataToHistoryDataset(libraryName.getName() + "2", "testData2.fastq",
 				localGalaxy.getGalaxyInstanceUser1(), contentsMap
 						.get("/illumina_reads/testData/testData2.fastq")
 						.getId());
 		
-		assertEquals("fastqsanger",datasetData2.getDataType());
+		assertEquals("fastqsanger",datasetData2.getDataTypeExt());
 
 		// no duplicate folders or libraries for user1
 		libraries = galaxySearchUser1.findByName(libraryName);
@@ -1779,14 +1779,14 @@ public class GalaxyAPIIT {
 						.get("/illumina_reads/testData1/testData1.fastq")
 						.getId());
 		
-		assertEquals("fastqsanger",datasetData1.getDataType());
+		assertEquals("fastqsanger",datasetData1.getDataTypeExt());
 		
 		Dataset datasetData2 = moveLibraryDataToHistoryDataset(libraryName.getName() + "2", "testData1.fastq",
 				localGalaxy.getGalaxyInstanceAdmin(), contentsMap
 						.get("/illumina_reads/testData2/testData1.fastq")
 						.getId());
 		
-		assertEquals("fastqsanger",datasetData2.getDataType());
+		assertEquals("fastqsanger",datasetData2.getDataTypeExt());
 	}
 	
 	/**

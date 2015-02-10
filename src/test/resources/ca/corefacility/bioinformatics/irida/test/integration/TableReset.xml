@@ -23,6 +23,7 @@
 	<analysis_properties />
 	<analysis_sequence_file />
 	<analysis_phylogenomicspipeline />
+	<analysis_assemblyannotation />
 
 	<client_details />
 	<client_role />

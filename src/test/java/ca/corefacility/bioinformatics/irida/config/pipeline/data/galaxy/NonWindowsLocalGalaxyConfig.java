@@ -93,7 +93,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	 * URL to a local database file.
 	 */
 	private static final URL LOCAL_DATABASE_URL = NonWindowsLocalGalaxyConfig.class
-			.getResource("db_gx_rev_0120.sqlite");
+			.getResource("db_gx_rev_0124.sqlite");
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(NonWindowsLocalGalaxyConfig.class);
@@ -302,8 +302,18 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 				"core_pipeline_outputs_paired.xml").toURI());
 		Path corePipelineOutputsSinglePairedToolSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
 				"core_pipeline_outputs_single_paired.xml").toURI());
+		Path assemblyAnnotationPipelineOutputsSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
+				"assembly_annotation_pipeline_outputs.xml").toURI());
 		Path iridaToolConfigSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
 				"tool_conf_irida.xml").toURI());
+		
+		Path configDirectory = galaxyRoot.resolve("config");
+		
+		// copies conf/tool_conf.xml.sample to conf/tool_conf.xml
+		// I'm suprised Galaxy doesn't do this by default
+		Path toolConfigSample = configDirectory.resolve("tool_conf.xml.sample");
+		Path toolConfig = configDirectory.resolve("tool_conf.xml");
+		Files.copy(toolConfigSample, toolConfig);
 
 		// copy over necessary files for testing custom tools
 		Path exampleToolDirectory = galaxyRoot.resolve("tools").resolve("irida");
@@ -316,17 +326,20 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 				exampleToolDirectory.resolve("core_pipeline_outputs_paired.xml");
 		Path corePipelineSinglePairedExampleToolDestination = 
 				exampleToolDirectory.resolve("core_pipeline_outputs_single_paired.xml");
+		Path assemblyAnnotationPipelinOutputsDestination = 
+				exampleToolDirectory.resolve("assembly_annotation_pipeline_outputs.xml");
 		Files.copy(collectionExampleToolSource, collectionExampleToolDestination);
 		Files.copy(corePipelineOutputsSingleToolSource, corePipelineExampleToolDestination);
 		Files.copy(corePipelineOutputsPairedToolSource, corePipelinePairedExampleToolDestination);
 		Files.copy(corePipelineOutputsSinglePairedToolSource, corePipelineSinglePairedExampleToolDestination);
+		Files.copy(assemblyAnnotationPipelineOutputsSource, assemblyAnnotationPipelinOutputsDestination);
 		
-		Path iridaToolConfigDestination = galaxyRoot.resolve("tool_conf_irida.xml");
+		Path iridaToolConfigDestination = configDirectory.resolve("tool_conf_irida.xml");
 		Files.copy(iridaToolConfigSource, iridaToolConfigDestination);
 		
 		// set configuration file in Galaxy for custom tools
 		galaxyProperties.setAppProperty("tool_config_file",
-				"tool_conf.xml,shed_tool_conf.xml,tool_conf_irida.xml");
+				"config/tool_conf.xml,config/shed_tool_conf.xml,config/tool_conf_irida.xml");
 	}
 	
 	/**
