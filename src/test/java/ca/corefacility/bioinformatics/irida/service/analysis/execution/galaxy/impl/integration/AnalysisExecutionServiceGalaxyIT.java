@@ -37,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
@@ -59,6 +60,7 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
@@ -112,6 +114,9 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 	@Autowired
 	private ExecutorService analysisTaskExecutor;
+	
+	@Autowired
+	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
 
 	private Path sequenceFilePath;
 	private Path sequenceFilePath2;
@@ -220,14 +225,14 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * @throws InterruptedException
 	 * @throws NoSuchValueException
 	 * @throws ExecutionManagerException
-	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
 	 * @throws ExecutionException
+	 * @throws IridaWorkflowException 
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testExecuteAnalysisSuccess() throws InterruptedException, NoSuchValueException,
-			IridaWorkflowNotFoundException, ExecutionManagerException, IOException, ExecutionException {
+			ExecutionManagerException, IOException, ExecutionException, IridaWorkflowException {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 
@@ -331,13 +336,12 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * 
 	 * @throws NoSuchValueException
 	 * @throws ExecutionManagerException
-	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
+	 * @throws IridaWorkflowException 
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testExecuteAnalysisFailState() throws NoSuchValueException, IridaWorkflowNotFoundException,
-			ExecutionManagerException, IOException {
+	public void testExecuteAnalysisFailState() throws NoSuchValueException, ExecutionManagerException, IOException, IridaWorkflowException {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
 

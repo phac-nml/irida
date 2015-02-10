@@ -37,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateException;
@@ -244,13 +245,13 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * 
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
-	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
+	 * @throws IridaWorkflowException 
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareAnalysisFilesSingleSuccess() throws InterruptedException, ExecutionManagerException,
-			IridaWorkflowNotFoundException, IOException {
+			IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesSingleSuccess");
@@ -300,13 +301,13 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * 
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
-	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
+	 * @throws IridaWorkflowException 
 	 */
 	@Test(expected = SampleAnalysisDuplicateException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareAnalysisFilesSingleFail() throws InterruptedException, ExecutionManagerException,
-			IridaWorkflowNotFoundException, IOException {
+			IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesSingleFail");
@@ -335,13 +336,13 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * 
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
-	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
+	 * @throws IridaWorkflowException 
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareAnalysisFilesPairSuccess() throws InterruptedException, ExecutionManagerException,
-			IridaWorkflowNotFoundException, IOException {
+			IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesPairSuccess");
@@ -390,13 +391,13 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * 
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
-	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
+	 * @throws IridaWorkflowException 
 	 */
 	@Test(expected = SampleAnalysisDuplicateException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareAnalysisFilesPairFail() throws InterruptedException, ExecutionManagerException,
-			IridaWorkflowNotFoundException, IOException {
+			IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesPairFail");
@@ -424,13 +425,13 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * 
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
-	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
+	 * @throws IridaWorkflowException 
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareAnalysisFilesSinglePairSuccess() throws InterruptedException, ExecutionManagerException,
-			IridaWorkflowNotFoundException, IOException {
+			IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesPairSuccess");
@@ -484,13 +485,13 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * 
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
-	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
+	 * @throws IridaWorkflowException 
 	 */
 	@Test(expected = SampleAnalysisDuplicateException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareAnalysisFilesSinglePairFail() throws InterruptedException, ExecutionManagerException,
-			IridaWorkflowNotFoundException, IOException {
+			IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesSinglePairFail");
@@ -517,13 +518,13 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * 
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
-	 * @throws IridaWorkflowNotFoundException
 	 * @throws IOException
+	 * @throws IridaWorkflowException 
 	 */
 	@Test(expected = WorkflowException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareAnalysisFilesFail() throws InterruptedException, ExecutionManagerException,
-			IridaWorkflowNotFoundException, IOException {
+			IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesFail");
