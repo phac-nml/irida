@@ -92,7 +92,10 @@ public class TestDataFactory {
 		Set<SequenceFile> files = new HashSet<>();
 		files.add(constructSequenceFile());
 		Long id = 5L;
-		AnalysisSubmission analysisSubmission = AnalysisSubmission.createSubmissionSingle("submission-" + id, files, UUID.randomUUID());
+		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(UUID.randomUUID())
+				.name("submission-" + id)
+				.inputFilesSingle(files)
+				.build();
 		analysisSubmission.setId(id);
 		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
 		analysisSubmission.setAnalysis(constructAnalysis());

@@ -110,17 +110,17 @@ public class AnalysisExecutionServiceGalaxyTest {
 		MockitoAnnotations.initMocks(this);
 
 		String submissionName = "name";
-		Set<SequenceFile> submissionInputFiles = Sets.newHashSet();
+		Set<SequenceFile> submissionInputFiles = Sets.newHashSet(new SequenceFile());
 
-		analysisSubmission = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisPreparing = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisPrepared = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisSubmitting = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisRunning = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisFinishedRunning = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisCompleting = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisCompleted = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
-		analysisError = AnalysisSubmission.createSubmissionSingle(submissionName, submissionInputFiles, WORKFLOW_ID);
+		analysisSubmission = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
+		analysisPreparing = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
+		analysisPrepared = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
+		analysisSubmitting = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
+		analysisRunning = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
+		analysisFinishedRunning = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
+		analysisCompleting = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
+		analysisCompleted = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
+		analysisError = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
 
 		AnalysisExecutionServiceGalaxyAsync workflowManagementAsync = new AnalysisExecutionServiceGalaxyAsync(
 				analysisSubmissionService, analysisService, galaxyWorkflowService, analysisWorkspaceService,

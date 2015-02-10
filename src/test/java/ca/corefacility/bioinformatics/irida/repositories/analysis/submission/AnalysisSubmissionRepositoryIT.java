@@ -107,14 +107,20 @@ public class AnalysisSubmissionRepositoryIT {
 		submitter1 = userRepository.findOne(1L);
 		submitter2 = userRepository.findOne(2L);
 
-		analysisSubmission = AnalysisSubmission.createSubmissionSingleReference(analysisName, sequenceFiles,
-				referenceFile, workflowId);
+		analysisSubmission = AnalysisSubmission.builder(workflowId)
+				.name(analysisName)
+				.inputFilesSingle(sequenceFiles)
+				.referenceFile(referenceFile)
+				.build();
 		analysisSubmission.setRemoteAnalysisId(analysisId);
 		analysisSubmission.setAnalysisState(AnalysisState.SUBMITTING);
 		analysisSubmission.setSubmitter(submitter1);
 
-		analysisSubmission2 = AnalysisSubmission.createSubmissionSingleReference(analysisName2, sequenceFiles2,
-				referenceFile, workflowId);
+		analysisSubmission2 = AnalysisSubmission.builder(workflowId)
+				.name(analysisName2)
+				.inputFilesSingle(sequenceFiles2)
+				.referenceFile(referenceFile)
+				.build();
 		analysisSubmission2.setRemoteAnalysisId(analysisId2);
 		analysisSubmission2.setAnalysisState(AnalysisState.SUBMITTING);
 		analysisSubmission2.setSubmitter(submitter2);
@@ -165,8 +171,10 @@ public class AnalysisSubmissionRepositoryIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateAnalysisPaired() {
-		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.createSubmissionPaired("submission paired 1",
-				Sets.newHashSet(sequenceFilePair), workflowId);
+		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.builder(workflowId)
+				.name("submission paired 1")
+				.inputFilesPaired(Sets.newHashSet(sequenceFilePair))
+				.build(); 
 		analysisSubmissionPaired.setSubmitter(submitter1);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
 		assertEquals(0, savedSubmission.getSingleInputFiles().size());
@@ -180,8 +188,11 @@ public class AnalysisSubmissionRepositoryIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateAnalysisPairedReference() {
-		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.createSubmissionPairedReference(
-				"submission paired 1", Sets.newHashSet(sequenceFilePair), referenceFile, workflowId);
+		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.builder(workflowId)
+				.name("submission paired 1")
+				.inputFilesPaired(Sets.newHashSet(sequenceFilePair))
+				.referenceFile(referenceFile)
+				.build();
 		analysisSubmissionPaired.setSubmitter(submitter1);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
 
@@ -197,9 +208,12 @@ public class AnalysisSubmissionRepositoryIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateAnalysisSingleAndPairedAndReference() {
-		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.createSubmissionSingleAndPairedReference(
-				"submission paired 1", Sets.newHashSet(sequenceFile), Sets.newHashSet(sequenceFilePair), referenceFile,
-				workflowId);
+		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.builder(workflowId)
+				.name("submission paired 1")
+				.inputFilesPaired(Sets.newHashSet(sequenceFilePair))
+				.inputFilesSingle(Sets.newHashSet(sequenceFile))
+				.referenceFile(referenceFile)
+				.build();
 		analysisSubmissionPaired.setSubmitter(submitter1);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
 
@@ -215,8 +229,11 @@ public class AnalysisSubmissionRepositoryIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateAnalysisSingleAndPaired() {
-		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.createSubmissionSingleAndPaired(
-				"submission paired 1", Sets.newHashSet(sequenceFile), Sets.newHashSet(sequenceFilePair), workflowId);
+		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.builder(workflowId)
+				.name("submission paired 1")
+				.inputFilesPaired(Sets.newHashSet(sequenceFilePair))
+				.inputFilesSingle(Sets.newHashSet(sequenceFile))
+				.build();
 		analysisSubmissionPaired.setSubmitter(submitter1);
 		AnalysisSubmission savedSubmission = analysisSubmissionRepository.save(analysisSubmissionPaired);
 
@@ -231,8 +248,10 @@ public class AnalysisSubmissionRepositoryIT {
 	@Test(expected = DataIntegrityViolationException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateAnalysisNoSubmitterFail() {
-		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.createSubmissionPaired("submission paired 1",
-				Sets.newHashSet(sequenceFilePair), workflowId);
+		AnalysisSubmission analysisSubmissionPaired = AnalysisSubmission.builder(workflowId)
+				.name("submission paired 1")
+				.inputFilesPaired(Sets.newHashSet(sequenceFilePair))
+				.build(); 
 		analysisSubmissionRepository.save(analysisSubmissionPaired);
 	}
 
