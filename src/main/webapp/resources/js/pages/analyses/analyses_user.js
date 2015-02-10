@@ -7,9 +7,7 @@
    * @constructor
    */
   function AnalysisFilterService() {
-    return {
-      search: ""
-    }
+    return {}
   }
 
   /**
@@ -19,14 +17,25 @@
    * @constructor
    */
   function AnalysesFilter(filter) {
-    return function (analyses) {
-      var filtered = [];
-      analyses.forEach(function (analysis) {
-        if (filter.search.length === 0 || analysis['label'].toLowerCase().indexOf(filter.search.toLowerCase()) != -1) {
-          filtered.push(analysis);
+    function _filterAnalysis(analysis) {
+      var result = true;
+      _.forOwn(filter, function (value, key) {
+        var item = analysis[key];
+        if(item === null) return;
+        if(key === 'analysisState') {
+          if(value.length > 0 && value !== 'ALL' && item !== value) result = false;
+        }
+        else if (angular.isString(value) && item.toLowerCase().indexOf(value.toLowerCase()) === -1) {
+          result = false;
         }
       });
-      return filtered;
+      return result;
+    }
+
+    return function (analyses) {
+      return _.filter(analyses, function (analysis) {
+        return _filterAnalysis(analysis)
+      });
     }
   }
 
@@ -53,11 +62,28 @@
    */
   function FilterController(filter) {
     var vm = this;
-    vm.search = filter.search;
+
+    function _setDefaults() {
+      vm.search = "";
+      vm.state = "ALL";
+    }
+
+    vm.clear = function () {
+      _.forOwn(filter, function (value, key) {
+        delete filter[key];
+      });
+      _setDefaults();
+    };
 
     vm.doSearch = function () {
-      filter.search = vm.search;
+      filter.label = vm.search;
     };
+
+    vm.doState = function () {
+      filter.analysisState = vm.state;
+    };
+
+    _setDefaults();
   }
 
   /**

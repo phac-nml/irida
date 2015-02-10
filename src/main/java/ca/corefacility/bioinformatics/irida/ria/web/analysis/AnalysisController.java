@@ -98,12 +98,7 @@ public class AnalysisController {
 
 	@RequestMapping("/list")
 	public String getPageUserAnalysis(Model model, Locale locale) {
-		Map<String, String> stateMap = new HashMap<>();
-		for (AnalysisState state : AnalysisState.values()) {
-			stateMap.put(state.toString(),
-					messageSource.getMessage("analysis.state." + state.toString(), null, locale));
-		}
-		model.addAttribute("states", stateMap);
+		model.addAttribute("states", AnalysisState.values());
 		return PAGE_USER_ANALYSIS;
 	}
 
