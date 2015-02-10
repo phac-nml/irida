@@ -29,11 +29,12 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
 
 /**
- * Created by josh on 14-09-04.
+ * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
 public class AnalysisControllerTest {
 	/*
@@ -45,12 +46,14 @@ public class AnalysisControllerTest {
 	 * SERVICES
 	 */
 	private AnalysisSubmissionService analysisSubmissionServiceMock;
+	private UserService userServiceMock;
 
 	@Before
 	public void init() {
 		analysisSubmissionServiceMock = mock(AnalysisSubmissionService.class);
+		userServiceMock = mock(UserService.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
-		analysisController = new AnalysisController(analysisSubmissionServiceMock, messageSourceMock);
+		analysisController = new AnalysisController(analysisSubmissionServiceMock, userServiceMock, messageSourceMock);
 	}
 
 	// ************************************************************************************************

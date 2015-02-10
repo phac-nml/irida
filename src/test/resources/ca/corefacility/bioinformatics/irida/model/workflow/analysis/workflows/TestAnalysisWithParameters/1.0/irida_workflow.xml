@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <iridaWorkflow>
-	<id>d92e9918-1e3d-4dea-b2b9-089f1256ac1b</id>
+	<id>c59e79dc-b5a6-448d-a106-ed8eaceb1a69</id>
 	<name>TestWorkflow</name>
-	<version>1.0-single-paired</version>
+	<version>1.0</version>
 	<author>Mr. Developer</author>
 	<email>developer@example.com</email>
 	<analysisType>default</analysisType>
 	<inputs>
-		<sequenceReadsSingle>sequence_reads_single</sequenceReadsSingle>
-		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+		<sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
 		<reference>reference</reference>
 	</inputs>
 	<parameters>
@@ -17,9 +16,6 @@
 			<toolParameter
 				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/test-tool/0.1"
 				parameterName="a" />
-			<toolParameter
-				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/test-tool/0.1"
-				parameterName="b" />
 		</parameter>
 	</parameters>
 	<outputs>

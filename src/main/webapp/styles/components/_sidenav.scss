@@ -1,0 +1,21 @@
+@import "../helpers/variables";
+
+.sidenav {
+  width: 200px;
+  margin-right: 1rem;
+  padding: .5rem;
+}
+
+.sidenav__inner--fixed {
+  position: fixed;
+  top: 50px;
+  width: 180px;
+}
+
+.sidenav__label {
+  color: $irida-colour-grey-dark;
+  font-weight: normal;
+  font-size: 1.3rem;
+  margin: 0;
+  padding: 0;
+}
