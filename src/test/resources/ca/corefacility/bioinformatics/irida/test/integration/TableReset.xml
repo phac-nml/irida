@@ -12,7 +12,6 @@
 	<user />
 	<project />
 	<related_project />
-	<library_description />
 
 	<analysis />
 	<analysis_output_file />
@@ -110,5 +109,4 @@
 	<remote_related_project_AUD />
 	<sequence_file_pair_AUD />
 	<sequence_file_pair_files_AUD />
-	<library_description_AUD />
 </dataset>
