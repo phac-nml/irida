@@ -41,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
@@ -246,6 +247,19 @@ public class PipelineController extends BaseController {
 				projectMap.put("samples", sampleList);
 				projectList.add(projectMap);
 			}
+
+			// Need to add the pipeline parameters
+			List<IridaWorkflowParameter> paras = iridaWorkflow.getWorkflowDescription().getParameters();
+			List<Map<String, String>> parameters = new ArrayList<>();
+			if () {
+				for (IridaWorkflowParameter p : paras) {
+					parameters.add(ImmutableMap.of(
+							"name", p.getName(),
+							"default", p.getDefaultValue()
+					));
+				}
+			}
+
 			model.addAttribute("name", iridaWorkflow.getWorkflowDescription().getName() + " (" + dateFormatter.print(new Date(), locale) + ")");
 			model.addAttribute("pipelineId", pipelineId.toString());
 			model.addAttribute("referenceFiles", referenceFileList);

@@ -189,13 +189,14 @@
 	</form>
 </div>
 <th:block layout:fragment="page-scripts">
-	<th:block th:replace="analysis/templates/parameters :: modal (#{pipeline.phylogenomics.parameters.modal-title}, '')"></th:block>
+	<th:block th:replace="analysis/templates/parameters :: modal (#{pipeline.phylogenomics.parameters.modal-title}, ${parameters})"></th:block>
 	<script th:inline="javascript">
 		/*<![CDATA[*/
 		var PIPELINE = {
 			url     : /*[[@{/pipelines/ajax/start/{id}(id=${pipelineId})}]]*/ '/ajax/pipelines/ccca532d-b0be-4f2c-bd6d-9886aa722571',
 			redirect: /*[[@{/analysis/admin}]]*/ '/analysis/admin', // TODO: This should be the page for this specific pipeline.
-			required: /*[[#{workflow.no-name-provided}]]*/ 'Name Required'
+			required: /*[[#{workflow.no-name-provided}]]*/ 'Name Required',
+			parameters: /*[[${parameters}]]*/ []
 		};
 		/*]]>*/
 	</script>
