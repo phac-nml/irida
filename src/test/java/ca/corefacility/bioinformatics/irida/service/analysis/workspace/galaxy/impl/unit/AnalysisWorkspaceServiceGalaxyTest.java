@@ -28,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowParameterException;
 import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
@@ -635,6 +636,40 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 				sampleSequenceFileMap);
 		when(analysisCollectionServiceGalaxy.getSequenceFilePairedSamples(any(Set.class))).thenReturn(
 				sampleSequenceFilePairMap);
+
+		workflowPreparation.prepareAnalysisFiles(submission);
+	}
+
+	/**
+	 * Tests out failing to prepare workflow files due to a failure to prepare
+	 * parameters.
+	 * 
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowException
+	 */
+	@SuppressWarnings("unchecked")
+	@Test(expected = IridaWorkflowParameterException.class)
+	public void testPrepareAnalysisFilesFailParameters() throws ExecutionManagerException, IridaWorkflowException {
+		submission = AnalysisSubmission.builder(workflowId).name("my analysis")
+				.inputFilesSingle(Sets.newHashSet(sampleSequenceFileMap.values())).referenceFile(referenceFile).build();
+		submission.setRemoteAnalysisId(HISTORY_ID);
+		submission.setRemoteWorkflowId(WORKFLOW_ID);
+
+		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflowSingle);
+
+		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
+		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
+
+		when(analysisCollectionServiceGalaxy.getSequenceFileSingleSamples(any(Set.class))).thenReturn(
+				sampleSequenceFileMap);
+		when(analysisCollectionServiceGalaxy.getSequenceFilePairedSamples(any(Set.class)))
+				.thenReturn(ImmutableMap.of());
+
+		when(galaxyHistoriesService.fileToHistory(refFile, InputFileType.FASTA, workflowHistory))
+				.thenReturn(refDataset);
+		when(galaxyWorkflowService.getWorkflowDetails(WORKFLOW_ID)).thenReturn(workflowDetails);
+		when(analysisParameterServiceGalaxy.prepareAnalysisParameters(any(Map.class), any(IridaWorkflow.class)))
+				.thenThrow(new IridaWorkflowParameterException(""));
 
 		workflowPreparation.prepareAnalysisFiles(submission);
 	}
