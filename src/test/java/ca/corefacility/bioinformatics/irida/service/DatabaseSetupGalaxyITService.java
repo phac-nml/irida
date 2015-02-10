@@ -107,8 +107,12 @@ public class DatabaseSetupGalaxyITService {
 
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
-		AnalysisSubmission submission = analysisSubmissionService.create(AnalysisSubmission.createSubmissionSingleReference("my analysis",
-				sequenceFiles, referenceFile, iridaWorkflowId));
+		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId)
+				.name("my analysis")
+				.inputFilesSingle(sequenceFiles)
+				.referenceFile(referenceFile)
+				.build();
+		analysisSubmissionService.create(submission);
 
 		return analysisSubmissionRepository.findOne(submission.getId());
 	}
@@ -140,9 +144,12 @@ public class DatabaseSetupGalaxyITService {
 
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
-		AnalysisSubmission submission = analysisSubmissionService.create(AnalysisSubmission
-				.createSubmissionPairedReference("paired analysis", Sets.newHashSet(sequenceFilePairs), referenceFile,
-						iridaWorkflowId));
+		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId)
+				.name("paired analysis")
+				.inputFilesPaired(Sets.newHashSet(sequenceFilePairs))
+				.referenceFile(referenceFile)
+				.build();
+		analysisSubmissionService.create(submission);
 
 		return analysisSubmissionRepository.findOne(submission.getId());
 	}
@@ -170,9 +177,11 @@ public class DatabaseSetupGalaxyITService {
 		List<SequenceFilePair> sequenceFilePairs = setupSampleSequenceFileInDatabase(sampleId, sequenceFilePaths1,
 				sequenceFilePaths2);
 
-		AnalysisSubmission submission = analysisSubmissionService.create(AnalysisSubmission
-				.createSubmissionPaired("paired analysis", Sets.newHashSet(sequenceFilePairs),
-						iridaWorkflowId));
+		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId)
+				.name("paired analysis")
+				.inputFilesPaired(Sets.newHashSet(sequenceFilePairs))
+				.build(); 
+		analysisSubmissionService.create(submission);
 
 		return analysisSubmissionRepository.findOne(submission.getId());
 	}
@@ -195,8 +204,12 @@ public class DatabaseSetupGalaxyITService {
 
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
-		AnalysisSubmission submission = analysisSubmissionService.create(AnalysisSubmission
-				.createSubmissionPairedReference("paired analysis", sequenceFilePairs, referenceFile, iridaWorkflowId));
+		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId)
+				.name("paired analysis")
+				.inputFilesPaired(sequenceFilePairs)
+				.referenceFile(referenceFile)
+				.build(); 
+		analysisSubmissionService.create(submission);
 
 		return analysisSubmissionRepository.findOne(submission.getId());
 	}
@@ -266,9 +279,13 @@ public class DatabaseSetupGalaxyITService {
 
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
-		AnalysisSubmission submission = analysisSubmissionService.create(AnalysisSubmission
-				.createSubmissionSingleAndPairedReference("paired analysis", Sets.newHashSet(sequenceFile),
-						Sets.newHashSet(sequenceFilePairs), referenceFile, iridaWorkflowId));
+		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId)
+				.name("paired analysis")
+				.inputFilesSingle(Sets.newHashSet(sequenceFile))
+				.inputFilesPaired(Sets.newHashSet(sequenceFilePairs))
+				.referenceFile(referenceFile)
+				.build(); 
+		analysisSubmissionService.create(submission);
 
 		return analysisSubmissionRepository.findOne(submission.getId());
 	}
@@ -293,8 +310,12 @@ public class DatabaseSetupGalaxyITService {
 
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
-		AnalysisSubmission submission = analysisSubmissionService.create(AnalysisSubmission.createSubmissionSingleReference("my analysis",
-				sequenceFileSet, referenceFile, iridaWorkflowId));
+		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId)
+				.name("my analysis")
+				.inputFilesSingle(sequenceFileSet)
+				.referenceFile(referenceFile)
+				.build(); 
+		analysisSubmissionService.create(submission);
 
 		return analysisSubmissionRepository.findOne(submission.getId());
 	}

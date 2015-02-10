@@ -74,8 +74,11 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService);
 
-		analysisSubmission = AnalysisSubmission.createSubmissionSingleReference("my analysis", sequenceFiles, referenceFile,
-				workflowId);
+		analysisSubmission = AnalysisSubmission.builder(workflowId)
+				.name("my analysis")
+				.inputFilesSingle(sequenceFiles)
+				.referenceFile(referenceFile)
+				.build();
 		analysisSubmission.setId(INTERNAL_ID);
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
 	}

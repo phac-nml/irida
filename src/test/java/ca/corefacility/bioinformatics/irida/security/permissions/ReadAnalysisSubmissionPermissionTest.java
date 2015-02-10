@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
 
 import org.junit.Before;
@@ -17,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -46,6 +48,8 @@ public class ReadAnalysisSubmissionPermissionTest {
 	private ReferenceFile referenceFile;
 
 	private UUID workflowId = UUID.randomUUID();
+	
+	private Set<SequenceFile> inputSingleFiles;
 
 	/**
 	 * Setup for tests
@@ -56,6 +60,8 @@ public class ReadAnalysisSubmissionPermissionTest {
 
 		readAnalysisSubmissionPermission = new ReadAnalysisSubmissionPermission(analysisSubmissionRepository,
 				userRepository);
+		
+		inputSingleFiles = Sets.newHashSet(new SequenceFile());
 	}
 
 	/**
@@ -69,8 +75,11 @@ public class ReadAnalysisSubmissionPermissionTest {
 		u.setUsername(username);
 		Authentication auth = new UsernamePasswordAuthenticationToken("aaron", "password1");
 
-		AnalysisSubmission analysisSubmission = AnalysisSubmission.createSubmissionSingleReference("test",
-				Sets.newHashSet(), referenceFile, workflowId);
+		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(workflowId)
+				.name("test")
+				.inputFilesSingle(inputSingleFiles)
+				.referenceFile(referenceFile)
+				.build();
 		analysisSubmission.setSubmitter(u);
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
@@ -93,8 +102,11 @@ public class ReadAnalysisSubmissionPermissionTest {
 		u.setUsername(username);
 		Authentication auth = new UsernamePasswordAuthenticationToken("aaron", "password1");
 
-		AnalysisSubmission analysisSubmission = AnalysisSubmission.createSubmissionSingleReference("test",
-				Sets.newHashSet(), referenceFile, workflowId);
+		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(workflowId)
+				.name("test")
+				.inputFilesSingle(inputSingleFiles)
+				.referenceFile(referenceFile)
+				.build();
 		analysisSubmission.setSubmitter(u);
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
@@ -117,8 +129,11 @@ public class ReadAnalysisSubmissionPermissionTest {
 		u.setUsername(username);
 		Authentication auth = new UsernamePasswordAuthenticationToken("aaron", "password1");
 
-		AnalysisSubmission analysisSubmission = AnalysisSubmission.createSubmissionSingleReference("test",
-				Sets.newHashSet(), referenceFile, workflowId);
+		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(workflowId)
+				.name("test")
+				.inputFilesSingle(inputSingleFiles)
+				.referenceFile(referenceFile)
+				.build();
 		analysisSubmission.setSubmitter(new User());
 
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
