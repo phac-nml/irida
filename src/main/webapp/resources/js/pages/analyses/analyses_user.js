@@ -25,9 +25,9 @@
           item = analysis['createdDate'];
         }
 
-        if(item === null) return;
-        if(key === 'analysisState') {
-          if(value.length > 0 && value !== 'ALL' && item !== value) result = false;
+        if (item === null) return;
+        if (key === 'analysisState') {
+          if (value.length > 0 && value !== 'ALL' && item !== value) result = false;
         }
         else if (key === 'minDate' && item < value) {
           result = false;
@@ -72,6 +72,7 @@
    */
   function FilterController(filter) {
     var vm = this;
+    vm.opened = {};
 
     function _setDefaults() {
       vm.search = "";
