@@ -26,6 +26,7 @@ import com.google.common.collect.ImmutableList;
 @XmlRootElement(name = "iridaWorkflow")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IridaWorkflowDescription {
+	
 	@XmlElement(name = "id")
 	private UUID id;
 
@@ -50,6 +51,10 @@ public class IridaWorkflowDescription {
 	@XmlElementWrapper(name = "outputs")
 	@XmlElement(name = "output")
 	private List<IridaWorkflowOutput> outputs;
+	
+	@XmlElementWrapper(name = "parameters")
+	@XmlElement(name = "parameter")
+	private List<IridaWorkflowParameter> parameters;
 
 	@XmlElementWrapper(name = "toolRepositories")
 	@XmlElement(name = "repository")
@@ -80,9 +85,12 @@ public class IridaWorkflowDescription {
 	 *            The outputs to the workflow.
 	 * @param toolRepositories
 	 *            The list of tools repositories for this workflow.
+	 * @param parameters
+	 *            The valid parameters that can be modified for this workflow.
 	 */
 	public IridaWorkflowDescription(UUID id, String name, String version, String author, String email,
-			AnalysisType analysisType, IridaWorkflowInput inputs, List<IridaWorkflowOutput> outputs, List<IridaWorkflowToolRepository> toolRepositories) {
+			AnalysisType analysisType, IridaWorkflowInput inputs, List<IridaWorkflowOutput> outputs,
+			List<IridaWorkflowToolRepository> toolRepositories, List<IridaWorkflowParameter> parameters) {
 		this.id = id;
 		this.name = name;
 		this.version = version;
@@ -92,6 +100,7 @@ public class IridaWorkflowDescription {
 		this.inputs = inputs;
 		this.outputs = ImmutableList.copyOf(outputs);
 		this.repository = ImmutableList.copyOf(toolRepositories);
+		this.parameters = ImmutableList.copyOf(parameters);
 	}
 
 	public UUID getId() {
@@ -150,6 +159,10 @@ public class IridaWorkflowDescription {
 	public List<IridaWorkflowOutput> getOutputs() {
 		return outputs;
 	}
+	
+	public List<IridaWorkflowParameter> getParameters() {
+		return parameters;
+	}
 
 	/**
 	 * Gets a {@link Map} representation of the outputs of a workflow, linking
@@ -175,10 +188,19 @@ public class IridaWorkflowDescription {
 	public AnalysisType getAnalysisType() {
 		return analysisType;
 	}
+	
+	/**
+	 * Determines if this workflow accepts parameters.
+	 * 
+	 * @return True if this workflow accepts, false otherwise.
+	 */
+	public boolean acceptsParameters() {
+		return parameters != null;
+	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, name, version, author, email, analysisType, inputs, outputs, repository);
+		return Objects.hash(id, name, version, author, email, analysisType, inputs, outputs, repository, parameters);
 	}
 
 	@Override
@@ -192,7 +214,7 @@ public class IridaWorkflowDescription {
 					&& Objects.equals(version, other.version) && Objects.equals(author, other.author)
 					&& Objects.equals(email, other.email) && Objects.equals(analysisType, other.analysisType)
 					&& Objects.equals(inputs, other.inputs) && Objects.equals(outputs, other.outputs)
-					&& Objects.equals(repository, other.repository);
+					&& Objects.equals(repository, other.repository) && Objects.equals(parameters, other.parameters);
 		}
 
 		return false;
@@ -202,6 +224,6 @@ public class IridaWorkflowDescription {
 	public String toString() {
 		return "IridaWorkflowDescription [id=" + id + ", name=" + name + ", version=" + version + ", author=" + author
 				+ ", email=" + email + ", analysisType=" + analysisType + ", inputs=" + inputs + ", outputs=" + outputs
-				+ ", tools=" + repository + "]";
+				+ ", parameters=" + parameters + ", repository=" + repository + "]";
 	}
 }
