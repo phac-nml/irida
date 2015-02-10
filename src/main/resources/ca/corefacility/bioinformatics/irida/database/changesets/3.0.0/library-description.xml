@@ -15,13 +15,13 @@
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
-		
+
 		<addColumn tableName="miseq_run_AUD">
-            <column name="layout_type" type="varchar(255)">
-            </column>
-            <column name="read_lengths" type="int(11)">
-            </column>
-        </addColumn>
+			<column name="layout_type" type="varchar(255)">
+			</column>
+			<column name="read_lengths" type="int(11)">
+			</column>
+		</addColumn>
 
 	</changeSet>
 </databaseChangeLog>
