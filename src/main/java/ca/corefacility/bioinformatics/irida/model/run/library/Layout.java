@@ -7,9 +7,11 @@ import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
+import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
+
 /**
- * Describes the layout part of a {@link LibraryDescription} single or paired
- * end reads, and read lengths.
+ * Describes the layout part of a {@link MiseqRun} single or paired end reads,
+ * and read lengths.
  * 
  * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
@@ -48,7 +50,7 @@ public class Layout {
 
 		return false;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(readLengths, layoutType);
