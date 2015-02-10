@@ -18,11 +18,11 @@ import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
  */
 @Embeddable
 public class Layout {
-	@Column(name = "read_lengths", nullable = false)
+	@Column(name = "read_lengths")
 	private final Integer readLengths;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "layout_type", nullable = false)
+	@Column(name = "layout_type")
 	private final LayoutType layoutType;
 
 	/**
