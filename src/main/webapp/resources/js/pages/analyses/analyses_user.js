@@ -77,7 +77,8 @@
     function _setDefaults() {
       vm.search = "";
       vm.state = "ALL";
-      vm.min = "";
+      vm.minDate = "";
+      vm.maxDate = "";
       vm.max = new Date();
     }
 
