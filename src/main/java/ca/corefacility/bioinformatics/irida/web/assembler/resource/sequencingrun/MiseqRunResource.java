@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencingru
 
 import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.run.library.Layout;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -96,6 +97,14 @@ public class MiseqRunResource extends SequencingRunResource {
 
     public void setChemistry(String chemistry) {
     	miseqRun.setChemistry(chemistry);
-    }    
+    }
+    
+	public void setLayout(Layout layout) {
+		miseqRun.setLayout(layout);
+	}
+
+	public Layout getLayout() {
+		return miseqRun.getLayout();
+	}
     
 }
