@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.enums.analysis.integration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -12,6 +13,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -38,6 +40,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
@@ -48,6 +51,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionSchedu
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -236,7 +240,31 @@ public class SNVPhylAnalysisIT {
 		assertTrue("the phylogenetic tree file should not be empty.",
 				Files.size(analysisPhylogenomics.getPhylogeneticTree().getFile()) > 0);
 
-		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getPhylogeneticTree()
+		// try to follow the phylogenomics provenance all the way back to the
+		// upload tools
+		final List<ToolExecution> toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getPhylogeneticTree()
 				.getCreatedByTool());
+		assertFalse("file should have tool provenance attached.", toolsToVisit.isEmpty());
+
+		boolean foundReadsInputTool = false;
+		boolean foundReferenceInputTool = false;
+
+		// navigate through the tree to make sure that you can find both types
+		// of input tools: the one where you upload the reference file, and the
+		// one where you upload the reads.
+		while (!toolsToVisit.isEmpty()) {
+			final ToolExecution ex = toolsToVisit.remove(0);
+			toolsToVisit.addAll(ex.getPreviousSteps());
+
+			if (ex.isInputTool()) {
+				final Map<String, String> params = ex.getExecutionTimeParameters();
+				foundReferenceInputTool |= params.get("files.NAME").contains("reference")
+						&& params.get("file_type").contains("fasta");
+				foundReadsInputTool |= params.get("file_type").contains("fastq");
+			}
+		}
+
+		assertTrue("Should have found both reads and reference input tools.", foundReadsInputTool
+				&& foundReferenceInputTool);
 	}
 }
