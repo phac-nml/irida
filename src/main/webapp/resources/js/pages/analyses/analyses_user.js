@@ -24,7 +24,7 @@
         if (key === 'minDate' || key == 'maxDate') {
           item = analysis['createdDate'];
         }
-        
+
         if(item === null) return;
         if(key === 'analysisState') {
           if(value.length > 0 && value !== 'ALL' && item !== value) result = false;
