@@ -69,11 +69,10 @@ public class ReadAnalysisSubmissionPermissionTest {
 		u.setUsername(username);
 		Authentication auth = new UsernamePasswordAuthenticationToken("aaron", "password1");
 
-		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder()
+		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(workflowId)
 				.name("test")
 				.inputFilesSingle(Sets.newHashSet())
 				.referenceFile(referenceFile)
-				.workflowId(workflowId)
 				.build();
 		analysisSubmission.setSubmitter(u);
 
@@ -97,11 +96,10 @@ public class ReadAnalysisSubmissionPermissionTest {
 		u.setUsername(username);
 		Authentication auth = new UsernamePasswordAuthenticationToken("aaron", "password1");
 
-		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder()
+		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(workflowId)
 				.name("test")
 				.inputFilesSingle(Sets.newHashSet())
 				.referenceFile(referenceFile)
-				.workflowId(workflowId)
 				.build();
 		analysisSubmission.setSubmitter(u);
 
@@ -125,11 +123,10 @@ public class ReadAnalysisSubmissionPermissionTest {
 		u.setUsername(username);
 		Authentication auth = new UsernamePasswordAuthenticationToken("aaron", "password1");
 
-		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder()
+		AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(workflowId)
 				.name("test")
 				.inputFilesSingle(Sets.newHashSet())
 				.referenceFile(referenceFile)
-				.workflowId(workflowId)
 				.build();
 		analysisSubmission.setSubmitter(new User());
 

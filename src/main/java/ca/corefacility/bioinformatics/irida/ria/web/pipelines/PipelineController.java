@@ -294,11 +294,10 @@ public class PipelineController extends BaseController {
 			}
 
 			ReferenceFile referenceFile = referenceFileService.read(ref);
-			AnalysisSubmission analysisSubmission = AnalysisSubmission.builder()
+			AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(pipelineId)
 					.inputFilesSingle(Sets.newHashSet(sequenceFiles))
 					.inputFilesPaired(Sets.newHashSet(sequenceFilePairs))
 					.referenceFile(referenceFile)
-					.workflowId(pipelineId)
 					.build();
 
 			AnalysisSubmission submission = analysisSubmissionService.create(analysisSubmission);

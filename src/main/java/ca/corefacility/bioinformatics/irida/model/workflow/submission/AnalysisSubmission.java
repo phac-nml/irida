@@ -364,6 +364,18 @@ public class AnalysisSubmission implements IridaThing {
 		private Set<SequenceFilePair> inputFilesPaired;
 		private ReferenceFile referenceFile;
 		private UUID workflowId;
+		
+		/**
+		 * Creates a new {@link AnalysisSubmission.Builder} with a workflow id.
+		 * 
+		 * @param workflowId
+		 *            The workflow id for this submission.
+		 */
+		public Builder(UUID workflowId) {
+			checkNotNull(workflowId, "workflowId is null");
+
+			this.workflowId = workflowId;
+		}
 
 		/**
 		 * Sets a name for this submission.
@@ -413,19 +425,10 @@ public class AnalysisSubmission implements IridaThing {
 			return this;
 		}
 
-		/**
-		 * Sets the workflowId for this submission.
-		 * 
-		 * @param inputFilesSingle
-		 *            The workflowId for this submission.
-		 * @return An {@link AnalysisSubmission.Builder}.
-		 */
-		public Builder workflowId(UUID workflowId) {
-			this.workflowId = workflowId;
-			return this;
-		}
-
 		public AnalysisSubmission build() {
+			checkArgument(inputFilesSingle != null || inputFilesPaired != null,
+					"both inputFilesSingle and inputFilesPaired are null.  You must supply at least one set of input files");
+
 			return new AnalysisSubmission(this);
 		}
 	}
@@ -433,9 +436,12 @@ public class AnalysisSubmission implements IridaThing {
 	/**
 	 * Gets an {@link AnalysisSubmission.Builder}.
 	 * 
+	 * @param workflowId
+	 *            The id of the workflow to submit.
+	 * 
 	 * @return An {@link AnalysisSubmission.Builder}.
 	 */
-	public static Builder builder() {
-		return new AnalysisSubmission.Builder();
+	public static Builder builder(UUID workflowId) {
+		return new AnalysisSubmission.Builder(workflowId);
 	}
 }
