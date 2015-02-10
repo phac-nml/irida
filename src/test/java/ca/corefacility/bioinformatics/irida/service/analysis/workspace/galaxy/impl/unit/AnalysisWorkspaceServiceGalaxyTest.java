@@ -133,6 +133,8 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 	private CollectionResponse collectionResponseSingle;
 	private CollectionResponse collectionResponsePaired;
+	
+	private Set<SequenceFile> singleInputFiles;
 
 	/**
 	 * Sets up variables for testing.
@@ -200,6 +202,8 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		collectionResponseSingle.setId(COLLECTION_SINGLE_ID);
 		collectionResponsePaired = new CollectionResponse();
 		collectionResponsePaired.setId(COLLECTION_PAIRED_ID);
+		
+		singleInputFiles = Sets.newHashSet(new SequenceFile());
 	}
 
 	private Path createTempFile(String prefix, String suffix) throws IOException {
@@ -635,7 +639,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 			IridaWorkflowAnalysisTypeException, ExecutionManagerException, IOException {
 		submission = AnalysisSubmission.builder(workflowId)
 				.name("my analysis")
-				.inputFilesSingle(Sets.newHashSet())
+				.inputFilesSingle(singleInputFiles)
 				.referenceFile(referenceFile)
 				.build();
 		submission.setRemoteWorkflowId(WORKFLOW_ID);
@@ -672,7 +676,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 			ExecutionManagerException, IOException {
 		submission = AnalysisSubmission.builder(workflowId)
 				.name("my analysis")
-				.inputFilesSingle(Sets.newHashSet())
+				.inputFilesSingle(singleInputFiles)
 				.referenceFile(referenceFile)
 				.build();
 		submission.setRemoteWorkflowId(WORKFLOW_ID);

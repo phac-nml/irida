@@ -385,6 +385,8 @@ public class AnalysisSubmission implements IridaThing {
 		 * @return An {@link AnalysisSubmission.Builder}.
 		 */
 		public Builder name(String name) {
+			checkNotNull(name, "name is null");
+			
 			this.name = name;
 			return this;
 		}
@@ -397,6 +399,9 @@ public class AnalysisSubmission implements IridaThing {
 		 * @return An {@link AnalysisSubmission.Builder}.
 		 */
 		public Builder inputFilesSingle(Set<SequenceFile> inputFilesSingle) {
+			checkNotNull(inputFilesSingle, "inputFilesSingle is null");
+			checkArgument(!inputFilesSingle.isEmpty(), "inputFilesSingle is empty");
+			
 			this.inputFilesSingle = inputFilesSingle;
 			return this;
 		}
@@ -409,6 +414,9 @@ public class AnalysisSubmission implements IridaThing {
 		 * @return An {@link AnalysisSubmission.Builder}.
 		 */
 		public Builder inputFilesPaired(Set<SequenceFilePair> inputFilesPaired) {
+			checkNotNull(inputFilesPaired, "inputFilesPaired is null");
+			checkArgument(!inputFilesPaired.isEmpty(), "inputFilesPaired is empty");
+			
 			this.inputFilesPaired = inputFilesPaired;
 			return this;
 		}
@@ -421,6 +429,8 @@ public class AnalysisSubmission implements IridaThing {
 		 * @return An {@link AnalysisSubmission.Builder}.
 		 */
 		public Builder referenceFile(ReferenceFile referenceFile) {
+			checkNotNull(referenceFile, "referenceFile is null");
+			
 			this.referenceFile = referenceFile;
 			return this;
 		}

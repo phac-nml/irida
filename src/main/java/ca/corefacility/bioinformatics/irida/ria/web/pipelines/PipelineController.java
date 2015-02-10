@@ -294,13 +294,19 @@ public class PipelineController extends BaseController {
 			}
 
 			ReferenceFile referenceFile = referenceFileService.read(ref);
-			AnalysisSubmission analysisSubmission = AnalysisSubmission.builder(pipelineId)
-					.inputFilesSingle(Sets.newHashSet(sequenceFiles))
-					.inputFilesPaired(Sets.newHashSet(sequenceFilePairs))
-					.referenceFile(referenceFile)
-					.build();
+			
+			AnalysisSubmission.Builder analysisSubmissionBuilder = AnalysisSubmission.builder(pipelineId);
+			if (!sequenceFiles.isEmpty()) {
+				analysisSubmissionBuilder.inputFilesSingle(Sets.newHashSet(sequenceFiles));
+			}
+			
+			if (!sequenceFilePairs.isEmpty()) {
+				analysisSubmissionBuilder.inputFilesPaired(Sets.newHashSet(sequenceFilePairs));
+			}
+					
+			analysisSubmissionBuilder.referenceFile(referenceFile);
 
-			AnalysisSubmission submission = analysisSubmissionService.create(analysisSubmission);
+			AnalysisSubmission submission = analysisSubmissionService.create(analysisSubmissionBuilder.build());
 
 			// TODO [15-01-21] (Josh): This should be replaced by storing the values into the database.
 			SubmissionIds submissionIds = (SubmissionIds) session.getAttribute("submissionIds");

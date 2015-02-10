@@ -110,7 +110,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 		MockitoAnnotations.initMocks(this);
 
 		String submissionName = "name";
-		Set<SequenceFile> submissionInputFiles = Sets.newHashSet();
+		Set<SequenceFile> submissionInputFiles = Sets.newHashSet(new SequenceFile());
 
 		analysisSubmission = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
 		analysisPreparing = AnalysisSubmission.builder(WORKFLOW_ID).name(submissionName).inputFilesSingle(submissionInputFiles).build();
