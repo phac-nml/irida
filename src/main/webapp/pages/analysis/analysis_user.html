@@ -35,8 +35,36 @@
 						<select class="form-control input-full" id="filter-state" ng-model="filter.state"
 						        ng-change="filter.doState()">
 							<option value="ALL" selected="selected" th:text="#{analysis.select.all}"></option>
-							<option th:each="state : ${states}" th:value="${state}" th:text="#{'analysis.state.' + ${state}}"></option>
+							<option th:each="state : ${states}" th:value="${state}"
+							        th:text="#{'analysis.state.' + ${state}}"></option>
 						</select>
+					</div>
+					<div class="form-group">
+						<label class="sidenav__label" th:text="#{analysis.filter.date-earliest}">Earliest Date</label>
+
+						<div class="input-group">
+							<input id="filter-date-early" ng-focus="filter.opened.minDate=true" type="text"
+							       class="form-control"
+							       th:attr="datepicker-popup=#{datepicker.short}, close-text=#{datepicker.close}, current-text=#{datepicker.current}, clear=#{datepicker.clear}"
+							       ng-model="filter.minDate" is-open="filter.opened.minDate"
+							       max-date="filter.max" ng-change="filter.doDateFilter('minDate')"/>
+			              <span class="input-group-btn">
+			                <button type="button" class="btn btn-default" ng-click="filter.open($event, 'minDate')"><i
+				                class="fa fa-calendar-o fa-lg"></i></button>
+			              </span>
+						</div>
+						<label class="sidenav__label" th:text="#{analysis.filter.date-latest}">Latest Date</label>
+
+						<div class="input-group">
+							<input ng-focus="filter.opened.maxDate=true" id="filter-date-late" type="text"
+							       class="form-control" th:attr="datepicker-popup=#{datepicker.short}"
+							       ng-model="filter.maxDate" is-open="filter.opened.maxDate"
+							       max-date="filter.max" close-text="Close" ng-change="filter.doDateFilter('maxDate')"/>
+			              <span class="input-group-btn">
+			                <button type="button" class="btn btn-default" ng-click="filter.open($event, 'maxDate')"><i
+				                class="fa fa-calendar-o fa-lg"></i></button>
+			              </span>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -50,8 +78,10 @@
 							<div class="board_detail--desc" th:text="#{analyses.state}">State</div>
 						</div>
 						<div class="col-md-5">
-							<div class="board_detail--value">{{analysis.label}}</div>
-							<div class="board_detail--desc" th:text="#{analyses.analysis-name}">Analysis Name</div>
+							<a href="#" ng-href="{{analysis.id}}">
+								<div class="board_detail--value">{{analysis.label}}</div>
+								<div class="board_detail--desc" th:text="#{analyses.analysis-name}">Analysis Name</div>
+							</a>
 						</div>
 						<div class="col-md-4">
 							<div class="board_detail--value">{{::analysis.createdDate | date:'medium'}}</div>
