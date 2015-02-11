@@ -60,6 +60,28 @@
 							<option th:each="state : ${states}" th:value="${state}" th:text="#{'analysis.state.' + ${state}}"></option>
 						</select>
 					</div>
+					<div class="form-group">
+						<label class="sidenav__label" th:text="#{analysis.filter.date-earliest}">Earliest Date</label>
+						<div class="input-group">
+							<input id="filter-date-early" type="text" class="form-control" th:attr="datepicker-popup=#{datepicker.short}, close-text=#{datepicker.close}, current-text=#{datepicker.current}, clear=#{datepicker.clear}"
+							       ng-model="filter.minDate" is-open="filter.opened.minDate"
+							       max-date="filter.max" ng-change="filter.doDateFilter('minDate')"/>
+			              <span class="input-group-btn">
+			                <button type="button" class="btn btn-default" ng-click="filter.open($event, 'minDate')"><i
+				                class="fa fa-calendar-o fa-lg"></i></button>
+			              </span>
+						</div>
+						<label class="sidenav__label" th:text="#{analysis.filter.date-latest}">Latest Date</label>
+						<div class="input-group">
+							<input id="filter-date-late" type="text" class="form-control" th:attr="datepicker-popup=#{datepicker.short}"
+							       ng-model="filter.maxDate" is-open="filter.opened.maxDate"
+							       max-date="filter.max" close-text="Close" ng-change="filter.doDateFilter('maxDate')"/>
+			              <span class="input-group-btn">
+			                <button type="button" class="btn btn-default" ng-click="filter.open($event, 'maxDate')"><i
+				                class="fa fa-calendar-o fa-lg"></i></button>
+			              </span>
+						</div>
+					</div>
 				</div>
 			</div>
 		</aside>

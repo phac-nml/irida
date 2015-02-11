@@ -115,8 +115,8 @@ public class PipelinesPhylogenomicsPageIT {
 		LoginPage.loginAsUser(driver);
 		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver);
 		samplesPage.goToPage();
+		samplesPage.selectSampleByRow(0);
 		samplesPage.selectSampleByRow(1);
-		samplesPage.selectSampleByRow(2);
 		samplesPage.addSamplesToGlobalCart();
 		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
 		assertTrue("Should be on the phylogenomics page.",

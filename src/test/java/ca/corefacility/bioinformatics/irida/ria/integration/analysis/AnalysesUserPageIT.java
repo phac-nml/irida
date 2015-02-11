@@ -71,6 +71,15 @@ public class AnalysesUserPageIT {
 		// Clear
 		page.clearFilter();
 		assertEquals("Should be 8 analyses displayed on the page", 8, page.getNumberOfAnalyses());
+
+		page.filterByDateEarly("06 Nov 2013");
+		assertEquals("Should be 3 analyses after filtering by date earliest", 3, page.getNumberOfAnalyses());
+
+		// Clear
+		page.clearFilter();
+
+		page.filterByDateLate("06 Jan 2014");
+		assertEquals("Should be 7 analyses after filtering by date earliest", 7, page.getNumberOfAnalyses());
 	}
 
 	@After
