@@ -50,6 +50,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflo
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisCollectionServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -93,7 +94,10 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 	@Mock
 	private AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy;
-	
+
+	@Mock
+	private AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy;
+
 	@Mock
 	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
 
@@ -196,7 +200,8 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		workflowDetails.setId(WORKFLOW_ID);
 
 		workflowPreparation = new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
-				sequenceFileRepository, libraryBuilder, iridaWorkflowsService, analysisCollectionServiceGalaxy, analysisParameterServiceGalaxy);
+				sequenceFileRepository, libraryBuilder, iridaWorkflowsService, analysisCollectionServiceGalaxy,
+				analysisProvenanceServiceGalaxy, analysisParameterServiceGalaxy);
 
 		output1Dataset = new Dataset();
 		output1Dataset.setId("1");
