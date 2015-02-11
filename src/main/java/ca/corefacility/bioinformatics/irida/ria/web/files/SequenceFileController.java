@@ -103,7 +103,8 @@ public class SequenceFileController {
 	 * @return The name fo the template
 	 */
 	@RequestMapping(value = { "/sequenceFiles/{sequenceFileId}/overrepresented",
-			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}/overrepresented" })
+			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}/overrepresented",
+			"/sequencingRuns/{runId}/sequenceFiles/{sequenceFileId}/overrepresented" })
 	public String getSequenceFileOverrepresentedPage(final Model model, @PathVariable Long sequenceFileId) {
 		logger.debug("Loading sequence files page for id: " + sequenceFileId);
 		createDefaultPageInfo(sequenceFileId, model);
