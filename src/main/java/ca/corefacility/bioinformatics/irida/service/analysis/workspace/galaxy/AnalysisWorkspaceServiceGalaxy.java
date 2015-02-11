@@ -33,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectNam
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
@@ -74,6 +75,8 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	
 	private AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy;
 
+	private AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy;
+
 	/**
 	 * Builds a new {@link AnalysisWorkspaceServiceGalaxy} with the given
 	 * information.
@@ -91,15 +94,17 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 *            A service for constructing dataset collections of input files.
 	 */
 	public AnalysisWorkspaceServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService,
-			GalaxyWorkflowService galaxyWorkflowService,
-			SequenceFileRepository sequenceFileRepository, GalaxyLibraryBuilder libraryBuilder,
-			IridaWorkflowsService iridaWorkflowsService, AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy) {
+			GalaxyWorkflowService galaxyWorkflowService, SequenceFileRepository sequenceFileRepository,
+			GalaxyLibraryBuilder libraryBuilder, IridaWorkflowsService iridaWorkflowsService,
+			AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy,
+			AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.libraryBuilder = libraryBuilder;
 		this.iridaWorkflowsService = iridaWorkflowsService;
 		this.analysisCollectionServiceGalaxy = analysisCollectionServiceGalaxy;
+		this.analysisProvenanceServiceGalaxy = analysisProvenanceServiceGalaxy;
 	}
 
 	/**
@@ -344,7 +349,9 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			String outputFileName = outputsMap.get(analysisOutputName).getFileName();
 			Dataset outputDataset = galaxyHistoriesService.getDatasetForFileInHistory(outputFileName, analysisId);
 			AnalysisOutputFile analysisOutput = buildOutputFile(analysisId, outputDataset, outputDirectory);
-
+			final ToolExecution toolExecution = analysisProvenanceServiceGalaxy.buildToolExecutionForOutputFile(
+					analysisSubmission, analysisOutput);
+			analysisOutput.setCreatedByTool(toolExecution);
 			analysisOutputFiles.put(analysisOutputName, analysisOutput);
 		}
 

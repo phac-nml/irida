@@ -11,7 +11,8 @@
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="command_line" type="longtext">
-				<constraints nullable="false" />
+				<!-- nullable until job API implemented in blend4j -->
+				<!-- <constraints nullable="false" /> -->
 			</column>
 			<column name="created_date" type="datetime">
 				<constraints nullable="false" />

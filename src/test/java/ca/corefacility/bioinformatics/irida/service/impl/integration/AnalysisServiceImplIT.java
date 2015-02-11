@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
@@ -67,11 +69,17 @@ public class AnalysisServiceImplIT {
 	private static final String EXECUTION_MANAGER_ID = "execution-manager-id";
 
 	@Test
-	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testCreatePhylogenomicsAnalysis() throws IOException {
 		Path treePath = Files.createTempFile(null, null);
 		Path tablePath = Files.createTempFile(null, null);
 		Path matrixPath = Files.createTempFile(null, null);
+
+		Map<String, String> params = new HashMap<>();
+		params.put("param", "value");
+		ToolExecution toolExecutionTree = new ToolExecution(null, null, "ls", "1.0", "executionManagerId", params);
+		ToolExecution toolExecutionTable = new ToolExecution(null, null, "ls", "1.0", "executionManagerId", params);
+		ToolExecution toolExecutionMatrix = new ToolExecution(null, null, "ls", "1.0", "executionManagerId", params);
 
 		AnalysisOutputFile tree = new AnalysisOutputFile(treePath, "internal-galaxy-tree-identifier");
 		AnalysisOutputFile table = new AnalysisOutputFile(tablePath, "internal-galaxy-table-identifier");
@@ -80,6 +88,9 @@ public class AnalysisServiceImplIT {
 				.put("tree", tree).put("matrix", matrix).put("table", table).build();
 		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(),
 				EXECUTION_MANAGER_ID, analysisOutputFiles);
+		tree.setCreatedByTool(toolExecutionTree);
+		table.setCreatedByTool(toolExecutionTable);
+		matrix.setCreatedByTool(toolExecutionMatrix);
 
 		// make sure that we're not falsely putting the files into the correct
 		// directory in the first place.
@@ -105,13 +116,19 @@ public class AnalysisServiceImplIT {
 	}
 
 	@Test
-	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	@WithMockUser(username = "admin", roles = "ADMIN")
 	public void testGetAnalysesForSequenceFile() throws IOException {
 		SequenceFile sf = sequenceFileService.read(1L);
 
 		Path treePath = Files.createTempFile("tree", ".txt");
 		Path tablePath = Files.createTempFile("table", ".tsv");
 		Path matrixPath = Files.createTempFile("matrix", ".tsv");
+		
+		Map<String, String> params = new HashMap<>();
+		params.put("param", "value");
+		ToolExecution toolExecutionTree = new ToolExecution(null, null, "ls", "1.0", "executionManagerId", params);
+		ToolExecution toolExecutionTable = new ToolExecution(null, null, "ls", "1.0", "executionManagerId", params);
+		ToolExecution toolExecutionMatrix = new ToolExecution(null, null, "ls", "1.0", "executionManagerId", params);
 
 		AnalysisOutputFile tree = new AnalysisOutputFile(treePath, "internal-galaxy-tree-identifier");
 		AnalysisOutputFile table = new AnalysisOutputFile(tablePath, "internal-galaxy-table-identifier");
@@ -120,6 +137,9 @@ public class AnalysisServiceImplIT {
 				.put("tree", tree).put("matrix", matrix).put("table", table).build();
 		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(sf),
 				EXECUTION_MANAGER_ID, analysisOutputFiles);
+		tree.setCreatedByTool(toolExecutionTree);
+		table.setCreatedByTool(toolExecutionTable);
+		matrix.setCreatedByTool(toolExecutionMatrix);
 
 		Analysis created = analysisService.create(pipeline);
 
