@@ -9,7 +9,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -18,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -31,6 +31,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.Tool;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Tests for {@link AnalysisProvenanceServiceGalaxy}.
@@ -198,7 +199,8 @@ public class AnalysisProvenanceServiceGalaxyTest {
 	}
 
 	private AnalysisSubmission analysisSubmission() {
-		return AnalysisSubmission.createSubmissionPaired("", Collections.emptySet(), UUID.randomUUID());
+		return AnalysisSubmission.builder(UUID.randomUUID()).inputFilesPaired(Sets.newHashSet(new SequenceFilePair()))
+				.name("").build();
 	}
 
 	private AnalysisOutputFile analysisOutputFile() {
