@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.analysis;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -63,6 +64,9 @@ public class AnalysesUserPageIT {
 
 		page.filterByType("Completed");
 		assertEquals("Should be 2 analysis in the state of 'COMPLETED'", 2, page.getNumberOfAnalyses());
+
+		page.filterByType("Prepared");
+		assertTrue("Should display a message that there are no analyses available", page.isNoAnalysesMessaageDisplayed());
 
 		// Clear
 		page.clearFilter();

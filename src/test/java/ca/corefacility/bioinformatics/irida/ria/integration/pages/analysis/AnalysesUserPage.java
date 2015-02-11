@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis;
 
 import java.util.List;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -54,5 +55,9 @@ public class AnalysesUserPage extends AbstractPage {
 
 	public int getNumberOfAnalyses() {
 		return analysesList.size();
+	}
+
+	public boolean isNoAnalysesMessaageDisplayed() {
+		return driver.findElement(By.id("no-analyses")).isDisplayed();
 	}
 }
