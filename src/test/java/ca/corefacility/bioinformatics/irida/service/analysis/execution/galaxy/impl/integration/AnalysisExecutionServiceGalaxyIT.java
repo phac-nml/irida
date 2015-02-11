@@ -717,10 +717,14 @@ public class AnalysisExecutionServiceGalaxyIT {
 				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> phyTreeCorePreviousSteps = phyTreeCoreInputs.getPreviousSteps();
-		assertTrue("there should exist previous steps", phyTreeCorePreviousSteps.size() > 0);
+		assertEquals("there should exist 2 previous steps", 2, phyTreeCorePreviousSteps.size());
+		Set<String> uploadedFileTypesPhy = Sets.newHashSet();
 		for (ToolExecution previousStep : phyTreeCorePreviousSteps) {
-			assertTrue("Second step should be input tool.", previousStep.isInputTool());
+			assertTrue("previous steps should be input tools.", previousStep.isInputTool());
+			uploadedFileTypesPhy.add(previousStep.getExecutionTimeParameters().get("file_type"));
 		}
+		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
+				uploadedFileTypesPhy);
 
 		// snp matrix
 		final ToolExecution matrixCoreInputs = snpMatrix.getCreatedByTool();
@@ -738,10 +742,14 @@ public class AnalysisExecutionServiceGalaxyIT {
 				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> matrixCorePreviousSteps = matrixCoreInputs.getPreviousSteps();
-		assertTrue("there should exist previous steps", matrixCorePreviousSteps.size() > 0);
+		assertEquals("there should exist 2 previous steps", 2, matrixCorePreviousSteps.size());
+		Set<String> uploadedFileTypesMatrix = Sets.newHashSet();
 		for (ToolExecution previousStep : matrixCorePreviousSteps) {
-			assertTrue("Second step should be input tool.", previousStep.isInputTool());
+			assertTrue("previous steps should be input tools.", previousStep.isInputTool());
+			uploadedFileTypesMatrix.add(previousStep.getExecutionTimeParameters().get("file_type"));
 		}
+		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
+				uploadedFileTypesMatrix);
 
 		// snp table
 		final ToolExecution tableCoreInputs = snpTable.getCreatedByTool();
@@ -760,13 +768,13 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		Set<ToolExecution> tablePreviousSteps = tableCoreInputs.getPreviousSteps();
 		assertEquals("there should exist 2 previous steps", 2, tablePreviousSteps.size());
-		Set<String> uploadedFileTypes = Sets.newHashSet();
+		Set<String> uploadedFileTypesTable = Sets.newHashSet();
 		for (ToolExecution previousStep : tablePreviousSteps) {
 			assertTrue("previous steps should be input tools.", previousStep.isInputTool());
-			uploadedFileTypes.add(previousStep.getExecutionTimeParameters().get("file_type"));
+			uploadedFileTypesTable.add(previousStep.getExecutionTimeParameters().get("file_type"));
 		}
 		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
-				uploadedFileTypes);
+				uploadedFileTypesTable);
 	}
 
 	/**
@@ -837,10 +845,14 @@ public class AnalysisExecutionServiceGalaxyIT {
 				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> phyTreeCorePreviousSteps = phyTreeCoreInputs.getPreviousSteps();
-		assertTrue("there should exist previous steps", phyTreeCorePreviousSteps.size() > 0);
+		assertEquals("there should exist 2 previous steps", 2, phyTreeCorePreviousSteps.size());
+		Set<String> uploadedFileTypesPhy = Sets.newHashSet();
 		for (ToolExecution previousStep : phyTreeCorePreviousSteps) {
-			assertTrue("Second step should be input tool.", previousStep.isInputTool());
+			assertTrue("previous steps should be input tools.", previousStep.isInputTool());
+			uploadedFileTypesPhy.add(previousStep.getExecutionTimeParameters().get("file_type"));
 		}
+		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
+				uploadedFileTypesPhy);
 
 		// snp matrix
 		final ToolExecution matrixCoreInputs = snpMatrix.getCreatedByTool();
@@ -858,10 +870,14 @@ public class AnalysisExecutionServiceGalaxyIT {
 				matrixCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> matrixCorePreviousSteps = matrixCoreInputs.getPreviousSteps();
-		assertTrue("there should exist previous steps", matrixCorePreviousSteps.size() > 0);
+		assertEquals("there should exist 2 previous steps", 2, matrixCorePreviousSteps.size());
+		Set<String> uploadedFileTypesMatrix = Sets.newHashSet();
 		for (ToolExecution previousStep : matrixCorePreviousSteps) {
-			assertTrue("Second step should be input tool.", previousStep.isInputTool());
+			assertTrue("previous steps should be input tools.", previousStep.isInputTool());
+			uploadedFileTypesMatrix.add(previousStep.getExecutionTimeParameters().get("file_type"));
 		}
+		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
+				uploadedFileTypesMatrix);
 
 		// snp table
 		final ToolExecution tableCoreInputs = snpTable.getCreatedByTool();
@@ -880,13 +896,13 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		Set<ToolExecution> tablePreviousSteps = tableCoreInputs.getPreviousSteps();
 		assertEquals("there should exist 2 previous steps", 2, tablePreviousSteps.size());
-		Set<String> uploadedFileTypes = Sets.newHashSet();
+		Set<String> uploadedFileTypesTable = Sets.newHashSet();
 		for (ToolExecution previousStep : tablePreviousSteps) {
 			assertTrue("previous steps should be input tools.", previousStep.isInputTool());
-			uploadedFileTypes.add(previousStep.getExecutionTimeParameters().get("file_type"));
+			uploadedFileTypesTable.add(previousStep.getExecutionTimeParameters().get("file_type"));
 		}
 		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
-				uploadedFileTypes);
+				uploadedFileTypesTable);
 	}
 	
 	/**
