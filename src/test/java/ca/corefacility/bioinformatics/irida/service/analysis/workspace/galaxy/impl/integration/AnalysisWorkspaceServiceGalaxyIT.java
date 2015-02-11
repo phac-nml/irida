@@ -276,6 +276,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		assertEquals("the response history id should match the input history id", createdHistory.getId(),
 				preparedWorkflow.getRemoteAnalysisId());
 		assertNotNull("the returned workflow inputs should not be null", preparedWorkflow.getWorkflowInputs());
+		assertNotNull("the returned library id should not be null", preparedWorkflow.getRemoteDataId());
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
