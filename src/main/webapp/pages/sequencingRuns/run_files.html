@@ -32,7 +32,8 @@
 				    th:id="${'file-row-' + file.id}">
 					<td class="file-id" th:text="${file.id}">ID</td>
 					<td>
-						<a class="file-name btn btn-default btn-xs" th:href="@{/sequencingRuns/{runId}/sequenceFiles/{id}/summary(runId=${run.id}, id=${file.id})}"
+						<a class="file-name btn btn-default btn-xs"
+						   th:href="@{/sequencingRuns/{runId}/sequenceFiles/{id}/summary(runId=${run.id}, id=${file.id})}"
 						   href="#"
 						   th:text="${file.label}"></a>
 					</td>
