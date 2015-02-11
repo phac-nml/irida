@@ -334,6 +334,39 @@ public class AnalysisExecutionServiceGalaxyIT {
 			throw e.getCause();
 		}
 	}
+	
+	/**
+	 * Tests out attempting to execute an analysis with an invalid parameter value.
+	 * 
+	 * @throws Throwable
+	 */
+	@Test(expected = WorkflowException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testExecuteAnalysisFailInvalidParameterValue() throws Throwable {
+		Map<String, String> parameters = ImmutableMap.of("coverage", "not an integer for coverage");
+		
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
+				.setupPairSubmissionInDatabase(1L, pairedPaths1, pairedPaths2, referenceFilePath, parameters,
+						iridaPhylogenomicsPairedParametersWorkflowId);
+
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+
+		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
+				.executeAnalysis(analysisSubmitted);
+
+		try {
+			analysisExecutionFuture.get();
+		} catch (ExecutionException e) {
+			// check to make sure the submission is in the error state
+			AnalysisSubmission savedSubmission = analysisSubmissionRepository.findOne(analysisSubmitted.getId());
+			logger.debug("Submission on exception=" + savedSubmission.getId());
+			assertEquals(AnalysisState.ERROR, savedSubmission.getAnalysisState());
+
+			throw e.getCause();
+		}
+	}
 
 	/**
 	 * Tests out attempting to execute an analysis with an invalid initial
