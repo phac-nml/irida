@@ -44,25 +44,29 @@ public class AnalysisParameterServiceGalaxy implements AnalysisParameterService<
 		WorkflowInputs inputs = new WorkflowInputs();
 		Set<String> parameterNamesUsed = Sets.newHashSet();
 
-		List<IridaWorkflowParameter> iridaParameters = iridaWorkflow.getWorkflowDescription().getParameters();
-		for (IridaWorkflowParameter iridaParameter : iridaParameters) {
-			String parameterName = iridaParameter.getName();
-			String value = parameters.get(parameterName);
-			parameterNamesUsed.add(parameterName);
-
-			if (value == null) {
-				value = iridaParameter.getDefaultValue();
-				logger.debug("Parameter with name=" + parameterName + ", for workflow=" + iridaWorkflow
-						+ ", has no value set, using defaultValue=" + value);
-			}
-
-			for (IridaToolParameter iridaToolParameter : iridaParameter.getToolParameters()) {
-				String toolId = iridaToolParameter.getToolId();
-				String galaxyParameterName = iridaToolParameter.getParameterName();
-
-				logger.debug("Setting parameter iridaName=" + parameterName + ", galaxyToolId=" + toolId + ", value="
-						+ value);
-				inputs.setToolParameter(toolId, new ToolParameter(galaxyParameterName, value));
+		if (!iridaWorkflow.getWorkflowDescription().acceptsParameters()) {
+			logger.debug("workflow " + iridaWorkflow + " does not accept parameters.");
+		} else {
+			List<IridaWorkflowParameter> iridaParameters = iridaWorkflow.getWorkflowDescription().getParameters();
+			for (IridaWorkflowParameter iridaParameter : iridaParameters) {
+				String parameterName = iridaParameter.getName();
+				String value = parameters.get(parameterName);
+				parameterNamesUsed.add(parameterName);
+	
+				if (value == null) {
+					value = iridaParameter.getDefaultValue();
+					logger.debug("Parameter with name=" + parameterName + ", for workflow=" + iridaWorkflow
+							+ ", has no value set, using defaultValue=" + value);
+				}
+	
+				for (IridaToolParameter iridaToolParameter : iridaParameter.getToolParameters()) {
+					String toolId = iridaToolParameter.getToolId();
+					String galaxyParameterName = iridaToolParameter.getParameterName();
+	
+					logger.debug("Setting parameter iridaName=" + parameterName + ", galaxyToolId=" + toolId + ", value="
+							+ value);
+					inputs.setToolParameter(toolId, new ToolParameter(galaxyParameterName, value));
+				}
 			}
 		}
 
