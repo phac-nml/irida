@@ -1,9 +1,12 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -29,10 +32,9 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * A historical record of how a tool was executed by a workflow execution
@@ -63,10 +65,12 @@ public class ToolExecution implements IridaThing {
 	@Column(name = "tool_version")
 	private final String toolVersion;
 
-	@NotNull
+	// TODO: add command-line requirement back *after* Galaxy and blend4j have
+	// been updated.
+	// @NotNull
 	@Lob
 	@Column(name = "command_line")
-	private final String commandLine;
+	private String commandLine;
 
 	@NotNull
 	@Lob
@@ -86,13 +90,27 @@ public class ToolExecution implements IridaThing {
 	@Column(name = "created_date")
 	private final Date createdDate;
 
-	private ToolExecution(final Long id, final Set<ToolExecution> previousSteps, final String toolName,
-			final String toolVersion, final String commandLine, final String executionManagerIdentifier,
+	/**
+	 * for hibernate.
+	 */
+	@SuppressWarnings("unused")
+	private ToolExecution() {
+		this.id = null;
+		this.previousSteps = null;
+		this.toolName = null;
+		this.toolVersion = null;
+		this.commandLine = null;
+		this.executionManagerIdentifier = null;
+		this.executionTimeParameters = null;
+		this.createdDate = null;
+	}
+
+	public ToolExecution(final Long id, final Set<ToolExecution> previousSteps, final String toolName,
+			final String toolVersion, final String executionManagerIdentifier,
 			final Map<String, String> executionTimeParameters) {
 		this.id = id;
 		this.toolName = toolName;
 		this.toolVersion = toolVersion;
-		this.commandLine = commandLine;
 		this.executionManagerIdentifier = executionManagerIdentifier;
 
 		if (previousSteps == null) {
@@ -100,12 +118,32 @@ public class ToolExecution implements IridaThing {
 		} else {
 			this.previousSteps = previousSteps;
 		}
-		if (executionTimeParameters == null) {
-			this.executionTimeParameters = new HashMap<>();
-		} else {
-			this.executionTimeParameters = executionTimeParameters;
-		}
+		this.executionTimeParameters = new HashMap<>();
+		addExecutionTimeParameters(executionTimeParameters);
 		this.createdDate = new Date();
+	}
+
+	@Override
+	public String toString() {
+		return "ToolExecution [toolName=" + this.toolName + ", toolVersion=" + toolVersion + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(toolName, toolVersion, executionTimeParameters);
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (this == o) {
+			return true;
+		} else if (o instanceof ToolExecution) {
+			final ToolExecution t = (ToolExecution) o;
+			return Objects.equals(toolName, t.toolName) && Objects.equals(toolVersion, t.toolVersion)
+					&& Objects.equals(executionTimeParameters, t.executionTimeParameters);
+		}
+
+		return false;
 	}
 
 	public final void addPreviousStep(final ToolExecution toolExecution) {
@@ -133,15 +171,23 @@ public class ToolExecution implements IridaThing {
 	}
 
 	public final Map<String, String> getExecutionTimeParameters() {
-		return ImmutableMap.copyOf(executionTimeParameters);
+		final Map<String, String> unescapedKeys = new HashMap<>();
+		for (final Entry<String, String> param : executionTimeParameters.entrySet()) {
+			final String unescapedKey = param.getKey().replaceAll("\\\\([A-Z])", "$1");
+			unescapedKeys.put(unescapedKey, param.getValue());
+		}
+		return Collections.unmodifiableMap(unescapedKeys);
 	}
 
 	public final void addExecutionTimeParameter(final String paramName, final String paramValue) {
-		this.executionTimeParameters.put(paramName, paramValue);
+		final String escapedKey = paramName.replaceAll("([A-Z])", "\\\\$1");
+		this.executionTimeParameters.put(escapedKey, paramValue);
 	}
 
 	public final void addExecutionTimeParameters(final Map<String, String> parameters) {
-		this.executionTimeParameters.putAll(parameters);
+		for (final Entry<String, String> param : parameters.entrySet()) {
+			addExecutionTimeParameter(param.getKey(), param.getValue());
+		}
 	}
 
 	@Override

@@ -40,6 +40,7 @@ import com.github.jmchilton.blend4j.galaxy.ToolsClient.FileUploadRequest;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryContentsProvenance;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset.Source;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
@@ -502,6 +503,39 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 					"Could not download dataset identified by historyId="
 							+ historyId + ", datasetId=" + datasetId
 							+ " to destination=" + destination, e);
+		}
+	}
+	
+	/**
+	 * Show the history contents for the specified history identifier
+	 * 
+	 * @param historyId the identifier to show the history contents for.
+	 * 
+	 * @return the history contents for the specified identifier.
+	 * @throws ExecutionManagerException on failure to communicate with Galaxy.
+	 */
+	public List<HistoryContents> showHistoryContents(final String historyId) throws ExecutionManagerException {
+		try {
+			return historiesClient.showHistoryContents(historyId);
+		} catch (RuntimeException e) {
+			throw new ExecutionManagerException("Couldn't load history contents for id [" + historyId + "]", e);
+		}
+	}
+	
+	/**
+	 * Show the history provenance contents for the specified history identifiers.
+	 * 
+	 * @param historyId the identifier to show the history contents for.
+	 * @param historyProvenanceId the step in the execution to show provenance for.
+	 * 
+	 * @return the history provenance contents for the specified identifiers.
+	 * @throws ExecutionManagerException on failure to communicate with Galaxy.
+	 */
+	public HistoryContentsProvenance showProvenance(final String historyId, final String historyProvenanceId) throws ExecutionManagerException {
+		try {
+			return historiesClient.showProvenance(historyId, historyProvenanceId);
+		} catch (RuntimeException e) {
+			throw new ExecutionManagerException(e);
 		}
 	}
 }

@@ -50,6 +50,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
@@ -579,16 +580,37 @@ public class AnalysisExecutionServiceGalaxyIT {
 				com.google.common.io.Files.equal(expectedTree.toFile(), phylogeneticTree.getFile().toFile()));
 		assertEquals("invalid file name for snp tree", expectedTree.getFileName(), phylogeneticTree.getFile()
 				.getFileName());
+		final ToolExecution phyTreeCoreInputs = phylogeneticTree.getCreatedByTool();
+		assertEquals("The first tool execution should be by core_pipeline_outputs_paired v0.1.0",
+				"core_pipeline_outputs_paired", phyTreeCoreInputs.getToolName());
+		assertEquals("The first tool execution should be by core_pipeline_outputs_paired v0.1.0", "0.1.0",
+				phyTreeCoreInputs.getToolVersion());
+		final ToolExecution phyTreeCoreUpload = phyTreeCoreInputs.getPreviousSteps().iterator().next();
+		assertTrue("Second step should be input tool.", phyTreeCoreUpload.isInputTool());
 
 		assertTrue("snp matrices should be correct",
 				com.google.common.io.Files.equal(expectedSnpMatrix.toFile(), snpMatrix.getFile().toFile()));
 		assertEquals("invalid file name for snp matrix", expectedSnpMatrix.getFileName(), snpMatrix.getFile()
 				.getFileName());
+		final ToolExecution snpMatrixCoreInputs = snpMatrix.getCreatedByTool();
+		assertEquals("The first tool execution should be by core_pipeline_outputs_paired v0.1.0",
+				"core_pipeline_outputs_paired", snpMatrixCoreInputs.getToolName());
+		assertEquals("The first tool execution should be by core_pipeline_outputs_paired v0.1.0", "0.1.0",
+				snpMatrixCoreInputs.getToolVersion());
+		final ToolExecution snpMatrixCoreUpload = snpMatrixCoreInputs.getPreviousSteps().iterator().next();
+		assertTrue("Second step should be input tool.", snpMatrixCoreUpload.isInputTool());
 
 		assertTrue("snpTable should be correct",
 				com.google.common.io.Files.equal(expectedSnpTable.toFile(), snpTable.getFile().toFile()));
 		assertEquals("invalid file name for snp table", expectedSnpTable.getFileName(), snpTable.getFile()
 				.getFileName());
+		final ToolExecution snpTableCoreInputs = snpTable.getCreatedByTool();
+		assertEquals("The first tool execution should be by core_pipeline_outputs_paired v0.1.0",
+				"core_pipeline_outputs_paired", snpTableCoreInputs.getToolName());
+		assertEquals("The first tool execution should be by core_pipeline_outputs_paired v0.1.0", "0.1.0",
+				snpTableCoreInputs.getToolVersion());
+		final ToolExecution snpTableCoreUpload = snpTableCoreInputs.getPreviousSteps().iterator().next();
+		assertTrue("Second step should be input tool.", snpTableCoreUpload.isInputTool());
 
 		AnalysisSubmission finalSubmission = analysisSubmissionRepository.findOne(analysisExecuted.getId());
 		Analysis analysis = finalSubmission.getAnalysis();
