@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+	<id>23434bf8-e551-4efd-9957-e61c6f649f8b</id>
+	<name>SNVPhylTestPairedWithParameters</name>
+	<version>0.1-paired-with-parameters</version>
+	<author>Aaron Petkau</author>
+	<email>aaron.petkau@phac-aspc.gc.ca</email>
+	<analysisType>phylogenomics</analysisType>
+	<inputs>
+		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+		<reference>reference</reference>
+	</inputs>
+	<parameters>
+		<parameter name="minimum-coverage" defaultValue="10">
+			<toolParameter toolId="core_pipeline_outputs_paired_with_parameters"
+				parameterName="coverage" />
+		</parameter>
+	</parameters>
+	<outputs>
+		<output name="tree" fileName="phylogeneticTree.txt" />
+		<output name="matrix" fileName="snpMatrix.tsv" />
+		<output name="table" fileName="snpTable.tsv" />
+	</outputs>
+	<toolRepositories>
+		<repository>
+			<name>sam_to_bam</name>
+			<owner>devteam</owner>
+			<url>http://toolshed.g2.bx.psu.edu/</url>
+			<revision>8176b2575aa1</revision>
+		</repository>
+	</toolRepositories>
+</iridaWorkflow>

@@ -36,6 +36,7 @@
 
 	<analysis_submission />
 	<analysis_submission_sequence_file_single />
+	<analysis_submission_parameters />
 
 	<password_reset />
 	<remote_api />
@@ -83,6 +84,7 @@
 	<analysis_submission_AUD />
 	<analysis_submission_sequence_file_single_AUD />
 	<analysis_submission_sequence_file_pair_AUD />
+	<analysis_submission_parameters_AUD />
 	<system_role_AUD />
 	<user_AUD />
 	<sample_AUD />

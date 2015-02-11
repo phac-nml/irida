@@ -40,6 +40,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisType
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowParameterException;
 import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
@@ -70,10 +71,12 @@ import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.Workflow;
+import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs.WorkflowInput;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -129,6 +132,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 	private static final UUID validWorkflowIdSingle = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
 	private static final UUID validWorkflowIdPaired = UUID.fromString("ec93b50d-c9dd-4000-98fc-4a70d46ddd36");
+	private static final UUID validWorkflowIdPairedWithParameters = UUID.fromString("23434bf8-e551-4efd-9957-e61c6f649f8b");
 	private static final UUID validWorkflowIdSinglePaired = UUID.fromString("d92e9918-1e3d-4dea-b2b9-089f1256ac1b");
 	private static final UUID phylogenomicsWorkflowId = UUID.fromString("1f9ea289-5053-4e4a-bc76-1f0c60b179f8");
 
@@ -383,6 +387,143 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
 				.getInputs();
 		assertEquals("the created workflow inputs has an invalid number of elements", 2, workflowInputsMap.size());
+	}
+	
+	/**
+	 * Tests out successfully preparing paired workflow input files for
+	 * execution with parameters.
+	 * 
+	 * @throws InterruptedException
+	 * @throws ExecutionManagerException
+	 * @throws IOException
+	 * @throws IridaWorkflowException 
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testPrepareAnalysisFilesParametersSuccess() throws InterruptedException, ExecutionManagerException,
+			IOException, IridaWorkflowException {
+
+		History history = new History();
+		history.setName("testPrepareAnalysisFilesParametersSuccess");
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
+		History createdHistory = historiesClient.create(history);
+
+		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedWithParameters);
+		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
+		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+
+		Map<String,String> parameters = ImmutableMap.of("minimum-coverage", "20");
+
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
+				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, parameters, validWorkflowIdPairedWithParameters);
+		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
+		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
+
+		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
+		assertEquals("the response history id should match the input history id", createdHistory.getId(),
+				preparedWorkflow.getRemoteAnalysisId());
+		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
+		assertNotNull("the returned workflow inputs should not be null", workflowInputsGalaxy);
+
+		// verify correct files have been uploaded
+		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
+		assertEquals("the created history has an invalid number of elements", 4, historyContents.size());
+		
+		WorkflowInputs workflowInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
+		assertNotNull("created workflowInputs is null", workflowInputs);
+		
+		Map<String,Object> toolParameters = workflowInputs.getParameters().get("core_pipeline_outputs_paired_with_parameters");
+		assertNotNull("toolParameters is null", toolParameters);
+		
+		String coverageValue = (String)toolParameters.get("coverage");
+		assertEquals("coverageValue should have been changed", "20", coverageValue);
+	}
+	
+	/**
+	 * Tests out successfully preparing paired workflow input files for
+	 * execution, no parameters set.
+	 * 
+	 * @throws InterruptedException
+	 * @throws ExecutionManagerException
+	 * @throws IOException
+	 * @throws IridaWorkflowException 
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testPrepareAnalysisFilesParametersSuccessWithNoParameters() throws InterruptedException, ExecutionManagerException,
+			IOException, IridaWorkflowException {
+
+		History history = new History();
+		history.setName("testPrepareAnalysisFilesParametersSuccessWithNoParameters");
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
+		History createdHistory = historiesClient.create(history);
+
+		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedWithParameters);
+		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
+		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
+				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, validWorkflowIdPairedWithParameters);
+		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
+		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
+
+		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
+		assertEquals("the response history id should match the input history id", createdHistory.getId(),
+				preparedWorkflow.getRemoteAnalysisId());
+		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
+		assertNotNull("the returned workflow inputs should not be null", workflowInputsGalaxy);
+
+		// verify correct files have been uploaded
+		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
+		assertEquals("the created history has an invalid number of elements", 4, historyContents.size());
+		
+		WorkflowInputs workflowInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
+		assertNotNull("created workflowInputs is null", workflowInputs);
+		
+		Map<String,Object> toolParameters = workflowInputs.getParameters().get("core_pipeline_outputs_paired_with_parameters");
+		assertNotNull("toolParameters is null", toolParameters);
+		
+		String coverageValue = (String)toolParameters.get("coverage");
+		assertEquals("coverageValue should have been changed to defaultValue", "10", coverageValue);
+	}
+	
+	/**
+	 * Tests out failing to prepare paired workflow input files for
+	 * execution with parameters due to an invalid parameter passed.
+	 * 
+	 * @throws InterruptedException
+	 * @throws ExecutionManagerException
+	 * @throws IOException
+	 * @throws IridaWorkflowException 
+	 */
+	@Test(expected=IridaWorkflowParameterException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testPrepareAnalysisFilesParametersFailInvalidParameter() throws InterruptedException, ExecutionManagerException,
+			IOException, IridaWorkflowException {
+
+		History history = new History();
+		history.setName("testPrepareAnalysisFilesParametersFailInvalidParameter");
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
+		History createdHistory = historiesClient.create(history);
+
+		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedWithParameters);
+		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
+		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+
+		Map<String,String> parameters = ImmutableMap.of("invalid", "20");
+
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
+				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, parameters, validWorkflowIdPairedWithParameters);
+		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
+		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
+
+		analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
 	}
 
 	/**

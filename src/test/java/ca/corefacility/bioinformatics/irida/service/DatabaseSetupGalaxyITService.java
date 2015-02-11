@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -149,6 +150,43 @@ public class DatabaseSetupGalaxyITService {
 				.inputFilesPaired(Sets.newHashSet(sequenceFilePairs))
 				.referenceFile(referenceFile)
 				.build();
+		analysisSubmissionService.create(submission);
+
+		return analysisSubmissionRepository.findOne(submission.getId());
+	}
+	
+	/**
+	 * Sets up an {@link AnalysisSubmission} with a list of paired sequence
+	 * files and saves all dependencies in database.
+	 * 
+	 * @param sampleId
+	 *            The id of the sample to associate with the given sequence
+	 *            file.
+	 * @param sequenceFilePaths1
+	 *            A list of paths for the first part of the pair.
+	 * @param sequenceFilePaths2
+	 *            A list of paths for the second part of the pair. The path to
+	 *            an input sequence file for this test.
+	 * @param referenceFilePath
+	 *            The path to an input reference file for this test.
+	 * @param parameters
+	 *            The input parameters.
+	 * @param iridaWorkflowID
+	 *            The id of an irida workflow.
+	 * @return An {@link AnalysisSubmission} which has been saved to the
+	 *         database.
+	 */
+	public AnalysisSubmission setupPairSubmissionInDatabase(long sampleId, List<Path> sequenceFilePaths1,
+			List<Path> sequenceFilePaths2, Path referenceFilePath, Map<String, String> parameters, UUID iridaWorkflowId) {
+
+		List<SequenceFilePair> sequenceFilePairs = setupSampleSequenceFileInDatabase(sampleId, sequenceFilePaths1,
+				sequenceFilePaths2);
+
+		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
+
+		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId).name("paired analysis")
+				.inputFilesPaired(Sets.newHashSet(sequenceFilePairs)).referenceFile(referenceFile)
+				.inputParameters(parameters).build();
 		analysisSubmissionService.create(submission);
 
 		return analysisSubmissionRepository.findOne(submission.getId());

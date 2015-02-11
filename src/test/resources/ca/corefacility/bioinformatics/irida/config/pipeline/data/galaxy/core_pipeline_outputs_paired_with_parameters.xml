@@ -1,0 +1,15 @@
+<tool id="core_pipeline_outputs_paired_with_parameters" name="core_pipeline_outputs_paired_with_parameters" version="0.1.0">
+  <command>
+    echo "$coverage" > $csv; echo "$coverage" > $output_tree; echo "$coverage" > $positions;
+  </command>
+  <inputs>
+    <param name="sequence_reads" label="sequence_reads" type="data_collection" collection_type="list:paired" />
+    <param name="fasta" type="data" label="reference" format="fasta" />
+    <param name="coverage" type="integer" value="15" label="minimum coverage"/>
+  </inputs>
+  <outputs>
+    <data format="csv" name="csv" />
+    <data format="txt" name="output_tree" />
+    <data format="tabular" name="positions" />
+  </outputs>
+</tool>
