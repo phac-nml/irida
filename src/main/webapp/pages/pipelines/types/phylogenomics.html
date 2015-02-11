@@ -189,7 +189,7 @@
 	</form>
 </div>
 <th:block layout:fragment="page-scripts">
-	<th:block th:replace="analysis/templates/parameters :: modal (#{pipeline.phylogenomics.parameters.modal-title}, ${parameters})"></th:block>
+	<th:block th:replace="pipelines/templates/parameters :: modal (#{pipeline.phylogenomics.parameters.modal-title}, ${parameters})"></th:block>
 	<script th:inline="javascript">
 		/*<![CDATA[*/
 		var PIPELINE = {

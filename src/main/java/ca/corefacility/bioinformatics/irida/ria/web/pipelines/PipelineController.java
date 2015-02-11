@@ -251,13 +251,14 @@ public class PipelineController extends BaseController {
 			// Need to add the pipeline parameters
 			List<IridaWorkflowParameter> paras = iridaWorkflow.getWorkflowDescription().getParameters();
 			List<Map<String, String>> parameters = new ArrayList<>();
-			if () {
+			if (paras != null) {
 				for (IridaWorkflowParameter p : paras) {
 					parameters.add(ImmutableMap.of(
-							"name", p.getName(),
+							"name", messageSource.getMessage("workflow.param." + p.getName(), null, locale),
 							"default", p.getDefaultValue()
 					));
 				}
+				model.addAttribute("parameters", parameters);
 			}
 
 			model.addAttribute("name", iridaWorkflow.getWorkflowDescription().getName() + " (" + dateFormatter.print(new Date(), locale) + ")");

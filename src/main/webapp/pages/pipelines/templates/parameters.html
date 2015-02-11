@@ -11,7 +11,8 @@
 	</div>
 	<div class="modal-body">
 		<div class="form-group" th:each="parameter : ${parameters}">
-			<div class="label label-info" th:text="${parameter.name}"></div>
+			<label th:text="${parameter.name}"></label>
+			<input class="form-control" type="text" th:placeholder="${parameter.default}"/>
 		</div>
 	</div>
 	<div class="modal-footer">
