@@ -22,7 +22,7 @@ public class SequencingRunFilesPage extends AbstractPage {
 	}
 
 	public void getFilesPage(Long id) {
-		String url = PAGEURL + id + "/files";
+		String url = PAGEURL + id + "/sequenceFiles";
 		logger.debug("Loading sequencing run files " + id + " at " + url);
 		get(driver, url);
 	}
