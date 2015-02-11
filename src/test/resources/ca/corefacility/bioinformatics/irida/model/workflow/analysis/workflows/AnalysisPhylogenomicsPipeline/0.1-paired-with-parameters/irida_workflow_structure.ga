@@ -108,11 +108,11 @@
             }, 
             "tool_errors": null, 
             "tool_id": "core_pipeline_outputs_paired_with_parameters", 
-            "tool_state": "{\"__page__\": 0, \"fasta\": \"null\", \"sequence_reads\": \"null\", \"__rerun_remap_job_id__\": null, \"coverage\": \"\\\"15\\\"\"}", 
+            "tool_state": "{\"__page__\": 0, \"sequence_reads\": \"null\", \"coverageMin\": \"\\\"5\\\"\", \"__rerun_remap_job_id__\": null, \"fasta\": \"null\", \"coverageMax\": \"\\\"15\\\"\"}", 
             "tool_version": "0.1.0", 
             "type": "tool", 
             "user_outputs": []
         }
     }, 
-    "uuid": "3fbc4ff2-1dd2-4a8a-b009-5469981cb616"
+    "uuid": "f858ce4e-b41d-4d97-9e95-e711a5ab03c3"
 }

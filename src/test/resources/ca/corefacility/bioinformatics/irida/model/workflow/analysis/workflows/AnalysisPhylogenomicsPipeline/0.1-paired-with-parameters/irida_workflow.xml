@@ -12,9 +12,11 @@
 		<reference>reference</reference>
 	</inputs>
 	<parameters>
-		<parameter name="minimum-coverage" defaultValue="10">
+		<parameter name="coverage" defaultValue="10">
 			<toolParameter toolId="core_pipeline_outputs_paired_with_parameters"
-				parameterName="coverage" />
+				parameterName="coverageMin" />
+			<toolParameter toolId="core_pipeline_outputs_paired_with_parameters"
+				parameterName="coverageMax" />
 		</parameter>
 	</parameters>
 	<outputs>
