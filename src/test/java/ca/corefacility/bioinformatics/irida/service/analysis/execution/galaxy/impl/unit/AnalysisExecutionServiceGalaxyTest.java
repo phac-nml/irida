@@ -92,6 +92,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 	private static final String REMOTE_WORKFLOW_ID = "1";
 	private static final Long INTERNAL_ANALYSIS_ID = 2l;
 	private static final String ANALYSIS_ID = "2";
+	private static final String LIBRARY_ID = "3";
 	private AnalysisExecutionServiceGalaxy workflowManagement;
 	private PreparedWorkflowGalaxy preparedWorkflow;
 	private WorkflowInputsGalaxy workflowInputsGalaxy;
@@ -203,7 +204,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 
 		analysisPrepared.setRemoteAnalysisId(ANALYSIS_ID);
 
-		preparedWorkflow = new PreparedWorkflowGalaxy(ANALYSIS_ID, workflowInputsGalaxy);
+		preparedWorkflow = new PreparedWorkflowGalaxy(ANALYSIS_ID, LIBRARY_ID, workflowInputsGalaxy);
 
 		when(galaxyWorkflowService.uploadGalaxyWorkflow(workflowFile)).thenReturn(REMOTE_WORKFLOW_ID);
 	}

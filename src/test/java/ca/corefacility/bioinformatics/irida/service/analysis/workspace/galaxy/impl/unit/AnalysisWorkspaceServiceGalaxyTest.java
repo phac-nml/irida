@@ -31,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundExce
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowParameterException;
 import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -113,6 +114,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 	private Library workflowLibrary;
 
 	private static final String HISTORY_ID = "10";
+	private static final String LIBRARY_ID = "9";
 	private static final String WORKFLOW_ID = "11";
 	private static final String SEQUENCE_FILE_SINGLE_LABEL = "sequence_reads";
 	private static final String SEQUENCE_FILE_PAIRED_LABEL = "sequence_reads_paired";
@@ -194,7 +196,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		workflowHistory.setId(HISTORY_ID);
 
 		workflowLibrary = new Library();
-		workflowLibrary.setId("1");
+		workflowLibrary.setId(LIBRARY_ID);
 
 		workflowDetails = new WorkflowDetails();
 		workflowDetails.setId(WORKFLOW_ID);
@@ -302,6 +304,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 		assertEquals("preparedWorflow history id not equal to " + HISTORY_ID, HISTORY_ID,
 				preparedWorkflow.getRemoteAnalysisId());
+		assertEquals("preparedWorkflow library is invalid", LIBRARY_ID, preparedWorkflow.getRemoteDataId());
 
 		assertNotNull("workflowInputs in preparedWorkflow is null", preparedWorkflow.getWorkflowInputs());
 		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
@@ -364,6 +367,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 		assertEquals("preparedWorflow history id not equal to " + HISTORY_ID, HISTORY_ID,
 				preparedWorkflow.getRemoteAnalysisId());
+		assertEquals("preparedWorkflow library is invalid", LIBRARY_ID, preparedWorkflow.getRemoteDataId());
 
 		assertNotNull("workflowInputs in preparedWorkflow is null", preparedWorkflow.getWorkflowInputs());
 		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
@@ -426,6 +430,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 
 		assertEquals("preparedWorflow history id not equal to " + HISTORY_ID, HISTORY_ID,
 				preparedWorkflow.getRemoteAnalysisId());
+		assertEquals("preparedWorkflow library is invalid", LIBRARY_ID, preparedWorkflow.getRemoteDataId());
 
 		assertNotNull("workflowInputs in preparedWorkflow is null", preparedWorkflow.getWorkflowInputs());
 		Map<String, WorkflowInput> workflowInputsMap = preparedWorkflow.getWorkflowInputs().getInputsObject()
@@ -439,6 +444,31 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 				any(Library.class));
 		verify(analysisCollectionServiceGalaxy).uploadSequenceFilesPaired(any(Map.class), any(History.class),
 				any(Library.class));
+	}
+	
+	/**
+	 * Tests out successfully to preparing an analysis with single files.
+	 * 
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowException 
+	 */
+	@Test(expected = CreateLibraryException.class)
+	public void testPrepareAnalysisFilesNoCreateLibraryFail() throws ExecutionManagerException,
+			IridaWorkflowException {
+		submission = AnalysisSubmission.builder(workflowId)
+				.name("my analysis")
+				.inputFilesSingle(Sets.newHashSet(sampleSequenceFileMap.values()))
+				.referenceFile(referenceFile)
+				.build();
+		submission.setRemoteAnalysisId(HISTORY_ID);
+		submission.setRemoteWorkflowId(WORKFLOW_ID);
+
+		when(iridaWorkflowsService.getIridaWorkflow(workflowId)).thenReturn(iridaWorkflowSingle);
+
+		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
+		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenThrow(new CreateLibraryException(""));
+
+		workflowPreparation.prepareAnalysisFiles(submission);
 	}
 
 	/**
