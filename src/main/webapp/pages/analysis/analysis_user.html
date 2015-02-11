@@ -83,7 +83,8 @@
 				</li>
 			</ul>
 			<div id="no-analyses" ng-hide="ctrl.showAnalyses" class="alert alert-info ng-cloak animate-hide">
-				<strong th:text="#{analysis.no-analysis}">Damn, You need to create some analyses.</strong>
+				<strong><i class="fa fa-exclamation-circle fa-2x"></i>&nbsp;<span th:text="#{analysis.no-analysis-title}">Damn, You need to create some analyses.</span></strong>
+				<p th:text="#{analysis.no-analysis-message}"></p>
 			</div>
 		</div>
 	</div>
