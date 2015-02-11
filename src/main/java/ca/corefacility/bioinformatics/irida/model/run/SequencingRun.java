@@ -62,6 +62,10 @@ public abstract class SequencingRun implements IridaThing, Comparable<Sequencing
 	@Column(name = "upload_status")
 	private SequencingRunUploadStatus uploadStatus;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "layout_type")
+	private LayoutType layoutType;
+
 	public SequencingRun() {
 		uploadStatus = SequencingRunUploadStatus.UPLOADING;
 		createdDate = new Date();
@@ -142,11 +146,29 @@ public abstract class SequencingRun implements IridaThing, Comparable<Sequencing
 		return uploadStatus;
 	}
 
+	public LayoutType getLayoutType() {
+		return layoutType;
+	}
+
+	public void setLayoutType(LayoutType layoutType) {
+		this.layoutType = layoutType;
+	}
+
 	/**
 	 * Get the sequencer type
 	 * 
 	 * @return Name of the sequencer type
 	 */
 	public abstract String getSequencerType();
+
+	/**
+	 * The type of layout for the run. Single/Paired end
+	 * 
+	 * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+	 *
+	 */
+	public static enum LayoutType {
+		SINGLE_END, PAIRED_END
+	}
 
 }

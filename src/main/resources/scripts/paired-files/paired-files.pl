@@ -80,13 +80,13 @@ for my $runId ( keys %runs ) {
 
 #update the sequencing runs to reflect the paired end runs
 my $runPairsQuery =
-'UPDATE miseq_run m SET m.layout_type="PAIRED_END" WHERE m.id IN (SELECT DISTINCT f.sequencingRun_id FROM sequence_file f INNER JOIN sequence_file_pair_files p ON f.id=p.files_id);';
+'UPDATE sequencing_run m SET m.layout_type="PAIRED_END" WHERE m.id IN (SELECT DISTINCT f.sequencingRun_id FROM sequence_file f INNER JOIN sequence_file_pair_files p ON f.id=p.files_id);';
 
 $sth = $dbh->prepare($runPairsQuery);
 print "Updated paired runs: " . $sth->execute() . "\n";
 
 $runPairsQuery =
-'UPDATE miseq_run m SET m.layout_type="SINGLE_END" WHERE m.id NOT IN (SELECT DISTINCT f.sequencingRun_id FROM sequence_file f INNER JOIN sequence_file_pair_files p ON f.id=p.files_id);';
+'UPDATE sequencing_run m SET m.layout_type="SINGLE_END" WHERE m.id NOT IN (SELECT DISTINCT f.sequencingRun_id FROM sequence_file f INNER JOIN sequence_file_pair_files p ON f.id=p.files_id);';
 
 $sth = $dbh->prepare($runPairsQuery);
 print "Updated unpaired runs " . $sth->execute() . "\n";

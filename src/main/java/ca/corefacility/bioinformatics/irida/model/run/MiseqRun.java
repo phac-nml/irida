@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.run;
 
 import java.util.Objects;
 
-import javax.persistence.Embedded;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -10,7 +10,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.envers.Audited;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.run.library.Layout;
 
 /**
  *
@@ -41,8 +40,8 @@ public class MiseqRun extends SequencingRun implements IridaThing {
 
 	private String chemistry;
 
-	@Embedded
-	private Layout layout;
+	@Column(name = "read_lengths")
+	private Integer readLengths;
 
 	public String getInvestigatorName() {
 		return investigatorName;
@@ -100,12 +99,12 @@ public class MiseqRun extends SequencingRun implements IridaThing {
 		this.chemistry = chemistry;
 	}
 
-	public Layout getLayout() {
-		return layout;
+	public Integer getReadLengths() {
+		return readLengths;
 	}
 
-	public void setLayout(Layout layout) {
-		this.layout = layout;
+	public void setReadLengths(Integer readLengths) {
+		this.readLengths = readLengths;
 	}
 
 	@Override
@@ -116,7 +115,7 @@ public class MiseqRun extends SequencingRun implements IridaThing {
 	@Override
 	public int hashCode() {
 		return Objects.hash(super.hashCode(), application, assay, chemistry, experimentName, investigatorName,
-				projectName, workflow, layout);
+				projectName, workflow, readLengths);
 	}
 
 	@Override
@@ -133,7 +132,7 @@ public class MiseqRun extends SequencingRun implements IridaThing {
 				&& Objects.equals(this.experimentName, other.experimentName)
 				&& Objects.equals(this.workflow, other.workflow) && Objects.equals(this.application, other.application)
 				&& Objects.equals(this.assay, other.assay) && Objects.equals(this.chemistry, other.chemistry)
-				&& Objects.equals(this.layout, other.layout)) {
+				&& Objects.equals(this.readLengths, other.readLengths)) {
 			return true;
 		}
 

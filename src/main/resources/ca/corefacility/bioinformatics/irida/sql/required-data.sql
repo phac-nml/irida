@@ -280,8 +280,8 @@ insert into related_project (`subject_id`, `relatedProject_id`, `createdDate`) V
 insert into remote_api (name,clientId,clientSecret,description,serviceURI,createdDate) values ("Test Web Client","webClient","webClientSecret","A local testing api","http://localhost:8080/api",now());
 
 -- sequence run
-insert into sequencing_run (createdDate, description, modifiedDate, upload_status) values ('2014-07-30 08:24:33','Superbug','2014-07-30 08:24:33','COMPLETE');
-insert into miseq_run(id,workflow,layout_type,read_lengths) values (1,"test workflow","SINGLE_END",250);
+insert into sequencing_run (createdDate, description, modifiedDate, upload_status, layout_type) values ('2014-07-30 08:24:33','Superbug','2014-07-30 08:24:33','COMPLETE', "SINGLE_END");
+insert into miseq_run(id,workflow,read_lengths) values (1,"test workflow",250);
 
 -- sequence files
 insert into sequence_file (id, createdDate, fileRevisionNumber, modifiedDate, filePath, sequencingRun_id) values (1, '2014-07-30 08:24:34',2,'2014-07-30 08:24:34','/tmp/sequence-files/1/2/02-2222_S1_L001_R1_001.fastq',1);
