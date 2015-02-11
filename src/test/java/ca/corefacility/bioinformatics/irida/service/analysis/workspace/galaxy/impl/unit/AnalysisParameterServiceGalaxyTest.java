@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.i
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Work
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
 
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -48,6 +50,7 @@ public class AnalysisParameterServiceGalaxyTest {
 		List<IridaWorkflowParameter> iridaWorkflowParameters = Lists.newArrayList(parameter1);
 
 		when(iridaWorkflowDescription.getParameters()).thenReturn(iridaWorkflowParameters);
+		when(iridaWorkflowDescription.acceptsParameters()).thenReturn(true);
 	}
 
 	/**
@@ -140,5 +143,25 @@ public class AnalysisParameterServiceGalaxyTest {
 		parameters.put("parameter-invalid", "1");
 
 		analysisParameterService.prepareAnalysisParameters(parameters, iridaWorkflow);
+	}
+	
+	/**
+	 * Tests preparing workflow parameters when there are no parameters to prepare.
+	 * 
+	 * @throws IridaWorkflowParameterException
+	 */
+	@Test
+	public void testPrepareParametersSuccessNoParameters() throws IridaWorkflowParameterException {
+		when(iridaWorkflowDescription.acceptsParameters()).thenReturn(false);
+		
+		WorkflowInputsGalaxy workflowInputsGalaxy = analysisParameterService.prepareAnalysisParameters(ImmutableMap.of(),
+				iridaWorkflow);
+
+		assertNotNull("workflowInputsGalaxy is null", workflowInputsGalaxy);
+
+		WorkflowInputs workflowInputs = workflowInputsGalaxy.getInputsObject();
+		assertNotNull("workflowInputs is null", workflowInputs);
+		
+		verify(iridaWorkflowDescription).acceptsParameters();
 	}
 }
