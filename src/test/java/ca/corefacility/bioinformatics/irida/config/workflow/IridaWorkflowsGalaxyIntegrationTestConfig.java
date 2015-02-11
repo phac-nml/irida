@@ -83,8 +83,9 @@ public class IridaWorkflowsGalaxyIntegrationTestConfig {
 	 *            The instance of Galaxy to import tools into.
 	 * @param iridaWorkflow
 	 *            The workflow to import all tools for.
+	 * @throws IridaWorkflowException
 	 */
-	private void importAllTools(GalaxyInstance galaxyInstance, IridaWorkflow iridaWorkflow) {
+	private void importAllTools(GalaxyInstance galaxyInstance, IridaWorkflow iridaWorkflow) throws IridaWorkflowException {
 		for (IridaWorkflowToolRepository workflowTool : iridaWorkflow.getWorkflowDescription().getToolRepositories()) {
 			ToolShedRepositoriesClient toolRepositoriesClient = galaxyInstance.getRepositoriesClient();
 
@@ -101,6 +102,10 @@ public class IridaWorkflowsGalaxyIntegrationTestConfig {
 			for (InstalledRepository installedRepository : installedRepositories) {
 				InstallationStatus status = installedRepository.getInstallationStatus();
 				logger.debug("Installation status=" + status + " for tool " + workflowTool);
+				if (status.equals(InstallationStatus.ERROR)) {
+					// don't even try to proceed with tests if you can't install the required tools.
+					throw new IridaWorkflowException("Failed to install tool [" + workflowTool + "]");
+				}
 			}
 		}
 	}

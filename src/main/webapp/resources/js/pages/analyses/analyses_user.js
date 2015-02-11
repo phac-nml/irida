@@ -35,7 +35,7 @@
         else if (key === 'maxDate' && item > value) {
           result = false;
         }
-        else if (angular.isString(value) && item.toLowerCase().indexOf(value.toLowerCase()) !== -1) {
+        else if (angular.isString(value) && item.toLowerCase().indexOf(value.toLowerCase()) === -1) {
           result = false;
         }
       });
@@ -77,7 +77,8 @@
     function _setDefaults() {
       vm.search = "";
       vm.state = "ALL";
-      vm.min = "";
+      vm.minDate = "";
+      vm.maxDate = "";
       vm.max = new Date();
     }
 

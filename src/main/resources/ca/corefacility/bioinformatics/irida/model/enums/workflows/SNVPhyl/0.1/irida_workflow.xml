@@ -11,6 +11,13 @@
     <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
     <reference>reference</reference>
   </inputs>
+	<parameters>
+		<parameter name="alternative-allele-fraction" defaultValue="0.75">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/freebayes/freebayes/0.0.4"
+				parameterName="min_alternate_fraction" />
+		</parameter>
+	</parameters>
   <outputs>
     <output name="tree" fileName="phylogeneticTree.tre"/>
     <output name="matrix" fileName="snpMatrix.tsv"/>
