@@ -21,33 +21,29 @@
 			<table id="filesTable">
 				<thead>
 				<tr role="row">
-					<th th:text="#{samples.files.id}">ID</th>
-					<th th:text="#{samples.files.name}">Name</th>
-					<th th:text="#{samples.files.uploaded}">Uploaded</th>
-					<th th:text="#{samples.files.size}">Size</th>
+					<th th:text="#{sequencingruns.files.id}">ID</th>
+					<th th:text="#{sequencingruns.files.name}">Name</th>
+					<th th:text="#{sequencingruns.files.size}">Size</th>
 					<th></th>
 				</tr>
 				</thead>
 				<tbody>
-				<tr class="file-row" role="row" th:each="file : ${files}" th:with="dateFormat=#{locale.date.long}"
+				<tr class="file-row" role="row" th:each="file : ${files}"
 				    th:id="${'file-row-' + file.id}">
 					<td class="file-id" th:text="${file.id}">ID</td>
 					<td>
-						<a class="file-name btn btn-default btn-xs" th:href="@{/sequenceFiles/{id}(id=${file.id})}"
+						<a class="file-name btn btn-default btn-xs" th:href="@{/sequenceFiles/{id}/summary(id=${file.id})}"
 						   href="#"
 						   th:text="${file.label}"></a>
 					</td>
-					<td data:order="${file.createdDate}"
-					    th:title="${#dates.format(file.createdDate, dateFormat)}" th:text="${file.createdDate}">Date
-					</td>
 					<td data:order="${file.size}" th:text="${file.size}"></td>
 					<td class="file-buttons">
-                        <div class="btn-toolbar pull-right">
-                            <button class="btn btn-primary btn-xs download-file"
-                                    th:attr="data-file-id=${file.id}">
-	                            <span class="fa fa-fw fa-download"></span>
-                            </button>
-                        </div>
+						<div class="btn-toolbar pull-right">
+							<button class="btn btn-primary btn-xs download-file"
+							        th:attr="data-file-id=${file.id}">
+								<span class="fa fa-fw fa-download"></span>
+							</button>
+						</div>
 					</td>
 				</tr>
 				</tbody>
