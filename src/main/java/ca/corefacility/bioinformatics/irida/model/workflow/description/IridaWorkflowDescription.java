@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 /**
  * Class providing access to generic information about a workflow.
@@ -161,7 +162,11 @@ public class IridaWorkflowDescription {
 	}
 	
 	public List<IridaWorkflowParameter> getParameters() {
-		return parameters;
+		if (parameters != null) {
+			return parameters;
+		} else {
+			return Lists.newLinkedList();
+		}
 	}
 
 	/**
