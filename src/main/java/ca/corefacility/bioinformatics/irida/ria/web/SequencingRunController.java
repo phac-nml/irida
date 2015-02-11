@@ -92,7 +92,7 @@ public class SequencingRunController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/{runId}/files")
+	@RequestMapping("/{runId}/sequenceFiles")
 	public String getFilesPage(@PathVariable Long runId, Model model) throws IOException {
 		model = getPageDetails(runId, model);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_FILES);
