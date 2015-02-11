@@ -655,11 +655,12 @@ public class AnalysisExecutionServiceGalaxyIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testTransferAnalysisResultsSuccessPhylogenomicsPairedParameters() throws Exception {
 		String validCoverage = "20";
-		String validCoverageFromProvenance = "\"20\""; // coverage from provenance has quotes
+		String validCoverageFromProvenance = "\"20\""; // coverage from
+														// provenance has quotes
 		Map<String, String> parameters = ImmutableMap.of("coverage", validCoverage);
 		String validTreeFile = "20 20"; // I verify parameters were set
-											// correctly by checking output file
-											// (where parameters were printed).
+										// correctly by checking output file
+										// (where parameters were printed).
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
 				.setupPairSubmissionInDatabase(1L, pairedPaths1, pairedPaths2, referenceFilePath, parameters,
@@ -708,9 +709,12 @@ public class AnalysisExecutionServiceGalaxyIT {
 				"0.1.0", phyTreeCoreInputs.getToolVersion());
 		Map<String, String> phyTreeCoreParameters = phyTreeCoreInputs.getExecutionTimeParameters();
 		assertEquals("incorrect number of non-file parameters", 3, phyTreeCoreParameters.size());
-		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance, phyTreeCoreParameters.get("coverageMin"));
-		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance, phyTreeCoreParameters.get("coverageMax"));
-		assertNotNull("parameter __workflow_invocation_uuid__ exists", phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
+		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
+				phyTreeCoreParameters.get("coverageMin"));
+		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance,
+				phyTreeCoreParameters.get("coverageMax"));
+		assertNotNull("parameter __workflow_invocation_uuid__ exists",
+				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> phyTreeCorePreviousSteps = phyTreeCoreInputs.getPreviousSteps();
 		assertTrue("there should exist previous steps", phyTreeCorePreviousSteps.size() > 0);
@@ -726,9 +730,12 @@ public class AnalysisExecutionServiceGalaxyIT {
 				"0.1.0", matrixCoreInputs.getToolVersion());
 		Map<String, String> matrixCoreParameters = matrixCoreInputs.getExecutionTimeParameters();
 		assertEquals("incorrect number of non-file parameters", 3, matrixCoreParameters.size());
-		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance, matrixCoreParameters.get("coverageMin"));
-		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance, matrixCoreParameters.get("coverageMax"));
-		assertNotNull("parameter __workflow_invocation_uuid__ exists", phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
+		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
+				matrixCoreParameters.get("coverageMin"));
+		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance,
+				matrixCoreParameters.get("coverageMax"));
+		assertNotNull("parameter __workflow_invocation_uuid__ exists",
+				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> matrixCorePreviousSteps = matrixCoreInputs.getPreviousSteps();
 		assertTrue("there should exist previous steps", matrixCorePreviousSteps.size() > 0);
@@ -744,15 +751,22 @@ public class AnalysisExecutionServiceGalaxyIT {
 				"0.1.0", tableCoreInputs.getToolVersion());
 		Map<String, String> tableCoreParameters = tableCoreInputs.getExecutionTimeParameters();
 		assertEquals("incorrect number of non-file parameters", 3, tableCoreParameters.size());
-		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance, tableCoreParameters.get("coverageMin"));
-		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance, tableCoreParameters.get("coverageMax"));
-		assertNotNull("parameter __workflow_invocation_uuid__ exists", phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
+		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
+				tableCoreParameters.get("coverageMin"));
+		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance,
+				tableCoreParameters.get("coverageMax"));
+		assertNotNull("parameter __workflow_invocation_uuid__ exists",
+				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> tablePreviousSteps = tableCoreInputs.getPreviousSteps();
-		assertTrue("there should exist previous steps", tablePreviousSteps.size() > 0);
+		assertEquals("there should exist 2 previous steps", 2, tablePreviousSteps.size());
+		Set<String> uploadedFileTypes = Sets.newHashSet();
 		for (ToolExecution previousStep : tablePreviousSteps) {
-			assertTrue("Second step should be input tool.", previousStep.isInputTool());
+			assertTrue("previous steps should be input tools.", previousStep.isInputTool());
+			uploadedFileTypes.add(previousStep.getExecutionTimeParameters().get("file_type"));
 		}
+		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
+				uploadedFileTypes);
 	}
 
 	/**
@@ -766,8 +780,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsSuccessPhylogenomicsPairedNoParameters() throws Exception {
 		String validCoverageFromProvenance = "\"10\"";
 		String validTreeFile = "10 10"; // I verify parameters were set
-											// correctly by checking output file
-											// (where parameters were printed).
+										// correctly by checking output file
+										// (where parameters were printed).
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				pairedPaths1, pairedPaths2, referenceFilePath, iridaPhylogenomicsPairedParametersWorkflowId);
@@ -815,9 +829,12 @@ public class AnalysisExecutionServiceGalaxyIT {
 				"0.1.0", phyTreeCoreInputs.getToolVersion());
 		Map<String, String> phyTreeCoreParameters = phyTreeCoreInputs.getExecutionTimeParameters();
 		assertEquals("incorrect number of non-file parameters", 3, phyTreeCoreParameters.size());
-		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance, phyTreeCoreParameters.get("coverageMin"));
-		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance, phyTreeCoreParameters.get("coverageMax"));
-		assertNotNull("parameter __workflow_invocation_uuid__ exists", phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
+		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
+				phyTreeCoreParameters.get("coverageMin"));
+		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance,
+				phyTreeCoreParameters.get("coverageMax"));
+		assertNotNull("parameter __workflow_invocation_uuid__ exists",
+				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> phyTreeCorePreviousSteps = phyTreeCoreInputs.getPreviousSteps();
 		assertTrue("there should exist previous steps", phyTreeCorePreviousSteps.size() > 0);
@@ -833,9 +850,12 @@ public class AnalysisExecutionServiceGalaxyIT {
 				"0.1.0", matrixCoreInputs.getToolVersion());
 		Map<String, String> matrixCoreParameters = matrixCoreInputs.getExecutionTimeParameters();
 		assertEquals("incorrect number of non-file parameters", 3, matrixCoreParameters.size());
-		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance, matrixCoreParameters.get("coverageMin"));
-		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance, matrixCoreParameters.get("coverageMax"));
-		assertNotNull("parameter __workflow_invocation_uuid__ exists", phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
+		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
+				matrixCoreParameters.get("coverageMin"));
+		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance,
+				matrixCoreParameters.get("coverageMax"));
+		assertNotNull("parameter __workflow_invocation_uuid__ exists",
+				matrixCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> matrixCorePreviousSteps = matrixCoreInputs.getPreviousSteps();
 		assertTrue("there should exist previous steps", matrixCorePreviousSteps.size() > 0);
@@ -851,15 +871,22 @@ public class AnalysisExecutionServiceGalaxyIT {
 				"0.1.0", tableCoreInputs.getToolVersion());
 		Map<String, String> tableCoreParameters = tableCoreInputs.getExecutionTimeParameters();
 		assertEquals("incorrect number of non-file parameters", 3, tableCoreParameters.size());
-		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance, tableCoreParameters.get("coverageMin"));
-		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance, tableCoreParameters.get("coverageMax"));
-		assertNotNull("parameter __workflow_invocation_uuid__ exists", phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
+		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
+				tableCoreParameters.get("coverageMin"));
+		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance,
+				tableCoreParameters.get("coverageMax"));
+		assertNotNull("parameter __workflow_invocation_uuid__ exists",
+				tableCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> tablePreviousSteps = tableCoreInputs.getPreviousSteps();
-		assertTrue("there should exist previous steps", tablePreviousSteps.size() > 0);
+		assertEquals("there should exist 2 previous steps", 2, tablePreviousSteps.size());
+		Set<String> uploadedFileTypes = Sets.newHashSet();
 		for (ToolExecution previousStep : tablePreviousSteps) {
-			assertTrue("Second step should be input tool.", previousStep.isInputTool());
+			assertTrue("previous steps should be input tools.", previousStep.isInputTool());
+			uploadedFileTypes.add(previousStep.getExecutionTimeParameters().get("file_type"));
 		}
+		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
+				uploadedFileTypes);
 	}
 	
 	/**
