@@ -73,10 +73,8 @@
 							<div class="board_detail--desc" th:text="#{analyses.state}">State</div>
 						</div>
 						<div class="col-md-5">
-							<a href="#" ng-href="{{analysis.id}}">
-								<div class="board_detail--value">{{analysis.label}}</div>
-								<div class="board_detail--desc" th:text="#{analyses.analysis-name}">Analysis Name</div>
-							</a>
+							<div class="board_detail--value">{{analysis.label}}</div>
+							<div class="board_detail--desc" th:text="#{analyses.analysis-name}">Analysis Name</div>
 						</div>
 						<div class="col-md-4">
 							<div class="board_detail--value">{{::analysis.createdDate | date:'medium'}}</div>
