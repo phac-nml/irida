@@ -62,6 +62,7 @@ public abstract class SequencingRun implements IridaThing, Comparable<Sequencing
 	@Column(name = "upload_status")
 	private SequencingRunUploadStatus uploadStatus;
 
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "layout_type")
 	private LayoutType layoutType;

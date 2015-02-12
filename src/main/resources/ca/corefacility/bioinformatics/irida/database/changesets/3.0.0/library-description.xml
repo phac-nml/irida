@@ -11,6 +11,9 @@
 			<column name="layout_type" type="varchar(255)" />
 		</addColumn>
 
+		<addNotNullConstraint columnDataType="varchar(255)"
+			columnName="layout_type" defaultNullValue="SINGLE_END" tableName="sequencing_run" />
+
 		<addColumn tableName="miseq_run">
 			<column name="read_lengths" type="int(11)" />
 		</addColumn>
