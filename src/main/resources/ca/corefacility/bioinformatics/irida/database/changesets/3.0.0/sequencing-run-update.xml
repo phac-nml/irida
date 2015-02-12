@@ -5,14 +5,18 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-	<changeSet id="library-description" author="tom">
+	<changeSet id="sequencing-run-update" author="tom">
 
 		<addColumn tableName="sequencing_run">
 			<column name="layout_type" type="varchar(255)" />
+			<column name="upload_status" type="varchar(255)" />
 		</addColumn>
 
 		<addNotNullConstraint columnDataType="varchar(255)"
 			columnName="layout_type" defaultNullValue="SINGLE_END" tableName="sequencing_run" />
+
+		<addNotNullConstraint columnDataType="varchar(255)"
+			columnName="upload_status" defaultNullValue="COMPLETE" tableName="sequencing_run" />
 
 		<addColumn tableName="miseq_run">
 			<column name="read_lengths" type="int(11)" />
@@ -20,6 +24,7 @@
 
 		<addColumn tableName="sequencing_run_AUD">
 			<column name="layout_type" type="varchar(255)" />
+			<column name="upload_status" type="varchar(255)" />
 		</addColumn>
 
 		<addColumn tableName="miseq_run_AUD">
