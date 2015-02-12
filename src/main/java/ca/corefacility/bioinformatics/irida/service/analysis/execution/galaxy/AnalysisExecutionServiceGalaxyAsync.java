@@ -144,12 +144,13 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		logger.trace("Preparing files for " + analysisSubmission);
 		PreparedWorkflowGalaxy preparedWorkflow = workspaceService.prepareAnalysisFiles(analysisSubmission);
 		WorkflowInputsGalaxy input = preparedWorkflow.getWorkflowInputs();
+		String libraryId = preparedWorkflow.getRemoteDataId();
 
 		logger.trace("Executing " + analysisSubmission);
 		galaxyWorkflowService.runWorkflow(input);
 
 		AnalysisSubmission submittedAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
-				ImmutableMap.of("analysisState", AnalysisState.RUNNING));
+				ImmutableMap.of("analysisState", AnalysisState.RUNNING, "remoteInputDataId", libraryId));
 
 		return new AsyncResult<>(submittedAnalysis);
 	}

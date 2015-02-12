@@ -244,7 +244,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 					workflowDetails, inputs);
 		}
 
-		return new PreparedWorkflowGalaxy(analysisId, new WorkflowInputsGalaxy(inputs));
+		return new PreparedWorkflowGalaxy(analysisId, workflowLibrary.getId(), new WorkflowInputsGalaxy(inputs));
 	}
 
 	/**

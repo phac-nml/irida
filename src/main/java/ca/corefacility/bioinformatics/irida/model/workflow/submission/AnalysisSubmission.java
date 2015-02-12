@@ -95,6 +95,13 @@ public class AnalysisSubmission implements IridaThing {
 	 */
 	@Column(name="remote_analysis_id")
 	private String remoteAnalysisId;
+	
+	/**
+	 * Defines the remote id for a location where input data can be uploaded to
+	 * for an analysis.
+	 */
+	@Column(name = "remote_input_data_id")
+	private String remoteInputDataId;
 
 	/**
 	 * Defines the remote id of the workflow being executed. With Galaxy this
@@ -220,6 +227,25 @@ public class AnalysisSubmission implements IridaThing {
 	}
 
 	/**
+	 * Gets the id of a remote location to store input files.
+	 * 
+	 * @return The id of a remote location to store input files.
+	 */
+	public String getRemoteInputDataId() {
+		return remoteInputDataId;
+	}
+
+	/**
+	 * Sets the id of a remote location to store input files.
+	 * 
+	 * @param remoteInputDataId
+	 *            The id of a remote location to store input files.
+	 */
+	public void setRemoteInputDataId(String remoteInputDataId) {
+		this.remoteInputDataId = remoteInputDataId;
+	}
+
+	/**
 	 * Sets the remote analysis id.
 	 * 
 	 * @param remoteAnalysisId
@@ -329,10 +355,11 @@ public class AnalysisSubmission implements IridaThing {
 	@Override
 	public String toString() {
 		return "AnalysisSubmission [id=" + id + ", name=" + name + ", submitter=" + submitter + ", workflowId="
-				+ workflowId + ", remoteAnalysisId=" + remoteAnalysisId + ", remoteWorkflowId=" + remoteWorkflowId
-				+ ", inputFilesSingle=" + inputFilesSingle + ", inputFilesPaired=" + inputFilesPaired
-				+ ", createdDate=" + createdDate + ", modifiedDate=" + modifiedDate + ", analysisState="
-				+ analysisState + ", analysis=" + analysis + ", referenceFile=" + referenceFile + ", inputParameters=" + inputParameters + "]";
+				+ workflowId + ", remoteAnalysisId=" + remoteAnalysisId + ", remoteInputDataId=" + remoteInputDataId
+				+ ", remoteWorkflowId=" + remoteWorkflowId + ", inputFilesSingle=" + inputFilesSingle
+				+ ", inputFilesPaired=" + inputFilesPaired + ", createdDate=" + createdDate + ", modifiedDate="
+				+ modifiedDate + ", analysisState=" + analysisState + ", analysis=" + analysis + ", referenceFile="
+				+ referenceFile + ", inputParameters=" + inputParameters + "]";
 	}
 
 	/**

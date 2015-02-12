@@ -23,6 +23,12 @@ public interface PreparedWorkflow<WorkflowInputsType extends WorkflowInputsGener
 	public String getRemoteAnalysisId();
 	
 	/**
+	 * Gets the id for a location used to store data for a workflow.
+	 * @return  The id of a location used to store data for a workflow.
+	 */
+	public String getRemoteDataId();
+	
+	/**
 	 * Gets the inputs to a workflow.
 	 * @return The inputs to a workflow.
 	 */
