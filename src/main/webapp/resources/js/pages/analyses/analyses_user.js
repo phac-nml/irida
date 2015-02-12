@@ -16,7 +16,7 @@
    * @returns {Function}
    * @constructor
    */
-  function AnalysesFilter(filter) {
+  function AnalysesFilter(filter, $rootScope) {
     function _filterAnalysis(analysis) {
       var result = true;
       _.forOwn(filter, function (value, key) {
@@ -24,10 +24,10 @@
         if (key === 'minDate' || key == 'maxDate') {
           item = analysis['createdDate'];
         }
-
-        if (item === null) return;
-        if (key === 'analysisState') {
-          if (value.length > 0 && value !== 'ALL' && item !== value) result = false;
+        if(item === null) return;
+        
+        if(key === 'analysisState') {
+          if(value.length > 0 && value !== 'ALL' && item !== value) result = false;
         }
         else if (key === 'minDate' && item < value) {
           result = false;
@@ -43,9 +43,17 @@
     }
 
     return function (analyses) {
-      return _.filter(analyses, function (analysis) {
+      var filtered = _.filter(analyses, function (analysis) {
         return _filterAnalysis(analysis)
       });
+
+      if(filtered.length === 0) {
+        $rootScope.$broadcast('NO_ANALYSIS');
+      }
+      else {
+        $rootScope.$broadcast('ANALYSIS_AVAILABLE');
+      }
+      return filtered;
     }
   }
 
@@ -72,6 +80,7 @@
    */
   function FilterController(filter) {
     var vm = this;
+    vm.showAnalyses = true;
     vm.opened = {};
 
     function _setDefaults() {
@@ -124,7 +133,7 @@
    * @param svc
    * @constructor
    */
-  function AnalysisController(svc) {
+  function AnalysisController(svc, $scope) {
     var vm = this;
     vm.analyses = [];
 
@@ -132,13 +141,21 @@
       .success(function (data) {
         vm.analyses = data.analyses;
       });
+
+    $scope.$on('NO_ANALYSIS', function () {
+      vm.showAnalyses = false;
+    });
+
+    $scope.$on('ANALYSIS_AVAILABLE', function () {
+      vm.showAnalyses = true;
+    })
   }
 
   angular.module('irida.analysis.user', [])
-    .filter('analysesFilter', ['analysisFilterService', AnalysesFilter])
+    .filter('analysesFilter', ['analysisFilterService', '$rootScope', AnalysesFilter])
     .service('analysisService', ['$http', AnalysisService])
     .service('analysisFilterService', [AnalysisFilterService])
-    .controller('analysisController', ['analysisService', AnalysisController])
+    .controller('analysisController', ['analysisService', '$scope', AnalysisController])
     .controller('filterController', ['analysisFilterService', FilterController])
   ;
 })();
