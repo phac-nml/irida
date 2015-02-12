@@ -8047,6 +8047,11 @@ input {
   font-size: 16px !important;
 }
 
+/* line 59, ../../styles/components/_forms.scss */
+.input-group input, .input-group button.btn-default {
+  border-color: #cccccc !important;
+}
+
 /* line 1, ../../styles/components/_modals.scss */
 .modal-backdrop {
   position: absolute;
@@ -8142,9 +8147,10 @@ input {
   position: fixed;
   top: 60px;
   width: 290px;
+  z-index: 500;
 }
 
-/* line 15, ../../styles/components/_sidenav.scss */
+/* line 16, ../../styles/components/_sidenav.scss */
 .sidenav__label {
   color: #939393;
   font-weight: normal;

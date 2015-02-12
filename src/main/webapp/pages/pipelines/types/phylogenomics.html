@@ -154,8 +154,6 @@
 			<div class="col-md-2" ng-switch="phylCtrl.loading">
 				<div data-spy="affix" style="width: 200px;">
 					<div ng-switch-when="false" class="ng-cloak text-center">
-						<h2 th:text="#{pipeline.phylogenomics.parameters.section-title}">Have you checked the pipeline parameters?</h2>
-						<button id="pipeline-parameters-btn" ng-controller="ParameterController as para" class="btn btn-default" ng-click="para.openModal()" th:text="#{pipeline.phylogenomics.parameters.section-button}">Pipeline Parameters</button>
 						<h2 th:text="#{workflow.launch.btn}">Ready to Launch?</h2>
 						<div>
 							<button id="btn-launch" class="btn btn-xl btn-danger btn-action"
@@ -164,6 +162,8 @@
 								<span class="fa fa-rocket"></span>
 							</button>
 						</div>
+						<br/>
+						<button id="pipeline-parameters-btn" style="width: 130px; white-space: pre-wrap;" ng-controller="ParameterController as para" class="btn btn-default" ng-click="para.openModal()"><i class="fa fa-cogs fa-2x"></i><br/><span th:text="#{workflow.parameters.section-button}">Pipeline Parameters</span></button>
 					</div>
 					<div id="pipeline-submitted" class="ng-cloak" ng-switch-when="true">
 						<div ng-hide="phylCtrl.success" class="alert alert-info">

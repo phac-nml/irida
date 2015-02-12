@@ -43,8 +43,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/pipelines/PipelinePhylogenomicsView.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class
-		PipelinesPhylogenomicsPageIT {
+public class PipelinesPhylogenomicsPageIT {
 	private static final Logger logger = LoggerFactory.getLogger(PipelinesPhylogenomicsPageIT.class);
 	private WebDriver driver;
 	private PipelinesPhylogenomicsPage page;

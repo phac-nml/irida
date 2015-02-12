@@ -55,3 +55,7 @@ input {
   // TODO: This can be removed after fixing REM sizing issue with bootstraps _scaffold.scss
   font-size: $irida-rem-base !important;
 }
+
+.input-group input, .input-group button.btn-default {
+  border-color: #cccccc !important;
+}

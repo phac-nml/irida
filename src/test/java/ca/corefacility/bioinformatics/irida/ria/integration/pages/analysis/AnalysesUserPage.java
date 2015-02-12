@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis;
 
 import java.util.List;
 
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -22,6 +23,12 @@ public class AnalysesUserPage extends AbstractPage {
 
 	@FindBy(id = "filter-state")
 	private WebElement filterState;
+
+	@FindBy(id = "filter-date-early")
+	private WebElement filterDateEarly;
+
+	@FindBy(id = "filter-date-late")
+	private WebElement filterDateLate;
 
 	@FindBy(className = "board")
 	private List<WebElement> analysesList;
@@ -49,6 +56,20 @@ public class AnalysesUserPage extends AbstractPage {
 	public void filterByType(String text) {
 		Select state = new Select(filterState);
 		state.selectByVisibleText(text);
+		waitForTime(100);
+	}
+
+	public void filterByDateEarly(String date) {
+		filterDateEarly.clear();
+		filterDateEarly.sendKeys(date);
+		filterDateEarly.sendKeys(Keys.ENTER);
+		waitForTime(100);
+	}
+
+	public void filterByDateLate(String date) {
+		filterDateLate.clear();
+		filterDateLate.sendKeys(date);
+		filterDateLate.sendKeys(Keys.ENTER);
 		waitForTime(100);
 	}
 
