@@ -66,43 +66,35 @@
     }
   }
 
-  function StorageService($sessionStorage) {
+  function StorageService() {
     "use strict";
-    var storage = $sessionStorage;
-
-    function addProject() {
-      var projects = storage.projects || {};
-      projects[project.id] = projects[project.id] || {};
-      storage.$default({projects: projects});
-    }
-
+    var storage = [];
+    
     function addSample(sample) {
-      storage.projects[project.id][sample.id] = JSON.stringify(sample);
+      storage[sample.id] = JSON.stringify(sample);
     }
 
     function removeSample(id) {
-      delete storage.projects[project.id][id];
+      delete storage[id];
     }
 
     function getKeys() {
-      return Object.keys(storage.projects[project.id]);
+      return Object.keys(storage);
     }
 
     function clear() {
-      delete storage.projects[project.id];
-      addProject(project.id);
+      storage = [];
     }
 
     function getSamples() {
       var samples = [];
-      var p = storage.projects[project.id];
+      var p = storage;
       _.forEach(getKeys(), function (key) {
         samples.push($.parseJSON(p[key]));
       });
       return samples;
     }
 
-    addProject();
     return ({
       addSample   : addSample,
       removeSample: removeSample,
@@ -789,7 +781,7 @@
   angular.module('Samples', ['cgBusy', 'ngStorage', 'irida.cart'])
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
-    .service('StorageService', ['$sessionStorage', StorageService])
+    .service('StorageService', [StorageService])
     .service('Select2Service', ['$timeout', Select2Service])
     .service('SamplesService', ['$rootScope', 'StorageService', 'Restangular', 'notifications', 'FilterFactory', '$q', SamplesService])
     .filter('SamplesFilter', ['FilterFactory', SamplesFilter])
