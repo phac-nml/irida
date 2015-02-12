@@ -68,6 +68,7 @@ public abstract class SequencingRun implements IridaThing, Comparable<Sequencing
 	private LayoutType layoutType;
 
 	public SequencingRun() {
+		layoutType = LayoutType.SINGLE_END;
 		uploadStatus = SequencingRunUploadStatus.UPLOADING;
 		createdDate = new Date();
 	}
