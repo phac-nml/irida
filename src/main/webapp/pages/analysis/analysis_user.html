@@ -8,6 +8,28 @@
 	<link rel="stylesheet" href="/resources/css/app.css" th:href="@{/resources/css/app.css}"/>
 	<link rel="stylesheet" href="/resources/css/pages/analyses.css" th:href="@{/resources/css/pages/analyses.css}"/>
 	<script>window.dependencies = ['irida.analysis.user'];</script>
+	<style>
+		.animate-hide {
+			transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+			position: relative;
+			display: block;
+			opacity: 1;
+			top: 0;
+		}
+
+		.animate-hide.ng-hide {
+			top: 30px;
+			opacity: 0;
+		}
+
+		.animate-hide.ng-hide-add {
+			display: none;
+		}
+
+		.animate-hide.ng-hide-remove-active {
+			display: block !important;
+		}
+	</style>
 </head>
 <body>
 <div layout:fragment="page">
@@ -65,7 +87,7 @@
 			</div>
 		</aside>
 		<div class="content ng-cloak" ng-controller="analysisController as ctrl">
-			<ul class="boards">
+			<ul ng-show="ctrl.showAnalyses" class="boards">
 				<li class="board" ng-repeat="analysis in ctrl.analyses | analysesFilter | orderBy:'createdDate':true">
 					<div class="button board_inner row">
 						<div ng-class="'analysis__state--' + analysis.analysisState" class="analysis__state col-md-2">
@@ -83,6 +105,10 @@
 					</div>
 				</li>
 			</ul>
+			<div id="no-analyses" ng-hide="ctrl.showAnalyses" class="alert alert-info ng-cloak animate-hide">
+				<strong><i class="fa fa-exclamation-circle fa-2x"></i>&nbsp;<span th:text="#{analysis.no-analysis-title}">Damn, You need to create some analyses.</span></strong>
+				<p th:text="#{analysis.no-analysis-message}"></p>
+			</div>
 		</div>
 	</div>
 </div>
