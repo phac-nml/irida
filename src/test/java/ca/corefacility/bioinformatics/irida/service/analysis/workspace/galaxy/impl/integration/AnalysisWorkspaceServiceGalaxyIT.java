@@ -285,7 +285,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		
 		// verify correct library is created
 		Map<String, List<LibraryContent>> libraryContentsMap = galaxyLibraryContentSearch
-				.libraryContentAsMap(preparedWorkflow.getRemoteAnalysisId());
+				.libraryContentAsMap(preparedWorkflow.getRemoteDataId());
 		assertFalse("the returned library should exist in Galaxy", libraryContentsMap.isEmpty());
 		String sequenceFileALibraryName = "/" + sequenceFilePathA.getFileName().toString();
 		assertEquals("the returned library does not contain the correct number of elements", 2,
@@ -391,7 +391,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		
 		// verify correct library is created
 		Map<String, List<LibraryContent>> libraryContentsMap = galaxyLibraryContentSearch
-				.libraryContentAsMap(preparedWorkflow.getRemoteAnalysisId());
+				.libraryContentAsMap(preparedWorkflow.getRemoteDataId());
 		assertFalse("the returned library should exist in Galaxy", libraryContentsMap.isEmpty());
 		String sequenceFile1ALibraryName = "/" + sequenceFilePathA.getFileName().toString();
 		String sequenceFile2ALibraryName = "/" + sequenceFilePath2A.getFileName().toString();
