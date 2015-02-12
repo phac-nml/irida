@@ -112,18 +112,30 @@ public class PipelinesPhylogenomicsPageIT {
 
 	@Test
 	public void testPipelineSubmission() {
-		LoginPage.loginAsUser(driver);
-		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver);
-		samplesPage.goToPage();
-		samplesPage.selectSampleByRow(0);
-		samplesPage.selectSampleByRow(1);
-		samplesPage.addSamplesToGlobalCart();
-		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
+		addSamplesToCart();
 		assertTrue("Should be on the phylogenomics page.",
 				driver.getCurrentUrl().contains(PipelinesPhylogenomicsPage.RELATIVE_URL));
 
 		page.clickLaunchPipelineBtn();
 		assertTrue("Message should be displayed when the pipeline is submitted", page.isPipelineSubmittedMessageShown());
 		assertTrue("Message should be displayed once the pipeline finished submitting", page.isPipelineSubmittedSuccessMessageShown());
+	}
+
+	@Test
+	public void testModifyParameters() {
+		addSamplesToCart();
+		page.clickPipelineParametersBtn();
+		assertEquals("Should have the proper pipeline name in title", "Phylogenomics Pipeline Parameters",
+				page.getParametersModalTitle());
+	}
+
+	private void addSamplesToCart() {
+		LoginPage.loginAsUser(driver);
+		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver);
+		samplesPage.goToPage("1");
+		samplesPage.selectSampleByRow(0);
+		samplesPage.selectSampleByRow(1);
+		samplesPage.addSamplesToGlobalCart();
+		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
 	}
 }

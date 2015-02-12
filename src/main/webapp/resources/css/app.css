@@ -8147,7 +8147,7 @@ input {
   position: fixed;
   top: 60px;
   width: 290px;
-  z-index: 1000;
+  z-index: 500;
 }
 
 /* line 16, ../../styles/components/_sidenav.scss */

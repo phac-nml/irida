@@ -64,7 +64,7 @@
 					</div>
 				</div>
 
-				<div class="form-group alert">
+				<div class="form-group">
 					<label class="col-sm-2 control-label" th:text="#{workflow.label.files}">Files</label>
 
 					<div class="col-sm-10" th:with="dateFormat=#{locale.date.short}">
@@ -155,7 +155,6 @@
 				<div data-spy="affix" style="width: 200px;">
 					<div ng-switch-when="false" class="ng-cloak text-center">
 						<h2 th:text="#{workflow.launch.btn}">Ready to Launch?</h2>
-
 						<div>
 							<button id="btn-launch" class="btn btn-xl btn-danger btn-action"
 							        th:title="#{workflow.launch.btn.title}"
@@ -163,8 +162,10 @@
 								<span class="fa fa-rocket"></span>
 							</button>
 						</div>
+						<br/>
+						<button id="pipeline-parameters-btn" style="width: 130px; white-space: pre-wrap;" ng-controller="ParameterController as para" class="btn btn-default" ng-click="para.openModal()"><i class="fa fa-cogs fa-2x"></i><br/><span th:text="#{workflow.parameters.section-button}">Pipeline Parameters</span></button>
 					</div>
-					<div id="pipeline-submitted" ng-switch-when="true">
+					<div id="pipeline-submitted" class="ng-cloak" ng-switch-when="true">
 						<div ng-hide="phylCtrl.success" class="alert alert-info">
 							<strong class="fa fa-2x fa-fw fa-coffee"></strong>&nbsp;
 							<span th:text="#{workflow.pipeline-kickoff-message}"></span>
@@ -188,6 +189,7 @@
 	</form>
 </div>
 <th:block layout:fragment="page-scripts">
+	<th:block th:replace="analysis/templates/parameters :: modal (#{pipeline.phylogenomics.parameters.modal-title}, '')"></th:block>
 	<script th:inline="javascript">
 		/*<![CDATA[*/
 		var PIPELINE = {

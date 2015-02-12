@@ -58,7 +58,18 @@
     };
   }
 
+  function ParameterController ($modal) {
+      var vm = this;
+
+    vm.openModal = function () {
+        $modal.open({
+          templateUrl: '/parameters.html',
+        });
+    };
+  }
+
   angular.module('irida.pipelines.phylogenomics', [])
     .controller('PhylogenomicsController', ['$http', PhylogenomicsController])
+    .controller('ParameterController', ["$modal", ParameterController])
   ;
 })();
