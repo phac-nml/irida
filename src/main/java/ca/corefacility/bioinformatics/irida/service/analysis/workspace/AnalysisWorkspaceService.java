@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.PreparedWorkflowGalaxy;
@@ -38,12 +39,11 @@ public interface AnalysisWorkspaceService {
 	 * @return A PreparedWorkflow which can be submitted.
 	 * @throws ExecutionManagerException
 	 *             If there was an issue preparing the workflow workspace.
-	 * @throws IridaWorkflowNotFoundException
-	 *             If the workflow passed to this analysis submission could not
-	 *             be found.
+	 * @throws IridaWorkflowException
+	 *             If there was an issue with the IRIDA workflow.
 	 */
 	public PreparedWorkflowGalaxy prepareAnalysisFiles(AnalysisSubmission analysisSubmission)
-			throws ExecutionManagerException, IridaWorkflowNotFoundException;
+			throws ExecutionManagerException, IridaWorkflowException;
 
 	/**
 	 * Gets an Analysis object containing the results for this analysis. This

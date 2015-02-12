@@ -160,9 +160,11 @@ public class IridaWorkflowLoaderService {
 		} else {
 			if (workflowDescription.acceptsParameters()) {
 				for (IridaWorkflowParameter workflowParameter : workflowDescription.getParameters()) {
-					if (workflowParameter.getDefaultValue() == null) {
+					try {
+						workflowParameter.getDefaultValue();
+					} catch (NullPointerException e) {
 						throw new IridaWorkflowLoadException("Workflow parameter" + workflowParameter
-								+ " has no default value set: " + descriptionFile);
+								+ " has no default value set: " + descriptionFile, e);
 					}
 				}
 			}

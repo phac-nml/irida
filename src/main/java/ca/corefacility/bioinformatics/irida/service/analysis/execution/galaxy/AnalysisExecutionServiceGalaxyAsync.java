@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -129,12 +130,11 @@ public class AnalysisExecutionServiceGalaxyAsync {
 	 * @throws ExecutionManagerException
 	 *             If there was an exception submitting the analysis to the
 	 *             execution manager.
-	 * @throws IridaWorkflowNotFoundException
-	 *             If the workflow for the analysis was not found.
+	 * @throws IridaWorkflowException If there was an issue with the IRIDA workflow.
 	 */
 	@Transactional
 	public Future<AnalysisSubmission> executeAnalysis(AnalysisSubmission analysisSubmission)
-			throws IridaWorkflowNotFoundException, ExecutionManagerException {
+			throws ExecutionManagerException, IridaWorkflowException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getRemoteAnalysisId(), "remote analyis id is null");
 		checkNotNull(analysisSubmission.getWorkflowId(), "workflowId is null");
@@ -144,12 +144,13 @@ public class AnalysisExecutionServiceGalaxyAsync {
 		logger.trace("Preparing files for " + analysisSubmission);
 		PreparedWorkflowGalaxy preparedWorkflow = workspaceService.prepareAnalysisFiles(analysisSubmission);
 		WorkflowInputsGalaxy input = preparedWorkflow.getWorkflowInputs();
+		String libraryId = preparedWorkflow.getRemoteDataId();
 
 		logger.trace("Executing " + analysisSubmission);
 		galaxyWorkflowService.runWorkflow(input);
 
 		AnalysisSubmission submittedAnalysis = analysisSubmissionService.update(analysisSubmission.getId(),
-				ImmutableMap.of("analysisState", AnalysisState.RUNNING));
+				ImmutableMap.of("analysisState", AnalysisState.RUNNING, "remoteInputDataId", libraryId));
 
 		return new AsyncResult<>(submittedAnalysis);
 	}
