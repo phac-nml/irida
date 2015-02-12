@@ -170,4 +170,17 @@ public class AnalysisParameterServiceGalaxyTest {
 		
 		verify(iridaWorkflowDescription).acceptsParameters();
 	}
+	
+	/**
+	 * Tests failing to prepare workflow parameters when there are some parameters passed but the workflow accepts no parameters.
+	 * 
+	 * @throws IridaWorkflowParameterException
+	 */
+	@Test(expected=IridaWorkflowParameterException.class)
+	public void testPrepareParametersSuccessNoAcceptParametersWithParameters() throws IridaWorkflowParameterException {
+		when(iridaWorkflowDescription.acceptsParameters()).thenReturn(false);
+		
+		analysisParameterService.prepareAnalysisParameters(ImmutableMap.of("name", "value"),
+				iridaWorkflow);
+	}
 }

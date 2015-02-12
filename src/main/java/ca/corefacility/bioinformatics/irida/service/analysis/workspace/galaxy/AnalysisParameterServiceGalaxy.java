@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNoParameterException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowParameterException;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaToolParameter;
@@ -45,7 +46,12 @@ public class AnalysisParameterServiceGalaxy implements AnalysisParameterService<
 		Set<String> parameterNamesUsed = Sets.newHashSet();
 
 		if (!iridaWorkflow.getWorkflowDescription().acceptsParameters()) {
-			logger.debug("workflow " + iridaWorkflow + " does not accept parameters.");
+			if (parameters.isEmpty()) {
+				logger.debug("workflow " + iridaWorkflow + " does not accept parameters and no parameters passed.");
+			} else {
+				throw new IridaWorkflowNoParameterException("The workflow " + iridaWorkflow
+						+ " does not accept parameters but parameters " + parameters + " were passed.");
+			}
 		} else {
 			List<IridaWorkflowParameter> iridaParameters = iridaWorkflow.getWorkflowDescription().getParameters();
 			for (IridaWorkflowParameter iridaParameter : iridaParameters) {
