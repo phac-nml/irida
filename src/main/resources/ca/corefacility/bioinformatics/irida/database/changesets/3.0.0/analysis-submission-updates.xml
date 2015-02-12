@@ -78,10 +78,12 @@
 				<constraints nullable="false" referencedTableName="user"
 					referencedColumnNames="id" foreignKeyName="FK_ANALYIS_SUBMISSION_SUBMITTER_ID" />
 			</column>
+			<column name="remote_input_data_id" type="varchar(255)" />
 		</addColumn>
 	
 		<addColumn tableName="analysis_submission_AUD">
 			<column name="submitter" type="bigint(20)" />
+			<column name="remote_input_data_id" type="varchar(255)" />
 		</addColumn>
 
 	</changeSet>
