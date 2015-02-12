@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerDownloadException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
@@ -77,6 +78,8 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 
 	private AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy;
 
+	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
+
 	/**
 	 * Builds a new {@link AnalysisWorkspaceServiceGalaxy} with the given
 	 * information.
@@ -92,12 +95,15 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 *            A service used for loading workflows from IRIDA.
 	 * @param analysisCollectionServiceGalaxy
 	 *            A service for constructing dataset collections of input files.
+	 * @param analysisProvenanceServiceGalaxy The service for provenance information.
+	 * @param analysisParameterServiceGalaxy
+	 *            A service for setting up parameters in Galaxy.
 	 */
 	public AnalysisWorkspaceServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService,
-			GalaxyWorkflowService galaxyWorkflowService, SequenceFileRepository sequenceFileRepository,
-			GalaxyLibraryBuilder libraryBuilder, IridaWorkflowsService iridaWorkflowsService,
-			AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy,
-			AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy) {
+			GalaxyWorkflowService galaxyWorkflowService,
+			SequenceFileRepository sequenceFileRepository, GalaxyLibraryBuilder libraryBuilder,
+			IridaWorkflowsService iridaWorkflowsService, AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy,
+			AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy, AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.sequenceFileRepository = sequenceFileRepository;
@@ -105,6 +111,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		this.iridaWorkflowsService = iridaWorkflowsService;
 		this.analysisCollectionServiceGalaxy = analysisCollectionServiceGalaxy;
 		this.analysisProvenanceServiceGalaxy = analysisProvenanceServiceGalaxy;
+		this.analysisParameterServiceGalaxy = analysisParameterServiceGalaxy;
 	}
 
 	/**
@@ -154,7 +161,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 */
 	@Override
 	public PreparedWorkflowGalaxy prepareAnalysisFiles(AnalysisSubmission analysisSubmission)
-			throws ExecutionManagerException, IridaWorkflowNotFoundException {
+			throws ExecutionManagerException, IridaWorkflowException {
 		checkNotNull(analysisSubmission, "analysisSubmission is null");
 		checkNotNull(analysisSubmission.getRemoteAnalysisId(), "analysisId is null");
 		checkNotNull(analysisSubmission.getSingleInputFiles(), "inputFiles are null");
@@ -201,7 +208,9 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		String workflowId = analysisSubmission.getRemoteWorkflowId();
 		WorkflowDetails workflowDetails = galaxyWorkflowService.getWorkflowDetails(workflowId);
 
-		WorkflowInputs inputs = new WorkflowInputs();
+		WorkflowInputsGalaxy workflowInputsGalaxy = analysisParameterServiceGalaxy.prepareAnalysisParameters(
+				analysisSubmission.getInputParameters(), iridaWorkflow);
+		WorkflowInputs inputs = workflowInputsGalaxy.getInputsObject();
 		inputs.setDestination(new WorkflowInputs.ExistingHistory(workflowHistory.getId()));
 		inputs.setWorkflowId(workflowDetails.getId());
 

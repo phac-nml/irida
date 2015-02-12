@@ -21,6 +21,7 @@ import org.mockito.MockitoAnnotations;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
@@ -286,14 +287,13 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * Tests successfully executing an analysis.
 	 * 
 	 * @throws ExecutionManagerException
-	 * @throws IridaWorkflowNotFoundException
 	 * @throws NoSuchValueException
 	 * @throws ExecutionException
 	 * @throws InterruptedException
+	 * @throws IridaWorkflowException 
 	 */
 	@Test
-	public void testExecuteAnalysisSuccess() throws ExecutionManagerException, IridaWorkflowNotFoundException,
-			NoSuchValueException, InterruptedException, ExecutionException {
+	public void testExecuteAnalysisSuccess() throws ExecutionManagerException, NoSuchValueException, InterruptedException, ExecutionException, IridaWorkflowException {
 		when(analysisWorkspaceService.prepareAnalysisFiles(any(AnalysisSubmission.class))).thenReturn(
 				preparedWorkflow);
 
@@ -313,13 +313,12 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * Tests failing to executing an analysis due to already being submitted.
 	 * 
 	 * @throws ExecutionManagerException
-	 * @throws IridaWorkflowNotFoundException
 	 * @throws ExecutionException
 	 * @throws InterruptedException
+	 * @throws IridaWorkflowException 
 	 */
 	@Test(expected = IllegalArgumentException.class)
-	public void testExecuteAnalysisFailAlreadySubmitted() throws IridaWorkflowNotFoundException,
-			ExecutionManagerException, InterruptedException, ExecutionException {
+	public void testExecuteAnalysisFailAlreadySubmitted() throws ExecutionManagerException, InterruptedException, ExecutionException, IridaWorkflowException {
 		analysisPrepared.setAnalysisState(AnalysisState.RUNNING);
 		workflowManagement.executeAnalysis(analysisSubmission);
 	}
@@ -328,13 +327,12 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * Tests failing to prepare a workflow.
 	 * 
 	 * @throws ExecutionManagerException
-	 * @throws IridaWorkflowNotFoundException
 	 * @throws ExecutionException
 	 * @throws InterruptedException
+	 * @throws IridaWorkflowException 
 	 */
 	@Test(expected = ExecutionManagerException.class)
-	public void testExecuteAnalysisFailPrepareWorkflow() throws IridaWorkflowNotFoundException,
-			ExecutionManagerException, InterruptedException, ExecutionException {
+	public void testExecuteAnalysisFailPrepareWorkflow() throws ExecutionManagerException, InterruptedException, ExecutionException, IridaWorkflowException {
 		when(analysisWorkspaceService.prepareAnalysisFiles(any(AnalysisSubmission.class))).thenThrow(
 				new ExecutionManagerException());
 
@@ -350,13 +348,13 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 * Tests failing to execute a workflow.
 	 * 
 	 * @throws ExecutionManagerException
-	 * @throws IridaWorkflowNotFoundException
 	 * @throws ExecutionException
 	 * @throws InterruptedException
+	 * @throws IridaWorkflowException 
 	 */
 	@Test(expected = WorkflowException.class)
-	public void testExecuteAnalysisFail() throws IridaWorkflowNotFoundException, ExecutionManagerException,
-			InterruptedException, ExecutionException {
+	public void testExecuteAnalysisFail() throws ExecutionManagerException,
+			InterruptedException, ExecutionException, IridaWorkflowException {
 		when(analysisWorkspaceService.prepareAnalysisFiles(any(AnalysisSubmission.class))).thenReturn(
 				preparedWorkflow);
 		when(galaxyWorkflowService.runWorkflow(workflowInputsGalaxy)).thenThrow(new WorkflowException());

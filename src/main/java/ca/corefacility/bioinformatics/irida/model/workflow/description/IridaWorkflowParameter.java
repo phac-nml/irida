@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.description;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -16,6 +19,11 @@ import javax.xml.bind.annotation.XmlElement;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IridaWorkflowParameter {
+	
+	/**
+	 * Can be passed as the value of a parameter instructing IRIDA to ignore the default value. 
+	 */
+	public static final String IGNORE_DEFAULT_VALUE = "";
 
 	@XmlAttribute(name = "name")
 	private String name;
@@ -41,6 +49,11 @@ public class IridaWorkflowParameter {
 	 *            The tool parameters corresponding to this named parameter.
 	 */
 	public IridaWorkflowParameter(String name, String defaultValue, List<IridaToolParameter> toolParameters) {
+		checkNotNull(name, "name is null");
+		checkNotNull(defaultValue, "defaultValue is null");
+		checkNotNull(toolParameters, "toolParameters is null");
+		checkArgument(toolParameters.size() > 0, "toolParameters has no elements");
+		
 		this.name = name;
 		this.defaultValue = defaultValue;
 		this.toolParameters = toolParameters;
@@ -71,7 +84,11 @@ public class IridaWorkflowParameter {
 	 * @return The default value for this parameter.
 	 */
 	public String getDefaultValue() {
-		return defaultValue;
+		if (defaultValue == null) {
+			throw new NullPointerException("defaultVaule is null");
+		} else {
+			return defaultValue;
+		}
 	}
 
 	@Override

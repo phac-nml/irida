@@ -41,6 +41,38 @@
 			<column name="REVTYPE" type="TINYINT(4)" />
 		</createTable>
 
+		<createTable tableName="analysis_submission_parameters">
+			<column name="id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"
+					foreignKeyName="FK_ANALYSIS_SUBMISSION_PARAMETERS_ANALYSIS_SUBMISSION_ID"
+					referencedColumnNames="id" referencedTableName="analysis_submission" />
+			</column>
+			<column name="name" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="value" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	
+		<createTable tableName="analysis_submission_parameters_AUD">
+			<column name="REV" type="INT(11)">
+				<constraints nullable="false" primaryKey="true"
+					foreignKeyName="FK_ANALYSIS_SUBMISSION_PARAMETER_ID_REV"
+					referencedColumnNames="id" referencedTableName="Revisions" />
+			</column>
+			<column name="id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="name" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="value" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="REVTYPE" type="TINYINT(4)" />
+		</createTable>
+
 		<addColumn tableName="analysis_submission">
 			<column name="submitter" type="bigint(20)">
 				<constraints nullable="false" referencedTableName="user"

@@ -300,6 +300,8 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 				"core_pipeline_outputs.xml").toURI());
 		Path corePipelineOutputsPairedToolSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
 				"core_pipeline_outputs_paired.xml").toURI());
+		Path corePipelineOutputsPairedWithParametersToolSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
+				"core_pipeline_outputs_paired_with_parameters.xml").toURI());
 		Path corePipelineOutputsSinglePairedToolSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
 				"core_pipeline_outputs_single_paired.xml").toURI());
 		Path assemblyAnnotationPipelineOutputsSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
@@ -324,6 +326,8 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 				exampleToolDirectory.resolve("core_pipeline_outputs.xml");
 		Path corePipelinePairedExampleToolDestination = 
 				exampleToolDirectory.resolve("core_pipeline_outputs_paired.xml");
+		Path corePipelinePairedWithParametersExampleToolDestination = 
+				exampleToolDirectory.resolve("core_pipeline_outputs_paired_with_parameters.xml");
 		Path corePipelineSinglePairedExampleToolDestination = 
 				exampleToolDirectory.resolve("core_pipeline_outputs_single_paired.xml");
 		Path assemblyAnnotationPipelinOutputsDestination = 
@@ -331,6 +335,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		Files.copy(collectionExampleToolSource, collectionExampleToolDestination);
 		Files.copy(corePipelineOutputsSingleToolSource, corePipelineExampleToolDestination);
 		Files.copy(corePipelineOutputsPairedToolSource, corePipelinePairedExampleToolDestination);
+		Files.copy(corePipelineOutputsPairedWithParametersToolSource, corePipelinePairedWithParametersExampleToolDestination);
 		Files.copy(corePipelineOutputsSinglePairedToolSource, corePipelineSinglePairedExampleToolDestination);
 		Files.copy(assemblyAnnotationPipelineOutputsSource, assemblyAnnotationPipelinOutputsDestination);
 		

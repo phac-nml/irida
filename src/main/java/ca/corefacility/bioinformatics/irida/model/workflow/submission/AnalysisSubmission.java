@@ -4,12 +4,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
@@ -24,10 +27,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -44,6 +49,8 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -103,6 +110,13 @@ public class AnalysisSubmission implements IridaThing {
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinTable(name = "analysis_submission_sequence_file_pair", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequence_file_pair_id", nullable = false))
 	private Set<SequenceFilePair> inputFilesPaired;
+	
+	@ElementCollection(fetch = FetchType.EAGER)
+	@MapKeyColumn(name = "name", nullable = false)
+	@Column(name = "value", nullable = false)
+	@CollectionTable(name = "analysis_submission_parameters", joinColumns = @JoinColumn(name = "id"), uniqueConstraints = @UniqueConstraint(columnNames = {
+			"id", "name" }, name = "UK_ANALYSIS_SUBMISSION_PARAMETER_NAME"))
+	private Map<String,String> inputParameters;
 
 	@CreatedDate
 	@NotNull
@@ -153,6 +167,8 @@ public class AnalysisSubmission implements IridaThing {
 		this.name = (builder.name != null) ? builder.name : "Unknown";
 		this.inputFilesSingle = (builder.inputFilesSingle != null) ? builder.inputFilesSingle : Sets.newHashSet();
 		this.inputFilesPaired = (builder.inputFilesPaired != null) ? builder.inputFilesPaired : Sets.newHashSet();
+		this.inputParameters = (builder.inputParameters != null) ? ImmutableMap.copyOf(builder.inputParameters)
+				: ImmutableMap.of();
 		this.referenceFile = builder.referenceFile;
 		this.workflowId = builder.workflowId;
 	}
@@ -316,7 +332,7 @@ public class AnalysisSubmission implements IridaThing {
 				+ workflowId + ", remoteAnalysisId=" + remoteAnalysisId + ", remoteWorkflowId=" + remoteWorkflowId
 				+ ", inputFilesSingle=" + inputFilesSingle + ", inputFilesPaired=" + inputFilesPaired
 				+ ", createdDate=" + createdDate + ", modifiedDate=" + modifiedDate + ", analysisState="
-				+ analysisState + ", analysis=" + analysis + ", referenceFile=" + referenceFile + "]";
+				+ analysisState + ", analysis=" + analysis + ", referenceFile=" + referenceFile + ", inputParameters=" + inputParameters + "]";
 	}
 
 	/**
@@ -354,6 +370,15 @@ public class AnalysisSubmission implements IridaThing {
 	}
 	
 	/**
+	 * Gets the input parameters for this submission.
+	 * 
+	 * @return The input parameters for this submission.
+	 */
+	public Map<String, String> getInputParameters() {
+		return inputParameters;
+	}
+	
+	/**
 	 * Used to build up an {@link AnalysisSubmission}.
 	 * 
 	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
@@ -364,6 +389,7 @@ public class AnalysisSubmission implements IridaThing {
 		private Set<SequenceFilePair> inputFilesPaired;
 		private ReferenceFile referenceFile;
 		private UUID workflowId;
+		private Map<String,String> inputParameters;
 		
 		/**
 		 * Creates a new {@link AnalysisSubmission.Builder} with a workflow id.
@@ -375,6 +401,7 @@ public class AnalysisSubmission implements IridaThing {
 			checkNotNull(workflowId, "workflowId is null");
 
 			this.workflowId = workflowId;
+			this.inputParameters = Maps.newHashMap();
 		}
 
 		/**
@@ -432,6 +459,40 @@ public class AnalysisSubmission implements IridaThing {
 			checkNotNull(referenceFile, "referenceFile is null");
 			
 			this.referenceFile = referenceFile;
+			return this;
+		}
+
+		/**
+		 * Sets the input parameters for this submission.
+		 * 
+		 * @param inputParameters
+		 *            A map of parameters for this submission.
+		 * @return An {@link AnalysisSubmission.Builder}.
+		 */
+		public Builder inputParameters(Map<String, String> inputParameters) {
+			checkNotNull(inputParameters, "inputParameters is null");
+			checkArgument(!inputParameters.isEmpty(), "inputParameters is empty");
+			
+			this.inputParameters = inputParameters;
+			return this;
+		}
+		
+		/**
+		 * Adds an individual input parameter.
+		 * 
+		 * @param name
+		 *            The name of the parameter.
+		 * @param value
+		 *            The value of the parameter.
+		 * @return An {@link AnalysisSubmission.Builder}.
+		 */
+		public Builder inputParameter(final String name, final String value) {
+			checkNotNull(name, "key is null");
+			checkNotNull(value, "value is null");
+			checkArgument(!inputParameters.containsKey(name), "key=" + name + " already exists as a parameter");
+
+			inputParameters.put(name, value);
+
 			return this;
 		}
 
