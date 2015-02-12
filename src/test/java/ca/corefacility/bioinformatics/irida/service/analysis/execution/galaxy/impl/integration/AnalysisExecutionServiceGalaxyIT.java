@@ -253,6 +253,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals(AnalysisState.RUNNING, analysisExecuted.getAnalysisState());
 
 		assertNotNull("remoteAnalysisId is null", analysisExecuted.getRemoteAnalysisId());
+		assertNotNull("remoteInputDataId is null", analysisExecuted.getRemoteInputDataId());
 
 		GalaxyWorkflowStatus status = analysisExecutionService.getWorkflowStatus(analysisExecuted);
 		analysisExecutionGalaxyITService.assertValidStatus(status);
@@ -492,6 +493,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
 				.executeAnalysis(analysisSubmitted);
 		AnalysisSubmission analysisExecuted = analysisExecutionFuture.get();
+		assertNotNull("remoteInputDataId is null", analysisExecuted.getRemoteInputDataId());
+		String remoteInputDataId = analysisExecuted.getRemoteInputDataId();
 
 		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
 
@@ -506,6 +509,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 				.getId());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompleted.getAnalysisState());
+		assertEquals("remoteInputDataId should be unchanged in the completed analysis", remoteInputDataId,
+				analysisSubmissionCompletedDatabase.getRemoteInputDataId());
 
 		Analysis analysisResults = analysisSubmissionCompleted.getAnalysis();
 		Analysis analysisResultsDatabase = analysisSubmissionCompletedDatabase.getAnalysis();

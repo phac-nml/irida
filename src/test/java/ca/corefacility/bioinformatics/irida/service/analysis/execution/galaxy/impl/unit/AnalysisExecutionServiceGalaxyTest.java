@@ -167,19 +167,22 @@ public class AnalysisExecutionServiceGalaxyTest {
 		analysisRunning.setAnalysisState(AnalysisState.RUNNING);
 		analysisRunning.setRemoteAnalysisId(REMOTE_WORKFLOW_ID);
 		analysisRunning.setRemoteAnalysisId(ANALYSIS_ID);
+		analysisRunning.setRemoteInputDataId(LIBRARY_ID);
 		when(
 				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID,
-						ImmutableMap.of("analysisState", AnalysisState.RUNNING))).thenReturn(analysisRunning);
+						ImmutableMap.of("analysisState", AnalysisState.RUNNING, "remoteInputDataId", LIBRARY_ID))).thenReturn(analysisRunning);
 
 		analysisFinishedRunning.setId(INTERNAL_ANALYSIS_ID);
 		analysisFinishedRunning.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 		analysisFinishedRunning.setRemoteAnalysisId(REMOTE_WORKFLOW_ID);
 		analysisFinishedRunning.setRemoteAnalysisId(ANALYSIS_ID);
+		analysisFinishedRunning.setRemoteInputDataId(LIBRARY_ID);
 
 		analysisCompleting.setId(INTERNAL_ANALYSIS_ID);
 		analysisCompleting.setAnalysisState(AnalysisState.SUBMITTING);
 		analysisCompleting.setRemoteAnalysisId(REMOTE_WORKFLOW_ID);
 		analysisCompleting.setRemoteAnalysisId(ANALYSIS_ID);
+		analysisCompleting.setRemoteInputDataId(LIBRARY_ID);
 		when(
 				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID,
 						ImmutableMap.of("analysisState", AnalysisState.COMPLETING))).thenReturn(analysisCompleting);
@@ -191,6 +194,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 		analysisCompleted.setRemoteAnalysisId(REMOTE_WORKFLOW_ID);
 		analysisCompleted.setRemoteAnalysisId(ANALYSIS_ID);
 		analysisCompleted.setAnalysis(analysisResults);
+		analysisCompleted.setRemoteInputDataId(LIBRARY_ID);
 		when(
 				analysisSubmissionService.update(INTERNAL_ANALYSIS_ID,
 						ImmutableMap.of("analysis", analysisResults, "analysisState", AnalysisState.COMPLETED)))
@@ -307,7 +311,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 		verify(analysisWorkspaceService).prepareAnalysisFiles(analysisSubmitting);
 		verify(galaxyWorkflowService).runWorkflow(workflowInputsGalaxy);
 		verify(analysisSubmissionService).update(INTERNAL_ANALYSIS_ID,
-				ImmutableMap.of("analysisState", AnalysisState.RUNNING));
+				ImmutableMap.of("analysisState", AnalysisState.RUNNING, "remoteInputDataId", LIBRARY_ID));
 	}
 
 	/**

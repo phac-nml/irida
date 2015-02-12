@@ -69,6 +69,7 @@ import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
+import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.Workflow;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs.WorkflowInput;
@@ -259,6 +260,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesSingleSuccess");
 		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
+		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
 		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
 		History createdHistory = historiesClient.create(history);
 
@@ -277,6 +279,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				preparedWorkflow.getRemoteAnalysisId());
 		assertNotNull("the returned workflow inputs should not be null", preparedWorkflow.getWorkflowInputs());
 		assertNotNull("the returned library id should not be null", preparedWorkflow.getRemoteDataId());
+		
+		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(preparedWorkflow.getRemoteDataId());
+		assertFalse("the returned library should exist in Galaxy", libraryContents.isEmpty());
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
@@ -369,6 +374,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				preparedWorkflow.getRemoteAnalysisId());
 		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
 		assertNotNull("the returned workflow inputs should not be null", workflowInputsGalaxy);
+		assertNotNull("the returned library id should not be null", preparedWorkflow.getRemoteDataId());
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
@@ -427,6 +433,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				preparedWorkflow.getRemoteAnalysisId());
 		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
 		assertNotNull("the returned workflow inputs should not be null", workflowInputsGalaxy);
+		assertNotNull("the returned library id should not be null", preparedWorkflow.getRemoteDataId());
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
@@ -480,6 +487,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				preparedWorkflow.getRemoteAnalysisId());
 		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
 		assertNotNull("the returned workflow inputs should not be null", workflowInputsGalaxy);
+		assertNotNull("the returned library id should not be null", preparedWorkflow.getRemoteDataId());
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
@@ -535,6 +543,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 				preparedWorkflow.getRemoteAnalysisId());
 		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
 		assertNotNull("the returned workflow inputs should not be null", workflowInputsGalaxy);
+		assertNotNull("the returned library id should not be null", preparedWorkflow.getRemoteDataId());
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
