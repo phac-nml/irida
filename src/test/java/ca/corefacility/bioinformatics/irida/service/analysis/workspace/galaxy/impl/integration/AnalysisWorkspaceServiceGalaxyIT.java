@@ -54,6 +54,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Work
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryContentSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.Util;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
@@ -112,6 +113,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 	@Autowired
 	private SampleRepository sampleRepository;
+	
+	@Autowired
+	private GalaxyLibraryContentSearch galaxyLibraryContentSearch;
 
 	private GalaxyHistoriesService galaxyHistoriesService;
 
@@ -260,7 +264,6 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesSingleSuccess");
 		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
-		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
 		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
 		History createdHistory = historiesClient.create(history);
 
@@ -280,8 +283,18 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		assertNotNull("the returned workflow inputs should not be null", preparedWorkflow.getWorkflowInputs());
 		assertNotNull("the returned library id should not be null", preparedWorkflow.getRemoteDataId());
 		
-		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(preparedWorkflow.getRemoteDataId());
-		assertFalse("the returned library should exist in Galaxy", libraryContents.isEmpty());
+		// verify correct library is created
+		Map<String, List<LibraryContent>> libraryContentsMap = galaxyLibraryContentSearch
+				.libraryContentAsMap(preparedWorkflow.getRemoteAnalysisId());
+		assertFalse("the returned library should exist in Galaxy", libraryContentsMap.isEmpty());
+		String sequenceFileALibraryName = "/" + sequenceFilePathA.getFileName().toString();
+		assertEquals("the returned library does not contain the correct number of elements", 2,
+				libraryContentsMap.size());
+		assertTrue("the returned library does not contain a root folder", libraryContentsMap.containsKey("/"));
+		assertTrue("the returned library does not contain the correct sequence file",
+				libraryContentsMap.containsKey(sequenceFileALibraryName));
+		assertEquals("the returned library does not contain the correct sequence file", 1,
+				libraryContentsMap.get(sequenceFileALibraryName).size());
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
@@ -375,6 +388,24 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
 		assertNotNull("the returned workflow inputs should not be null", workflowInputsGalaxy);
 		assertNotNull("the returned library id should not be null", preparedWorkflow.getRemoteDataId());
+		
+		// verify correct library is created
+		Map<String, List<LibraryContent>> libraryContentsMap = galaxyLibraryContentSearch
+				.libraryContentAsMap(preparedWorkflow.getRemoteAnalysisId());
+		assertFalse("the returned library should exist in Galaxy", libraryContentsMap.isEmpty());
+		String sequenceFile1ALibraryName = "/" + sequenceFilePathA.getFileName().toString();
+		String sequenceFile2ALibraryName = "/" + sequenceFilePath2A.getFileName().toString();
+		assertEquals("the returned library does not contain the correct number of elements", 3,
+				libraryContentsMap.size());
+		assertTrue("the returned library does not contain a root folder", libraryContentsMap.containsKey("/"));
+		assertTrue("the returned library does not contain the correct sequence file",
+				libraryContentsMap.containsKey(sequenceFile1ALibraryName));
+		assertEquals("the returned library does not contain the correct sequence file", 1,
+				libraryContentsMap.get(sequenceFile1ALibraryName).size());
+		assertTrue("the returned library does not contain the correct sequence file",
+				libraryContentsMap.containsKey(sequenceFile2ALibraryName));
+		assertEquals("the returned library does not contain the correct sequence file", 1,
+				libraryContentsMap.get(sequenceFile2ALibraryName).size());
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
