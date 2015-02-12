@@ -22,11 +22,14 @@
 		credentialsNonExpired="true" />
 
 	<sequencing_run id="1" description="run 1"
-		createdDate="2013-07-18 14:20:19.0" upload_status="COMPLETE" />
+		createdDate="2013-07-18 14:20:19.0" upload_status="COMPLETE"
+		layoutType="PAIRED_END" />
 	<sequencing_run id="2" description="run 2"
-		createdDate="2013-07-18 14:20:19.0" upload_status="COMPLETE" />
+		createdDate="2013-07-18 14:20:19.0" upload_status="COMPLETE"
+		layoutType="PAIRED_END" />
 	<sequencing_run id="3" description="run 3"
-		createdDate="2013-07-18 14:20:19.0" upload_status="COMPLETE" />
+		createdDate="2013-07-18 14:20:19.0" upload_status="COMPLETE"
+		layoutType="PAIRED_END" />
 
 	<miseq_run id="1" workflow="Test workflow 1" />
 	<miseq_run id="2" workflow="Test workflow 2" />
