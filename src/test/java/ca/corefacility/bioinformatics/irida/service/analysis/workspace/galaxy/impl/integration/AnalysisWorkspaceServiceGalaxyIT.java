@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.impl.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -50,6 +48,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.PreparedWorkflowGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -496,6 +495,56 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		assertEquals("coverageMinValue should have been changed to default", "10", coverageMinValue);
 		String coverageMaxValue = (String) toolParameters.get("coverageMin");
 		assertEquals("coverageMaxValue should have been changed to default", "10", coverageMaxValue);
+	}
+	
+	/**
+	 * Tests out successfully preparing paired workflow input files for
+	 * execution and ignoring default parameters.
+	 * 
+	 * @throws InterruptedException
+	 * @throws ExecutionManagerException
+	 * @throws IOException
+	 * @throws IridaWorkflowException
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testPrepareAnalysisFilesParametersSuccessIgnoreDefaultParameters() throws InterruptedException,
+			ExecutionManagerException, IOException, IridaWorkflowException {
+
+		History history = new History();
+		history.setName("testPrepareAnalysisFilesParametersSuccessIgnoreDefaultParameters");
+		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
+		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
+		History createdHistory = historiesClient.create(history);
+
+		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(validWorkflowIdPairedWithParameters);
+		Path workflowPath = iridaWorkflow.getWorkflowStructure().getWorkflowFile();
+		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
+		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString);
+		
+		Map<String, String> parameters = ImmutableMap.of("coverage", IridaWorkflowParameter.IGNORE_DEFAULT_VALUE);
+
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
+				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, parameters, validWorkflowIdPairedWithParameters);
+		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
+		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
+
+		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
+		assertEquals("the response history id should match the input history id", createdHistory.getId(),
+				preparedWorkflow.getRemoteAnalysisId());
+		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
+		assertNotNull("the returned workflow inputs should not be null", workflowInputsGalaxy);
+
+		// verify correct files have been uploaded
+		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
+		assertEquals("the created history has an invalid number of elements", 4, historyContents.size());
+
+		WorkflowInputs workflowInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
+		assertNotNull("created workflowInputs is null", workflowInputs);
+
+		Map<String, Object> toolParameters = workflowInputs.getParameters().get(
+				"core_pipeline_outputs_paired_with_parameters");
+		assertNull("toolParameters is not null", toolParameters);
 	}
 
 	/**

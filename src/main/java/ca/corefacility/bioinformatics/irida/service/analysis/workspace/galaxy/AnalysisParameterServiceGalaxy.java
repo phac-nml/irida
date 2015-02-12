@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -33,6 +34,15 @@ public class AnalysisParameterServiceGalaxy implements AnalysisParameterService<
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisParameterServiceGalaxy.class);
 
+	private boolean ignoreDefaultValue(Map<String, String> parameters, String parameterName) {
+		return parameters.containsKey(parameterName)
+				&& Objects.equals(parameters.get(parameterName), IridaWorkflowParameter.IGNORE_DEFAULT_VALUE);
+	}
+
+	private boolean useDefaultValue(Map<String, String> parameters, String parameterName) {
+		return parameters.get(parameterName) == null;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -58,20 +68,25 @@ public class AnalysisParameterServiceGalaxy implements AnalysisParameterService<
 				String parameterName = iridaParameter.getName();
 				String value = parameters.get(parameterName);
 				parameterNamesUsed.add(parameterName);
-	
-				if (value == null) {
-					value = iridaParameter.getDefaultValue();
-					logger.debug("Parameter with name=" + parameterName + ", for workflow=" + iridaWorkflow
-							+ ", has no value set, using defaultValue=" + value);
-				}
-	
-				for (IridaToolParameter iridaToolParameter : iridaParameter.getToolParameters()) {
-					String toolId = iridaToolParameter.getToolId();
-					String galaxyParameterName = iridaToolParameter.getParameterName();
-	
-					logger.debug("Setting parameter iridaName=" + parameterName + ", galaxyToolId=" + toolId + ", value="
-							+ value);
-					inputs.setToolParameter(toolId, new ToolParameter(galaxyParameterName, value));
+
+				if (ignoreDefaultValue(parameters, parameterName)) {
+					logger.debug("Parameter with name=" + parameterName + " will ignore the default value="
+							+ iridaParameter.getDefaultValue());
+				} else {
+					if (useDefaultValue(parameters, parameterName)) {
+						value = iridaParameter.getDefaultValue();
+						logger.debug("Parameter with name=" + parameterName + ", for workflow=" + iridaWorkflow
+								+ ", has no value set, using defaultValue=" + value);
+					}
+
+					for (IridaToolParameter iridaToolParameter : iridaParameter.getToolParameters()) {
+						String toolId = iridaToolParameter.getToolId();
+						String galaxyParameterName = iridaToolParameter.getParameterName();
+
+						logger.debug("Setting parameter iridaName=" + parameterName + ", galaxyToolId=" + toolId
+								+ ", value=" + value);
+						inputs.setToolParameter(toolId, new ToolParameter(galaxyParameterName, value));
+					}
 				}
 			}
 		}

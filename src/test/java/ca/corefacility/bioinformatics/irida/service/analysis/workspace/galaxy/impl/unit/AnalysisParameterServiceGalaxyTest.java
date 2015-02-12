@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.impl.unit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
@@ -102,6 +101,25 @@ public class AnalysisParameterServiceGalaxyTest {
 		assertNotNull("parameters for galaxy-tool1 should not be null", tool1Parameters);
 
 		assertEquals("galaxy-tool1,parameter1 is not valid", "0", tool1Parameters.get("parameter1"));
+	}
+	
+	/**
+	 * Tests preparing workflow parameters and ignoring the default value successfully.
+	 * 
+	 * @throws IridaWorkflowParameterException
+	 */
+	@Test
+	public void testPrepareParametersIgnoreDefaultSuccess() throws IridaWorkflowParameterException {
+		Map<String, String> parameters = Maps.newHashMap();
+		parameters.put("parameter1", IridaWorkflowParameter.IGNORE_DEFAULT_VALUE);
+
+		WorkflowInputsGalaxy workflowInputsGalaxy = analysisParameterService.prepareAnalysisParameters(parameters,
+				iridaWorkflow);
+		assertNotNull("workflowInputsGalaxy is null", workflowInputsGalaxy);
+
+		WorkflowInputs workflowInputs = workflowInputsGalaxy.getInputsObject();
+		Map<Object, Map<String, Object>> workflowParameters = workflowInputs.getParameters();
+		assertNull("should be no parameter set for galaxy-tool1", workflowParameters.get("galaxy-tool1"));
 	}
 
 	/**

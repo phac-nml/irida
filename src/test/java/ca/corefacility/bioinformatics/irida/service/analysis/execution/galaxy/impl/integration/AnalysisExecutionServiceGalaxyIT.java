@@ -55,6 +55,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAsse
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
@@ -926,6 +927,137 @@ public class AnalysisExecutionServiceGalaxyIT {
 				tableCoreParameters.get("coverageMax"));
 		assertNotNull("parameter __workflow_invocation_uuid__ exists",
 				tableCoreParameters.get("__workflow_invocation_uuid__"));
+
+		Set<ToolExecution> tablePreviousSteps = tableCoreInputs.getPreviousSteps();
+		assertEquals("there should exist 2 previous steps", 2, tablePreviousSteps.size());
+		Set<String> uploadedFileTypesTable = Sets.newHashSet();
+		for (ToolExecution previousStep : tablePreviousSteps) {
+			assertTrue("previous steps should be input tools.", previousStep.isInputTool());
+			uploadedFileTypesTable.add(previousStep.getExecutionTimeParameters().get("file_type"));
+		}
+		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
+				uploadedFileTypesTable);
+	}
+	
+	/**
+	 * Tests out getting analysis results successfully for phylogenomics
+	 * pipeline (paired test version and ignoring default parameters).
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testTransferAnalysisResultsSuccessPhylogenomicsPairedParametersIgnoreDefaultValues() throws Exception {
+		String validMinCoverageFromProvenance = "\"5\"";
+		String validMaxCoverageFromProvenance = "\"15\"";
+		Map<String, String> parameters = ImmutableMap.of("coverage", IridaWorkflowParameter.IGNORE_DEFAULT_VALUE);
+		String validTreeFile = "5 15"; // I verify parameters were set
+										// correctly by checking output file
+										// (where parameters were printed).
+
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
+				.setupPairSubmissionInDatabase(1L, pairedPaths1, pairedPaths2, referenceFilePath, parameters,
+						iridaPhylogenomicsPairedParametersWorkflowId);
+
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+
+		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
+				.executeAnalysis(analysisSubmitted);
+		AnalysisSubmission analysisExecuted = analysisExecutionFuture.get();
+
+		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
+
+		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
+		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
+				.transferAnalysisResults(analysisExecuted);
+		analysisSubmissionCompletedFuture.get();
+		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
+				.getId());
+		assertEquals("analysis state is not completed", AnalysisState.COMPLETED,
+				analysisSubmissionCompletedDatabase.getAnalysisState());
+
+		Analysis analysisResults = analysisSubmissionCompletedDatabase.getAnalysis();
+
+		assertEquals("analysis results is an invalid class", AnalysisPhylogenomicsPipeline.class,
+				analysisResults.getClass());
+		AnalysisPhylogenomicsPipeline analysisResultsPhylogenomics = (AnalysisPhylogenomicsPipeline) analysisResults;
+
+		assertEquals("invalid number of output files", 3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
+		AnalysisOutputFile phylogeneticTree = analysisResultsPhylogenomics.getPhylogeneticTree();
+		AnalysisOutputFile snpMatrix = analysisResultsPhylogenomics.getSnpMatrix();
+		AnalysisOutputFile snpTable = analysisResultsPhylogenomics.getSnpTable();
+
+		// verify parameters were set properly by checking contents of file
+		@SuppressWarnings("resource")
+		String treeContent = new Scanner(phylogeneticTree.getFile().toFile()).useDelimiter("\\Z").next();
+		assertEquals("phylogenetic trees containing the parameters should be equal", validTreeFile, treeContent);
+
+		// phy tree
+		final ToolExecution phyTreeCoreInputs = phylogeneticTree.getCreatedByTool();
+		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
+				"core_pipeline_outputs_paired_with_parameters", phyTreeCoreInputs.getToolName());
+		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
+				"0.1.0", phyTreeCoreInputs.getToolVersion());
+		Map<String, String> phyTreeCoreParameters = phyTreeCoreInputs.getExecutionTimeParameters();
+		assertEquals("incorrect number of non-file parameters", 3, phyTreeCoreParameters.size());
+		assertEquals("parameter coverageMin set incorrectly", validMinCoverageFromProvenance,
+				phyTreeCoreParameters.get("coverageMin"));
+		assertEquals("parameter coverageMax set incorrectly", validMaxCoverageFromProvenance,
+				phyTreeCoreParameters.get("coverageMax"));
+		assertNotNull("parameter __workflow_invocation_uuid__ exists",
+				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
+
+		Set<ToolExecution> phyTreeCorePreviousSteps = phyTreeCoreInputs.getPreviousSteps();
+		assertEquals("there should exist 2 previous steps", 2, phyTreeCorePreviousSteps.size());
+		Set<String> uploadedFileTypesPhy = Sets.newHashSet();
+		for (ToolExecution previousStep : phyTreeCorePreviousSteps) {
+			assertTrue("previous steps should be input tools.", previousStep.isInputTool());
+			uploadedFileTypesPhy.add(previousStep.getExecutionTimeParameters().get("file_type"));
+		}
+		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
+				uploadedFileTypesPhy);
+
+		// snp matrix
+		final ToolExecution matrixCoreInputs = snpMatrix.getCreatedByTool();
+		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
+				"core_pipeline_outputs_paired_with_parameters", matrixCoreInputs.getToolName());
+		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
+				"0.1.0", matrixCoreInputs.getToolVersion());
+		Map<String, String> matrixCoreParameters = matrixCoreInputs.getExecutionTimeParameters();
+		assertEquals("incorrect number of non-file parameters", 3, matrixCoreParameters.size());
+		assertEquals("parameter coverageMin set incorrectly", validMinCoverageFromProvenance,
+				matrixCoreParameters.get("coverageMin"));
+		assertEquals("parameter coverageMax set incorrectly", validMaxCoverageFromProvenance,
+				matrixCoreParameters.get("coverageMax"));
+		assertNotNull("parameter __workflow_invocation_uuid__ exists",
+				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
+
+		Set<ToolExecution> matrixCorePreviousSteps = matrixCoreInputs.getPreviousSteps();
+		assertEquals("there should exist 2 previous steps", 2, matrixCorePreviousSteps.size());
+		Set<String> uploadedFileTypesMatrix = Sets.newHashSet();
+		for (ToolExecution previousStep : matrixCorePreviousSteps) {
+			assertTrue("previous steps should be input tools.", previousStep.isInputTool());
+			uploadedFileTypesMatrix.add(previousStep.getExecutionTimeParameters().get("file_type"));
+		}
+		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
+				uploadedFileTypesMatrix);
+
+		// snp table
+		final ToolExecution tableCoreInputs = snpTable.getCreatedByTool();
+		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
+				"core_pipeline_outputs_paired_with_parameters", tableCoreInputs.getToolName());
+		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
+				"0.1.0", tableCoreInputs.getToolVersion());
+		Map<String, String> tableCoreParameters = tableCoreInputs.getExecutionTimeParameters();
+		assertEquals("incorrect number of non-file parameters", 3, tableCoreParameters.size());
+		assertEquals("parameter coverageMin set incorrectly", validMinCoverageFromProvenance,
+				tableCoreParameters.get("coverageMin"));
+		assertEquals("parameter coverageMax set incorrectly", validMaxCoverageFromProvenance,
+				tableCoreParameters.get("coverageMax"));
+		assertNotNull("parameter __workflow_invocation_uuid__ exists",
+				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 
 		Set<ToolExecution> tablePreviousSteps = tableCoreInputs.getPreviousSteps();
 		assertEquals("there should exist 2 previous steps", 2, tablePreviousSteps.size());

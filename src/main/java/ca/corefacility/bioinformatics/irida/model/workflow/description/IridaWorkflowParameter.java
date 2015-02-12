@@ -19,6 +19,11 @@ import javax.xml.bind.annotation.XmlElement;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IridaWorkflowParameter {
+	
+	/**
+	 * Can be passed as the value of a parameter instructing IRIDA to ignore the default value. 
+	 */
+	public static final String IGNORE_DEFAULT_VALUE = "";
 
 	@XmlAttribute(name = "name")
 	private String name;
