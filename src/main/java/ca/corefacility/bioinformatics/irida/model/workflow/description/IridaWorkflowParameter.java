@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.description;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.List;
 import java.util.Objects;
@@ -46,6 +47,7 @@ public class IridaWorkflowParameter {
 		checkNotNull(name, "name is null");
 		checkNotNull(defaultValue, "defaultValue is null");
 		checkNotNull(toolParameters, "toolParameters is null");
+		checkArgument(toolParameters.size() > 0, "toolParameters has no elements");
 		
 		this.name = name;
 		this.defaultValue = defaultValue;
