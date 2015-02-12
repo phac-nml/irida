@@ -69,7 +69,7 @@
   function StorageService() {
     "use strict";
     var storage = [];
-    
+
     function addSample(sample) {
       storage[sample.id] = JSON.stringify(sample);
     }
@@ -86,6 +86,17 @@
       storage = [];
     }
 
+    function removeUnavailableSamples(available) {
+      var newStorage = [];
+      _.forEach(available, function (sample) {
+        if (storage[sample.id] != null) {
+          newStorage[sample.id] = storage[sample.id];
+        }
+      });
+
+      storage = newStorage;
+    }
+
     function getSamples() {
       var samples = [];
       var p = storage;
@@ -100,7 +111,8 @@
       removeSample: removeSample,
       getKeys     : getKeys,
       getSamples  : getSamples,
-      clear       : clear
+      clear       : clear,
+      removeUnavailableSamples : removeUnavailableSamples
     });
   }
 
@@ -254,6 +266,9 @@
         });
 
         $rootScope.$broadcast('SAMPLES_READY', true);
+
+        storage.removeUnavailableSamples(svc.samples);
+        updateSelectedCount();
       });
     }
 
