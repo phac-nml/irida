@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
@@ -127,6 +128,14 @@ public class PipelinesPhylogenomicsPageIT {
 		page.clickPipelineParametersBtn();
 		assertEquals("Should have the proper pipeline name in title", "Phylogenomics Pipeline Parameters",
 				page.getParametersModalTitle());
+
+		// set the value for the ALternative Allele Fraction
+		String value = page.getAlternativeAlleleFractionValue();
+		String newValue = "10";
+		page.setAlternativeAlleleFraction(newValue);
+		assertNotEquals("Should not have the same value as the default after being changed", newValue, page.getAlternativeAlleleFractionValue());
+		page.clickSetDefaultAlternativeAlleleFraction();
+		assertEquals("Value should be reset to the default value", value, page.getAlternativeAlleleFractionValue());
 	}
 
 	private void addSamplesToCart() {
