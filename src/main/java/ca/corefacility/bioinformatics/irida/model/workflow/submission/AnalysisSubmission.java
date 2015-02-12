@@ -50,6 +50,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -400,6 +401,7 @@ public class AnalysisSubmission implements IridaThing {
 			checkNotNull(workflowId, "workflowId is null");
 
 			this.workflowId = workflowId;
+			this.inputParameters = Maps.newHashMap();
 		}
 
 		/**
@@ -472,6 +474,25 @@ public class AnalysisSubmission implements IridaThing {
 			checkArgument(!inputParameters.isEmpty(), "inputParameters is empty");
 			
 			this.inputParameters = inputParameters;
+			return this;
+		}
+		
+		/**
+		 * Adds an individual input parameter.
+		 * 
+		 * @param name
+		 *            The name of the parameter.
+		 * @param value
+		 *            The value of the parameter.
+		 * @return An {@link AnalysisSubmission.Builder}.
+		 */
+		public Builder inputParameter(final String name, final String value) {
+			checkNotNull(name, "key is null");
+			checkNotNull(value, "value is null");
+			checkArgument(!inputParameters.containsKey(name), "key=" + name + " already exists as a parameter");
+
+			inputParameters.put(name, value);
+
 			return this;
 		}
 

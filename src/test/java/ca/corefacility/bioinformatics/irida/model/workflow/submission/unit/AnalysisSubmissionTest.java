@@ -35,6 +35,22 @@ public class AnalysisSubmissionTest {
 				AnalysisSubmission.builder(workflowId).name("name").referenceFile(referenceFile)
 						.inputFilesSingle(Sets.newHashSet(sequenceFile)).inputParameters(inputParameters).build());
 	}
+	
+	@Test
+	public void testIndividualInputParameter() {
+		AnalysisSubmission submission = AnalysisSubmission.builder(workflowId).name("name")
+				.referenceFile(referenceFile).inputFilesSingle(Sets.newHashSet(sequenceFile))
+				.inputParameter("name", "value").inputParameter("name2", "value2").build();
+		assertEquals("input parameter \"name\" not correct", "value", submission.getInputParameters().get("name"));
+		assertEquals("input parameter \"name2\" not correct", "value2", submission.getInputParameters().get("name2"));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testIndividualInputParameterDuplicateFail() {
+		AnalysisSubmission.builder(workflowId).name("name").referenceFile(referenceFile)
+				.inputFilesSingle(Sets.newHashSet(sequenceFile)).inputParameter("name", "value")
+				.inputParameter("name", "value2").build();
+	}
 
 	@Test(expected = NullPointerException.class)
 	public void testNullinputFilesSingle() {
