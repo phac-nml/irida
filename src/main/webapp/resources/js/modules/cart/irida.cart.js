@@ -27,6 +27,10 @@
         getCart();
     }
 
+  /**
+   * Controller for functions on the cart slider
+   * @param CartService The cart service to communicate with the server
+   */
     function CartSliderController(CartService){
       "use strict";
 
@@ -79,7 +83,8 @@
         };
 
       svc.clear = function () {
-        $http.delete(urls.all).then(function(){
+        //fire a DELETE to the server on the cart then broadcast the cart update event
+        $http.delete(urls.all).then(function () {
           scope.$broadcast("cart.update", {});
         })
       };
