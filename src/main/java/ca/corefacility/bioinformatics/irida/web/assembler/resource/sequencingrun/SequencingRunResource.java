@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.IdentifiableResource;
 
 /**
@@ -34,6 +35,14 @@ public abstract class SequencingRunResource extends IdentifiableResource<Sequenc
 
 	public void setUploadStatus(SequencingRunUploadStatus uploadStatus) {
 		resource.setUploadStatus(uploadStatus);
+	}
+
+	public void setLayoutType(LayoutType layoutType) {
+		resource.setLayoutType(layoutType);
+	}
+
+	public LayoutType getLayoutType() {
+		return resource.getLayoutType();
 	}
 
 }

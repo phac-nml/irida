@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.model.run;
 
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -38,6 +39,9 @@ public class MiseqRun extends SequencingRun implements IridaThing {
 	private String assay;
 
 	private String chemistry;
+
+	@Column(name = "read_lengths")
+	private Integer readLengths;
 
 	public String getInvestigatorName() {
 		return investigatorName;
@@ -95,6 +99,14 @@ public class MiseqRun extends SequencingRun implements IridaThing {
 		this.chemistry = chemistry;
 	}
 
+	public Integer getReadLengths() {
+		return readLengths;
+	}
+
+	public void setReadLengths(Integer readLengths) {
+		this.readLengths = readLengths;
+	}
+
 	@Override
 	public String getLabel() {
 		return "MiseqRun: " + projectName;
@@ -103,7 +115,7 @@ public class MiseqRun extends SequencingRun implements IridaThing {
 	@Override
 	public int hashCode() {
 		return Objects.hash(super.hashCode(), application, assay, chemistry, experimentName, investigatorName,
-				projectName, workflow);
+				projectName, workflow, readLengths);
 	}
 
 	@Override
@@ -119,7 +131,8 @@ public class MiseqRun extends SequencingRun implements IridaThing {
 				&& Objects.equals(this.projectName, other.projectName)
 				&& Objects.equals(this.experimentName, other.experimentName)
 				&& Objects.equals(this.workflow, other.workflow) && Objects.equals(this.application, other.application)
-				&& Objects.equals(this.assay, other.assay) && Objects.equals(this.chemistry, other.chemistry)) {
+				&& Objects.equals(this.assay, other.assay) && Objects.equals(this.chemistry, other.chemistry)
+				&& Objects.equals(this.readLengths, other.readLengths)) {
 			return true;
 		}
 

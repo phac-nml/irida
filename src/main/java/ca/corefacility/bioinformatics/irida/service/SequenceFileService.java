@@ -41,6 +41,10 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 * Persist the {@link SequenceFile} to the database and create a new
 	 * relationship between the {@link SequenceFile} and a {@link Sample}
 	 * 
+	 * Note: This method will throw {@link IllegalArgumentException} if the
+	 * {@link SequenceFile} has an associated {@link SequencingRun} with the
+	 * wrong type of {@link SequencingRun.LayoutType}
+	 * 
 	 * @param sequenceFile
 	 *            the {@link SequenceFile} to be persisted.
 	 * @param sample
@@ -53,6 +57,10 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 
 	/**
 	 * Create a pair of {@link SequenceFile}s in a {@link Sample}
+	 * 
+	 * Note: This method will throw {@link IllegalArgumentException} if the
+	 * {@link SequenceFile} has an associated {@link SequencingRun} with the
+	 * wrong type of {@link SequencingRun.LayoutType}
 	 * 
 	 * @param file1
 	 *            First {@link SequenceFile}
