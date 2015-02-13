@@ -11,9 +11,12 @@
 		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
 	</inputs>
 	<outputs>
+		<output name="assembly-log" fileName="spades.log" />
 		<output name="contigs" fileName="contigs.fasta" />
 		<output name="annotations-genbank" fileName="genome.gbk" />
+		<output name="annotations-stats" fileName="prokka_stats.txt" />
 		<output name="annotations-log" fileName="prokka.log" />
+		<output name="annotations-error" fileName="prokka.err" />
 	</outputs>
 	<toolRepositories>
 		<repository>
