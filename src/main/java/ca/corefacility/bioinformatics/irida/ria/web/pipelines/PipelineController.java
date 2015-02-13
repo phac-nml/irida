@@ -254,7 +254,7 @@ public class PipelineController extends BaseController {
 			if (paras != null) {
 				for (IridaWorkflowParameter p : paras) {
 					parameters.add(ImmutableMap.of(
-							"label", messageSource.getMessage("workflow.param." + p.getName(), null, locale),
+							"label", messageSource.getMessage("pipeline.parameters.snvphyl." + p.getName(), null, locale),
 							"value", p.getDefaultValue(),
 							"name", p.getName()
 					));
