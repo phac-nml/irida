@@ -46,7 +46,7 @@
 				<p class="lead" th:text="#{cart.empty-text}"></p>
 				<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close</button>
 			</section>
-			<section ng-show="cart.projects.length > 0">
+			<section ng-show="cart.projects.length > 0" ng-controller="CartSliderController as cartCtrl">
 				<ul id="cart-project-list" class="list-group">
 					<li class="list-group-item" ng-repeat="p in cart.projects" ng-init="cart.collapsed[p.id]=true"
 					    ng-click="cart.collapsed[p.id] = !cart.collapsed[p.id]">
@@ -61,6 +61,7 @@
 				</ul>
 				<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close</button>
 				<a id="go-to-pipeline-btn" href="#" th:href="@{/pipelines}" class="btn btn-primary pull-right" th:text="#{cart.btn.run}">Run Pipeline</a>
+				<button class="btn btn-default" ng-click="cartCtrl.clear()">_Clear_</button>
 			</section>
 		</aside>
 	</script>

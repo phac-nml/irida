@@ -9,7 +9,7 @@
         vm.count = 0;
         vm.collapsed = {};
 
-        $scope.$on('cart.add', function () {
+        $scope.$on('cart.update', function () {
             getCart();
         });
 
@@ -25,6 +25,16 @@
         }
 
         getCart();
+    }
+
+    function CartSliderController(CartService){
+      "use strict";
+
+      var vm = this;
+
+      vm.clear = function(){
+        CartService.clear();
+      };
     }
 
     function CartDirective() {
@@ -64,15 +74,22 @@
           });
 
           $q.all(promises).then(function(){
-            scope.$broadcast("cart.add", {});
+            scope.$broadcast("cart.update", {});
           });
         };
+
+      svc.clear = function () {
+        $http.delete(urls.all).then(function(){
+          scope.$broadcast("cart.update", {});
+        })
+      };
 
     }
 
     angular
       .module('irida.cart', [])
       .service('CartService', ['$rootScope', '$http', '$q', CartService])
+      .controller('CartSliderController', ['CartService', CartSliderController])
       .directive('cart', [CartDirective])
     ;
 })();
