@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+	<meta charset="UTF-8"/>
+	<title></title>
+</head>
+<body>
+<script th:fragment="modal (title, parameters)" type="text/ng-template" id="/parameters.html">
+	<form name="parameters">
+		<div class="modal-header">
+			<h2 class="modal-title" th:text="${title}">Phylogenomics Pipeline Parameters</h2>
+		</div>
+		<div class="modal-body">
+			<div class="form-group" ng-repeat="parameter in paras.parameters">
+				<label ng-bind="parameter.label" for="{{parameter.name}}"></label>
+				<div class="input-group">
+					<input id="{{parameter.name}}" class="form-control para-input" type="text" ng-model="parameter.value"/>
+					<span class="input-group-btn">
+						<button class="btn btn-default set-default-btn" type="button" ng-click="paras.reset($index)" th:text="#{pipeline.parameters.use-default}">Use Default</button>
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button id="para-cancel-btn" class="btn btn-default" th:text="#{pipeline.phylogenomics.parameters.modal-button-cancel}" ng-click="paras.close()">Cancel</button>
+			<button id="para-update-btn" class="btn btn-primary" th:text="#{pipeline.phylogenomics.parameters.modal-button-good}" ng-click="paras.update()">These work for me!</button>
+		</div>
+	</form>
+</script>
+</body>
+</html>

@@ -45,7 +45,12 @@
           }
         });
 
-        $http.post(PIPELINE.url, {ref: ref, single: single, paired: paired, name: name})
+        var paras = [];
+        _.forEach(PIPELINE.parameters, function (p) {
+          paras.push({'name': p.name, 'value': p.value});
+        });
+
+        $http.post(PIPELINE.url, {ref: ref, single: single, paired: paired, name: name, paras: paras})
           .success(function (data) {
             if (data.result === 'success') {
               vm.success = true;
@@ -58,18 +63,40 @@
     };
   }
 
-  function ParameterController ($modal) {
+  function ParameterModalController ($modal) {
       var vm = this;
 
     vm.openModal = function () {
         $modal.open({
           templateUrl: '/parameters.html',
+          controller: 'ParameterController as paras'
         });
+    };
+  }
+
+  function ParameterController ($modalInstance) {
+    var vm = this;
+    PIPELINE.defaults = PIPELINE.defaults || angular.copy(PIPELINE.parameters);
+    vm.parameters = angular.copy(PIPELINE.parameters);
+
+    vm.update = function () {
+      PIPELINE.parameters = angular.copy(vm.parameters);
+      $modalInstance.close();
+    };
+
+    vm.close = function() {
+      $modalInstance.dismiss();
+    };
+
+    vm.reset = function (index) {
+      vm.parameters[index] = angular.copy(PIPELINE.defaults[index]);
+
     };
   }
 
   angular.module('irida.pipelines.phylogenomics', [])
     .controller('PhylogenomicsController', ['$http', PhylogenomicsController])
-    .controller('ParameterController', ["$modal", ParameterController])
+    .controller('ParameterModalController', ["$modal", ParameterModalController])
+    .controller('ParameterController', ['$modalInstance', ParameterController])
   ;
 })();
