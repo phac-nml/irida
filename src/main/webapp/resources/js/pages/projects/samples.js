@@ -69,7 +69,7 @@
   function StorageService() {
     "use strict";
     //storing samples as an object hash
-    var storage = new Object();
+    var storage = {};
 
     function addSample(sample) {
       storage[sample.id] = JSON.stringify(sample);
@@ -84,11 +84,11 @@
     }
 
     function clear() {
-      storage = new Object();
+      storage = {};
     }
 
     function removeUnavailableSamples(available) {
-      var newStorage = [];
+      var newStorage = {};
       _.forEach(available, function (sample) {
         if (storage[sample.id] != null) {
           newStorage[sample.id] = storage[sample.id];
