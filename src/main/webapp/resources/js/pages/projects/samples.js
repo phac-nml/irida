@@ -72,7 +72,7 @@
     var storage = {};
 
     function addSample(sample) {
-      storage[sample.id] = JSON.stringify(sample);
+      storage[sample.id] = sample;
     }
 
     function removeSample(id) {
@@ -99,12 +99,7 @@
     }
 
     function getSamples() {
-      var samples = [];
-      var p = storage;
-      _.forEach(getKeys(), function (key) {
-        samples.push($.parseJSON(p[key]));
-      });
-      return samples;
+      return storage;
     }
 
     return ({
