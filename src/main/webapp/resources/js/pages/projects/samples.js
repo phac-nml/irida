@@ -68,6 +68,7 @@
 
   function StorageService() {
     "use strict";
+    //storing samples as an object hash
     var storage = new Object();
 
     function addSample(sample) {
@@ -107,12 +108,12 @@
     }
 
     return ({
-      addSample   : addSample,
-      removeSample: removeSample,
-      getKeys     : getKeys,
-      getSamples  : getSamples,
-      clear       : clear,
-      removeUnavailableSamples : removeUnavailableSamples
+      addSample               : addSample,
+      removeSample            : removeSample,
+      getKeys                 : getKeys,
+      getSamples              : getSamples,
+      clear                   : clear,
+      removeUnavailableSamples: removeUnavailableSamples
     });
   }
 
