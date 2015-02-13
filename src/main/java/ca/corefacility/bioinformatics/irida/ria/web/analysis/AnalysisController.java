@@ -37,7 +37,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -66,14 +65,11 @@ public class AnalysisController {
 	 * SERVICES
 	 */
 	private AnalysisSubmissionService analysisSubmissionService;
-	private UserService userService;
 	private MessageSource messageSource;
 
 	@Autowired
-	public AnalysisController(AnalysisSubmissionService analysisSubmissionService, UserService userService,
-			MessageSource messageSource) {
+	public AnalysisController(AnalysisSubmissionService analysisSubmissionService, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
-		this.userService = userService;
 		this.messageSource = messageSource;
 	}
 
@@ -106,9 +102,9 @@ public class AnalysisController {
 	 * Get the page for previewing a tree result
 	 *
 	 * @param analysisId
-	 * 		Id for the {@link AnalysisSubmission}
+	 *            Id for the {@link AnalysisSubmission}
 	 * @param model
-	 * 		{@link Model}
+	 *            {@link Model}
 	 *
 	 * @return Name of the page
 	 * @throws IOException
@@ -134,21 +130,21 @@ public class AnalysisController {
 	 * Get a list of analysis by page and filter
 	 *
 	 * @param page
-	 * 		Current page being displayed
+	 *            Current page being displayed
 	 * @param count
-	 * 		Number of analysis per page
+	 *            Number of analysis per page
 	 * @param sortedBy
-	 * 		field to sort by
+	 *            field to sort by
 	 * @param sortDir
-	 * 		direction to sort by
+	 *            direction to sort by
 	 * @param state
-	 * 		AnalysisSubmission state
+	 *            AnalysisSubmission state
 	 * @param nameFilter
-	 * 		text to filter the name by
+	 *            text to filter the name by
 	 * @param minDateFilter
-	 * 		date to filter out anything previous
+	 *            date to filter out anything previous
 	 * @param maxDateFilter
-	 * 		date to filter out anything after
+	 *            date to filter out anything after
 	 *
 	 * @return JSON object with analysis, total pages, and total analysis
 	 * @throws IOException
@@ -228,9 +224,9 @@ public class AnalysisController {
 	 * Download all output files from an {@link AnalysisSubmission}
 	 *
 	 * @param analysisSubmissionId
-	 * 		Id for a {@link AnalysisSubmission}
+	 *            Id for a {@link AnalysisSubmission}
 	 * @param response
-	 * 		{@link HttpServletResponse}
+	 *            {@link HttpServletResponse}
 	 *
 	 * @throws IOException
 	 */
