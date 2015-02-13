@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.pipelines;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,6 +56,7 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
@@ -262,7 +264,8 @@ public class PipelineController extends BaseController {
 				model.addAttribute("parameters", parameters);
 			}
 
-			model.addAttribute("name", iridaWorkflow.getWorkflowDescription().getName() + " (" + dateFormatter.print(new Date(), locale) + ")");
+			model.addAttribute("name", iridaWorkflow.getWorkflowDescription().getName());
+			model.addAttribute("today", new Date());
 			model.addAttribute("pipelineId", pipelineId.toString());
 			model.addAttribute("referenceFiles", referenceFileList);
 			model.addAttribute("addRefProjects", addRefList);
@@ -290,7 +293,8 @@ public class PipelineController extends BaseController {
 	@RequestMapping(value = "/ajax/start/{pipelineId}", method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> ajaxStartPipelinePhylogenomics(HttpSession session, Locale locale,
 			@PathVariable UUID pipelineId,
-			@RequestParam(value = "single[]", required = false) List<Long> single, @RequestParam(value = "paired[]", required = false) List<Long> paired,
+			@RequestParam(required = false) List<Long> single, @RequestParam(required = false) List<Long> paired,
+			@RequestParam(required = false) List<String> paras,
 			@RequestParam Long ref, @RequestParam String name) {
 		Map<String, Object> result;
 
@@ -309,19 +313,38 @@ public class PipelineController extends BaseController {
 				sequenceFilePairs = (List<SequenceFilePair>) sequenceFilePairService.readMultiple(paired);
 			}
 
-			ReferenceFile referenceFile = referenceFileService.read(ref);
-			
+			// Build the analysis submission
 			AnalysisSubmission.Builder analysisSubmissionBuilder = AnalysisSubmission.builder(pipelineId);
+
+			// Add workflow parameters
+			if (paras != null && paras.size() > 0) {
+				for (String p : paras) {
+					Map<String, String> parameters = null;
+					ObjectMapper mapper = new ObjectMapper();
+					try {
+						parameters = mapper.readValue(p, Map.class);
+						analysisSubmissionBuilder.inputParameters(parameters);
+					} catch (IOException e) {
+						logger.error("Cannot create pipeline parameters from: " + p, e);
+					}
+				}
+			}
+
+			// Add reference file
+			ReferenceFile referenceFile = referenceFileService.read(ref);
+			analysisSubmissionBuilder.referenceFile(referenceFile);
+
+			// Add any single end sequencing files.
 			if (!sequenceFiles.isEmpty()) {
 				analysisSubmissionBuilder.inputFilesSingle(Sets.newHashSet(sequenceFiles));
 			}
-			
+
+			// Add any paired end sequencing files.
 			if (!sequenceFilePairs.isEmpty()) {
 				analysisSubmissionBuilder.inputFilesPaired(Sets.newHashSet(sequenceFilePairs));
 			}
-					
-			analysisSubmissionBuilder.referenceFile(referenceFile);
 
+			// Create the submission
 			AnalysisSubmission submission = analysisSubmissionService.create(analysisSubmissionBuilder.build());
 
 			// TODO [15-01-21] (Josh): This should be replaced by storing the values into the database.
@@ -348,5 +371,26 @@ public class PipelineController extends BaseController {
 				"projects", cartController.getNumberOfProjects(),
 				"samples", cartController.getNumberOfSamples()
 		);
+	}
+
+	private class PipelineParameters {
+		private String name;
+		private String value;
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getValue() {
+			return value;
+		}
+
+		public void setValue(String value) {
+			this.value = value;
+		}
 	}
 }

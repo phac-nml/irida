@@ -44,8 +44,8 @@
 						<label class="col-sm-2 control-label" for="pipeline-name"
 						       th:text="#{workflow.label.name}">Name</label>
 
-						<div class="col-md-10">
-							<input id="pipeline-name" class="form-control" type="text" th:value="${name}"/>
+						<div class="col-md-10" th:with="dateFormat=#{date.iso-8601}">
+							<input id="pipeline-name" class="form-control" type="text" th:value="${name + '_' + #calendars.format(today, dateFormat)}"/>
 
 							<div ng-show="phylCtrl.error" class="label label-danger">{{phylCtrl.error}}</div>
 						</div>
