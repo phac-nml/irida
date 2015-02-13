@@ -68,7 +68,7 @@
 
   function StorageService() {
     "use strict";
-    var storage = [];
+    var storage = new Object();
 
     function addSample(sample) {
       storage[sample.id] = JSON.stringify(sample);
@@ -83,7 +83,7 @@
     }
 
     function clear() {
-      storage = [];
+      storage = new Object();
     }
 
     function removeUnavailableSamples(available) {
