@@ -25,10 +25,12 @@
 
 		<div class="form-group">
 			<label for="samplesSelect" th:text="#{project.samples.modal.merge.select-label}"></label>
-			<select class="form-control" name="samplesSelect" id="samplesSelect" ng-model="mergeCtrl.selected" ng-options="s.sample.sampleName for s in mergeCtrl.samples"></select>
+			<select class="form-control"  ng-model="mergeCtrl.selected">
+				<option ng-repeat="s in mergeCtrl.samples" value="{{s.id}}">{{s.sample.sampleName}}</option>
+			</select>
 		</div>
 		<div class="form-group">
-			<label th:text="#{project.samples.modal.merge.name-label}"></label>
+			<label th:text="#{project.samples.modal.merge.name-label}">_Rename Sample_</label>
 			<input id="newName" class="form-control" type="text" placeholder="{{mergeCtrl.selected.name}}" ng-model="mergeCtrl.name"/>
 			<div id="merge-length-error" ng-hide="mergeCtrl.error.length!==true" class="alert alert-danger" th:text="#{project.samples.modal.error-length}">Name must be at least 5 characters long.</div>
 			<div id="merge-format-error" ng-hide="mergeCtrl.error.format!==true" class="alert alert-danger" th:text="#{project.samples.modal.error-format}">Name must be at least 5 characters long.</div>

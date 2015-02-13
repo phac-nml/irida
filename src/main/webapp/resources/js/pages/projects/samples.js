@@ -607,7 +607,7 @@
     };
 
     vm.merge = function () {
-      SamplesService.merge({mergeSampleId: vm.selected.id, newName: vm.name}).then(function () {
+      SamplesService.merge({mergeSampleId: vm.selected, newName: vm.name}).then(function () {
         vm.close();
       });
     };
