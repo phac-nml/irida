@@ -12,10 +12,38 @@
     <reference>reference</reference>
   </inputs>
 	<parameters>
+		<parameter name="repeat-minimum-length" defaultValue="150">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/core_pipeline/findrepeat/0.0.2"
+				parameterName="length" />
+		</parameter>
+		<parameter name="repeat-minimum-pid" defaultValue="90">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/core_pipeline/findrepeat/0.0.2"
+				parameterName="pid" />
+		</parameter>
 		<parameter name="alternative-allele-fraction" defaultValue="0.75">
 			<toolParameter
 				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/freebayes/freebayes/0.0.4"
 				parameterName="min_alternate_fraction" />
+		</parameter>
+		<parameter name="minimum-mapping-quality" defaultValue="30">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/freebayes/freebayes/0.0.4"
+				parameterName="minimum_mapping_quality" />
+		</parameter>
+		<parameter name="minimum-base-quality" defaultValue="30">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/freebayes/freebayes/0.0.4"
+				parameterName="minimum_base_quality" />
+		</parameter>
+		<parameter name="minimum-read-coverage" defaultValue="15">
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/freebayes/freebayes/0.0.4"
+				parameterName="min_coverage" />
+			<toolParameter
+				toolId="irida.corefacility.ca/galaxy-shed/repos/irida/core_pipeline/vcf2pseudoalignment/0.0.10"
+				parameterName="coverage" />
 		</parameter>
 	</parameters>
   <outputs>
