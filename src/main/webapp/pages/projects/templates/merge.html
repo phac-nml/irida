@@ -25,7 +25,7 @@
 
 		<div class="form-group">
 			<label for="samplesSelect" th:text="#{project.samples.modal.merge.select-label}"></label>
-			<select class="form-control"  ng-model="mergeCtrl.selected">
+			<select class="form-control" name="samplesSelect" id="samplesSelect" ng-model="mergeCtrl.selected">
 				<option ng-repeat="s in mergeCtrl.samples" value="{{s.id}}">{{s.sample.sampleName}}</option>
 			</select>
 		</div>

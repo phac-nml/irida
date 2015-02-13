@@ -541,12 +541,7 @@
         vm.export.open = false;
         $modal.open({
           templateUrl: TL.BASE_URL + 'projects/templates/samples/linker',
-          controller : 'LinkerCtrl as lCtrl',
-          resolve    : {
-            samples: function () {
-              return SamplesService.getSelectedSampleNames();
-            }
-          }
+          controller : 'LinkerCtrl as lCtrl'
         });
       },
       galaxy  : function galaxy() {
@@ -596,7 +591,7 @@
     "use strict";
     var vm = this;
     vm.samples = samples;
-    vm.selected = samples[0];
+    vm.selected = Object.keys(samples)[0];
     vm.name = "";
     vm.error = {};
 
@@ -691,6 +686,13 @@
     vm.close = function () {
       $modalInstance.close();
     };
+
+    vm.areAllSelected = function(){
+        if(Object.keys(vm.samples).length == SamplesService.samples.length){
+          return true;
+        }
+        return false;
+    }
   }
 
   function SortCtrl($rootScope, filter) {
