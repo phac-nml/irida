@@ -43,10 +43,17 @@
 	<script type="text/ng-template" id="/cart.html">
 		<aside class="cart">
 			<section ng-hide="cart.projects.length">
-				<p class="lead" th:text="#{cart.empty-text}"></p>
 				<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close</button>
+				<p class="lead" th:text="#{cart.empty-text}"></p>
 			</section>
 			<section ng-show="cart.projects.length > 0" ng-controller="CartSliderController as cartCtrl">
+				<div class="cart-control-buttons">
+					<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close
+					</button>
+					<button class="btn btn-warning pull-right" ng-click="cartCtrl.clear()" th:text="#{cart.btn.clear}">
+						_Clear_
+					</button>
+				</div>
 				<ul id="cart-project-list" class="list-group">
 					<li class="list-group-item" ng-repeat="p in cart.projects" ng-init="cart.collapsed[p.id]=true"
 					    ng-click="cart.collapsed[p.id] = !cart.collapsed[p.id]">
@@ -59,9 +66,9 @@
 						</ul>
 					</li>
 				</ul>
-				<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close</button>
-				<a id="go-to-pipeline-btn" href="#" th:href="@{/pipelines}" class="btn btn-primary pull-right" th:text="#{cart.btn.run}">Run Pipeline</a>
-				<button class="btn btn-default" ng-click="cartCtrl.clear()">_Clear_</button>
+				<a id="go-to-pipeline-btn" href="#" th:href="@{/pipelines}" class="btn btn-primary pull-right"
+				   th:text="#{cart.btn.run}">Run Pipeline
+				</a>
 			</section>
 		</aside>
 	</script>
@@ -88,10 +95,10 @@
 			SESSION_LENGTH: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800,
 			lang          : {
 				crumbs: {
-					"projects"     : /*[[#{bc.projects}]]*/ "Projects",
-					"samples"      : /*[[#{bc.samples}]]*/ "Samples",
-					"sequencingRuns" : /*[[#{bc.sequencingRuns}]]*/  "Sequencing Runs",
-					"sequenceFiles": /*[[#{bc.sequenceFiles}]]*/ "Sequence Files"
+					"projects"      : /*[[#{bc.projects}]]*/ "Projects",
+					"samples"       : /*[[#{bc.samples}]]*/ "Samples",
+					"sequencingRuns": /*[[#{bc.sequencingRuns}]]*/  "Sequencing Runs",
+					"sequenceFiles" : /*[[#{bc.sequenceFiles}]]*/ "Sequence Files"
 				},
 				page  : {
 					"first": /*[[#{table.first}]]*/ 'First',
