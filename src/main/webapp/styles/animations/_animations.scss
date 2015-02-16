@@ -1,0 +1,13 @@
+@keyframes move-up-down {
+  0% {
+    transform: translate3d(0, -65px, 0px);
+    animation-timing-function: ease-in;
+  }
+  50% {
+    transform: translate3d(0, 0, 0px);
+    animation-timing-function: ease-out;
+  }
+  100% {
+    transform: translate3d(0, -65px, 0px);
+  }
+}
