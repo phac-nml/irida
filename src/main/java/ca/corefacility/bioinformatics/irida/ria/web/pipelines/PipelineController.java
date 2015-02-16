@@ -339,7 +339,7 @@ public class PipelineController extends BaseController {
 				Map<String, String> paras = mapper.readValue(parameters.get("paras"), Map.class);
 				analysisSubmissionBuilder.inputParameters(paras);
 			} catch (IOException e) {
-				logger.error("Error extacting parameters from submission", e);
+				logger.error("Error extracting parameters from submission", e);
 			}
 
 			// Create the submission
