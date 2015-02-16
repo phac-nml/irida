@@ -123,6 +123,7 @@
         base = R.all('projects/' + project.id),
         filtered = [];
     svc.samples = [];
+    svc.projectId = project.id;
 
     svc.getNumSamples = function () {
       return svc.samples.length;
@@ -199,7 +200,7 @@
         return "ids=" + id
       });
       var iframe = document.createElement("iframe");
-      iframe.src = TL.BASE_URL + "projects/" + id + "/download/files?" + mapped.join("&");
+      iframe.src = TL.BASE_URL + "projects/" + svc.projectId + "/download/files?" + mapped.join("&");
       iframe.style.display = "none";
       document.body.appendChild(iframe);
     };
