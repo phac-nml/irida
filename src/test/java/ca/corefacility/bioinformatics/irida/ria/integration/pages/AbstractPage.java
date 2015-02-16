@@ -118,6 +118,10 @@ public class AbstractPage {
 	public void showCart() {
 		driver.findElement(By.id("cart-show-btn")).click();
 	}
+	
+	public void clearCart(){
+		driver.findElement(By.id("clear-cart-btn")).click();
+	}
 
 	public boolean isCartVisible() {
 		return driver.findElements(By.className("cart-open")).size() > 0;
