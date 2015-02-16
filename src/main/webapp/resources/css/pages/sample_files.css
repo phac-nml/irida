@@ -1,16 +1,38 @@
-/* line 3, ../../../styles/pages/sample_files.scss */
+@keyframes move-up-down {
+  0% {
+    transform: translate3d(0, -65px, 0px);
+    animation-timing-function: ease-in;
+  }
+  50% {
+    transform: translate3d(0, 0, 0px);
+    animation-timing-function: ease-out;
+  }
+  100% {
+    transform: translate3d(0, -65px, 0px);
+  }
+}
+/* line 4, ../../../styles/pages/sample_files.scss */
 .paired_end {
   border-left: 1rem solid #133B54;
 }
 
-/* line 7, ../../../styles/pages/sample_files.scss */
+/* line 8, ../../../styles/pages/sample_files.scss */
 .single_end {
   border-left: 1rem solid #3092d0;
 }
 
-/* line 11, ../../../styles/pages/sample_files.scss */
+/* line 12, ../../../styles/pages/sample_files.scss */
 .sidebar-content {
   width: 130px;
   white-space: pre-wrap;
   margin: 1rem auto 0 auto;
+}
+/* line 17, ../../../styles/pages/sample_files.scss */
+.sidebar-content.alert {
+  padding: 0;
+}
+
+/* line 22, ../../../styles/pages/sample_files.scss */
+.alert-icon-motion {
+  animation: move-up-down 2s infinite;
 }

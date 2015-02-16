@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.pipelines;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -19,8 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
-import org.springframework.format.Formatter;
-import org.springframework.format.datetime.DateFormatter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -262,7 +259,6 @@ public class PipelineController extends BaseController {
 			}
 
 			model.addAttribute("name", iridaWorkflow.getWorkflowDescription().getName());
-			model.addAttribute("today", new Date());
 			model.addAttribute("pipelineId", pipelineId.toString());
 			model.addAttribute("referenceFiles", referenceFileList);
 			model.addAttribute("addRefProjects", addRefList);
