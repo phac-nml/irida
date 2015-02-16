@@ -131,7 +131,7 @@
 						<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" role="menu">
-						<li ng-class="{disabled:subnav.count&lt;2}">
+						<li ng-class="{disabled:subnav.count&lt;2 || ! subnav.localSelected}">
 							<a id="mergeBtn" href="#" ng-click="subnav.merge()">
 								<span class="fa fa-fw fa-compress"></span>
 								&nbsp;
@@ -145,7 +145,7 @@
 								<span th:text="#{project.samples.nav.copy}">_COPY_</span>
 							</a>
 						</li>
-						<li th:if="${isOwner} or ${isAdmin}">
+						<li th:if="${isOwner} or ${isAdmin}" ng-class="{disabled: ! subnav.localSelected}">
 							<a id="moveBtn" href="#" ng-click="subnav.openModal('move')">
 								<span class="fa fa-truck fa-fw"></span>
 								<span th:text="#{project.samples.nav.move}"></span>
@@ -169,7 +169,7 @@
 								<span th:text="#{form.download}">_Download</span>
 							</a>
 						</li>
-						<li th:if="${linkerAvailable}">
+						<li th:if="${linkerAvailable}" ng-class="{disabled: ! subnav.localSelected}">
 							<a id="exportLinkerBtn" href="#" ng-click="subnav.export.linker()">
 								<span class="fa fa-fw fa-terminal"></span>
 								&nbsp;

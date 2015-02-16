@@ -227,7 +227,7 @@
      */
     svc.getSamples = function () {
       var selectedKeys = storage.getKeys();
-      $rootScope.$broadcast('SELECTED_COUNT', {count: selectedKeys.length});
+      updateSelectedCount();
 
       _.each(svc.samples, function (s) {
         if (_.contains(selectedKeys, s.id + "")) {
@@ -303,7 +303,13 @@
     }
 
     function updateSelectedCount() {
-      $rootScope.$broadcast('SELECTED_COUNT', {count: storage.getKeys().length});
+      var message = {count: 0, LOCAL: 0, ASSOCIATED: 0};
+      _.forEach(storage.getSamples(), function (s) {
+        message.count++;
+        message[s.sampleType]++;
+      });
+
+      $rootScope.$broadcast('SELECTED_COUNT', message);
     }
 
 
@@ -509,6 +515,7 @@
     "use strict";
     var vm = this;
     vm.count = 0;
+    vm.localSelected = true;
 
     vm.selection = {
       isopen    : false,
@@ -584,6 +591,13 @@
 
     $scope.$on('SELECTED_COUNT', function (e, a) {
       vm.count = a.count;
+
+      if (a["ASSOCIATED"] > 0) {
+        vm.localSelected = false;
+      }
+      else {
+        vm.localSelected = true;
+      }
     });
   }
 
@@ -687,11 +701,11 @@
       $modalInstance.close();
     };
 
-    vm.areAllSelected = function(){
-        if(Object.keys(vm.samples).length == SamplesService.samples.length){
-          return true;
-        }
-        return false;
+    vm.areAllSelected = function () {
+      if (Object.keys(vm.samples).length == SamplesService.samples.length) {
+        return true;
+      }
+      return false;
     }
   }
 
@@ -790,7 +804,7 @@
       cart.add(samples);
     };
 
-    vm.clear = function(){
+    vm.clear = function () {
       cart.clear();
     };
   }
