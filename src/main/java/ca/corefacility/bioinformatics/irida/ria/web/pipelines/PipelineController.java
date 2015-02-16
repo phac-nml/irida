@@ -319,6 +319,7 @@ public class PipelineController extends BaseController {
 			AnalysisSubmission.Builder analysisSubmissionBuilder = AnalysisSubmission.builder(pipelineId);
 
 			// Add workflow parameters
+			// TODO [15-02-16] (Josh): Update when addressing issue #100
 			if (paras != null && paras.size() > 0) {
 				for (String p : paras) {
 					Map<String, String> parameters = null;
