@@ -45,9 +45,9 @@
           }
         });
 
-        var paras = [];
+        var paras = {};
         _.forEach(PIPELINE.parameters, function (p) {
-          paras.push({"name": p.name, "value": p.value});
+          paras[p.name] = p.value;
         });
 
         $http({

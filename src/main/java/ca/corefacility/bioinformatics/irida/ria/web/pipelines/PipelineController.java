@@ -296,7 +296,7 @@ public class PipelineController extends BaseController {
 	public @ResponseBody Map<String, Object> ajaxStartPipelinePhylogenomics(HttpSession session, Locale locale,
 			@PathVariable UUID pipelineId,
 			@RequestParam(required = false) List<Long> single, @RequestParam(required = false) List<Long> paired,
-			@RequestParam(required = false) List<String> paras,
+			@RequestParam(required = false) Map<String, String> parameters,
 			@RequestParam Long ref, @RequestParam String name) {
 		Map<String, Object> result;
 
@@ -318,21 +318,6 @@ public class PipelineController extends BaseController {
 			// Build the analysis submission
 			AnalysisSubmission.Builder analysisSubmissionBuilder = AnalysisSubmission.builder(pipelineId);
 
-			// Add workflow parameters
-			// TODO [15-02-16] (Josh): Update when addressing issue #100
-			if (paras != null && paras.size() > 0) {
-				for (String p : paras) {
-					Map<String, String> parameters = null;
-					ObjectMapper mapper = new ObjectMapper();
-					try {
-						parameters = mapper.readValue(p, Map.class);
-						analysisSubmissionBuilder.inputParameters(parameters);
-					} catch (IOException e) {
-						logger.error("Cannot create pipeline parameters from: " + p, e);
-					}
-				}
-			}
-
 			// Add reference file
 			ReferenceFile referenceFile = referenceFileService.read(ref);
 			analysisSubmissionBuilder.referenceFile(referenceFile);
@@ -345,6 +330,16 @@ public class PipelineController extends BaseController {
 			// Add any paired end sequencing files.
 			if (!sequenceFilePairs.isEmpty()) {
 				analysisSubmissionBuilder.inputFilesPaired(Sets.newHashSet(sequenceFilePairs));
+			}
+
+			// Add workflow parameters
+			// TODO [15-02-16] (Josh): Update when addressing issue #100
+			ObjectMapper mapper = new ObjectMapper();
+			try {
+				Map<String, String> paras = mapper.readValue(parameters.get("paras"), Map.class);
+				analysisSubmissionBuilder.inputParameters(paras);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 
 			// Create the submission
