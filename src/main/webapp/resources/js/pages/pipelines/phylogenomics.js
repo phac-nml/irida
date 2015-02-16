@@ -64,7 +64,12 @@
               vm.success = true;
             }
             else {
-              vm.error = data.error;
+              if (data.error) {
+                vm.error = data.error;
+              }
+              else if(data.parameters) {
+                vm.paramError = data.parameters;
+              }
             }
           });
       }

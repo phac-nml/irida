@@ -302,7 +302,7 @@ public class PipelineController extends BaseController {
 
 		if (Strings.isNullOrEmpty(name)) {
 			result = ImmutableMap
-					.of("error", messageSource.getMessage("workflow.no-name-provided", new Object[] { }, locale));
+					.of("error", messageSource.getMessage("workflow.no-name-provided", null, locale));
 		} else {
 			List<SequenceFile> sequenceFiles = new ArrayList<>();
 			List<SequenceFilePair> sequenceFilePairs = new ArrayList<>();
@@ -340,6 +340,7 @@ public class PipelineController extends BaseController {
 				analysisSubmissionBuilder.inputParameters(paras);
 			} catch (IOException e) {
 				logger.error("Error extracting parameters from submission", e);
+				result = ImmutableMap.of("parameters", messageSource.getMessage("pipeline.parameters.error", null, locale));
 			}
 
 			// Create the submission

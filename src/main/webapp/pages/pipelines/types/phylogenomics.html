@@ -162,8 +162,11 @@
 								<span class="fa fa-rocket"></span>
 							</button>
 						</div>
-						<br/>
-						<button id="pipeline-parameters-btn" style="width: 130px; white-space: pre-wrap;" ng-controller="ParameterModalController as modal" class="btn btn-default" ng-click="modal.openModal()"><i class="fa fa-cogs fa-2x"></i><br/><span th:text="#{workflow.parameters.section-button}">Pipeline Parameters</span></button>
+						<button id="pipeline-parameters-btn" ng-controller="ParameterModalController as modal" class="btn btn-default sidebar-content" ng-click="modal.openModal()"><i class="fa fa-cogs fa-2x"></i><br/><span th:text="#{workflow.parameters.section-button}">Pipeline Parameters</span></button>
+						<div ng-show="phylCtrl.paramError" class="alert alert-danger sidebar-content">
+							<strong class="fa fa-3x fa-fw fa-hand-o-up"></strong>
+							{{phylCtrl.paramError}}
+						</div>
 					</div>
 					<div id="pipeline-submitted" class="ng-cloak" ng-switch-when="true">
 						<div ng-hide="phylCtrl.success" class="alert alert-info">
