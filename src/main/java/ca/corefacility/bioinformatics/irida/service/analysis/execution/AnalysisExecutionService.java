@@ -5,6 +5,7 @@ import java.util.concurrent.Future;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -47,11 +48,11 @@ public interface AnalysisExecutionService {
 	 * @throws ExecutionManagerException
 	 *             If there was an exception submitting the analysis to the
 	 *             execution manager.
-	 * @throws IridaWorkflowNotFoundException
-	 *             If the workflow for the analysis was not found.
+	 * @throws IridaWorkflowException
+	 *             If there was an issue with the IRIDA workflow.
 	 */
 	public Future<AnalysisSubmission> executeAnalysis(AnalysisSubmission analysisSubmission)
-			throws IridaWorkflowNotFoundException, ExecutionManagerException;
+			throws IridaWorkflowException, ExecutionManagerException;
 
 	/**
 	 * Gets the status for the given submitted analysis.

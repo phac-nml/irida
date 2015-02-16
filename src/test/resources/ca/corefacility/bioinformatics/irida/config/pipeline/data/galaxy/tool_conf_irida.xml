@@ -3,6 +3,7 @@
   <tool file="irida/collection_list_paired.xml" />
   <tool file="irida/core_pipeline_outputs.xml" />
   <tool file="irida/core_pipeline_outputs_paired.xml" />
+  <tool file="irida/core_pipeline_outputs_paired_with_parameters.xml" />
   <tool file="irida/core_pipeline_outputs_single_paired.xml" />
   <tool file="irida/assembly_annotation_pipeline_outputs.xml" />
 </toolbox>

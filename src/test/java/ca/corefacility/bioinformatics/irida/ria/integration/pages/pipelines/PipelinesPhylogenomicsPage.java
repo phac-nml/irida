@@ -66,4 +66,16 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 	public String getParametersModalTitle() {
 		return driver.findElement(By.className("modal-title")).getText();
 	}
+
+	public String getAlternativeAlleleFractionValue() {
+		return driver.findElements(By.className("para-input")).get(0).getText();
+	}
+
+	public void setAlternativeAlleleFraction(String value) {
+		driver.findElements(By.className("para-input")).get(0).sendKeys(value);
+	}
+
+	public void clickSetDefaultAlternativeAlleleFraction() {
+		driver.findElements(By.className("set-default-btn")).get(0).click();
+	}
 }

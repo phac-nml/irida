@@ -789,6 +789,10 @@
 
       cart.add(samples);
     };
+
+    vm.clear = function(){
+      cart.clear();
+    };
   }
 
   angular.module('Samples', ['cgBusy', 'ngStorage', 'irida.cart'])

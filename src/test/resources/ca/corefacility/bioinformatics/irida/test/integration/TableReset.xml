@@ -12,7 +12,6 @@
 	<user />
 	<project />
 	<related_project />
-	<library_description />
 
 	<analysis />
 	<analysis_output_file />
@@ -36,6 +35,7 @@
 
 	<analysis_submission />
 	<analysis_submission_sequence_file_single />
+	<analysis_submission_parameters />
 
 	<password_reset />
 	<remote_api />
@@ -83,6 +83,7 @@
 	<analysis_submission_AUD />
 	<analysis_submission_sequence_file_single_AUD />
 	<analysis_submission_sequence_file_pair_AUD />
+	<analysis_submission_parameters_AUD />
 	<system_role_AUD />
 	<user_AUD />
 	<sample_AUD />
@@ -110,5 +111,4 @@
 	<remote_related_project_AUD />
 	<sequence_file_pair_AUD />
 	<sequence_file_pair_files_AUD />
-	<library_description_AUD />
 </dataset>

@@ -12,6 +12,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.task.TaskExecutor;
 
+import ca.corefacility.bioinformatics.irida.model.run.MiseqRun;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
@@ -61,5 +64,31 @@ public class SequenceFileServiceTest {
 		// verify that we're only actually running one file processor on the new
 		// sequence file.
 		verify(executor, times(1)).execute(any(Runnable.class));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testCreateSequenceFileInSampleWrongType() {
+		Sample s = new Sample();
+		SequenceFile sf = new SequenceFile();
+		SequencingRun run = new MiseqRun();
+		run.setLayoutType(LayoutType.PAIRED_END);
+
+		sf.setSequencingRun(run);
+
+		sequenceFileService.createSequenceFileInSample(sf, s);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testCreateSequenceFilePairInSampleWrongType() {
+		Sample s = new Sample();
+		SequenceFile sf = new SequenceFile();
+		SequenceFile sf2 = new SequenceFile();
+		SequencingRun run = new MiseqRun();
+		run.setLayoutType(LayoutType.SINGLE_END);
+
+		sf.setSequencingRun(run);
+		sf2.setSequencingRun(run);
+
+		sequenceFileService.createSequenceFilePairInSample(sf, sf2, s);
 	}
 }
