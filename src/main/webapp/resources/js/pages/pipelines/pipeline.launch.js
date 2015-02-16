@@ -5,7 +5,7 @@
    * @param $http AngularJS http object
    * @constructor
    */
-  function PhylogenomicsController($http) {
+  function PipelineController($http) {
     var vm = this;
     /*
      * Whether or not the page is waiting for a response from the server.
@@ -50,12 +50,29 @@
           paras[p.name] = p.value;
         });
 
+        // Create the parameter object;
+        var params = {};
+        if($.isNumeric(ref)){
+          params['ref'] = ref;
+        }
+        if(single.length>0) {
+          params['single'] = single;
+        }
+        if(paired.length>0) {
+          params['paired'] = paired;
+        }
+        if(_.keys(paras).length>0) {
+          params['paras'] = paras;
+        }
+        params['name'] = angular.element("#pipeline-name").val();
+
+
         $http({
-          url   : PIPELINE.url,
-          method: 'POST',
+          url     : PIPELINE.url,
+          method  : 'POST',
           dataType: 'json',
-          params: {ref: ref, single: single, paired: paired, name: name, paras: paras},
-          headers: {
+          params  : params,
+          headers : {
             "Content-Type": "application/json"
           }
         })
@@ -67,7 +84,7 @@
               if (data.error) {
                 vm.error = data.error;
               }
-              else if(data.parameters) {
+              else if (data.parameters) {
                 vm.paramError = data.parameters;
               }
             }
@@ -76,18 +93,18 @@
     };
   }
 
-  function ParameterModalController ($modal) {
-      var vm = this;
+  function ParameterModalController($modal) {
+    var vm = this;
 
     vm.openModal = function () {
-        $modal.open({
-          templateUrl: '/parameters.html',
-          controller: 'ParameterController as paras'
-        });
+      $modal.open({
+        templateUrl: '/parameters.html',
+        controller : 'ParameterController as paras'
+      });
     };
   }
 
-  function ParameterController ($modalInstance) {
+  function ParameterController($modalInstance) {
     var vm = this;
     PIPELINE.defaults = PIPELINE.defaults || angular.copy(PIPELINE.parameters);
     vm.parameters = angular.copy(PIPELINE.parameters);
@@ -97,7 +114,7 @@
       $modalInstance.close();
     };
 
-    vm.close = function() {
+    vm.close = function () {
       $modalInstance.dismiss();
     };
 
@@ -107,8 +124,8 @@
     };
   }
 
-  angular.module('irida.pipelines.phylogenomics', [])
-    .controller('PhylogenomicsController', ['$http', PhylogenomicsController])
+  angular.module('irida.pipelines', [])
+    .controller('PipelineController', ['$http', PipelineController])
     .controller('ParameterModalController', ["$modal", ParameterModalController])
     .controller('ParameterController', ['$modalInstance', ParameterController])
   ;
