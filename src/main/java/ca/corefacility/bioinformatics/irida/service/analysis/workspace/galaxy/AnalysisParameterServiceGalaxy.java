@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Work
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisParameterService;
 
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -125,7 +126,7 @@ public class AnalysisParameterServiceGalaxy implements AnalysisParameterService<
 			checkNotNull(parameterName, "parameterName is null");
 			checkArgument(!"".equals(parameterName), "parameterName is empty");
 
-			parameterNames = Lists.newArrayList(parameterName.split(IridaToolParameter.PARAMETER_NAME_SEPARATOR));
+			parameterNames = Lists.newArrayList(Splitter.on(IridaToolParameter.PARAMETER_NAME_SEPARATOR).split(parameterName));
 
 			checkArgument(parameterNames.size() >= 1);
 
