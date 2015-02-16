@@ -86,10 +86,6 @@ public class PipelineController extends BaseController {
 	public static final String JSON_KEY_SAMPLE_OMIT_FILES_LIST = "omit";
 	private static final Logger logger = LoggerFactory.getLogger(PipelineController.class);
 	/*
-	 * Converters
-	 */
-	private Formatter<Date> dateFormatter;
-	/*
 	 * SERVICES
 	 */
 	private ReferenceFileService referenceFileService;
@@ -124,7 +120,6 @@ public class PipelineController extends BaseController {
 		this.userService = userService;
 		this.cartController = cartController;
 		this.messageSource = messageSource;
-		this.dateFormatter = new DateFormatter();
 	}
 
 	/**
