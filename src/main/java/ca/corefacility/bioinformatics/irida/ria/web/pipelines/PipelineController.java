@@ -161,6 +161,8 @@ public class PipelineController extends BaseController {
 				logger.error("Workflow not found - See stack:", e);
 			}
 		});
+
+		flows.sort((f1, f2) -> f1.get("name").compareTo(f2.get("name")));
 		model.addAttribute("counts", getCartSummaryMap());
 		model.addAttribute("workflows", flows);
 		return URL_LAUNCH;
