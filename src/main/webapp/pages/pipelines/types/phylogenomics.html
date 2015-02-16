@@ -78,7 +78,8 @@
 									        th:text="#{form.btn.remove}">Remove
 									</button>
 								</h3>
-								<ul class="boards">
+								<p th:if="${#lists.isEmpty(sample.files)}" class="text-warning"><strong class="fa fa-fw fa-ban"></strong> <th:block th:text="#{workflow.files.files-not-appropriate}"></th:block></p>
+								<ul th:unless="${#lists.isEmpty(sample.files)}" class="boards">
 									<li class="board" th:each="s, iterStat : ${sample.files}">
 										<div class="paired_end board_inner" th:if="${s.type == 'paired_end'}">
 											<div class="row board_paired" th:each="file : ${s.files}">
