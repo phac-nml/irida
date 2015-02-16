@@ -12,7 +12,7 @@
 <body>
 <div layout:fragment="page" ng-app="irida.pipelines.phylogenomics">
 	<form class="form-horizontal" method="post" ng-controller="PhylogenomicsController as phylCtrl">
-		<div id="no-ref-warning" class="row" th:if="${#lists.size(referenceFiles)} == 0">
+		<div id="no-ref-warning" class="row" th:if="${referenceRequired} and ${#lists.size(referenceFiles)} == 0">
 			<h1 th:text="#{workflow.phylogenomics.title}"></h1>
 
 			<div class="alert alert-danger col-md-12">
@@ -50,7 +50,7 @@
 							<div ng-show="phylCtrl.error" class="label label-danger">{{phylCtrl.error}}</div>
 						</div>
 					</div>
-					<div class="form-group">
+					<div th:if="${referenceRequired}" class="form-group">
 						<label for="referenceFiles" class="col-sm-2 control-label"
 						       th:text="#{workflow.label.reference-file}">Reference File</label>
 
