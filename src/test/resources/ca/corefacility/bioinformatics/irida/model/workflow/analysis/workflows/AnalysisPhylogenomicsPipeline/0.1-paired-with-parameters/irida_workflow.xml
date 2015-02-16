@@ -16,7 +16,7 @@
 			<toolParameter toolId="core_pipeline_outputs_paired_with_parameters"
 				parameterName="coverageMin" />
 			<toolParameter toolId="core_pipeline_outputs_paired_with_parameters"
-				parameterName="coverageMid" />
+				parameterName="conditional.coverageMid" />
 			<toolParameter toolId="core_pipeline_outputs_paired_with_parameters"
 				parameterName="coverageMax" />
 		</parameter>

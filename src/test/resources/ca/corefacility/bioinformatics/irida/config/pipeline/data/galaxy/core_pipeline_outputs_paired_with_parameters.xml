@@ -1,6 +1,6 @@
 <tool id="core_pipeline_outputs_paired_with_parameters" name="core_pipeline_outputs_paired_with_parameters" version="0.1.0">
   <command>
-    echo "$coverageMin $coverageMid $coverageMax" > $csv; echo "$coverageMin $coverageMid $coverageMax" > $output_tree; echo "$coverageMin $coverageMid $coverageMax" > $positions;
+    echo "$coverageMin $conditional.coverageMid $coverageMax" > $csv; echo "$coverageMin $conditional.coverageMid $coverageMax" > $output_tree; echo "$coverageMin $conditional.coverageMid $coverageMax" > $positions;
   </command>
   <inputs>
     <param name="sequence_reads" label="sequence_reads" type="data_collection" collection_type="list:paired" />

@@ -16,6 +16,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IridaToolParameter {
 	
+	public static final String PARAMETER_NAME_SEPARATOR = "\\.";
+	
 	@XmlAttribute(name = "toolId")
 	private String toolId;
 	
