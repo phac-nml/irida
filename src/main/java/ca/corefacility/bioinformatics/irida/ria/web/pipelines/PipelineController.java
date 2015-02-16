@@ -331,7 +331,7 @@ public class PipelineController extends BaseController {
 				analysisSubmissionBuilder.inputParameters(paras);
 			} catch (IOException e) {
 				logger.error("Error extracting parameters from submission", e);
-				result = ImmutableMap.of("parameters", messageSource.getMessage("pipeline.parameters.error", null, locale));
+				return ImmutableMap.of("parameters", messageSource.getMessage("pipeline.parameters.error", null, locale));
 			}
 
 			// Create the submission
