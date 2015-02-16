@@ -697,7 +697,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		String validCoverageFromProvenance = "\"20\""; // coverage from
 														// provenance has quotes
 		Map<String, String> parameters = ImmutableMap.of("coverage", validCoverage);
-		String validTreeFile = "20 20"; // I verify parameters were set
+		String validTreeFile = "20 20 20"; // I verify parameters were set
 										// correctly by checking output file
 										// (where parameters were printed).
 
