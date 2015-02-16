@@ -112,7 +112,6 @@ public class AnalysisParameterServiceGalaxy implements AnalysisParameterService<
 	 */
 	public static class ParameterBuilderGalaxy {
 
-		private String startName;
 		private List<String> parameterNames;
 
 		/**
@@ -126,11 +125,9 @@ public class AnalysisParameterServiceGalaxy implements AnalysisParameterService<
 			checkNotNull(parameterName, "parameterName is null");
 			checkArgument(!"".equals(parameterName), "parameterName is empty");
 
-			parameterNames = Lists.newArrayList(Splitter.on(IridaToolParameter.PARAMETER_NAME_SEPARATOR).split(parameterName));
+			parameterNames = Splitter.on(IridaToolParameter.PARAMETER_NAME_SEPARATOR).splitToList(parameterName);
 
 			checkArgument(parameterNames.size() >= 1);
-
-			this.startName = parameterNames.remove(0);
 		}
 
 		/**
@@ -139,7 +136,7 @@ public class AnalysisParameterServiceGalaxy implements AnalysisParameterService<
 		 * @return The very first name of the parameter list.
 		 */
 		public String getStartName() {
-			return startName;
+			return parameterNames.get(0);
 		}
 
 		/**
@@ -151,7 +148,10 @@ public class AnalysisParameterServiceGalaxy implements AnalysisParameterService<
 		 * @return A {@link Map} encoding the nested data structure.
 		 */
 		public Object buildForValue(String value) {
-			return buildForMapRecursive(parameterNames, value);
+			List<String> parameterNamesSubList = Lists.newArrayList(parameterNames);
+			parameterNamesSubList.remove(0); // remove the first 'startName' element
+			
+			return buildForMapRecursive(parameterNamesSubList, value);
 		}
 
 		private Object buildForMapRecursive(List<String> parameterNames, String value) {
