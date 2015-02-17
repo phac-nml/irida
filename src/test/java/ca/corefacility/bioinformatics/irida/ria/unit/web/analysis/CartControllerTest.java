@@ -78,7 +78,7 @@ public class CartControllerTest {
 
 		Set<Long> subIds = Sets.newHashSet(sampleIds.iterator().next());
 
-		Map<String, Object> addProjectSample = controller.removeProjectSample(projectId, subIds);
+		Map<String, Object> addProjectSample = controller.removeProjectSamples(projectId, subIds);
 
 		assertTrue((boolean) addProjectSample.get("success"));
 
@@ -103,7 +103,7 @@ public class CartControllerTest {
 		selected.put(project, samples);
 		controller.setSelected(selected);
 
-		Map<String, Object> addProjectSample = controller.removeProjectSample(projectId, sampleIds);
+		Map<String, Object> addProjectSample = controller.removeProjectSamples(projectId, sampleIds);
 
 		assertTrue((boolean) addProjectSample.get("success"));
 
