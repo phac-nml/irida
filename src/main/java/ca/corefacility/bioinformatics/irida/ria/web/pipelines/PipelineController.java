@@ -259,16 +259,17 @@ public class PipelineController extends BaseController {
 			List<IridaWorkflowParameter> paras = flow.getWorkflowDescription().getParameters();
 			List<Map<String, String>> parameters = new ArrayList<>();
 			if (paras != null) {
+				String name = description.getName().toLowerCase();
 				for (IridaWorkflowParameter p : paras) {
 					parameters.add(ImmutableMap.of(
-							"label", messageSource.getMessage("pipeline.parameters." + description.getName().toLowerCase() + "." + p.getName(), null, locale),
+							"label", messageSource.getMessage("pipeline.parameters." + name + "." + p.getName(), null, locale),
 							"value", p.getDefaultValue(),
 							"name", p.getName()
 					));
 				}
 				model.addAttribute("parameters", parameters);
 				model.addAttribute("parameterModalTitle",
-						messageSource.getMessage("pipeline.parameters.SNVPhyl.modal-title", null, locale));
+						messageSource.getMessage("pipeline.parameters.modal-title." + name, null, locale));
 			}
 			else {
 				model.addAttribute("noParameters", messageSource.getMessage("pipeline.no-parameters", null, locale));
