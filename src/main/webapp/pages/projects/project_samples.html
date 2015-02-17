@@ -70,7 +70,7 @@
 			<div class="btn-toolbar">
 				<!-- Sample Selection (Page, All, None) -->
 				<div class="btn-group" dropdown="" is-open="subnav.selection.isopen">
-					<button id="selectBtn" type="button" class="btn btn-default btn-sm dropdown-toggle">
+					<button id="selectBtn" type="button" class="btn btn-default btn-sm dropdown-toggle" dropdown-toggle="">
                         <span ng-controller="SelectedCountCtrl as countCtrl" id="selected-count"
                               class="label label-default" ng-bind="countCtrl.count">0</span>
 						<span th:text="#{lists.select-title}">Select</span>
@@ -99,7 +99,7 @@
 
 				<div ng-controller="SampleDisplayCtrl as displayCtrl" class="btn-group drop-check" dropdown=""
 				     is-open="subnav.display.isopen">
-					<button id="displayBtn" type="button" class="btn btn-default btn-sm dropdown-toggle">
+					<button id="displayBtn" type="button" class="btn btn-default btn-sm dropdown-toggle" dropdown-toggle="">
 						<span th:text="#{project.samples.display.title}">_Display_</span>
 						&nbsp;
 						<span class="caret"></span>
@@ -124,7 +124,7 @@
 
 				<!-- Samples Options (Download, Copy, Merge, Move)-->
 				<div class="btn-group" dropdown="" is-open="subnav.samplesOptions.open">
-					<button id="samplesOptionsBtn" class="btn btn-default btn-sm dropdown-toggle"
+					<button id="samplesOptionsBtn" class="btn btn-default btn-sm dropdown-toggle" dropdown-toggle=""
 					        ng-disabled="subnav.count&lt;1">
 						<span>Samples</span>
 						&nbsp;
@@ -155,7 +155,7 @@
 				</div>
 
 				<div class="btn-group" dropdown="" is-open="subnav.export.open">
-					<button id="exportOptionsBtn" class="btn btn-default btn-sm dropdown-toggle"
+					<button id="exportOptionsBtn" class="btn btn-default btn-sm dropdown-toggle" dropdown-toggle=""
 					        ng-disabled="subnav.count&lt;1">
 						<span th:text="#{project.samples.export.label}">Export</span>
 						&nbsp;
