@@ -479,6 +479,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		String coverageMinValue = (String) toolParameters.get("coverageMin");
 		assertEquals("coverageMinValue should have been changed", "20", coverageMinValue);
+		assertEquals("coverageMidValue should have been changed",
+				ImmutableMap.of("coverageMid", "20"), toolParameters.get("conditional"));
 		String coverageMaxValue = (String) toolParameters.get("coverageMin");
 		assertEquals("coverageMaxValue should have been changed", "20", coverageMaxValue);
 	}
@@ -533,6 +535,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		String coverageMinValue = (String) toolParameters.get("coverageMin");
 		assertEquals("coverageMinValue should have been changed to default", "10", coverageMinValue);
+		assertEquals("coverageMidValue should have been changed to default",
+				ImmutableMap.of("coverageMid", "10"), toolParameters.get("conditional"));
 		String coverageMaxValue = (String) toolParameters.get("coverageMin");
 		assertEquals("coverageMaxValue should have been changed to default", "10", coverageMaxValue);
 	}

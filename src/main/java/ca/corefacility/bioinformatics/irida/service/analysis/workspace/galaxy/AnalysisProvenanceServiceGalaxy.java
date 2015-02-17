@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaToolParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 
@@ -39,7 +40,7 @@ public class AnalysisProvenanceServiceGalaxy {
 	private static final Set<String> PARAMETERS_TO_IGNORE = Sets.newHashSet("chromInfo", "dbkey", "async_datasets",
 			"paramfile", "uuid", "__current_case__", "__index__");
 	private static final String ID_PARAM_KEY = "id";
-	private static final Joiner KEY_JOINER = Joiner.on('.').skipNulls();
+	private static final Joiner KEY_JOINER = Joiner.on(IridaToolParameter.PARAMETER_NAME_SEPARATOR).skipNulls();
 	private static final String JSON_TEXT_MAP_INDICATOR = JsonToken.START_OBJECT.asString(); // "{"
 	private static final String JSON_TEXT_ARRAY_INDICATOR = JsonToken.START_ARRAY.asString(); // "["
 	private static final String EMPTY_VALUE_PLACEHOLDER = null;

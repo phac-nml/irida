@@ -24,15 +24,11 @@
 /* line 12, ../../../styles/pages/sample_files.scss */
 .sidebar-content {
   width: 130px;
-  white-space: pre-wrap;
+  white-space: normal;
   margin: 1rem auto 0 auto;
 }
-/* line 17, ../../../styles/pages/sample_files.scss */
-.sidebar-content.alert {
-  padding: 0;
-}
 
-/* line 22, ../../../styles/pages/sample_files.scss */
+/* line 18, ../../../styles/pages/sample_files.scss */
 .alert-icon-motion {
   animation: move-up-down 2s infinite;
 }

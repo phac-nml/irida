@@ -137,6 +137,13 @@
     var vm = this;
     vm.analyses = [];
 
+    vm.download = function (id) {
+      var iframe = document.createElement("iframe");
+      iframe.src = TL.BASE_URL + "analysis/ajax/download/" + id;
+      iframe.style.display = "none";
+      document.body.appendChild(iframe);
+    };
+
     svc.load()
       .success(function (data) {
         vm.analyses = data.analyses;

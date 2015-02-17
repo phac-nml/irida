@@ -98,7 +98,7 @@ public class PipelineControllerTest {
 				.thenReturn(TestDataFactory.generateSequenceFilesForSample(TestDataFactory.constructSample()));
 		when(workflowsService.getIridaWorkflow(id)).thenReturn(TestDataFactory.getIridaWorkflow(id));
 		String response = controller.getPhylogenomicsPage(model, principal, Locale.US, id);
-		assertEquals("Response should be the path to the phylogenomics template", PipelineController.URL_PHYLOGENOMICS, response);
+		assertEquals("Response should be the path to the phylogenomics template", PipelineController.URL_GENERIC_PIPELINE, response);
 		assertTrue("Model should contain the reference files.", model.containsKey("referenceFiles"));
 		assertTrue("Model should contain a list of files.", model.containsKey("projects"));
 	}

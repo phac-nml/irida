@@ -22,8 +22,8 @@
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"
 		     collapse="navbarCollapsed">
 			<ul class="nav navbar-nav">
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+				<li class="dropdown" dropdown="">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle="" role="button">
 						<span th:text="#{nav.main.project}">Projects</span>
 						&nbsp;
 						<span class="caret"></span>
@@ -54,8 +54,8 @@
 				</li>
 				<li>
 					<a th:href="@{/pipelines}" href="/pipelines" th:text="#{nav.main.pipelines}">Pipelines</a></li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+				<li class="dropdown" dropdown="">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle="" role="button">
 						<span th:text="#{nav.main.users}">Users</span>
 						&nbsp;
 						<span class="caret"></span>
@@ -79,8 +79,8 @@
 						</li>
 					</ul>
 				</li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+				<li class="dropdown" dropdown="">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle="">
 						<span th:text="#{nav.main.analysis}">Analysis</span>
 						&nbsp;
 						<span class="caret"></span>
@@ -102,8 +102,8 @@
 				</li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-				<li sec:authorize="hasRole('ROLE_ADMIN')" class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+				<li sec:authorize="hasRole('ROLE_ADMIN')" class="dropdown" dropdown="">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle="">
 						<span th:text="#{nav.main.admin}">Admin</span>
 						<span class="caret"></span>
 					</a>
@@ -120,8 +120,8 @@
 						</li>
 					</ul>
 				</li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+				<li class="dropdown" dropdown="">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" dropdown-toggle="">
 						<span th:text="#{nav.main.settings}">Account</span>
 						<span class="caret"></span>
 					</a>

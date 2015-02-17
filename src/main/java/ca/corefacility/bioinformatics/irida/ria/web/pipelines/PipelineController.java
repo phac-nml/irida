@@ -74,7 +74,7 @@ public class PipelineController extends BaseController {
 	 */
 	public static final String URL_EMPTY_CART_REDIRECT = "redirect:/pipelines";
 	public static final String URL_LAUNCH ="pipelines/pipeline_selection";
-	public static final String URL_PHYLOGENOMICS = "pipelines/types/phylogenomics";
+	public static final String URL_GENERIC_PIPELINE = "pipelines/types/generic_pipeline";
 	public static final String URI_LIST_PIPELINES = "/ajax/list.json";
 	public static final String URI_AJAX_START_PIPELINE = "/ajax/start.json";
 	public static final String URI_AJAX_CART_LIST = "/ajax/cart_list.json";
@@ -162,7 +162,7 @@ public class PipelineController extends BaseController {
 		return URL_LAUNCH;
 	}
 
-	@RequestMapping(value = "/phylogenomics/{pipelineId}")
+	@RequestMapping(value = "/{pipelineId}")
 	public String getPhylogenomicsPage(final Model model, Principal principal, Locale locale, @PathVariable UUID pipelineId) {
 		String response = URL_EMPTY_CART_REDIRECT;
 
@@ -170,9 +170,9 @@ public class PipelineController extends BaseController {
 		// Cannot run a pipeline on an empty cart!
 		if (!cartMap.isEmpty()) {
 
-			IridaWorkflow iridaWorkflow = null;
+			IridaWorkflow flow = null;
 			try {
-				iridaWorkflow = workflowsService.getIridaWorkflow(pipelineId);
+				flow = workflowsService.getIridaWorkflow(pipelineId);
 			} catch (IridaWorkflowNotFoundException e) {
 				logger.error("Workflow not found - See stack:", e);
 				return "redirect:errors/not_found";
@@ -184,22 +184,27 @@ public class PipelineController extends BaseController {
 			List<Map<String, Object>> projectList = new ArrayList<>();
 			List<Map<String, Object>> addRefList = new ArrayList<>();
 			SequenceFileWebUtilities sequenceFileWebUtilities = new SequenceFileWebUtilities();
+			IridaWorkflowDescription description = flow.getWorkflowDescription();
 			for (Project project : cartMap.keySet()) {
-				List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
-				for (Join<Project, ReferenceFile> join : joinList) {
-					referenceFileList.add(ImmutableMap.of(
-							"project", project,
-							"file", join.getObject()
-					));
-				}
-
-				if (referenceFileList.size() == 0) {
-					if (user.getSystemRole().equals(Role.ROLE_ADMIN) || projectService
-							.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER)) {
-						addRefList.add(ImmutableMap.of(
-								"name", project.getLabel(),
-								"id", project.getId()
+				// Check to see if it requires a reference file.
+				if (description.requiresReference()) {
+					List<Join<Project, ReferenceFile>> joinList = referenceFileService
+							.getReferenceFilesForProject(project);
+					for (Join<Project, ReferenceFile> join : joinList) {
+						referenceFileList.add(ImmutableMap.of(
+								"project", project,
+								"file", join.getObject()
 						));
+					}
+
+					if (referenceFileList.size() == 0) {
+						if (user.getSystemRole().equals(Role.ROLE_ADMIN) || projectService
+								.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER)) {
+							addRefList.add(ImmutableMap.of(
+									"name", project.getLabel(),
+									"id", project.getId()
+							));
+						}
 					}
 				}
 
@@ -213,25 +218,29 @@ public class PipelineController extends BaseController {
 					List<Map<String, Object>> fileList = new ArrayList<>();
 
 					// Paired end reads
-					List<SequenceFilePair> sequenceFilePairs = sequenceFilePairService
-							.getSequenceFilePairsForSample(sample);
-					for (SequenceFilePair pair : sequenceFilePairs) {
-						List<Map<String, Object>> fileMap = pair.getFiles().stream()
-								.map(sequenceFileWebUtilities::getFileDataMap).collect(Collectors.toList());
-						fileList.add(ImmutableMap.of(
-								"id", pair.getId(),
-								"type", "paired_end",
-								"files", fileMap,
-								"createdDate", pair.getCreatedDate()
-						));
+					if (description.acceptsPairedSequenceFiles()) {
+						List<SequenceFilePair> sequenceFilePairs = sequenceFilePairService
+								.getSequenceFilePairsForSample(sample);
+						for (SequenceFilePair pair : sequenceFilePairs) {
+							List<Map<String, Object>> fileMap = pair.getFiles().stream()
+									.map(sequenceFileWebUtilities::getFileDataMap).collect(Collectors.toList());
+							fileList.add(ImmutableMap.of(
+									"id", pair.getId(),
+									"type", "paired_end",
+									"files", fileMap,
+									"createdDate", pair.getCreatedDate()
+							));
+						}
 					}
 
 					// Singe end reads
-					List<Join<Sample, SequenceFile>> sfJoin = sequenceFileService.getSequenceFilesForSample(sample);
-					for (Join<Sample, SequenceFile> join : sfJoin) {
-						Map<String, Object> fileMap = sequenceFileWebUtilities.getFileDataMap(join.getObject());
-						fileMap.put("type", "single_end");
-						fileList.add(fileMap);
+					if (description.acceptsSingleSequenceFiles()) {
+						List<Join<Sample, SequenceFile>> sfJoin = sequenceFileService.getSequenceFilesForSample(sample);
+						for (Join<Sample, SequenceFile> join : sfJoin) {
+							Map<String, Object> fileMap = sequenceFileWebUtilities.getFileDataMap(join.getObject());
+							fileMap.put("type", "single_end");
+							fileList.add(fileMap);
+						}
 					}
 
 					sampleMap.put("files", fileList);
@@ -245,25 +254,35 @@ public class PipelineController extends BaseController {
 			}
 
 			// Need to add the pipeline parameters
-			List<IridaWorkflowParameter> paras = iridaWorkflow.getWorkflowDescription().getParameters();
+			List<IridaWorkflowParameter> paras = flow.getWorkflowDescription().getParameters();
 			List<Map<String, String>> parameters = new ArrayList<>();
 			if (paras != null) {
+				String name = description.getName().toLowerCase();
 				for (IridaWorkflowParameter p : paras) {
 					parameters.add(ImmutableMap.of(
-							"label", messageSource.getMessage("pipeline.parameters.snvphyl." + p.getName(), null, locale),
+							"label", messageSource.getMessage("pipeline.parameters." + name + "." + p.getName(), null, locale),
 							"value", p.getDefaultValue(),
 							"name", p.getName()
 					));
 				}
 				model.addAttribute("parameters", parameters);
+				model.addAttribute("parameterModalTitle",
+						messageSource.getMessage("pipeline.parameters.modal-title." + name, null, locale));
+			}
+			else {
+				model.addAttribute("noParameters", messageSource.getMessage("pipeline.no-parameters", null, locale));
 			}
 
-			model.addAttribute("name", iridaWorkflow.getWorkflowDescription().getName());
+			model.addAttribute("title",
+					messageSource.getMessage("pipeline.title." + description.getName(), null, locale));
+			model.addAttribute("mainTitle", messageSource.getMessage("pipeline.h1." + description.getName(), null, locale ));
+			model.addAttribute("name", description.getName());
 			model.addAttribute("pipelineId", pipelineId.toString());
 			model.addAttribute("referenceFiles", referenceFileList);
+			model.addAttribute("referenceRequired", description.requiresReference());
 			model.addAttribute("addRefProjects", addRefList);
 			model.addAttribute("projects", projectList);
-			response = URL_PHYLOGENOMICS;
+			response = URL_GENERIC_PIPELINE;
 		}
 
 		return response;
@@ -283,12 +302,13 @@ public class PipelineController extends BaseController {
 	 * @param name a user provided name for the {@link IridaWorkflow}
 	 * @return a JSON response with the status and any messages.
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/ajax/start/{pipelineId}", method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> ajaxStartPipelinePhylogenomics(HttpSession session, Locale locale,
 			@PathVariable UUID pipelineId,
 			@RequestParam(required = false) List<Long> single, @RequestParam(required = false) List<Long> paired,
 			@RequestParam(required = false) Map<String, String> parameters,
-			@RequestParam Long ref, @RequestParam String name) {
+			@RequestParam(required = false) Long ref, @RequestParam String name) {
 		Map<String, Object> result;
 
 		if (Strings.isNullOrEmpty(name)) {
@@ -310,8 +330,11 @@ public class PipelineController extends BaseController {
 			AnalysisSubmission.Builder analysisSubmissionBuilder = AnalysisSubmission.builder(pipelineId);
 
 			// Add reference file
-			ReferenceFile referenceFile = referenceFileService.read(ref);
-			analysisSubmissionBuilder.referenceFile(referenceFile);
+			ReferenceFile referenceFile = null;
+			if (ref != null) {
+				referenceFile = referenceFileService.read(ref);
+				analysisSubmissionBuilder.referenceFile(referenceFile);
+			}
 
 			// Add any single end sequencing files.
 			if (!sequenceFiles.isEmpty()) {
@@ -326,12 +349,14 @@ public class PipelineController extends BaseController {
 			// Add workflow parameters
 			// TODO [15-02-16] (Josh): Update when addressing issue #100
 			ObjectMapper mapper = new ObjectMapper();
-			try {
-				Map<String, String> paras = mapper.readValue(parameters.get("paras"), Map.class);
-				analysisSubmissionBuilder.inputParameters(paras);
-			} catch (IOException e) {
-				logger.error("Error extracting parameters from submission", e);
-				return ImmutableMap.of("parameters", messageSource.getMessage("pipeline.parameters.error", null, locale));
+			if (parameters.get("paras") != null) {
+				try {
+					Map<String, String> paras = mapper.readValue(parameters.get("paras"), Map.class);
+					analysisSubmissionBuilder.inputParameters(paras);
+				} catch (IOException e) {
+					logger.error("Error extracting parameters from submission", e);
+					return ImmutableMap.of("parameters", messageSource.getMessage("pipeline.parameters.error", null, locale));
+				}
 			}
 
 			// Create the submission
