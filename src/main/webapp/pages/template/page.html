@@ -50,7 +50,8 @@
 				<div class="cart-control-buttons">
 					<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close
 					</button>
-					<button id="clear-cart-btn" class="btn btn-warning pull-right" ng-click="cartCtrl.clear()" th:text="#{cart.btn.clear}">
+					<button id="clear-cart-btn" class="btn btn-warning pull-right" ng-click="cartCtrl.clear()"
+					        th:text="#{cart.btn.clear}">
 						_Clear_
 					</button>
 				</div>
@@ -60,7 +61,12 @@
 						<span class="fa fa-fw"
 						      ng-class="cart.collapsed[p.id] ? 'fa-caret-right' : 'fa-caret-down'"></span>
 						{{ p.label }}
-						<span class="badge pull-right">{{ p.samples.length }}</span>
+						<div class="pull-right">
+							<button class="btn-icon" ng-click="cartCtrl.removeProject(p.id)">
+								<i class="fa fa-remove remove-icon"></i>
+							</button>
+							<span class="badge">{{ p.samples.length }}</span>
+						</div>
 						<ul collapse="cart.collapsed[p.id]">
 							<li ng-repeat="s in p.samples">{{ s.label }}</li>
 						</ul>
