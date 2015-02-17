@@ -45,18 +45,31 @@
           }
         });
 
-        var paras = [];
+        var paras = {};
         _.forEach(PIPELINE.parameters, function (p) {
-          paras.push({'name': p.name, 'value': p.value});
+          paras[p.name] = p.value;
         });
 
-        $http.post(PIPELINE.url, {ref: ref, single: single, paired: paired, name: name, paras: paras})
+        $http({
+          url   : PIPELINE.url,
+          method: 'POST',
+          dataType: 'json',
+          params: {ref: ref, single: single, paired: paired, name: name, paras: paras},
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
           .success(function (data) {
             if (data.result === 'success') {
               vm.success = true;
             }
             else {
-              vm.error = data.error;
+              if (data.error) {
+                vm.error = data.error;
+              }
+              else if(data.parameters) {
+                vm.paramError = data.parameters;
+              }
             }
           });
       }

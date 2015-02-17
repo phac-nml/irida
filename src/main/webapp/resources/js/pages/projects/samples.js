@@ -66,49 +66,49 @@
     }
   }
 
-  function StorageService($sessionStorage) {
+  function StorageService() {
     "use strict";
-    var storage = $sessionStorage;
-
-    function addProject() {
-      var projects = storage.projects || {};
-      projects[project.id] = projects[project.id] || {};
-      storage.$default({projects: projects});
-    }
+    //storing samples as an object hash
+    var storage = {};
 
     function addSample(sample) {
-      storage.projects[project.id][sample.id] = JSON.stringify(sample);
+      storage[sample.id] = sample;
     }
 
     function removeSample(id) {
-      delete storage.projects[project.id][id];
+      delete storage[id];
     }
 
     function getKeys() {
-      return Object.keys(storage.projects[project.id]);
+      return Object.keys(storage);
     }
 
     function clear() {
-      delete storage.projects[project.id];
-      addProject(project.id);
+      storage = {};
+    }
+
+    function removeUnavailableSamples(available) {
+      var newStorage = {};
+      _.forEach(available, function (sample) {
+        if (storage[sample.id] != null) {
+          newStorage[sample.id] = storage[sample.id];
+        }
+      });
+
+      storage = newStorage;
     }
 
     function getSamples() {
-      var samples = [];
-      var p = storage.projects[project.id];
-      _.forEach(getKeys(), function (key) {
-        samples.push($.parseJSON(p[key]));
-      });
-      return samples;
+      return storage;
     }
 
-    addProject();
     return ({
-      addSample   : addSample,
-      removeSample: removeSample,
-      getKeys     : getKeys,
-      getSamples  : getSamples,
-      clear       : clear
+      addSample               : addSample,
+      removeSample            : removeSample,
+      getKeys                 : getKeys,
+      getSamples              : getSamples,
+      clear                   : clear,
+      removeUnavailableSamples: removeUnavailableSamples
     });
   }
 
@@ -262,6 +262,9 @@
         });
 
         $rootScope.$broadcast('SAMPLES_READY', true);
+
+        storage.removeUnavailableSamples(svc.samples);
+        updateSelectedCount();
       });
     }
 
@@ -538,12 +541,7 @@
         vm.export.open = false;
         $modal.open({
           templateUrl: TL.BASE_URL + 'projects/templates/samples/linker',
-          controller : 'LinkerCtrl as lCtrl',
-          resolve    : {
-            samples: function () {
-              return SamplesService.getSelectedSampleNames();
-            }
-          }
+          controller : 'LinkerCtrl as lCtrl'
         });
       },
       galaxy  : function galaxy() {
@@ -593,7 +591,7 @@
     "use strict";
     var vm = this;
     vm.samples = samples;
-    vm.selected = samples[0];
+    vm.selected = Object.keys(samples)[0];
     vm.name = "";
     vm.error = {};
 
@@ -604,7 +602,7 @@
     };
 
     vm.merge = function () {
-      SamplesService.merge({mergeSampleId: vm.selected.id, newName: vm.name}).then(function () {
+      SamplesService.merge({mergeSampleId: vm.selected, newName: vm.name}).then(function () {
         vm.close();
       });
     };
@@ -688,6 +686,13 @@
     vm.close = function () {
       $modalInstance.close();
     };
+
+    vm.areAllSelected = function(){
+        if(Object.keys(vm.samples).length == SamplesService.samples.length){
+          return true;
+        }
+        return false;
+    }
   }
 
   function SortCtrl($rootScope, filter) {
@@ -784,12 +789,16 @@
 
       cart.add(samples);
     };
+
+    vm.clear = function(){
+      cart.clear();
+    };
   }
 
   angular.module('Samples', ['cgBusy', 'ngStorage', 'irida.cart'])
     .run(['$rootScope', setRootVariable])
     .factory('FilterFactory', [FilterFactory])
-    .service('StorageService', ['$sessionStorage', StorageService])
+    .service('StorageService', [StorageService])
     .service('Select2Service', ['$timeout', Select2Service])
     .service('SamplesService', ['$rootScope', 'StorageService', 'Restangular', 'notifications', 'FilterFactory', '$q', SamplesService])
     .filter('SamplesFilter', ['FilterFactory', SamplesFilter])

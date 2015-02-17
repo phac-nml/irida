@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.pipelines;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -18,8 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
-import org.springframework.format.Formatter;
-import org.springframework.format.datetime.DateFormatter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,6 +53,7 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
@@ -83,10 +82,6 @@ public class PipelineController extends BaseController {
 	public static final String JSON_KEY_SAMPLE_ID = "id";
 	public static final String JSON_KEY_SAMPLE_OMIT_FILES_LIST = "omit";
 	private static final Logger logger = LoggerFactory.getLogger(PipelineController.class);
-	/*
-	 * Converters
-	 */
-	private Formatter<Date> dateFormatter;
 	/*
 	 * SERVICES
 	 */
@@ -122,7 +117,6 @@ public class PipelineController extends BaseController {
 		this.userService = userService;
 		this.cartController = cartController;
 		this.messageSource = messageSource;
-		this.dateFormatter = new DateFormatter();
 	}
 
 	/**
@@ -161,6 +155,8 @@ public class PipelineController extends BaseController {
 				logger.error("Workflow not found - See stack:", e);
 			}
 		});
+
+		flows.sort((f1, f2) -> f1.get("name").compareTo(f2.get("name")));
 		model.addAttribute("counts", getCartSummaryMap());
 		model.addAttribute("workflows", flows);
 		return URL_LAUNCH;
@@ -262,7 +258,7 @@ public class PipelineController extends BaseController {
 				model.addAttribute("parameters", parameters);
 			}
 
-			model.addAttribute("name", iridaWorkflow.getWorkflowDescription().getName() + " (" + dateFormatter.print(new Date(), locale) + ")");
+			model.addAttribute("name", iridaWorkflow.getWorkflowDescription().getName());
 			model.addAttribute("pipelineId", pipelineId.toString());
 			model.addAttribute("referenceFiles", referenceFileList);
 			model.addAttribute("addRefProjects", addRefList);
@@ -290,13 +286,14 @@ public class PipelineController extends BaseController {
 	@RequestMapping(value = "/ajax/start/{pipelineId}", method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> ajaxStartPipelinePhylogenomics(HttpSession session, Locale locale,
 			@PathVariable UUID pipelineId,
-			@RequestParam(value = "single[]", required = false) List<Long> single, @RequestParam(value = "paired[]", required = false) List<Long> paired,
+			@RequestParam(required = false) List<Long> single, @RequestParam(required = false) List<Long> paired,
+			@RequestParam(required = false) Map<String, String> parameters,
 			@RequestParam Long ref, @RequestParam String name) {
 		Map<String, Object> result;
 
 		if (Strings.isNullOrEmpty(name)) {
 			result = ImmutableMap
-					.of("error", messageSource.getMessage("workflow.no-name-provided", new Object[] { }, locale));
+					.of("error", messageSource.getMessage("workflow.no-name-provided", null, locale));
 		} else {
 			List<SequenceFile> sequenceFiles = new ArrayList<>();
 			List<SequenceFilePair> sequenceFilePairs = new ArrayList<>();
@@ -309,19 +306,35 @@ public class PipelineController extends BaseController {
 				sequenceFilePairs = (List<SequenceFilePair>) sequenceFilePairService.readMultiple(paired);
 			}
 
-			ReferenceFile referenceFile = referenceFileService.read(ref);
-			
+			// Build the analysis submission
 			AnalysisSubmission.Builder analysisSubmissionBuilder = AnalysisSubmission.builder(pipelineId);
+
+			// Add reference file
+			ReferenceFile referenceFile = referenceFileService.read(ref);
+			analysisSubmissionBuilder.referenceFile(referenceFile);
+
+			// Add any single end sequencing files.
 			if (!sequenceFiles.isEmpty()) {
 				analysisSubmissionBuilder.inputFilesSingle(Sets.newHashSet(sequenceFiles));
 			}
-			
+
+			// Add any paired end sequencing files.
 			if (!sequenceFilePairs.isEmpty()) {
 				analysisSubmissionBuilder.inputFilesPaired(Sets.newHashSet(sequenceFilePairs));
 			}
-					
-			analysisSubmissionBuilder.referenceFile(referenceFile);
 
+			// Add workflow parameters
+			// TODO [15-02-16] (Josh): Update when addressing issue #100
+			ObjectMapper mapper = new ObjectMapper();
+			try {
+				Map<String, String> paras = mapper.readValue(parameters.get("paras"), Map.class);
+				analysisSubmissionBuilder.inputParameters(paras);
+			} catch (IOException e) {
+				logger.error("Error extracting parameters from submission", e);
+				return ImmutableMap.of("parameters", messageSource.getMessage("pipeline.parameters.error", null, locale));
+			}
+
+			// Create the submission
 			AnalysisSubmission submission = analysisSubmissionService.create(analysisSubmissionBuilder.build());
 
 			// TODO [15-01-21] (Josh): This should be replaced by storing the values into the database.
