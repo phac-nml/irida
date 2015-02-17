@@ -1,3 +1,4 @@
+@import "../helpers/variables";
 .st-container,
 .st-pusher,
 .st-content {
@@ -80,5 +81,10 @@
 }
 
 .remove-icon {
-  color: #F04124;
+  color: $irida-colour-grey-dark;
+  cursor: pointer;
+}
+
+.cart-project-header{
+  cursor: pointer;
 }

@@ -7898,31 +7898,31 @@ html, body {
   height: 35px;
 }
 
-/* line 1, ../../styles/components/_cart.scss */
+/* line 2, ../../styles/components/_cart.scss */
 .st-container,
 .st-pusher,
 .st-content {
   height: 100%;
 }
 
-/* line 7, ../../styles/components/_cart.scss */
+/* line 8, ../../styles/components/_cart.scss */
 .st-content {
   overflow-y: scroll;
 }
 
-/* line 11, ../../styles/components/_cart.scss */
+/* line 12, ../../styles/components/_cart.scss */
 .st-content,
 .st-content-inner {
   position: relative;
 }
 
-/* line 16, ../../styles/components/_cart.scss */
+/* line 17, ../../styles/components/_cart.scss */
 .st-container {
   position: relative;
   overflow: hidden;
 }
 
-/* line 21, ../../styles/components/_cart.scss */
+/* line 22, ../../styles/components/_cart.scss */
 .st-pusher {
   position: relative;
   right: 0;
@@ -7932,7 +7932,7 @@ html, body {
   transition: transform 0.5s;
 }
 
-/* line 30, ../../styles/components/_cart.scss */
+/* line 31, ../../styles/components/_cart.scss */
 .st-pusher::after {
   position: absolute;
   top: 0;
@@ -7946,7 +7946,7 @@ html, body {
   transition: opacity 0.5s, width 0.1s 0.5s, height 0.1s 0.5s;
 }
 
-/* line 43, ../../styles/components/_cart.scss */
+/* line 44, ../../styles/components/_cart.scss */
 .cart {
   padding: 10px;
   position: absolute;
@@ -7961,39 +7961,45 @@ html, body {
   transition: all 0.5s;
 }
 
-/* line 57, ../../styles/components/_cart.scss */
+/* line 58, ../../styles/components/_cart.scss */
 .cart-open .st-pusher {
   -webkit-transform: translate3d(-300px, 0, 0);
   transform: translate3d(-300px, 0, 0);
 }
 
-/* line 62, ../../styles/components/_cart.scss */
+/* line 63, ../../styles/components/_cart.scss */
 .cart {
   visibility: visible;
   -webkit-transform: translate3d(100%, 0, 0);
   transform: translate3d(100%, 0, 0);
 }
 
-/* line 68, ../../styles/components/_cart.scss */
+/* line 69, ../../styles/components/_cart.scss */
 .cart-open .cart {
   visibility: visible;
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
 }
 
-/* line 74, ../../styles/components/_cart.scss */
+/* line 75, ../../styles/components/_cart.scss */
 .cart::after {
   display: none;
 }
 
-/* line 78, ../../styles/components/_cart.scss */
+/* line 79, ../../styles/components/_cart.scss */
 .cart-control-buttons {
   margin-bottom: 10px;
 }
 
-/* line 82, ../../styles/components/_cart.scss */
+/* line 83, ../../styles/components/_cart.scss */
 .remove-icon {
-  color: #F04124;
+  color: #939393;
+  cursor: pointer;
+}
+
+/* line 88, ../../styles/components/_cart.scss */
+.cart-project-header {
+  cursor: pointer;
 }
 
 /* line 4, ../../styles/components/_forms.scss */
