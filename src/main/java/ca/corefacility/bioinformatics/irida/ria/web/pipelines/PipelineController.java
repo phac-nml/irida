@@ -302,6 +302,7 @@ public class PipelineController extends BaseController {
 	 * @param name a user provided name for the {@link IridaWorkflow}
 	 * @return a JSON response with the status and any messages.
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/ajax/start/{pipelineId}", method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> ajaxStartPipelinePhylogenomics(HttpSession session, Locale locale,
 			@PathVariable UUID pipelineId,
