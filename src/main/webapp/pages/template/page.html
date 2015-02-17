@@ -57,7 +57,7 @@
 				</div>
 				<ul id="cart-project-list" class="list-group">
 					<li class="list-group-item" ng-repeat="p in cart.projects">
-						<div ng-click="cart.collapsed[p.id] = !cart.collapsed[p.id]">
+						<div class="cart-project-header" ng-click="cart.collapsed[p.id] = !cart.collapsed[p.id]">
 							<span class="fa fa-fw"
 							      ng-class="cart.collapsed[p.id] ? 'fa-caret-right' : 'fa-caret-down'"></span>
 							<span>{{ p.label }}</span>
