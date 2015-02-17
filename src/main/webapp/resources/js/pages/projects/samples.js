@@ -545,11 +545,13 @@
         SamplesService.downloadFiles();
       },
       linker  : function linker() {
-        vm.export.open = false;
-        $modal.open({
-          templateUrl: TL.BASE_URL + 'projects/templates/samples/linker',
-          controller : 'LinkerCtrl as lCtrl'
-        });
+        if (vm.localSelected) {
+          vm.export.open = false;
+          $modal.open({
+            templateUrl: TL.BASE_URL + 'projects/templates/samples/linker',
+            controller : 'LinkerCtrl as lCtrl'
+          });
+        }
       },
       galaxy  : function galaxy() {
         vm.export.open = false;
@@ -561,7 +563,7 @@
     };
 
     vm.merge = function () {
-      if (vm.count > 1) {
+      if (vm.localSelected && vm.count > 1) {
         $modal.open({
           templateUrl: TL.BASE_URL + 'projects/templates/merge',
           controller : 'MergeCtrl as mergeCtrl',
@@ -575,18 +577,20 @@
     };
 
     vm.openModal = function (type) {
-      $modal.open({
-        templateUrl: TL.BASE_URL + 'projects/templates/' + type,
-        controller : 'CopyMoveCtrl as cmCtrl',
-        resolve    : {
-          samples: function () {
-            return SamplesService.getSelectedSampleNames();
-          },
-          type   : function () {
-            return type;
+      if(type === 'copy' || vm.localSelected) {
+        $modal.open({
+          templateUrl: TL.BASE_URL + 'projects/templates/' + type,
+          controller : 'CopyMoveCtrl as cmCtrl',
+          resolve    : {
+            samples: function () {
+              return SamplesService.getSelectedSampleNames();
+            },
+            type   : function () {
+              return type;
+            }
           }
-        }
-      });
+        });
+      }
     };
 
     $scope.$on('SELECTED_COUNT', function (e, a) {
