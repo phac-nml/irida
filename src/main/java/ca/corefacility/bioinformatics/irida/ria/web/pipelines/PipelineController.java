@@ -255,12 +255,11 @@ public class PipelineController extends BaseController {
 
 			// Need to add the pipeline parameters
 			List<IridaWorkflowParameter> paras = flow.getWorkflowDescription().getParameters();
-			String analysisType = description.getAnalysisType().toString();
 			List<Map<String, String>> parameters = new ArrayList<>();
 			if (paras != null) {
 				for (IridaWorkflowParameter p : paras) {
 					parameters.add(ImmutableMap.of(
-							"label", messageSource.getMessage("pipeline.parameters." + analysisType + "." + p.getName(), null, locale),
+							"label", messageSource.getMessage("pipeline.parameters." + description.getName().toLowerCase() + "." + p.getName(), null, locale),
 							"value", p.getDefaultValue(),
 							"name", p.getName()
 					));
