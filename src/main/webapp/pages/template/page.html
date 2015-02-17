@@ -56,14 +56,15 @@
 					</button>
 				</div>
 				<ul id="cart-project-list" class="list-group">
-					<li class="list-group-item" ng-repeat="p in cart.projects">
+					<li class="list-group-item" ng-repeat="p in cart.projects" ng-attr-id="{{'cart-project-'+p.id}}">
 						<div class="cart-project-header" ng-click="cart.collapsed[p.id] = !cart.collapsed[p.id]">
 							<span class="fa fa-fw"
 							      ng-class="cart.collapsed[p.id] ? 'fa-caret-right' : 'fa-caret-down'"></span>
 							<span>{{ p.label }}</span>
 							<div class="pull-right">
 								<span class="badge">{{ p.samples.length }}</span>
-								<button class="btn-icon" ng-click="cartCtrl.removeProject(p.id)">
+								<button class="btn-icon" ng-click="cartCtrl.removeProject(p.id)"
+								        ng-attr-id="{{'remove-project-'+p.id}}">
 									<i class="fa fa-remove remove-icon"></i>
 								</button>
 							</div>
@@ -71,7 +72,7 @@
 						<ul collapse="cart.collapsed[p.id]">
 							<li ng-repeat="s in p.samples">
 								<span>{{ s.label }}</span>
-								<button class="btn-icon pull-right" ng-click="cartCtrl.removeSample(p.id,s.id)">
+								<button class="btn-icon pull-right remove-sample-btn" ng-click="cartCtrl.removeSample(p.id,s.id)">
 									<i class="fa fa-remove remove-icon"></i>
 								</button>
 							</li>

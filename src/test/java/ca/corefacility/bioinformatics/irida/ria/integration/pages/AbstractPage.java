@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
@@ -118,9 +119,21 @@ public class AbstractPage {
 	public void showCart() {
 		driver.findElement(By.id("cart-show-btn")).click();
 	}
-	
-	public void clearCart(){
+
+	public void clearCart() {
 		driver.findElement(By.id("clear-cart-btn")).click();
+	}
+
+	public void removeProjectFromCart(Long projectId) {
+		driver.findElement(By.id("remove-project-" + projectId)).click();
+	}
+
+	public void removeFirstSampleFromProjectInCart(Long projectId) {
+		WebElement projectItem = driver.findElement(By.id("cart-project-" + projectId));
+		List<WebElement> sampleRemoveButtons = projectItem.findElements(By.className("remove-sample-btn"));
+		WebElement firstSampleRemoveBtn = sampleRemoveButtons.iterator().next();
+		firstSampleRemoveBtn.click();
+		waitForTime(250);
 	}
 
 	public boolean isCartVisible() {
