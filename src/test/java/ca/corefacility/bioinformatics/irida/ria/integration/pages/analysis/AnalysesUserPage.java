@@ -34,6 +34,9 @@ public class AnalysesUserPage extends AbstractPage {
 	@FindBy(className = "board")
 	private List<WebElement> analysesList;
 
+	@FindBy(className = "download-analysis-btn")
+	private List<WebElement> downloadAnalysisBtn;
+
 	public AnalysesUserPage(WebDriver driver) {
 		super(driver);
 	}
@@ -76,6 +79,16 @@ public class AnalysesUserPage extends AbstractPage {
 
 	public int getNumberOfAnalyses() {
 		return analysesList.size();
+	}
+
+	public int getNumberOfDownloadBtns() {
+		int count = 0;
+		for (WebElement btn : downloadAnalysisBtn) {
+			if (btn.isDisplayed()) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	public boolean isNoAnalysesMessaageDisplayed() {

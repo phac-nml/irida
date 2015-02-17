@@ -98,9 +98,14 @@
 							<div class="board_detail--value">{{analysis.label}}</div>
 							<div class="board_detail--desc" th:text="#{analyses.analysis-name}">Analysis Name</div>
 						</div>
-						<div class="col-md-4">
-							<div class="board_detail--value">{{::analysis.createdDate | date:'medium'}}</div>
+						<div class="col-md-3">
+							<div class="board_detail--value">{{::analysis.createdDate | date:'short'}}</div>
 							<div class="board_detail--desc" th:text="#{analysis.date-created}">Date Created</div>
+						</div>
+						<div class="col-md-1">
+							<button ng-show="analysis.state==='Completed'" class="btn btn-default btn-sm download-analysis-btn" th:title="#{form.download}" ng-click="ctrl.download(analysis.id)">
+								<i class="fa fa-download"></i>
+							</button>
 						</div>
 					</div>
 				</li>
