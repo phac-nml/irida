@@ -22,6 +22,14 @@
   white-space: normal !important;
 }
 
+/* line 21, ../../styles/components/_buttons.scss */
+.btn-icon {
+  border: none;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+}
+
 /* line 3, ../../styles/components/_datatables.scss */
 .dataTables_filter input[type='search'] {
   background-color: #f3f3f3;

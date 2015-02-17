@@ -7991,6 +7991,11 @@ html, body {
   margin-bottom: 10px;
 }
 
+/* line 82, ../../styles/components/_cart.scss */
+.remove-icon {
+  color: #F04124;
+}
+
 /* line 4, ../../styles/components/_forms.scss */
 .input-full {
   width: 100%;
