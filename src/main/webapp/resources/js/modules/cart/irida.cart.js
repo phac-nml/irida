@@ -39,6 +39,10 @@
       vm.clear = function(){
         CartService.clear();
       };
+
+      vm.removeProject = function(projectId){
+        CartService.removeProject(projectId);
+      }
     }
 
     function CartDirective() {
@@ -55,7 +59,8 @@
         var svc = this,
             urls = {
                 all: TL.BASE_URL + "cart",
-                add: TL.BASE_URL + "cart/add/samples"
+                add: TL.BASE_URL + "cart/add/samples",
+                project: TL.BASE_URL + "cart/project/"
             };
 
         svc.all = function () {
@@ -88,6 +93,12 @@
           scope.$broadcast("cart.update", {});
         })
       };
+
+      svc.removeProject = function(projectId){
+        $http.delete(urls.project+projectId).then(function () {
+          scope.$broadcast("cart.update", {});
+        })
+      }
 
     }
 
