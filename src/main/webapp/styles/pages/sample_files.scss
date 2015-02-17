@@ -1,4 +1,5 @@
 @import "../helpers/variables";
+@import "../animations/animations";
 
 .paired_end {
   border-left: 1rem solid $colour-paired-end;
@@ -7,3 +8,14 @@
 .single_end {
   border-left: 1rem solid $colour-single-end;
 }
+
+.sidebar-content {
+  width: 130px;
+  white-space: normal;
+  margin: 1rem auto 0 auto;
+}
+
+.alert-icon-motion {
+  animation: move-up-down 2s infinite;
+}
+

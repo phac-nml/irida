@@ -52,6 +52,7 @@ public class AnalysesUserPageIT {
 		page.filterByName("submission");
 		assertEquals("Should be 6 analyses displayed on the page after filtering by name", 6,
 				page.getNumberOfAnalyses());
+		assertEquals("Should be 2 download buttons displayed, one for each completed analysis", 2, page.getNumberOfDownloadBtns());
 	}
 
 	@Test

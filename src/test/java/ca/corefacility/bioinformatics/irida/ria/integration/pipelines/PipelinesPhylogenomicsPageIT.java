@@ -62,17 +62,11 @@ public class PipelinesPhylogenomicsPageIT {
 
 	@Test
 	public void testPageSetup() {
-		LoginPage.loginAsUser(driver);
-		ProjectSamplesPage samplesPage = new ProjectSamplesPage(driver);
-		samplesPage.goToPage();
-		samplesPage.selectSampleByRow(1);
-		samplesPage.selectSampleByRow(2);
-		samplesPage.addSamplesToGlobalCart();
-		PipelinesSelectionPage.goToPhylogenomicsPipeline(driver);
+		addSamplesToCart();
+
 		logger.info("Checking Phylogenomics Page Setup.");
-		assertTrue("Should be on the phylogenomics page.", driver.getCurrentUrl().contains(PipelinesPhylogenomicsPage.RELATIVE_URL));
 		assertEquals("Should display the correct number of reference files in the select input.", 2, page.getReferenceFileCount());
-		assertEquals("Should display the correct number of samples.", 2, page.getNumberofSamplesDisplayed());
+		assertEquals("Should display the correct number of samples.", 2, page.getNumberOfSamplesDisplayed());
 	}
 
 	@Test
@@ -114,8 +108,6 @@ public class PipelinesPhylogenomicsPageIT {
 	@Test
 	public void testPipelineSubmission() {
 		addSamplesToCart();
-		assertTrue("Should be on the phylogenomics page.",
-				driver.getCurrentUrl().contains(PipelinesPhylogenomicsPage.RELATIVE_URL));
 
 		page.clickLaunchPipelineBtn();
 		assertTrue("Message should be displayed when the pipeline is submitted", page.isPipelineSubmittedMessageShown());

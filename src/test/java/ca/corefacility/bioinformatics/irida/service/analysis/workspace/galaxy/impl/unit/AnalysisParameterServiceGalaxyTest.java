@@ -19,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy.ParameterBuilderGalaxy;
 
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.google.common.collect.ImmutableMap;
@@ -80,6 +81,38 @@ public class AnalysisParameterServiceGalaxyTest {
 		assertNotNull("parameters for galaxy-tool1 should not be null", tool1Parameters);
 
 		assertEquals("galaxy-tool1,parameter1 is not valid", "1", tool1Parameters.get("parameter1"));
+	}
+	
+	/**
+	 * Tests preparing workflow parameters with multiple levels and overriding
+	 * with custom value successfully.
+	 * 
+	 * @throws IridaWorkflowParameterException
+	 */
+	@Test
+	public void testPrepareParametersOverrideMultipleLevelSuccess() throws IridaWorkflowParameterException {
+		IridaToolParameter iridaToolParameter = new IridaToolParameter("galaxy-tool1", "level1.parameter1");
+		IridaWorkflowParameter parameter1 = new IridaWorkflowParameter("parameter1", "0",
+				Lists.newArrayList(iridaToolParameter));
+		List<IridaWorkflowParameter> iridaWorkflowParameters = Lists.newArrayList(parameter1);
+
+		when(iridaWorkflowDescription.getParameters()).thenReturn(iridaWorkflowParameters);
+
+		Map<String, String> parameters = Maps.newHashMap();
+		parameters.put("parameter1", "1");
+
+		WorkflowInputsGalaxy workflowInputsGalaxy = analysisParameterService.prepareAnalysisParameters(parameters,
+				iridaWorkflow);
+
+		assertNotNull("workflowInputsGalaxy is null", workflowInputsGalaxy);
+
+		WorkflowInputs workflowInputs = workflowInputsGalaxy.getInputsObject();
+		Map<Object, Map<String, Object>> workflowParameters = workflowInputs.getParameters();
+		Map<String, Object> tool1Parameters = workflowParameters.get("galaxy-tool1");
+		assertNotNull("parameters for galaxy-tool1 should not be null", tool1Parameters);
+
+		assertEquals("parameter not properly defined", ImmutableMap.of("level1", ImmutableMap.of("parameter1", "1")),
+				tool1Parameters);
 	}
 
 	/**
@@ -200,5 +233,54 @@ public class AnalysisParameterServiceGalaxyTest {
 		
 		analysisParameterService.prepareAnalysisParameters(ImmutableMap.of("name", "value"),
 				iridaWorkflow);
+	}
+	
+	/**
+	 * Tests out failing to build a parameter builder due to null parameters.
+	 */
+	@Test(expected = NullPointerException.class)
+	public void testParameterBuilderGalaxyFailNullParameter() {
+		new ParameterBuilderGalaxy(null);
+	}
+
+	/**
+	 * Tests out failing to build a parameter builder due to no parameters
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testParameterBuilderGalaxyFailNoParameter() {
+		new ParameterBuilderGalaxy("");
+	}
+
+	/**
+	 * Tests out building a data structure with only one parameter mapping for
+	 * Galaxy.
+	 */
+	@Test
+	public void testParameterBuilderGalaxySuccessOneParameter() {
+		ParameterBuilderGalaxy parameterBuilder = new ParameterBuilderGalaxy("parameter");
+		assertEquals("parameter", parameterBuilder.getStartName());
+		assertEquals("value", parameterBuilder.buildForValue("value"));
+	}
+
+	/**
+	 * Tests out building a data structure with only a second level for
+	 * parameter mapping for Galaxy.
+	 */
+	@Test
+	public void testParameterBuilderGalaxySuccessTwoParameters() {
+		ParameterBuilderGalaxy parameterBuilder = new ParameterBuilderGalaxy("level1.parameter");
+		assertEquals("level1", parameterBuilder.getStartName());
+		assertEquals(ImmutableMap.of("parameter", "value"), parameterBuilder.buildForValue("value"));
+	}
+
+	/**
+	 * Tests out building a data structure with a third level for a parameter.
+	 */
+	@Test
+	public void testParameterBuilderGalaxySuccessThreeParameters() {
+		ParameterBuilderGalaxy parameterBuilder = new ParameterBuilderGalaxy("level1.level2.parameter");
+		assertEquals("level1", parameterBuilder.getStartName());
+		assertEquals(ImmutableMap.of("level2", ImmutableMap.of("parameter", "value")),
+				parameterBuilder.buildForValue("value"));
 	}
 }

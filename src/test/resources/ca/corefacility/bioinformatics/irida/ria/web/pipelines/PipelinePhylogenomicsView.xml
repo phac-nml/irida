@@ -125,6 +125,11 @@
     <sequencefile_sample id="3" createdDate="2013-07-18 14:20:19.0"
                          sample_id="1" sequencefile_id="3" />
 
+    <sequence_file_pair id="1" created_date="2014-07-30 08:24:34" />
+
+    <sequence_file_pair_files pair_id="1" files_id="1" />
+    <sequence_file_pair_files pair_id="1" files_id="2" />
+
     <reference_file id="1" createdDate="2013-06-16 11:15:36.2" filePath="/tmp/path/to/nowhere/02-222.fastq" fileRevisionNumber="1" modifiedDate="2013-06-16 11:15:36.2" />
     <reference_file id="2" createdDate="2013-07-16 11:15:36.2" filePath="/tmp/path/to/nowhere/03-333.fastq" fileRevisionNumber="1" modifiedDate="2013-07-17 11:15:36.2" />
 
