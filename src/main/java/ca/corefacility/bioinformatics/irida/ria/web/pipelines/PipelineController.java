@@ -255,7 +255,7 @@ public class PipelineController extends BaseController {
 
 			// Need to add the pipeline parameters
 			List<IridaWorkflowParameter> paras = flow.getWorkflowDescription().getParameters();
-			String analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType().toString();
+			String analysisType = description.getAnalysisType().toString();
 			List<Map<String, String>> parameters = new ArrayList<>();
 			if (paras != null) {
 				for (IridaWorkflowParameter p : paras) {
