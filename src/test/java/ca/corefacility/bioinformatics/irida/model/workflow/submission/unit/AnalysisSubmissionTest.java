@@ -13,6 +13,7 @@ import com.google.common.collect.Sets;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 
 /**
  * Tests out constructing {@link AnalysisSubmission} objects.
@@ -27,6 +28,31 @@ public class AnalysisSubmissionTest {
 	private static final Map<String, String> inputParameters = ImmutableMap.of("test", "test");
 
 	private static final UUID workflowId = UUID.randomUUID();
+
+	private static final IridaWorkflowNamedParameters namedParameters = new IridaWorkflowNamedParameters("name",
+			workflowId, inputParameters);
+
+	@Test
+	public void testBuildWithNamedParameters() {
+		final AnalysisSubmission submission = AnalysisSubmission.builder(workflowId)
+				.withNamedParameters(namedParameters).inputFilesSingle(Sets.newHashSet(sequenceFile)).build();
+		assertEquals("analysis submission should have a reference to the specified named parameters.", inputParameters,
+				submission.getInputParameters());
+	}
+
+	@Test(expected = UnsupportedOperationException.class)
+	public void testBuildWithNamedParametersThenOthers() {
+		// disallow adding or changing input parameters after we've elected to
+		// use named parameters.
+		AnalysisSubmission.builder(workflowId).withNamedParameters(namedParameters)
+				.inputFilesSingle(Sets.newHashSet(sequenceFile)).inputParameter("something", "crazy");
+	}
+
+	@Test(expected = UnsupportedOperationException.class)
+	public void testBuildWithNamedParametersThenOthersMap() {
+		AnalysisSubmission.builder(workflowId).withNamedParameters(namedParameters)
+				.inputFilesSingle(Sets.newHashSet(sequenceFile)).inputParameters(inputParameters);
+	}
 
 	@Test
 	public void testBuildSuccess() {
