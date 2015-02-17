@@ -56,19 +56,25 @@
 					</button>
 				</div>
 				<ul id="cart-project-list" class="list-group">
-					<li class="list-group-item" ng-repeat="p in cart.projects" ng-init="cart.collapsed[p.id]=true"
-					    ng-click="cart.collapsed[p.id] = !cart.collapsed[p.id]">
+					<li class="list-group-item" ng-repeat="p in cart.projects">
+						<span ng-click="cart.collapsed[p.id] = !cart.collapsed[p.id]" >
 						<span class="fa fa-fw"
 						      ng-class="cart.collapsed[p.id] ? 'fa-caret-right' : 'fa-caret-down'"></span>
 						{{ p.label }}
+						</span>
 						<div class="pull-right">
+							<span class="badge">{{ p.samples.length }}</span>
 							<button class="btn-icon" ng-click="cartCtrl.removeProject(p.id)">
 								<i class="fa fa-remove remove-icon"></i>
 							</button>
-							<span class="badge">{{ p.samples.length }}</span>
 						</div>
 						<ul collapse="cart.collapsed[p.id]">
-							<li ng-repeat="s in p.samples">{{ s.label }}</li>
+							<li ng-repeat="s in p.samples">
+								<span>{{ s.label }}</span>
+								<button class="btn-icon pull-right" ng-click="cartCtrl.removeSample(p.id,s.id)">
+									<i class="fa fa-remove remove-icon"></i>
+								</button>
+							</li>
 						</ul>
 					</li>
 				</ul>
