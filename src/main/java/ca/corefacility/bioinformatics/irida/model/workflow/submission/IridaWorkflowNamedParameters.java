@@ -46,19 +46,19 @@ public class IridaWorkflowNamedParameters implements IridaThing {
 
 	@NotNull
 	@Size(min = 3)
-	@Column(name = "name")
+	@Column(name = "name", nullable = false)
 	private final String name;
 
 	@NotNull
-	@Column(name = "workflow_id")
+	@Column(name = "workflow_id", nullable = false)
 	private final UUID workflowId;
 
 	@ElementCollection(fetch = FetchType.EAGER)
-	@MapKeyColumn(name = "name", nullable = false)
-	@Column(name = "value", nullable = false)
-	@CollectionTable(name = "workflow_named_parameters", joinColumns = @JoinColumn(name = "id"), uniqueConstraints = @UniqueConstraint(columnNames = {
-			"id", "name" }, name = "UK_WORKFLOW_PARAMETERS_NAME"))
-	private final Map<String, String> inputParameters;
+	@MapKeyColumn(name = "named_parameter_name", nullable = false)
+	@Column(name = "named_parameter_value", nullable = false)
+	@CollectionTable(name = "workflow_named_parameter_values", joinColumns = @JoinColumn(name = "named_parameters_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
+			"named_parameters_id", "named_parameter_name" }, name = "UK_WORKFLOW_PARAMETERS_NAME"))
+	private final Map<String, String> namedParameters;
 
 	@CreatedDate
 	@NotNull
@@ -75,14 +75,14 @@ public class IridaWorkflowNamedParameters implements IridaThing {
 		this.id = null;
 		this.name = null;
 		this.workflowId = null;
-		this.inputParameters = null;
+		this.namedParameters = null;
 	}
 
 	public IridaWorkflowNamedParameters(final String name, final UUID workflowId, final Map<String, String> parameters) {
 		this.createdDate = new Date();
 		this.workflowId = workflowId;
 		this.name = name;
-		this.inputParameters = parameters;
+		this.namedParameters = parameters;
 	}
 
 	@Override
@@ -120,6 +120,6 @@ public class IridaWorkflowNamedParameters implements IridaThing {
 	}
 
 	public final Map<String, String> getInputParameters() {
-		return inputParameters;
+		return namedParameters;
 	}
 }

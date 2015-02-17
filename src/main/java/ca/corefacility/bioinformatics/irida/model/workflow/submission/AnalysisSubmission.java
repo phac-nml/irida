@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.submission;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
 import java.util.Map;
@@ -38,6 +38,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -154,6 +155,7 @@ public class AnalysisSubmission implements IridaThing {
 	@JoinColumn(name = "reference_file_id")
 	private ReferenceFile referenceFile;
 
+	@NotAudited
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "named_parameters_id")
 	private IridaWorkflowNamedParameters namedParameters;
