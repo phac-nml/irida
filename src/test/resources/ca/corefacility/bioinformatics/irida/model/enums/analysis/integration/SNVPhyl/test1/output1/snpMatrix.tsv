@@ -1,0 +1,5 @@
+strain	Reference	SampleB	SampleA	SampleC	
+Reference	0	1	0	1	
+SampleB	1	0	1	2	
+SampleA	0	1	0	1	
+SampleC	1	2	1	0	
