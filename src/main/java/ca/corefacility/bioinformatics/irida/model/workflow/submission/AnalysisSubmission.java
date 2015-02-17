@@ -154,6 +154,10 @@ public class AnalysisSubmission implements IridaThing {
 	@JoinColumn(name = "reference_file_id")
 	private ReferenceFile referenceFile;
 
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "named_parameters_id")
+	private IridaWorkflowNamedParameters namedParameters;
+
 	protected AnalysisSubmission() {
 		this.createdDate = new Date();
 		this.analysisState = AnalysisState.NEW;
@@ -180,6 +184,7 @@ public class AnalysisSubmission implements IridaThing {
 				: ImmutableMap.of();
 		this.referenceFile = builder.referenceFile;
 		this.workflowId = builder.workflowId;
+		this.namedParameters = builder.namedParameters;
 	}
 
 	/**
@@ -408,6 +413,15 @@ public class AnalysisSubmission implements IridaThing {
 	}
 	
 	/**
+	 * Get the named parameters object used to build this submission.
+	 * 
+	 * @return The {@link IridaWorkflowNamedParameters} for this submission.
+	 */
+	public final IridaWorkflowNamedParameters getNamedParameters() {
+		return namedParameters;
+	}
+
+	/**
 	 * Used to build up an {@link AnalysisSubmission}.
 	 * 
 	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
@@ -419,6 +433,7 @@ public class AnalysisSubmission implements IridaThing {
 		private ReferenceFile referenceFile;
 		private UUID workflowId;
 		private Map<String,String> inputParameters;
+		private IridaWorkflowNamedParameters namedParameters;
 		
 		/**
 		 * Creates a new {@link AnalysisSubmission.Builder} with a workflow id.
@@ -502,7 +517,12 @@ public class AnalysisSubmission implements IridaThing {
 			checkNotNull(inputParameters, "inputParameters is null");
 			checkArgument(!inputParameters.isEmpty(), "inputParameters is empty");
 			
-			this.inputParameters = inputParameters;
+			if (namedParameters != null) {
+				throw new UnsupportedOperationException("You cannot change named parameters once set.");
+			}
+			
+			this.inputParameters.clear();
+			this.inputParameters.putAll(inputParameters);
 			return this;
 		}
 		
@@ -520,8 +540,25 @@ public class AnalysisSubmission implements IridaThing {
 			checkNotNull(value, "value is null");
 			checkArgument(!inputParameters.containsKey(name), "key=" + name + " already exists as a parameter");
 
+			if (namedParameters != null) {
+				throw new UnsupportedOperationException("You cannot change named parameters once set.");
+			}
 			inputParameters.put(name, value);
 
+			return this;
+		}
+
+		/**
+		 * Use the specified set of named parameters to run this workflow.
+		 * 
+		 * @param parameters
+		 *            the named parameters to use.
+		 * @return An {@link AnalysisSubmission.Builder}.
+		 */
+		public Builder withNamedParameters(final IridaWorkflowNamedParameters parameters) {
+			checkNotNull(parameters, "named parameters cannot be null.");
+			inputParameters(parameters.getInputParameters());
+			this.namedParameters = parameters;
 			return this;
 		}
 
