@@ -11,15 +11,14 @@
 </head>
 <body>
 <div layout:fragment="page" ng-app="irida.pipelines">
-	<form class="form-horizontal" method="post" ng-controller="PipelineController as phylCtrl">
+	<form class="form-horizontal" method="post" ng-controller="PipelineController as pipeline">
 		<div id="no-ref-warning" class="row" th:if="${referenceRequired} and ${#lists.size(referenceFiles)} == 0">
 			<h1 th:text="${mainTitle}"></h1>
 
 			<div class="alert alert-danger col-md-12">
-				<b th:text="#{pipeline.phylogenomics.no-reference-heading}">The Phylogenomics Pipeline Requires a
-					reference file to run.</b><br/><br/>
+				<b th:text="#{pipeline.error.no-reference-heading}">Reference File Required</b><br/><br/>
 				<th:block th:if="${#lists.size(addRefProjects) > 0}">
-					<p id="has-rights" th:text="#{pipeline.no-reference.link-heading}">Projects You can
+					<p id="has-rights" th:text="#{pipeline.error.no-reference.link-heading}">Projects You can
 						Upload a Reference File to:</p>
 					<ul class="nav nav-pills nav-stacked col-md-3">
 						<li th:each="project : ${addRefProjects}">
@@ -29,7 +28,7 @@
 					</ul>
 				</th:block>
 				<th:block th:if="${#lists.size(addRefProjects)} == 0">
-					<p id="has-no-rights" th:text="#{pipeline.no-reference.no-permissions}">You do not
+					<p id="has-no-rights" th:text="#{pipeline.orror.no-reference.no-permissions}">You do not
 						have permission to upload a reference file to these projects. Please contact a project manager
 						to add a reference file.</p>
 				</th:block>
@@ -47,7 +46,7 @@
 						<div class="col-md-10" th:with="dateFormat=#{date.iso-8601}">
 							<input id="pipeline-name" class="form-control" type="text" th:value="${name + '_' + #calendars.format(#dates.createToday(), dateFormat)}"/>
 
-							<div ng-show="phylCtrl.error" class="label label-danger ng-cloak">{{phylCtrl.error}}</div>
+							<div ng-show="pipeline.error" class="label label-danger ng-cloak">{{pipeline.error}}</div>
 						</div>
 					</div>
 					<div th:if="${referenceRequired}" class="form-group">
@@ -152,14 +151,14 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-md-2" ng-switch="phylCtrl.loading">
+			<div class="col-md-2" ng-switch="pipeline.loading">
 				<div data-spy="affix" style="width: 200px;">
 					<div ng-switch-when="false" class="ng-cloak text-center">
 						<h2 th:text="#{workflow.launch.btn}">Ready to Launch?</h2>
 						<div>
 							<button id="btn-launch" class="btn btn-xl btn-danger btn-action"
 							        th:title="#{workflow.launch.btn.title}"
-							        ng-click="phylCtrl.launch()">
+							        ng-click="pipeline.launch()">
 								<span class="fa fa-rocket"></span>
 							</button>
 						</div>
@@ -168,9 +167,9 @@
 							        class="btn btn-default sidebar-content" ng-click="modal.openModal()">
 								<i class="fa fa-cogs fa-2x"></i><br/><span th:text="#{workflow.parameters.section-button}">Pipeline Parameters</span>
 							</button>
-							<div ng-show="phylCtrl.paramError" class="alert alert-danger sidebar-content">
+							<div ng-show="pipeline.paramError" class="alert alert-danger sidebar-content">
 								<strong class="fa fa-3x fa-fw fa-hand-o-up alert-icon-motion"></strong>
-								{{phylCtrl.paramError}}
+								{{pipeline.paramError}}
 							</div>
 						</th:block>
 						<th:block th:unless="${parameters}">
@@ -178,11 +177,11 @@
 						</th:block>
 					</div>
 					<div id="pipeline-submitted" class="ng-cloak" ng-switch-when="true">
-						<div ng-hide="phylCtrl.success" class="alert alert-info">
+						<div ng-hide="pipeline.success" class="alert alert-info">
 							<strong class="fa fa-2x fa-fw fa-coffee"></strong>&nbsp;
 							<span th:text="#{workflow.pipeline-kickoff-message}"></span>
 						</div>
-						<div id="pipeline-submitted-success" ng-show="phylCtrl.success" class="alert alert-success">
+						<div id="pipeline-submitted-success" ng-show="pipeline.success" class="alert alert-success">
 							<strong class="fa fa-2x fa-smile-o text-center"></strong>&nbsp;
 							<span th:text="#{workflow.submitted-success}">You must be awesome!  All your files looked good and the pipeline has been launched and the pedal should hit the metal soon.</span>
 							<br/><br/>
