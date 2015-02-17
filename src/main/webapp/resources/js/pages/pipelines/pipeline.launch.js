@@ -1,7 +1,7 @@
 (function () {
   "use strict";
   /**
-   * Main controller for the phylogenomics pipeline page.
+   * Main controller for the pipeline launch page.
    * @param $http AngularJS http object
    * @constructor
    */
@@ -13,7 +13,7 @@
     vm.loading = false;
 
     /**
-     * Launch the phylogenomics pipeline
+     * Launch the pipeline
      */
     vm.launch = function () {
       var
