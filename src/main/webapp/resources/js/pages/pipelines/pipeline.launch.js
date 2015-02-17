@@ -5,7 +5,7 @@
    * @param $http AngularJS http object
    * @constructor
    */
-  function PipelineController($http) {
+  function PipelineController($http, notifications) {
     var vm = this;
     /*
      * Whether or not the page is waiting for a response from the server.
@@ -84,8 +84,11 @@
               if (data.error) {
                 vm.error = data.error;
               }
-              else if (data.parameters) {
+              else if (data.parameterError) {
                 vm.paramError = data.parameters;
+              }
+              else if(data.pipelineError) {
+                notifications.show({type: 'error', msg: data.pipelineError});
               }
             }
           });
@@ -125,7 +128,7 @@
   }
 
   angular.module('irida.pipelines', [])
-    .controller('PipelineController', ['$http', PipelineController])
+    .controller('PipelineController', ['$http', 'notifications', PipelineController])
     .controller('ParameterModalController', ["$modal", ParameterModalController])
     .controller('ParameterController', ['$modalInstance', ParameterController])
   ;

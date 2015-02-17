@@ -55,7 +55,9 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -292,7 +294,7 @@ public class PipelineController extends BaseController {
 	// ************************************************************************************************
 
 	/**
-	 * Launch a phylogenomics pipeline
+	 * Launch a pipeline
 	 * @param session the current {@link HttpSession}
 	 * @param pipelineId the id for the {@link IridaWorkflow}
 	 * @param single a list of {@link SequenceFile} id's
@@ -301,19 +303,25 @@ public class PipelineController extends BaseController {
 	 * @param name a user provided name for the {@link IridaWorkflow}
 	 * @return a JSON response with the status and any messages.
 	 */
-	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/ajax/start/{pipelineId}", method = RequestMethod.POST)
-	public @ResponseBody Map<String, Object> ajaxStartPipelinePhylogenomics(HttpSession session, Locale locale,
+	public @ResponseBody Map<String, Object> ajaxStartPipeline(HttpSession session, Locale locale,
 			@PathVariable UUID pipelineId,
 			@RequestParam(required = false) List<Long> single, @RequestParam(required = false) List<Long> paired,
 			@RequestParam(required = false) Map<String, String> parameters,
 			@RequestParam(required = false) Long ref, @RequestParam String name) {
 		Map<String, Object> result;
 
-		if (Strings.isNullOrEmpty(name)) {
-			result = ImmutableMap
-					.of("error", messageSource.getMessage("workflow.no-name-provided", null, locale));
-		} else {
+		try {
+			IridaWorkflow flow = workflowsService.getIridaWorkflow(pipelineId);
+			IridaWorkflowDescription description = flow.getWorkflowDescription();
+
+			// The pipeline needs to have a name.
+			if (Strings.isNullOrEmpty(name)) {
+				return ImmutableMap
+						.of("error", messageSource.getMessage("workflow.no-name-provided", null, locale));
+			}
+
+			// Get a list of the files to submit
 			List<SequenceFile> sequenceFiles = new ArrayList<>();
 			List<SequenceFilePair> sequenceFilePairs = new ArrayList<>();
 
@@ -325,53 +333,120 @@ public class PipelineController extends BaseController {
 				sequenceFilePairs = (List<SequenceFilePair>) sequenceFilePairService.readMultiple(paired);
 			}
 
-			// Build the analysis submission
-			AnalysisSubmission.Builder analysisSubmissionBuilder = AnalysisSubmission.builder(pipelineId);
-
-			// Add reference file
-			ReferenceFile referenceFile = null;
-			if (ref != null) {
-				referenceFile = referenceFileService.read(ref);
-				analysisSubmissionBuilder.referenceFile(referenceFile);
+			// Get the pipeline parameters
+			Map<String, String> params = extractPipelineParameters(parameters.get("paras"));
+			if (params.containsKey("parameterError")) {
+				return ImmutableMap
+						.of("parameterError", messageSource.getMessage("pipeline.parameters.error", null, locale));
 			}
 
-			// Add any single end sequencing files.
-			if (!sequenceFiles.isEmpty()) {
-				analysisSubmissionBuilder.inputFilesSingle(Sets.newHashSet(sequenceFiles));
-			}
+			// TODO [15-02-17] (Josh): Replace this once the description has a setting for multiple files.
+			String type = description.getAnalysisType().toString();
+			if (type.equals("phylogenomics")) {
+				// Build the analysis submission
+				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(pipelineId);
 
-			// Add any paired end sequencing files.
-			if (!sequenceFilePairs.isEmpty()) {
-				analysisSubmissionBuilder.inputFilesPaired(Sets.newHashSet(sequenceFilePairs));
-			}
-
-			// Add workflow parameters
-			// TODO [15-02-16] (Josh): Update when addressing issue #100
-			ObjectMapper mapper = new ObjectMapper();
-			if (parameters.get("paras") != null) {
-				try {
-					Map<String, String> paras = mapper.readValue(parameters.get("paras"), Map.class);
-					analysisSubmissionBuilder.inputParameters(paras);
-				} catch (IOException e) {
-					logger.error("Error extracting parameters from submission", e);
-					return ImmutableMap.of("parameters", messageSource.getMessage("pipeline.parameters.error", null, locale));
+				// Add reference file
+				if (ref != null && description.requiresReference()) {
+					ReferenceFile referenceFile = referenceFileService.read(ref);
+					builder.referenceFile(referenceFile);
 				}
+
+				// Add any single end sequencing files.
+				if (!sequenceFiles.isEmpty() && description.acceptsSingleSequenceFiles()) {
+					builder.inputFilesSingle(Sets.newHashSet(sequenceFiles));
+				}
+
+				// Add any paired end sequencing files.
+				if (!sequenceFilePairs.isEmpty() && description.acceptsPairedSequenceFiles()) {
+					builder.inputFilesPaired(Sets.newHashSet(sequenceFilePairs));
+				}
+
+				if (description.acceptsParameters()) {
+					builder.inputParameters(params);
+				}
+
+				// Create the submission
+				AnalysisSubmission submission = analysisSubmissionService.create(builder.build());
+
+				// TODO [15-01-21] (Josh): This should be replaced by storing the values into the database.
+				SubmissionIds submissionIds = (SubmissionIds) session.getAttribute("submissionIds");
+				if (submissionIds == null) {
+					submissionIds = new SubmissionIds();
+				}
+				submissionIds.addId(submission.getId());
+				session.setAttribute("submissionIds", submissionIds);
+
+				result = ImmutableMap.of("result", "success", "submissionIds", ImmutableList.of(
+						submission.getId().toString()));
+			} else {
+				List<AnalysisSubmission> pipelineSubmissions = new ArrayList<>();
+
+				// Single end reads
+				if (description.acceptsSingleSequenceFiles()) {
+					for (SequenceFile file : sequenceFiles) {
+						// Build the analysis submission
+						AnalysisSubmission.Builder builder = AnalysisSubmission.builder(pipelineId);
+						builder.inputFilesSingle(ImmutableSet.of(file));
+
+						// Add reference file
+						if (ref != null && description.requiresReference()) {
+							ReferenceFile referenceFile = referenceFileService.read(ref);
+							builder.referenceFile(referenceFile);
+						}
+
+						if (description.acceptsParameters()) {
+							builder.inputParameters(params);
+						}
+
+						// Create the submission
+						pipelineSubmissions.add(analysisSubmissionService.create(builder.build()));
+					}
+				}
+
+				// Paired end reads
+				if (description.acceptsPairedSequenceFiles()) {
+					for (SequenceFilePair pair : sequenceFilePairs) {
+						// Build the analysis submission
+						AnalysisSubmission.Builder builder = AnalysisSubmission.builder(pipelineId);
+						builder.inputFilesPaired(ImmutableSet.of(pair));
+
+						// Add reference file
+						if (ref != null && description.requiresReference()) {
+							ReferenceFile referenceFile = referenceFileService.read(ref);
+							builder.referenceFile(referenceFile);
+						}
+
+						if (description.acceptsParameters()) {
+							builder.inputParameters(params);
+						}
+
+						// Create the submission
+						pipelineSubmissions.add(analysisSubmissionService.create(builder.build()));
+					}
+				}
+				result = ImmutableMap.of("result", "success", "submissionIds", pipelineSubmissions);
 			}
 
-			// Create the submission
-			AnalysisSubmission submission = analysisSubmissionService.create(analysisSubmissionBuilder.build());
-
-			// TODO [15-01-21] (Josh): This should be replaced by storing the values into the database.
-			SubmissionIds submissionIds = (SubmissionIds) session.getAttribute("submissionIds");
-			if (submissionIds == null) {
-				submissionIds = new SubmissionIds();
-			}
-			submissionIds.addId(submission.getId());
-			session.setAttribute("submissionIds", submissionIds);
-
-			result = ImmutableMap.of("result", "success", "submissionId", submission.getId());
+		} catch (IridaWorkflowNotFoundException e) {
+			logger.error("Cannot file IridaWorkflow [" + pipelineId + "]", e);
+			result = ImmutableMap.of("pipelineError", messageSource.getMessage("pipeline.error.invalid-pipeline", null, locale));
 		}
+		return result;
+	}
 
+	@SuppressWarnings("unchecked")
+	private Map<String, String> extractPipelineParameters(String mapString) {
+		// TODO [15-02-16] (Josh): Update when addressing issue #100
+		Map<String, String> result;
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			result = mapper.readValue(mapString, Map.class);
+		} catch (IOException e) {
+			logger.error("Error extracting parameters from submission", e);
+			result = ImmutableMap
+					.of("parameterError", "");
+		}
 		return result;
 	}
 
