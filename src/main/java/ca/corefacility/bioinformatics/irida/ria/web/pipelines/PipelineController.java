@@ -43,7 +43,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
-import ca.corefacility.bioinformatics.irida.ria.web.components.SubmissionIds;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -55,7 +54,6 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -75,7 +73,7 @@ public class PipelineController extends BaseController {
 	 * CONSTANTS
 	 */
 	public static final String URL_EMPTY_CART_REDIRECT = "redirect:/pipelines";
-	public static final String URL_LAUNCH ="pipelines/pipeline_selection";
+	public static final String URL_LAUNCH = "pipelines/pipeline_selection";
 	public static final String URL_GENERIC_PIPELINE = "pipelines/types/generic_pipeline";
 	public static final String URI_LIST_PIPELINES = "/ajax/list.json";
 	public static final String URI_AJAX_START_PIPELINE = "/ajax/start.json";
@@ -140,19 +138,19 @@ public class PipelineController extends BaseController {
 			IridaWorkflow flow = null;
 			try {
 				flow = workflowsService.getDefaultWorkflowByType(type);
-			IridaWorkflowDescription description = flow.getWorkflowDescription();
-			String name = type.toString();
-			String key = "workflow." + name;
-			flows.add(ImmutableMap.of(
-					"name", name,
-					"id", description.getId().toString(),
-					"title",
-					messageSource
-							.getMessage(key + ".title", new Object[] { }, locale),
-					"description",
-					messageSource
-							.getMessage(key + ".description", new Object[] { }, locale)
-			));
+				IridaWorkflowDescription description = flow.getWorkflowDescription();
+				String name = type.toString();
+				String key = "workflow." + name;
+				flows.add(ImmutableMap.of(
+						"name", name,
+						"id", description.getId().toString(),
+						"title",
+						messageSource
+								.getMessage(key + ".title", new Object[] { }, locale),
+						"description",
+						messageSource
+								.getMessage(key + ".description", new Object[] { }, locale)
+				));
 			} catch (IridaWorkflowNotFoundException e) {
 				logger.error("Workflow not found - See stack:", e);
 			}
@@ -165,7 +163,8 @@ public class PipelineController extends BaseController {
 	}
 
 	@RequestMapping(value = "/{pipelineId}")
-	public String getPhylogenomicsPage(final Model model, Principal principal, Locale locale, @PathVariable UUID pipelineId) {
+	public String getPhylogenomicsPage(final Model model, Principal principal, Locale locale,
+			@PathVariable UUID pipelineId) {
 		String response = URL_EMPTY_CART_REDIRECT;
 
 		Map<Project, Set<Sample>> cartMap = cartController.getSelected();
@@ -262,7 +261,8 @@ public class PipelineController extends BaseController {
 				String name = description.getName().toLowerCase();
 				for (IridaWorkflowParameter p : paras) {
 					parameters.add(ImmutableMap.of(
-							"label", messageSource.getMessage("pipeline.parameters." + name + "." + p.getName(), null, locale),
+							"label",
+							messageSource.getMessage("pipeline.parameters." + name + "." + p.getName(), null, locale),
 							"value", p.getDefaultValue(),
 							"name", p.getName()
 					));
@@ -270,14 +270,14 @@ public class PipelineController extends BaseController {
 				model.addAttribute("parameters", parameters);
 				model.addAttribute("parameterModalTitle",
 						messageSource.getMessage("pipeline.parameters.modal-title." + name, null, locale));
-			}
-			else {
+			} else {
 				model.addAttribute("noParameters", messageSource.getMessage("pipeline.no-parameters", null, locale));
 			}
 
 			model.addAttribute("title",
 					messageSource.getMessage("pipeline.title." + description.getName(), null, locale));
-			model.addAttribute("mainTitle", messageSource.getMessage("pipeline.h1." + description.getName(), null, locale ));
+			model.addAttribute("mainTitle",
+					messageSource.getMessage("pipeline.h1." + description.getName(), null, locale));
 			model.addAttribute("name", description.getName());
 			model.addAttribute("pipelineId", pipelineId.toString());
 			model.addAttribute("referenceFiles", referenceFileList);
@@ -296,12 +296,20 @@ public class PipelineController extends BaseController {
 
 	/**
 	 * Launch a pipeline
-	 * @param session the current {@link HttpSession}
-	 * @param pipelineId the id for the {@link IridaWorkflow}
-	 * @param single a list of {@link SequenceFile} id's
-	 * @param paired a list of {@link SequenceFilePair} id's
-	 * @param ref the id for a {@link ReferenceFile}
-	 * @param name a user provided name for the {@link IridaWorkflow}
+	 *
+	 * @param session
+	 * 		the current {@link HttpSession}
+	 * @param pipelineId
+	 * 		the id for the {@link IridaWorkflow}
+	 * @param single
+	 * 		a list of {@link SequenceFile} id's
+	 * @param paired
+	 * 		a list of {@link SequenceFilePair} id's
+	 * @param ref
+	 * 		the id for a {@link ReferenceFile}
+	 * @param name
+	 * 		a user provided name for the {@link IridaWorkflow}
+	 *
 	 * @return a JSON response with the status and any messages.
 	 */
 	@RequestMapping(value = "/ajax/start/{pipelineId}", method = RequestMethod.POST)
@@ -310,8 +318,7 @@ public class PipelineController extends BaseController {
 			@RequestParam(required = false) List<Long> single, @RequestParam(required = false) List<Long> paired,
 			@RequestParam(required = false) Map<String, String> parameters,
 			@RequestParam(required = false) Long ref, @RequestParam String name) {
-		Map<String, Object> result;
-
+		Map<String, Object> result = ImmutableMap.of("success", true);
 		try {
 			IridaWorkflow flow = workflowsService.getIridaWorkflow(pipelineId);
 			IridaWorkflowDescription description = flow.getWorkflowDescription();
@@ -344,8 +351,40 @@ public class PipelineController extends BaseController {
 			// TODO [15-02-17] (Josh): Replace this once the description has a setting for multiple files.
 			String type = description.getAnalysisType().toString();
 			if (type.equals("phylogenomics")) {
+				submitMultipleFileWorkflow(flow, ref, sequenceFiles, sequenceFilePairs, params);
+
+			} else {
+				submitSingleFileWorkflow(flow, ref, sequenceFiles, sequenceFilePairs, params);
+			}
+
+		} catch (IridaWorkflowNotFoundException e) {
+			logger.error("Cannot file IridaWorkflow [" + pipelineId + "]", e);
+			result = ImmutableMap
+					.of("pipelineError", messageSource.getMessage("pipeline.error.invalid-pipeline", null, locale));
+		}
+
+		return result;
+	}
+
+	/**
+	 * Submit {@link AnalysisSubmission} for workflows requiring only one {@link SequenceFile} or {@link
+	 * SequenceFilePair}
+	 *
+	 * @param workflow {@link IridaWorkflow} that the files will be run on
+	 * @param ref {@link Long} id for a {@link ReferenceFile}
+	 * @param sequenceFiles {@link List} of {@link SequenceFile} to run on the workflow
+	 * @param sequenceFilePairs {@link List} of {@link SequenceFilePair} to run on the workflow
+	 * @param params {@link Map} of parameters specific for the pipeline
+	 */
+	private void submitSingleFileWorkflow(IridaWorkflow workflow, Long ref, List<SequenceFile> sequenceFiles,
+			List<SequenceFilePair> sequenceFilePairs, Map<String, String> params) {
+		// Single end reads
+		IridaWorkflowDescription description = workflow.getWorkflowDescription();
+		if (description.acceptsSingleSequenceFiles()) {
+			for (SequenceFile file : sequenceFiles) {
 				// Build the analysis submission
-				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(pipelineId);
+				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
+				builder.inputFilesSingle(ImmutableSet.of(file));
 
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
@@ -353,14 +392,26 @@ public class PipelineController extends BaseController {
 					builder.referenceFile(referenceFile);
 				}
 
-				// Add any single end sequencing files.
-				if (!sequenceFiles.isEmpty() && description.acceptsSingleSequenceFiles()) {
-					builder.inputFilesSingle(Sets.newHashSet(sequenceFiles));
+				if (description.acceptsParameters()) {
+					builder.inputParameters(params);
 				}
 
-				// Add any paired end sequencing files.
-				if (!sequenceFilePairs.isEmpty() && description.acceptsPairedSequenceFiles()) {
-					builder.inputFilesPaired(Sets.newHashSet(sequenceFilePairs));
+				// Create the submission
+				analysisSubmissionService.create(builder.build());
+			}
+		}
+
+		// Paired end reads
+		if (description.acceptsPairedSequenceFiles()) {
+			for (SequenceFilePair pair : sequenceFilePairs) {
+				// Build the analysis submission
+				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
+				builder.inputFilesPaired(ImmutableSet.of(pair));
+
+				// Add reference file
+				if (ref != null && description.requiresReference()) {
+					ReferenceFile referenceFile = referenceFileService.read(ref);
+					builder.referenceFile(referenceFile);
 				}
 
 				if (description.acceptsParameters()) {
@@ -368,72 +419,48 @@ public class PipelineController extends BaseController {
 				}
 
 				// Create the submission
-				AnalysisSubmission submission = analysisSubmissionService.create(builder.build());
-
-				// TODO [15-01-21] (Josh): This should be replaced by storing the values into the database.
-				SubmissionIds submissionIds = (SubmissionIds) session.getAttribute("submissionIds");
-				if (submissionIds == null) {
-					submissionIds = new SubmissionIds();
-				}
-				submissionIds.addId(submission.getId());
-				session.setAttribute("submissionIds", submissionIds);
-
-				result = ImmutableMap.of("result", "success", "submissionIds", ImmutableList.of(
-						submission.getId().toString()));
-			} else {
-				List<AnalysisSubmission> pipelineSubmissions = new ArrayList<>();
-
-				// Single end reads
-				if (description.acceptsSingleSequenceFiles()) {
-					for (SequenceFile file : sequenceFiles) {
-						// Build the analysis submission
-						AnalysisSubmission.Builder builder = AnalysisSubmission.builder(pipelineId);
-						builder.inputFilesSingle(ImmutableSet.of(file));
-
-						// Add reference file
-						if (ref != null && description.requiresReference()) {
-							ReferenceFile referenceFile = referenceFileService.read(ref);
-							builder.referenceFile(referenceFile);
-						}
-
-						if (description.acceptsParameters()) {
-							builder.inputParameters(params);
-						}
-
-						// Create the submission
-						pipelineSubmissions.add(analysisSubmissionService.create(builder.build()));
-					}
-				}
-
-				// Paired end reads
-				if (description.acceptsPairedSequenceFiles()) {
-					for (SequenceFilePair pair : sequenceFilePairs) {
-						// Build the analysis submission
-						AnalysisSubmission.Builder builder = AnalysisSubmission.builder(pipelineId);
-						builder.inputFilesPaired(ImmutableSet.of(pair));
-
-						// Add reference file
-						if (ref != null && description.requiresReference()) {
-							ReferenceFile referenceFile = referenceFileService.read(ref);
-							builder.referenceFile(referenceFile);
-						}
-
-						if (description.acceptsParameters()) {
-							builder.inputParameters(params);
-						}
-
-						// Create the submission
-						pipelineSubmissions.add(analysisSubmissionService.create(builder.build()));
-					}
-				}
-				result = ImmutableMap.of("result", "success", "submissionIds", pipelineSubmissions);
+				analysisSubmissionService.create(builder.build());
 			}
-
-		} catch (IridaWorkflowNotFoundException e) {
-			logger.error("Cannot file IridaWorkflow [" + pipelineId + "]", e);
-			result = ImmutableMap.of("pipelineError", messageSource.getMessage("pipeline.error.invalid-pipeline", null, locale));
 		}
-		return result;
+	}
+
+	/**
+	 * Submit {@link AnalysisSubmission} for workflows allowing multiple one {@link SequenceFile} or {@link
+	 * SequenceFilePair}
+	 *
+	 * @param workflow {@link IridaWorkflow} that the files will be run on
+	 * @param ref {@link Long} id for a {@link ReferenceFile}
+	 * @param sequenceFiles {@link List} of {@link SequenceFile} to run on the workflow
+	 * @param sequenceFilePairs {@link List} of {@link SequenceFilePair} to run on the workflow
+	 * @param params {@link Map} of parameters specific for the pipeline
+	 */
+	private void submitMultipleFileWorkflow(IridaWorkflow workflow, Long ref, List<SequenceFile> sequenceFiles,
+			List<SequenceFilePair> sequenceFilePairs, Map<String, String> params) {
+		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
+		IridaWorkflowDescription description = workflow.getWorkflowDescription();
+
+		// Add reference file
+		if (ref != null && description.requiresReference()) {
+			ReferenceFile referenceFile = referenceFileService.read(ref);
+			builder.referenceFile(referenceFile);
+		}
+
+		// Add any single end sequencing files.
+		if (!sequenceFiles.isEmpty() && description.acceptsSingleSequenceFiles()) {
+			builder.inputFilesSingle(Sets.newHashSet(sequenceFiles));
+		}
+
+		// Add any paired end sequencing files.
+		if (!sequenceFilePairs.isEmpty() && description.acceptsPairedSequenceFiles()) {
+			builder.inputFilesPaired(Sets.newHashSet(sequenceFilePairs));
+		}
+
+		if (description.acceptsParameters()) {
+			builder.inputParameters(params);
+		}
+
+		// Create the submission
+		analysisSubmissionService.create(builder.build());
 	}
 
 	@SuppressWarnings("unchecked")
