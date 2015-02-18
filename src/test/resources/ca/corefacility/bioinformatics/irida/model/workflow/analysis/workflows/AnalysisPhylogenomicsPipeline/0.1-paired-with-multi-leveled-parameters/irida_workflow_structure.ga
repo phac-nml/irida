@@ -1,0 +1,118 @@
+{
+    "a_galaxy_workflow": "true", 
+    "annotation": "", 
+    "format-version": "0.1", 
+    "name": "core_snp_phylogenomics_paired_test", 
+    "steps": {
+        "0": {
+            "annotation": "", 
+            "id": 0, 
+            "input_connections": {}, 
+            "inputs": [
+                {
+                    "description": "", 
+                    "name": "sequence_reads_paired"
+                }
+            ], 
+            "name": "Input dataset collection", 
+            "outputs": [], 
+            "position": {
+                "left": 200, 
+                "top": 200
+            }, 
+            "tool_errors": null, 
+            "tool_id": null, 
+            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads_paired\"}", 
+            "tool_version": null, 
+            "type": "data_collection_input", 
+            "user_outputs": []
+        }, 
+        "1": {
+            "annotation": "", 
+            "id": 1, 
+            "input_connections": {}, 
+            "inputs": [
+                {
+                    "description": "", 
+                    "name": "reference"
+                }
+            ], 
+            "name": "Input dataset", 
+            "outputs": [], 
+            "position": {
+                "left": 200, 
+                "top": 285
+            }, 
+            "tool_errors": null, 
+            "tool_id": null, 
+            "tool_state": "{\"name\": \"reference\"}", 
+            "tool_version": null, 
+            "type": "data_input", 
+            "user_outputs": []
+        }, 
+        "2": {
+            "annotation": "", 
+            "id": 2, 
+            "input_connections": {
+                "fasta": {
+                    "id": 1, 
+                    "output_name": "output"
+                }, 
+                "sequence_reads": {
+                    "id": 0, 
+                    "output_name": "output"
+                }
+            }, 
+            "inputs": [], 
+            "name": "core_pipeline_outputs_paired_with_multi_level_parameters", 
+            "outputs": [
+                {
+                    "name": "csv", 
+                    "type": "csv"
+                }, 
+                {
+                    "name": "output_tree", 
+                    "type": "txt"
+                }, 
+                {
+                    "name": "positions", 
+                    "type": "tabular"
+                }
+            ], 
+            "position": {
+                "left": 462, 
+                "top": 200
+            }, 
+            "post_job_actions": {
+                "RenameDatasetActioncsv": {
+                    "action_arguments": {
+                        "newname": "snpMatrix.tsv"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "csv"
+                }, 
+                "RenameDatasetActionoutput_tree": {
+                    "action_arguments": {
+                        "newname": "phylogeneticTree.txt"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "output_tree"
+                }, 
+                "RenameDatasetActionpositions": {
+                    "action_arguments": {
+                        "newname": "snpTable.tsv"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "positions"
+                }
+            }, 
+            "tool_errors": null, 
+            "tool_id": "core_pipeline_outputs_paired_with_parameters", 
+            "tool_state": "{\"__page__\": 0, \"sequence_reads\": \"null\", \"coverageMin\": \"\\\"15\\\"\", \"__rerun_remap_job_id__\": null, \"conditional\": \"{\\\"level2\\\": {\\\"parameter\\\": \\\"1\\\", \\\"level2_select\\\": \\\"all2\\\", \\\"__current_case__\\\": 0}, \\\"coverageMid\\\": \\\"15\\\", \\\"conditional_select\\\": \\\"all\\\", \\\"__current_case__\\\": 0}\", \"fasta\": \"null\", \"coverageMax\": \"\\\"15\\\"\"}", 
+            "tool_version": "0.1.0", 
+            "type": "tool", 
+            "user_outputs": []
+        }
+    }, 
+    "uuid": "8252e47c-4b67-40d9-bc7f-b49a6bdfa721"
+}
