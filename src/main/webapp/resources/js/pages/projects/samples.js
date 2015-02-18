@@ -199,7 +199,7 @@
         return "ids=" + id
       });
       var iframe = document.createElement("iframe");
-      iframe.src = TL.BASE_URL + "projects/" + id + "/download/files?" + mapped.join("&");
+      iframe.src = TL.BASE_URL + "projects/" + project.id + "/download/files?" + mapped.join("&");
       iframe.style.display = "none";
       document.body.appendChild(iframe);
     };
