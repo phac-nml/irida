@@ -122,6 +122,7 @@ public class AbstractPage {
 
 	public void clearCart() {
 		driver.findElement(By.id("clear-cart-btn")).click();
+		waitForTime(250);
 	}
 
 	public void removeProjectFromCart(Long projectId) {
