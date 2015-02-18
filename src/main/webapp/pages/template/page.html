@@ -64,7 +64,8 @@
 							<div class="pull-right">
 								<span class="badge">{{ p.samples.length }}</span>
 								<button class="btn-icon" ng-click="cartCtrl.removeProject(p.id)"
-								        ng-attr-id="{{'remove-project-'+p.id}}">
+								        ng-attr-id="{{'remove-project-'+p.id}}"
+								        th:attr="tooltip=#{cart.tooltip.removeProject}">
 									<i class="fa fa-remove remove-icon"></i>
 								</button>
 							</div>
@@ -72,7 +73,9 @@
 						<ul collapse="cart.collapsed[p.id]">
 							<li ng-repeat="s in p.samples">
 								<span>{{ s.label }}</span>
-								<button class="btn-icon pull-right remove-sample-btn" ng-click="cartCtrl.removeSample(p.id,s.id)">
+								<button class="btn-icon pull-right remove-sample-btn"
+								        ng-click="cartCtrl.removeSample(p.id,s.id)"
+								        th:attr="tooltip=#{cart.tooltip.removeSample}">
 									<i class="fa fa-remove remove-icon"></i>
 								</button>
 							</li>

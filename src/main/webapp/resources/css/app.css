@@ -7993,11 +7993,16 @@ html, body {
 
 /* line 83, ../../styles/components/_cart.scss */
 .remove-icon {
-  color: #939393;
+  color: #dfdfdf;
   cursor: pointer;
 }
 
 /* line 88, ../../styles/components/_cart.scss */
+.remove-icon:hover {
+  color: #939393;
+}
+
+/* line 92, ../../styles/components/_cart.scss */
 .cart-project-header {
   cursor: pointer;
 }

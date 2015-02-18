@@ -81,8 +81,12 @@
 }
 
 .remove-icon {
-  color: $irida-colour-grey-dark;
+  color: $irida-colour-grey;
   cursor: pointer;
+}
+
+.remove-icon:hover {
+  color: $irida-colour-grey-dark;
 }
 
 .cart-project-header{
