@@ -71,7 +71,7 @@ public class CartControllerTest {
 	}
 
 	@Test
-	public void testRemoveProjectSample() {
+	public void testRemoveProjectSamples() {
 		Map<Project, Set<Sample>> selected = new HashMap<>();
 		selected.put(project, samples);
 		controller.setSelected(selected);
@@ -95,6 +95,24 @@ public class CartControllerTest {
 		for (Sample s : selected.get(projectKey)) {
 			assertFalse(subIds.contains(s.getId()));
 		}
+	}
+
+	@Test
+	public void testRemoveProjectSample() {
+		Map<Project, Set<Sample>> selected = new HashMap<>();
+		selected.put(project, samples);
+		controller.setSelected(selected);
+
+		Sample sample = samples.iterator().next();
+
+		Map<String, Object> removeProjectSample = controller.removeProjectSample(projectId, sample.getId());
+
+		assertTrue((boolean) removeProjectSample.get("success"));
+
+		selected = controller.getSelected();
+		assertEquals(1, selected.keySet().size());
+		assertFalse(selected.get(project).contains(sample));
+
 	}
 
 	@Test
