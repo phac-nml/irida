@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -328,38 +329,48 @@ public class PipelineController extends BaseController {
 						.of("error", messageSource.getMessage("workflow.no-name-provided", null, locale));
 			}
 
+
 			// Get a list of the files to submit
 			List<SequenceFile> sequenceFiles = new ArrayList<>();
 			List<SequenceFilePair> sequenceFilePairs = new ArrayList<>();
 
 			if (single != null) {
 				sequenceFiles = (List<SequenceFile>) sequenceFileService.readMultiple(single);
+				// Check the single files for duplicates in a sample, throws SampleAnalysisDuplicateException
+				sequenceFileService.getSequenceFileSingleSamples(Sets.newHashSet(sequenceFiles));
 			}
 
 			if (paired != null) {
 				sequenceFilePairs = (List<SequenceFilePair>) sequenceFilePairService.readMultiple(paired);
+				// Check the pair files for duplicates in a sample, throws SampleAnalysisDuplicateException
+				sequenceFilePairService.getSequenceFilePairedSamples(Sets.newHashSet(sequenceFilePairs));
 			}
 
 			// Get the pipeline parameters
-			Map<String, String> params = extractPipelineParameters(parameters.get("paras"));
-			if (params.containsKey("parameterError")) {
-				return ImmutableMap
-						.of("parameterError", messageSource.getMessage("pipeline.parameters.error", null, locale));
+			Map<String, String> params = null;
+			if (parameters.containsKey("paras")) {
+				params = extractPipelineParameters(parameters.get("paras"));
+				if (params.containsKey("parameterError")) {
+					return ImmutableMap
+							.of("parameterError", messageSource.getMessage("pipeline.parameters.error", null, locale));
+				}
 			}
 
 			// TODO [15-02-17] (Josh): Replace this once the description has a setting for multiple files.
 			String type = description.getAnalysisType().toString();
 			if (type.equals("phylogenomics")) {
-				submitMultipleFileWorkflow(flow, ref, sequenceFiles, sequenceFilePairs, params);
+				submitMultipleFileWorkflow(flow, ref, sequenceFiles, sequenceFilePairs, params, name);
 
 			} else {
-				submitSingleSampleWorkflow(flow, ref, sequenceFiles, sequenceFilePairs, params);
+				submitSingleSampleWorkflow(flow, ref, sequenceFiles, sequenceFilePairs, params, name);
 			}
 
 		} catch (IridaWorkflowNotFoundException e) {
 			logger.error("Cannot file IridaWorkflow [" + pipelineId + "]", e);
 			result = ImmutableMap
 					.of("pipelineError", messageSource.getMessage("pipeline.error.invalid-pipeline", null, locale));
+		} catch (SampleAnalysisDuplicateException e) {
+			logger.error("Multiple files for Sample found", e);
 		}
 
 		return result;
@@ -374,24 +385,29 @@ public class PipelineController extends BaseController {
 	 * @param sequenceFiles {@link List} of {@link SequenceFile} to run on the workflow
 	 * @param sequenceFilePairs {@link List} of {@link SequenceFilePair} to run on the workflow
 	 * @param params {@link Map} of parameters specific for the pipeline
+	 * @param name {@link String} the name for the analysis
 	 */
 	private void submitSingleSampleWorkflow(IridaWorkflow workflow, Long ref, List<SequenceFile> sequenceFiles,
-			List<SequenceFilePair> sequenceFilePairs, Map<String, String> params) {
+			List<SequenceFilePair> sequenceFilePairs, Map<String, String> params, String name) {
 		// Single end reads
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
+		int count = 0;
 		if (description.acceptsSingleSequenceFiles()) {
 			for (SequenceFile file : sequenceFiles) {
 				// Build the analysis submission
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
+				builder.name(name + "_" + ++count);
 				builder.inputFilesSingle(ImmutableSet.of(file));
 
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
+					// Note: This cannot be empty if through the UI if the pipeline required a reference file.
 					ReferenceFile referenceFile = referenceFileService.read(ref);
 					builder.referenceFile(referenceFile);
 				}
 
-				if (description.acceptsParameters()) {
+				if (params != null && description.acceptsParameters()) {
+					// Note: This cannot be empty if through the UI if the pipeline required params.
 					builder.inputParameters(params);
 				}
 
@@ -405,6 +421,7 @@ public class PipelineController extends BaseController {
 			for (SequenceFilePair pair : sequenceFilePairs) {
 				// Build the analysis submission
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
+				builder.name(name + "_" + ++count);
 				builder.inputFilesPaired(ImmutableSet.of(pair));
 
 				// Add reference file
@@ -432,10 +449,12 @@ public class PipelineController extends BaseController {
 	 * @param sequenceFiles {@link List} of {@link SequenceFile} to run on the workflow
 	 * @param sequenceFilePairs {@link List} of {@link SequenceFilePair} to run on the workflow
 	 * @param params {@link Map} of parameters specific for the pipeline
+	 * @param name {@link String} the name for the analysis
 	 */
 	private void submitMultipleFileWorkflow(IridaWorkflow workflow, Long ref, List<SequenceFile> sequenceFiles,
-			List<SequenceFilePair> sequenceFilePairs, Map<String, String> params) {
+			List<SequenceFilePair> sequenceFilePairs, Map<String, String> params, String name) {
 		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
+		builder.name(name);
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
 
 		// Add reference file
