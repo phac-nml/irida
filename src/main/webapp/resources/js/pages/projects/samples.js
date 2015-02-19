@@ -199,7 +199,7 @@
         return "ids=" + id
       });
       var iframe = document.createElement("iframe");
-      iframe.src = TL.BASE_URL + "projects/" + id + "/download/files?" + mapped.join("&");
+      iframe.src = TL.BASE_URL + "projects/" + project.id + "/download/files?" + mapped.join("&");
       iframe.style.display = "none";
       document.body.appendChild(iframe);
     };
@@ -227,7 +227,7 @@
      */
     svc.getSamples = function () {
       var selectedKeys = storage.getKeys();
-      $rootScope.$broadcast('SELECTED_COUNT', {count: selectedKeys.length});
+      updateSelectedCount();
 
       _.each(svc.samples, function (s) {
         if (_.contains(selectedKeys, s.id + "")) {
@@ -303,7 +303,13 @@
     }
 
     function updateSelectedCount() {
-      $rootScope.$broadcast('SELECTED_COUNT', {count: storage.getKeys().length});
+      var message = {count: 0, LOCAL: 0, ASSOCIATED: 0};
+      _.forEach(storage.getSamples(), function (s) {
+        message.count++;
+        message[s.sampleType]++;
+      });
+
+      $rootScope.$broadcast('SELECTED_COUNT', message);
     }
 
 
@@ -509,6 +515,7 @@
     "use strict";
     var vm = this;
     vm.count = 0;
+    vm.localSelected = true;
 
     vm.selection = {
       isopen    : false,
@@ -538,11 +545,13 @@
         SamplesService.downloadFiles();
       },
       linker  : function linker() {
-        vm.export.open = false;
-        $modal.open({
-          templateUrl: TL.BASE_URL + 'projects/templates/samples/linker',
-          controller : 'LinkerCtrl as lCtrl'
-        });
+        if (vm.localSelected) {
+          vm.export.open = false;
+          $modal.open({
+            templateUrl: TL.BASE_URL + 'projects/templates/samples/linker',
+            controller : 'LinkerCtrl as lCtrl'
+          });
+        }
       },
       galaxy  : function galaxy() {
         vm.export.open = false;
@@ -554,7 +563,7 @@
     };
 
     vm.merge = function () {
-      if (vm.count > 1) {
+      if (vm.localSelected && vm.count > 1) {
         $modal.open({
           templateUrl: TL.BASE_URL + 'projects/templates/merge',
           controller : 'MergeCtrl as mergeCtrl',
@@ -568,22 +577,38 @@
     };
 
     vm.openModal = function (type) {
-      $modal.open({
-        templateUrl: TL.BASE_URL + 'projects/templates/' + type,
-        controller : 'CopyMoveCtrl as cmCtrl',
-        resolve    : {
-          samples: function () {
-            return SamplesService.getSelectedSampleNames();
-          },
-          type   : function () {
-            return type;
+      if (type === 'copy' || vm.localSelected) {
+        $modal.open({
+          templateUrl: TL.BASE_URL + 'projects/templates/' + type,
+          controller : 'CopyMoveCtrl as cmCtrl',
+          resolve    : {
+            samples: function () {
+              return SamplesService.getSelectedSampleNames();
+            },
+            type   : function () {
+              return type;
+            }
           }
-        }
-      });
+        });
+      }
     };
+
+    vm.showTooltip = function () {
+      if (!vm.localSelected) {
+        return associatedSelectedTooltip;
+      }
+      return "";
+    }
 
     $scope.$on('SELECTED_COUNT', function (e, a) {
       vm.count = a.count;
+
+      if (a["ASSOCIATED"] > 0) {
+        vm.localSelected = false;
+      }
+      else {
+        vm.localSelected = true;
+      }
     });
   }
 
@@ -687,11 +712,11 @@
       $modalInstance.close();
     };
 
-    vm.areAllSelected = function(){
-        if(Object.keys(vm.samples).length == SamplesService.samples.length){
-          return true;
-        }
-        return false;
+    vm.areAllSelected = function () {
+      if (Object.keys(vm.samples).length == SamplesService.samples.length) {
+        return true;
+      }
+      return false;
     }
   }
 
@@ -790,7 +815,7 @@
       cart.add(samples);
     };
 
-    vm.clear = function(){
+    vm.clear = function () {
       cart.clear();
     };
   }
