@@ -354,7 +354,7 @@ public class PipelineController extends BaseController {
 				submitMultipleFileWorkflow(flow, ref, sequenceFiles, sequenceFilePairs, params);
 
 			} else {
-				submitSingleFileWorkflow(flow, ref, sequenceFiles, sequenceFilePairs, params);
+				submitSingleSampleWorkflow(flow, ref, sequenceFiles, sequenceFilePairs, params);
 			}
 
 		} catch (IridaWorkflowNotFoundException e) {
@@ -376,7 +376,7 @@ public class PipelineController extends BaseController {
 	 * @param sequenceFilePairs {@link List} of {@link SequenceFilePair} to run on the workflow
 	 * @param params {@link Map} of parameters specific for the pipeline
 	 */
-	private void submitSingleFileWorkflow(IridaWorkflow workflow, Long ref, List<SequenceFile> sequenceFiles,
+	private void submitSingleSampleWorkflow(IridaWorkflow workflow, Long ref, List<SequenceFile> sequenceFiles,
 			List<SequenceFilePair> sequenceFilePairs, Map<String, String> params) {
 		// Single end reads
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
