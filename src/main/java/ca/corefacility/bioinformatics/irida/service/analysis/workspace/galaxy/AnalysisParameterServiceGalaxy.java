@@ -63,6 +63,8 @@ public class AnalysisParameterServiceGalaxy implements AnalysisParameterService<
 			}
 		} else {
 			List<IridaWorkflowParameter> iridaParameters = iridaWorkflow.getWorkflowDescription().getParameters();
+			ParameterBuilderGalaxy parameterBuilder = new ParameterBuilderGalaxy();
+			
 			for (IridaWorkflowParameter iridaParameter : iridaParameters) {
 				String parameterName = iridaParameter.getName();
 				String value = parameters.get(parameterName);
@@ -81,13 +83,16 @@ public class AnalysisParameterServiceGalaxy implements AnalysisParameterService<
 					for (IridaToolParameter iridaToolParameter : iridaParameter.getToolParameters()) {
 						String toolId = iridaToolParameter.getToolId();
 						String galaxyParameterName = iridaToolParameter.getParameterName();
-						ParameterBuilderGalaxy parameterBuilder = new ParameterBuilderGalaxy(galaxyParameterName);
 
+						parameterBuilder.addParameter(toolId, galaxyParameterName, value);
 						logger.debug("Setting parameter iridaName=" + parameterName + ", galaxyToolId=" + toolId
 								+ ", galaxyParameterName=" + galaxyParameterName + ", value=" + value);
-						inputs.setToolParameter(toolId, parameterBuilder.getStartName(), parameterBuilder.buildForValue(value));
 					}
 				}
+			}
+			
+			for (ParameterBuilderGalaxy.ParameterId parameterId : parameterBuilder.getParameterIds()) {
+				inputs.setToolParameter(parameterId.getToolId(), parameterId.getStartName(), parameterBuilder.getMappingForParameterId(parameterId));
 			}
 		}
 

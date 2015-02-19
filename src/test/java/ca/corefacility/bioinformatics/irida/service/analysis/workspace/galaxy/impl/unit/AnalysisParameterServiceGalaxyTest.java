@@ -19,7 +19,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.WorkflowInputsGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.ParameterBuilderGalaxy;
 
 import com.github.jmchilton.blend4j.galaxy.beans.WorkflowInputs;
 import com.google.common.collect.ImmutableMap;
@@ -233,54 +232,5 @@ public class AnalysisParameterServiceGalaxyTest {
 		
 		analysisParameterService.prepareAnalysisParameters(ImmutableMap.of("name", "value"),
 				iridaWorkflow);
-	}
-	
-	/**
-	 * Tests out failing to build a parameter builder due to null parameters.
-	 */
-	@Test(expected = NullPointerException.class)
-	public void testParameterBuilderGalaxyFailNullParameter() {
-		new ParameterBuilderGalaxy(null);
-	}
-
-	/**
-	 * Tests out failing to build a parameter builder due to no parameters
-	 */
-	@Test(expected = IllegalArgumentException.class)
-	public void testParameterBuilderGalaxyFailNoParameter() {
-		new ParameterBuilderGalaxy("");
-	}
-
-	/**
-	 * Tests out building a data structure with only one parameter mapping for
-	 * Galaxy.
-	 */
-	@Test
-	public void testParameterBuilderGalaxySuccessOneParameter() {
-		ParameterBuilderGalaxy parameterBuilder = new ParameterBuilderGalaxy("parameter");
-		assertEquals("parameter", parameterBuilder.getStartName());
-		assertEquals("value", parameterBuilder.buildForValue("value"));
-	}
-
-	/**
-	 * Tests out building a data structure with only a second level for
-	 * parameter mapping for Galaxy.
-	 */
-	@Test
-	public void testParameterBuilderGalaxySuccessTwoParameters() {
-		ParameterBuilderGalaxy parameterBuilder = new ParameterBuilderGalaxy("level1.parameter");
-		assertEquals("level1", parameterBuilder.getStartName());
-		assertEquals(ImmutableMap.of("parameter", "value"), parameterBuilder.buildForValue("value"));
-	}
-
-	/**
-	 * Tests out building a data structure with a third level for a parameter.
-	 */
-	@Test
-	public void testParameterBuilderGalaxySuccessThreeParameters() {
-		ParameterBuilderGalaxy parameterBuilder = new ParameterBuilderGalaxy("level1.level2.parameter");
-		assertEquals("level1", parameterBuilder.getStartName());
-		assertEquals(ImmutableMap.of("level2", ImmutableMap.of("parameter", "value")),
-				parameterBuilder.buildForValue("value"));
 	}
 }
