@@ -50,19 +50,35 @@
 				<div class="cart-control-buttons">
 					<button class="btn btn-default" ng-click="cart.show=false" th:text="#{cart.btn.close}">Close
 					</button>
-					<button id="clear-cart-btn" class="btn btn-warning pull-right" ng-click="cartCtrl.clear()" th:text="#{cart.btn.clear}">
+					<button id="clear-cart-btn" class="btn btn-warning pull-right" ng-click="cartCtrl.clear()"
+					        th:text="#{cart.btn.clear}">
 						_Clear_
 					</button>
 				</div>
 				<ul id="cart-project-list" class="list-group">
-					<li class="list-group-item" ng-repeat="p in cart.projects" ng-init="cart.collapsed[p.id]=true"
-					    ng-click="cart.collapsed[p.id] = !cart.collapsed[p.id]">
-						<span class="fa fa-fw"
-						      ng-class="cart.collapsed[p.id] ? 'fa-caret-right' : 'fa-caret-down'"></span>
-						{{ p.label }}
-						<span class="badge pull-right">{{ p.samples.length }}</span>
+					<li class="list-group-item" ng-repeat="p in cart.projects" ng-attr-id="{{'cart-project-'+p.id}}">
+						<div class="cart-project-header" ng-click="cart.collapsed[p.id] = !cart.collapsed[p.id]">
+							<span class="fa fa-fw"
+							      ng-class="cart.collapsed[p.id] ? 'fa-caret-right' : 'fa-caret-down'"></span>
+							<span>{{ p.label }}</span>
+							<div class="pull-right">
+								<span class="badge">{{ p.samples.length }}</span>
+								<button class="btn-icon" ng-click="cartCtrl.removeProject(p.id)"
+								        ng-attr-id="{{'remove-project-'+p.id}}"
+								        th:title="#{cart.tooltip.removeProject}">
+									<i class="fa fa-remove remove-icon"></i>
+								</button>
+							</div>
+						</div>
 						<ul collapse="cart.collapsed[p.id]">
-							<li ng-repeat="s in p.samples">{{ s.label }}</li>
+							<li ng-repeat="s in p.samples">
+								<span>{{ s.label }}</span>
+								<button class="btn-icon pull-right remove-sample-btn"
+								        ng-click="cartCtrl.removeSample(p.id,s.id)"
+								        th:title="#{cart.tooltip.removeSample}">
+									<i class="fa fa-remove remove-icon"></i>
+								</button>
+							</li>
 						</ul>
 					</li>
 				</ul>

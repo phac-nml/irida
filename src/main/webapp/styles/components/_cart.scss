@@ -1,3 +1,5 @@
+@import "../helpers/variables";
+
 .st-container,
 .st-pusher,
 .st-content {
@@ -33,7 +35,7 @@
   right: 0;
   width: 0;
   height: 0;
-  background: rgba(0,0,0,0.2);
+  background: rgba(0, 0, 0, 0.2);
   content: '';
   opacity: 0;
   -webkit-transition: opacity 0.5s, width 0.1s 0.5s, height 0.1s 0.5s;
@@ -77,4 +79,17 @@
 
 .cart-control-buttons {
   margin-bottom: 10px;
+}
+
+.remove-icon {
+  color: $irida-colour-grey;
+  cursor: pointer;
+}
+
+.btn-icon:hover .remove-icon {
+  color: $irida-colour-grey-dark;
+}
+
+.cart-project-header {
+  cursor: pointer;
 }

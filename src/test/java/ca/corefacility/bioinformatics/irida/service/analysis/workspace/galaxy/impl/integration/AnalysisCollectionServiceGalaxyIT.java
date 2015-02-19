@@ -41,6 +41,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.Data
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisCollectionServiceGalaxy;
 
 import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
@@ -84,6 +86,12 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 	@Autowired
 	private SampleRepository sampleRepository;
+
+	@Autowired
+	private SequenceFileService sequenceFileService;
+
+	@Autowired
+	private SequenceFilePairService sequenceFilePairService;
 
 	private Path sequenceFilePathA;
 	private Path sequenceFilePathAInvalidName;
@@ -164,7 +172,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Sample sample = sampleRepository.findOne(1L);
 		SequenceFile sequenceFile = sequenceFiles.iterator().next();
 
-		Map<Sample, SequenceFile> sampleSequenceFiles = analysisCollectionServiceGalaxy
+		Map<Sample, SequenceFile> sampleSequenceFiles = sequenceFileService
 				.getSequenceFileSingleSamples(sequenceFiles);
 		assertEquals("sampleSequenceFiles map has size != 1", 1, sampleSequenceFiles.size());
 		assertEquals("sampleSequenceFiles map does not have sequenceFile " + sequenceFile + " corresponding to sample "
@@ -182,7 +190,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Set<SequenceFile> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathA, sequenceFilePath2A));
 
-		analysisCollectionServiceGalaxy.getSequenceFileSingleSamples(sequenceFiles);
+		sequenceFileService.getSequenceFileSingleSamples(sequenceFiles);
 	}
 
 	/**
@@ -198,7 +206,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Sample sample = sampleRepository.findOne(1L);
 		SequenceFilePair sequenceFilePair = sequenceFiles.iterator().next();
 
-		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = analysisCollectionServiceGalaxy
+		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = sequenceFilePairService
 				.getSequenceFilePairedSamples(sequenceFiles);
 		assertEquals("sampleSequenceFiles map has size != 1", 1, sampleSequenceFilePairs.size());
 		assertEquals("sampleSequenceFiles map does not have sequenceFilePair " + sequenceFilePair
@@ -215,7 +223,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 	public void testGetSequenceFilePairSamplesFail() throws SampleAnalysisDuplicateException {
 		Set<SequenceFilePair> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, pairSequenceFiles1AB, pairSequenceFiles2AB));
-		analysisCollectionServiceGalaxy.getSequenceFilePairedSamples(sequenceFiles);
+		sequenceFilePairService.getSequenceFilePairedSamples(sequenceFiles);
 	}
 
 	/**
@@ -240,7 +248,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		Set<SequenceFile> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathA));
-		Map<Sample, SequenceFile> sampleSequenceFiles = analysisCollectionServiceGalaxy
+		Map<Sample, SequenceFile> sampleSequenceFiles = sequenceFileService
 				.getSequenceFileSingleSamples(sequenceFiles);
 		Sample sample1 = sampleRepository.findOne(1L);
 
@@ -291,7 +299,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		Set<SequenceFilePair> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, pairSequenceFiles1A, pairSequenceFiles2A));
-		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = analysisCollectionServiceGalaxy
+		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = sequenceFilePairService
 				.getSequenceFilePairedSamples(sequenceFiles);
 		Sample sample1 = sampleRepository.findOne(1L);
 
@@ -379,7 +387,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 
 		Set<SequenceFilePair> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, pairSequenceFiles1AInvalidName, pairSequenceFiles2A));
-		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = analysisCollectionServiceGalaxy
+		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = sequenceFilePairService
 				.getSequenceFilePairedSamples(sequenceFiles);
 
 		analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilePairs, createdHistory,
