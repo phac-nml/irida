@@ -1,3 +1,5 @@
+@import "../helpers/variables";
+
 @keyframes move-up-down {
   0% {
     transform: translate3d(0, -65px, 0px);
@@ -10,4 +12,14 @@
   100% {
     transform: translate3d(0, -65px, 0px);
   }
+}
+
+@-webkit-keyframes shake {
+  from { background-color: $irida-colour-info; -webkit-box-shadow: 0 0 9px #333; }
+  50% { background-color: lighten($irida-colour-info, 10); -webkit-box-shadow: 0 0 18px #ddd; }
+  to { background-color: $irida-colour-info; -webkit-box-shadow: 0 0 9px #333; }
+}
+
+.shake {
+  animation: shake .5s .2s 2;
 }

@@ -1,9 +1,10 @@
 (function () {
     "use strict";
 
-    function CartController($scope, cart) {
+    function CartController($scope, $timeout, cart) {
         "use strict";
-        var vm = this;
+        var vm = this,
+          initialized = false;
         vm.show = false;
         vm.projects = [];
         vm.count = 0;
@@ -20,7 +21,15 @@
                   vm.count = 0;
                   _.each(data, function(p) {
                       vm.count += p.samples.length;
-                  })
+                  });
+                if (initialized) {
+                  vm.animation = 'shake';
+                  $timeout(function () {
+                    vm.animation = '';
+                  }, 3000);
+                } else {
+                  initialized = true;
+                }
               })
         }
 
@@ -47,7 +56,7 @@
             templateUrl : "/cart.html",
             replace: true,
             controllerAs: "cart",
-            controller  : ['$scope', 'CartService', CartController]
+            controller  : ['$scope', '$timeout', 'CartService', CartController]
         }
     }
 
