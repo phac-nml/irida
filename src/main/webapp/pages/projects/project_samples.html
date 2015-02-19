@@ -70,7 +70,8 @@
 			<div class="btn-toolbar">
 				<!-- Sample Selection (Page, All, None) -->
 				<div class="btn-group" dropdown="" is-open="subnav.selection.isopen">
-					<button id="selectBtn" type="button" class="btn btn-default btn-sm dropdown-toggle" dropdown-toggle="">
+					<button id="selectBtn" type="button" class="btn btn-default btn-sm dropdown-toggle"
+					        dropdown-toggle="">
                         <span ng-controller="SelectedCountCtrl as countCtrl" id="selected-count"
                               class="label label-default" ng-bind="countCtrl.count">0</span>
 						<span th:text="#{lists.select-title}">Select</span>
@@ -99,7 +100,8 @@
 
 				<div ng-controller="SampleDisplayCtrl as displayCtrl" class="btn-group drop-check" dropdown=""
 				     is-open="subnav.display.isopen">
-					<button id="displayBtn" type="button" class="btn btn-default btn-sm dropdown-toggle" dropdown-toggle="">
+					<button id="displayBtn" type="button" class="btn btn-default btn-sm dropdown-toggle"
+					        dropdown-toggle="">
 						<span th:text="#{project.samples.display.title}">_Display_</span>
 						&nbsp;
 						<span class="caret"></span>
@@ -131,7 +133,9 @@
 						<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" role="menu">
-						<li ng-class="{disabled:subnav.count&lt;2 || ! subnav.localSelected}">
+						<li ng-class="{disabled:subnav.count&lt;2 || ! subnav.localSelected}"
+						    ng-attr-tooltip="{{subnav.showTooltip()}}" tooltip-append-to-body="true"
+						    tooltip-placement="right">
 							<a id="mergeBtn" href="#" ng-click="subnav.merge()">
 								<span class="fa fa-fw fa-compress"></span>
 								&nbsp;
@@ -145,7 +149,9 @@
 								<span th:text="#{project.samples.nav.copy}">_COPY_</span>
 							</a>
 						</li>
-						<li th:if="${isOwner} or ${isAdmin}" ng-class="{disabled: ! subnav.localSelected}">
+						<li class="local-only" th:if="${isOwner} or ${isAdmin}"
+						    ng-class="{disabled: ! subnav.localSelected}" ng-attr-tooltip="{{subnav.showTooltip()}}"
+						    tooltip-append-to-body="true" tooltip-placement="right">
 							<a id="moveBtn" href="#" ng-click="subnav.openModal('move')">
 								<span class="fa fa-truck fa-fw"></span>
 								<span th:text="#{project.samples.nav.move}"></span>
@@ -169,7 +175,9 @@
 								<span th:text="#{form.download}">_Download</span>
 							</a>
 						</li>
-						<li th:if="${linkerAvailable}" ng-class="{disabled: ! subnav.localSelected}">
+						<li th:if="${linkerAvailable}" ng-class="{disabled: ! subnav.localSelected}"
+						    ng-attr-tooltip="{{subnav.showTooltip()}}" tooltip-append-to-body="true"
+						    tooltip-placement="right">
 							<a id="exportLinkerBtn" href="#" ng-click="subnav.export.linker()">
 								<span class="fa fa-fw fa-terminal"></span>
 								&nbsp;
@@ -285,6 +293,9 @@
 	<script th:src="@{/resources/js/pages/projects/samples.js}" src="/resources/js/pages/projects/samples.js"></script>
 	<script th:src="@{/resources/js/vendor/dropdowns-enhancement.js}"
 	        src="/resources/js/vendor/dropdowns-enhancement.js"></script>
+	<script th:inline="javascript">
+		var associatedSelectedTooltip = /*[[#{project.samples.associated-selected-error}]]*/ "_Unavailable_";
+	</script>
 </th:block>
 </body>
 </html>

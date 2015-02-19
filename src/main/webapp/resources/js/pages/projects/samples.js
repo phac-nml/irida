@@ -577,7 +577,7 @@
     };
 
     vm.openModal = function (type) {
-      if(type === 'copy' || vm.localSelected) {
+      if (type === 'copy' || vm.localSelected) {
         $modal.open({
           templateUrl: TL.BASE_URL + 'projects/templates/' + type,
           controller : 'CopyMoveCtrl as cmCtrl',
@@ -592,6 +592,13 @@
         });
       }
     };
+
+    vm.showTooltip = function () {
+      if (!vm.localSelected) {
+        return associatedSelectedTooltip;
+      }
+      return "";
+    }
 
     $scope.$on('SELECTED_COUNT', function (e, a) {
       vm.count = a.count;
