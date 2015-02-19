@@ -127,6 +127,7 @@ public class AbstractPage {
 
 	public void removeProjectFromCart(Long projectId) {
 		driver.findElement(By.id("remove-project-" + projectId)).click();
+		waitForTime(250);
 	}
 
 	public void removeFirstSampleFromProjectInCart(Long projectId) {
