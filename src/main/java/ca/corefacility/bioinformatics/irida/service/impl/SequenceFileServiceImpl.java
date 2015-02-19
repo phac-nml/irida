@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.FileProcessorTimeoutException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
@@ -246,6 +248,31 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 		}
 
 		throw new EntityNotFoundException("Sequence file " + identifier + " does not exist in sample " + sample);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Map<Sample, SequenceFile> getSequenceFileSingleSamples(Set<SequenceFile> sequenceFiles)
+			throws SampleAnalysisDuplicateException {
+		Map<Sample, SequenceFile> sampleSequenceFiles = new HashMap<>();
+
+		for (SequenceFile file : sequenceFiles) {
+			Join<Sample, SequenceFile> sampleSequenceFile = ssfRepository
+					.getSampleForSequenceFile(file);
+			Sample sample = sampleSequenceFile.getSubject();
+			SequenceFile sequenceFile = sampleSequenceFile.getObject();
+
+			if (sampleSequenceFiles.containsKey(sample)) {
+				SequenceFile previousFile = sampleSequenceFiles.get(sample);
+				throw new SampleAnalysisDuplicateException("Sequence files " + sequenceFile + ", " + previousFile
+						+ " both have the same sample " + sample);
+			} else {
+				sampleSequenceFiles.put(sample, sequenceFile);
+			}
+		}
+
+		return sampleSequenceFiles;
 	}
 
 	@Override

@@ -45,6 +45,8 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistori
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
@@ -68,6 +70,9 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	private GalaxyWorkflowService galaxyWorkflowService;
 
 	private SequenceFileRepository sequenceFileRepository;
+	private SequenceFileService sequenceFileService;
+	private SequenceFilePairService sequenceFilePairService;
+
 	private GalaxyLibraryBuilder libraryBuilder;
 
 	private GalaxyHistoriesService galaxyHistoriesService;
@@ -89,6 +94,9 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 *            Histories.
 	 * @param galaxyWorkflowService
 	 *            A GalaxyWorkflowService for interacting with Galaxy workflows.
+	 * @param sequenceFileRepository {@link SequenceFileRepository} for getting {@link SequenceFile}
+	 * @param sequenceFileService {@link SequenceFileService}
+	 * @param sequenceFilePairService {@link SequenceFilePairService}
 	 * @param libraryBuilder
 	 *            An object for building libraries in Galaxy.
 	 * @param iridaWorkflowsService
@@ -101,12 +109,16 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 */
 	public AnalysisWorkspaceServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService,
-			SequenceFileRepository sequenceFileRepository, GalaxyLibraryBuilder libraryBuilder,
+			SequenceFileRepository sequenceFileRepository, SequenceFileService sequenceFileService,
+			SequenceFilePairService sequenceFilePairService,
+			GalaxyLibraryBuilder libraryBuilder,
 			IridaWorkflowsService iridaWorkflowsService, AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy,
 			AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy, AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.sequenceFileRepository = sequenceFileRepository;
+		this.sequenceFileService = sequenceFileService;
+		this.sequenceFilePairService = sequenceFilePairService;
 		this.libraryBuilder = libraryBuilder;
 		this.iridaWorkflowsService = iridaWorkflowsService;
 		this.analysisCollectionServiceGalaxy = analysisCollectionServiceGalaxy;
@@ -196,9 +208,9 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		History workflowHistory = galaxyHistoriesService.findById(analysisSubmission.getRemoteAnalysisId());
 		Library workflowLibrary = libraryBuilder.buildEmptyLibrary(new GalaxyProjectName(temporaryLibraryName));
 
-		Map<Sample, SequenceFile> sampleSequenceFilesSingle = analysisCollectionServiceGalaxy.getSequenceFileSingleSamples(analysisSubmission
+		Map<Sample, SequenceFile> sampleSequenceFilesSingle = sequenceFileService.getSequenceFileSingleSamples(analysisSubmission
 				.getSingleInputFiles());
-		Map<Sample, SequenceFilePair> sampleSequenceFilesPaired = analysisCollectionServiceGalaxy.getSequenceFilePairedSamples(analysisSubmission
+		Map<Sample, SequenceFilePair> sampleSequenceFilesPaired = sequenceFilePairService.getSequenceFilePairedSamples(analysisSubmission
 				.getPairedInputFiles());
 		if (samplesInCommon(sampleSequenceFilesSingle, sampleSequenceFilesPaired)) {
 			throw new SampleAnalysisDuplicateException("Single and paired input files share a common sample for submission "
