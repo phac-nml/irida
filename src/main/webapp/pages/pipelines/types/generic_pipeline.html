@@ -18,8 +18,8 @@
 			<div class="alert alert-danger col-md-12">
 				<b th:text="#{pipeline.error.no-reference-heading}">Reference File Required</b><br/><br/>
 				<th:block th:if="${#lists.size(addRefProjects) > 0}">
-					<p id="has-rights" th:text="#{pipeline.error.no-reference.link-heading}">Projects You can
-						Upload a Reference File to:</p>
+					<p id="has-rights" th:text="#{pipeline.error.no-reference.link-heading}">Projects You can Upload a
+						Reference File to:</p>
 					<ul class="nav nav-pills nav-stacked col-md-3">
 						<li th:each="project : ${addRefProjects}">
 							<a class="add-ref-file" th:href="@{/projects/{id}/referenceFiles(id=${project.id})}"
@@ -28,9 +28,9 @@
 					</ul>
 				</th:block>
 				<th:block th:if="${#lists.size(addRefProjects)} == 0">
-					<p id="has-no-rights" th:text="#{pipeline.orror.no-reference.no-permissions}">You do not
-						have permission to upload a reference file to these projects. Please contact a project manager
-						to add a reference file.</p>
+					<p id="has-no-rights" th:text="#{pipeline.orror.no-reference.no-permissions}">You do not have
+						permission to upload a reference file to these projects. Please contact a project manager to add
+						a reference file.</p>
 				</th:block>
 			</div>
 		</div>
@@ -44,7 +44,8 @@
 						       th:text="#{workflow.label.name}">Name</label>
 
 						<div class="col-md-10" th:with="dateFormat=#{date.iso-8601}">
-							<input id="pipeline-name" class="form-control" type="text" th:value="${name + '_' + #calendars.format(#dates.createToday(), dateFormat)}"/>
+							<input id="pipeline-name" class="form-control" type="text"
+							       th:value="${name + '_' + #calendars.format(#dates.createToday(), dateFormat)}"/>
 
 							<div ng-show="pipeline.error" class="label label-danger ng-cloak">{{pipeline.error}}</div>
 						</div>
@@ -74,10 +75,15 @@
 									<a href="#" th:href="@{/projects/{id}/samples(id=${project.id})}"
 									   th:text="${project.name + ' / ' + sample.name}"></a>
 									<button type="button" class="btn btn-xs btn-default pull-right remove"
-									        th:text="#{form.btn.remove}">Remove
+									        th:text="#{form.btn.remove}"
+									        th:attr="ng-click=${'pipeline.removeSample('+project.id+','+sample.id+')'}">
+										Remove
 									</button>
 								</h3>
-								<p th:if="${#lists.isEmpty(sample.files)}" class="text-warning"><strong class="fa fa-fw fa-ban"></strong> <th:block th:text="#{workflow.files.files-not-appropriate}"></th:block></p>
+								<p th:if="${#lists.isEmpty(sample.files)}" class="text-warning"><strong
+									class="fa fa-fw fa-ban"></strong>
+									<th:block th:text="#{workflow.files.files-not-appropriate}"></th:block>
+								</p>
 								<ul th:unless="${#lists.isEmpty(sample.files)}" class="boards">
 									<li class="board" th:each="s, iterStat : ${sample.files}">
 										<div class="paired_end board_inner" th:if="${s.type == 'paired_end'}">
@@ -155,6 +161,7 @@
 				<div data-spy="affix" style="width: 200px;">
 					<div ng-switch-when="false" class="ng-cloak text-center">
 						<h2 th:text="#{workflow.launch.btn}">Ready to Launch?</h2>
+
 						<div>
 							<button id="btn-launch" class="btn btn-xl btn-danger btn-action"
 							        th:title="#{workflow.launch.btn.title}"
@@ -165,7 +172,8 @@
 						<th:block th:if="${parameters} and ${#lists.size(parameters)} != 0">
 							<button id="pipeline-parameters-btn" ng-controller="ParameterModalController as modal"
 							        class="btn btn-default sidebar-content" ng-click="modal.openModal()">
-								<i class="fa fa-cogs fa-2x"></i><br/><span th:text="#{workflow.parameters.section-button}">Pipeline Parameters</span>
+								<i class="fa fa-cogs fa-2x"></i><br/>
+								<span th:text="#{workflow.parameters.section-button}">Pipeline Parameters</span>
 							</button>
 							<div ng-show="pipeline.paramError" class="alert alert-danger sidebar-content">
 								<strong class="fa fa-3x fa-fw fa-hand-o-up alert-icon-motion"></strong>
@@ -200,12 +208,13 @@
 	</form>
 </div>
 <th:block layout:fragment="page-scripts">
-	<th:block th:if="${parameters} and ${#lists.size(parameters)} != 0" th:replace="pipelines/templates/parameters :: modal (${parameterModalTitle}, ${parameters})"></th:block>
+	<th:block th:if="${parameters} and ${#lists.size(parameters)} != 0"
+	          th:replace="pipelines/templates/parameters :: modal (${parameterModalTitle}, ${parameters})"></th:block>
 	<script th:inline="javascript">
 		/*<![CDATA[*/
 		var PIPELINE = {
-			url     : /*[[@{/pipelines/ajax/start/{id}(id=${pipelineId})}]]*/ '/ajax/pipelines/ccca532d-b0be-4f2c-bd6d-9886aa722571',
-			required: /*[[#{workflow.no-name-provided}]]*/ 'Name Required',
+			url       : /*[[@{/pipelines/ajax/start/{id}(id=${pipelineId})}]]*/ '/ajax/pipelines/ccca532d-b0be-4f2c-bd6d-9886aa722571',
+			required  : /*[[#{workflow.no-name-provided}]]*/ 'Name Required',
 			parameters: /*[[${parameters}]]*/ []
 		};
 		/*]]>*/
