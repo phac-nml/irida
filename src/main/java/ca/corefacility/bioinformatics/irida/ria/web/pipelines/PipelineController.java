@@ -11,8 +11,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpSession;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -297,14 +295,15 @@ public class PipelineController extends BaseController {
 	/**
 	 * Launch a pipeline
 	 *
-	 * @param session
-	 * 		the current {@link HttpSession}
 	 * @param pipelineId
 	 * 		the id for the {@link IridaWorkflow}
 	 * @param single
 	 * 		a list of {@link SequenceFile} id's
 	 * @param paired
 	 * 		a list of {@link SequenceFilePair} id's
+	 * 	@param parameters
+	 * 	    TODO: This is a hack! Update when fixing issue #100
+	 *      {@link Map} of ALL parameters passed.  Only want the 'paras' object --> a {@link Map} of pipeline parameters
 	 * @param ref
 	 * 		the id for a {@link ReferenceFile}
 	 * @param name
@@ -313,7 +312,7 @@ public class PipelineController extends BaseController {
 	 * @return a JSON response with the status and any messages.
 	 */
 	@RequestMapping(value = "/ajax/start/{pipelineId}", method = RequestMethod.POST)
-	public @ResponseBody Map<String, Object> ajaxStartPipeline(HttpSession session, Locale locale,
+	public @ResponseBody Map<String, Object> ajaxStartPipeline(Locale locale,
 			@PathVariable UUID pipelineId,
 			@RequestParam(required = false) List<Long> single, @RequestParam(required = false) List<Long> paired,
 			@RequestParam(required = false) Map<String, String> parameters,
