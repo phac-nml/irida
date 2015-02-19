@@ -42,6 +42,8 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.WorkflowNamedParametersRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
@@ -77,6 +79,9 @@ public class AnalysisSubmissionServiceImplIT {
 	
 	@Autowired
 	private SequenceFileRepository sequenceFileRepository;
+	
+	@Autowired
+	private WorkflowNamedParametersRepository parametersRepository;
 
 	private UUID workflowId = UUID.randomUUID();
 
@@ -503,6 +508,32 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "aaron", roles = "")
 	public void testGetAnalysisSubmissionsForCurrentUserAsRegularUserFail() {
 		analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
+	}
+	
+	@Test(expected = UnsupportedOperationException.class)
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCreateSubmissionWithUnsavedNamedParameters() {
+		final SequenceFile sequenceFile = sequenceFileRepository.findOne(1L);
+		final IridaWorkflowNamedParameters params = new IridaWorkflowNamedParameters("named parameters.", workflowId,
+				ImmutableMap.of("named", "parameter"));
+		final AnalysisSubmission submission = AnalysisSubmission.builder(workflowId)
+				.inputFilesSingle(Sets.newHashSet(sequenceFile)).withNamedParameters(params).build();
+		analysisSubmissionService.create(submission);
+	}
+	
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCreateSubmissionWithNamedParameters() {
+		final SequenceFile sequenceFile = sequenceFileRepository.findOne(1L);
+		final IridaWorkflowNamedParameters params = parametersRepository.findOne(1L);
+		final AnalysisSubmission submission = AnalysisSubmission.builder(workflowId)
+				.inputFilesSingle(Sets.newHashSet(sequenceFile)).withNamedParameters(params).build();
+		analysisSubmissionService.create(submission);
+
+		assertNotNull("Should have saved and created an id for the submission", submission.getId());
+		assertNotNull("Submission should have a map of parameters", submission.getInputParameters());
+		assertEquals("Submission parameters should be the same as the named parameters", params.getInputParameters(),
+				submission.getInputParameters());
 	}
 
 	/**
