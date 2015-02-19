@@ -113,6 +113,78 @@ public class AnalysisParameterServiceGalaxyTest {
 		assertEquals("parameter not properly defined", ImmutableMap.of("level1", ImmutableMap.of("parameter1", "1")),
 				tool1Parameters);
 	}
+	
+	/**
+	 * Tests preparing workflow parameters with multiple levels, multiple
+	 * parameters and overriding with custom value successfully.
+	 * 
+	 * @throws IridaWorkflowParameterException
+	 */
+	@Test
+	public void testPrepareParametersOverrideMultipleLevelMultipleParameterSuccess()
+			throws IridaWorkflowParameterException {
+		IridaToolParameter iridaToolParameter = new IridaToolParameter("galaxy-tool1", "level1.parameter1");
+		IridaToolParameter iridaToolParameter2 = new IridaToolParameter("galaxy-tool1", "level1.parameter2");
+		IridaWorkflowParameter parameter1 = new IridaWorkflowParameter("parameter1", "0", Lists.newArrayList(
+				iridaToolParameter, iridaToolParameter2));
+		List<IridaWorkflowParameter> iridaWorkflowParameters = Lists.newArrayList(parameter1);
+
+		when(iridaWorkflowDescription.getParameters()).thenReturn(iridaWorkflowParameters);
+
+		Map<String, String> parameters = Maps.newHashMap();
+		parameters.put("parameter1", "1");
+
+		WorkflowInputsGalaxy workflowInputsGalaxy = analysisParameterService.prepareAnalysisParameters(parameters,
+				iridaWorkflow);
+
+		assertNotNull("workflowInputsGalaxy is null", workflowInputsGalaxy);
+
+		WorkflowInputs workflowInputs = workflowInputsGalaxy.getInputsObject();
+		Map<Object, Map<String, Object>> workflowParameters = workflowInputs.getParameters();
+		Map<String, Object> tool1Parameters = workflowParameters.get("galaxy-tool1");
+		assertNotNull("parameters for galaxy-tool1 should not be null", tool1Parameters);
+
+		assertEquals("parameter not properly defined",
+				ImmutableMap.of("level1", ImmutableMap.of("parameter1", "1", "parameter2", "1")), tool1Parameters);
+	}
+
+	/**
+	 * Tests preparing workflow parameters with three levels, multiple
+	 * parameters and overriding with custom value successfully.
+	 * 
+	 * @throws IridaWorkflowParameterException
+	 */
+	@Test
+	public void testPrepareParametersOverrideThreeLevelMultipleParameterSuccess()
+			throws IridaWorkflowParameterException {
+		IridaToolParameter iridaToolParameter = new IridaToolParameter("galaxy-tool1", "level1.level2.parameter1");
+		IridaToolParameter iridaToolParameter2 = new IridaToolParameter("galaxy-tool1", "level1.level2.parameter2");
+		IridaToolParameter iridaToolParameter3 = new IridaToolParameter("galaxy-tool1", "level1.parameter3");
+		IridaWorkflowParameter parameter1 = new IridaWorkflowParameter("parameter1", "0", Lists.newArrayList(
+				iridaToolParameter, iridaToolParameter2, iridaToolParameter3));
+		List<IridaWorkflowParameter> iridaWorkflowParameters = Lists.newArrayList(parameter1);
+
+		when(iridaWorkflowDescription.getParameters()).thenReturn(iridaWorkflowParameters);
+
+		Map<String, String> parameters = Maps.newHashMap();
+		parameters.put("parameter1", "1");
+
+		WorkflowInputsGalaxy workflowInputsGalaxy = analysisParameterService.prepareAnalysisParameters(parameters,
+				iridaWorkflow);
+
+		assertNotNull("workflowInputsGalaxy is null", workflowInputsGalaxy);
+
+		WorkflowInputs workflowInputs = workflowInputsGalaxy.getInputsObject();
+		Map<Object, Map<String, Object>> workflowParameters = workflowInputs.getParameters();
+		Map<String, Object> tool1Parameters = workflowParameters.get("galaxy-tool1");
+		assertNotNull("parameters for galaxy-tool1 should not be null", tool1Parameters);
+
+		assertEquals(
+				"parameter not properly defined",
+				ImmutableMap.of("level1",
+						ImmutableMap.of("parameter3", "1", "level2", ImmutableMap.of("parameter1", "1", "parameter2", "1"))),
+				tool1Parameters);
+	}
 
 	/**
 	 * Tests preparing workflow parameters and using the default value defined.
