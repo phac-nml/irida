@@ -462,6 +462,14 @@ public class PipelineController extends BaseController {
 		analysisSubmissionService.create(builder.build());
 	}
 
+	/**
+	 * Extract {@link IridaWorkflow} parameters from the request {@link Map}
+	 *
+	 * @param mapString
+	 * 		{@link Map} of parameters
+	 *
+	 * @return {@link Map} of parameters for the pipeline
+	 */
 	@SuppressWarnings("unchecked")
 	private Map<String, String> extractPipelineParameters(String mapString) {
 		// TODO [15-02-16] (Josh): Update when addressing issue #100
