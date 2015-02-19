@@ -119,11 +119,22 @@ public class PipelinesPhylogenomicsPageIT {
 		addSamplesToCart();
 
 		int numberOfSamplesDisplayed = page.getNumberOfSamplesDisplayed();
-		
+
 		page.removeFirstSample();
 		int laterNumber = page.getNumberOfSamplesDisplayed();
-		
-		assertEquals(numberOfSamplesDisplayed - 1, laterNumber);
+
+		assertEquals("should have 1 less sample than before", numberOfSamplesDisplayed - 1, laterNumber);
+		assertEquals("cart samples count should equal samples on page", laterNumber, page.getCartCount());
+	}
+
+	@Test
+	public void testRemoveAllSample() {
+		addSamplesToCart();
+
+		page.removeFirstSample();
+		page.removeFirstSample();
+
+		assertTrue("user should be redirected to pipelinese page", driver.getCurrentUrl().endsWith("/pipelines"));
 	}
 
 	@Test
