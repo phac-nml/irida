@@ -77,7 +77,7 @@
           }
         })
           .success(function (data) {
-            if (data.result === 'success') {
+            if (data.success) {
               vm.success = true;
             }
             else {
