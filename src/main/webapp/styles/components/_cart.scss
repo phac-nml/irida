@@ -1,4 +1,5 @@
 @import "../helpers/variables";
+
 .st-container,
 .st-pusher,
 .st-content {
@@ -85,10 +86,10 @@
   cursor: pointer;
 }
 
-.remove-icon:hover {
+.btn-icon:hover .remove-icon {
   color: $irida-colour-grey-dark;
 }
 
-.cart-project-header{
+.cart-project-header {
   cursor: pointer;
 }

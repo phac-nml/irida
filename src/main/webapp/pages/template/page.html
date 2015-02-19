@@ -65,7 +65,7 @@
 								<span class="badge">{{ p.samples.length }}</span>
 								<button class="btn-icon" ng-click="cartCtrl.removeProject(p.id)"
 								        ng-attr-id="{{'remove-project-'+p.id}}"
-								        th:attr="tooltip=#{cart.tooltip.removeProject}">
+								        th:title="#{cart.tooltip.removeProject}">
 									<i class="fa fa-remove remove-icon"></i>
 								</button>
 							</div>
@@ -75,7 +75,7 @@
 								<span>{{ s.label }}</span>
 								<button class="btn-icon pull-right remove-sample-btn"
 								        ng-click="cartCtrl.removeSample(p.id,s.id)"
-								        th:attr="tooltip=#{cart.tooltip.removeSample}">
+								        th:title="#{cart.tooltip.removeSample}">
 									<i class="fa fa-remove remove-icon"></i>
 								</button>
 							</li>
