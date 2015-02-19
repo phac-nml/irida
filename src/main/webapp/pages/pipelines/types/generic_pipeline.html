@@ -74,7 +74,8 @@
 								<h3>
 									<a href="#" th:href="@{/projects/{id}/samples(id=${project.id})}"
 									   th:text="${project.name + ' / ' + sample.name}"></a>
-									<button type="button" class="btn btn-xs btn-default pull-right remove"
+									<button type="button"
+									        class="btn btn-xs btn-default pull-right remove remove-sample-button"
 									        th:text="#{form.btn.remove}"
 									        th:attr="ng-click=${'pipeline.removeSample('+project.id+','+sample.id+')'}">
 										Remove

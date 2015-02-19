@@ -115,6 +115,18 @@ public class PipelinesPhylogenomicsPageIT {
 	}
 
 	@Test
+	public void testRemoveSample() {
+		addSamplesToCart();
+
+		int numberOfSamplesDisplayed = page.getNumberOfSamplesDisplayed();
+		
+		page.removeFirstSample();
+		int laterNumber = page.getNumberOfSamplesDisplayed();
+		
+		assertEquals(numberOfSamplesDisplayed - 1, laterNumber);
+	}
+
+	@Test
 	public void testModifyParameters() {
 		addSamplesToCart();
 		page.clickPipelineParametersBtn();
