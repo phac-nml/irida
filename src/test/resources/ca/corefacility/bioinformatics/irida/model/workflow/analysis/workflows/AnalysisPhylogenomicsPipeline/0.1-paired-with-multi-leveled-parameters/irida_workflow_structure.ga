@@ -107,7 +107,7 @@
                 }
             }, 
             "tool_errors": null, 
-            "tool_id": "core_pipeline_outputs_paired_with_parameters", 
+            "tool_id": "core_pipeline_outputs_paired_with_multi_level_parameters", 
             "tool_state": "{\"__page__\": 0, \"sequence_reads\": \"null\", \"coverageMin\": \"\\\"15\\\"\", \"__rerun_remap_job_id__\": null, \"conditional\": \"{\\\"level2\\\": {\\\"parameter\\\": \\\"1\\\", \\\"level2_select\\\": \\\"all2\\\", \\\"__current_case__\\\": 0}, \\\"coverageMid\\\": \\\"15\\\", \\\"conditional_select\\\": \\\"all\\\", \\\"__current_case__\\\": 0}\", \"fasta\": \"null\", \"coverageMax\": \"\\\"15\\\"\"}", 
             "tool_version": "0.1.0", 
             "type": "tool", 

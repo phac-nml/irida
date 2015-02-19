@@ -1128,8 +1128,9 @@ public class AnalysisExecutionServiceGalaxyIT {
 		String validCoverageFromProvenance = "\"20\""; // coverage from
 														// provenance has quotes
 		String validMidCoverageFromProvenance = "20"; // this value does not have quotes around it in final results.
+		String validParameterValueFromProvenance = "20";
 		Map<String, String> parameters = ImmutableMap.of("coverage", validCoverage);
-		String validTreeFile = "20 20 20"; // I verify parameters were set
+		String validTreeFile = "20 20 20 20"; // I verify parameters were set
 										// correctly by checking output file
 										// (where parameters were printed).
 
@@ -1172,9 +1173,9 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		// phy tree
 		final ToolExecution phyTreeCoreInputs = phylogeneticTree.getCreatedByTool();
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
-				"core_pipeline_outputs_paired_with_parameters", phyTreeCoreInputs.getToolName());
-		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_parameters v0.1.0",
+		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_multi_level_parameters v0.1.0",
+				"core_pipeline_outputs_paired_with_multi_level_parameters", phyTreeCoreInputs.getToolName());
+		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_multi_level_parameters v0.1.0",
 				"0.1.0", phyTreeCoreInputs.getToolVersion());
 		Map<String, String> phyTreeCoreParameters = phyTreeCoreInputs.getExecutionTimeParameters();
 		assertEquals("incorrect number of non-file parameters", 7, phyTreeCoreParameters.size());
@@ -1182,7 +1183,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 				phyTreeCoreParameters.get("coverageMin"));
 		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
 				phyTreeCoreParameters.get("conditional.coverageMid"));
-		assertEquals("parameter 'parameter' set incorrectly", validCoverageFromProvenance,
+		assertEquals("parameter 'parameter' set incorrectly", validParameterValueFromProvenance,
 				phyTreeCoreParameters.get("conditional.level2.parameter"));
 		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance,
 				phyTreeCoreParameters.get("coverageMax"));
