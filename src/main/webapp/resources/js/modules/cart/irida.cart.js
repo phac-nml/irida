@@ -11,16 +11,19 @@
         vm.collapsed = {};
 
         $scope.$on('cart.update', function () {
-            getCart();
+            getCart(false);
         });
 
-        function getCart () {
+        function getCart (collapse) {
             cart.all()
               .then(function (data) {
                   vm.projects = data;
                   vm.count = 0;
                   _.each(data, function(p) {
                       vm.count += p.samples.length;
+                      if(collapse){
+                        vm.collapsed[p.id] = true;
+                      }
                   });
                 if (initialized) {
                   vm.animation = 'shake';
@@ -30,10 +33,10 @@
                 } else {
                   initialized = true;
                 }
-              })
+              });
         }
 
-        getCart();
+        getCart(true);
     }
 
   /**
@@ -48,6 +51,14 @@
       vm.clear = function(){
         CartService.clear();
       };
+
+      vm.removeProject = function(projectId){
+        CartService.removeProject(projectId);
+      }
+
+      vm.removeSample = function(projectId,sampleId){
+        CartService.removeSample(projectId,sampleId);
+      }
     }
 
     function CartDirective() {
@@ -64,7 +75,8 @@
         var svc = this,
             urls = {
                 all: TL.BASE_URL + "cart",
-                add: TL.BASE_URL + "cart/add/samples"
+                add: TL.BASE_URL + "cart/add/samples",
+                project: TL.BASE_URL + "cart/project/"
             };
 
         svc.all = function () {
@@ -97,6 +109,18 @@
           scope.$broadcast("cart.update", {});
         })
       };
+
+      svc.removeProject = function(projectId){
+        $http.delete(urls.project+projectId).then(function () {
+          scope.$broadcast("cart.update", {});
+        })
+      };
+
+      svc.removeSample = function(projectId,sampleId){
+        $http.delete(urls.project+projectId+"/samples/"+sampleId).then(function () {
+          scope.$broadcast("cart.update", {});
+        })
+      }
 
     }
 

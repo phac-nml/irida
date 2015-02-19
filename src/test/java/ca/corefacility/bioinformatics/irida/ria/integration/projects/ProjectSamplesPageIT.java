@@ -504,6 +504,69 @@ public class ProjectSamplesPageIT {
 	}
 
 	@Test
+	public void testClearCart() {
+		LoginPage.loginAsAdmin(driver);
+		page.goToPage();
+
+		assertFalse(page.isCartVisible());
+		assertEquals(0, page.getCartCount());
+		page.showCart();
+		assertTrue(page.isCartVisible());
+
+		selectFirstThreeSamples();
+		page.addSamplesToGlobalCart();
+		assertEquals("cart should have 3 samples", 3, page.getCartCount());
+		assertEquals("cart should have 1 project", 1, page.getCartProjectCount());
+
+		page.clearCart();
+
+		assertEquals("cart should have been emptied", 0, page.getCartCount());
+		assertEquals("cart should have been emptied", 0, page.getCartProjectCount());
+	}
+
+	@Test
+	public void testDeleteProjectFromCart() {
+		LoginPage.loginAsAdmin(driver);
+		page.goToPage();
+
+		assertFalse(page.isCartVisible());
+		assertEquals(0, page.getCartCount());
+		page.showCart();
+		assertTrue(page.isCartVisible());
+
+		selectFirstThreeSamples();
+		page.addSamplesToGlobalCart();
+		assertEquals("cart should have 3 samples", 3, page.getCartCount());
+		assertEquals("cart should have 1 project", 1, page.getCartProjectCount());
+
+		page.removeProjectFromCart(1l);
+
+		assertEquals("cart should have been emptied", 0, page.getCartCount());
+		assertEquals("cart should have been emptied", 0, page.getCartProjectCount());
+	}
+	
+	@Test
+	public void testDeleteSampleFromCart() {
+		LoginPage.loginAsAdmin(driver);
+		page.goToPage();
+
+		assertFalse(page.isCartVisible());
+		assertEquals(0, page.getCartCount());
+		page.showCart();
+		assertTrue(page.isCartVisible());
+
+		selectFirstThreeSamples();
+		page.addSamplesToGlobalCart();
+		assertEquals("cart should have 3 samples", 3, page.getCartCount());
+		assertEquals("cart should have 1 project", 1, page.getCartProjectCount());
+
+		page.removeFirstSampleFromProjectInCart(1l);
+
+		assertEquals("cart should have 2 samples", 2, page.getCartCount());
+		assertEquals("cart should have 2 samples", 1, page.getCartProjectCount());
+	}
+
+	@Test
 	public void testShowAssociatedSamples() throws InterruptedException {
 		LoginPage.loginAsAdmin(driver);
 		page.goToPage("6");

@@ -107,7 +107,8 @@ public class CartController {
 	 */
 	@RequestMapping(value = "/add/samples", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> addProjectSample(@RequestParam Long projectId, @RequestParam(value = "sampleIds[]") Set<Long> sampleIds) {
+	public Map<String, Object> addProjectSample(@RequestParam Long projectId,
+			@RequestParam(value = "sampleIds[]") Set<Long> sampleIds) {
 		Project project = projectService.read(projectId);
 		Set<Sample> samples = loadSamplesForProject(project, sampleIds);
 
@@ -127,11 +128,36 @@ public class CartController {
 	 */
 	@RequestMapping(value = "/project/{projectId}/samples", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public Map<String, Object> removeProjectSample(@PathVariable Long projectId, @RequestBody Set<Long> sampleIds) {
+	public Map<String, Object> removeProjectSamples(@PathVariable Long projectId, @RequestBody Set<Long> sampleIds) {
 		Project project = projectService.read(projectId);
 		Set<Sample> samples = loadSamplesForProject(project, sampleIds);
 		Set<Sample> selectedSamplesForProject = getSelectedSamplesForProject(project);
 		selectedSamplesForProject.removeAll(samples);
+
+		if (selectedSamplesForProject.isEmpty()) {
+			selected.remove(project);
+		}
+
+		return ImmutableMap.of("success", true);
+	}
+
+	/**
+	 * Remove a single sample from the cart
+	 * 
+	 * @param projectId
+	 *            The project id of the sample
+	 * @param sampleId
+	 *            the id of the sample
+	 * @return Success if the sample was successfully removed
+	 */
+	@RequestMapping(value = "/project/{projectId}/samples/{sampleId}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public Map<String, Object> removeProjectSample(@PathVariable Long projectId, @PathVariable Long sampleId) {
+		Project project = projectService.read(projectId);
+		Sample sampleForProject = sampleService.getSampleForProject(project, sampleId);
+		Set<Sample> selectedSamplesForProject = getSelectedSamplesForProject(project);
+
+		selectedSamplesForProject.remove(sampleForProject);
 
 		if (selectedSamplesForProject.isEmpty()) {
 			selected.remove(project);
@@ -168,7 +194,7 @@ public class CartController {
 	 *            The ID of the {@link Project} to delete
 	 * @return a map stating success
 	 */
-	@RequestMapping(value = "/project/{projectId}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/project/{projectId}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public Map<String, Object> removeProject(@PathVariable Long projectId) {
 		Project project = projectService.read(projectId);
