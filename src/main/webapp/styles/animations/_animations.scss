@@ -15,11 +15,11 @@
 }
 
 @-webkit-keyframes shake {
-  from { background-color: $irida-colour-info; -webkit-box-shadow: 0 0 9px #333; }
-  50% { background-color: lighten($irida-colour-info, 10); -webkit-box-shadow: 0 0 18px #ddd; }
-  to { background-color: $irida-colour-info; -webkit-box-shadow: 0 0 9px #333; }
+  from { background-color: $irida-colour-info;}
+  50% { background-color: lighten($irida-colour-info, 20);}
+  to { background-color: $irida-colour-info;}
 }
 
 .shake {
-  animation: shake .5s .2s 2;
+  animation: shake .5s .2s 1;
 }

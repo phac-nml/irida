@@ -14,20 +14,17 @@
 @-webkit-keyframes shake {
   from {
     background-color: #3092d0;
-    -webkit-box-shadow: 0 0 9px #333;
   }
   50% {
-    background-color: #59a8da;
-    -webkit-box-shadow: 0 0 18px #ddd;
+    background-color: #83bee3;
   }
   to {
     background-color: #3092d0;
-    -webkit-box-shadow: 0 0 9px #333;
   }
 }
 /* line 23, ../../../styles/animations/_animations.scss */
 .shake {
-  animation: shake .5s .2s 2;
+  animation: shake .5s .2s 1;
 }
 
 /* line 4, ../../../styles/pages/sample_files.scss */

@@ -17,20 +17,22 @@
         function getCart (collapse) {
             cart.all()
               .then(function (data) {
+                var prev = vm.count;
+                vm.count = 0;
                   vm.projects = data;
-                  vm.count = 0;
                   _.each(data, function(p) {
                       vm.count += p.samples.length;
                       if(collapse){
                         vm.collapsed[p.id] = true;
                       }
                   });
-                if (initialized) {
+                if (initialized && prev !== vm.count) {
                   vm.animation = 'shake';
                   $timeout(function () {
                     vm.animation = '';
                   }, 3000);
                 } else {
+                  // This is just to prevent animation on page load.
                   initialized = true;
                 }
               });
