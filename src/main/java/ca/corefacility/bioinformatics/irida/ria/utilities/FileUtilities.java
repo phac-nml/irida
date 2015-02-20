@@ -9,6 +9,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +70,12 @@ public class FileUtilities {
 
 				// 4) Close the current entry in the archive in preparation for
 				// the next entry.
+				outputStream.closeEntry();
+				
+				ObjectMapper objectMapper = new ObjectMapper();
+				byte[] bytes = objectMapper.writeValueAsBytes(file);
+				outputStream.putNextEntry(new ZipEntry(zipEntryName.toString() + "-prov.json"));
+				outputStream.write(bytes);
 				outputStream.closeEntry();
 			}
 

@@ -19,6 +19,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
@@ -43,6 +44,7 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 
 	@Column(name = "file_path", unique = true)
 	@NotNull(message = "{analysis.output.file.file.notnull}")
+	@JsonIgnore
 	private Path file;
 
 	@NotNull
@@ -55,6 +57,7 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 	private Date modifiedDate;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@JsonIgnore
 	private Analysis analysis;
 
 	@NotNull(message = "{analysis.output.file.execution.manager.file.id}")
