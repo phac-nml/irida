@@ -145,10 +145,10 @@ public class PipelineController extends BaseController {
 						"id", description.getId().toString(),
 						"title",
 						messageSource
-								.getMessage(key + ".title", new Object[]{}, locale),
+								.getMessage(key + ".title", null, locale),
 						"description",
 						messageSource
-								.getMessage(key + ".description", new Object[]{}, locale)
+								.getMessage(key + ".description", null, locale)
 				));
 			} catch (IridaWorkflowNotFoundException e) {
 				logger.error("Workflow not found - See stack:", e);
