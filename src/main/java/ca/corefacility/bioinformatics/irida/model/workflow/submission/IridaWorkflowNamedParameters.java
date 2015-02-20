@@ -22,6 +22,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -51,6 +52,7 @@ public class IridaWorkflowNamedParameters implements IridaThing {
 
 	@NotNull
 	@Column(name = "workflow_id", nullable = false)
+	@Type(type = "uuid-char")
 	private final UUID workflowId;
 
 	@ElementCollection(fetch = FetchType.EAGER)

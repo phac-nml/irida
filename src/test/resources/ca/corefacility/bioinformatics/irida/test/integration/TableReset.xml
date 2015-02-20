@@ -32,6 +32,9 @@
 	<client_details_scope />
 
 	<reference_file />
+	
+	<workflow_named_parameters/>
+	<workflow_named_parameter_values/>
 
 	<analysis_submission />
 	<analysis_submission_sequence_file_single />
