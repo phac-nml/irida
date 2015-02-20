@@ -163,7 +163,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 	/**
 	 * Tests successfully getting a map of samples and sequence files (single).
 	 * 
-	 * @throws SampleAnalysisDuplicateException
+	 * @throws DuplicateSampleException
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
@@ -184,9 +184,9 @@ public class AnalysisCollectionServiceGalaxyIT {
 	/**
 	 * Tests failing to get a map of samples and sequence files (single).
 	 * 
-	 * @throws SampleAnalysisDuplicateException
+	 * @throws DuplicateSampleException
 	 */
-	@Test(expected = SampleAnalysisDuplicateException.class)
+	@Test(expected = DuplicateSampleException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetSequenceFileSingleSamplesFail() throws DuplicateSampleException {
 		Set<SequenceFile> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
@@ -198,7 +198,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 	/**
 	 * Tests successfully getting a map of samples and sequence files (pair).
 	 * 
-	 * @throws SampleAnalysisDuplicateException
+	 * @throws DuplicateSampleException
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
@@ -218,9 +218,9 @@ public class AnalysisCollectionServiceGalaxyIT {
 	/**
 	 * Tests failing to get a map of samples and sequence files (pair).
 	 * 
-	 * @throws SampleAnalysisDuplicateException
+	 * @throws DuplicateSampleException
 	 */
-	@Test(expected = SampleAnalysisDuplicateException.class)
+	@Test(expected = DuplicateSampleException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetSequenceFilePairSamplesFail() throws DuplicateSampleException {
 		Set<SequenceFilePair> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
