@@ -236,7 +236,7 @@ public class SNVPhylAnalysisIT {
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpMatrix()
 				.getCreatedByTool());
 		@SuppressWarnings("resource")
-		String snpTableContent = new Scanner(analysisPhylogenomics.getSnpMatrix().getFile().toFile()).useDelimiter(
+		String snpTableContent = new Scanner(analysisPhylogenomics.getSnpTable().getFile().toFile()).useDelimiter(
 				"\\Z").next();
 		assertTrue(
 				"snpTable should be the same but is \"" + snpTableContent + "\"",
@@ -320,7 +320,7 @@ public class SNVPhylAnalysisIT {
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpMatrix()
 				.getCreatedByTool());
 		@SuppressWarnings("resource")
-		String snpTableContent = new Scanner(analysisPhylogenomics.getSnpMatrix().getFile().toFile()).useDelimiter(
+		String snpTableContent = new Scanner(analysisPhylogenomics.getSnpTable().getFile().toFile()).useDelimiter(
 				"\\Z").next();
 		assertTrue(
 				"snpTable should be the same but is \"" + snpTableContent + "\"",
@@ -339,9 +339,9 @@ public class SNVPhylAnalysisIT {
 				.getCreatedByTool());
 		assertFalse("file should have tool provenance attached.", toolsToVisit.isEmpty());
 
-		boolean foundReadsInputTool = false;
-		boolean foundReferenceInputTool = false;
-
+		String minimumFreebayesCoverage = null;
+		String altAlleleFraction = null;
+		
 		// navigate through the tree to make sure that you can find both types
 		// of input tools: the one where you upload the reference file, and the
 		// one where you upload the reads.
@@ -349,15 +349,14 @@ public class SNVPhylAnalysisIT {
 			final ToolExecution ex = toolsToVisit.remove(0);
 			toolsToVisit.addAll(ex.getPreviousSteps());
 
-			if (ex.isInputTool()) {
+			if (ex.getToolName().contains("FreeBayes")) {
 				final Map<String, String> params = ex.getExecutionTimeParameters();
-				foundReferenceInputTool |= params.get("files.NAME").contains("reference")
-						&& params.get("file_type").contains("fasta");
-				foundReadsInputTool |= params.get("file_type").contains("fastq");
+				minimumFreebayesCoverage = params.get("options_type.section_input_filters_type.min_coverage");
+				altAlleleFraction = params.get("options_type.section_input_filters_type.min_alternate_fraction");
+				break;
 			}
 		}
-
-		assertTrue("Should have found both reads and reference input tools.", foundReadsInputTool
-				&& foundReferenceInputTool);
+		assertEquals("incorrect minimum freebayes coverage", "2", minimumFreebayesCoverage);
+		assertEquals("incorrect alternative allele fraction", "0.9", altAlleleFraction);
 	}
 }
