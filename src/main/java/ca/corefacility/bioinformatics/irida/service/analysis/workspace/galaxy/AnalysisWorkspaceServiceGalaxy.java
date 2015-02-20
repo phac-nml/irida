@@ -208,8 +208,9 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		History workflowHistory = galaxyHistoriesService.findById(analysisSubmission.getRemoteAnalysisId());
 		Library workflowLibrary = libraryBuilder.buildEmptyLibrary(new GalaxyProjectName(temporaryLibraryName));
 
-		Map<Sample, SequenceFile> sampleSequenceFilesSingle = sequenceFileService.getSequenceFileSingleSamples(analysisSubmission
-				.getSingleInputFiles());
+		Map<Sample, SequenceFile> sampleSequenceFilesSingle = sequenceFileService.getUniqueSamplesForSequenceFiles(
+				analysisSubmission
+						.getSingleInputFiles());
 		Map<Sample, SequenceFilePair> sampleSequenceFilesPaired = sequenceFilePairService.getSequenceFilePairedSamples(analysisSubmission
 				.getPairedInputFiles());
 		if (samplesInCommon(sampleSequenceFilesSingle, sampleSequenceFilesPaired)) {

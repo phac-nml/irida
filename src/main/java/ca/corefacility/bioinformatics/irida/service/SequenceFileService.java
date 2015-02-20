@@ -139,6 +139,7 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 *             If there was more than one sequence file with the same
 	 *             sample.
 	 */
-	public Map<Sample, SequenceFile> getSequenceFileSingleSamples(Set<SequenceFile> sequenceFiles)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sequenceFiles, 'canReadSequenceFile')")
+	public Map<Sample, SequenceFile> getUniqueSamplesForSequenceFiles(Set<SequenceFile> sequenceFiles)
 			throws SampleAnalysisDuplicateException;
 }

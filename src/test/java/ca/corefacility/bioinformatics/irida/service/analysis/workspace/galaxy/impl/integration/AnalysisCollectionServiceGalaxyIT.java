@@ -173,7 +173,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		SequenceFile sequenceFile = sequenceFiles.iterator().next();
 
 		Map<Sample, SequenceFile> sampleSequenceFiles = sequenceFileService
-				.getSequenceFileSingleSamples(sequenceFiles);
+				.getUniqueSamplesForSequenceFiles(sequenceFiles);
 		assertEquals("sampleSequenceFiles map has size != 1", 1, sampleSequenceFiles.size());
 		assertEquals("sampleSequenceFiles map does not have sequenceFile " + sequenceFile + " corresponding to sample "
 				+ sample, sequenceFile, sampleSequenceFiles.get(sample));
@@ -190,7 +190,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Set<SequenceFile> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathA, sequenceFilePath2A));
 
-		sequenceFileService.getSequenceFileSingleSamples(sequenceFiles);
+		sequenceFileService.getUniqueSamplesForSequenceFiles(sequenceFiles);
 	}
 
 	/**
@@ -249,7 +249,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Set<SequenceFile> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathA));
 		Map<Sample, SequenceFile> sampleSequenceFiles = sequenceFileService
-				.getSequenceFileSingleSamples(sequenceFiles);
+				.getUniqueSamplesForSequenceFiles(sequenceFiles);
 		Sample sample1 = sampleRepository.findOne(1L);
 
 		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(

@@ -253,7 +253,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	/**
 	 * {@inheritDoc}
 	 */
-	public Map<Sample, SequenceFile> getSequenceFileSingleSamples(Set<SequenceFile> sequenceFiles)
+	public Map<Sample, SequenceFile> getUniqueSamplesForSequenceFiles(Set<SequenceFile> sequenceFiles)
 			throws SampleAnalysisDuplicateException {
 		Map<Sample, SequenceFile> sampleSequenceFiles = new HashMap<>();
 
