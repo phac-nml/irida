@@ -99,7 +99,7 @@ public class AnalysisExecutionServiceConfig {
 	@Bean
 	public AnalysisWorkspaceServiceGalaxy analysisWorkspaceService() {
 		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService(), galaxyWorkflowService(),
-				sequenceFileRepository, sequenceFileService, sequenceFilePairService, galaxyLibraryBuilder(), iridaWorkflowsService,
+				sequenceFileService, sequenceFilePairService, galaxyLibraryBuilder(), iridaWorkflowsService,
 				analysisCollectionServiceGalaxy(), analysisProvenanceService(), analysisParameterServiceGalaxy);
 	}
 

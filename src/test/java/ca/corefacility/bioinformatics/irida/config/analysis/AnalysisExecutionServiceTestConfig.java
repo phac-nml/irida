@@ -31,7 +31,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.L
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
@@ -82,16 +81,13 @@ public class AnalysisExecutionServiceTestConfig {
 	private ReferenceFileRepository referenceFileRepository;
 
 	@Autowired
-	private SequenceFileService seqeunceFileService;
+	private SequenceFileService sequenceFileService;
 
 	@Autowired
 	private SequenceFilePairService sequenceFilePairService;
 
 	@Autowired
 	private SampleService sampleService;
-
-	@Autowired
-	private SequenceFileRepository sequenceFileRepository;
 
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
@@ -120,7 +116,7 @@ public class AnalysisExecutionServiceTestConfig {
 	@Bean
 	public AnalysisWorkspaceServiceGalaxy analysisWorkspaceService() {
 		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService(), galaxyWorkflowService(),
-				sequenceFileRepository, seqeunceFileService, sequenceFilePairService, galaxyLibraryBuilder(),
+				sequenceFileService, sequenceFilePairService, galaxyLibraryBuilder(),
 				iridaWorkflowsService,
 				analysisCollectionServiceGalaxy(), analysisProvenanceServiceGalaxy(), analysisParameterServiceGalaxy);
 	}
@@ -211,7 +207,7 @@ public class AnalysisExecutionServiceTestConfig {
 	@Lazy
 	@Bean
 	public DatabaseSetupGalaxyITService analysisExecutionGalaxyITService() {
-		return new DatabaseSetupGalaxyITService(referenceFileRepository, seqeunceFileService,
+		return new DatabaseSetupGalaxyITService(referenceFileRepository, sequenceFileService,
 				sampleService, analysisExecutionService(),
 				analysisSubmissionService, analysisSubmissionRepository, sequenceFilePairRepository);
 	}

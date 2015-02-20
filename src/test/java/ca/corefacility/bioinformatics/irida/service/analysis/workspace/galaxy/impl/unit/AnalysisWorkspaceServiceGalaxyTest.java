@@ -210,7 +210,7 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		workflowDetails.setId(WORKFLOW_ID);
 
 		workflowPreparation = new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
-				sequenceFileRepository, sequenceFileService, sequenceFilePairService, libraryBuilder, iridaWorkflowsService, analysisCollectionServiceGalaxy,
+				sequenceFileService, sequenceFilePairService, libraryBuilder, iridaWorkflowsService, analysisCollectionServiceGalaxy,
 				analysisProvenanceServiceGalaxy, analysisParameterServiceGalaxy);
 
 		output1Dataset = new Dataset();
@@ -284,9 +284,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
-		when(sequenceFileService.getSequenceFileSingleSamples(any(Set.class))).thenReturn(
+		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class))).thenReturn(
 				sampleSequenceFileMap);
-		when(sequenceFilePairService.getSequenceFilePairedSamples(any(Set.class))).thenReturn(
+		when(sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(any(Set.class))).thenReturn(
 				sampleSequenceFilePairMap);
 
 		when(galaxyHistoriesService.fileToHistory(refFile, InputFileType.FASTA, workflowHistory))
@@ -352,9 +352,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
-		when(sequenceFileService.getSequenceFileSingleSamples(any(Set.class))).thenReturn(
+		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class))).thenReturn(
 				sampleSequenceFileMap);
-		when(sequenceFilePairService.getSequenceFilePairedSamples(any(Set.class)))
+		when(sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(any(Set.class)))
 				.thenReturn(ImmutableMap.of());
 
 		when(galaxyHistoriesService.fileToHistory(refFile, InputFileType.FASTA, workflowHistory))
@@ -415,9 +415,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
-		when(sequenceFileService.getSequenceFileSingleSamples(any(Set.class)))
+		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class)))
 				.thenReturn(ImmutableMap.of());
-		when(sequenceFilePairService.getSequenceFilePairedSamples(any(Set.class))).thenReturn(
+		when(sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(any(Set.class))).thenReturn(
 				sampleSequenceFilePairMap);
 
 		when(galaxyHistoriesService.fileToHistory(refFile, InputFileType.FASTA, workflowHistory))
@@ -504,9 +504,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
-		when(sequenceFileService.getSequenceFileSingleSamples(any(Set.class))).thenReturn(
+		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class))).thenReturn(
 				sampleSequenceFileMap);
-		when(sequenceFilePairService.getSequenceFilePairedSamples(any(Set.class))).thenReturn(
+		when(sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(any(Set.class))).thenReturn(
 				sampleSequenceFilePairMapSampleA);
 
 		workflowPreparation.prepareAnalysisFiles(submission);
@@ -536,9 +536,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
-		when(sequenceFileService.getSequenceFileSingleSamples(any(Set.class)))
+		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class)))
 				.thenReturn(ImmutableMap.of());
-		when(sequenceFilePairService.getSequenceFilePairedSamples(any(Set.class))).thenReturn(
+		when(sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(any(Set.class))).thenReturn(
 				sampleSequenceFilePairMap);
 
 		workflowPreparation.prepareAnalysisFiles(submission);
@@ -568,9 +568,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
-		when(sequenceFileService.getSequenceFileSingleSamples(any(Set.class))).thenReturn(
+		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class))).thenReturn(
 				sampleSequenceFileMap);
-		when(sequenceFilePairService.getSequenceFilePairedSamples(any(Set.class)))
+		when(sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(any(Set.class)))
 				.thenReturn(ImmutableMap.of());
 
 		workflowPreparation.prepareAnalysisFiles(submission);
@@ -599,9 +599,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
-		when(sequenceFileService.getSequenceFileSingleSamples(any(Set.class))).thenReturn(
+		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class))).thenReturn(
 				sampleSequenceFileMap);
-		when(sequenceFilePairService.getSequenceFilePairedSamples(any(Set.class)))
+		when(sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(any(Set.class)))
 				.thenReturn(ImmutableMap.of());
 
 		workflowPreparation.prepareAnalysisFiles(submission);
@@ -675,9 +675,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
-		when(sequenceFileService.getSequenceFileSingleSamples(any(Set.class))).thenReturn(
+		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class))).thenReturn(
 				sampleSequenceFileMap);
-		when(sequenceFilePairService.getSequenceFilePairedSamples(any(Set.class))).thenReturn(
+		when(sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(any(Set.class))).thenReturn(
 				sampleSequenceFilePairMap);
 
 		workflowPreparation.prepareAnalysisFiles(submission);
@@ -703,9 +703,9 @@ public class AnalysisWorkspaceServiceGalaxyTest {
 		when(galaxyHistoriesService.findById(HISTORY_ID)).thenReturn(workflowHistory);
 		when(libraryBuilder.buildEmptyLibrary(any(GalaxyProjectName.class))).thenReturn(workflowLibrary);
 
-		when(sequenceFileService.getSequenceFileSingleSamples(any(Set.class))).thenReturn(
+		when(sequenceFileService.getUniqueSamplesForSequenceFiles(any(Set.class))).thenReturn(
 				sampleSequenceFileMap);
-		when(sequenceFilePairService.getSequenceFilePairedSamples(any(Set.class)))
+		when(sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(any(Set.class)))
 				.thenReturn(ImmutableMap.of());
 
 		when(galaxyHistoriesService.fileToHistory(refFile, InputFileType.FASTA, workflowHistory))

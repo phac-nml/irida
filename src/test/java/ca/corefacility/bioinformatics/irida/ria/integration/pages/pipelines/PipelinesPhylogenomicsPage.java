@@ -1,7 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines;
 
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
@@ -24,7 +27,7 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 	}
 
 	public boolean isNoReferenceWarningDisplayed() {
-		return  driver.findElements(By.id("no-ref-warning")).size() > 0;
+		return driver.findElements(By.id("no-ref-warning")).size() > 0;
 	}
 
 	public boolean isNoRightsMessageDisplayed() {
@@ -71,5 +74,11 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 
 	public void clickSetDefaultAlternativeAlleleFraction() {
 		driver.findElements(By.className("set-default-btn")).get(0).click();
+	}
+
+	public void removeFirstSample() {
+		List<WebElement> findElements = driver.findElements(By.className("remove-sample-button"));
+		findElements.iterator().next().click();
+		waitForTime(250);
 	}
 }

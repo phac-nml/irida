@@ -145,6 +145,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	private UUID iridaPhylogenomicsWorkflowId = UUID.fromString("1f9ea289-5053-4e4a-bc76-1f0c60b179f8");
 	private UUID iridaPhylogenomicsPairedWorkflowId = UUID.fromString("b8c3916c-846e-4a78-96a9-9630911257cd");
 	private UUID iridaPhylogenomicsPairedParametersWorkflowId = UUID.fromString("23434bf8-e551-4efd-9957-e61c6f649f8b");
+	private UUID iridaPhylogenomicsPairedMultiLeveledParametersWorkflowId = UUID.fromString("12734a7d-a0d7-4ede-9cc3-a76b1f8c14e7");
 	private UUID iridaAssemblyAnnotationWorkflowId = UUID.fromString("8c438951-484a-48da-be2b-93b7d29aa2a3");
 	private UUID iridaTestAnalysisWorkflowId = UUID.fromString("c5f29cb2-1b68-4d34-9b93-609266af7551");
 	private UUID iridaWorkflowIdInvalidWorkflowFile = UUID.fromString("d54f1780-e6c9-472a-92dd-63520ec85967");
@@ -1112,6 +1113,86 @@ public class AnalysisExecutionServiceGalaxyIT {
 		}
 		assertEquals("uploaded files should have correct types", Sets.newHashSet("\"fastqsanger\"", "\"fasta\""),
 				uploadedFileTypesTable);
+	}
+	
+	/**
+	 * Tests out getting analysis results successfully for phylogenomics
+	 * pipeline (paired test version with multiple levels of parameters).
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testTransferAnalysisResultsSuccessPhylogenomicsPairedMultiLeveledParameters() throws Exception {
+		String validCoverage = "20";
+		String validCoverageFromProvenance = "\"20\""; // coverage from
+														// provenance has quotes
+		String validMidCoverageFromProvenance = "20"; // this value does not have quotes around it in final results.
+		String validParameterValueFromProvenance = "20";
+		Map<String, String> parameters = ImmutableMap.of("coverage", validCoverage);
+		String validTreeFile = "20 20 20 20"; // I verify parameters were set
+										// correctly by checking output file
+										// (where parameters were printed).
+
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
+				.setupPairSubmissionInDatabase(1L, pairedPaths1, pairedPaths2, referenceFilePath, parameters,
+						iridaPhylogenomicsPairedMultiLeveledParametersWorkflowId);
+
+		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
+				.prepareSubmission(analysisSubmission);
+		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+
+		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
+				.executeAnalysis(analysisSubmitted);
+		AnalysisSubmission analysisExecuted = analysisExecutionFuture.get();
+
+		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
+
+		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
+		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
+				.transferAnalysisResults(analysisExecuted);
+		analysisSubmissionCompletedFuture.get();
+		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
+				.getId());
+		assertEquals("analysis state is not completed", AnalysisState.COMPLETED,
+				analysisSubmissionCompletedDatabase.getAnalysisState());
+
+		Analysis analysisResults = analysisSubmissionCompletedDatabase.getAnalysis();
+
+		assertEquals("analysis results is an invalid class", AnalysisPhylogenomicsPipeline.class,
+				analysisResults.getClass());
+		AnalysisPhylogenomicsPipeline analysisResultsPhylogenomics = (AnalysisPhylogenomicsPipeline) analysisResults;
+
+		assertEquals("invalid number of output files", 3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
+		AnalysisOutputFile phylogeneticTree = analysisResultsPhylogenomics.getPhylogeneticTree();
+
+		// verify parameters were set properly by checking contents of file
+		@SuppressWarnings("resource")
+		String treeContent = new Scanner(phylogeneticTree.getFile().toFile()).useDelimiter("\\Z").next();
+		assertEquals("phylogenetic trees containing the parameters should be equal", validTreeFile, treeContent);
+
+		// phy tree
+		final ToolExecution phyTreeCoreInputs = phylogeneticTree.getCreatedByTool();
+		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_multi_level_parameters v0.1.0",
+				"core_pipeline_outputs_paired_with_multi_level_parameters", phyTreeCoreInputs.getToolName());
+		assertEquals("The first tool execution should be by core_pipeline_outputs_paired_with_multi_level_parameters v0.1.0",
+				"0.1.0", phyTreeCoreInputs.getToolVersion());
+		Map<String, String> phyTreeCoreParameters = phyTreeCoreInputs.getExecutionTimeParameters();
+		assertEquals("incorrect number of non-file parameters", 7, phyTreeCoreParameters.size());
+		assertEquals("parameter coverageMin set incorrectly", validCoverageFromProvenance,
+				phyTreeCoreParameters.get("coverageMin"));
+		assertEquals("parameter coverageMid set incorrectly", validMidCoverageFromProvenance,
+				phyTreeCoreParameters.get("conditional.coverageMid"));
+		assertEquals("parameter 'parameter' set incorrectly", validParameterValueFromProvenance,
+				phyTreeCoreParameters.get("conditional.level2.parameter"));
+		assertEquals("parameter coverageMax set incorrectly", validCoverageFromProvenance,
+				phyTreeCoreParameters.get("coverageMax"));
+		assertEquals("parameter conditional_select set incorrectly", "all",
+				phyTreeCoreParameters.get("conditional.conditional_select"));
+		assertEquals("parameter conditional_select set incorrectly", "all2",
+				phyTreeCoreParameters.get("conditional.level2.level2_select"));
+		assertNotNull("parameter __workflow_invocation_uuid__ exists",
+				phyTreeCoreParameters.get("__workflow_invocation_uuid__"));
 	}
 	
 	/**

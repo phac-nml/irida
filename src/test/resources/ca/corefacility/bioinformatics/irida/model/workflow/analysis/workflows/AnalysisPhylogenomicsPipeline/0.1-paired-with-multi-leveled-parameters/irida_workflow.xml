@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+	<id>12734a7d-a0d7-4ede-9cc3-a76b1f8c14e7</id>
+	<name>SNVPhylTestPairedWithMultiLeveledParameters</name>
+	<version>0.1-paired-with-multi-leveled-parameters</version>
+	<author>Aaron Petkau</author>
+	<email>aaron.petkau@phac-aspc.gc.ca</email>
+	<analysisType>phylogenomics</analysisType>
+	<inputs>
+		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+		<reference>reference</reference>
+	</inputs>
+	<parameters>
+		<parameter name="coverage" defaultValue="10">
+			<toolParameter toolId="core_pipeline_outputs_paired_with_multi_level_parameters"
+				parameterName="coverageMin" />
+			<toolParameter toolId="core_pipeline_outputs_paired_with_multi_level_parameters"
+				parameterName="conditional.coverageMid" />
+			<toolParameter toolId="core_pipeline_outputs_paired_with_multi_level_parameters"
+				parameterName="coverageMax" />
+			<toolParameter toolId="core_pipeline_outputs_paired_with_multi_level_parameters"
+				parameterName="conditional.level2.parameter" />
+		</parameter>
+	</parameters>
+	<outputs>
+		<output name="tree" fileName="phylogeneticTree.txt" />
+		<output name="matrix" fileName="snpMatrix.tsv" />
+		<output name="table" fileName="snpTable.tsv" />
+	</outputs>
+	<toolRepositories>
+		<repository>
+			<name>sam_to_bam</name>
+			<owner>devteam</owner>
+			<url>http://toolshed.g2.bx.psu.edu/</url>
+			<revision>8176b2575aa1</revision>
+		</repository>
+	</toolRepositories>
+</iridaWorkflow>

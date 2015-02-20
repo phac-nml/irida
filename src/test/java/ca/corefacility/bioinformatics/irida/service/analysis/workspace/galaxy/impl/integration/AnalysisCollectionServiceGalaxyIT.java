@@ -31,6 +31,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
+import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateException;
@@ -166,14 +167,15 @@ public class AnalysisCollectionServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetSequenceFileSingleSamplesSuccess() throws SampleAnalysisDuplicateException {
+	public void testGetSequenceFileSingleSamplesSuccess()
+			throws DuplicateSampleException {
 		Set<SequenceFile> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathA));
 		Sample sample = sampleRepository.findOne(1L);
 		SequenceFile sequenceFile = sequenceFiles.iterator().next();
 
 		Map<Sample, SequenceFile> sampleSequenceFiles = sequenceFileService
-				.getSequenceFileSingleSamples(sequenceFiles);
+				.getUniqueSamplesForSequenceFiles(sequenceFiles);
 		assertEquals("sampleSequenceFiles map has size != 1", 1, sampleSequenceFiles.size());
 		assertEquals("sampleSequenceFiles map does not have sequenceFile " + sequenceFile + " corresponding to sample "
 				+ sample, sequenceFile, sampleSequenceFiles.get(sample));
@@ -186,11 +188,11 @@ public class AnalysisCollectionServiceGalaxyIT {
 	 */
 	@Test(expected = SampleAnalysisDuplicateException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetSequenceFileSingleSamplesFail() throws SampleAnalysisDuplicateException {
+	public void testGetSequenceFileSingleSamplesFail() throws DuplicateSampleException {
 		Set<SequenceFile> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathA, sequenceFilePath2A));
 
-		sequenceFileService.getSequenceFileSingleSamples(sequenceFiles);
+		sequenceFileService.getUniqueSamplesForSequenceFiles(sequenceFiles);
 	}
 
 	/**
@@ -200,14 +202,14 @@ public class AnalysisCollectionServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetSequenceFilePairSamplesSuccess() throws SampleAnalysisDuplicateException {
+	public void testGetSequenceFilePairSamplesSuccess() throws DuplicateSampleException {
 		Set<SequenceFilePair> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, pairSequenceFiles1A, pairSequenceFiles2A));
 		Sample sample = sampleRepository.findOne(1L);
 		SequenceFilePair sequenceFilePair = sequenceFiles.iterator().next();
 
 		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = sequenceFilePairService
-				.getSequenceFilePairedSamples(sequenceFiles);
+				.getUniqueSamplesForSequenceFilePairs(sequenceFiles);
 		assertEquals("sampleSequenceFiles map has size != 1", 1, sampleSequenceFilePairs.size());
 		assertEquals("sampleSequenceFiles map does not have sequenceFilePair " + sequenceFilePair
 				+ " corresponding to sample " + sample, sequenceFilePair, sampleSequenceFilePairs.get(sample));
@@ -220,10 +222,10 @@ public class AnalysisCollectionServiceGalaxyIT {
 	 */
 	@Test(expected = SampleAnalysisDuplicateException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetSequenceFilePairSamplesFail() throws SampleAnalysisDuplicateException {
+	public void testGetSequenceFilePairSamplesFail() throws DuplicateSampleException {
 		Set<SequenceFilePair> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, pairSequenceFiles1AB, pairSequenceFiles2AB));
-		sequenceFilePairService.getSequenceFilePairedSamples(sequenceFiles);
+		sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(sequenceFiles);
 	}
 
 	/**
@@ -249,7 +251,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Set<SequenceFile> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathA));
 		Map<Sample, SequenceFile> sampleSequenceFiles = sequenceFileService
-				.getSequenceFileSingleSamples(sequenceFiles);
+				.getUniqueSamplesForSequenceFiles(sequenceFiles);
 		Sample sample1 = sampleRepository.findOne(1L);
 
 		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy.uploadSequenceFilesSingle(
@@ -300,7 +302,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Set<SequenceFilePair> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, pairSequenceFiles1A, pairSequenceFiles2A));
 		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = sequenceFilePairService
-				.getSequenceFilePairedSamples(sequenceFiles);
+				.getUniqueSamplesForSequenceFilePairs(sequenceFiles);
 		Sample sample1 = sampleRepository.findOne(1L);
 
 		CollectionResponse collectionResponse = analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(
@@ -388,7 +390,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 		Set<SequenceFilePair> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, pairSequenceFiles1AInvalidName, pairSequenceFiles2A));
 		Map<Sample, SequenceFilePair> sampleSequenceFilePairs = sequenceFilePairService
-				.getSequenceFilePairedSamples(sequenceFiles);
+				.getUniqueSamplesForSequenceFilePairs(sequenceFiles);
 
 		analysisCollectionServiceGalaxy.uploadSequenceFilesPaired(sampleSequenceFilePairs, createdHistory,
 				createdLibrary);
