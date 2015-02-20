@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
+import ca.corefacility.bioinformatics.irida.exceptions.*;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,14 +34,6 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowParameterException;
-import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateException;
-import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -326,7 +319,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IOException
 	 * @throws IridaWorkflowException 
 	 */
-	@Test(expected = SampleAnalysisDuplicateException.class)
+	@Test(expected = DuplicateSampleException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareAnalysisFilesSingleFail() throws InterruptedException, ExecutionManagerException,
 			IOException, IridaWorkflowException {
@@ -637,7 +630,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IOException
 	 * @throws IridaWorkflowException 
 	 */
-	@Test(expected = SampleAnalysisDuplicateException.class)
+	@Test(expected = DuplicateSampleException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareAnalysisFilesPairFail() throws InterruptedException, ExecutionManagerException,
 			IOException, IridaWorkflowException {

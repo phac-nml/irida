@@ -9,6 +9,7 @@ import javax.validation.Valid;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
@@ -126,4 +127,19 @@ public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public List<Join<Sample, SequenceFile>> getUnpairedSequenceFilesForSample(Sample sample);
+
+	/**
+	 * Given a set of {@link SequenceFile}s, constructs a map between the
+	 * {@link SequenceFile}s and the corresponding {@link Sample}s.
+	 *
+	 * @param sequenceFiles
+	 *            The set of sequence files.
+	 * @return A map linking a sample and the sequence files to run.
+	 * @throws DuplicateSampleException
+	 *             If there was more than one sequence file with the same
+	 *             sample.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sequenceFiles, 'canReadSequenceFile')")
+	public Map<Sample, SequenceFile> getUniqueSamplesForSequenceFiles(Set<SequenceFile> sequenceFiles)
+			throws DuplicateSampleException;
 }
