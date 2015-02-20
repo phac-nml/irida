@@ -7673,7 +7673,7 @@ html, body {
     transform: translate3d(0, -65px, 0px);
   }
 }
-@-webkit-keyframes shake {
+@-webkit-keyframes glow {
   from {
     background-color: #3092d0;
   }
@@ -7685,8 +7685,8 @@ html, body {
   }
 }
 /* line 23, ../../styles/animations/_animations.scss */
-.shake {
-  animation: shake .5s .2s 1;
+.glow {
+  animation: glow .5s .2s 1;
 }
 
 /* line 1, ../../styles/components/_board.scss */

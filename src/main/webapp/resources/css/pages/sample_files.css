@@ -11,7 +11,7 @@
     transform: translate3d(0, -65px, 0px);
   }
 }
-@-webkit-keyframes shake {
+@-webkit-keyframes glow {
   from {
     background-color: #3092d0;
   }
@@ -23,8 +23,8 @@
   }
 }
 /* line 23, ../../../styles/animations/_animations.scss */
-.shake {
-  animation: shake .5s .2s 1;
+.glow {
+  animation: glow .5s .2s 1;
 }
 
 /* line 4, ../../../styles/pages/sample_files.scss */

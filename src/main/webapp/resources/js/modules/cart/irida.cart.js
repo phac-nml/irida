@@ -27,7 +27,7 @@
                       }
                   });
                 if (initialized && prev !== vm.count) {
-                  vm.animation = 'shake';
+                  vm.animation = 'glow';
                   $timeout(function () {
                     vm.animation = '';
                   }, 3000);

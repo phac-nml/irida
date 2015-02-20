@@ -14,12 +14,12 @@
   }
 }
 
-@-webkit-keyframes shake {
+@-webkit-keyframes glow {
   from { background-color: $irida-colour-info;}
   50% { background-color: lighten($irida-colour-info, 20);}
   to { background-color: $irida-colour-info;}
 }
 
-.shake {
-  animation: shake .5s .2s 1;
+.glow {
+  animation: glow .5s .2s 1;
 }
