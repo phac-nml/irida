@@ -17,6 +17,7 @@ import org.mockito.ArgumentCaptor;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.impl.SequenceFilePairServiceImpl;
@@ -29,16 +30,18 @@ import ca.corefacility.bioinformatics.irida.service.impl.SequenceFilePairService
  * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
 public class SequenceFilePairServiceTest {
+	private SampleSequenceFileJoinRepository ssfRepository;
 	private SequenceFilePairService sequenceFilePairService;
 	private SequenceFilePairRepository pairRepository;
 	private Validator validator;
 
 	@Before
 	public void setUp() {
+		this.ssfRepository = mock(SampleSequenceFileJoinRepository.class);
 		this.pairRepository = mock(SequenceFilePairRepository.class);
 		this.validator = mock(Validator.class);
 
-		this.sequenceFilePairService = new SequenceFilePairServiceImpl(pairRepository, validator);
+		this.sequenceFilePairService = new SequenceFilePairServiceImpl(ssfRepository, pairRepository, validator);
 	}
 
 	@Test

@@ -5,7 +5,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-	<changeSet id="update-analysis-workflows" author="apetkau">
+	<changeSet id="update-analysis-workflows" author="apetkau,fbristow">
 
 		<dropForeignKeyConstraint baseTableName="analysis_submission_phylogenomics_AUD"
 			constraintName="FK_ANALYSIS_SUBMISSION_PHYLOGENOMICS_REVISION" />
@@ -89,5 +89,11 @@
 			</column>
 		</createTable>
 
+	<modifyDataType columnName="workflow_id" tableName="analysis_submission"
+		newDataType="varchar(255)" />
+	<addNotNullConstraint columnName="workflow_id"
+		tableName="analysis_submission" columnDataType="varchar(255)" />
+	<modifyDataType columnName="workflow_id" tableName="analysis_submission_AUD"
+		newDataType="varchar(255)" />
 	</changeSet>
 </databaseChangeLog>
