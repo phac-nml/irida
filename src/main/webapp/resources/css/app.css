@@ -7660,6 +7660,32 @@ html, body {
   flex-grow: 1;
 }
 
+@-webkit-keyframes move-up-down {
+  0% {
+    transform: translate3d(0, -65px, 0px);
+    animation-timing-function: ease-in;
+  }
+  50% {
+    transform: translate3d(0, 0, 0px);
+    animation-timing-function: ease-out;
+  }
+  100% {
+    transform: translate3d(0, -65px, 0px);
+  }
+}
+@-moz-keyframes move-up-down {
+  0% {
+    transform: translate3d(0, -65px, 0px);
+    animation-timing-function: ease-in;
+  }
+  50% {
+    transform: translate3d(0, 0, 0px);
+    animation-timing-function: ease-out;
+  }
+  100% {
+    transform: translate3d(0, -65px, 0px);
+  }
+}
 @keyframes move-up-down {
   0% {
     transform: translate3d(0, -65px, 0px);
@@ -7684,8 +7710,32 @@ html, body {
     background-color: #3092d0;
   }
 }
-/* line 23, ../../styles/animations/_animations.scss */
+@-moz-keyframes glow {
+  from {
+    background-color: #3092d0;
+  }
+  50% {
+    background-color: #83bee3;
+  }
+  to {
+    background-color: #3092d0;
+  }
+}
+@-webkit-keyframes glow {
+  from {
+    background-color: #3092d0;
+  }
+  50% {
+    background-color: #83bee3;
+  }
+  to {
+    background-color: #3092d0;
+  }
+}
+/* line 63, ../../styles/animations/_animations.scss */
 .glow {
+  -webkit-animation: glow .5s .2s 1;
+  -moz-animation: glow .5s .2s 1;
   animation: glow .5s .2s 1;
 }
 
