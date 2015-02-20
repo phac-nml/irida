@@ -143,7 +143,7 @@
 					<a th:href="@{/logout}" th:title="#{nav.main.logout}" href="/logout"><i class="fa fa-sign-out"></i> </a>
 				</li>
 			</ul>
-			<button id="cart-show-btn" type="button" class="btn btn-info btn-sm navbar-btn navbar-right"
+			<button id="cart-show-btn" type="button" class="btn btn-info btn-sm navbar-btn navbar-right" ng-class="cart.animation"
 			        ng-click="cart.show=!cart.show">
 				<span th:text="#{cart.label}"></span>
 				&nbsp;
