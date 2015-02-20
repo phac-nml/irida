@@ -1,0 +1,32 @@
+<tool id="core_pipeline_outputs_paired_with_multi_level_parameters" name="core_pipeline_outputs_paired_with_multi_level_parameters" version="0.1.0">
+  <command>
+    echo "$coverageMin $conditional.level2.parameter $conditional.coverageMid $coverageMax" > $csv; echo "$coverageMin $conditional.level2.parameter $conditional.coverageMid $coverageMax" > $output_tree; echo "$coverageMin $conditional.level2.parameter $conditional.coverageMid $coverageMax" > $positions;
+  </command>
+  <inputs>
+    <param name="sequence_reads" label="sequence_reads" type="data_collection" collection_type="list:paired" />
+    <param name="fasta" type="data" label="reference" format="fasta" />
+    <param name="coverageMin" type="integer" value="15" label="minimum coverage"/>
+    <param name="coverageMax" type="integer" value="15" label="maximum coverage"/>
+    <conditional name="conditional">
+      <param name="conditional_select" type="select" label="Conditional Select">
+        <option value="all">All</option>
+      </param>
+      <when value="all">
+        <param name="coverageMid" type="integer" value="15" label="Optional mid coverage"/>
+        <conditional name="level2">
+          <param name="level2_select" type="select" label="Level 2 Select">
+            <option value="all2">All</option>
+          </param>
+          <when value="all2">
+            <param name="parameter" type="integer" value="1" label="Parameter" />
+          </when>
+        </conditional>
+      </when>
+    </conditional>
+  </inputs>
+  <outputs>
+    <data format="csv" name="csv" />
+    <data format="txt" name="output_tree" />
+    <data format="tabular" name="positions" />
+  </outputs>
+</tool>
