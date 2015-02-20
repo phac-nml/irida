@@ -19,10 +19,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.FileProcessorTimeoutException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
@@ -254,7 +254,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 * {@inheritDoc}
 	 */
 	public Map<Sample, SequenceFile> getUniqueSamplesForSequenceFiles(Set<SequenceFile> sequenceFiles)
-			throws SampleAnalysisDuplicateException {
+			throws DuplicateSampleException {
 		Map<Sample, SequenceFile> sampleSequenceFiles = new HashMap<>();
 
 		for (SequenceFile file : sequenceFiles) {
@@ -265,7 +265,7 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 
 			if (sampleSequenceFiles.containsKey(sample)) {
 				SequenceFile previousFile = sampleSequenceFiles.get(sample);
-				throw new SampleAnalysisDuplicateException("Sequence files " + sequenceFile + ", " + previousFile
+				throw new DuplicateSampleException("Sequence files " + sequenceFile + ", " + previousFile
 						+ " both have the same sample " + sample);
 			} else {
 				sampleSequenceFiles.put(sample, sequenceFile);

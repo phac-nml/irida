@@ -31,6 +31,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
+import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
 import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateException;
@@ -166,7 +167,8 @@ public class AnalysisCollectionServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetSequenceFileSingleSamplesSuccess() throws SampleAnalysisDuplicateException {
+	public void testGetSequenceFileSingleSamplesSuccess()
+			throws DuplicateSampleException {
 		Set<SequenceFile> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathA));
 		Sample sample = sampleRepository.findOne(1L);
@@ -186,7 +188,7 @@ public class AnalysisCollectionServiceGalaxyIT {
 	 */
 	@Test(expected = SampleAnalysisDuplicateException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetSequenceFileSingleSamplesFail() throws SampleAnalysisDuplicateException {
+	public void testGetSequenceFileSingleSamplesFail() throws DuplicateSampleException {
 		Set<SequenceFile> sequenceFiles = Sets.newHashSet(databaseSetupGalaxyITService
 				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathA, sequenceFilePath2A));
 
