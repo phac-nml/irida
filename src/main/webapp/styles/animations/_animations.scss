@@ -1,3 +1,33 @@
+@import "../helpers/variables";
+
+@-webkit-keyframes move-up-down {
+  0% {
+    transform: translate3d(0, -65px, 0px);
+    animation-timing-function: ease-in;
+  }
+  50% {
+    transform: translate3d(0, 0, 0px);
+    animation-timing-function: ease-out;
+  }
+  100% {
+    transform: translate3d(0, -65px, 0px);
+  }
+}
+
+@-moz-keyframes move-up-down {
+  0% {
+    transform: translate3d(0, -65px, 0px);
+    animation-timing-function: ease-in;
+  }
+  50% {
+    transform: translate3d(0, 0, 0px);
+    animation-timing-function: ease-out;
+  }
+  100% {
+    transform: translate3d(0, -65px, 0px);
+  }
+}
+
 @keyframes move-up-down {
   0% {
     transform: translate3d(0, -65px, 0px);
@@ -10,4 +40,28 @@
   100% {
     transform: translate3d(0, -65px, 0px);
   }
+}
+
+@-webkit-keyframes glow {
+  from { background-color: $irida-colour-info;}
+  50% { background-color: lighten($irida-colour-info, 20);}
+  to { background-color: $irida-colour-info;}
+}
+
+@-moz-keyframes glow {
+  from { background-color: $irida-colour-info;}
+  50% { background-color: lighten($irida-colour-info, 20);}
+  to { background-color: $irida-colour-info;}
+}
+
+@-webkit-keyframes glow {
+  from { background-color: $irida-colour-info;}
+  50% { background-color: lighten($irida-colour-info, 20);}
+  to { background-color: $irida-colour-info;}
+}
+
+.glow {
+  -webkit-animation: glow .5s .2s 1;
+  -moz-animation: glow .5s .2s 1;
+  animation: glow .5s .2s 1;
 }

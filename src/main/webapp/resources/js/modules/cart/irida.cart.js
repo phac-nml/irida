@@ -1,9 +1,10 @@
 (function () {
     "use strict";
 
-    function CartController($scope, cart) {
+    function CartController($scope, $timeout, cart) {
         "use strict";
-        var vm = this;
+        var vm = this,
+          initialized = false;
         vm.show = false;
         vm.projects = [];
         vm.count = 0;
@@ -16,14 +17,24 @@
         function getCart (collapse) {
             cart.all()
               .then(function (data) {
+                var prev = vm.count;
+                vm.count = 0;
                   vm.projects = data;
-                  vm.count = 0;
                   _.each(data, function(p) {
                       vm.count += p.samples.length;
                       if(collapse){
                         vm.collapsed[p.id] = true;
                       }
                   });
+                if (initialized && prev !== vm.count) {
+                  vm.animation = 'glow';
+                  $timeout(function () {
+                    vm.animation = '';
+                  }, 3000);
+                } else {
+                  // This is just to prevent animation on page load.
+                  initialized = true;
+                }
               });
         }
 
@@ -58,7 +69,7 @@
             templateUrl : "/cart.html",
             replace: true,
             controllerAs: "cart",
-            controller  : ['$scope', 'CartService', CartController]
+            controller  : ['$scope', '$timeout', 'CartService', CartController]
         }
     }
 
