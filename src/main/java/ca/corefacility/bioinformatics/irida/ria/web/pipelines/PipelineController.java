@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -145,10 +145,10 @@ public class PipelineController extends BaseController {
 						"id", description.getId().toString(),
 						"title",
 						messageSource
-								.getMessage(key + ".title", new Object[] { }, locale),
+								.getMessage(key + ".title", new Object[]{}, locale),
 						"description",
 						messageSource
-								.getMessage(key + ".description", new Object[] { }, locale)
+								.getMessage(key + ".description", new Object[]{}, locale)
 				));
 			} catch (IridaWorkflowNotFoundException e) {
 				logger.error("Workflow not found - See stack:", e);
@@ -162,8 +162,7 @@ public class PipelineController extends BaseController {
 	}
 
 	@RequestMapping(value = "/{pipelineId}")
-	public String getPhylogenomicsPage(final Model model, Principal principal, Locale locale,
-			@PathVariable UUID pipelineId) {
+	public String getPhylogenomicsPage(final Model model, Principal principal, Locale locale, @PathVariable UUID pipelineId) {
 		String response = URL_EMPTY_CART_REDIRECT;
 
 		Map<Project, Set<Sample>> cartMap = cartController.getSelected();
@@ -337,13 +336,13 @@ public class PipelineController extends BaseController {
 			if (single != null) {
 				sequenceFiles = (List<SequenceFile>) sequenceFileService.readMultiple(single);
 				// Check the single files for duplicates in a sample, throws SampleAnalysisDuplicateException
-				sequenceFileService.getSequenceFileSingleSamples(Sets.newHashSet(sequenceFiles));
+				sequenceFileService.getUniqueSamplesForSequenceFiles(Sets.newHashSet(sequenceFiles));
 			}
 
 			if (paired != null) {
 				sequenceFilePairs = (List<SequenceFilePair>) sequenceFilePairService.readMultiple(paired);
 				// Check the pair files for duplicates in a sample, throws SampleAnalysisDuplicateException
-				sequenceFilePairService.getSequenceFilePairedSamples(Sets.newHashSet(sequenceFilePairs));
+				sequenceFilePairService.getUniqueSamplesForSequenceFilePairs(Sets.newHashSet(sequenceFilePairs));
 			}
 
 			// Get the pipeline parameters
@@ -369,7 +368,7 @@ public class PipelineController extends BaseController {
 			logger.error("Cannot file IridaWorkflow [" + pipelineId + "]", e);
 			result = ImmutableMap
 					.of("pipelineError", messageSource.getMessage("pipeline.error.invalid-pipeline", null, locale));
-		} catch (SampleAnalysisDuplicateException e) {
+		} catch (DuplicateSampleException e) {
 			logger.error("Multiple files for Sample found", e);
 		}
 
