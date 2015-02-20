@@ -52,16 +52,16 @@
 
         // Create the parameter object;
         var params = {};
-        if($.isNumeric(ref)){
+        if ($.isNumeric(ref)) {
           params['ref'] = ref;
         }
-        if(single.length>0) {
+        if (single.length > 0) {
           params['single'] = single;
         }
-        if(paired.length>0) {
+        if (paired.length > 0) {
           params['paired'] = paired;
         }
-        if(_.keys(paras).length>0) {
+        if (_.keys(paras).length > 0) {
           params['paras'] = paras;
         }
         params['name'] = angular.element("#pipeline-name").val();
@@ -90,6 +90,19 @@
             }
           });
       }
+    };
+
+    vm.removeSample = function (projectId, sampleId) {
+      console.log("removing " + projectId);
+      $http({
+        url    : "/cart/project/" + projectId + "/samples/" + sampleId,
+        method : "DELETE",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }).success(function () {
+        location.reload();
+      });
     };
   }
 
