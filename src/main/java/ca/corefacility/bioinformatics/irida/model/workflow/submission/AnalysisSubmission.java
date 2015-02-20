@@ -36,6 +36,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -87,6 +88,7 @@ public class AnalysisSubmission implements IridaThing {
 	 */
 	@NotNull
 	@Column(name="workflow_id")
+	@Type(type = "uuid-char")
 	private UUID workflowId;
 
 	/**
