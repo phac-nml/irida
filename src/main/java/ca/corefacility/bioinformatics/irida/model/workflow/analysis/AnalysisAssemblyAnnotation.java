@@ -37,6 +37,10 @@ public class AnalysisAssemblyAnnotation extends Analysis {
 			Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
 		super(inputFiles, executionManagerAnalysisId, analysisOutputFilesMap);
 	}
+	
+	public AnalysisOutputFile getAssemblyLog() {
+		return getAnalysisOutputFile("assembly-log");
+	}
 
 	public AnalysisOutputFile getContigs() {
 		return getAnalysisOutputFile("contigs");
@@ -46,7 +50,15 @@ public class AnalysisAssemblyAnnotation extends Analysis {
 		return getAnalysisOutputFile("annotations-genbank");
 	}
 	
+	public AnalysisOutputFile getAnnotationsStats() {
+		return getAnalysisOutputFile("annotations-stats");
+	}
+	
 	public AnalysisOutputFile getAnnotationLog() {
 		return getAnalysisOutputFile("annotations-log");
+	}
+	
+	public AnalysisOutputFile getAnnotationsError() {
+		return getAnalysisOutputFile("annotations-error");
 	}
 }

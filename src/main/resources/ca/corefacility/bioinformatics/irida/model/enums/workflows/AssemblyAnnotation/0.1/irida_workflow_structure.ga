@@ -75,11 +75,6 @@
                     "action_type": "HideDatasetAction", 
                     "output_name": "out_contigs"
                 }, 
-                "HideDatasetActionout_log": {
-                    "action_arguments": {}, 
-                    "action_type": "HideDatasetAction", 
-                    "output_name": "out_log"
-                }, 
                 "HideDatasetActionout_scaffold_stats": {
                     "action_arguments": {}, 
                     "action_type": "HideDatasetAction", 
@@ -89,6 +84,13 @@
                     "action_arguments": {}, 
                     "action_type": "HideDatasetAction", 
                     "output_name": "out_scaffolds"
+                }, 
+                "RenameDatasetActionout_log": {
+                    "action_arguments": {
+                        "newname": "spades.log"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "out_log"
                 }
             }, 
             "tool_errors": null, 
@@ -210,11 +212,6 @@
                 "top": 200
             }, 
             "post_job_actions": {
-                "HideDatasetActionout_err": {
-                    "action_arguments": {}, 
-                    "action_type": "HideDatasetAction", 
-                    "output_name": "out_err"
-                }, 
                 "HideDatasetActionout_faa": {
                     "action_arguments": {}, 
                     "action_type": "HideDatasetAction", 
@@ -250,10 +247,12 @@
                     "action_type": "HideDatasetAction", 
                     "output_name": "out_tbl"
                 }, 
-                "HideDatasetActionout_txt": {
-                    "action_arguments": {}, 
-                    "action_type": "HideDatasetAction", 
-                    "output_name": "out_txt"
+                "RenameDatasetActionout_err": {
+                    "action_arguments": {
+                        "newname": "prokka.err"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "out_err"
                 }, 
                 "RenameDatasetActionout_gbk": {
                     "action_arguments": {
@@ -275,6 +274,13 @@
                     }, 
                     "action_type": "RenameDatasetAction", 
                     "output_name": "out_sqn"
+                }, 
+                "RenameDatasetActionout_txt": {
+                    "action_arguments": {
+                        "newname": "prokka_stats.txt"
+                    }, 
+                    "action_type": "RenameDatasetAction", 
+                    "output_name": "out_txt"
                 }
             }, 
             "tool_errors": null, 

@@ -87,7 +87,7 @@
 					</a>
 					<ul class="dropdown-menu" role="menu">
 						<li>
-							<a href="/analysis/list" th:text="#{nav.main.analysis-user}">Your Analysis</a>
+							<a th:href="@{/analysis/list}" href="/analysis/list" th:text="#{nav.main.analysis-user}">Your Analysis</a>
 						</li>
 						<li sec:authorize="hasAnyRole('ROLE_ADMIN')"
 						    role="presentation"
