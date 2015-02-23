@@ -370,6 +370,8 @@ public class PipelineController extends BaseController {
 					.of("pipelineError", messageSource.getMessage("pipeline.error.invalid-pipeline", null, locale));
 		} catch (DuplicateSampleException e) {
 			logger.error("Multiple files for Sample found", e);
+			result = ImmutableMap.of("pipelineError", messageSource.getMessage("pipeline.error.duplicate-samples",
+					null, locale));
 		}
 
 		return result;
