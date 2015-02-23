@@ -2,9 +2,13 @@ package ca.corefacility.bioinformatics.irida.service.impl.analysis.submission;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
@@ -19,14 +23,23 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
@@ -43,6 +56,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	
 	private UserRepository userRepository;
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
+	private final ReferenceFileRepository referenceFileRepository;
 
 	/**
 	 * Builds a new AnalysisSubmissionServiceImpl with the given information.
@@ -56,10 +70,11 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Autowired
 	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
-			UserRepository userRepository, Validator validator) {
+			UserRepository userRepository, final ReferenceFileRepository referenceFileRepository, Validator validator) {
 		super(analysisSubmissionRepository, validator, AnalysisSubmission.class);
 		this.userRepository = userRepository;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
+		this.referenceFileRepository = referenceFileRepository;
 	}
 
 	/**
@@ -205,5 +220,106 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		User user = userRepository.loadUserByUsername(userDetails.getUsername());
 		return getAnalysisSubmissionsForUser(user);
+	}
+	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public Collection<AnalysisSubmission> createSingleSampleWorkflow(IridaWorkflow workflow, Long ref,
+			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, Map<String, String> params,
+			String name) {
+		final Collection<AnalysisSubmission> createdSubmissions = new HashSet<AnalysisSubmission>();
+		// Single end reads
+		IridaWorkflowDescription description = workflow.getWorkflowDescription();
+		if (description.acceptsSingleSequenceFiles()) {
+			for (int i = 0; i < sequenceFiles.size(); i++) {
+				SequenceFile file = sequenceFiles.get(i);
+				// Build the analysis submission
+				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
+				builder.name(name + "_" + (i + 1));
+				builder.inputFilesSingle(ImmutableSet.of(file));
+
+				// Add reference file
+				if (ref != null && description.requiresReference()) {
+					// Note: This cannot be empty if through the UI if the
+					// pipeline required a reference file.
+					ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
+					builder.referenceFile(referenceFile);
+				}
+
+				if (params != null && description.acceptsParameters()) {
+					// Note: This cannot be empty if through the UI if the
+					// pipeline required params.
+					builder.inputParameters(params);
+				}
+
+				// Create the submission
+				createdSubmissions.add(create(builder.build()));
+			}
+		}
+
+		// Paired end reads
+		if (description.acceptsPairedSequenceFiles()) {
+			for (int i = 0; i < sequenceFilePairs.size(); i++) {
+				SequenceFilePair pair = sequenceFilePairs.get(i);
+				// Build the analysis submission
+				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
+				builder.name(name + "_" + (i + 1));
+				builder.inputFilesPaired(ImmutableSet.of(pair));
+
+				// Add reference file
+				if (ref != null && description.requiresReference()) {
+					ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
+					builder.referenceFile(referenceFile);
+				}
+
+				if (description.acceptsParameters()) {
+					builder.inputParameters(params);
+				}
+
+				// Create the submission
+				createdSubmissions.add(create(builder.build()));
+			}
+		}
+		
+		return createdSubmissions;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional
+	public AnalysisSubmission createMultipleFileWorkflow(IridaWorkflow workflow, Long ref,
+			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, Map<String, String> params,
+			String name) {
+		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
+		builder.name(name);
+		IridaWorkflowDescription description = workflow.getWorkflowDescription();
+
+		// Add reference file
+		if (ref != null && description.requiresReference()) {
+			ReferenceFile referenceFile = referenceFileRepository.findOne(ref);
+			builder.referenceFile(referenceFile);
+		}
+
+		// Add any single end sequencing files.
+		if (!sequenceFiles.isEmpty() && description.acceptsSingleSequenceFiles()) {
+			builder.inputFilesSingle(Sets.newHashSet(sequenceFiles));
+		}
+
+		// Add any paired end sequencing files.
+		if (!sequenceFilePairs.isEmpty() && description.acceptsPairedSequenceFiles()) {
+			builder.inputFilesPaired(Sets.newHashSet(sequenceFilePairs));
+		}
+
+		if (description.acceptsParameters()) {
+			builder.inputParameters(params);
+		}
+
+		// Create the submission
+		return create(builder.build());
 	}
 }

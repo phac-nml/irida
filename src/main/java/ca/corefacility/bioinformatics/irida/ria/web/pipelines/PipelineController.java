@@ -39,7 +39,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
@@ -54,7 +53,6 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -358,10 +356,11 @@ public class PipelineController extends BaseController {
 			// TODO [15-02-17] (Josh): Replace this once the description has a setting for multiple files.
 			String type = description.getAnalysisType().toString();
 			if (type.equals("phylogenomics")) {
-				submitMultipleFileWorkflow(flow, ref, sequenceFiles, sequenceFilePairs, params, name);
-
+				analysisSubmissionService.createMultipleFileWorkflow(flow, ref, sequenceFiles, sequenceFilePairs,
+						params, name);
 			} else {
-				submitSingleSampleWorkflow(flow, ref, sequenceFiles, sequenceFilePairs, params, name);
+				analysisSubmissionService.createSingleSampleWorkflow(flow, ref, sequenceFiles, sequenceFilePairs,
+						params, name);
 			}
 
 		} catch (IridaWorkflowNotFoundException e) {
@@ -375,112 +374,6 @@ public class PipelineController extends BaseController {
 		}
 
 		return result;
-	}
-
-	/**
-	 * Submit {@link AnalysisSubmission} for workflows requiring only one {@link SequenceFile} or {@link
-	 * SequenceFilePair}
-	 *
-	 * @param workflow {@link IridaWorkflow} that the files will be run on
-	 * @param ref {@link Long} id for a {@link ReferenceFile}
-	 * @param sequenceFiles {@link List} of {@link SequenceFile} to run on the workflow
-	 * @param sequenceFilePairs {@link List} of {@link SequenceFilePair} to run on the workflow
-	 * @param params {@link Map} of parameters specific for the pipeline
-	 * @param name {@link String} the name for the analysis
-	 */
-	private void submitSingleSampleWorkflow(IridaWorkflow workflow, Long ref, List<SequenceFile> sequenceFiles,
-			List<SequenceFilePair> sequenceFilePairs, Map<String, String> params, String name) {
-		// Single end reads
-		IridaWorkflowDescription description = workflow.getWorkflowDescription();
-		if (description.acceptsSingleSequenceFiles()) {
-			for (int i = 0; i < sequenceFiles.size(); i++) {
-				SequenceFile file = sequenceFiles.get(i);
-				// Build the analysis submission
-				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
-				builder.name(name + "_" + (i + 1));
-				builder.inputFilesSingle(ImmutableSet.of(file));
-
-				// Add reference file
-				if (ref != null && description.requiresReference()) {
-					// Note: This cannot be empty if through the UI if the pipeline required a reference file.
-					ReferenceFile referenceFile = referenceFileService.read(ref);
-					builder.referenceFile(referenceFile);
-				}
-
-				if (params != null && description.acceptsParameters()) {
-					// Note: This cannot be empty if through the UI if the pipeline required params.
-					builder.inputParameters(params);
-				}
-
-				// Create the submission
-				analysisSubmissionService.create(builder.build());
-			}
-		}
-
-		// Paired end reads
-		if (description.acceptsPairedSequenceFiles()) {
-			for (int i = 0; i < sequenceFilePairs.size(); i++) {
-				SequenceFilePair pair = sequenceFilePairs.get(i);
-				// Build the analysis submission
-				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
-				builder.name(name + "_" + (i + 1));
-				builder.inputFilesPaired(ImmutableSet.of(pair));
-
-				// Add reference file
-				if (ref != null && description.requiresReference()) {
-					ReferenceFile referenceFile = referenceFileService.read(ref);
-					builder.referenceFile(referenceFile);
-				}
-
-				if (description.acceptsParameters()) {
-					builder.inputParameters(params);
-				}
-
-				// Create the submission
-				analysisSubmissionService.create(builder.build());
-			}
-		}
-	}
-
-	/**
-	 * Submit {@link AnalysisSubmission} for workflows allowing multiple one {@link SequenceFile} or {@link
-	 * SequenceFilePair}
-	 *
-	 * @param workflow {@link IridaWorkflow} that the files will be run on
-	 * @param ref {@link Long} id for a {@link ReferenceFile}
-	 * @param sequenceFiles {@link List} of {@link SequenceFile} to run on the workflow
-	 * @param sequenceFilePairs {@link List} of {@link SequenceFilePair} to run on the workflow
-	 * @param params {@link Map} of parameters specific for the pipeline
-	 * @param name {@link String} the name for the analysis
-	 */
-	private void submitMultipleFileWorkflow(IridaWorkflow workflow, Long ref, List<SequenceFile> sequenceFiles,
-			List<SequenceFilePair> sequenceFilePairs, Map<String, String> params, String name) {
-		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
-		builder.name(name);
-		IridaWorkflowDescription description = workflow.getWorkflowDescription();
-
-		// Add reference file
-		if (ref != null && description.requiresReference()) {
-			ReferenceFile referenceFile = referenceFileService.read(ref);
-			builder.referenceFile(referenceFile);
-		}
-
-		// Add any single end sequencing files.
-		if (!sequenceFiles.isEmpty() && description.acceptsSingleSequenceFiles()) {
-			builder.inputFilesSingle(Sets.newHashSet(sequenceFiles));
-		}
-
-		// Add any paired end sequencing files.
-		if (!sequenceFilePairs.isEmpty() && description.acceptsPairedSequenceFiles()) {
-			builder.inputFilesPaired(Sets.newHashSet(sequenceFilePairs));
-		}
-
-		if (description.acceptsParameters()) {
-			builder.inputParameters(params);
-		}
-
-		// Create the submission
-		analysisSubmissionService.create(builder.build());
 	}
 
 	/**
