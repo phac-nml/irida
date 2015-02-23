@@ -194,11 +194,12 @@
 							<strong class="fa fa-2x fa-smile-o text-center"></strong>&nbsp;
 							<span th:text="#{workflow.submitted-success}">You must be awesome!  All your files looked good and the pipeline has been launched and the pedal should hit the metal soon.</span>
 							<br/><br/>
-							<button id="btn-see-pipeline" class="btn btn-success btn-affixed"
-							        th:text="#{workflow.submitted-view-btn}">Let's see how this pipeline is doing.
-							</button>
+							<a id="btn-see-pipeline" class="btn btn-success btn-affixed" href="#"
+							   th:href="@{/analysis/list}"
+							   th:text="#{workflow.submitted-view-btn}">Let's see how this pipeline is doing.
+							</a>
 							<br/><br/>
-							<button id="btn-clear-pipeline" class="btn btn-warning btn-affixed"
+							<button id="btn-clear-pipeline" class="btn btn-warning btn-affixed" ng-click="pipeline.clearAndRedirect()"
 							        th:text="#{workflow.submitted-clear-btn}">Clear the cart and start over!
 							</button>
 						</div>
@@ -218,6 +219,8 @@
 			required  : /*[[#{workflow.no-name-provided}]]*/ 'Name Required',
 			parameters: /*[[${parameters}]]*/ []
 		};
+
+		var projectsPage = /*[[@{/projects}]]*/ '/projects';
 		/*]]>*/
 	</script>
 	<script src="/resources/bower_components/bootstrap/js/affix.js"

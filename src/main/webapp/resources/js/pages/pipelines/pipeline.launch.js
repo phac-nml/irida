@@ -5,7 +5,7 @@
    * @param $http AngularJS http object
    * @constructor
    */
-  function PipelineController($http, notifications) {
+  function PipelineController($http, CartService, notifications) {
     var vm = this;
     /*
      * Whether or not the page is waiting for a response from the server.
@@ -107,6 +107,18 @@
         location.reload();
       });
     };
+
+    /**
+     * Clear the cart and redirect to the projects page
+     */
+    vm.clearAndRedirect = function () {
+      var clearPromise = CartService.clear();
+
+      // after the cart is cleared, redirect the browser
+      clearPromise.then(function () {
+        window.location = projectsPage;
+      })
+    }
   }
 
   function ParameterModalController($modal) {
@@ -140,8 +152,8 @@
     };
   }
 
-  angular.module('irida.pipelines', [])
-    .controller('PipelineController', ['$http', 'notifications', PipelineController])
+  angular.module('irida.pipelines', ['irida.cart'])
+    .controller('PipelineController', ['$http','CartService', 'notifications', PipelineController])
     .controller('ParameterModalController', ["$modal", ParameterModalController])
     .controller('ParameterController', ['$modalInstance', ParameterController])
   ;

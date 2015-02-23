@@ -113,6 +113,31 @@ public class PipelinesPhylogenomicsPageIT {
 		assertTrue("Message should be displayed when the pipeline is submitted", page.isPipelineSubmittedMessageShown());
 		assertTrue("Message should be displayed once the pipeline finished submitting", page.isPipelineSubmittedSuccessMessageShown());
 	}
+	
+	@Test
+	public void testCheckPipelineStatusAfterSubmit() {
+		addSamplesToCart();
+
+		page.clickLaunchPipelineBtn();
+		assertTrue("Message should be displayed once the pipeline finished submitting",
+				page.isPipelineSubmittedSuccessMessageShown());
+		page.clickSeePipeline();
+
+		assertTrue("Should be on analysis page", driver.getCurrentUrl().endsWith("/analysis/list"));
+	}
+
+	@Test
+	public void testClearPipelineAndGetSamples() {
+		addSamplesToCart();
+
+		page.clickLaunchPipelineBtn();
+		assertTrue("Message should be displayed once the pipeline finished submitting",
+				page.isPipelineSubmittedSuccessMessageShown());
+		page.clickClearAndFindMore();
+
+		assertTrue("Should be on projects page", driver.getCurrentUrl().endsWith("/projects"));
+		assertEquals("cart should be empty", 0, page.getCartCount());
+	}
 
 	@Test
 	public void testRemoveSample() {
