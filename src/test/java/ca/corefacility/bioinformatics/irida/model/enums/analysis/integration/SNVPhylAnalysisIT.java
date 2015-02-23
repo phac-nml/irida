@@ -51,6 +51,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionSchedu
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -98,8 +99,11 @@ public class SNVPhylAnalysisIT {
 	private List<Path> sequenceFilePathsC1List;
 	private List<Path> sequenceFilePathsC2List;
 
-	private Path outputSnpTable;
-	private Path outputSnpMatrix;
+	private Path outputSnpTable1;
+	private Path outputSnpMatrix1;
+	
+	private Path outputSnpTable2;
+	private Path outputSnpMatrix2;
 
 	/**
 	 * Sets up variables for testing.
@@ -164,8 +168,11 @@ public class SNVPhylAnalysisIT {
 		referenceFilePath = Files.createTempFile("reference", ".fasta");
 		Files.copy(referenceFilePathReal, referenceFilePath, StandardCopyOption.REPLACE_EXISTING);
 
-		outputSnpTable = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output/snpTable.tsv").toURI());
-		outputSnpMatrix = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output/snpMatrix.tsv").toURI());
+		outputSnpTable1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snpTable.tsv").toURI());
+		outputSnpMatrix1 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output1/snpMatrix.tsv").toURI());
+		
+		outputSnpTable2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snpTable.tsv").toURI());
+		outputSnpMatrix2 = Paths.get(SNVPhylAnalysisIT.class.getResource("SNVPhyl/test1/output2/snpMatrix.tsv").toURI());
 	}
 
 	private void waitUntilAnalysisStageComplete(Set<Future<AnalysisSubmission>> submissionsFutureSet)
@@ -200,11 +207,13 @@ public class SNVPhylAnalysisIT {
 				sequenceFilePathsB1List, sequenceFilePathsB2List).get(0);
 		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(3L,
 				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
+		
+		Map<String,String> parameters = ImmutableMap.of("alternative-allele-fraction", "0.75", "minimum-read-coverage", "2");
 
 		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
 				Sets.newHashSet(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC), referenceFilePath,
-				snvPhylWorkflow.getWorkflowIdentifier());
-
+				parameters, snvPhylWorkflow.getWorkflowIdentifier());
+		
 		completeSubmittedAnalyses(submission.getId());
 
 		submission = analysisSubmissionRepository.findOne(submission.getId());
@@ -222,16 +231,16 @@ public class SNVPhylAnalysisIT {
 				.next();
 		assertTrue(
 				"snpMatrix should be the same but is \"" + matrixContent + "\"",
-				com.google.common.io.Files.equal(outputSnpMatrix.toFile(), analysisPhylogenomics.getSnpMatrix()
+				com.google.common.io.Files.equal(outputSnpMatrix1.toFile(), analysisPhylogenomics.getSnpMatrix()
 						.getFile().toFile()));
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpMatrix()
 				.getCreatedByTool());
 		@SuppressWarnings("resource")
-		String snpTableContent = new Scanner(analysisPhylogenomics.getSnpMatrix().getFile().toFile()).useDelimiter(
+		String snpTableContent = new Scanner(analysisPhylogenomics.getSnpTable().getFile().toFile()).useDelimiter(
 				"\\Z").next();
 		assertTrue(
 				"snpTable should be the same but is \"" + snpTableContent + "\"",
-				com.google.common.io.Files.equal(outputSnpTable.toFile(), analysisPhylogenomics.getSnpTable().getFile()
+				com.google.common.io.Files.equal(outputSnpTable1.toFile(), analysisPhylogenomics.getSnpTable().getFile()
 						.toFile()));
 		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpTable()
 				.getCreatedByTool());
@@ -266,5 +275,88 @@ public class SNVPhylAnalysisIT {
 
 		assertTrue("Should have found both reads and reference input tools.", foundReadsInputTool
 				&& foundReferenceInputTool);
+	}
+	
+	/**
+	 * Tests out successfully executing the SNVPhyl pipeline and passing a higher value for fraction of reads to call a SNP.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testSNVPhylSuccessHigherSNVReadProportion() throws Exception {
+		SequenceFilePair sequenceFilePairA = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(1L,
+				sequenceFilePathsA1List, sequenceFilePathsA2List).get(0);
+		SequenceFilePair sequenceFilePairB = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(2L,
+				sequenceFilePathsB1List, sequenceFilePathsB2List).get(0);
+		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService.setupSampleSequenceFileInDatabase(3L,
+				sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
+
+		Map<String,String> parameters = ImmutableMap.of("alternative-allele-fraction", "0.90", "minimum-read-coverage", "2");
+		
+		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
+				Sets.newHashSet(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC), referenceFilePath,
+				parameters, snvPhylWorkflow.getWorkflowIdentifier());
+
+		completeSubmittedAnalyses(submission.getId());
+
+		submission = analysisSubmissionRepository.findOne(submission.getId());
+		assertEquals("analysis state should be completed.", AnalysisState.COMPLETED, submission.getAnalysisState());
+
+		Analysis analysis = submission.getAnalysis();
+		assertEquals("Should have generated a phylogenomics pipeline analysis type.",
+				AnalysisPhylogenomicsPipeline.class, analysis.getClass());
+		AnalysisPhylogenomicsPipeline analysisPhylogenomics = (AnalysisPhylogenomicsPipeline) analysis;
+
+		assertEquals("the phylogenomics pipeline should have 3 output files.", 3, analysisPhylogenomics
+				.getAnalysisOutputFiles().size());
+		@SuppressWarnings("resource")
+		String matrixContent = new Scanner(analysisPhylogenomics.getSnpMatrix().getFile().toFile()).useDelimiter("\\Z")
+				.next();
+		assertTrue(
+				"snpMatrix should be the same but is \"" + matrixContent + "\"",
+				com.google.common.io.Files.equal(outputSnpMatrix2.toFile(), analysisPhylogenomics.getSnpMatrix()
+						.getFile().toFile()));
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpMatrix()
+				.getCreatedByTool());
+		@SuppressWarnings("resource")
+		String snpTableContent = new Scanner(analysisPhylogenomics.getSnpTable().getFile().toFile()).useDelimiter(
+				"\\Z").next();
+		assertTrue(
+				"snpTable should be the same but is \"" + snpTableContent + "\"",
+				com.google.common.io.Files.equal(outputSnpTable2.toFile(), analysisPhylogenomics.getSnpTable().getFile()
+						.toFile()));
+		assertNotNull("file should have tool provenance attached.", analysisPhylogenomics.getSnpTable()
+				.getCreatedByTool());
+		// only test to make sure the file has a valid size since PhyML uses a
+		// random seed to generate the tree (and so changes results)
+		assertTrue("the phylogenetic tree file should not be empty.",
+				Files.size(analysisPhylogenomics.getPhylogeneticTree().getFile()) > 0);
+
+		// try to follow the phylogenomics provenance all the way back to the
+		// upload tools
+		final List<ToolExecution> toolsToVisit = Lists.newArrayList(analysisPhylogenomics.getPhylogeneticTree()
+				.getCreatedByTool());
+		assertFalse("file should have tool provenance attached.", toolsToVisit.isEmpty());
+
+		String minimumFreebayesCoverage = null;
+		String altAlleleFraction = null;
+		
+		// navigate through the tree to make sure that you can find both types
+		// of input tools: the one where you upload the reference file, and the
+		// one where you upload the reads.
+		while (!toolsToVisit.isEmpty()) {
+			final ToolExecution ex = toolsToVisit.remove(0);
+			toolsToVisit.addAll(ex.getPreviousSteps());
+
+			if (ex.getToolName().contains("FreeBayes")) {
+				final Map<String, String> params = ex.getExecutionTimeParameters();
+				minimumFreebayesCoverage = params.get("options_type.section_input_filters_type.min_coverage");
+				altAlleleFraction = params.get("options_type.section_input_filters_type.min_alternate_fraction");
+				break;
+			}
+		}
+		assertEquals("incorrect minimum freebayes coverage", "2", minimumFreebayesCoverage);
+		assertEquals("incorrect alternative allele fraction", "0.9", altAlleleFraction);
 	}
 }
