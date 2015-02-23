@@ -392,12 +392,12 @@ public class PipelineController extends BaseController {
 			List<SequenceFilePair> sequenceFilePairs, Map<String, String> params, String name) {
 		// Single end reads
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
-		int count = 0;
 		if (description.acceptsSingleSequenceFiles()) {
-			for (SequenceFile file : sequenceFiles) {
+			for (int i = 0; i < sequenceFiles.size(); i++) {
+				SequenceFile file = sequenceFiles.get(i);
 				// Build the analysis submission
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
-				builder.name(name + "_" + ++count);
+				builder.name(name + "_" + (i + 1));
 				builder.inputFilesSingle(ImmutableSet.of(file));
 
 				// Add reference file
@@ -419,10 +419,11 @@ public class PipelineController extends BaseController {
 
 		// Paired end reads
 		if (description.acceptsPairedSequenceFiles()) {
-			for (SequenceFilePair pair : sequenceFilePairs) {
+			for (int i = 0; i < sequenceFilePairs.size(); i++) {
+				SequenceFilePair pair = sequenceFilePairs.get(i);
 				// Build the analysis submission
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
-				builder.name(name + "_" + ++count);
+				builder.name(name + "_" + (i + 1));
 				builder.inputFilesPaired(ImmutableSet.of(pair));
 
 				// Add reference file
