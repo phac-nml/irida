@@ -107,9 +107,9 @@
 
       svc.clear = function () {
         //fire a DELETE to the server on the cart then broadcast the cart update event
-        $http.delete(urls.all).then(function () {
+        return $http.delete(urls.all).then(function () {
           scope.$broadcast("cart.update", {});
-        })
+        });
       };
 
       svc.removeProject = function(projectId){
