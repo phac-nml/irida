@@ -181,7 +181,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *            {@link String} the name for the analysis
 	 */
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public AnalysisSubmission createMultipleFileWorkflow(IridaWorkflow workflow, Long ref,
+	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, Map<String, String> params,
 			String name);
 	
@@ -204,7 +204,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *            {@link String} the name for the analysis
 	 */
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public Collection<AnalysisSubmission> createSingleSampleWorkflow(IridaWorkflow workflow, Long ref,
+	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, Map<String, String> params,
 			String name);
 }

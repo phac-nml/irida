@@ -228,7 +228,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@Transactional
-	public Collection<AnalysisSubmission> createSingleSampleWorkflow(IridaWorkflow workflow, Long ref,
+	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, Map<String, String> params,
 			String name) {
 		final Collection<AnalysisSubmission> createdSubmissions = new HashSet<AnalysisSubmission>();
@@ -292,7 +292,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Transactional
-	public AnalysisSubmission createMultipleFileWorkflow(IridaWorkflow workflow, Long ref,
+	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, Map<String, String> params,
 			String name) {
 		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
