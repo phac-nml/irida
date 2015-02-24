@@ -81,6 +81,17 @@ public class AnalysisExecutionServiceConfig {
 	@Autowired
 	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
 	
+	/**
+	 * Timeout in seconds to stop polling a Galaxy library.
+	 */
+	private static final int LIBRARY_TIMEOUT = 5 * 60;
+	
+	/**
+	 * Polling time in seconds to poll a Galaxy library to check if
+	 * datasets have been properly uploaded.
+	 */
+	private static final int LIBRARY_POLLING_TIME = 5;
+	
 	@Lazy
 	@Bean
 	public AnalysisExecutionService analysisExecutionService() {
@@ -195,7 +206,7 @@ public class AnalysisExecutionServiceConfig {
 	@Lazy
 	@Bean
 	public GalaxyLibrariesService galaxyLibrariesService() {
-		return new GalaxyLibrariesService(librariesClient());
+		return new GalaxyLibrariesService(librariesClient(), LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT);
 	}
 
 	/**

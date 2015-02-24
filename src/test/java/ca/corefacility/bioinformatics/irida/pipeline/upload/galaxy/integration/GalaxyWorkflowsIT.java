@@ -102,6 +102,17 @@ public class GalaxyWorkflowsIT {
 	
 	private static final InputFileType FILE_TYPE = InputFileType.FASTQ_SANGER;
 	private static final InputFileType INVALID_FILE_TYPE = null;
+	
+	/**
+	 * Timeout in seconds to stop polling a Galaxy library.
+	 */
+	private static final int LIBRARY_TIMEOUT = 5 * 60;
+	
+	/**
+	 * Polling time in seconds to poll a Galaxy library to check if
+	 * datasets have been properly uploaded.
+	 */
+	private static final int LIBRARY_POLLING_TIME = 5;
 
 	/**
 	 * Sets up files and objects for workflow tests.
@@ -136,7 +147,7 @@ public class GalaxyWorkflowsIT {
 		historiesClient = galaxyAdminInstance.getHistoriesClient();
 		librariesClient = galaxyAdminInstance.getLibrariesClient();
 		
-		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient);
+		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT);
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService);
 		galaxyWorkflowService 
 			= new GalaxyWorkflowService(historiesClient, workflowsClient,

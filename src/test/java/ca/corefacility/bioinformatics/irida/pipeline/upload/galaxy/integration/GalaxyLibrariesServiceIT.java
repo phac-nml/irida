@@ -62,6 +62,17 @@ public class GalaxyLibrariesServiceIT {
 	private static final InputFileType FILE_TYPE = InputFileType.FASTQ_SANGER;
 	
 	/**
+	 * Timeout in seconds to stop polling a Galaxy library.
+	 */
+	private static final int LIBRARY_TIMEOUT = 5 * 60;
+	
+	/**
+	 * Polling time in seconds to poll a Galaxy library to check if
+	 * datasets have been properly uploaded.
+	 */
+	private static final int LIBRARY_POLLING_TIME = 5;
+	
+	/**
 	 * Sets up variables for tests
 	 * @throws URISyntaxException 
 	 */
@@ -70,7 +81,7 @@ public class GalaxyLibrariesServiceIT {
 		galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceAdmin();
 		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
 		
-		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient);
+		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT);
 		
 		dataFile = Paths.get(GalaxyAPIIT.class.getResource(
 				"testData1.fastq").toURI());
