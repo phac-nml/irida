@@ -34,7 +34,7 @@
 				</th:block>
 			</div>
 		</div>
-		<div class="row" id="pipeline-creation" th:if="${#lists.size(addRefProjects) != 0}">
+		<div class="row" id="pipeline-creation" th:if="${#lists.size(referenceFiles) != 0} or ${!referenceRequired}">
 			<div class="col-md-10">
 				<h1 th:text="${mainTitle}"></h1>
 
@@ -199,7 +199,8 @@
 							   th:text="#{workflow.submitted-view-btn}">Let's see how this pipeline is doing.
 							</a>
 							<br/><br/>
-							<button id="btn-clear-pipeline" class="btn btn-warning btn-affixed" ng-click="pipeline.clearAndRedirect()"
+							<button id="btn-clear-pipeline" class="btn btn-warning btn-affixed"
+							        ng-click="pipeline.clearAndRedirect()"
 							        th:text="#{workflow.submitted-clear-btn}">Clear the cart and start over!
 							</button>
 						</div>
