@@ -96,15 +96,8 @@
     };
 
     vm.removeSample = function (projectId, sampleId) {
-      console.log("removing " + projectId);
-      $http({
-        url    : "/cart/project/" + projectId + "/samples/" + sampleId,
-        method : "DELETE",
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }).success(function () {
-        location.reload();
+      CartService.removeSample(projectId,sampleId).then(function(){
+	  location.reload();
       });
     };
 
