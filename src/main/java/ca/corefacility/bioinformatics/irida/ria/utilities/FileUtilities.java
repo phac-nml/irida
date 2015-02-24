@@ -45,6 +45,12 @@ public class FileUtilities {
 	public static void createAnalysisOutputFileZippedResponse(HttpServletResponse response, String fileName,
 			Set<AnalysisOutputFile> files) throws IOException {
 		logger.debug("Creating zipped file response. [" + fileName + "]");
+		
+		// set the response headers before we do *ANYTHING* so that the filename
+		// actually appears in the download dialog
+		response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + fileName + EXTENSION_ZIP);
+		// for zip file
+		response.setContentType(CONTENT_TYPE_APPLICATION_ZIP);
 
 		// warnings suppressed here because we are actually closing the stream,
 		// eclipse just doesn't know it
@@ -78,11 +84,6 @@ public class FileUtilities {
 				outputStream.write(bytes);
 				outputStream.closeEntry();
 			}
-
-			// Set the response headers
-			response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + fileName + EXTENSION_ZIP);
-			// for zip file
-			response.setContentType(CONTENT_TYPE_APPLICATION_ZIP);
 
 			// Tell the output stream that you are finished downloading.
 			outputStream.finish();
