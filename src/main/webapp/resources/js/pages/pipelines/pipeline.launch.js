@@ -98,6 +98,9 @@
     vm.removeSample = function (projectId, sampleId) {
       CartService.removeSample(projectId,sampleId).then(function(){
         angular.element('#sample-' + sampleId).remove();
+        if(angular.element('.sample-container').length === 0) {
+          window.location = TL.BASE_URL + "pipelines"
+        }
       });
     };
 
