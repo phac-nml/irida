@@ -43,6 +43,7 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 
@@ -60,6 +61,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	private final ReferenceFileRepository referenceFileRepository;
 	private final SequenceFileService sequenceFileService;
+	private final SequenceFilePairService sequenceFilePairService;
 
 	/**
 	 * Builds a new AnalysisSubmissionServiceImpl with the given information.
@@ -74,12 +76,14 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Autowired
 	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
 			UserRepository userRepository, final ReferenceFileRepository referenceFileRepository,
-			final SequenceFileService sequenceFileService, Validator validator) {
+			final SequenceFileService sequenceFileService, final SequenceFilePairService sequenceFilePairService,
+			Validator validator) {
 		super(analysisSubmissionRepository, validator, AnalysisSubmission.class);
 		this.userRepository = userRepository;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.referenceFileRepository = referenceFileRepository;
 		this.sequenceFileService = sequenceFileService;
+		this.sequenceFilePairService = sequenceFilePairService;
 	}
 
 	/**
@@ -269,12 +273,13 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 		// Paired end reads
 		if (description.acceptsPairedSequenceFiles()) {
-			for (int i = 0; i < sequenceFilePairs.size(); i++) {
-				SequenceFilePair pair = sequenceFilePairs.get(i);
+			final Map<Sample, SequenceFilePair> samplesMap = sequenceFilePairService
+					.getUniqueSamplesForSequenceFilePairs(Sets.newHashSet(sequenceFilePairs));
+			for (final Sample s : samplesMap.keySet()) {
 				// Build the analysis submission
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
-				builder.name(name + "_" + (i + 1));
-				builder.inputFilesPaired(ImmutableSet.of(pair));
+				builder.name(name + "_" + s.getSampleName());
+				builder.inputFilesPaired(ImmutableSet.of(samplesMap.get(s)));
 
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
