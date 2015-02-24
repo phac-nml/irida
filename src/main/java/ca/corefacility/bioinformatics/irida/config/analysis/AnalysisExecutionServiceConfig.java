@@ -8,8 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.manager.galaxy.ExecutionManagerGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
@@ -121,8 +119,7 @@ public class AnalysisExecutionServiceConfig {
 	@Lazy
 	@Bean
 	public GalaxyWorkflowService galaxyWorkflowService() {
-		return new GalaxyWorkflowService(historiesClient(), workflowsClient(), workflowChecksumEncoder(),
-				StandardCharsets.UTF_8);
+		return new GalaxyWorkflowService(historiesClient(), workflowsClient(), StandardCharsets.UTF_8);
 	}
 
 	/**
@@ -150,16 +147,6 @@ public class AnalysisExecutionServiceConfig {
 	@Bean
 	public RolesClient rolesClient() {
 		return galaxyInstance().getRolesClient();
-	}
-
-	/**
-	 * @return A PasswordEncoder for generating or validating workflow
-	 *         checksums.
-	 */
-	@Lazy
-	@Bean
-	public PasswordEncoder workflowChecksumEncoder() {
-		return new StandardPasswordEncoder();
 	}
 
 	/**
