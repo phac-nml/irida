@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedExce
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -42,6 +43,7 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 
 /**
@@ -57,6 +59,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	private UserRepository userRepository;
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	private final ReferenceFileRepository referenceFileRepository;
+	private final SequenceFileService sequenceFileService;
 
 	/**
 	 * Builds a new AnalysisSubmissionServiceImpl with the given information.
@@ -70,11 +73,13 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Autowired
 	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
-			UserRepository userRepository, final ReferenceFileRepository referenceFileRepository, Validator validator) {
+			UserRepository userRepository, final ReferenceFileRepository referenceFileRepository,
+			final SequenceFileService sequenceFileService, Validator validator) {
 		super(analysisSubmissionRepository, validator, AnalysisSubmission.class);
 		this.userRepository = userRepository;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.referenceFileRepository = referenceFileRepository;
+		this.sequenceFileService = sequenceFileService;
 	}
 
 	/**
@@ -235,12 +240,13 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		// Single end reads
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
 		if (description.acceptsSingleSequenceFiles()) {
-			for (int i = 0; i < sequenceFiles.size(); i++) {
-				SequenceFile file = sequenceFiles.get(i);
+			final Map<Sample, SequenceFile> samplesMap = sequenceFileService.getUniqueSamplesForSequenceFiles(Sets
+					.newHashSet(sequenceFiles));
+			for (final Sample s : samplesMap.keySet()) {
 				// Build the analysis submission
 				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
-				builder.name(name + "_" + (i + 1));
-				builder.inputFilesSingle(ImmutableSet.of(file));
+				builder.name(name + "_" + s.getSampleName());
+				builder.inputFilesSingle(ImmutableSet.of(samplesMap.get(s)));
 
 				// Add reference file
 				if (ref != null && description.requiresReference()) {
