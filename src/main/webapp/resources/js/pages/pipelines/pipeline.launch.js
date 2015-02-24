@@ -97,7 +97,7 @@
 
     vm.removeSample = function (projectId, sampleId) {
       CartService.removeSample(projectId,sampleId).then(function(){
-	  location.reload();
+        angular.element('#sample-' + sampleId).remove();
       });
     };
 
