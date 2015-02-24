@@ -72,6 +72,8 @@ public class GalaxyLibrariesService {
 		checkArgument(libraryUploadTimeout > 0, "libraryUploadTimeout=" + libraryUploadTimeout + " must be positive");
 		checkArgument(libraryUploadTimeout > libraryPollingTime, "libraryUploadTimeout=" + libraryUploadTimeout
 				+ " must be greater then libraryPollingTime=" + libraryPollingTime);
+		
+		logger.debug("Setting libraryPollingTime=" + libraryPollingTime + ", libraryUploadTimeout=" + libraryUploadTimeout);
 
 		this.librariesClient = librariesClient;
 		this.libraryPollingTime = libraryPollingTime;
