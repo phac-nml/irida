@@ -206,10 +206,13 @@ public class AnalysisController {
 			String remoteAnalysisId = sub.getRemoteAnalysisId();
 			String remoteWorkflowId = sub.getRemoteWorkflowId();
 			String analysisState = sub.getAnalysisState().toString();
+			String typeId = ANALYSIS_TYPE_IDS.get(sub.getClass());
+			String type = ANALYSIS_TYPE_NAMES.get(typeId);
 
 			Map<String, String> map = new HashMap<>();
 			map.put("id", sub.getId().toString());
 			map.put("label", sub.getLabel());
+			map.put("type", type);
 			map.put("workflowId", Strings.isNullOrEmpty(remoteWorkflowId) ? "NOT SET" : remoteWorkflowId);
 			map.put("remoteAnalysisId", Strings.isNullOrEmpty(remoteAnalysisId) ? "NOT SET" : remoteAnalysisId);
 			map.put("state", messageSource.getMessage("analysis.state." + analysisState, null, locale));

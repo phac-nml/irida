@@ -133,9 +133,17 @@
    * @param svc
    * @constructor
    */
-  function AnalysisController(svc, $scope) {
-    var vm = this;
-    vm.analyses = [];
+  function AnalysisController(svc, ngTableParams, filter, $scope) {
+    var vm = this,
+        analyses = [];
+
+    vm.tableParams = new ngTableParams({
+      sorting: {'createdDate':'asc'}
+    },{
+      getData: function($defer, params) {
+        
+      }
+    });
 
     vm.download = function (id) {
       var iframe = document.createElement("iframe");
@@ -146,7 +154,7 @@
 
     svc.load()
       .success(function (data) {
-        vm.analyses = data.analyses;
+        analyses = data.analyses;
       });
 
     $scope.$on('NO_ANALYSIS', function () {
@@ -158,11 +166,11 @@
     })
   }
 
-  angular.module('irida.analysis.user', [])
+  angular.module('irida.analysis.user', ['ngTable'])
     .filter('analysesFilter', ['analysisFilterService', '$rootScope', AnalysesFilter])
     .service('analysisService', ['$http', AnalysisService])
     .service('analysisFilterService', [AnalysisFilterService])
-    .controller('analysisController', ['analysisService', '$scope', AnalysisController])
+    .controller('analysisController', ['analysisService', 'ngTableParams', '$scope', AnalysisController])
     .controller('filterController', ['analysisFilterService', FilterController])
   ;
 })();

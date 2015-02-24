@@ -7,6 +7,8 @@
 	<title th:text="#{analyses.user.page-title}">My Title Goes Here</title>
 	<link rel="stylesheet" href="/resources/css/app.css" th:href="@{/resources/css/app.css}"/>
 	<link rel="stylesheet" href="/resources/css/pages/analyses.css" th:href="@{/resources/css/pages/analyses.css}"/>
+	<link rel="stylesheet" href="/resources/bower_components/ng-table/dist/ng-table.min.css"
+	      th:href="@{/resources/bower_components/ng-table/dist/ng-table.min.css}"/>
 	<script>window.dependencies = ['irida.analysis.user'];</script>
 	<style>
 		.animate-hide {
@@ -87,29 +89,43 @@
 			</div>
 		</aside>
 		<div class="content ng-cloak" ng-controller="analysisController as ctrl">
-			<ul ng-show="ctrl.showAnalyses" class="boards">
-				<li class="board" ng-repeat="analysis in ctrl.analyses | analysesFilter | orderBy:'createdDate':true">
-					<div class="button board_inner row">
-						<div ng-class="'analysis__state--' + analysis.analysisState" class="analysis__state col-md-2">
-							<div class="board_detail--value">{{::analysis.state}}</div>
-							<div class="board_detail--desc" th:text="#{analyses.state}">State</div>
-						</div>
-						<div class="col-md-5">
-							<div class="board_detail--value">{{analysis.label}}</div>
-							<div class="board_detail--desc" th:text="#{analyses.analysis-name}">Analysis Name</div>
-						</div>
-						<div class="col-md-3">
-							<div class="board_detail--value">{{::analysis.createdDate | date:'short'}}</div>
-							<div class="board_detail--desc" th:text="#{analysis.date-created}">Date Created</div>
-						</div>
-						<div class="col-md-1">
-							<button ng-show="analysis.state==='Completed'" class="btn btn-default btn-sm download-analysis-btn" th:title="#{form.download}" ng-click="ctrl.download(analysis.id)">
-								<i class="fa fa-download"></i>
-							</button>
-						</div>
-					</div>
-				</li>
-			</ul>
+			<table class="table" ng-table="ctrl.tableParams">
+				<tr ng-repeat="analysis in ctrl.analyses | analysesFilter">
+					<td data:title="'\'' + #{analyses.state} + '\''" sortable="'state'">{{analysis.state}}</td>
+					<td data-title="'_TYPE'" sortable="'type'">{{analysis.type}}</td>
+					<td data-title="'Created'" sortable="'createdDate'">{{analysis.createdDate | date:'short'}}</td>
+					<td>
+						<button ng-show="analysis.state==='Completed'"
+						        class="btn btn-default btn-xs pull-right download-analysis-btn"
+						        th:title="#{form.download}" ng-click="ctrl.download(analysis.id)">
+							<i class="fa fa-download"></i>
+						</button>
+					</td>
+				</tr>
+			</table>
+			<!--<ul ng-show="ctrl.showAnalyses" class="boards">-->
+				<!--<li class="board" ng-repeat="analysis in ctrl.analyses | analysesFilter | orderBy:'createdDate':true">-->
+					<!--<div class="button board_inner row">-->
+						<!--<div ng-class="'analysis__state&#45;&#45;' + analysis.analysisState" class="analysis__state col-md-2">-->
+							<!--<div class="board_detail&#45;&#45;value">{{::analysis.state}}</div>-->
+							<!--<div class="board_detail&#45;&#45;desc" th:text="#{analyses.state}">State</div>-->
+						<!--</div>-->
+						<!--<div class="col-md-5">-->
+							<!--<div class="board_detail&#45;&#45;value">{{analysis.label}}</div>-->
+							<!--<div class="board_detail&#45;&#45;desc" th:text="#{analyses.analysis-name}">Analysis Name</div>-->
+						<!--</div>-->
+						<!--<div class="col-md-3">-->
+							<!--<div class="board_detail&#45;&#45;value">{{::analysis.createdDate | date:'short'}}</div>-->
+							<!--<div class="board_detail&#45;&#45;desc" th:text="#{analysis.date-created}">Date Created</div>-->
+						<!--</div>-->
+						<!--<div class="col-md-1">-->
+							<!--<button ng-show="analysis.state==='Completed'" class="btn btn-default btn-sm download-analysis-btn" th:title="#{form.download}" ng-click="ctrl.download(analysis.id)">-->
+								<!--<i class="fa fa-download"></i>-->
+							<!--</button>-->
+						<!--</div>-->
+					<!--</div>-->
+				<!--</li>-->
+			<!--</ul>-->
 			<div id="no-analyses" ng-hide="ctrl.showAnalyses" class="alert alert-info ng-cloak animate-hide">
 				<strong><i class="fa fa-exclamation-circle fa-2x"></i>&nbsp;<span th:text="#{analysis.no-analysis-title}">Damn, You need to create some analyses.</span></strong>
 				<p th:text="#{analysis.no-analysis-message}"></p>
@@ -118,6 +134,7 @@
 	</div>
 </div>
 <th:block layout:fragment="page-scripts">
+	<script src="/resources/bower_components/ng-table/dist/ng-table.min.js" th:src="@{/resources/bower_components/ng-table/dist/ng-table.min.js}"></script>
 	<script src="/resources/js/pages/analyses/analyses_user.js"
 	        th:src="@{/resources/js/pages/analyses/analyses_user.js}"></script>
 </th:block>
