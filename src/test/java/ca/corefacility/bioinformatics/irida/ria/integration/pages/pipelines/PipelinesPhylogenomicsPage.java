@@ -91,4 +91,8 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 		findElements.iterator().next().click();
 		waitForTime(250);
 	}
+
+	public boolean isCreatePipelineAreaVisible() {
+		return driver.findElements(By.id("pipeline-creation")).size() > 0;
+	}
 }

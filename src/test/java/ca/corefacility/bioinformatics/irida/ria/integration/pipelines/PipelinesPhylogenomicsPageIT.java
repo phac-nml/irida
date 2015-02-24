@@ -87,6 +87,7 @@ public class PipelinesPhylogenomicsPageIT {
 				page.isNoRightsMessageDisplayed());
 		assertFalse("Should show the user which projects they can upload files to.",
 				page.isAddReferenceFileLinksDisplayed());
+		assertFalse("Should not be able to create a pipeline", page.isCreatePipelineAreaVisible());
 	}
 
 	@Test

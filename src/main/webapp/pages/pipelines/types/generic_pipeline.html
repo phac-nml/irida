@@ -28,13 +28,13 @@
 					</ul>
 				</th:block>
 				<th:block th:if="${#lists.size(addRefProjects)} == 0">
-					<p id="has-no-rights" th:text="#{pipeline.orror.no-reference.no-permissions}">You do not have
+					<p id="has-no-rights" th:text="#{pipeline.error.no-reference.no-permissions}">You do not have
 						permission to upload a reference file to these projects. Please contact a project manager to add
 						a reference file.</p>
 				</th:block>
 			</div>
 		</div>
-		<div class="row">
+		<div class="row" id="pipeline-creation" th:if="${#lists.size(addRefProjects) != 0}">
 			<div class="col-md-10">
 				<h1 th:text="${mainTitle}"></h1>
 
