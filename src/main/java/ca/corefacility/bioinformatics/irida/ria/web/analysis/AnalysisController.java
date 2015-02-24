@@ -37,7 +37,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisSubmissionSpecification;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -66,14 +65,11 @@ public class AnalysisController {
 	 * SERVICES
 	 */
 	private AnalysisSubmissionService analysisSubmissionService;
-	private UserService userService;
 	private MessageSource messageSource;
 
 	@Autowired
-	public AnalysisController(AnalysisSubmissionService analysisSubmissionService, UserService userService,
-			MessageSource messageSource) {
+	public AnalysisController(AnalysisSubmissionService analysisSubmissionService, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
-		this.userService = userService;
 		this.messageSource = messageSource;
 	}
 
