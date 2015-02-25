@@ -133,17 +133,17 @@
    * @param svc
    * @constructor
    */
-  function AnalysisController(svc, ngTableParams, filter, $scope) {
-    var vm = this,
-        analyses = [];
+  function AnalysisController(svc, ngTableParams, $scope) {
+    var vm = this;
+        vm.analyses = [];
 
     vm.tableParams = new ngTableParams({
       sorting: {'createdDate':'asc'}
-    },{
-      getData: function($defer, params) {
-        
-      }
     });
+
+    vm.createClass = function(state) {
+      return  state.toLowerCase().replace(" ", "_");
+    };
 
     vm.download = function (id) {
       var iframe = document.createElement("iframe");
@@ -154,7 +154,7 @@
 
     svc.load()
       .success(function (data) {
-        analyses = data.analyses;
+        vm.analyses = data.analyses;
       });
 
     $scope.$on('NO_ANALYSIS', function () {

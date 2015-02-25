@@ -207,7 +207,7 @@ public class AnalysisController {
 			String remoteWorkflowId = sub.getRemoteWorkflowId();
 			String analysisState = sub.getAnalysisState().toString();
 			String typeId = ANALYSIS_TYPE_IDS.get(sub.getClass());
-			String type = ANALYSIS_TYPE_NAMES.get(typeId);
+			String type = ANALYSIS_TYPE_NAMES.get(typeId);  // THIS IS WRONG!!!
 
 			Map<String, String> map = new HashMap<>();
 			map.put("id", sub.getId().toString());
