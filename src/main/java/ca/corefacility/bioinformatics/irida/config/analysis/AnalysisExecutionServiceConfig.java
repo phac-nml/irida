@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.config.analysis;
 import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -78,6 +79,19 @@ public class AnalysisExecutionServiceConfig {
 	
 	@Autowired
 	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
+	
+	/**
+	 * Timeout in seconds to stop polling a Galaxy library.
+	 */
+	@Value("${galaxy.library.upload.timeout}")
+	private int libraryTimeout;
+	
+	/**
+	 * Polling time in seconds to poll a Galaxy library to check if
+	 * datasets have been properly uploaded.
+	 */
+	@Value("${galaxy.library.upload.polling.time}")
+	private int pollingTime;
 	
 	@Lazy
 	@Bean
@@ -182,7 +196,7 @@ public class AnalysisExecutionServiceConfig {
 	@Lazy
 	@Bean
 	public GalaxyLibrariesService galaxyLibrariesService() {
-		return new GalaxyLibrariesService(librariesClient());
+		return new GalaxyLibrariesService(librariesClient(), pollingTime, libraryTimeout);
 	}
 
 	/**
