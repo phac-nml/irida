@@ -328,7 +328,7 @@ public class PipelineController extends BaseController {
 
 
 			// Check to see if a reference file is required.
-			if (description.requiresReference() && ref == = null) {
+			if (description.requiresReference() && ref == null) {
 				return ImmutableMap.of("error", messageSource.getMessage("pipeline.error.no-reference.pipeline-start", null, locale));
 			}
 
