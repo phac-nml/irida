@@ -3,13 +3,12 @@ package ca.corefacility.bioinformatics.irida.config.analysis;
 import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.manager.galaxy.ExecutionManagerGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
@@ -81,6 +80,19 @@ public class AnalysisExecutionServiceConfig {
 	@Autowired
 	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
 	
+	/**
+	 * Timeout in seconds to stop polling a Galaxy library.
+	 */
+	@Value("${galaxy.library.upload.timeout}")
+	private int libraryTimeout;
+	
+	/**
+	 * Polling time in seconds to poll a Galaxy library to check if
+	 * datasets have been properly uploaded.
+	 */
+	@Value("${galaxy.library.upload.polling.time}")
+	private int pollingTime;
+	
 	@Lazy
 	@Bean
 	public AnalysisExecutionService analysisExecutionService() {
@@ -121,8 +133,7 @@ public class AnalysisExecutionServiceConfig {
 	@Lazy
 	@Bean
 	public GalaxyWorkflowService galaxyWorkflowService() {
-		return new GalaxyWorkflowService(historiesClient(), workflowsClient(), workflowChecksumEncoder(),
-				StandardCharsets.UTF_8);
+		return new GalaxyWorkflowService(historiesClient(), workflowsClient(), StandardCharsets.UTF_8);
 	}
 
 	/**
@@ -150,16 +161,6 @@ public class AnalysisExecutionServiceConfig {
 	@Bean
 	public RolesClient rolesClient() {
 		return galaxyInstance().getRolesClient();
-	}
-
-	/**
-	 * @return A PasswordEncoder for generating or validating workflow
-	 *         checksums.
-	 */
-	@Lazy
-	@Bean
-	public PasswordEncoder workflowChecksumEncoder() {
-		return new StandardPasswordEncoder();
 	}
 
 	/**
@@ -195,7 +196,7 @@ public class AnalysisExecutionServiceConfig {
 	@Lazy
 	@Bean
 	public GalaxyLibrariesService galaxyLibrariesService() {
-		return new GalaxyLibrariesService(librariesClient());
+		return new GalaxyLibrariesService(librariesClient(), pollingTime, libraryTimeout);
 	}
 
 	/**

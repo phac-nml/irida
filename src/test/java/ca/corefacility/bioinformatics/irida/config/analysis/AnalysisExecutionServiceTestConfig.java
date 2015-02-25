@@ -16,7 +16,6 @@ import org.springframework.security.concurrent.DelegatingSecurityContextSchedule
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
@@ -97,6 +96,17 @@ public class AnalysisExecutionServiceTestConfig {
 	
 	@Autowired
 	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
+	
+	/**
+	 * Timeout in seconds to stop polling a Galaxy library.
+	 */
+	private static final int LIBRARY_TIMEOUT = 5 * 60;
+	
+	/**
+	 * Polling time in seconds to poll a Galaxy library to check if
+	 * datasets have been properly uploaded.
+	 */
+	private static final int LIBRARY_POLLING_TIME = 5;
 
 	@Lazy
 	@Bean
@@ -146,7 +156,7 @@ public class AnalysisExecutionServiceTestConfig {
 	@Bean
 	public GalaxyLibrariesService galaxyLibrariesService() {
 		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
-		return new GalaxyLibrariesService(librariesClient);
+		return new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT);
 	}
 
 	@Lazy
@@ -200,8 +210,7 @@ public class AnalysisExecutionServiceTestConfig {
 		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
 		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
 
-		return new GalaxyWorkflowService(historiesClient, workflowsClient, new StandardPasswordEncoder(),
-				StandardCharsets.UTF_8);
+		return new GalaxyWorkflowService(historiesClient, workflowsClient, StandardCharsets.UTF_8);
 	}
 
 	@Lazy

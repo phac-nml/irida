@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
@@ -45,16 +46,8 @@ public class GalaxyLibrariesService {
 	
 	private final ExecutorService executor = Executors.newFixedThreadPool(1);
 
-	/**
-	 * Polling time in milliseconds to poll a Galaxy library to check if
-	 * datasets have been properly uploaded.
-	 */
-	private static final int LIBRARY_POLLING_TIME = 5 * 1000;
-
-	/**
-	 * Timeout in milliseconds to stop polling a Galaxy library.
-	 */
-	private static final int LIBRARY_TIMEOUT = 5 * 60 * 1000;
+	private final int libraryPollingTime;
+	private final int libraryUploadTimeout;
 
 	/**
 	 * State a library dataset should be in on proper upload.
@@ -66,9 +59,25 @@ public class GalaxyLibrariesService {
 	 * 
 	 * @param librariesClient
 	 *            The LibrariesClient used to interact with Galaxy libraries.
+	 * @param libraryPollingTime
+	 *            The time (in seconds) for polling a Galaxy library.
+	 * @param libraryUploadTimeout
+	 *            The timeout (in seconds) for waiting for files to be uploaded
+	 *            to a library.
 	 */
-	public GalaxyLibrariesService(LibrariesClient librariesClient) {
-		this.librariesClient = librariesClient;		
+	public GalaxyLibrariesService(LibrariesClient librariesClient, final int libraryPollingTime,
+			final int libraryUploadTimeout) {
+		checkNotNull(librariesClient, "librariesClient is null");
+		checkArgument(libraryPollingTime > 0, "libraryPollingTime=" + libraryPollingTime + " must be positive");
+		checkArgument(libraryUploadTimeout > 0, "libraryUploadTimeout=" + libraryUploadTimeout + " must be positive");
+		checkArgument(libraryUploadTimeout > libraryPollingTime, "libraryUploadTimeout=" + libraryUploadTimeout
+				+ " must be greater then libraryPollingTime=" + libraryPollingTime);
+		
+		logger.debug("Setting libraryPollingTime=" + libraryPollingTime + ", libraryUploadTimeout=" + libraryUploadTimeout);
+
+		this.librariesClient = librariesClient;
+		this.libraryPollingTime = libraryPollingTime;
+		this.libraryUploadTimeout = libraryUploadTimeout;
 	}
 
 	/**
@@ -137,6 +146,7 @@ public class GalaxyLibrariesService {
 			InputFileType fileType, Library library, DataStorage dataStorage)
 			throws UploadException {
 		checkNotNull(paths, "paths is null");
+		final int pollingTimeMillis = libraryPollingTime*1000;
 
 		Map<Path, String> datasetLibraryIdsMap = new HashMap<>();
 
@@ -161,7 +171,7 @@ public class GalaxyLibrariesService {
 									+ libraryDataset.getId()
 									+ " to be finished processing, in state "
 									+ libraryDataset.getState());
-							Thread.sleep(LIBRARY_POLLING_TIME);
+							Thread.sleep(pollingTimeMillis);
 	
 							libraryDataset = librariesClient.showDataset(
 									library.getId(), datasetLibraryId);
@@ -172,7 +182,7 @@ public class GalaxyLibrariesService {
 				}
 			});
 			
-			waitForLibraries.get(LIBRARY_TIMEOUT, TimeUnit.MILLISECONDS);
+			waitForLibraries.get(libraryUploadTimeout, TimeUnit.SECONDS);
 		} catch (RuntimeException e) {
 			throw new UploadException(e);
 		} catch (ExecutionException | InterruptedException | TimeoutException e) {
