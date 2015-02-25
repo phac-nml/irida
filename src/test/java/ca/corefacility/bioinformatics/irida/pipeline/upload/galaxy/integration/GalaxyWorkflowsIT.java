@@ -20,13 +20,11 @@ import java.util.Map;
 
 import org.junit.Assume;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -139,8 +137,7 @@ public class GalaxyWorkflowsIT {
 		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient);
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService);
 		galaxyWorkflowService 
-			= new GalaxyWorkflowService(historiesClient, workflowsClient,
-					new StandardPasswordEncoder(), StandardCharsets.UTF_8);		
+			= new GalaxyWorkflowService(historiesClient, workflowsClient, StandardCharsets.UTF_8);		
 	}
 	
 	private void checkWorkflowIdValid(String workflowId) throws WorkflowException {
@@ -334,59 +331,6 @@ public class GalaxyWorkflowsIT {
 		logger.debug("Running workflow in history " + output.getHistoryId());
 		
 		return output;
-	}
-	
-	/**
-	 * Tests generating a checksum for a workflow successfully.
-	 * @throws WorkflowException 
-	 */
-	@Test
-	@Ignore
-	public void testGetWorkflowChecksumSuccess() throws WorkflowException {
-		String workflowId = localGalaxy.getSingleInputWorkflowId();
-		
-		String checksum = galaxyWorkflowService.getWorkflowChecksum(workflowId);
-		assertNotNull(checksum);
-		
-		logger.debug("generated checksum: " + checksum);
-	}	
-	
-	/**
-	 * Tests generating a checksum for a workflow and failing.
-	 * @throws WorkflowException 
-	 */
-	@Test(expected=WorkflowException.class)
-	@Ignore
-	public void testGetWorkflowChecksumFail() throws WorkflowException {
-		String workflowId = localGalaxy.getInvalidWorkflowId();
-
-		galaxyWorkflowService.getWorkflowChecksum(workflowId);
-	}
-	
-	/**
-	 * Tests validating a workflow by a checksum successfully.
-	 * @throws WorkflowException 
-	 */
-	@Test
-	@Ignore
-	public void testValidateWorkflowByChecksumSuccess() throws WorkflowException {
-		String workflowId = localGalaxy.getSingleInputWorkflowId();
-		String workflowChecksum = localGalaxy.getSingleInputWorkflowChecksum();
-		
-		assertTrue(galaxyWorkflowService.validateWorkflowByChecksum(workflowChecksum, workflowId));
-	}
-	
-	/**
-	 * Tests validating a workflow by a checksum failure.
-	 * @throws WorkflowException 
-	 */
-	@Test
-	@Ignore
-	public void testValidateWorkflowByChecksumFail() throws WorkflowException {
-		String workflowId = localGalaxy.getSingleInputWorkflowId();
-		String workflowChecksum = localGalaxy.getSingleInputWorkflowChecksumInvalid();
-		
-		assertFalse(galaxyWorkflowService.validateWorkflowByChecksum(workflowChecksum, workflowId));
 	}
 	
 	/**
