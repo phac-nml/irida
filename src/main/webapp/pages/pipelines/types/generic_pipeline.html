@@ -70,7 +70,7 @@
 					<div class="col-sm-10" th:with="dateFormat=#{locale.date.short}">
 						<div th:each="project : ${projects}">
 
-							<div class="sample-container" th:each="sample : ${project.samples}">
+							<div th:id="${'sample-' + sample.id}" class="sample-container" th:each="sample : ${project.samples}">
 								<h3>
 									<a href="#" th:href="@{/projects/{id}/samples(id=${project.id})}"
 									   th:text="${project.name + ' / ' + sample.name}"></a>
