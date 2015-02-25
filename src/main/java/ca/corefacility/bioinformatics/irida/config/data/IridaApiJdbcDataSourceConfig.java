@@ -99,7 +99,7 @@ public class IridaApiJdbcDataSourceConfig implements DataConfig {
 	@Bean
 	public JpaVendorAdapter jpaVendorAdapter() {
 		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
-		adapter.setShowSql(true);
+		adapter.setShowSql(false);
 		adapter.setGenerateDdl(true);
 		adapter.setDatabase(Database.MYSQL);
 		return adapter;
