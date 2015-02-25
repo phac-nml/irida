@@ -32,7 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
  */
 @Entity
 @Table(name = "project_referencefile", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id",
-		"referenceFile_id" }))
+		"reference_file_id" }))
 @Audited
 @EntityListeners(AuditingEntityListener.class)
 public class ProjectReferenceFileJoin implements Join<Project, ReferenceFile> {
@@ -51,7 +51,7 @@ public class ProjectReferenceFileJoin implements Join<Project, ReferenceFile> {
 	private Project project;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "referenceFile_id")
+	@JoinColumn(name = "reference_file_id")
 	private ReferenceFile referenceFile;
 
 	public ProjectReferenceFileJoin() {

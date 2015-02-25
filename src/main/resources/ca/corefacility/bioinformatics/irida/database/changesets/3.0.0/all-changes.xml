@@ -11,4 +11,5 @@
 	<include file="analysis-submission-updates.xml" relativeToChangelogFile="true"/>
 	<include file="workflow-provenance.xml" relativeToChangelogFile="true"/>
 	<include file="analysis-assembly-annotation.xml" relativeToChangelogFile="true"/>
+	<include file="fix-project-referencefile-fk.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
