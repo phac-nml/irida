@@ -65,7 +65,10 @@
    */
   function AnalysisService($http) {
     function _loadData() {
-      return $http.get(TL.BASE_URL + "analysis/ajax/list");
+      return $http.get(TL.BASE_URL + "analysis/ajax/list")
+        .error(function(data) {
+          window.location = TL.BASE_URL + data.error.url;
+        });
     }
 
     return {
