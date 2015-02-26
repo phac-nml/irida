@@ -25,6 +25,9 @@ public class AnalysesUserPage extends AbstractPage {
 	@FindBy(id = "filter-state")
 	private WebElement filterState;
 
+	@FindBy(id = "filter-type")
+	private WebElement filterType;
+
 	@FindBy(id = "filter-date-early")
 	private WebElement filterDateEarly;
 
@@ -57,9 +60,15 @@ public class AnalysesUserPage extends AbstractPage {
 		waitForTime(400);
 	}
 
-	public void filterByType(String text) {
+	public void filterByState(String text) {
 		Select state = new Select(filterState);
 		state.selectByVisibleText(text);
+		waitForTime(100);
+	}
+
+	public void filterByType(String text) {
+		Select type = new Select(filterType);
+		type.selectByVisibleText(text);
 		waitForTime(100);
 	}
 

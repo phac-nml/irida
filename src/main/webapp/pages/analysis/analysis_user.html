@@ -95,25 +95,37 @@
 				</div>
 			</div>
 		</aside>
-		<div class="content ng-cloak" style="margin-left: 1rem;" ng-controller="analysisController as ctrl">
-			<table ng-show="ctrl.showAnalyses" class="table" ng-table="ctrl.tableParams">
-				<tr class="analysis__state" ng-class="'analysis__state--' +ctrl.createClass(analysis.state)" ng-repeat="analysis in ctrl.analyses | analysesFilter | orderBy: ctrl.tableParams.orderBy()">
-					<td data:title="'\'' + #{analyses.state} + '\''" sortable="'state'">{{analysis.state}}</td>
-					<td data:title="'\'' + #{analyses.analysis-name} + '\''" sortable="'label'">{{analysis.label}}</td>
-					<td data:title="'\'' + #{analyses.type} + '\''" sortable="'type'">{{analysis.workflowName}}</td>
-					<td data:title="'\'' + #{analysis.date-created} + '\''" sortable="'createdDate'">{{analysis.createdDate | date:'short'}}</td>
-					<td>
-						<button ng-show="analysis.state==='Completed'"
-						        class="btn btn-default btn-xs pull-right download-analysis-btn"
-						        th:title="#{form.download}" ng-click="ctrl.download(analysis.id)">
-							<i class="fa fa-download"></i>
-						</button>
-					</td>
-				</tr>
-			</table>
-			<div id="no-analyses" ng-hide="ctrl.showAnalyses" class="alert alert-info ng-cloak animate-hide">
-				<strong><i class="fa fa-exclamation-circle fa-2x"></i>&nbsp;<span th:text="#{analysis.no-analysis-title}">Damn, You need to create some analyses.</span></strong>
-				<p th:text="#{analysis.no-analysis-message}"></p>
+		<div class="content ng-cloak" ng-controller="analysisController as ctrl">
+			<div ng-show="ctrl.loading" class="alert alert-info animate-hide">
+				<b><i class="fa fa-circle-o-notch fa-spin"></i>&nbsp;<span th:text="#{analysis.loading}">_CHECKING_SERVER_</span></b>
+			</div>
+			<div ng-hide="ctrl.loading">
+				<table ng-show="ctrl.showAnalyses" class="table" ng-table="ctrl.tableParams">
+					<tr class="analysis__state" ng-class="'analysis__state--' +ctrl.createClass(analysis.state)"
+					    ng-repeat="analysis in ctrl.analyses | analysesFilter | orderBy: ctrl.tableParams.orderBy()">
+						<td data:title="'\'' + #{analyses.state} + '\''" sortable="'state'">{{analysis.state}}</td>
+						<td data:title="'\'' + #{analyses.analysis-name} + '\''" sortable="'label'">{{analysis.label}}
+						</td>
+						<td data:title="'\'' + #{analyses.type} + '\''" sortable="'type'">{{analysis.workflowName}}</td>
+						<td data:title="'\'' + #{analysis.date-created} + '\''" sortable="'createdDate'">
+							{{analysis.createdDate | date:'short'}}
+						</td>
+						<td>
+							<button ng-show="analysis.state==='Completed'"
+							        class="btn btn-default btn-xs pull-right download-analysis-btn"
+							        th:title="#{form.download}" ng-click="ctrl.download(analysis.id)">
+								<i class="fa fa-download"></i>
+							</button>
+						</td>
+					</tr>
+				</table>
+				<div id="no-analyses" ng-hide="ctrl.showAnalyses" class="alert alert-info ng-cloak animate-hide">
+					<strong><i class="fa fa-exclamation-circle fa-2x"></i>&nbsp;
+						<span th:text="#{analysis.no-analysis-title}">Damn, You need to create some analyses.</span>
+					</strong>
+
+					<p th:text="#{analysis.no-analysis-message}"></p>
+				</div>
 			</div>
 		</div>
 	</div>

@@ -7658,6 +7658,7 @@ html, body {
 /* line 11, ../../styles/layouts/_all.scss */
 .content {
   flex-grow: 1;
+  padding-left: 1rem;
 }
 
 @-webkit-keyframes move-up-down {

@@ -146,6 +146,7 @@
   function AnalysisController(svc, ngTableParams, $scope) {
     var vm = this;
         vm.analyses = [];
+    vm.loading = true;
 
     vm.tableParams = new ngTableParams({
       sorting: {'createdDate':'asc'}
@@ -162,9 +163,10 @@
       document.body.appendChild(iframe);
     };
 
-    svc.load()
+    vm.busy = svc.load()
       .success(function (data) {
         vm.analyses = data.analyses;
+        vm.loading = false;
       });
 
     $scope.$on('NO_ANALYSIS', function () {
