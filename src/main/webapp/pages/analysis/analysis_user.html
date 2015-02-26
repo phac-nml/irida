@@ -64,6 +64,13 @@
 						</select>
 					</div>
 					<div class="form-group">
+						<label class="sidenav__label" th:text="#{analyses.type}">_WORKFLOW_TYPE_</label>
+						<select name="" id="filter-type" class="form-control input-full" ng-model="filter.workflowId" ng-change="filter.doType()">
+							<option value="ALL" th:text="#{analysis.select.all}">_ALL_</option>
+							<option th:each="flow : ${workflows}" th:value="${flow.id}" th:text="${flow.title}"></option>
+						</select>
+					</div>
+					<div class="form-group">
 						<label class="sidenav__label" th:text="#{analysis.filter.date-earliest}">Earliest Date</label>
 						<div class="input-group">
 							<input id="filter-date-early" type="text" class="form-control" th:attr="datepicker-popup=#{datepicker.short}, close-text=#{datepicker.close}, current-text=#{datepicker.current}, clear=#{datepicker.clear}"
@@ -93,7 +100,7 @@
 				<tr class="analysis__state" ng-class="'analysis__state--' +ctrl.createClass(analysis.state)" ng-repeat="analysis in ctrl.analyses | analysesFilter | orderBy: ctrl.tableParams.orderBy()">
 					<td data:title="'\'' + #{analyses.state} + '\''" sortable="'state'">{{analysis.state}}</td>
 					<td data:title="'\'' + #{analyses.analysis-name} + '\''" sortable="'label'">{{analysis.label}}</td>
-					<td data:title="'\'' + #{analyses.type} + '\''" sortable="'type'">{{analysis.type}}</td>
+					<td data:title="'\'' + #{analyses.type} + '\''" sortable="'type'">{{analysis.workflowName}}</td>
 					<td data:title="'\'' + #{analysis.date-created} + '\''" sortable="'createdDate'">{{analysis.createdDate | date:'short'}}</td>
 					<td>
 						<button ng-show="analysis.state==='Completed'"

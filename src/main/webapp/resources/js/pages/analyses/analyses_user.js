@@ -7,7 +7,7 @@
    * @constructor
    */
   function AnalysisFilterService() {
-    return {}
+    return {};
   }
 
   /**
@@ -26,7 +26,7 @@
         }
         if(item === null) return;
         
-        if(key === 'analysisState') {
+        if(key === 'analysisState' || key === 'workflowId') {
           if(value.length > 0 && value !== 'ALL' && item !== value) result = false;
         }
         else if (key === 'minDate' && item < value) {
@@ -86,6 +86,7 @@
     function _setDefaults() {
       vm.search = "";
       vm.state = "ALL";
+      vm.workflowId = "ALL";
       vm.minDate = "";
       vm.maxDate = "";
       vm.max = new Date();
@@ -106,6 +107,10 @@
       filter.analysisState = vm.state;
     };
 
+    vm.doType = function () {
+      filter.workflowId = vm.workflowId;
+    };
+
     vm.open = function (e, value) {
       e.preventDefault();
       e.stopPropagation();
@@ -123,15 +128,17 @@
         date.setDate(date.getDate() + 1);
       }
       filter[key] = date.getTime();
-    }
+    };
 
     _setDefaults();
   }
 
   /**
    * Controller for the actual analyses list.
-   * @param svc
    * @constructor
+   * @param svc
+   * @param ngTableParams
+   * @param $scope
    */
   function AnalysisController(svc, ngTableParams, $scope) {
     var vm = this;

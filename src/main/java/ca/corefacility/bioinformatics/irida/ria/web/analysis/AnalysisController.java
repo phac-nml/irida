@@ -9,9 +9,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,11 +71,13 @@ public class AnalysisController {
 	 * SERVICES
 	 */
 	private AnalysisSubmissionService analysisSubmissionService;
+	private IridaWorkflowsService workflowsService;
 	private MessageSource messageSource;
 
 	@Autowired
-	public AnalysisController(AnalysisSubmissionService analysisSubmissionService, MessageSource messageSource) {
+	public AnalysisController(AnalysisSubmissionService analysisSubmissionService, IridaWorkflowsService iridaWorkflowsService, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
+		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 	}
 
@@ -94,6 +102,27 @@ public class AnalysisController {
 
 	@RequestMapping("/list")
 	public String getPageUserAnalysis(Model model, Locale locale) {
+		Set<AnalysisType> workflows = workflowsService.getRegisteredWorkflowTypes();
+		List<Map<String, String>> flows = new ArrayList<>(workflows.size());
+		workflows.stream().forEach(type -> {
+			IridaWorkflow flow = null;
+			try {
+				flow = workflowsService.getDefaultWorkflowByType(type);
+				IridaWorkflowDescription description = flow.getWorkflowDescription();
+				String name = type.toString();
+				String key = "workflow." + name;
+				flows.add(ImmutableMap.of(
+						"id", description.getId().toString(),
+						"value", name,
+						"title",
+						messageSource
+								.getMessage(key + ".title", null, locale)
+				));
+			} catch (IridaWorkflowNotFoundException e) {
+				logger.error("Workflow not found - See stack:", e);
+			}
+		});
+		model.addAttribute("workflows", flows);
 		model.addAttribute("states", AnalysisState.values());
 		return PAGE_USER_ANALYSIS;
 	}
@@ -204,16 +233,23 @@ public class AnalysisController {
 		List<Map<String, String>> analysesMap = new ArrayList<>();
 		for (AnalysisSubmission sub : analyses) {
 			String remoteAnalysisId = sub.getRemoteAnalysisId();
-			String remoteWorkflowId = sub.getRemoteWorkflowId();
+			UUID workflowUUID = sub.getWorkflowId();
+			String workflowName = null;
+			try {
+				String type = workflowsService.getIridaWorkflow(workflowUUID).getWorkflowDescription().getAnalysisType()
+						.toString();
+				workflowName = messageSource.getMessage("workflow." + type + ".title", null, locale);
+			} catch (IridaWorkflowNotFoundException e) {
+				e.printStackTrace();
+			}
+
 			String analysisState = sub.getAnalysisState().toString();
-			String typeId = ANALYSIS_TYPE_IDS.get(sub.getClass());
-			String type = ANALYSIS_TYPE_NAMES.get(typeId);  // THIS IS WRONG!!!
 
 			Map<String, String> map = new HashMap<>();
 			map.put("id", sub.getId().toString());
 			map.put("label", sub.getLabel());
-			map.put("type", type);
-			map.put("workflowId", Strings.isNullOrEmpty(remoteWorkflowId) ? "NOT SET" : remoteWorkflowId);
+			map.put("workflowId", sub.getWorkflowId().toString());
+			map.put("workflowName", workflowName);
 			map.put("remoteAnalysisId", Strings.isNullOrEmpty(remoteAnalysisId) ? "NOT SET" : remoteAnalysisId);
 			map.put("state", messageSource.getMessage("analysis.state." + analysisState, null, locale));
 			map.put("analysisState", analysisState.toUpperCase());
