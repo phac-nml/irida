@@ -201,8 +201,8 @@ public class ProjectSamplesController {
 			Map<String, Object> sampleMap = getSampleMap(join.getObject(), join.getSubject(), SampleType.LOCAL, join.getObject().getId());
 			samples.add(sampleMap);
 
-			List<Join<Sample,SequenceFile>> seqFiles = sequenceFileService.getSequenceFilesForSample(join.getObject());
-			
+			List<Join<Sample,SequenceFile>> seqFiles = sequenceFileService.getSequenceFilesForSample(join.getObject());			
+			// Comment for Josh, if it matters:
 			// For some reason, using a separate loop, putting each file path string in its own HashMap and adding 
 			// them to samples, only allowed one of these objects to be added to the JavaScript array.
 			for(Join<Sample,SequenceFile> seqFile : seqFiles) {

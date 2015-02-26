@@ -771,20 +771,8 @@
     "use strict";
     var vm = this;
 
-    vm.upload = function () {
-      //SamplesService.galaxyUpload(vm.email, vm.name).then(function (data) {
-      //  vm.uploading = false;
-      //  if (data.result === 'success') {
-      //    vm.close();
-      //    // TODO: Create a progress bar to monitor the status of the upload.
-      //  }
-      //  else {
-      //   vm.errors = data.errors;
-      //  }
-      //});
-    	
-    	
-    	
+    vm.upload = function () {   
+
       vm.uploading = true;
       var SAMPLE_ENTITY_LABEL = "sampleFilePath"
       vm.sampleEntities = [];
@@ -798,7 +786,6 @@
       vm.samples = StorageService.getSamples();
       
       var sampleNum = 1;
-      //debugger;
       for(var sampleIndex in vm.samples) {
         var sampleFilesAdded = false;
         var sample = vm.samples[sampleIndex];
@@ -823,21 +810,16 @@
           var samplePathValue = "http://localhost/lalala_will_be_a_sample_path"
           vm.addSampleEntity(samplePath,samplePathValue);
           sampleNum++;
-        } 
-        
+        }  
       }
-      
       vm.addSampleEntity("library_name",vm.name);
       
-      
       $timeout(
-    		     function(){
-				   document.getElementById("galSubFrm").submit();
-				 }
-			   ); 
-      //document.getElementById("galSubFrm").submit()
-      //*/
-      //debugger;
+        function(){
+	      document.getElementById("galSubFrm").submit();
+	      vm.close();
+		}
+	  ); 
     };
 
     vm.setName = function (name) {
