@@ -327,6 +327,11 @@ public class PipelineController extends BaseController {
 			}
 
 
+			// Check to see if a reference file is required.
+			if (description.requiresReference() && ref == null) {
+				return ImmutableMap.of("error", messageSource.getMessage("pipeline.error.no-reference.pipeline-start", null, locale));
+			}
+
 			// Get a list of the files to submit
 			List<SequenceFile> sequenceFiles = new ArrayList<>();
 			List<SequenceFilePair> sequenceFilePairs = new ArrayList<>();
