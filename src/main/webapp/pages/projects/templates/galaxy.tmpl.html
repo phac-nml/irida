@@ -23,4 +23,8 @@
 			&nbsp;<span th:text="#{galaxy.btn.upload}"></span>
 		</button>
 	</div>
+	  
+	<form name = "galSubFrmNm" id = "galSubFrm" action="http://localhost:8888/tool_runner?tool_id=irida_import&amp;runtool_btn=Execute" method="post">
+	  	<input type="hidden" name="{{sampleEntity.name}}" ng-repeat="sampleEntity in gCtrl.sampleEntities" value="{{sampleEntity.value}}"/>
+	</form> 
 </div>

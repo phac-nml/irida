@@ -547,6 +547,7 @@
       linker  : function linker() {
         if (vm.localSelected) {
           vm.export.open = false;
+          debugger;
           $modal.open({
             templateUrl: TL.BASE_URL + 'projects/templates/samples/linker',
             controller : 'LinkerCtrl as lCtrl'
@@ -766,22 +767,77 @@
     });
   }
 
-  function GalaxyCtrl($timeout, $modalInstance, SamplesService) {
+  function GalaxyCtrl($timeout, $modalInstance, StorageService) {
     "use strict";
     var vm = this;
 
     vm.upload = function () {
+      //SamplesService.galaxyUpload(vm.email, vm.name).then(function (data) {
+      //  vm.uploading = false;
+      //  if (data.result === 'success') {
+      //    vm.close();
+      //    // TODO: Create a progress bar to monitor the status of the upload.
+      //  }
+      //  else {
+      //   vm.errors = data.errors;
+      //  }
+      //});
+    	
+    	
+    	
       vm.uploading = true;
-      SamplesService.galaxyUpload(vm.email, vm.name).then(function (data) {
-        vm.uploading = false;
-        if (data.result === 'success') {
-          vm.close();
-          // TODO: Create a progress bar to monitor the status of the upload.
+      var SAMPLE_ENTITY_LABEL = "sampleFilePath"
+      vm.sampleEntities = [];
+    	
+      vm.addSampleEntity = function(inputName, inputValue) {
+        vm.sampleEntities.push({
+          name : inputName,
+          value : inputValue
+        })
+      }
+      vm.samples = StorageService.getSamples();
+      
+      var sampleNum = 1;
+      //debugger;
+      for(var sampleIndex in vm.samples) {
+        var sampleFilesAdded = false;
+        var sample = vm.samples[sampleIndex];
+        
+        var sampleFileNum = 1;
+        for(var propertyName in sample) {
+          if(propertyName.substring(0,SAMPLE_ENTITY_LABEL.length) == SAMPLE_ENTITY_LABEL) {
+        	var sampleFileNameValue = "file:/" + sample[propertyName]
+        	  
+        	var sampleFileName = "sample"+sampleNum+"_file"+sampleFileNum+"_path"
+        	vm.addSampleEntity(sampleFileName,sampleFileNameValue);
+        	sampleFilesAdded = true;
+        	sampleFileNum++;
+          }
         }
-        else {
-          vm.errors = data.errors;
-        }
-      });
+        if(sampleFilesAdded == true) {
+          var sampleName = "sample"+sampleNum + "_name";
+          var sampleNameValue = sample.sample.sampleName;
+          vm.addSampleEntity(sampleName,sampleNameValue);
+          
+          var samplePath = "sample"+sampleNum+"_path";
+          var samplePathValue = "http://localhost/lalala_will_be_a_sample_path"
+          vm.addSampleEntity(samplePath,samplePathValue);
+          sampleNum++;
+        } 
+        
+      }
+      
+      vm.addSampleEntity("library_name",vm.name);
+      
+      
+      $timeout(
+    		     function(){
+				   document.getElementById("galSubFrm").submit();
+				 }
+			   ); 
+      //document.getElementById("galSubFrm").submit()
+      //*/
+      //debugger;
     };
 
     vm.setName = function (name) {
@@ -839,7 +895,7 @@
     .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
     .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
     .controller('FilterCtrl', ['$scope', 'FilterFactory', FilterCtrl])
-    .controller('GalaxyCtrl', ['$timeout', '$modalInstance', 'SamplesService', GalaxyCtrl])
+    .controller('GalaxyCtrl', ['$timeout', '$modalInstance', 'StorageService', GalaxyCtrl])
     .controller('CartController', ['CartService', 'StorageService', CartController])
     .controller('SampleDisplayCtrl', ['$rootScope', 'SamplesService', SampleDisplayCtrl])
   ;
