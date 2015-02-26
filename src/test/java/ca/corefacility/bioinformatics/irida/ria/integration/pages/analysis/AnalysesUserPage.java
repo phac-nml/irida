@@ -31,7 +31,7 @@ public class AnalysesUserPage extends AbstractPage {
 	@FindBy(id = "filter-date-late")
 	private WebElement filterDateLate;
 
-	@FindBy(className = "board")
+	@FindBy(className = "analysis__state")
 	private List<WebElement> analysesList;
 
 	@FindBy(className = "download-analysis-btn")
