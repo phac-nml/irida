@@ -45,11 +45,9 @@
 
 .sidebar__body {
   position: relative;
-  >div {
-    border-top: 1px solid $irida-colour-grey-light;
-    padding: 6px 4px;
-  }
+
   .form-group {
+    border-top: 1px solid $irida-colour-grey-light;
     padding: 4px 8px;
   }
   label {
@@ -66,13 +64,23 @@
   }
 }
 
+.sidebar__item {
+  border-top: 1px solid $irida-colour-grey-light;
+  padding: .3em 0;
+  display: flex;
+  align-items: center;
+
+  > div {
+    padding: 0 .3em;
+  }
+}
+
 .sidebar__icon {
   color: $irida-colour-grey-dark;
-  width: 15%;
 }
 
 .sidebar__value {
   color: $irida-colour-dark;
-  position: absolute;
-  right: 8px;
+  text-align: right;
+  flex-grow: 2;
 }
