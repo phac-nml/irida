@@ -240,7 +240,7 @@ public class AnalysisController {
 						.toString();
 				workflowName = messageSource.getMessage("workflow." + type + ".title", null, locale);
 			} catch (IridaWorkflowNotFoundException e) {
-				e.printStackTrace();
+				logger.error("Error finding workflow, ", e);
 			}
 
 			String analysisState = sub.getAnalysisState().toString();
