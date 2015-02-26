@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -94,6 +95,10 @@ public class ProjectsController {
 	 */
 	Formatter<Date> dateFormatter;
 	FileSizeConverter fileSizeConverter;
+	
+	
+	// HTTP session variable name for Galaxy callback variable
+	public static final String GALAXY_CALLBACK_VARIABLE_NAME = "galaxyExportToolCallbackURL";
 
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
@@ -113,9 +118,17 @@ public class ProjectsController {
 	 * @return The name of the page.
 	 */
 	@RequestMapping("/projects")
-	public String getProjectsPage(Model model) {
+	public String getProjectsPage(Model model,
+			@RequestParam(value="appCallbackUrl",required=false) String galaxyCallbackURL,
+			HttpSession httpSession) {
 		model.addAttribute("ajaxURL", "/projects/ajax/list");
 		model.addAttribute("isAdmin", false);
+
+		//External exporting functionality
+		if(galaxyCallbackURL != null) {
+			httpSession.setAttribute(GALAXY_CALLBACK_VARIABLE_NAME, galaxyCallbackURL);
+		}
+		
 		return LIST_PROJECTS_PAGE;
 	}
 

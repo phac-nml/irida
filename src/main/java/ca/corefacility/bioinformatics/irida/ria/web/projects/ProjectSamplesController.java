@@ -17,6 +17,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -134,7 +135,8 @@ public class ProjectSamplesController {
 	 * @return Name of the project samples list view
 	 */
 	@RequestMapping("/projects/{projectId}/samples")
-	public String getProjectSamplesPage(final Model model, final Principal principal, @PathVariable long projectId) {
+	public String getProjectSamplesPage(final Model model, final Principal principal, @PathVariable long projectId,
+		HttpSession httpSession) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 
@@ -142,9 +144,10 @@ public class ProjectSamplesController {
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 
 		// Exporting functionality
+		boolean haveGalaxyCallbackURL = (httpSession.getAttribute(ProjectsController.GALAXY_CALLBACK_VARIABLE_NAME) != null);
 		model.addAttribute("linkerAvailable", LINKER_AVAILABLE);
-		model.addAttribute("galaxyConfigured", galaxyUploadService.isConfigured());
-		model.addAttribute("galaxyConnected", galaxyUploadService.isConnected());
+		model.addAttribute("galaxyConfigured", haveGalaxyCallbackURL);
+		model.addAttribute("galaxyConnected", haveGalaxyCallbackURL);
 
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_SAMPLES);
 		return PROJECT_SAMPLES_PAGE;

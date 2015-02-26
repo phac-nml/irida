@@ -774,6 +774,7 @@
     vm.upload = function () {   
 
       vm.uploading = true;
+
       var SAMPLE_ENTITY_LABEL = "sampleFilePath"
       vm.sampleEntities = [];
     	
