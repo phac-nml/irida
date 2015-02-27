@@ -12,6 +12,8 @@ import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -57,11 +59,22 @@ import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, AnalysisSubmission> implements
 		AnalysisSubmissionService {
 	
+	private static final Logger logger = LoggerFactory.getLogger(AnalysisSubmissionServiceImpl.class);
+	
 	private UserRepository userRepository;
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	private final ReferenceFileRepository referenceFileRepository;
 	private final SequenceFileService sequenceFileService;
 	private final SequenceFilePairService sequenceFilePairService;
+	
+	/**
+	 * Defines a set of states that, if IRIDA was shutdown with a submission in
+	 * one of these states, would need to be switched to an
+	 * {@link AnalysisSubmission.ERROR} state.
+	 */
+	private static final Set<AnalysisState> inconsistentStates = ImmutableSet.of(AnalysisState.PREPARING,
+			AnalysisState.SUBMITTING, AnalysisState.COMPLETING);
+	private boolean ranSwitchInconsistentSubmissionsToError = false;
 
 	/**
 	 * Builds a new AnalysisSubmissionServiceImpl with the given information.
@@ -332,5 +345,33 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 		// Create the submission
 		return create(builder.build());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public int switchInconsistentSubmissionsToError() {
+		if (ranSwitchInconsistentSubmissionsToError) {
+			throw new RuntimeException("already ran this method once");
+		} else {
+			int numberSubmissionsSwitched = 0;
+			ranSwitchInconsistentSubmissionsToError = true;
+
+			for (AnalysisState state : inconsistentStates) {
+				List<AnalysisSubmission> submissions = analysisSubmissionRepository.findByAnalysisState(state);
+				for (AnalysisSubmission submission : submissions) {
+					submission.setAnalysisState(AnalysisState.ERROR);
+					analysisSubmissionRepository.save(submission);
+					numberSubmissionsSwitched++;
+					logger.error("AnalysisSubmission [id=" + submission.getId() + ", name=" + submission.getName()
+							+ ", state=" + submission.getAnalysisState()
+							+ "] left in inconsistent state.  Switching to " + AnalysisState.ERROR);
+				}
+			}
+
+			return numberSubmissionsSwitched;
+		}
 	}
 }
