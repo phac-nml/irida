@@ -65,4 +65,8 @@
                          analysis_id="1" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="2"/>
 	<analysis_submission id="10" analysis_state="COMPLETING" created_date="2014-02-06 10:01:02" name="random name"
                          analysis_id="1" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="3"/>
+	<analysis_submission id="11" analysis_state="RUNNING" created_date="2014-02-06 10:01:02" name="random name"
+                         analysis_id="1" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="3"/>
+	<analysis_submission id="12" analysis_state="PREPARED" created_date="2014-02-06 10:01:02" name="random name"
+                         analysis_id="1" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="3"/>
 </dataset>

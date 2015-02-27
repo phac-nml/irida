@@ -362,12 +362,13 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			for (AnalysisState state : inconsistentStates) {
 				List<AnalysisSubmission> submissions = analysisSubmissionRepository.findByAnalysisState(state);
 				for (AnalysisSubmission submission : submissions) {
+					logger.error("AnalysisSubmission [id=" + submission.getId() + ", name=" + submission.getName()
+							+ ", state=" + submission.getAnalysisState()
+							+ "] left in inconsistent state.  Switching to " + AnalysisState.ERROR + ".");
+					
 					submission.setAnalysisState(AnalysisState.ERROR);
 					analysisSubmissionRepository.save(submission);
 					numberSubmissionsSwitched++;
-					logger.error("AnalysisSubmission [id=" + submission.getId() + ", name=" + submission.getName()
-							+ ", state=" + submission.getAnalysisState()
-							+ "] left in inconsistent state.  Switching to " + AnalysisState.ERROR);
 				}
 			}
 
