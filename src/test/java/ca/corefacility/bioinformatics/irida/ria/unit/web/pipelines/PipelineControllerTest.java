@@ -68,6 +68,7 @@ public class PipelineControllerTest {
 		controller = new PipelineController(sequenceFileService, sequenceFilePairService, referenceFileService,
 				analysisSubmissionService, workflowsService, projectService, userService, cartController,
 				messageSource, namedParameterService);
+		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 	}
 
 	@Test

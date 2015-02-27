@@ -167,7 +167,7 @@ public class PipelinesPhylogenomicsPageIT {
 	public void testModifyParameters() {
 		addSamplesToCart();
 		page.clickPipelineParametersBtn();
-		assertEquals("Should have the proper pipeline name in title", "Phylogenomics Pipeline Parameters",
+		assertEquals("Should have the proper pipeline name in title", "Default Parameters",
 				page.getParametersModalTitle());
 
 		// set the value for the ALternative Allele Fraction

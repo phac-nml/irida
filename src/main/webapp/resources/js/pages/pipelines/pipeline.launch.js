@@ -10,6 +10,7 @@
     vm.parameters = PIPELINE.parameters;
     ParameterService.selectedParameters = vm.parameters[0];
     vm.selectedParameters = ParameterService.selectedParameters;
+    PIPELINE.selectedParameters = vm.selectedParameters;
     
     $scope.$on('PARAMETERS_SAVED', function() {
     	vm.selectedParameters = ParameterService.selectedParameters;
