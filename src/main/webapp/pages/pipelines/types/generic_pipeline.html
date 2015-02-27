@@ -62,6 +62,40 @@
 							</select>
 						</div>
 					</div>
+					<div class="form-group"
+						th:if="${parameters} and ${#lists.size(parameters)} != 0">
+						<label for="named-parameters" class="col-sm-2 control-label"
+							 th:text="#{workflow.parameters.select.label}">___Parameters___</label>
+							 
+						<div class="col-sm-10">
+							<div class="input-group">
+								<select id="named-parameters" name="named-parameters"
+										class="form-control"
+										ng-model="pipeline.selectedParameters"
+										ng-change="pipeline.parameterSelected()"
+										ng-options="item.label for item in pipeline.parameters">
+								
+								</select>
+								<span class="input-group-btn">
+									<button id="pipeline-parameters-btn"
+										ng-controller="ParameterModalController as modal"
+										class="btn btn-default set-default-btn"
+										ng-click="modal.openModal()">
+										<i class="fa fa-cogs"></i> <span th:text="#{workflow.parameters.section-button}">___Customize___</span>
+									</button>
+								</span>
+							</div>
+						</div>
+						<div ng-show="pipeline.paramError"
+							class="alert alert-danger sidebar-content">
+							<strong class="fa fa-3x fa-fw fa-hand-o-up alert-icon-motion"></strong>
+							{{pipeline.paramError}}
+						</div>
+					</div>
+					<th:block th:unless="${parameters}">
+						<div class="alert alert-info sidebar-content"
+							th:text="${noParameters}"></div>
+					</th:block>
 				</div>
 
 				<div class="form-group">
@@ -170,20 +204,6 @@
 								<span class="fa fa-rocket"></span>
 							</button>
 						</div>
-						<th:block th:if="${parameters} and ${#lists.size(parameters)} != 0">
-							<button id="pipeline-parameters-btn" ng-controller="ParameterModalController as modal"
-							        class="btn btn-default sidebar-content" ng-click="modal.openModal()">
-								<i class="fa fa-cogs fa-2x"></i><br/>
-								<span th:text="#{workflow.parameters.section-button}">Pipeline Parameters</span>
-							</button>
-							<div ng-show="pipeline.paramError" class="alert alert-danger sidebar-content">
-								<strong class="fa fa-3x fa-fw fa-hand-o-up alert-icon-motion"></strong>
-								{{pipeline.paramError}}
-							</div>
-						</th:block>
-						<th:block th:unless="${parameters}">
-							<div class="alert alert-info sidebar-content" th:text="${noParameters}"></div>
-						</th:block>
 					</div>
 					<div id="pipeline-submitted" class="ng-cloak" ng-switch-when="true">
 						<div ng-hide="pipeline.success" class="alert alert-info">
@@ -218,7 +238,9 @@
 		var PIPELINE = {
 			url       : /*[[@{/pipelines/ajax/start/{id}(id=${pipelineId})}]]*/ '/ajax/pipelines/ccca532d-b0be-4f2c-bd6d-9886aa722571',
 			required  : /*[[#{workflow.no-name-provided}]]*/ 'Name Required',
-			parameters: /*[[${parameters}]]*/ []
+			parameters: /*[[${parameters}]]*/ [],
+			saveParametersUrl : /*[[@{/pipelines/ajax/parameters}]]*/ '/ajax/pipeline/parameters',
+			pipelineId : /*[[${pipelineId}]]*/ 'pipelineId'
 		};
 
 		var projectsPage = /*[[@{/projects}]]*/ '/projects';

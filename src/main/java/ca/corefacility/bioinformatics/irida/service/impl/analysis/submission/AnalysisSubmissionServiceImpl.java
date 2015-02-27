@@ -42,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
@@ -260,7 +261,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Transactional
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, Map<String, String> params,
-			String name) {
+			IridaWorkflowNamedParameters namedParameters, String name) {
 		final Collection<AnalysisSubmission> createdSubmissions = new HashSet<AnalysisSubmission>();
 		// Single end reads
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
@@ -281,10 +282,16 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 					builder.referenceFile(referenceFile);
 				}
 
-				if (params != null && description.acceptsParameters()) {
-					// Note: This cannot be empty if through the UI if the
-					// pipeline required params.
-					builder.inputParameters(params);
+				if (description.acceptsParameters()) {
+					if (namedParameters != null) {
+						builder.withNamedParameters(namedParameters);
+					} else {
+						if (!params.isEmpty()) {
+							// Note: This cannot be empty if through the UI if
+							// the pipeline required params.
+							builder.inputParameters(params);
+						}
+					}
 				}
 
 				// Create the submission
@@ -309,7 +316,15 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				}
 
 				if (description.acceptsParameters()) {
-					builder.inputParameters(params);
+					if (namedParameters != null) {
+						builder.withNamedParameters(namedParameters);
+					} else {
+						if (!params.isEmpty()) {
+							// Note: This cannot be empty if through the UI if
+							// the pipeline required params.
+							builder.inputParameters(params);
+						}
+					}
 				}
 
 				// Create the submission
@@ -326,7 +341,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Transactional
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, Map<String, String> params,
-			String name) {
+			IridaWorkflowNamedParameters namedParameters, String name) {
 		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 		builder.name(name);
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
@@ -348,7 +363,15 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		}
 
 		if (description.acceptsParameters()) {
-			builder.inputParameters(params);
+			if (namedParameters != null) {
+				builder.withNamedParameters(namedParameters);
+			} else {
+				if (!params.isEmpty()) {
+					// Note: This cannot be empty if through the UI if
+					// the pipeline required params.
+					builder.inputParameters(params);
+				}
+			}
 		}
 
 		// Create the submission
