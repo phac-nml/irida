@@ -7,7 +7,7 @@
    * @constructor
    */
   function AnalysisFilterService() {
-    return {}
+    return {};
   }
 
   /**
@@ -26,7 +26,7 @@
         }
         if(item === null) return;
         
-        if(key === 'analysisState') {
+        if(key === 'analysisState' || key === 'workflowId') {
           if(value.length > 0 && value !== 'ALL' && item !== value) result = false;
         }
         else if (key === 'minDate' && item < value) {
@@ -65,7 +65,10 @@
    */
   function AnalysisService($http) {
     function _loadData() {
-      return $http.get(TL.BASE_URL + "analysis/ajax/list");
+      return $http.get(TL.BASE_URL + "analysis/ajax/list")
+        .error(function(data) {
+          window.location = TL.BASE_URL + data.error.url;
+        });
     }
 
     return {
@@ -86,6 +89,7 @@
     function _setDefaults() {
       vm.search = "";
       vm.state = "ALL";
+      vm.workflowId = "ALL";
       vm.minDate = "";
       vm.maxDate = "";
       vm.max = new Date();
@@ -106,6 +110,10 @@
       filter.analysisState = vm.state;
     };
 
+    vm.doType = function () {
+      filter.workflowId = vm.workflowId;
+    };
+
     vm.open = function (e, value) {
       e.preventDefault();
       e.stopPropagation();
@@ -123,19 +131,30 @@
         date.setDate(date.getDate() + 1);
       }
       filter[key] = date.getTime();
-    }
+    };
 
     _setDefaults();
   }
 
   /**
    * Controller for the actual analyses list.
-   * @param svc
    * @constructor
+   * @param svc
+   * @param ngTableParams
+   * @param $scope
    */
-  function AnalysisController(svc, $scope) {
+  function AnalysisController(svc, ngTableParams, $scope) {
     var vm = this;
-    vm.analyses = [];
+        vm.analyses = [];
+    vm.loading = true;
+
+    vm.tableParams = new ngTableParams({
+      sorting: {'createdDate':'asc'}
+    });
+
+    vm.createClass = function(state) {
+      return  state.toLowerCase().replace(" ", "_");
+    };
 
     vm.download = function (id) {
       var iframe = document.createElement("iframe");
@@ -144,9 +163,10 @@
       document.body.appendChild(iframe);
     };
 
-    svc.load()
+    vm.busy = svc.load()
       .success(function (data) {
         vm.analyses = data.analyses;
+        vm.loading = false;
       });
 
     $scope.$on('NO_ANALYSIS', function () {
@@ -158,11 +178,11 @@
     })
   }
 
-  angular.module('irida.analysis.user', [])
+  angular.module('irida.analysis.user', ['ngTable'])
     .filter('analysesFilter', ['analysisFilterService', '$rootScope', AnalysesFilter])
     .service('analysisService', ['$http', AnalysisService])
     .service('analysisFilterService', [AnalysisFilterService])
-    .controller('analysisController', ['analysisService', '$scope', AnalysisController])
+    .controller('analysisController', ['analysisService', 'ngTableParams', '$scope', AnalysisController])
     .controller('filterController', ['analysisFilterService', FilterController])
   ;
 })();
