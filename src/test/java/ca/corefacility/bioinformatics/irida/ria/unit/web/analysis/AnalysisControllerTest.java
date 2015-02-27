@@ -51,8 +51,8 @@ public class AnalysisControllerTest {
 	@Before
 	public void init() {
 		analysisSubmissionServiceMock = mock(AnalysisSubmissionService.class);
-		MessageSource messageSourceMock = mock(MessageSource.class);
 		iridaWorkflowsServiceMock = mock(IridaWorkflowsService.class);
+		MessageSource messageSourceMock = mock(MessageSource.class);
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock, messageSourceMock);
 	}
 
