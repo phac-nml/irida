@@ -60,26 +60,6 @@ public class AnalysisControllerTest {
 	}
 
 	// ************************************************************************************************
-	// PAGE TESTS
-	// ************************************************************************************************
-
-	@Test
-	public void testGetTreeAnalysis() throws IOException {
-		Long id = 1L;
-		ExtendedModelMap model = new ExtendedModelMap();
-		AnalysisSubmission analysisSubmission = TestDataFactory.constructAnalysisSubmission();
-
-		when(analysisSubmissionServiceMock.read(id)).thenReturn(analysisSubmission);
-		analysisController.getTreeAnalysis(id, model);
-		assertTrue(model.containsAttribute("analysis"));
-		assertTrue(model.containsAttribute("analysisSubmission"));
-		assertTrue(model.containsAttribute("newick"));
-		Path path = Paths.get(TestDataFactory.FAKE_FILE_PATH.replace("{name}", "snp_tree.tree"));
-		List<String> lines = Files.readAllLines(path);
-		assertEquals(lines.get(0), model.get("newick"));
-	}
-
-	// ************************************************************************************************
 	// AJAX TESTS
 	// ************************************************************************************************
 

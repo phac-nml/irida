@@ -1,11 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -37,7 +35,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
@@ -56,18 +53,12 @@ import com.google.common.collect.ImmutableMap;
 @Controller
 @RequestMapping("/analysis")
 public class AnalysisController {
-	private static final Map<String, String> ANALYSIS_TYPE_NAMES = ImmutableMap.of("1",
-			"Whole Genome Phylogenomics Pipeline");
-	private static final Map<Class<? extends AnalysisSubmission>, String> ANALYSIS_TYPE_IDS = ImmutableMap.of(
-			AnalysisSubmission.class, "1");
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
 
 	// PAGES
 	private static final String REDIRECT_ERROR = "redirect:errors/not_found";
 	private static final String BASE = "analysis/";
-	public static final String PAGE_ADMIN_ANALYSIS = BASE + "admin";
-	public static final String PAGE_USER_ANALYSIS = BASE + "analysis_user";
-	public static final String PAGE_TREE_ANALYSIS_PREVIEW = BASE + "preview/tree";
+	public static final String PAGE_USER_ANALYSIS = BASE + "analyses";
 
 	/*
 	 * SERVICES
@@ -89,21 +80,6 @@ public class AnalysisController {
 	// ************************************************************************************************
 	// PAGES
 	// ************************************************************************************************
-
-	/**
-	 * Get the Analysis Admin Page
-	 *
-	 * @return uri for the analysis admin page
-	 */
-
-	@RequestMapping("/admin")
-	public String getPageAdminAnalysis(Model model) {
-		logger.trace("Showing the Analysis Admin Page");
-		// TODO: (14-08-29 - Josh) Once individuals can own an analysis this
-		// needs to be only admin.
-		model.addAttribute("types", ANALYSIS_TYPE_NAMES);
-		return PAGE_ADMIN_ANALYSIS;
-	}
 
 	@RequestMapping("/list")
 	public String getUserAnalysesPage(Model model, Locale locale) {
@@ -134,30 +110,6 @@ public class AnalysisController {
 			response = REDIRECT_ERROR;
 		}
 		return response;
-	}
-
-	/**
-	 * Get the page for previewing a tree result
-	 *
-	 * @param analysisId
-	 * 		Id for the {@link AnalysisSubmission}
-	 * @param model
-	 * 		{@link Model}
-	 *
-	 * @return Name of the page
-	 * @throws IOException
-	 */
-	@RequestMapping("/preview/tree/{analysisId}")
-	public String getTreeAnalysis(@PathVariable Long analysisId, Model model) throws IOException {
-		logger.trace("Getting the preview of the the tree");
-		AnalysisSubmission analysisSubmission = analysisSubmissionService.read(analysisId);
-		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) analysisSubmission.getAnalysis();
-		AnalysisOutputFile file = analysis.getPhylogeneticTree();
-		List<String> lines = Files.readAllLines(file.getFile());
-		model.addAttribute("analysis", analysis);
-		model.addAttribute("analysisSubmission", analysisSubmission);
-		model.addAttribute("newick", lines.get(0));
-		return PAGE_TREE_ANALYSIS_PREVIEW;
 	}
 
 	// ************************************************************************************************
