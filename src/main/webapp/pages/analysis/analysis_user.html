@@ -4,7 +4,7 @@
       layout:decorator="template/page">
 <head lang="en">
 	<meta charset="UTF-8"/>
-	<title th:text="#{analyses.user.page-title}">My Title Goes Here</title>
+	<title th:text="#{${admin} ? 'analyses.admin.page-title' : 'analyses.user.page-title'}">My Title Goes Here</title>
 	<link rel="stylesheet" href="/resources/css/app.css" th:href="@{/resources/css/app.css}"/>
 	<link rel="stylesheet" href="/resources/css/pages/analyses.css" th:href="@{/resources/css/pages/analyses.css}"/>
 	<link rel="stylesheet" href="/resources/bower_components/ng-table/dist/ng-table.min.css"
@@ -65,15 +65,19 @@
 					</div>
 					<div class="form-group">
 						<label class="sidenav__label" th:text="#{analyses.type}">_WORKFLOW_TYPE_</label>
-						<select name="" id="filter-type" class="form-control input-full" ng-model="filter.workflowId" ng-change="filter.doType()">
+						<select name="" id="filter-type" class="form-control input-full" ng-model="filter.workflowId"
+						        ng-change="filter.doType()">
 							<option value="ALL" th:text="#{analysis.select.all}">_ALL_</option>
-							<option th:each="flow : ${workflows}" th:value="${flow.id}" th:text="${flow.title}"></option>
+							<option th:each="flow : ${workflows}" th:value="${flow.id}"
+							        th:text="${flow.title}"></option>
 						</select>
 					</div>
 					<div class="form-group">
 						<label class="sidenav__label" th:text="#{analysis.filter.date-earliest}">Earliest Date</label>
+
 						<div class="input-group">
-							<input id="filter-date-early" type="text" class="form-control" th:attr="datepicker-popup=#{datepicker.short}, close-text=#{datepicker.close}, current-text=#{datepicker.current}, clear=#{datepicker.clear}"
+							<input id="filter-date-early" type="text" class="form-control"
+							       th:attr="datepicker-popup=#{datepicker.short}, close-text=#{datepicker.close}, current-text=#{datepicker.current}, clear=#{datepicker.clear}"
 							       ng-model="filter.minDate" is-open="filter.opened.minDate"
 							       max-date="filter.max" ng-change="filter.doDateFilter('minDate')"/>
 			              <span class="input-group-btn">
@@ -82,8 +86,10 @@
 			              </span>
 						</div>
 						<label class="sidenav__label" th:text="#{analysis.filter.date-latest}">Latest Date</label>
+
 						<div class="input-group">
-							<input id="filter-date-late" type="text" class="form-control" th:attr="datepicker-popup=#{datepicker.short}"
+							<input id="filter-date-late" type="text" class="form-control"
+							       th:attr="datepicker-popup=#{datepicker.short}"
 							       ng-model="filter.maxDate" is-open="filter.opened.maxDate"
 							       max-date="filter.max" close-text="Close" ng-change="filter.doDateFilter('maxDate')"/>
 			              <span class="input-group-btn">
@@ -95,43 +101,65 @@
 				</div>
 			</div>
 		</aside>
-		<div class="content ng-cloak" ng-controller="analysisController as ctrl">
-			<div ng-show="ctrl.loading" class="alert alert-info animate-hide">
-				<b><i class="fa fa-circle-o-notch fa-spin"></i>&nbsp;<span th:text="#{analysis.loading}">_CHECKING_SERVER_</span></b>
-			</div>
-			<div ng-hide="ctrl.loading">
-				<table ng-show="ctrl.showAnalyses" class="table" ng-table="ctrl.tableParams">
-					<tr class="analysis__state" ng-class="'analysis__state--' +ctrl.createClass(analysis.state)"
-					    ng-repeat="analysis in ctrl.analyses | analysesFilter | orderBy: ctrl.tableParams.orderBy()">
-						<td data:title="'\'' + #{analyses.state} + '\''" sortable="'state'">{{analysis.state}}</td>
-						<td data:title="'\'' + #{analyses.analysis-name} + '\''" sortable="'label'">{{analysis.label}}
-						</td>
-						<td data:title="'\'' + #{analyses.type} + '\''" sortable="'type'">{{analysis.workflowName}}</td>
-						<td data:title="'\'' + #{analysis.date-created} + '\''" sortable="'createdDate'">
-							{{analysis.createdDate | date:'short'}}
-						</td>
-						<td>
-							<button ng-show="analysis.state==='Completed'"
-							        class="btn btn-default btn-xs pull-right download-analysis-btn"
-							        th:title="#{form.download}" ng-click="ctrl.download(analysis.id)">
-								<i class="fa fa-download"></i>
-							</button>
-						</td>
-					</tr>
-				</table>
-				<div id="no-analyses" ng-hide="ctrl.showAnalyses" class="alert alert-info ng-cloak animate-hide">
-					<strong><i class="fa fa-exclamation-circle fa-2x"></i>&nbsp;
-						<span th:text="#{analysis.no-analysis-title}">Damn, You need to create some analyses.</span>
-					</strong>
+		<div class="content">
+			<h1 style="margin-top: 0;" th:text="#{${admin} ? 'analyses.admin.page-title' : 'analyses.user.page-title'}">
+				_ANALYSIS_PAGE_</h1>
 
-					<p th:text="#{analysis.no-analysis-message}"></p>
+			<div class="ng-cloak" ng-controller="analysisController as ctrl">
+				<div ng-show="ctrl.loading" class="alert alert-info animate-hide">
+					<b><i class="fa fa-circle-o-notch fa-spin"></i>&nbsp;
+						<span th:text="#{analysis.loading}">_CHECKING_SERVER_</span>
+					</b>
+				</div>
+				<div ng-hide="ctrl.loading">
+					<table ng-show="ctrl.showAnalyses" class="table" ng-table="ctrl.tableParams">
+						<tr class="analysis__state" ng-class="'analysis__state--' +ctrl.createClass(analysis.state)"
+						    ng-repeat="analysis in ctrl.analyses | analysesFilter | orderBy: ctrl.tableParams.orderBy()">
+							<td data:title="'\'' + #{analyses.state} + '\''" sortable="'state'">{{analysis.state}}</td>
+							<td data:title="'\'' + #{analyses.analysis-name} + '\''" sortable="'label'">
+								{{analysis.label}}
+							</td>
+							<td data:title="'\'' + #{analyses.type} + '\''" sortable="'type'">
+								{{analysis.workflowName}}
+							</td>
+							<td data:title="'\'' + #{analysis.date-created} + '\''" sortable="'createdDate'">
+								{{analysis.createdDate | date:'short'}}
+							</td>
+							<td data:title="'\'' + #{analysis.duration} + '\''" sortable="'duration'">
+								{{ ctrl.convertTime(analysis.duration) }}
+							</td>
+							<td>
+								<button ng-show="analysis.state==='Completed'"
+								        class="btn btn-default btn-xs pull-right download-analysis-btn"
+								        th:title="#{form.download}" ng-click="ctrl.download(analysis.id)">
+									<i class="fa fa-download"></i>
+								</button>
+							</td>
+						</tr>
+					</table>
+					<div id="no-analyses" ng-hide="ctrl.showAnalyses" class="alert alert-info ng-cloak animate-hide">
+						<strong><i class="fa fa-exclamation-circle fa-2x"></i>&nbsp;
+							<span th:text="#{analysis.no-analysis-title}">Damn, You need to create some analyses.</span>
+						</strong>
+
+						<p th:text="#{analysis.no-analysis-message}"></p>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
 <th:block layout:fragment="page-scripts">
-	<script src="/resources/bower_components/ng-table/dist/ng-table.min.js" th:src="@{/resources/bower_components/ng-table/dist/ng-table.min.js}"></script>
+	<script th:inline="javascript">
+		var PAGE = {
+			"URLS": {
+				"analyses": /*[[@{/analysis/ajax/list(all=${admin})}]]*/ "/analysis/ajax/list",
+				"download": /*[[@{/analysis/ajax/download/}]]*/ "/analysis/ajax/download/"
+			}
+		};
+	</script>
+	<script src="/resources/bower_components/ng-table/dist/ng-table.min.js"
+	        th:src="@{/resources/bower_components/ng-table/dist/ng-table.min.js}"></script>
 	<script src="/resources/js/pages/analyses/analyses_user.js"
 	        th:src="@{/resources/js/pages/analyses/analyses_user.js}"></script>
 </th:block>

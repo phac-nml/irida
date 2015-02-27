@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.collect.ImmutableList;
@@ -46,14 +47,16 @@ public class AnalysisControllerTest {
 	 * SERVICES
 	 */
 	private AnalysisSubmissionService analysisSubmissionServiceMock;
+	private UserService userServiceMock;
 	private IridaWorkflowsService iridaWorkflowsServiceMock;
 
 	@Before
 	public void init() {
 		analysisSubmissionServiceMock = mock(AnalysisSubmissionService.class);
+		userServiceMock = mock(UserService.class);
 		iridaWorkflowsServiceMock = mock(IridaWorkflowsService.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
-		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock, messageSourceMock);
+		analysisController = new AnalysisController(analysisSubmissionServiceMock, userServiceMock, iridaWorkflowsServiceMock, messageSourceMock);
 	}
 
 	// ************************************************************************************************
@@ -79,47 +82,6 @@ public class AnalysisControllerTest {
 	// ************************************************************************************************
 	// AJAX TESTS
 	// ************************************************************************************************
-
-	@Test
-	@SuppressWarnings("unchecked")
-	public void testGetAjaxListAllAnalysis() throws IOException {
-		int countParam = 10;
-		int pageParam = 0;
-		String sortDirParam = "desc";
-		String sortedByParam = "createdDate";
-
-		AnalysisSubmission analysisSubmission1 = TestDataFactory.constructAnalysisSubmission();
-		AnalysisSubmission analysisSubmission2 = TestDataFactory.constructAnalysisSubmission();
-		ImmutableList<AnalysisSubmission> analysisList = ImmutableList.of(analysisSubmission1, analysisSubmission2);
-		Page<AnalysisSubmission> analysisSubmissionPage = new PageImpl<>(analysisList);
-
-		when(analysisSubmissionServiceMock
-				.search(any(Specification.class), eq(0), eq(10), eq(Sort.Direction.DESC), eq("createdDate"))).thenReturn(analysisSubmissionPage);
-		Map<String, Object> map = analysisController.getAjaxListAllAnalysis(pageParam, countParam, sortedByParam, sortDirParam, null, null, null, null);
-
-		assertTrue(map.containsKey("analysis"));
-		assertTrue(map.containsKey("totalAnalysis"));
-		assertTrue(map.containsKey("totalPages"));
-
-		// Make sure all the analysis were added.
-		List<Object> analysis = (List<Object>) map.get("analysis");
-		assertTrue(analysisList.size() == analysis.size());
-		for (int i = 0; i < analysis.size(); i++) {
-			Object o = analysis.get(i);
-			if (o instanceof Map) {
-				Map<String, String> oMap = (HashMap<String, String>) o;
-				AnalysisSubmission a = analysisList.get(i);
-				assertEquals(oMap.get("id"), a.getId().toString());
-				assertEquals(oMap.get("name"), a.getName());
-			}
-		}
-
-		// Make sure there are the correct number of pages
-		assertEquals("the correct number of pages", 1, map.get("totalPages"));
-
-		// Make sure that the total is correctly set.
-		assertEquals("total is correctly set.", (long) analysisList.size(), map.get("totalAnalysis"));
-	}
 
 	@Test
 	public void TestGetAjaxDownloadAnalysisSubmission() throws IOException {
