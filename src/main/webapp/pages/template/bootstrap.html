@@ -39,12 +39,6 @@
 							   th:text="#{nav.main.project-create}">Create New Project
 							</a>
 						</li>
-						<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')"
-						    class="divider"></li>
-						<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')"
-						    role="presentation"
-						    class="dropdown-header" th:text="#{nav.main.admin}">Admin Only
-						</li>
 						<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')">
 							<a href="/projects/all" th:href="@{/projects/all}"
 							   th:text="#{nav.main.project-list-all}">One more separated link
@@ -66,12 +60,6 @@
 								List Users
 							</a>
 						</li>
-						<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')"
-						    class="divider"></li>
-						<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')"
-						    role="presentation"
-						    class="dropdown-header" th:text="#{nav.main.admin}">Admin Only
-						</li>
 						<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')">
 							<a href="#" th:href="@{/users/create}" th:text="#{nav.main.add.user}">
 								Add User
@@ -88,10 +76,6 @@
 					<ul class="dropdown-menu" role="menu">
 						<li>
 							<a th:href="@{/analysis/list}" href="/analysis/list" th:text="#{nav.main.analysis-user}">Your Analysis</a>
-						</li>
-						<li sec:authorize="hasAnyRole('ROLE_ADMIN')"
-						    role="presentation"
-						    class="dropdown-header" th:text="#{nav.main.admin}">Admin Only
 						</li>
 						<li sec:authorize="hasAnyRole('ROLE_ADMIN')">
 							<a th:href="@{/analysis/admin}" href="/analysis/admin"
