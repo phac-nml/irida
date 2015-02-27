@@ -1,49 +1,49 @@
 /* line 15, ../../../styles/pages/analyses.scss */
 .analysis__state {
-  border-left: 1rem solid #f3f3f3;
+  border-left: 1rem solid transparent;
 }
 
 /* line 20, ../../../styles/pages/analyses.scss */
-.analysis__state--NEW {
+.analysis__state--new {
   border-color: #3092d0;
 }
 
 /* line 20, ../../../styles/pages/analyses.scss */
-.analysis__state--PREPARING {
+.analysis__state--preparing {
   border-color: #2675a7;
 }
 
 /* line 20, ../../../styles/pages/analyses.scss */
-.analysis__state--PREPARED {
+.analysis__state--prepared {
   border-color: #1c587e;
 }
 
 /* line 20, ../../../styles/pages/analyses.scss */
-.analysis__state--SUBMITTING {
+.analysis__state--submitting {
   border-color: #133b54;
 }
 
 /* line 20, ../../../styles/pages/analyses.scss */
-.analysis__state--RUNNING {
+.analysis__state--running {
   border-color: #133B54;
 }
 
 /* line 20, ../../../styles/pages/analyses.scss */
-.analysis__state--FINISHED_RUNNING {
+.analysis__state--finished_running {
   border-color: #43AC6A;
 }
 
 /* line 20, ../../../styles/pages/analyses.scss */
-.analysis__state--COMPLETING {
+.analysis__state--completing {
   border-color: #61c185;
 }
 
 /* line 20, ../../../styles/pages/analyses.scss */
-.analysis__state--COMPLETED {
+.analysis__state--completed {
   border-color: #00FF00;
 }
 
 /* line 20, ../../../styles/pages/analyses.scss */
-.analysis__state--ERROR {
+.analysis__state--error {
   border-color: #F04124;
 }

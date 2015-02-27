@@ -29,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.collect.ImmutableList;
 
@@ -45,12 +46,14 @@ public class AnalysisControllerTest {
 	 * SERVICES
 	 */
 	private AnalysisSubmissionService analysisSubmissionServiceMock;
+	private IridaWorkflowsService iridaWorkflowsServiceMock;
 
 	@Before
 	public void init() {
 		analysisSubmissionServiceMock = mock(AnalysisSubmissionService.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
-		analysisController = new AnalysisController(analysisSubmissionServiceMock, messageSourceMock);
+		iridaWorkflowsServiceMock = mock(IridaWorkflowsService.class);
+		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock, messageSourceMock);
 	}
 
 	// ************************************************************************************************

@@ -87,6 +87,7 @@ public class PipelinesPhylogenomicsPageIT {
 				page.isNoRightsMessageDisplayed());
 		assertFalse("Should show the user which projects they can upload files to.",
 				page.isAddReferenceFileLinksDisplayed());
+		assertFalse("Should not be able to create a pipeline", page.isCreatePipelineAreaVisible());
 	}
 
 	@Test
@@ -112,6 +113,31 @@ public class PipelinesPhylogenomicsPageIT {
 		page.clickLaunchPipelineBtn();
 		assertTrue("Message should be displayed when the pipeline is submitted", page.isPipelineSubmittedMessageShown());
 		assertTrue("Message should be displayed once the pipeline finished submitting", page.isPipelineSubmittedSuccessMessageShown());
+	}
+	
+	@Test
+	public void testCheckPipelineStatusAfterSubmit() {
+		addSamplesToCart();
+
+		page.clickLaunchPipelineBtn();
+		assertTrue("Message should be displayed once the pipeline finished submitting",
+				page.isPipelineSubmittedSuccessMessageShown());
+		page.clickSeePipeline();
+
+		assertTrue("Should be on analysis page", driver.getCurrentUrl().endsWith("/analysis/list"));
+	}
+
+	@Test
+	public void testClearPipelineAndGetSamples() {
+		addSamplesToCart();
+
+		page.clickLaunchPipelineBtn();
+		assertTrue("Message should be displayed once the pipeline finished submitting",
+				page.isPipelineSubmittedSuccessMessageShown());
+		page.clickClearAndFindMore();
+
+		assertTrue("Should be on projects page", driver.getCurrentUrl().endsWith("/projects"));
+		assertEquals("cart should be empty", 0, page.getCartCount());
 	}
 
 	@Test

@@ -28,13 +28,13 @@
 					</ul>
 				</th:block>
 				<th:block th:if="${#lists.size(addRefProjects)} == 0">
-					<p id="has-no-rights" th:text="#{pipeline.orror.no-reference.no-permissions}">You do not have
+					<p id="has-no-rights" th:text="#{pipeline.error.no-reference.no-permissions}">You do not have
 						permission to upload a reference file to these projects. Please contact a project manager to add
 						a reference file.</p>
 				</th:block>
 			</div>
 		</div>
-		<div class="row">
+		<div class="row" id="pipeline-creation" th:if="${#lists.size(referenceFiles) != 0} or ${!referenceRequired}">
 			<div class="col-md-10">
 				<h1 th:text="${mainTitle}"></h1>
 
@@ -70,7 +70,7 @@
 					<div class="col-sm-10" th:with="dateFormat=#{locale.date.short}">
 						<div th:each="project : ${projects}">
 
-							<div class="sample-container" th:each="sample : ${project.samples}">
+							<div th:id="${'sample-' + sample.id}" class="sample-container" th:each="sample : ${project.samples}">
 								<h3>
 									<a href="#" th:href="@{/projects/{id}/samples(id=${project.id})}"
 									   th:text="${project.name + ' / ' + sample.name}"></a>
@@ -194,11 +194,13 @@
 							<strong class="fa fa-2x fa-smile-o text-center"></strong>&nbsp;
 							<span th:text="#{workflow.submitted-success}">You must be awesome!  All your files looked good and the pipeline has been launched and the pedal should hit the metal soon.</span>
 							<br/><br/>
-							<button id="btn-see-pipeline" class="btn btn-success btn-affixed"
-							        th:text="#{workflow.submitted-view-btn}">Let's see how this pipeline is doing.
-							</button>
+							<a id="btn-see-pipeline" class="btn btn-success btn-affixed" href="#"
+							   th:href="@{/analysis/list}"
+							   th:text="#{workflow.submitted-view-btn}">Let's see how this pipeline is doing.
+							</a>
 							<br/><br/>
 							<button id="btn-clear-pipeline" class="btn btn-warning btn-affixed"
+							        ng-click="pipeline.clearAndRedirect()"
 							        th:text="#{workflow.submitted-clear-btn}">Clear the cart and start over!
 							</button>
 						</div>
@@ -218,6 +220,8 @@
 			required  : /*[[#{workflow.no-name-provided}]]*/ 'Name Required',
 			parameters: /*[[${parameters}]]*/ []
 		};
+
+		var projectsPage = /*[[@{/projects}]]*/ '/projects';
 		/*]]>*/
 	</script>
 	<script src="/resources/bower_components/bootstrap/js/affix.js"

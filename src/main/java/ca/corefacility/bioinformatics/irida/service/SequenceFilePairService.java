@@ -1,9 +1,12 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -46,4 +49,18 @@ public interface SequenceFilePairService extends CRUDService<Long, SequenceFileP
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public List<SequenceFilePair> getSequenceFilePairsForSample(Sample sample);
+
+	/**
+	 * Gets a map of {@link SequenceFilePair}s and corresponding {@link Sample}
+	 * s.
+	 *
+	 * @param pairedInputFiles
+	 *            A {@link Set} of {@link SequenceFilePair}s.
+	 * @return A {@link Map} of between {@link Sample} and
+	 *         {@link SequenceFilePair}.
+	 * @throws DuplicateSampleException
+	 *             If there is a duplicate sample.
+	 */
+	public Map<Sample, SequenceFilePair> getUniqueSamplesForSequenceFilePairs(Set<SequenceFilePair> pairedInputFiles)
+			throws DuplicateSampleException;
 }

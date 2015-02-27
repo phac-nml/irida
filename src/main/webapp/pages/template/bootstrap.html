@@ -39,12 +39,6 @@
 							   th:text="#{nav.main.project-create}">Create New Project
 							</a>
 						</li>
-						<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')"
-						    class="divider"></li>
-						<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')"
-						    role="presentation"
-						    class="dropdown-header" th:text="#{nav.main.admin}">Admin Only
-						</li>
 						<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')">
 							<a href="/projects/all" th:href="@{/projects/all}"
 							   th:text="#{nav.main.project-list-all}">One more separated link
@@ -66,12 +60,6 @@
 								List Users
 							</a>
 						</li>
-						<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')"
-						    class="divider"></li>
-						<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')"
-						    role="presentation"
-						    class="dropdown-header" th:text="#{nav.main.admin}">Admin Only
-						</li>
 						<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')">
 							<a href="#" th:href="@{/users/create}" th:text="#{nav.main.add.user}">
 								Add User
@@ -87,11 +75,7 @@
 					</a>
 					<ul class="dropdown-menu" role="menu">
 						<li>
-							<a href="/analysis/list" th:text="#{nav.main.analysis-user}">Your Analysis</a>
-						</li>
-						<li sec:authorize="hasAnyRole('ROLE_ADMIN')"
-						    role="presentation"
-						    class="dropdown-header" th:text="#{nav.main.admin}">Admin Only
+							<a th:href="@{/analysis/list}" href="/analysis/list" th:text="#{nav.main.analysis-user}">Your Analysis</a>
 						</li>
 						<li sec:authorize="hasAnyRole('ROLE_ADMIN')">
 							<a th:href="@{/analysis/admin}" href="/analysis/admin"
@@ -126,12 +110,14 @@
 						<span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu" role="menu">
+                        <!--/* TODO: Re-enable for federated data
 						<li>
 							<a href="#" th:href="@{/remote_api}" th:text="#{nav.main.remoteapis}">
 								Remote API Status
 							</a>
 						</li>
 						<li class="divider"></li>
+                        */-->
 						<li>
 							<a href="#" th:href="@{/users/current}" th:text="#{nav.main.account}">
 								Account
@@ -143,7 +129,7 @@
 					<a th:href="@{/logout}" th:title="#{nav.main.logout}" href="/logout"><i class="fa fa-sign-out"></i> </a>
 				</li>
 			</ul>
-			<button id="cart-show-btn" type="button" class="btn btn-info btn-sm navbar-btn navbar-right"
+			<button id="cart-show-btn" type="button" class="btn btn-info btn-sm navbar-btn navbar-right" ng-class="cart.animation"
 			        ng-click="cart.show=!cart.show">
 				<span th:text="#{cart.label}"></span>
 				&nbsp;

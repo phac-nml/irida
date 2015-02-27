@@ -7,9 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -17,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileTy
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
@@ -40,8 +37,6 @@ public class AnalysisCollectionServiceGalaxy {
 	private static final String FORWARD_NAME = "forward";
 	private static final String REVERSE_NAME = "reverse";
 
-	private SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository;
-
 	private GalaxyHistoriesService galaxyHistoriesService;
 
 	/**
@@ -51,77 +46,9 @@ public class AnalysisCollectionServiceGalaxy {
 	 * @param galaxyHistoriesService
 	 *            A GalaxyHistoriesService for interacting with Galaxy
 	 *            Histories.
-	 * @param sampleSequenceFileJoinRepository
-	 *            A repository joining together sequence files and samples.
 	 */
-	public AnalysisCollectionServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService,
-			SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository) {
+	public AnalysisCollectionServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
-		this.sampleSequenceFileJoinRepository = sampleSequenceFileJoinRepository;
-	}
-
-	/**
-	 * Given a set of {@link SequenceFile}s, constructs a map between the
-	 * {@link SequenceFile}s and the corresponding {@link Sample}s.
-	 * 
-	 * @param sequenceFiles
-	 *            The set of sequence files.
-	 * @return A map linking a sample and the sequence files to run.
-	 * @throws SampleAnalysisDuplicateException
-	 *             If there was more than one sequence file with the same
-	 *             sample.
-	 */
-	public Map<Sample, SequenceFile> getSequenceFileSingleSamples(Set<SequenceFile> sequenceFiles)
-			throws SampleAnalysisDuplicateException {
-		Map<Sample, SequenceFile> sampleSequenceFiles = new HashMap<>();
-
-		for (SequenceFile file : sequenceFiles) {
-			Join<Sample, SequenceFile> sampleSequenceFile = sampleSequenceFileJoinRepository
-					.getSampleForSequenceFile(file);
-			Sample sample = sampleSequenceFile.getSubject();
-			SequenceFile sequenceFile = sampleSequenceFile.getObject();
-
-			if (sampleSequenceFiles.containsKey(sample)) {
-				SequenceFile previousFile = sampleSequenceFiles.get(sample);
-				throw new SampleAnalysisDuplicateException("Sequence files " + sequenceFile + ", " + previousFile
-						+ " both have the same sample " + sample);
-			} else {
-				sampleSequenceFiles.put(sample, sequenceFile);
-			}
-		}
-
-		return sampleSequenceFiles;
-	}
-
-	/**
-	 * Gets a map of {@link SequenceFilePair}s and corresponding {@link Sample}
-	 * s.
-	 * 
-	 * @param pairedInputFiles
-	 *            A {@link Set} of {@link SequenceFilePair}s.
-	 * @return A {@link Map} of between {@link Sample} and
-	 *         {@link SequenceFilePair}.
-	 * @throws SampleAnalysisDuplicateException
-	 *             If there is a duplicate sample.
-	 */
-	public Map<Sample, SequenceFilePair> getSequenceFilePairedSamples(Set<SequenceFilePair> pairedInputFiles)
-			throws SampleAnalysisDuplicateException {
-		Map<Sample, SequenceFilePair> sequenceFilePairsSampleMap = new HashMap<>();
-
-		for (SequenceFilePair filePair : pairedInputFiles) {
-			SequenceFile pair1 = filePair.getFiles().iterator().next();
-			Join<Sample, SequenceFile> pair1Join = sampleSequenceFileJoinRepository.getSampleForSequenceFile(pair1);
-			Sample sample = pair1Join.getSubject();
-			if (sequenceFilePairsSampleMap.containsKey(sample)) {
-				SequenceFilePair previousPair = sequenceFilePairsSampleMap.get(sample);
-				throw new SampleAnalysisDuplicateException("Sequence file pairs " + pair1 + ", " + previousPair
-						+ " have the same sample " + sample);
-			} else {
-				sequenceFilePairsSampleMap.put(sample, filePair);
-			}
-		}
-
-		return sequenceFilePairsSampleMap;
 	}
 
 	/**

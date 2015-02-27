@@ -5,7 +5,7 @@
    * @param $http AngularJS http object
    * @constructor
    */
-  function PipelineController($http) {
+  function PipelineController($http, CartService, notifications) {
     var vm = this;
     /*
      * Whether or not the page is waiting for a response from the server.
@@ -77,15 +77,18 @@
           }
         })
           .success(function (data) {
-            if (data.result === 'success') {
+            if (data.success) {
               vm.success = true;
             }
             else {
               if (data.error) {
                 vm.error = data.error;
               }
-              else if (data.parameters) {
+              else if (data.parameterError) {
                 vm.paramError = data.parameters;
+              }
+              else if(data.pipelineError) {
+                notifications.show({type: 'error', msg: data.pipelineError});
               }
             }
           });
@@ -93,17 +96,25 @@
     };
 
     vm.removeSample = function (projectId, sampleId) {
-      console.log("removing " + projectId);
-      $http({
-        url    : "/cart/project/" + projectId + "/samples/" + sampleId,
-        method : "DELETE",
-        headers: {
-          "Content-Type": "application/json"
+      CartService.removeSample(projectId,sampleId).then(function(){
+        angular.element('#sample-' + sampleId).remove();
+        if(angular.element('.sample-container').length === 0) {
+          location.reload();
         }
-      }).success(function () {
-        location.reload();
       });
     };
+
+    /**
+     * Clear the cart and redirect to the projects page
+     */
+    vm.clearAndRedirect = function () {
+      var clearPromise = CartService.clear();
+
+      // after the cart is cleared, redirect the browser
+      clearPromise.then(function () {
+        window.location = projectsPage;
+      })
+    }
   }
 
   function ParameterModalController($modal) {
@@ -137,8 +148,8 @@
     };
   }
 
-  angular.module('irida.pipelines', [])
-    .controller('PipelineController', ['$http', PipelineController])
+  angular.module('irida.pipelines', ['irida.cart'])
+    .controller('PipelineController', ['$http','CartService', 'notifications', PipelineController])
     .controller('ParameterModalController', ["$modal", ParameterModalController])
     .controller('ParameterController', ['$modalInstance', ParameterController])
   ;

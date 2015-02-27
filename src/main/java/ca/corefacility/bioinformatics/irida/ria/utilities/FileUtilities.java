@@ -9,6 +9,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +45,12 @@ public class FileUtilities {
 	public static void createAnalysisOutputFileZippedResponse(HttpServletResponse response, String fileName,
 			Set<AnalysisOutputFile> files) throws IOException {
 		logger.debug("Creating zipped file response. [" + fileName + "]");
+		
+		// set the response headers before we do *ANYTHING* so that the filename
+		// actually appears in the download dialog
+		response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + fileName + EXTENSION_ZIP);
+		// for zip file
+		response.setContentType(CONTENT_TYPE_APPLICATION_ZIP);
 
 		// warnings suppressed here because we are actually closing the stream,
 		// eclipse just doesn't know it
@@ -70,12 +77,13 @@ public class FileUtilities {
 				// 4) Close the current entry in the archive in preparation for
 				// the next entry.
 				outputStream.closeEntry();
+				
+				ObjectMapper objectMapper = new ObjectMapper();
+				byte[] bytes = objectMapper.writeValueAsBytes(file);
+				outputStream.putNextEntry(new ZipEntry(zipEntryName.toString() + "-prov.json"));
+				outputStream.write(bytes);
+				outputStream.closeEntry();
 			}
-
-			// Set the response headers
-			response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + fileName + EXTENSION_ZIP);
-			// for zip file
-			response.setContentType(CONTENT_TYPE_APPLICATION_ZIP);
 
 			// Tell the output stream that you are finished downloading.
 			outputStream.finish();

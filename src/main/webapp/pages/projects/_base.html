@@ -5,6 +5,8 @@
 	<title th:text="${project.label}">Project</title>
 	<link rel="stylesheet" th:href="@{/resources/bower_components/qtip2/jquery.qtip.min.css}"
 	      href="/resources/bower_components/qtip2/jquery.qtip.min.css"/>
+	<link rel="stylesheet" th:href="@{/resources/css/vendor/dropdowns-enhancement.min.css}"
+	      href="/resources/css/vendor/dropdowns-enhancement.min.css"/>
 </head>
 <body>
 
@@ -31,17 +33,13 @@
 						class="badge badge-default" th:text="${related_project_count}"></span></a>
 				</li>
 
-			</ul>
-			<ul class="nav navbar-nav navbar-right">
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"><span th:text="#{project.nav.settings}"></span>&nbsp;<span class="caret"></span></a>
-					<ul class="dropdown-menu" role="menu">
-						<li th:class="${activeNav} == 'metadata' ? 'active'"><a th:href="@{${baseLink} + '/metadata'}">[[#{project.nav.metadata}]]</a>
-						</li>
-						<li th:class="${activeNav} == 'reference' ? 'active'">
-							<a href="" th:href="@{${baseLink} + '/referenceFiles'}" th:text="#{project.nav.referenceFiles}">_Reference Files</a>
-						</li>
-					</ul>
+				<li th:class="${activeNav} == 'metadata' ? 'active'">
+					<a th:href="@{${baseLink} + '/metadata'}">[[#{project.nav.metadata}]]</a>
+				</li>
+				<li th:class="${activeNav} == 'reference' ? 'active'">
+					<a href="" th:href="@{${baseLink} + '/referenceFiles'}" th:text="#{project.nav.referenceFiles}">
+						_Reference Files
+					</a>
 				</li>
 			</ul>
 		</div>
@@ -71,6 +69,8 @@
 	        src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
 	<script th:src="@{/resources/bower_components/qtip2/jquery.qtip.min.js}"
 	        src="/resources/bower_components/qtip2/jquery.qtip.min.js"></script>
+	<script th:src="@{/resources/js/vendor/dropdowns-enhancement.js}"
+	        src="/resources/js/vendor/dropdowns-enhancement.js"></script>
 
 	<th:block layout:fragment="scripts"></th:block>
 </th:block>

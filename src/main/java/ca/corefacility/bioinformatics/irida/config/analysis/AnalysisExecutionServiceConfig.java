@@ -3,13 +3,12 @@ package ca.corefacility.bioinformatics.irida.config.analysis;
 import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.manager.galaxy.ExecutionManagerGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
@@ -17,14 +16,15 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrari
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceAspect;
+import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceAspect;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisCollectionServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
@@ -66,7 +66,10 @@ public class AnalysisExecutionServiceConfig {
 	private AnalysisService analysisService;
 
 	@Autowired
-	private SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository;
+	private SequenceFileService sequenceFileService;
+
+	@Autowired
+	private SequenceFilePairService sequenceFilePairService;
 
 	@Autowired
 	private SequenceFileRepository sequenceFileRepository;
@@ -76,6 +79,19 @@ public class AnalysisExecutionServiceConfig {
 	
 	@Autowired
 	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
+	
+	/**
+	 * Timeout in seconds to stop polling a Galaxy library.
+	 */
+	@Value("${galaxy.library.upload.timeout}")
+	private int libraryTimeout;
+	
+	/**
+	 * Polling time in seconds to poll a Galaxy library to check if
+	 * datasets have been properly uploaded.
+	 */
+	@Value("${galaxy.library.upload.polling.time}")
+	private int pollingTime;
 	
 	@Lazy
 	@Bean
@@ -95,7 +111,7 @@ public class AnalysisExecutionServiceConfig {
 	@Bean
 	public AnalysisWorkspaceServiceGalaxy analysisWorkspaceService() {
 		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService(), galaxyWorkflowService(),
-				sequenceFileRepository, galaxyLibraryBuilder(), iridaWorkflowsService,
+				sequenceFileService, sequenceFilePairService, galaxyLibraryBuilder(), iridaWorkflowsService,
 				analysisCollectionServiceGalaxy(), analysisProvenanceService(), analysisParameterServiceGalaxy);
 	}
 
@@ -108,7 +124,7 @@ public class AnalysisExecutionServiceConfig {
 	@Lazy
 	@Bean
 	public AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy() {
-		return new AnalysisCollectionServiceGalaxy(galaxyHistoriesService(), sampleSequenceFileJoinRepository);
+		return new AnalysisCollectionServiceGalaxy(galaxyHistoriesService());
 	}
 
 	/**
@@ -117,8 +133,7 @@ public class AnalysisExecutionServiceConfig {
 	@Lazy
 	@Bean
 	public GalaxyWorkflowService galaxyWorkflowService() {
-		return new GalaxyWorkflowService(historiesClient(), workflowsClient(), workflowChecksumEncoder(),
-				StandardCharsets.UTF_8);
+		return new GalaxyWorkflowService(historiesClient(), workflowsClient(), StandardCharsets.UTF_8);
 	}
 
 	/**
@@ -146,16 +161,6 @@ public class AnalysisExecutionServiceConfig {
 	@Bean
 	public RolesClient rolesClient() {
 		return galaxyInstance().getRolesClient();
-	}
-
-	/**
-	 * @return A PasswordEncoder for generating or validating workflow
-	 *         checksums.
-	 */
-	@Lazy
-	@Bean
-	public PasswordEncoder workflowChecksumEncoder() {
-		return new StandardPasswordEncoder();
 	}
 
 	/**
@@ -191,7 +196,7 @@ public class AnalysisExecutionServiceConfig {
 	@Lazy
 	@Bean
 	public GalaxyLibrariesService galaxyLibrariesService() {
-		return new GalaxyLibrariesService(librariesClient());
+		return new GalaxyLibrariesService(librariesClient(), pollingTime, libraryTimeout);
 	}
 
 	/**

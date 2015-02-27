@@ -16,7 +16,6 @@ import org.springframework.security.concurrent.DelegatingSecurityContextSchedule
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
@@ -29,20 +28,19 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSea
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFilePairRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisCollectionServiceGalaxy;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisParameterServiceGalaxy;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisProvenanceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -79,19 +77,16 @@ public class AnalysisExecutionServiceTestConfig {
 	private AnalysisService analysisService;
 
 	@Autowired
-	private SampleSequenceFileJoinRepository sampleSequenceFileJoinRepository;
-
-	@Autowired
 	private ReferenceFileRepository referenceFileRepository;
 
 	@Autowired
-	private SequenceFileService seqeunceFileService;
+	private SequenceFileService sequenceFileService;
+
+	@Autowired
+	private SequenceFilePairService sequenceFilePairService;
 
 	@Autowired
 	private SampleService sampleService;
-
-	@Autowired
-	private SequenceFileRepository sequenceFileRepository;
 
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
@@ -101,6 +96,17 @@ public class AnalysisExecutionServiceTestConfig {
 	
 	@Autowired
 	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
+	
+	/**
+	 * Timeout in seconds to stop polling a Galaxy library.
+	 */
+	private static final int LIBRARY_TIMEOUT = 5 * 60;
+	
+	/**
+	 * Polling time in seconds to poll a Galaxy library to check if
+	 * datasets have been properly uploaded.
+	 */
+	private static final int LIBRARY_POLLING_TIME = 5;
 
 	@Lazy
 	@Bean
@@ -120,14 +126,15 @@ public class AnalysisExecutionServiceTestConfig {
 	@Bean
 	public AnalysisWorkspaceServiceGalaxy analysisWorkspaceService() {
 		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService(), galaxyWorkflowService(),
-				sequenceFileRepository, galaxyLibraryBuilder(), iridaWorkflowsService,
+				sequenceFileService, sequenceFilePairService, galaxyLibraryBuilder(),
+				iridaWorkflowsService,
 				analysisCollectionServiceGalaxy(), analysisProvenanceServiceGalaxy(), analysisParameterServiceGalaxy);
 	}
 	
 	@Lazy
 	@Bean
 	public AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy() {
-		return new AnalysisCollectionServiceGalaxy(galaxyHistoriesService(), sampleSequenceFileJoinRepository);
+		return new AnalysisCollectionServiceGalaxy(galaxyHistoriesService());
 	}
 
 	@Lazy
@@ -149,7 +156,7 @@ public class AnalysisExecutionServiceTestConfig {
 	@Bean
 	public GalaxyLibrariesService galaxyLibrariesService() {
 		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getLibrariesClient();
-		return new GalaxyLibrariesService(librariesClient);
+		return new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT);
 	}
 
 	@Lazy
@@ -203,14 +210,13 @@ public class AnalysisExecutionServiceTestConfig {
 		HistoriesClient historiesClient = localGalaxy.getGalaxyInstanceWorkflowUser().getHistoriesClient();
 		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceWorkflowUser().getWorkflowsClient();
 
-		return new GalaxyWorkflowService(historiesClient, workflowsClient, new StandardPasswordEncoder(),
-				StandardCharsets.UTF_8);
+		return new GalaxyWorkflowService(historiesClient, workflowsClient, StandardCharsets.UTF_8);
 	}
 
 	@Lazy
 	@Bean
 	public DatabaseSetupGalaxyITService analysisExecutionGalaxyITService() {
-		return new DatabaseSetupGalaxyITService(referenceFileRepository, seqeunceFileService,
+		return new DatabaseSetupGalaxyITService(referenceFileRepository, sequenceFileService,
 				sampleService, analysisExecutionService(),
 				analysisSubmissionService, analysisSubmissionRepository, sequenceFilePairRepository);
 	}

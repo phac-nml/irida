@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
+import ca.corefacility.bioinformatics.irida.exceptions.*;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,14 +34,6 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
-import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowParameterException;
-import ca.corefacility.bioinformatics.irida.exceptions.SampleAnalysisDuplicateException;
-import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -118,6 +111,17 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	private GalaxyLibraryContentSearch galaxyLibraryContentSearch;
 
 	private GalaxyHistoriesService galaxyHistoriesService;
+	
+	/**
+	 * Timeout in seconds to stop polling a Galaxy library.
+	 */
+	private static final int LIBRARY_TIMEOUT = 5 * 60;
+	
+	/**
+	 * Polling time in seconds to poll a Galaxy library to check if
+	 * datasets have been properly uploaded.
+	 */
+	private static final int LIBRARY_POLLING_TIME = 5;
 
 	private Path sequenceFilePathA;
 	private Path sequenceFilePath2A;
@@ -198,7 +202,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		HistoriesClient historiesClient = galaxyInstanceAdmin.getHistoriesClient();
 		ToolsClient toolsClient = galaxyInstanceAdmin.getToolsClient();
 		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
-		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient);
+		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT);
 
 		galaxyHistoriesService = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService);
 
@@ -326,7 +330,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IOException
 	 * @throws IridaWorkflowException 
 	 */
-	@Test(expected = SampleAnalysisDuplicateException.class)
+	@Test(expected = DuplicateSampleException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareAnalysisFilesSingleFail() throws InterruptedException, ExecutionManagerException,
 			IOException, IridaWorkflowException {
@@ -637,7 +641,7 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws IOException
 	 * @throws IridaWorkflowException 
 	 */
-	@Test(expected = SampleAnalysisDuplicateException.class)
+	@Test(expected = DuplicateSampleException.class)
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testPrepareAnalysisFilesPairFail() throws InterruptedException, ExecutionManagerException,
 			IOException, IridaWorkflowException {

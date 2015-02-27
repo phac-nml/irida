@@ -76,9 +76,23 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 		driver.findElements(By.className("set-default-btn")).get(0).click();
 	}
 
+	public void clickSeePipeline() {
+		driver.findElement(By.id("btn-see-pipeline")).click();
+		waitForTime(250);
+	}
+
+	public void clickClearAndFindMore() {
+		driver.findElement(By.id("btn-clear-pipeline")).click();
+		waitForTime(250);
+	}
+
 	public void removeFirstSample() {
 		List<WebElement> findElements = driver.findElements(By.className("remove-sample-button"));
 		findElements.iterator().next().click();
 		waitForTime(250);
+	}
+
+	public boolean isCreatePipelineAreaVisible() {
+		return driver.findElements(By.id("pipeline-creation")).size() > 0;
 	}
 }
