@@ -12,7 +12,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -97,7 +97,8 @@ public class ProjectsControllerTest {
 	@Test
 	public void showAllProjects() {
 		Model model = new ExtendedModelMap();
-		String page = controller.getProjectsPage(model);
+		HttpSession ses = mock(HttpSession.class);
+		String page = controller.getProjectsPage(model, null, ses);
 		assertEquals(ProjectsController.LIST_PROJECTS_PAGE, page);
 	}
 
