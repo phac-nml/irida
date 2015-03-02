@@ -773,47 +773,40 @@
 
     vm.upload = function () {   
 
-      vm.uploading = true;
+        vm.sampleFormEntities= [];
 
-      var SAMPLE_ENTITY_LABEL = "sampleFilePath"
-      vm.sampleEntities = [];
+        vm.addSampleFormEntity = function(inputName, inputValue) {
+          vm.sampleFormEntities.push({
+            name : inputName,
+            value : inputValue
+          });
+        };
     	
-      vm.addSampleEntity = function(inputName, inputValue) {
-        vm.sampleEntities.push({
-          name : inputName,
-          value : inputValue
-        })
-      }
+    	
+      vm.uploading = true;
       vm.samples = StorageService.getSamples();
       
-      var sampleNum = 1;
-      for(var sampleIndex in vm.samples) {
-        var sampleFilesAdded = false;
-        var sample = vm.samples[sampleIndex];
-        
-        var sampleFileNum = 1;
-        for(var propertyName in sample) {
-          if(propertyName.substring(0,SAMPLE_ENTITY_LABEL.length) == SAMPLE_ENTITY_LABEL) {
-        	var sampleFileNameValue = "file:/" + sample[propertyName]
-        	  
-        	var sampleFileName = "sample"+sampleNum+"_file"+sampleFileNum+"_path"
-        	vm.addSampleEntity(sampleFileName,sampleFileNameValue);
-        	sampleFilesAdded = true;
-        	sampleFileNum++;
-          }
+      //make a JSON string
+       vm.sendLibrary = {"name" : vm.name};
+       vm.sendSamples = [];
+       vm.sendJSONParam = {
+         "_embedded" : {
+    	   "library" : vm.sendLibrary,
+    	   "samples" : vm.sendSamples
+    	  }
+       };
+       
+      //push samples to the JSON string
+      for(var sampleIndex in vm.samples)
+        {
+    	  if(vm.samples[sampleIndex].embedded.sample_files.length > 0)
+    	  vm.sendSamples.push({
+    		  "name" : vm.samples[sampleIndex].sample.sampleName,
+    		  "_links": {"self" : {"href" : "http://sample/path/will/go/here"}}, 
+    	      "_embedded" : vm.samples[sampleIndex].embedded
+    	  });
         }
-        if(sampleFilesAdded == true) {
-          var sampleName = "sample"+sampleNum + "_name";
-          var sampleNameValue = sample.sample.sampleName;
-          vm.addSampleEntity(sampleName,sampleNameValue);
-          
-          var samplePath = "sample"+sampleNum+"_path";
-          var samplePathValue = "http://localhost/lalala_will_be_a_sample_path"
-          vm.addSampleEntity(samplePath,samplePathValue);
-          sampleNum++;
-        }  
-      }
-      vm.addSampleEntity("library_name",vm.name);
+      vm.addSampleFormEntity("json_params",JSON.stringify(vm.sendJSONParam));
       
       $timeout(
         function(){
@@ -834,7 +827,7 @@
     vm.close = function () {
       $modalInstance.close();
     };
-  }
+  };
 
   function CartController(cart, storage) {
     "use strict";

@@ -24,6 +24,6 @@
 		</button>
 	</div>
 	<form name = "galSubFrmNm" id = "galSubFrm" th:action="${#httpSession.getAttribute('galaxyExportToolCallbackURL')}" method="post">
-	  	<input type="hidden" name="{{sampleEntity.name}}" ng-repeat="sampleEntity in gCtrl.sampleEntities" value="{{sampleEntity.value}}"/>
+	  	<input type="hidden" name="{{sampleFormEntity.name}}" ng-repeat="sampleFormEntity in gCtrl.sampleFormEntities" value="{{sampleFormEntity.value}}"/>
 	</form> 
 </div>
