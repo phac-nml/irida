@@ -811,14 +811,14 @@
 		<guava.version>17.0</guava.version>
 		<spring.version>4.0.6.RELEASE</spring.version>
 		<spring.security.version>4.0.0.M1</spring.security.version>
-		<spring.data.jpa.version>1.7.2.RELEASE</spring.data.jpa.version>
+		<spring.data.jpa.version>1.7.0.RELEASE</spring.data.jpa.version>
 		<spring.security.oauth.version>2.0.4.RELEASE</spring.security.oauth.version>
 		<spring.data.envers.version>0.2.0.RELEASE</spring.data.envers.version>
 		<spring.ws.test.version>2.2.0.RELEASE</spring.ws.test.version>
 		<mockito.version>1.9.5</mockito.version>
 		<mysql.connector.version>5.1.31</mysql.connector.version>
-		<hibernate.version>4.3.8.Final</hibernate.version>
-		<h2.version>1.4.185</h2.version>
+		<hibernate.version>4.3.6.Final</hibernate.version>
+		<h2.version>1.4.180</h2.version>
 		<jsr250.api.version>1.0</jsr250.api.version>
 		<spring.test.dbunit.version>1.1.0</spring.test.dbunit.version>
 		<dbunit.version>2.4.9</dbunit.version>
