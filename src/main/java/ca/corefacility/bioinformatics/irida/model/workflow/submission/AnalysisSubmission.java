@@ -411,7 +411,11 @@ public class AnalysisSubmission implements IridaThing {
 	 * @return The input parameters for this submission.
 	 */
 	public Map<String, String> getInputParameters() {
-		return inputParameters;
+		if (this.namedParameters != null) {
+			return this.namedParameters.getInputParameters();
+		} else {
+			return inputParameters;
+		}
 	}
 	
 	/**
@@ -559,7 +563,6 @@ public class AnalysisSubmission implements IridaThing {
 		 */
 		public Builder withNamedParameters(final IridaWorkflowNamedParameters parameters) {
 			checkNotNull(parameters, "named parameters cannot be null.");
-			inputParameters(parameters.getInputParameters());
 			this.namedParameters = parameters;
 			return this;
 		}
