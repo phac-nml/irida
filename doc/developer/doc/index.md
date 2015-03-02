@@ -18,7 +18,7 @@ You should install Jekyll as described on its web site: http://jekyllrb.com/docs
 
 Once you've got Jekyll installed, from the root of the documentation directory (`$IRIDA/doc`) you can run:
 
-    jekyll --serve
+    jekyll serve
 
 Jekyll will run a web server on port 4000 that you can navigate to with your web browser. If you make changes to any files or add new files under the `/doc` directory, Jekyll with auto-compile the document and update the files that it's serving (how handy!).
 
