@@ -73,12 +73,45 @@
 			<column name="REVTYPE" type="TINYINT(4)" />
 		</createTable>
 
+		<createTable tableName="workflow_named_parameters">
+			<column name="id" type="bigint(20)" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="created_date" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="name" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="workflow_id" type="binary(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="workflow_named_parameter_values">
+			<column name="named_parameters_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true"
+					referencedTableName="workflow_named_parameters"
+					referencedColumnNames="id" foreignKeyName="FK_NAMED_PARAMETER_VALUES" />
+			</column>
+			<column name="named_parameter_name" type="varchar(255)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="named_parameter_value" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
 		<addColumn tableName="analysis_submission">
 			<column name="submitter" type="bigint(20)">
 				<constraints nullable="false" referencedTableName="user"
 					referencedColumnNames="id" foreignKeyName="FK_ANALYIS_SUBMISSION_SUBMITTER_ID" />
 			</column>
 			<column name="remote_input_data_id" type="varchar(255)" />
+			<column name="named_parameters_id" type="bigint(20)">
+				<constraints referencedTableName="workflow_named_parameters"
+					referencedColumnNames="id" foreignKeyName="FK_ANALYSIS_SUBMISSION_NAMED_PARAMETERS" />
+			</column>
 		</addColumn>
 	
 		<addColumn tableName="analysis_submission_AUD">
