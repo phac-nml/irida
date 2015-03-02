@@ -342,7 +342,7 @@ INSERT INTO `analysis_sequence_file` (analysis_id, inputFiles_id) VALUES (3,1),(
 INSERT INTO `reference_file` (id, createdDate, filePath, fileRevisionNumber, modifiedDate) VALUES (1, '2014-08-06 10:01:02', '/tmp/sequence-files/7/2/02-2222_S1_L001_R1_001.fastq', 1, '2014-08-06 10:01:02');
 
 -- project_referencefile
-INSERT INTO `project_referencefile` (id, createdDate, project_id, referenceFile_id) VALUES (1, '2014-08-06 10:01:02', 4, 1);
+INSERT INTO `project_referencefile` (id, createdDate, project_id, reference_file_id) VALUES (1, '2014-08-06 10:01:02', 4, 1);
 
 -- analysis_phylogenomicspipeline
 INSERT INTO `analysis_phylogenomicspipeline` (id) VALUES (1);
@@ -448,3 +448,10 @@ INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_
 INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter) VALUES ('PREPARING', 'Analysis-99', '2014-02-06 10:01:02', 13, 'ccca532d-b0be-4f2c-bd6d-9886aa722571', 1);
 INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter) VALUES ('PREPARING', 'Analysis-100', '2014-02-06 10:01:02', 13, 'ccca532d-b0be-4f2c-bd6d-9886aa722571', 1);
 
+INSERT INTO `workflow_named_parameters` (id, created_date, name, workflow_id) VALUES (1, now(), 'NML SNVPhyl', 'ccca532d-b0be-4f2c-bd6d-9886aa722571');
+INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-1', 'repeat-minimum-length');
+INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-2', 'repeat-minimum-pid');
+INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-3', 'alternative-allele-fraction');
+INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-4', 'minimum-mapping-quality');
+INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-5', 'minimum-base-quality');
+INSERT INTO `workflow_named_parameter_values` (named_parameters_id, named_parameter_value, named_parameter_name) VALUES (1, '-6', 'minimum-read-coverage');

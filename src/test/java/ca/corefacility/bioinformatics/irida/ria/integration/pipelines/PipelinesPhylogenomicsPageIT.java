@@ -167,7 +167,7 @@ public class PipelinesPhylogenomicsPageIT {
 	public void testModifyParameters() {
 		addSamplesToCart();
 		page.clickPipelineParametersBtn();
-		assertEquals("Should have the proper pipeline name in title", "Phylogenomics Pipeline Parameters",
+		assertEquals("Should have the proper pipeline name in title", "Default Parameters",
 				page.getParametersModalTitle());
 
 		// set the value for the ALternative Allele Fraction
@@ -177,6 +177,25 @@ public class PipelinesPhylogenomicsPageIT {
 		assertNotEquals("Should not have the same value as the default after being changed", newValue, page.getAlternativeAlleleFractionValue());
 		page.clickSetDefaultAlternativeAlleleFraction();
 		assertEquals("Value should be reset to the default value", value, page.getAlternativeAlleleFractionValue());
+	}
+	
+	@Test
+	public void testModifyAndSaveParameters() {
+		addSamplesToCart();
+		page.clickPipelineParametersBtn();
+		assertEquals("Should have the proper pipeline name in title", "Default Parameters",
+				page.getParametersModalTitle());
+
+		// set the value for the ALternative Allele Fraction
+		String newValue = "10";
+		final String savedParametersName = "Saved parameters name.";
+		page.setAlternativeAlleleFraction(newValue);
+		assertNotEquals("Should not have the same value as the default after being changed", newValue, page.getAlternativeAlleleFractionValue());
+		page.clickSaveParameters();
+		assertTrue("Page should have shown name for parameters field with selected parameters name.", page.isNameForParametersVisible());
+		page.setNameForSavedParameters(savedParametersName);
+		page.clickUseParametersButton();
+		assertEquals("Selected parameter set should be the saved one.", savedParametersName, page.getSelectedParameterSet());
 	}
 
 	private void addSamplesToCart() {

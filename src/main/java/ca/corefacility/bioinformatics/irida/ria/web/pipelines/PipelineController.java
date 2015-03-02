@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,9 +40,11 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.CartController;
 import ca.corefacility.bioinformatics.irida.ria.web.files.SequenceFileWebUtilities;
+import ca.corefacility.bioinformatics.irida.ria.web.pipelines.dto.WorkflowParametersToSave;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
@@ -49,6 +52,7 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
@@ -69,6 +73,8 @@ public class PipelineController extends BaseController {
 	/*
 	 * CONSTANTS
 	 */
+	private static final String DEFAULT_WORKFLOW_PARAMETERS_ID = "default";
+	private static final String CUSTOM_UNSAVED_WORKFLOW_PARAMETERS_ID = "custom";
 	public static final String URL_EMPTY_CART_REDIRECT = "redirect:/pipelines";
 	public static final String URL_LAUNCH = "pipelines/pipeline_selection";
 	public static final String URL_GENERIC_PIPELINE = "pipelines/types/generic_pipeline";
@@ -90,6 +96,7 @@ public class PipelineController extends BaseController {
 	private UserService userService;
 	private IridaWorkflowsService workflowsService;
 	private MessageSource messageSource;
+	private final WorkflowNamedParametersService namedParameterService;
 	/*
 	 * CONTROLLERS
 	 */
@@ -104,7 +111,8 @@ public class PipelineController extends BaseController {
 			ProjectService projectService,
 			UserService userService,
 			CartController cartController,
-			MessageSource messageSource) {
+			MessageSource messageSource,
+			final WorkflowNamedParametersService namedParameterService) {
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
 		this.referenceFileService = referenceFileService;
@@ -114,6 +122,7 @@ public class PipelineController extends BaseController {
 		this.userService = userService;
 		this.cartController = cartController;
 		this.messageSource = messageSource;
+		this.namedParameterService = namedParameterService;
 	}
 
 	/**
@@ -159,8 +168,21 @@ public class PipelineController extends BaseController {
 		return URL_LAUNCH;
 	}
 
+	/**
+	 * Get a generic pipeline page.
+	 * 
+	 * @param model
+	 *            the the model for the current request
+	 * @param principal
+	 *            the user in the current request
+	 * @param locale
+	 *            the locale that the user is using
+	 * @param pipelineId
+	 *            the pipeline to load
+	 * @return a page reference or redirect to load.
+	 */
 	@RequestMapping(value = "/{pipelineId}")
-	public String getPhylogenomicsPage(final Model model, Principal principal, Locale locale, @PathVariable UUID pipelineId) {
+	public String getSpecifiedPipelinePage(final Model model, Principal principal, Locale locale, @PathVariable UUID pipelineId) {
 		String response = URL_EMPTY_CART_REDIRECT;
 
 		Map<Project, Set<Sample>> cartMap = cartController.getSelected();
@@ -251,21 +273,37 @@ public class PipelineController extends BaseController {
 			}
 
 			// Need to add the pipeline parameters
-			List<IridaWorkflowParameter> paras = flow.getWorkflowDescription().getParameters();
-			List<Map<String, String>> parameters = new ArrayList<>();
-			if (paras != null) {
-				String name = description.getName().toLowerCase();
-				for (IridaWorkflowParameter p : paras) {
-					parameters.add(ImmutableMap.of(
+			final List<IridaWorkflowParameter> defaultWorkflowParameters = flow.getWorkflowDescription().getParameters();
+			final List<Map<String, Object>> parameters = new ArrayList<>();
+			if (defaultWorkflowParameters != null) {
+				final List<Map<String, String>> defaultParameters = new ArrayList<>();
+				final String workflowName = description.getName().toLowerCase();
+				for (IridaWorkflowParameter p : defaultWorkflowParameters) {
+					defaultParameters.add(ImmutableMap.of(
 							"label",
-							messageSource.getMessage("pipeline.parameters." + name + "." + p.getName(), null, locale),
+							messageSource.getMessage("pipeline.parameters." + workflowName + "." + p.getName(), null, locale),
 							"value", p.getDefaultValue(),
 							"name", p.getName()
 					));
 				}
+				parameters.add(ImmutableMap.of("id", DEFAULT_WORKFLOW_PARAMETERS_ID,
+						"label", messageSource.getMessage("workflow.parameters.named.default", null, locale), "parameters", defaultParameters));
+				final List<IridaWorkflowNamedParameters> namedParameters = namedParameterService.findNamedParametersForWorkflow(pipelineId);
+				for (final IridaWorkflowNamedParameters p : namedParameters) {
+					final List<Map<String, String>> namedParametersList = new ArrayList<>();
+					for (final Map.Entry<String, String> parameter : p.getInputParameters().entrySet()) {
+						namedParametersList.add(ImmutableMap.of(
+							"label",
+							messageSource.getMessage("pipeline.parameters." + workflowName + "." + parameter.getKey(), null, locale),
+							"value", parameter.getValue(),
+							"name", parameter.getKey()
+					));
+					}
+					parameters.add(ImmutableMap.of("id", p.getId(), "label", p.getLabel(), "parameters", namedParametersList));
+				}
 				model.addAttribute("parameters", parameters);
 				model.addAttribute("parameterModalTitle",
-						messageSource.getMessage("pipeline.parameters.modal-title." + name, null, locale));
+						messageSource.getMessage("pipeline.parameters.modal-title." + workflowName, null, locale));
 			} else {
 				model.addAttribute("noParameters", messageSource.getMessage("pipeline.no-parameters", null, locale));
 			}
@@ -349,10 +387,28 @@ public class PipelineController extends BaseController {
 			}
 
 			// Get the pipeline parameters
-			Map<String, String> params = null;
-			if (parameters.containsKey("paras")) {
-				params = extractPipelineParameters(parameters.get("paras"));
-				if (params.containsKey("parameterError")) {
+			Map<String, String> params = new HashMap<>();
+			IridaWorkflowNamedParameters namedParameters = null;
+			if (parameters.containsKey("selectedParameters")) {
+				try {
+					final Map<String, Object> passedParameters = extractPipelineParameters(parameters
+							.get("selectedParameters"));
+					// we should only have *one* parameter set supplied.
+					final String selectedParametersId = passedParameters.get("id").toString();
+					if (!DEFAULT_WORKFLOW_PARAMETERS_ID.equals(selectedParametersId)
+							&& !CUSTOM_UNSAVED_WORKFLOW_PARAMETERS_ID.equals(selectedParametersId)) {
+						// this means that a named parameter set was selected
+						// and unmodified, so load up that named parameter set
+						// to pass along.
+						namedParameters = namedParameterService.read(Long.valueOf(selectedParametersId));
+					} else {
+						@SuppressWarnings("unchecked")
+						final List<Map<String, String>> unnamedParameters = (List<Map<String, String>>) passedParameters.get("parameters");
+						for (final Map<String, String> parameter : unnamedParameters) {
+							params.put(parameter.get("name"), parameter.get("value"));
+						}
+					}
+				} catch (final IOException e) {
 					return ImmutableMap
 							.of("parameterError", messageSource.getMessage("pipeline.parameters.error", null, locale));
 				}
@@ -362,10 +418,10 @@ public class PipelineController extends BaseController {
 			String type = description.getAnalysisType().toString();
 			if (type.equals("phylogenomics")) {
 				analysisSubmissionService.createMultipleSampleSubmission(flow, ref, sequenceFiles, sequenceFilePairs,
-						params, name);
+						params, namedParameters, name);
 			} else {
 				analysisSubmissionService.createSingleSampleSubmission(flow, ref, sequenceFiles, sequenceFilePairs,
-						params, name);
+						params, namedParameters, name);
 			}
 
 		} catch (IridaWorkflowNotFoundException e) {
@@ -380,28 +436,41 @@ public class PipelineController extends BaseController {
 
 		return result;
 	}
+	
+	/**
+	 * Save a set of {@link IridaWorkflowNamedParameters} and respond with the
+	 * ID that we saved the new set with.
+	 * 
+	 * @param params
+	 *            the DTO with the parameters to save.
+	 * @return a map with the ID of the saved named parameters.
+	 */
+	@RequestMapping(value = "/ajax/parameters", method = RequestMethod.POST)
+	public @ResponseBody Map<String, Object> ajaxSaveParameters(@RequestBody final WorkflowParametersToSave params) {
+		final IridaWorkflowNamedParameters namedParameters = namedParameterService.create(params.namedParameters());
+		return ImmutableMap.of("id", namedParameters.getId());
+	}
 
 	/**
 	 * Extract {@link IridaWorkflow} parameters from the request {@link Map}
 	 *
 	 * @param mapString
-	 * 		{@link Map} of parameters
+	 *            {@link Map} of parameters
 	 *
 	 * @return {@link Map} of parameters for the pipeline
+	 * @throws IOException
+	 *             when unable to parse the parameters from the provided string.
 	 */
 	@SuppressWarnings("unchecked")
-	private Map<String, String> extractPipelineParameters(String mapString) {
+	private Map<String, Object> extractPipelineParameters(String mapString) throws IOException {
 		// TODO [15-02-16] (Josh): Update when addressing issue #100
-		Map<String, String> result;
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			result = mapper.readValue(mapString, Map.class);
+			return mapper.readValue(mapString, Map.class);
 		} catch (IOException e) {
 			logger.error("Error extracting parameters from submission", e);
-			result = ImmutableMap
-					.of("parameterError", "");
+			throw e;
 		}
-		return result;
 	}
 
 	/**
