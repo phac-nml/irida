@@ -1,0 +1,13 @@
+# Site settings
+title: IRIDA Documentation
+# email: your-email@domain.com
+description: > # this means to ignore newlines until "baseurl:"
+        Integrated Rapid Infectious Disease Analysis (IRIDA): A platform for genomic epidemiology.
+baseurl: "" # the subpath of your site, e.g. /blog/
+url: "http://www.irida.ca" # the base hostname & protocol for your site
+
+# Build settings
+markdown: KramdownPygments
+
+kramdown:
+        input: GFM
