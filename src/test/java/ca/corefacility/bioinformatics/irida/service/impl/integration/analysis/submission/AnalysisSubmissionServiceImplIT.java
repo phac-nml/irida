@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration.analysis.submission;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.Iterator;
@@ -109,7 +112,7 @@ public class AnalysisSubmissionServiceImplIT {
 				null, null);
 		Page<AnalysisSubmission> paged = analysisSubmissionService.search(specification, 0, 10, Sort.Direction.ASC,
 				"createdDate");
-		assertEquals(10, paged.getContent().size());
+		assertEquals(9, paged.getContent().size());
 
 		// Try filtering a by names
 		String name = "My";

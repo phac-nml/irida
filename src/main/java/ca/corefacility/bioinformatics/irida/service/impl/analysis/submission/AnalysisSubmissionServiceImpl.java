@@ -60,7 +60,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 @Service
 public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, AnalysisSubmission> implements
 		AnalysisSubmissionService {
-		
+	
 	private UserRepository userRepository;
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	private final ReferenceFileRepository referenceFileRepository;
