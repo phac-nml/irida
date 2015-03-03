@@ -50,6 +50,7 @@
                             Organism</label>
                         <input type="text" id="projectOrganism" class="organism-select form-control input-full"
                                name="organism"/>
+                        <div class="alert alert-warning" id="new-organism-warning" th:text="#{projects.create.new-organism-warning}">_Warning: new organism_</div>
                         <small id="error-organism-server" th:if="${#maps.containsKey(errors, 'organism')}"
                                th:text="${errors.organism}"></small>
                     </div>
@@ -94,6 +95,7 @@
     <script th:src="@{/resources/bower_components/qtip2/jquery.qtip.min.js}"
             src="/resources/bower_components/qtip2/jquery.qtip.min.js"></script>
     <script>
+        $("#new-organism-warning").hide();
         $(".organism-select").select2({
             placeholder: /*[[#{projects.create.form.select-organism}]]*/ "Enter Organism",
             minimumInputLength: 2,
@@ -111,6 +113,13 @@
                 }
             }
 
+        }).on("change", function(data){
+          if(data.added.searchTerm){
+            $("#new-organism-warning").show();
+          }
+          else{
+            $("#new-organism-warning").hide();
+          }
         });
 
         (function() {
