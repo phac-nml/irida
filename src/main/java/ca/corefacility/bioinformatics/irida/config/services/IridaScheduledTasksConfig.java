@@ -7,6 +7,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -89,6 +90,7 @@ public class IridaScheduledTasksConfig implements SchedulingConfigurer {
 	 * 
 	 * @return A AnalysisExecutionScheduledTask bean.
 	 */
+	@DependsOn("analysisSubmissionCleanupService")
 	@Bean
 	public AnalysisExecutionScheduledTask analysisExecutionScheduledTask() {
 		return new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository, analysisExecutionService);
