@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.transaction.Transactional;
@@ -14,7 +15,9 @@ import javax.validation.Validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.hibernate.TransientPropertyValueException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -41,6 +44,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
@@ -212,7 +216,25 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		User user = userRepository.loadUserByUsername(userDetails.getUsername());
 		analysisSubmission.setSubmitter(user);
 		
-		return super.create(analysisSubmission);
+		try {
+			return super.create(analysisSubmission);
+		} catch (final InvalidDataAccessApiUsageException e) {
+			// if the exception is because we're using unsaved properties, try to wrap the exception with a sane-er message.
+			if (e.getCause() != null) {
+				final Throwable primaryCause = e.getCause();
+				if (primaryCause.getCause() != null
+						&& primaryCause.getCause() instanceof TransientPropertyValueException) {
+					final TransientPropertyValueException propertyException = (TransientPropertyValueException) primaryCause
+							.getCause();
+					if (Objects.equals("namedParameters", propertyException.getPropertyName())) {
+						throw new UnsupportedOperationException(
+								"You must save the named properties *before* you use them in a submission.", e);
+					}
+				}
+			}
+
+			throw e;
+		}
 	}
 
 	/**
@@ -252,7 +274,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Transactional
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, Map<String, String> params,
-			String name) {
+			IridaWorkflowNamedParameters namedParameters, String name) {
 		final Collection<AnalysisSubmission> createdSubmissions = new HashSet<AnalysisSubmission>();
 		// Single end reads
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
@@ -273,10 +295,16 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 					builder.referenceFile(referenceFile);
 				}
 
-				if (params != null && description.acceptsParameters()) {
-					// Note: This cannot be empty if through the UI if the
-					// pipeline required params.
-					builder.inputParameters(params);
+				if (description.acceptsParameters()) {
+					if (namedParameters != null) {
+						builder.withNamedParameters(namedParameters);
+					} else {
+						if (!params.isEmpty()) {
+							// Note: This cannot be empty if through the UI if
+							// the pipeline required params.
+							builder.inputParameters(params);
+						}
+					}
 				}
 
 				// Create the submission
@@ -301,7 +329,15 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 				}
 
 				if (description.acceptsParameters()) {
-					builder.inputParameters(params);
+					if (namedParameters != null) {
+						builder.withNamedParameters(namedParameters);
+					} else {
+						if (!params.isEmpty()) {
+							// Note: This cannot be empty if through the UI if
+							// the pipeline required params.
+							builder.inputParameters(params);
+						}
+					}
 				}
 
 				// Create the submission
@@ -318,7 +354,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Transactional
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, Map<String, String> params,
-			String name) {
+			IridaWorkflowNamedParameters namedParameters, String name) {
 		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 		builder.name(name);
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
@@ -340,7 +376,15 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		}
 
 		if (description.acceptsParameters()) {
-			builder.inputParameters(params);
+			if (namedParameters != null) {
+				builder.withNamedParameters(namedParameters);
+			} else {
+				if (!params.isEmpty()) {
+					// Note: This cannot be empty if through the UI if
+					// the pipeline required params.
+					builder.inputParameters(params);
+				}
+			}
 		}
 
 		// Create the submission

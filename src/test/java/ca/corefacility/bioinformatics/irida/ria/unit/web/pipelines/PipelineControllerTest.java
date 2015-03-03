@@ -30,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
 
 /**
  * Created by josh on 15-01-09.
@@ -49,6 +50,7 @@ public class PipelineControllerTest {
 	private CartController cartController;
 	// Controller to test
 	private PipelineController controller;
+	private WorkflowNamedParametersService namedParameterService;
 
 	@Before
 	public void setUp() {
@@ -61,9 +63,12 @@ public class PipelineControllerTest {
 		userService = mock(UserService.class);
 		messageSource = mock(MessageSource.class);
 		cartController = mock(CartController.class);
+		namedParameterService = mock(WorkflowNamedParametersService.class);
 
 		controller = new PipelineController(sequenceFileService, sequenceFilePairService, referenceFileService,
-				analysisSubmissionService, workflowsService, projectService, userService, cartController, messageSource);
+				analysisSubmissionService, workflowsService, projectService, userService, cartController,
+				messageSource, namedParameterService);
+		when(messageSource.getMessage(any(), any(), any())).thenReturn("");
 	}
 
 	@Test
@@ -80,7 +85,7 @@ public class PipelineControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		Principal principal = () -> "FRED";
 		UUID id = UUID.randomUUID();
-		String response = controller.getPhylogenomicsPage(model, principal, Locale.US, id);
+		String response = controller.getSpecifiedPipelinePage(model, principal, Locale.US, id);
 		assertEquals("If cart is empty user should be redirected.", PipelineController.URL_EMPTY_CART_REDIRECT, response);
 	}
 
@@ -97,7 +102,7 @@ public class PipelineControllerTest {
 		when(sequenceFileService.getSequenceFilesForSample(any(Sample.class)))
 				.thenReturn(TestDataFactory.generateSequenceFilesForSample(TestDataFactory.constructSample()));
 		when(workflowsService.getIridaWorkflow(id)).thenReturn(TestDataFactory.getIridaWorkflow(id));
-		String response = controller.getPhylogenomicsPage(model, principal, Locale.US, id);
+		String response = controller.getSpecifiedPipelinePage(model, principal, Locale.US, id);
 		assertEquals("Response should be the path to the phylogenomics template", PipelineController.URL_GENERIC_PIPELINE, response);
 		assertTrue("Model should contain the reference files.", model.containsKey("referenceFiles"));
 		assertTrue("Model should contain a list of files.", model.containsKey("projects"));

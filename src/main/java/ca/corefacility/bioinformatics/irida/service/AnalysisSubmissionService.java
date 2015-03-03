@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 
 /**
  * A service for AnalysisSubmissions.
@@ -175,16 +176,18 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param sequenceFilePairs
 	 *            {@link List} of {@link SequenceFilePair} to run on the
 	 *            workflow
-	 * @param params
+	 * @param unnamedParameters
 	 *            {@link Map} of parameters specific for the pipeline
+	 * @param namedParameters
+	 *            the named parameters to use for the workflow.
 	 * @param name
 	 *            {@link String} the name for the analysis
 	 */
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
-			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, Map<String, String> params,
-			String name);
-	
+			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
+			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name);
+
 	/**
 	 * Submit {@link AnalysisSubmission} for workflows requiring only one
 	 * {@link SequenceFile} or {@link SequenceFilePair}
@@ -198,16 +201,18 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 * @param sequenceFilePairs
 	 *            {@link List} of {@link SequenceFilePair} to run on the
 	 *            workflow
-	 * @param params
+	 * @param unnamedParameters
 	 *            {@link Map} of parameters specific for the pipeline
+	 * @param namedParameters
+	 *            the named parameters to use for the workflow.
 	 * @param name
 	 *            {@link String} the name for the analysis
 	 */
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
-			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs, Map<String, String> params,
-			String name);
-	
+			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
+			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name);
+
 	/**
 	 * This examines all possible analysis submissions and moves any submissions
 	 * not in a valid state to {@link AnalysisState.ERROR}. This is used on
