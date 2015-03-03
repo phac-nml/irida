@@ -17,9 +17,9 @@
 		<div class="row">
 			<!-- User details -->
 			<div class="col-md-6" ng-controller="DetailsCtrl as details">
-				<div class="panel panel-primary">
-					<div class="panel-heading clearfix">
-						<h3 class="panel-title pull-left" th:text="#{user.details}">_User Details_</h3>
+				<div class="sidebar">
+					<div class="sidebar__heading clearfix">
+						<h2 class="pull-left" th:text="#{user.details}">_User Details_</h2>
 
 						<div class="btn-group-xs pull-right">
 							<button th:if="${canCreatePasswordReset}"
@@ -32,60 +32,94 @@
 						</div>
 					</div>
 
-					<div class="panel-body">
-						<ul class="nav nav-pills nav-stacked project-details" th:inline="text">
-							<li>
-								<i class="glyphicon glyphicon-barcode"></i>&nbsp;[[#{users.id}]] <span
-									class="pull-right" id="user-id" th:text="${user.id}">_USER_ID_</span>
-							</li>
-							<li>
-								<i class="glyphicon glyphicon-user"></i>&nbsp;[[#{users.username}]] <span
-									class="pull-right" id="user-username" th:text="${user.username}">_USERNAME_</span>
-							</li>
-							<li>
-								<i class="glyphicon glyphicon-tag"></i>&nbsp;[[#{user.name}]] <span class="pull-right"
-								                                                                    id="user-name"
-								                                                                    th:text="${user.label}">_NAME_</span>
-							</li>
-							<li>
-								<i class="glyphicon glyphicon-envelope"></i>&nbsp;[[#{users.email}]]
-                    		<span class="pull-right">
-                    			<a th:href="'mailto:'+${user.email}" href="mailto:someone@nowhere.com"> <span
-					                    id="user-email" th:text="${user.email}">_EMAIL_</span> </a>
-                    		</span>
-							</li>
-							<li>
-								<i class="glyphicon glyphicon-earphone"></i>&nbsp;[[#{user.phone}]] <span
-									class="pull-right" id="user-phone"
-									th:text="${user.phoneNumber}">_123-456-7890_</span>
-							</li>
-							<li>
-								<i class="glyphicon glyphicon-stats"></i>&nbsp;[[#{users.role}]] <span
-									class="pull-right" id="user-role" th:text="${systemRole}">_ROLE_</span>
-							</li>
-							<li>
-								<i class="glyphicon glyphicon-off"></i>&nbsp;[[#{user.enabled}]] <span
-									class="pull-right glyphicon glyphicon-ok" th:if="${user.enabled}"></span> <span
-									class="pull-right glyphicon glyphicon-remove" th:if="not ${user.enabled}"></span>
-							</li>
-							<li>
-								<i class="glyphicon glyphicon-calendar"></i>&nbsp;[[#{user.created}]]
-                        	<span class="pull-right" id="user-created"
-	                              th:text="${#calendars.format(user.createdDate, 'dd MMM yyyy')}">_DATE_CREATED_</span>
-							</li>
-							<li>
-								<i class="glyphicon glyphicon-calendar"></i>&nbsp;[[#{user.modified}]]
-                        	<span class="pull-right" id="user-modified"
-	                              th:text="${#calendars.format(user.modifiedDate, 'dd MMM yyyy')}">__DATE_CREATED__</span>
-							</li>
-						</ul>
+					<div class="sidebar__body">
+
+							<div class="sidebar__item">
+                <div class="sidebar__icon">
+								  <i class="glyphicon glyphicon-barcode"></i>
+                </div>
+                <div th:text="#{users.id}">_ID_</div>
+                <div class="sidebar__value" id="user-id" th:text="${user.id}">_USER_ID_</div>
+							</div>
+
+              <div class="sidebar__item">
+                <div class="sidebar__icon">
+                  <i class="glyphicon glyphicon-user"></i>
+                </div>
+                <div th:text="#{users.username}">_Username</div>
+                <div class="sidebar__value" id="user-username" th:text="${user.username}">_USERNAME_</div>
+              </div>
+
+              <div class="sidebar__item">
+                <div class="sidebar__icon">
+                  <i class="glyphicon glyphicon-tag"></i>
+                </div>
+                <div th:text="#{user.name}">_Name_</div>
+                <div class="sidebar__value" id="user-name" th:text="${user.label}">_NAME_</div>
+              </div>
+
+              <div class="sidebar__item">
+                <div class="sidebar__icon">
+                  <i class="glyphicon glyphicon-envelope"></i>
+                </div>
+                <div th:text="#{users.email}">_email_</div>
+                <div class="sidebar__value">
+                  <a th:href="'mailto:'+${user.email}" href="mailto:someone@nowhere.com"> <span
+                    id="user-email" th:text="${user.email}">_EMAIL_</span> </a>
+                </div>
+              </div>
+
+              <div class="sidebar__item">
+                <div class="sidebar__icon">
+                  <i class="glyphicon glyphicon-earphone"></i>
+                </div>
+                <div th:text="#{user.phone}">_phone</div>
+                <div class="sidebar__value" id="user-phone" th:text="${user.phoneNumber}">_123-456-7890_</div>
+              </div>
+
+              <div class="sidebar__item">
+                <div class="sidebar__icon">
+                  <i class="glyphicon glyphicon-stats"></i>
+                </div>
+                <div th:text="#{users.role}">_phone</div>
+                <div class="sidebar__value" id="user-role" th:text="${systemRole}">_ROLE_</div>
+              </div>
+
+              <div class="sidebar__item">
+                <div class="sidebar__icon">
+                  <i class="glyphicon glyphicon-off"></i>
+                </div>
+                <div th:text="#{user.enabled}">_phone</div>
+                <div class="sidebar__value">
+                  <i class="glyphicon glyphicon-ok" th:if="${user.enabled}"></i>
+                  <i class="glyphicon glyphicon-remove" th:if="not ${user.enabled}"></i>
+                </div>
+              </div>
+
+              <div class="sidebar__item">
+                <div class="sidebar__icon">
+                  <i class="glyphicon glyphicon-calendar"></i>
+                </div>
+                <div th:text="#{user.created}">_phone</div>
+                <div class="sidebar__value" id="user-created"
+                th:text="${#calendars.format(user.createdDate, 'dd MMM yyyy')}">_DATE_CREATED_</div>
+              </div>
+
+              <div class="sidebar__item">
+                <div class="sidebar__icon">
+                  <i class="glyphicon glyphicon-calendar"></i>
+                </div>
+                <div th:text="#{user.modified}">_phone</div>
+                <div class="sidebar__value" id="user-modified"
+                th:text="${#calendars.format(user.modifiedDate, 'dd MMM yyyy')}">_DATE_MODIFIED_</div>
+              </div>
 					</div>
 				</div>
 			</div>
 
 			<!-- User project table -->
 			<div class="col-md-6 ">
-				<div class="panel panel-info">
+				<div class="panel panel-default">
 					<div class="panel-heading clearfix">
 						<h3 class="panel-title pull-left" th:text="#{user.projects.title}">_Projects_</h3>
 					</div>
