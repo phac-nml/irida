@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.service.impl;
+package ca.corefacility.bioinformatics.irida.service.impl.analysis.submission;
 
 import java.util.List;
 import java.util.Set;
@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionServiceImpl;
 
 /**
  * Implementation for a service to cleanup inconsistencies with {@link AnalysisSubmission}s.
@@ -25,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.Ana
 @Service
 public class AnalysisSubmissionCleanupServiceImpl implements AnalysisSubmissionCleanupService {
 	
-	private static final Logger logger = LoggerFactory.getLogger(AnalysisSubmissionServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(AnalysisSubmissionCleanupServiceImpl.class);
 	
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	

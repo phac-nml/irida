@@ -52,8 +52,8 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
-import ca.corefacility.bioinformatics.irida.service.impl.AnalysisSubmissionCleanupServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
+import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;

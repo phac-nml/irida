@@ -24,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
-import ca.corefacility.bioinformatics.irida.service.impl.AnalysisSubmissionCleanupServiceImpl;
+import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
