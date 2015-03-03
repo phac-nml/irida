@@ -4,6 +4,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 
+/**
+ * A service for cleaning up certaion aspects of {@link AnalysisSubmission}s.
+ * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
+ *
+ */
 public interface AnalysisSubmissionCleanupService {
 
 	/**
