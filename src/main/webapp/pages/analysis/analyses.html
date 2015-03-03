@@ -129,7 +129,7 @@
 								{{ ctrl.convertTime(analysis.duration) }}
 							</td>
 							<td>
-								<button ng-show="analysis.state==='Completed'"
+								<button ng-show="analysis.analysisState==='COMPLETED'"
 								        class="btn btn-default btn-xs pull-right download-analysis-btn"
 								        th:title="#{form.download}" ng-click="ctrl.download(analysis.id)">
 									<i class="fa fa-download"></i>
