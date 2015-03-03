@@ -30,22 +30,22 @@
                     <h2 th:text="#{sequencingruns.details.title(${run.id})}">__NAME__</h2>
                 </div>
                 <div class="sidebar__body">
-                    <div>
-                        <span class="fa fa-fw fa-barcode sidebar__icon"></span> <span th:text="#{iridaThing.id}">ID</span>
-                        <span id="sb-id" class="sidebar__value" th:text="${run.getId()}"></span>
+                    <div class="sidebar__item">
+                        <div class="sidebar__icon"><span class="fa fa-fw fa-barcode sidebar__icon"></span></div> <span th:text="#{iridaThing.id}">ID</span>
+                        <div id="sb-id" class="sidebar__value" th:text="${run.getId()}"></div>
                     </div>
-                    <div>
-                        <span class="fa fa-fw fa-desktop sidebar__icon"></span> <span th:text="#{sequencingruns.details.type}">ID</span>
-                        <span id="sb-id" class="sidebar__value sequencer-type" th:text="${run.sequencerType}"></span>
+                    <div class="sidebar__item">
+                        <div class="sidebar__icon"><span class="fa fa-fw fa-desktop sidebar__icon"></span></div> <span th:text="#{sequencingruns.details.type}">ID</span>
+                        <div id="sb-id" class="sidebar__value sequencer-type" th:text="${run.sequencerType}"></div>
                     </div>
-                    <div>
-                        <span class="fa fa-upload fa-fw sidebar__icon"></span> <span th:text="#{sequencingruns.uploadStatus}">_Status_</span>
-                        <span id="sb-id" class="sidebar__value sequencer-type" th:text="#{'sequencingruns.status.' + ${run.uploadStatus}}"></span>
+                    <div class="sidebar__item">
+                        <div class="sidebar__icon"><span class="fa fa-upload fa-fw sidebar__icon"></span></div> <span th:text="#{sequencingruns.uploadStatus}">_Status_</span>
+                        <div id="sb-id" class="sidebar__value sequencer-type" th:text="#{'sequencingruns.status.' + ${run.uploadStatus}}"></div>
                     </div>
-                    <div>
-                        <span class="fa fa-fw fa-calendar-o sidebar__icon"></span> <em
-                            th:text="#{iridaThing.timestamp}">Created</em> <span id="sb-created"
-                            class="sidebar__value" th:text="${#calendars.format(run.getCreatedDate(), 'dd MMM yyyy')}"></span>
+                    <div class="sidebar__item">
+                        <div class="sidebar__icon"><span class="fa fa-fw fa-calendar-o sidebar__icon"></span></div> <em
+                            th:text="#{iridaThing.timestamp}">Created</em> <div id="sb-created"
+                            class="sidebar__value" th:text="${#calendars.format(run.getCreatedDate(), 'dd MMM yyyy')}"></div>
                     </div>
                 </div>
             </div>

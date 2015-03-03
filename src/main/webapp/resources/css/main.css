@@ -207,7 +207,7 @@
 /* line 67, ../../styles/components/_panels.scss */
 .sidebar__item {
   border-top: 1px solid #f3f3f3;
-  padding: .3em 0;
+  padding: .3em 0.5em;
   display: flex;
   align-items: center;
 }
