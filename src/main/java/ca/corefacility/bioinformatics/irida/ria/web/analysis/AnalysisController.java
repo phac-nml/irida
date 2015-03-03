@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,8 +29,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
@@ -64,15 +61,13 @@ public class AnalysisController {
 	 * SERVICES
 	 */
 	private AnalysisSubmissionService analysisSubmissionService;
-	private UserService userService;
 	private IridaWorkflowsService workflowsService;
 	private MessageSource messageSource;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
-			UserService userService, IridaWorkflowsService iridaWorkflowsService, MessageSource messageSource) {
+			IridaWorkflowsService iridaWorkflowsService, MessageSource messageSource) {
 		this.analysisSubmissionService = analysisSubmissionService;
-		this.userService = userService;
 		this.workflowsService = iridaWorkflowsService;
 		this.messageSource = messageSource;
 	}
@@ -94,9 +89,8 @@ public class AnalysisController {
 	}
 
 	@RequestMapping("/list/all")
-	public String getAdminAnalysesPage(Model model, Principal principal, Locale locale) {
+	public String getAdminAnalysesPage(Model model, Locale locale) {
 		String response = PAGE_USER_ANALYSIS;
-		User user = userService.getUserByUsername(principal.getName());
 		try {
 			generateAnalysesPageModel(true, model, locale);
 		} catch (IridaWorkflowNotFoundException e) {
@@ -125,7 +119,7 @@ public class AnalysisController {
 	 * @return A JSON object containing the analyses.
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<String, Object> ajaxGetAnalysesListForUser(@RequestParam boolean all, Principal principal,
+	public @ResponseBody Map<String, Object> ajaxGetAnalysesListForUser(@RequestParam boolean all,
 			Locale locale, HttpServletResponse httpServletResponse) {
 		Map<String, Object> response = new HashMap<>();
 

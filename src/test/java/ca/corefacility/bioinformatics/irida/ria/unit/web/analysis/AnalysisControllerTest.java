@@ -47,16 +47,14 @@ public class AnalysisControllerTest {
 	 * SERVICES
 	 */
 	private AnalysisSubmissionService analysisSubmissionServiceMock;
-	private UserService userServiceMock;
 	private IridaWorkflowsService iridaWorkflowsServiceMock;
 
 	@Before
 	public void init() {
 		analysisSubmissionServiceMock = mock(AnalysisSubmissionService.class);
-		userServiceMock = mock(UserService.class);
 		iridaWorkflowsServiceMock = mock(IridaWorkflowsService.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
-		analysisController = new AnalysisController(analysisSubmissionServiceMock, userServiceMock, iridaWorkflowsServiceMock, messageSourceMock);
+		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock, messageSourceMock);
 	}
 
 	// ************************************************************************************************
