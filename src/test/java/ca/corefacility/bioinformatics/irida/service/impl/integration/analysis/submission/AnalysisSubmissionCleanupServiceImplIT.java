@@ -21,8 +21,8 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -45,7 +45,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 public class AnalysisSubmissionCleanupServiceImplIT {
 
 	@Autowired
-	private AnalysisSubmissionService analysisSubmissionService;
+	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	
 	@Autowired
 	private AnalysisSubmissionCleanupService analysisSubmissionCleanupService;
@@ -62,32 +62,31 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSwitchInconsistentSubmissionsToErrorSuccess() {
-		int analysisSubmissionsChanged = analysisSubmissionService.switchInconsistentSubmissionsToError();
+		int analysisSubmissionsChanged = analysisSubmissionCleanupService.switchInconsistentSubmissionsToError();
 
 		assertEquals("Switched invalid number of submissions", 3, analysisSubmissionsChanged);
-		assertEquals("Did not switch SUBMITTING to ERROR", AnalysisState.ERROR, analysisSubmissionService.read(1L)
+		assertEquals("Did not switch SUBMITTING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findOne(1L)
 				.getAnalysisState());
-		assertEquals("Did not switch PREPARING to ERROR", AnalysisState.ERROR, analysisSubmissionService.read(2L)
+		assertEquals("Did not switch PREPARING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findOne(2L)
 				.getAnalysisState());
-		assertEquals("Did not switch COMPLETING to ERROR", AnalysisState.ERROR, analysisSubmissionService.read(3L)
+		assertEquals("Did not switch COMPLETING to ERROR", AnalysisState.ERROR, analysisSubmissionRepository.findOne(3L)
 				.getAnalysisState());
 
 		// make sure no other submissions have changed
 		assertEquals("Analysis submission state has changed", AnalysisState.NEW,
-				analysisSubmissionService.read(4L).getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.PREPARED, analysisSubmissionService
-				.read(5L).getAnalysisState());
+				analysisSubmissionRepository.findOne(4L).getAnalysisState());
+		assertEquals("Analysis submission state has changed", AnalysisState.PREPARED, analysisSubmissionRepository.findOne(5L).getAnalysisState());
 		assertEquals("Analysis submission state has changed", AnalysisState.RUNNING,
-				analysisSubmissionService.read(6L).getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.FINISHED_RUNNING, analysisSubmissionService.read(7L)
+				analysisSubmissionRepository.findOne(6L).getAnalysisState());
+		assertEquals("Analysis submission state has changed", AnalysisState.FINISHED_RUNNING, analysisSubmissionRepository.findOne(7L)
 				.getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.COMPLETED, analysisSubmissionService.read(8L)
+		assertEquals("Analysis submission state has changed", AnalysisState.COMPLETED, analysisSubmissionRepository.findOne(8L)
 				.getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.ERROR, analysisSubmissionService.read(9L)
+		assertEquals("Analysis submission state has changed", AnalysisState.ERROR, analysisSubmissionRepository.findOne(9L)
 				.getAnalysisState());
 
 		try {
-			analysisSubmissionService.switchInconsistentSubmissionsToError();
+			analysisSubmissionCleanupService.switchInconsistentSubmissionsToError();
 			fail("Did not throw RuntimeException on second run");
 		} catch (RuntimeException e) {
 		}

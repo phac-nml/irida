@@ -534,58 +534,6 @@ public class AnalysisSubmissionServiceImplIT {
 	}
 
 	/**
-	 * Tests failing to switch submissions to error using a non-admin user.
-	 */
-	@Test(expected=AccessDeniedException.class)
-	@WithMockUser(username = "aaron", roles = "")
-	public void testSwitchInconsistentSubmissionsToErrorInvalidUser() {
-		analysisSubmissionService.switchInconsistentSubmissionsToError();
-	}
-	
-	/**
-	 * Tests successfully switching submissions to error.
-	 */
-	@Test
-	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testSwitchInconsistentSubmissionsToErrorSuccess() {
-		int analysisSubmissionsChanged = analysisSubmissionService.switchInconsistentSubmissionsToError();
-
-		assertEquals("Switched invalid number of submissions", 4, analysisSubmissionsChanged);
-		assertEquals("Did not switch SUBMITTING to ERROR", AnalysisState.ERROR, analysisSubmissionService.read(1L)
-				.getAnalysisState());
-		assertEquals("Did not switch PREPARING to ERROR", AnalysisState.ERROR, analysisSubmissionService.read(2L)
-				.getAnalysisState());
-		assertEquals("Did not switch SUBMITTING to ERROR", AnalysisState.ERROR, analysisSubmissionService.read(3L)
-				.getAnalysisState());
-		assertEquals("Did not switch COMPLETING to ERROR", AnalysisState.ERROR, analysisSubmissionService.read(10L)
-				.getAnalysisState());
-
-		// make sure no other submissions have changed
-		assertEquals("Analysis submission state has changed", AnalysisState.COMPLETED,
-				analysisSubmissionService.read(4L).getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.FINISHED_RUNNING, analysisSubmissionService
-				.read(5L).getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.COMPLETED,
-				analysisSubmissionService.read(6L).getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.ERROR, analysisSubmissionService.read(7L)
-				.getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.NEW, analysisSubmissionService.read(8L)
-				.getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.ERROR, analysisSubmissionService.read(9L)
-				.getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.RUNNING, analysisSubmissionService.read(11L)
-				.getAnalysisState());
-		assertEquals("Analysis submission state has changed", AnalysisState.PREPARED, analysisSubmissionService.read(12L)
-				.getAnalysisState());
-
-		try {
-			analysisSubmissionService.switchInconsistentSubmissionsToError();
-			fail("Did not throw RuntimeException on second run");
-		} catch (RuntimeException e) {
-		}
-	}
-
-	/**
 	 * Test specification.
 	 * 
 	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>

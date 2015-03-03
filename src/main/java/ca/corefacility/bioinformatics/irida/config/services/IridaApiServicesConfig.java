@@ -48,9 +48,9 @@ import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessin
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisSubmissionCleanupServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
@@ -152,17 +152,20 @@ public class IridaApiServicesConfig {
 	
 	@Bean
 	@DependsOn("springLiquibase")
-	@Profile({"prod", "dev"})
-	public AnalysisSubmissionCleanupService analysisSubmissionCleanupService(AnalysisSubmissionService analysisSubmissionService, UserService userService) {
-		AnalysisSubmissionCleanupService analysisSubmissionCleanupService = new AnalysisSubmissionCleanupServiceImpl(analysisSubmissionService);
+	@Profile({ "prod", "dev" })
+	public AnalysisSubmissionCleanupService analysisSubmissionCleanupService(
+			AnalysisSubmissionRepository analysisSubmissionRepository, UserService userService) {
+		AnalysisSubmissionCleanupService analysisSubmissionCleanupService = new AnalysisSubmissionCleanupServiceImpl(
+				analysisSubmissionRepository);
 		SecurityContext adminContext = createAnalysisTaskSecurityContext(userService);
 
-		// Run method to clean up previous analysis submissions in inconsistent states.
+		// Run method to clean up previous analysis submissions in inconsistent
+		// states.
 		SecurityContext oldContext = SecurityContextHolder.getContext();
 		SecurityContextHolder.setContext(adminContext);
 		analysisSubmissionCleanupService.switchInconsistentSubmissionsToError();
 		SecurityContextHolder.setContext(oldContext);
-		
+
 		return analysisSubmissionCleanupService;
 	}
 

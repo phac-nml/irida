@@ -212,15 +212,4 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name);
-
-	/**
-	 * This examines all possible analysis submissions and moves any submissions
-	 * not in a valid state to {@link AnalysisState.ERROR}. This is used on
-	 * start up to clean up inconsistent submissions that weren't properly
-	 * executed.
-	 * 
-	 * @return The number of submissions switched over to {@link AnalysisState.ERROR}.
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public int switchInconsistentSubmissionsToError();
 }
