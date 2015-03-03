@@ -1,3 +1,7 @@
+---
+layout: default
+---
+
 IRIDA Whole Genome Phylogenomics
 ================================
 
@@ -22,17 +26,17 @@ Some of these tools require additional dependencies to be installed.  For a clus
 
 1. [MUMMer][]:  Please download and install MUMMer (in particular, the command `nucmer`) and add your `PATH` in the `$GALAXY_ENV` file.
 2. [SAMTools][]: Please download and install [SAMTools 0.1.18][] and add to your `PATH` in the `$GALAXY_ENV` file.
-3. **Perl Modules**:  Please download and install dependency Perl modules with the command.
+3. **Perl Modules**:  Please download and install dependency Perl modules with the command:
 
-    ```bash
-    cpanm Clone Parallel::ForkManager
-    ```
+```bash
+cpanm Clone Parallel::ForkManager
+```
 
-    In addition, [BioPerl][] version 1.6.901 must be installed.  Please run the following command to install.
+In addition, [BioPerl][] version 1.6.901 must be installed.  Please run the following command to install:
 
-    ```bash
-    cpanm http://search.cpan.org/CPAN/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.901.tar.gz
-    ```
+```bash
+cpanm http://search.cpan.org/CPAN/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.901.tar.gz
+```
 
 ## Step 2: Install Galaxy Tools
 
@@ -71,12 +75,12 @@ If everything was successfull then all dependencies for this pipeline have been 
 [SAMTools]: http://www.htslib.org/
 [SAMTools 0.1.18]: http://downloads.sourceforge.net/project/samtools/samtools/0.1.18/samtools-0.1.18.tar.bz2
 [BioPerl]: http://www.bioperl.org/wiki/Main_Page
-[SNVPhyl Galaxy Workflow]: test/snvphyl/snvphyl_workflow.ga
-[upload-icon]: test/snvphyl/images/upload-icon.jpg
-[pipelines/test/snvphyl/reference.fasta]: test/snvphyl/reference.fasta
-[pipelines/test/snvphyl/reads]: test/snvphyl/reads
-[upload-history]: test/snvphyl/images/upload-history.jpg
-[datasets-icon]: test/snvphyl/images/datasets-icon.jpg
-[dataset-pair-screen]: test/snvphyl/images/dataset-pair-screen.jpg
-[workflow-success]: test/snvphyl/images/workflow-success.jpg
-[view-details-icon]: test/snvphyl/images/view-details-icon.jpg
+[SNVPhyl Galaxy Workflow]: ../test/snvphyl/snvphyl_workflow.ga
+[upload-icon]: ../test/snvphyl/images/upload-icon.jpg
+[pipelines/test/snvphyl/reference.fasta]: ../test/snvphyl/reference.fasta
+[pipelines/test/snvphyl/reads]: ../test/snvphyl/reads
+[upload-history]: ../test/snvphyl/images/upload-history.jpg
+[datasets-icon]: ../test/snvphyl/images/datasets-icon.jpg
+[dataset-pair-screen]: ../test/snvphyl/images/dataset-pair-screen.jpg
+[workflow-success]: ../test/snvphyl/images/workflow-success.jpg
+[view-details-icon]: ../test/snvphyl/images/view-details-icon.jpg
