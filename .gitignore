@@ -10,3 +10,5 @@ phantomjsdriver.log
 node_modules
 .sass-cache
 /src/main/java/a
+doc/_site
+*.swp

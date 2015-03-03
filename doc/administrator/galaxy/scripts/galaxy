@@ -1,0 +1,91 @@
+#!/bin/bash
+#
+# /etc/init.d/galaxy
+#
+# manages the Galaxy webserver
+#
+# author: Eric Enns
+# date: August 19, 2014
+#
+# updated by: Aaron Petkau
+# date: August 19, 2014
+#
+# chkconfig: 2345 80 20
+# description: Manages the Galaxy webserver
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ "$NETWORKING" = "no" ] && exit 0
+
+GALAXY_USER=galaxy-irida
+GALAXY_BASE_DIR=$GALAXY_BASE_DIR
+GALAXY_ENV=$GALAXY_BASE_DIR/env.sh
+GALAXY_ROOT_DIR=$GALAXY_BASE_DIR/galaxy-dist
+GALAXY_RUN=$GALAXY_ROOT_DIR/run.sh
+
+GALAXY_NUM_PIDS=1
+
+GALAXY_PID[0]="${GALAXY_ROOT_DIR}/main.pid"
+
+lockfile=/var/lock/subsys/galaxy
+
+start() {
+	echo -n "Starting galaxy services: "
+	daemon --user $GALAXY_USER "source ${GALAXY_ENV} && GALAXY_RUN_ALL=1 sh ${GALAXY_RUN} --daemon"
+	retval=$?
+	echo
+	[ $retval -eq 0 ] && touch $lockfile
+	return $retval
+}
+
+stop() {
+        echo -n "Stopping galaxy services: "
+        daemon --user $GALAXY_USER "source ${GALAXY_ENV} && GALAXY_RUN_ALL=1 sh ${GALAXY_RUN} --stop-daemon"
+	retval=$?
+	echo
+	[ $retval -eq 0 ] && rm -f $lockfile
+        return $retval
+}
+
+restart() {
+	stop
+	start
+}
+
+reload() {
+	restart
+}
+
+status() {
+	numpids=$GALAXY_NUM_PIDS
+	for ((i=0;i<$numpids;i++)); do
+		daemon --user $GALAXY_USER "source ${GALAXY_ENV} && ${GALAXY_RUN} --status --pid-file=${GALAXY_PID[i]}"
+	done
+}
+
+case "$1" in
+	start)
+		$1
+	;;
+	stop)
+		$1
+	;;
+	restart)
+		$1
+	;;
+	reload)
+		$1
+	;;
+	status)
+		$1
+	;;
+	*)
+		echo "Usage: galaxy {start|stop|status|reload|restart"
+		exit1
+	;;
+esac
