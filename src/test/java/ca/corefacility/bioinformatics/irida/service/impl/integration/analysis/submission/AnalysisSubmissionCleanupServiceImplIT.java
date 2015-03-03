@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration.analysis.submission;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,7 +62,7 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSwitchInconsistentSubmissionsToErrorSuccess() {
-		int analysisSubmissionsChanged = analysisSubmissionCleanupService.switchInconsistentSubmissionsToError();
+		int analysisSubmissionsChanged = analysisSubmissionService.switchInconsistentSubmissionsToError();
 
 		assertEquals("Switched invalid number of submissions", 3, analysisSubmissionsChanged);
 		assertEquals("Did not switch SUBMITTING to ERROR", AnalysisState.ERROR, analysisSubmissionService.read(1L)
@@ -70,5 +71,25 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 				.getAnalysisState());
 		assertEquals("Did not switch COMPLETING to ERROR", AnalysisState.ERROR, analysisSubmissionService.read(3L)
 				.getAnalysisState());
+
+		// make sure no other submissions have changed
+		assertEquals("Analysis submission state has changed", AnalysisState.NEW,
+				analysisSubmissionService.read(4L).getAnalysisState());
+		assertEquals("Analysis submission state has changed", AnalysisState.PREPARED, analysisSubmissionService
+				.read(5L).getAnalysisState());
+		assertEquals("Analysis submission state has changed", AnalysisState.RUNNING,
+				analysisSubmissionService.read(6L).getAnalysisState());
+		assertEquals("Analysis submission state has changed", AnalysisState.FINISHED_RUNNING, analysisSubmissionService.read(7L)
+				.getAnalysisState());
+		assertEquals("Analysis submission state has changed", AnalysisState.COMPLETED, analysisSubmissionService.read(8L)
+				.getAnalysisState());
+		assertEquals("Analysis submission state has changed", AnalysisState.ERROR, analysisSubmissionService.read(9L)
+				.getAnalysisState());
+
+		try {
+			analysisSubmissionService.switchInconsistentSubmissionsToError();
+			fail("Did not throw RuntimeException on second run");
+		} catch (RuntimeException e) {
+		}
 	}
 }
