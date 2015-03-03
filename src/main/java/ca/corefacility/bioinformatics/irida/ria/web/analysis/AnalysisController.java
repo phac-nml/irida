@@ -97,12 +97,6 @@ public class AnalysisController {
 	public String getAdminAnalysesPage(Model model, Principal principal, Locale locale) {
 		String response = PAGE_USER_ANALYSIS;
 		User user = userService.getUserByUsername(principal.getName());
-		boolean isAdmin = user.getSystemRole().equals(Role.ROLE_ADMIN);
-
-		if (!isAdmin) {
-			throw new AccessDeniedException("User does not have permission to see all analysis.");
-		}
-
 		try {
 			generateAnalysesPageModel(true, model, locale);
 		} catch (IridaWorkflowNotFoundException e) {
@@ -136,7 +130,7 @@ public class AnalysisController {
 		Map<String, Object> response = new HashMap<>();
 
 		Set<AnalysisSubmission> analyses;
-		if (all && userService.getUserByUsername(principal.getName()).getSystemRole().equals(Role.ROLE_ADMIN)) {
+		if (all) {
 			analyses = new HashSet<>(
 					(Collection<? extends AnalysisSubmission>) analysisSubmissionService.findAll());
 		} else {
@@ -166,6 +160,10 @@ public class AnalysisController {
 
 				if (sub.getAnalysisState().equals(AnalysisState.COMPLETED)) {
 					Analysis analysis = sub.getAnalysis();
+					logger.debug("Getting analysis stuff");
+					logger.debug(analysis.toString());
+					logger.debug(analysis.getLabel());
+					logger.debug(analysis.getCreatedDate().toString());
 					long duration = sub.getCreatedDate().getTime() - analysis.getCreatedDate().getTime();
 					map.put("duration", String.valueOf(Math.abs(duration)));
 				}
