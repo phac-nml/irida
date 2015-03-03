@@ -36,7 +36,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.base.Strings;
@@ -154,10 +153,6 @@ public class AnalysisController {
 
 				if (sub.getAnalysisState().equals(AnalysisState.COMPLETED)) {
 					Analysis analysis = sub.getAnalysis();
-					logger.debug("Getting analysis stuff");
-					logger.debug(analysis.toString());
-					logger.debug(analysis.getLabel());
-					logger.debug(analysis.getCreatedDate().toString());
 					long duration = sub.getCreatedDate().getTime() - analysis.getCreatedDate().getTime();
 					map.put("duration", String.valueOf(Math.abs(duration)));
 				}
