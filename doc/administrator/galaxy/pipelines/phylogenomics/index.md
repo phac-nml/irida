@@ -26,17 +26,17 @@ Some of these tools require additional dependencies to be installed.  For a clus
 
 1. [MUMMer][]:  Please download and install MUMMer (in particular, the command `nucmer`) and add your `PATH` in the `$GALAXY_ENV` file.
 2. [SAMTools][]: Please download and install [SAMTools 0.1.18][] and add to your `PATH` in the `$GALAXY_ENV` file.
-3. **Perl Modules**:  Please download and install dependency Perl modules with the command.
+3. **Perl Modules**:  Please download and install dependency Perl modules with the command:
 
-    ```bash
-    cpanm Clone Parallel::ForkManager
-    ```
+```bash
+cpanm Clone Parallel::ForkManager
+```
 
-    In addition, [BioPerl][] version 1.6.901 must be installed.  Please run the following command to install.
+In addition, [BioPerl][] version 1.6.901 must be installed.  Please run the following command to install:
 
-    ```bash
-    cpanm http://search.cpan.org/CPAN/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.901.tar.gz
-    ```
+```bash
+cpanm http://search.cpan.org/CPAN/authors/id/C/CJ/CJFIELDS/BioPerl-1.6.901.tar.gz
+```
 
 ## Step 2: Install Galaxy Tools
 
