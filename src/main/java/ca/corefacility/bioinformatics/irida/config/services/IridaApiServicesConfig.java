@@ -10,7 +10,6 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import javax.validation.Validator;
 
-import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,9 +35,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
 import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
 import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositoriesConfig;
@@ -47,14 +43,21 @@ import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
+import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
+import ca.corefacility.bioinformatics.irida.service.impl.AnalysisSubmissionCleanupServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 /**
  * Configuration for the IRIDA platform.
@@ -145,6 +148,22 @@ public class IridaApiServicesConfig {
 		ScheduledExecutorService delegateExecutor = Executors.newScheduledThreadPool(4);
 		SecurityContext schedulerContext = createAnalysisTaskSecurityContext(userService);
 		return new DelegatingSecurityContextScheduledExecutorService(delegateExecutor, schedulerContext);
+	}
+	
+	@Bean
+	@DependsOn("springLiquibase")
+	@Profile({"prod", "dev"})
+	public AnalysisSubmissionCleanupService analysisSubmissionCleanupService(AnalysisSubmissionService analysisSubmissionService, UserService userService) {
+		AnalysisSubmissionCleanupService analysisSubmissionCleanupService = new AnalysisSubmissionCleanupServiceImpl(analysisSubmissionService);
+		SecurityContext adminContext = createAnalysisTaskSecurityContext(userService);
+
+		// Run method to clean up previous analysis submissions in inconsistent states.
+		SecurityContext oldContext = SecurityContextHolder.getContext();
+		SecurityContextHolder.setContext(adminContext);
+		analysisSubmissionCleanupService.switchInconsistentSubmissionsToError();
+		SecurityContextHolder.setContext(oldContext);
+		
+		return analysisSubmissionCleanupService;
 	}
 
 	/**
