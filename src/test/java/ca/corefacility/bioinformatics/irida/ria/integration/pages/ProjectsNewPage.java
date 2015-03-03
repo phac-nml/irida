@@ -10,12 +10,16 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.google.common.base.Strings;
 
 /**
- * <p> Page Object to represent the projects-new page used to create a new project. </p>
+ * <p>
+ * Page Object to represent the projects-new page used to create a new project.
+ * </p>
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectsNewPage extends AbstractPage {
 	public static final String PROJECT_NEW_URL = BASE_URL + "projects/new";
+
+	public static final String EXISTING_TAXA = "Escherichia";
 
 	public ProjectsNewPage(WebDriver driver) {
 		super(driver);
@@ -26,17 +30,14 @@ public class ProjectsNewPage extends AbstractPage {
 	}
 
 	public void submitForm(String name, String organism, String wiki, String description) {
+		setName(name);
+
 		driver.findElement(By.name("name")).sendKeys(name);
 		if (!Strings.isNullOrEmpty(organism)) {
-			WebElement organismField = driver.findElement(By.cssSelector("a.select2-choice"));
-			organismField.click();
-			WebElement sdf = driver.findElement(By.name("organism"));
-			sdf.sendKeys(organism);
-			sdf.sendKeys(Keys.RETURN);
+			setOrganism(organism);
 		}
-		waitForTime(700);
-		driver.findElement(By.name("remoteURL")).sendKeys(wiki);
-		driver.findElement(By.name("projectDescription")).sendKeys(description);
+		setRemoteURL(wiki);
+		setProjectDescription(description);
 	}
 
 	public void clickSubmit() {
@@ -48,6 +49,20 @@ public class ProjectsNewPage extends AbstractPage {
 		nameField.sendKeys(name);
 		nameField.sendKeys(Keys.TAB);
 		waitForTime(700);
+	}
+
+	public void setOrganism(String organism) {
+		WebElement organismField = driver.findElement(By.cssSelector("a.select2-choice"));
+		organismField.click();
+		WebElement sdf = driver.findElement(By.name("organism"));
+		sdf.sendKeys(organism);
+		waitForTime(250);
+		sdf.sendKeys(Keys.RETURN);
+		waitForTime(250);
+	}
+
+	public void setProjectDescription(String description) {
+		driver.findElement(By.name("projectDescription")).sendKeys(description);
 	}
 
 	public boolean isErrorNameRequiredDisplayed() {
@@ -73,6 +88,10 @@ public class ProjectsNewPage extends AbstractPage {
 		} catch (Exception e) {
 			return true;
 		}
+	}
+
+	public boolean isNewOrganismWarningDisplayed() {
+		return driver.findElement(By.id("new-organism-warning")).isDisplayed();
 	}
 
 	public void setRemoteURL(String url) {

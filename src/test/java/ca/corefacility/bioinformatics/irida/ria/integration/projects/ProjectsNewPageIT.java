@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ActiveProfiles;
@@ -30,7 +30,9 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 /**
- * <p> Integration test to ensure that the ProjectsNew Page. </p>
+ * <p>
+ * Integration test to ensure that the ProjectsNew Page.
+ * </p>
  *
  * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
@@ -48,7 +50,7 @@ public class ProjectsNewPageIT {
 
 	@Before
 	public void setUp() {
-		driver = TestUtilities.setDriverDefaults(new PhantomJSDriver());
+		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
 		LoginPage.loginAsAdmin(driver);
 		page = new ProjectsNewPage(driver);
 	}
@@ -89,5 +91,15 @@ public class ProjectsNewPageIT {
 		page.submitForm("test project name", "", "", "");
 		page.clickSubmit();
 		assertTrue("Redirects to the project metadata page", driver.getCurrentUrl().contains("/metadata"));
+	}
+
+	@Test
+	public void testCustomTaxa() {
+		page.goToPage();
+		page.setOrganism("something new");
+		assertTrue("warning should be displayed", page.isNewOrganismWarningDisplayed());
+
+		page.setOrganism(ProjectsNewPage.EXISTING_TAXA);
+		assertFalse("warning should not be displayed", page.isNewOrganismWarningDisplayed());
 	}
 }
