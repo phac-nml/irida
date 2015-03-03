@@ -56,9 +56,9 @@ public class ProjectsNewPage extends AbstractPage {
 		organismField.click();
 		WebElement sdf = driver.findElement(By.name("organism"));
 		sdf.sendKeys(organism);
-		waitForTime(250);
+		waitForTime(700);
 		sdf.sendKeys(Keys.RETURN);
-		waitForTime(250);
+		waitForTime(700);
 	}
 
 	public void setProjectDescription(String description) {
