@@ -1,3 +1,7 @@
+---
+layout: default
+---
+
 IRIDA Assembly and Annotation
 =============================
 
@@ -63,11 +67,11 @@ If everything was successfull then all dependencies for this pipeline have been 
 [Galaxy Main Shed]: http://toolshed.g2.bx.psu.edu/
 [Java]: http://www.oracle.com/technetwork/java/javase/downloads/index.html
 [BioPerl]: http://www.bioperl.org/wiki/Main_Page
-[Assembly Annotation Galaxy Workflow]: test/assembly-annotation/assembly-annotation.ga
-[upload-icon]: test/snvphyl/images/upload-icon.jpg
-[pipelines/test/assembly-annotation/reads]: test/assembly-annotation/reads
-[upload-history]: test/assembly-annotation/images/upload-history.jpg
-[datasets-icon]: test/snvphyl/images/datasets-icon.jpg
-[dataset-pair-screen]: test/assembly-annotation/images/dataset-pair-screen.jpg
-[workflow-success]: test/assembly-annotation/images/workflow-success.jpg
-[view-details-icon]: test/snvphyl/images/view-details-icon.jpg
+[Assembly Annotation Galaxy Workflow]: ../test/assembly-annotation/assembly-annotation.ga
+[upload-icon]: ../test/snvphyl/images/upload-icon.jpg
+[pipelines/test/assembly-annotation/reads]: ../test/assembly-annotation/reads
+[upload-history]: ../test/assembly-annotation/images/upload-history.jpg
+[datasets-icon]: ../test/snvphyl/images/datasets-icon.jpg
+[dataset-pair-screen]: ../test/assembly-annotation/images/dataset-pair-screen.jpg
+[workflow-success]: ../test/assembly-annotation/images/workflow-success.jpg
+[view-details-icon]: ../test/snvphyl/images/view-details-icon.jpg

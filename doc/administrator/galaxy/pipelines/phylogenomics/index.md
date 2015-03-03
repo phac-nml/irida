@@ -1,3 +1,7 @@
+---
+layout: default
+---
+
 IRIDA Whole Genome Phylogenomics
 ================================
 
@@ -71,12 +75,12 @@ If everything was successfull then all dependencies for this pipeline have been 
 [SAMTools]: http://www.htslib.org/
 [SAMTools 0.1.18]: http://downloads.sourceforge.net/project/samtools/samtools/0.1.18/samtools-0.1.18.tar.bz2
 [BioPerl]: http://www.bioperl.org/wiki/Main_Page
-[SNVPhyl Galaxy Workflow]: test/snvphyl/snvphyl_workflow.ga
-[upload-icon]: test/snvphyl/images/upload-icon.jpg
-[pipelines/test/snvphyl/reference.fasta]: test/snvphyl/reference.fasta
-[pipelines/test/snvphyl/reads]: test/snvphyl/reads
-[upload-history]: test/snvphyl/images/upload-history.jpg
-[datasets-icon]: test/snvphyl/images/datasets-icon.jpg
-[dataset-pair-screen]: test/snvphyl/images/dataset-pair-screen.jpg
-[workflow-success]: test/snvphyl/images/workflow-success.jpg
-[view-details-icon]: test/snvphyl/images/view-details-icon.jpg
+[SNVPhyl Galaxy Workflow]: ../test/snvphyl/snvphyl_workflow.ga
+[upload-icon]: ../test/snvphyl/images/upload-icon.jpg
+[pipelines/test/snvphyl/reference.fasta]: ../test/snvphyl/reference.fasta
+[pipelines/test/snvphyl/reads]: ../test/snvphyl/reads
+[upload-history]: ../test/snvphyl/images/upload-history.jpg
+[datasets-icon]: ../test/snvphyl/images/datasets-icon.jpg
+[dataset-pair-screen]: ../test/snvphyl/images/dataset-pair-screen.jpg
+[workflow-success]: ../test/snvphyl/images/workflow-success.jpg
+[view-details-icon]: ../test/snvphyl/images/view-details-icon.jpg
