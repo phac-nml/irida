@@ -11,47 +11,63 @@
     <div class="row mrgn-tp-lg">
     	<h1 th:text="${remoteApi.name}">_Api Name_</h1>
     	<div class="col-md-6">
-            <div class="panel panel-primary">
-                <div class="panel-heading clearfix">
-                	<h3 class="panel-title pull-left" th:text="#{remoteapi.details.title}">_User Details_</h3>
-					<div class="btn-group-xs pull-right">
-				        <div id="remove-btn" class="btn btn-danger" th:text="#{remoteapi.remove.button}">Remove</div>
+            <div class="sidebar">
+                <div class="sidebar__heading clearfix">
+                	<h2 class="pull-left" th:text="#{remoteapi.details.title}">_API Details_</h2>
+					        <div class="btn-group-xs pull-right">
+				            <button id="remove-btn" class="btn btn-danger" th:text="#{remoteapi.remove.button}">Remove</button>
                 	</div>
                 </div>
-                    
-                <div class="panel-body">
-                    <ul class="nav nav-pills nav-stacked project-details" th:inline="text">
-                    	<li>
-                    		<i class="glyphicon glyphicon-barcode"></i>&nbsp;[[#{iridaThing.id}]]
-                    		<span class="pull-right" id="remoteapi-id"
-                                th:text="${remoteApi.id}">_ID_</span>
-                    	</li>
-                        <li>
-                            <i class="glyphicon glyphicon-flag"></i>&nbsp;[[#{remoteapi.name}]]
-                            <span class="pull-right" id="remoteapi-name"
-                                th:text="${remoteApi.name}">_Name_</span>
-                        </li>
-                        <li sec:authorize="hasRole('ROLE_ADMIN')">
-                            <i class="glyphicon glyphicon-globe"></i>&nbsp;[[#{remoteapi.serviceurl}]]
-                            <span class="pull-right" id="remoteapi-serviceurl"
-                                th:text="${remoteApi.serviceURI}">_URL_</span>
-                        </li>
-                    	<li sec:authorize="hasRole('ROLE_ADMIN')">
-                    		<i class="glyphicon glyphicon-tag"></i>&nbsp;[[#{remoteapi.clientid}]]
-                    		<span class="pull-right" id="remoteapi-clientid"
-                                th:text="${remoteApi.clientId}">_Client ID_</span>
-                    	</li>
-                        <li sec:authorize="hasRole('ROLE_ADMIN')">
-                            <i class="glyphicon glyphicon-eye-close"></i>&nbsp;[[#{remoteapi.details.secret}]]
-                            <span class="pull-right" id="remoteapi-secret"
-                                th:text="${remoteApi.clientSecret}">_Secret_</span>
-                        </li>
-                        <li>
-                        	<i class="glyphicon glyphicon-calendar"></i>&nbsp;[[#{iridaThing.timestamp}]]
-                        	<span class="pull-right" id="remoteapi-created"
-                                th:text="${#calendars.format(remoteApi.createdDate, 'dd MMM yyyy')}">_DATE_CREATED_</span>
-                        </li>
-                    </ul>
+
+                <div class="sidebar__body">
+                  <div class="sidebar__item">
+                    <div class="sidebar__icon">
+                      <i class="glyphicon glyphicon-barcode"></i>
+                    </div>
+                    <div th:text="#{iridaThing.id}">_ID_</div>
+                    <div class="sidebar__value" id="remoteapi-id" th:text="${remoteApi.id}">_ID_</div>
+                  </div>
+
+                  <div class="sidebar__item">
+                    <div class="sidebar__icon">
+                      <i class="glyphicon glyphicon-flag"></i>
+                    </div>
+                    <div th:text="#{remoteapi.name}">_ID_</div>
+                    <div class="sidebar__value" id="remoteapi-name" th:text="${remoteApi.name}">_Name_</div>
+                  </div>
+
+                  <div class="sidebar__item" sec:authorize="hasRole('ROLE_ADMIN')">
+                    <div class="sidebar__icon">
+                      <i class="glyphicon glyphicon-globe"></i>
+                    </div>
+                    <div th:text="#{remoteapi.serviceurl}">_ID_</div>
+                    <div class="sidebar__value" id="remoteapi-serviceurl" th:text="${remoteApi.serviceURI}">_URL_</div>
+                  </div>
+
+                  <div class="sidebar__item" sec:authorize="hasRole('ROLE_ADMIN')">
+                    <div class="sidebar__icon">
+                      <i class="glyphicon glyphicon-tag"></i>
+                    </div>
+                    <div th:text="#{remoteapi.clientid}">_ID_</div>
+                    <div class="sidebar__value" id="remoteapi-clientid" th:text="${remoteApi.clientId}">_Client ID_</div>
+                  </div>
+
+                  <div class="sidebar__item" sec:authorize="hasRole('ROLE_ADMIN')">
+                    <div class="sidebar__icon">
+                      <i class="glyphicon glyphicon-eye-close"></i>
+                    </div>
+                    <div th:text="#{remoteapi.details.secret}">_ID_</div>
+                    <div class="sidebar__value" id="remoteapi-secret" th:text="${remoteApi.clientSecret}">_Secret_</div>
+                  </div>
+
+                  <div class="sidebar__item" sec:authorize="hasRole('ROLE_ADMIN')">
+                    <div class="sidebar__icon">
+                      <i class="glyphicon glyphicon-calendar"></i>
+                    </div>
+                    <div th:text="#{iridaThing.timestamp}">_ID_</div>
+                    <div class="sidebar__value" id="remoteapi-created"
+                         th:text="${#calendars.format(remoteApi.createdDate, 'dd MMM yyyy')}">_DATE_CREATED_</div>
+                  </div>
                 </div>
             </div>
         </div>
@@ -66,14 +82,14 @@
                     </div>
                 </div>
                 <div class="panel-body">
-                    <ul class="nav nav-pills nav-stacked project-details" th:inline="text">
+                    <ul class="list-unstyled project-details" th:inline="text">
                         <li>
-                            <i class="glyphicon glyphicon-link"></i>&nbsp;[[#{remoteapi.status}]]
+                            <i class="glyphicon glyphicon-link"></i>[[#{remoteapi.status}]]
                             <span class="pull-right">
                                 <span id="connection-status"
                                         th:text="#{remoteapi.status.waiting}">_Connection Status_</span>
                             </span>
-                            
+
                         </li>
                         <li th:if="${tokenExpiry}">
                             <i class="glyphicon glyphicon-time"></i>&nbsp;[[#{remoteapi.status.tokenexpiry}]]
@@ -121,11 +137,11 @@
     			});
 
     		});
-    		
+
     		var apiId = /*[[${remoteApi.id}]]*/ 1;
     		getApiStatus(apiId,"#connection-status","#connect-button");
     	});
-    	
+
     </script>
     <script th:replace="remote_apis/remote_api_connect"></script>
 </th:block>

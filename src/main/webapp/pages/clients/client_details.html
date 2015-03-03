@@ -11,53 +11,72 @@
     	<!-- User details -->
     	<div class="col-md-8 col-md-offset-2">
             <h1 th:text="${client.clientId}">_Name_</h1>
-            <div class="panel panel-primary">
-                <div class="panel-heading clearfix">
-                	<h3 class="panel-title pull-left" th:text="#{client.details.title}">_User Details_</h3>
-					<div class="btn-group-xs pull-right">
-				        <div id="remove-btn" class="btn btn-danger" th:text="#{client.remove.button}">Remove</div>
+            <div class="sidebar">
+                <div class="sidebar__heading clearfix">
+                	<h2 class="pull-left" th:text="#{client.details.title}">_Client Details_</h2>
+					        <div class="btn-group-xs pull-right">
+				            <div id="remove-btn" class="btn btn-danger" th:text="#{client.remove.button}">Remove</div>
                         <a href="#" th:href="@{/clients/{id}/edit(id=${client.id})}" id="edit-btn" class="btn btn-default" th:text="#{form.btn.edit}">Edit</a>
                 	</div>
                 </div>
-                <div class="panel-body">
-                    <ul class="nav nav-pills nav-stacked project-details" th:inline="text">
-                    	<li>
-                    		<i class="glyphicon glyphicon-barcode"></i>&nbsp;[[#{iridaThing.id}]]
-                    		<span class="pull-right" id="client-id"
-                                th:text="${client.id}">_ID_</span>
-                    	</li>
-                    	<li>
-                    		<i class="glyphicon glyphicon-tag"></i>&nbsp;[[#{client.clientid}]]
-                    		<span class="pull-right" id="client-clientid"
-                                th:text="${client.clientId}">_Client ID_</span>
-                    	</li>
-                        <li>
-                            <i class="glyphicon glyphicon-eye-close"></i>&nbsp;[[#{client.details.clientSecret}]]
-                            <span class="pull-right" id="client-secret"
-                                th:text="${client.clientSecret}">_Secret_</span>
-                        </li>
-                        <li>
-                            <i class="glyphicon glyphicon-ok-sign"></i>&nbsp;[[#{client.grant-types}]]
-                            <span class="pull-right" id="client-grants"
-                                th:text="${grants}">_Grants_</span>
-                        </li>
-                        <li>
-                            <i class="glyphicon glyphicon-transfer"></i>&nbsp;[[#{client.scopes}]]
-                            <span class="pull-right" id="client-scopes"
-                                th:text="${scopes}">_Scopes_</span>
-                        </li>
-                        
-                        <li>
-                            <i class="glyphicon glyphicon-time"></i>&nbsp;[[#{client.details.tokenValidity}]]
-                            <span class="pull-right tokenValidityInSeconds" id="client-token-validity"
-                                th:text="${client.accessTokenValiditySeconds}">_Token Validity_</span>
-                        </li>
-                        <li>
-                        	<i class="glyphicon glyphicon-calendar"></i>&nbsp;[[#{iridaThing.timestamp}]]
-                        	<span class="pull-right" id="client-created"
-                                th:text="${#calendars.format(client.createdDate, 'dd MMM yyyy')}">_DATE_CREATED_</span>
-                        </li>
-                    </ul>
+                <div class="sidebar__body">
+                  <div class="sidebar__item">
+                    <div class="sidebar__icon">
+                      <i class="glyphicon glyphicon-barcode"></i>
+                    </div>
+                    <div th:text="#{iridaThing.id}">_ID_</div>
+                    <div class="sidebar__value" id="client-id" th:text="${client.id}">_ID_</div>
+                  </div>
+
+                  <div class="sidebar__item">
+                    <div class="sidebar__icon">
+                      <i class="glyphicon glyphicon-tag"></i>
+                    </div>
+                    <div th:text="#{client.clientid}">_ID_</div>
+                    <div class="sidebar__value" id="client-clientid" th:text="${client.clientId}">_Client ID_</div>
+                  </div>
+
+                  <div class="sidebar__item">
+                    <div class="sidebar__icon">
+                      <i class="glyphicon glyphicon-eye-close"></i>
+                    </div>
+                    <div th:text="#{client.details.clientSecret}">_ID_</div>
+                    <div class="sidebar__value" id="client-secret" th:text="${client.clientSecret}">_Secret_</div>
+                  </div>
+
+                  <div class="sidebar__item">
+                    <div class="sidebar__icon">
+                      <i class="glyphicon glyphicon-ok-sign"></i>
+                    </div>
+                    <div th:text="#{client.grant-types}">_ID_</div>
+                    <div class="sidebar__value" id="client-grants" th:text="${grants}">_Grants_</div>
+                  </div>
+
+                  <div class="sidebar__item">
+                    <div class="sidebar__icon">
+                      <i class="glyphicon glyphicon-transfer"></i>
+                    </div>
+                    <div th:text="#{client.scopes}">_ID_</div>
+                    <div class="sidebar__value" id="client-scopes" th:text="${scopes}">_Scopes_</div>
+                  </div>
+
+                  <div class="sidebar__item">
+                    <div class="sidebar__icon">
+                      <i class="glyphicon glyphicon-time"></i>
+                    </div>
+                    <div th:text="#{client.details.tokenValidity}">_ID_</div>
+                    <div class="sidebar__value tokenValidityInSeconds" id="client-token-validity"
+                         th:text="${client.accessTokenValiditySeconds}">_Token Validity_</div>
+                  </div>
+
+                  <div class="sidebar__item">
+                    <div class="sidebar__icon">
+                      <i class="glyphicon glyphicon-calendar"></i>
+                    </div>
+                    <div th:text="#{iridaThing.timestamp}">_ID_</div>
+                    <div class="sidebar__value" id="client-created"
+                         th:text="${#calendars.format(client.createdDate, 'dd MMM yyyy')}">_DATE_CREATED_</div>
+                  </div>
                 </div>
             </div>
         </div>
@@ -99,7 +118,7 @@
 
     		});
     	});
-    	
+
     </script>
 </th:block>
 </body>
