@@ -1,7 +1,9 @@
 package ca.corefacility.bioinformatics.irida.util;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -22,6 +24,8 @@ public class TreeNode<ValueType> {
 
 	// The value to be stored by this node
 	private ValueType value;
+	
+	Map<String,Object> properties;
 
 	/**
 	 * Create a new {@link TreeNode} with a given value
@@ -32,6 +36,7 @@ public class TreeNode<ValueType> {
 	public TreeNode(ValueType value) {
 		this.value = value;
 		children = new HashSet<>();
+		properties = new HashMap<>();
 	}
 
 	/**
@@ -87,6 +92,18 @@ public class TreeNode<ValueType> {
 	 */
 	public TreeNode<ValueType> getParent() {
 		return parent;
+	}
+	
+	public Map<String, Object> getProperties() {
+		return properties;
+	}
+	
+	public void setProperties(Map<String, Object> properties) {
+		this.properties = properties;
+	}
+	
+	public void addProperty(String key, Object value){
+		properties.put(key, value);
 	}
 
 	@Override
