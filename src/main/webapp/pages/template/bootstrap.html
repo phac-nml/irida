@@ -78,7 +78,7 @@
 							<a th:href="@{/analysis/list}" href="/analysis/list" th:text="#{nav.main.analysis-user}">Your Analysis</a>
 						</li>
 						<li sec:authorize="hasAnyRole('ROLE_ADMIN')">
-							<a th:href="@{/analysis/admin}" href="/analysis/admin"
+							<a th:href="@{/analysis/list/all}" href="/analysis/list/all"
 							   th:text="#{nav.main.analysis-admin}">List All Analysis
 							</a>
 						</li>

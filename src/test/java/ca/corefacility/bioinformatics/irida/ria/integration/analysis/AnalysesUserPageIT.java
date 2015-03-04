@@ -67,7 +67,7 @@ public class AnalysesUserPageIT {
 		assertEquals("Should be 2 analysis in the state of 'COMPLETED'", 2, page.getNumberOfAnalyses());
 
 		page.filterByState("Prepared");
-		assertTrue("Should display a message that there are no analyses available", page.isNoAnalysesMessaageDisplayed());
+		assertTrue("Should display a message that there are no analyses available", page.isNoAnalysesMessageDisplayed());
 
 		// Clear
 		page.clearFilter();

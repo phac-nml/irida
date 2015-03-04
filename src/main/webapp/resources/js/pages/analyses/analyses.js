@@ -65,7 +65,7 @@
    */
   function AnalysisService($http) {
     function _loadData() {
-      return $http.get(TL.BASE_URL + "analysis/ajax/list")
+      return $http.get(PAGE.URLS.analyses)
         .error(function(data) {
           window.location = TL.BASE_URL + data.error.url;
         });
@@ -148,6 +148,13 @@
         vm.analyses = [];
     vm.loading = true;
 
+    vm.convertTime = function(duration) {
+      if(!isNaN(duration)) {
+        return moment.duration(parseInt(duration)).humanize();
+      }
+      return "";
+    };
+
     vm.tableParams = new ngTableParams({
       sorting: {'createdDate':'asc'}
     });
@@ -158,7 +165,7 @@
 
     vm.download = function (id) {
       var iframe = document.createElement("iframe");
-      iframe.src = TL.BASE_URL + "analysis/ajax/download/" + id;
+      iframe.src = PAGE.URLS.download + id;
       iframe.style.display = "none";
       document.body.appendChild(iframe);
     };
