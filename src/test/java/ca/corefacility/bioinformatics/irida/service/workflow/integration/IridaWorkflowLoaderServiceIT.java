@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -67,6 +68,7 @@ public class IridaWorkflowLoaderServiceIT {
 	private final static UUID DEFAULT_SINGLE_ID = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
 	private final static UUID DEFAULT_PAIRED_ID = UUID.fromString("ec93b50d-c9dd-4000-98fc-4a70d46ddd36");
 	private final static UUID DEFAULT_SINGLE_PAIRED_ID = UUID.fromString("d92e9918-1e3d-4dea-b2b9-089f1256ac1b");
+	private final static UUID DEFAULT_SINGLE_SAMPLE_ID = UUID.fromString("a9692a52-5bc6-4da2-a89d-d880bb35bfe4");
 
 	@Autowired
 	private IridaWorkflowLoaderService workflowLoaderService;
@@ -74,6 +76,7 @@ public class IridaWorkflowLoaderServiceIT {
 	private Path workflowSingleXmlPath;
 	private Path workflowPairedXmlPath;
 	private Path workflowSinglePairedXmlPath;
+	private Path workflowRequiresSingleSampleXmlPath;
 	private Path workflowStructurePath;
 	private Path workflowDirectoryPath;
 	private Path workflowVersionDirectoryPath;
@@ -92,6 +95,8 @@ public class IridaWorkflowLoaderServiceIT {
 		workflowPairedXmlPath = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysis/1.0-paired/irida_workflow.xml")
 				.toURI());
 		workflowSinglePairedXmlPath = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysis/1.0-single-paired/irida_workflow.xml")
+				.toURI());
+		workflowRequiresSingleSampleXmlPath = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysis/1.0-requires-single-sample/irida_workflow.xml")
 				.toURI());
 		workflowStructurePath = Paths.get(TestAnalysis.class.getResource(
 				"workflows/TestAnalysis/1.0/irida_workflow_structure.ga").toURI());
@@ -121,18 +126,23 @@ public class IridaWorkflowLoaderServiceIT {
 	}
 
 	private IridaWorkflowDescription buildTestDescriptionSingle() throws MalformedURLException {
-		return buildTestDescription(DEFAULT_SINGLE_ID, "TestWorkflow", "1.0", "sequence_reads", null);
+		return buildTestDescription(DEFAULT_SINGLE_ID, "TestWorkflow", "1.0", "sequence_reads", null, false);
 	}
 	
 	private IridaWorkflowDescription buildTestDescriptionPaired() throws MalformedURLException {
-		return buildTestDescription(DEFAULT_PAIRED_ID, "TestWorkflow", "1.0-paired", null, "sequence_reads_paired");
+		return buildTestDescription(DEFAULT_PAIRED_ID, "TestWorkflow", "1.0-paired", null, "sequence_reads_paired", false);
 	}
 	
 	private IridaWorkflowDescription buildTestDescriptionSinglePaired() throws MalformedURLException {
-		return buildTestDescription(DEFAULT_SINGLE_PAIRED_ID, "TestWorkflow", "1.0-single-paired", "sequence_reads_single", "sequence_reads_paired");
+		return buildTestDescription(DEFAULT_SINGLE_PAIRED_ID, "TestWorkflow", "1.0-single-paired", "sequence_reads_single", "sequence_reads_paired", false);
+	}
+	
+	private IridaWorkflowDescription buildTestDescriptionRequiresSingleSample() throws MalformedURLException {
+		return buildTestDescription(DEFAULT_SINGLE_SAMPLE_ID, "TestWorkflow", "1.0-requires-single-sample", "sequence_reads_single", "sequence_reads_paired", true);
 	}
 
-	private IridaWorkflowDescription buildTestDescription(UUID id, String name, String version, String sequenceReadsSingle, String sequenceReadsPaired)
+	private IridaWorkflowDescription buildTestDescription(UUID id, String name, String version, String sequenceReadsSingle, String sequenceReadsPaired,
+			boolean requiresSingleSample)
 			throws MalformedURLException {
 		List<IridaWorkflowOutput> outputs = new LinkedList<>();
 		outputs.add(new IridaWorkflowOutput("output1", "output1.txt"));
@@ -150,7 +160,7 @@ public class IridaWorkflowLoaderServiceIT {
 		parameters.add(parameter1);
 
 		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version,
-				AnalysisType.DEFAULT, new IridaWorkflowInput(sequenceReadsSingle, sequenceReadsPaired, "reference", false),
+				AnalysisType.DEFAULT, new IridaWorkflowInput(sequenceReadsSingle, sequenceReadsPaired, "reference", requiresSingleSample),
 				outputs, tools, parameters);
 
 		return iridaWorkflow;
@@ -194,6 +204,20 @@ public class IridaWorkflowLoaderServiceIT {
 	public void testLoadWorkflowDescriptionSinglePaired() throws IOException, IridaWorkflowLoadException {
 		IridaWorkflowDescription iridaWorkflowDescription = buildTestDescriptionSinglePaired();
 		IridaWorkflowDescription iridaWorkflowFromFile = workflowLoaderService.loadWorkflowDescription(workflowSinglePairedXmlPath);
+
+		assertEquals("irida workflow description is invalid", iridaWorkflowFromFile, iridaWorkflowDescription);
+	}
+	
+	/**
+	 * Tests loading up the workflow description file that requires a single sample.
+	 * 
+	 * @throws IOException
+	 * @throws IridaWorkflowLoadException
+	 */
+	@Test
+	public void testLoadWorkflowDescriptionRequiresSingleSample() throws IOException, IridaWorkflowLoadException {
+		IridaWorkflowDescription iridaWorkflowDescription = buildTestDescriptionRequiresSingleSample();
+		IridaWorkflowDescription iridaWorkflowFromFile = workflowLoaderService.loadWorkflowDescription(workflowRequiresSingleSampleXmlPath);
 
 		assertEquals("irida workflow description is invalid", iridaWorkflowFromFile, iridaWorkflowDescription);
 	}
@@ -246,30 +270,21 @@ public class IridaWorkflowLoaderServiceIT {
 	public void testLoadAllWorkflowImplementationsSuccess() throws IOException, IridaWorkflowLoadException {
 		Set<IridaWorkflow> iridaWorkflowsFromFile = workflowLoaderService
 				.loadAllWorkflowImplementations(workflowDirectoryPath);
+		
+		Set<String> workflowNamesSet = new HashSet<>();
+		Set<String> workflowVersionsSet = new HashSet<>();
 
-		assertEquals(6, iridaWorkflowsFromFile.size());
-		Iterator<IridaWorkflow> iter = iridaWorkflowsFromFile.iterator();
-		IridaWorkflow workflowA = iter.next();
-		IridaWorkflow workflowB = iter.next();
-		IridaWorkflow workflowC = iter.next();
-		IridaWorkflow workflowD = iter.next();
-		IridaWorkflow workflowE = iter.next();
-		IridaWorkflow workflowF = iter.next();
+		assertEquals(7, iridaWorkflowsFromFile.size());
+		
+		for (IridaWorkflow workflow : iridaWorkflowsFromFile) {
+			workflowNamesSet.add(workflow.getWorkflowDescription().getName());
+			workflowVersionsSet.add(workflow.getWorkflowDescription().getVersion());
+		}
 
-		assertEquals("irida workflow name is invalid", "TestWorkflow", workflowA.getWorkflowDescription().getName());
-		assertEquals("irida workflow name is invalid", "TestWorkflow", workflowB.getWorkflowDescription().getName());
-		assertEquals("irida workflow name is invalid", "TestWorkflow", workflowC.getWorkflowDescription().getName());
-		assertEquals("irida workflow name is invalid", "TestWorkflow", workflowD.getWorkflowDescription().getName());
-		assertEquals("irida workflow name is invalid", "TestWorkflow", workflowE.getWorkflowDescription().getName());
-		assertEquals("irida workflow name is invalid", "TestWorkflow", workflowF.getWorkflowDescription().getName());
-
-		Set<String> actualVersionNumbers = Sets.newHashSet(workflowA.getWorkflowDescription().getVersion(), workflowB
-				.getWorkflowDescription().getVersion(), workflowC.getWorkflowDescription().getVersion(), workflowD
-				.getWorkflowDescription().getVersion(), workflowE.getWorkflowDescription().getVersion(), workflowF
-				.getWorkflowDescription().getVersion());
+		assertEquals("irida workflow names are invalid", Sets.newHashSet("TestWorkflow"), workflowNamesSet);
 		Set<String> validVersionNumbers = Sets.newHashSet("1.0", "2.0", "1.0-invalid", "2.0-missing-output",
-				"1.0-paired", "1.0-single-paired");
-		assertEquals("irida workflow versions are invalid", validVersionNumbers, actualVersionNumbers);
+				"1.0-paired", "1.0-single-paired", "1.0-requires-single-sample");
+		assertEquals("irida workflow versions are invalid", validVersionNumbers, workflowVersionsSet);
 	}
 
 	/**
