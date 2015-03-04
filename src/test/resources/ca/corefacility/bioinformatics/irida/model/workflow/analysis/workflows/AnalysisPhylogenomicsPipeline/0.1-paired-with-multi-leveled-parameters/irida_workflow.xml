@@ -4,8 +4,6 @@
 	<id>12734a7d-a0d7-4ede-9cc3-a76b1f8c14e7</id>
 	<name>SNVPhylTestPairedWithMultiLeveledParameters</name>
 	<version>0.1-paired-with-multi-leveled-parameters</version>
-	<author>Aaron Petkau</author>
-	<email>aaron.petkau@phac-aspc.gc.ca</email>
 	<analysisType>phylogenomics</analysisType>
 	<inputs>
 		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
