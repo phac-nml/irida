@@ -37,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
@@ -51,6 +52,7 @@ import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
+import com.github.jmchilton.blend4j.galaxy.ToolsClient.FileUploadRequest;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContentsProvenance;
@@ -62,6 +64,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.google.common.collect.ImmutableMap;
+import com.sun.jersey.api.client.ClientResponse;
 
 /**
  * Integration tests for managing workflows in Galaxy.
@@ -345,6 +348,50 @@ public class GalaxyWorkflowsIT {
 	}
 	
 	/**
+	 * Runs a test filter workflow with the given input.
+	 * @param history  The history to run the workflow in.
+	 * @param inputFile  The file to run the workflow on.
+	 * @param filterParameters  The condition to run the workflow with.
+	 * @return  A {@link WorkflowOutputs} for this workflow.
+	 * @throws ExecutionManagerException
+	 */
+	private WorkflowOutputs runSingleFileTabularWorkflow(History history, Path inputFile, String filterParameters)
+			throws ExecutionManagerException {
+		checkNotNull(inputFile, "file is null");
+		checkNotNull(filterParameters, "filterParameters is null");
+		
+		String workflowId = localGalaxy.getWorkflowFilterId();
+		String workflowInputLabel = localGalaxy.getWorkflowFilterLabel(); 
+				
+		checkArgument(Files.exists(inputFile), "inputFile " + inputFile + " does not exist");
+		checkWorkflowIdValid(workflowId);
+				
+		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(workflowId);
+		
+		// upload dataset to history
+		Dataset inputDataset = fileToHistory(inputFile, "tabular", history.getId());
+		assertNotNull(inputDataset);
+		
+		String workflowInputId = galaxyWorkflowService.
+				getWorkflowInputId(workflowDetails, workflowInputLabel);
+
+		WorkflowInputs inputs = new WorkflowInputs();
+		inputs.setDestination(new WorkflowInputs.ExistingHistory(history.getId()));
+		inputs.setWorkflowId(workflowDetails.getId());
+		inputs.setInput(workflowInputId, new WorkflowInputs.WorkflowInput(inputDataset.getId(), WorkflowInputs.InputSourceType.HDA));
+		
+		ToolParameter toolParameter = new ToolParameter("cond", filterParameters);
+		inputs.setToolParameter("Filter", toolParameter);
+		
+		// execute workflow
+		WorkflowOutputs output = workflowsClient.runWorkflow(inputs);
+
+		logger.debug("Running workflow in history " + output.getHistoryId());
+		
+		return output;
+	}
+	
+	/**
 	 * Tests executing a single workflow in Galaxy.
 	 * @throws ExecutionManagerException
 	 */
@@ -388,13 +435,11 @@ public class GalaxyWorkflowsIT {
 	 * @throws TimeoutException 
 	 */
 	@Test
-	public void testGetWorkflowStatusComplete() throws ExecutionManagerException, TimeoutException, InterruptedException {
-		
-		String workflowId = localGalaxy.getSingleInputWorkflowId();
-		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
+	public void testGetWorkflowStatusComplete() throws ExecutionManagerException, TimeoutException, InterruptedException {	
+		History history = galaxyHistory.newHistoryForWorkflow();
 		
 		WorkflowOutputs workflowOutput = 
-				runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel);
+				runSingleFileTabularWorkflow(history, dataFile1, "c1==''");
 		
 		Util.waitUntilHistoryComplete(workflowOutput.getHistoryId(), galaxyHistory, 60);
 		
@@ -402,6 +447,16 @@ public class GalaxyWorkflowsIT {
 		GalaxyWorkflowStatus workflowStatus = 
 				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
 		assertEquals("final workflow state is invalid", GalaxyWorkflowState.OK, workflowStatus.getState());
+	}
+
+	private Dataset fileToHistory(Path path, String fileType, String historyId) throws GalaxyDatasetException {		
+		FileUploadRequest uploadRequest = new FileUploadRequest(historyId, path.toFile());
+		uploadRequest.setFileType(fileType.toString());
+		
+		ClientResponse clientResponse = 
+				toolsClient.uploadRequest(uploadRequest);
+				
+		return galaxyHistory.getDatasetForFileInHistory(path.toFile().getName(), historyId);
 	}
 
 	/**

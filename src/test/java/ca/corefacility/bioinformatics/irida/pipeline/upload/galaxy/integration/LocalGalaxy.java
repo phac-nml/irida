@@ -70,6 +70,9 @@ public class LocalGalaxy {
 	private String singleInputWorkflowId;
 	private String singleInputWorkflowLabel;
 	
+	private String workflowFilterId;
+	private String workflowFilterLabel;
+	
 	private String worklowCollectionListId;
 	private String workflowCollectionListLabel;
 	
@@ -474,6 +477,22 @@ public class LocalGalaxy {
 	}
 	
 	/**
+	 * Sets up a filter workflow.
+	 */
+	private void setupWorkflowFilter() {
+		try {
+			Path workflowFile = Paths.get(LocalGalaxy.class.getResource(
+					"GalaxyWorkflowFilter.ga").toURI());
+			
+			// build workflow
+			workflowFilterId = constructTestWorkflow(workflowFile);
+			workflowFilterLabel = "Input Dataset";
+		} catch (URISyntaxException | IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	/**
 	 * Sets up a collection list workflow.
 	 */
 	private void setupWorkflowCollectionListPaired() {
@@ -607,8 +626,25 @@ public class LocalGalaxy {
 		setupWorkflowSingleInput();
 		setupWorkflowCollectionListPaired();
 		setupWorkflowCorePipelineTest();
+		setupWorkflowFilter();
 		
 		invalidWorkflowId = "invalid";
+	}
+	
+	/**
+	 * Gets an id for a test filter workflow.
+	 * @return  The id for a test filter workflow.
+	 */
+	public String getWorkflowFilterId() {
+		return workflowFilterId;
+	}
+
+	/**
+	 * Gets an input label for a test filter workflow.
+	 * @return  The input label for a test filter workflow.
+	 */
+	public String getWorkflowFilterLabel() {
+		return workflowFilterLabel;
 	}
 
 	/**
