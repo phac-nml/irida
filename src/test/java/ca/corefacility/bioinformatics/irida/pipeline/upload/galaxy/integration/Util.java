@@ -70,7 +70,7 @@ public class Util {
 				throw new TimeoutException("Timeout for history " + historyId +
 						" " + deltaSeconds + "s > " + timeout + "s");
 			}
-		} while (!GalaxyWorkflowState.OK.equals(workflowStatus.getState()));
+		} while (!(GalaxyWorkflowState.OK.equals(workflowStatus.getState()) || GalaxyWorkflowState.ERROR.equals(workflowStatus.getState())));
 	}
 	
 	/**

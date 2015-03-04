@@ -381,7 +381,7 @@ public class GalaxyWorkflowsIT {
 		inputs.setInput(workflowInputId, new WorkflowInputs.WorkflowInput(inputDataset.getId(), WorkflowInputs.InputSourceType.HDA));
 		
 		ToolParameter toolParameter = new ToolParameter("cond", filterParameters);
-		inputs.setToolParameter("Filter", toolParameter);
+		inputs.setToolParameter("Filter1", toolParameter);
 		
 		// execute workflow
 		WorkflowOutputs output = workflowsClient.runWorkflow(inputs);
@@ -448,13 +448,34 @@ public class GalaxyWorkflowsIT {
 				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
 		assertEquals("final workflow state is invalid", GalaxyWorkflowState.OK, workflowStatus.getState());
 	}
+	
+	/**
+	 * Tests executing a single workflow in Galaxy and getting an error status after completion.
+	 * @throws ExecutionManagerException
+	 * @throws InterruptedException 
+	 * @throws TimeoutException 
+	 */
+	@Test
+	public void testGetWorkflowStatusError() throws ExecutionManagerException, TimeoutException, InterruptedException {	
+		History history = galaxyHistory.newHistoryForWorkflow();
+		
+		// no column c2 for this input file, so should give an error
+		WorkflowOutputs workflowOutput = 
+				runSingleFileTabularWorkflow(history, dataFile1, "c2==''");
+		
+		Util.waitUntilHistoryComplete(workflowOutput.getHistoryId(), galaxyHistory, 60);
+		
+		// test get workflow status
+		GalaxyWorkflowStatus workflowStatus = 
+				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
+		assertEquals("final workflow state is invalid", GalaxyWorkflowState.ERROR, workflowStatus.getState());
+	}
 
 	private Dataset fileToHistory(Path path, String fileType, String historyId) throws GalaxyDatasetException {		
 		FileUploadRequest uploadRequest = new FileUploadRequest(historyId, path.toFile());
 		uploadRequest.setFileType(fileType.toString());
 		
-		ClientResponse clientResponse = 
-				toolsClient.uploadRequest(uploadRequest);
+		toolsClient.uploadRequest(uploadRequest);
 				
 		return galaxyHistory.getDatasetForFileInHistory(path.toFile().getName(), historyId);
 	}
