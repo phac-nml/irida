@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 import org.junit.Assume;
 import org.junit.Before;
@@ -378,6 +379,29 @@ public class GalaxyWorkflowsIT {
 		assertFalse(GalaxyWorkflowState.UNKNOWN.equals(workflowStatus.getState()));
 		float percentComplete = workflowStatus.getPercentComplete();
 		assertTrue(0.0f <= percentComplete && percentComplete <= 100.0f);
+	}
+	
+	/**
+	 * Tests executing a single workflow in Galaxy and getting the status after completion.
+	 * @throws ExecutionManagerException
+	 * @throws InterruptedException 
+	 * @throws TimeoutException 
+	 */
+	@Test
+	public void testGetWorkflowStatusComplete() throws ExecutionManagerException, TimeoutException, InterruptedException {
+		
+		String workflowId = localGalaxy.getSingleInputWorkflowId();
+		String workflowInputLabel = localGalaxy.getSingleInputWorkflowLabel();
+		
+		WorkflowOutputs workflowOutput = 
+				runSingleFileWorkflow(dataFile1, FILE_TYPE, workflowId, workflowInputLabel);
+		
+		Util.waitUntilHistoryComplete(workflowOutput.getHistoryId(), galaxyHistory, 60);
+		
+		// test get workflow status
+		GalaxyWorkflowStatus workflowStatus = 
+				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
+		assertEquals("final workflow state is invalid", GalaxyWorkflowState.OK, workflowStatus.getState());
 	}
 
 	/**
