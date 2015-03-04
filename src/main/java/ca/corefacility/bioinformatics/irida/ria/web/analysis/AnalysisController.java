@@ -150,6 +150,7 @@ public class AnalysisController {
 				map.put("state", messageSource.getMessage("analysis.state." + analysisState, null, locale));
 				map.put("analysisState", analysisState.toUpperCase());
 				map.put("createdDate", String.valueOf(sub.getCreatedDate().getTime()));
+                map.put("submitter", sub.getSubmitter().getLabel());
 
 				if (sub.getAnalysisState().equals(AnalysisState.COMPLETED)) {
 					Analysis analysis = sub.getAnalysis();

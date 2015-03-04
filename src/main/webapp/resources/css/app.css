@@ -7648,19 +7648,6 @@ html, body {
   height: 100%;
 }
 
-/* line 5, ../../styles/layouts/_all.scss */
-.main-container {
-  display: flex;
-  flex-direction: row;
-  height: 100%;
-}
-
-/* line 11, ../../styles/layouts/_all.scss */
-.content {
-  flex-grow: 1;
-  padding-left: 1rem;
-}
-
 @-webkit-keyframes move-up-down {
   0% {
     transform: translate3d(0, -65px, 0px);
@@ -8239,20 +8226,45 @@ input {
 
 /* line 3, ../../styles/components/_sidenav.scss */
 .sidenav {
-  width: 290px;
+  height: 100%;
   margin-right: 1rem;
   padding: .5rem;
 }
+@media screen and (max-width: 920px) {
+  /* line 3, ../../styles/components/_sidenav.scss */
+  .sidenav {
+    width: 100%;
+  }
+}
 
-/* line 9, ../../styles/components/_sidenav.scss */
+/* line 12, ../../styles/components/_sidenav.scss */
 .sidenav__inner--fixed {
   position: fixed;
   top: 60px;
   width: 290px;
   z-index: 500;
 }
+@media screen and (max-width: 1170px) {
+  /* line 12, ../../styles/components/_sidenav.scss */
+  .sidenav__inner--fixed {
+    width: 240px;
+  }
+}
+@media screen and (max-width: 970px) {
+  /* line 12, ../../styles/components/_sidenav.scss */
+  .sidenav__inner--fixed {
+    width: 180px;
+  }
+}
+@media screen and (max-width: 750px) {
+  /* line 12, ../../styles/components/_sidenav.scss */
+  .sidenav__inner--fixed {
+    position: static;
+    width: 100%;
+  }
+}
 
-/* line 16, ../../styles/components/_sidenav.scss */
+/* line 29, ../../styles/components/_sidenav.scss */
 .sidenav__label {
   color: #939393;
   font-weight: normal;
