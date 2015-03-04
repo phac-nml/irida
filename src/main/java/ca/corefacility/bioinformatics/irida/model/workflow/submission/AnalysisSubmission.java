@@ -363,12 +363,8 @@ public class AnalysisSubmission implements IridaThing {
 
 	@Override
 	public String toString() {
-		return "AnalysisSubmission [id=" + id + ", name=" + name + ", submitter=" + submitter + ", workflowId="
-				+ workflowId + ", remoteAnalysisId=" + remoteAnalysisId + ", remoteInputDataId=" + remoteInputDataId
-				+ ", remoteWorkflowId=" + remoteWorkflowId + ", inputFilesSingle=" + inputFilesSingle
-				+ ", inputFilesPaired=" + inputFilesPaired + ", createdDate=" + createdDate + ", modifiedDate="
-				+ modifiedDate + ", analysisState=" + analysisState + ", analysis=" + analysis + ", referenceFile="
-				+ referenceFile + ", inputParameters=" + inputParameters + "]";
+		return "AnalysisSubmission [id=" + id + ", name=" + name + ", submitter=" + submitter.getUsername() + ", workflowId="
+				+ workflowId + ", analysisState=" + analysisState + "]";
 	}
 
 	/**
