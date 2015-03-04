@@ -1,38 +1,20 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.ui.ExtendedModelMap;
 
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
