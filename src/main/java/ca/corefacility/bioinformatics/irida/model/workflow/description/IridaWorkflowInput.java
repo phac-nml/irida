@@ -25,6 +25,9 @@ public class IridaWorkflowInput {
 
 	@XmlElement(name = "sequenceReadsPaired")
 	private String sequenceReadsPaired;
+	
+	@XmlElement(name = "requiresSingleSample")
+	private boolean requiresSingleSample;
 
 	public IridaWorkflowInput() {
 	}
@@ -41,11 +44,16 @@ public class IridaWorkflowInput {
 	 *            reads. Null if no acceptance of paired-end reads.
 	 * @param reference
 	 *            The label to use for a reference file.
+	 * @param requiresSingleSample
+	 *            Whether or not this workflow requires a single sample, or can
+	 *            work with multiple samples.
 	 */
-	public IridaWorkflowInput(String sequenceReadsSingle, String sequenceReadsPaired, String reference) {
+	public IridaWorkflowInput(String sequenceReadsSingle, String sequenceReadsPaired, String reference,
+			boolean requiresSingleSample) {
 		this.sequenceReadsSingle = sequenceReadsSingle;
 		this.sequenceReadsPaired = sequenceReadsPaired;
 		this.reference = reference;
+		this.requiresSingleSample = requiresSingleSample;
 	}
 
 	/**
@@ -77,10 +85,19 @@ public class IridaWorkflowInput {
 	public Optional<String> getSequenceReadsPaired() {
 		return Optional.ofNullable(sequenceReadsPaired);
 	}
+	
+	/**
+	 * Whether or not this workflow requires a single sample.
+	 * 
+	 * @return True if this workflow requires a single sample, false otherwise.
+	 */
+	public boolean requiresSingleSample() {
+		return requiresSingleSample;
+	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(sequenceReadsSingle, sequenceReadsPaired, reference);
+		return Objects.hash(sequenceReadsSingle, sequenceReadsPaired, reference, requiresSingleSample);
 	}
 
 	@Override
@@ -92,7 +109,8 @@ public class IridaWorkflowInput {
 
 			return Objects.equals(sequenceReadsSingle, other.sequenceReadsSingle)
 					&& Objects.equals(sequenceReadsPaired, other.sequenceReadsPaired)
-					&& Objects.equals(reference, other.reference);
+					&& Objects.equals(reference, other.reference)
+					&& Objects.equals(requiresSingleSample, other.requiresSingleSample);
 		}
 
 		return false;

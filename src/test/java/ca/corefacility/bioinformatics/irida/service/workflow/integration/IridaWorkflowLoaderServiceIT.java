@@ -150,7 +150,7 @@ public class IridaWorkflowLoaderServiceIT {
 		parameters.add(parameter1);
 
 		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version,
-				AnalysisType.DEFAULT, new IridaWorkflowInput(sequenceReadsSingle, sequenceReadsPaired, "reference"),
+				AnalysisType.DEFAULT, new IridaWorkflowInput(sequenceReadsSingle, sequenceReadsPaired, "reference", false),
 				outputs, tools, parameters);
 
 		return iridaWorkflow;
