@@ -154,7 +154,7 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 			
 			workflowStatus = new GalaxyWorkflowStatus(workflowState, percentComplete);
 			
-			logger.debug("Details for history " + details.getId() + ": state=" + details.getState());
+			logger.trace("Details for history " + details.getId() + ": state=" + details.getState());
 			
 			return workflowStatus;
 		} catch (ClientHandlerException | UniformInterfaceException e) {
