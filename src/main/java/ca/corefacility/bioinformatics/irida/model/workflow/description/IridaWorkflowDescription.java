@@ -202,7 +202,6 @@ public class IridaWorkflowDescription {
 	@Override
 	public String toString() {
 		return "IridaWorkflowDescription [id=" + id + ", name=" + name + ", version=" + version 
-				+ ", analysisType=" + analysisType + ", inputs=" + inputs + ", outputs=" + outputs
-				+ ", parameters=" + parameters + ", repository=" + repository + "]";
+				+ ", analysisType=" + analysisType + "]";
 	}
 }
