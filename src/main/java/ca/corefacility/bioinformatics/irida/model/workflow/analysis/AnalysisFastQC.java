@@ -11,12 +11,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.envers.Audited;
-
-import com.google.common.collect.Sets;
-
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+
+import com.google.common.collect.Sets;
 
 /**
  * Specific implementation of {@link Analysis} for storing properties created by
@@ -27,7 +25,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
  */
 @Entity
 @Table(name = "analysis_fastqc")
-@Audited
 public class AnalysisFastQC extends Analysis {
 
 	@NotNull

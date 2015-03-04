@@ -149,6 +149,7 @@ public class AnalysisSubmission implements IridaThing {
 	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
 			CascadeType.REFRESH })
 	@JoinColumn(name="analysis_id")
+	@NotAudited
 	private Analysis analysis;
 	
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)

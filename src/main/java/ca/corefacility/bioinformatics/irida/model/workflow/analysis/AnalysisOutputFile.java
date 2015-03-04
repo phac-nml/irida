@@ -20,7 +20,6 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
@@ -35,7 +34,6 @@ import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
  */
 @Entity
 @Table(name = "analysis_output_file")
-@Audited
 public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long> {
 
 	@Id

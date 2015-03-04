@@ -27,13 +27,11 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.envers.Audited;
+import ca.corefacility.bioinformatics.irida.model.IridaThing;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
-import ca.corefacility.bioinformatics.irida.model.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
  * An analysis object for storing results of an analysis execution.
@@ -44,7 +42,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 @Entity
 @Table(name = "analysis")
 @Inheritance(strategy = InheritanceType.JOINED)
-@Audited
 public class Analysis implements IridaThing {
 
 	@Id
