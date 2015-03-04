@@ -85,6 +85,11 @@ public class AnalysisAdminPageIT {
 
 		// Clear
 		page.clearFilter();
+		page.filterBySubmitter("test");
+		assertEquals("Should only be one submission send by 'test' user", 1, page.getNumberOfAnalyses());
+
+		// Clear
+		page.clearFilter();
 
 		page.filterByDateLate("06 Jan 2014");
 		assertEquals("Should be 8 analyses after filtering by date earliest", 8, page.getNumberOfAnalyses());
