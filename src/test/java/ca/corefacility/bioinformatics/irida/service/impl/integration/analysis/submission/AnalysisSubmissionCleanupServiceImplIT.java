@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration.analysis.s
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.Field;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,10 +59,23 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 	
 	/**
 	 * Setup for tests.
+	 * 
+	 * @throws SecurityException
+	 * @throws NoSuchFieldException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
 	 */
 	@Before
-	public void setup() {
+	public void setup() throws NoSuchFieldException, SecurityException, IllegalArgumentException,
+			IllegalAccessException {
 		analysisSubmissionCleanupServiceLocal = new AnalysisSubmissionCleanupServiceImpl(analysisSubmissionRepository);
+
+		// Unset the 'ranSwitchInconsistentSubmissionsToError' field so we can
+		// properly test with multiple test cases.
+		Field ranSwitchInconsistentSubmissionsToError = AnalysisSubmissionCleanupServiceImpl.class
+				.getDeclaredField("ranSwitchInconsistentSubmissionsToError");
+		ranSwitchInconsistentSubmissionsToError.setAccessible(true);
+		ranSwitchInconsistentSubmissionsToError.setBoolean(null, false);
 	}
 	
 	/**

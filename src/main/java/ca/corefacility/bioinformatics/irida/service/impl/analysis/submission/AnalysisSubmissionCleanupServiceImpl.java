@@ -35,7 +35,8 @@ public class AnalysisSubmissionCleanupServiceImpl implements AnalysisSubmissionC
 	 */
 	private static final Set<AnalysisState> inconsistentStates = ImmutableSet.of(AnalysisState.PREPARING,
 			AnalysisState.SUBMITTING, AnalysisState.COMPLETING);
-	private boolean ranSwitchInconsistentSubmissionsToError = false;
+	
+	private static boolean ranSwitchInconsistentSubmissionsToError = false;
 	
 	/**
 	 * Builds a new {@link AnalysisSubmissionCleanupServiceImpl} with the given information.
