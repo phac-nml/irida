@@ -149,8 +149,8 @@ public class IridaWorkflowLoaderServiceIT {
 		IridaWorkflowParameter parameter1 = new IridaWorkflowParameter("test-parameter", "1", Lists.newArrayList(tool1, tool2));
 		parameters.add(parameter1);
 
-		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version, "Mr. Developer",
-				"developer@example.com", AnalysisType.DEFAULT, new IridaWorkflowInput(sequenceReadsSingle, sequenceReadsPaired, "reference"),
+		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version,
+				AnalysisType.DEFAULT, new IridaWorkflowInput(sequenceReadsSingle, sequenceReadsPaired, "reference"),
 				outputs, tools, parameters);
 
 		return iridaWorkflow;
