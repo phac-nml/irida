@@ -470,6 +470,40 @@ public class GalaxyWorkflowsIT {
 				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
 		assertEquals("final workflow state is invalid", GalaxyWorkflowState.ERROR, workflowStatus.getState());
 	}
+	
+	/**
+	 * Tests executing a single workflow in Galaxy and getting an error status if one of the tools is in error even while running.
+	 * @throws ExecutionManagerException
+	 * @throws InterruptedException 
+	 * @throws TimeoutException 
+	 */
+	@Test
+	public void testGetWorkflowStatusErrorWhileRunning() throws ExecutionManagerException, TimeoutException, InterruptedException {	
+		History history = galaxyHistory.newHistoryForWorkflow();
+		
+		WorkflowOutputs workflowOutput = runSingleFileTabularWorkflow(history, dataFile1, "c2==''");
+		
+		Util.waitUntilHistoryComplete(workflowOutput.getHistoryId(), galaxyHistory, 60);
+		
+		// test get workflow status, should be in error
+		GalaxyWorkflowStatus workflowStatus = 
+				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
+		assertEquals("final workflow state is invalid", GalaxyWorkflowState.ERROR, workflowStatus.getState());
+		
+		// run a few valid jobs to keep us busy
+		runSingleFileTabularWorkflow(history, dataFile2, "c1==''");
+		runSingleFileTabularWorkflow(history, dataFile3, "c1==''");
+		runSingleFileTabularWorkflow(history, dataFile4, "c1==''");
+				
+		// check status.  I'm assuming the tasks launched above are not complete.
+		workflowStatus = galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
+		assertEquals("workflow state should be in error even while running", GalaxyWorkflowState.ERROR, workflowStatus.getState());
+		
+		Util.waitUntilHistoryComplete(workflowOutput.getHistoryId(), galaxyHistory, 60);
+		
+		workflowStatus = galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
+		assertEquals("workflow state should be in error after completion", GalaxyWorkflowState.ERROR, workflowStatus.getState());
+	}
 
 	private Dataset fileToHistory(Path path, String fileType, String historyId) throws GalaxyDatasetException {		
 		FileUploadRequest uploadRequest = new FileUploadRequest(historyId, path.toFile());
