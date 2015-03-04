@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -410,6 +411,8 @@ public class ProjectsController {
 		Collection<TreeNode<String>> search = taxonomyService.search(searchTerm);
 
 		TreeNode<String> searchTermNode = new TreeNode<>(searchTerm);
+		// add a property to this node to indicate that it's the search term
+		searchTermNode.addProperty("searchTerm", true);
 
 		List<Map<String, Object>> elements = new ArrayList<>();
 
@@ -507,6 +510,12 @@ public class ProjectsController {
 	 */
 	private Map<String, Object> transformTreeNode(TreeNode<String> node) {
 		Map<String, Object> current = new HashMap<>();
+		
+		// add the node properties to the map
+		for(Entry<String,Object> property : node.getProperties().entrySet()){
+			current.put(property.getKey(), property.getValue());
+		}
+		
 		current.put("id", node.getValue());
 		current.put("text", node.getValue());
 
