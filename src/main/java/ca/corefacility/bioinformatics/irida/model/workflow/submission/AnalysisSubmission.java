@@ -363,7 +363,8 @@ public class AnalysisSubmission implements IridaThing {
 
 	@Override
 	public String toString() {
-		return "AnalysisSubmission [id=" + id + ", name=" + name + ", submitter=" + submitter.getUsername() + ", workflowId="
+		String userName = (submitter == null) ? "null" : submitter.getUsername();
+		return "AnalysisSubmission [id=" + id + ", name=" + name + ", submitter=" + userName + ", workflowId="
 				+ workflowId + ", analysisState=" + analysisState + "]";
 	}
 
