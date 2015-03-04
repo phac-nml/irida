@@ -64,7 +64,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.google.common.collect.ImmutableMap;
-import com.sun.jersey.api.client.ClientResponse;
 
 /**
  * Integration tests for managing workflows in Galaxy.
@@ -114,6 +113,9 @@ public class GalaxyWorkflowsIT {
 	 * datasets have been properly uploaded.
 	 */
 	private static final int LIBRARY_POLLING_TIME = 5;
+	
+	private static final String VALID_FILTER_PARAMETER = "c1==''";
+	private static final String INVALID_FILTER_PARAMETER = "c2==''";
 
 	/**
 	 * Sets up files and objects for workflow tests.
@@ -439,7 +441,7 @@ public class GalaxyWorkflowsIT {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		
 		WorkflowOutputs workflowOutput = 
-				runSingleFileTabularWorkflow(history, dataFile1, "c1==''");
+				runSingleFileTabularWorkflow(history, dataFile1, VALID_FILTER_PARAMETER);
 		
 		Util.waitUntilHistoryComplete(workflowOutput.getHistoryId(), galaxyHistory, 60);
 		
@@ -461,7 +463,7 @@ public class GalaxyWorkflowsIT {
 		
 		// no column c2 for this input file, so should give an error
 		WorkflowOutputs workflowOutput = 
-				runSingleFileTabularWorkflow(history, dataFile1, "c2==''");
+				runSingleFileTabularWorkflow(history, dataFile1, INVALID_FILTER_PARAMETER);
 		
 		Util.waitUntilHistoryComplete(workflowOutput.getHistoryId(), galaxyHistory, 60);
 		
@@ -481,7 +483,7 @@ public class GalaxyWorkflowsIT {
 	public void testGetWorkflowStatusErrorWhileRunning() throws ExecutionManagerException, TimeoutException, InterruptedException {	
 		History history = galaxyHistory.newHistoryForWorkflow();
 		
-		WorkflowOutputs workflowOutput = runSingleFileTabularWorkflow(history, dataFile1, "c2==''");
+		WorkflowOutputs workflowOutput = runSingleFileTabularWorkflow(history, dataFile1, INVALID_FILTER_PARAMETER);
 		
 		Util.waitUntilHistoryComplete(workflowOutput.getHistoryId(), galaxyHistory, 60);
 		
@@ -491,9 +493,9 @@ public class GalaxyWorkflowsIT {
 		assertEquals("final workflow state is invalid", GalaxyWorkflowState.ERROR, workflowStatus.getState());
 		
 		// run a few valid jobs to keep us busy
-		runSingleFileTabularWorkflow(history, dataFile2, "c1==''");
-		runSingleFileTabularWorkflow(history, dataFile3, "c1==''");
-		runSingleFileTabularWorkflow(history, dataFile4, "c1==''");
+		runSingleFileTabularWorkflow(history, dataFile2, VALID_FILTER_PARAMETER);
+		runSingleFileTabularWorkflow(history, dataFile3, VALID_FILTER_PARAMETER);
+		runSingleFileTabularWorkflow(history, dataFile4, VALID_FILTER_PARAMETER);
 				
 		// check status.  I'm assuming the tasks launched above are not complete.
 		workflowStatus = galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
