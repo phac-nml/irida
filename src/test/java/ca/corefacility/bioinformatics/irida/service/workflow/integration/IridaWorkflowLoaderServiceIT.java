@@ -68,6 +68,7 @@ public class IridaWorkflowLoaderServiceIT {
 	private final static UUID DEFAULT_PAIRED_ID = UUID.fromString("ec93b50d-c9dd-4000-98fc-4a70d46ddd36");
 	private final static UUID DEFAULT_SINGLE_PAIRED_ID = UUID.fromString("d92e9918-1e3d-4dea-b2b9-089f1256ac1b");
 	private final static UUID DEFAULT_SINGLE_SAMPLE_ID = UUID.fromString("a9692a52-5bc6-4da2-a89d-d880bb35bfe4");
+	private final static UUID DEFAULT_SINGLE_SAMPLE_UNSET_ID = UUID.fromString("6371716f-fbef-4b10-8474-f66666e341bc");
 
 	@Autowired
 	private IridaWorkflowLoaderService workflowLoaderService;
@@ -76,6 +77,7 @@ public class IridaWorkflowLoaderServiceIT {
 	private Path workflowPairedXmlPath;
 	private Path workflowSinglePairedXmlPath;
 	private Path workflowRequiresSingleSampleXmlPath;
+	private Path workflowRequiresSingleSampleUnsetXmlPath;
 	private Path workflowStructurePath;
 	private Path workflowDirectoryPath;
 	private Path workflowVersionDirectoryPath;
@@ -96,6 +98,8 @@ public class IridaWorkflowLoaderServiceIT {
 		workflowSinglePairedXmlPath = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysis/1.0-single-paired/irida_workflow.xml")
 				.toURI());
 		workflowRequiresSingleSampleXmlPath = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysis/1.0-requires-single-sample/irida_workflow.xml")
+				.toURI());
+		workflowRequiresSingleSampleUnsetXmlPath = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysis/1.0-requires-single-sample-unset/irida_workflow.xml")
 				.toURI());
 		workflowStructurePath = Paths.get(TestAnalysis.class.getResource(
 				"workflows/TestAnalysis/1.0/irida_workflow_structure.ga").toURI());
@@ -138,6 +142,10 @@ public class IridaWorkflowLoaderServiceIT {
 	
 	private IridaWorkflowDescription buildTestDescriptionRequiresSingleSample() throws MalformedURLException {
 		return buildTestDescription(DEFAULT_SINGLE_SAMPLE_ID, "TestWorkflow", "1.0-requires-single-sample", "sequence_reads_single", "sequence_reads_paired", true);
+	}
+	
+	private IridaWorkflowDescription buildTestDescriptionRequiresSingleSampleUnset() throws MalformedURLException {
+		return buildTestDescription(DEFAULT_SINGLE_SAMPLE_UNSET_ID, "TestWorkflow", "1.0-requires-single-sample-unset", "sequence_reads_single", "sequence_reads_paired", false);
 	}
 
 	private IridaWorkflowDescription buildTestDescription(UUID id, String name, String version, String sequenceReadsSingle, String sequenceReadsPaired,
@@ -220,6 +228,20 @@ public class IridaWorkflowLoaderServiceIT {
 
 		assertEquals("irida workflow description is invalid", iridaWorkflowFromFile, iridaWorkflowDescription);
 	}
+	
+	/**
+	 * Tests loading up the workflow description file that has no requires single sample parameter set.
+	 * 
+	 * @throws IOException
+	 * @throws IridaWorkflowLoadException
+	 */
+	@Test
+	public void testLoadWorkflowDescriptionRequiresSingleSampleUnset() throws IOException, IridaWorkflowLoadException {
+		IridaWorkflowDescription iridaWorkflowDescription = buildTestDescriptionRequiresSingleSampleUnset();
+		IridaWorkflowDescription iridaWorkflowFromFile = workflowLoaderService.loadWorkflowDescription(workflowRequiresSingleSampleUnsetXmlPath);
+
+		assertEquals("irida workflow description is invalid", iridaWorkflowFromFile, iridaWorkflowDescription);
+	}
 
 	/**
 	 * Tests loading up a workflow from a file.
@@ -273,7 +295,7 @@ public class IridaWorkflowLoaderServiceIT {
 		Set<String> workflowNamesSet = new HashSet<>();
 		Set<String> workflowVersionsSet = new HashSet<>();
 
-		assertEquals(7, iridaWorkflowsFromFile.size());
+		assertEquals(8, iridaWorkflowsFromFile.size());
 		
 		for (IridaWorkflow workflow : iridaWorkflowsFromFile) {
 			workflowNamesSet.add(workflow.getWorkflowDescription().getName());
@@ -282,7 +304,7 @@ public class IridaWorkflowLoaderServiceIT {
 
 		assertEquals("irida workflow names are invalid", Sets.newHashSet("TestWorkflow"), workflowNamesSet);
 		Set<String> validVersionNumbers = Sets.newHashSet("1.0", "2.0", "1.0-invalid", "2.0-missing-output",
-				"1.0-paired", "1.0-single-paired", "1.0-requires-single-sample");
+				"1.0-paired", "1.0-single-paired", "1.0-requires-single-sample", "1.0-requires-single-sample-unset");
 		assertEquals("irida workflow versions are invalid", validVersionNumbers, workflowVersionsSet);
 	}
 
