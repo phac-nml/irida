@@ -4,8 +4,6 @@
 	<id>bac44f4b-46f9-4393-b247-de11a751410e</id>
 	<name>AssemblyAnnotation</name>
 	<version>0.1-dev</version>
-	<author>Aaron Petkau</author>
-	<email>aaron.petkau@phac-aspc.gc.ca</email>
 	<analysisType>assembly-annotation</analysisType>
 	<inputs>
 		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>

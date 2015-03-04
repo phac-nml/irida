@@ -3,8 +3,6 @@
 <iridaWorkflow>
 	<name>TestWorkflow</name>
 	<version>1.0</version>
-	<author>Mr. Developer</author>
-	<email>developer@example.com</email>
 	<analysisType>default</analysisType>
 	<inputs>
 		<sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
