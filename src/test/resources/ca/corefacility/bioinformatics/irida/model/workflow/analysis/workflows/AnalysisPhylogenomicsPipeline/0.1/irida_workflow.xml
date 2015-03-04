@@ -8,6 +8,7 @@
   <inputs>
     <sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
     <reference>reference</reference>
+    <requiresSingleSample>false</requiresSingleSample>
   </inputs>
   <outputs>
     <output name="tree" fileName="phylogeneticTree.txt"/>

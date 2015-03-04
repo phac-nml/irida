@@ -7,6 +7,7 @@
   <analysisType>assembly-annotation</analysisType>
   <inputs>
     <sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+    <requiresSingleSample>true</requiresSingleSample>
   </inputs>
   <outputs>
     <output name="contigs" fileName="contigs.fasta"/>
