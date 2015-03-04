@@ -160,8 +160,8 @@ public class IridaWorkflowTestBuilder {
 		IridaWorkflowParameter parameter1 = new IridaWorkflowParameter("test-parameter", "1", Lists.newArrayList(tool1, tool2));
 		parameters.add(parameter1);
 
-		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version, "Mr. Developer",
-				"developer@example.com", analysisType, workflowInput, outputs, tools, parameters);
+		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version,
+				analysisType, workflowInput, outputs, tools, parameters);
 
 		return iridaWorkflow;
 	}
