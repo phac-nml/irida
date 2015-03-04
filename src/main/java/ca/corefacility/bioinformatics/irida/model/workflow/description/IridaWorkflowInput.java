@@ -26,8 +26,8 @@ public class IridaWorkflowInput {
 	@XmlElement(name = "sequenceReadsPaired")
 	private String sequenceReadsPaired;
 	
-	@XmlElement(name = "requiresSingleSample")
-	private boolean requiresSingleSample = false;
+	@XmlElement(name = "requiresSingleSample", defaultValue="false")
+	private boolean requiresSingleSample;
 
 	public IridaWorkflowInput() {
 	}
