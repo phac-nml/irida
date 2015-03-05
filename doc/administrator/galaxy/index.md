@@ -41,7 +41,7 @@ The main steps needed to install and integrate Galaxy with IRIDA are as follows.
 Environment Variables
 ---------------------
 
-For the purpose of this document the following environment variables will be used:
+For the purpose of installation the following one-time environment variables will be used:
 
 ```bash 
 # The system user the Galaxy software will run as.  For a clustered environment this account must be the same on all nodes of the cluster.
@@ -66,7 +66,7 @@ GALAXY_WORKFLOW_USER=workflow@localhost.localdomain
 GALAXY_VERSION=097bbb3b7d3246faaa5188a1fc2a79b01630025c
 ```
 
-Please customize these environment variables to your system and proceed through the rest of the instructions.  However, **do not** change the `$GALAXY_VERSION` variable; this revision is the version of Galaxy we have tested against.  To see more information about the particular version or other information on Galaxy releases please see [Galaxy News Page][] and [Bitbucket][].
+Please customize these environment variables to your system and proceed through the rest of the instructions.  Please replace any instance of a variable (such as `$GALAXY_USER`) with the value for your system (such as `galaxy-irida`).  However, **do not** change the `$GALAXY_VERSION` variable; this revision is the version of Galaxy we have tested against.  To see more information about the particular version or other information on Galaxy releases please see [Galaxy News Page][] and [Bitbucket][].
 
 For more information about installing Galaxy, please see [Running Galaxy in a production environment][].
 
@@ -132,7 +132,7 @@ The main Galaxy configuration file is located in `$GALAXY_ROOT_DIR/config/galaxy
    * Change `#admin_users = None` to `admin_users = $GALAXY_ADMIN_USER,$GALAXY_WORKFLOW_USER`.
 5. Disable developer settings (from [Galaxy Disable Developer Settings][]).
    * Change `debug = True` to `debug = False`.
-   * Change `use_interactive = True` to `user_interactive = False`.
+   * Change `use_interactive = True` to `use_interactive = False`.
    * Make sure `filter-with = gzip` is disabled.
 6. Set directory for installing tools in Galaxy.
    * Change `#tool_dependency_dir = None` to `tool_dependency_dir = $GALAXY_BASE_DIR/tool_dependencies`
