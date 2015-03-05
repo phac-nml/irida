@@ -787,7 +787,6 @@
       vm.sampleFormEntities = GalaxyExportService.getSampleFormEntities();
       $timeout(
         function(){
-        
 	      document.getElementById("galSubFrm").submit();
 	      vm.close();
 		}

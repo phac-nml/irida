@@ -202,27 +202,19 @@ public class ProjectSamplesController {
 		List<Map<String,Object>> samples = new ArrayList<>(joinList.size());
 		for (Join<Project, Sample> join : joinList) {
 			Map<String, Object> sampleMap = getSampleMap(join.getObject(), join.getSubject(), SampleType.LOCAL, join.getObject().getId());
-			
 
 			//Galaxy Export Functionality:
 			List<Join<Sample,SequenceFile>> sampleSeqFiles = sequenceFileService.getSequenceFilesForSample(join.getObject());			
 			List<Map<String,Object>> sequences = new ArrayList<>();
 			Map<String,Object> embedded = new HashMap<>(1);
 			for(Join<Sample,SequenceFile> sampleSeqJoin : sampleSeqFiles) {
-				String filePath = sampleSeqJoin.getObject().getFile().toString();
-				sampleMap.put("sampleFilePath_sample_"+join.getObject().getId()+"_seqFile_"+sampleSeqJoin.getId(),filePath);
-
-				
-				
 				
 				Map<String,Object> seqFileMap = new HashMap<>(1);
 				Map<String,Object> links = new HashMap<>(1);
 				Map<String,Object> self = new HashMap<>(1);
-
 				seqFileMap.put("_links", links);
 				links.put("self", self);
-				self.put("href", sampleSeqJoin.getObject().getFile().toUri().toASCIIString());
-				
+				self.put("href", sampleSeqJoin.getObject().getFile().toUri().toString());
 				sequences.add(seqFileMap);
 			}
 			embedded.put("sample_files", sequences);
@@ -230,9 +222,6 @@ public class ProjectSamplesController {
 			
 			samples.add(sampleMap);
 		}
-		
-
-		
 		result.put("samples", samples);
 		return result;
 	}

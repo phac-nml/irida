@@ -64,22 +64,16 @@
       }
       
       vm.exportToGalaxy = function() {
-    	var project;
-    	
     	CartService.all()
     		.then(function (data) {
     			if(data != null) {
+    				CartService.show=false;
     				$modal.open({
-    					templateUrl: TL.BASE_URL + 'cart/template/galaxy/project/' + data[0].id,
+    					templateUrl: TL.BASE_URL + 'cart/template/galaxy/project/' + firstProjID,
     					controller : 'GalaxyCartDialogCtrl as gCtrl'
     				});
     			}
-    			
-
     		});
-    		
-      
-
       }
     }
 
@@ -190,15 +184,16 @@
     	"use strict";
     	var vm = this
     	
+    	
     	vm.upload = function () {
     		vm.uploading = true;
     		
     		cart.all()
 			.then(function (data) {
-				var projects = data;
 				GalaxyExportService.initialize();
 				GalaxyExportService.setUserEmail(vm.email);
 	    		GalaxyExportService.setLibrary(vm.name);
+	    		var projects = data;
 				_.each(projects,function(project){
 					var samples = project.samples;
 					_.each(samples,function(sample){
@@ -212,6 +207,8 @@
 	    		vm.sampleFormEntities = GalaxyExportService.getSampleFormEntities();
 	    	    $timeout(function(){
 	    	    	document.getElementById("galSubFrm").submit();
+	    	    	
+	    	    	cart.clear();
 	    	    	vm.close();
 	    	    	}); 
 	    	});        
