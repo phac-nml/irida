@@ -150,7 +150,7 @@ Verify that Galaxy can start by running:
 
 	stdbuf -o 0 sh run.sh 2>&1 | tee run.sh.log # Builds Galaxy
 
-This will attempt to build the Galaxy database and start up Galaxy on http://127.0.0.1:8080.  Note: `run.sh` builds and starts Galaxy, `tee` keeps a copy of the output, and `stdbuf` changes to no buffering to deal with pauses in output when running `tee`.
+This will attempt to build the Galaxy database and start up Galaxy on http://127.0.0.1:8080.  Note: `run.sh` builds and starts Galaxy, `tee` keeps a copy of the output, and `stdbuf` changes to no buffering to deal with pauses in output when running `tee`.  If `stdbuf` is not installed on your system you can just run `sh run.sh 2>&1 > run.sh.log` and `tail -f run.sh.log`.
 
 When complete you should see something similar to:
 
