@@ -118,12 +118,15 @@ public class AnalysisController {
 	}
 	
 	public void tree(AnalysisSubmission submission, Model model) throws IOException{
+		//inform the view to display the tree preview
+		model.addAttribute("preview","tree");
+		
 		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) submission.getAnalysis();
 		AnalysisOutputFile file = analysis.getPhylogeneticTree();
-		logger.debug("file is " + file.getFile());
 		List<String> lines = Files.readAllLines(file.getFile());
 		model.addAttribute("analysis", analysis);
 		model.addAttribute("newick", lines.get(0));
+		
 	}
 
 	// ************************************************************************************************

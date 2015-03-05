@@ -24,9 +24,11 @@
           <div class="panel-heading">
             <b class="panel-title">_Preview_</b>
           </div>
-          <div class="panel-body" th:replace="analysis/details/tree">
-
-
+          <div class="panel-body">
+            <div th:if="${preview}">
+              <div th:replace="${'analysis/details/' + preview }"></div>
+            </div>
+            <div th:if="! ${preview}">Preview not available</div>
           </div>
         </div>
       </div>
