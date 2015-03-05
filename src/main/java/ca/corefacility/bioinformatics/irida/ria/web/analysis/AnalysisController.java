@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
@@ -55,6 +57,7 @@ public class AnalysisController {
 	private static final String REDIRECT_ERROR = "redirect:errors/not_found";
 	private static final String BASE = "analysis/";
 	public static final String PAGE_USER_ANALYSIS = BASE + "analyses";
+	public static final String PAGE_DETAILS = BASE + "details/details";
 
 	/*
 	 * SERVICES
@@ -97,6 +100,30 @@ public class AnalysisController {
 			response = REDIRECT_ERROR;
 		}
 		return response;
+	}
+	
+	@RequestMapping("/{submissionId}")
+	public String getDetailsPage(@PathVariable Long submissionId, Model model) throws IOException{
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		model.addAttribute("analysisSubmission",submission);
+		
+		if(submission.getAnalysisState().equals(AnalysisState.COMPLETED)){
+			if(submission.getAnalysis().getClass().equals(AnalysisPhylogenomicsPipeline.class)){
+				tree(submission,model);
+			}
+			
+		}
+		
+		return PAGE_DETAILS;
+	}
+	
+	public void tree(AnalysisSubmission submission, Model model) throws IOException{
+		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) submission.getAnalysis();
+		AnalysisOutputFile file = analysis.getPhylogeneticTree();
+		logger.debug("file is " + file.getFile());
+		List<String> lines = Files.readAllLines(file.getFile());
+		model.addAttribute("analysis", analysis);
+		model.addAttribute("newick", lines.get(0));
 	}
 
 	// ************************************************************************************************

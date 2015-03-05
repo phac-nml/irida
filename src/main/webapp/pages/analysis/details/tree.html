@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<body>
+  <div class="btn-toolbar btn-xs pull-right">
+    <div class="btn-group">
+      <a href="#" id="saveBtn" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" th:title="#{form.save.image}">
+        <span class="fa fa-fw fa-save"></span>
+        <span class="sr-only" th:text="#{form.save.image}">Save Image</span>
+      </a>
+      <a class="btn btn-default" th:href="@{/analysis/ajax/download/{id}(id=${analysisSubmission.getId()})}" href="#" data-toggle="tooltip" data-placement="bottom" th:title="#{form.download-files}">
+        <span class="fa fa-download fa-fw"></span>
+        <span class="sr-only" th:text="#{form.download-files}">Download Files</span>
+      </a>
+    </div>
+  </div>
+  <div id="phyloSVG"></div>
+
+  <script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}" src="/resources/bower_components/jquery/dist/jquery.min.js"></script>
+  <script th:src="@{/resources/bower_components/bootstrap/dist/js/bootstrap.min.js}" src="/resources/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script th:src="@{/resources/bower_components/raphael/raphael-min.js}" src="/resources/bower_components/raphael/raphael-min.js"></script>
+  <script th:src="@{/resources/js/jsphylosvg-min.js}" src="/resources/js/jsphylosvg-min.js"></script>
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+
+    var newick = /*[[${newick}]]*/ '';
+    var phylo = new Smits.PhyloCanvas({
+      'newick': newick
+    }, 'phyloSVG', 800, 800, 'circular');
+    $('.btn').tooltip();
+
+    (function() {
+      /*[- */
+      // There is a bug in safari that prevents this from working.
+      // TODO: find a way to get it to work.  Server option was vetoed.
+      /* -]*/
+      var name = /*[[${analysisSubmission.name + '.svg'}]]*/ 'no_name.svg',
+        svg = $("svg");
+
+      svg.attr({
+        version: '1.1',
+        xmlns: "http://www.w3.org/2000/svg"
+      });
+      var content = svg.parent().html();
+      var url = "data:image/svg+xml;utf8," + encodeURIComponent(content);
+      $('#saveBtn').attr('href', url).attr('download', name);
+    })();
+
+
+    /*]]>*/
+  </script>
+</body>
+
+</html>
