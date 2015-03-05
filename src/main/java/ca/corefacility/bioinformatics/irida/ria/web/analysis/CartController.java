@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,8 +24,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -40,20 +45,31 @@ public class CartController {
 	private Map<Project, Set<Sample>> selected;
 
 	private final SampleService sampleService;
-
+	private final UserService userService;
 	private final ProjectService projectService;
+	private final SequenceFileService sequenceFileService;
 
 	@Autowired
-	public CartController(SampleService sampleService, ProjectService projectService) {
+	public CartController(SampleService sampleService, UserService userService, ProjectService projectService, SequenceFileService sequenceFileService) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
+		this.userService = userService;
+		this.sequenceFileService = sequenceFileService;
 		selected = new HashMap<>();
+	}
+	
+	@RequestMapping("/template/galaxy/project/{projectId}")
+	public String getGalaxyModal(Model model, Principal principal,@PathVariable Long projectId) {
+		model.addAttribute("email", userService.getUserByUsername(principal.getName()).getEmail());
+		String name = projectService.read(projectId).getOrganism() + "-" + principal.getName();
+		model.addAttribute("name", name);
+		return "templates/cart-galaxy.tmpl";
 	}
 
 	/**
 	 * Get a Json representation of what's in the cart. Format: { 'projects' : [
 	 * { 'id': '5', 'label': 'project', 'samples': [ { 'id': '6', 'label': 'a
-	 * sample' } ] } ]}
+	 * sample', 'sequenceFiles': [{href: 'file:///123.fastq'}] } ] } ]}
 	 * 
 	 * @return a Map<String,Object> containing the cart information.
 	 */
@@ -251,11 +267,32 @@ public class CartController {
 	private List<Map<String, Object>> getSamplesAsList(Set<Sample> samples) {
 		List<Map<String, Object>> sampleList = new ArrayList<>();
 		for (Sample s : samples) {
-			Map<String, Object> sampleMap = ImmutableMap.of("id", s.getId(), "label", s.getLabel());
+			Map<String, Object> sampleMap = ImmutableMap.of("id", s.getId(), "label", s.getLabel()
+					,"sequenceFiles",getSequenceFileList(s));
 			sampleList.add(sampleMap);
 		}
 		return sampleList;
 	}
+	
+	/**
+	 * Get {@link SequenceFile}s as a List from a {@link Sample} for JSON serialization
+	 * 
+	 * @param samples
+	 *            The {@link Sample} set
+	 * @return A List<Map<String,Object>> containing the relevant SequenceFile
+	 *         information
+	 */
+	private List<Map<String,Object>> getSequenceFileList(Sample sample) {
+		List<Join<Sample, SequenceFile>> seqJoinList = sequenceFileService.getSequenceFilesForSample(sample);
+		List<Map<String,Object>> sequenceFiles = new ArrayList<>();
+		for(Join<Sample, SequenceFile>seqJoin : seqJoinList) {
+			SequenceFile seq = seqJoin.getObject();
+			Map<String, Object> seqMap = ImmutableMap.of("href",seq.getFile().toUri().toString());
+			sequenceFiles.add(seqMap);
+		}
+		return sequenceFiles;
+	}
+	
 
 	private synchronized Set<Sample> getSelectedSamplesForProject(Project project) {
 		if (!selected.containsKey(project)) {

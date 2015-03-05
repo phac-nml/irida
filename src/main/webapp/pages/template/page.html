@@ -85,8 +85,13 @@
 				<a id="go-to-pipeline-btn" href="#" th:href="@{/pipelines}" class="btn btn-primary pull-right"
 				   th:text="#{cart.btn.run}">Run Pipeline
 				</a>
+				<a id="go-to-pipeline-btn" href="#" ng-click="cartCtrl.exportToGalaxy()" class="btn btn-primary pull-right"
+				   th:text="Export_to_Galaxy">lad de da
+				</a>
 			</section>
 		</aside>
+
+
 	</script>
 
 	<script type="text/ng-template" id="/session-modal.html">

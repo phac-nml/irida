@@ -810,6 +810,7 @@
       
       $timeout(
         function(){
+        
 	      document.getElementById("galSubFrm").submit();
 	      vm.close();
 		}
