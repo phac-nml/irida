@@ -9,6 +9,17 @@ module.exports = function (grunt) {
       css : app_path + '/resources/css',
       js  : app_path + '/resources/js'
     },
+    autoprefixer: {
+      options: {
+        browsers: ['last 2 versions', 'ie 9']
+      },
+      multiple_files: {
+        expand: true,
+        flatten: true,
+        src: '<%= paths.css %>/*.css',
+        dest: '<%= paths.css %>/'
+      }
+    },
     compass: {
       dev: {
         options: {
@@ -49,5 +60,5 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask("default", []);
-  grunt.registerTask("dev", ['compass:dev']);
+  grunt.registerTask("dev", ['compass:dev', 'autoprefixer']);
 };

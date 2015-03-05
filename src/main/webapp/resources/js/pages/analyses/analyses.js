@@ -92,6 +92,7 @@
       vm.workflowId = "ALL";
       vm.minDate = "";
       vm.maxDate = "";
+      vm.submitter = "";
       vm.max = new Date();
     }
 
@@ -104,6 +105,10 @@
 
     vm.doSearch = function () {
       filter.label = vm.search;
+    };
+
+    vm.searchSubmitter = function() {
+      filter.submitter = vm.submitter;
     };
 
     vm.doState = function () {

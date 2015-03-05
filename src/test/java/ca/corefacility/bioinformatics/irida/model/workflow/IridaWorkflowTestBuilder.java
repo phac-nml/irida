@@ -144,13 +144,13 @@ public class IridaWorkflowTestBuilder {
 		IridaWorkflowInput workflowInput = null;
 		switch (input) {
 		case SINGLE:
-			workflowInput = new IridaWorkflowInput("sequence_reads", null, reference);
+			workflowInput = new IridaWorkflowInput("sequence_reads", null, reference, false);
 			break;
 		case PAIRED:
-			workflowInput = new IridaWorkflowInput(null, "sequence_reads_paired", reference);
+			workflowInput = new IridaWorkflowInput(null, "sequence_reads_paired", reference, false);
 			break;
 		case SINGLE_PAIRED:
-			workflowInput = new IridaWorkflowInput("sequence_reads", "sequence_reads_paired", reference);
+			workflowInput = new IridaWorkflowInput("sequence_reads", "sequence_reads_paired", reference, false);
 			break;
 		}
 		
@@ -160,8 +160,8 @@ public class IridaWorkflowTestBuilder {
 		IridaWorkflowParameter parameter1 = new IridaWorkflowParameter("test-parameter", "1", Lists.newArrayList(tool1, tool2));
 		parameters.add(parameter1);
 
-		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version, "Mr. Developer",
-				"developer@example.com", analysisType, workflowInput, outputs, tools, parameters);
+		IridaWorkflowDescription iridaWorkflow = new IridaWorkflowDescription(id, name, version,
+				analysisType, workflowInput, outputs, tools, parameters);
 
 		return iridaWorkflow;
 	}

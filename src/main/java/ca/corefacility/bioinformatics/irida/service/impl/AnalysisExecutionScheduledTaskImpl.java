@@ -128,7 +128,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
 	
 			for (AnalysisSubmission analysisSubmission : analysisSubmissions) {
-				logger.debug("Checking state of " + analysisSubmission);
+				logger.trace("Checking state of " + analysisSubmission);
 	
 				try {
 					GalaxyWorkflowStatus workflowStatus = analysisExecutionService
@@ -200,7 +200,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		case WAITING:
 		case QUEUED:
 		case RUNNING:
-			logger.debug("Workflow for analysis " + analysisSubmission + " is running: percent "
+			logger.trace("Workflow for analysis " + analysisSubmission + " is running: percent "
 					+ workflowStatus.getPercentComplete());
 			returnedSubmission = new AsyncResult<>(analysisSubmission);
 
