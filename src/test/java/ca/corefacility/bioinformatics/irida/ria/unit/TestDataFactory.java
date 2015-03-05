@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -109,7 +110,7 @@ public class TestDataFactory {
 				.put("matrix", constructAnalysisOutputFile("test_file_1.fastq"))
 				.put("table", constructAnalysisOutputFile("test_file_2.fastq")).build();
 		AnalysisPhylogenomicsPipeline analysis = new AnalysisPhylogenomicsPipeline(files, FAKE_EXECUTION_MANAGER_ID,
-				analysisOutputFiles);
+				analysisOutputFiles, "description", Collections.emptyMap());
 		return analysis;
 	}
 

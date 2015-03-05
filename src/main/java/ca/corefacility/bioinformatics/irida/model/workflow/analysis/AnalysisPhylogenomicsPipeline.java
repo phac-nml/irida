@@ -21,13 +21,15 @@ public class AnalysisPhylogenomicsPipeline extends Analysis {
 	/**
 	 * required for hibernate, marked as private so nobody else uses it.
 	 */
+	@SuppressWarnings("unused")
 	private AnalysisPhylogenomicsPipeline() {
-		super(null, null);
+		super();
 	}
 
-	public AnalysisPhylogenomicsPipeline(Set<SequenceFile> inputFiles, String executionManagerAnalysisId,
-			Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
-		super(inputFiles, executionManagerAnalysisId, analysisOutputFilesMap);
+	public AnalysisPhylogenomicsPipeline(final Set<SequenceFile> inputFiles, final String executionManagerAnalysisId,
+			final Map<String, AnalysisOutputFile> analysisOutputFilesMap, final String description,
+			final Map<String, String> additionalProperties) {
+		super(inputFiles, executionManagerAnalysisId, analysisOutputFilesMap, description, additionalProperties);
 	}
 
 	public AnalysisOutputFile getPhylogeneticTree() {

@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
+import java.lang.reflect.Field;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -14,6 +16,8 @@ import javax.validation.constraints.NotNull;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -28,47 +32,245 @@ import com.google.common.collect.Sets;
 public class AnalysisFastQC extends Analysis {
 
 	@NotNull
-	private String fileType;
+	private final String fileType;
 	@NotNull
-	private String encoding;
+	private final String encoding;
 	@NotNull
-	private Integer totalSequences;
+	private final Integer totalSequences;
 	@NotNull
-	private Integer filteredSequences;
+	private final Integer filteredSequences;
 	@NotNull
-	private Long totalBases;
+	private final Long totalBases;
 	@NotNull
-	private Integer minLength;
+	private final Integer minLength;
 	@NotNull
-	private Integer maxLength;
+	private final Integer maxLength;
 	@NotNull
-	private Short gcContent;
-	@NotNull
-	@Lob
-	private byte[] perBaseQualityScoreChart;
+	private final Short gcContent;
 	@NotNull
 	@Lob
-	private byte[] perSequenceQualityScoreChart;
+	private final byte[] perBaseQualityScoreChart;
 	@NotNull
 	@Lob
-	private byte[] duplicationLevelChart;
+	private final byte[] perSequenceQualityScoreChart;
+	@NotNull
+	@Lob
+	private final byte[] duplicationLevelChart;
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<OverrepresentedSequence> overrepresentedSequences;
+	private final Set<OverrepresentedSequence> overrepresentedSequences;
 
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private AnalysisOutputFile fastQCReport;
-
+	private final AnalysisOutputFile fastQCReport;
 
 	/**
 	 * Required for hibernate, should not be used anywhere else, so private.
 	 */
+	@SuppressWarnings("unused")
 	private AnalysisFastQC() {
-		super(null, null);
+		super();
+		this.fileType = null;
+		this.encoding = null;
+		this.totalSequences = null;
+		this.filteredSequences = null;
+		this.totalBases = null;
+		this.minLength = null;
+		this.maxLength = null;
+		this.gcContent = null;
+		this.perBaseQualityScoreChart = null;
+		this.perSequenceQualityScoreChart = null;
+		this.duplicationLevelChart = null;
+		this.overrepresentedSequences = null;
+		this.fastQCReport = null;
 	}
 
-	public AnalysisFastQC(Set<SequenceFile> inputFiles, String executionManagerAnalysisId) {
-		super(inputFiles, executionManagerAnalysisId);
+	public AnalysisFastQC(final AnalysisFastQCBuilder builder) {
+		super(builder.inputFiles, builder.executionManagerAnalysisId, builder.analysisOutputFilesMap,
+				builder.description, builder.additionalProperties);
+		this.fileType = builder.fileType;
+		this.encoding = builder.encoding;
+		this.totalSequences = builder.totalSequences;
+		this.filteredSequences = builder.filteredSequences;
+		this.totalBases = builder.totalBases;
+		this.minLength = builder.minLength;
+		this.maxLength = builder.maxLength;
+		this.gcContent = builder.gcContent;
+		this.perBaseQualityScoreChart = builder.perBaseQualityScoreChart;
+		this.perSequenceQualityScoreChart = builder.perSequenceQualityScoreChart;
+		this.duplicationLevelChart = builder.duplicationLevelChart;
+		this.overrepresentedSequences = builder.overrepresentedSequences;
+		this.fastQCReport = builder.fastQCReport;
+	}
+
+	public static AnalysisFastQCBuilder builder() {
+		return new AnalysisFastQCBuilder();
+	}
+
+	public static AnalysisFastQCBuilder sloppyBuilder() {
+		return new AnalysisFastQCBuilder(false);
+	}
+
+	/**
+	 * Builder for creating instances of {@link AnalysisFastQC}. This builder
+	 * can optionally check if all required fields are set.
+	 * 
+	 * @author Franklin Bristow franklin.bristow@phac-aspc.gc.ca
+	 *
+	 */
+	public static class AnalysisFastQCBuilder {
+		private String fileType;
+		private String encoding;
+		private Integer totalSequences;
+		private Integer filteredSequences;
+		private Long totalBases;
+		private Integer minLength;
+		private Integer maxLength;
+		private Short gcContent;
+		private byte[] perBaseQualityScoreChart;
+		private byte[] perSequenceQualityScoreChart;
+		private byte[] duplicationLevelChart;
+		private Set<OverrepresentedSequence> overrepresentedSequences;
+		private AnalysisOutputFile fastQCReport;
+		private String description;
+		private String executionManagerAnalysisId;
+		private Map<String, String> additionalProperties;
+		private Set<SequenceFile> inputFiles;
+		private Map<String, AnalysisOutputFile> analysisOutputFilesMap;
+
+		private final boolean enforceRequiredFieldCheck;
+
+		/**
+		 * Create an instance of AnalysisFastQCBuilder, and enforce checking
+		 * required fields by default.
+		 */
+		public AnalysisFastQCBuilder() {
+			this.enforceRequiredFieldCheck = true;
+		}
+
+		/**
+		 * Create an instance of AnalysisFastQCBuilder, only enforcing checking
+		 * required fields if requested.
+		 * 
+		 * @param enforceRequiredFieldCheck
+		 *            if true, the `build()` method will throw an exception if
+		 *            all required fields are not set; if false, the `build()`
+		 *            method will not. NOTE: This setting does **NOT** affect
+		 *            database-level constraints.
+		 */
+		public AnalysisFastQCBuilder(final boolean enforceRequiredFieldCheck) {
+			this.enforceRequiredFieldCheck = enforceRequiredFieldCheck;
+		}
+
+		public AnalysisFastQCBuilder analysisOutputFilesMap(final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
+			this.analysisOutputFilesMap = ImmutableMap.copyOf(analysisOutputFilesMap);
+			return this;
+		}
+
+		public AnalysisFastQCBuilder inputFiles(final Set<SequenceFile> inputFiles) {
+			this.inputFiles = ImmutableSet.copyOf(inputFiles);
+			return this;
+		}
+
+		public AnalysisFastQCBuilder additionalProperties(final Map<String, String> additionalProperties) {
+			this.additionalProperties = ImmutableMap.copyOf(additionalProperties);
+			return this;
+		}
+
+		public AnalysisFastQCBuilder executionManagerAnalysisId(final String executionManagerAnalysisId) {
+			this.executionManagerAnalysisId = executionManagerAnalysisId;
+			return this;
+		}
+
+		public AnalysisFastQCBuilder description(final String description) {
+			this.description = description;
+			return this;
+		}
+
+		public AnalysisFastQCBuilder fastQCReport(final AnalysisOutputFile fastQCReport) {
+			this.fastQCReport = fastQCReport;
+			return this;
+		}
+
+		public AnalysisFastQCBuilder overrepresentedSequences(
+				final Set<OverrepresentedSequence> overrepresentedSequences) {
+			this.overrepresentedSequences = ImmutableSet.copyOf(overrepresentedSequences);
+			return this;
+		}
+
+		public AnalysisFastQCBuilder duplicationLevelChart(final byte[] duplicationLevelChart) {
+			this.duplicationLevelChart = duplicationLevelChart;
+			return this;
+		}
+
+		public AnalysisFastQCBuilder perSequenceQualityScoreChart(final byte[] perSequenceQualityScoreChart) {
+			this.perSequenceQualityScoreChart = perSequenceQualityScoreChart;
+			return this;
+		}
+
+		public AnalysisFastQCBuilder perBaseQualityScoreChart(final byte[] perBaseQualityScoreChart) {
+			this.perBaseQualityScoreChart = perBaseQualityScoreChart;
+			return this;
+		}
+
+		public AnalysisFastQCBuilder gcContent(final Short gcContent) {
+			this.gcContent = gcContent;
+			return this;
+		}
+
+		public AnalysisFastQCBuilder maxLength(final Integer maxLength) {
+			this.maxLength = maxLength;
+			return this;
+		}
+
+		public AnalysisFastQCBuilder minLength(final Integer minLength) {
+			this.minLength = minLength;
+			return this;
+		}
+
+		public AnalysisFastQCBuilder totalBases(final Long totalBases) {
+			this.totalBases = totalBases;
+			return this;
+		}
+
+		public AnalysisFastQCBuilder filteredSequences(final Integer filteredSequences) {
+			this.filteredSequences = filteredSequences;
+			return this;
+		}
+
+		public AnalysisFastQCBuilder totalSequences(final Integer totalSequences) {
+			this.totalSequences = totalSequences;
+			return this;
+		}
+
+		public AnalysisFastQCBuilder fileType(final String fileType) {
+			this.fileType = fileType;
+			return this;
+		}
+
+		public AnalysisFastQCBuilder encoding(final String encoding) {
+			this.encoding = encoding;
+			return this;
+		}
+
+		public AnalysisFastQC build() {
+			if (enforceRequiredFieldCheck) {
+				final Field[] fields = AnalysisFastQCBuilder.class.getDeclaredFields();
+				for (final Field field : fields) {
+					try {
+						if (AnalysisFastQC.class.getDeclaredField(field.getName()).getAnnotation(NotNull.class) != null
+								&& field.get(this) == null) {
+							throw new IllegalStateException("The field AnalaysisFastQC." + field.getName()
+									+ " is not nullable.");
+						}
+					} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException
+							| SecurityException e) {
+						throw new IllegalStateException("The field AnalaysisFastQC." + field.getName()
+								+ " is not accessible.", e);
+					}
+				}
+			}
+			return new AnalysisFastQC(this);
+		}
 	}
 
 	/**
@@ -88,10 +290,6 @@ public class AnalysisFastQC extends Analysis {
 		return perBaseQualityScoreChart;
 	}
 
-	public void setPerBaseQualityScoreChart(byte[] perBaseQualityScoreChart) {
-		this.perBaseQualityScoreChart = perBaseQualityScoreChart;
-	}
-
 	/**
 	 * Line chartshowing per-sequence quality scores as a PNG-formatted image in
 	 * a byte array.
@@ -100,10 +298,6 @@ public class AnalysisFastQC extends Analysis {
 	 */
 	public byte[] getPerSequenceQualityScoreChart() {
 		return perSequenceQualityScoreChart;
-	}
-
-	public void setPerSequenceQualityScoreChart(byte[] perSequenceQualityScoreChart) {
-		this.perSequenceQualityScoreChart = perSequenceQualityScoreChart;
 	}
 
 	/**
@@ -116,87 +310,43 @@ public class AnalysisFastQC extends Analysis {
 		return duplicationLevelChart;
 	}
 
-	public void setDuplicationLevelChart(byte[] duplicationLevelChart) {
-		this.duplicationLevelChart = duplicationLevelChart;
-	}
-
 	public String getFileType() {
 		return fileType;
-	}
-
-	public void setFileType(String fileType) {
-		this.fileType = fileType;
 	}
 
 	public String getEncoding() {
 		return encoding;
 	}
 
-	public void setEncoding(String encoding) {
-		this.encoding = encoding;
-	}
-
 	public Integer getTotalSequences() {
 		return totalSequences;
-	}
-
-	public void setTotalSequences(Integer totalSequences) {
-		this.totalSequences = totalSequences;
 	}
 
 	public Integer getFilteredSequences() {
 		return filteredSequences;
 	}
 
-	public void setFilteredSequences(Integer filteredSequences) {
-		this.filteredSequences = filteredSequences;
-	}
-
 	public Integer getMinLength() {
 		return minLength;
-	}
-
-	public void setMinLength(Integer minLength) {
-		this.minLength = minLength;
 	}
 
 	public Integer getMaxLength() {
 		return maxLength;
 	}
 
-	public void setMaxLength(Integer maxLength) {
-		this.maxLength = maxLength;
-	}
-
 	public Short getGcContent() {
 		return gcContent;
-	}
-
-	public void setGcContent(Short gcContent) {
-		this.gcContent = gcContent;
 	}
 
 	public Long getTotalBases() {
 		return totalBases;
 	}
 
-	public void setTotalBases(Long totalBases) {
-		this.totalBases = totalBases;
-	}
-
 	public Set<OverrepresentedSequence> getOverrepresentedSequences() {
 		return overrepresentedSequences;
 	}
 
-	public void setOverrepresentedSequences(Set<OverrepresentedSequence> overrepresentedSequences) {
-		this.overrepresentedSequences = overrepresentedSequences;
-	}
-
 	public AnalysisOutputFile getFastQCReport() {
 		return fastQCReport;
-	}
-
-	public void setFastQCReport(AnalysisOutputFile fastQCReport) {
-		this.fastQCReport = fastQCReport;
 	}
 }

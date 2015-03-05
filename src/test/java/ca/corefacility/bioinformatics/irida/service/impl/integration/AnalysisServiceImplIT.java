@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -87,7 +88,7 @@ public class AnalysisServiceImplIT {
 		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
 				.put("tree", tree).put("matrix", matrix).put("table", table).build();
 		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(),
-				EXECUTION_MANAGER_ID, analysisOutputFiles);
+				EXECUTION_MANAGER_ID, analysisOutputFiles, "description", Collections.emptyMap());
 		tree.setCreatedByTool(toolExecutionTree);
 		table.setCreatedByTool(toolExecutionTable);
 		matrix.setCreatedByTool(toolExecutionMatrix);
@@ -136,7 +137,7 @@ public class AnalysisServiceImplIT {
 		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
 				.put("tree", tree).put("matrix", matrix).put("table", table).build();
 		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(sf),
-				EXECUTION_MANAGER_ID, analysisOutputFiles);
+				EXECUTION_MANAGER_ID, analysisOutputFiles, "description", Collections.emptyMap());
 		tree.setCreatedByTool(toolExecutionTree);
 		table.setCreatedByTool(toolExecutionTable);
 		matrix.setCreatedByTool(toolExecutionMatrix);

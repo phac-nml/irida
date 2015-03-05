@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.validation.Validator;
@@ -47,10 +48,10 @@ public class AnalysisServiceTest {
 	@Test
 	public void testCreateAnalysisWithOneOutputFile() throws IOException {
 		SequenceFile sf = new SequenceFile();
-		AnalysisFastQC analysis = new AnalysisFastQC(Sets.newHashSet(sf), "something");
 		Path outputFile = Files.createTempFile(null, null);
 		AnalysisOutputFile report = new AnalysisOutputFile(outputFile, "");
-		analysis.setFastQCReport(report);
+		AnalysisFastQC analysis = AnalysisFastQC.sloppyBuilder().inputFiles(Sets.newHashSet(sf))
+				.description("something").fastQCReport(report).build();
 
 		analysisService.create(analysis);
 
@@ -70,7 +71,7 @@ public class AnalysisServiceTest {
 		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
 				.put("tree", report1).put("matrix", report2).put("table", report3).build();
 		AnalysisPhylogenomicsPipeline analysis = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(sf), "something",
-				analysisOutputFiles);
+				analysisOutputFiles, "description", Collections.emptyMap());
 
 		analysisService.create(analysis);
 
