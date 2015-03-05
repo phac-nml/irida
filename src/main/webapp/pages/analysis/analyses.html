@@ -117,7 +117,9 @@
 						    ng-repeat="analysis in ctrl.analyses | analysesFilter | orderBy: ctrl.tableParams.orderBy()">
 							<td data:title="'\'' + #{analyses.state} + '\''" sortable="'state'">{{analysis.state}}</td>
 							<td data:title="'\'' + #{analyses.analysis-name} + '\''" sortable="'label'">
-								{{analysis.label}}
+                              <a th:href="@{/analysis/{{analysis.id}}}" href="#">
+							    {{analysis.label}}
+                              </a>
 							</td>
 							<td data:title="'\'' + #{analyses.type} + '\''" sortable="'type'">
 								{{analysis.workflowName}}
