@@ -68,8 +68,7 @@ public class ProjectsController {
 	private static final String ACTIVE_NAV_DASHBOARD = "dashboard";
 	private static final String ACTIVE_NAV_METADATA = "metadata";
 	private static final String ACTIVE_NAV_REFERENCE = "reference";
-
-	// private static final String ACTIVE_NAV_ANALYSIS = "analysis";
+    private static final String ACTIVE_NAV_ACTIVITY = "activity";
 
 	// Page Names
 	public static final String PROJECTS_DIR = "projects/";
@@ -80,7 +79,8 @@ public class ProjectsController {
 	public static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
 	public static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
-	public static final String PROJECT_REFERENCE_FILES_PAGE = PROJECTS_DIR + "project_reference";
+    public static final String PROJECT_ACTIVITY_PAGE = PROJECTS_DIR + "project_details";
+    public static final String PROJECT_REFERENCE_FILES_PAGE = PROJECTS_DIR + "project_reference";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
 	// Services
@@ -138,13 +138,13 @@ public class ProjectsController {
 	 *
 	 * @return The name of the project details page.
 	 */
-	@RequestMapping(value = "/projects/{projectId}")
+	@RequestMapping(value = "/projects/{projectId}/activity")
 	public String getProjectSpecificPage(@PathVariable Long projectId, final Model model, final Principal principal) {
 		logger.debug("Getting project information for [Project " + projectId + "]");
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_DASHBOARD);
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ACTIVITY);
 		return SPECIFIC_PROJECT_PAGE;
 	}
 
