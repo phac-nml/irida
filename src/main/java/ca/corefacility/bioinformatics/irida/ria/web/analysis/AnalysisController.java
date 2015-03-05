@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
@@ -103,17 +104,31 @@ public class AnalysisController {
 	}
 	
 	@RequestMapping("/{submissionId}")
-	public String getDetailsPage(@PathVariable Long submissionId, Model model) throws IOException{
+	public String getDetailsPage(@PathVariable Long submissionId, Model model, Locale locale) throws IOException {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-		model.addAttribute("analysisSubmission",submission);
-		
-		if(submission.getAnalysisState().equals(AnalysisState.COMPLETED)){
-			if(submission.getAnalysis().getClass().equals(AnalysisPhylogenomicsPipeline.class)){
-				tree(submission,model);
-			}
-			
+		model.addAttribute("analysisSubmission", submission);
+
+		UUID workflowUUID = submission.getWorkflowId();
+
+		String workflowName = null;
+		try {
+			String type = workflowsService.getIridaWorkflow(workflowUUID).getWorkflowDescription().getAnalysisType()
+					.toString();
+			workflowName = messageSource.getMessage("workflow." + type + ".title", null, locale);
+		} catch (IridaWorkflowNotFoundException e) {
+			logger.error("Error finding workflow, ", e);
+			throw new EntityNotFoundException("Couldn't find workflow for submission " + submission.getId(), e);
 		}
-		
+
+		model.addAttribute("workflowName", workflowName);
+
+		if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
+			if (submission.getAnalysis().getClass().equals(AnalysisPhylogenomicsPipeline.class)) {
+				tree(submission, model);
+			}
+
+		}
+
 		return PAGE_DETAILS;
 	}
 	
