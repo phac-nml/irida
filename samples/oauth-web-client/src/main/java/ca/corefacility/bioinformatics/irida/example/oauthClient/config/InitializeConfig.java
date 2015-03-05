@@ -1,9 +1,5 @@
 package ca.corefacility.bioinformatics.irida.example.oauthClient.config;
 
-import java.util.EnumSet;
-
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
@@ -11,7 +7,6 @@ import javax.servlet.ServletRegistration;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
 /**
@@ -25,7 +20,6 @@ public class InitializeConfig implements WebApplicationInitializer {
 	public void onStartup(ServletContext servletContext) throws ServletException {
 		registerSpringConfiguration(servletContext);
 		registerSpringDispatcherServlet(servletContext);
-		registerSpringSecurityFilterChain(servletContext);
 
 		servletContext.setInitParameter("spring.profiles.default", "dev");
 	}
@@ -45,12 +39,5 @@ public class InitializeConfig implements WebApplicationInitializer {
 		dispatcher.addMapping("/");
 	}
 
-	public void registerSpringSecurityFilterChain(ServletContext servletContext) {
-		FilterRegistration.Dynamic securityFilterChain = servletContext.addFilter("springSecurityFilterChain",
-				DelegatingFilterProxy.class);
-		securityFilterChain.setInitParameter("contextAttribute",
-				"org.springframework.web.servlet.FrameworkServlet.CONTEXT.oauthClient");
-		securityFilterChain.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
-	}
 
 }
