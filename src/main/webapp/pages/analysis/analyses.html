@@ -72,6 +72,11 @@
 							        th:text="${flow.title}"></option>
 						</select>
 					</div>
+					<div class="form-group" th:if="${admin}">
+						<label class="sidenav__label" th:text="#{analysis.filter.submitter}">_SUBMITTER_</label>
+						<input id="filter-submitter" type="search" class="form-control input-full" ng-model="filter.submitter"
+						       ng-model-options="{ debounce: 350 }" ng-change="filter.searchSubmitter()"/>
+					</div>
 					<div class="form-group">
 						<label class="sidenav__label" th:text="#{analysis.filter.date-earliest}">Earliest Date</label>
 
