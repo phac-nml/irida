@@ -23,15 +23,21 @@
             <span class="sidebar__value" th:text="${analysisSubmission.getId()}"></span>
           </div>
           <div class="sidebar__item">
-            <span class="fa fa-fw fa-barcode sidebar__icon"></span>
-            <span>_NAME_</span>
+            <span class="fa fa-tag sidebar__icon"></span>
+            <span th:text="#{analysis.details.name}">_NAME_</span>
             <span class="sidebar__value" th:text="${analysisSubmission.name}"></span>
           </div>
           <div class="sidebar__item">
-            <span class="fa fa-fw fa-barcode sidebar__icon"></span>
-            <span>_State_</span>
+            <span class="fa fa-cogs sidebar__icon"></span>
+            <span th:text="#{analysis.details.type}">_Workflow_</span>
+            <span class="sidebar__value" th:text="${workflowName}"></span>
+          </div>
+          <div class="sidebar__item">
+            <span class="fa fa-history sidebar__icon"></span>
+            <span th:text="#{analysis.details.state}">_State_</span>
             <span class="sidebar__value" th:text="${analysisSubmission.analysisState}"></span>
           </div>
+
 
           <div class="sidebar__item">
             <span class="fa fa-fw fa-calendar-o sidebar__icon"></span>

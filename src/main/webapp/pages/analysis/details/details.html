@@ -10,25 +10,20 @@
   <main layout:fragment="main">
     <div class="row">
       <div class="col-md-10">
-        <h1 role="heading">__TITLE__</h1>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-        <p class="lead">_Description_</p>
+        <h1 role="heading" th:text="${analysisSubmission.name}">__TITLE__</h1>
       </div>
     </div>
     <div class="row">
       <div class="col-md-12">
         <div class="panel panel-info">
           <div class="panel-heading">
-            <b class="panel-title">_Preview_</b>
+            <b class="panel-title" th:text="#{analysis.details.preview}">_Preview_</b>
           </div>
           <div class="panel-body">
             <div th:if="${preview}">
               <div th:replace="${'analysis/details/' + preview }"></div>
             </div>
-            <div th:if="! ${preview}">Preview not available</div>
+            <div th:if="! ${preview}" th:text="#{analysis.details.preview.unavailable}">_Preview not available_</div>
           </div>
         </div>
       </div>
