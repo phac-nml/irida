@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <iridaWorkflow>
-	<id>739f29ea-ae82-48b9-8914-3d2931405db6</id>
+	<id>76248aa7-8215-4a97-a3d8-f4b4edc165a6</id>
 	<name>TestWorkflow</name>
-	<version>1.0</version>
-	<analysisType>invalid</analysisType>
+	<version>1.0-not-requires-single-sample</version>
+	<analysisType>default</analysisType>
 	<inputs>
-		<sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
+		<sequenceReadsSingle>sequence_reads_single</sequenceReadsSingle>
+		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
 		<reference>reference</reference>
+		<requiresSingleSample>false</requiresSingleSample>
 		<requiresSingleSample>false</requiresSingleSample>
 	</inputs>
 	<parameters>

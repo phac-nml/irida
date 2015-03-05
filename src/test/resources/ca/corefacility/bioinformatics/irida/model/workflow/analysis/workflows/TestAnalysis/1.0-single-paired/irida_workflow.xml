@@ -9,6 +9,7 @@
 		<sequenceReadsSingle>sequence_reads_single</sequenceReadsSingle>
 		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
 		<reference>reference</reference>
+		<requiresSingleSample>false</requiresSingleSample>
 	</inputs>
 	<parameters>
 		<parameter name="test-parameter" defaultValue="1">

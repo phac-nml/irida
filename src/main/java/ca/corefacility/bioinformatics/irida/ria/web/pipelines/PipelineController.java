@@ -414,13 +414,11 @@ public class PipelineController extends BaseController {
 				}
 			}
 
-			// TODO [15-02-17] (Josh): Replace this once the description has a setting for multiple files.
-			String type = description.getAnalysisType().toString();
-			if (type.equals("phylogenomics")) {
-				analysisSubmissionService.createMultipleSampleSubmission(flow, ref, sequenceFiles, sequenceFilePairs,
+			if (description.getInputs().requiresSingleSample()) {
+				analysisSubmissionService.createSingleSampleSubmission(flow, ref, sequenceFiles, sequenceFilePairs,
 						params, namedParameters, name);
 			} else {
-				analysisSubmissionService.createSingleSampleSubmission(flow, ref, sequenceFiles, sequenceFilePairs,
+				analysisSubmissionService.createMultipleSampleSubmission(flow, ref, sequenceFiles, sequenceFilePairs,
 						params, namedParameters, name);
 			}
 
