@@ -13,6 +13,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.util.ReflectionUtils;
+
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
@@ -257,13 +259,17 @@ public class AnalysisFastQC extends Analysis {
 				final Field[] fields = AnalysisFastQCBuilder.class.getDeclaredFields();
 				for (final Field field : fields) {
 					try {
-						if (AnalysisFastQC.class.getDeclaredField(field.getName()).getAnnotation(NotNull.class) != null
-								&& field.get(this) == null) {
+						if (field.getName().equals("enforceRequiredFieldCheck")) {
+							continue;
+						}
+						
+						final Field analysisFastQCField = ReflectionUtils.findField(AnalysisFastQC.class,
+								field.getName());
+						if (analysisFastQCField.getAnnotation(NotNull.class) != null && field.get(this) == null) {
 							throw new IllegalStateException("The field AnalaysisFastQC." + field.getName()
 									+ " is not nullable.");
 						}
-					} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException
-							| SecurityException e) {
+					} catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
 						throw new IllegalStateException("The field AnalaysisFastQC." + field.getName()
 								+ " is not accessible.", e);
 					}

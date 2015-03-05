@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
@@ -53,7 +54,7 @@ public class Analysis implements IridaThing {
 	private final Date createdDate;
 
 	@Lob
-	private final String description;
+	private String description;
 
 	// identifier linking an analysis to an external workflow manager.
 	@NotNull
@@ -64,7 +65,7 @@ public class Analysis implements IridaThing {
 	@Column(name = "property_value", nullable = false)
 	@CollectionTable(name = "analysis_properties", joinColumns = @JoinColumn(name = "analysis_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
 			"analysis_id", "property_key" }, name = "UK_ANALYSIS_PROPERTY_KEY"))
-	private final Map<String, String> additionalProperties;
+	private Map<String, String> additionalProperties;
 
 	@NotNull
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
@@ -102,15 +103,44 @@ public class Analysis implements IridaThing {
 	 *            {@link AnalysisOutputFile}s.
 	 */
 	public Analysis(final Set<SequenceFile> inputFiles, final String executionManagerAnalysisId,
+			final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
+		this.id = null;
+		this.createdDate = new Date();
+		this.inputFiles = inputFiles;
+		this.executionManagerAnalysisId = executionManagerAnalysisId;
+		this.analysisOutputFilesMap = analysisOutputFilesMap == null ? Collections.emptyMap() : ImmutableMap
+				.copyOf(analysisOutputFilesMap);
+		this.description = null;
+		this.additionalProperties = Collections.emptyMap();
+	}
+
+	/**
+	 * Builds a new {@link Analysis} object with the given information.
+	 * 
+	 * @param inputFiles
+	 *            The input {@link SequenceFile}s for this analysis.
+	 * @param executionManagerAnalysisId
+	 *            The id for an execution manager used with this analysis.
+	 * @param analysisOutputFilesMap
+	 *            A {@link Map} of output file keys and
+	 *            {@link AnalysisOutputFile}s.
+	 * @param description
+	 *            a description of the analysis.
+	 * @param additionalProperties
+	 *            any other properties available
+	 */
+	public Analysis(final Set<SequenceFile> inputFiles, final String executionManagerAnalysisId,
 			final Map<String, AnalysisOutputFile> analysisOutputFilesMap, final String description,
 			final Map<String, String> additionalProperties) {
 		this.id = null;
 		this.createdDate = new Date();
 		this.inputFiles = inputFiles;
 		this.executionManagerAnalysisId = executionManagerAnalysisId;
-		this.analysisOutputFilesMap = analysisOutputFilesMap;
+		this.analysisOutputFilesMap = analysisOutputFilesMap == null ? Collections.emptyMap() : ImmutableMap
+				.copyOf(analysisOutputFilesMap);
 		this.description = description;
-		this.additionalProperties = additionalProperties;
+		this.additionalProperties = additionalProperties == null ? Collections.emptyMap() : ImmutableMap
+				.copyOf(additionalProperties);
 	}
 
 	/**
@@ -124,7 +154,10 @@ public class Analysis implements IridaThing {
 	 */
 	public Analysis(final Set<SequenceFile> inputFiles, final String executionManagerAnalysisId,
 			final String description, final Map<String, String> additionalProperties) {
-		this(inputFiles, executionManagerAnalysisId, Maps.newHashMap(), description, additionalProperties);
+		this(inputFiles, executionManagerAnalysisId, Maps.newHashMap());
+		this.description = description;
+		this.additionalProperties = additionalProperties == null ? Collections.emptyMap() : ImmutableMap
+				.copyOf(additionalProperties);
 	}
 
 	public int hashCode() {

@@ -53,12 +53,14 @@ public class FastqcFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessor.class);
 	
 	private static final String EXECUTION_MANAGER_ANALYSIS_ID = "internal-fastqc";
+	private static final String FASTQC_DESCRIPTION = "fastqc";
 
 	private final AnalysisRepository analysisRepository;
 	private final SequenceFileRepository sequenceFileRepository;
 	private final MessageSource messageSource;
 
-	public FastqcFileProcessor(AnalysisRepository analysisRepository, MessageSource messageSource, SequenceFileRepository sequenceFileRepository) {
+	public FastqcFileProcessor(AnalysisRepository analysisRepository, MessageSource messageSource,
+			SequenceFileRepository sequenceFileRepository) {
 		this.analysisRepository = analysisRepository;
 		this.messageSource = messageSource;
 		this.sequenceFileRepository = sequenceFileRepository;
@@ -69,10 +71,11 @@ public class FastqcFileProcessor implements FileProcessor {
 	 */
 	@Override
 	public void process(final Long sequenceFileId) throws FileProcessorException {
-		final SequenceFile sequenceFile = sequenceFileRepository.findOne(sequenceFileId);		
+		final SequenceFile sequenceFile = sequenceFileRepository.findOne(sequenceFileId);
 		Path fileToProcess = sequenceFile.getFile();
 		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC.builder()
-				.inputFiles(ImmutableSet.of(sequenceFile)).executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID);
+				.inputFiles(ImmutableSet.of(sequenceFile)).executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID)
+				.description(FASTQC_DESCRIPTION);
 		try {
 			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory
 					.getSequenceFile(fileToProcess.toFile());
