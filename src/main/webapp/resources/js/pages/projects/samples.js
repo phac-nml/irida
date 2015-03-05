@@ -767,47 +767,24 @@
     });
   }
 
-  function GalaxyCtrl($timeout, $modalInstance, StorageService) {
+  function GalaxyCtrl($timeout, $modalInstance, GalaxyExportService) {
     "use strict";
     var vm = this;
 
     vm.upload = function () {   
-
-        vm.sampleFormEntities= [];
-
-        vm.addSampleFormEntity = function(inputName, inputValue) {
-          vm.sampleFormEntities.push({
-            name : inputName,
-            value : inputValue
-          });
-        };
     	
+    	GalaxyExportService.initialize();
+		GalaxyExportService.setUserEmail(vm.email);
+		GalaxyExportService.setLibrary(vm.name);
+		
+    	var samples = StorageService.getSamples()
+    	_.each(samples, function(sample) {
+    		_.each(sample.embedded.sample_files, function(sequenceFile) {
+    			GalaxyExportService.addSampleFile(sample.sample.label, sequenceFile._links.self.href)
+    		})
+    	})
     	
-      vm.uploading = true;
-      vm.samples = StorageService.getSamples();
-      
-      //make a JSON string
-       vm.sendLibrary = {"name" : vm.name};
-       vm.sendSamples = [];
-       vm.sendJSONParam = {
-         "_embedded" : {
-    	   "library" : vm.sendLibrary,
-    	   "samples" : vm.sendSamples
-    	  }
-       };
-       
-      //push samples to the JSON string
-      for(var sampleIndex in vm.samples)
-        {
-    	  if(vm.samples[sampleIndex].embedded.sample_files.length > 0)
-    	  vm.sendSamples.push({
-    		  "name" : vm.samples[sampleIndex].sample.sampleName,
-    		  "_links": {"self" : {"href" : "http://sample/path/will/go/here"}}, 
-    	      "_embedded" : vm.samples[sampleIndex].embedded
-    	  });
-        }
-      vm.addSampleFormEntity("json_params",JSON.stringify(vm.sendJSONParam));
-      
+      vm.sampleFormEntities = GalaxyExportService.getSampleFormEntities();
       $timeout(
         function(){
         
@@ -872,7 +849,7 @@
     .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
     .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
     .controller('FilterCtrl', ['$scope', 'FilterFactory', FilterCtrl])
-    .controller('GalaxyCtrl', ['$timeout', '$modalInstance', 'StorageService', GalaxyCtrl])
+    .controller('GalaxyCtrl', ['$timeout', '$modalInstance', 'GalaxyExportService', GalaxyCtrl])
     .controller('CartController', ['CartService', 'StorageService', CartController])
     .controller('SampleDisplayCtrl', ['$rootScope', 'SamplesService', SampleDisplayCtrl])
   ;
