@@ -148,9 +148,16 @@ The main Galaxy configuration file is located in `$GALAXY_ROOT_DIR/config/galaxy
 
 Verify that Galaxy can start by running:
 
-	sh run.sh 2>&1 | tee run.sh.log # Builds Galaxy
+	stdbuf -o 0 sh run.sh 2>&1 | tee run.sh.log # Builds Galaxy
 
-This will attempt to build the Galaxy database and start up Galaxy on http://127.0.0.1:8080.  Once complete, Galaxy can be killed by pressing `CTRL+C`.
+This will attempt to build the Galaxy database and start up Galaxy on http://127.0.0.1:8080.  Note: `run.sh` builds and starts Galaxy, `tee` keeps a copy of the output, and `stdbuf` changes to no buffering to deal with pauses in output when running `tee`.
+
+When complete you should see something similar to:
+
+	Starting server in PID 8967.
+	serving on http://127.0.0.1:8080
+
+Once complete, Galaxy can be killed by pressing `CTRL+C`.
 
 **Do not proceed if Galaxy does not start.**
 
