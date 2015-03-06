@@ -103,6 +103,19 @@ public class AnalysisController {
 		return response;
 	}
 	
+	/**
+	 * View details about an individual analysis submission
+	 * 
+	 * @param submissionId
+	 *            the ID of the submission
+	 * @param model
+	 *            Model for the view
+	 * @param locale
+	 *            User's locale
+	 * @return name of the details page view
+	 * @throws IOException
+	 *             If analysis files are attempted to be read, but fail.
+	 */
 	@RequestMapping("/{submissionId}")
 	public String getDetailsPage(@PathVariable Long submissionId, Model model, Locale locale) throws IOException {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
@@ -122,26 +135,49 @@ public class AnalysisController {
 
 		model.addAttribute("workflowName", workflowName);
 
+		/*
+		 * If the analysis is completed, add preview information
+		 */
 		if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
 			if (submission.getAnalysis().getClass().equals(AnalysisPhylogenomicsPipeline.class)) {
-				tree(submission, model);
+				model = tree(submission, model);
 			}
 
 		}
 
 		return PAGE_DETAILS;
 	}
+
 	
-	public void tree(AnalysisSubmission submission, Model model) throws IOException{
-		//inform the view to display the tree preview
-		model.addAttribute("preview","tree");
-		
+	// ************************************************************************************************
+	// Analysis view setup
+	// ************************************************************************************************
+
+	/**
+	 * Construct the model parameters for an
+	 * {@link AnalysisPhylogenomicsPipeline}
+	 * 
+	 * @param submission
+	 *            The analysis submission
+	 * @param model
+	 *            The model to add parameters
+	 * @throws IOException
+	 *             If the tree file couldn't be read
+	 */
+	public Model tree(AnalysisSubmission submission, Model model) throws IOException {
+		assert (submission.getAnalysis().getClass().equals(AnalysisPhylogenomicsPipeline.class));
+
+		// inform the view to display the tree preview
+		model.addAttribute("preview", "tree");
+
 		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) submission.getAnalysis();
 		AnalysisOutputFile file = analysis.getPhylogeneticTree();
 		List<String> lines = Files.readAllLines(file.getFile());
 		model.addAttribute("analysis", analysis);
 		model.addAttribute("newick", lines.get(0));
-		
+
+		return model;
+
 	}
 
 	// ************************************************************************************************
