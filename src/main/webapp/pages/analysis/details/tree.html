@@ -1,50 +1,54 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="analysis/details/details">
 
 <body>
-  <div class="btn-toolbar btn-xs pull-right">
-    <div class="btn-group">
-      <a href="#" id="saveBtn" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" th:title="#{form.save.image}">
-        <span class="fa fa-fw fa-save"></span>
-        <span class="sr-only" th:text="#{form.save.image}">Save Image</span>
-      </a>
+  <th:block layout:fragment="previewContent">
+    <div class="btn-toolbar btn-xs pull-right">
+      <div class="btn-group">
+        <a href="#" id="saveBtn" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" th:title="#{form.save.image}">
+          <span class="fa fa-fw fa-save"></span>
+          <span class="sr-only" th:text="#{form.save.image}">Save Image</span>
+        </a>
+      </div>
     </div>
-  </div>
-  <div id="phyloSVG" class="image-preview"></div>
+    <div id="phyloSVG" class="image-preview"></div>
+  </th:block>
 
-  <script th:src="@{/resources/bower_components/jquery/dist/jquery.min.js}" src="/resources/bower_components/jquery/dist/jquery.min.js"></script>
-  <script th:src="@{/resources/bower_components/bootstrap/dist/js/bootstrap.min.js}" src="/resources/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-  <script th:src="@{/resources/bower_components/raphael/raphael-min.js}" src="/resources/bower_components/raphael/raphael-min.js"></script>
-  <script th:src="@{/resources/js/jsphylosvg-min.js}" src="/resources/js/jsphylosvg-min.js"></script>
-  <script th:inline="javascript">
-    /*<![CDATA[*/
+  <th:block layout:fragment="previewScripts">
+    <script th:src="@{/resources/bower_components/raphael/raphael-min.js}" src="/resources/bower_components/raphael/raphael-min.js"></script>
+    <script th:src="@{/resources/js/jsphylosvg-min.js}" src="/resources/js/jsphylosvg-min.js"></script>
+    <script th:src="@{/resources/bower_components/bootstrap/dist/js/bootstrap.min.js}" src="/resources/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
-    var newick = /*[[${newick}]]*/ '';
-    var phylo = new Smits.PhyloCanvas({
-      'newick': newick
-    }, 'phyloSVG', 600, 600, 'circular');
-    $('.btn').tooltip();
+    <script th:inline="javascript">
+      /*<![CDATA[*/
 
-    (function() {
-      /*[- */
-      // There is a bug in safari that prevents this from working.
-      // TODO: find a way to get it to work.  Server option was vetoed.
-      /* -]*/
-      var name = /*[[${analysisSubmission.name + '.svg'}]]*/ 'no_name.svg',
-        svg = $("svg");
+      var newick = /*[[${newick}]]*/ '';
+      var phylo = new Smits.PhyloCanvas({
+        'newick': newick
+      }, 'phyloSVG', 600, 600, 'circular');
+      $('.btn').tooltip();
 
-      svg.attr({
-        version: '1.1',
-        xmlns: "http://www.w3.org/2000/svg"
-      });
-      var content = svg.parent().html();
-      var url = "data:image/svg+xml;utf8," + encodeURIComponent(content);
-      $('#saveBtn').attr('href', url).attr('download', name);
-    })();
+      (function() {
+        /*[- */
+        // There is a bug in safari that prevents this from working.
+        // TODO: find a way to get it to work.  Server option was vetoed.
+        /* -]*/
+        var name = /*[[${analysisSubmission.name + '.svg'}]]*/ 'no_name.svg',
+          svg = $("svg");
+
+        svg.attr({
+          version: '1.1',
+          xmlns: "http://www.w3.org/2000/svg"
+        });
+        var content = svg.parent().html();
+        var url = "data:image/svg+xml;utf8," + encodeURIComponent(content);
+        $('#saveBtn').attr('href', url).attr('download', name);
+      })();
 
 
-    /*]]>*/
-  </script>
+      /*]]>*/
+    </script>
+  </th:block>
 </body>
 
 </html>

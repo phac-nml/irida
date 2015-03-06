@@ -33,21 +33,21 @@
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
-                <i class="fa fa-cogs"></i>
+              <i class="fa fa-cogs"></i>
             </div>
             <span th:text="#{analysis.details.type}">_Workflow_</span>
             <span class="sidebar__value" th:text="${workflowName}"></span>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
-                <i class="fa fa-history"></i>
+              <i class="fa fa-history"></i>
             </div>
             <span th:text="#{analysis.details.state}">_State_</span>
             <span class="sidebar__value" th:text="#{'analysis.state.' + ${analysisSubmission.analysisState}}"></span>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
-                <i class="fa fa-fw fa-calendar-o"></i>
+              <i class="fa fa-fw fa-calendar-o"></i>
             </div>
             <em th:text="#{iridaThing.timestamp}">Created</em>
             <span class="sidebar__value" th:text="${#calendars.format(analysisSubmission.getCreatedDate(), 'dd MMM yyyy')}"></span>
@@ -60,6 +60,7 @@
     <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}" src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
 
     <th:block layout:fragment="pageScripts"></th:block>
+    <th:block layout:fragment="previewScripts"></th:block>
   </th:block>
 </body>
 

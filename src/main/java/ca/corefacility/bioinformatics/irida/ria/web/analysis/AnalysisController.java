@@ -58,7 +58,10 @@ public class AnalysisController {
 	private static final String REDIRECT_ERROR = "redirect:errors/not_found";
 	private static final String BASE = "analysis/";
 	public static final String PAGE_USER_ANALYSIS = BASE + "analyses";
-	public static final String PAGE_DETAILS = BASE + "details/details";
+	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
+
+	public static final String PREVIEW_UNAVAILABLE = "unavailable";
+	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap.of(AnalysisType.PHYLOGENOMICS, "tree");
 
 	/*
 	 * SERVICES
@@ -133,6 +136,8 @@ public class AnalysisController {
 			throw new EntityNotFoundException("Couldn't find workflow for submission " + submission.getId(), e);
 		}
 
+		String viewName = PAGE_DETAILS_DIRECTORY + PREVIEW_UNAVAILABLE;
+		
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
 		logger.trace("Workflow type is " + analysisType);
 		String workflowName = messageSource.getMessage("workflow." + analysisType.toString() + ".title", null, locale);
@@ -142,6 +147,8 @@ public class AnalysisController {
 		 * If the analysis is completed, add preview information
 		 */
 		if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
+			viewName = getViewForAnalysisType(analysisType);
+			
 			if (analysisType.equals(AnalysisType.PHYLOGENOMICS)) {
 				model = tree(submission, model);
 			}
@@ -150,7 +157,7 @@ public class AnalysisController {
 
 		}
 
-		return PAGE_DETAILS;
+		return viewName;
 	}
 
 	
@@ -319,5 +326,16 @@ public class AnalysisController {
 			));
 		}
 		return flows;
+	}
+	
+	private String getViewForAnalysisType(AnalysisType type) {
+		String viewName = null;
+		if (PREVIEWS.containsKey(type)) {
+			viewName = PAGE_DETAILS_DIRECTORY + PREVIEWS.get(type);
+		} else {
+			viewName = PAGE_DETAILS_DIRECTORY + PREVIEW_UNAVAILABLE;
+		}
+
+		return viewName;
 	}
 }
