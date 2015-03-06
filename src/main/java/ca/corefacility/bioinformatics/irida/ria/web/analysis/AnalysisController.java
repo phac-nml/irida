@@ -164,7 +164,7 @@ public class AnalysisController {
 	 * @throws IOException
 	 *             If the tree file couldn't be read
 	 */
-	public Model tree(AnalysisSubmission submission, Model model) throws IOException {
+	private Model tree(AnalysisSubmission submission, Model model) throws IOException {
 		assert (submission.getAnalysis().getClass().equals(AnalysisPhylogenomicsPipeline.class));
 
 		// inform the view to display the tree preview
