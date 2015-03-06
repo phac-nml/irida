@@ -26,7 +26,7 @@ public class ProjectDetailsPage extends AbstractPage {
 	}
 
 	public void goTo(Long projectId) {
-		get(driver, "projects/" + projectId);
+		get(driver, "projects/" + projectId + "/activity");
 	}
 
 	public String getPageTitle() {
