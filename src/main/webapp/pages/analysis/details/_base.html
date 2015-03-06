@@ -21,36 +21,36 @@
             <div class="sidebar__icon">
               <i class="fa fa-fw fa-barcode"></i>
             </div>
-            <span th:text="#{iridaThing.id}">_ID_</span>
-            <span class="sidebar__value" th:text="${analysisSubmission.getId()}"></span>
+            <div th:text="#{iridaThing.id}">_ID_</div>
+            <div class="sidebar__value" th:text="${analysisSubmission.getId()}"></div>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
               <i class="fa fa-tag"></i>
             </div>
-            <span th:text="#{analysis.details.name}">_NAME_</span>
-            <span class="sidebar__value" th:text="${analysisSubmission.name}"></span>
+            <div th:text="#{analysis.details.name}">_NAME_</div>
+            <div class="sidebar__value" th:text="${analysisSubmission.name}"></div>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
               <i class="fa fa-cogs"></i>
             </div>
-            <span th:text="#{analysis.details.type}">_Workflow_</span>
-            <span class="sidebar__value" th:text="${workflowName}"></span>
+            <div th:text="#{analysis.details.type}">_Workflow_</div>
+            <div class="sidebar__value" th:text="${workflowName}"></div>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
               <i class="fa fa-history"></i>
             </div>
-            <span th:text="#{analysis.details.state}">_State_</span>
-            <span class="sidebar__value" th:text="#{'analysis.state.' + ${analysisSubmission.analysisState}}"></span>
+            <div th:text="#{analysis.details.state}">_State_</div>
+            <div class="sidebar__value" th:text="#{'analysis.state.' + ${analysisSubmission.analysisState}}"></div>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
               <i class="fa fa-fw fa-calendar-o"></i>
             </div>
-            <em th:text="#{iridaThing.timestamp}">Created</em>
-            <span class="sidebar__value" th:text="${#calendars.format(analysisSubmission.getCreatedDate(), 'dd MMM yyyy')}"></span>
+            <div th:text="#{iridaThing.timestamp}">Created</div>
+            <div class="sidebar__value" th:text="${#calendars.format(analysisSubmission.getCreatedDate(), 'dd MMM yyyy')}"></div>
           </div>
         </div>
       </div>
