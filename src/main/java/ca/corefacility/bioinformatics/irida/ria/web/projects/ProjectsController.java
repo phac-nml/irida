@@ -65,7 +65,6 @@ import com.google.common.base.Strings;
 public class ProjectsController {
 	// Sub Navigation Strings
 	private static final String ACTIVE_NAV = "activeNav";
-	private static final String ACTIVE_NAV_DASHBOARD = "dashboard";
 	private static final String ACTIVE_NAV_METADATA = "metadata";
 	private static final String ACTIVE_NAV_REFERENCE = "reference";
 	private static final String ACTIVE_NAV_ACTIVITY = "activity";
