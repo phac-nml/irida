@@ -124,9 +124,10 @@ public class AnalysisController {
 		UUID workflowUUID = submission.getWorkflowId();
 
 		String workflowName = null;
+		IridaWorkflow iridaWorkflow;
 		try {
-			String type = workflowsService.getIridaWorkflow(workflowUUID).getWorkflowDescription().getAnalysisType()
-					.toString();
+			iridaWorkflow = workflowsService.getIridaWorkflow(workflowUUID);
+			String type = iridaWorkflow.getWorkflowDescription().getAnalysisType().toString();
 			workflowName = messageSource.getMessage("workflow." + type + ".title", null, locale);
 		} catch (IridaWorkflowNotFoundException e) {
 			logger.error("Error finding workflow, ", e);
@@ -139,7 +140,7 @@ public class AnalysisController {
 		 * If the analysis is completed, add preview information
 		 */
 		if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
-			if (submission.getAnalysis().getClass().equals(AnalysisPhylogenomicsPipeline.class)) {
+			if (iridaWorkflow.getWorkflowDescription().getAnalysisType().equals(AnalysisType.PHYLOGENOMICS)) {
 				model = tree(submission, model);
 			}
 
