@@ -68,7 +68,7 @@ public class ProjectsController {
 	private static final String ACTIVE_NAV_DASHBOARD = "dashboard";
 	private static final String ACTIVE_NAV_METADATA = "metadata";
 	private static final String ACTIVE_NAV_REFERENCE = "reference";
-    private static final String ACTIVE_NAV_ACTIVITY = "activity";
+	private static final String ACTIVE_NAV_ACTIVITY = "activity";
 
 	// Page Names
 	public static final String PROJECTS_DIR = "projects/";
@@ -79,8 +79,8 @@ public class ProjectsController {
 	public static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
 	public static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
-    public static final String PROJECT_ACTIVITY_PAGE = PROJECTS_DIR + "project_details";
-    public static final String PROJECT_REFERENCE_FILES_PAGE = PROJECTS_DIR + "project_reference";
+	public static final String PROJECT_ACTIVITY_PAGE = PROJECTS_DIR + "project_details";
+	public static final String PROJECT_REFERENCE_FILES_PAGE = PROJECTS_DIR + "project_reference";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
 	// Services
@@ -397,7 +397,7 @@ public class ProjectsController {
 
 	/**
 	 * Search for taxonomy terms. This method will return a map of found taxonomy terms and their child nodes.
-	 * <p/>
+	 * <p>
 	 * Note: If the search term was not included in the results, it will be added as an option
 	 *
 	 * @param searchTerm
@@ -500,7 +500,7 @@ public class ProjectsController {
 
 	/**
 	 * }
-	 * <p/>
+	 * <p>
 	 * /** Recursively transform a {@link TreeNode} into a json parsable map object
 	 *
 	 * @param node
@@ -510,12 +510,12 @@ public class ProjectsController {
 	 */
 	private Map<String, Object> transformTreeNode(TreeNode<String> node) {
 		Map<String, Object> current = new HashMap<>();
-		
+
 		// add the node properties to the map
-		for(Entry<String,Object> property : node.getProperties().entrySet()){
+		for (Entry<String, Object> property : node.getProperties().entrySet()) {
 			current.put(property.getKey(), property.getValue());
 		}
-		
+
 		current.put("id", node.getValue());
 		current.put("text", node.getValue());
 
