@@ -18,29 +18,37 @@
         </div>
         <div class="sidebar__body">
           <div class="sidebar__item">
-            <span class="fa fa-fw fa-barcode sidebar__icon"></span>
+            <div class="sidebar__icon">
+              <i class="fa fa-fw fa-barcode"></i>
+            </div>
             <span th:text="#{iridaThing.id}">_ID_</span>
             <span class="sidebar__value" th:text="${analysisSubmission.getId()}"></span>
           </div>
           <div class="sidebar__item">
-            <span class="fa fa-tag sidebar__icon"></span>
+            <div class="sidebar__icon">
+              <i class="fa fa-tag"></i>
+            </div>
             <span th:text="#{analysis.details.name}">_NAME_</span>
             <span class="sidebar__value" th:text="${analysisSubmission.name}"></span>
           </div>
           <div class="sidebar__item">
-            <span class="fa fa-cogs sidebar__icon"></span>
+            <div class="sidebar__icon">
+                <i class="fa fa-cogs"></i>
+            </div>
             <span th:text="#{analysis.details.type}">_Workflow_</span>
             <span class="sidebar__value" th:text="${workflowName}"></span>
           </div>
           <div class="sidebar__item">
-            <span class="fa fa-history sidebar__icon"></span>
+            <div class="sidebar__icon">
+                <i class="fa fa-history"></i>
+            </div>
             <span th:text="#{analysis.details.state}">_State_</span>
             <span class="sidebar__value" th:text="${analysisSubmission.analysisState}"></span>
           </div>
-
-
           <div class="sidebar__item">
-            <span class="fa fa-fw fa-calendar-o sidebar__icon"></span>
+            <div class="sidebar__icon">
+                <i class="fa fa-fw fa-calendar-o"></i>    
+            </div>
             <em th:text="#{iridaThing.timestamp}">Created</em>
             <span class="sidebar__value" th:text="${#calendars.format(analysisSubmission.getCreatedDate(), 'dd MMM yyyy')}"></span>
           </div>
