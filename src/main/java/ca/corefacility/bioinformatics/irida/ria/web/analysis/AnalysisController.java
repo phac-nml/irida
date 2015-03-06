@@ -118,33 +118,35 @@ public class AnalysisController {
 	 */
 	@RequestMapping("/{submissionId}")
 	public String getDetailsPage(@PathVariable Long submissionId, Model model, Locale locale) throws IOException {
+		logger.trace("reading analysis submssion " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		model.addAttribute("analysisSubmission", submission);
 
 		UUID workflowUUID = submission.getWorkflowId();
+		logger.trace("Workflow ID is " + workflowUUID);
 
-		String workflowName = null;
 		IridaWorkflow iridaWorkflow;
 		try {
 			iridaWorkflow = workflowsService.getIridaWorkflow(workflowUUID);
-			String type = iridaWorkflow.getWorkflowDescription().getAnalysisType().toString();
-			workflowName = messageSource.getMessage("workflow." + type + ".title", null, locale);
 		} catch (IridaWorkflowNotFoundException e) {
 			logger.error("Error finding workflow, ", e);
 			throw new EntityNotFoundException("Couldn't find workflow for submission " + submission.getId(), e);
 		}
 
+		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
+		logger.trace("Workflow type is " + analysisType);
+		String workflowName = messageSource.getMessage("workflow." + analysisType.toString() + ".title", null, locale);
 		model.addAttribute("workflowName", workflowName);
 
 		/*
 		 * If the analysis is completed, add preview information
 		 */
 		if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
-			if (iridaWorkflow.getWorkflowDescription().getAnalysisType().equals(AnalysisType.PHYLOGENOMICS)) {
+			if (analysisType.equals(AnalysisType.PHYLOGENOMICS)) {
 				model = tree(submission, model);
 			}
-			
-			model.addAttribute("outputFiles",submission.getAnalysis().getAnalysisOutputFiles());
+
+			model.addAttribute("outputFiles", submission.getAnalysis().getAnalysisOutputFiles());
 
 		}
 
