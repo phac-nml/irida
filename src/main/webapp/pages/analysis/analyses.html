@@ -35,8 +35,8 @@
 </head>
 <body>
 <div layout:fragment="page">
-	<div class="main-container">
-		<aside class="sidenav" ng-controller="filterController as filter">
+	<div class="row">
+		<aside class="col-sm-3" ng-controller="filterController as filter">
 			<div class="sidenav__inner--fixed sidebar">
 				<div class="sidebar__heading">
 					<h2>
@@ -72,6 +72,11 @@
 							        th:text="${flow.title}"></option>
 						</select>
 					</div>
+					<div class="form-group" th:if="${admin}">
+						<label class="sidenav__label" th:text="#{analysis.filter.submitter}">_SUBMITTER_</label>
+						<input id="filter-submitter" type="search" class="form-control input-full" ng-model="filter.submitter"
+						       ng-model-options="{ debounce: 350 }" ng-change="filter.searchSubmitter()"/>
+					</div>
 					<div class="form-group">
 						<label class="sidenav__label" th:text="#{analysis.filter.date-earliest}">Earliest Date</label>
 
@@ -101,7 +106,7 @@
 				</div>
 			</div>
 		</aside>
-		<div class="content">
+		<div class="col-sm-9">
 			<h1 style="margin-top: 0;" th:text="#{${admin} ? 'analyses.admin.page-title' : 'analyses.user.page-title'}">
 				_ANALYSIS_PAGE_</h1>
 
@@ -124,6 +129,9 @@
 							<td data:title="'\'' + #{analyses.type} + '\''" sortable="'type'">
 								{{analysis.workflowName}}
 							</td>
+                            <td th:if="${admin}" data:title="'\'' + #{analyses.submitter} + '\''" sortable="'submitter'">
+                                {{analysis.submitter}}
+                            </td>
 							<td data:title="'\'' + #{analysis.date-created} + '\''" sortable="'createdDate'">
 								{{analysis.createdDate | date:'short'}}
 							</td>

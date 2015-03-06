@@ -18,13 +18,10 @@
 				<span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span
 					class="icon-bar"></span> <span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" th:classappend="${activeNav} == 'dashboard' ? 'active'" th:href="@{${baseLink}}" href="#"><span
-					class="glyphicon glyphicon-home"></span></a>
 		</div>
 		<div class="collapse navbar-collapse"  collapse="projectSubnav" th:inline="text">
 			<ul class="nav navbar-nav">
-
-				<li th:class="${activeNav} == 'samples' ? 'active'"><a th:href="@{${baseLink} + '/samples'}">[[#{project.nav.samples}]]&nbsp;<span
+				<li th:class="${activeNav} == 'samples' ? 'active'"><a th:href="@{${baseLink}}">[[#{project.nav.samples}]]&nbsp;<span
 						class="badge badge-default" th:text="${samples}"></span> </a></li>
 				<li th:class="${activeNav} == 'members' ? 'active'"><a th:href="@{${baseLink} + '/members'}">[[#{project.nav.members}]]&nbsp;<span
 						class="badge badge-default" th:text="${users}"></span></a>
@@ -41,6 +38,11 @@
 						_Reference Files
 					</a>
 				</li>
+                <li th:class="${activeNav} == 'activity' ? 'active'">
+                    <a href="" th:href="@{${baseLink} + '/activity'}" th:text="#{project.nav.activity}">
+                        _Recent_Activity_
+                    </a>
+                </li>
 			</ul>
 		</div>
 	</div>

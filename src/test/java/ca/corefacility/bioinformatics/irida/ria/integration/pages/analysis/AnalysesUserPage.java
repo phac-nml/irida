@@ -30,6 +30,9 @@ public class AnalysesUserPage extends AbstractPage {
 	@FindBy(id = "filter-type")
 	private WebElement filterType;
 
+	@FindBy(id = "filter-submitter")
+	private WebElement filterSubmitter;
+
 	@FindBy(id = "filter-date-early")
 	private WebElement filterDateEarly;
 
@@ -79,6 +82,12 @@ public class AnalysesUserPage extends AbstractPage {
 		Select type = new Select(filterType);
 		type.selectByVisibleText(text);
 		waitForTime(100);
+	}
+
+	public void filterBySubmitter(String name) {
+		filterSubmitter.clear();
+		filterSubmitter.sendKeys(name);
+		waitForTime(400);
 	}
 
 	public void filterByDateEarly(String date) {

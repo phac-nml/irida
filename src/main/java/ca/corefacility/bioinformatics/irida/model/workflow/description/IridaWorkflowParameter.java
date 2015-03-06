@@ -112,7 +112,6 @@ public class IridaWorkflowParameter {
 
 	@Override
 	public String toString() {
-		return "IridaWorkflowParameter [name=" + name + ", defaultValue=" + defaultValue + ", toolParameters="
-				+ toolParameters + "]";
+		return "IridaWorkflowParameter [name=" + name + ", defaultValue=" + defaultValue + "]";
 	}
 }
