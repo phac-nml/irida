@@ -43,11 +43,11 @@
                 <i class="fa fa-history"></i>
             </div>
             <span th:text="#{analysis.details.state}">_State_</span>
-            <span class="sidebar__value" th:text="${analysisSubmission.analysisState}"></span>
+            <span class="sidebar__value" th:text="#{'analysis.state.' + ${analysisSubmission.analysisState}}"></span>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
-                <i class="fa fa-fw fa-calendar-o"></i>    
+                <i class="fa fa-fw fa-calendar-o"></i>
             </div>
             <em th:text="#{iridaThing.timestamp}">Created</em>
             <span class="sidebar__value" th:text="${#calendars.format(analysisSubmission.getCreatedDate(), 'dd MMM yyyy')}"></span>
