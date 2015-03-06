@@ -143,6 +143,8 @@ public class AnalysisController {
 			if (iridaWorkflow.getWorkflowDescription().getAnalysisType().equals(AnalysisType.PHYLOGENOMICS)) {
 				model = tree(submission, model);
 			}
+			
+			model.addAttribute("outputFiles",submission.getAnalysis().getAnalysisOutputFiles());
 
 		}
 

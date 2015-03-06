@@ -8,10 +8,6 @@
         <span class="fa fa-fw fa-save"></span>
         <span class="sr-only" th:text="#{form.save.image}">Save Image</span>
       </a>
-      <a class="btn btn-default" th:href="@{/analysis/ajax/download/{id}(id=${analysisSubmission.getId()})}" href="#" data-toggle="tooltip" data-placement="bottom" th:title="#{form.download-files}">
-        <span class="fa fa-download fa-fw"></span>
-        <span class="sr-only" th:text="#{form.download-files}">Download Files</span>
-      </a>
     </div>
   </div>
   <div id="phyloSVG"></div>
@@ -26,7 +22,7 @@
     var newick = /*[[${newick}]]*/ '';
     var phylo = new Smits.PhyloCanvas({
       'newick': newick
-    }, 'phyloSVG', 800, 800, 'circular');
+    }, 'phyloSVG', 600, 600, 'circular');
     $('.btn').tooltip();
 
     (function() {
