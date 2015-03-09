@@ -64,9 +64,4 @@
 	<client_details_authorities_AUD />
 	<client_role_AUD />
 	<client_details_AUD />
-	<analysis_AUD />
-	<analysis_fastqc_AUD />
-	<analysis_properties_AUD />
-	<analysis_sequence_file_AUD />
-	<analysis_fastqc_overrepresented_sequence_AUD />
 </dataset>
