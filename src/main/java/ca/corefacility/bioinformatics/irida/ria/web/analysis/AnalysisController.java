@@ -120,7 +120,7 @@ public class AnalysisController {
 	 *             If analysis files are attempted to be read, but fail.
 	 */
 	@RequestMapping("/{submissionId}")
-	public String getDetailsPage(@PathVariable Long submissionId, Model model, Locale locale) throws IOException {
+	public String getDetailsPage(@PathVariable Long submissionId, Model model, Locale locale) {
 		logger.trace("reading analysis submssion " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		model.addAttribute("analysisSubmission", submission);
@@ -137,7 +137,7 @@ public class AnalysisController {
 		}
 
 		String viewName = PAGE_DETAILS_DIRECTORY + PREVIEW_UNAVAILABLE;
-		
+
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
 		logger.trace("Workflow type is " + analysisType);
 		String workflowName = messageSource.getMessage("workflow." + analysisType.toString() + ".title", null, locale);
@@ -146,15 +146,22 @@ public class AnalysisController {
 		/*
 		 * If the analysis is completed, add preview information
 		 */
-		if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
-			viewName = getViewForAnalysisType(analysisType);
-			
-			if (analysisType.equals(AnalysisType.PHYLOGENOMICS)) {
-				model = tree(submission, model);
+		try {
+			if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
+
+				if (analysisType.equals(AnalysisType.PHYLOGENOMICS)) {
+
+					model = tree(submission, model);
+
+				}
+
+				model.addAttribute("outputFiles", submission.getAnalysis().getAnalysisOutputFiles());
+
+				viewName = getViewForAnalysisType(analysisType);
 			}
 
-			model.addAttribute("outputFiles", submission.getAnalysis().getAnalysisOutputFiles());
-
+		} catch (IOException e) {
+			logger.error("Couldn't get preview for analysis", e);
 		}
 
 		return viewName;
