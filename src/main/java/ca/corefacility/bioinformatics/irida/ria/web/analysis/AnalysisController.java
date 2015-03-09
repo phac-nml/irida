@@ -119,7 +119,7 @@ public class AnalysisController {
 	 * @throws IOException
 	 *             If analysis files are attempted to be read, but fail.
 	 */
-	@RequestMapping("/{submissionId}")
+	@RequestMapping(value = "/{submissionId}", produces = MediaType.TEXT_HTML_VALUE)
 	public String getDetailsPage(@PathVariable Long submissionId, Model model, Locale locale) {
 		logger.trace("reading analysis submssion " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
