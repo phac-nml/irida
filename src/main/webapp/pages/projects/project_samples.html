@@ -201,7 +201,9 @@
 				</div>
 
 				<button id="cart-add-btn" ng-controller="CartController as cart" ng-click="cart.add()" type="button"
-				        class="btn btn-default btn-sm" th:text="#{project.samples.nav.add-to-cart}">Add to Cart
+				        class="btn btn-info btn-sm" ng-disabled="subnav.count&lt;1">
+					<i class="fa fa-fw fa-cart-plus"></i>
+					<span th:text="#{project.samples.nav.add-to-cart}">Add to Cart></span>
 				</button>
 			</div>
 		</div>
