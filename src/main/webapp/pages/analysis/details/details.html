@@ -10,34 +10,24 @@
 <body>
   <main layout:fragment="main">
     <div class="row">
-      <div class="col-md-10">
-        <h1 role="heading" th:text="${analysisSubmission.name}">__TITLE__</h1>
+      <div class="col-md-12">
+        <h1 style="margin-top: 0" role="heading">
+	        <span th:text="${analysisSubmission.name}">__TITLE__</span>
+        </h1>
       </div>
     </div>
     <div class="row">
       <div class="col-md-12">
-        <div class="panel panel-default" th:if="${outputFiles}">
-          <div class="panel-heading">
-            <b class="panel-title" th:text="#{analysis.details.files}">_Output files_</b>
-            <a class="btn btn-default btn-sm pull-right" th:href="@{/analysis/ajax/download/{id}(id=${analysisSubmission.getId()})}" href="#" data-toggle="tooltip" data-placement="bottom" th:title="#{form.download-files}">
-              <span class="fa fa-download fa-fw"></span>
-              <span class="sr-only" th:text="#{form.download-files}">Download Files</span>
-            </a>
-          </div>
-          <div class="panel-body">
-            <ul class="list-inline">
-              <li th:each="file : ${outputFiles}" th:text="${file.file.fileName}">
-              </li>
-            </ul>
-          </div>
-        </div>
-
         <div class="panel panel-info">
           <div class="panel-heading">
             <b class="panel-title" th:text="#{analysis.details.preview}">_Preview_</b>
+	          <a href="#" id="saveBtn" class="btn btn-default btn-xs pull-right" data-toggle="tooltip" data-placement="bottom"
+	             th:title="#{form.save.image}">
+		          <span class="fa fa-fw fa-save"></span>
+		          <span class="sr-only" th:text="#{form.save.image}">Save Image</span>
+	          </a>
           </div>
-          <div class="panel-body">
-            <th:block layout:fragment="previewContent"></th:block>
+          <div class="panel-body preview-panel" layout:fragment="previewContent">
           </div>
         </div>
       </div>
