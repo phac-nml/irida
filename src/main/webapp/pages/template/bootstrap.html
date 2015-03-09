@@ -34,14 +34,15 @@
 							   th:text="#{nav.main.project-list}">List Projects
 							</a>
 						</li>
-						<li>
-							<a th:href="@{/projects/new}" href="/projects/new"
-							   th:text="#{nav.main.project-create}">Create New Project
-							</a>
-						</li>
 						<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')">
 							<a href="/projects/all" th:href="@{/projects/all}"
 							   th:text="#{nav.main.project-list-all}">One more separated link
+							</a>
+						</li>
+						<li role="presentation" class="divider"></li>
+						<li>
+							<a th:href="@{/projects/new}" href="/projects/new">
+								<span th:text="#{nav.main.project-create}">Create New Project</span>
 							</a>
 						</li>
 					</ul>
@@ -60,9 +61,10 @@
 								List Users
 							</a>
 						</li>
+						<li role="presentation" class="divider"></li>
 						<li sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_MANAGER')">
-							<a href="#" th:href="@{/users/create}" th:text="#{nav.main.add.user}">
-								Add User
+							<a href="#" th:href="@{/users/create}">
+								<span th:text="#{nav.main.add.user}">Creaet new user</span>
 							</a>
 						</li>
 					</ul>
