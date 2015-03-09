@@ -197,7 +197,6 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 
 		case NEW:
 		case UPLOAD:
-		case WAITING:
 		case QUEUED:
 		case RUNNING:
 			logger.trace("Workflow for analysis " + analysisSubmission + " is running: percent "

@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
+
 /**
  * Defines the status of a workflow.
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
@@ -46,5 +48,17 @@ public class GalaxyWorkflowStatus {
 	public String toString() {
 		return "WorkflowStatus [state=" + state + ", percentComplete="
 				+ percentComplete + "]";
+	}
+	
+	public static GalaxyWorkflowStatus buildStatusFromHistoryDetails(HistoryDetails historyDetails) {
+		checkNotNull(historyDetails, "historyDetails is null");
+		checkNotNull(historyDetails.getState(), "historyDetails.getState() is null");
+		checkNotNull(historyDetails.getStateIds(), "historyDetails.getStateIds() is null");
+		
+		GalaxyWorkflowState workflowState = GalaxyWorkflowState.stringToState(historyDetails.getState());
+				
+		GalaxyWorkflowStatus galaxyWorkflowStatus = new GalaxyWorkflowStatus(workflowState, 100.0f);
+		
+		return galaxyWorkflowStatus;
 	}
 }
