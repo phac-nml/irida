@@ -108,8 +108,7 @@ public class Analysis implements IridaThing {
 		this.createdDate = new Date();
 		this.inputFiles = inputFiles;
 		this.executionManagerAnalysisId = executionManagerAnalysisId;
-		this.analysisOutputFilesMap = analysisOutputFilesMap == null ? Collections.emptyMap() : ImmutableMap
-				.copyOf(analysisOutputFilesMap);
+		this.analysisOutputFilesMap = analysisOutputFilesMap;
 		this.description = null;
 		this.additionalProperties = Collections.emptyMap();
 	}
@@ -136,11 +135,9 @@ public class Analysis implements IridaThing {
 		this.createdDate = new Date();
 		this.inputFiles = inputFiles;
 		this.executionManagerAnalysisId = executionManagerAnalysisId;
-		this.analysisOutputFilesMap = analysisOutputFilesMap == null ? Collections.emptyMap() : ImmutableMap
-				.copyOf(analysisOutputFilesMap);
+		this.analysisOutputFilesMap = analysisOutputFilesMap;
 		this.description = description;
-		this.additionalProperties = additionalProperties == null ? Collections.emptyMap() : ImmutableMap
-				.copyOf(additionalProperties);
+		this.additionalProperties = additionalProperties;
 	}
 
 	/**
@@ -156,8 +153,7 @@ public class Analysis implements IridaThing {
 			final String description, final Map<String, String> additionalProperties) {
 		this(inputFiles, executionManagerAnalysisId, Maps.newHashMap());
 		this.description = description;
-		this.additionalProperties = additionalProperties == null ? Collections.emptyMap() : ImmutableMap
-				.copyOf(additionalProperties);
+		this.additionalProperties = additionalProperties;
 	}
 
 	public int hashCode() {

@@ -18,9 +18,7 @@ import org.springframework.util.ReflectionUtils;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 /**
  * Specific implementation of {@link Analysis} for storing properties created by
@@ -164,17 +162,17 @@ public class AnalysisFastQC extends Analysis {
 		}
 
 		public AnalysisFastQCBuilder analysisOutputFilesMap(final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
-			this.analysisOutputFilesMap = ImmutableMap.copyOf(analysisOutputFilesMap);
+			this.analysisOutputFilesMap = analysisOutputFilesMap;
 			return this;
 		}
 
 		public AnalysisFastQCBuilder inputFiles(final Set<SequenceFile> inputFiles) {
-			this.inputFiles = ImmutableSet.copyOf(inputFiles);
+			this.inputFiles = inputFiles;
 			return this;
 		}
 
 		public AnalysisFastQCBuilder additionalProperties(final Map<String, String> additionalProperties) {
-			this.additionalProperties = ImmutableMap.copyOf(additionalProperties);
+			this.additionalProperties = additionalProperties;
 			return this;
 		}
 
@@ -195,7 +193,7 @@ public class AnalysisFastQC extends Analysis {
 
 		public AnalysisFastQCBuilder overrepresentedSequences(
 				final Set<OverrepresentedSequence> overrepresentedSequences) {
-			this.overrepresentedSequences = ImmutableSet.copyOf(overrepresentedSequences);
+			this.overrepresentedSequences = overrepresentedSequences;
 			return this;
 		}
 
@@ -283,7 +281,7 @@ public class AnalysisFastQC extends Analysis {
 	 * {@inheritDoc}
 	 */
 	public Set<AnalysisOutputFile> getAnalysisOutputFiles() {
-		return Sets.newHashSet(fastQCReport);
+		return ImmutableSet.of(fastQCReport);
 	}
 
 	/**
@@ -349,7 +347,7 @@ public class AnalysisFastQC extends Analysis {
 	}
 
 	public Set<OverrepresentedSequence> getOverrepresentedSequences() {
-		return overrepresentedSequences;
+		return ImmutableSet.copyOf(overrepresentedSequences);
 	}
 
 	public AnalysisOutputFile getFastQCReport() {
