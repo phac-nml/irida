@@ -16,6 +16,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.google.common.collect.Maps;
+
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
@@ -174,7 +176,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
 		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
-				new GalaxyWorkflowStatus(GalaxyWorkflowState.OK, 100.0f));
+				new GalaxyWorkflowStatus(GalaxyWorkflowState.OK, Maps.newHashMap()));
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 
@@ -197,7 +199,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
 		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
-				new GalaxyWorkflowStatus(GalaxyWorkflowState.RUNNING, 50.0f));
+				new GalaxyWorkflowStatus(GalaxyWorkflowState.RUNNING, Maps.newHashMap()));
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 
@@ -220,7 +222,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
 		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
-				new GalaxyWorkflowStatus(GalaxyWorkflowState.ERROR, 50.0f));
+				new GalaxyWorkflowStatus(GalaxyWorkflowState.ERROR, Maps.newHashMap()));
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 
@@ -243,7 +245,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
 		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
-				new GalaxyWorkflowStatus(GalaxyWorkflowState.UNKNOWN, 50.0f));
+				new GalaxyWorkflowStatus(GalaxyWorkflowState.UNKNOWN, Maps.newHashMap()));
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 

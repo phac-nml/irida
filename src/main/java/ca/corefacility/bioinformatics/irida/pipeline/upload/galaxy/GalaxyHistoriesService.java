@@ -49,6 +49,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDe
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
+import com.google.common.collect.Maps;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
@@ -152,7 +153,7 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 			Map<String, List<String>> stateIds = details.getStateIds();
 			percentComplete = getPercentComplete(stateIds);
 			
-			workflowStatus = new GalaxyWorkflowStatus(workflowState, percentComplete);
+			workflowStatus = new GalaxyWorkflowStatus(workflowState,  Maps.newHashMap());
 			
 			logger.trace("Details for history " + details.getId() + ": state=" + details.getState());
 			

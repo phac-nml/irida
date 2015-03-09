@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
  **/
 public class GalaxyWorkflowStatusTest {
 
-//	private static float DELTA = 0.00001f;
+	private static float DELTA = 0.00001f;
 
 	private static final List<String> EMPTY_IDS = Lists.newLinkedList();
 	private static final String DATASET_ID = "1";
@@ -71,6 +71,6 @@ public class GalaxyWorkflowStatusTest {
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.buildStatusFromHistoryDetails(historyDetails);
 
 		assertEquals("workflow status not in correct state", GalaxyWorkflowState.OK, workflowStatus.getState());
-//		assertEquals("percentage complete not correct", 100.0f, workflowStatus.getPercentComplete(), DELTA);
+		assertEquals("percentage complete not correct", 100.0f, workflowStatus.getPercentComplete(), DELTA);
 	}
 }
