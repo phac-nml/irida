@@ -6,17 +6,15 @@ import java.util.Map;
 /**
  * Defines the state of a workflow.
  * Based off of states defined within Galaxy.
- * @see <a href="https://bitbucket.org/galaxy/galaxy-dist/src/097bbb3b7d3246faaa5188a1fc2a79b01630025c/lib/galaxy/model/__init__.py#cl-300">Galaxy Model</a>
- * @see <a href="https://bitbucket.org/galaxy/galaxy-dist/src/097bbb3b7d3246faaa5188a1fc2a79b01630025c/lib/galaxy/webapps/galaxy/api/jobs.py#cl-233">Galaxy API</a>
+ * @see <a href="https://bitbucket.org/galaxy/galaxy-dist/src/097bbb3b7d3246faaa5188a1fc2a79b01630025c/lib/galaxy/model/__init__.py#cl-1316">Galaxy Dataset Model</a>
+ * @see <a href="https://bitbucket.org/galaxy/galaxy-dist/src/097bbb3b7d3246faaa5188a1fc2a79b01630025c/lib/galaxy/web/base/controller.py#cl-429">Galaxy API</a>
  * @see <a href="https://github.com/jmchilton/blend4j/blob/c5e3f157d402950a843d4e395e1daf889945d587/src/main/java/com/github/jmchilton/blend4j/galaxy/beans/HistoryDetails.java">HistoryDetails in blend4j</a>
  * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public enum GalaxyWorkflowState {
 	NEW("new"),
-	RESUBMITTED("resubmitted"),
 	UPLOAD("upload"),
-	WAITING("waiting"),
 	QUEUED("queued"),
 	RUNNING("running"),
 	
@@ -25,10 +23,13 @@ public enum GalaxyWorkflowState {
 	 */
 	OK("ok"),
 	
+	EMPTY("empty"),
 	ERROR("error"),
+	DISCARDED("discarded"),
 	PAUSED("paused"),
-	DELETED("deleted"),
-	DELETED_NEW("deleted_new"),
+	SETTING_METADATA("setting_metadata"),
+	FAILED_METADATA("failed_metadata"),
+	RESUBMITTED("resubmitted"),
 	
 	/**
 	 * Unknown is used if the state from Galaxy is different from the above states (say if a new state was added to Galaxy).
