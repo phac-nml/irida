@@ -4,12 +4,11 @@
 	<id>c5f29cb2-1b68-4d34-9b93-609266af7551</id>
 	<name>TestWorkflow</name>
 	<version>2.0</version>
-	<author>Mr. Developer</author>
-	<email>developer@example.com</email>
 	<analysisType>default</analysisType>
 	<inputs>
 		<sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
 		<reference>reference</reference>
+		<requiresSingleSample>false</requiresSingleSample>
 	</inputs>
 	<parameters>
 		<parameter name="test-parameter" defaultValue="1">

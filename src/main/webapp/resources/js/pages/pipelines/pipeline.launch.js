@@ -5,12 +5,26 @@
    * @param $http AngularJS http object
    * @constructor
    */
-  function PipelineController($http, CartService) {
+  function PipelineController($scope, $http, CartService, notifications, ParameterService) {
     var vm = this;
+    vm.parameters = PIPELINE.parameters;
+    ParameterService.selectedParameters = vm.parameters[0];
+    vm.selectedParameters = ParameterService.selectedParameters;
+    PIPELINE.selectedParameters = vm.selectedParameters;
+    
+    $scope.$on('PARAMETERS_SAVED', function() {
+    	vm.selectedParameters = ParameterService.selectedParameters;
+    });
+    
     /*
      * Whether or not the page is waiting for a response from the server.
      */
     vm.loading = false;
+    
+    vm.parameterSelected = function() {
+    	ParameterService.selectedParameters = vm.selectedParameters;
+    	PIPELINE.selectedParameters = vm.selectedParameters;
+    };
 
     /**
      * Launch the pipeline
@@ -45,10 +59,10 @@
           }
         });
 
-        var paras = {};
-        _.forEach(PIPELINE.parameters, function (p) {
-          paras[p.name] = p.value;
-        });
+        var selectedParameters = {
+        		"id": PIPELINE.selectedParameters.id,
+        		"parameters": PIPELINE.selectedParameters.parameters
+        };
 
         // Create the parameter object;
         var params = {};
@@ -61,8 +75,8 @@
         if (paired.length > 0) {
           params['paired'] = paired;
         }
-        if (_.keys(paras).length > 0) {
-          params['paras'] = paras;
+        if (_.keys(selectedParameters).length > 0) {
+          params['selectedParameters'] = selectedParameters;
         }
         params['name'] = angular.element("#pipeline-name").val();
 
@@ -76,15 +90,18 @@
           }
         })
           .success(function (data) {
-            if (data.result === 'success') {
+            if (data.success) {
               vm.success = true;
             }
             else {
               if (data.error) {
                 vm.error = data.error;
               }
-              else if (data.parameters) {
+              else if (data.parameterError) {
                 vm.paramError = data.parameters;
+              }
+              else if(data.pipelineError) {
+                notifications.show({type: 'error', msg: data.pipelineError});
               }
             }
           });
@@ -92,15 +109,11 @@
     };
 
     vm.removeSample = function (projectId, sampleId) {
-      console.log("removing " + projectId);
-      $http({
-        url    : "/cart/project/" + projectId + "/samples/" + sampleId,
-        method : "DELETE",
-        headers: {
-          "Content-Type": "application/json"
+      CartService.removeSample(projectId,sampleId).then(function(){
+        angular.element('#sample-' + sampleId).remove();
+        if(angular.element('.sample-container').length === 0) {
+          location.reload();
         }
-      }).success(function () {
-        location.reload();
       });
     };
 
@@ -114,7 +127,7 @@
       clearPromise.then(function () {
         window.location = projectsPage;
       })
-    }
+    };
   }
 
   function ParameterModalController($modal) {
@@ -128,13 +141,20 @@
     };
   }
 
-  function ParameterController($modalInstance) {
+  function ParameterController($rootScope, $http, $modalInstance, ParameterService) {
     var vm = this;
-    PIPELINE.defaults = PIPELINE.defaults || angular.copy(PIPELINE.parameters);
-    vm.parameters = angular.copy(PIPELINE.parameters);
+
+    vm.defaults = angular.copy(ParameterService.selectedParameters.parameters);
+    vm.selectedParameters = angular.copy(ParameterService.selectedParameters);
+    vm.parameterSetName = vm.selectedParameters.label;
+    vm.parametersModified = false;
+    vm.saveParameters = false;
 
     vm.update = function () {
-      PIPELINE.parameters = angular.copy(vm.parameters);
+      PIPELINE.selectedParameters = angular.copy(vm.selectedParameters);
+      if (vm.saveParameters) {
+    	  vm.saveAndUse();
+      }
       $modalInstance.close();
     };
 
@@ -143,14 +163,60 @@
     };
 
     vm.reset = function (index) {
-      vm.parameters[index] = angular.copy(PIPELINE.defaults[index]);
-
+      vm.selectedParameters.parameters[index] = angular.copy(vm.defaults[index]);
     };
+    
+    vm.saveAndUse = function() {
+      var parametersToSave = {
+        pipelineId : PIPELINE.pipelineId,
+        parameterSetName : vm.parameterSetName,
+        // vm.selectedParameters.parameters is an array of maps, this will reduce it down
+        // into a single map with key-value pairs from each parameter name to its corresponding
+        // value. The final parameter to reduce is the empty map, that's our initial state.
+        parameterValues : vm.selectedParameters.parameters.reduce(function (prev, curr) {
+          prev[curr.name] = curr.value;
+          return prev;
+        }, {})
+      };
+    
+      $http({
+        url    : PIPELINE.saveParametersUrl,
+        method : "POST",
+        headers: {
+          "Content-Type": "application/json"
+        }, 
+        transformRequest : undefined,
+        data   : JSON.stringify(parametersToSave),
+      }).success(function (data) {
+    	  $modalInstance.dismiss();
+    	  // on success, we can re-use the selected parameters in
+    	  // this controller; update the id and label, then append
+    	  // it to PIPELINE.parameters to have it magically appear!
+    	  vm.selectedParameters.id = data.id;
+    	  vm.selectedParameters.label = vm.parameterSetName;
+    	  PIPELINE.parameters.unshift(vm.selectedParameters);
+    	  ParameterService.selectedParameters = PIPELINE.parameters[0];
+    	  $rootScope.$emit('PARAMETERS_SAVED');
+      });
+    };
+    
+    vm.valueChanged = function() {
+    	vm.parametersModified = true;
+    	vm.selectedParameters.id = "custom";
+    	if (vm.parameterSetName.indexOf("(*)") == -1) {
+    		vm.parameterSetName = vm.parameterSetName + " (*)";
+    	}
+    };
+  }
+  
+  function ParameterService() {
+	  return {};
   }
 
   angular.module('irida.pipelines', ['irida.cart'])
-    .controller('PipelineController', ['$http','CartService', PipelineController])
+    .controller('PipelineController', ['$rootScope', '$http','CartService', 'notifications', 'ParameterService', PipelineController])
     .controller('ParameterModalController', ["$modal", ParameterModalController])
-    .controller('ParameterController', ['$modalInstance', ParameterController])
+    .controller('ParameterController', ['$rootScope', '$http', '$modalInstance', 'ParameterService', ParameterController])
+    .service('ParameterService', [ParameterService])
   ;
 })();

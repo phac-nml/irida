@@ -4,12 +4,11 @@
   <id>63038f49-9f2c-4850-9de3-deb9eaf57512</id>
   <name>TestWorkflow</name>
   <version>2.0-missing-output</version>
-  <author>Mr. Developer</author>
-  <email>developer@example.com</email>
   <analysisType>default</analysisType>
   <inputs>
     <reference>reference</reference>
     <sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
+    <requiresSingleSample>false</requiresSingleSample>
   </inputs>
   <outputs>
     <output name="output1" fileName="output1.txt"></output>

@@ -28,13 +28,13 @@
 					</ul>
 				</th:block>
 				<th:block th:if="${#lists.size(addRefProjects)} == 0">
-					<p id="has-no-rights" th:text="#{pipeline.orror.no-reference.no-permissions}">You do not have
+					<p id="has-no-rights" th:text="#{pipeline.error.no-reference.no-permissions}">You do not have
 						permission to upload a reference file to these projects. Please contact a project manager to add
 						a reference file.</p>
 				</th:block>
 			</div>
 		</div>
-		<div class="row">
+		<div class="row" id="pipeline-creation" th:if="${#lists.size(referenceFiles) != 0} or ${!referenceRequired}">
 			<div class="col-md-10">
 				<h1 th:text="${mainTitle}"></h1>
 
@@ -62,6 +62,42 @@
 							</select>
 						</div>
 					</div>
+					<div class="form-group"
+					     th:if="${parameters} and ${#lists.size(parameters)} != 0">
+						<label for="named-parameters" class="col-sm-2 control-label"
+						       th:text="#{workflow.parameters.select.label}">___Parameters___</label>
+
+						<div class="col-sm-10">
+							<div class="row">
+								<div class="col-md-9">
+									<select id="named-parameters" name="named-parameters"
+								        class="form-control"
+								        ng-model="pipeline.selectedParameters"
+								        ng-change="pipeline.parameterSelected()"
+								        ng-options="item.label for item in pipeline.parameters">
+
+									</select>
+								</div>
+								<div class="col-md-3">
+									<button id="pipeline-parameters-btn"
+								        ng-controller="ParameterModalController as modal"
+								        class="btn btn-default btn-block"
+								        ng-click="modal.openModal()">
+									<i class="fa fa-cogs"></i>
+									<span th:text="#{workflow.parameters.section-button}">___Customize___</span>
+								</button></div>
+							</div>
+						</div>
+						<div ng-show="pipeline.paramError"
+							class="alert alert-danger sidebar-content">
+							<strong class="fa fa-3x fa-fw fa-hand-o-up alert-icon-motion"></strong>
+							{{pipeline.paramError}}
+						</div>
+					</div>
+					<th:block th:unless="${parameters}">
+						<div class="alert alert-info sidebar-content"
+						     th:text="${noParameters}"></div>
+					</th:block>
 				</div>
 
 				<div class="form-group">
@@ -70,7 +106,7 @@
 					<div class="col-sm-10" th:with="dateFormat=#{locale.date.short}">
 						<div th:each="project : ${projects}">
 
-							<div class="sample-container" th:each="sample : ${project.samples}">
+							<div th:id="${'sample-' + sample.id}" class="sample-container" th:each="sample : ${project.samples}">
 								<h3>
 									<a href="#" th:href="@{/projects/{id}/samples(id=${project.id})}"
 									   th:text="${project.name + ' / ' + sample.name}"></a>
@@ -170,20 +206,6 @@
 								<span class="fa fa-rocket"></span>
 							</button>
 						</div>
-						<th:block th:if="${parameters} and ${#lists.size(parameters)} != 0">
-							<button id="pipeline-parameters-btn" ng-controller="ParameterModalController as modal"
-							        class="btn btn-default sidebar-content" ng-click="modal.openModal()">
-								<i class="fa fa-cogs fa-2x"></i><br/>
-								<span th:text="#{workflow.parameters.section-button}">Pipeline Parameters</span>
-							</button>
-							<div ng-show="pipeline.paramError" class="alert alert-danger sidebar-content">
-								<strong class="fa fa-3x fa-fw fa-hand-o-up alert-icon-motion"></strong>
-								{{pipeline.paramError}}
-							</div>
-						</th:block>
-						<th:block th:unless="${parameters}">
-							<div class="alert alert-info sidebar-content" th:text="${noParameters}"></div>
-						</th:block>
 					</div>
 					<div id="pipeline-submitted" class="ng-cloak" ng-switch-when="true">
 						<div ng-hide="pipeline.success" class="alert alert-info">
@@ -199,7 +221,8 @@
 							   th:text="#{workflow.submitted-view-btn}">Let's see how this pipeline is doing.
 							</a>
 							<br/><br/>
-							<button id="btn-clear-pipeline" class="btn btn-warning btn-affixed" ng-click="pipeline.clearAndRedirect()"
+							<button id="btn-clear-pipeline" class="btn btn-warning btn-affixed"
+							        ng-click="pipeline.clearAndRedirect()"
 							        th:text="#{workflow.submitted-clear-btn}">Clear the cart and start over!
 							</button>
 						</div>
@@ -217,7 +240,9 @@
 		var PIPELINE = {
 			url       : /*[[@{/pipelines/ajax/start/{id}(id=${pipelineId})}]]*/ '/ajax/pipelines/ccca532d-b0be-4f2c-bd6d-9886aa722571',
 			required  : /*[[#{workflow.no-name-provided}]]*/ 'Name Required',
-			parameters: /*[[${parameters}]]*/ []
+			parameters: /*[[${parameters}]]*/ [],
+			saveParametersUrl : /*[[@{/pipelines/ajax/parameters}]]*/ '/ajax/pipeline/parameters',
+			pipelineId : /*[[${pipelineId}]]*/ 'pipelineId'
 		};
 
 		var projectsPage = /*[[@{/projects}]]*/ '/projects';

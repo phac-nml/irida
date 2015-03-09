@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="fix-project-referencefile-fk" author="fbristow">
+		<dropForeignKeyConstraint baseTableName="project_referencefile"
+			constraintName="FK_PROJECT_REFERENCEFILE_REFERENCEFILE" />
+		<renameColumn tableName="project_referencefile"
+			oldColumnName="referenceFile_id" newColumnName="reference_file_id"
+			columnDataType="bigint(20)" />
+		<renameColumn tableName="project_referencefile_AUD"
+			oldColumnName="referenceFile_id" newColumnName="reference_file_id"
+			columnDataType="bigint(20)" />
+		<addForeignKeyConstraint baseTableName="project_referencefile"
+			baseColumnNames="reference_file_id" constraintName="FK_PROJECT_REFERENCEFILE_REFERENCEFILE"
+			referencedTableName="reference_file" referencedColumnNames="id" />
+	</changeSet>
+</databaseChangeLog>

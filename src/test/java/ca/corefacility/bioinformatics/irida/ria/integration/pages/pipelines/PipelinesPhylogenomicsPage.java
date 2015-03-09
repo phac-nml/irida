@@ -21,6 +21,11 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 	public int getReferenceFileCount() {
 		return driver.findElement(By.id("referenceFiles")).findElements(By.tagName("option")).size();
 	}
+	
+	public String getSelectedParameterSet() {
+		return driver.findElement(By.id("named-parameters")).findElement(By.cssSelector("[selected='selected']"))
+				.getAttribute("label");
+	}
 
 	public int getNumberOfSamplesDisplayed() {
 		return driver.findElements(By.className("sample-container")).size();
@@ -50,6 +55,11 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 		waitForElementVisible(By.id("pipeline-submitted-success"));
 		return true;
 	}
+	
+	public boolean isNameForParametersVisible() {
+		waitForElementVisible(By.id("parameterSetName"));
+		return true;
+	}
 
 	public void clickLaunchPipelineBtn() {
 		driver.findElement(By.id("btn-launch")).click();
@@ -71,6 +81,21 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 	public void setAlternativeAlleleFraction(String value) {
 		driver.findElements(By.className("para-input")).get(0).sendKeys(value);
 	}
+	
+	public void setNameForSavedParameters(String value) {
+		driver.findElement(By.id("parameterSetName")).clear();
+		driver.findElement(By.id("parameterSetName")).sendKeys(value);
+	}
+	
+	public void clickUseParametersButton() {
+		driver.findElement(By.id("para-update-btn")).click();
+		waitForTime(250);
+	}
+	
+	public void clickSaveParameters() {
+		driver.findElement(By.id("saveParameters")).click();
+		waitForTime(250);
+	}
 
 	public void clickSetDefaultAlternativeAlleleFraction() {
 		driver.findElements(By.className("set-default-btn")).get(0).click();
@@ -90,5 +115,9 @@ public class PipelinesPhylogenomicsPage extends AbstractPage {
 		List<WebElement> findElements = driver.findElements(By.className("remove-sample-button"));
 		findElements.iterator().next().click();
 		waitForTime(250);
+	}
+
+	public boolean isCreatePipelineAreaVisible() {
+		return driver.findElements(By.id("pipeline-creation")).size() > 0;
 	}
 }

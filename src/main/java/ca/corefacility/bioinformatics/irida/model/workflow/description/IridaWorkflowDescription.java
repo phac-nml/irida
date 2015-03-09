@@ -36,12 +36,6 @@ public class IridaWorkflowDescription {
 	@XmlElement(name = "version")
 	private String version;
 
-	@XmlElement(name = "author")
-	private String author;
-
-	@XmlElement(name = "email")
-	private String email;
-
 	@XmlElement(name = "analysisType")
 	private AnalysisType analysisType;
 
@@ -73,10 +67,6 @@ public class IridaWorkflowDescription {
 	 *            The name of the workflow.
 	 * @param version
 	 *            The version of the workflow.
-	 * @param author
-	 *            The author of the workflow.
-	 * @param email
-	 *            The email address of the author.
 	 * @param analysisClass
 	 *            The class type of the {@link Analysis}.
 	 * @param inputs
@@ -88,14 +78,12 @@ public class IridaWorkflowDescription {
 	 * @param parameters
 	 *            The valid parameters that can be modified for this workflow.
 	 */
-	public IridaWorkflowDescription(UUID id, String name, String version, String author, String email,
+	public IridaWorkflowDescription(UUID id, String name, String version,
 			AnalysisType analysisType, IridaWorkflowInput inputs, List<IridaWorkflowOutput> outputs,
 			List<IridaWorkflowToolRepository> toolRepositories, List<IridaWorkflowParameter> parameters) {
 		this.id = id;
 		this.name = name;
 		this.version = version;
-		this.author = author;
-		this.email = email;
 		this.analysisType = analysisType;
 		this.inputs = inputs;
 		this.outputs = ImmutableList.copyOf(outputs);
@@ -113,14 +101,6 @@ public class IridaWorkflowDescription {
 
 	public String getVersion() {
 		return version;
-	}
-
-	public String getAuthor() {
-		return author;
-	}
-
-	public String getEmail() {
-		return email;
 	}
 
 	/**
@@ -200,7 +180,7 @@ public class IridaWorkflowDescription {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, name, version, author, email, analysisType, inputs, outputs, repository, parameters);
+		return Objects.hash(id, name, version, analysisType, inputs, outputs, repository, parameters);
 	}
 
 	@Override
@@ -211,8 +191,7 @@ public class IridaWorkflowDescription {
 			IridaWorkflowDescription other = (IridaWorkflowDescription) obj;
 
 			return Objects.equals(id, other.id) && Objects.equals(name, other.name)
-					&& Objects.equals(version, other.version) && Objects.equals(author, other.author)
-					&& Objects.equals(email, other.email) && Objects.equals(analysisType, other.analysisType)
+					&& Objects.equals(version, other.version) && Objects.equals(analysisType, other.analysisType)
 					&& Objects.equals(inputs, other.inputs) && Objects.equals(outputs, other.outputs)
 					&& Objects.equals(repository, other.repository) && Objects.equals(parameters, other.parameters);
 		}
@@ -222,8 +201,7 @@ public class IridaWorkflowDescription {
 
 	@Override
 	public String toString() {
-		return "IridaWorkflowDescription [id=" + id + ", name=" + name + ", version=" + version + ", author=" + author
-				+ ", email=" + email + ", analysisType=" + analysisType + ", inputs=" + inputs + ", outputs=" + outputs
-				+ ", parameters=" + parameters + ", repository=" + repository + "]";
+		return "IridaWorkflowDescription [id=" + id + ", name=" + name + ", version=" + version 
+				+ ", analysisType=" + analysisType + "]";
 	}
 }

@@ -4,14 +4,13 @@
 	<id>bac44f4b-46f9-4393-b247-de11a751410e</id>
 	<name>AssemblyAnnotation</name>
 	<version>0.1-dev</version>
-	<author>Aaron Petkau</author>
-	<email>aaron.petkau@phac-aspc.gc.ca</email>
 	<analysisType>assembly-annotation</analysisType>
 	<inputs>
 		<sequenceReadsPaired>sequence_reads_paired</sequenceReadsPaired>
+		<requiresSingleSample>true</requiresSingleSample>
 	</inputs>
 	<parameters>
-		<parameter name="assembly-kmers" defaultValue="77,99,127">
+		<parameter name="assembly-kmers" defaultValue="21,33,55,77,99,127">
 			<toolParameter
 				toolId="toolshed.g2.bx.psu.edu/repos/lionelguy/spades/spades/1.0"
 				parameterName="kmers" />

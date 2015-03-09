@@ -72,7 +72,6 @@ public class UsersController {
 	private static final String SORT_BY_ID = "id";
 	private static final String SORT_ASCENDING = "asc";
 	private static final String ROLE_MESSAGE_PREFIX = "systemrole.";
-	private static final int MAX_DISPLAY_PROJECTS = 10;
 	private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
 	private final UserService userService;
@@ -148,11 +147,6 @@ public class UsersController {
 
 		// show the user's projects
 		List<Join<Project, User>> projectsForUser = projectService.getProjectsForUser(user);
-		int totalProjects = projectsForUser.size();
-		// Trimming down the number of projects if there are too many
-		if (totalProjects > MAX_DISPLAY_PROJECTS) {
-			projectsForUser = projectsForUser.subList(0, MAX_DISPLAY_PROJECTS);
-		}
 
 		// add the projects to the model list
 		List<Map<String, Object>> projects = new ArrayList<>();
@@ -170,7 +164,6 @@ public class UsersController {
 			projects.add(map);
 		}
 		model.addAttribute("projects", projects);
-		model.addAttribute("totalProjects", totalProjects);
 
 		return SPECIFIC_USER_PAGE;
 	}

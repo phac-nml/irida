@@ -8,7 +8,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
@@ -25,13 +27,19 @@ public class AnalysesUserPage extends AbstractPage {
 	@FindBy(id = "filter-state")
 	private WebElement filterState;
 
+	@FindBy(id = "filter-type")
+	private WebElement filterType;
+
+	@FindBy(id = "filter-submitter")
+	private WebElement filterSubmitter;
+
 	@FindBy(id = "filter-date-early")
 	private WebElement filterDateEarly;
 
 	@FindBy(id = "filter-date-late")
 	private WebElement filterDateLate;
 
-	@FindBy(className = "board")
+	@FindBy(className = "analysis__state")
 	private List<WebElement> analysesList;
 
 	@FindBy(className = "download-analysis-btn")
@@ -46,6 +54,13 @@ public class AnalysesUserPage extends AbstractPage {
 		return PageFactory.initElements(driver, AnalysesUserPage.class);
 	}
 
+	public static AnalysesUserPage initializeAdminPage(WebDriver driver) {
+		get(driver, "analysis/list/all");
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("table tbody tr")));
+		return PageFactory.initElements(driver, AnalysesUserPage.class);
+	}
+
 	public void clearFilter() {
 		filterClear.click();
 		waitForTime(100);
@@ -57,10 +72,22 @@ public class AnalysesUserPage extends AbstractPage {
 		waitForTime(400);
 	}
 
-	public void filterByType(String text) {
+	public void filterByState(String text) {
 		Select state = new Select(filterState);
 		state.selectByVisibleText(text);
 		waitForTime(100);
+	}
+
+	public void filterByType(String text) {
+		Select type = new Select(filterType);
+		type.selectByVisibleText(text);
+		waitForTime(100);
+	}
+
+	public void filterBySubmitter(String name) {
+		filterSubmitter.clear();
+		filterSubmitter.sendKeys(name);
+		waitForTime(400);
 	}
 
 	public void filterByDateEarly(String date) {
@@ -91,7 +118,7 @@ public class AnalysesUserPage extends AbstractPage {
 		return count;
 	}
 
-	public boolean isNoAnalysesMessaageDisplayed() {
+	public boolean isNoAnalysesMessageDisplayed() {
 		return driver.findElement(By.id("no-analyses")).isDisplayed();
 	}
 }

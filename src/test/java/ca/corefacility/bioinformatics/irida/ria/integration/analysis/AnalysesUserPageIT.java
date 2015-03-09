@@ -60,14 +60,14 @@ public class AnalysesUserPageIT {
 		AnalysesUserPage page = AnalysesUserPage.initializePage(driver);
 		assertEquals("Should be 8 analyses displayed on the page", 8, page.getNumberOfAnalyses());
 
-		page.filterByType("New");
+		page.filterByState("New");
 		assertEquals("Should be 1 analysis in the state of 'NEW'", 1, page.getNumberOfAnalyses());
 
-		page.filterByType("Completed");
+		page.filterByState("Completed");
 		assertEquals("Should be 2 analysis in the state of 'COMPLETED'", 2, page.getNumberOfAnalyses());
 
-		page.filterByType("Prepared");
-		assertTrue("Should display a message that there are no analyses available", page.isNoAnalysesMessaageDisplayed());
+		page.filterByState("Prepared");
+		assertTrue("Should display a message that there are no analyses available", page.isNoAnalysesMessageDisplayed());
 
 		// Clear
 		page.clearFilter();
@@ -81,6 +81,11 @@ public class AnalysesUserPageIT {
 
 		page.filterByDateLate("06 Jan 2014");
 		assertEquals("Should be 7 analyses after filtering by date earliest", 7, page.getNumberOfAnalyses());
+
+		// Clear
+		page.clearFilter();
+		page.filterByType("Phylogenomics Pipeline");
+		assertEquals("Should be 6 analyses aftering filtering by type", 6, page.getNumberOfAnalyses());
 	}
 
 	@After

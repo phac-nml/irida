@@ -57,4 +57,6 @@
                          analysis_id="1" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"/>
    	<analysis_submission id="9" analysis_state="ERROR" created_date="2014-02-06 10:01:02" name="My Really Bad Mistake!"
                          analysis_id="1" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="2"/>
+    <workflow_named_parameters id="1" created_date="2014-02-06 10:01:02" name="named parameters" workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" />
+    <workflow_named_parameter_values named_parameters_id="1" named_parameter_name="A really cool parameter" named_parameter_value="A really cool value" />
 </dataset>

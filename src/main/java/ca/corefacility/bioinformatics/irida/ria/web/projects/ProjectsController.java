@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
@@ -65,11 +66,9 @@ import com.google.common.base.Strings;
 public class ProjectsController {
 	// Sub Navigation Strings
 	private static final String ACTIVE_NAV = "activeNav";
-	private static final String ACTIVE_NAV_DASHBOARD = "dashboard";
 	private static final String ACTIVE_NAV_METADATA = "metadata";
 	private static final String ACTIVE_NAV_REFERENCE = "reference";
-
-	// private static final String ACTIVE_NAV_ANALYSIS = "analysis";
+	private static final String ACTIVE_NAV_ACTIVITY = "activity";
 
 	// Page Names
 	public static final String PROJECTS_DIR = "projects/";
@@ -80,6 +79,7 @@ public class ProjectsController {
 	public static final String PROJECT_METADATA_PAGE = PROJECTS_DIR + "project_metadata";
 	public static final String PROJECT_METADATA_EDIT_PAGE = PROJECTS_DIR + "project_metadata_edit";
 	public static final String PROJECT_SAMPLES_PAGE = PROJECTS_DIR + "project_samples";
+	public static final String PROJECT_ACTIVITY_PAGE = PROJECTS_DIR + "project_details";
 	public static final String PROJECT_REFERENCE_FILES_PAGE = PROJECTS_DIR + "project_reference";
 	private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
 
@@ -150,13 +150,13 @@ public class ProjectsController {
 	 *
 	 * @return The name of the project details page.
 	 */
-	@RequestMapping(value = "/projects/{projectId}")
+	@RequestMapping(value = "/projects/{projectId}/activity")
 	public String getProjectSpecificPage(@PathVariable Long projectId, final Model model, final Principal principal) {
 		logger.debug("Getting project information for [Project " + projectId + "]");
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_DASHBOARD);
+		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ACTIVITY);
 		return SPECIFIC_PROJECT_PAGE;
 	}
 
@@ -409,7 +409,7 @@ public class ProjectsController {
 
 	/**
 	 * Search for taxonomy terms. This method will return a map of found taxonomy terms and their child nodes.
-	 * <p/>
+	 * <p>
 	 * Note: If the search term was not included in the results, it will be added as an option
 	 *
 	 * @param searchTerm
@@ -423,6 +423,8 @@ public class ProjectsController {
 		Collection<TreeNode<String>> search = taxonomyService.search(searchTerm);
 
 		TreeNode<String> searchTermNode = new TreeNode<>(searchTerm);
+		// add a property to this node to indicate that it's the search term
+		searchTermNode.addProperty("searchTerm", true);
 
 		List<Map<String, Object>> elements = new ArrayList<>();
 
@@ -510,7 +512,7 @@ public class ProjectsController {
 
 	/**
 	 * }
-	 * <p/>
+	 * <p>
 	 * /** Recursively transform a {@link TreeNode} into a json parsable map object
 	 *
 	 * @param node
@@ -520,6 +522,12 @@ public class ProjectsController {
 	 */
 	private Map<String, Object> transformTreeNode(TreeNode<String> node) {
 		Map<String, Object> current = new HashMap<>();
+
+		// add the node properties to the map
+		for (Entry<String, Object> property : node.getProperties().entrySet()) {
+			current.put(property.getKey(), property.getValue());
+		}
+
 		current.put("id", node.getValue());
 		current.put("text", node.getValue());
 

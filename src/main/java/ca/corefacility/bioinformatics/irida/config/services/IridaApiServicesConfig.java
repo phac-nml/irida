@@ -10,7 +10,6 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import javax.validation.Validator;
 
-import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +17,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -35,9 +35,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceConfig;
 import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
 import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositoriesConfig;
@@ -46,14 +43,21 @@ import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
+import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.DefaultFileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
+import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 /**
  * Configuration for the IRIDA platform.
@@ -138,11 +142,31 @@ public class IridaApiServicesConfig {
 	 * @return A new {@link Executor} for analysis tasks.
 	 */
 	@Bean
+	@DependsOn("springLiquibase")
 	@Profile({"prod", "dev"})
 	public Executor analysisTaskExecutor(UserService userService) {
 		ScheduledExecutorService delegateExecutor = Executors.newScheduledThreadPool(4);
 		SecurityContext schedulerContext = createAnalysisTaskSecurityContext(userService);
 		return new DelegatingSecurityContextScheduledExecutorService(delegateExecutor, schedulerContext);
+	}
+	
+	@Bean
+	@DependsOn("springLiquibase")
+	@Profile({ "prod" })
+	public AnalysisSubmissionCleanupService analysisSubmissionCleanupService(
+			AnalysisSubmissionRepository analysisSubmissionRepository, UserService userService) {
+		AnalysisSubmissionCleanupService analysisSubmissionCleanupService = new AnalysisSubmissionCleanupServiceImpl(
+				analysisSubmissionRepository);
+		SecurityContext adminContext = createAnalysisTaskSecurityContext(userService);
+
+		// Run method to clean up previous analysis submissions in inconsistent
+		// states.
+		SecurityContext oldContext = SecurityContextHolder.getContext();
+		SecurityContextHolder.setContext(adminContext);
+		analysisSubmissionCleanupService.switchInconsistentSubmissionsToError();
+		SecurityContextHolder.setContext(oldContext);
+
+		return analysisSubmissionCleanupService;
 	}
 
 	/**

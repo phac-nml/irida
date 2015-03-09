@@ -190,8 +190,7 @@ public class TestDataFactory {
 		List<IridaWorkflowOutput> outputs = ImmutableList.of(new IridaWorkflowOutput());
 		List<IridaWorkflowToolRepository> tools = ImmutableList.of();
 		List<IridaWorkflowParameter> parameters = ImmutableList.of();
-		IridaWorkflowDescription description = new IridaWorkflowDescription(id, "My Workflow", "V1", "Test User",
-				"me@me.com",
+		IridaWorkflowDescription description = new IridaWorkflowDescription(id, "My Workflow", "V1",
 				AnalysisType.DEFAULT, input, outputs, tools, parameters);
 		IridaWorkflowStructure structure = new IridaWorkflowStructure(null);
 		return new IridaWorkflow(description, structure);

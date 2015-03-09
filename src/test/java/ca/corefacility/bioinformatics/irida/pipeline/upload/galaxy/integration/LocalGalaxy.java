@@ -645,30 +645,6 @@ public class LocalGalaxy {
 	}
 	
 	/**
-	 * Gets a checksum for a example core pipeline workflow.
-	 * @return  The checksum for an example core pipeline workflow.
-	 */
-	public String getWorkflowCorePipelineTestChecksum() {
-		return "1ed4352eed1a4e00188affbd9c2b954934522598a9951e92732a13cdabf15f0e46e9e112531cbb29";
-	}
-
-	/**
-	 * Gets a checksum for an example workflow.
-	 * @return  The checksum for an example workflow.
-	 */
-	public String getSingleInputWorkflowChecksum() {
-		return "db670b734c3808abc5e71acdd9bb23b1f12886158f2ae9b39d79d95d914e790f512a3420d913bb3a";
-	}
-	
-	/**
-	 * Gets an invalid checksum for an example workflow.
-	 * @return  An invalid checksum for an example workflow.
-	 */
-	public String getSingleInputWorkflowChecksumInvalid() {
-		return "eb670b734c3808abc5e71acdd9bb23b1f12886158f2ae9b39d79d95d914e790f512a3420d913bb3a";
-	}
-
-	/**
 	 * Gets an example output snp matrix.
 	 * @return  An example output snp matrix.
 	 */

@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.analysis;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -18,7 +19,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysisAdminPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysesUserPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -39,14 +40,12 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisAdminPageIT {
 	private WebDriver driver;
-	private AnalysisAdminPage adminPage;
 
 	@Before
 	public void setUp() {
 		// TODO (14-11-07 - josh): Find out why PhantomJS fails here.
 		driver = TestUtilities.setDriverDefaults(new ChromeDriver());
 		LoginPage.loginAsAdmin(driver);
-		adminPage = new AnalysisAdminPage(driver);
 	}
 
 	@After
@@ -56,16 +55,48 @@ public class AnalysisAdminPageIT {
 
 	@Test
 	public void testPageSetup() {
-		assertEquals(8, adminPage.getTableRowCount());
+		AnalysesUserPage userPage = AnalysesUserPage.initializePage(driver);
+		assertEquals("Admin has not personal analysis", 8, userPage.getNumberOfAnalyses());
 
-		adminPage.clickShowFilterButton();
-		adminPage.filterByName("My");
-		assertEquals(7, adminPage.getTableRowCount());
+		AnalysesUserPage adminPage = AnalysesUserPage.initializeAdminPage(driver);
+		assertEquals("Should be 8 analyses displayed on the page", 9, adminPage.getNumberOfAnalyses());
+	}
 
-		adminPage.selectStateFilter("Completed");
-		assertEquals(2, adminPage.getTableRowCount());
+	@Test
+	public void testAdvancedFilters() {
+		AnalysesUserPage page = AnalysesUserPage.initializeAdminPage(driver);
+		assertEquals("Should be 9 analyses displayed on the page", 9, page.getNumberOfAnalyses());
 
-		adminPage.clickClearFilterButton();
-		assertEquals(8, adminPage.getTableRowCount());
+		page.filterByState("New");
+		assertEquals("Should be 1 analysis in the state of 'NEW'", 1, page.getNumberOfAnalyses());
+
+		page.filterByState("Completed");
+		assertEquals("Should be 2 analysis in the state of 'COMPLETED'", 2, page.getNumberOfAnalyses());
+
+		page.filterByState("Prepared");
+		assertTrue("Should display a message that there are no analyses available", page.isNoAnalysesMessageDisplayed());
+
+		// Clear
+		page.clearFilter();
+		assertEquals("Should be 9 analyses displayed on the page", 9, page.getNumberOfAnalyses());
+
+		page.filterByDateEarly("06 Nov 2013");
+		assertEquals("Should be 3 analyses after filtering by date earliest", 3, page.getNumberOfAnalyses());
+
+		// Clear
+		page.clearFilter();
+		page.filterBySubmitter("test");
+		assertEquals("Should only be one submission send by 'test' user", 1, page.getNumberOfAnalyses());
+
+		// Clear
+		page.clearFilter();
+
+		page.filterByDateLate("06 Jan 2014");
+		assertEquals("Should be 8 analyses after filtering by date earliest", 8, page.getNumberOfAnalyses());
+
+		// Clear
+		page.clearFilter();
+		page.filterByType("Phylogenomics Pipeline");
+		assertEquals("Should be 7 analyses aftering filtering by type", 7, page.getNumberOfAnalyses());
 	}
 }
