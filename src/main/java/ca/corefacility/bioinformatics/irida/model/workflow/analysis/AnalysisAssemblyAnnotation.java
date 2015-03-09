@@ -25,9 +25,8 @@ public class AnalysisAssemblyAnnotation extends Analysis {
 
 
 	public AnalysisAssemblyAnnotation(final Set<SequenceFile> inputFiles, final String executionManagerAnalysisId,
-			final Map<String, AnalysisOutputFile> analysisOutputFilesMap, final String description,
-			final Map<String, String> additionalProperties) {
-		super(inputFiles, executionManagerAnalysisId, analysisOutputFilesMap, description, additionalProperties);
+			final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
+		super(inputFiles, executionManagerAnalysisId, analysisOutputFilesMap);
 	}
 	
 	public AnalysisOutputFile getAssemblyLog() {

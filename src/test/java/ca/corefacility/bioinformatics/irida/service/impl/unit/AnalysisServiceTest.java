@@ -8,7 +8,6 @@ import static org.mockito.Mockito.verify;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.Map;
 
 import javax.validation.Validator;
@@ -71,7 +70,7 @@ public class AnalysisServiceTest {
 		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
 				.put("tree", report1).put("matrix", report2).put("table", report3).build();
 		AnalysisPhylogenomicsPipeline analysis = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(sf), "something",
-				analysisOutputFiles, "description", Collections.emptyMap());
+				analysisOutputFiles);
 
 		analysisService.create(analysis);
 
