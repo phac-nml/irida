@@ -19,7 +19,6 @@ import com.google.common.base.Strings;
 /**
  * Represents the common elements in a page within the application.
  *
- * @author Josh Adam
  */
 public class AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractPage.class);

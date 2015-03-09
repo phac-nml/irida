@@ -8,7 +8,6 @@ import org.openqa.selenium.support.PageFactory;
 /**
  * <p> Page Object to represent the login page. </p>
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class LoginPage extends AbstractPage {
 	public static final String ADMIN_USERNAME = "mrtest";

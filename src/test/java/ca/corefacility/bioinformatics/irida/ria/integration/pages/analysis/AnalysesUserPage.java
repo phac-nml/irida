@@ -15,7 +15,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 /**
- * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
 public class AnalysesUserPage extends AbstractPage {
 	@FindBy(id = "filter-clear")

@@ -49,7 +49,6 @@ import com.google.common.collect.Sets;
 /**
  * Integration tests for analysis schedulers.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)

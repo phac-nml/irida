@@ -23,7 +23,6 @@ import com.google.common.util.concurrent.MoreExecutors;
  * make sure the configuration is the same for every test requiring Galaxy to
  * avoid duplicate Galaxy beans being created.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Configuration

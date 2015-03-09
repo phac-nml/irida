@@ -33,7 +33,6 @@ import ca.corefacility.bioinformatics.irida.service.upload.UploadSampleConversio
 /**
  * Used to convert IRIDA Samples to those that can be uploaded into Galaxy.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Service

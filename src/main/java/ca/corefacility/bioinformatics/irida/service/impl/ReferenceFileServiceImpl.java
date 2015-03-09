@@ -23,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 /**
  * Service for storing and reading {@link ReferenceFile} objects
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Service

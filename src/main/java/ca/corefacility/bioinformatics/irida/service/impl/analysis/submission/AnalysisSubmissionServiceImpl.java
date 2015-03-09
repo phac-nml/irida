@@ -54,7 +54,6 @@ import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 /**
  * Implementation of an AnalysisSubmissionService.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Service

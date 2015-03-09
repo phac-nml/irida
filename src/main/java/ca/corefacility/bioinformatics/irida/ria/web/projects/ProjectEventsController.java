@@ -30,7 +30,6 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Controller for handling {@link ProjectEvent} views
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Controller

@@ -16,8 +16,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 /**
  * Repository for managing {@link ProjectUserJoin}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * 
  */
 public interface ProjectSampleJoinRepository extends PagingAndSortingRepository<ProjectSampleJoin, Long>,

@@ -22,7 +22,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 /**
  * Service for managing {@link SequenceFile} entities.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public interface SequenceFileService extends CRUDService<Long, SequenceFile> {
 

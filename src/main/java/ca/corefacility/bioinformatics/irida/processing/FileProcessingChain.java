@@ -9,7 +9,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
  * A collection of {@link FileProcessor} that are executed, in order, on a
  * specific {@link SequenceFile}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public interface FileProcessingChain {

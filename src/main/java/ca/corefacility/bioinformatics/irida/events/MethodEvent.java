@@ -6,7 +6,6 @@ import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
  * Captures the arguments and return value of a method call. Also contains the
  * {@link ProjectEvent} class that should be created from this call.
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class MethodEvent {

@@ -11,7 +11,6 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.validators.La
 /**
  * Tests the behaviour of {@link LatitudeValidator}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 public class LatitudeValidatorTest {

@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 /**
  * Sample read from an IRIDA REST API
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)

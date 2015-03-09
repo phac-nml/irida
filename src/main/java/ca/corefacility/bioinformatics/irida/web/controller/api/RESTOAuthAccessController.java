@@ -18,7 +18,6 @@ import com.google.common.base.Joiner;
 
 /**
  * Controller class for serving custom OAuth2 confirmation pages
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Controller

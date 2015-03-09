@@ -45,7 +45,6 @@ import com.google.common.collect.Lists;
 /**
  * Testing the behavior of {@link UserServiceImpl}
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class UserServiceImplTest {
 

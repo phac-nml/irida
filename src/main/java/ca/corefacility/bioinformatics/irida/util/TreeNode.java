@@ -10,7 +10,6 @@ import java.util.Set;
 /**
  * Simple generic tree node with links to parent and a list of children
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  * @param <ValueType>
  *            The value to be stored by this node

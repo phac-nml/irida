@@ -4,7 +4,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNot
 
 /**
  * When no content for a data library could be found.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class NoGalaxyContentFoundException extends ExecutionManagerObjectNotFoundException {

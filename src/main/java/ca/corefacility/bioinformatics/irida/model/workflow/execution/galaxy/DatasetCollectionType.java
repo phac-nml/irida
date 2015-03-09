@@ -5,7 +5,6 @@ package ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy;
  * 
  * @see <a href=https://wiki.galaxyproject.org/Documents/Presentations/GCC2014?action=AttachFile&do=view&target=Chilton.pdf>Dataset Collections GCC 2014.pdf</a>
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public enum DatasetCollectionType {

@@ -8,7 +8,6 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
  * This exception will often be thrown when a {@link RemoteAPIToken} is invalid
  * or expired.
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class IridaOAuthException extends RuntimeException {

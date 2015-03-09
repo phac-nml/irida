@@ -3,13 +3,11 @@ package ca.corefacility.bioinformatics.irida.model.workflow.execution;
 
 /**
  * A Workflow that has been prepared for execution.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 
 /**
  * A Workflow that has been prepared for execution.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  * @param <AnalysisIdType> The type of remote analysis id.
  * @param <WorkflowInputsType> The type of WorkflowInputsGeneric.

@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlElement;
 /**
  * An implementation of a resource that only has a label and an identifier.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class LabelledRelationshipResource<Owner extends IridaThing, Child extends IridaThing> extends
 		Resource<Join<Owner, Child>> {

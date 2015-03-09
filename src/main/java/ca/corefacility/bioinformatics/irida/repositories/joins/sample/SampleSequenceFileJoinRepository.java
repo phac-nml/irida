@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 /**
  * Repository for managing {@link SampleSequenceFileJoin}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public interface SampleSequenceFileJoinRepository extends CrudRepository<SampleSequenceFileJoin, Long> {

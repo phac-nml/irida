@@ -29,7 +29,6 @@ import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.Use
 /**
  * Configuration for repository/data storage classes.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 @Configuration

@@ -9,7 +9,6 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 /**
  * Service interface for managing {@link RemoteRelatedProject}s
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public interface RemoteRelatedProjectService extends CRUDService<Long, RemoteRelatedProject> {

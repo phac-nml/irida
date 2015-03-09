@@ -29,7 +29,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
  * Relationship between two {@link Project}s. A {@link Project} can have a list
  * of {@link RelatedProjectJoin}s where it will search for {@link Sample}s.
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Entity

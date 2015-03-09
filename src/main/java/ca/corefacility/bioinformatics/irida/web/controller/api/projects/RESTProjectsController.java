@@ -19,7 +19,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericContro
 /**
  * Controller for managing {@link Project}s in the database.
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping(value = "/api/projects")

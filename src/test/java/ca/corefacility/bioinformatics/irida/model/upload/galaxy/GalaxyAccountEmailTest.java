@@ -19,7 +19,6 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 
 /**
  * Tests for {@link GalaxyAccountEmail}.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyAccountEmailTest {

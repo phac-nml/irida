@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
  * Error message response class to be serialzed to Json and returned from the
  * {@link ControllerExceptionHandler}
  * 
- * @author "Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>"
  * 
  */
 public class ErrorResponse {

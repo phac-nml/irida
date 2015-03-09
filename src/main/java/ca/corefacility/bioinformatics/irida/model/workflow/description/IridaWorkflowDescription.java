@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableList;
 /**
  * Class providing access to generic information about a workflow.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @XmlRootElement(name = "iridaWorkflow")

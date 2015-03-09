@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.exceptions;
 
 /**
  * Defines an exception for parameters within an IRIDA workflow.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class IridaWorkflowParameterException extends IridaWorkflowException {

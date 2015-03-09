@@ -4,7 +4,6 @@ package ca.corefacility.bioinformatics.irida.exceptions;
  * Exception that gets thrown when attempting to set a default workflow for an
  * analysis type that already has a default workflow set.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class IridaWorkflowDefaultException extends IridaWorkflowException {

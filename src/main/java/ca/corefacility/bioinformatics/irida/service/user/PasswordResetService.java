@@ -8,7 +8,6 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
 /**
  * Service for managing {@link PasswordReset} entities.
  * 
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @PreAuthorize("permitAll")
 public interface PasswordResetService extends CRUDService<String, PasswordReset> {

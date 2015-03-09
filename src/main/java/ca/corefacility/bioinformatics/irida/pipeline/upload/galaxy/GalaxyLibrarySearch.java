@@ -18,7 +18,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.Library;
 /**
  * Class containing methods used to search for library information in Galaxy
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
 public class GalaxyLibrarySearch implements DataSourceSearch<Library, String, GalaxyProjectName>{

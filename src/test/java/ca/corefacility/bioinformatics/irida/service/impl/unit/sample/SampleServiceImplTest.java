@@ -48,7 +48,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 /**
  * Unit tests for {@link SampleServiceImpl}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class SampleServiceImplTest {
 

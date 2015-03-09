@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 /**
  * Specification for searching {@link ProjectUserJoin}s
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class ProjectUserJoinSpecification {

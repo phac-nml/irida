@@ -40,8 +40,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 /**
  * Service class for managing {@link Sample}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Service
 public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements SampleService {

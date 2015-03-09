@@ -6,7 +6,6 @@ import java.util.Map;
 /**
  * Class to hold a list of resources when being read from a remote Irida API
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * @param <Type>
  *            The type of object being held in this list
  */

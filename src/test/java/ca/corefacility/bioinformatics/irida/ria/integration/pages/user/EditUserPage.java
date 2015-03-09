@@ -9,7 +9,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 /**
  * Edit user page for selenium testing
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class EditUserPage extends AbstractPage {

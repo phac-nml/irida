@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 /**
  * Remote service for retrieving {@link RemoteProject}s
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Service

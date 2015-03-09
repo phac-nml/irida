@@ -35,7 +35,6 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 import com.google.common.collect.ImmutableList;
 
 /**
- * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
 public class AnalysisControllerTest {
 	/*

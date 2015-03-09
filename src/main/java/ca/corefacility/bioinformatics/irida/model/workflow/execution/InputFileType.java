@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.model.workflow.execution;
 
 /**
  * Defines acceptable file types for input to a workflow.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public enum InputFileType {

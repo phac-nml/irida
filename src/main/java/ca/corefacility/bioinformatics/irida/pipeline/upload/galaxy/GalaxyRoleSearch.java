@@ -14,7 +14,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.Role;
 
 /**
  * Class defining methods for searching for different Galaxy roles.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyRoleSearch extends GalaxySearch<Role, GalaxyAccountEmail> {

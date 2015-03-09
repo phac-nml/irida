@@ -17,8 +17,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 /**
  * Service layer for SequencingRun objects
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public interface SequencingRunService extends CRUDService<Long, SequencingRun> {
 

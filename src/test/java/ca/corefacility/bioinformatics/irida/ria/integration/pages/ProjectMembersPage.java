@@ -22,8 +22,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
  * Page Object to represent the project details page.
  * </p>
  * 
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class ProjectMembersPage extends AbstractPage {
 	public static final String RELATIVE_URL = "projects/1/members";

@@ -42,7 +42,6 @@ import com.google.common.collect.Maps;
  * Object representing a client that has been registered to communicate with
  * this API via OAuth2
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Entity

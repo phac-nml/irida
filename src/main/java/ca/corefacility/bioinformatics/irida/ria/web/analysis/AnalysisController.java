@@ -44,7 +44,6 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Controller for Analysis.
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping("/analysis")

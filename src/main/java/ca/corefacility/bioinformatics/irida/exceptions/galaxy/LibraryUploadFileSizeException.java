@@ -9,7 +9,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
  * Exception thrown when there is a mismatch of file sizes within a Galaxy data
  * library.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class LibraryUploadFileSizeException extends LibraryUploadException {

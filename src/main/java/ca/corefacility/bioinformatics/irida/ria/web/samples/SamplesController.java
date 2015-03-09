@@ -52,7 +52,6 @@ import com.google.common.collect.ImmutableList;
 /**
  * Controller for all sample related views
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Controller
 public class SamplesController extends BaseController {

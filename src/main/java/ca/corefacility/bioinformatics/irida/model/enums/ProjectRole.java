@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.model.enums;
 
 /**
  *
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public enum ProjectRole {
 

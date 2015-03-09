@@ -24,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.service.user.GroupService;
 /**
  * Testing the behavior of {@link GroupServiceImpl}
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class GroupServiceImplTest {
 

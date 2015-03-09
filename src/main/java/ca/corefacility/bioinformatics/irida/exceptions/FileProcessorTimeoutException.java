@@ -7,7 +7,6 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
  * timeout for the {@link SequenceFileService} to finish executing its
  * transaction.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 public class FileProcessorTimeoutException extends Exception {

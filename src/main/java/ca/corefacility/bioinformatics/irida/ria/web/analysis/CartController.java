@@ -30,7 +30,6 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Controller managing interactions with the selected sequences
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Controller

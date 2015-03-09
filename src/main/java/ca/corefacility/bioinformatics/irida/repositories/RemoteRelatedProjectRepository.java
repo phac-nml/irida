@@ -10,7 +10,6 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 /**
  * Repository for storing/retrieving {@link RemoteRelatedProject} objects
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public interface RemoteRelatedProjectRepository extends IridaJpaRepository<RemoteRelatedProject, Long> {

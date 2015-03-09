@@ -26,8 +26,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  * This class is responsible for all email sent to the server that are templated
  * with Thymeleaf.
  * 
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Component
 @Profile({ "prod", "dev" })

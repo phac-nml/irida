@@ -20,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
  * Remote repository to request from remote IRIDA instances using
  * {@link OAuthTokenRestTemplate}s
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  * @param <Type>
  *            The type of object to be stored in this repository (extends

@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 /**
  * User Login Page Controller
  * 
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Controller
 public class DashboardController {

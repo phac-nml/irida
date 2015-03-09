@@ -58,7 +58,6 @@ import com.google.common.collect.Sets;
 /**
  * Defines a submission to an AnalysisService for executing a remote workflow.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  * @param <T>
  *            Defines the RemoteWorkflow implementing this analysis.
@@ -427,7 +426,6 @@ public class AnalysisSubmission implements IridaThing {
 	/**
 	 * Used to build up an {@link AnalysisSubmission}.
 	 * 
-	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
 	 */
 	public static class Builder {
 		private String name;

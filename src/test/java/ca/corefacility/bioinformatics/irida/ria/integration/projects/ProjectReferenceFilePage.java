@@ -11,7 +11,6 @@ import org.openqa.selenium.support.PageFactory;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 /**
- * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectReferenceFilePage extends AbstractPage {
 	@FindBy(id = "rf-notice")

@@ -44,8 +44,6 @@ import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousA
 /**
  * Configuration for web security using OAuth2
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Configuration
@@ -99,7 +97,6 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 	 * anonymous authentication object into the security context *before*
 	 * {@link ClientDetailsService#loadClientByClientId(String)} is called.
 	 * 
-	 * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
 	 *
 	 */
 	@Configuration

@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.exceptions;
 
 /**
  * Defines an exception in cases of no parameters within an IRIDA workflow.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class IridaWorkflowNoParameterException extends IridaWorkflowParameterException {

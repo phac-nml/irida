@@ -27,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 /**
  * {@link Join}-type relating {@link Project} to {@link ReferenceFile}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Entity

@@ -8,7 +8,6 @@ import java.util.Map;
 /**
  * Defines a set of states for an {@link AnalysisSubmission}.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public enum AnalysisState {

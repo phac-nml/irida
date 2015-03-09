@@ -32,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 /**
  * A join table and class for users and projects.
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
 @Table(name = "project_user", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "user_id" }))

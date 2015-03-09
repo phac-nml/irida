@@ -10,7 +10,6 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * Test specification
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class IdentifiableTestEntitySpecification {

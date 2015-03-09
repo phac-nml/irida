@@ -23,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 /**
  * Tests for {@link UpdateUserPermission}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public class UpdateUserPermissionTest {

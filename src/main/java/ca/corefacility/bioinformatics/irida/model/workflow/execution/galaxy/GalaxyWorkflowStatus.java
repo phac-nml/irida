@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Defines the status of a workflow.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyWorkflowStatus {

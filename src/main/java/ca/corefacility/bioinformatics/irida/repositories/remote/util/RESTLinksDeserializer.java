@@ -18,7 +18,6 @@ import com.fasterxml.jackson.databind.JsonNode;
  * Implementation of JsonDeserializer<RESTLinks> to deserialize json links into
  * a {@link RESTLinks} object
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class RESTLinksDeserializer extends JsonDeserializer<RESTLinks> {

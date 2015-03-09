@@ -5,7 +5,6 @@ import java.util.Date;
 /**
  * An object with a timestamp
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public interface Timestamped {

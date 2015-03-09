@@ -33,7 +33,6 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 /**
  * Controller for handling OAuth2 authorizations
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Controller

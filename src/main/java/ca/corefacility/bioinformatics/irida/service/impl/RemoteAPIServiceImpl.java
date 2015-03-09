@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
  * Service implementation for storing and retrieving RemoteAPI objects from a
  * {@link RemoteAPIRepository}
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Transactional

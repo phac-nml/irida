@@ -34,7 +34,6 @@ import com.google.common.collect.ImmutableList;
 /**
  * Controller for handling project/members views and functions
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Controller
