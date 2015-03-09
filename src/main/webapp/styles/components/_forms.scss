@@ -19,13 +19,14 @@
     font-size: 14px;
     cursor: pointer;
     color: $irida-colour-dark;
+    margin-right: 1rem;
     &:before, &:after {
       font-family: FontAwesome;
       font-weight: 100;
       font-size: 22px;
       /*absolutely positioned*/
       position: absolute;
-      top: -20px;
+      top: -16px;
       left: 0;
     }
   }
