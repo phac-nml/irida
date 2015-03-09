@@ -60,7 +60,7 @@ public class AnalysisController {
 	public static final String PAGE_USER_ANALYSIS = BASE + "analyses";
 	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
 
-	public static final String PREVIEW_UNAVAILABLE = "unavailable";
+	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
 	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap.of(AnalysisType.PHYLOGENOMICS, "tree");
 
 	/*
@@ -136,7 +136,7 @@ public class AnalysisController {
 			throw new EntityNotFoundException("Couldn't find workflow for submission " + submission.getId(), e);
 		}
 
-		String viewName = PAGE_DETAILS_DIRECTORY + PREVIEW_UNAVAILABLE;
+		String viewName = PREVIEW_UNAVAILABLE;
 
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
 		logger.trace("Workflow type is " + analysisType);
@@ -334,13 +334,20 @@ public class AnalysisController {
 		}
 		return flows;
 	}
-	
+
+	/**
+	 * Get the view name for different analysis types
+	 * 
+	 * @param type
+	 *            The {@link AnalysisType}
+	 * @return the view name to display
+	 */
 	private String getViewForAnalysisType(AnalysisType type) {
 		String viewName = null;
 		if (PREVIEWS.containsKey(type)) {
 			viewName = PAGE_DETAILS_DIRECTORY + PREVIEWS.get(type);
 		} else {
-			viewName = PAGE_DETAILS_DIRECTORY + PREVIEW_UNAVAILABLE;
+			viewName = PREVIEW_UNAVAILABLE;
 		}
 
 		return viewName;
