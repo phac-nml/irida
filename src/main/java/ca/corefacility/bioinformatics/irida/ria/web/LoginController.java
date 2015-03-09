@@ -34,7 +34,7 @@ public class LoginController extends BaseController {
 	@RequestMapping(value = "/login")
 	public String showLogin(Model model,
 			@RequestParam(value = "error", required = false, defaultValue = "false") Boolean hasError,
-			@RequestParam(value="appCallbackUrl",required=false) String galaxyCallbackURL,
+			@RequestParam(value="galaxyCallbackUrl",required=false) String galaxyCallbackURL,
 			HttpSession httpSession) {
 		logger.debug("Displaying login page.");
 		

@@ -59,11 +59,12 @@ public class CartController {
 	}
 	
 	@RequestMapping("/template/galaxy/project/{projectId}")
-	public String getGalaxyModal(Model model, Principal principal,@PathVariable Long projectId) {
+	public String getGalaxyModal(Model model, Principal principal,@PathVariable Long projectId ) {
 		model.addAttribute("email", userService.getUserByUsername(principal.getName()).getEmail());
-		String name = projectService.read(projectId).getOrganism() + "-" + principal.getName();
-		model.addAttribute("name", name);
-		return "templates/cart-galaxy.tmpl";
+		model.addAttribute("name", projectService.read(projectId).getName() + "-" + principal.getName());
+		String orgName = projectService.read(projectId).getOrganism() + "-" + principal.getName();
+		model.addAttribute("orgName", orgName);
+		return "templates/galaxy.tmpl";
 	}
 
 	/**

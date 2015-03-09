@@ -557,8 +557,16 @@
       galaxy  : function galaxy() {
         vm.export.open = false;
         $modal.open({
-          templateUrl: TL.BASE_URL + 'projects/' + project.id + '/templates/samples/galaxy',
-          controller : 'GalaxyCtrl as gCtrl'
+          templateUrl: TL.BASE_URL + 'cart/template/galaxy/project/' + project.id,
+          controller : 'GalaxyCartDialogCtrl as gCtrl',
+          resolve    : {
+            openedByCart: function () {
+              return false;
+            },
+            multiProject: function () {
+              return (data.length > 1)
+            }
+          }
         });
       }
     };
@@ -767,45 +775,6 @@
     });
   }
 
-  function GalaxyCtrl($timeout, $modalInstance, GalaxyExportService) {
-    "use strict";
-    var vm = this;
-
-    vm.upload = function () {   
-    	
-    	GalaxyExportService.initialize();
-		GalaxyExportService.setUserEmail(vm.email);
-		GalaxyExportService.setLibrary(vm.name);
-		
-    	var samples = StorageService.getSamples()
-    	_.each(samples, function(sample) {
-    		_.each(sample.embedded.sample_files, function(sequenceFile) {
-    			GalaxyExportService.addSampleFile(sample.sample.label, sequenceFile._links.self.href)
-    		})
-    	})
-    	
-      vm.sampleFormEntities = GalaxyExportService.getSampleFormEntities();
-      $timeout(
-        function(){
-	      document.getElementById("galSubFrm").submit();
-	      vm.close();
-		}
-	  ); 
-    };
-
-    vm.setName = function (name) {
-      vm.name = name;
-    };
-
-    vm.setEmail = function (email) {
-      vm.email = email;
-    };
-
-    vm.close = function () {
-      $modalInstance.close();
-    };
-  };
-
   function CartController(cart, storage) {
     "use strict";
     var vm = this;
@@ -848,7 +817,6 @@
     .controller('LinkerCtrl', ['$modalInstance', 'SamplesService', LinkerCtrl])
     .controller('SortCtrl', ['$rootScope', 'FilterFactory', SortCtrl])
     .controller('FilterCtrl', ['$scope', 'FilterFactory', FilterCtrl])
-    .controller('GalaxyCtrl', ['$timeout', '$modalInstance', 'GalaxyExportService', GalaxyCtrl])
     .controller('CartController', ['CartService', 'StorageService', CartController])
     .controller('SampleDisplayCtrl', ['$rootScope', 'SamplesService', SampleDisplayCtrl])
   ;

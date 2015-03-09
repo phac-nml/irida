@@ -119,7 +119,7 @@ public class ProjectsController {
 	 */
 	@RequestMapping("/projects")
 	public String getProjectsPage(Model model,
-			@RequestParam(value="appCallbackUrl",required=false) String galaxyCallbackURL,
+			@RequestParam(value="galaxyCallbackUrl",required=false) String galaxyCallbackURL,
 			HttpSession httpSession) {
 		model.addAttribute("ajaxURL", "/projects/ajax/list");
 		model.addAttribute("isAdmin", false);
