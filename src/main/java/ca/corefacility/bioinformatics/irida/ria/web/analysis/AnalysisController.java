@@ -121,7 +121,7 @@ public class AnalysisController {
 	 */
 	@RequestMapping(value = "/{submissionId}", produces = MediaType.TEXT_HTML_VALUE)
 	public String getDetailsPage(@PathVariable Long submissionId, Model model, Locale locale) {
-		logger.trace("reading analysis submssion " + submissionId);
+		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		model.addAttribute("analysisSubmission", submission);
 
@@ -152,7 +152,6 @@ public class AnalysisController {
 				if (analysisType.equals(AnalysisType.PHYLOGENOMICS)) {
 
 					model = tree(submission, model);
-
 				}
 
 				model.addAttribute("outputFiles", submission.getAnalysis().getAnalysisOutputFiles());
@@ -186,14 +185,14 @@ public class AnalysisController {
 	private Model tree(AnalysisSubmission submission, Model model) throws IOException {
 		assert (submission.getAnalysis().getClass().equals(AnalysisPhylogenomicsPipeline.class));
 
-		// inform the view to display the tree preview
-		model.addAttribute("preview", "tree");
-
 		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) submission.getAnalysis();
 		AnalysisOutputFile file = analysis.getPhylogeneticTree();
 		List<String> lines = Files.readAllLines(file.getFile());
 		model.addAttribute("analysis", analysis);
 		model.addAttribute("newick", lines.get(0));
+
+		// inform the view to display the tree preview
+		model.addAttribute("preview", "tree");
 
 		return model;
 
