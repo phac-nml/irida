@@ -137,6 +137,36 @@ public class GalaxyWorkflowStatusTest {
 	}
 
 	/**
+	 * Tests whether or not this workflow is in an error state when it is an
+	 * empty state.
+	 */
+	@Test
+	public void testErrorOccuredEmpty() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("empty");
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("empty", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+	}
+
+	/**
+	 * Tests whether or not this workflow is in an error state when it is empty
+	 * but the overall workflow is still running.
+	 */
+	@Test
+	public void testErrorOccuredEmptyStillRunning() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("running");
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("empty", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+	}
+
+	/**
 	 * Tests successfully building a workflow status from history details
 	 * (everything complete).
 	 */

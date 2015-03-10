@@ -62,7 +62,8 @@ public class GalaxyWorkflowStatus {
 	public boolean errorOccurred() {
 		return state.equals(GalaxyWorkflowState.ERROR) || countHistoryItemsInState(GalaxyWorkflowState.ERROR) > 0
 				|| state.equals(GalaxyWorkflowState.FAILED_METADATA)
-				|| countHistoryItemsInState(GalaxyWorkflowState.FAILED_METADATA) > 0;
+				|| countHistoryItemsInState(GalaxyWorkflowState.FAILED_METADATA) > 0
+				|| state.equals(GalaxyWorkflowState.EMPTY) || countHistoryItemsInState(GalaxyWorkflowState.EMPTY) > 0;
 	}
 
 	/**
@@ -71,9 +72,9 @@ public class GalaxyWorkflowStatus {
 	 * @return True if this workflow is still running, false otherwise.
 	 */
 	public boolean isRunning() {
-		return Sets.newHashSet(GalaxyWorkflowState.UPLOAD, GalaxyWorkflowState.QUEUED, GalaxyWorkflowState.RUNNING,
-				GalaxyWorkflowState.PAUSED, GalaxyWorkflowState.SETTING_METADATA, GalaxyWorkflowState.RESUBMITTED)
-				.contains(state);
+		return Sets.newHashSet(GalaxyWorkflowState.NEW, GalaxyWorkflowState.UPLOAD, GalaxyWorkflowState.QUEUED,
+				GalaxyWorkflowState.RUNNING, GalaxyWorkflowState.PAUSED, GalaxyWorkflowState.SETTING_METADATA,
+				GalaxyWorkflowState.RESUBMITTED).contains(state);
 	}
 
 	/**
