@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeoutException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
@@ -13,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistori
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Utility methods for Galaxy integration tests.
@@ -20,8 +22,15 @@ import com.google.common.collect.Lists;
  */
 public class Util {
 	private static final List<String> EMPTY_IDS = Lists.newLinkedList();
+	private static final Set<String> EMPTY_IDS_SET = Sets.newHashSet();
 	private static final List<String> STATES = Lists.newArrayList("discarded", "empty", "error", "failed_metadata",
 			"ok", "paused", "queued", "resubmitted", "running", "setting_metadata", "upload", "new");
+	
+	private static final List<GalaxyWorkflowState> IRIDA_STATES = Lists.newArrayList(GalaxyWorkflowState.values());
+	
+	static {
+		IRIDA_STATES.remove(GalaxyWorkflowState.UNKNOWN);
+	}
 	
 	/**
 	 * Given a file within a Galaxy history, finds the id of that file.
@@ -91,6 +100,31 @@ public class Util {
 				stateIds.put(state, ids);
 			} else {
 				stateIds.put(state, EMPTY_IDS);
+			}
+		}
+
+		return stateIds;
+	}
+
+	/**
+	 * Builds a map of irida workflow states to state ids with the given state
+	 * filled with the given ids.
+	 * 
+	 * @param stateToFill
+	 *            The state to set the given ids with.
+	 * @param ids
+	 *            The ids to add to the given state.
+	 * @return A map of states to a list of ids.
+	 */
+	public static Map<GalaxyWorkflowState, Set<String>> buildStateIdsWithStateFilled(GalaxyWorkflowState stateToFill,
+			Set<String> ids) {
+		Map<GalaxyWorkflowState, Set<String>> stateIds = new HashMap<>();
+
+		for (GalaxyWorkflowState state : IRIDA_STATES) {
+			if (state.equals(stateToFill)) {
+				stateIds.put(state, ids);
+			} else {
+				stateIds.put(state, EMPTY_IDS_SET);
 			}
 		}
 
