@@ -6,7 +6,6 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 
 /**
  * Service for storing and retrieving {@link RemoteAPIs} that this API can connect to
- * @author "Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>"
  *
  */
 public interface RemoteAPIService extends CRUDService<Long, RemoteAPI> {

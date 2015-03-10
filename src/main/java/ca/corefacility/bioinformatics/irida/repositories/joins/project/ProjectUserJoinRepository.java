@@ -16,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 /**
  * A repository for {@link ProjectUserJoin}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoin, Long>,

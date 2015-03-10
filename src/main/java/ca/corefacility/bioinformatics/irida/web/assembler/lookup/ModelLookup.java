@@ -27,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserReso
  * associated IdentifiableResource classes are. Can also be used to see what
  * properties are available to those web resources.
  * 
- * @author "Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>"
  * 
  */
 public class ModelLookup {

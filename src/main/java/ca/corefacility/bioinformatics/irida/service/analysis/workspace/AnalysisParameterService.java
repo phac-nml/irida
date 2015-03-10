@@ -9,7 +9,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.WorkflowInp
 /**
  * A service for setting up parameters for an analysis.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public interface AnalysisParameterService<WorkflowInputsType extends WorkflowInputsGeneric> {

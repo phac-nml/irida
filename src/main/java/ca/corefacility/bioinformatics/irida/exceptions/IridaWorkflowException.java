@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.exceptions;
 /**
  * Exception that gets thrown for any Irida workflows.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class IridaWorkflowException extends Exception {

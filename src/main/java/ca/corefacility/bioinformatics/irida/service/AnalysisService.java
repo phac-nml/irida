@@ -12,7 +12,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 /**
  * Service for managing objects of type {@link Analysis}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 public interface AnalysisService extends CRUDService<Long, Analysis> {

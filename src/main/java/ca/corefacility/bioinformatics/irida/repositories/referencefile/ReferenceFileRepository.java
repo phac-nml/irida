@@ -7,7 +7,6 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
 /**
  * Repository for interacting with {@link ReferenceFile}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 public interface ReferenceFileRepository extends IridaJpaRepository<ReferenceFile, Long>,

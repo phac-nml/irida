@@ -39,8 +39,6 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 /**
  * Implementation for managing {@link SequenceFile}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Service
 public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile> implements SequenceFileService {
@@ -190,7 +188,6 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 * Executes {@link FileProcessingChain} asynchronously in a
 	 * {@link TaskExecutor}.
 	 * 
-	 * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
 	 * 
 	 */
 	private static final class SequenceFileProcessorLauncher implements Runnable {

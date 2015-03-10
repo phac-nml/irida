@@ -13,7 +13,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 
 /**
  * Utility methods for Galaxy integration tests.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class Util {

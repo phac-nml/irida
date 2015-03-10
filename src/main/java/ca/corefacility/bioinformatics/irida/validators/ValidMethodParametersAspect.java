@@ -25,7 +25,6 @@ import com.google.common.collect.Lists;
  * This aspect automatically invokes a {@link Validator} for method parameters
  * annotated with the {@link @Valid} annotation.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 @Aspect

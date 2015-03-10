@@ -18,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 
 /**
  * Implementation for a service to cleanup inconsistencies with {@link AnalysisSubmission}s.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Service

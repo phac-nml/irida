@@ -35,7 +35,6 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 /**
  * Tests for an analysis submission cleanup service.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)

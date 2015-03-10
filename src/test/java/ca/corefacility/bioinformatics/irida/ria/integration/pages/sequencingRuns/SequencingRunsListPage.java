@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 /**
  * Page displaying the list of sequencing runs
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class SequencingRunsListPage extends AbstractPage {

@@ -43,8 +43,6 @@ import com.google.common.collect.ImmutableSet;
 /**
  * Generates test data for unit tests.
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class TestDataFactory {
 	public static final String FAKE_FILE_PATH = "src/test/resources/files/{name}";

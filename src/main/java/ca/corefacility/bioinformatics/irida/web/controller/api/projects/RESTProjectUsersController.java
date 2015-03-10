@@ -36,7 +36,6 @@ import com.google.common.net.HttpHeaders;
 /**
  * Controller for managing relationships between {@link Project} and {@link User}.
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
 public class RESTProjectUsersController {

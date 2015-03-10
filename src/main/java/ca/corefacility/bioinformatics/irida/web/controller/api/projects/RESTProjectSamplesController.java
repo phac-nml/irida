@@ -41,7 +41,6 @@ import com.google.common.net.HttpHeaders;
  * Controller for managing relationships between {@link Project} and
  * {@link Sample}.
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
 public class RESTProjectSamplesController {

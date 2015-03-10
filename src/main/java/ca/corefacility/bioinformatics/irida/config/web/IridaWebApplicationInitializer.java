@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.web.filter.HttpHeadFilter;
 /**
  * REST API initializer with security.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 public class IridaWebApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {

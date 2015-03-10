@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmissionOneO
  * these fields are based on NCBI BioSample. Information can be found at
  * https://submit.ncbi.nlm.nih.gov/biosample/template/
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public interface IridaSample {

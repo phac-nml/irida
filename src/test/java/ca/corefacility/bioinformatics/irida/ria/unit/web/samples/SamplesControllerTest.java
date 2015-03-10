@@ -49,7 +49,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 /**
- * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
 public class SamplesControllerTest {
 

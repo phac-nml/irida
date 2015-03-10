@@ -9,7 +9,6 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 
 /**
  * Resource class for a MiseqRun
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @XmlRootElement(name = "miseqRun")
 public class MiseqRunResource extends SequencingRunResource {

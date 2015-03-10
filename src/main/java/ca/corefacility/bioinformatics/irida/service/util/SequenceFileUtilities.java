@@ -5,7 +5,6 @@ import java.nio.file.Path;
 /**
  * Utility class for executing common functions on sequence files
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public interface SequenceFileUtilities {

@@ -8,7 +8,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 /**
  * <p> Project Metadata Page </p>
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectMetadataPage extends AbstractPage {
 

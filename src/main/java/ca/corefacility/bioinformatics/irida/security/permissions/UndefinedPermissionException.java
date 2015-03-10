@@ -4,7 +4,6 @@ package ca.corefacility.bioinformatics.irida.security.permissions;
  * Thrown when the {@link IridaPermissionEvaluator} is asked to test a
  * permission that it doesn't know about.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public class UndefinedPermissionException extends RuntimeException {

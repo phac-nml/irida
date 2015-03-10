@@ -3,8 +3,6 @@ package ca.corefacility.bioinformatics.irida.exceptions;
 /**
  * Thrown when a property cannot be set or retrieved by a service class.
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class InvalidPropertyException extends RuntimeException {
 

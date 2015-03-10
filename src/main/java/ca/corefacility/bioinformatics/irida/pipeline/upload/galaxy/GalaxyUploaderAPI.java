@@ -54,7 +54,6 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 /**
  * A class defining an API for uploading samples to a remote Galaxy instance.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyUploaderAPI {

@@ -40,7 +40,6 @@ import org.hibernate.usertype.UserType;
  * remove this class and replace with with a much more sane JPA-compliant
  * version.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @MappedSuperclass

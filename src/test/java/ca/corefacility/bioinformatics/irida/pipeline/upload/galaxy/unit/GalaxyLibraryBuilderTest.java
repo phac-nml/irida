@@ -33,7 +33,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSea
 
 /**
  * Unit tests for GalaxyLibrary.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyLibraryBuilderTest {

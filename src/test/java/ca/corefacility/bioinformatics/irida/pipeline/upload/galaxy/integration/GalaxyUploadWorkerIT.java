@@ -41,7 +41,6 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 
 /**
  * Integration tests for the GalaxyUploadWorker with a running instance of Galaxy.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)

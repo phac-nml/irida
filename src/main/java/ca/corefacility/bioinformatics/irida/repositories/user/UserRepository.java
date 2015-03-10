@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 /**
  * Specialized repository for {@link User}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public interface UserRepository extends IridaJpaRepository<User, Long>, UserDetailsService {
 

@@ -5,7 +5,6 @@ import org.springframework.data.domain.Sort;
 /**
  * Static string used in the ResponseBody for DataTables calls.
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class DataTable {
 	/**

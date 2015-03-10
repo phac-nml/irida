@@ -40,7 +40,6 @@ import com.google.common.collect.ImmutableSet;
  * A historical record of how a tool was executed by a workflow execution
  * manager to produce some set of outputs.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Entity

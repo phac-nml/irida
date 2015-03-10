@@ -11,7 +11,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 /**
  * Phylogenomics workflow launch page.
  *
- * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
 public class PipelinesPhylogenomicsPage extends AbstractPage {
 	public PipelinesPhylogenomicsPage(WebDriver driver) {

@@ -17,7 +17,6 @@ import org.springframework.web.filter.GenericFilterBean;
 /**
  * Filter to be used to add constants to the session for templating
  *
- * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
 @Component
 public class SessionFilter extends GenericFilterBean {

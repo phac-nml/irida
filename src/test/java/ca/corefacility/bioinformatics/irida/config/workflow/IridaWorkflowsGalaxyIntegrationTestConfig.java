@@ -33,7 +33,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.RepositoryInstall;
 /**
  * Class used configure workflows in Galaxy for integration testing.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Configuration

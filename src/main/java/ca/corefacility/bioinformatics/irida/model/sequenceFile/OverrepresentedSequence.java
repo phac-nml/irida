@@ -24,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 /**
  * A {@link SequenceFile} may have 0 or more over-represented sequences.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Entity
 @Table(name = "overrepresented_sequence")

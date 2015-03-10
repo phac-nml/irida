@@ -9,7 +9,6 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
 /**
  * Service for interacting with named parameter sets.
  * 
- * @author Franklin Bristow franklin.bristow@phac-aspc.gc.ca
  *
  */
 public interface WorkflowNamedParametersService extends CRUDService<Long, IridaWorkflowNamedParameters> {

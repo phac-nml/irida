@@ -20,8 +20,6 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
 /**
  * A service class for working with samples.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public interface SampleService extends CRUDService<Long, Sample> {
 

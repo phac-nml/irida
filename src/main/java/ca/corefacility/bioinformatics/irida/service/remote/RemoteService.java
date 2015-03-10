@@ -9,7 +9,6 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource
 /**
  * Service for communicating with a remote IRIDA instance
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  * @param <Type>
  *            The type of object this repository will store

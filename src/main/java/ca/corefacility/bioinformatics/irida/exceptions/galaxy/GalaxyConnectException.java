@@ -4,7 +4,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 
 /**
  * When there is an issue connecting to Galaxy.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyConnectException extends UploadException {

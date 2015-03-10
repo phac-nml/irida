@@ -27,7 +27,6 @@ import com.github.jmchilton.galaxybootstrap.GalaxyProperties;
 
 /**
  * A class containing information about the running instance of Galaxy for integration testing.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class LocalGalaxy {

@@ -19,7 +19,6 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource
  * object needs to be displayed in a form on a page and must be able to be
  * selected by a user.
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  * @param <Type>
  *            The type of {@link RemoteResource} to store

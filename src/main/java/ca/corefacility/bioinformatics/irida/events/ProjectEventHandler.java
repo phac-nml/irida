@@ -18,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
  * Handles the creation of {@link ProjectEvent}s from methods annotated with
  * {@link LaunchesProjectEvent}
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * 
  * @see LaunchesProjectEvent
  *

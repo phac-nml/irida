@@ -28,7 +28,6 @@ import com.google.common.collect.Maps;
 /**
  * Tests for the {@link AnalysisParameterServiceGalaxy} class.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class AnalysisParameterServiceGalaxyTest {

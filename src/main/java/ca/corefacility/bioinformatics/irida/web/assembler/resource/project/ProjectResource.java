@@ -9,7 +9,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.IdentifiableR
 /**
  * A resource for {@link Project}s.
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @XmlRootElement(name = "project")
 public class ProjectResource extends IdentifiableResource<Project> {

@@ -30,7 +30,6 @@ import com.google.common.net.HttpHeaders;
 
 /**
  *
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
 public class RESTSequencingRunSequenceFilesController {

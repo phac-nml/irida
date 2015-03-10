@@ -166,7 +166,6 @@ public abstract class SequencingRun implements IridaThing, Comparable<Sequencing
 	/**
 	 * The type of layout for the run. Single/Paired end
 	 * 
-	 * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
 	 *
 	 */
 	public static enum LayoutType {

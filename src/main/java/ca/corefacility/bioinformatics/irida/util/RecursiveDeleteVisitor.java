@@ -10,7 +10,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 /**
  * Delete an entire directory structure recursively.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public class RecursiveDeleteVisitor implements FileVisitor<Path> {

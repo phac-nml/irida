@@ -25,7 +25,6 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleNa
 
 /**
  * Tests for {@link GalaxySample}.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxySampleTest {

@@ -60,7 +60,6 @@ import com.google.common.collect.Maps;
 /**
  * A service for performing tasks for analysis in Galaxy.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
 public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService {
 

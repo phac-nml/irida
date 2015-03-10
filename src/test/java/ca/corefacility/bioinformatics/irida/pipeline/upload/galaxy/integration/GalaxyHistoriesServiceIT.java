@@ -67,7 +67,6 @@ import com.sun.jersey.api.client.ClientResponse;
 
 /**
  * Tests for building Galaxy histories.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)

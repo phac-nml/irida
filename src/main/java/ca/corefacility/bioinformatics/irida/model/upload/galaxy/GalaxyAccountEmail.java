@@ -12,7 +12,6 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 /**
  * A GalaxyAccount object for storing credentials for an account in Galaxy.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
 public class GalaxyAccountEmail implements UploaderAccountName {

@@ -10,7 +10,6 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 /**
  * Test sequencing run entity
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Entity

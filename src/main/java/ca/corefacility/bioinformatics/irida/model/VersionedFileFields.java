@@ -7,7 +7,6 @@ import java.io.Serializable;
  * an internally managed version representation. This interface exposes that
  * version.
  * 
- * @author fbristow
  *
  */
 public interface VersionedFileFields<VersionType extends Serializable> {

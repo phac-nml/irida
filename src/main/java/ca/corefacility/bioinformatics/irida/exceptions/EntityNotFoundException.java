@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.exceptions;
 /**
  * When an {@link Identifiable} entity cannot be found in the database.
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class EntityNotFoundException extends RuntimeException {
 

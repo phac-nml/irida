@@ -30,7 +30,6 @@ import com.google.common.collect.ImmutableList;
  * This handler will create a new {@link PasswordReset} and redirect to the
  * appropriate {@link PasswordResetController} page.
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Component

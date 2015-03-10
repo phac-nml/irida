@@ -36,7 +36,6 @@ import com.google.common.collect.Sets;
 /**
  * Tests for {@link AnalysisProvenanceServiceGalaxy}.
  * 
- * @author Franklin Bristow franklin.bristow@phac-aspc.gc.ca
  *
  */
 public class AnalysisProvenanceServiceGalaxyTest {

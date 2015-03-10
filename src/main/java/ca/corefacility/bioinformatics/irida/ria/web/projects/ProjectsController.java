@@ -59,7 +59,6 @@ import com.google.common.base.Strings;
 /**
  * Controller for project related views
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Controller
 public class ProjectsController {

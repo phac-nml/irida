@@ -62,7 +62,6 @@ import com.google.common.collect.Lists;
 /**
  * Configuration for the IRIDA platform.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 @Configuration

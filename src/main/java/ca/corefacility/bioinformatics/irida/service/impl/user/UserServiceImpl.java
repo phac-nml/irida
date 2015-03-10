@@ -41,7 +41,6 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Implementation of the {@link UserService}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Transactional
 @Service

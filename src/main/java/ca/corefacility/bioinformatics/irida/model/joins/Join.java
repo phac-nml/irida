@@ -10,7 +10,6 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
  * will have a "subject" and "object" that are the 2 fields being joined, then a
  * creation timestamp.
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * 
  * @param <SubjectType>
  *            the type of the owning object

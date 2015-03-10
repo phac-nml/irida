@@ -24,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
 /**
  * Customized service for accessing user objects.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public interface UserService extends CRUDService<Long, User>, UserDetailsService {
 

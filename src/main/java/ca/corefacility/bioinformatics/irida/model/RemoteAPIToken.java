@@ -21,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  * OAuth2 token for communicating with a {@link RemoteAPI} for a given
  * {@link User}
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Entity

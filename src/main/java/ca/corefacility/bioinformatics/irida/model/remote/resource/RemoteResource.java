@@ -8,7 +8,6 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 /**
  * Methods that must be implemented by resources read from a remote Irida API
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public interface RemoteResource extends IridaThing {
 	public static final String SELF_REL = "self";

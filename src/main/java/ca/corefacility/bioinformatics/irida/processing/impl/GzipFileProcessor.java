@@ -26,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
  * that the decompressed file name will not conflict with the compressed file
  * name.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public class GzipFileProcessor implements FileProcessor {

@@ -13,7 +13,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 /**
  * Defines a service used to perform the tasks for execution of a workflow.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
 public interface AnalysisWorkspaceService {
 

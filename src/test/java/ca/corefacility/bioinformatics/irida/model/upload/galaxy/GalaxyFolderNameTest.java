@@ -22,7 +22,6 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleNa
 
 /**
  * Tests for {@link GalaxyProjectName}.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyFolderNameTest {

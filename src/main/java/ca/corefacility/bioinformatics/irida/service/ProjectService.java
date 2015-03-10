@@ -23,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 /**
  * A specialized service layer for projects.
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public interface ProjectService extends CRUDService<Long, Project> {
 

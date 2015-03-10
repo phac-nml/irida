@@ -40,7 +40,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
  * code. This includes code for setup of sequence files in a database and
  * waiting for submission to complete in Galaxy.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class DatabaseSetupGalaxyITService {

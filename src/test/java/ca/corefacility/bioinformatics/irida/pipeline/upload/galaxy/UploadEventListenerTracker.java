@@ -8,7 +8,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadEventListener;
 
 /**
  * Class which keeps track of events it recieves for testing.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class UploadEventListenerTracker implements UploadEventListener {

@@ -14,7 +14,6 @@ import org.springframework.web.servlet.ModelAndView;
 /**
  * Serves error pages that are mapped directly in web.xml.
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Controller
