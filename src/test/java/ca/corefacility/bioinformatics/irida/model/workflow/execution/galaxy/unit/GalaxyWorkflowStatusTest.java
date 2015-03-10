@@ -165,6 +165,35 @@ public class GalaxyWorkflowStatusTest {
 
 		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
 	}
+	
+	/**
+	 * Tests whether or not this workflow is in an error state when it is discarded.
+	 */
+	@Test
+	public void testErrorOccuredDiscarded() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("discarded");
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("discarded", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+	}
+
+	/**
+	 * Tests whether or not this workflow is in an error state when it is discarded
+	 * but the overall workflow is still running.
+	 */
+	@Test
+	public void testErrorOccuredDiscardedStillRunning() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("discarded");
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("discarded", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+	}
 
 	/**
 	 * Tests successfully building a workflow status from history details

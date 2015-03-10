@@ -63,7 +63,8 @@ public class GalaxyWorkflowStatus {
 		return state.equals(GalaxyWorkflowState.ERROR) || countHistoryItemsInState(GalaxyWorkflowState.ERROR) > 0
 				|| state.equals(GalaxyWorkflowState.FAILED_METADATA)
 				|| countHistoryItemsInState(GalaxyWorkflowState.FAILED_METADATA) > 0
-				|| state.equals(GalaxyWorkflowState.EMPTY) || countHistoryItemsInState(GalaxyWorkflowState.EMPTY) > 0;
+				|| state.equals(GalaxyWorkflowState.EMPTY) || countHistoryItemsInState(GalaxyWorkflowState.EMPTY) > 0
+				|| state.equals(GalaxyWorkflowState.DISCARDED) || countHistoryItemsInState(GalaxyWorkflowState.DISCARDED) > 0;
 	}
 
 	/**
