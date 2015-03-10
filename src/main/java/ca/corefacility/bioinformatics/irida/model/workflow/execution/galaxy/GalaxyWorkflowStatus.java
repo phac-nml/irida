@@ -20,7 +20,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
  *
  */
 public class GalaxyWorkflowStatus {
-	private static final Logger logger = LoggerFactory.getLogger(GalaxyWorkflowStatus.class);
 
 	private final GalaxyWorkflowState state;
 	private final Map<GalaxyWorkflowState, Set<String>> stateIds;
@@ -100,11 +99,15 @@ public class GalaxyWorkflowStatus {
 	 */
 	public static class GalaxyWorkflowStatusBuilder {
 
+		private static final Logger logger = LoggerFactory.getLogger(GalaxyWorkflowStatusBuilder.class);
+
 		private HistoryDetails historyDetails;
-		
+
 		/**
 		 * Constructs a new {@link GalaxyWorkflowStatusBuilder}.
-		 * @param historyDetails  The HistoryDetails to build the status from.
+		 * 
+		 * @param historyDetails
+		 *            The HistoryDetails to build the status from.
 		 */
 		public GalaxyWorkflowStatusBuilder(HistoryDetails historyDetails) {
 			checkNotNull(historyDetails, "historyDetails is null");
