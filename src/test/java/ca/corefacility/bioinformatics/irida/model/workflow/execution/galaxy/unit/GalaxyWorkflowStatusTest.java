@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.unit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.List;
 import java.util.Map;
@@ -31,6 +31,109 @@ public class GalaxyWorkflowStatusTest {
 	 */
 	@Before
 	public void setup() {
+	}
+
+	/**
+	 * Tests whether or not this workflow completed successfully.
+	 */
+	@Test
+	public void testCompletedSuccessfully() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("ok");
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("ok", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow did not complete successfully", workflowStatus.completedSuccessfully());
+	}
+
+	/**
+	 * Tests whether or not this workflow is still running.
+	 */
+	@Test
+	public void testIsRunning() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("running");
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("running", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow is not still running", workflowStatus.isRunning());
+	}
+
+	/**
+	 * Tests whether or not this workflow is considered still running (while
+	 * queued).
+	 */
+	@Test
+	public void testIsRunningWhileQueued() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("queued");
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("queued", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow is not still running", workflowStatus.isRunning());
+	}
+
+	/**
+	 * Tests whether or not this workflow is in an error state.
+	 */
+	@Test
+	public void testErrorOccured() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("error");
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("error", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+	}
+
+	/**
+	 * Tests whether or not an error occured even while still running.
+	 */
+	@Test
+	public void testErrorOccuredWhileStillRunning() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("running");
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("error", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+	}
+
+	/**
+	 * Tests whether or not this workflow is in an error state when there is
+	 * failed metadata.
+	 */
+	@Test
+	public void testErrorOccuredFailedMetadata() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("failed_metadata");
+		historyDetails
+				.setStateIds(Util.buildStateIdsWithStateFilled("failed_metadata", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+	}
+
+	/**
+	 * Tests whether or not this workflow is in an error state when there is
+	 * failed metadata but the overall workflow is still running.
+	 */
+	@Test
+	public void testErrorOccuredFailedMetadataStillRunning() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("running");
+		historyDetails
+				.setStateIds(Util.buildStateIdsWithStateFilled("failed_metadata", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
 	}
 
 	/**
