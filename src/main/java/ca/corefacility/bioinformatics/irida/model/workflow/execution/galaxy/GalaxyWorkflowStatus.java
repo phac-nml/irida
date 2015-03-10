@@ -23,7 +23,6 @@ public class GalaxyWorkflowStatus {
 
 	private final GalaxyWorkflowState state;
 	private final Map<GalaxyWorkflowState, Set<String>> stateIds;
-	private final int totalWorkflowItems;
 
 	/**
 	 * Constructs a new {@link GalaxyWorkflowStatus} with the given information.
@@ -40,7 +39,6 @@ public class GalaxyWorkflowStatus {
 
 		this.state = state;
 		this.stateIds = stateIds;
-		this.totalWorkflowItems = stateIds.values().stream().mapToInt(Set::size).sum();
 	}
 
 	/**
@@ -58,7 +56,7 @@ public class GalaxyWorkflowStatus {
 	 * @return The percentage complete for this workflow.
 	 */
 	public float getPercentComplete() {
-		return 100.0f * (countHistoryItemsInState(GalaxyWorkflowState.OK) / (float) totalWorkflowItems);
+		return 100.0f * (countHistoryItemsInState(GalaxyWorkflowState.OK) / (float) countTotalWorkflowItems());
 	}
 
 	/**
@@ -78,6 +76,15 @@ public class GalaxyWorkflowStatus {
 	 */
 	private int countHistoryItemsInState(GalaxyWorkflowState state) {
 		return stateIds.get(state).size();
+	}
+
+	/**
+	 * Count the total number of workflow items within all states.
+	 * 
+	 * @return The number of workflow items in all states.
+	 */
+	private int countTotalWorkflowItems() {
+		return stateIds.values().stream().mapToInt(Set::size).sum();
 	}
 
 	/**
