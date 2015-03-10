@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
@@ -10,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistori
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
+import com.google.common.collect.Lists;
 
 /**
  * Utility methods for Galaxy integration tests.
@@ -17,6 +20,10 @@ import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
  *
  */
 public class Util {
+	private static final List<String> EMPTY_IDS = Lists.newLinkedList();
+	private static final List<String> STATES = Lists.newArrayList("discarded", "empty", "error", "failed_metadata",
+			"ok", "paused", "queued", "resubmitted", "running", "setting_metadata", "upload", "new");
+	
 	/**
 	 * Given a file within a Galaxy history, finds the id of that file.
 	 * @param filename  The name of the file within a history.
@@ -65,5 +72,29 @@ public class Util {
 						" " + deltaSeconds + "s > " + timeout + "s");
 			}
 		} while (!GalaxyWorkflowState.OK.equals(workflowStatus.getState()));
+	}
+	
+	/**
+	 * Builds a map of states to state ids with the given state filled with the
+	 * given ids.
+	 * 
+	 * @param stateToFill
+	 *            The state to set the given ids with.
+	 * @param ids
+	 *            The ids to add to the given state.
+	 * @return A map of states to a list of ids.
+	 */
+	public static Map<String, List<String>> buildStateIdsWithStateFilled(String stateToFill, List<String> ids) {
+		Map<String, List<String>> stateIds = new HashMap<>();
+
+		for (String state : STATES) {
+			if (state.equals(stateToFill)) {
+				stateIds.put(state, ids);
+			} else {
+				stateIds.put(state, EMPTY_IDS);
+			}
+		}
+
+		return stateIds;
 	}
 }

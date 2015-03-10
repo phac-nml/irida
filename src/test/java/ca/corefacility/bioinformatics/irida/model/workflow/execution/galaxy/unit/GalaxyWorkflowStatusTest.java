@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.uni
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +10,7 @@ import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.Util;
 
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.google.common.collect.Lists;
@@ -22,43 +22,15 @@ public class GalaxyWorkflowStatusTest {
 
 	private static float DELTA = 0.00001f;
 
-	private static final List<String> EMPTY_IDS = Lists.newLinkedList();
 	private static final String DATASET_ID = "1";
 	private static final String DATASET_ID2 = "2";
 	private static final String DATASET_ID3 = "3";
-
-	private static final List<String> STATES = Lists.newArrayList("discarded", "empty", "error", "failed_metadata",
-			"ok", "paused", "queued", "resubmitted", "running", "setting_metadata", "upload", "new");
 
 	/**
 	 * Sets up objects for test.
 	 */
 	@Before
 	public void setup() {
-	}
-
-	/**
-	 * Builds a map of states to state ids with the given state filled with the
-	 * given ids.
-	 * 
-	 * @param stateToFill
-	 *            The state to set the given ids with.
-	 * @param ids
-	 *            The ids to add to the given state.
-	 * @return A map of states to a list of ids.
-	 */
-	private Map<String, List<String>> buildStateIdsWithStateFilled(String stateToFill, List<String> ids) {
-		Map<String, List<String>> stateIds = new HashMap<>();
-
-		for (String state : STATES) {
-			if (state.equals(stateToFill)) {
-				stateIds.put(state, ids);
-			} else {
-				stateIds.put(state, EMPTY_IDS);
-			}
-		}
-
-		return stateIds;
 	}
 
 	/**
@@ -69,7 +41,7 @@ public class GalaxyWorkflowStatusTest {
 	public void testBuildWorkflowStatusFromHistoryDetailsSuccessComplete() {
 		HistoryDetails historyDetails = new HistoryDetails();
 		historyDetails.setState("ok");
-		historyDetails.setStateIds(buildStateIdsWithStateFilled("ok", Lists.newArrayList(DATASET_ID)));
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("ok", Lists.newArrayList(DATASET_ID)));
 
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
@@ -85,7 +57,7 @@ public class GalaxyWorkflowStatusTest {
 	public void testBuildWorkflowStatusFromHistoryDetailsSuccessQueued() {
 		HistoryDetails historyDetails = new HistoryDetails();
 		historyDetails.setState("queued");
-		historyDetails.setStateIds(buildStateIdsWithStateFilled("queued", Lists.newArrayList(DATASET_ID)));
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("queued", Lists.newArrayList(DATASET_ID)));
 
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
@@ -101,7 +73,8 @@ public class GalaxyWorkflowStatusTest {
 	public void testBuildWorkflowStatusFromHistoryDetailsSuccessRunning() {
 		HistoryDetails historyDetails = new HistoryDetails();
 		historyDetails.setState("running");
-		Map<String, List<String>> stateIds = buildStateIdsWithStateFilled("running", Lists.newArrayList(DATASET_ID));
+		Map<String, List<String>> stateIds = Util.buildStateIdsWithStateFilled("running",
+				Lists.newArrayList(DATASET_ID));
 		stateIds.put("ok", Lists.newArrayList(DATASET_ID));
 		historyDetails.setStateIds(stateIds);
 
@@ -117,7 +90,7 @@ public class GalaxyWorkflowStatusTest {
 	 */
 	@Test
 	public void testBuildWorkflowStatusFromHistoryDetailsSuccessQuarterComplete() {
-		Map<String, List<String>> stateIds = buildStateIdsWithStateFilled("running",
+		Map<String, List<String>> stateIds = Util.buildStateIdsWithStateFilled("running",
 				Lists.newArrayList(DATASET_ID, DATASET_ID2, DATASET_ID3));
 		stateIds.put("ok", Lists.newArrayList(DATASET_ID));
 
@@ -138,7 +111,7 @@ public class GalaxyWorkflowStatusTest {
 	public void testBuildWorkflowStatusFromHistoryDetailsUnknownState() {
 		HistoryDetails historyDetails = new HistoryDetails();
 		historyDetails.setState("unknown new galaxy state");
-		historyDetails.setStateIds(buildStateIdsWithStateFilled("ok", Lists.newArrayList(DATASET_ID)));
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("ok", Lists.newArrayList(DATASET_ID)));
 
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
@@ -161,7 +134,7 @@ public class GalaxyWorkflowStatusTest {
 	@Test(expected = NullPointerException.class)
 	public void testBuildWorkflowStatusFromHistoryDetailsErrorNoDetailsState() {
 		HistoryDetails historyDetails = new HistoryDetails();
-		historyDetails.setStateIds(buildStateIdsWithStateFilled("ok", Lists.newArrayList(DATASET_ID)));
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("ok", Lists.newArrayList(DATASET_ID)));
 
 		GalaxyWorkflowStatus.builder(historyDetails).build();
 	}
@@ -185,7 +158,7 @@ public class GalaxyWorkflowStatusTest {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testBuildWorkflowStatusFromHistoryDetailsErrorMissingState() {
-		Map<String, List<String>> stateIds = buildStateIdsWithStateFilled("ok", Lists.newArrayList(DATASET_ID));
+		Map<String, List<String>> stateIds = Util.buildStateIdsWithStateFilled("ok", Lists.newArrayList(DATASET_ID));
 		stateIds.remove("running");
 
 		HistoryDetails historyDetails = new HistoryDetails();
@@ -201,7 +174,8 @@ public class GalaxyWorkflowStatusTest {
 	 */
 	@Test
 	public void testBuildWorkflowStatusFromHistoryDetailsUnknownStateIds() {
-		Map<String, List<String>> stateIds = buildStateIdsWithStateFilled("running", Lists.newArrayList(DATASET_ID));
+		Map<String, List<String>> stateIds = Util.buildStateIdsWithStateFilled("running",
+				Lists.newArrayList(DATASET_ID));
 		stateIds.put("unknown", Lists.newArrayList(DATASET_ID));
 
 		HistoryDetails historyDetails = new HistoryDetails();
