@@ -16,7 +16,7 @@ public class RemoteIdentifiableTestEntity extends IdentifiableTestEntity impleme
 	private RemoteAPI remoteAPI;
 
 	@Override
-	public RESTLinks getLinks() {
+	public RESTLinks getRestLinks() {
 		return links;
 	}
 
