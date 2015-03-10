@@ -19,9 +19,9 @@
 	</div>
 	<div class="row">
 		<div class="col-md-12">
-			<div th:if="${hasPreview}" layout:fragment="previewContent">
+			<div th:if="${preview}" layout:fragment="previewContent">
 			</div>
-			<div th:unless="${hasPreview}" layout:fragment="noPreview">__NO_PREVIEW__</div>
+			<div th:unless="${preview}" layout:fragment="noPreview">__NO_PREVIEW__</div>
 		</div>
 	</div>
 </main>

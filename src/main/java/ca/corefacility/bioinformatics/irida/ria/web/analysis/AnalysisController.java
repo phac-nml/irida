@@ -152,11 +152,6 @@ public class AnalysisController {
 				if (analysisType.equals(AnalysisType.PHYLOGENOMICS)) {
 
 					model = tree(submission, model);
-					model.addAttribute("hasPreview", true);
-
-				}
-				else {
-					model.addAttribute("hasPreview", false);
 				}
 
 				model.addAttribute("outputFiles", submission.getAnalysis().getAnalysisOutputFiles());
