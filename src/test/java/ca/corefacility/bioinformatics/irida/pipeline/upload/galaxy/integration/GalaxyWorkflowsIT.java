@@ -348,48 +348,95 @@ public class GalaxyWorkflowsIT {
 		
 		return output;
 	}
-	
+
 	/**
 	 * Runs a test filter workflow with the given input.
-	 * @param history  The history to run the workflow in.
-	 * @param inputFile  The file to run the workflow on.
-	 * @param filterParameters  The condition to run the workflow with.
-	 * @return  A {@link WorkflowOutputs} for this workflow.
+	 * 
+	 * @param history
+	 *            The history to run the workflow in.
+	 * @param inputFile
+	 *            The file to run the workflow on.
+	 * @param filterParameters
+	 *            The condition to run the workflow with.
+	 * @return A {@link WorkflowOutputs} for this workflow.
 	 * @throws ExecutionManagerException
 	 */
-	private WorkflowOutputs runSingleFileTabularWorkflow(History history, Path inputFile, String filterParameters)
-			throws ExecutionManagerException {
-		checkNotNull(inputFile, "file is null");
-		checkNotNull(filterParameters, "filterParameters is null");
-		
+	private WorkflowOutputs runSingleFileTabularWorkflowFilterTool(History history, Path inputFile,
+			String filterParameters) throws ExecutionManagerException {
 		String workflowId = localGalaxy.getWorkflowFilterId();
-		String workflowInputLabel = localGalaxy.getWorkflowFilterLabel(); 
-				
+		String workflowInputLabel = localGalaxy.getWorkflowFilterLabel();
+
+		ToolParameter toolParameter = new ToolParameter("cond", filterParameters);
+		return runSingleFileTabularWorkflow(workflowId, workflowInputLabel, history, inputFile, "Filter1",
+				toolParameter);
+	}
+
+	/**
+	 * Runs a test sleep workflow with the given input.
+	 * 
+	 * @param history
+	 *            The history to run the workflow in.
+	 * @param inputFile
+	 *            The file to run the workflow on.
+	 * @param sleepTime
+	 *            The sleep time.
+	 * @return A {@link WorkflowOutputs} for this workflow.
+	 * @throws ExecutionManagerException
+	 */
+	private WorkflowOutputs runSingleFileTabularWorkflowSleepTool(History history, Path inputFile, String sleepTime)
+			throws ExecutionManagerException {
+		String workflowId = localGalaxy.getWorkflowSleepId();
+		String workflowInputLabel = localGalaxy.getWorkflowSleepLabel();
+
+		ToolParameter toolParameter = new ToolParameter("time", sleepTime);
+		return runSingleFileTabularWorkflow(workflowId, workflowInputLabel, history, inputFile, "sleep", toolParameter);
+	}
+
+	/**
+	 * Runs a test workflow with the given parameters and input file.
+	 * 
+	 * @param workflowId
+	 *            The id of the workflow to run.
+	 * @param workflowInputLabel
+	 *            The lable of the input for the workflow.
+	 * @param history
+	 *            The history to run the workflow in.
+	 * @param inputFile
+	 *            The file to run the workflow on.
+	 * @param toolName
+	 *            The toolName of a parameter to override.
+	 * @param toolParameter
+	 *            The overridden tool parameter.
+	 * @return A {@link WorkflowOutputs} for this workflow.
+	 * @throws ExecutionManagerException
+	 */
+	private WorkflowOutputs runSingleFileTabularWorkflow(String workflowId, String workflowInputLabel, History history,
+			Path inputFile, String toolName, ToolParameter toolParameter) throws ExecutionManagerException {
+
 		checkArgument(Files.exists(inputFile), "inputFile " + inputFile + " does not exist");
 		checkWorkflowIdValid(workflowId);
-				
+
 		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(workflowId);
-		
+
 		// upload dataset to history
 		Dataset inputDataset = fileToHistory(inputFile, "tabular", history.getId());
 		assertNotNull(inputDataset);
-		
-		String workflowInputId = galaxyWorkflowService.
-				getWorkflowInputId(workflowDetails, workflowInputLabel);
+
+		String workflowInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, workflowInputLabel);
 
 		WorkflowInputs inputs = new WorkflowInputs();
 		inputs.setDestination(new WorkflowInputs.ExistingHistory(history.getId()));
 		inputs.setWorkflowId(workflowDetails.getId());
-		inputs.setInput(workflowInputId, new WorkflowInputs.WorkflowInput(inputDataset.getId(), WorkflowInputs.InputSourceType.HDA));
-		
-		ToolParameter toolParameter = new ToolParameter("cond", filterParameters);
-		inputs.setToolParameter("Filter1", toolParameter);
-		
+		inputs.setInput(workflowInputId, new WorkflowInputs.WorkflowInput(inputDataset.getId(),
+				WorkflowInputs.InputSourceType.HDA));
+
+		inputs.setToolParameter(toolName, toolParameter);
+
 		// execute workflow
 		WorkflowOutputs output = workflowsClient.runWorkflow(inputs);
 
 		logger.debug("Running workflow in history " + output.getHistoryId());
-		
+
 		return output;
 	}
 	
@@ -441,7 +488,7 @@ public class GalaxyWorkflowsIT {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		
 		WorkflowOutputs workflowOutput = 
-				runSingleFileTabularWorkflow(history, dataFile1, VALID_FILTER_PARAMETER);
+				runSingleFileTabularWorkflowFilterTool(history, dataFile1, VALID_FILTER_PARAMETER);
 		
 		Util.waitUntilHistoryComplete(workflowOutput.getHistoryId(), galaxyHistory, 60);
 		
@@ -464,7 +511,7 @@ public class GalaxyWorkflowsIT {
 		
 		// no column c2 for this input file, so should give an error
 		WorkflowOutputs workflowOutput = 
-				runSingleFileTabularWorkflow(history, dataFile1, INVALID_FILTER_PARAMETER);
+				runSingleFileTabularWorkflowFilterTool(history, dataFile1, INVALID_FILTER_PARAMETER);
 		
 		Util.waitUntilHistoryComplete(workflowOutput.getHistoryId(), galaxyHistory, 60);
 		
@@ -482,10 +529,12 @@ public class GalaxyWorkflowsIT {
 	 * @throws TimeoutException 
 	 */
 	@Test
-	public void testGetWorkflowStatusErrorWhileRunning() throws ExecutionManagerException, TimeoutException, InterruptedException {	
+	public void testGetWorkflowStatusErrorWhileRunning() throws ExecutionManagerException, TimeoutException, InterruptedException {
+		final String SLEEP_TIME_SECONDS = "30";
+		
 		History history = galaxyHistory.newHistoryForWorkflow();
 		
-		WorkflowOutputs workflowOutput = runSingleFileTabularWorkflow(history, dataFile1, INVALID_FILTER_PARAMETER);
+		WorkflowOutputs workflowOutput = runSingleFileTabularWorkflowFilterTool(history, dataFile1, INVALID_FILTER_PARAMETER);
 		
 		Util.waitUntilHistoryComplete(workflowOutput.getHistoryId(), galaxyHistory, 60);
 		
@@ -495,9 +544,7 @@ public class GalaxyWorkflowsIT {
 		assertEquals("final workflow state is invalid", GalaxyWorkflowState.ERROR, workflowStatus.getState());
 		
 		// run a sleep workflow to keep busy
-		runSingleFileTabularWorkflow(history, dataFile2, VALID_FILTER_PARAMETER);
-		runSingleFileTabularWorkflow(history, dataFile3, VALID_FILTER_PARAMETER);
-		runSingleFileTabularWorkflow(history, dataFile4, VALID_FILTER_PARAMETER);
+		runSingleFileTabularWorkflowSleepTool(history, dataFile2, SLEEP_TIME_SECONDS);
 				
 		// check status.  I'm assuming the tasks launched above are not complete.
 		workflowStatus = galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());

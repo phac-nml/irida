@@ -488,8 +488,8 @@ public class LocalGalaxy {
 					"Galaxy-Workflow-Sleep.ga").toURI());
 			
 			// build workflow
-			workflowFilterId = constructTestWorkflow(workflowFile);
-			workflowFilterLabel = "Input Dataset";
+			workflowSleepId = constructTestWorkflow(workflowFile);
+			workflowSleepLabel = "Input Dataset";
 		} catch (URISyntaxException | IOException e) {
 			throw new RuntimeException(e);
 		}
