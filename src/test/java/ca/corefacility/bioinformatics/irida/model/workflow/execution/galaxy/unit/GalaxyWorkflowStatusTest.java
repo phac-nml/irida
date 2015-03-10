@@ -60,10 +60,10 @@ public class GalaxyWorkflowStatusTest {
 	}
 
 	/**
-	 * Tests successfully building a workflow status from history details.
+	 * Tests successfully building a workflow status from history details (everything complete).
 	 */
 	@Test
-	public void testBuildWorkflowStatusFromHistoryDetailsSuccess() {
+	public void testBuildWorkflowStatusFromHistoryDetailsSuccessComplete() {
 		HistoryDetails historyDetails = new HistoryDetails();
 		historyDetails.setState("ok");
 		historyDetails.setStateIds(buildStateIdsWithStateFilled("ok", Lists.newArrayList(DATASET_ID)));
@@ -72,5 +72,50 @@ public class GalaxyWorkflowStatusTest {
 
 		assertEquals("workflow status not in correct state", GalaxyWorkflowState.OK, workflowStatus.getState());
 		assertEquals("percentage complete not correct", 100.0f, workflowStatus.getPercentComplete(), DELTA);
+	}
+	
+	/**
+	 * Tests successfully building a workflow status from history details (still queued).
+	 */
+	@Test
+	public void testBuildWorkflowStatusFromHistoryDetailsSuccessQueued() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("queued");
+		historyDetails.setStateIds(buildStateIdsWithStateFilled("queued", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.buildStatusFromHistoryDetails(historyDetails);
+
+		assertEquals("workflow status not in correct state", GalaxyWorkflowState.QUEUED, workflowStatus.getState());
+		assertEquals("percentage complete not correct", 0.0f, workflowStatus.getPercentComplete(), DELTA);
+	}
+	
+	/**
+	 * Tests successfully building a workflow status from history details (still running).
+	 */
+	@Test
+	public void testBuildWorkflowStatusFromHistoryDetailsSuccessRunning() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("running");
+		Map<String, List<String>> stateIds = buildStateIdsWithStateFilled("running", Lists.newArrayList(DATASET_ID));
+		stateIds.put("ok", Lists.newArrayList(DATASET_ID));
+		historyDetails.setStateIds(stateIds);
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.buildStatusFromHistoryDetails(historyDetails);
+
+		assertEquals("workflow status not in correct state", GalaxyWorkflowState.RUNNING, workflowStatus.getState());
+		assertEquals("percentage complete not correct", 50.0f, workflowStatus.getPercentComplete(), DELTA);
+	}
+	
+	/**
+	 * Tests successfully building a workflow status from history details.
+	 */
+	@Test
+	public void testBuildWorkflowStatusFromHistoryDetailsUnknownState() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("unknown new galaxy state");
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.buildStatusFromHistoryDetails(historyDetails);
+
+		assertEquals("workflow status not in correct state", GalaxyWorkflowState.UNKNOWN, workflowStatus.getState());
 	}
 }
