@@ -185,14 +185,14 @@ public class AnalysisController {
 	private Model tree(AnalysisSubmission submission, Model model) throws IOException {
 		assert (submission.getAnalysis().getClass().equals(AnalysisPhylogenomicsPipeline.class));
 
-		// inform the view to display the tree preview
-		model.addAttribute("preview", "tree");
-
 		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) submission.getAnalysis();
 		AnalysisOutputFile file = analysis.getPhylogeneticTree();
 		List<String> lines = Files.readAllLines(file.getFile());
 		model.addAttribute("analysis", analysis);
 		model.addAttribute("newick", lines.get(0));
+
+		// inform the view to display the tree preview
+		model.addAttribute("preview", "tree");
 
 		return model;
 
