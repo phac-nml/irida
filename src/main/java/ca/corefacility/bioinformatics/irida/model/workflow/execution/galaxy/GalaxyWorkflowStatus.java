@@ -158,7 +158,7 @@ public class GalaxyWorkflowStatus {
 				Set<String> idSet;
 
 				if (stateIdsMap.containsKey(workflowState)) {
-					logger.debug("State " + workflowState + " already exists");
+					logger.trace("State " + workflowState + " already exists");
 					idSet = stateIdsMap.get(workflowState);
 				} else {
 					idSet = new HashSet<>();
