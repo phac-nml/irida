@@ -8,6 +8,8 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -17,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
@@ -195,11 +198,14 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	public void testMonitorRunningAnalysesSuccessRunning() throws ExecutionManagerException,
 			IridaWorkflowNotFoundException {
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
-
+		Map<GalaxyWorkflowState, Set<String>> stateIds = new HashMap<>();
+		stateIds.put(GalaxyWorkflowState.RUNNING, Sets.newHashSet("1"));
+		stateIds.put(GalaxyWorkflowState.OK, Sets.newHashSet());
+		
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
 		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
-				new GalaxyWorkflowStatus(GalaxyWorkflowState.RUNNING, Maps.newHashMap()));
+				new GalaxyWorkflowStatus(GalaxyWorkflowState.RUNNING, stateIds));
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 
