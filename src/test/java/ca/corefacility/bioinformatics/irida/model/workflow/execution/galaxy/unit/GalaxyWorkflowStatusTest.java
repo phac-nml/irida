@@ -68,7 +68,7 @@ public class GalaxyWorkflowStatusTest {
 		historyDetails.setState("ok");
 		historyDetails.setStateIds(buildStateIdsWithStateFilled("ok", Lists.newArrayList(DATASET_ID)));
 
-		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.buildStatusFromHistoryDetails(historyDetails);
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
 		assertEquals("workflow status not in correct state", GalaxyWorkflowState.OK, workflowStatus.getState());
 		assertEquals("percentage complete not correct", 100.0f, workflowStatus.getPercentComplete(), DELTA);
@@ -83,7 +83,7 @@ public class GalaxyWorkflowStatusTest {
 		historyDetails.setState("queued");
 		historyDetails.setStateIds(buildStateIdsWithStateFilled("queued", Lists.newArrayList(DATASET_ID)));
 
-		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.buildStatusFromHistoryDetails(historyDetails);
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
 		assertEquals("workflow status not in correct state", GalaxyWorkflowState.QUEUED, workflowStatus.getState());
 		assertEquals("percentage complete not correct", 0.0f, workflowStatus.getPercentComplete(), DELTA);
@@ -100,7 +100,7 @@ public class GalaxyWorkflowStatusTest {
 		stateIds.put("ok", Lists.newArrayList(DATASET_ID));
 		historyDetails.setStateIds(stateIds);
 
-		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.buildStatusFromHistoryDetails(historyDetails);
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
 		assertEquals("workflow status not in correct state", GalaxyWorkflowState.RUNNING, workflowStatus.getState());
 		assertEquals("percentage complete not correct", 50.0f, workflowStatus.getPercentComplete(), DELTA);
@@ -114,7 +114,7 @@ public class GalaxyWorkflowStatusTest {
 		HistoryDetails historyDetails = new HistoryDetails();
 		historyDetails.setState("unknown new galaxy state");
 
-		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.buildStatusFromHistoryDetails(historyDetails);
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
 		assertEquals("workflow status not in correct state", GalaxyWorkflowState.UNKNOWN, workflowStatus.getState());
 	}
