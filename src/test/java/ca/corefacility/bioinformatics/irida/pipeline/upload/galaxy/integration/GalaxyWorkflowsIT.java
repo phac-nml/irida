@@ -449,6 +449,7 @@ public class GalaxyWorkflowsIT {
 		GalaxyWorkflowStatus workflowStatus = 
 				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
 		assertEquals("final workflow state is invalid", GalaxyWorkflowState.OK, workflowStatus.getState());
+		assertTrue("final workflow state is invalid", workflowStatus.completedSuccessfully());
 	}
 	
 	/**
@@ -471,6 +472,7 @@ public class GalaxyWorkflowsIT {
 		GalaxyWorkflowStatus workflowStatus = 
 				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
 		assertEquals("final workflow state is invalid", GalaxyWorkflowState.ERROR, workflowStatus.getState());
+		assertTrue("final workflow state is invalid", workflowStatus.errorOccurred());
 	}
 	
 	/**
@@ -499,12 +501,14 @@ public class GalaxyWorkflowsIT {
 				
 		// check status.  I'm assuming the tasks launched above are not complete.
 		workflowStatus = galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
-		assertEquals("workflow state should be in error even while running", GalaxyWorkflowState.ERROR, workflowStatus.getState());
+		assertTrue("workflow should still be running", workflowStatus.isRunning());
+		assertTrue("an error should have occured even while running", workflowStatus.errorOccurred());
 		
 		Util.waitUntilHistoryComplete(workflowOutput.getHistoryId(), galaxyHistory, 60);
 		
 		workflowStatus = galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
 		assertEquals("workflow state should be in error after completion", GalaxyWorkflowState.ERROR, workflowStatus.getState());
+		assertTrue("workflow is not in error state", workflowStatus.errorOccurred());
 	}
 
 	private Dataset fileToHistory(Path path, String fileType, String historyId) throws GalaxyDatasetException {		
