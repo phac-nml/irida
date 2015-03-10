@@ -135,13 +135,13 @@
     };
 
     svc.removeProject = function (projectId) {
-      $http.delete(urls.project + projectId).then(function () {
+      return $http.delete(urls.project + projectId).then(function () {
         scope.$broadcast("cart.update", {});
       })
     };
 
     svc.removeSample = function (projectId, sampleId) {
-      $http.delete(urls.project + projectId + "/samples/" + sampleId).then(function () {
+      return $http.delete(urls.project + projectId + "/samples/" + sampleId).then(function () {
         scope.$broadcast("cart.update", {});
       })
     }
