@@ -29,7 +29,6 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisE
  * {@link AnalysisSubmission}s and execute the {@link Analysis} defined by the
  * submissions.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionScheduledTask {

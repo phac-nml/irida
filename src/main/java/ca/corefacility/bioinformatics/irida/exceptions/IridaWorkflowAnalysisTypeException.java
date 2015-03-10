@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.exceptions;
 
 /**
  * Exception for when there is an issue building a particular {@link Analysis} type.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class IridaWorkflowAnalysisTypeException extends IridaWorkflowException {

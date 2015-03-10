@@ -7,7 +7,6 @@ package ca.corefacility.bioinformatics.irida.exceptions;
  * https://github.com/spring-projects/spring-data-envers/issues/13 for more
  * information.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.a>
  *
  */
 public class EntityRevisionDeletedException extends RuntimeException {

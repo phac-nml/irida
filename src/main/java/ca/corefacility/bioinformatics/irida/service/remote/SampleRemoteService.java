@@ -10,7 +10,6 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteSample;
 /**
  * Service for reading {@link RemoteSample}s
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public interface SampleRemoteService extends RemoteService<RemoteSample> {

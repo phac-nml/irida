@@ -11,7 +11,6 @@ import com.jayway.restassured.http.ContentType;
 /**
  * Global settings for all integration tests.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class IntegrationTestListener extends RunListener {
 	private static final Logger logger = LoggerFactory.getLogger(IntegrationTestListener.class);

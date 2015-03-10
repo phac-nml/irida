@@ -10,7 +10,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 /**
  * Service for reading and managing {@link ProjectEvent}s
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public interface ProjectEventService extends CRUDService<Long, ProjectEvent> {

@@ -6,7 +6,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNot
 
 /**
  * Searches through a data source within an execution manager.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  * @param <T> The type of object to return.
  * @param <ID> The ID of the objects.

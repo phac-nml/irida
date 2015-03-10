@@ -20,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 /**
  * Implementation of {@link AnalysisService}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Service

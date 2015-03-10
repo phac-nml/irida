@@ -54,7 +54,6 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 
 /**
  * Class for working with Galaxy Histories.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyHistoriesService implements ExecutionManagerSearch<History, String> {

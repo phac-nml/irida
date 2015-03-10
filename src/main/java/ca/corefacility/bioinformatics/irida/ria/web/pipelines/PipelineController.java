@@ -62,7 +62,6 @@ import com.google.common.collect.Sets;
 /**
  * Controller for pipeline related views
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Controller
 @Scope("session")

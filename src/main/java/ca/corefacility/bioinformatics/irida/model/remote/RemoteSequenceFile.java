@@ -16,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemo
 /**
  * {@link SequenceFile} object pulled from a remote IRIDA installation
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @JsonIgnoreProperties(ignoreUnknown = true, value = "file")

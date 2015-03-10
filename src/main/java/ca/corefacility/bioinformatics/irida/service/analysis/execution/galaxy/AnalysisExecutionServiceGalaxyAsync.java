@@ -37,7 +37,6 @@ import com.google.common.collect.ImmutableMap;
  * Service for executing {@link AnalysisSubmission} stages within a Galaxy
  * execution manager asynchronously.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
 @Async("analysisTaskExecutor")
 public class AnalysisExecutionServiceGalaxyAsync {

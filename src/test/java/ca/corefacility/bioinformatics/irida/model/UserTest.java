@@ -21,7 +21,6 @@ import static org.junit.Assert.*;
 /**
  * Testing the validation for user objects.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class UserTest {
 

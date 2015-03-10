@@ -27,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 /**
  * Controller for displaying and interacting with {@link SequencingRun} objects
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Controller

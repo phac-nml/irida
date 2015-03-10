@@ -32,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkf
 /**
  * A service for AnalysisSubmissions.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSubmission> {

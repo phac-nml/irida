@@ -4,7 +4,6 @@ package ca.corefacility.bioinformatics.irida.model.remote.resource;
  * Object wrapping a list of returned resources from a remote IRIDA API. This
  * type will be returned when listing objects from the API. Example: "/projects"
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * @param <Type>
  *            The type of object being stored in the list extends
  *            {@link RemoteResource}

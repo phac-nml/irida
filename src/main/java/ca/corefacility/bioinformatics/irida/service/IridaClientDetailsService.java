@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 /**
  * Service for storing and reading {@link IridaClientDetails} objects
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public interface IridaClientDetailsService extends ClientDetailsService, CRUDService<Long, IridaClientDetails> {

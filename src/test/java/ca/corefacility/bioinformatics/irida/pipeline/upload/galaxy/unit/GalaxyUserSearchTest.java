@@ -26,7 +26,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.User;
 
 /**
  * Tests for GalaxyUserSearch.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyUserSearchTest {

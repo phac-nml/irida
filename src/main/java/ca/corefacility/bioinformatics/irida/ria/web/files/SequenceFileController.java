@@ -31,8 +31,6 @@ import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 /**
  * Controller for all {@link SequenceFile} related views
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
 public class SequenceFileController {

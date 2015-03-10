@@ -21,7 +21,6 @@ import java.util.Objects;
  * }
  * </pre>
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class IridaWorkflowStructure {

@@ -46,7 +46,6 @@ import com.google.common.collect.Lists;
 /**
  * Controller for all {@link IridaClientDetails} related views
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping(value = "/clients")

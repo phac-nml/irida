@@ -41,7 +41,6 @@ import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionSchedu
 /**
  * Tests out scheduling analysis tasks.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class AnalysisExecutionScheduledTaskImplTest {

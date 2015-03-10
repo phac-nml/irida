@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.validators.La
 /**
  * Validates geographic latitude coordinate values.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE })

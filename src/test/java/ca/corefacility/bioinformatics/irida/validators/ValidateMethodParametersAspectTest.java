@@ -27,7 +27,6 @@ import com.google.common.collect.Lists;
 /**
  * Unit tests for validating method parameters.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public class ValidateMethodParametersAspectTest {

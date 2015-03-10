@@ -52,7 +52,6 @@ import com.google.common.collect.Lists;
  * Controller handling basic operations for listing, viewing, adding, and
  * removing {@link RemoteAPI}s
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Controller

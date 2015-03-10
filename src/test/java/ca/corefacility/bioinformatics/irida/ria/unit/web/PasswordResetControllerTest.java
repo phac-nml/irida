@@ -36,7 +36,6 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 /**
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class PasswordResetControllerTest {

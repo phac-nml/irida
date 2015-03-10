@@ -30,7 +30,6 @@ import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
  * Store file references to files produced by a workflow execution that we
  * otherwise don't want to parse metadata from.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Entity

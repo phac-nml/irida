@@ -74,7 +74,6 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 
 /**
  * Unit tests for the Galaxy API.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyAPITest {

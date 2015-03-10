@@ -26,7 +26,6 @@ import com.sun.jersey.api.client.ClientResponse;
  * Class containing methods used to build new Galaxy libraries and change
  * permissions on a library.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
 public class GalaxyLibraryBuilder {

@@ -20,7 +20,6 @@ import com.google.common.collect.Ordering;
  * Page Object to represent the project samples page.
  * </p>
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectSamplesPage extends AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectSamplesPage.class);

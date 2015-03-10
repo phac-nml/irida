@@ -41,7 +41,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.L
 
 /**
  * Builds a local running instance of Galaxy (requires mercurial and python) for integration testing.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Configuration

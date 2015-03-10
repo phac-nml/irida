@@ -9,7 +9,6 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 /**
  * Export the current hibernate-generated schema (with auditing tables).
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 public class SchemaExporter {

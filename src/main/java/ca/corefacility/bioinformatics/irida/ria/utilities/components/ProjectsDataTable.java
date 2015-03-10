@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableMap;
 /**
  * DataTables information for listing projects.
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectsDataTable extends DataTable {
 

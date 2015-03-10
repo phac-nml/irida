@@ -16,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilit
 /**
  * User details page for selenium testing
  *
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class UserDetailsPage extends AbstractPage {
 	public static String EDIT_USER_LINK = "editUser";

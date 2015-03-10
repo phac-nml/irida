@@ -21,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeCon
 /**
  * Utilities class for converting {@link SequenceFile} objects for the web
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Component

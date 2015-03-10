@@ -9,7 +9,6 @@ import java.util.Map;
  * @see <a href="https://bitbucket.org/galaxy/galaxy-dist/src/097bbb3b7d3246faaa5188a1fc2a79b01630025c/lib/galaxy/model/__init__.py#cl-1316">Galaxy Dataset Model</a>
  * @see <a href="https://bitbucket.org/galaxy/galaxy-dist/src/097bbb3b7d3246faaa5188a1fc2a79b01630025c/lib/galaxy/web/base/controller.py#cl-429">Galaxy API</a>
  * @see <a href="https://github.com/jmchilton/blend4j/blob/c5e3f157d402950a843d4e395e1daf889945d587/src/main/java/com/github/jmchilton/blend4j/galaxy/beans/HistoryDetails.java">HistoryDetails in blend4j</a>
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public enum GalaxyWorkflowState {

@@ -12,9 +12,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Wrapper for exposing User resources to the web with linking support.
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @XmlRootElement(name = "user")
 public class UserResource extends IdentifiableResource<User> {

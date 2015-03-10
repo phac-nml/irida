@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 /**
  * A custom repository for managing {@link Analysis} objects.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 public interface AnalysisRepository extends IridaJpaRepository<Analysis, Long> {

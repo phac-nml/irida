@@ -52,7 +52,6 @@ import com.google.common.collect.Sets;
 /**
  * Tests out an execution service for Galaxy analyses.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class AnalysisExecutionServiceGalaxyTest {

@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
  * Custom implementation of {@link FilesystemSupplementedRepositoryImpl} for
  * {@link SequenceFile}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Repository

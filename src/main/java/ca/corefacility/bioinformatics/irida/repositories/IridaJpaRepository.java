@@ -12,7 +12,6 @@ import org.springframework.data.repository.history.RevisionRepository;
  * JpaSpecificationExecutor<Type>, and RevisionRepository<Type, Identifier,
  * Integer>
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  * @param <Type>
  *            Entity type stored by this repository

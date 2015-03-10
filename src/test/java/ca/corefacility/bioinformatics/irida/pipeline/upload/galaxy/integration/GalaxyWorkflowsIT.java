@@ -64,7 +64,6 @@ import com.google.common.collect.ImmutableMap;
 
 /**
  * Integration tests for managing workflows in Galaxy.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)

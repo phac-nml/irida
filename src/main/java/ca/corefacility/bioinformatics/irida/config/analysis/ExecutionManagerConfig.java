@@ -31,7 +31,6 @@ import com.google.common.collect.ImmutableMap;
 
 /**
  * Configuration for connections to an ExecutionManager in IRIDA.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Configuration

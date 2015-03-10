@@ -26,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProj
 
 /**
  *
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping(value = "/api/sequencingrun")

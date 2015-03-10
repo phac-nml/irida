@@ -13,7 +13,6 @@ import org.springframework.security.web.authentication.AnonymousAuthenticationFi
  * Anonymous authentication filter that sets anonymous tokens as being
  * unauthenticated
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class UnauthenticatedAnonymousAuthenticationFilter extends AnonymousAuthenticationFilter {

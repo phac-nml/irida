@@ -22,7 +22,6 @@ import com.google.common.collect.Sets;
  * annotations on junit tests. Adds a OAuth2Authentication object into the
  * security context.
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class WithMockOAuth2SecurityContextFactory implements WithSecurityContextFactory<WithMockOAuth2Client> {

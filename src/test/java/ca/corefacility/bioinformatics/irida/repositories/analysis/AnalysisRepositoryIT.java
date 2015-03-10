@@ -30,7 +30,6 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 /**
  * Tests methods in the {@link AnalysisRepository}.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)

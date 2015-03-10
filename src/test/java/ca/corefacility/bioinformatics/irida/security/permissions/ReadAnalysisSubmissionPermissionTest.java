@@ -31,7 +31,6 @@ import com.google.common.collect.Sets;
 /**
  * Tests for {@link ReadAnalysisSubmissionPermission}.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class ReadAnalysisSubmissionPermissionTest {

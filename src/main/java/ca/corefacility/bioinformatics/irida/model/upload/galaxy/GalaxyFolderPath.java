@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
  * checking the validity of the path.  This is different from the GalaxyFolderName only in that
  * a folder path can contain '/' characters separating folders or files.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
 public class GalaxyFolderPath {

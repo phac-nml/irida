@@ -24,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 /**
  * Snapshot taken of an {@link IridaSequenceFile} object
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Entity

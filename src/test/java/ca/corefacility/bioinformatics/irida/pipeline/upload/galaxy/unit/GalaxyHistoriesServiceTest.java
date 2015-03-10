@@ -52,7 +52,6 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 
 /**
  * Tests the GalaxyHistory class
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyHistoriesServiceTest {

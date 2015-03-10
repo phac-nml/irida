@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 /**
  * Event created when a {@link Sample} is added to a {@link Project}
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Entity

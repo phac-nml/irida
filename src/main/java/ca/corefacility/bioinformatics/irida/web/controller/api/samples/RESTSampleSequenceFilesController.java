@@ -52,7 +52,6 @@ import com.google.common.net.HttpHeaders;
  * Controller for managing relationships between {@link Sample} and
  * {@link SequenceFile}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
 public class RESTSampleSequenceFilesController {

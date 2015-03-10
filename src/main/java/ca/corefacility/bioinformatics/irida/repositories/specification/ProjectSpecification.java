@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 /**
  * Specification for searching project properties
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class ProjectSpecification {

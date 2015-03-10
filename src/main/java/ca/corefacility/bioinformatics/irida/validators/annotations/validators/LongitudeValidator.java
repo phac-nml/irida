@@ -10,7 +10,6 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.Longitude;
 /**
  * Validator for validating longitude portion of a geographic coordinate.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 public class LongitudeValidator implements ConstraintValidator<Longitude, String> {

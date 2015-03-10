@@ -40,7 +40,6 @@ import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDiale
 import com.google.common.collect.ImmutableMap;
 
 /**
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Configuration
 @EnableWebMvc

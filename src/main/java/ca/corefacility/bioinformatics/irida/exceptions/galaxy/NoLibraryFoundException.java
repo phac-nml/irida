@@ -4,7 +4,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNot
 
 /**
  * When no data library could be found.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class NoLibraryFoundException extends ExecutionManagerObjectNotFoundException {

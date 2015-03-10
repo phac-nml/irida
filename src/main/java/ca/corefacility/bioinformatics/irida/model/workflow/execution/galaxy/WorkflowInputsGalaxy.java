@@ -6,7 +6,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.WorkflowInp
 
 /**
  * Describes a set of workflow inputs for a Galaxy workflow.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class WorkflowInputsGalaxy implements WorkflowInputsGeneric {

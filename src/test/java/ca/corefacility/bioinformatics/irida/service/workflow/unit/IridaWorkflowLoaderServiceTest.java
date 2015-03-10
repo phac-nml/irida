@@ -30,7 +30,6 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoader
 /**
  * Tests for the IRIDA workflow service.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class IridaWorkflowLoaderServiceTest {

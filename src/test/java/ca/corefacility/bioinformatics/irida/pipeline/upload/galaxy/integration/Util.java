@@ -16,7 +16,6 @@ import com.google.common.collect.Lists;
 
 /**
  * Utility methods for Galaxy integration tests.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class Util {

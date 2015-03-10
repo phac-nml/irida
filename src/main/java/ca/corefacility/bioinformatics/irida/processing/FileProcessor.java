@@ -6,7 +6,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
  * Responsible for processing a {@link SequenceFile} after the file has been
  * uploaded to the server.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public interface FileProcessor {

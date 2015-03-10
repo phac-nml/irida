@@ -12,7 +12,6 @@ import org.springframework.context.support.SimpleThreadScope;
  * Configuration file for allowing session scoped beans in test. Include this
  * file in @ContextConfiguration(classes) on integration tests.
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Configuration

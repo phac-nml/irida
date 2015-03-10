@@ -17,8 +17,6 @@ import ca.corefacility.bioinformatics.irida.security.permissions.UpdateReference
 /**
  * Interface for interactions with {@link ReferenceFile}.
  * 
- * @author Tom Matthews <thomas.matthews@phac-aspc.gc.ca>
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public interface ReferenceFileService extends CRUDService<Long, ReferenceFile> {
 

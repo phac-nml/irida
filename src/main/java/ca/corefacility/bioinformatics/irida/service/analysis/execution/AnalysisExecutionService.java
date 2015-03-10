@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  * Service for submission of {@link AnalysisSubmission}s to an execution
  * manager.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
 public interface AnalysisExecutionService {
 

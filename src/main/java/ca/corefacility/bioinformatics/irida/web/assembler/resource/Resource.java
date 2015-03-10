@@ -14,7 +14,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 /**
  * A generic container for all resources.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public abstract class Resource<Type extends IridaThing> extends ResourceSupport {
 

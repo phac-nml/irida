@@ -11,7 +11,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 /**
  * <p>Page Object to represent the pipeline selection page.</p>
  *
- * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
 public class PipelinesSelectionPage extends AbstractPage {
 	private static final String RELATIVE_URL = "pipelines";

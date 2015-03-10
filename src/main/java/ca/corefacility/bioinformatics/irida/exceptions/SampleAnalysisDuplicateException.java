@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.exceptions;
 
 /**
  * If there is a duplicate {@link Sample} which is being sent for analysis.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class SampleAnalysisDuplicateException extends WorkflowPreprationException {

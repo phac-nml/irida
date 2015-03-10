@@ -43,8 +43,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
  * A file that may be stored somewhere on the file system and belongs to a
  * particular {@link Sample}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
 @Table(name = "sequence_file")

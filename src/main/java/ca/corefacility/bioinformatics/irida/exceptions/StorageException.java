@@ -3,8 +3,6 @@ package ca.corefacility.bioinformatics.irida.exceptions;
 /**
  * When a database error occurs
  *
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class StorageException extends RuntimeException {
 
