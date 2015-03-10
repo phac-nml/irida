@@ -18,7 +18,7 @@ public class RemoteSampleSnapshot extends SampleSnapshot implements RemoteSnapsh
 
 	public RemoteSampleSnapshot(RemoteSample sample) {
 		super(sample);
-		this.links = sample.getLinks();
+		this.links = sample.getRestLinks();
 	}
 
 	@Override

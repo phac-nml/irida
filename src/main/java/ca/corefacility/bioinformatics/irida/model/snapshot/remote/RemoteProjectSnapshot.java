@@ -18,7 +18,7 @@ public class RemoteProjectSnapshot extends ProjectSnapshot implements RemoteSnap
 
 	public RemoteProjectSnapshot(RemoteProject project) {
 		super(project);
-		this.links = project.getLinks();
+		this.links = project.getRestLinks();
 	}
 
 	public RESTLinks getLinks() {

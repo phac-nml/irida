@@ -18,7 +18,7 @@ public class RemoteUser extends User implements RemoteResource {
 	private RemoteAPI remoteAPI;
 
 	@Override
-	public RESTLinks getLinks() {
+	public RESTLinks getRestLinks() {
 		return links;
 	}
 

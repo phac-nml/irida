@@ -32,7 +32,7 @@ public interface RemoteResource extends IridaThing {
 	 * 
 	 * @return
 	 */
-	public RESTLinks getLinks();
+	public RESTLinks getRestLinks();
 
 	/**
 	 * Set the objects this resource links to
@@ -63,7 +63,7 @@ public interface RemoteResource extends IridaThing {
 	 * @return an href
 	 */
 	public default String getHrefForRel(String rel) {
-		return getLinks().getHrefForRel(rel);
+		return getRestLinks().getHrefForRel(rel);
 	}
 
 }
