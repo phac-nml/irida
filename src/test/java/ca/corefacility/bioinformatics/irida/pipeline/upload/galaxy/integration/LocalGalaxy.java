@@ -73,6 +73,9 @@ public class LocalGalaxy {
 	private String workflowFilterId;
 	private String workflowFilterLabel;
 	
+	private String workflowSleepId;
+	private String workflowSleepLabel;
+	
 	private String worklowCollectionListId;
 	private String workflowCollectionListLabel;
 	
@@ -477,6 +480,22 @@ public class LocalGalaxy {
 	}
 	
 	/**
+	 * Sets up a sleep workflow.
+	 */
+	private void setupWorkflowSleep() {
+		try {
+			Path workflowFile = Paths.get(LocalGalaxy.class.getResource(
+					"Galaxy-Workflow-Sleep.ga").toURI());
+			
+			// build workflow
+			workflowFilterId = constructTestWorkflow(workflowFile);
+			workflowFilterLabel = "Input Dataset";
+		} catch (URISyntaxException | IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	/**
 	 * Sets up a filter workflow.
 	 */
 	private void setupWorkflowFilter() {
@@ -627,8 +646,25 @@ public class LocalGalaxy {
 		setupWorkflowCollectionListPaired();
 		setupWorkflowCorePipelineTest();
 		setupWorkflowFilter();
+		setupWorkflowSleep();
 		
 		invalidWorkflowId = "invalid";
+	}
+	
+	/**
+	 * Gets an id for a test sleep workflow.
+	 * @return  The id for a test sleep workflow.
+	 */
+	public String getWorkflowSleepId() {
+		return workflowSleepId;
+	}
+
+	/**
+	 * Gets an input label for a test sleep workflow.
+	 * @return  The input label for a test sleep workflow.
+	 */
+	public String getWorkflowSleepLabel() {
+		return workflowSleepLabel;
 	}
 	
 	/**

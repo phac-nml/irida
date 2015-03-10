@@ -494,7 +494,7 @@ public class GalaxyWorkflowsIT {
 				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
 		assertEquals("final workflow state is invalid", GalaxyWorkflowState.ERROR, workflowStatus.getState());
 		
-		// run a few valid jobs to keep us busy
+		// run a sleep workflow to keep busy
 		runSingleFileTabularWorkflow(history, dataFile2, VALID_FILTER_PARAMETER);
 		runSingleFileTabularWorkflow(history, dataFile3, VALID_FILTER_PARAMETER);
 		runSingleFileTabularWorkflow(history, dataFile4, VALID_FILTER_PARAMETER);
