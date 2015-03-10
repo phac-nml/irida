@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Defines the state of a workflow.
  * Based off of states defined within Galaxy.
@@ -28,12 +30,7 @@ public enum GalaxyWorkflowState {
 	PAUSED("paused"),
 	SETTING_METADATA("setting_metadata"),
 	FAILED_METADATA("failed_metadata"),
-	RESUBMITTED("resubmitted"),
-	
-	/**
-	 * Unknown is used if the state from Galaxy is different from the above states (say if a new state was added to Galaxy).
-	 */
-	UNKNOWN("unknown");
+	RESUBMITTED("resubmitted");
 	
 	private static Map<String, GalaxyWorkflowState> stateMap = new HashMap<>();
 	private String stateString;
@@ -57,10 +54,10 @@ public enum GalaxyWorkflowState {
 	 * @return  A {@link GalaxyWorkflowState} for the corresponding state.
 	 */
 	public static GalaxyWorkflowState stringToState(String stateString) {
+		checkNotNull(stateString, "stateString is null");
+		
 		GalaxyWorkflowState state = stateMap.get(stateString);
-		if (state == null) {
-			state = UNKNOWN;
-		}
+		checkNotNull(state, "Unknown state " + stateString);
 		
 		return state;
 	}

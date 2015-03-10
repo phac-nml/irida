@@ -236,29 +236,6 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR}
-	 * if there was an unknown Galaxy state.
-	 * 
-	 * @throws ExecutionManagerException
-	 * @throws IridaWorkflowNotFoundException
-	 */
-	@Test
-	public void testMonitorRunningAnalysesSuccessUnknown() throws ExecutionManagerException,
-			IridaWorkflowNotFoundException {
-		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
-
-		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
-				Arrays.asList(analysisSubmission));
-		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
-				new GalaxyWorkflowStatus(GalaxyWorkflowState.UNKNOWN, Maps.newHashMap()));
-
-		analysisExecutionScheduledTask.monitorRunningAnalyses();
-
-		assertEquals(AnalysisState.ERROR, analysisSubmission.getAnalysisState());
-		verify(analysisSubmissionRepository).save(analysisSubmission);
-	}
-
-	/**
 	 * Tests successfully transferring results for a submitted analysis.
 	 * 
 	 * @throws ExecutionManagerException

@@ -107,11 +107,6 @@ public class GalaxyWorkflowStatus {
 	public static class GalaxyWorkflowStatusBuilder {
 
 		private static final Set<GalaxyWorkflowState> ALL_STATES = Sets.newHashSet(GalaxyWorkflowState.values());
-		private static final Set<GalaxyWorkflowState> NO_UNKNOWN_STATES = Sets.newHashSet(GalaxyWorkflowState.values());
-
-		static {
-			NO_UNKNOWN_STATES.remove(GalaxyWorkflowState.UNKNOWN);
-		}
 
 		private static final Logger logger = LoggerFactory.getLogger(GalaxyWorkflowStatusBuilder.class);
 
@@ -142,7 +137,7 @@ public class GalaxyWorkflowStatus {
 			GalaxyWorkflowState workflowState = GalaxyWorkflowState.stringToState(historyDetails.getState());
 			Map<GalaxyWorkflowState, Set<String>> stateIdsMap = createStateIdsMap(historyDetails);
 
-			checkArgument(stateIdsMap.keySet().equals(ALL_STATES) || stateIdsMap.keySet().equals(NO_UNKNOWN_STATES),
+			checkArgument(stateIdsMap.keySet().equals(ALL_STATES),
 					"invalid states: " + stateIdsMap.keySet());
 
 			return new GalaxyWorkflowStatus(workflowState, stateIdsMap);
