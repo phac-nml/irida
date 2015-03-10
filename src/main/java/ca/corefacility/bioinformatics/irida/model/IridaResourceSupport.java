@@ -6,10 +6,20 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.ResourceSupport;
 import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Adds a collection of {@link org.springframework.hateoas.Link}s to extending
+ * objects. Similar to {@link org.springframework.hateoas.ResourceSupport}
+ * 
+ * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ * 
+ * @see ResourceSupport
+ *
+ */
 public class IridaResourceSupport {
 	private final List<Link> links;
 
@@ -93,21 +103,11 @@ public class IridaResourceSupport {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return String.format("links: %s", links.toString());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 
@@ -124,11 +124,6 @@ public class IridaResourceSupport {
 		return this.links.equals(that.links);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return this.links.hashCode();
