@@ -121,7 +121,7 @@ public class AnalysisController {
 	 */
 	@RequestMapping(value = "/{submissionId}", produces = MediaType.TEXT_HTML_VALUE)
 	public String getDetailsPage(@PathVariable Long submissionId, Model model, Locale locale) {
-		logger.trace("reading analysis submssion " + submissionId);
+		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		model.addAttribute("analysisSubmission", submission);
 
@@ -152,7 +152,11 @@ public class AnalysisController {
 				if (analysisType.equals(AnalysisType.PHYLOGENOMICS)) {
 
 					model = tree(submission, model);
+					model.addAttribute("hasPreview", true);
 
+				}
+				else {
+					model.addAttribute("hasPreview", false);
 				}
 
 				model.addAttribute("outputFiles", submission.getAnalysis().getAnalysisOutputFiles());

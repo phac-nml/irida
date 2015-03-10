@@ -3,9 +3,18 @@
       layout:decorator="analysis/details/details">
 
 <body>
-<th:block layout:fragment="previewContent">
-	<div id="phyloSVG" class="image-preview"></div>
-</th:block>
+<div layout:fragment="previewContent" class="panel panel-info">
+	<div class="panel-heading">
+		<b class="panel-title" th:text="#{analysis.details.preview}">_Preview_</b>
+		<a href="#" id="saveBtn" class="btn btn-default btn-xs pull-right" data-toggle="tooltip" data-placement="bottom" th:title="#{form.save.image}">
+			<span class="fa fa-fw fa-save"></span>
+			<span class="sr-only" th:text="#{form.save.image}">Save Image</span>
+		</a>
+	</div>
+	<div class="panel-body">
+		<div id="phyloSVG" class="image-preview"></div>
+	</div>
+</div>
 
 <th:block layout:fragment="previewScripts">
 	<script th:src="@{/resources/bower_components/raphael/raphael-min.js}"
