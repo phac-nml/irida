@@ -13,8 +13,6 @@ import javax.validation.constraints.Pattern;
 /**
  * A collection of patterns that validate the name of a sample.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
 @Pattern.List({ @Pattern(regexp = "^[^\\']*$", message = "{irida.name.invalid.single.quote}"),

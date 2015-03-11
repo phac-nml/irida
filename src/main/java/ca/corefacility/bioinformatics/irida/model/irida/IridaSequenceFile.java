@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 /**
  * Describes fields that must be made available for a Sequence File in IRIDA
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public interface IridaSequenceFile {

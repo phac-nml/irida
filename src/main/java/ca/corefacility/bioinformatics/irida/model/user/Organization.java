@@ -28,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
  * An organization or institution responsible for producing data related to
  * {@link Sample} and {@link Project}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Entity

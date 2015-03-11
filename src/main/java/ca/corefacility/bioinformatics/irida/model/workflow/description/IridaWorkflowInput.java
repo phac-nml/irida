@@ -11,7 +11,6 @@ import java.util.Optional;
 /**
  * Defines the input labels for a workflow.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)

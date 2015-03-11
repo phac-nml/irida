@@ -34,7 +34,6 @@ import com.jayway.restassured.response.Response;
 /**
  * Integration test for project and user.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,

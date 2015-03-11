@@ -16,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
  * Value must be some subclass of {@link ProjectEvent} to notify the event
  * handler which event should be created.
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * 
  * @see ProjectEventHandler
  * @see UserRoleSetProjectEvent

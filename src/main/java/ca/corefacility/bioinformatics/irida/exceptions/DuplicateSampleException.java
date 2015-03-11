@@ -7,7 +7,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 /**
  * If there is more than one {@link SequenceFile} from a {@link Sample} for a {@link IridaWorkflow}.
  *
- * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
 public class DuplicateSampleException extends RuntimeException {
 	private static final long serialVersionUID = -432490135272603887L;

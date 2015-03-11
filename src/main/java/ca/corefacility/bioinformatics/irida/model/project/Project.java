@@ -36,8 +36,6 @@ import ca.corefacility.bioinformatics.irida.model.user.Organization;
 /**
  * A project object.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
 @Table(name = "project")

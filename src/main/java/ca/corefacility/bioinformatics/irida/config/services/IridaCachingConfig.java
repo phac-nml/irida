@@ -18,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.impl.SampleRemot
 /**
  * Configuration file for setting up EhCache caching for IRIDA
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Configuration

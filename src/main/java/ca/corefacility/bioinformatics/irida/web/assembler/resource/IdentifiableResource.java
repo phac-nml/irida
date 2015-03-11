@@ -6,7 +6,6 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
  * This is an extension of {@link Resource} for types that have an identifier
  * (specifically, types other than join types).
  * 
- * @author Franklin Bristow
  * 
  * @param <Type>
  *            the type of resource exposed by this class.

@@ -18,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
 /**
  * Specialized service for managing {@link Group}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 public interface GroupService extends CRUDService<Long, Group> {

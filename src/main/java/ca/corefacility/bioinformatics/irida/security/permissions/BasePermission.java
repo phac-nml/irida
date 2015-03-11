@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 /**
  * Generic super-class for permission types to extend from.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  * @param <DomainObjectType>
  *            the type of domain object that this permission is evaluating.

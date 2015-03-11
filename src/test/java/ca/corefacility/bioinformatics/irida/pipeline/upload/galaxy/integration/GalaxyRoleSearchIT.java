@@ -25,7 +25,6 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 
 /**
  * Tests for searching for Galaxy roles.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)

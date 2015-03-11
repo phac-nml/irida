@@ -7,7 +7,6 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
 /**
  * Class for storing together any progress update messages so I can verify
  * that they got sent later.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
 public class ProgressUpdate {
 

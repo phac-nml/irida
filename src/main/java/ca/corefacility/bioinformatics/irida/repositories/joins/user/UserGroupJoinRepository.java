@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.model.user.UserGroupJoin;
  * Repository for managing {@link UserGroupJoin} -- the relationship between
  * {@link User} and {@link Group}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 public interface UserGroupJoinRepository extends CrudRepository<UserGroupJoin, Long> {

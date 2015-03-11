@@ -9,7 +9,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkfl
 /**
  * Describes a workflow for IRIDA.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class IridaWorkflow {

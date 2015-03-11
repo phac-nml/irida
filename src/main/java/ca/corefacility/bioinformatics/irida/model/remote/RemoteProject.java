@@ -10,7 +10,6 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource
 /**
  * A project read from a remote Irida instance
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class RemoteProject extends Project implements RemoteResource {
 	private RESTLinks links;

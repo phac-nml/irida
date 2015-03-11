@@ -27,7 +27,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionR
  * A service for constructing dataset collections of input files for workflows
  * in galaxy.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
 public class AnalysisCollectionServiceGalaxy {
 

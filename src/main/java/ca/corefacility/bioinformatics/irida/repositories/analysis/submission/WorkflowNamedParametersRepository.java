@@ -11,7 +11,6 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 /**
  * Repository for working with named parameter sets.
  * 
- * @author Franklin Bristow franklin.bristow@phac-aspc.gc.ca
  *
  */
 public interface WorkflowNamedParametersRepository extends IridaJpaRepository<IridaWorkflowNamedParameters, Long> {

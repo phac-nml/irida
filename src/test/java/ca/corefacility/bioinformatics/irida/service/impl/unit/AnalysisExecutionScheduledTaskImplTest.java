@@ -8,6 +8,8 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -15,6 +17,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
@@ -36,7 +41,6 @@ import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionSchedu
 /**
  * Tests out scheduling analysis tasks.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class AnalysisExecutionScheduledTaskImplTest {
@@ -174,7 +178,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
 		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
-				new GalaxyWorkflowStatus(GalaxyWorkflowState.OK, 100.0f));
+				new GalaxyWorkflowStatus(GalaxyWorkflowState.OK, Maps.newHashMap()));
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 
@@ -193,11 +197,14 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	public void testMonitorRunningAnalysesSuccessRunning() throws ExecutionManagerException,
 			IridaWorkflowNotFoundException {
 		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
-
+		Map<GalaxyWorkflowState, Set<String>> stateIds = new HashMap<>();
+		stateIds.put(GalaxyWorkflowState.RUNNING, Sets.newHashSet("1"));
+		stateIds.put(GalaxyWorkflowState.OK, Sets.newHashSet());
+		
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
 		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
-				new GalaxyWorkflowStatus(GalaxyWorkflowState.RUNNING, 50.0f));
+				new GalaxyWorkflowStatus(GalaxyWorkflowState.RUNNING, stateIds));
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 
@@ -220,30 +227,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
 		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
-				new GalaxyWorkflowStatus(GalaxyWorkflowState.ERROR, 50.0f));
-
-		analysisExecutionScheduledTask.monitorRunningAnalyses();
-
-		assertEquals(AnalysisState.ERROR, analysisSubmission.getAnalysisState());
-		verify(analysisSubmissionRepository).save(analysisSubmission);
-	}
-
-	/**
-	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR}
-	 * if there was an unknown Galaxy state.
-	 * 
-	 * @throws ExecutionManagerException
-	 * @throws IridaWorkflowNotFoundException
-	 */
-	@Test
-	public void testMonitorRunningAnalysesSuccessUnknown() throws ExecutionManagerException,
-			IridaWorkflowNotFoundException {
-		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
-
-		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
-				Arrays.asList(analysisSubmission));
-		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
-				new GalaxyWorkflowStatus(GalaxyWorkflowState.UNKNOWN, 50.0f));
+				new GalaxyWorkflowStatus(GalaxyWorkflowState.ERROR, Maps.newHashMap()));
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 

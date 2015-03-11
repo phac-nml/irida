@@ -17,7 +17,6 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
 /**
  *
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class UserRevListener implements RevisionListener, ApplicationContextAware{
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(UserRevListener.class); 

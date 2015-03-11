@@ -28,7 +28,6 @@ import com.google.common.collect.Sets;
 /**
  * Class used to load up installed workflows in IRIDA.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Service

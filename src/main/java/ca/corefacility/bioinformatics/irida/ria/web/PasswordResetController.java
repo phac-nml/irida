@@ -41,7 +41,6 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Controller for handling password reset flow
  *
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping(value = "/password_reset")

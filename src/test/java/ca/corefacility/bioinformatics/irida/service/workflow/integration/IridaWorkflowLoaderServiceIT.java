@@ -53,7 +53,6 @@ import com.google.common.collect.Sets;
 /**
  * Tests loading up workflows.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)

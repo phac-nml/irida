@@ -16,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMe
 /**
  * Base class for controllers so that they all can have access to common functionality.
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Controller
 public class BaseController {

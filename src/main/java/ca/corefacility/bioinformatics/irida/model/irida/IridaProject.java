@@ -10,7 +10,6 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectN
 /**
  * Defines what must be exposed by a Project in IRIDA
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public interface IridaProject {

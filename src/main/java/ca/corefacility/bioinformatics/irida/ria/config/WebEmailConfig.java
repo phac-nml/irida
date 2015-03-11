@@ -20,7 +20,6 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
  * <li>on the filesystem at /etc/irida/irida.conf</li>
  * </ol>
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 @Configuration

@@ -24,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploade
 
 /**
  * Unit tests for GalaxyUploader.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyUploaderTest {

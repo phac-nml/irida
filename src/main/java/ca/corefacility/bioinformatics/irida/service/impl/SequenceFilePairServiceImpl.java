@@ -23,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 /**
  * Implementation for managing {@link SequenceFilePair}
  *
- * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
 @Service
 public class SequenceFilePairServiceImpl extends CRUDServiceImpl<Long, SequenceFilePair> implements

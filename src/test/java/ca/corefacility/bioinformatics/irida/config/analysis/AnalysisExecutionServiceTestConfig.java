@@ -55,7 +55,6 @@ import com.google.common.collect.Lists;
 /**
  * Test configuration for {@link AnalysisExecutionService} classes.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Configuration

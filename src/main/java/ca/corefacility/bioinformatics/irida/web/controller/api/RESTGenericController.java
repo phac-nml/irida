@@ -39,7 +39,6 @@ import com.google.common.net.HttpHeaders;
  * @param <ResourceType>
  *            the type that this controller uses to serialize and de-serialize
  *            the <code>Type</code> to the client.
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping("/api/generic")

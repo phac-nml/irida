@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * DTO to allow easy access to a set of named parameters supplied by the client.
  * 
- * @author Franklin Bristow franklin.bristow@phac-aspc.gc.ca
  *
  */
 public class WorkflowParametersToSave {

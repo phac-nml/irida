@@ -12,7 +12,6 @@ import org.springframework.hateoas.ResourceSupport;
 /**
  * Wraps a collection of {@link ResourceCollection} objects to be sent to the client.
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @XmlRootElement(name = "resource")
 public class ResourceCollection<Type extends ResourceSupport> extends ResourceSupport implements Iterable<Type> {

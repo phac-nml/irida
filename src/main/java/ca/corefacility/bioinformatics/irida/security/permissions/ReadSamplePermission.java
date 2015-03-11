@@ -18,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 /**
  * Confirms that the authenticated user is allowed to read a sample.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 @Component

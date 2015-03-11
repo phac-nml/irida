@@ -41,8 +41,6 @@ import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmission;
  * "https://submit.ncbi.nlm.nih.gov/biosample/template/?package=Pathogen.cl.1.0&action=definition"
  * >BioSample Attributes: Package Pathogen</a> for more information.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
 @Table(name = "sample")

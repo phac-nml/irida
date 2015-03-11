@@ -34,7 +34,6 @@ import ca.corefacility.bioinformatics.irida.service.CRUDService;
  * A universal CRUD service for all types. Specialized services should extend
  * this class to get basic CRUD methods for free.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Timestamped> implements
 		CRUDService<KeyType, ValueType> {

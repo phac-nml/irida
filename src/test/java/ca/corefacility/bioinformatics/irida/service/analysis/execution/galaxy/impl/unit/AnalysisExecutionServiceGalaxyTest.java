@@ -46,12 +46,12 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.An
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
  * Tests out an execution service for Galaxy analyses.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class AnalysisExecutionServiceGalaxyTest {
@@ -379,7 +379,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 */
 	@Test
 	public void testGetWorkflowStatusSuccess() throws ExecutionManagerException {
-		GalaxyWorkflowStatus workflowStatus = new GalaxyWorkflowStatus(GalaxyWorkflowState.OK, 1.0f);
+		GalaxyWorkflowStatus workflowStatus = new GalaxyWorkflowStatus(GalaxyWorkflowState.OK, Maps.newHashMap());
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
 
 		when(galaxyHistoriesService.getStatusForHistory(analysisSubmission.getRemoteAnalysisId())).thenReturn(

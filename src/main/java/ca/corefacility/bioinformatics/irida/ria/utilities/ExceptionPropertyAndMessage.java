@@ -9,7 +9,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
  * To be used with the getErrorsFromDataIntegrityViolationException method of
  * {@link BaseController}
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class ExceptionPropertyAndMessage {

@@ -4,7 +4,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 
 /**
  * Exception that gets thrown when there is an error uploading a workflow to Galaxy.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class WorkflowUploadException extends ExecutionManagerException {

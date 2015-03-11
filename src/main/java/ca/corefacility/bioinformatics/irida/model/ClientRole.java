@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 
 /**
  * Role of an OAuth2 client in the Irida system
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Entity

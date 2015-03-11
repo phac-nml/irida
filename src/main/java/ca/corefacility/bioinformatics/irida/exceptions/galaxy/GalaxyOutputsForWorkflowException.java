@@ -4,7 +4,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 
 /**
  * An exception in getting outputs from Galaxy for a workflow.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyOutputsForWorkflowException extends WorkflowException {

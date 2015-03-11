@@ -36,7 +36,6 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 /**
  * Tests for {@link ReadSequenceFilePermission}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public class ReadSequenceFilePermissionTest {

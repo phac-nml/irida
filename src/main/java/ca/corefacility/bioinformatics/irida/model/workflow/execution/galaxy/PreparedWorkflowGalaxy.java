@@ -4,7 +4,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.PreparedWor
 
 /**
  * A Galaxy workflow that has been prepared for execution.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class PreparedWorkflowGalaxy implements PreparedWorkflow<WorkflowInputsGalaxy> {

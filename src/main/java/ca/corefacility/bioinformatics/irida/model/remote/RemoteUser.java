@@ -8,7 +8,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 /**
  * A user read from a remote irida API
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class RemoteUser extends User implements RemoteResource {
 

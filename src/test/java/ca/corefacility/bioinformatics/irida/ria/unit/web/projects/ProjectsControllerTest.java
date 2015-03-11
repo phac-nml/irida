@@ -53,7 +53,6 @@ import com.google.common.collect.Lists;
 /**
  * Unit test for {@link }
  * 
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectsControllerTest {
 	public static final String PROJECT_ORGANISM = "E. coli";

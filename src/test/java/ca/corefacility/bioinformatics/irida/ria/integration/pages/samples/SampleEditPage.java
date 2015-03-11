@@ -11,7 +11,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  * Page Object to represent the sample edit page.
  * </p>
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class SampleEditPage extends AbstractPage {
 	public static final String RELATIVE_URL = "samples/1/edit";

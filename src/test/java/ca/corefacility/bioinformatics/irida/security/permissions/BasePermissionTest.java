@@ -22,7 +22,6 @@ import com.google.common.collect.Sets;
 /**
  * Tests for {@link BasePermission}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public class BasePermissionTest {
@@ -227,7 +226,6 @@ public class BasePermissionTest {
 	/**
 	 * A class which allows the definition of permissions for different objects.
 	 * 
-	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
 	 *
 	 */
 	private static class VariablePermittablePermission extends BasePermission<Permittable, Long> {
@@ -287,7 +285,6 @@ public class BasePermissionTest {
 	/**
 	 * An object used as a placeholder for checking permissions.
 	 * 
-	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
 	 *
 	 */
 	private static class Permittable {

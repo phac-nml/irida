@@ -8,7 +8,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 /**
  * A service for executing {@link AnalysisSubmission} tasks.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public interface AnalysisExecutionScheduledTask {

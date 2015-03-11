@@ -22,7 +22,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
  * Specific implementation of {@link Analysis} for storing properties created by
  * FastQC.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Entity

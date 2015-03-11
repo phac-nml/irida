@@ -46,7 +46,6 @@ import com.google.common.collect.ImmutableSet;
  * statistics computed by FastQC are <code>private</code> fields, so we reflect
  * on those fields and make them <code>public</code> to get the values.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public class FastqcFileProcessor implements FileProcessor {

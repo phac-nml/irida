@@ -167,7 +167,6 @@ public abstract class SequencingRun extends IridaResourceSupport implements Irid
 	/**
 	 * The type of layout for the run. Single/Paired end
 	 * 
-	 * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
 	 *
 	 */
 	public static enum LayoutType {

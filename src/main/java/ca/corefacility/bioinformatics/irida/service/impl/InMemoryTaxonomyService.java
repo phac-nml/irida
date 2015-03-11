@@ -33,7 +33,6 @@ import com.hp.hpl.jena.vocabulary.RDFS;
  * A {@link TaxonomyService} leveraging Apache Jena's in memory storage service
  * and Apache Lucene's text searching abilities.
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class InMemoryTaxonomyService implements TaxonomyService {

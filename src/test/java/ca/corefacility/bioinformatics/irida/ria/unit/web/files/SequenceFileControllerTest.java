@@ -31,7 +31,6 @@ import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 /**
  * Unit Tests for @{link SequenceFileController}
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class SequenceFileControllerTest {
 	public static final Long FILE_ID = 1l;

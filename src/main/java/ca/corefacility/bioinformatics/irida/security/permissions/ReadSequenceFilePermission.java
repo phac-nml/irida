@@ -20,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 /**
  * Evaluate whether or not an authenticated user can read a sequence file.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 @Component

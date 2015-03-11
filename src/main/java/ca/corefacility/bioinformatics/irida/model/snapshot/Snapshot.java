@@ -31,7 +31,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  * Collection of {@link ProjectSnapshot}s, {@link SampleSnapshot}s, and
  * {@link SequenceFileSnapshot}s
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Entity

@@ -26,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyConnect
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 /**
  * Tests GalaxyConnector to make sure it can properly generate connections to Galaxy.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)

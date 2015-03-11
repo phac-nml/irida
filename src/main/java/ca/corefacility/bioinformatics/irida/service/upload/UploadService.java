@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
 /**
  * Service for performing uploads of genomic sequence data to a remote site.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  * @param <ProjectName>
  *            The name of the project to upload into.

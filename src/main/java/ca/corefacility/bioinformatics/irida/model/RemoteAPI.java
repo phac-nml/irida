@@ -28,7 +28,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
  * Description of a remote Irida API that this API can communicate with via
  * OAuth2
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Entity

@@ -12,7 +12,6 @@ import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 /**
  * Specification class for {@link IridaClientDetails}
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class IridaClientDetailsSpecification {

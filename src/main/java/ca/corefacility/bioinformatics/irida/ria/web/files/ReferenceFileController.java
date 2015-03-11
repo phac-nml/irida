@@ -36,7 +36,6 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Controller for all {@link ReferenceFile} related views
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping("/referenceFiles")

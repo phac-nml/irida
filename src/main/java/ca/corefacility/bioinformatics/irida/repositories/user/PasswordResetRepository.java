@@ -7,7 +7,6 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 /**
  * A repository to store password resets for a user.
  * 
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public interface PasswordResetRepository extends IridaJpaRepository<PasswordReset, String> {
 

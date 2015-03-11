@@ -58,8 +58,6 @@ import com.google.common.collect.Lists;
 /**
  * Controller for all {@link User} related views
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping(value = "/users")

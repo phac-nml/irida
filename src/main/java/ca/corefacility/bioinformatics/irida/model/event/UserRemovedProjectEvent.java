@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 /**
  * Event for when a {@link User} is removed from a {@link Project}
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Entity

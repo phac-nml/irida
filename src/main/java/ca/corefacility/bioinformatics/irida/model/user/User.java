@@ -41,8 +41,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 /**
  * A user object.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
 @Table(name = "user", uniqueConstraints = {

@@ -26,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
  * {@link AnalysisExecutionServiceGalaxyAsync} ->
  * {@link AnalysisExecutionServiceAspect} -> Transaction Manager.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Aspect

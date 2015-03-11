@@ -63,7 +63,6 @@ import com.google.common.collect.Sets;
 /**
  * Tests out preparing a workspace for execution of workflows in Galaxy.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)

@@ -12,7 +12,6 @@ import com.jayway.restassured.specification.RequestSpecification;
 /**
  * Utilities for doing web requests as certain types of user roles.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public class ITestAuthUtils {

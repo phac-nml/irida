@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableMap;
 /**
  * DataTables information for listing all projects for administrators.
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectsAdminDataTable extends DataTable {
 

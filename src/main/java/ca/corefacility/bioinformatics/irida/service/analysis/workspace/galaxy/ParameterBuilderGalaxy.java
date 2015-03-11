@@ -18,7 +18,6 @@ import com.google.common.collect.Lists;
 /**
  * A class used to build up the parameter data structures used for Galaxy.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class ParameterBuilderGalaxy {
@@ -26,7 +25,6 @@ public class ParameterBuilderGalaxy {
 	/**
 	 * An id for a particular parameter.
 	 * 
-	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
 	 *
 	 */
 	public static class ParameterId {

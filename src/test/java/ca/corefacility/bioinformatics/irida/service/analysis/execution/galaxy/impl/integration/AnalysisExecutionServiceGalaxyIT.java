@@ -79,7 +79,6 @@ import com.google.common.collect.Sets;
 /**
  * Tests out the analysis service for the Galaxy analyses.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)

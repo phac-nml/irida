@@ -4,7 +4,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 
 /**
  * This exception is thrown when there is an error obtaining a Galaxy dataset.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyDatasetException extends ExecutionManagerException {

@@ -11,7 +11,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.IdentifiableR
  * Resource class for a {@link SequencingRun}. This class will be extended by
  * individual sequencing run resource types
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public abstract class SequencingRunResource extends IdentifiableResource<SequencingRun> {

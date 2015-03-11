@@ -50,7 +50,6 @@ import com.google.common.collect.ImmutableMap;
  * reset file at /ca/corefacility/bioinformatics/irida/service/impl/
  * SequencingRunServiceTableReset.xml
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)

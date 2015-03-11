@@ -11,7 +11,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 /**
  * Repository for storing events that occurred on a project
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public interface ProjectEventRepository extends IridaJpaRepository<ProjectEvent, Long> {
