@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.exceptions;
 
 /**
  * An exception that gets thrown for an invalid configuration option for an execution manager.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class ExecutionManagerConfigurationException extends Exception {

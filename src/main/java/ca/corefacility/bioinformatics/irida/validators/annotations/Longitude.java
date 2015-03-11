@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.validators.Lo
 /**
  * Validates geographic longitude coordinate values.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE })

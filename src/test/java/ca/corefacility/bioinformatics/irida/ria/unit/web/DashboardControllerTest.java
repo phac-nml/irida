@@ -8,7 +8,6 @@ import static org.junit.Assert.assertEquals;
 /**
  * Unit Test for {@link DashboardController}
  * 
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class DashboardControllerTest {
 

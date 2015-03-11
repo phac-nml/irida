@@ -21,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 /**
  * An uploader for deciding whether or not to upload sample files into Galaxy
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
 public class GalaxyUploader implements Uploader<GalaxyProjectName, GalaxyAccountEmail> {

@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetailsChecker;
  * Expired credentials should be ignored when a user is trying to change their
  * password.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public class IgnoreExpiredCredentialsForPasswordChangeChecker implements UserDetailsChecker {

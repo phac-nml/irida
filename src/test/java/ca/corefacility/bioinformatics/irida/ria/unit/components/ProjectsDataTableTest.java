@@ -9,7 +9,6 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDat
 /**
  * Unit test for {@link ProjectsDataTable}
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectsDataTableTest {
 

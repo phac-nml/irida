@@ -12,7 +12,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 /**
  * Global settings for unit tests.
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class UnitTestListener extends RunListener {
     private static final Logger logger = LoggerFactory.getLogger(UnitTestListener.class);

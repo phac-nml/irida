@@ -12,7 +12,6 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.ValidProjectN
  * A name for a Galaxy project (Library) used for checking the validity
  * of the name.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
 public class GalaxyProjectName implements UploadProjectName {

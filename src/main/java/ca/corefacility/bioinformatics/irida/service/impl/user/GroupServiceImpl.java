@@ -22,7 +22,6 @@ import ca.corefacility.bioinformatics.irida.service.user.GroupService;
 /**
  * Implementation of specialized service for managing {@link Group}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Service

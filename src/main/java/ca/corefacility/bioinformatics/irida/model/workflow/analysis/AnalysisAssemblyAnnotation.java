@@ -11,7 +11,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 /**
  * Metadata for an assembly and annotation analysis.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Entity

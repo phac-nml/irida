@@ -40,6 +40,8 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryExc
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
@@ -67,7 +69,6 @@ import com.sun.jersey.api.client.ClientResponse;
 
 /**
  * Tests for building Galaxy histories.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -76,6 +77,8 @@ import com.sun.jersey.api.client.ClientResponse;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
 public class GalaxyHistoriesServiceIT {
+	
+	private static final float DELTA = 0.00001f;
 	
 	@Autowired
 	private LocalGalaxy localGalaxy;
@@ -663,5 +666,23 @@ public class GalaxyHistoriesServiceIT {
 		History history = galaxyHistory.newHistoryForWorkflow();
 		
 		galaxyHistory.libraryDatasetToHistory("fake", history);
+	}
+	
+	/**
+	 * Tests getting the status for a history successfully.
+	 * @throws ExecutionManagerException
+	 * @throws InterruptedException 
+	 * @throws TimeoutException 
+	 */
+	@Test
+	public void testGetStatusForHistory() throws ExecutionManagerException, TimeoutException, InterruptedException {
+		History history = galaxyHistory.newHistoryForWorkflow();
+		galaxyHistory.fileToHistory(dataFile, InputFileType.FASTQ_SANGER, history);
+		
+		Util.waitUntilHistoryComplete(history.getId(), galaxyHistory, 60);
+		
+		GalaxyWorkflowStatus status = galaxyHistory.getStatusForHistory(history.getId());
+		assertEquals("state is invalid", GalaxyWorkflowState.OK, status.getState());
+		assertEquals("percent complete is invalid", 100.0f, status.getPercentComplete(), DELTA);
 	}
 }

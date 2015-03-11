@@ -54,7 +54,6 @@ import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 /**
  * Implementation of an AnalysisSubmissionService.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Service
@@ -76,6 +75,12 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 *            A repository for accessing user information.
 	 * @param validator
 	 *            A validator.
+	 * @param referenceFileRepository
+	 *            the reference file repository
+	 * @param sequenceFilePairService
+	 *            the sequence file pair service
+	 * @param sequenceFileService
+	 *            the sequence file service.
 	 */
 	@Autowired
 	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,

@@ -33,7 +33,6 @@ import ca.corefacility.bioinformatics.irida.service.upload.UploadSampleConversio
 /**
  * Used to convert IRIDA Samples to those that can be uploaded into Galaxy.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Service
@@ -51,6 +50,8 @@ public class UploadSampleConversionServiceGalaxy implements
 	 * 
 	 * @param projectRepository
 	 *            The repository of all projects.
+	 * @param psjRepository
+	 *            the project sample join repository.
 	 * @param ssfjRepository
 	 *            The repository for joining sequence files and samples.
 	 * @param sfRepository

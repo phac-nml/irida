@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 /**
- * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
 public class AnalysisControllerTest {
 	/*

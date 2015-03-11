@@ -13,7 +13,6 @@ import ca.corefacility.bioinformatics.irida.model.snapshot.Snapshot;
 /**
  * Service for storing and creating {@link Snapshot}s
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public interface SnapshotService extends CRUDService<Long, Snapshot> {

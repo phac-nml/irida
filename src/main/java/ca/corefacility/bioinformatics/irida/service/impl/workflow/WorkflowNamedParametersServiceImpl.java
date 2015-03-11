@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParame
 /**
  * Service for interacting with named parameter sets.
  * 
- * @author Franklin Bristow franklin.bristow@phac-aspc.gc.ca
  *
  */
 @Service

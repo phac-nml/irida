@@ -48,7 +48,6 @@ import com.google.common.collect.Sets;
 /**
  * Unit tests for {@link SampleServiceImpl}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class SampleServiceImplTest {
 

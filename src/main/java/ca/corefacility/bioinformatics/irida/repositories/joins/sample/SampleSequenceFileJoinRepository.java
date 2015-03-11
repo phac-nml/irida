@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 /**
  * Repository for managing {@link SampleSequenceFileJoin}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public interface SampleSequenceFileJoinRepository extends CrudRepository<SampleSequenceFileJoin, Long> {
@@ -57,7 +56,7 @@ public interface SampleSequenceFileJoinRepository extends CrudRepository<SampleS
 	 * 
 	 * @param sample
 	 *            The Sample to get files for
-	 * @return a List of Join<Sample,SequenceFile>
+	 * @return a List of {@link SampleSequenceFileJoin}
 	 */
 	@Query("FROM SampleSequenceFileJoin j WHERE j.sample=?1 AND not exists (FROM SequenceFilePair p WHERE j.sequenceFile in elements(p.files))")
 	public List<Join<Sample, SequenceFile>> getUnpairedSequenceFilesForSample(Sample sample);

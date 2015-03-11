@@ -12,7 +12,6 @@ import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 /**
  * Service for interacting with {@link Organization}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Service

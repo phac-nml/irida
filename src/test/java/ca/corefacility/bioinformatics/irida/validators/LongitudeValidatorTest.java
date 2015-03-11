@@ -9,7 +9,6 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.validators.Lo
 /**
  * Tests the behaviour of {@link LongitudeValidator}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 public class LongitudeValidatorTest {

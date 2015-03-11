@@ -35,7 +35,6 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 /**
  * <p> Testing for launching a phylogenomics pipeline. </p>
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,

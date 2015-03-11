@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.service.util.SequenceFileUtilities;
 /**
  * Sequence file utilities class using BioJava for calculation
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Component

@@ -21,7 +21,6 @@ import org.hibernate.envers.Audited;
 
 /**
  *
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
 @Table(name="entityjoin")

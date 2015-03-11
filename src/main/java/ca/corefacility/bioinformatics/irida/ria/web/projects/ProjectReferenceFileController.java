@@ -29,7 +29,6 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Controller for ajax request dealing with project reference files.
  *
- * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping(value = "/projects/{projectId}/ajax/reference")

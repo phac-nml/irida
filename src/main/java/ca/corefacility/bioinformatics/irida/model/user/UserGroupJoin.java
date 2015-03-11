@@ -27,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 /**
  * Join class between {@link User} and {@link Group}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Entity

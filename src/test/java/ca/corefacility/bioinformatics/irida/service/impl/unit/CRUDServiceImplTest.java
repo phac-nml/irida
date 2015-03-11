@@ -44,8 +44,6 @@ import com.google.common.collect.Lists;
 /**
  * Testing the behavior of {@link CRUDServiceImpl}
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public class CRUDServiceImplTest {
 

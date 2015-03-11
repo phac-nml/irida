@@ -11,7 +11,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrari
 
 /**
  * Tests for {@link GalaxyLibrariesService}.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyLibrariesServiceTest {

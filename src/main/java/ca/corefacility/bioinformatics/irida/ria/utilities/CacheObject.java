@@ -7,7 +7,6 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource
  * Object stored by the {@link RemoteObjectCache}. Includes a reference to
  * {@link RemoteObjectCache}
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  * @param <Type>
  *            the type stored by this object

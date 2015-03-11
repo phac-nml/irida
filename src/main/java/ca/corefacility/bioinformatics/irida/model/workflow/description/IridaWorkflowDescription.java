@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableList;
 /**
  * Class providing access to generic information about a workflow.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @XmlRootElement(name = "iridaWorkflow")
@@ -67,7 +66,7 @@ public class IridaWorkflowDescription {
 	 *            The name of the workflow.
 	 * @param version
 	 *            The version of the workflow.
-	 * @param analysisClass
+	 * @param analysisType
 	 *            The class type of the {@link Analysis}.
 	 * @param inputs
 	 *            The inputs to the workflow.

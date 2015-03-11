@@ -25,7 +25,6 @@ import com.google.common.collect.Sets;
 /**
  * A Galaxy implementation for preparing parameters for an analysis.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Service

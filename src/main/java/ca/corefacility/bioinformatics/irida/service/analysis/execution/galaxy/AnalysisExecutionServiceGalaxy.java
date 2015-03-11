@@ -26,7 +26,6 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Service for performing analyses within a Galaxy execution manager.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
 public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService {
 

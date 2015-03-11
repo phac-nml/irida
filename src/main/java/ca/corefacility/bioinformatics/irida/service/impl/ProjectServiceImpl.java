@@ -52,7 +52,6 @@ import ca.corefacility.bioinformatics.irida.service.util.SequenceFileUtilities;
 /**
  * A specialized service layer for projects.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Service
 public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implements ProjectService {

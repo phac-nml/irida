@@ -28,7 +28,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.WorkflowOutputs;
 
 /**
  * Handles operating with workflows in Galaxy.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyWorkflowService {

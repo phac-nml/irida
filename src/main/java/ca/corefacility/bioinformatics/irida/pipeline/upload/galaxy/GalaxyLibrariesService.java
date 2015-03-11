@@ -34,7 +34,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
 /**
  * A service class for dealing with Galaxy libraries.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyLibrariesService {

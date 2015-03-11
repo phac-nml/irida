@@ -12,7 +12,6 @@ import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEv
  * Aspect used to create project events for methods annotated with event
  * annotations
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  * @see LaunchesProjectEvent
  */

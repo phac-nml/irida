@@ -11,7 +11,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.LoginController;
 /**
  * Unit Tests for {@link LoginController}
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class LoginControllerTest {
 	private LoginController controller = new LoginController();

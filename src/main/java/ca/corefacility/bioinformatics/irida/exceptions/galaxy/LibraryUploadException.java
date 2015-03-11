@@ -4,7 +4,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 
 /**
  * When there is an issue uploading files to a data library.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class LibraryUploadException extends UploadException {

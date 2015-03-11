@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleNa
  * contains '/' separating different folders.  Both paths and names
  * are used by blend4j for different purposes.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
 public class GalaxyFolderName implements UploadFolderName {

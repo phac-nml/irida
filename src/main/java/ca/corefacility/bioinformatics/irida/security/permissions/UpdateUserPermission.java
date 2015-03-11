@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
  * Confirms that the authenticated user is allowed to modify another (or their
  * own) user account.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 @Component
@@ -28,6 +27,9 @@ public class UpdateUserPermission extends BasePermission<User, Long> {
 
 	/**
 	 * Construct an instance of {@link UpdateUserPermission}.
+	 * 
+	 * @param userRepository
+	 *            the user repository.
 	 */
 	@Autowired
 	public UpdateUserPermission(UserRepository userRepository) {

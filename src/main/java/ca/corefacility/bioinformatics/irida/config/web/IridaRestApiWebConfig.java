@@ -42,8 +42,6 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Configuration for IRIDA REST API.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * 
  */
 @Configuration

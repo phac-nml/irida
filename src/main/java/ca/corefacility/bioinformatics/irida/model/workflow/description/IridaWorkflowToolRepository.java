@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlElement;
 /**
  * Defines a Galaxy ToolShed repository containing dependency tools for a workflow.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * @see <a href="https://wiki.galaxyproject.org/ToolShed">https://wiki.galaxyproject.org/ToolShed</a>
  * @see <a href="https://wiki.galaxyproject.org/Tools">https://wiki.galaxyproject.org/Tools</a>
  *
@@ -37,8 +36,6 @@ public class IridaWorkflowToolRepository {
 	 * 
 	 * @param name
 	 *            The name of the tool.
-	 * @param id
-	 *            The id of the tool
 	 * @param owner
 	 *            The owner of the tool.
 	 * @param url

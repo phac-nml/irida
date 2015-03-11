@@ -30,7 +30,6 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
  * Implementation of {@link SequenceFileRemoteRepository} using
  * {@link OAuthTokenRestTemplate} for making requests
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Repository

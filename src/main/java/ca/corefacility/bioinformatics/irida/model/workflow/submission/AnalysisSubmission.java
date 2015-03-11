@@ -57,11 +57,6 @@ import com.google.common.collect.Sets;
 
 /**
  * Defines a submission to an AnalysisService for executing a remote workflow.
- * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
- *
- * @param <T>
- *            Defines the RemoteWorkflow implementing this analysis.
  */
 @Entity
 @Table(name = "analysis_submission")
@@ -167,12 +162,10 @@ public class AnalysisSubmission implements IridaThing {
 	}
 	
 	/**
-	 * Builds a new {@link AnalysisSubmission} with the given
-	 * {@link AnalysisSubmission.Builder}.
+	 * Builds a new {@link AnalysisSubmission} with the given {@link Builder}.
 	 * 
 	 * @param builder
-	 *            The {@link AnalyisSubmission.Builder} to build the
-	 *            {@link AnalysisSubmission}.
+	 *            The {@link Builder} to build the {@link AnalysisSubmission}.
 	 */
 	public AnalysisSubmission(Builder builder) {
 		this();
@@ -428,7 +421,6 @@ public class AnalysisSubmission implements IridaThing {
 	/**
 	 * Used to build up an {@link AnalysisSubmission}.
 	 * 
-	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
 	 */
 	public static class Builder {
 		private String name;
@@ -440,7 +432,7 @@ public class AnalysisSubmission implements IridaThing {
 		private IridaWorkflowNamedParameters namedParameters;
 		
 		/**
-		 * Creates a new {@link AnalysisSubmission.Builder} with a workflow id.
+		 * Creates a new {@link Builder} with a workflow id.
 		 * 
 		 * @param workflowId
 		 *            The workflow id for this submission.
@@ -457,7 +449,7 @@ public class AnalysisSubmission implements IridaThing {
 		 * 
 		 * @param name
 		 *            A name for this submission.
-		 * @return An {@link AnalysisSubmission.Builder}.
+		 * @return A {@link Builder}.
 		 */
 		public Builder name(String name) {
 			checkNotNull(name, "name is null");
@@ -471,7 +463,7 @@ public class AnalysisSubmission implements IridaThing {
 		 * 
 		 * @param inputFilesSingle
 		 *            The inputFilesSingle for this submission.
-		 * @return An {@link AnalysisSubmission.Builder}.
+		 * @return A {@link Builder}.
 		 */
 		public Builder inputFilesSingle(Set<SequenceFile> inputFilesSingle) {
 			checkNotNull(inputFilesSingle, "inputFilesSingle is null");
@@ -484,9 +476,9 @@ public class AnalysisSubmission implements IridaThing {
 		/**
 		 * Sets the inputFilesPaired for this submission.
 		 * 
-		 * @param inputFilesSingle
+		 * @param inputFilesPaired
 		 *            The inputFilesPaired for this submission.
-		 * @return An {@link AnalysisSubmission.Builder}.
+		 * @return A {@link Builder}.
 		 */
 		public Builder inputFilesPaired(Set<SequenceFilePair> inputFilesPaired) {
 			checkNotNull(inputFilesPaired, "inputFilesPaired is null");
@@ -499,9 +491,9 @@ public class AnalysisSubmission implements IridaThing {
 		/**
 		 * Sets the referenceFile for this submission.
 		 * 
-		 * @param inputFilesSingle
+		 * @param referenceFile
 		 *            The referenceFile for this submission.
-		 * @return An {@link AnalysisSubmission.Builder}.
+		 * @return A {@link Builder}.
 		 */
 		public Builder referenceFile(ReferenceFile referenceFile) {
 			checkNotNull(referenceFile, "referenceFile is null");
@@ -515,7 +507,7 @@ public class AnalysisSubmission implements IridaThing {
 		 * 
 		 * @param inputParameters
 		 *            A map of parameters for this submission.
-		 * @return An {@link AnalysisSubmission.Builder}.
+		 * @return A {@link Builder}.
 		 */
 		public Builder inputParameters(Map<String, String> inputParameters) {
 			checkNotNull(inputParameters, "inputParameters is null");
@@ -537,7 +529,7 @@ public class AnalysisSubmission implements IridaThing {
 		 *            The name of the parameter.
 		 * @param value
 		 *            The value of the parameter.
-		 * @return An {@link AnalysisSubmission.Builder}.
+		 * @return A {@link Builder}.
 		 */
 		public Builder inputParameter(final String name, final String value) {
 			checkNotNull(name, "key is null");
@@ -557,7 +549,7 @@ public class AnalysisSubmission implements IridaThing {
 		 * 
 		 * @param parameters
 		 *            the named parameters to use.
-		 * @return An {@link AnalysisSubmission.Builder}.
+		 * @return A {@link Builder}.
 		 */
 		public Builder withNamedParameters(final IridaWorkflowNamedParameters parameters) {
 			checkNotNull(parameters, "named parameters cannot be null.");
@@ -574,12 +566,12 @@ public class AnalysisSubmission implements IridaThing {
 	}
 	
 	/**
-	 * Gets an {@link AnalysisSubmission.Builder}.
+	 * Gets a {@link Builder}.
 	 * 
 	 * @param workflowId
 	 *            The id of the workflow to submit.
 	 * 
-	 * @return An {@link AnalysisSubmission.Builder}.
+	 * @return A {@link Builder}.
 	 */
 	public static Builder builder(UUID workflowId) {
 		return new AnalysisSubmission.Builder(workflowId);

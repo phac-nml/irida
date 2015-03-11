@@ -20,7 +20,6 @@ import org.springframework.security.core.Authentication;
  * Inspired by
  * http://blog.solidcraft.eu/2011/03/spring-security-by-example-securing.html
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public class IridaPermissionEvaluator implements PermissionEvaluator {

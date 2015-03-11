@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.exceptions;
 
 /**
  * Thrown when there is an issue with a SequenceFile analysis.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class SequenceFileAnalysisException extends Exception {
@@ -20,11 +19,13 @@ public class SequenceFileAnalysisException extends Exception {
 	}
 
 	/**
-	 * Construct a new {@link SequenceFileAnalysisException} with the specified message and
-	 * original cause.
+	 * Construct a new {@link SequenceFileAnalysisException} with the specified
+	 * message and original cause.
 	 * 
 	 * @param message
+	 *            the message explaining the exception.
 	 * @param cause
+	 *            the original cause of the exception
 	 */
 	public SequenceFileAnalysisException(String message, Throwable cause) {
 		super(message, cause);

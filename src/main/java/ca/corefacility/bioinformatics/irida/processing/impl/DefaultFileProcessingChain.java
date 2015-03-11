@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
  * Default implementation of {@link FileProcessingChain}. Simply iterates
  * through a collection of {@link FileProcessor}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public class DefaultFileProcessingChain implements FileProcessingChain {

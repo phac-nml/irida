@@ -26,7 +26,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.Role;
 
 /**
  * Tests for the GalaxyRoleSearch class.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyRoleSearchTest {

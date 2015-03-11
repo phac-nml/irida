@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,7 +43,6 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Controller for Analysis.
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping("/analysis")
@@ -108,8 +106,6 @@ public class AnalysisController {
 	 *
 	 * @param all
 	 * 		{@link boolean} whether or not to show all the system analysis or just the users.
-	 * @param principal
-	 * 		{@link Principal} the current user.
 	 * @param locale
 	 * 		{@link Locale} locale for the current user.
 	 * @param httpServletResponse
@@ -173,11 +169,12 @@ public class AnalysisController {
 	 * Download all output files from an {@link AnalysisSubmission}
 	 *
 	 * @param analysisSubmissionId
-	 * 		Id for a {@link AnalysisSubmission}
+	 *            Id for a {@link AnalysisSubmission}
 	 * @param response
-	 * 		{@link HttpServletResponse}
+	 *            {@link HttpServletResponse}
 	 *
 	 * @throws IOException
+	 *             if we fail to create a zip file.
 	 */
 	@RequestMapping(value = "/ajax/download/{analysisSubmissionId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public void getAjaxDownloadAnalysisSubmission(@PathVariable Long analysisSubmissionId, HttpServletResponse response)

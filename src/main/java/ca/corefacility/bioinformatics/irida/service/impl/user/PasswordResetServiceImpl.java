@@ -16,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 /**
  * Implementation for managing {@link PasswordReset}
  * 
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  * 
  */
 @Service

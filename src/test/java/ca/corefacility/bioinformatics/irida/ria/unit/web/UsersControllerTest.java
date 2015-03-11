@@ -47,7 +47,6 @@ import com.google.common.collect.Lists;
 /**
  * Unit test for {@link }
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class UsersControllerTest {
 	// HTML page names

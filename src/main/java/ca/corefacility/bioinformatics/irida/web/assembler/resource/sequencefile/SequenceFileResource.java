@@ -17,7 +17,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Resource wrapper for {@link SequenceFile}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @XmlRootElement(name = "sequenceFile")
 public class SequenceFileResource extends IdentifiableResource<SequenceFile> {

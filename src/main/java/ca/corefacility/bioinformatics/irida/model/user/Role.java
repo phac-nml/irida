@@ -13,8 +13,6 @@ import org.springframework.security.core.GrantedAuthority;
 /**
  * Roles for authorization in the application.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
 @Table(name = "system_role")

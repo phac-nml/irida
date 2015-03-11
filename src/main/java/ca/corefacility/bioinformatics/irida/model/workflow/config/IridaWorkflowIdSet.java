@@ -6,7 +6,6 @@ import java.util.UUID;
 /**
  * A class wrapping around a {@link Set} of {@link UUID}s for IRIDA workflows.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class IridaWorkflowIdSet {

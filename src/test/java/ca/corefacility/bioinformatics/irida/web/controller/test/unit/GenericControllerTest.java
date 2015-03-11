@@ -47,7 +47,6 @@ import com.google.common.net.HttpHeaders;
 /**
  * Unit tests for the {@link RESTGenericController}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @SuppressWarnings("unused")
 public class GenericControllerTest {

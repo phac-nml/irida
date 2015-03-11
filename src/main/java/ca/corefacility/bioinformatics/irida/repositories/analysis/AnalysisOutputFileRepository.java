@@ -7,7 +7,6 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
 /**
  * A custom repository for managing {@link AnalysisOutputFile} objects.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 public interface AnalysisOutputFileRepository extends IridaJpaRepository<AnalysisOutputFile, Long>,

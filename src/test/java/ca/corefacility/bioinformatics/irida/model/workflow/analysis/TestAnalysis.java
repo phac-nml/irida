@@ -8,7 +8,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 /**
  * Class defining an analysis for testing purposes.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class TestAnalysis extends Analysis {

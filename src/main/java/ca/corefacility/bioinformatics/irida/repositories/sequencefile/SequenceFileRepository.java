@@ -13,8 +13,6 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
  * A repository to store information about sequence files. This repository will
  * not directly store the file, just metadata
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public interface SequenceFileRepository extends FilesystemSupplementedRepository<SequenceFile>,
 		IridaJpaRepository<SequenceFile, Long> {

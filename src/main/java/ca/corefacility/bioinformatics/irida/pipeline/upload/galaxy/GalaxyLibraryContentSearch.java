@@ -93,7 +93,7 @@ public class GalaxyLibraryContentSearch extends GalaxySearch<LibraryContent, Lib
 	 *            The library to get all contents from.
 	 * @return A Map mapping the path of the library content to a list of
 	 *         {@link LibraryContent} objects.
-	 * @throws ExecutionManagerObjectNotFoundException 
+	 * @throws ExecutionManagerObjectNotFoundException  if the library cannot be found
 	 */
 	public Map<String, List<LibraryContent>> libraryContentAsMap(String libraryId)
 			throws ExecutionManagerObjectNotFoundException {

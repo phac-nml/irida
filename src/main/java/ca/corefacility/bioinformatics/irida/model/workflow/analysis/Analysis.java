@@ -37,7 +37,6 @@ import com.google.common.collect.Maps;
 /**
  * An analysis object for storing results of an analysis execution.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Entity

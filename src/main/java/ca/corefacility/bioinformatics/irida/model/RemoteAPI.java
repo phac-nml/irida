@@ -28,7 +28,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
  * Description of a remote Irida API that this API can communicate with via
  * OAuth2
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Entity
@@ -89,16 +88,16 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 	/**
 	 * Get the entity id
 	 * 
-	 * @return
+	 * @return the identifier of the object
 	 */
 	public Long getId() {
 		return id;
 	}
 
 	/**
-	 * Set the entity idea
+	 * Set the entity id
 	 * 
-	 * @param id
+	 * @param id the identifier of the object
 	 */
 	public void setId(Long id) {
 		this.id = id;
@@ -107,7 +106,7 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 	/**
 	 * Get the base URI of this remote api
 	 * 
-	 * @return
+	 * @return the base URI for the remote API
 	 */
 	public String getServiceURI() {
 		return serviceURI;
@@ -116,7 +115,7 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 	/**
 	 * Set the base URI of this remote service
 	 * 
-	 * @param serviceURI
+	 * @param serviceURI the base URI of the remote API
 	 */
 	public void setServiceURI(String serviceURI) {
 		this.serviceURI = serviceURI;
@@ -125,7 +124,7 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 	/**
 	 * Get a description of the remote api
 	 * 
-	 * @return
+	 * @return the description of the remote API
 	 */
 	public String getDescription() {
 		return description;
@@ -134,16 +133,26 @@ public class RemoteAPI implements Comparable<RemoteAPI>, IridaThing {
 	/**
 	 * Set the description for the remote api
 	 * 
-	 * @param description
+	 * @param description the description of the remote API
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
+	/**
+	 * get the name of the remote API.
+	 * 
+	 * @return the name of the remote API
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * Set the name of the remote API.
+	 * 
+	 * @param name the name of the remote API.
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}

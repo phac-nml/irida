@@ -27,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserReso
  * associated IdentifiableResource classes are. Can also be used to see what
  * properties are available to those web resources.
  * 
- * @author "Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>"
  * 
  */
 public class ModelLookup {
@@ -60,7 +59,7 @@ public class ModelLookup {
 	 * 
 	 * @param clazz
 	 *            The model class to find properties for
-	 * @return A List<String> of the available properties for the class itself.
+	 * @return A {@code List<String>} of the available properties for the class itself.
 	 */
 	public static List<String> getProperties(Class<? extends Object> clazz) {
 		Class<? extends IdentifiableResource<? extends IridaThing>> resource = classes.get(clazz);

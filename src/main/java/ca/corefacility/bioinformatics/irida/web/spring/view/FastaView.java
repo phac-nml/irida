@@ -17,7 +17,6 @@ import java.util.Map;
 /**
  * Write out FASTA formatted sequence files to the client.
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class FastaView extends AbstractView {
 

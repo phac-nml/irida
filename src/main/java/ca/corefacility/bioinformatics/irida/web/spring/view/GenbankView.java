@@ -17,7 +17,6 @@ import java.util.Map;
 /**
  * Write out GenBank formatted sequence files to the client.
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class GenbankView extends AbstractView {
 

@@ -18,7 +18,6 @@ import com.google.common.util.concurrent.MoreExecutors;
 /**
  * Config name for test services that need to be setup.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Configuration
