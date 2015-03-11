@@ -24,8 +24,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.user.UserResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
 
 /**
@@ -34,7 +32,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProj
  */
 @Controller
 @RequestMapping(value = "/api/users")
-public class RESTUsersController extends RESTGenericController<User, UserResource> {
+public class RESTUsersController extends RESTGenericController<User> {
 
 	/**
 	 * logger
@@ -73,7 +71,7 @@ public class RESTUsersController extends RESTGenericController<User, UserResourc
 	 */
 	@Autowired
 	public RESTUsersController(UserService userService, ProjectService projectService) {
-		super(userService, User.class, UserResource.class);
+		super(userService, User.class);
 		this.userService = userService;
 		this.projectService = projectService;
 	}
@@ -108,16 +106,15 @@ public class RESTUsersController extends RESTGenericController<User, UserResourc
 		User u = userService.getUserByUsername(username);
 
 		// get all of the projects that this user belongs to
-		ResourceCollection<ProjectResource> resources = new ResourceCollection<>();
+		ResourceCollection<Project> resources = new ResourceCollection<>();
 		List<Join<Project, User>> projects = projectService.getProjectsForUser(u);
 		ControllerLinkBuilder linkBuilder = linkTo(RESTProjectsController.class);
 
 		// add the project and a self-rel link to the project representation
 		for (Join<Project, User> join : projects) {
 			Project project = join.getSubject();
-			ProjectResource resource = new ProjectResource(project);
-			resource.add(linkBuilder.slash(project.getId()).withSelfRel());
-			resources.add(resource);
+			project.add(linkBuilder.slash(project.getId()).withSelfRel());
+			resources.add(project);
 		}
 
 		// add the resources to the response
