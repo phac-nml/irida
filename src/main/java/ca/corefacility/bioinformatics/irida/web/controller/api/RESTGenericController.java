@@ -23,8 +23,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
+import ca.corefacility.bioinformatics.irida.web.controller.api.exception.GenericsException;
 
 import com.google.common.net.HttpHeaders;
 
@@ -146,17 +148,17 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 
 		// try to retrieve a resource from the database using the identifier
 		// supplied by the client.
-		Type resource = crudService.read(identifier);
+		Type t = crudService.read(identifier);
 
 		// add any custom links for the specific resource type that we're
 		// serving
 		// right now (implemented in the class that extends GenericController).
-		resource.add(constructCustomResourceLinks(resource));
+		t.add(constructCustomResourceLinks(t));
 		// add a self-rel to this resource
-		resource.add(linkTo(getClass()).slash(identifier).withSelfRel());
+		t.add(linkTo(getClass()).slash(identifier).withSelfRel());
 
 		// add the resource to the model
-		model.addAttribute(RESOURCE_NAME, resource);
+		model.addAttribute(RESOURCE_NAME, t);
 
 		// send the response back to the client.
 		return model;
@@ -174,7 +176,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 */
 	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
-	public ModelMap create(@RequestBody Type resource, HttpServletResponse response) {		
+	public ModelMap create(@RequestBody Type resource,HttpServletResponse response) {		
 		ModelMap model = new ModelMap();
 
 		// ask the subclass to map the de-serialized request to a concrete
@@ -192,7 +194,7 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 		
 		// In order to obtain a correct created date, the persisted resource is
 		// accessed from the service/database layer.
-		Type readResource = crudService.read(id);
+		Type readType = crudService.read(id);
 		
 		// the location of the new resource is relative to this class (i.e.,
 		// linkTo(getClass())) with the identifier appended.
@@ -201,13 +203,13 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 		// add any custom links for the specific resource type that we're
 		// serving
 		// right now (implemented in the class that extends GenericController).
-		readResource.add(constructCustomResourceLinks(resource));
+		readType.add(constructCustomResourceLinks(resource));
 		
 		//add a self reference
-		readResource.add(linkTo(getClass()).slash(id).withSelfRel());
+		readType.add(linkTo(getClass()).slash(id).withSelfRel());
 		
 		// add the resource to the model
-		model.addAttribute(RESOURCE_NAME,readResource);
+		model.addAttribute(RESOURCE_NAME,readType);
 		
 		// add a location header.
 		response.addHeader(HttpHeaders.LOCATION, location);
