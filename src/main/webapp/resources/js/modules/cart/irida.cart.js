@@ -154,11 +154,12 @@
     var params = {};
     var samples = [];
 
-    function initialize(libraryName, email) {
+    function initialize(libraryName, email, authCode) {
       params = {
         "_embedded": {
           "library": {"name": libraryName},
           "user"   : {"email": email},
+          "oauth2" : {"code": authCode},
           "samples": samples
         }
       };
@@ -187,8 +188,8 @@
       return [sampleFormEntity];
     };
 
-    svc.exportFromProjSampPage = function (libraryName, email) {
-      initialize(libraryName, email);
+    svc.exportFromProjSampPage = function (libraryName, email, authCode) {
+      initialize(libraryName, email, authCode);
 
       var samples = StorageService.getSamples()
       _.each(samples, function (sample) {
@@ -199,10 +200,10 @@
       return getSampleFormEntities();
     };
 
-    svc.exportFromCart = function (libraryName, email) {
+    svc.exportFromCart = function (libraryName, email, authCode) {
       return CartService.all()
         .then(function (data) {
-          initialize(libraryName, email);
+          initialize(libraryName, email, authCode);
           var projects = data;
           _.each(projects, function (project) {
             var samples = project.samples;
@@ -218,20 +219,26 @@
     };
   }
 
-  function GalaxyCartDialogCtrl($modalInstance, $timeout, GalaxyExportService, openedByCart, multiProject) {
+  function GalaxyCartDialogCtrl($modalInstance, $timeout, $scope, GalaxyExportService, openedByCart, multiProject) {
     "use strict";
-    var vm = this
+    var vm = this;
+    vm.showOauthIframe = false;
+    vm.showEmailLibInput = true;
+
+    var request = makeOauth2Request("webClient", "code", "read", TL.BASE_URL + "galaxy/auth_code");
+    vm.iframeSrc = "/api/oauth/authorize" + request;
+
+
+    function makeOauth2Request(clientID, responseType, scope, redirectURI) {
+      //Is there an URL builder I should use?
+      return "?&client_id=" + clientID + "&response_type=" + responseType + "&scope=" + scope + "&redirect_uri=" + redirectURI;
+    }
 
     vm.upload = function () {
       vm.uploading = true;
-      var sampleFormEntities
-
-      if (openedByCart) {
-        GalaxyExportService.exportFromCart(vm.name, vm.email).then(sendSampleForm);
-      }
-      else {
-        sendSampleForm(GalaxyExportService.exportFromProjSampPage(vm.name, vm.email));
-      }
+      var sampleFormEntities;
+      vm.showEmailLibInput = false;
+      vm.showOauthIframe = true;
     };
 
     function sendSampleForm(sampleFormEntities) {
@@ -239,11 +246,31 @@
 
       //$timeout is necessary because it adds a new event to the browser event queue,
       //allowing the full form to be generated before it is submitted.
+
+      //Two timeouts are required now--this is starting to look like a real hack.
       $timeout(function () {
-        document.getElementById("galSubFrm").submit();
-        vm.close();
+        $timeout(function () {
+          document.getElementById("galSubFrm").submit();
+          vm.close();
+        });
       });
     }
+
+    $scope.$on("galaxyAuthCode", function (e, authToken) {
+
+      if (authToken) {
+
+        vm.showOauthIframe = false;
+        vm.showEmailLibInput = true;
+
+        if (openedByCart) {
+          GalaxyExportService.exportFromCart(vm.name, vm.email, authToken).then(sendSampleForm);
+        }
+        else {
+          sendSampleForm(GalaxyExportService.exportFromProjSampPage(vm.name, vm.email, authToken));
+        }
+      }
+    });
 
     vm.setName = function (name, orgName) {
       if (multiProject) {
@@ -265,7 +292,7 @@
     .module('irida.cart', [])
     .service('CartService', ['$rootScope', '$http', '$q', CartService])
     .controller('CartSliderController', ['CartService', '$modal', CartSliderController])
-    .controller('GalaxyCartDialogCtrl', ['$modalInstance', '$timeout', 'GalaxyExportService', 'openedByCart', 'multiProject', GalaxyCartDialogCtrl])
+    .controller('GalaxyCartDialogCtrl', ['$modalInstance', '$timeout', '$scope', 'GalaxyExportService', 'openedByCart', 'multiProject', GalaxyCartDialogCtrl])
     .service('GalaxyExportService', ['CartService', 'StorageService', GalaxyExportService])
     .directive('cart', [CartDirective])
   ;

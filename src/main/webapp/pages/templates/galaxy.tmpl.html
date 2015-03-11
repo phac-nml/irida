@@ -5,7 +5,7 @@
 			<span th:utext="#{galaxy.title}">__LINKER</span>
 		</h3>
 	</div>
-	<div class="modal-body">
+	<div class="modal-body" ng-show="gCtrl.showEmailLibInput">
 		<div class="form-group">
 			<label for="email" th:text="#{galaxy.label.email}"></label>
 			<input id="email" class="form-control" type="email" th:attr="ng-init='gCtrl.setEmail(\'' + ${email} + '\')'" ng-model="gCtrl.email"/>
@@ -16,6 +16,9 @@
 			<div id="galaxy-error" ng-show="gCtrl.errors" class="alert alert-danger" role="alert">{{gCtrl.errors}}</div>
 		</div>
 	</div>
+	<div class="modal-body" ng-show="gCtrl.showOauthIframe">
+		<iframe name="oauth2Iframe" ng-src="{{gCtrl.iframeSrc}}" style="zoom:0.60" width="99.6%" height="800" frameborder="0"></iframe>
+	</div>
 	<div class="modal-footer">
 		<button class="btn btn-default" ng-click="gCtrl.close()" th:text="#{form.btn.close}">Close</button>
 		<button ng-disabled="gCtrl.uploading" class="btn btn-primary" ng-click="gCtrl.upload()">
@@ -24,6 +27,7 @@
 		</button>
 	</div>
 	<form name="galSubFrmNm" id="galSubFrm" th:action="${#httpSession.getAttribute('galaxyExportToolCallbackURL')}" method="post">
-	  	<input type="hidden" name="{{sampleFormEntity.name}}" ng-repeat="sampleFormEntity in gCtrl.sampleFormEntities" value="{{sampleFormEntity.value}}"/>
-	</form> 
+		<input type="hidden" name="{{sampleFormEntity.name}}" ng-repeat="sampleFormEntity in gCtrl.sampleFormEntities" value="{{sampleFormEntity.value}}"/>
+	</form>
+
 </div>
