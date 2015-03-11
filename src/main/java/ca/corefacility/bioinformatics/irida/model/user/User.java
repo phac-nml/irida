@@ -24,6 +24,8 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Email;
@@ -32,6 +34,9 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
@@ -48,6 +53,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 		@UniqueConstraint(name = User.USER_USERNAME_CONSTRAINT_NAME, columnNames = "username") })
 @Audited
 @EntityListeners(AuditingEntityListener.class)
+@XmlRootElement(name = "user")
 public class User extends IridaResourceSupport implements IridaThing, Comparable<User>, UserDetails {
 
 	private static final long serialVersionUID = -7516211470008791995L;
@@ -208,6 +214,7 @@ public class User extends IridaResourceSupport implements IridaThing, Comparable
 	}
 
 	@Override
+	@XmlElement
 	public Long getId() {
 		return id;
 	}
@@ -233,6 +240,7 @@ public class User extends IridaResourceSupport implements IridaThing, Comparable
 				.add("firstName", firstName).add("lastName", lastName).add("phoneNumber", phoneNumber).toString();
 	}
 
+	@XmlElement
 	@Override
 	public String getUsername() {
 		return username;
@@ -242,6 +250,7 @@ public class User extends IridaResourceSupport implements IridaThing, Comparable
 		this.username = username;
 	}
 
+	@XmlElement
 	public String getEmail() {
 		return email;
 	}
@@ -250,15 +259,18 @@ public class User extends IridaResourceSupport implements IridaThing, Comparable
 		this.email = email;
 	}
 
+	@JsonIgnore
 	@Override
 	public String getPassword() {
 		return password;
 	}
 
+	@JsonProperty
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
+	@XmlElement
 	public String getFirstName() {
 		return firstName;
 	}
@@ -267,6 +279,7 @@ public class User extends IridaResourceSupport implements IridaThing, Comparable
 		this.firstName = firstName;
 	}
 
+	@XmlElement
 	public String getLastName() {
 		return lastName;
 	}
@@ -275,6 +288,7 @@ public class User extends IridaResourceSupport implements IridaThing, Comparable
 		this.lastName = lastName;
 	}
 
+	@XmlElement
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
@@ -345,6 +359,7 @@ public class User extends IridaResourceSupport implements IridaThing, Comparable
 		this.locale = locale;
 	}
 
+	@XmlElement
 	public Date getCreatedDate() {
 		return createdDate;
 	}
