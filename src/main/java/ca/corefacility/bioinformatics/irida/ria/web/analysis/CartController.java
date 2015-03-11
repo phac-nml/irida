@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -70,7 +74,8 @@ public class CartController {
 	/**
 	 * Get a Json representation of what's in the cart. Format: { 'projects' : [
 	 * { 'id': '5', 'label': 'project', 'samples': [ { 'id': '6', 'label': 'a
-	 * sample', 'sequenceFiles': [{href: 'file:///123.fastq'}] } ] } ]}
+	 * sample', 'sequenceFiles': [{href: 'file:///123.fastq',
+	 * href2: 'http://localhost/projects/1/samples/1/sequenceFiles/1'}] } ] } ]}
 	 * 
 	 * @return a Map<String,Object> containing the cart information.
 	 */
@@ -288,7 +293,17 @@ public class CartController {
 		List<Map<String,Object>> sequenceFiles = new ArrayList<>();
 		for(Join<Sample, SequenceFile>seqJoin : seqJoinList) {
 			SequenceFile seq = seqJoin.getObject();
-			Map<String, Object> seqMap = ImmutableMap.of("href",seq.getFile().toUri().toString());
+			
+			List<Join<Project,Sample>> projects = projectService.getProjectsForSample(sample);
+			
+			//Maybe 0 projects should be explicitly checked for
+			long projectId = projects.get(0).getId();
+			
+			String seqFileLoc = linkTo(methodOn(RESTSampleSequenceFilesController.class)
+					.getSequenceFileForSample(projectId, sample.getId(),seq.getId())).withSelfRel().getHref();
+					
+			Map<String, Object> seqMap = ImmutableMap.of("href",seq.getFile().toUri().toString()
+					,"href2",seqFileLoc);
 			sequenceFiles.add(seqMap);
 		}
 		return sequenceFiles;

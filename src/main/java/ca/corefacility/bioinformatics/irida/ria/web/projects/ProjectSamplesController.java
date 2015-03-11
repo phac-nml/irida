@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -62,6 +65,7 @@ import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.upload.galaxy.GalaxyUploadService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -168,25 +172,6 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Special method to add Galaxy specific details to the modal template
-	 *
-	 * @param model
-	 * 		{@link Model}
-	 * @param principal
-	 * 		Current User
-	 * @param projectId
-	 * 		Id for the current {@link Project}
-	 *
-	 * @return Location of the modal template
-	 */
-	@RequestMapping("/projects/{projectId}/templates/samples/galaxy")
-	public String getGalaxyModal(Model model, Principal principal, @PathVariable Long projectId) {
-		model.addAttribute("email", userService.getUserByUsername(principal.getName()).getEmail());
-		model.addAttribute("name", projectService.read(projectId).getName() + "-" + principal.getName());
-		return PROJECT_TEMPLATE_DIR + "galaxy.tmpl";
-	}
-
-	/**
 	 * Get a list of all samples within the project
 	 *
 	 * @param projectId
@@ -215,6 +200,10 @@ public class ProjectSamplesController {
 				seqFileMap.put("_links", links);
 				links.put("self", self);
 				self.put("href", sampleSeqJoin.getObject().getFile().toUri().toString());
+				
+				String seqFileLoc = linkTo(methodOn(RESTSampleSequenceFilesController.class)
+						.getSequenceFileForSample(projectId, sampleSeqJoin.getSubject().getId(),sampleSeqJoin.getObject().getId())).withSelfRel().getHref();
+				self.put("href2", seqFileLoc);
 				sequences.add(seqFileMap);
 			}
 			embedded.put("sample_files", sequences);

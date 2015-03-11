@@ -194,7 +194,7 @@
       var samples = StorageService.getSamples()
       _.each(samples, function (sample) {
         _.each(sample.embedded.sample_files, function (sequenceFile) {
-          addSampleFile(sample.sample.label, sequenceFile._links.self.href)
+          addSampleFile(sample.sample.label, sequenceFile._links.self.href2)
         })
       });
       return getSampleFormEntities();
@@ -210,7 +210,7 @@
             _.each(samples, function (sample) {
               var sequenceFiles = sample.sequenceFiles
               _.each(sequenceFiles, function (sequenceFile) {
-                addSampleFile(sample.label, sequenceFile.href);
+                addSampleFile(sample.label, sequenceFile.href2);
               })
             })
           });
