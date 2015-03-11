@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -479,7 +478,6 @@ public class DatabaseSetupGalaxyITService {
 	 */
 	public void assertValidStatus(GalaxyWorkflowStatus status) {
 		assertNotNull("WorkflowStatus is null", status);
-		assertFalse("WorkflowState is " + GalaxyWorkflowState.UNKNOWN, GalaxyWorkflowState.UNKNOWN.equals(status.getState()));
 		float percentComplete = status.getPercentComplete();
 		assertTrue("percentComplete not in range of 0 to 100", 0.0f <= percentComplete && percentComplete <= 100.0f);
 	}

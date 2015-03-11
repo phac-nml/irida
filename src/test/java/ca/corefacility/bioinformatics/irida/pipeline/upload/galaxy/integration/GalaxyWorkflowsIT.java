@@ -39,7 +39,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
@@ -276,7 +275,6 @@ public class GalaxyWorkflowsIT {
 		// test get workflow status
 		GalaxyWorkflowStatus workflowStatus = 
 				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
-		assertFalse(GalaxyWorkflowState.UNKNOWN.equals(workflowStatus.getState()));
 		float percentComplete = workflowStatus.getPercentComplete();
 		assertTrue(0.0f <= percentComplete && percentComplete <= 100.0f);
 	}
@@ -375,7 +373,6 @@ public class GalaxyWorkflowsIT {
 		// test get workflow status
 		GalaxyWorkflowStatus workflowStatus = 
 				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
-		assertFalse(GalaxyWorkflowState.UNKNOWN.equals(workflowStatus.getState()));
 		float percentComplete = workflowStatus.getPercentComplete();
 		assertTrue(0.0f <= percentComplete && percentComplete <= 100.0f);
 	}
@@ -422,8 +419,6 @@ public class GalaxyWorkflowsIT {
 
 		// test get workflow status
 		GalaxyWorkflowStatus workflowStatus = galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
-		assertFalse("the workflow should not be in an " + GalaxyWorkflowState.UNKNOWN + " state",
-				GalaxyWorkflowState.UNKNOWN.equals(workflowStatus.getState()));
 		float percentComplete = workflowStatus.getPercentComplete();
 		assertTrue("the workflow percent complete should be between 0 and 100", 0.0f <= percentComplete
 				&& percentComplete <= 100.0f);

@@ -196,9 +196,10 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 
 		case NEW:
 		case UPLOAD:
-		case WAITING:
 		case QUEUED:
 		case RUNNING:
+		case PAUSED:
+		case SETTING_METADATA:
 			logger.trace("Workflow for analysis " + analysisSubmission + " is running: percent "
 					+ workflowStatus.getPercentComplete());
 			returnedSubmission = new AsyncResult<>(analysisSubmission);
