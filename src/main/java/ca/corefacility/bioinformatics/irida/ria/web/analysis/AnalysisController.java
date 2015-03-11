@@ -35,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
@@ -42,6 +43,7 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -153,9 +155,13 @@ public class AnalysisController {
 					model = tree(submission, model);
 				}
 
-				model.addAttribute("outputFiles", submission.getAnalysis().getAnalysisOutputFiles());
+				Set<AnalysisOutputFile> analysisOutputFiles = submission.getAnalysis().getAnalysisOutputFiles();
+				model.addAttribute("outputFiles", analysisOutputFiles);
 
 				viewName = getViewForAnalysisType(analysisType);
+
+				// Add provenance data
+				model.addAttribute("files", generateOutputFileProvenance(analysisOutputFiles));
 			}
 
 		} catch (IOException e) {
@@ -195,6 +201,53 @@ public class AnalysisController {
 
 		return model;
 
+	}
+
+	/**
+	 * Generate a List of provenance data from a set of output files.
+	 *
+	 * @param outputFiles
+	 *
+	 * @return
+	 */
+	private List<Map<String, Object>> generateOutputFileProvenance(Set<AnalysisOutputFile> outputFiles) {
+		List<Map<String, Object>> provenance = new ArrayList<>();
+		for (AnalysisOutputFile analysisOutputFile : outputFiles) {
+			Map<String, Object> map = new HashMap<>();
+			// FILE INFORMATION
+			map.put("filename", analysisOutputFile.getLabel());
+
+			// TOOL INFORMATION
+			List<Map<String, Object>> tools = generateProvenanceForTool(analysisOutputFile.getCreatedByTool());
+			map.put("tools", tools);
+
+			provenance.add(map);
+		}
+		return provenance;
+	}
+
+	private List<Map<String, Object>> generateProvenanceForTool(ToolExecution tool) {
+		List<Map<String, Object>> provenance = new ArrayList<>();
+		Set<ToolExecution> previousSteps = tool.getPreviousSteps();
+		if (previousSteps == null || previousSteps.size() == 0) {
+			provenance.add(generateToolInfo(tool));
+		}
+		else {
+			for (ToolExecution step : previousSteps) {
+				provenance.addAll(generateProvenanceForTool(step));
+			}
+		}
+		return provenance;
+	}
+
+	private Map<String, Object> generateToolInfo(ToolExecution tool) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("id", tool.getId().toString());
+		map.put("name", tool.getToolName());
+		map.put("label", tool.getLabel());
+		map.put("version", tool.getToolVersion());
+		map.put("parameters", tool.getExecutionTimeParameters());
+		return map;
 	}
 
 	// ************************************************************************************************

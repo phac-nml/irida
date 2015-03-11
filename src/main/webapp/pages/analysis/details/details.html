@@ -18,9 +18,33 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-12">
-			<div th:if="${preview}" layout:fragment="previewContent">
-			</div>
+		<div class="col-md-12 ng-cloak">
+			<tabset>
+				<tab heading="__FILES">
+					<div th:each="file : ${files}">
+						<h3 th:text="${file.filename}">__FILENAME__</h3>
+						<div style="margin-left: 2rem;">
+							<accordion>
+								<accordion-group th:each="tool : ${file.tools}">
+									<accordion-heading><i class="fa fa-fw fa-wrench"></i>&nbsp;
+										<span th:text="${tool.label}"></span>
+									</accordion-heading>
+									<table class="table table-striped">
+										<tr th:each="parameter : ${tool.parameters}">
+											<td th:text="${parameter.key}"></td>
+											<td th:text="${parameter.value}"></td>
+										</tr>
+									</table>
+								</accordion-group>
+							</accordion>
+						</div>
+					</div>
+				</tab>
+
+				<tab heading="PREVIEW__">
+					<div th:if="${preview}" layout:fragment="previewContent"></div>
+				</tab>
+			</tabset>
 			<div th:unless="${preview}" layout:fragment="noPreview">__NO_PREVIEW__</div>
 		</div>
 	</div>

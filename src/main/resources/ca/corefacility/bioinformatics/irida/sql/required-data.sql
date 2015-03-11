@@ -1,3 +1,4 @@
+# noinspection SqlNoDataSourceInspection
 INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_USER','A basic user in the system.');
 INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_ADMIN','An administrative user in the system.');
 INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_MANAGER','A manager role in the system.');
@@ -309,14 +310,169 @@ INSERT INTO `analysis` (id, createdDate, description, executionManagerAnalysisId
 INSERT INTO `analysis` (id, createdDate, executionManagerAnalysisId) VALUES (13,'2014-07-30 08:24:35', 'Whole Genome Phylogenomics Pipeline');
 
 -- tool_execution
-INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (1, '/bin/ls -lrth', now(), 'galaxyIdentifier', 'ls', 'GNU COREUTILS 8.21');
-INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (2, '/bin/ls -lrth', now(), 'galaxyIdentifier', 'ls', 'GNU COREUTILS 8.21');
-INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (3, '/bin/ls -lrth', now(), 'galaxyIdentifier', 'ls', 'GNU COREUTILS 8.21');
+INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (1, null, '2015-03-04 13:58:46', 'galaxyIdentifier', 'SNP Matrix', '0.0.1');
+INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (2, null, '2015-03-04 13:58:49', 'galaxyIdentifier', 'VCF 2 pseudoalignment', '0.0.10');
+INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (3, null, '2015-03-04 13:58:45', 'galaxyIdentifier', 'Find Repeats', '0.0.2');
+INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (5, null, '2015-03-04 13:58:45', 'galaxyIdentifier', 'Filter vcf', '0.0.1');
+INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (14, null, '2015-03-04 13:58:45', 'galaxyIdentifier', 'bcftools view', '0.0.1');
+INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (4, null, '2015-03-04 13:58:45', 'galaxyIdentifier', 'Upload File', '1.1.4');
+INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (6, null, '2015-03-04 13:58:45', 'galaxyIdentifier', 'FreeBayes', '0.0.4');
+INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (7, null, '2015-03-04 13:58:45', 'galaxyIdentifier', 'Upload File', '1.1.4');
+INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (7, null, '2015-03-04 13:58:45', 'galaxyIdentifier', 'SAM-to-BAM', '1.1.4');
+
+
+
+INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (2, null, '2015-03-04 13:58:43', 'galaxyIdentifier', 'PhyML', '3.1');
+INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (2, null, '2015-03-04 13:58:46', 'galaxyIdentifier', 'VCF 2 pseudoalignment', '0.0.10');
+
+
+-- tool_execution_parameters for "SNP Matrix"
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('1', '__workflow_invocation_uuid__', 'e4acd686c29f11e49e0f5254006919ab');
+
+-- tool_execution_parameters for "VCF 2 pseudoalignment"
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'ambiguous', 'False');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'coverage', '15');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'numcpus', '4');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'reference', 'Reference');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', '__workflow_invocation_uuid__', 'e4acd686c29f11e49e0f5254006919ab');
+
+-- tool_execution_parameters for "Find Repeats"
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('3', 'length', '150');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('3', 'pid', '90');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('3', '__workflow_invocation_uuid__', 'e4acd686c29f11e49e0f5254006919ab');
+
+-- tool_execution_parameters for "Filter vcf"
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('5', '__workflow_invocation_uuid__', 'e4acd686c29f11e49e0f5254006919ab');
+
+-- tool_execution_parameters for "bcftools view"
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 'b', 'false');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 'c', 'true');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 'e', 'false');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 'g', 'true');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 'i.alt_indel_snp_ratio', 'false');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 'p.variant_filter', 'false');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 't.mutation_rate', 'false');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 'u', 'false');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 'v', 'false');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 'a', 'false');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 'd.seq_dictionary', 'false');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 'f', 'false');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 'g', 'false');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 'n', 'false');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 'd', 'false');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', '__workflow_invocation_uuid__', 'e4acd686c29f11e49e0f5254006919ab');
+
+
+-- tool_execution_parameters for "Upload File"
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('4', 'files.file_data', '/Warehouse/Applications/irida/galaxy/galaxy-dist/database/tmp/upload_file_data_zpavd2');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('4', 'files.to_posix_lines', 'Yes');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('4', 'files.url_paste', 'None');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('4', 'files.name', 'M04-240196.fasta');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('4', 'files_metadata.file_type', 'fasta');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('4', 'file_type', 'fasta');
+
+-- tool_execution_parameters for "FreeBayes"
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.dont_left_align_indels', 'False');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.input_variant_type.input_variant_type_selector', 'do_not_provide');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.options_type_selector', 'advanced');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.output_failed_alleles_option', 'False');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.output_trace_option', 'False');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.report_all_haplotype_alleles', 'False');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_algorithmic_features_type.exclude_unobserved_genotypes', 'False');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_algorithmic_features_type.genotype_qualities', 'False');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_algorithmic_features_type.genotype_variant_threshold', '');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_algorithmic_features_type.genotyping_max_banddepth', '7');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_algorithmic_features_type.genotyping_max_iterations', '1000');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_algorithmic_features_type.harmonic_indel_quality', 'False');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_algorithmic_features_type.posterior_integration_limits_m', '3');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_algorithmic_features_type.posterior_integration_limits_n', '1');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_algorithmic_features_type.read_dependence_factor', '0.9');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_algorithmic_features_type.report_genotype_likelihood_max', 'False');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_algorithmic_features_type.section_algorithmic_features_type_selector', 'set');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_algorithmic_features_type.site_selection_max_iterations', '5');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_algorithmic_features_type.use_mapping_quality', 'False');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_allele_scope_type.section_allele_scope_type_selector', 'do_not_set');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.indel_exclusion_window', '-1');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.min_alternate_count', '2');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.min_alternate_fraction', '0.75');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.min_alternate_qsum', '0');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.min_alternate_total', '1');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.min_coverage', '15');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.mismatch_base_quality_threshold', '10');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.quality_filter_type.min_base_quality', '30');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.quality_filter_type.min_mapping_quality', '30');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.quality_filter_type.min_supporting_allele_qsum', '0');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.quality_filter_type.min_supporting_mapping_qsum', '0');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.quality_filter_type.quality_filter_type_selector', 'apply_filters');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.read_indel_limit', '');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.read_max_mismatch_fraction', '1.0');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.read_mismatch_limit', '');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.read_snp_limit', '');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.section_input_filters_type_selector', 'set');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_input_filters_type.use_duplicate_reads', 'False');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_mappability_priors_expectations_type.section_mappability_priors_expectations_type_selector', 'do_not_set');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_population_model_type.ploidy', '1');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_population_model_type.pooled_continuous', 'False');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_population_model_type.pooled_discrete', 'False');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_population_model_type.section_population_model_type_selector', 'set');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_population_model_type.theta', '0.001');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.section_population_priors_type.section_population_priors_type_selector', 'do_not_set');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'options_type.target_limit_type.target_limit_type_selector', 'do_not_set');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'reference_source.input_bams.input_bam', '6723');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'reference_source.reference_source_selector', 'history');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', 'reference_source.ref_file', '6706');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('6', '__workflow_invocation_uuid__', 'e4acd686c29f11e49e0f5254006919ab');
+
+-- tool_execution_parameters for "Upload File"
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('7', 'files.file_data', '/Warehouse/Applications/irida/galaxy/galaxy-dist/database/tmp/upload_file_data_zpavd2');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('7', 'files.to_posix_lines', 'Yes');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('7', 'files.url_paste', 'None');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('7', 'files.name', 'M04-240196.fasta');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('7', 'files_metadata.file_type', 'fasta');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('7', 'file_type', 'fasta');
+
+-- tool_execution_parameters for "SAM-TO-BAM"
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('8', 'source.index_source', 'history');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('8', 'source.input1', '6712');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('8', 'source.ref_file', '6706');
+INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('8', '__workflow_invocation_uuid__', 'e4acd686c29f11e49e0f5254006919ab');
+
+
+
+#
+# -- tool_execution_parameters for "bcftools view"
+# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('5', '__workflow_invocation_uuid__', 'e4acd686c29f11e49e0f5254006919ab');
+#
+#
+#
+# -- tool_execution_parameters for "PhyML"
+# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'datatype_condition.model', 'HKY85');
+# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'datatype_condition.tstv', 'e');
+# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'datatype_condition.type', 'nt');
+# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'gamma_condition.categories', '4');
+# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'gamma_condition.gamma', 'yes');
+# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'gamma_condition.shape', 'e');
+# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'prop_invar', '0.0');
+# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'random_condition.random', 'no');
+# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'search', 'BEST');
+# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'support_condition.support', 'sh');
+# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', '__workflow_invocation_uuid__', 'e4acd686c29f11e49e0f5254006919ab');
+
+
+-- tool_execution_prev_steps
+INSERT INTO `tool_execution_prev_steps` (tool_execution_id, tool_execution_prev_id) VALUES (1, 2);
+INSERT INTO `tool_execution_prev_steps` (tool_execution_id, tool_execution_prev_id) VALUES (2, 3);
+INSERT INTO `tool_execution_prev_steps` (tool_execution_id, tool_execution_prev_id) VALUES (2, 5);
+INSERT INTO `tool_execution_prev_steps` (tool_execution_id, tool_execution_prev_id) VALUES (2, 14);
+INSERT INTO `tool_execution_prev_steps` (tool_execution_id, tool_execution_prev_id) VALUES (3, 4);
+INSERT INTO `tool_execution_prev_steps` (tool_execution_id, tool_execution_prev_id) VALUES (5, 6);
+INSERT INTO `tool_execution_prev_steps` (tool_execution_id, tool_execution_prev_id) VALUES (6, 7);
+INSERT INTO `tool_execution_prev_steps` (tool_execution_id, tool_execution_prev_id) VALUES (6, 8);
 
 -- analysis_output_file
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, analysis_id, tool_execution_id) VALUES (1, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snp_tree.tre', 13, 1);
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, analysis_id, tool_execution_id) VALUES (2, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/file2.txt', 13, 2);
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, analysis_id, tool_execution_id) VALUES (3, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/file3.txt', 13, 3);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, analysis_id, tool_execution_id) VALUES (1, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/phylogeneticTree.tre', 13, 1);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, analysis_id, tool_execution_id) VALUES (7, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snpMatrix.tsv', 13, 2);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, analysis_id, tool_execution_id) VALUES (3, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snpTable.tsv', 13, 3);
 
 -- analysis_output_file_map
 INSERT INTO `analysis_output_file_map` (analysis_id, analysisOutputFilesMap_id, analysis_output_file_key) VALUES (13, 1, 'tree');

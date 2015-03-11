@@ -2,18 +2,23 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="analysis/details/details">
 
+<head>
+	<style>
+		.tab-pane {
+			padding: 1rem;
+			border: 1px solid rgba(221, 221, 221, 1.0);
+			border-top: none;
+		}
+	</style>
+</head>
 <body>
-<div layout:fragment="previewContent" class="panel panel-info">
-	<div class="panel-heading">
-		<b class="panel-title" th:text="#{analysis.details.preview}">_Preview_</b>
-		<a href="#" id="saveBtn" class="btn btn-default btn-xs pull-right" data-toggle="tooltip" data-placement="bottom" th:title="#{form.save.image}">
-			<span class="fa fa-fw fa-save"></span>
-			<span class="sr-only" th:text="#{form.save.image}">Save Image</span>
-		</a>
-	</div>
-	<div class="panel-body">
-		<div id="phyloSVG" class="image-preview"></div>
-	</div>
+<div layout:fragment="previewContent">
+	<a href="#" id="saveBtn" class="btn btn-default pull-right" data-toggle="tooltip" data-placement="bottom"
+	   th:title="#{form.save.image}">
+		<span class="fa fa-fw fa-save"></span>
+		<span class="sr-only" th:text="#{form.save.image}">Save Image</span>
+	</a>
+	<div id="phyloSVG" class="image-preview"></div>
 </div>
 
 <th:block layout:fragment="previewScripts">
@@ -38,7 +43,7 @@
 			// TODO: find a way to get it to work.  Server option was vetoed.
 			/* -]*/
 			var name = /*[[${analysisSubmission.name + '.svg'}]]*/ 'no_name.svg',
-			    svg = $("svg");
+			    svg  = $("svg");
 
 			svg.attr({
 				version: '1.1',
