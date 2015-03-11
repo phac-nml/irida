@@ -22,7 +22,17 @@ public class AnalysisAssemblyAnnotation extends Analysis {
 		super();
 	}
 
-
+	/**
+	 * Builds a new {@link AnalysisAssemblyAnnotation} with the given
+	 * information.
+	 * 
+	 * @param inputFiles
+	 *            The files used as input for this analysis.
+	 * @param executionManagerAnalysisId
+	 *            The execution manager id for this analysis.
+	 * @param analysisOutputFilesMap
+	 *            A {@link Map} of output files for this analysis.
+	 */
 	public AnalysisAssemblyAnnotation(final Set<SequenceFile> inputFiles, final String executionManagerAnalysisId,
 			final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
 		super(inputFiles, executionManagerAnalysisId, analysisOutputFilesMap);
