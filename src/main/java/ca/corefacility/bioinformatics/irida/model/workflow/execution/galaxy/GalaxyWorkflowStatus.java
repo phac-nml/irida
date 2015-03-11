@@ -42,6 +42,41 @@ public class GalaxyWorkflowStatus {
 	}
 
 	/**
+	 * Whether or not this workflow has completed successfully.
+	 * 
+	 * @return True if this workflow has completed successfully, false
+	 *         otherwise.
+	 */
+	public boolean completedSuccessfully() {
+		return state.equals(GalaxyWorkflowState.OK);
+	}
+
+	/**
+	 * Whether or not this workflow is in an error state.
+	 * 
+	 * @return True if this workflow has completed successfully, false
+	 *         otherwise.
+	 */
+	public boolean errorOccurred() {
+		return state.equals(GalaxyWorkflowState.ERROR) || countHistoryItemsInState(GalaxyWorkflowState.ERROR) > 0
+				|| state.equals(GalaxyWorkflowState.FAILED_METADATA)
+				|| countHistoryItemsInState(GalaxyWorkflowState.FAILED_METADATA) > 0
+				|| state.equals(GalaxyWorkflowState.EMPTY) || countHistoryItemsInState(GalaxyWorkflowState.EMPTY) > 0
+				|| state.equals(GalaxyWorkflowState.DISCARDED) || countHistoryItemsInState(GalaxyWorkflowState.DISCARDED) > 0;
+	}
+
+	/**
+	 * Whether or not this workflow is still running.
+	 * 
+	 * @return True if this workflow is still running, false otherwise.
+	 */
+	public boolean isRunning() {
+		return Sets.newHashSet(GalaxyWorkflowState.NEW, GalaxyWorkflowState.UPLOAD, GalaxyWorkflowState.QUEUED,
+				GalaxyWorkflowState.RUNNING, GalaxyWorkflowState.PAUSED, GalaxyWorkflowState.SETTING_METADATA,
+				GalaxyWorkflowState.RESUBMITTED).contains(state);
+	}
+
+	/**
 	 * Gets the state of the workflow.
 	 * 
 	 * @return The {@link GalaxyWorkflowState} for this workflow.

@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 import org.junit.Assume;
 import org.junit.Before;
@@ -36,9 +37,11 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.WorkflowException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyOutputsForWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
@@ -49,6 +52,7 @@ import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient;
 import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
+import com.github.jmchilton.blend4j.galaxy.ToolsClient.FileUploadRequest;
 import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
 import com.github.jmchilton.blend4j.galaxy.beans.History;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContentsProvenance;
@@ -109,6 +113,9 @@ public class GalaxyWorkflowsIT {
 	 * datasets have been properly uploaded.
 	 */
 	private static final int LIBRARY_POLLING_TIME = 5;
+	
+	private static final String VALID_FILTER_PARAMETER = "c1==''";
+	private static final String INVALID_FILTER_PARAMETER = "c2==''";
 
 	/**
 	 * Sets up files and objects for workflow tests.
@@ -340,6 +347,97 @@ public class GalaxyWorkflowsIT {
 		
 		return output;
 	}
+
+	/**
+	 * Runs a test filter workflow with the given input.
+	 * 
+	 * @param history
+	 *            The history to run the workflow in.
+	 * @param inputFile
+	 *            The file to run the workflow on.
+	 * @param filterParameters
+	 *            The condition to run the workflow with.
+	 * @return A {@link WorkflowOutputs} for this workflow.
+	 * @throws ExecutionManagerException
+	 */
+	private WorkflowOutputs runSingleFileTabularWorkflowFilterTool(History history, Path inputFile,
+			String filterParameters) throws ExecutionManagerException {
+		String workflowId = localGalaxy.getWorkflowFilterId();
+		String workflowInputLabel = localGalaxy.getWorkflowFilterLabel();
+
+		ToolParameter toolParameter = new ToolParameter("cond", filterParameters);
+		return runSingleFileTabularWorkflow(workflowId, workflowInputLabel, history, inputFile, "Filter1",
+				toolParameter);
+	}
+
+	/**
+	 * Runs a test sleep workflow with the given input.
+	 * 
+	 * @param history
+	 *            The history to run the workflow in.
+	 * @param inputFile
+	 *            The file to run the workflow on.
+	 * @param sleepTime
+	 *            The sleep time.
+	 * @return A {@link WorkflowOutputs} for this workflow.
+	 * @throws ExecutionManagerException
+	 */
+	private WorkflowOutputs runSingleFileTabularWorkflowSleepTool(History history, Path inputFile, String sleepTime)
+			throws ExecutionManagerException {
+		String workflowId = localGalaxy.getWorkflowSleepId();
+		String workflowInputLabel = localGalaxy.getWorkflowSleepLabel();
+
+		ToolParameter toolParameter = new ToolParameter("time", sleepTime);
+		return runSingleFileTabularWorkflow(workflowId, workflowInputLabel, history, inputFile, "sleep", toolParameter);
+	}
+
+	/**
+	 * Runs a test workflow with the given parameters and input file.
+	 * 
+	 * @param workflowId
+	 *            The id of the workflow to run.
+	 * @param workflowInputLabel
+	 *            The lable of the input for the workflow.
+	 * @param history
+	 *            The history to run the workflow in.
+	 * @param inputFile
+	 *            The file to run the workflow on.
+	 * @param toolName
+	 *            The toolName of a parameter to override.
+	 * @param toolParameter
+	 *            The overridden tool parameter.
+	 * @return A {@link WorkflowOutputs} for this workflow.
+	 * @throws ExecutionManagerException
+	 */
+	private WorkflowOutputs runSingleFileTabularWorkflow(String workflowId, String workflowInputLabel, History history,
+			Path inputFile, String toolName, ToolParameter toolParameter) throws ExecutionManagerException {
+
+		checkArgument(Files.exists(inputFile), "inputFile " + inputFile + " does not exist");
+		checkWorkflowIdValid(workflowId);
+
+		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(workflowId);
+
+		// upload dataset to history
+		Dataset inputDataset = fileToHistory(inputFile, "tabular", history.getId());
+		assertNotNull(inputDataset);
+
+		String workflowInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails, workflowInputLabel);
+
+		WorkflowInputs inputs = new WorkflowInputs();
+		inputs.setDestination(new WorkflowInputs.ExistingHistory(history.getId()));
+		inputs.setWorkflowId(workflowDetails.getId());
+		inputs.setInput(workflowInputId, new WorkflowInputs.WorkflowInput(inputDataset.getId(),
+				WorkflowInputs.InputSourceType.HDA));
+
+		inputs.setToolParameter(toolName, toolParameter);
+
+		// execute workflow
+		WorkflowOutputs output = workflowsClient.runWorkflow(inputs);
+
+		logger.debug("Running workflow in history " + output.getHistoryId());
+
+		return output;
+	}
 	
 	/**
 	 * Tests executing a single workflow in Galaxy.
@@ -375,6 +473,96 @@ public class GalaxyWorkflowsIT {
 				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
 		float percentComplete = workflowStatus.getPercentComplete();
 		assertTrue(0.0f <= percentComplete && percentComplete <= 100.0f);
+	}
+	
+	/**
+	 * Tests executing a single workflow in Galaxy and getting the status after completion.
+	 * @throws ExecutionManagerException
+	 * @throws InterruptedException 
+	 * @throws TimeoutException 
+	 */
+	@Test
+	public void testGetWorkflowStatusComplete() throws ExecutionManagerException, TimeoutException, InterruptedException {	
+		History history = galaxyHistory.newHistoryForWorkflow();
+		
+		WorkflowOutputs workflowOutput = 
+				runSingleFileTabularWorkflowFilterTool(history, dataFile1, VALID_FILTER_PARAMETER);
+		
+		Util.waitUntilHistoryComplete(workflowOutput.getHistoryId(), galaxyHistory, 60);
+		
+		// test get workflow status
+		GalaxyWorkflowStatus workflowStatus = 
+				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
+		assertEquals("final workflow state is invalid", GalaxyWorkflowState.OK, workflowStatus.getState());
+		assertTrue("final workflow state is invalid", workflowStatus.completedSuccessfully());
+	}
+	
+	/**
+	 * Tests executing a single workflow in Galaxy and getting an error status after completion.
+	 * @throws ExecutionManagerException
+	 * @throws InterruptedException 
+	 * @throws TimeoutException 
+	 */
+	@Test
+	public void testGetWorkflowStatusError() throws ExecutionManagerException, TimeoutException, InterruptedException {	
+		History history = galaxyHistory.newHistoryForWorkflow();
+		
+		// no column c2 for this input file, so should give an error
+		WorkflowOutputs workflowOutput = 
+				runSingleFileTabularWorkflowFilterTool(history, dataFile1, INVALID_FILTER_PARAMETER);
+		
+		Util.waitUntilHistoryComplete(workflowOutput.getHistoryId(), galaxyHistory, 60);
+		
+		// test get workflow status
+		GalaxyWorkflowStatus workflowStatus = 
+				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
+		assertEquals("final workflow state is invalid", GalaxyWorkflowState.ERROR, workflowStatus.getState());
+		assertTrue("final workflow state is invalid", workflowStatus.errorOccurred());
+	}
+	
+	/**
+	 * Tests executing a single workflow in Galaxy and getting an error status if one of the tools is in error even while running.
+	 * @throws ExecutionManagerException
+	 * @throws InterruptedException 
+	 * @throws TimeoutException 
+	 */
+	@Test
+	public void testGetWorkflowStatusErrorWhileRunning() throws ExecutionManagerException, TimeoutException, InterruptedException {
+		final String SLEEP_TIME_SECONDS = "30";
+		
+		History history = galaxyHistory.newHistoryForWorkflow();
+		
+		WorkflowOutputs workflowOutput = runSingleFileTabularWorkflowFilterTool(history, dataFile1, INVALID_FILTER_PARAMETER);
+		
+		Util.waitUntilHistoryComplete(workflowOutput.getHistoryId(), galaxyHistory, 60);
+		
+		// test get workflow status, should be in error
+		GalaxyWorkflowStatus workflowStatus = 
+				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
+		assertEquals("final workflow state is invalid", GalaxyWorkflowState.ERROR, workflowStatus.getState());
+		
+		// run a sleep workflow to keep busy
+		runSingleFileTabularWorkflowSleepTool(history, dataFile2, SLEEP_TIME_SECONDS);
+				
+		// check status.  I'm assuming the tasks launched above are not complete.
+		workflowStatus = galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
+		assertTrue("workflow should still be running", workflowStatus.isRunning());
+		assertTrue("an error should have occured even while running", workflowStatus.errorOccurred());
+		
+		Util.waitUntilHistoryComplete(workflowOutput.getHistoryId(), galaxyHistory, 60);
+		
+		workflowStatus = galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
+		assertEquals("workflow state should be in error after completion", GalaxyWorkflowState.ERROR, workflowStatus.getState());
+		assertTrue("workflow is not in error state", workflowStatus.errorOccurred());
+	}
+
+	private Dataset fileToHistory(Path path, String fileType, String historyId) throws GalaxyDatasetException {		
+		FileUploadRequest uploadRequest = new FileUploadRequest(historyId, path.toFile());
+		uploadRequest.setFileType(fileType.toString());
+		
+		toolsClient.uploadRequest(uploadRequest);
+				
+		return galaxyHistory.getDatasetForFileInHistory(path.toFile().getName(), historyId);
 	}
 
 	/**

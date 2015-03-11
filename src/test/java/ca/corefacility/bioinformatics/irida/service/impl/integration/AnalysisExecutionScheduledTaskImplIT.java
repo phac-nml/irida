@@ -80,6 +80,7 @@ public class AnalysisExecutionScheduledTaskImplIT {
 	private Path referenceFilePath2;
 
 	private UUID validIridaWorkflowId = UUID.fromString("1f9ea289-5053-4e4a-bc76-1f0c60b179f8");
+	private UUID iridaWorkflowIdWithError = UUID.fromString("9ac828e9-2ee4-409d-80dd-f1bf955fd8b9");
 	private UUID invalidIridaWorkflowId = UUID.fromString("8ec369e8-1b39-4b9a-97a1-70ac1f6cc9e6");
 	
 	private User analysisSubmitter;
@@ -245,6 +246,43 @@ public class AnalysisExecutionScheduledTaskImplIT {
 		// Should be in error state
 		assertEquals(1, submissionsFutureSet.size());
 		returnedSubmission = submissionsFutureSet.iterator().next().get();
+		assertEquals(AnalysisState.ERROR, returnedSubmission.getAnalysisState());
+	}
+	
+	/**
+	 * Tests out failing to complete execution of a workflow due to an error
+	 * with the workflow causing a job to fail.
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testFullAnalysisRunFailErrorWithJob() throws Throwable {
+		analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L, sequenceFilePath, referenceFilePath,
+				iridaWorkflowIdWithError);
+
+		// PREPARE SUBMISSION
+		Set<Future<AnalysisSubmission>> submissionsFutureSet = analysisExecutionScheduledTask.prepareAnalyses();
+		assertEquals(1, submissionsFutureSet.size());
+		// wait until finished
+		for (Future<AnalysisSubmission> submissionFuture : submissionsFutureSet) {
+			AnalysisSubmission returnedSubmission = submissionFuture.get();
+			assertEquals(AnalysisState.PREPARED, returnedSubmission.getAnalysisState());
+		}
+
+		// EXECUTE SUBMISSION
+		submissionsFutureSet = analysisExecutionScheduledTask.executeAnalyses();
+		assertEquals(1, submissionsFutureSet.size());
+		AnalysisSubmission executedSubmission = submissionsFutureSet.iterator().next().get();
+		assertEquals(AnalysisState.RUNNING, executedSubmission.getAnalysisState());
+			
+		// wait until Galaxy finished
+		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(executedSubmission);
+
+		// CHECK STATUS, should be in ERROR state.
+		submissionsFutureSet = analysisExecutionScheduledTask.monitorRunningAnalyses();
+		assertEquals(1, submissionsFutureSet.size());
+		AnalysisSubmission returnedSubmission = submissionsFutureSet.iterator().next().get();
 		assertEquals(AnalysisState.ERROR, returnedSubmission.getAnalysisState());
 	}
 
