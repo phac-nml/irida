@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.project.ProjectResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 
 /**
@@ -22,7 +21,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericContro
  */
 @Controller
 @RequestMapping(value = "/api/projects")
-public class RESTProjectsController extends RESTGenericController<Project, ProjectResource> {
+public class RESTProjectsController extends RESTGenericController<Project> {
 
     /**
      * rel used for accessing an individual project.
@@ -46,7 +45,7 @@ public class RESTProjectsController extends RESTGenericController<Project, Proje
      */
     @Autowired
     public RESTProjectsController(ProjectService projectService) {
-        super(projectService, Project.class, ProjectResource.class);
+        super(projectService, Project.class);
     }
 
     /**
