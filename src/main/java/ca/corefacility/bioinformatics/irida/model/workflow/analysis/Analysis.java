@@ -32,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 
 /**
  * An analysis object for storing results of an analysis execution.
@@ -53,7 +52,7 @@ public class Analysis implements IridaThing {
 	private final Date createdDate;
 
 	@Lob
-	private String description;
+	private final String description;
 
 	// identifier linking an analysis to an external workflow manager.
 	@NotNull
@@ -64,7 +63,7 @@ public class Analysis implements IridaThing {
 	@Column(name = "property_value", nullable = false)
 	@CollectionTable(name = "analysis_properties", joinColumns = @JoinColumn(name = "analysis_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
 			"analysis_id", "property_key" }, name = "UK_ANALYSIS_PROPERTY_KEY"))
-	private Map<String, String> additionalProperties;
+	private final Map<String, String> additionalProperties;
 
 	@NotNull
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
@@ -150,7 +149,11 @@ public class Analysis implements IridaThing {
 	 */
 	public Analysis(final Set<SequenceFile> inputFiles, final String executionManagerAnalysisId,
 			final String description, final Map<String, String> additionalProperties) {
-		this(inputFiles, executionManagerAnalysisId, Maps.newHashMap());
+		this.id = null;
+		this.createdDate = new Date();
+		this.inputFiles = inputFiles;
+		this.executionManagerAnalysisId = executionManagerAnalysisId;
+		this.analysisOutputFilesMap = Collections.emptyMap();
 		this.description = description;
 		this.additionalProperties = additionalProperties;
 	}
