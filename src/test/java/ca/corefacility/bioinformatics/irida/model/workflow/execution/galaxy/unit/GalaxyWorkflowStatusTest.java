@@ -267,17 +267,15 @@ public class GalaxyWorkflowStatusTest {
 	}
 
 	/**
-	 * Tests successfully building a workflow status from history details.
+	 * Tests failing to build a workflow status due to an unknwon state.
 	 */
-	@Test
+	@Test(expected=NullPointerException.class)
 	public void testBuildWorkflowStatusFromHistoryDetailsUnknownState() {
 		HistoryDetails historyDetails = new HistoryDetails();
-		historyDetails.setState("unknown new galaxy state");
+		historyDetails.setState("unknown");
 		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("ok", Lists.newArrayList(DATASET_ID)));
 
-		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
-
-		assertEquals("workflow status not in correct state", GalaxyWorkflowState.UNKNOWN, workflowStatus.getState());
+		GalaxyWorkflowStatus.builder(historyDetails).build();
 	}
 
 	/**
@@ -331,11 +329,11 @@ public class GalaxyWorkflowStatusTest {
 	}
 
 	/**
-	 * Tests successfully building a GalaxyWorkflowStats object with some state
+	 * Tests failing to build a GalaxyWorkflowStats object with some state
 	 * ids in an unknown state.
 	 */
-	@Test
-	public void testBuildWorkflowStatusFromHistoryDetailsUnknownStateIds() {
+	@Test(expected=NullPointerException.class)
+	public void testBuildWorkflowStatusFromHistoryDetailsUnknownStateIdsFail() {
 		Map<String, List<String>> stateIds = Util.buildStateIdsWithStateFilled("running",
 				Lists.newArrayList(DATASET_ID));
 		stateIds.put("unknown", Lists.newArrayList(DATASET_ID));
@@ -344,9 +342,6 @@ public class GalaxyWorkflowStatusTest {
 		historyDetails.setState("running");
 		historyDetails.setStateIds(stateIds);
 
-		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
-
-		assertEquals("workflow status not in correct state", GalaxyWorkflowState.RUNNING, workflowStatus.getState());
-		assertEquals("percentage complete not correct", 0.0f, workflowStatus.getPercentComplete(), DELTA);
+		GalaxyWorkflowStatus.builder(historyDetails).build();
 	}
 }

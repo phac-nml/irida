@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -16,6 +17,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
@@ -282,33 +286,6 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
 		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(galaxyWorkflowStatus);
-
-		analysisExecutionScheduledTask.monitorRunningAnalyses();
-
-		assertEquals(AnalysisState.ERROR, analysisSubmission.getAnalysisState());
-		verify(analysisSubmissionRepository).save(analysisSubmission);
-	}
-
-	/**
-	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR}
-	 * if there was an unknown Galaxy state.
-	 * 
-	 * @throws ExecutionManagerException
-	 * @throws IridaWorkflowNotFoundException
-	 */
-	@Test
-	public void testMonitorRunningAnalysesSuccessUnknown() throws ExecutionManagerException,
-			IridaWorkflowNotFoundException {
-		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
-		
-		Map<GalaxyWorkflowState, Set<String>> stateIds = Util.buildStateIdsWithStateFilled(GalaxyWorkflowState.UNKNOWN,
-				Sets.newHashSet("1"));
-		GalaxyWorkflowStatus galaxyWorkflowStatus = new GalaxyWorkflowStatus(GalaxyWorkflowState.UNKNOWN, stateIds);
-
-		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
-				Arrays.asList(analysisSubmission));
-		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(
-				galaxyWorkflowStatus);
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 

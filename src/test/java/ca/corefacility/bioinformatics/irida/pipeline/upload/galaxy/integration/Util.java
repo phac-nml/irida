@@ -28,10 +28,6 @@ public class Util {
 	
 	private static final List<GalaxyWorkflowState> IRIDA_STATES = Lists.newArrayList(GalaxyWorkflowState.values());
 	
-	static {
-		IRIDA_STATES.remove(GalaxyWorkflowState.UNKNOWN);
-	}
-	
 	/**
 	 * Given a file within a Galaxy history, finds the id of that file.
 	 * @param filename  The name of the file within a history.

@@ -23,7 +23,6 @@ public class GalaxyWorkflowStatus {
 
 	private final GalaxyWorkflowState state;
 	private final Map<GalaxyWorkflowState, Set<String>> stateIds;
-	private final int totalWorkflowItems;
 
 	/**
 	 * Constructs a new {@link GalaxyWorkflowStatus} with the given information.
@@ -40,7 +39,6 @@ public class GalaxyWorkflowStatus {
 
 		this.state = state;
 		this.stateIds = stateIds;
-		this.totalWorkflowItems = stateIds.values().stream().mapToInt(Set::size).sum();
 	}
 
 	/**
@@ -93,7 +91,7 @@ public class GalaxyWorkflowStatus {
 	 * @return The percentage complete for this workflow.
 	 */
 	public float getPercentComplete() {
-		return 100.0f * (countHistoryItemsInState(GalaxyWorkflowState.OK) / (float) totalWorkflowItems);
+		return 100.0f * (countHistoryItemsInState(GalaxyWorkflowState.OK) / (float) countTotalWorkflowItems());
 	}
 
 	/**
@@ -116,6 +114,15 @@ public class GalaxyWorkflowStatus {
 	}
 
 	/**
+	 * Count the total number of workflow items within all states.
+	 * 
+	 * @return The number of workflow items in all states.
+	 */
+	private int countTotalWorkflowItems() {
+		return stateIds.values().stream().mapToInt(Set::size).sum();
+	}
+
+	/**
 	 * Constructs a new {@link GalaxyWorkflowStatusBuilder}.
 	 * 
 	 * @param historyDetails
@@ -135,11 +142,6 @@ public class GalaxyWorkflowStatus {
 	public static class GalaxyWorkflowStatusBuilder {
 
 		private static final Set<GalaxyWorkflowState> ALL_STATES = Sets.newHashSet(GalaxyWorkflowState.values());
-		private static final Set<GalaxyWorkflowState> NO_UNKNOWN_STATES = Sets.newHashSet(GalaxyWorkflowState.values());
-
-		static {
-			NO_UNKNOWN_STATES.remove(GalaxyWorkflowState.UNKNOWN);
-		}
 
 		private static final Logger logger = LoggerFactory.getLogger(GalaxyWorkflowStatusBuilder.class);
 
@@ -170,7 +172,7 @@ public class GalaxyWorkflowStatus {
 			GalaxyWorkflowState workflowState = GalaxyWorkflowState.stringToState(historyDetails.getState());
 			Map<GalaxyWorkflowState, Set<String>> stateIdsMap = createStateIdsMap(historyDetails);
 
-			checkArgument(stateIdsMap.keySet().equals(ALL_STATES) || stateIdsMap.keySet().equals(NO_UNKNOWN_STATES),
+			checkArgument(stateIdsMap.keySet().equals(ALL_STATES),
 					"invalid states: " + stateIdsMap.keySet());
 
 			return new GalaxyWorkflowStatus(workflowState, stateIdsMap);
@@ -193,7 +195,7 @@ public class GalaxyWorkflowStatus {
 				Set<String> idSet;
 
 				if (stateIdsMap.containsKey(workflowState)) {
-					logger.debug("State " + workflowState + " already exists");
+					logger.trace("State " + workflowState + " already exists");
 					idSet = stateIdsMap.get(workflowState);
 				} else {
 					idSet = new HashSet<>();
