@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -17,9 +16,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
@@ -260,6 +256,28 @@ public class AnalysisExecutionScheduledTaskImplTest {
 		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
 				Arrays.asList(analysisSubmission));
 		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(galaxyWorkflowStatus);
+
+		analysisExecutionScheduledTask.monitorRunningAnalyses();
+
+		assertEquals(AnalysisState.ERROR, analysisSubmission.getAnalysisState());
+		verify(analysisSubmissionRepository).save(analysisSubmission);
+	}
+	
+	/**
+	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR}
+	 * if there was an error building the workflow status.
+	 * 
+	 * @throws ExecutionManagerException
+	 * @throws IridaWorkflowNotFoundException
+	 */
+	@Test
+	public void testMonitorRunningAnalysesErrorWorkflowStatus() throws ExecutionManagerException,
+			IridaWorkflowNotFoundException {
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
+				Arrays.asList(analysisSubmission));
+		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenThrow(new IllegalArgumentException());
 
 		analysisExecutionScheduledTask.monitorRunningAnalyses();
 
