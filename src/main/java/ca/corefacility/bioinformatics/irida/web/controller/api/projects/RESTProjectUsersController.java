@@ -79,7 +79,7 @@ public class RESTProjectUsersController {
 	 */
     @RequestMapping(value = "/api/projects/{projectId}/users", method = RequestMethod.GET)
     public ModelMap getUsersForProject(@PathVariable Long projectId) throws ProjectWithoutOwnerException {
-        ResourceCollection<UserResource> resources = new ResourceCollection<>();
+        ResourceCollection<User> resources = new ResourceCollection<>();
 
         // get all of the users belonging to this project
         Project p = projectService.read(projectId);
@@ -89,12 +89,11 @@ public class RESTProjectUsersController {
         // and convert to a resource suitable for sending back to the client.
         for (Join<Project, User> r : relationships) {
             User u = r.getObject();
-            UserResource ur = new UserResource(u);
-            ur.add(linkTo(RESTUsersController.class).slash(u.getUsername()).withSelfRel());
-            ur.add(linkTo(methodOn(RESTProjectUsersController.class).removeUserFromProject(projectId,
+            u.add(linkTo(RESTUsersController.class).slash(u.getUsername()).withSelfRel());
+            u.add(linkTo(methodOn(RESTProjectUsersController.class).removeUserFromProject(projectId,
                     u.getUsername())).withRel(RESTGenericController.REL_RELATIONSHIP));
 
-            resources.add(ur);
+            resources.add(u);
         }
 
         // add a link to this resource to the response
