@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.exceptions;
 
 /**
- * When an {@link Identifiable} entity to be created in the database shares an
- * identifier with an existing entity.
+ * When an entity to be created in the database shares an identifier with an
+ * existing entity.
  * 
  */
 public class EntityExistsException extends RuntimeException {

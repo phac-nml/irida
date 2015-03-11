@@ -26,7 +26,7 @@ import org.hibernate.usertype.UserType;
  * <li>We're annotating the class with {@code MappedSuperclass} so that
  * hibernate will look at it and say "Hey, I need to manage this."</li>
  * <li>We're annotating the class with {@code TypeDef} so that we can tell
- * hibernate: "use this class to convert a {@Code Path} to some sort of
+ * hibernate: "use this class to convert a {@code Path} to some sort of
  * database column."</li>
  * </ol>
  * 

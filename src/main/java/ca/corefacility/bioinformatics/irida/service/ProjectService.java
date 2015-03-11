@@ -161,7 +161,7 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 * 		The user to test
 	 * @param project
 	 * 		The project to test
-	 * @param role
+	 * @param projectRole
 	 * 		The project role to test
 	 *
 	 * @return true/false whether the user has the given role
@@ -265,8 +265,10 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	/**
 	 * Remove a {@link ReferenceFile} from a {@link Project}
 	 *
-	 * @param join
-	 * 		a {@link ProjectReferenceFileJoin} between the {@link ReferenceFile} and {@link Project}
+	 * @param project
+	 *            the {@link Project} to remove the reference file from.
+	 * @param referenceFile
+	 *            the {@link ReferenceFile} to remove.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public void removeReferenceFileFromProject(Project project, ReferenceFile referenceFile);

@@ -14,7 +14,7 @@ public class WorkflowInputsGalaxy implements WorkflowInputsGeneric {
 	
 	/**
 	 * Builds a new WorkflowInputsGalaxy to wrap around a WorkflowInputs.
-	 * @param workflowInputs
+	 * @param workflowInputs the inputs for this workflow.
 	 */
 	public WorkflowInputsGalaxy(WorkflowInputs workflowInputs) {
 		this.workflowInputs = workflowInputs;

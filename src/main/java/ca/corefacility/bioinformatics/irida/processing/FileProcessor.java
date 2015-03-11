@@ -17,10 +17,8 @@ public interface FileProcessor {
 	 * persisted by the {@link FileProcessor} itself -- the
 	 * {@link FileProcessingChain} *does not* handle persistence.
 	 * 
-	 * @param sequenceFile
-	 *            the file to process.
-	 * @return a (possibly modified) instance of the {@link SequenceFile} to be
-	 *         processed by further chain members.
+	 * @param sequenceFileId
+	 *            the id of the file to process.
 	 * @throws FileProcessorException
 	 *             when processing fails.
 	 */

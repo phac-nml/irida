@@ -29,28 +29,28 @@ public interface RemoteResource extends IridaThing {
 	/**
 	 * Get the objects this resource links to
 	 * 
-	 * @return
+	 * @return the links used to access the remote resource
 	 */
 	public RESTLinks getLinks();
 
 	/**
 	 * Set the objects this resource links to
 	 * 
-	 * @param links
+	 * @param links the links used to access the remote resource
 	 */
 	public void setLinks(RESTLinks links);
 
 	/**
 	 * Set the {@link RemoteAPI} this resource was read from
 	 * 
-	 * @param api
+	 * @param api the API where we can find the resource.
 	 */
 	public void setRemoteAPI(RemoteAPI api);
 
 	/**
 	 * Get the {@link RemoteAPI} this resource was read from
 	 * 
-	 * @return
+	 * @return the API where we can find the resource.
 	 */
 	public RemoteAPI getRemoteAPI();
 

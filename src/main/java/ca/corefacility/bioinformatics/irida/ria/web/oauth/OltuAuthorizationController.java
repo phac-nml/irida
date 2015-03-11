@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -69,6 +67,7 @@ public class OltuAuthorizationController {
 	 *            complete
 	 * @return A ModelAndView beginning the authentication procedure
 	 * @throws OAuthSystemException
+	 *             if we can't read from the authorization server.
 	 */
 	public String authenticate(RemoteAPI remoteAPI, String redirect) throws OAuthSystemException {
 		// get the URI for the remote service we'll be requesting from
@@ -108,15 +107,14 @@ public class OltuAuthorizationController {
 	 *            The URL location to redirect to after completion
 	 * @return A ModelAndView redirecting back to the resource that was
 	 *         requested
-	 * @throws IOException
 	 * @throws OAuthSystemException
+	 *             if we can't get an access token for the current request.
 	 * @throws OAuthProblemException
-	 * @throws URISyntaxException
+	 *             if we can't get a response from the authorization server
 	 */
 	@RequestMapping(TOKEN_ENDPOINT)
 	public String getTokenFromAuthCode(HttpServletRequest request, HttpServletResponse response, @RequestParam("apiId") Long apiId,
-			@RequestParam("redirect") String redirect) throws IOException, OAuthSystemException, OAuthProblemException,
-			URISyntaxException {
+			@RequestParam("redirect") String redirect) throws OAuthSystemException, OAuthProblemException {
 
 		// get the current time for the expiry calculation
 		Long currentTime = System.currentTimeMillis();
@@ -185,7 +183,7 @@ public class OltuAuthorizationController {
 	/**
 	 * Set the base URL of this server
 	 * 
-	 * @param serverBase
+	 * @param serverBase the base url of the server.
 	 */
 	public void setServerBase(String serverBase) {
 		this.serverBase = serverBase;

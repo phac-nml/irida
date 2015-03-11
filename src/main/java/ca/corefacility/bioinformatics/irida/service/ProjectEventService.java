@@ -19,8 +19,8 @@ public interface ProjectEventService extends CRUDService<Long, ProjectEvent> {
 	 * 
 	 * @param project
 	 *            The project to get events for
-	 * @param max
-	 *            The maximum number of events to show
+	 * @param pageable
+	 *            The page description
 	 * @return A List of {@link ProjectEvent}s
 	 */
 	public Page<ProjectEvent> getEventsForProject(Project project, Pageable pageable);
@@ -30,8 +30,8 @@ public interface ProjectEventService extends CRUDService<Long, ProjectEvent> {
 	 * 
 	 * @param user
 	 *            The {@link User} to get events for
-	 * @param max
-	 *            The maximum number of events to show
+	 * @param pageable
+	 *            The page description.
 	 * @return A List of {@link ProjectEvent}s
 	 */
 	public Page<ProjectEvent> getEventsForUser(User user, Pageable pageable);

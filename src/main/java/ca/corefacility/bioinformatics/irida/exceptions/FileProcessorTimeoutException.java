@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.exceptions;
 
 import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 
 /**
  * Thrown when the {@link FileProcessingChain} waits longer than a specified

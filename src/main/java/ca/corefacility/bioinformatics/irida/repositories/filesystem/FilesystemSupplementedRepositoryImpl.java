@@ -57,7 +57,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 
 	/**
 	 * Persist an entity to disk and database. Implementors of this method are
-	 * recommended to call {@link FilesystemSupplementedRepositoryImpl#__save}
+	 * recommended to call {@link FilesystemSupplementedRepositoryImpl#saveInternal}
 	 * to avoid repeated boilerplate code.
 	 * 
 	 * @param entity

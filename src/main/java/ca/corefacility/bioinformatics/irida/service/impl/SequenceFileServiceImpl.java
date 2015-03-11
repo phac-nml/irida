@@ -75,6 +75,14 @@ public class SequenceFileServiceImpl extends CRUDServiceImpl<Long, SequenceFile>
 	 *            the sequence file repository.
 	 * @param validator
 	 *            validator.
+	 * @param ssfRepository
+	 *            the sample sequence file repository.
+	 * @param pairRepository
+	 *            the sequence file pair repository.
+	 * @param executor
+	 *            the task executor for processing sequence files.
+	 * @param fileProcessingChain
+	 *            the processing chain for processing sequence file.
 	 */
 	@Autowired
 	public SequenceFileServiceImpl(SequenceFileRepository sequenceFileRepository,

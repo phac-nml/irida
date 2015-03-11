@@ -20,7 +20,7 @@ public interface DataConfig {
 	/**
 	 * Get the Properties to be used by the data source.
 	 * 
-	 * @return
+	 * @return the properties to be used by the data source.
 	 */
 	public Properties getJpaProperties();
 

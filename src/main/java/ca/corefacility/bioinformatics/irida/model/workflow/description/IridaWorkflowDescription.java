@@ -66,7 +66,7 @@ public class IridaWorkflowDescription {
 	 *            The name of the workflow.
 	 * @param version
 	 *            The version of the workflow.
-	 * @param analysisClass
+	 * @param analysisType
 	 *            The class type of the {@link Analysis}.
 	 * @param inputs
 	 *            The inputs to the workflow.

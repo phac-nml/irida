@@ -69,8 +69,10 @@ public class ExecutionManagerConfig {
 	
 	/**
 	 * Builds a new ExecutionManagerGalaxy from the given properties.
-	 * @return  An ExecutionManagerGalaxy.
-	 * @throws NoExecutionManagerException If no execution manager is configured.
+	 * 
+	 * @return An ExecutionManagerGalaxy.
+	 * @throws ExecutionManagerConfigurationException
+	 *             If no execution manager is configured.
 	 */
 	@Lazy
 	@Bean

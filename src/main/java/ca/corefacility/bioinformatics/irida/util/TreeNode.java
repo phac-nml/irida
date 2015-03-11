@@ -41,7 +41,7 @@ public class TreeNode<ValueType> {
 	/**
 	 * Get a list of all the children of this node
 	 * 
-	 * @return A List<TreeNode>
+	 * @return A List of child nodes.
 	 */
 	public Collection<TreeNode<ValueType>> getChildren() {
 		return children;
@@ -60,7 +60,7 @@ public class TreeNode<ValueType> {
 	/**
 	 * Get the value stored by this node
 	 * 
-	 * @return
+	 * @return the value stored by this node
 	 */
 	public ValueType getValue() {
 		return value;
@@ -69,7 +69,7 @@ public class TreeNode<ValueType> {
 	/**
 	 * Set the value for this node
 	 * 
-	 * @param value
+	 * @param value the value for this node
 	 */
 	public void setValue(ValueType value) {
 		this.value = value;
@@ -78,7 +78,7 @@ public class TreeNode<ValueType> {
 	/**
 	 * Set the parent node
 	 * 
-	 * @param parent
+	 * @param parent the parent node
 	 */
 	public void setParent(TreeNode<ValueType> parent) {
 		this.parent = parent;
@@ -87,7 +87,7 @@ public class TreeNode<ValueType> {
 	/**
 	 * Get the parent node
 	 * 
-	 * @return
+	 * @return the parent node
 	 */
 	public TreeNode<ValueType> getParent() {
 		return parent;

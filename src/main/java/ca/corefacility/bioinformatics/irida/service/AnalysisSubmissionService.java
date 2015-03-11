@@ -181,6 +181,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *            the named parameters to use for the workflow.
 	 * @param name
 	 *            {@link String} the name for the analysis
+	 * @return the {@link AnalysisSubmission} created for the files.
 	 */
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
@@ -206,6 +207,8 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *            the named parameters to use for the workflow.
 	 * @param name
 	 *            {@link String} the name for the analysis
+	 * @return the {@link Collection} of {@link AnalysisSubmission} created for
+	 *         the supplied files.
 	 */
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,

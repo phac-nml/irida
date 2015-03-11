@@ -36,8 +36,6 @@ public class IridaWorkflowToolRepository {
 	 * 
 	 * @param name
 	 *            The name of the tool.
-	 * @param id
-	 *            The id of the tool
 	 * @param owner
 	 *            The owner of the tool.
 	 * @param url

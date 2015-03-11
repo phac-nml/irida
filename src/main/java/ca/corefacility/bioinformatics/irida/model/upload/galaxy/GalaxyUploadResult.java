@@ -94,7 +94,7 @@ public class GalaxyUploadResult implements UploadResult {
 
 	/**
 	 * Gets the API url for the data library the files were uploaded to.
-	 * @return
+	 * @return the Galaxy API url for the data library.
 	 */
 	public URL getLibraryAPIURL() {
 		return libraryAPIURL;
