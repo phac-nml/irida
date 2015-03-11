@@ -52,7 +52,6 @@ public class FastqcFileProcessor implements FileProcessor {
 	private static final Logger logger = LoggerFactory.getLogger(FastqcFileProcessor.class);
 	
 	private static final String EXECUTION_MANAGER_ANALYSIS_ID = "internal-fastqc";
-	private static final String FASTQC_DESCRIPTION = "fastqc";
 
 	private final AnalysisRepository analysisRepository;
 	private final SequenceFileRepository sequenceFileRepository;
@@ -74,7 +73,8 @@ public class FastqcFileProcessor implements FileProcessor {
 		Path fileToProcess = sequenceFile.getFile();
 		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC.builder()
 				.inputFiles(ImmutableSet.of(sequenceFile)).executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID)
-				.description(FASTQC_DESCRIPTION);
+				.description(messageSource.getMessage("fastqc.file.processor.analysis.description", null,
+						LocaleContextHolder.getLocale()));
 		try {
 			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory
 					.getSequenceFile(fileToProcess.toFile());
@@ -101,8 +101,6 @@ public class FastqcFileProcessor implements FileProcessor {
 
 			logger.trace("Saving FastQC analysis.");
 			analysis.overrepresentedSequences(overrepresentedSequences);
-			analysis.description(messageSource.getMessage("fastqc.file.processor.analysis.description", null,
-					LocaleContextHolder.getLocale()));
 
 			analysisRepository.save(analysis.build());
 		} catch (Exception e) {
