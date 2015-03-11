@@ -39,6 +39,7 @@ public class FileUtilities {
 	 * @param files
 	 *            Set of {@link AnalysisOutputFile}
 	 * @throws IOException
+	 *             if the file cannot be read from the filesystem.
 	 */
 	public static void createAnalysisOutputFileZippedResponse(HttpServletResponse response, String fileName,
 			Set<AnalysisOutputFile> files) throws IOException {

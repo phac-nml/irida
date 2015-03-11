@@ -50,6 +50,7 @@ public class IridaWorkflowsConfig {
 	 * 
 	 * @return The {@link Path} for all IRIDA workflow types.
 	 * @throws URISyntaxException
+	 *             if the path is not a valid uri.
 	 */
 	@Bean
 	public Path iridaWorkflowTypesPath() throws URISyntaxException {

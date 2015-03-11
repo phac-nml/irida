@@ -141,6 +141,9 @@ public class IridaClientDetails implements ClientDetails, IridaThing {
 	 *            The scopes this client can access
 	 * @param authorizedGrantTypes
 	 *            The grant types allowed for this client
+	 * @param authorities
+	 *            the collection of {@link ClientRole} that this client should
+	 *            have.
 	 */
 	public IridaClientDetails(String clientId, String clientSecret, Set<String> resourceIds, Set<String> scope,
 			Set<String> authorizedGrantTypes, Collection<ClientRole> authorities) {

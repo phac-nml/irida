@@ -101,7 +101,7 @@ public interface UserService extends CRUDService<Long, User>, UserDetailsService
 	 *            The project to find users for
 	 * @param projectRole
 	 *            The {@link ProjectRole} a user needs to have to be returned
-	 * @return A Collection of {@link Join<Project,User>}s that have the given
+	 * @return A Collection of {@code Join<Project,User>}s that have the given
 	 *         role
 	 */
 	public Collection<Join<Project, User>> getUsersForProjectByRole(Project project, ProjectRole projectRole);

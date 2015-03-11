@@ -185,7 +185,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	/**
 	 * Get the Map of optional properties
 	 * 
-	 * @return A Map<String,String> of all the optional propertie
+	 * @return A {@code Map<String,String>} of all the optional propertie
 	 */
 	public Map<String, String> getOptionalProperties() {
 		return optionalProperties;
@@ -206,7 +206,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	 * Set the Map of optional properties
 	 * 
 	 * @param optionalProperties
-	 *            A Map<String,String> of all the optional properties for this
+	 *            A {@code Map<String,String>} of all the optional properties for this
 	 *            object
 	 */
 	public void setOptionalProperties(Map<String, String> optionalProperties) {

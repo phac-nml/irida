@@ -78,6 +78,7 @@ public class OAuthTokenRestTemplate extends RestTemplate {
 	 * Set the API this rest template will communicate with
 	 * 
 	 * @param remoteAPI
+	 *            the {@link RemoteAPI} that this template communicates with.
 	 */
 	public void setRemoteAPI(RemoteAPI remoteAPI) {
 		this.remoteAPI = remoteAPI;

@@ -12,6 +12,7 @@ import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositori
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
 
 /**
  * Switches an {@link AnalysisSubmission} to an error state on an exception when
@@ -19,12 +20,12 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
  * 
  * The {@link Order} here needs to be a value between the order of
  * {@link AnalysisExecutionServiceGalaxyAsync} (
- * {@link AnalysisExecutionServiceConfig.ASYNC_ORDER}) and the order of the
+ * {@link AnalysisExecutionServiceConfig#ASYNC_ORDER}) and the order of the
  * Transaction Manager (
- * {@link IridaApiRepositoriesConfig.TRANSACTION_MANAGEMENT_ORDER}). This means
+ * {@link IridaApiRepositoriesConfig#TRANSACTION_MANAGEMENT_ORDER}). This means
  * that the order of execution is
- * {@link AnalysisExecutionServiceGalaxyAsync} ->
- * {@link AnalysisExecutionServiceAspect} -> Transaction Manager.
+ * {@link AnalysisExecutionServiceGalaxyAsync}, then
+ * {@link AnalysisExecutionServiceAspect}, then Transaction Manager.
  * 
  *
  */
@@ -53,7 +54,7 @@ public class AnalysisExecutionServiceAspect {
 	 * @param analysisSubmission
 	 *            The submission that has failed.
 	 * 
-	 * @param execption
+	 * @param exception
 	 *            The exception that was thrown.
 	 */
 	@AfterThrowing(value = "execution(* ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync.*(ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission)) && args(analysisSubmission)", throwing = ("exception"))

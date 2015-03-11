@@ -138,6 +138,9 @@ public class IridaApiServicesConfig {
 	/**
 	 * Builds a new {@link Executor} for analysis tasks.
 	 * 
+	 * @param userService
+	 *            a reference to the user service.
+	 * 
 	 * @return A new {@link Executor} for analysis tasks.
 	 */
 	@Bean

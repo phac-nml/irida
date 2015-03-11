@@ -236,6 +236,12 @@ public class ClientsController extends BaseController {
 	 * 
 	 * @param client
 	 *            The client to add
+	 * @param scope_read
+	 *            if the client should be allowed to read from the server (value
+	 *            should be "read").
+	 * @param scope_write
+	 *            if the client should be allowed to write to the server (value
+	 *            should be "write").
 	 * @param model
 	 *            Model for the view
 	 * @param locale
@@ -302,7 +308,7 @@ public class ClientsController extends BaseController {
 	 *            The direction of the sort
 	 * @param searchValue
 	 *            The string search value for the table
-	 * @return a Map<String,Object> for the table
+	 * @return a Map for the table
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> getAjaxClientList(

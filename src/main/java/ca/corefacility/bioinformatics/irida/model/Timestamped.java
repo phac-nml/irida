@@ -12,7 +12,7 @@ public interface Timestamped {
 	/**
 	 * Get the created date of the object
 	 * 
-	 * @returnA {@link Date} object of the created date
+	 * @return A {@link Date} object of the created date
 	 */
 	public Date getCreatedDate();
 

@@ -118,6 +118,7 @@ public class SequenceFileController {
 	 * @param response
 	 *            {@link HttpServletResponse}
 	 * @throws IOException
+	 *             if we can't write the file to the response.
 	 */
 	@RequestMapping("/sequenceFiles/download/{sequenceFileId}")
 	public void downloadSequenceFile(@PathVariable Long sequenceFileId, HttpServletResponse response)
@@ -139,6 +140,7 @@ public class SequenceFileController {
 	 * @param response
 	 *            {@link HttpServletResponse}
 	 * @throws IOException
+	 *             if we can't write the image out to the response.
 	 */
 	@RequestMapping(value = "/sequenceFiles/img/{sequenceFileId}/{type}", produces = MediaType.IMAGE_PNG_VALUE)
 	public void downloadSequenceFileImages(@PathVariable Long sequenceFileId, @PathVariable String type,

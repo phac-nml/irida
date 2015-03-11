@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.exceptions;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+
 /**
  * Exception for when there is an issue building a particular {@link Analysis} type.
  *

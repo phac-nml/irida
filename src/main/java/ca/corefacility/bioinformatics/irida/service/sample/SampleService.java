@@ -36,7 +36,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *            the {@link Sample} that the {@link SequenceFile} belongs to.
 	 * @param sampleFile
 	 *            the {@link SequenceFile} that we're adding.
-	 * @return the {@link Relationship} created between the two entities.
+	 * @return the relationship created between the two entities.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public Join<Sample, SequenceFile> addSequenceFileToSample(Sample sample, SequenceFile sampleFile);
@@ -44,17 +44,17 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	/**
 	 * Get a specific instance of a {@link Sample} that belongs to a
 	 * {@link Project}. If the {@link Sample} is not associated to the
-	 * {@link Project} (i.e., no {@link Relationship} is shared between the
+	 * {@link Project} (i.e., no relationship is shared between the
 	 * {@link Sample} and {@link Project}, then an
 	 * {@link EntityNotFoundException} will be thrown.
 	 * 
 	 * @param project
 	 *            the {@link Project} to get the {@link Sample} for.
 	 * @param identifier
-	 *            the {@link Identifier} of the {@link Sample}
+	 *            the identifier of the {@link Sample}
 	 * @return the {@link Sample} as requested
 	 * @throws EntityNotFoundException
-	 *             if no {@link Relationship} exists between {@link Sample} and
+	 *             if no relationship exists between {@link Sample} and
 	 *             {@link Project}.
 	 */
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
@@ -63,7 +63,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	/**
 	 * Get the list of {@link Sample} that belongs to a specific project.
 	 * 
-	 * @param p
+	 * @param project
 	 *            the {@link Project} to get samples for.
 	 * @return the collection of samples for the {@link Project}.
 	 */
@@ -113,7 +113,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	/**
 	 * Get the {@link Sample} for the given ID
 	 * 
-	 * @param p
+	 * @param project
 	 *            the {@link Project} that the {@link Sample} belongs to.
 	 * @param sampleId
 	 *            The id for the requested sample
@@ -131,8 +131,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 *            {@link SequenceFile}.
 	 * @param sequenceFile
 	 *            the {@link SequenceFile} that we're moving.
-	 * @return the new relationship between the {@link Project} and
-	 *         {@link SequenceFile}.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")
 	public void removeSequenceFileFromSample(Sample sample, SequenceFile sequenceFile);

@@ -34,7 +34,7 @@ public class IridaCachingConfig {
 	/**
 	 * Create the EhCache manager
 	 * 
-	 * @return
+	 * @return the ehcache manager.
 	 */
 	@Bean
 	public net.sf.ehcache.CacheManager ehCacheManager() {
@@ -52,7 +52,7 @@ public class IridaCachingConfig {
 	/**
 	 * Create the Spring cache manager
 	 * 
-	 * @return
+	 * @return the spring cache manager.
 	 */
 	@Bean
 	@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)

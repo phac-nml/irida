@@ -89,7 +89,10 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService{
 	
 	/**
 	 * Remove any old token for this user from the database
-	 * @param token
+	 * 
+	 * @param apiToken
+	 *            the api token to remove.
+	 * @return the token that was found.
 	 */
 	protected RemoteAPIToken getOldTokenId(RemoteAPIToken apiToken){
 		RemoteAPIToken oldToken = null;

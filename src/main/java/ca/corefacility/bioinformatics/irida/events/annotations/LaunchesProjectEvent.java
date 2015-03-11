@@ -29,6 +29,9 @@ public @interface LaunchesProjectEvent {
 	/**
 	 * The type of {@link ProjectEvent} that should be created on this annotated
 	 * method
+	 * 
+	 * @return the type of {@link ProjectEvent} that should be created on the
+	 *         annotated method.
 	 */
 	Class<? extends ProjectEvent> value();
 }

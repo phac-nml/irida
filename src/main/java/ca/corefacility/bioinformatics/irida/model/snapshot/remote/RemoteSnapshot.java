@@ -13,7 +13,7 @@ public interface RemoteSnapshot {
 	/**
 	 * Get the links associated with a {@link RemoteResource}
 	 * 
-	 * @return
+	 * @return the links used to access the remote snapshot.
 	 */
 	public RESTLinks getLinks();
 }

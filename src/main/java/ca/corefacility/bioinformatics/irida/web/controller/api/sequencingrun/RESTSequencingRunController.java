@@ -43,7 +43,7 @@ public class RESTSequencingRunController extends RESTGenericController<Sequencin
 	 * {@link ProjectService}.
 	 *
 	 * @param service
-	 *            the {@link MiseqRunService} to be used by this controller.
+	 *            the {@link SequencingRunService} to be used by this controller.
 	 */
 	@Autowired
 	public RESTSequencingRunController(SequencingRunService service) {

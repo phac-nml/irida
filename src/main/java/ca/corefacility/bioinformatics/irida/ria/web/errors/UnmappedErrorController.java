@@ -25,8 +25,10 @@ public class UnmappedErrorController {
 
 	/**
 	 * The basic 404 page.
+	 * 
 	 * @param request
-	 * @return
+	 *            a reference to the current request.
+	 * @return a model to be applied to the 404 page template.
 	 */
 	@RequestMapping(value = "/404", produces = MediaType.TEXT_HTML_VALUE)
 	public ModelAndView basic404(HttpServletRequest request) {
@@ -46,8 +48,10 @@ public class UnmappedErrorController {
 
 	/**
 	 * 404 response for JSON requests
+	 * 
 	 * @param request
-	 * @return
+	 *            a reference to the current request.
+	 * @return an empty string.
 	 */
 	@RequestMapping(value = "/404")
 	@ResponseBody

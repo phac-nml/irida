@@ -8,13 +8,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.ImmutableSet;
-
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation for a service to cleanup inconsistencies with {@link AnalysisSubmission}s.
@@ -38,8 +37,11 @@ public class AnalysisSubmissionCleanupServiceImpl implements AnalysisSubmissionC
 	private static boolean ranSwitchInconsistentSubmissionsToError = false;
 	
 	/**
-	 * Builds a new {@link AnalysisSubmissionCleanupServiceImpl} with the given information.
-	 * @param analysisSubmissionService  The {@link AnalysisSubmissionService} to use.
+	 * Builds a new {@link AnalysisSubmissionCleanupServiceImpl} with the given
+	 * information.
+	 * 
+	 * @param analysisSubmissionRepository
+	 *            The {@link AnalysisSubmissionRepository} to use.
 	 */
 	@Autowired
 	public AnalysisSubmissionCleanupServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository) {

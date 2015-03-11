@@ -59,7 +59,7 @@ public class ModelLookup {
 	 * 
 	 * @param clazz
 	 *            The model class to find properties for
-	 * @return A List<String> of the available properties for the class itself.
+	 * @return A {@code List<String>} of the available properties for the class itself.
 	 */
 	public static List<String> getProperties(Class<? extends Object> clazz) {
 		Class<? extends IdentifiableResource<? extends IridaThing>> resource = classes.get(clazz);

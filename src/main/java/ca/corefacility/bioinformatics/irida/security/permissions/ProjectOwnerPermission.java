@@ -31,6 +31,13 @@ public class ProjectOwnerPermission extends BasePermission<Project, Long> {
 
 	/**
 	 * Construct an instance of {@link ReadProjectPermission}.
+	 * 
+	 * @param projectRepository
+	 *            the project repository.
+	 * @param userRepository
+	 *            the user repository.
+	 * @param pujRepository
+	 *            the project user join repository.
 	 */
 	@Autowired
 	public ProjectOwnerPermission(ProjectRepository projectRepository, UserRepository userRepository,

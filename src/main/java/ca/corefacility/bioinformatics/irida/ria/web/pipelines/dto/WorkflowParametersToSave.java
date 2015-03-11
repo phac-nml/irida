@@ -27,8 +27,10 @@ public class WorkflowParametersToSave {
 	}
 	
 	/**
-	 * Get an instance of {@link IridaWorkflowNamedParameters} that corresponds to this request.
-	 * @return
+	 * Get an instance of {@link IridaWorkflowNamedParameters} that corresponds
+	 * to this request.
+	 * 
+	 * @return an instance of {@link IridaWorkflowNamedParameters} for this DTO.
 	 */
 	public IridaWorkflowNamedParameters namedParameters() {
 		return new IridaWorkflowNamedParameters(parameterSetName, UUID.fromString(pipelineId), parameterValues);

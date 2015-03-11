@@ -73,6 +73,9 @@ public class PasswordResetController {
 	 *
 	 * @param resetId
 	 *            The ID of the {@link PasswordReset}
+	 * @param expired
+	 *            indicates whether we're showing the reset page because of an
+	 *            expired password or a reset request.
 	 * @param model
 	 *            A model for the page
 	 *
@@ -272,6 +275,11 @@ public class PasswordResetController {
 	 *
 	 * @param userId
 	 *            The ID of the {@link User}
+	 * @param principal
+	 *            a reference to the logged in user.
+	 * @param locale
+	 *            a reference to the locale specified by the browser.
+	 * @return a model indicating success or failure of the reset request.
 	 */
 	@RequestMapping("/ajax/create/{userId}")
 	@ResponseBody
@@ -322,7 +330,7 @@ public class PasswordResetController {
 	/**
 	 * Test if a user should be able to click the password reset button
 	 * 
-	 * @param principal
+	 * @param principalUser
 	 *            The currently logged in principal
 	 * @param user
 	 *            The user being edited

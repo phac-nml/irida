@@ -330,19 +330,22 @@ public class PipelineController extends BaseController {
 	/**
 	 * Launch a pipeline
 	 *
+	 * @param locale
+	 *            the locale that the browser is using for the current request.
 	 * @param pipelineId
-	 * 		the id for the {@link IridaWorkflow}
+	 *            the id for the {@link IridaWorkflow}
 	 * @param single
-	 * 		a list of {@link SequenceFile} id's
+	 *            a list of {@link SequenceFile} id's
 	 * @param paired
-	 * 		a list of {@link SequenceFilePair} id's
-	 * 	@param parameters
-	 * 	    TODO: This is a hack! Update when fixing issue #100
-	 *      {@link Map} of ALL parameters passed.  Only want the 'paras' object --> a {@link Map} of pipeline parameters
+	 *            a list of {@link SequenceFilePair} id's
+	 * @param parameters
+	 *            TODO: This is a hack! Update when fixing issue #100
+	 *            {@link Map} of ALL parameters passed. Only want the 'paras'
+	 *            object: a {@link Map} of pipeline parameters
 	 * @param ref
-	 * 		the id for a {@link ReferenceFile}
+	 *            the id for a {@link ReferenceFile}
 	 * @param name
-	 * 		a user provided name for the {@link IridaWorkflow}
+	 *            a user provided name for the {@link IridaWorkflow}
 	 *
 	 * @return a JSON response with the status and any messages.
 	 */

@@ -9,7 +9,7 @@ public class ResourceWrapper <Type extends RemoteResource> {
 
 	/**
 	 * Get the resource
-	 * @return
+	 * @return the {@link RemoteResource} wrapped by this object.
 	 */
 	public Type getResource() {
 		return resource;
@@ -17,7 +17,7 @@ public class ResourceWrapper <Type extends RemoteResource> {
 
 	/**
 	 * Set the resource
-	 * @param resource
+	 * @param resource the {@link RemoteResource} wrapped by this object.
 	 */
 	public void setResource(Type resource) {
 		this.resource = resource;
