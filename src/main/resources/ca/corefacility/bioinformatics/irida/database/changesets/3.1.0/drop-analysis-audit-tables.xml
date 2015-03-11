@@ -14,5 +14,7 @@
 		<dropTable tableName="analysis_output_file_map_AUD" />
 		<dropTable tableName="analysis_properties_AUD" />
 		<dropTable tableName="analysis_sequence_file_AUD" />
+		<dropColumn tableName="analysis" columnName="modifiedDate" />
+		<dropColumn tableName="analysis_submission_AUD" columnName="analysis_id" />
 	</changeSet>
 </databaseChangeLog>
