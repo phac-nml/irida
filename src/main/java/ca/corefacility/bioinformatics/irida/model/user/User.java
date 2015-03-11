@@ -279,7 +279,6 @@ public class User extends IridaResourceSupport implements IridaThing, Comparable
 		this.lastName = lastName;
 	}
 
-	@XmlElement
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
