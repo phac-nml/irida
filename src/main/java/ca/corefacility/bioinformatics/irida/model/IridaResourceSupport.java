@@ -10,6 +10,7 @@ import org.springframework.hateoas.ResourceSupport;
 import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Adds a collection of {@link org.springframework.hateoas.Link}s to extending
@@ -76,7 +77,7 @@ public class IridaResourceSupport {
 	@XmlElement(name = "link", namespace = Link.ATOM_NAMESPACE)
 	@JsonProperty("links")
 	public List<Link> getLinks() {
-		return links;
+		return ImmutableList.copyOf(links);
 	}
 
 	/**
