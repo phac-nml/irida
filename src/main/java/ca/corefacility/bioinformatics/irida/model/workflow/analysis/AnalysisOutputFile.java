@@ -22,6 +22,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepository;
 
 /**
  * Store file references to files produced by a workflow execution that we
@@ -51,9 +52,6 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 	@Column(name = "execution_manager_file_id")
 	private final String executionManagerFileId;
 
-	@Column(name = "file_revision_number")
-	private final Long fileRevisionNumber; // the filesystem file revision number
-
 	@NotNull
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
 	@JoinColumn(name = "tool_execution_id")
@@ -65,7 +63,6 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 	@SuppressWarnings("unused")
 	private AnalysisOutputFile() {
 		this.createdDate = new Date();
-		this.fileRevisionNumber = 0L;
 		this.id = null;
 		this.file = null;
 		this.executionManagerFileId = null;
@@ -91,7 +88,6 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 		this.file = file;
 		this.executionManagerFileId = executionManagerFileId;
 		this.createdByTool = createdByTool;
-		this.fileRevisionNumber = 0L;
 	}
 
 	@Override
@@ -99,14 +95,27 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 		return this.createdDate;
 	}
 
+	/**
+	 * This intentionally always returns 0. We're abusing
+	 * {@link VersionedFileFields} so that we can get support from
+	 * {@link FilesystemSupplementedRepository}, even though
+	 * {@link AnalysisOutputFile} is immutable and cannot be versioned.
+	 * 
+	 * @return *always* {@code 0L} for {@link AnalysisOutputFile}.
+	 */
 	@Override
 	public Long getFileRevisionNumber() {
-		return this.fileRevisionNumber;
+		return 0L;
 	}
 
+	/**
+	 * This intentionally does nothing. We're abusing
+	 * {@link VersionedFileFields} so that we can get support from
+	 * {@link FilesystemSupplementedRepository}, even though
+	 * {@link AnalysisOutputFile} is immutable and cannot be versioned.
+	 */
 	@Override
 	public void incrementFileRevisionNumber() {
-		//this.fileRevisionNumber++;
 	}
 
 	@Override
@@ -150,7 +159,7 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(file, executionManagerFileId, fileRevisionNumber);
+		return Objects.hash(file, executionManagerFileId);
 	}
 
 	/**
@@ -164,8 +173,7 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 
 		if (o instanceof AnalysisOutputFile) {
 			AnalysisOutputFile a = (AnalysisOutputFile) o;
-			return Objects.equals(file, a.file) && Objects.equals(executionManagerFileId, a.executionManagerFileId)
-					&& Objects.equals(fileRevisionNumber, a.fileRevisionNumber);
+			return Objects.equals(file, a.file) && Objects.equals(executionManagerFileId, a.executionManagerFileId);
 		}
 
 		return false;

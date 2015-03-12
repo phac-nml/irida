@@ -24,5 +24,6 @@
 			constraintName="FK_ANALYSIS_OUTPUT_FILE_ANALYSIS" />
 		<dropColumn tableName="analysis_output_file" columnName="analysis_id" />
 		<dropColumn tableName="analysis_output_file" columnName="modified_date" />
+		<dropColumn tableName="analysis_output_file" columnName="file_revision_number" />
 	</changeSet>
 </databaseChangeLog>
