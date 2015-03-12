@@ -314,9 +314,9 @@ INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_
 INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (3, '/bin/ls -lrth', now(), 'galaxyIdentifier', 'ls', 'GNU COREUTILS 8.21');
 
 -- analysis_output_file
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, analysis_id, tool_execution_id) VALUES (1, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snp_tree.tre', 13, 1);
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, analysis_id, tool_execution_id) VALUES (2, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/file2.txt', 13, 2);
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, analysis_id, tool_execution_id) VALUES (3, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/file3.txt', 13, 3);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id) VALUES (1, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snp_tree.tre', 1);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id) VALUES (2, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/file2.txt', 2);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id) VALUES (3, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/file3.txt', 3);
 
 -- analysis_output_file_map
 INSERT INTO `analysis_output_file_map` (analysis_id, analysisOutputFilesMap_id, analysis_output_file_key) VALUES (13, 1, 'tree');
