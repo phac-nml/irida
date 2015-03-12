@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -29,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceAdditionalProperties;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
@@ -52,6 +54,9 @@ public class RESTProjectSamplesController {
 	 * rel used for accessing the list of samples associated with a project.
 	 */
 	public static final String REL_PROJECT_SAMPLES = "project/samples";
+	
+	public static final String FILE_COUNT_PARAM = "sequenceFileCount";
+	
 	/**
 	 * Reference to {@link ProjectService}.
 	 */
@@ -90,7 +95,9 @@ public class RESTProjectSamplesController {
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "application/idcollection+json")
 	public ModelMap copySampleToProject(final @PathVariable Long projectId,
 			final @RequestBody List<Long> sampleIds, HttpServletResponse response) {
-		ModelMap modelMap = new ModelMap();
+		
+		throw new UnsupportedOperationException("not implemented yet");
+		/**ModelMap modelMap = new ModelMap();
 		Project p = projectService.read(projectId);
 		ResourceCollection<LabelledRelationshipResource<Project,Sample>> labeledProjectSampleResources = new ResourceCollection
 				<>(sampleIds.size());
@@ -118,7 +125,7 @@ public class RESTProjectSamplesController {
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, labeledProjectSampleResources);
 		response.setStatus(HttpStatus.CREATED.value());
 		
-		return modelMap;
+		return modelMap;**/
 	}
 
 	/**
@@ -183,20 +190,21 @@ public class RESTProjectSamplesController {
 		Project p = projectService.read(projectId);
 		List<Join<Project, Sample>> relationships = sampleService.getSamplesForProject(p);
 
-		ResourceCollection<SampleResource> sampleResources = new ResourceCollection<>(relationships.size());
+		ResourceCollection<ResourceAdditionalProperties<Sample>> sampleResources = new ResourceCollection<>(relationships.size());
 
 		for (Join<Project, Sample> r : relationships) {
 			Sample sample = r.getObject();
-			SampleResource sr = new SampleResource();
-			sr.setResource(sample);
-			sr.setSequenceFileCount(getSequenceFileCountForSampleResource(sr));
-			sr.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sample.getId()))
+			ResourceAdditionalProperties<Sample> resourceAdditionalProperties = new ResourceAdditionalProperties<>(sample);
+
+			resourceAdditionalProperties.addProperty(FILE_COUNT_PARAM, getSequenceFileCountForSampleResource(sample));
+			
+			sample.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sample.getId()))
 					.withSelfRel());
-			sr.add(linkTo(
+			sample.add(linkTo(
 					methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sample.getId()))
 					.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
-			sr.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
-			sampleResources.add(sr);
+			sample.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
+			sampleResources.add(resourceAdditionalProperties);
 		}
 
 		sampleResources
@@ -246,19 +254,18 @@ public class RESTProjectSamplesController {
 		Sample s = sampleService.getSampleForProject(p, sampleId);
 
 		// prepare the sample for serializing to the client
-		SampleResource sr = new SampleResource();
-		sr.setResource(s);
 
-		sr.setSequenceFileCount(getSequenceFileCountForSampleResource(sr));
+		ResourceAdditionalProperties<Sample> props = new ResourceAdditionalProperties<Sample>(s);
+		props.addProperty(FILE_COUNT_PARAM, getSequenceFileCountForSampleResource(s));
 
 		// add a link to: 1) self, 2) sequenceFiles, 3) project
-		sr.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel());
-		sr.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
-		sr.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
+		s.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withSelfRel());
+		s.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
+		s.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
 				.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
 
 		// add the sample resource to the response
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sr);
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, props);
 
 		return modelMap;
 	}
@@ -346,9 +353,9 @@ public class RESTProjectSamplesController {
 	 *            The {@link SampleResource} to enhance
 	 * @return The number of sequence files in the sample
 	 */
-	private int getSequenceFileCountForSampleResource(SampleResource resource) {
+	private int getSequenceFileCountForSampleResource(Sample resource) {
 		List<Join<Sample, SequenceFile>> sequenceFilesForSample = sequenceFileService
-				.getSequenceFilesForSample(resource.getResource());
+				.getSequenceFilesForSample(resource);
 		return sequenceFilesForSample.size();
 	}
 }
