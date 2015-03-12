@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.ui.ExtendedModelMap;
 
 import com.google.common.collect.Lists;
 
