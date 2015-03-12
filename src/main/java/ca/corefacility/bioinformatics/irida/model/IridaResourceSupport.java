@@ -13,10 +13,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 
 /**
- * Adds a collection of {@link org.springframework.hateoas.Link}s to extending
- * objects. Similar to {@link org.springframework.hateoas.ResourceSupport}
- * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
+ * Adds a collection of {@link Link}s to extending objects. Similar to
+ * {@link ResourceSupport}
  * 
  * @see ResourceSupport
  *
