@@ -30,6 +30,7 @@ public class IridaResourceSupport {
 	 * Adds the given link to the resource.
 	 * 
 	 * @param link
+	 *            The link to add to the resource
 	 */
 	public void add(Link link) {
 		Assert.notNull(link, "Link must not be null!");
@@ -40,6 +41,7 @@ public class IridaResourceSupport {
 	 * Adds all given {@link Link}s to the resource.
 	 * 
 	 * @param links
+	 *            The list of links to add to the resource
 	 */
 	public void add(Iterable<Link> links) {
 		Assert.notNull(links, "Given links must not be null!");
@@ -51,7 +53,7 @@ public class IridaResourceSupport {
 	/**
 	 * Returns whether the resource contains {@link Link}s at all.
 	 * 
-	 * @return
+	 * @return true/false whether the resource contains the link
 	 */
 	public boolean hasLinks() {
 		return !this.links.isEmpty();
@@ -61,7 +63,8 @@ public class IridaResourceSupport {
 	 * Returns whether the resource contains a {@link Link} with the given rel.
 	 * 
 	 * @param rel
-	 * @return
+	 *            The rel name to test
+	 * @return true/false if it has a link with the given rel
 	 */
 	public boolean hasLink(String rel) {
 		return getLink(rel) != null;
@@ -70,7 +73,7 @@ public class IridaResourceSupport {
 	/**
 	 * Returns all {@link Link}s contained in this resource.
 	 * 
-	 * @return
+	 * @return The list of links for this resource
 	 */
 	@XmlElement(name = "link", namespace = Link.ATOM_NAMESPACE)
 	@JsonProperty("links")
@@ -89,6 +92,7 @@ public class IridaResourceSupport {
 	 * Returns the link with the given rel.
 	 * 
 	 * @param rel
+	 *            the String rel to get a link for
 	 * @return the link with the given rel or {@literal null} if none found.
 	 */
 	public Link getLink(String rel) {
@@ -102,11 +106,17 @@ public class IridaResourceSupport {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return String.format("links: %s", links.toString());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object obj) {
 
@@ -123,6 +133,9 @@ public class IridaResourceSupport {
 		return this.links.equals(that.links);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int hashCode() {
 		return this.links.hashCode();
