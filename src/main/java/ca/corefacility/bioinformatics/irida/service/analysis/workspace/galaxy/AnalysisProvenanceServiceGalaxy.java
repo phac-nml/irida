@@ -13,10 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaToolParameter;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 
 import com.fasterxml.jackson.core.JsonToken;
@@ -62,38 +60,39 @@ public class AnalysisProvenanceServiceGalaxy {
 	 * Build up a provenance report for a specific file that's attached to the
 	 * outputs of an analysis submission.
 	 * 
-	 * @param submission
-	 *            the submission that the output file is going to be attached
-	 *            to.
-	 * @param analysisOutputFile
-	 *            the file to build the report for.
+	 * @param remoteAnalysisId
+	 *            the identifier of the submission history that the output file
+	 *            is attached to on the execution manager (i.e., Galaxy's
+	 *            history id).
+	 * @param analysisOutputFilename
+	 *            the filename to build the report for. This should be the raw
+	 *            basename of the file (i.e., only the filename + extension
+	 *            part).
 	 * @return the complete report for the file.
 	 * @throws ExecutionManagerException
 	 *             if the history contents could not be shown for the specified
 	 *             file.
 	 */
-	public ToolExecution buildToolExecutionForOutputFile(final AnalysisSubmission submission,
-			final AnalysisOutputFile analysisOutputFile) throws ExecutionManagerException {
-		final List<HistoryContents> historyContents = galaxyHistoriesService.showHistoryContents(submission
-				.getRemoteAnalysisId());
+	public ToolExecution buildToolExecutionForOutputFile(final String remoteAnalysisId,
+			final String analysisOutputFilename) throws ExecutionManagerException {
+		final List<HistoryContents> historyContents = galaxyHistoriesService.showHistoryContents(remoteAnalysisId);
 		// group the history contents by name. The names that we're interested
 		// in starting from should match the filename of the output file.
 		final Map<String, List<HistoryContents>> historyContentsByName = historyContents.stream().collect(
 				Collectors.groupingBy(HistoryContents::getName));
-		final String filename = analysisOutputFile.getFile().getFileName().toString();
 
-		final List<HistoryContents> currentContents = historyContentsByName.get(filename);
+		final List<HistoryContents> currentContents = historyContentsByName.get(analysisOutputFilename);
 		if (currentContents == null || currentContents.isEmpty() || currentContents.size() > 1) {
 			throw new ExecutionManagerException("Could not load a unique history contents for the specified filename ["
-					+ filename + "] in history with id [" + submission.getRemoteAnalysisId() + "]");
+					+ analysisOutputFilename + "] in history with id [" + remoteAnalysisId + "]");
 		}
 		final HistoryContentsProvenance currentProvenance = galaxyHistoriesService.showProvenance(
-				submission.getRemoteAnalysisId(), currentContents.get(0).getId());
+				remoteAnalysisId, currentContents.get(0).getId());
 
 		try {
 			final Tool toolDetails = toolsClient.showTool(currentProvenance.getToolId());
 	
-			return buildToolExecutionForHistoryStep(toolDetails, currentProvenance, submission.getRemoteAnalysisId());
+			return buildToolExecutionForHistoryStep(toolDetails, currentProvenance, remoteAnalysisId);
 		} catch (final RuntimeException e) {
 			throw new ExecutionManagerException("Failed to build tool execution provenance.", e);
 		}

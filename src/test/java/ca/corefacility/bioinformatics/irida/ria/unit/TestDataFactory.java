@@ -137,7 +137,7 @@ public class TestDataFactory {
 	}
 
 	private static AnalysisOutputFile constructAnalysisOutputFile(String name) {
-		return new AnalysisOutputFile(Paths.get(FAKE_FILE_PATH.replace("{name}", name)), FAKE_EXECUTION_MANAGER_ID);
+		return new AnalysisOutputFile(Paths.get(FAKE_FILE_PATH.replace("{name}", name)), FAKE_EXECUTION_MANAGER_ID, null);
 	}
 
 	public static Project constructProject() {

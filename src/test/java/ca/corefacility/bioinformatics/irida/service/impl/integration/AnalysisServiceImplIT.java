@@ -81,16 +81,13 @@ public class AnalysisServiceImplIT {
 		ToolExecution toolExecutionTable = new ToolExecution(null, null, "ls", "1.0", "executionManagerId", params);
 		ToolExecution toolExecutionMatrix = new ToolExecution(null, null, "ls", "1.0", "executionManagerId", params);
 
-		AnalysisOutputFile tree = new AnalysisOutputFile(treePath, "internal-galaxy-tree-identifier");
-		AnalysisOutputFile table = new AnalysisOutputFile(tablePath, "internal-galaxy-table-identifier");
-		AnalysisOutputFile matrix = new AnalysisOutputFile(matrixPath, "internal-galaxy-matrix-identifier");
+		AnalysisOutputFile tree = new AnalysisOutputFile(treePath, "internal-galaxy-tree-identifier", toolExecutionTree);
+		AnalysisOutputFile table = new AnalysisOutputFile(tablePath, "internal-galaxy-table-identifier", toolExecutionTable);
+		AnalysisOutputFile matrix = new AnalysisOutputFile(matrixPath, "internal-galaxy-matrix-identifier", toolExecutionMatrix);
 		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
 				.put("tree", tree).put("matrix", matrix).put("table", table).build();
 		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(),
 				EXECUTION_MANAGER_ID, analysisOutputFiles);
-		tree.setCreatedByTool(toolExecutionTree);
-		table.setCreatedByTool(toolExecutionTable);
-		matrix.setCreatedByTool(toolExecutionMatrix);
 
 		// make sure that we're not falsely putting the files into the correct
 		// directory in the first place.
@@ -130,16 +127,13 @@ public class AnalysisServiceImplIT {
 		ToolExecution toolExecutionTable = new ToolExecution(null, null, "ls", "1.0", "executionManagerId", params);
 		ToolExecution toolExecutionMatrix = new ToolExecution(null, null, "ls", "1.0", "executionManagerId", params);
 
-		AnalysisOutputFile tree = new AnalysisOutputFile(treePath, "internal-galaxy-tree-identifier");
-		AnalysisOutputFile table = new AnalysisOutputFile(tablePath, "internal-galaxy-table-identifier");
-		AnalysisOutputFile matrix = new AnalysisOutputFile(matrixPath, "internal-galaxy-matrix-identifier");
+		AnalysisOutputFile tree = new AnalysisOutputFile(treePath, "internal-galaxy-tree-identifier", toolExecutionTree);
+		AnalysisOutputFile table = new AnalysisOutputFile(tablePath, "internal-galaxy-table-identifier", toolExecutionTable);
+		AnalysisOutputFile matrix = new AnalysisOutputFile(matrixPath, "internal-galaxy-matrix-identifier", toolExecutionMatrix);
 		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
 				.put("tree", tree).put("matrix", matrix).put("table", table).build();
 		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(sf),
 				EXECUTION_MANAGER_ID, analysisOutputFiles);
-		tree.setCreatedByTool(toolExecutionTree);
-		table.setCreatedByTool(toolExecutionTable);
-		matrix.setCreatedByTool(toolExecutionMatrix);
 
 		Analysis created = analysisService.create(pipeline);
 
