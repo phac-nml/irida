@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -96,9 +95,10 @@ public class RESTProjectSamplesController {
 	public ModelMap copySampleToProject(final @PathVariable Long projectId,
 			final @RequestBody List<Long> sampleIds, HttpServletResponse response) {
 		
-		throw new UnsupportedOperationException("not implemented yet");
-		/**ModelMap modelMap = new ModelMap();
+		ModelMap modelMap = new ModelMap();
+		
 		Project p = projectService.read(projectId);
+		
 		ResourceCollection<LabelledRelationshipResource<Project,Sample>> labeledProjectSampleResources = new ResourceCollection
 				<>(sampleIds.size());
 		for (final long sampleId : sampleIds) {
@@ -125,7 +125,7 @@ public class RESTProjectSamplesController {
 		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, labeledProjectSampleResources);
 		response.setStatus(HttpStatus.CREATED.value());
 		
-		return modelMap;**/
+		return modelMap;
 	}
 
 	/**
@@ -141,17 +141,14 @@ public class RESTProjectSamplesController {
 	 *         location information.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples", method = RequestMethod.POST, consumes = "!application/idcollection+json")
-	public ModelMap addSampleToProject(@PathVariable Long projectId, @RequestBody SampleResource sample, HttpServletResponse response) {
+	public ModelMap addSampleToProject(@PathVariable Long projectId, @RequestBody Sample sample, HttpServletResponse response) {
 		ModelMap model = new ModelMap();
 		
 		// load the project that we're adding to
 		Project p = projectService.read(projectId);
 
-		// construct the sample that we're going to create
-		Sample s = sample.getResource();
-
 		// add the sample to the project
-		Join<Project, Sample> r = projectService.addSampleToProject(p, s);
+		Join<Project, Sample> r = projectService.addSampleToProject(p, sample);
 
 		// construct a link to the sample itself on the samples controller
 		Long sampleId = r.getObject().getId();
