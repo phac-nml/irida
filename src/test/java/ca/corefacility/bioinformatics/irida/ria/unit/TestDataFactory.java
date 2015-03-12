@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.unit;
 
+import static org.junit.Assert.fail;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoSuchValueException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
@@ -96,7 +99,13 @@ public class TestDataFactory {
 				.build();
 		analysisSubmission.setId(id);
 		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
-		analysisSubmission.setAnalysis(constructAnalysis());
+		try {
+			analysisSubmission.setAnalysis(constructAnalysis());
+		} catch (final AnalysisAlreadySetException e) {
+			// this should *never* happen, we just constructed
+			// AnalysisSubmission above.
+			fail();
+		}
 		return analysisSubmission;
 	}
 

@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
@@ -108,7 +109,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 */
 	@Before
 	public void setup() throws IridaWorkflowNotFoundException, IOException, ExecutionManagerException,
-			NoSuchValueException, IridaWorkflowAnalysisTypeException {
+			NoSuchValueException, IridaWorkflowAnalysisTypeException, AnalysisAlreadySetException {
 		MockitoAnnotations.initMocks(this);
 
 		String submissionName = "name";
