@@ -46,13 +46,13 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
-import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 
 /**
@@ -69,7 +69,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	private final ReferenceFileRepository referenceFileRepository;
 	private final SequenceFileService sequenceFileService;
 	private final SequenceFilePairService sequenceFilePairService;
-	private final AnalysisExecutionService analysisExecutionService;
+	private final GalaxyHistoriesService galaxyHistoriesService;
 
 	/**
 	 * Builds a new AnalysisSubmissionServiceImpl with the given information.
@@ -84,8 +84,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 *            the sequence file service.
 	 * @param sequenceFilePairService
 	 *            the sequence file pair service
-	 * @param analysisExecutionService
-	 *            The {@link AnalysisExecutionService}.
+	 * @param galaxyHistoriesService
+	 *            The {@link galaxyHistoriesService}.
 	 * @param validator
 	 *            A validator.
 	 */
@@ -93,14 +93,14 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
 			UserRepository userRepository, final ReferenceFileRepository referenceFileRepository,
 			final SequenceFileService sequenceFileService, final SequenceFilePairService sequenceFilePairService,
-			final AnalysisExecutionService analysisExecutionServiceGalaxy, Validator validator) {
+			final GalaxyHistoriesService galaxyHistoriesService, Validator validator) {
 		super(analysisSubmissionRepository, validator, AnalysisSubmission.class);
 		this.userRepository = userRepository;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.referenceFileRepository = referenceFileRepository;
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
-		this.analysisExecutionService = analysisExecutionServiceGalaxy;
+		this.galaxyHistoriesService = galaxyHistoriesService;
 	}
 
 	/**
@@ -410,7 +410,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		case SUBMITTING:
 			return 2.0f;
 		case RUNNING:
-			GalaxyWorkflowStatus workflowStatus = analysisExecutionService.getWorkflowStatus(analysisSubmission);
+			String workflowHistoryId = analysisSubmission.getRemoteAnalysisId();
+			GalaxyWorkflowStatus workflowStatus = galaxyHistoriesService.getStatusForHistory(workflowHistoryId);
 			return 10.0f + (90.0f - 10.0f) * workflowStatus.getProportionComplete();
 		case FINISHED_RUNNING:
 			return 90.0f;
