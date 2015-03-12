@@ -19,7 +19,7 @@ public class RemoteSequenceFileSnapshot extends SequenceFileSnapshot implements 
 
 	public RemoteSequenceFileSnapshot(RemoteSequenceFile sequenceFile, Path file) {
 		super(sequenceFile, file);
-		this.links = sequenceFile.getLinks();
+		this.links = sequenceFile.getRestLinks();
 	}
 
 	@Override

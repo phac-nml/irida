@@ -28,7 +28,7 @@ public class RemoteSequenceFile extends SequenceFile implements RemoteResource {
 	/**
 	 * {@inheritDoc}
 	 */
-	public RESTLinks getLinks() {
+	public RESTLinks getRestLinks() {
 		return links;
 	}
 

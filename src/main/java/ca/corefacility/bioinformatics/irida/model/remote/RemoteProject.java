@@ -16,7 +16,7 @@ public class RemoteProject extends Project implements RemoteResource {
 
 	private RemoteAPI remoteAPI;
 
-	public RESTLinks getLinks() {
+	public RESTLinks getRestLinks() {
 		return links;
 	}
 

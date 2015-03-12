@@ -21,7 +21,7 @@ public class RemoteSample extends Sample implements RemoteResource {
 	private int sequenceFileCount;
 
 	@Override
-	public RESTLinks getLinks() {
+	public RESTLinks getRestLinks() {
 		return links;
 	}
 
