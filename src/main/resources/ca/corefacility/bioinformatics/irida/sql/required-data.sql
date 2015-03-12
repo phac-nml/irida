@@ -345,10 +345,10 @@ INSERT INTO `reference_file` (id, createdDate, filePath, fileRevisionNumber, mod
 INSERT INTO `project_referencefile` (id, createdDate, project_id, reference_file_id) VALUES (1, '2014-08-06 10:01:02', 4, 1);
 
 -- analysis_phylogenomicspipeline
-INSERT INTO `analysis_phylogenomicspipeline` (id) VALUES (1);
+INSERT INTO `analysis_phylogenomicspipeline` (id) VALUES (13);
 
 -- analysis_submission
-INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter) VALUES ('COMPLETED', 'Analysis-1', '2014-08-06 10:01:02', 1, 'ccca532d-b0be-4f2c-bd6d-9886aa722571', 1);
+INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter) VALUES ('COMPLETED', 'Analysis-1', '2014-08-06 10:01:02', 13, 'ccca532d-b0be-4f2c-bd6d-9886aa722571', 1);
 INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter) VALUES ('RUNNING', 'Analysis-2', '2014-07-06 10:01:02', 13, 'ccca532d-b0be-4f2c-bd6d-9886aa722571', 1);
 INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter) VALUES ('FINISHED_RUNNING', 'Analysis-3', '2014-07-09 10:01:02', 13, 'ccca532d-b0be-4f2c-bd6d-9886aa722571', 1);
 INSERT INTO `analysis_submission` (analysis_state, name, created_date, analysis_id, workflow_id, submitter) VALUES ('COMPLETED', 'Analysis-4', '2014-07-15 10:01:02', 13, 'ccca532d-b0be-4f2c-bd6d-9886aa722571', 1);

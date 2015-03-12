@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="template/page">
+
+<head lang="en">
+
+</head>
+
+<body>
+
+  <div layout:fragment="page">
+    <main class="col-md-9 col-md-push-3" layout:fragment="main">
+
+    </main>
+    <aside class="col-md-3 col-md-pull-9 visible-md visible-lg">
+      <div class="sidebar">
+        <div class="sidebar__heading">
+          <h2 th:text="${analysisSubmission.getLabel()}">__NAME__</h2>
+        </div>
+        <div class="sidebar__body">
+          <div class="sidebar__item">
+            <div class="sidebar__icon">
+              <i class="fa fa-fw fa-barcode"></i>
+            </div>
+            <div th:text="#{iridaThing.id}">_ID_</div>
+            <div class="sidebar__value" th:text="${analysisSubmission.getId()}"></div>
+          </div>
+          <div class="sidebar__item">
+            <div class="sidebar__icon">
+              <i class="fa fa-tag"></i>
+            </div>
+            <div th:text="#{analysis.details.name}">_NAME_</div>
+            <div class="sidebar__value" th:text="${analysisSubmission.name}"></div>
+          </div>
+          <div class="sidebar__item">
+            <div class="sidebar__icon">
+              <i class="fa fa-cogs"></i>
+            </div>
+            <div th:text="#{analysis.details.type}">_Workflow_</div>
+            <div class="sidebar__value" th:text="${workflowName}"></div>
+          </div>
+          <div class="sidebar__item">
+            <div class="sidebar__icon">
+              <i class="fa fa-history"></i>
+            </div>
+            <div th:text="#{analysis.details.state}">_State_</div>
+            <div class="sidebar__value" th:text="#{'analysis.state.' + ${analysisSubmission.analysisState}}"></div>
+          </div>
+          <div class="sidebar__item">
+            <div class="sidebar__icon">
+              <i class="fa fa-fw fa-calendar-o"></i>
+            </div>
+            <div th:text="#{iridaThing.timestamp}">Created</div>
+            <div class="sidebar__value" th:text="${#calendars.format(analysisSubmission.getCreatedDate(), 'dd MMM yyyy')}"></div>
+          </div>
+        </div>
+      </div>
+
+	    <div class="sidebar" th:if="${outputFiles}">
+		    <div class="sidebar__heading">
+			    <h2>
+			    <span th:text="#{analysis.details.files}">_FILES_</span>
+			    <a class="btn btn-default btn-xs pull-right" th:href="@{/analysis/ajax/download/{id}(id=${analysisSubmission.getId()})}" href="#" data-toggle="tooltip" data-placement="bottom" th:title="#{form.download-files}">
+				    <span class="fa fa-download fa-fw"></span>
+				    <span class="sr-only" th:text="#{form.download-files}">Download Files</span>
+			    </a>
+			    </h2>
+		    </div>
+		    <div class="sidebar__body">
+			    <div class="sidebar__item" th:each="file : ${outputFiles}">
+				    <div th:text="${file.file.fileName}"></div>
+			    </div>
+		    </div>
+	    </div>
+    </aside>
+  </div>
+  <th:block layout:fragment="page-scripts">
+    <script th:src="@{/resources/bower_components/livestampjs/livestamp.min.js}" src="/resources/bower_components/livestampjs/livestamp.min.js"></script>
+
+    <th:block layout:fragment="pageScripts"></th:block>
+    <th:block layout:fragment="previewScripts"></th:block>
+  </th:block>
+</body>
+
+</html>
