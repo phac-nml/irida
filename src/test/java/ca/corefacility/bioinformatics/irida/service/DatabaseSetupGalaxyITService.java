@@ -478,7 +478,7 @@ public class DatabaseSetupGalaxyITService {
 	 */
 	public void assertValidStatus(GalaxyWorkflowStatus status) {
 		assertNotNull("WorkflowStatus is null", status);
-		float percentComplete = status.getPercentComplete();
-		assertTrue("percentComplete not in range of 0 to 100", 0.0f <= percentComplete && percentComplete <= 100.0f);
+		float percentComplete = status.getProportionComplete();
+		assertTrue("proportion not in range of 0 to 1", 0.0f <= percentComplete && percentComplete <= 1.0f);
 	}
 }
