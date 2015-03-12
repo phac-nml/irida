@@ -86,9 +86,9 @@ public class GalaxyWorkflowStatus {
 	}
 
 	/**
-	 * Gets the proportion complete for this workflow.
+	 * Gets the proportion of the workflow tasks complete.
 	 * 
-	 * @return The proportion complete for this workflow.
+	 * @return The proportion complete for this workflow as a number in the range [0.0f,1.0f].
 	 */
 	public float getProportionComplete() {
 		return countHistoryItemsInState(GalaxyWorkflowState.OK) / (float) countTotalWorkflowItems();

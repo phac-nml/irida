@@ -26,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -63,6 +64,26 @@ import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 @Service
 public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, AnalysisSubmission> implements
 		AnalysisSubmissionService {
+	
+	/**
+	 * A {@link Map} defining the progress transitions points for each state in
+	 * an {@link AnalysisSubmission}.
+	 */
+	// @formatter:off
+	private static final Map<AnalysisState,Float> STATE_PERCENTAGE = ImmutableMap.<AnalysisState,Float>builder().
+			put(AnalysisState.NEW,              0.0f).
+			put(AnalysisState.PREPARING,        0.0f).
+			put(AnalysisState.PREPARED,         1.0f).
+			put(AnalysisState.SUBMITTING,       2.0f).
+			put(AnalysisState.RUNNING,          10.0f).
+			put(AnalysisState.FINISHED_RUNNING, 90.0f).
+			put(AnalysisState.COMPLETING,       95.0f).
+			put(AnalysisState.COMPLETED,        100.0f).
+			build();
+	// @formatter:on
+	
+	private static final float RUNNING_PERCENT = STATE_PERCENTAGE.get(AnalysisState.RUNNING);
+	private static final float FINISHED_RUNNING_PERCENT = STATE_PERCENTAGE.get(AnalysisState.FINISHED_RUNNING);
 	
 	private UserRepository userRepository;
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
@@ -402,23 +423,18 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 		switch (analysisState) {
 		case NEW:
-			return 0.0f;
 		case PREPARING:
-			return 0.0f;
 		case PREPARED:
-			return 1.0f;
 		case SUBMITTING:
-			return 2.0f;
+			return STATE_PERCENTAGE.get(analysisState);
 		case RUNNING:
 			String workflowHistoryId = analysisSubmission.getRemoteAnalysisId();
 			GalaxyWorkflowStatus workflowStatus = galaxyHistoriesService.getStatusForHistory(workflowHistoryId);
-			return 10.0f + (90.0f - 10.0f) * workflowStatus.getProportionComplete();
+			return RUNNING_PERCENT + (FINISHED_RUNNING_PERCENT - RUNNING_PERCENT) * workflowStatus.getProportionComplete();
 		case FINISHED_RUNNING:
-			return 90.0f;
 		case COMPLETING:
-			return 95.0f;
 		case COMPLETED:
-			return 100.0f;
+			return STATE_PERCENTAGE.get(analysisState);
 		default:
 			throw new NoPercentageCompleteException("No valid percent complete for state " + analysisState);
 		}
