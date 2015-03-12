@@ -38,6 +38,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -69,6 +70,8 @@ import com.google.common.collect.Sets;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/analysis/submission/AnalysisSubmissionServiceIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisSubmissionServiceImplIT {
+	
+	private static float DELTA = 0.000001f;
 
 	@Autowired
 	private AnalysisSubmissionService analysisSubmissionService;
@@ -533,6 +536,41 @@ public class AnalysisSubmissionServiceImplIT {
 		assertNotNull("Submission should have a map of parameters", submission.getInputParameters());
 		assertEquals("Submission parameters should be the same as the named parameters", params.getInputParameters(),
 				submission.getInputParameters());
+	}
+	
+	/**
+	 * Tests getting the percentage complete for a submission as a regular user
+	 * @throws EntityNotFoundException 
+	 * @throws NoPercentageCompleteException 
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testGetPercentageCompleteGrantedRegularUser() throws NoPercentageCompleteException, EntityNotFoundException {
+		float percentageComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(1L);
+		assertEquals("submission was not properly returned", 0.0f, percentageComplete, DELTA);
+	}
+
+	/**
+	 * Tests being denied to get the percentage complete a submission as a regular user
+	 * @throws EntityNotFoundException 
+	 * @throws NoPercentageCompleteException 
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "otheraaron", roles = "USER")
+	public void testGetPercentageCompleteDeniedRegularUser() throws NoPercentageCompleteException, EntityNotFoundException {
+		analysisSubmissionService.getPercentCompleteForAnalysisSubmission(1L);
+	}
+
+	/**
+	 * Tests getting the percentage complete for a submission as an admin user.
+	 * @throws EntityNotFoundException 
+	 * @throws NoPercentageCompleteException 
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testGetPercentageCompleteGrantedAdminUser() throws NoPercentageCompleteException, EntityNotFoundException {
+		float percentageComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(1L);
+		assertEquals("submission was not properly returned", 0.0f, percentageComplete, DELTA);
 	}
 
 	/**

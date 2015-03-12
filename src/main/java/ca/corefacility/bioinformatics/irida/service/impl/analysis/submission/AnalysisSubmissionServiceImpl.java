@@ -33,6 +33,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -381,5 +382,15 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 		// Create the submission
 		return create(builder.build());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public float getPercentCompleteForAnalysisSubmission(Long id) throws NoPercentageCompleteException,
+			EntityNotFoundException {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
