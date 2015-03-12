@@ -154,12 +154,16 @@
     var params = {};
     var samples = [];
 
-    function initialize(libraryName, email, authCode) {
+
+    function initialize(libraryName, email, authCode, redirectURI) {
       params = {
         "_embedded": {
           "library": {"name": libraryName},
           "user"   : {"email": email},
-          "oauth2" : {"code": authCode},
+          "oauth2" : {
+            "code"    : authCode,
+            "redirect": redirectURI
+          },
           "samples": samples
         }
       };
@@ -188,8 +192,8 @@
       return [sampleFormEntity];
     };
 
-    svc.exportFromProjSampPage = function (libraryName, email, authCode) {
-      initialize(libraryName, email, authCode);
+    svc.exportFromProjSampPage = function (libraryName, email, authCode, redirectURI) {
+      initialize(libraryName, email, authCode, redirectURI);
 
       var samples = StorageService.getSamples()
       _.each(samples, function (sample) {
@@ -200,7 +204,7 @@
       return getSampleFormEntities();
     };
 
-    svc.exportFromCart = function (libraryName, email, authCode) {
+    svc.exportFromCart = function (libraryName, email, authCode, redirectURI) {
       return CartService.all()
         .then(function (data) {
           initialize(libraryName, email, authCode);
@@ -224,22 +228,40 @@
     var vm = this;
     vm.showOauthIframe = false;
     vm.showEmailLibInput = true;
+    vm.redirectURI = TL.BASE_URL + "galaxy/auth_code";
 
-    var request = makeOauth2Request("webClient", "code", "read", TL.BASE_URL + "galaxy/auth_code");
-    vm.iframeSrc = "/api/oauth/authorize" + request;
+    vm.upload = function () {
+      vm.makeOauth2AuthRequest("webClient");
+      vm.showEmailLibInput = false;
+      vm.showOauthIframe = true;
+    };
 
+    vm.makeOauth2AuthRequest = function (clientID) {
+      var request = buildOauth2Request(clientID, "code", "read", vm.redirectURI);
+      vm.iframeSrc = "/api/oauth/authorize" + request;
+    }
 
-    function makeOauth2Request(clientID, responseType, scope, redirectURI) {
+    function buildOauth2Request(clientID, responseType, scope, redirectURI) {
       //Is there an URL builder I should use?
       return "?&client_id=" + clientID + "&response_type=" + responseType + "&scope=" + scope + "&redirect_uri=" + redirectURI;
     }
 
-    vm.upload = function () {
-      vm.uploading = true;
-      var sampleFormEntities;
-      vm.showEmailLibInput = false;
-      vm.showOauthIframe = true;
-    };
+    $scope.$on("galaxyAuthCode", function (e, authToken) {
+
+      if (authToken) {
+        vm.uploading = true;
+
+        vm.showOauthIframe = false;
+        vm.showEmailLibInput = true;
+
+        if (openedByCart) {
+          GalaxyExportService.exportFromCart(vm.name, vm.email, authToken, vm.redirectURI).then(sendSampleForm);
+        }
+        else {
+          sendSampleForm(GalaxyExportService.exportFromProjSampPage(vm.name, vm.email, authToken, vm.redirectURI));
+        }
+      }
+    });
 
     function sendSampleForm(sampleFormEntities) {
       vm.sampleFormEntities = sampleFormEntities;
@@ -256,22 +278,6 @@
       });
     }
 
-    $scope.$on("galaxyAuthCode", function (e, authToken) {
-
-      if (authToken) {
-
-        vm.showOauthIframe = false;
-        vm.showEmailLibInput = true;
-
-        if (openedByCart) {
-          GalaxyExportService.exportFromCart(vm.name, vm.email, authToken).then(sendSampleForm);
-        }
-        else {
-          sendSampleForm(GalaxyExportService.exportFromProjSampPage(vm.name, vm.email, authToken));
-        }
-      }
-    });
-
     vm.setName = function (name, orgName) {
       if (multiProject) {
         vm.name = orgName;
@@ -286,6 +292,7 @@
     vm.close = function () {
       $modalInstance.close();
     };
+
   }
 
   angular
