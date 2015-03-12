@@ -356,6 +356,9 @@ public class AnalysisSubmission implements IridaThing {
 	 * 
 	 * @param analysis
 	 *            the analysis to set
+	 * @throws AnalysisAlreadySetException
+	 *             if the {@link Analysis} reference has already been created
+	 *             for this submission.
 	 */
 	public void setAnalysis(Analysis analysis) throws AnalysisAlreadySetException {
 		if (this.analysis == null) {
