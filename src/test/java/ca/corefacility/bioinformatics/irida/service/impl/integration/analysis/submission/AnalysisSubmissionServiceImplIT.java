@@ -114,7 +114,7 @@ public class AnalysisSubmissionServiceImplIT {
 				null, null);
 		Page<AnalysisSubmission> paged = analysisSubmissionService.search(specification, 0, 10, Sort.Direction.ASC,
 				"createdDate");
-		assertEquals(9, paged.getContent().size());
+		assertEquals(10, paged.getContent().size());
 
 		// Try filtering a by names
 		String name = "My";
@@ -445,7 +445,7 @@ public class AnalysisSubmissionServiceImplIT {
 		User user = userRepository.findOne(1L);
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForUser(user);
 		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 8, submissions.size());
+		assertEquals("submissions should have correct number", 9, submissions.size());
 	}
 
 	/**
@@ -467,7 +467,7 @@ public class AnalysisSubmissionServiceImplIT {
 		User user = userRepository.findOne(1L);
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForUser(user);
 		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 8, submissions.size());
+		assertEquals("submissions should have correct number", 9, submissions.size());
 	}
 	
 	/**
@@ -478,7 +478,7 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testGetAnalysisSubmissionsForCurrentUserAsRegularUser() {
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
 		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 8, submissions.size());
+		assertEquals("submissions should have correct number", 9, submissions.size());
 	}
 
 	/**
@@ -546,7 +546,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testGetPercentageCompleteGrantedRegularUser() throws NoPercentageCompleteException, EntityNotFoundException {
-		float percentageComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(1L);
+		float percentageComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(10L);
 		assertEquals("submission was not properly returned", 0.0f, percentageComplete, DELTA);
 	}
 
@@ -558,7 +558,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testGetPercentageCompleteDeniedRegularUser() throws NoPercentageCompleteException, EntityNotFoundException {
-		analysisSubmissionService.getPercentCompleteForAnalysisSubmission(1L);
+		analysisSubmissionService.getPercentCompleteForAnalysisSubmission(10L);
 	}
 
 	/**
@@ -569,7 +569,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetPercentageCompleteGrantedAdminUser() throws NoPercentageCompleteException, EntityNotFoundException {
-		float percentageComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(1L);
+		float percentageComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(10L);
 		assertEquals("submission was not properly returned", 0.0f, percentageComplete, DELTA);
 	}
 

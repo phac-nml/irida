@@ -390,7 +390,28 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Override
 	public float getPercentCompleteForAnalysisSubmission(Long id) throws NoPercentageCompleteException,
 			EntityNotFoundException {
-		// TODO Auto-generated method stub
-		return 0;
+		AnalysisSubmission analysisSubmission = read(id);
+		AnalysisState analysisState = analysisSubmission.getAnalysisState();
+
+		switch (analysisState) {
+		case NEW:
+			return 0.0f;
+		case PREPARING:
+			return 0.0f;
+		case PREPARED:
+			return 1.0f;
+		case SUBMITTING:
+			return 2.0f;
+		case RUNNING:
+			return 10.0f;
+		case FINISHED_RUNNING:
+			return 90.0f;
+		case COMPLETING:
+			return 95.0f;
+		case COMPLETED:
+			return 100.0f;
+		default:
+			throw new NoPercentageCompleteException("No valid percent complete for state " + analysisState);
+		}
 	}
 }

@@ -73,4 +73,117 @@ public class AnalysisSubmissionServiceImplTest {
 		assertEquals("invalid percent complete", 0.0f,
 				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
 	}
+
+	/**
+	 * Tests getting the percent complete in the preparing state.
+	 * 
+	 * @throws EntityNotFoundException
+	 * @throws NoPercentageCompleteException
+	 */
+	@Test
+	public void testGetPercentageCompleteStatePreparing() throws NoPercentageCompleteException, EntityNotFoundException {
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.PREPARING);
+
+		assertEquals("invalid percent complete", 0.0f,
+				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
+	}
+
+	/**
+	 * Tests getting the percent complete in the prepared state.
+	 * 
+	 * @throws EntityNotFoundException
+	 * @throws NoPercentageCompleteException
+	 */
+	@Test
+	public void testGetPercentageCompleteStatePrepared() throws NoPercentageCompleteException, EntityNotFoundException {
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.PREPARED);
+
+		assertEquals("invalid percent complete", 1.0f,
+				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
+	}
+
+	/**
+	 * Tests getting the percent complete in the submitting state.
+	 * 
+	 * @throws EntityNotFoundException
+	 * @throws NoPercentageCompleteException
+	 */
+	@Test
+	public void testGetPercentageCompleteStateSubmitting() throws NoPercentageCompleteException,
+			EntityNotFoundException {
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.SUBMITTING);
+
+		assertEquals("invalid percent complete", 2.0f,
+				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
+	}
+
+	/**
+	 * Tests getting the percent complete in the running state.
+	 * 
+	 * @throws EntityNotFoundException
+	 * @throws NoPercentageCompleteException
+	 */
+	@Test
+	public void testGetPercentageCompleteStateRunning() throws NoPercentageCompleteException, EntityNotFoundException {
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
+
+		assertEquals("invalid percent complete", 10.0f,
+				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
+	}
+
+	/**
+	 * Tests getting the percent complete in the finished running state.
+	 * 
+	 * @throws EntityNotFoundException
+	 * @throws NoPercentageCompleteException
+	 */
+	@Test
+	public void testGetPercentageCompleteStateFinishedRunning() throws NoPercentageCompleteException,
+			EntityNotFoundException {
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.FINISHED_RUNNING);
+
+		assertEquals("invalid percent complete", 90.0f,
+				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
+	}
+
+	/**
+	 * Tests getting the percent complete in the completing state.
+	 * 
+	 * @throws EntityNotFoundException
+	 * @throws NoPercentageCompleteException
+	 */
+	@Test
+	public void testGetPercentageCompleteStateCompleting() throws NoPercentageCompleteException,
+			EntityNotFoundException {
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.COMPLETING);
+
+		assertEquals("invalid percent complete", 95.0f,
+				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
+	}
+
+	/**
+	 * Tests getting the percent complete in the completed state.
+	 * 
+	 * @throws EntityNotFoundException
+	 * @throws NoPercentageCompleteException
+	 */
+	@Test
+	public void testGetPercentageCompleteStateCompleted() throws NoPercentageCompleteException, EntityNotFoundException {
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
+
+		assertEquals("invalid percent complete", 100.0f,
+				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA);
+	}
+
+	/**
+	 * Tests getting the percent complete in the error.
+	 * 
+	 * @throws EntityNotFoundException
+	 * @throws NoPercentageCompleteException
+	 */
+	@Test(expected = NoPercentageCompleteException.class)
+	public void testGetPercentageCompleteError() throws NoPercentageCompleteException, EntityNotFoundException {
+		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.ERROR);
+		analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID);
+	}
 }
