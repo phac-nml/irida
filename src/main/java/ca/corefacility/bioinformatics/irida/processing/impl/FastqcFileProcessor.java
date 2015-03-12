@@ -31,8 +31,8 @@ import uk.ac.babraham.FastQC.Sequence.SequenceFactory;
 import uk.ac.babraham.FastQC.Sequence.QualityEncoding.PhredEncoding;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC.AnalysisFastQCBuilder;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
@@ -115,9 +115,9 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * @param stats
 	 *            the {@link BasicStats} computed by fastqc.
 	 * @param analysis
-	 *            the {@link Analysis} to update.
+	 *            the {@link AnalysisFastQCBuilder} to update.
 	 */
-	private void handleBasicStats(BasicStats stats, AnalysisFastQC.AnalysisFastQCBuilder analysis) {
+	private void handleBasicStats(BasicStats stats, AnalysisFastQCBuilder analysis) {
 		analysis.fileType(stats.getFileType());
 		analysis.encoding(PhredEncoding.getFastQEncodingOffset(stats.getLowestChar()).name());
 		analysis.minLength(stats.getMinLength());
@@ -135,9 +135,9 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * @param scores
 	 *            the {@link PerBaseQualityScores} computed by fastqc.
 	 * @param analysis
-	 *            the {@link Analysis} to update.
+	 *            the {@link AnalysisFastQCBuilder} to update.
 	 */
-	private void handlePerBaseQualityScores(PerBaseQualityScores scores, AnalysisFastQC.AnalysisFastQCBuilder analysis)
+	private void handlePerBaseQualityScores(PerBaseQualityScores scores, AnalysisFastQCBuilder analysis)
 			throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		QualityBoxPlot bp = (QualityBoxPlot) scores.getResultsPanel();
@@ -156,10 +156,10 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * @param scores
 	 *            the {@link PerSequenceQualityScores} computed by fastqc.
 	 * @param analysis
-	 *            the {@link Analysis} to update.
+	 *            the {@link AnalysisFastQCBuilder} to update.
 	 */
 	private void handlePerSequenceQualityScores(PerSequenceQualityScores scores,
-			AnalysisFastQC.AnalysisFastQCBuilder analysis) throws IOException {
+			AnalysisFastQCBuilder analysis) throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LineGraph lg = (LineGraph) scores.getResultsPanel();
 		BufferedImage b = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
@@ -177,9 +177,9 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * @param duplicationLevel
 	 *            the {@link DuplicationLevel} calculated by fastqc.
 	 * @param analysis
-	 *            the {@link SequenceFile} to update.
+	 *            the {@link AnalysisFastQCBuilder} to update.
 	 */
-	private void handleDuplicationLevel(DuplicationLevel duplicationLevel, AnalysisFastQC.AnalysisFastQCBuilder analysis)
+	private void handleDuplicationLevel(DuplicationLevel duplicationLevel, AnalysisFastQCBuilder analysis)
 			throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LineGraph lg = (LineGraph) duplicationLevel.getResultsPanel();
