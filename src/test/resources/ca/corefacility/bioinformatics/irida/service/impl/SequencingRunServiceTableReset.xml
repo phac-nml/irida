@@ -39,7 +39,6 @@
 	<!-- All auditing table references *only* refer to the Revisions table, 
 		so they can all be listed in an arbitrary order *after* the Revisions table. -->
 	<Revisions />
-	<overrepresented_sequence_AUD />
 	<project_user_AUD />
 	<project_AUD />
 	<project_sample_AUD />
