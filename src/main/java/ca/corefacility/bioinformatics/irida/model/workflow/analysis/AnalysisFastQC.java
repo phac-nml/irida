@@ -22,7 +22,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
  * Specific implementation of {@link Analysis} for storing properties created by
  * FastQC.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Entity
@@ -85,7 +84,7 @@ public class AnalysisFastQC extends Analysis {
 	 * Box and whisker plot showing per-base quality scores as a PNG-formatted
 	 * image in a byte array.
 	 * 
-	 * @return
+	 * @return a PNG-formatted byte array for per-base quality score.
 	 */
 	public byte[] getPerBaseQualityScoreChart() {
 		return perBaseQualityScoreChart;
@@ -99,7 +98,7 @@ public class AnalysisFastQC extends Analysis {
 	 * Line chartshowing per-sequence quality scores as a PNG-formatted image in
 	 * a byte array.
 	 * 
-	 * @return
+	 * @return a PNG-formatted byte array for per-sequence quality score.
 	 */
 	public byte[] getPerSequenceQualityScoreChart() {
 		return perSequenceQualityScoreChart;
@@ -113,7 +112,7 @@ public class AnalysisFastQC extends Analysis {
 	 * Line chartshowing duplication-level as a PNG-formatted image in a byte
 	 * array.
 	 * 
-	 * @return
+	 * @return a PNG-formatted byte array for duplication levels.
 	 */
 	public byte[] getDuplicationLevelChart() {
 		return duplicationLevelChart;

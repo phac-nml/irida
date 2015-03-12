@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,7 +51,6 @@ import com.google.common.collect.ImmutableList;
 /**
  * Controller for all sample related views
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Controller
 public class SamplesController extends BaseController {
@@ -167,6 +165,8 @@ public class SamplesController extends BaseController {
 	 *            Date the sample was collected (Optional)
 	 * @param params
 	 *            Map of fields to update. See FIELDS.
+	 * @param request
+	 *            a reference to the current request.
 	 * @return The name of the details page.
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/edit", "/projects/{projectId}/samples/{sampleId}/edit" }, method = RequestMethod.POST)
@@ -209,13 +209,13 @@ public class SamplesController extends BaseController {
 	 *            Spring {@link Model}
 	 * @param sampleId
 	 *            Sample id
-	 * @return
-	 * @throws IOException
+	 * @param principal
+	 *            a reference to the logged in user.
+	 * @return a Map representing all files (pairs and singles) for the sample.
 	 */
 	@RequestMapping(value = { "/samples/{sampleId}/sequenceFiles",
 			"/projects/{projectId}/samples/{sampleId}/sequenceFiles" })
-	public String getSampleFiles(final Model model, @PathVariable Long sampleId, Principal principal)
-			throws IOException {
+	public String getSampleFiles(final Model model, @PathVariable Long sampleId, Principal principal) {
 		Sample sample = sampleService.read(sampleId);
 		List<Map<String, Object>> files = getFilesForSample(sampleId);
 
@@ -258,7 +258,7 @@ public class SamplesController extends BaseController {
 	 * @return A list file details.
 	 */
 	@RequestMapping(value = "/samples/ajax/{sampleId}/files", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<Map<String, Object>> getFilesForSample(@PathVariable Long sampleId) throws IOException {
+	public @ResponseBody List<Map<String, Object>> getFilesForSample(@PathVariable Long sampleId) {
 		Sample sample = sampleService.read(sampleId);
 
 		List<Join<Sample, SequenceFile>> joinList = sequenceFileService.getUnpairedSequenceFilesForSample(sample);
@@ -273,10 +273,17 @@ public class SamplesController extends BaseController {
 	/**
 	 * Remove a given sequence file from a sample
 	 *
+	 * @param attributes
+	 *            the redirect attributes where we can add flash-scoped messages
+	 *            for the client.
 	 * @param sampleId
 	 *            the {@link Sample} id
 	 * @param fileId
 	 *            The {@link SequenceFile} id
+	 * @param returnUrl
+	 *            where we should send the browser after removing the file.
+	 * @param locale
+	 *            the locale specified by the browser.
 	 * @return map stating the request was successful
 	 */
 	@RequestMapping(value = "/samples/{sampleId}/files/delete", method = RequestMethod.POST)

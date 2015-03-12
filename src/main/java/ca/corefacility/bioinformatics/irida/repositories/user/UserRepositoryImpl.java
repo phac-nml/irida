@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  * Custom implementation of {@link UserRepository} that throws
  * {@link UsernameNotFoundException}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 public class UserRepositoryImpl implements UserDetailsService {

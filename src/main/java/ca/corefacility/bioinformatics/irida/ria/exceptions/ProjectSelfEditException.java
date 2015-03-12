@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.exceptions;
 /**
  * Exception thrown when you try to edit your own information on a project
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class ProjectSelfEditException extends Exception {

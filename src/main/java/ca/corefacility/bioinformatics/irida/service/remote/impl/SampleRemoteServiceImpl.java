@@ -20,7 +20,6 @@ import com.google.common.base.Strings;
  * Implementation of {@link SampleRemoteService} using
  * {@link SampleRemoteRepository}
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Service

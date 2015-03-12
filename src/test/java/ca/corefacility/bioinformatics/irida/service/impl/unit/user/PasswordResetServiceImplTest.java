@@ -20,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import com.google.common.collect.ImmutableMap;
 
 /**
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class PasswordResetServiceImplTest {
 	private PasswordResetService passwordResetService;

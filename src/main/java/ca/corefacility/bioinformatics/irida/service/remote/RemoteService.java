@@ -9,7 +9,6 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource
 /**
  * Service for communicating with a remote IRIDA instance
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  * @param <Type>
  *            The type of object this repository will store
@@ -29,10 +28,12 @@ public interface RemoteService<Type extends RemoteResource> {
 
 	/**
 	 * List the resources available from this service
-	 * 
+	 *
+	 * @param uri
+	 *            the uri to load the resources from.
 	 * @param remoteAPI
 	 *            The API to read from
-	 * @return A List<Type> of the resources available
+	 * @return A {@code List<Type>} of the resources available
 	 */
 	public List<Type> list(String uri, RemoteAPI remoteAPI);
 

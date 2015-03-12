@@ -13,7 +13,6 @@ import com.google.common.collect.Sets;
 /**
  * Tests out building up a data structure of parameters for Galaxy.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class ParameterBuilderGalaxyTest {

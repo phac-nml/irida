@@ -4,7 +4,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNot
 
 /**
  * When there is no role for a user within Galaxy.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyUserNoRoleException extends ExecutionManagerObjectNotFoundException {

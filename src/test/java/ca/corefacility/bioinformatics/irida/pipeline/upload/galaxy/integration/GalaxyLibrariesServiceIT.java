@@ -39,7 +39,6 @@ import com.google.common.collect.Sets;
 
 /**
  * Tests for dealing with Galaxy Libraries.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)

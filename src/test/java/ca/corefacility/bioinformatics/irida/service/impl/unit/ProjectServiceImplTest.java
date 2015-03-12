@@ -63,8 +63,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 /**
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
- * @author Franklin Bristow <franklin.bristow@phac-apsc.gc.ca>
  */
 public class ProjectServiceImplTest {
 	private ProjectService projectService;

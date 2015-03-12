@@ -5,13 +5,12 @@ import javax.validation.constraints.NotNull;
 /**
  * An interface for all model classes in the IRIDA system
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 public interface IridaThing extends Timestamped {
 	/**
 	 * Get a human readable label for this object.
 	 * 
-	 * @return
+	 * @return a human-readable label for the object.
 	 */
 	@NotNull(message = "{irida.label.notnull}")
 	public String getLabel();
@@ -19,7 +18,7 @@ public interface IridaThing extends Timestamped {
 	/**
 	 * Get the numerical identifier for this object
 	 * 
-	 * @return
+	 * @return the numerical identifier for the object
 	 */
 	public Long getId();
 

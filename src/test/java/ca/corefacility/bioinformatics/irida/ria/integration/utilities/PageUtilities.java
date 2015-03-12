@@ -9,7 +9,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 /**
  * Helper methods for finding items within the UI.
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class PageUtilities {
 	public static final int TIME_OUT_IN_SECONDS = 10;

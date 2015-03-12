@@ -4,7 +4,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNot
 
 /**
  * An exception that gets thrown when there is no history in Galaxy that can be found.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class NoGalaxyHistoryException extends ExecutionManagerObjectNotFoundException {

@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 /**
  * A custom repository for managing {@link Analysis} objects.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 public interface AnalysisRepository extends IridaJpaRepository<Analysis, Long> {
@@ -34,12 +33,14 @@ public interface AnalysisRepository extends IridaJpaRepository<Analysis, Long> {
 
 	/**
 	 * Load the set of {@link Analysis} for a {@link SequenceFile} that are a
-	 * specific subtype of {@link Analyis}.
+	 * specific subtype of {@link Analysis}.
 	 * 
 	 * @param sf
 	 *            the file to load {@link Analysis} records for.
 	 * @param analysisType
 	 *            the type of {@link Analysis} that should be loaded.
+	 * @param <T> the type of analysis to load from the repository
+	 * 
 	 * @return the set of {@link Analysis} records of the specified type.
 	 */
 	@Query("select a from Analysis a where ?1 member of a.inputFiles and type(a) = ?2")
@@ -47,12 +48,14 @@ public interface AnalysisRepository extends IridaJpaRepository<Analysis, Long> {
 
 	/**
 	 * Load the most recently created {@link Analysis} for a
-	 * {@link SequenceFile} that is a specific subtype of {@link Analyis}.
+	 * {@link SequenceFile} that is a specific subtype of {@link Analysis}.
 	 * 
 	 * @param sf
 	 *            the file to load {@link Analysis} records for.
 	 * @param analysisType
 	 *            the type of {@link Analysis} that should be loaded.
+	 * @param <T> the type of analysis to load from the repository
+	 *
 	 * @return the most recently created {@link Analysis} record of the
 	 *         specified type.
 	 */
@@ -68,13 +71,18 @@ public interface AnalysisRepository extends IridaJpaRepository<Analysis, Long> {
 	}
 
 	/**
-	 * Load a pageable list of {@link Analysis} for
-	 * {@link SequenceFile} that are of a specific subtype of {@link Analyis}.
+	 * Load a pageable list of {@link Analysis} for {@link SequenceFile} that
+	 * are of a specific subtype of {@link Analysis}.
 	 * 
 	 * @param sf
 	 *            the file to load {@link Analysis} records for.
 	 * @param analysisType
 	 *            the types of {@link Analysis} that should be loaded.
+	 * @param page
+	 *            the page that we should load.
+	 * @param <T>
+	 *            the type of analysis to load from the repository
+	 * 
 	 * @return the most recently created {@link Analysis} records of the
 	 *         specified type.
 	 */

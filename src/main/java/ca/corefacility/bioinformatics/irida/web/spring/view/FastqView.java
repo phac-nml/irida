@@ -17,7 +17,6 @@ import java.util.Map;
 /**
  * Write out FASTQ formatted sequence files to the client.
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class FastqView extends AbstractView {
     public static final String DEFAULT_CONTENT_TYPE = "application/fastq";

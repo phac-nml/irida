@@ -5,7 +5,6 @@ import org.junit.Test;
 
 /**
  * Tests for {@link GalaxyFolderPath}.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyFolderPathTest {

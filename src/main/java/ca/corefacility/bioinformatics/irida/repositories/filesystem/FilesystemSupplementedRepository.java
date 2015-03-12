@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
  * the custom implementation re-implements only the persisting methods defined
  * as {@link CrudRepository#save(Object)}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @NoRepositoryBean

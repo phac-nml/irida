@@ -34,7 +34,6 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 /**
  * Tests for named parameter service.
  * 
- * @author Franklin Bristow franklin.bristow@phac-aspc.gc.ca
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)

@@ -6,7 +6,6 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 
 /**
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class IdentifiableTestEntity implements IridaThing, Comparable<IdentifiableTestEntity> {
 	Long id;

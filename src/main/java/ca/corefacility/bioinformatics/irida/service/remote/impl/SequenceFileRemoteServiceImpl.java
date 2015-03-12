@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteSer
  * Implementation of {@link SequenceFileRemoteService} using a
  * {@link SequenceFileRemoteRepository}
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Service

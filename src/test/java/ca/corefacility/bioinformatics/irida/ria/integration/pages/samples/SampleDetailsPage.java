@@ -8,7 +8,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 /**
  * <p> Page Object to represent the sample details page. </p>
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class SampleDetailsPage extends AbstractPage {
 	public static final String RELATIVE_URL = "samples/";

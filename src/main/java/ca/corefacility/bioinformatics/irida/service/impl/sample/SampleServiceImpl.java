@@ -40,8 +40,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 /**
  * Service class for managing {@link Sample}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Service
 public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements SampleService {
@@ -75,6 +73,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 *            the sample repository.
 	 * @param validator
 	 *            validator.
+	 * @param psjRepository
+	 *            the project sample join repository.
+	 * @param ssfRepository
+	 *            the sample sequence file join repository.
+	 * @param analysisRepository
+	 *            the analysis repository.
 	 */
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,

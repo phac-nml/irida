@@ -7,7 +7,6 @@ import ca.corefacility.bioinformatics.irida.util.TreeNode;
 /**
  * Service for reading taxonomy information
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public interface TaxonomyService {

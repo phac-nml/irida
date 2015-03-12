@@ -20,7 +20,6 @@ import org.hibernate.envers.Audited;
 
 /**
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Entity
 @Table(name="identifiable")

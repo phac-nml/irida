@@ -31,7 +31,6 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 /**
  * Edit Project Metadata Integration Test
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiJdbcDataSourceConfig.class,

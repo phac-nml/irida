@@ -7,7 +7,6 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 /**
  * Exception that gets thrown if a workflow is not found.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class IridaWorkflowNotFoundException extends IridaWorkflowLoadException {

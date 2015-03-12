@@ -16,7 +16,6 @@ import com.google.common.base.Strings;
 /**
  * Specification for searching {@link ProjectSampleJoin} properties
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectSampleFilterSpecification {
 	public static Specification<ProjectSampleJoin> searchProjectSamples(Project project, String name, String organism, Date minDate, Date maxDate) {

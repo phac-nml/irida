@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.model.remote.resource;
 
 /**
  * Object wrapping a resource read from an Irida API
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  * @param <Type> The type this resource will hold (extends {@link RemoteResource})
  */
 public class ResourceWrapper <Type extends RemoteResource> {
@@ -10,7 +9,7 @@ public class ResourceWrapper <Type extends RemoteResource> {
 
 	/**
 	 * Get the resource
-	 * @return
+	 * @return the {@link RemoteResource} wrapped by this object.
 	 */
 	public Type getResource() {
 		return resource;
@@ -18,7 +17,7 @@ public class ResourceWrapper <Type extends RemoteResource> {
 
 	/**
 	 * Set the resource
-	 * @param resource
+	 * @param resource the {@link RemoteResource} wrapped by this object.
 	 */
 	public void setResource(Type resource) {
 		this.resource = resource;

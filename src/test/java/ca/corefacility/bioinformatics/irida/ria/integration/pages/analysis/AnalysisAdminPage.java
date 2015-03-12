@@ -11,7 +11,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 /**
  * <p> Page Object to represent the Analysis Admin page. </p>
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class AnalysisAdminPage extends AbstractPage {
 	public static final String RELATIVE_URL = "analysis/admin";

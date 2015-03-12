@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 /**
  * Controller for displaying and interacting with {@link SequencingRun} objects
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Controller
@@ -72,13 +70,12 @@ public class SequencingRunController {
 	/**
 	 * Get the sequencing run display page
 	 * 
-	 * @param runId
-	 * @param model
-	 * @return
-	 * @throws IOException
+	 * @param runId the ID of the run to view.
+	 * @param model the model in the current request.
+	 * @return the name of the details view for sequencing run.
 	 */
 	@RequestMapping("/{runId}")
-	public String getDetailsPage(@PathVariable Long runId, Model model) throws IOException {
+	public String getDetailsPage(@PathVariable Long runId, Model model) {
 		model = getPageDetails(runId, model);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_DETAILS);
 
@@ -88,12 +85,12 @@ public class SequencingRunController {
 	/**
 	 * Get the sequencing run display page
 	 * 
-	 * @param runId
-	 * @param model
-	 * @return
+	 * @param runId the ID of the run to view.
+	 * @param model the model in the current request.
+	 * @return the name of the files view for sequencing run.
 	 */
 	@RequestMapping("/{runId}/sequenceFiles")
-	public String getFilesPage(@PathVariable Long runId, Model model) throws IOException {
+	public String getFilesPage(@PathVariable Long runId, Model model) {
 		model = getPageDetails(runId, model);
 		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_FILES);
 
@@ -102,6 +99,9 @@ public class SequencingRunController {
 
 	/**
 	 * Get a list of all the sequencing runs
+	 * 
+	 * @param locale
+	 *            the locale used by the browser for the current request.
 	 * 
 	 * @return A Collection of Maps contaning sequencing run params
 	 */
@@ -122,7 +122,7 @@ public class SequencingRunController {
 		return list;
 	}
 
-	private Model getPageDetails(Long runId, Model model) throws IOException {
+	private Model getPageDetails(Long runId, Model model) {
 		SequencingRun run = sequencingRunService.read(runId);
 
 		Set<SequenceFile> sequenceFilesForSequencingRun = sequenceFileService.getSequenceFilesForSequencingRun(run);

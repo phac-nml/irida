@@ -14,7 +14,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.User;
 
 /**
  * Class for defining methods used to search for different Galaxy users.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyUserSearch extends GalaxySearch<User, GalaxyAccountEmail> {

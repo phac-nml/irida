@@ -59,7 +59,6 @@ import com.google.common.base.Strings;
 /**
  * Controller for project related views
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Controller
 public class ProjectsController {
@@ -108,7 +107,11 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Request for the page to display a list of all projects available to the currently logged in user.
+	 * Request for the page to display a list of all projects available to the
+	 * currently logged in user.
+	 * 
+	 * @param model
+	 *            the model to add attributes to for the template.
 	 *
 	 * @return The name of the page.
 	 */
@@ -131,9 +134,11 @@ public class ProjectsController {
 	 * Request for a specific project details page.
 	 *
 	 * @param projectId
-	 * 		The id for the project to show details for.
+	 *            The id for the project to show details for.
 	 * @param model
-	 * 		Spring model to populate the html page.
+	 *            Spring model to populate the html page.
+	 * @param principal
+	 *            a reference to the logged in user.
 	 *
 	 * @return The name of the project details page.
 	 */
@@ -204,15 +209,16 @@ public class ProjectsController {
 	 * Returns the name of a page to add users to a *new* project.
 	 *
 	 * @param model
-	 * 		{@link Model}
+	 *            {@link Model}
+	 * @param principal
+	 *            a reference to the logged in user.
 	 * @param projectId
-	 * 		the id of the project to find the metadata for.
+	 *            the id of the project to find the metadata for.
 	 *
 	 * @return The name of the add users to new project page.
 	 */
 	@RequestMapping("/projects/{projectId}/metadata")
-	public String getProjectMetadataPage(final Model model, final Principal principal, @PathVariable long projectId)
-			throws IOException {
+	public String getProjectMetadataPage(final Model model, final Principal principal, @PathVariable long projectId) {
 		Project project = projectService.read(projectId);
 
 		model.addAttribute("project", project);
@@ -402,7 +408,7 @@ public class ProjectsController {
 	 * @param searchTerm
 	 * 		The term to find taxa for
 	 *
-	 * @return A List<Map<String,Object>> which will contain a taxonomic tree of matching terms
+	 * @return A {@code List<Map<String,Object>>} which will contain a taxonomic tree of matching terms
 	 */
 	@RequestMapping("/projects/ajax/taxonomy/search")
 	@ResponseBody

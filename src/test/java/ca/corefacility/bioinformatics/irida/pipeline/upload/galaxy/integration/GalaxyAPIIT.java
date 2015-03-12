@@ -93,7 +93,6 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 
 /**
  * Integration tests for {@link GalaxyUploaderAPI}.  Will use a running instance of Galaxy to test against.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)

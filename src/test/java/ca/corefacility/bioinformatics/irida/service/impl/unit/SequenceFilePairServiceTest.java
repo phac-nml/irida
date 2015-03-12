@@ -25,9 +25,6 @@ import ca.corefacility.bioinformatics.irida.service.impl.SequenceFilePairService
 /**
  * Test the behavior of {@link SequenceFilePairService}
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
- * @author Josh Adam<josh.adam@phac-aspc.gc.ca>
  */
 public class SequenceFilePairServiceTest {
 	private SampleSequenceFileJoinRepository ssfRepository;

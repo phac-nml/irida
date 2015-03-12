@@ -25,7 +25,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 /**
  * Class representing the Links sent back from an IRIDA REST API call
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @JsonDeserialize(using = RESTLinksDeserializer.class)

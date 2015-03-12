@@ -16,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 /**
  * Created by josh on 2014-07-15.
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @ControllerAdvice(basePackages = "ca.corefacility.bioinformatics.irida.ria.web")
 public class ExceptionHandlerController {

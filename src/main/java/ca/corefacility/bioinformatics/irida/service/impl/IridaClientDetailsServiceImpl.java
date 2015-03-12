@@ -23,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
  * Service for storing and retrieving {@link IridaClientDetails} object.
  * Implements {@link ClientDetailsService} for use with OAuth approvals.
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Service("clientDetails")

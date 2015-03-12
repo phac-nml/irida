@@ -29,7 +29,6 @@ import com.google.common.collect.Sets;
 /**
  * Class used to load up test workflows.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Configuration
@@ -51,6 +50,7 @@ public class IridaWorkflowsConfig {
 	 * 
 	 * @return The {@link Path} for all IRIDA workflow types.
 	 * @throws URISyntaxException
+	 *             if the path is not a valid uri.
 	 */
 	@Bean
 	public Path iridaWorkflowTypesPath() throws URISyntaxException {

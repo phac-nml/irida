@@ -9,7 +9,6 @@ import org.openqa.selenium.WebElement;
 /**
  * Class to get project event elements from a supported page
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class ProjectEventsUtilities {

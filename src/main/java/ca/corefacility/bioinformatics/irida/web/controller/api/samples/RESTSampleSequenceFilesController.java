@@ -52,7 +52,6 @@ import com.google.common.net.HttpHeaders;
  * Controller for managing relationships between {@link Sample} and
  * {@link SequenceFile}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
 public class RESTSampleSequenceFilesController {
@@ -111,7 +110,9 @@ public class RESTSampleSequenceFilesController {
 	/**
 	 * Get the {@link SequenceFile} entities associated with a specific
 	 * {@link Sample}.
-	 * 
+	 *
+	 * @param projectId
+	 *            the ID of the project.
 	 * @param sampleId
 	 *            the identifier for the {@link Sample}.
 	 * @return the {@link SequenceFile} entities associated with the
@@ -159,7 +160,13 @@ public class RESTSampleSequenceFilesController {
 	 *            the identifier for the {@link Sample}.
 	 * @param file
 	 *            the content of the {@link SequenceFile}.
+	 * @param fileResource
+	 *            the parameters for the file
+	 * @param response
+	 *            the servlet response.
 	 * @return a response indicating the success of the submission.
+	 * @throws IOException
+	 *             if we can't write the file to disk.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ModelMap addNewSequenceFileToSample(@PathVariable Long projectId, @PathVariable Long sampleId,
@@ -246,14 +253,24 @@ public class RESTSampleSequenceFilesController {
 	
 	/**
 	 * Add a pair of {@link SequenceFile}s to a {@link Sample}
-	 * @param projectId The {@link Project} id to add to
-	 * @param sampleId The {@link Sample} id to add to
-	 * @param file1 The first multipart file
-	 * @param fileResource1 The metadata for the first file
-	 * @param file2 The second multipart file
-	 * @param fileResource2 the metadata for the second file 
+	 * 
+	 * @param projectId
+	 *            The {@link Project} id to add to
+	 * @param sampleId
+	 *            The {@link Sample} id to add to
+	 * @param file1
+	 *            The first multipart file
+	 * @param fileResource1
+	 *            The metadata for the first file
+	 * @param file2
+	 *            The second multipart file
+	 * @param fileResource2
+	 *            the metadata for the second file
+	 * @param response
+	 *            a reference to the servlet response.
 	 * @return Response containing the locations for the created files
 	 * @throws IOException
+	 *             if we can't write the files to disk
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFilePairs", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ModelMap addNewSequenceFilePairToSample(@PathVariable Long projectId,
@@ -359,7 +376,9 @@ public class RESTSampleSequenceFilesController {
 	 * @param requestBody
 	 *            the JSON/XML encoded request that contains the
 	 *            {@link SequenceFile} identifier.
-	 * @return
+	 * @param response
+	 *            the servlet response.
+	 * @return a map with references to the created relationship.
 	 */
 	@RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles", method = RequestMethod.POST, consumes = {
 			MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
@@ -402,14 +421,11 @@ public class RESTSampleSequenceFilesController {
 
 	/**
 	 * Remove a {@link SequenceFile} from a {@link Sample}. The
-	 * {@link SequenceFile} will be moved to the
-	 * {@link ca.corefacility.bioinformatics.irida.model.Project} that is
-	 * related to this {@link Sample}.
+	 * {@link SequenceFile} will be moved to the {@link Project} that is related
+	 * to this {@link Sample}.
 	 * 
 	 * @param projectId
-	 *            the destination
-	 *            {@link ca.corefacility.bioinformatics.irida.model.Project}
-	 *            identifier.
+	 *            the destination {@link Project} identifier.
 	 * @param sampleId
 	 *            the source {@link Sample} identifier.
 	 * @param sequenceFileId
@@ -500,13 +516,20 @@ public class RESTSampleSequenceFilesController {
 	}
 	
 	/**
-     * Update a {@link SequenceFile} details.
-     *
-     * @param projectId     the identifier of the {@link Project} that the {@link Sample} belongs to.
-     * @param sampleId      the identifier of the {@link Sample}.
-     * @param updatedFields the updated fields of the {@link Sample}.
-     * @return a response including links to the {@link Project} and {@link Sample}.
-     */
+	 * Update a {@link SequenceFile} details.
+	 *
+	 * @param projectId
+	 *            the identifier of the {@link Project} that the {@link Sample}
+	 *            belongs to.
+	 * @param sampleId
+	 *            the identifier of the {@link Sample}.
+	 * @param sequenceFileId
+	 *            the identifier of the {@link SequenceFile} to be updated.
+	 * @param updatedFields
+	 *            the updated fields of the {@link Sample}.
+	 * @return a response including links to the {@link Project} and
+	 *         {@link Sample}.
+	 */
     @RequestMapping(value = "/api/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequenceFileId}", method = RequestMethod.PATCH,
             consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ModelMap updateSequenceFile(@PathVariable Long projectId, @PathVariable Long sampleId,

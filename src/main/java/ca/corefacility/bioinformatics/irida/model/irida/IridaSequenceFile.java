@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 /**
  * Describes fields that must be made available for a Sequence File in IRIDA
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public interface IridaSequenceFile {
@@ -16,14 +15,14 @@ public interface IridaSequenceFile {
 	/**
 	 * Get the local numerical identifier
 	 * 
-	 * @return
+	 * @return the numerical identifier for the sequence file.
 	 */
 	public Long getId();
 
 	/**
 	 * Get the location on the file system where the sequence file is stored
 	 * 
-	 * @return
+	 * @return the physical location of the file.
 	 */
 	@NotNull(message = "{sequencefile.file.notnull}")
 	public Path getFile();
@@ -31,7 +30,7 @@ public interface IridaSequenceFile {
 	/**
 	 * Get a map of optional key/value pair properties
 	 * 
-	 * @return
+	 * @return any additional properties provided by the sequencer.
 	 */
 	public Map<String, String> getOptionalProperties();
 

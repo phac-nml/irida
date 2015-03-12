@@ -27,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 /**
  * Logical organization for user accounts.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Entity

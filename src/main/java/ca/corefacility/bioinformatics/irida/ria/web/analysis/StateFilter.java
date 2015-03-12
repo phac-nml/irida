@@ -6,7 +6,6 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
  * Class for conversion from JSON.  This class is used to get the
  * state filter value.
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class StateFilter {
 

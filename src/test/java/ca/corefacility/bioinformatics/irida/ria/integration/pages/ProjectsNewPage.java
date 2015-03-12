@@ -14,7 +14,6 @@ import com.google.common.base.Strings;
  * Page Object to represent the projects-new page used to create a new project.
  * </p>
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectsNewPage extends AbstractPage {
 	public static final String PROJECT_NEW_URL = BASE_URL + "projects/new";

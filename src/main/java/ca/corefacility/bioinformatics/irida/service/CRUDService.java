@@ -25,7 +25,6 @@ import ca.corefacility.bioinformatics.irida.model.Timestamped;
  * relating to creating, reading, updating and deleting objects from
  * persistence.
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * @param <IdentifierType>
  *            Identifier for the object stored in this service
  * @param <Type>
