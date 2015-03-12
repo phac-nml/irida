@@ -54,23 +54,6 @@
           </div>
         </div>
       </div>
-
-	    <div class="sidebar" th:if="${outputFiles}">
-		    <div class="sidebar__heading">
-			    <h2>
-			    <span th:text="#{analysis.details.files}">_FILES_</span>
-			    <a class="btn btn-default btn-xs pull-right" th:href="@{/analysis/ajax/download/{id}(id=${analysisSubmission.getId()})}" href="#" data-toggle="tooltip" data-placement="bottom" th:title="#{form.download-files}">
-				    <span class="fa fa-download fa-fw"></span>
-				    <span class="sr-only" th:text="#{form.download-files}">Download Files</span>
-			    </a>
-			    </h2>
-		    </div>
-		    <div class="sidebar__body">
-			    <div class="sidebar__item" th:each="file : ${outputFiles}">
-				    <div th:text="${file.file.fileName}"></div>
-			    </div>
-		    </div>
-	    </div>
     </aside>
   </div>
   <th:block layout:fragment="page-scripts">

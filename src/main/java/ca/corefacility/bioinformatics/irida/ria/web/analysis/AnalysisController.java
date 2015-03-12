@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -43,7 +44,6 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -218,7 +218,7 @@ public class AnalysisController {
 			map.put("filename", analysisOutputFile.getLabel());
 
 			// TOOL INFORMATION
-			List<Map<String, Object>> tools = generateProvenanceForTool(analysisOutputFile.getCreatedByTool());
+			ToolInfo tools = new ToolInfo(analysisOutputFile.getCreatedByTool());
 			map.put("tools", tools);
 
 			provenance.add(map);
@@ -226,28 +226,50 @@ public class AnalysisController {
 		return provenance;
 	}
 
-	private List<Map<String, Object>> generateProvenanceForTool(ToolExecution tool) {
-		List<Map<String, Object>> provenance = new ArrayList<>();
-		Set<ToolExecution> previousSteps = tool.getPreviousSteps();
-		if (previousSteps == null || previousSteps.size() == 0) {
-			provenance.add(generateToolInfo(tool));
-		}
-		else {
-			for (ToolExecution step : previousSteps) {
-				provenance.addAll(generateProvenanceForTool(step));
-			}
-		}
-		return provenance;
-	}
+	private class ToolInfo {
+		private Set<ToolInfo> previousSteps = new HashSet<>();
+		private String id;
+		private String name;
+		private String label;
+		private String version;
+		private Map<String, String> parameters;
 
-	private Map<String, Object> generateToolInfo(ToolExecution tool) {
-		Map<String, Object> map = new HashMap<>();
-		map.put("id", tool.getId().toString());
-		map.put("name", tool.getToolName());
-		map.put("label", tool.getLabel());
-		map.put("version", tool.getToolVersion());
-		map.put("parameters", tool.getExecutionTimeParameters());
-		return map;
+		public Set<ToolInfo> getPreviousSteps() {
+			return previousSteps;
+		}
+
+		public String getId() {
+			return id;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public String getLabel() {
+			return label;
+		}
+
+		public String getVersion() {
+			return version;
+		}
+
+		public Map<String, String> getParameters() {
+			return parameters;
+		}
+
+		public ToolInfo(ToolExecution toolExecution) {
+			this.id = toolExecution.getId().toString();
+			this.name = toolExecution.getToolName();
+			this.label = toolExecution.getLabel();
+			this.version = toolExecution.getToolVersion();
+			this.parameters = toolExecution.getExecutionTimeParameters();
+			setPreviousSteps(toolExecution.getPreviousSteps());
+		}
+
+		private void setPreviousSteps(Set<ToolExecution> steps) {
+			previousSteps.addAll(steps.stream().map(ToolInfo::new).collect(Collectors.toList()));
+		}
 	}
 
 	// ************************************************************************************************
