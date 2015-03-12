@@ -112,9 +112,6 @@ public class AnalysisFastQC extends Analysis {
 	/**
 	 * Builder for creating instances of {@link AnalysisFastQC}. This builder
 	 * can optionally check if all required fields are set.
-	 * 
-	 * @author Franklin Bristow franklin.bristow@phac-aspc.gc.ca
-	 *
 	 */
 	public static class AnalysisFastQCBuilder {
 		private String fileType;
