@@ -17,8 +17,9 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 @Table(name = "analysis_assemblyannotation")
 public class AnalysisAssemblyAnnotation extends Analysis {
 
+	@SuppressWarnings("unused")
 	private AnalysisAssemblyAnnotation() {
-		super(null, null);
+		super();
 	}
 
 	/**
@@ -32,8 +33,8 @@ public class AnalysisAssemblyAnnotation extends Analysis {
 	 * @param analysisOutputFilesMap
 	 *            A {@link Map} of output files for this analysis.
 	 */
-	public AnalysisAssemblyAnnotation(Set<SequenceFile> inputFiles, String executionManagerAnalysisId,
-			Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
+	public AnalysisAssemblyAnnotation(final Set<SequenceFile> inputFiles, final String executionManagerAnalysisId,
+			final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
 		super(inputFiles, executionManagerAnalysisId, analysisOutputFilesMap);
 	}
 	

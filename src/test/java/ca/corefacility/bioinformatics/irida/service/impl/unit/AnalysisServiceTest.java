@@ -47,10 +47,10 @@ public class AnalysisServiceTest {
 	@Test
 	public void testCreateAnalysisWithOneOutputFile() throws IOException {
 		SequenceFile sf = new SequenceFile();
-		AnalysisFastQC analysis = new AnalysisFastQC(Sets.newHashSet(sf), "something");
 		Path outputFile = Files.createTempFile(null, null);
 		AnalysisOutputFile report = new AnalysisOutputFile(outputFile, "");
-		analysis.setFastQCReport(report);
+		AnalysisFastQC analysis = AnalysisFastQC.sloppyBuilder().inputFiles(Sets.newHashSet(sf))
+				.description("something").fastQCReport(report).build();
 
 		analysisService.create(analysis);
 

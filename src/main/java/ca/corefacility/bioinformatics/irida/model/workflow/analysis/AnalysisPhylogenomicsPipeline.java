@@ -6,8 +6,6 @@ import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.hibernate.envers.Audited;
-
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
@@ -17,18 +15,18 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
  */
 @Entity
 @Table(name = "analysis_phylogenomicspipeline")
-@Audited
 public class AnalysisPhylogenomicsPipeline extends Analysis {
 	
 	/**
 	 * required for hibernate, marked as private so nobody else uses it.
 	 */
+	@SuppressWarnings("unused")
 	private AnalysisPhylogenomicsPipeline() {
-		super(null, null);
+		super();
 	}
 
-	public AnalysisPhylogenomicsPipeline(Set<SequenceFile> inputFiles, String executionManagerAnalysisId,
-			Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
+	public AnalysisPhylogenomicsPipeline(final Set<SequenceFile> inputFiles, final String executionManagerAnalysisId,
+			final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
 		super(inputFiles, executionManagerAnalysisId, analysisOutputFilesMap);
 	}
 

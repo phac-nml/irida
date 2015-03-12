@@ -43,6 +43,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -144,6 +145,7 @@ public class AnalysisSubmission implements IridaThing {
 	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
 			CascadeType.REFRESH })
 	@JoinColumn(name="analysis_id")
+	@NotAudited
 	private Analysis analysis;
 	
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
@@ -347,11 +349,23 @@ public class AnalysisSubmission implements IridaThing {
 	}
 
 	/**
+	 * Set the {@link Analysis} generated as a result of this submission. Note:
+	 * {@link AnalysisSubmission#setAnalysis(Analysis)} can only be set
+	 * **once**; if the current {@link Analysis} is non-null, then this method
+	 * will throw a {@link AnalysisAlreadySetException}.
+	 * 
 	 * @param analysis
 	 *            the analysis to set
+	 * @throws AnalysisAlreadySetException
+	 *             if the {@link Analysis} reference has already been created
+	 *             for this submission.
 	 */
-	public void setAnalysis(Analysis analysis) {
-		this.analysis = analysis;
+	public void setAnalysis(Analysis analysis) throws AnalysisAlreadySetException {
+		if (this.analysis == null) {
+			this.analysis = analysis;
+		} else {
+			throw new AnalysisAlreadySetException("The analysis has already been set for this submission.");
+		}
 	}
 
 	@Override
