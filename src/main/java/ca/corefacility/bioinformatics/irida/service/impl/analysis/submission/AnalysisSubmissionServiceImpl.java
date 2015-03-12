@@ -32,6 +32,7 @@ import com.google.common.collect.Sets;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
@@ -42,6 +43,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
@@ -50,6 +52,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFilePairService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
+import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 
 /**
@@ -66,6 +69,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	private final ReferenceFileRepository referenceFileRepository;
 	private final SequenceFileService sequenceFileService;
 	private final SequenceFilePairService sequenceFilePairService;
+	private final AnalysisExecutionService analysisExecutionService;
 
 	/**
 	 * Builds a new AnalysisSubmissionServiceImpl with the given information.
@@ -74,26 +78,29 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 *            A repository for accessing analysis submissions.
 	 * @param userRepository
 	 *            A repository for accessing user information.
-	 * @param validator
-	 *            A validator.
 	 * @param referenceFileRepository
 	 *            the reference file repository
-	 * @param sequenceFilePairService
-	 *            the sequence file pair service
 	 * @param sequenceFileService
 	 *            the sequence file service.
+	 * @param sequenceFilePairService
+	 *            the sequence file pair service
+	 * @param analysisExecutionService
+	 *            The {@link AnalysisExecutionService}.
+	 * @param validator
+	 *            A validator.
 	 */
 	@Autowired
 	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
 			UserRepository userRepository, final ReferenceFileRepository referenceFileRepository,
 			final SequenceFileService sequenceFileService, final SequenceFilePairService sequenceFilePairService,
-			Validator validator) {
+			final AnalysisExecutionService analysisExecutionServiceGalaxy, Validator validator) {
 		super(analysisSubmissionRepository, validator, AnalysisSubmission.class);
 		this.userRepository = userRepository;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.referenceFileRepository = referenceFileRepository;
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
+		this.analysisExecutionService = analysisExecutionServiceGalaxy;
 	}
 
 	/**
@@ -388,8 +395,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * {@inheritDoc}
 	 */
 	@Override
-	public float getPercentCompleteForAnalysisSubmission(Long id) throws NoPercentageCompleteException,
-			EntityNotFoundException {
+	public float getPercentCompleteForAnalysisSubmission(Long id) throws EntityNotFoundException,
+			ExecutionManagerException, NoPercentageCompleteException {
 		AnalysisSubmission analysisSubmission = read(id);
 		AnalysisState analysisState = analysisSubmission.getAnalysisState();
 
@@ -403,7 +410,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		case SUBMITTING:
 			return 2.0f;
 		case RUNNING:
-			return 10.0f;
+			GalaxyWorkflowStatus workflowStatus = analysisExecutionService.getWorkflowStatus(analysisSubmission);
+			return 10.0f + (90.0f - 10.0f) * workflowStatus.getProportionComplete();
 		case FINISHED_RUNNING:
 			return 90.0f;
 		case COMPLETING:
