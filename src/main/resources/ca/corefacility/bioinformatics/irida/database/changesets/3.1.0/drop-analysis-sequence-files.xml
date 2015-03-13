@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="drop-analysis-sequence-files" author="fbristow">
+
+		<renameColumn tableName="sequence_file" columnDataType="datetime"
+			oldColumnName="createdDate" newColumnName="created_date" />
+		<renameColumn tableName="sequence_file" columnDataType="datetime"
+			oldColumnName="modifiedDate" newColumnName="modified_date" />
+		<renameColumn tableName="sequence_file" columnDataType="varchar(255)"
+			oldColumnName="filePath" newColumnName="file_path" />
+		<renameColumn tableName="sequence_file" columnDataType="bigint(20)"
+			oldColumnName="fileRevisionNumber" newColumnName="file_revision_number" />
+		<dropForeignKeyConstraint baseTableName="sequence_file"
+			constraintName="FK_SEQUENCE_FILE_SEQUENCING_RUN" />
+		<renameColumn tableName="sequence_file" columnDataType="bigint(20)"
+			oldColumnName="sequencingRun_id" newColumnName="sequencing_run_id" />
+		<addForeignKeyConstraint baseTableName="sequence_file"
+			baseColumnNames="sequencing_run_id" constraintName="FK_SEQUENCE_FILE_SEQUENCING_RUN"
+			referencedTableName="sequencing_run" referencedColumnNames="id" />
+
+		<addColumn tableName="sequence_file">
+			<column name="fastqc_analysis_id" type="bigint(20)" />
+		</addColumn>
+
+		<sql>
+			update sequence_file sf set fastqc_analysis_id = (select
+			analysis_id from analysis_sequence_file asf where asf.inputFiles_id =
+			sf.id);
+		</sql>
+
+		<dropTable tableName="analysis_sequence_file" />
+		<dropTable tableName="analysis_sequence_file_AUD" />
+	</changeSet>
+</databaseChangeLog>

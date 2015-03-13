@@ -13,9 +13,7 @@
 		<dropTable tableName="analysis_output_file_AUD" />
 		<dropTable tableName="analysis_output_file_map_AUD" />
 		<dropTable tableName="analysis_properties_AUD" />
-		<dropTable tableName="analysis_sequence_file_AUD" />
 		<dropTable tableName="overrepresented_sequence_AUD" />
-		<dropTable tableName="analysis_sequence_file" />
 		
 		<dropColumn tableName="analysis" columnName="modifiedDate" />
 		<dropColumn tableName="overrepresented_sequence"
