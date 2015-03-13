@@ -207,15 +207,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		List<Join<Sample, SequenceFile>> sequenceFiles = ssfRepository.getFilesForSample(sample);
 		for (Join<Sample, SequenceFile> sequenceFileJoin : sequenceFiles) {
 			SequenceFile sequenceFile = sequenceFileJoin.getObject();
-
-			try {
-				AnalysisFastQC sequenceFileFastQC = sequenceFile.getFastQCAnalysis();
-
-				totalBases += sequenceFileFastQC.getTotalBases();
-			} catch (EntityNotFoundException e) {
+			AnalysisFastQC sequenceFileFastQC = sequenceFile.getFastQCAnalysis();
+			if (sequenceFileFastQC == null || sequenceFileFastQC.getTotalBases() == null) {
 				throw new SequenceFileAnalysisException("Missing FastQC analysis for SequenceFile ["
-						+ sequenceFile.getId() + "]", e);
+						+ sequenceFile.getId() + "]");
 			}
+			totalBases += sequenceFileFastQC.getTotalBases();
 		}
 
 		return totalBases;
