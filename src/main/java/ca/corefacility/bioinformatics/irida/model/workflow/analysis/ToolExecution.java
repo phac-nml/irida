@@ -117,7 +117,7 @@ public class ToolExecution implements IridaThing {
 		} else {
 			this.previousSteps = previousSteps;
 		}
-		this.executionTimeParameters = executionTimeParameters == null ? Collections.emptyMap() : executionTimeParameters;
+		this.executionTimeParameters = addExecutionTimeParameters(executionTimeParameters);
 		this.createdDate = new Date();
 		this.commandLine = null;
 	}
@@ -178,6 +178,15 @@ public class ToolExecution implements IridaThing {
 		return Collections.unmodifiableMap(unescapedKeys);
 	}
 
+	private final Map<String, String> addExecutionTimeParameters(final Map<String, String> parameters) {
+		final Map<String, String> escapedParameters = new HashMap<>(parameters.size());
+		for (final Entry<String, String> param : parameters.entrySet()) {
+			final String escapedKey = param.getKey().replaceAll("([A-Z])", "\\\\$1");
+			escapedParameters.put(escapedKey, param.getValue());
+		}
+		return escapedParameters;
+	}
+
 	@Override
 	public Date getCreatedDate() {
 		return this.createdDate;
@@ -190,7 +199,7 @@ public class ToolExecution implements IridaThing {
 
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
-		throw new UnsupportedOperationException("ToolExecution is immutable.");
+		throw new UnsupportedOperationException("ToolExecution cannot be modified.");
 	}
 
 	@Override
