@@ -36,6 +36,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -567,6 +568,29 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testGetPercentageCompleteGrantedAdminUser() throws EntityNotFoundException, ExecutionManagerException {
 		float percentageComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(10L);
 		assertEquals("submission was not properly returned", 0.0f, percentageComplete, DELTA);
+	}
+	
+	/**
+	 * Tests getting the percentage complete for a submission as a regular user with an alternative state.
+	 * @throws EntityNotFoundException 
+	 * @throws ExecutionManagerException 
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testGetPercentageCompleteAlternativeState() throws EntityNotFoundException, ExecutionManagerException {
+		float percentageComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(3L);
+		assertEquals("submission was not properly returned", 5.0f, percentageComplete, DELTA);
+	}
+	
+	/**
+	 * Tests getting the percentage complete for a submission as a regular user and failing due to an error.
+	 * @throws EntityNotFoundException 
+	 * @throws ExecutionManagerException 
+	 */
+	@Test(expected = NoPercentageCompleteException.class)
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testGetPercentageCompleteFailError() throws EntityNotFoundException, ExecutionManagerException {
+		analysisSubmissionService.getPercentCompleteForAnalysisSubmission(7L);
 	}
 
 	/**
