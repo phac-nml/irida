@@ -35,7 +35,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC.AnalysisFastQCBuilder;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
 /**
@@ -51,13 +50,10 @@ public class FastqcFileProcessor implements FileProcessor {
 	
 	private static final String EXECUTION_MANAGER_ANALYSIS_ID = "internal-fastqc";
 
-	private final AnalysisRepository analysisRepository;
 	private final SequenceFileRepository sequenceFileRepository;
 	private final MessageSource messageSource;
 
-	public FastqcFileProcessor(AnalysisRepository analysisRepository, MessageSource messageSource,
-			SequenceFileRepository sequenceFileRepository) {
-		this.analysisRepository = analysisRepository;
+	public FastqcFileProcessor(MessageSource messageSource, SequenceFileRepository sequenceFileRepository) {
 		this.messageSource = messageSource;
 		this.sequenceFileRepository = sequenceFileRepository;
 	}
@@ -101,8 +97,10 @@ public class FastqcFileProcessor implements FileProcessor {
 
 			logger.trace("Saving FastQC analysis.");
 			analysis.overrepresentedSequences(overrepresentedSequences);
+			
+			sequenceFile.setFastQCAnalysis(analysis.build());
 
-			analysisRepository.save(analysis.build());
+			sequenceFileRepository.save(sequenceFile);
 		} catch (Exception e) {
 			logger.error("FastQC failed to process the sequence file. Stack trace follows.", e);
 			throw new FileProcessorException("FastQC failed to parse the sequence file.", e);

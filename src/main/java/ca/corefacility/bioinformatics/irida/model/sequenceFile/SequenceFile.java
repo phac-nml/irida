@@ -87,7 +87,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
 	private List<SampleSequenceFileJoin> samples;
 	
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private AnalysisFastQC fastqcAnalysis;
 
 	public SequenceFile() {
