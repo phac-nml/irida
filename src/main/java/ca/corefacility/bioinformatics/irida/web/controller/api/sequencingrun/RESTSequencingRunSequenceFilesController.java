@@ -75,10 +75,9 @@ public class RESTSequencingRunSequenceFilesController {
     	{
     		throw new IllegalArgumentException("The sequencing run ID must correspond to a a valid MiSeq sequence");
     	}
-    	SequencingRunResource resource = new MiseqRunResource(miseqRun);
     	Link seqFileLocation = linkTo(RESTSequencingRunController.class).slash(sequencingrunId).slash("sequenceFiles").slash(seqId).withSelfRel();
-    	resource.add(seqFileLocation);
-    	modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, resource);
+    	miseqRun.add(seqFileLocation);
+    	modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, miseqRun);
     	response.addHeader(HttpHeaders.LOCATION, seqFileLocation.getHref());
     	response.setStatus(HttpStatus.CREATED.value());
 
