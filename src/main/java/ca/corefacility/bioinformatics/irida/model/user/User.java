@@ -38,6 +38,8 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * A user object.
  * 
@@ -250,6 +252,7 @@ public class User extends IridaResourceSupport implements IridaThing, Comparable
 		this.email = email;
 	}
 
+	@JsonIgnore
 	@Override
 	public String getPassword() {
 		return password;
@@ -288,6 +291,7 @@ public class User extends IridaResourceSupport implements IridaThing, Comparable
 		return firstName + " " + lastName;
 	}
 
+	@JsonIgnore
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		ArrayList<Role> roles = new ArrayList<>();
@@ -295,16 +299,19 @@ public class User extends IridaResourceSupport implements IridaThing, Comparable
 		return roles;
 	}
 
+	@JsonIgnore
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;
 	}
 
+	@JsonIgnore
 	@Override
 	public boolean isAccountNonLocked() {
 		return true;
 	}
 
+	@JsonIgnore
 	@Override
 	public boolean isCredentialsNonExpired() {
 		return credentialsNonExpired;

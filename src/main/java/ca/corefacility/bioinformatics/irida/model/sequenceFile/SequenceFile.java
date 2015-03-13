@@ -40,6 +40,10 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * A file that may be stored somewhere on the file system and belongs to a
  * particular {@link Sample}.
@@ -159,6 +163,7 @@ public class SequenceFile extends IridaResourceSupport implements IridaThing, Co
 		this.modifiedDate = modifiedDate;
 	}
 
+	@JsonIgnore
 	public Long getFileRevisionNumber() {
 		return fileRevisionNumber;
 	}
@@ -179,6 +184,7 @@ public class SequenceFile extends IridaResourceSupport implements IridaThing, Co
 	 * @param value
 	 *            The value of the property to add
 	 */
+	@JsonAnySetter
 	public void addOptionalProperty(String key, String value) {
 		optionalProperties.put(key, value);
 	}
@@ -188,6 +194,7 @@ public class SequenceFile extends IridaResourceSupport implements IridaThing, Co
 	 * 
 	 * @return A Map<String,String> of all the optional propertie
 	 */
+	@JsonAnyGetter
 	public Map<String, String> getOptionalProperties() {
 		return optionalProperties;
 	}
@@ -218,4 +225,8 @@ public class SequenceFile extends IridaResourceSupport implements IridaThing, Co
 	public void incrementFileRevisionNumber() {
 		this.fileRevisionNumber++;
 	}
+	
+    public String getFileName() {
+            return getFile().getFileName().toString();
+    }
 }

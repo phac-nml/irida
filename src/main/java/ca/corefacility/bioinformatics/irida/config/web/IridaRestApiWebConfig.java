@@ -37,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.web.spring.view.FastaView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.FastqView;
 import ca.corefacility.bioinformatics.irida.web.spring.view.GenbankView;
 
+import com.fasterxml.jackson.datatype.jdk7.Jdk7Module;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -87,6 +88,10 @@ public class IridaRestApiWebConfig extends WebMvcConfigurerAdapter {
 		List<View> views = new ArrayList<>();
 		MappingJackson2JsonView jsonView = new MappingJackson2JsonView();
 		jsonView.setPrettyPrint(true);
+		
+		// add support for serializing Path data
+		jsonView.getObjectMapper().registerModule(new Jdk7Module());
+		
 		views.add(jsonView);
 		Jaxb2Marshaller jaxb2marshaller = new Jaxb2Marshaller();
 		jaxb2marshaller
