@@ -72,7 +72,7 @@ public class RESTSampleSequenceFilesController {
 	 * The key used in the request to add an existing {@link SequenceFile} to a
 	 * {@link Sample}.
 	 */
-	public static final String SEQUENCE_FILE_ID_KEY = "sequenceFileId";
+	public static final String SEQUENCE_FILE_ID_KEY = "sequenceFileId";	
 	/**
 	 * Reference to the {@link SequenceFileService}.
 	 */
@@ -126,16 +126,14 @@ public class RESTSampleSequenceFilesController {
 		Sample sample = sampleService.read(sampleId);
 		List<Join<Sample, SequenceFile>> relationships = sequenceFileService.getSequenceFilesForSample(sample);
 
-		ResourceCollection<SequenceFileResource> resources = new ResourceCollection<>(relationships.size());
+		ResourceCollection<SequenceFile> resources = new ResourceCollection<>(relationships.size());
 		for (Join<Sample, SequenceFile> r : relationships) {
 			SequenceFile sf = r.getObject();
 
-			SequenceFileResource sfr = new SequenceFileResource();
-			sfr.setResource(sf);
-			sfr.add(linkTo(
+			sf.add(linkTo(
 					methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
 							sf.getId())).withSelfRel());
-			resources.add(sfr);
+			resources.add(sf);
 		}
 
 		// add a link to this collection
@@ -190,7 +188,7 @@ public class RESTSampleSequenceFilesController {
 		if (fileResource != null) {
 			sf = fileResource.getResource();
 
-			Long miseqRunId = fileResource.getMiseqRunId();
+			Long miseqRunId = (Long) fileResource.getMiseqRunId();
 			if (miseqRunId != null) {
 				miseqRun = miseqRunService.read(miseqRunId);
 				logger.trace("Read miseq run " + miseqRunId);
@@ -218,22 +216,21 @@ public class RESTSampleSequenceFilesController {
 		String location = linkTo(
 				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
 						sequenceFileId)).withSelfRel().getHref();
-		SequenceFileResource sfr = new SequenceFileResource();
 		
 		// Changed, because sfr.setResource(sf) 
 		// and sfr.setResource(sampleSequenceFileRelationship.getObject())
 		// both will not pass a GET-POST comparison integration test.
-		sfr.setResource(sequenceFileService.read(sequenceFileId));
+		SequenceFile sequenceFile = sequenceFileService.read(sequenceFileId);
 		
 		// add links to the resource
-		sfr.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
+		sequenceFile.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
 				.withRel(REL_SAMPLE_SEQUENCE_FILES));
-		sfr.add(linkTo(
+		sequenceFile.add(linkTo(
 				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
 						sequenceFileId)).withSelfRel());
-		sfr.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(
+		sequenceFile.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(
 				REL_SAMPLE));
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sfr);
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sequenceFile);
 		// add a location header.
 		response.addHeader(HttpHeaders.LOCATION, location);
 		// set the response status.
@@ -466,16 +463,14 @@ public class RESTSampleSequenceFilesController {
 		// and prepare for serialization.
 		Join<Sample, SequenceFile> sequenceFileForSample = sequenceFileService.getSequenceFileForSample(sample, sequenceFileId);
 		SequenceFile sf = sequenceFileForSample.getObject();
-		SequenceFileResource sfr = new SequenceFileResource();
-		sfr.setResource(sf);
 
 		// add links to the resource
-		sfr.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
+		sf.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sampleId))
 				.withRel(REL_SAMPLE_SEQUENCE_FILES));
-		sfr.add(linkTo(
+		sf.add(linkTo(
 				methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
 						sequenceFileId)).withSelfRel());
-		sfr.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(
+		sf.add(linkTo(methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleId)).withRel(
 				REL_SAMPLE));
 		
 		/**
@@ -484,7 +479,7 @@ public class RESTSampleSequenceFilesController {
 		try{
 			logger.trace("Getting paired file for " + sequenceFileId);
 			SequenceFile pairedFileForSequenceFile = sequenceFilePairService.getPairedFileForSequenceFile(sf);
-			sfr.add(linkTo(
+			sf.add(linkTo(
 					methodOn(RESTSampleSequenceFilesController.class).getSequenceFileForSample(projectId, sampleId,
 							pairedFileForSequenceFile.getId())).withRel(REL_PAIR));
 		}
@@ -493,7 +488,7 @@ public class RESTSampleSequenceFilesController {
 		}
 		
 		// add the resource to the response
-		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sfr);
+		modelMap.addAttribute(RESTGenericController.RESOURCE_NAME, sf);
 
 		return modelMap;
 	}
