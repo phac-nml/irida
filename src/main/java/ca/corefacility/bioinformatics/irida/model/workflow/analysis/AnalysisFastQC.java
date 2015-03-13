@@ -16,7 +16,6 @@ import javax.validation.constraints.NotNull;
 import org.springframework.util.ReflectionUtils;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -84,8 +83,8 @@ public class AnalysisFastQC extends Analysis {
 	}
 
 	public AnalysisFastQC(final AnalysisFastQCBuilder builder) {
-		super(builder.inputFiles, builder.executionManagerAnalysisId, builder.analysisOutputFilesMap,
-				builder.description, builder.additionalProperties);
+		super(builder.executionManagerAnalysisId, builder.analysisOutputFilesMap, builder.description,
+				builder.additionalProperties);
 		this.fileType = builder.fileType;
 		this.encoding = builder.encoding;
 		this.totalSequences = builder.totalSequences;
@@ -130,7 +129,6 @@ public class AnalysisFastQC extends Analysis {
 		private String description;
 		private String executionManagerAnalysisId;
 		private Map<String, String> additionalProperties;
-		private Set<SequenceFile> inputFiles;
 		private Map<String, AnalysisOutputFile> analysisOutputFilesMap;
 
 		private final boolean enforceRequiredFieldCheck;
@@ -159,11 +157,6 @@ public class AnalysisFastQC extends Analysis {
 
 		public AnalysisFastQCBuilder analysisOutputFilesMap(final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
 			this.analysisOutputFilesMap = analysisOutputFilesMap;
-			return this;
-		}
-
-		public AnalysisFastQCBuilder inputFiles(final Set<SequenceFile> inputFiles) {
-			this.inputFiles = inputFiles;
 			return this;
 		}
 

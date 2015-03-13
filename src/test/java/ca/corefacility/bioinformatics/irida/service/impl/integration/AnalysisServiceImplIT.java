@@ -44,7 +44,6 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiServicesConfig.class,
@@ -86,8 +85,8 @@ public class AnalysisServiceImplIT {
 		AnalysisOutputFile matrix = new AnalysisOutputFile(matrixPath, "internal-galaxy-matrix-identifier", toolExecutionMatrix);
 		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
 				.put("tree", tree).put("matrix", matrix).put("table", table).build();
-		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(),
-				EXECUTION_MANAGER_ID, analysisOutputFiles);
+		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(EXECUTION_MANAGER_ID,
+				analysisOutputFiles);
 
 		// make sure that we're not falsely putting the files into the correct
 		// directory in the first place.
@@ -132,8 +131,8 @@ public class AnalysisServiceImplIT {
 		AnalysisOutputFile matrix = new AnalysisOutputFile(matrixPath, "internal-galaxy-matrix-identifier", toolExecutionMatrix);
 		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
 				.put("tree", tree).put("matrix", matrix).put("table", table).build();
-		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(sf),
-				EXECUTION_MANAGER_ID, analysisOutputFiles);
+		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(EXECUTION_MANAGER_ID,
+				analysisOutputFiles);
 
 		Analysis created = analysisService.create(pipeline);
 

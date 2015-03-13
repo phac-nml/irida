@@ -524,9 +524,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("id should be set properly for analysis", analysisId,
 				analysisResultsPhylogenomics.getExecutionManagerAnalysisId());
 
-		assertEquals("inputFiles should be the same for submission and results", analysisExecuted.getSingleInputFiles(),
-				analysisResultsPhylogenomics.getInputSequenceFiles());
-
 		assertEquals(3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
 		AnalysisOutputFile phylogeneticTree = analysisResultsPhylogenomics.getPhylogeneticTree();
 		AnalysisOutputFile snpMatrix = analysisResultsPhylogenomics.getSnpMatrix();
@@ -560,7 +557,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 				.getPhylogeneticTree().getFile());
 		assertEquals(analysisResultsPhylogenomics.getSnpMatrix().getFile(), savedPhylogenomics.getSnpMatrix().getFile());
 		assertEquals(analysisResultsPhylogenomics.getSnpTable().getFile(), savedPhylogenomics.getSnpTable().getFile());
-		assertEquals(analysisResultsPhylogenomics.getInputSequenceFiles(), savedPhylogenomics.getInputSequenceFiles());
 	}
 	
 	/**
@@ -577,7 +573,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		SequenceFilePair sequenceFilePair = analysisSubmission.getPairedInputFiles().iterator().next();
 		Iterator<SequenceFile> sequenceFilePairIter = sequenceFilePair.getFiles().iterator();
 		SequenceFile sequenceFile1 = sequenceFilePairIter.next();
-		SequenceFile sequenceFile2 = sequenceFilePairIter.next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -614,9 +609,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
 				analysisResultsPhylogenomics.getExecutionManagerAnalysisId());
-
-		assertEquals("inputFiles for the analysis should be set correctly",
-				Sets.newHashSet(sequenceFile1, sequenceFile2), analysisResultsPhylogenomics.getInputSequenceFiles());
 
 		assertEquals("invalid number of output files", 3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
 		AnalysisOutputFile phylogeneticTree = analysisResultsPhylogenomics.getPhylogeneticTree();
@@ -680,8 +672,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 				analysisResultsPhylogenomics.getSnpMatrix().getFile(), savedPhylogenomics.getSnpMatrix().getFile());
 		assertEquals("analysis results from database and from submission should have correct table output file",
 				analysisResultsPhylogenomics.getSnpTable().getFile(), savedPhylogenomics.getSnpTable().getFile());
-		assertEquals("analysis results from database and from submission should have correct input sequence files",
-				analysisResultsPhylogenomics.getInputSequenceFiles(), savedPhylogenomics.getInputSequenceFiles());
 	}
 	
 	/**
@@ -1207,7 +1197,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		SequenceFilePair sequenceFilePair = analysisSubmission.getPairedInputFiles().iterator().next();
 		Iterator<SequenceFile> sequenceFilePairIter = sequenceFilePair.getFiles().iterator();
 		SequenceFile sequenceFile1 = sequenceFilePairIter.next();
-		SequenceFile sequenceFile2 = sequenceFilePairIter.next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -1244,9 +1233,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
 				analysisResultsAssembly.getExecutionManagerAnalysisId());
-
-		assertEquals("inputFiles for the analysis should be set correctly",
-				Sets.newHashSet(sequenceFile1, sequenceFile2), analysisResultsAssembly.getInputSequenceFiles());
 
 		assertEquals("invalid number of output files", 3, analysisResultsAssembly.getAnalysisOutputFiles().size());
 		AnalysisOutputFile contigs = analysisResultsAssembly.getContigs();
@@ -1311,9 +1297,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
 				analysisResults.getExecutionManagerAnalysisId());
-
-		assertEquals("inputFiles should be the same for submission and results", analysisExecuted.getSingleInputFiles(),
-				analysisResults.getInputSequenceFiles());
 
 		assertEquals(2, analysisResults.getAnalysisOutputFiles().size());
 		AnalysisOutputFile output1 = analysisResults.getAnalysisOutputFile("output1");

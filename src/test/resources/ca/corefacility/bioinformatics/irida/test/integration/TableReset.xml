@@ -20,7 +20,6 @@
 	<overrepresented_sequence />
 	<analysis_fastqc_overrepresented_sequence />
 	<analysis_properties />
-	<analysis_sequence_file />
 	<analysis_phylogenomicspipeline />
 	<analysis_assemblyannotation />
 

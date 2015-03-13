@@ -43,8 +43,6 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSa
 import ca.corefacility.bioinformatics.irida.service.impl.sample.SampleServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-import com.google.common.collect.Sets;
-
 /**
  * Unit tests for {@link SampleServiceImpl}.
  * 
@@ -244,8 +242,8 @@ public class SampleServiceImplTest {
 
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
 
-		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().inputFiles(Sets.newHashSet(sf1))
-				.executionManagerAnalysisId("id").totalBases(1000l).build();
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id")
+				.totalBases(1000l).build();
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
 		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(
@@ -298,8 +296,8 @@ public class SampleServiceImplTest {
 
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
 
-		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().inputFiles(Sets.newHashSet(sf1))
-				.executionManagerAnalysisId("id").totalBases(1000L).build();
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id")
+				.totalBases(1000L).build();
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
 		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(
@@ -328,11 +326,11 @@ public class SampleServiceImplTest {
 		SampleSequenceFileJoin join1 = new SampleSequenceFileJoin(s1, sf1);
 		SampleSequenceFileJoin join2 = new SampleSequenceFileJoin(s1, sf2);
 
-		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().inputFiles(Sets.newHashSet(sf1))
-				.executionManagerAnalysisId("id").totalBases(1000l).build();
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id")
+				.totalBases(1000l).build();
 
-		AnalysisFastQC analysisFastQC2 = AnalysisFastQC.sloppyBuilder().inputFiles(Sets.newHashSet(sf2))
-				.executionManagerAnalysisId("id2").totalBases(1000l).build();
+		AnalysisFastQC analysisFastQC2 = AnalysisFastQC.sloppyBuilder().executionManagerAnalysisId("id2")
+				.totalBases(1000l).build();
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join1, join2));
 		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(

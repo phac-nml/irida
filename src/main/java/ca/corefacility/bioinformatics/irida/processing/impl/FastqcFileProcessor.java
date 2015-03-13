@@ -38,8 +38,6 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 
-import com.google.common.collect.ImmutableSet;
-
 /**
  * Executes FastQC on a {@link SequenceFile} and stores the report in the
  * database. This is a terrible, ugly, hacky class because most of the internal
@@ -71,10 +69,12 @@ public class FastqcFileProcessor implements FileProcessor {
 	public void process(final Long sequenceFileId) throws FileProcessorException {
 		final SequenceFile sequenceFile = sequenceFileRepository.findOne(sequenceFileId);
 		Path fileToProcess = sequenceFile.getFile();
-		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC.builder()
-				.inputFiles(ImmutableSet.of(sequenceFile)).executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID)
-				.description(messageSource.getMessage("fastqc.file.processor.analysis.description", null,
-						LocaleContextHolder.getLocale()));
+		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC
+				.builder()
+				.executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID)
+				.description(
+						messageSource.getMessage("fastqc.file.processor.analysis.description", null,
+								LocaleContextHolder.getLocale()));
 		try {
 			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory
 					.getSequenceFile(fileToProcess.toFile());
