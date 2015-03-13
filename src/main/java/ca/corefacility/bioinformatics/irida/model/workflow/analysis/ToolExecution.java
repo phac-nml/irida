@@ -49,7 +49,7 @@ public class ToolExecution implements IridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	private final Long id;
 
 	@NotNull
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -69,7 +69,7 @@ public class ToolExecution implements IridaThing {
 	// @NotNull
 	@Lob
 	@Column(name = "command_line")
-	private String commandLine;
+	private final String commandLine;
 
 	@NotNull
 	@Lob
@@ -117,9 +117,9 @@ public class ToolExecution implements IridaThing {
 		} else {
 			this.previousSteps = previousSteps;
 		}
-		this.executionTimeParameters = new HashMap<>();
-		addExecutionTimeParameters(executionTimeParameters);
+		this.executionTimeParameters = executionTimeParameters == null ? Collections.emptyMap() : executionTimeParameters;
 		this.createdDate = new Date();
+		this.commandLine = null;
 	}
 
 	@Override
@@ -178,17 +178,6 @@ public class ToolExecution implements IridaThing {
 		return Collections.unmodifiableMap(unescapedKeys);
 	}
 
-	public final void addExecutionTimeParameter(final String paramName, final String paramValue) {
-		final String escapedKey = paramName.replaceAll("([A-Z])", "\\\\$1");
-		this.executionTimeParameters.put(escapedKey, paramValue);
-	}
-
-	public final void addExecutionTimeParameters(final Map<String, String> parameters) {
-		for (final Entry<String, String> param : parameters.entrySet()) {
-			addExecutionTimeParameter(param.getKey(), param.getValue());
-		}
-	}
-
 	@Override
 	public Date getCreatedDate() {
 		return this.createdDate;
@@ -201,7 +190,7 @@ public class ToolExecution implements IridaThing {
 
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
-		throw new UnsupportedOperationException("ToolExecution cannot be modified.");
+		throw new UnsupportedOperationException("ToolExecution is immutable.");
 	}
 
 	@Override
@@ -216,7 +205,7 @@ public class ToolExecution implements IridaThing {
 
 	@Override
 	public void setId(Long id) {
-		this.id = id;
+		throw new UnsupportedOperationException("ToolExecution is immutable.");
 	}
 
 	/**
