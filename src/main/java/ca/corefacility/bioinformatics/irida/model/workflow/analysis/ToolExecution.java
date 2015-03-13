@@ -176,7 +176,7 @@ public class ToolExecution implements IridaThing {
 		return commandLine;
 	}
 
-	public final Object getExecutionManagerIdentifier() {
+	public final String getExecutionManagerIdentifier() {
 		return executionManagerIdentifier;
 	}
 
