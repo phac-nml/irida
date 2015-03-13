@@ -32,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelat
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceAdditionalProperties;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.sample.SampleResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
@@ -218,9 +217,6 @@ public class RESTProjectSamplesController {
 
 		Sample sampleBySampleId = sampleService.getSampleBySequencerSampleId(p, seqeuncerId);
 
-		SampleResource sr = new SampleResource();
-		sr.setResource(sampleBySampleId);
-
 		Link withSelfRel = linkTo(
 				methodOn(RESTProjectSamplesController.class).getProjectSample(projectId, sampleBySampleId.getId()))
 				.withSelfRel();
@@ -344,10 +340,10 @@ public class RESTProjectSamplesController {
 	}
 
 	/**
-	 * Get the number of sequence files to a {@link SampleResource}
+	 * Get the number of sequence files to a {@link Sample}
 	 * 
 	 * @param resource
-	 *            The {@link SampleResource} to enhance
+	 *            The {@link Sample} to enhance
 	 * @return The number of sequence files in the sample
 	 */
 	private int getSequenceFileCountForSampleResource(Sample resource) {
