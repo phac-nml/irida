@@ -29,6 +29,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -88,6 +89,7 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	private List<SampleSequenceFileJoin> samples;
 	
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@NotAudited
 	private AnalysisFastQC fastqcAnalysis;
 
 	public SequenceFile() {
