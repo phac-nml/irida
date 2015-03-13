@@ -77,9 +77,9 @@ public class AnalysisServiceImplIT {
 
 		Map<String, String> params = new HashMap<>();
 		params.put("param", "value");
-		ToolExecution toolExecutionTree = new ToolExecution(null, null, "ls", "1.0", "executionManagerId", params);
-		ToolExecution toolExecutionTable = new ToolExecution(null, null, "ls", "1.0", "executionManagerId", params);
-		ToolExecution toolExecutionMatrix = new ToolExecution(null, null, "ls", "1.0", "executionManagerId", params);
+		ToolExecution toolExecutionTree = new ToolExecution(null, "ls", "1.0", "executionManagerId", params);
+		ToolExecution toolExecutionTable = new ToolExecution(null, "ls", "1.0", "executionManagerId", params);
+		ToolExecution toolExecutionMatrix = new ToolExecution(null, "ls", "1.0", "executionManagerId", params);
 
 		AnalysisOutputFile tree = new AnalysisOutputFile(treePath, "internal-galaxy-tree-identifier", toolExecutionTree);
 		AnalysisOutputFile table = new AnalysisOutputFile(tablePath, "internal-galaxy-table-identifier", toolExecutionTable);
@@ -123,9 +123,9 @@ public class AnalysisServiceImplIT {
 		
 		Map<String, String> params = new HashMap<>();
 		params.put("param", "value");
-		ToolExecution toolExecutionTree = new ToolExecution(null, null, "ls", "1.0", "executionManagerId", params);
-		ToolExecution toolExecutionTable = new ToolExecution(null, null, "ls", "1.0", "executionManagerId", params);
-		ToolExecution toolExecutionMatrix = new ToolExecution(null, null, "ls", "1.0", "executionManagerId", params);
+		ToolExecution toolExecutionTree = new ToolExecution(null, "ls", "1.0", "executionManagerId", params);
+		ToolExecution toolExecutionTable = new ToolExecution(null, "ls", "1.0", "executionManagerId", params);
+		ToolExecution toolExecutionMatrix = new ToolExecution(null, "ls", "1.0", "executionManagerId", params);
 
 		AnalysisOutputFile tree = new AnalysisOutputFile(treePath, "internal-galaxy-tree-identifier", toolExecutionTree);
 		AnalysisOutputFile table = new AnalysisOutputFile(tablePath, "internal-galaxy-table-identifier", toolExecutionTable);

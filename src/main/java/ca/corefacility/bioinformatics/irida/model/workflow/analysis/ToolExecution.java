@@ -104,10 +104,25 @@ public class ToolExecution implements IridaThing {
 		this.createdDate = null;
 	}
 
-	public ToolExecution(final Long id, final Set<ToolExecution> previousSteps, final String toolName,
-			final String toolVersion, final String executionManagerIdentifier,
-			final Map<String, String> executionTimeParameters) {
-		this.id = id;
+	/**
+	 * Construct a new instance of {@link ToolExecution}.
+	 * 
+	 * @param previousSteps
+	 *            the set of {@link ToolExecution} that led to the input of this
+	 *            {@link ToolExecution}.
+	 * @param toolName
+	 *            the name of the tool that was executed.
+	 * @param toolVersion
+	 *            the version of the tool that was executed.
+	 * @param executionManagerIdentifier
+	 *            the execution manager identifier that this provenance was
+	 *            derived from (the history step in Galaxy).
+	 * @param executionTimeParameters
+	 *            the parameters that were passed to the tool at execution time.
+	 */
+	public ToolExecution(final Set<ToolExecution> previousSteps, final String toolName, final String toolVersion,
+			final String executionManagerIdentifier, final Map<String, String> executionTimeParameters) {
+		this.id = null;
 		this.toolName = toolName;
 		this.toolVersion = toolVersion;
 		this.executionManagerIdentifier = executionManagerIdentifier;
@@ -143,10 +158,6 @@ public class ToolExecution implements IridaThing {
 		}
 
 		return false;
-	}
-
-	public final void addPreviousStep(final ToolExecution toolExecution) {
-		this.previousSteps.add(toolExecution);
 	}
 
 	public final Set<ToolExecution> getPreviousSteps() {

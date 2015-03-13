@@ -139,7 +139,6 @@ public class AnalysisProvenanceServiceGalaxy {
 			paramValues.put(parameterKey, parameters.get(parameterKey));
 		}
 
-		final Long id = null;
 		final Set<ToolExecution> prevSteps = new HashSet<>();
 		final String toolName = toolDetails.getName();
 		final String toolVersion = toolDetails.getVersion();
@@ -158,7 +157,7 @@ public class AnalysisProvenanceServiceGalaxy {
 					previousProvenance, historyId);
 			prevSteps.add(toolExecution);
 		}
-		return new ToolExecution(id, prevSteps, toolName, toolVersion, jobId, paramStrings);
+		return new ToolExecution(prevSteps, toolName, toolVersion, jobId, paramStrings);
 	}
 
 	/**
