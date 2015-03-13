@@ -7,7 +7,7 @@ import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.IdentifiableResource;
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 
 /**
  * Service to look up what the mapping between model objects and their
@@ -28,7 +28,7 @@ public class ModelLookup {
 	public static List<String> getProperties(Class<? extends Object> clazz) {
 		BeanInfo info = null;
 		try {
-			info = Introspector.getBeanInfo(clazz, IdentifiableResource.class);
+			info = Introspector.getBeanInfo(clazz, IridaResourceSupport.class);
 		} catch (IntrospectionException e) {
 			e.printStackTrace();
 		}
