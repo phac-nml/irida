@@ -74,7 +74,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			put(AnalysisState.NEW,              0.0f).
 			put(AnalysisState.PREPARING,        0.0f).
 			put(AnalysisState.PREPARED,         1.0f).
-			put(AnalysisState.SUBMITTING,       2.0f).
+			put(AnalysisState.SUBMITTING,       5.0f).
 			put(AnalysisState.RUNNING,          10.0f).
 			put(AnalysisState.FINISHED_RUNNING, 90.0f).
 			put(AnalysisState.COMPLETING,       95.0f).
