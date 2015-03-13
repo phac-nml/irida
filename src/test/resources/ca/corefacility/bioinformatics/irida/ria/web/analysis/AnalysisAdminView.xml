@@ -54,7 +54,7 @@
                          analysis_id="1" workflow_id="ccca532d-b0be-4f2c-bd6d-9886aa722571" submitter="1"/>
     <analysis_submission id="3" analysis_state="SUBMITTING" created_date="2013-10-06 10:01:02"
                          name="My Submitted Submission" analysis_id="1" workflow_id="ccca532d-b0be-4f2c-bd6d-9886aa722571" submitter="1"/>
-    <analysis_submission id="4" analysis_state="COMPLETED" created_date="2013-10-06 10:01:02" name="My Running Submission"
+    <analysis_submission id="4" analysis_state="COMPLETED" created_date="2013-10-06 10:01:02" name="My Completed Submission"
                          analysis_id="1" workflow_id="ccca532d-b0be-4f2c-bd6d-9886aa722571" submitter="1"/>
     <analysis_submission id="5" analysis_state="FINISHED_RUNNING" created_date="2013-12-06 10:01:02"
                          name="My Finished Running Submission" analysis_id="1" workflow_id="bac44f4b-46f9-4393-b247-de11a751410e" submitter="1"/>
@@ -76,7 +76,7 @@
 
     <tool_execution_prev_steps tool_execution_id="2" tool_execution_prev_id="1" />
 
-    <analysis_output_file id="1" created_date="2014-03-06 10:01:02" execution_manager_file_id="???" file_path="/tmp/sldfkj.tre" analysis_id="1" tool_execution_id="2" />
+    <analysis_output_file id="1" created_date="2014-03-06 10:01:02" execution_manager_file_id="???" file_path="/tmp/your-mother-effing.tree" analysis_id="1" tool_execution_id="2" />
 
     <analysis_output_file_map analysis_id="1" analysisOutputFilesMap_id="1" analysis_output_file_key="tree" />
 </dataset>

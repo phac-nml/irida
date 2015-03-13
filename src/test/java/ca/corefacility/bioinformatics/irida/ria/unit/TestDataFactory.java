@@ -30,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
@@ -137,7 +138,10 @@ public class TestDataFactory {
 	}
 
 	private static AnalysisOutputFile constructAnalysisOutputFile(String name) {
-		return new AnalysisOutputFile(Paths.get(FAKE_FILE_PATH.replace("{name}", name)), FAKE_EXECUTION_MANAGER_ID);
+		AnalysisOutputFile file = new AnalysisOutputFile(Paths.get(FAKE_FILE_PATH.replace("{name}", name)),
+				FAKE_EXECUTION_MANAGER_ID);
+		file.setCreatedByTool(new ToolExecution(1L, null, "myTool", "V1", "identifier", ImmutableMap.of()));
+		return file;
 	}
 
 	public static Project constructProject() {

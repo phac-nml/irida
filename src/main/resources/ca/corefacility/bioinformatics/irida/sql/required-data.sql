@@ -318,13 +318,7 @@ INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_
 INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (4, null, '2015-03-04 13:58:45', 'galaxyIdentifier', 'Upload File', '1.1.4');
 INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (6, null, '2015-03-04 13:58:45', 'galaxyIdentifier', 'FreeBayes', '0.0.4');
 INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (7, null, '2015-03-04 13:58:45', 'galaxyIdentifier', 'Upload File', '1.1.4');
-INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (7, null, '2015-03-04 13:58:45', 'galaxyIdentifier', 'SAM-to-BAM', '1.1.4');
-
-
-
-INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (2, null, '2015-03-04 13:58:43', 'galaxyIdentifier', 'PhyML', '3.1');
-INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (2, null, '2015-03-04 13:58:46', 'galaxyIdentifier', 'VCF 2 pseudoalignment', '0.0.10');
-
+INSERT INTO `tool_execution` (id, command_line, created_date, execution_manager_identifier, tool_name, tool_version) VALUES (8, null, '2015-03-04 13:58:45', 'galaxyIdentifier', 'SAM-to-BAM', '1.1.4');
 
 -- tool_execution_parameters for "SNP Matrix"
 INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('1', '__workflow_invocation_uuid__', 'e4acd686c29f11e49e0f5254006919ab');
@@ -357,7 +351,6 @@ INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execu
 INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 'a', 'false');
 INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 'd.seq_dictionary', 'false');
 INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 'f', 'false');
-INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 'g', 'false');
 INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 'n', 'false');
 INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', 'd', 'false');
 INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('14', '__workflow_invocation_uuid__', 'e4acd686c29f11e49e0f5254006919ab');
@@ -449,7 +442,7 @@ INSERT INTO `tool_execution_prev_steps` (tool_execution_id, tool_execution_prev_
 
 -- analysis_output_file
 INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, analysis_id, tool_execution_id) VALUES (1, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/phylogeneticTree.tre', 13, 1);
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, analysis_id, tool_execution_id) VALUES (7, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snpMatrix.tsv', 13, 2);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, analysis_id, tool_execution_id) VALUES (2, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snpMatrix.tsv', 13, 2);
 INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, analysis_id, tool_execution_id) VALUES (3, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snpTable.tsv', 13, 3);
 
 -- analysis_output_file_map

@@ -28,7 +28,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 		super(driver);
 	}
 
-	public static AnalysisDetailsPage initPage(WebDriver driver, int analysisId) {
+	public static AnalysisDetailsPage initPage(WebDriver driver, long analysisId) {
 		get(driver, RELATIVE_URL + analysisId);
 		return PageFactory.initElements(driver, AnalysisDetailsPage.class);
 	}
