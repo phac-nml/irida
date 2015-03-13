@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -14,9 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExcecutionListener;
 import org.springframework.test.context.ActiveProfiles;
@@ -106,21 +102,5 @@ public class AnalysisServiceImplIT {
 				saved.getSnpMatrix().getFile().startsWith(outputFileBaseDirectory));
 		assertTrue("file was stored in the wrong directory.",
 				saved.getSnpTable().getFile().startsWith(outputFileBaseDirectory));
-	}
-
-	@Test
-	@WithMockUser(username = "user", roles = "USER")
-	public void testListAnalysesAsUser() {
-		SecurityContextHolder.getContext();
-		Page<Analysis> analyses = analysisService.list(1, 1, Direction.DESC);
-		assertEquals("number of analyses should be 1.", 1, analyses.getTotalElements());
-	}
-
-	@Test
-	@WithMockUser(username = "user", roles = "USER")
-	public void testListAnalysesAsUserWithSort() {
-		SecurityContextHolder.getContext();
-		Page<Analysis> analyses = analysisService.list(1, 1, Direction.DESC, "executionManagerAnalysisId");
-		assertEquals("number of analyses should be 1.", 1, analyses.getTotalElements());
 	}
 }
