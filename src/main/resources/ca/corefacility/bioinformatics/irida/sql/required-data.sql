@@ -437,28 +437,6 @@ INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execu
 INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('8', 'source.ref_file', '6706');
 INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('8', '__workflow_invocation_uuid__', 'e4acd686c29f11e49e0f5254006919ab');
 
-
-
-#
-# -- tool_execution_parameters for "bcftools view"
-# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('5', '__workflow_invocation_uuid__', 'e4acd686c29f11e49e0f5254006919ab');
-#
-#
-#
-# -- tool_execution_parameters for "PhyML"
-# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'datatype_condition.model', 'HKY85');
-# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'datatype_condition.tstv', 'e');
-# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'datatype_condition.type', 'nt');
-# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'gamma_condition.categories', '4');
-# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'gamma_condition.gamma', 'yes');
-# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'gamma_condition.shape', 'e');
-# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'prop_invar', '0.0');
-# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'random_condition.random', 'no');
-# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'search', 'BEST');
-# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', 'support_condition.support', 'sh');
-# INSERT INTO `tool_execution_parameters` (tool_id, execution_parameter_key, execution_parameter_value) VALUES ('2', '__workflow_invocation_uuid__', 'e4acd686c29f11e49e0f5254006919ab');
-
-
 -- tool_execution_prev_steps
 INSERT INTO `tool_execution_prev_steps` (tool_execution_id, tool_execution_prev_id) VALUES (1, 2);
 INSERT INTO `tool_execution_prev_steps` (tool_execution_id, tool_execution_prev_id) VALUES (2, 3);

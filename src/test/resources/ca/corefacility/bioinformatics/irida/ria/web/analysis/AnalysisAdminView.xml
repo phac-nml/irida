@@ -66,4 +66,17 @@
                          analysis_id="1" workflow_id="ccca532d-b0be-4f2c-bd6d-9886aa722571" submitter="1"/>
     <analysis_submission id="9" name="another analysis" remote_analysis_id="1" analysis_id="1"
                          analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19" workflow_id="ccca532d-b0be-4f2c-bd6d-9886aa722571" submitter="2"/>
+
+    <tool_execution id="1" created_date="2014-02-06 10:01:02" execution_manager_identifier="galaxyIdentifier" tool_name="SNP Matrix" tool_version="0.0.1" />
+    <tool_execution id="2" created_date="2014-03-06 10:01:02" execution_manager_identifier="galaxyIdentifier" tool_name="VCF pseudoalignment" tool_version="0.0.10" />
+
+    <tool_execution_parameters tool_id="1" execution_parameter_key="ambiguous" execution_parameter_value="False" />
+    <tool_execution_parameters tool_id="1" execution_parameter_key="coverage" execution_parameter_value="15" />
+    <tool_execution_parameters tool_id="2" execution_parameter_key="length" execution_parameter_value="150" />
+
+    <tool_execution_prev_steps tool_execution_id="2" tool_execution_prev_id="1" />
+
+    <analysis_output_file id="1" created_date="2014-03-06 10:01:02" execution_manager_file_id="???" file_path="/tmp/sldfkj.tre" analysis_id="1" tool_execution_id="2" />
+
+    <analysis_output_file_map analysis_id="1" analysisOutputFilesMap_id="1" analysis_output_file_key="tree" />
 </dataset>

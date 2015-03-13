@@ -6,46 +6,15 @@
 	<meta charset="UTF-8"/>
 	<title th:text="#{analysis.details.title(${analysisSubmission.label})}">_Analysis_</title>
 	<link rel="stylesheet" href="/resources/css/pages/analyses.css" th:href="@{/resources/css/pages/analyses.css}"/>
-	<style>
-		.tab-pane {
-			padding: 1rem;
-			border: 1px solid rgba(221, 221, 221, 1.0);
-			border-top: none;
-		}
-		.parameters {
-			margin-left: 2rem;
-			border: 1px solid rgba(221, 221, 221, 1.0);
-			border-top: none;
-			border-radius: 4px;
-		}
-		table {
-			table-layout: fixed!important;
-			margin-bottom: 0!important;
-		}
-		tr {
-			color: slategrey;
-		}
-		td.para-key {
-			/*width: 60%;*/
-			word-wrap: break-word;
-		}
-		td.para-value {
-			text-align: right;
-		}
-		.btn-icon-small {
-			color: #d4d4d4;
-			font-size: 0.8em;
-		}
-	</style>
 </head>
 
 <body>
 <main layout:fragment="main">
 	<div class="row">
 		<div class="col-md-12">
-			<h1 style="margin-top: 0" role="heading">
+			<h1>
 				<span th:text="${analysisSubmission.name}">__TITLE__</span>
-				<a class="btn btn-primary pull-right"
+				<a id="analysis-download-btn" class="btn btn-primary pull-right" th:if="${#strings.equalsIgnoreCase(analysisSubmission.analysisState, 'COMPLETED')}"
 				   th:href="@{/analysis/ajax/download/{id}(id=${analysisSubmission.getId()})}" href="#"
 				   data-toggle="tooltip" data-placement="bottom" th:title="#{form.download-files}">
 					<span class="fa fa-download fa-fw"></span>
@@ -57,33 +26,34 @@
 	<div class="row">
 		<div class="col-md-12 ng-cloak">
 			<tabset>
-				<tab heading="PREVIEW__">
+				<tab>
+					<tab-heading id="tab-preview" th:text="#{analysis.tab.preview}"></tab-heading>
 					<div th:if="${preview}" layout:fragment="previewContent"></div>
+					<div th:unless="${preview}" layout:fragment="noPreview">__NO_PREVIEW__</div>
 				</tab>
-				<tab heading="__FILES">
+				<tab th:unless="${#maps.isEmpty(files)}">
+					<tab-heading id="tab-files" th:text="#{analysis.tab.files}"></tab-heading>
 					<accordion>
 						<accordion-group th:each="file : ${files}">
-							<accordion-heading th:text="${file.filename}">__FILENAME__</accordion-heading>
+							<accordion-heading class="filename" th:text="${file.filename}">__FILENAME__</accordion-heading>
 							<div th:include="analysis/details/details :: toolsLayout (${file.tools})"></div>
 						</accordion-group>
 					</accordion>
 				</tab>
 			</tabset>
-			<div th:unless="${preview}" layout:fragment="noPreview">__NO_PREVIEW__</div>
 		</div>
 	</div>
 </main>
 
 <div th:fragment="toolsLayout (tools)">
-	<div th:each="tool : ${tools}" style="margin-left: 2rem;" th:with="toolId=${'tool' + #dates.createNow().getTime()}" data:ng-init="${toolId + '=false'}">
+	<div th:each="tool : ${tools}" style="margin-left: 2rem;" th:with="toolId=${'tool' + analysisSubmission.getId() + #dates.createNow().getTime()}" data:ng-init="${toolId + '=false'}">
 		<button data:ng-click="${toolId + '=!' + toolId}" class="btn btn-link">
+			<i data:ng-hide="${toolId}" class="fa fa-fw fa-chevron-right"></i>
+			<i data:ng-show="${toolId}" class="fa fa-fw fa-chevron-down"></i>
 			<span th:text="${tool.getLabel()}"></span>
-			&nbsp;
-			<i data:ng-hide="${toolId}" class="btn-icon-small fa fa-fw fa-eye"></i>
-			<i data:ng-show="${toolId}" class="btn-icon-small fa fa-fw fa-eye-slash"></i>
 		</button>
 		<div data:ng-show="${toolId}" class="parameters">
-			<table class="table table-hover">
+			<table class="table">
 				<tr th:each="parameter : ${tool.parameters}">
 					<td class="para-key" th:text="${parameter.key}"></td>
 					<td class="para-value" th:text="${parameter.value}"></td>
