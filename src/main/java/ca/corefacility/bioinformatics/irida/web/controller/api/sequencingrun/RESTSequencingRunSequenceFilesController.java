@@ -22,8 +22,6 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencingrun.MiseqRunResource;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencingrun.SequencingRunResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 
 import com.google.common.net.HttpHeaders;
