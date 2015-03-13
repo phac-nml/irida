@@ -22,16 +22,6 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 public interface AnalysisRepository extends IridaJpaRepository<Analysis, Long> {
 
 	/**
-	 * Load the set of {@link Analysis} for a {@link SequenceFile}.
-	 * 
-	 * @param sf
-	 *            the file to load {@link Analysis} records for.
-	 * @return the set of {@link Analysis} records.
-	 */
-	@Query("select os from Analysis os where ?1 member of os.inputFiles")
-	public Set<Analysis> findAnalysesForSequenceFile(SequenceFile sf);
-
-	/**
 	 * Load the set of {@link Analysis} for a {@link SequenceFile} that are a
 	 * specific subtype of {@link Analysis}.
 	 * 

@@ -49,14 +49,6 @@ public class AnalysisServiceImpl extends CRUDServiceImpl<Long, Analysis> impleme
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<Analysis> getAnalysesForSequenceFile(SequenceFile file) {
-		return analysisRepository.findAnalysesForSequenceFile(file);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public <T extends Analysis> Set<T> getAnalysesForSequenceFile(SequenceFile file, Class<T> analysisType) {
 		return analysisRepository.findAnalysesForSequenceFile(file, analysisType);
 	}

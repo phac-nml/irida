@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -10,7 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +30,6 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.processing.IridaApiTestMultithreadingConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
@@ -109,44 +106,6 @@ public class AnalysisServiceImplIT {
 				saved.getSnpMatrix().getFile().startsWith(outputFileBaseDirectory));
 		assertTrue("file was stored in the wrong directory.",
 				saved.getSnpTable().getFile().startsWith(outputFileBaseDirectory));
-	}
-
-	@Test
-	@WithMockUser(username = "admin", roles = "ADMIN")
-	public void testGetAnalysesForSequenceFile() throws IOException {
-		SequenceFile sf = sequenceFileService.read(1L);
-
-		Path treePath = Files.createTempFile("tree", ".txt");
-		Path tablePath = Files.createTempFile("table", ".tsv");
-		Path matrixPath = Files.createTempFile("matrix", ".tsv");
-		
-		Map<String, String> params = new HashMap<>();
-		params.put("param", "value");
-		ToolExecution toolExecutionTree = new ToolExecution(null, "ls", "1.0", "executionManagerId", params);
-		ToolExecution toolExecutionTable = new ToolExecution(null, "ls", "1.0", "executionManagerId", params);
-		ToolExecution toolExecutionMatrix = new ToolExecution(null, "ls", "1.0", "executionManagerId", params);
-
-		AnalysisOutputFile tree = new AnalysisOutputFile(treePath, "internal-galaxy-tree-identifier", toolExecutionTree);
-		AnalysisOutputFile table = new AnalysisOutputFile(tablePath, "internal-galaxy-table-identifier", toolExecutionTable);
-		AnalysisOutputFile matrix = new AnalysisOutputFile(matrixPath, "internal-galaxy-matrix-identifier", toolExecutionMatrix);
-		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
-				.put("tree", tree).put("matrix", matrix).put("table", table).build();
-		AnalysisPhylogenomicsPipeline pipeline = new AnalysisPhylogenomicsPipeline(EXECUTION_MANAGER_ID,
-				analysisOutputFiles);
-
-		Analysis created = analysisService.create(pipeline);
-
-		Set<Analysis> analyses = analysisService.getAnalysesForSequenceFile(sf);
-
-		assertNotNull("Analyses should not be null.", analyses);
-		Analysis saved = null;
-		for (Analysis a : analyses) {
-			if (a.getId().equals(created.getId())) {
-				saved = a;
-				break;
-			}
-		}
-		assertEquals("analysis in set should be what we just persisted.", pipeline, saved);
 	}
 
 	@Test
