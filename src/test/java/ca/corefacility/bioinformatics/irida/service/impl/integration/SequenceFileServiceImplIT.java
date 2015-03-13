@@ -164,10 +164,7 @@ public class SequenceFileServiceImplIT {
 		sf = asRole(Role.ROLE_ADMIN, "tom").sequenceFileService.read(sf.getId());
 		assertEquals("Wrong version number after processing.", Long.valueOf(1), sf.getFileRevisionNumber());
 
-		Set<AnalysisFastQC> analyses = asRole(Role.ROLE_ADMIN, "tom").analysisService.getAnalysesForSequenceFile(sf,
-				AnalysisFastQC.class);
-		assertEquals("Only one analysis should be generated automatically.", 1, analyses.size());
-		AnalysisFastQC analysis = analyses.iterator().next();
+		AnalysisFastQC analysis = sf.getFastQCAnalysis();
 
 		Set<OverrepresentedSequence> overrepresentedSequences = analysis.getOverrepresentedSequences();
 		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);
@@ -216,10 +213,7 @@ public class SequenceFileServiceImplIT {
 		assertEquals("Wrong version number after processing.", Long.valueOf(2L), sf.getFileRevisionNumber());
 		assertFalse("File name is still gzipped.", sf.getFile().getFileName().toString().endsWith(".gz"));
 
-		Set<AnalysisFastQC> analyses = asRole(Role.ROLE_ADMIN, "tom").analysisService.getAnalysesForSequenceFile(sf,
-				AnalysisFastQC.class);
-		assertEquals("Only one analysis should be generated automatically.", 1, analyses.size());
-		AnalysisFastQC analysis = analyses.iterator().next();
+		AnalysisFastQC analysis = sf.getFastQCAnalysis();
 
 		Set<OverrepresentedSequence> overrepresentedSequences = analysis.getOverrepresentedSequences();
 		assertNotNull("No overrepresented sequences were found.", overrepresentedSequences);

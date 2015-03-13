@@ -21,6 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -38,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 
 /**
  * A file that may be stored somewhere on the file system and belongs to a
@@ -84,6 +86,9 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
 	private List<SampleSequenceFileJoin> samples;
+	
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+	private AnalysisFastQC fastqcAnalysis;
 
 	public SequenceFile() {
 		createdDate = new Date();
@@ -216,5 +221,13 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	@Override
 	public void incrementFileRevisionNumber() {
 		this.fileRevisionNumber++;
+	}
+	
+	public AnalysisFastQC getFastQCAnalysis() {
+		return this.fastqcAnalysis;
+	}
+	
+	public void setFastQCAnalysis(final AnalysisFastQC fastqcAnalysis) {
+		this.fastqcAnalysis = fastqcAnalysis;
 	}
 }

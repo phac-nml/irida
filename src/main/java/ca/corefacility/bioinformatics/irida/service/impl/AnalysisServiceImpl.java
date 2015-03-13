@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import java.util.Set;
-
 import javax.transaction.Transactional;
 import javax.validation.Validator;
 
@@ -10,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
@@ -43,14 +40,6 @@ public class AnalysisServiceImpl extends CRUDServiceImpl<Long, Analysis> impleme
 			analysisOutputFileRepository.save(a);
 		}
 		return analysisRepository.save(analysis);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <T extends Analysis> Set<T> getAnalysesForSequenceFile(SequenceFile file, Class<T> analysisType) {
-		return analysisRepository.findAnalysesForSequenceFile(file, analysisType);
 	}
 
 	/**

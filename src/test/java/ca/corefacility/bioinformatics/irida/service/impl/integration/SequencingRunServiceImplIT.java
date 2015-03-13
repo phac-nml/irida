@@ -118,8 +118,8 @@ public class SequencingRunServiceImplIT {
 		Set<SequenceFile> sequenceFilesForMiseqRun = sequenceFileService.getSequenceFilesForSequencingRun(saved);
 		assertTrue("Saved miseq run should have seqence file", sequenceFilesForMiseqRun.contains(savedFile));
 
-		Set<AnalysisFastQC> analyses = analysisService.getAnalysesForSequenceFile(sf, AnalysisFastQC.class);
-		assertEquals("Wrong number of analyses created for sequence file.", 1, analyses.size());
+		AnalysisFastQC analysis = sf.getFastQCAnalysis();
+		assertNotNull("FastQC analysis should have been created for uploaded file.", analysis);
 	}
 
 	@Test
@@ -249,7 +249,7 @@ public class SequencingRunServiceImplIT {
 
 		miseqRunService.addSequenceFileToSequencingRun(run, sf);
 
-		Set<AnalysisFastQC> analyses = analysisService.getAnalysesForSequenceFile(sf, AnalysisFastQC.class);
-		assertEquals("Wrong number of analyses created for sequence file.", 1, analyses.size());
+		AnalysisFastQC analysis = sf.getFastQCAnalysis();
+		assertNotNull("FastQC analysis should have been created for sequence file.", analysis);
 	}
 }
