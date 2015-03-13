@@ -77,8 +77,6 @@ public class AnalysisOutputFile implements IridaThing, VersionedFileFields<Long>
 	 * @param executionManagerFileId
 	 *            the identifier for this file in the execution manager that it
 	 *            was created by.
-	 * @param analysis
-	 *            the analysis that owns this resource.
 	 * @param createdByTool
 	 *            the tools that were used to create the file.
 	 */
