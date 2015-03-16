@@ -1,3 +1,7 @@
+---
+layout: "default"
+---
+
 IRIDA NGS Archive - REST API
 ============================
 
