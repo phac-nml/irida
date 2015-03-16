@@ -8,11 +8,11 @@ import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteRepository;
-import ca.corefacility.bioinformatics.irida.utils.model.RemoteIdentifiableTestEntity;
+import ca.corefacility.bioinformatics.irida.utils.model.IdentifiableTestEntity;
 
 public class RemoteServiceImplTest {
-	RemoteServiceImpl<RemoteIdentifiableTestEntity> service;
-	RemoteRepository<RemoteIdentifiableTestEntity> repository;
+	RemoteServiceImpl<IdentifiableTestEntity> service;
+	RemoteRepository<IdentifiableTestEntity> repository;
 
 	@SuppressWarnings("unchecked")
 	@Before
@@ -47,9 +47,9 @@ public class RemoteServiceImplTest {
 		verify(repository).getServiceStatus(remoteAPI);
 	}
 
-	private class RemoteServiceImplImpl extends RemoteServiceImpl<RemoteIdentifiableTestEntity> {
+	private class RemoteServiceImplImpl extends RemoteServiceImpl<IdentifiableTestEntity> {
 
-		public RemoteServiceImplImpl(RemoteRepository<RemoteIdentifiableTestEntity> repository) {
+		public RemoteServiceImplImpl(RemoteRepository<IdentifiableTestEntity> repository) {
 			super(repository);
 		}
 
