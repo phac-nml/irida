@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
  * Repository for reading {@link RemoteSequenceFile}s from a Remote IRIDA
@@ -13,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteSequenceFile;
  * 
  *
  */
-public interface SequenceFileRemoteRepository extends RemoteRepository<RemoteSequenceFile> {
+public interface SequenceFileRemoteRepository extends RemoteRepository<SequenceFile> {
 	/**
 	 * Get a local copy of a {@link RemoteSequenceFile} with a default MediaType
 	 * of application/fastq

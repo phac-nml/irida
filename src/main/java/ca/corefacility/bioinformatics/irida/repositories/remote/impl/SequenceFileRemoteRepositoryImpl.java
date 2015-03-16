@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ListResourceWrapper;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrapper;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
 import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.SequenceFileMessageConverter;
@@ -33,12 +34,12 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
  *
  */
 @Repository
-public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<RemoteSequenceFile> implements
+public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<SequenceFile> implements
 		SequenceFileRemoteRepository {
-	private static final ParameterizedTypeReference<ListResourceWrapper<RemoteSequenceFile>> listTypeReference = new ParameterizedTypeReference<ListResourceWrapper<RemoteSequenceFile>>() {
+	private static final ParameterizedTypeReference<ListResourceWrapper<SequenceFile>> listTypeReference = new ParameterizedTypeReference<ListResourceWrapper<SequenceFile>>() {
 	};
 
-	private static final ParameterizedTypeReference<ResourceWrapper<RemoteSequenceFile>> objectTypeReference = new ParameterizedTypeReference<ResourceWrapper<RemoteSequenceFile>>() {
+	private static final ParameterizedTypeReference<ResourceWrapper<SequenceFile>> objectTypeReference = new ParameterizedTypeReference<ResourceWrapper<SequenceFile>>() {
 	};
 
 	// OAuth2 token storage service for making requests
