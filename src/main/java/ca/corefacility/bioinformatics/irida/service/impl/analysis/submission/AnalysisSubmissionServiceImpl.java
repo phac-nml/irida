@@ -427,10 +427,30 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		case PREPARED:
 		case SUBMITTING:
 			return STATE_PERCENTAGE.get(analysisState);
+
+			/**
+			 * If the analysis is in a state of {@link AnalysisState.RUNNING}
+			 * then we are able to ask Galaxy for the proportion of jobs that
+			 * are complete. We can scale this value between RUNNING_PERCENT
+			 * (10%) and FINISHED_RUNNING_PERCENT (90%) so that after all jobs
+			 * are complete we are only at 90%. The remaining 10% involves
+			 * transferring files back to Galaxy.
+			 * 
+			 * For example, if there are 10 out of 20 jobs finished on Galaxy,
+			 * then the proportion of jobs complete is 10/20 = 0.5. So, the
+			 * percent complete for the overall analysis is: percentComplete =
+			 * 10 + (90 - 10) * 0.5 = 50%.
+			 * 
+			 * If there are 20 out of 20 jobs finished in Galaxy, then the
+			 * percent complete is: percentComplete = 10 + (90 - 10) * 1.0 =
+			 * 90%.
+			 */
 		case RUNNING:
 			String workflowHistoryId = analysisSubmission.getRemoteAnalysisId();
 			GalaxyWorkflowStatus workflowStatus = galaxyHistoriesService.getStatusForHistory(workflowHistoryId);
-			return RUNNING_PERCENT + (FINISHED_RUNNING_PERCENT - RUNNING_PERCENT) * workflowStatus.getProportionComplete();
+			return RUNNING_PERCENT + (FINISHED_RUNNING_PERCENT - RUNNING_PERCENT)
+					* workflowStatus.getProportionComplete();
+			
 		case FINISHED_RUNNING:
 		case COMPLETING:
 		case COMPLETED:
