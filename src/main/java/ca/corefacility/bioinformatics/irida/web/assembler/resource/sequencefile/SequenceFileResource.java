@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 /**
  * Resource wrapper for {@link SequenceFile}. This file is required because the
- * MiseqRunId is passed as a parameter of SequenceFile when a file is added to a
- * run.
+ * sequencing run id is passed as a parameter of SequenceFile when a file is
+ * added to a run.
  * 
  */
 public class SequenceFileResource {

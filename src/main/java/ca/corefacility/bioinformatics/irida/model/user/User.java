@@ -259,6 +259,9 @@ public class User extends IridaResourceSupport implements IridaThing, Comparable
 		return password;
 	}
 
+	/*
+	 * JsonProperty must be here to enable user to set password via REST API
+	 */
 	@JsonProperty
 	public void setPassword(String password) {
 		this.password = password;

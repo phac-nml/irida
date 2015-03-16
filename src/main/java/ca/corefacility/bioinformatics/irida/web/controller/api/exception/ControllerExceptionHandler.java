@@ -254,7 +254,14 @@ public class ControllerExceptionHandler {
 		}
 		return mp;
 	}
-	
+
+	/**
+	 * Get the available properties of the given class.
+	 * 
+	 * @param clazz
+	 *            Class to test
+	 * @return List of strings of the available property names.
+	 */
 	private List<String> getProperties(Class<? extends Object> clazz) {
 		BeanInfo info = null;
 		try {

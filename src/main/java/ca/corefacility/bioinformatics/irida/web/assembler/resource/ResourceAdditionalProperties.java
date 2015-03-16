@@ -14,6 +14,9 @@ import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
  * freeform properties. When serializing to JSON it will be transparent that
  * these properties weren't on the model object to begin with.
  * 
+ * Example of this being used is adding the number of sequence files to a
+ * sample.
+ * 
  * @param <Type>
  *            The type of class being embedded.
  */
