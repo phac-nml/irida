@@ -34,7 +34,7 @@
 				<tab th:unless="${#maps.isEmpty(files)}">
 					<tab-heading id="tab-files" th:text="#{analysis.tab.files}"></tab-heading>
 					<accordion>
-						<accordion-group th:each="file : ${files}">
+						<accordion-group class="file-info" th:each="file : ${files}">
 							<accordion-heading class="filename" th:text="${file.filename}">__FILENAME__</accordion-heading>
 							<div th:include="analysis/details/details :: toolsLayout (${file.tools})"></div>
 						</accordion-group>
@@ -47,14 +47,14 @@
 
 <div th:fragment="toolsLayout (tools)">
 	<div th:each="tool : ${tools}" style="margin-left: 2rem;" th:with="toolId=${'tool' + analysisSubmission.getId() + #dates.createNow().getTime()}" data:ng-init="${toolId + '=false'}">
-		<button data:ng-click="${toolId + '=!' + toolId}" class="btn btn-link">
+		<button data:ng-click="${toolId + '=!' + toolId}" class="btn btn-link tool">
 			<i data:ng-hide="${toolId}" class="fa fa-fw fa-chevron-right"></i>
 			<i data:ng-show="${toolId}" class="fa fa-fw fa-chevron-down"></i>
 			<span th:text="${tool.getLabel()}"></span>
 		</button>
 		<div data:ng-show="${toolId}" class="parameters">
 			<table class="table">
-				<tr th:each="parameter : ${tool.parameters}">
+				<tr class="parameter" th:each="parameter : ${tool.parameters}">
 					<td class="para-key" th:text="${parameter.key}"></td>
 					<td class="para-value" th:text="${parameter.value}"></td>
 				</tr>
