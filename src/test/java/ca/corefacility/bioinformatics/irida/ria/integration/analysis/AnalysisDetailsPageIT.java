@@ -25,11 +25,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiNoGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
-import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsTestConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.AnalysisDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
@@ -67,14 +64,24 @@ public class AnalysisDetailsPageIT {
 
 		LoginPage.loginAsAdmin(driver);
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver, 4L);
+
+		// Ensure files are displayed
 		page.displayFilesView();
 		assertEquals("Should be displaying 1 file", 1, page.getNumberOfFilesDisplayed());
+
+		// Ensure tools are displayed
+		page.displayTreeTools();
+		assertEquals("Should have 2 tools associated with the tree", 2, page.getNumberOfToolsForTree());
+
+		// Ensure the tool parameters can be displayed;
+		assertEquals("First tool should have 1 parameter", 1, page.getNumberOfParametersForTool());
 	}
 
 	private void addOutputFile() throws URISyntaxException, IOException {
 		Path sequenceFilePathReal = Paths
 				.get(AnalysisDetailsPageIT.class.getResource("snp_tree.tree").toURI());
-		Files.copy(sequenceFilePathReal, Paths.get("/tmp/your-mother-effing.tree"), StandardCopyOption.REPLACE_EXISTING);
+		Files.copy(sequenceFilePathReal, Paths.get("/tmp/snp_tree_28329923473842346785384sd2s.tree"),
+				StandardCopyOption.REPLACE_EXISTING);
 
 	}
 }
