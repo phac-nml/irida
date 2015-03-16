@@ -814,7 +814,7 @@
 							<arguments>
 								<argument>build</argument>
 								<argument>--config</argument>
-								<argument>_config.yml</argument>
+								<argument>_build-config.yml</argument>
 							</arguments>
 						</configuration>
 						<goals>
