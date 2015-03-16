@@ -22,6 +22,14 @@ Once you've got Jekyll installed, from the root of the documentation directory (
 
 Jekyll will run a web server on port 4000 that you can navigate to with your web browser. If you make changes to any files or add new files under the `/doc` directory, Jekyll with auto-compile the document and update the files that it's serving (how handy!).
 
+Deploying documentation
+-----------------------
+You can create the complete deployable documentation package by running
+
+    mvn clean site
+
+from your root IRIDA directory, where pom.xml lives. Running this command will execute `jekyll` using the `_build-config.yml` file, and produce [JavaDoc](http://maven.apache.org/plugins/maven-javadoc-plugin/) inside the target `doc/_site` directory. You can copy the contents of the `doc/_site` directory to the web server hosting the documentation.
+
 Writing documentation
 ---------------------
 
