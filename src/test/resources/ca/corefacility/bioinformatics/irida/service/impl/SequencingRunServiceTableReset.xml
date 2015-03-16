@@ -7,16 +7,17 @@
 	<sequencing_run_entity />
 	<host />
 	<sample />
+	
+	<analysis />
+	<analysis_fastqc />
+	<overrepresented_sequence />
+	<analysis_fastqc_overrepresented_sequence />
+	
 	<sequence_file />
 	<sequence_file_properties />
 	<system_role />
 	<user />
 	<project />
-
-	<analysis />
-	<analysis_fastqc />
-	<overrepresented_sequence />
-	<analysis_fastqc_overrepresented_sequence />
 	<analysis_properties />
 
 	<client_details />

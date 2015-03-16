@@ -118,7 +118,7 @@ public class SequencingRunServiceImplIT {
 		Set<SequenceFile> sequenceFilesForMiseqRun = sequenceFileService.getSequenceFilesForSequencingRun(saved);
 		assertTrue("Saved miseq run should have seqence file", sequenceFilesForMiseqRun.contains(savedFile));
 
-		AnalysisFastQC analysis = sf.getFastQCAnalysis();
+		AnalysisFastQC analysis = savedFile.getFastQCAnalysis();
 		assertNotNull("FastQC analysis should have been created for uploaded file.", analysis);
 	}
 
