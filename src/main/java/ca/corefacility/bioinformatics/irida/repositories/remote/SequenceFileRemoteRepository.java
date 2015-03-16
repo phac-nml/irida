@@ -16,27 +16,27 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
  */
 public interface SequenceFileRemoteRepository extends RemoteRepository<SequenceFile> {
 	/**
-	 * Get a local copy of a {@link RemoteSequenceFile} with a default MediaType
+	 * Get a local copy of a {@link SequenceFile} with a default MediaType
 	 * of application/fastq
 	 * 
 	 * @param sequenceFile
-	 *            The {@link RemoteSequenceFile} to get sequence data for
+	 *            The {@link SequenceFile} to get sequence data for
 	 * @param api
 	 *            The {@link RemoteAPI} this file resides on
 	 * @return A temporary {@link Path} to the sequence file data
 	 */
-	public Path downloadRemoteSequenceFile(RemoteSequenceFile sequenceFile, RemoteAPI api);
+	public Path downloadRemoteSequenceFile(SequenceFile sequenceFile, RemoteAPI api);
 
 	/**
 	 * Get a local copy of a {@link RemoteSequenceFile}
 	 * 
 	 * @param sequenceFile
-	 *            The {@link RemoteSequenceFile} to get sequence data for
+	 *            The {@link SequenceFile} to get sequence data for
 	 * @param api
 	 *            The {@link RemoteAPI} this file resides on
 	 * @param mediaTypes
 	 *            The media types to request from the remote API
 	 * @return A temporary {@link Path} to the sequence file data
 	 */
-	public Path downloadRemoteSequenceFile(RemoteSequenceFile sequenceFile, RemoteAPI api, MediaType... mediaTypes);
+	public Path downloadRemoteSequenceFile(SequenceFile sequenceFile, RemoteAPI api, MediaType... mediaTypes);
 }
