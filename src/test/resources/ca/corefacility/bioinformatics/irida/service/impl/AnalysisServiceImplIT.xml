@@ -21,8 +21,8 @@
 		sequencerSampleId="sample1" sampleName="sample1" />
 	<project_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		project_id="1" sample_id="1" />
-	<sequence_file id="1" createdDate="2013-07-18 14:20:19.0"
-		filePath="/" fileRevisionNumber="1" />
+	<sequence_file id="1" created_date="2013-07-18 14:20:19.0"
+		file_path="/" file_revision_number="1" />
 	<sequencefile_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		sample_id="1" sequencefile_id="1" />
 
@@ -38,6 +38,5 @@
 	<analysis id="1" createdDate="2013-07-18 14:20:19.0"
 		executionManagerAnalysisId="execution-manager" />
 	<analysis_phylogenomicspipeline id="1" />
-	<analysis_sequence_file analysis_id="1"
-		inputFiles_id="1" />
+
 </dataset>
