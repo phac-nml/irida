@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,17 +52,14 @@ import com.google.common.collect.ImmutableMap;
 @Controller
 @RequestMapping("/analysis")
 public class AnalysisController {
+	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap.of(AnalysisType.PHYLOGENOMICS, "tree");
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
-
 	// PAGES
 	private static final String REDIRECT_ERROR = "redirect:errors/not_found";
 	private static final String BASE = "analysis/";
-	public static final String PAGE_USER_ANALYSIS = BASE + "analyses";
 	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
-
+	public static final String PAGE_USER_ANALYSIS = BASE + "analyses";
 	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
-	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap.of(AnalysisType.PHYLOGENOMICS, "tree");
-
 	/*
 	 * SERVICES
 	 */
@@ -117,8 +113,6 @@ public class AnalysisController {
 	 * @param locale
 	 *            User's locale
 	 * @return name of the details page view
-	 * @throws IOException
-	 *             If analysis files are attempted to be read, but fail.
 	 */
 	@RequestMapping(value = "/{submissionId}", produces = MediaType.TEXT_HTML_VALUE)
 	public String getDetailsPage(@PathVariable Long submissionId, Model model, Locale locale) {
@@ -206,9 +200,9 @@ public class AnalysisController {
 	/**
 	 * Generate a List of provenance data from a set of output files.
 	 *
-	 * @param outputFiles
+	 * @param outputFiles A set of {@link AnalysisOutputFile} to generate the provenance data from.
 	 *
-	 * @return
+	 * @return {@link HashMap} containing the provenance data for the {@link AnalysisOutputFile}s.
 	 */
 	private List<Map<String, Object>> generateOutputFileProvenance(Set<AnalysisOutputFile> outputFiles) {
 		List<Map<String, Object>> provenance = new ArrayList<>();
@@ -225,56 +219,6 @@ public class AnalysisController {
 		}
 		return provenance;
 	}
-
-	private class ToolInfo {
-		private Set<ToolInfo> previousSteps = new HashSet<>();
-		private String id;
-		private String name;
-		private String label;
-		private String version;
-		private Map<String, String> parameters;
-
-		public Set<ToolInfo> getPreviousSteps() {
-			return previousSteps;
-		}
-
-		public String getId() {
-			return id;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public String getLabel() {
-			return label;
-		}
-
-		public String getVersion() {
-			return version;
-		}
-
-		public Map<String, String> getParameters() {
-			return parameters;
-		}
-
-		public ToolInfo(ToolExecution toolExecution) {
-			this.id = toolExecution.getId().toString();
-			this.name = toolExecution.getToolName();
-			this.label = toolExecution.getLabel();
-			this.version = toolExecution.getToolVersion();
-			this.parameters = toolExecution.getExecutionTimeParameters();
-			setPreviousSteps(toolExecution.getPreviousSteps());
-		}
-
-		private void setPreviousSteps(Set<ToolExecution> steps) {
-			previousSteps.addAll(steps.stream().map(ToolInfo::new).collect(Collectors.toList()));
-		}
-	}
-
-	// ************************************************************************************************
-	// AJAX
-	// ************************************************************************************************
 
 	/**
 	 * Get a list of analyses either for a user or an administrator
@@ -339,6 +283,10 @@ public class AnalysisController {
 		}
 		return response;
 	}
+
+	// ************************************************************************************************
+	// AJAX
+	// ************************************************************************************************
 
 	/**
 	 * Download all output files from an {@link AnalysisSubmission}
@@ -409,13 +357,13 @@ public class AnalysisController {
 
 	/**
 	 * Get the view name for different analysis types
-	 * 
+	 *
 	 * @param type
 	 *            The {@link AnalysisType}
 	 * @return the view name to display
 	 */
 	private String getViewForAnalysisType(AnalysisType type) {
-		String viewName = null;
+		String viewName;
 		if (PREVIEWS.containsKey(type)) {
 			viewName = PAGE_DETAILS_DIRECTORY + PREVIEWS.get(type);
 		} else {
@@ -423,5 +371,51 @@ public class AnalysisController {
 		}
 
 		return viewName;
+	}
+
+	private class ToolInfo {
+		private Set<ToolInfo> previousSteps = new HashSet<>();
+		private String id;
+		private String name;
+		private String label;
+		private String version;
+		private Map<String, String> parameters;
+
+		public ToolInfo(ToolExecution toolExecution) {
+			this.id = toolExecution.getId().toString();
+			this.name = toolExecution.getToolName();
+			this.label = toolExecution.getLabel();
+			this.version = toolExecution.getToolVersion();
+			this.parameters = toolExecution.getExecutionTimeParameters();
+			setPreviousSteps(toolExecution.getPreviousSteps());
+		}
+
+		public Set<ToolInfo> getPreviousSteps() {
+			return previousSteps;
+		}
+
+		private void setPreviousSteps(Set<ToolExecution> steps) {
+			previousSteps.addAll(steps.stream().map(ToolInfo::new).collect(Collectors.toList()));
+		}
+
+		public String getId() {
+			return id;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public String getLabel() {
+			return label;
+		}
+
+		public String getVersion() {
+			return version;
+		}
+
+		public Map<String, String> getParameters() {
+			return parameters;
+		}
 	}
 }
