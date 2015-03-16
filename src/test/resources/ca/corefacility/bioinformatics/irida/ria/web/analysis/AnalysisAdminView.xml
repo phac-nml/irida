@@ -76,7 +76,7 @@
 
     <tool_execution_prev_steps tool_execution_id="2" tool_execution_prev_id="1" />
 
-    <analysis_output_file id="1" created_date="2014-03-06 10:01:02" execution_manager_file_id="???" file_path="/tmp/snp_tree_28329923473842346785384sd2s.tree" analysis_id="1" tool_execution_id="2" />
+    <analysis_output_file id="1" created_date="2014-03-06 10:01:02" execution_manager_file_id="???" file_path="/tmp/snp_tree_28329923473842346785384sd2s.tree" tool_execution_id="2" />
 
     <analysis_output_file_map analysis_id="1" analysisOutputFilesMap_id="1" analysis_output_file_key="tree" />
 </dataset>

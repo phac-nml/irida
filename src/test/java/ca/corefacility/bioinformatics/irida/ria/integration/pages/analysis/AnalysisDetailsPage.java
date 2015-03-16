@@ -84,6 +84,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 * @return {@link Integer} count of number of parameters
 	 */
 	public int getNumberOfParametersForTool() {
+		waitForElementVisible(By.className("tool"));
 		this.currentFile.findElements(By.className("tool")).get(0).click();
 		WebElement paramTable = currentFile.findElement(By.className("parameters"));
 		return paramTable.findElements(By.className("parameter")).size();
