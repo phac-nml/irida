@@ -137,6 +137,40 @@ public class ToolExecution implements IridaThing {
 		this.commandLine = null;
 	}
 
+	/**
+	 * Construct a new instance of {@link ToolExecution}.
+	 *
+	 * @param id the id for the ToolExecution
+	 * @param previousSteps
+	 *            the set of {@link ToolExecution} that led to the input of this
+	 *            {@link ToolExecution}.
+	 * @param toolName
+	 *            the name of the tool that was executed.
+	 * @param toolVersion
+	 *            the version of the tool that was executed.
+	 * @param executionManagerIdentifier
+	 *            the execution manager identifier that this provenance was
+	 *            derived from (the history step in Galaxy).
+	 * @param executionTimeParameters
+	 *            the parameters that were passed to the tool at execution time.
+	 */
+	public ToolExecution(final Long id, final Set<ToolExecution> previousSteps, final String toolName, final String toolVersion,
+			final String executionManagerIdentifier, final Map<String, String> executionTimeParameters) {
+		this.id = id;
+		this.toolName = toolName;
+		this.toolVersion = toolVersion;
+		this.executionManagerIdentifier = executionManagerIdentifier;
+
+		if (previousSteps == null) {
+			this.previousSteps = new HashSet<>();
+		} else {
+			this.previousSteps = previousSteps;
+		}
+		this.executionTimeParameters = addExecutionTimeParameters(executionTimeParameters);
+		this.createdDate = new Date();
+		this.commandLine = null;
+	}
+
 	@Override
 	public String toString() {
 		return "ToolExecution [toolName=" + this.toolName + ", toolVersion=" + toolVersion + "]";
@@ -160,7 +194,7 @@ public class ToolExecution implements IridaThing {
 		return false;
 	}
 
-	public Set<ToolExecution> getPreviousSteps() {
+	public final Set<ToolExecution> getPreviousSteps() {
 		return ImmutableSet.copyOf(previousSteps);
 	}
 
@@ -180,7 +214,7 @@ public class ToolExecution implements IridaThing {
 		return executionManagerIdentifier;
 	}
 
-	public Map<String, String> getExecutionTimeParameters() {
+	public final Map<String, String> getExecutionTimeParameters() {
 		final Map<String, String> unescapedKeys = new HashMap<>();
 		for (final Entry<String, String> param : executionTimeParameters.entrySet()) {
 			final String unescapedKey = param.getKey().replaceAll("\\\\([A-Z])", "$1");
