@@ -53,7 +53,16 @@ public class FastqcFileProcessor implements FileProcessor {
 	private final SequenceFileRepository sequenceFileRepository;
 	private final MessageSource messageSource;
 
-	public FastqcFileProcessor(MessageSource messageSource, SequenceFileRepository sequenceFileRepository) {
+	/**
+	 * Create a new {@link FastqcFileProcessor}
+	 * 
+	 * @param messageSource
+	 *            the message source for i18n (used to add an internationalized
+	 *            description for the analysis).
+	 * @param sequenceFileRepository
+	 *            the sequence file repository.
+	 */
+	public FastqcFileProcessor(final MessageSource messageSource, final SequenceFileRepository sequenceFileRepository) {
 		this.messageSource = messageSource;
 		this.sequenceFileRepository = sequenceFileRepository;
 	}
