@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -17,9 +18,7 @@ import org.springframework.security.core.token.TokenService;
 import org.springframework.stereotype.Repository;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ListResourceWrapper;
-import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrapper;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
@@ -69,12 +68,13 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Seque
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Path downloadRemoteSequenceFile(RemoteSequenceFile sequenceFile, RemoteAPI remoteAPI,
+	public Path downloadRemoteSequenceFile(SequenceFile sequenceFile, RemoteAPI remoteAPI,
 			MediaType... mediaTypes) {
 		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
 
 		// get the resource's URI
-		String uri = sequenceFile.getHrefForRel(RemoteResource.SELF_REL);
+		Link link = sequenceFile.getLink(Link.REL_SELF);
+		String uri = link.getHref();
 
 		// add the sequence file message converter
 		List<HttpMessageConverter<?>> converters = restTemplate.getMessageConverters();
@@ -95,7 +95,7 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Seque
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Path downloadRemoteSequenceFile(RemoteSequenceFile sequenceFile, RemoteAPI remoteAPI) {
+	public Path downloadRemoteSequenceFile(SequenceFile sequenceFile, RemoteAPI remoteAPI) {
 		return downloadRemoteSequenceFile(sequenceFile, remoteAPI, DEFAULT_DOWNLOAD_MEDIA_TYPE);
 	}
 
