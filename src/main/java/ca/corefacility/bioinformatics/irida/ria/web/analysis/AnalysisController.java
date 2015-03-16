@@ -395,7 +395,9 @@ public class AnalysisController {
 		}
 
 		private void setPreviousSteps(Set<ToolExecution> steps) {
-			previousSteps.addAll(steps.stream().map(ToolInfo::new).collect(Collectors.toList()));
+			for (ToolExecution toolExecution : steps) {
+				previousSteps.add(new ToolInfo(toolExecution));
+			}
 		}
 
 		public String getId() {
