@@ -3,10 +3,10 @@ package ca.corefacility.bioinformatics.irida.repositories.remote;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 
-public interface RemoteRepository<Type extends RemoteResource> {
+public interface RemoteRepository<Type extends IridaResourceSupport> {
 	/**
 	 * Read an individual resource
 	 * 
