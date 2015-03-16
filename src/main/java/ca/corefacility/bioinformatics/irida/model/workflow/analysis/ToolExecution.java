@@ -160,7 +160,7 @@ public class ToolExecution implements IridaThing {
 		return false;
 	}
 
-	public final Set<ToolExecution> getPreviousSteps() {
+	public Set<ToolExecution> getPreviousSteps() {
 		return ImmutableSet.copyOf(previousSteps);
 	}
 
@@ -180,7 +180,7 @@ public class ToolExecution implements IridaThing {
 		return executionManagerIdentifier;
 	}
 
-	public final Map<String, String> getExecutionTimeParameters() {
+	public Map<String, String> getExecutionTimeParameters() {
 		final Map<String, String> unescapedKeys = new HashMap<>();
 		for (final Entry<String, String> param : executionTimeParameters.entrySet()) {
 			final String unescapedKey = param.getKey().replaceAll("\\\\([A-Z])", "$1");
