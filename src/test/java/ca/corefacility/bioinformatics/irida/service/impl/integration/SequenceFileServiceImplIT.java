@@ -162,7 +162,7 @@ public class SequenceFileServiceImplIT {
 		// figure out what the version number of the sequence file is (should be
 		// 2; the file wasn't gzipped, but fastqc will have modified it.)
 		sf = asRole(Role.ROLE_ADMIN, "tom").sequenceFileService.read(sf.getId());
-		assertEquals("Wrong version number after processing.", Long.valueOf(1), sf.getFileRevisionNumber());
+		assertEquals("Wrong version number after processing.", Long.valueOf(2), sf.getFileRevisionNumber());
 
 		AnalysisFastQC analysis = sf.getFastQCAnalysis();
 		assertNotNull("FastQCAnalysis should have been created for the file.", analysis);
@@ -186,7 +186,7 @@ public class SequenceFileServiceImplIT {
 			dir.next();
 			fileCount++;
 		}
-		assertEquals("Wrong number of directories beneath the id directory", 1, fileCount);
+		assertEquals("Wrong number of directories beneath the id directory", 2, fileCount);
 	}
 
 	@Test
@@ -207,11 +207,11 @@ public class SequenceFileServiceImplIT {
 		assertNotNull("ID wasn't assigned.", sf.getId());
 
 		// figure out what the version number of the sequence file is (should be
-		// 2; the file was gzipped)
+		// 3; the file was gzipped)
 		// get the MOST RECENT version of the sequence file from the database
 		// (it will have been modified outside of the create method.)
 		sf = asRole(Role.ROLE_ADMIN, "tom").sequenceFileService.read(sf.getId());
-		assertEquals("Wrong version number after processing.", Long.valueOf(2L), sf.getFileRevisionNumber());
+		assertEquals("Wrong version number after processing.", Long.valueOf(3L), sf.getFileRevisionNumber());
 		assertFalse("File name is still gzipped.", sf.getFile().getFileName().toString().endsWith(".gz"));
 
 		AnalysisFastQC analysis = sf.getFastQCAnalysis();
@@ -237,7 +237,7 @@ public class SequenceFileServiceImplIT {
 			dir.next();
 			fileCount++;
 		}
-		assertEquals("Wrong number of directories beneath the id directory", 2, fileCount);
+		assertEquals("Wrong number of directories beneath the id directory", 3, fileCount);
 	}
 
 	@Test
