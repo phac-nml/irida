@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
