@@ -90,7 +90,7 @@ public class TestDataFactory {
 		return new ReferenceFile(path);
 	}
 
-	public static AnalysisSubmission constructAnalysisSubmission() {
+	public static AnalysisSubmission constructAnalysisSubmission(ToolExecution mockToolExecution) {
 		Set<SequenceFile> files = new HashSet<>();
 		files.add(constructSequenceFile());
 		Long id = 5L;
@@ -101,7 +101,7 @@ public class TestDataFactory {
 		analysisSubmission.setId(id);
 		analysisSubmission.setAnalysisState(AnalysisState.COMPLETED);
 		try {
-			analysisSubmission.setAnalysis(constructAnalysis());
+			analysisSubmission.setAnalysis(constructAnalysis(mockToolExecution));
 		} catch (final AnalysisAlreadySetException e) {
 			// this should *never* happen, we just constructed
 			// AnalysisSubmission above.
@@ -110,12 +110,12 @@ public class TestDataFactory {
 		return analysisSubmission;
 	}
 
-	public static Analysis constructAnalysis() {
+	public static Analysis constructAnalysis(ToolExecution mockToolExecution) {
 		Set<SequenceFile> files = ImmutableSet.of(constructSequenceFile());
 		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
-				.put("tree", constructAnalysisOutputFile("snp_tree.tree"))
-				.put("matrix", constructAnalysisOutputFile("test_file_1.fastq"))
-				.put("table", constructAnalysisOutputFile("test_file_2.fastq")).build();
+				.put("tree", constructAnalysisOutputFile("snp_tree.tree", mockToolExecution))
+				.put("matrix", constructAnalysisOutputFile("test_file_1.fastq", mockToolExecution))
+				.put("table", constructAnalysisOutputFile("test_file_2.fastq", mockToolExecution)).build();
 		AnalysisPhylogenomicsPipeline analysis = new AnalysisPhylogenomicsPipeline(files, FAKE_EXECUTION_MANAGER_ID,
 				analysisOutputFiles);
 		return analysis;
@@ -137,11 +137,9 @@ public class TestDataFactory {
 		return join;
 	}
 
-	private static AnalysisOutputFile constructAnalysisOutputFile(String name) {
-		AnalysisOutputFile file = new AnalysisOutputFile(Paths.get(FAKE_FILE_PATH.replace("{name}", name)),
-				FAKE_EXECUTION_MANAGER_ID);
-		file.setCreatedByTool(new ToolExecution(1L, null, "myTool", "V1", "identifier", ImmutableMap.of()));
-		return file;
+	private static AnalysisOutputFile constructAnalysisOutputFile(String name, ToolExecution mockToolExecution) {
+		return new AnalysisOutputFile(Paths.get(FAKE_FILE_PATH.replace("{name}", name)), FAKE_EXECUTION_MANAGER_ID,
+				mockToolExecution);
 	}
 
 	public static Project constructProject() {

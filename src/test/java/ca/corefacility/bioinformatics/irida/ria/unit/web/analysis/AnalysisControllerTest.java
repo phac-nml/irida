@@ -14,12 +14,14 @@ import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ExtendedModelMap;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
@@ -40,11 +42,13 @@ public class AnalysisControllerTest {
 	 */
 	private AnalysisSubmissionService analysisSubmissionServiceMock;
 	private IridaWorkflowsService iridaWorkflowsServiceMock;
+	private ToolExecution mockToolExecution;
 
 	@Before
 	public void init() {
 		analysisSubmissionServiceMock = mock(AnalysisSubmissionService.class);
 		iridaWorkflowsServiceMock = mock(IridaWorkflowsService.class);
+		mockToolExecution = mock(ToolExecution.class);
 		MessageSource messageSourceMock = mock(MessageSource.class);
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				messageSourceMock);
@@ -56,7 +60,8 @@ public class AnalysisControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		Locale locale = Locale.ENGLISH;
 
-		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission(mockToolExecution);
 		IridaWorkflowDescription description = new IridaWorkflowDescription(submission.getWorkflowId(), "My Workflow",
 				"V1", AnalysisType.PHYLOGENOMICS, null, Lists.newArrayList(), Lists.newArrayList(),
 				Lists.newArrayList());
@@ -65,6 +70,8 @@ public class AnalysisControllerTest {
 
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
 		when(iridaWorkflowsServiceMock.getIridaWorkflow(submission.getWorkflowId())).thenReturn(iridaWorkflow);
+		when(mockToolExecution.getId()).thenReturn(1L);
+		when(mockToolExecution.getExecutionTimeParameters()).thenReturn(ImmutableMap.of("test", "1"));
 
 		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
 		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY+"tree", detailsPage);
@@ -80,7 +87,7 @@ public class AnalysisControllerTest {
 		ExtendedModelMap model = new ExtendedModelMap();
 		Locale locale = Locale.ENGLISH;
 
-		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission(mockToolExecution);
 		IridaWorkflowDescription description = new IridaWorkflowDescription(submission.getWorkflowId(), "My Workflow",
 				"V1", AnalysisType.PHYLOGENOMICS, null, Lists.newArrayList(), Lists.newArrayList(),
 				Lists.newArrayList());
@@ -108,7 +115,7 @@ public class AnalysisControllerTest {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 
 		when(analysisSubmissionServiceMock.read(analysisSubmissionId)).thenReturn(
-				TestDataFactory.constructAnalysisSubmission());
+				TestDataFactory.constructAnalysisSubmission(mockToolExecution));
 		analysisController.getAjaxDownloadAnalysisSubmission(analysisSubmissionId, response);
 		assertEquals("Has the correct content type", "application/zip", response.getContentType());
 		assertEquals("Has the correct 'Content-Disposition' headers", "attachment;filename=submission-5.zip",
