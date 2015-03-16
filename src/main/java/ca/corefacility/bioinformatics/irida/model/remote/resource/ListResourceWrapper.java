@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.remote.resource;
 
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+
 /**
  * Object wrapping a list of returned resources from a remote IRIDA API. This
  * type will be returned when listing objects from the API. Example: "/projects"
@@ -8,7 +10,7 @@ package ca.corefacility.bioinformatics.irida.model.remote.resource;
  *            The type of object being stored in the list extends
  *            {@link RemoteResource}
  */
-public class ListResourceWrapper<Type extends RemoteResource> {
+public class ListResourceWrapper<Type extends IridaResourceSupport> {
 	private ResourceList<Type> resource;
 
 	public ResourceList<Type> getResource() {
