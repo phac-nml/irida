@@ -186,6 +186,10 @@ public class RESTProjectSamplesController {
 		Project p = projectService.read(projectId);
 		List<Join<Project, Sample>> relationships = sampleService.getSamplesForProject(p);
 
+		/*
+		 * Using ResourceAdditionalProperties<Sample> so that we can add the
+		 * number of files in the sample to the JSON entity.
+		 */
 		ResourceCollection<ResourceAdditionalProperties<Sample>> sampleResources = new ResourceCollection<>(relationships.size());
 
 		for (Join<Project, Sample> r : relationships) {
@@ -246,8 +250,10 @@ public class RESTProjectSamplesController {
 		// get the sample for the project.
 		Sample s = sampleService.getSampleForProject(p, sampleId);
 
-		// prepare the sample for serializing to the client
-
+		/*
+		 * Using ResourceAdditionalProperties<Sample> so that we can add the
+		 * number of files in the sample to the JSON entity.
+		 */
 		ResourceAdditionalProperties<Sample> props = new ResourceAdditionalProperties<Sample>(s);
 		props.addProperty(FILE_COUNT_PARAM, getSequenceFileCountForSampleResource(s));
 
