@@ -39,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * A user object.
@@ -258,6 +259,7 @@ public class User extends IridaResourceSupport implements IridaThing, Comparable
 		return password;
 	}
 
+	@JsonProperty
 	public void setPassword(String password) {
 		this.password = password;
 	}
