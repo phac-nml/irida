@@ -69,8 +69,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 *            the project sample join repository.
 	 * @param ssfRepository
 	 *            the sample sequence file join repository.
-	 * @param analysisRepository
-	 *            the analysis repository.
 	 */
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
