@@ -1,5 +1,9 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.exception;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,7 +32,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.web.assembler.lookup.ModelLookup;
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
@@ -76,7 +80,7 @@ public class ControllerExceptionHandler {
 		ErrorResponse errorResponse;
 		Class<? extends Object> affectedClass = e.getAffectedClass();
 		if (affectedClass != null) {
-			List<String> properties = ModelLookup.getProperties(affectedClass);
+			List<String> properties = getProperties(affectedClass);
 			String message = "Cannot update resource with supplied properties.";
 			errorResponse = new ErrorResponse(message);
 			errorResponse.addProperty("available-properties", properties);
@@ -249,5 +253,22 @@ public class ControllerExceptionHandler {
 			}
 		}
 		return mp;
+	}
+	
+	private List<String> getProperties(Class<? extends Object> clazz) {
+		BeanInfo info = null;
+		try {
+			info = Introspector.getBeanInfo(clazz, IridaResourceSupport.class);
+		} catch (IntrospectionException e) {
+			e.printStackTrace();
+		}
+
+		PropertyDescriptor[] propertyDescriptors = info.getPropertyDescriptors();
+		List<String> names = new ArrayList<>();
+		for (PropertyDescriptor p : propertyDescriptors) {
+			names.add(p.getName());
+		}
+
+		return names;
 	}
 }
