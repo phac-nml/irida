@@ -16,7 +16,14 @@
 		<dropTable tableName="analysis_sequence_file_AUD" />
 		<dropTable tableName="overrepresented_sequence_AUD" />
 		<dropColumn tableName="analysis" columnName="modifiedDate" />
-		<dropColumn tableName="overrepresented_sequence" columnName="modifiedDate" />
+		<dropColumn tableName="overrepresented_sequence"
+			columnName="modifiedDate" />
 		<dropColumn tableName="analysis_submission_AUD" columnName="analysis_id" />
+
+		<dropForeignKeyConstraint baseTableName="analysis_output_file"
+			constraintName="FK_ANALYSIS_OUTPUT_FILE_ANALYSIS" />
+		<dropColumn tableName="analysis_output_file" columnName="analysis_id" />
+		<dropColumn tableName="analysis_output_file" columnName="modified_date" />
+		<dropColumn tableName="analysis_output_file" columnName="file_revision_number" />
 	</changeSet>
 </databaseChangeLog>

@@ -1,4 +1,3 @@
-# noinspection SqlNoDataSourceInspection
 INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_USER','A basic user in the system.');
 INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_ADMIN','An administrative user in the system.');
 INSERT INTO system_role (`name`,`description`) VALUES ('ROLE_MANAGER','A manager role in the system.');
@@ -441,9 +440,9 @@ INSERT INTO `tool_execution_prev_steps` (tool_execution_id, tool_execution_prev_
 INSERT INTO `tool_execution_prev_steps` (tool_execution_id, tool_execution_prev_id) VALUES (6, 8);
 
 -- analysis_output_file
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, analysis_id, tool_execution_id) VALUES (1, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/phylogeneticTree.tre', 13, 1);
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, analysis_id, tool_execution_id) VALUES (2, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snpMatrix.tsv', 13, 2);
-INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, analysis_id, tool_execution_id) VALUES (3, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snpTable.tsv', 13, 3);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id) VALUES (1, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/snp_tree.tre', 1);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id) VALUES (2, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/file2.txt', 2);
+INSERT INTO `analysis_output_file` (id, created_date, execution_manager_file_id, file_path, tool_execution_id) VALUES (3, '2014-08-06 10:01:02', 'Whole Genome Phylogenomics Pipeline', '/tmp/analysis-files/file3.txt', 3);
 
 -- analysis_output_file_map
 INSERT INTO `analysis_output_file_map` (analysis_id, analysisOutputFilesMap_id, analysis_output_file_key) VALUES (13, 1, 'tree');
