@@ -10,6 +10,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 
@@ -25,7 +26,7 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource
  */
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class RemoteObjectCache<Type extends RemoteResource> {
+public class RemoteObjectCache<Type extends IridaResourceSupport> {
 	private static final Logger logger = LoggerFactory.getLogger(RemoteObjectCache.class);
 
 	private Map<Integer, CacheObject<Type>> objectCache;
