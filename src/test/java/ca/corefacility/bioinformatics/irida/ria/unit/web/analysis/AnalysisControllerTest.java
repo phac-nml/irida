@@ -51,7 +51,7 @@ public class AnalysisControllerTest {
 	}
 
 	@Test
-	public void testGetAnalysisDetalisTree() throws IOException, IridaWorkflowNotFoundException {
+	public void testGetAnalysisDetailsTree() throws IOException, IridaWorkflowNotFoundException {
 		Long submissionId = 1l;
 		ExtendedModelMap model = new ExtendedModelMap();
 		Locale locale = Locale.ENGLISH;
@@ -75,7 +75,7 @@ public class AnalysisControllerTest {
 	}
 
 	@Test
-	public void testGetAnalysisDetalisNotCompleted() throws IOException, IridaWorkflowNotFoundException {
+	public void testGetAnalysisDetailsNotCompleted() throws IOException, IridaWorkflowNotFoundException {
 		Long submissionId = 1l;
 		ExtendedModelMap model = new ExtendedModelMap();
 		Locale locale = Locale.ENGLISH;
