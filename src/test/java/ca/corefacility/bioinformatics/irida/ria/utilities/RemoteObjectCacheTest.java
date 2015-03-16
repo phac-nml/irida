@@ -7,10 +7,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.utils.model.IdentifiableTestEntity;
 import ca.corefacility.bioinformatics.irida.utils.model.RemoteIdentifiableTestEntity;
 
 public class RemoteObjectCacheTest {
-	private RemoteObjectCache<RemoteIdentifiableTestEntity> cache;
+	private RemoteObjectCache<IdentifiableTestEntity> cache;
 	private RemoteIdentifiableTestEntity entity;
 	private Integer entityId;
 	private RemoteAPI api;
@@ -33,8 +34,8 @@ public class RemoteObjectCacheTest {
 
 	@Test
 	public void testReadResource() {
-		CacheObject<RemoteIdentifiableTestEntity> cacheObject = cache.readResource(entityId);
-		RemoteIdentifiableTestEntity readResource = cacheObject.getResource();
+		CacheObject<IdentifiableTestEntity> cacheObject = cache.readResource(entityId);
+		IdentifiableTestEntity readResource = cacheObject.getResource();
 		assertEquals(entity, readResource);
 		assertEquals(api, cacheObject.getAPI());
 	}
