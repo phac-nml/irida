@@ -6,6 +6,12 @@
 	<miseq_run />
 	<host />
 	<sample />
+
+	<analysis />
+	<analysis_fastqc />
+	<overrepresented_sequence />
+	<analysis_fastqc_overrepresented_sequence />
+	
 	<sequence_file />
 	<sequence_file_properties />
 	<system_role />
@@ -13,12 +19,9 @@
 	<project />
 	<related_project />
 
-	<analysis />
 	<analysis_output_file />
 	<analysis_output_file_map />
-	<analysis_fastqc />
-	<overrepresented_sequence />
-	<analysis_fastqc_overrepresented_sequence />
+
 	<analysis_properties />
 	<analysis_phylogenomicspipeline />
 	<analysis_assemblyannotation />
