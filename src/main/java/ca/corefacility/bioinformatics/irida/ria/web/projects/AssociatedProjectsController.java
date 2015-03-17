@@ -37,7 +37,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -305,7 +304,7 @@ public class AssociatedProjectsController {
 	 * @param projectId
 	 *            The ID of the owning project
 	 * @param associatedProjectId
-	 *            The Cache ID of the {@link RemoteProject}
+	 *            The Cache ID of the {@link Project}
 	 * @param apiId
 	 *            The ID of the api this project resides on
 	 * @return
@@ -391,10 +390,10 @@ public class AssociatedProjectsController {
 	}
 
 	/**
-	 * Get a list of the {@link RemoteProject} parameters
+	 * Get a list of the {@link Project} parameters
 	 * 
 	 * @param projects
-	 *            A list of the {@link RemoteProject}s to display
+	 *            A list of the {@link Project}s to display
 	 * @param associatedProjects
 	 *            The {@link RemoteRelatedProject}s associated with the current
 	 *            project

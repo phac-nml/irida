@@ -14,7 +14,6 @@ import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.ria.utilities.CacheObject;
 import ca.corefacility.bioinformatics.irida.ria.utilities.RemoteObjectCache;
@@ -41,7 +40,7 @@ public class RemoteProjectsControllerTest {
 	public void testReadRemoteRelatedProject() {
 		Long remoteProjectId = 1l;
 		RemoteRelatedProject rrp = new RemoteRelatedProject();
-		RemoteProject rp = new RemoteProject();
+		Project rp = new Project();
 		rp.setId(2l);
 		rp.setName("project name");
 		rrp.setRemoteAPI(new RemoteAPI());
@@ -62,7 +61,7 @@ public class RemoteProjectsControllerTest {
 	public void testReadRemoteProject() {
 		ExtendedModelMap model = new ExtendedModelMap();
 		Integer projectCacheId = 2;
-		Project remoteProject = new RemoteProject();
+		Project remoteProject = new Project();
 		RemoteAPI api = new RemoteAPI();
 		CacheObject<Project> cacheObject = new CacheObject<>(remoteProject, api);
 
