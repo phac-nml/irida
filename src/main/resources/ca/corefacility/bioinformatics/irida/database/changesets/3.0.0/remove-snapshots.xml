@@ -16,7 +16,7 @@
 		<dropTable tableName="remote_project_snapshot" />
 
 		<dropTable tableName="snapshot_sequence_file_properties" />
-		
+
 		<dropTable tableName="snapshot_sample_snapshot" />
 
 		<dropTable tableName="snapshot_sequence_file_snapshot" />
