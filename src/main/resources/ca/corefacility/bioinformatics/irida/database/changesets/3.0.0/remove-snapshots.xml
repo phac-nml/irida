@@ -31,5 +31,9 @@
 
 		<dropTable tableName="snapshot" />
 
+		<dropTable tableName="rest_links_links" />
+
+		<dropTable tableName="rest_links" />
+
 	</changeSet>
 </databaseChangeLog>
