@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.model;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * An interface for all model classes in the IRIDA system
  * 
@@ -13,6 +15,7 @@ public interface IridaThing extends Timestamped {
 	 * @return
 	 */
 	@NotNull(message = "{irida.label.notnull}")
+	@JsonIgnore
 	public String getLabel();
 
 	/**
