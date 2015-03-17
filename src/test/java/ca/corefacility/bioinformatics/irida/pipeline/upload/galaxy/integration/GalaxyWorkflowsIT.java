@@ -282,8 +282,8 @@ public class GalaxyWorkflowsIT {
 		// test get workflow status
 		GalaxyWorkflowStatus workflowStatus = 
 				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
-		float percentComplete = workflowStatus.getPercentComplete();
-		assertTrue(0.0f <= percentComplete && percentComplete <= 100.0f);
+		float percentComplete = workflowStatus.getProportionComplete();
+		assertTrue(0.0f <= percentComplete && percentComplete <= 1.0f);
 	}
 	
 	/**
@@ -471,8 +471,8 @@ public class GalaxyWorkflowsIT {
 		// test get workflow status
 		GalaxyWorkflowStatus workflowStatus = 
 				galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
-		float percentComplete = workflowStatus.getPercentComplete();
-		assertTrue(0.0f <= percentComplete && percentComplete <= 100.0f);
+		float percentComplete = workflowStatus.getProportionComplete();
+		assertTrue(0.0f <= percentComplete && percentComplete <= 1.0f);
 	}
 	
 	/**
@@ -607,9 +607,9 @@ public class GalaxyWorkflowsIT {
 
 		// test get workflow status
 		GalaxyWorkflowStatus workflowStatus = galaxyHistory.getStatusForHistory(workflowOutput.getHistoryId());
-		float percentComplete = workflowStatus.getPercentComplete();
-		assertTrue("the workflow percent complete should be between 0 and 100", 0.0f <= percentComplete
-				&& percentComplete <= 100.0f);
+		float proportionComplete = workflowStatus.getProportionComplete();
+		assertTrue("the workflow proportion complete should be between 0 and 1", 0.0f <= proportionComplete
+				&& proportionComplete <= 1.0f);
 	}
 	
 	/**

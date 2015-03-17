@@ -197,8 +197,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			analysisSubmission.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
 		} else if (workflowStatus.isRunning()) {
-			logger.trace("Workflow for analysis " + analysisSubmission + " is running: percent "
-					+ workflowStatus.getPercentComplete());
+			logger.trace("Workflow for analysis " + analysisSubmission + " is running: proportion complete "
+					+ workflowStatus.getProportionComplete());
 			returnedSubmission = new AsyncResult<>(analysisSubmission);
 		} else {
 			// If one of the above combinations did not match, assume an error occurred.

@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Profile;
 
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsGalaxyIntegrationTestConfig;
 import ca.corefacility.bioinformatics.irida.config.analysis.AnalysisExecutionServiceTestConfig;
+import ca.corefacility.bioinformatics.irida.config.analysis.GalaxyExecutionTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.NonWindowsLocalGalaxyConfig;
 import ca.corefacility.bioinformatics.irida.config.pipeline.data.galaxy.WindowsLocalGalaxyConfig;
@@ -26,7 +27,7 @@ import com.google.common.util.concurrent.MoreExecutors;
  *
  */
 @Configuration
-@Import({ IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class,
+@Import({ GalaxyExecutionTestConfig.class, IridaApiServicesConfig.class, IridaApiTestDataSourceConfig.class, IridaApiTestMultithreadingConfig.class,
 		NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class,
 		AnalysisExecutionServiceTestConfig.class, IridaWorkflowsTestConfig.class, IridaWorkflowsGalaxyIntegrationTestConfig.class })
 @Profile("test")

@@ -89,6 +89,8 @@ import com.google.common.collect.Sets;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisExecutionServiceGalaxyIT {
+	
+	private static final float DELTA = 0.000001f;
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxyIT.class);
 
@@ -489,16 +491,25 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+		float percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
+		assertEquals("percent complete is incorrect", 1.0f, percentComplete, DELTA);
 
 		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
 				.executeAnalysis(analysisSubmitted);
 		AnalysisSubmission analysisExecuted = analysisExecutionFuture.get();
 		assertNotNull("remoteInputDataId is null", analysisExecuted.getRemoteInputDataId());
 		String remoteInputDataId = analysisExecuted.getRemoteInputDataId();
+		percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
+		assertTrue("percent complete is incorrect", 10.0f <= percentComplete && percentComplete <= 90.0f);
 
 		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
+		percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
+		assertEquals("percent complete is incorrect", 90.0f, percentComplete, DELTA);
 
 		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
+		percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
+		assertEquals("percent complete is incorrect", 90.0f, percentComplete, DELTA);
+		
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
@@ -511,6 +522,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompleted.getAnalysisState());
 		assertEquals("remoteInputDataId should be unchanged in the completed analysis", remoteInputDataId,
 				analysisSubmissionCompletedDatabase.getRemoteInputDataId());
+		percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
+		assertEquals("percent complete is incorrect", 100.0f, percentComplete, DELTA);
 
 		Analysis analysisResults = analysisSubmissionCompleted.getAnalysis();
 		Analysis analysisResultsDatabase = analysisSubmissionCompletedDatabase.getAnalysis();

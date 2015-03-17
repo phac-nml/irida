@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.config.analysis;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import javax.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -25,8 +27,20 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectNam
 import ca.corefacility.bioinformatics.irida.model.workflow.manager.galaxy.ExecutionManagerGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyConnector;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibraryBuilder;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyRoleSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyUploader;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 
+import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
+import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
+import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
+import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
+import com.github.jmchilton.blend4j.galaxy.RolesClient;
+import com.github.jmchilton.blend4j.galaxy.ToolsClient;
+import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -60,6 +74,19 @@ public class ExecutionManagerConfig {
 					"local", Uploader.DataStorage.LOCAL);
 	
 	private static final Uploader.DataStorage DEFAULT_DATA_STORAGE = Uploader.DataStorage.REMOTE;
+	
+	/**
+	 * Timeout in seconds to stop polling a Galaxy library.
+	 */
+	@Value("${galaxy.library.upload.timeout}")
+	private int libraryTimeout;
+	
+	/**
+	 * Polling time in seconds to poll a Galaxy library to check if
+	 * datasets have been properly uploaded.
+	 */
+	@Value("${galaxy.library.upload.polling.time}")
+	private int pollingTime;
 
 	@Autowired
 	private Environment environment;
@@ -215,5 +242,115 @@ public class ExecutionManagerConfig {
 		}
 		
 		return dataStorage;
+	}
+
+	/**
+	 * @return A GalaxyWorkflowService for interacting with Galaxy workflows.
+	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.
+	 */
+	@Lazy
+	@Bean
+	public GalaxyWorkflowService galaxyWorkflowService() throws ExecutionManagerConfigurationException {
+		return new GalaxyWorkflowService(historiesClient(), workflowsClient(), StandardCharsets.UTF_8);
+	}
+
+	/**
+	 * @return A GalaxyLibraryBuilder for building libraries.
+	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.
+	 */
+	@Lazy
+	@Bean
+	public GalaxyLibraryBuilder galaxyLibraryBuilder() throws ExecutionManagerConfigurationException {
+		return new GalaxyLibraryBuilder(librariesClient(), galaxyRoleSearch(), executionManager().getLocation());
+	}
+
+	/**
+	 * @return A GalaxyRoleSearch for searching through Galaxy roles.
+	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.
+	 */
+	@Lazy
+	@Bean
+	public GalaxyRoleSearch galaxyRoleSearch() throws ExecutionManagerConfigurationException {
+		return new GalaxyRoleSearch(rolesClient(), executionManager().getLocation());
+	}
+
+	/**
+	 * @return A RolesClient for dealing with roles in Galaxy.
+	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.
+	 */
+	@Lazy
+	@Bean
+	public RolesClient rolesClient() throws ExecutionManagerConfigurationException {
+		return galaxyInstance().getRolesClient();
+	}
+
+	/**
+	 * @return A WorkflowsClient for interacting with Galaxy.
+	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.
+	 */
+	@Lazy
+	@Bean
+	public WorkflowsClient workflowsClient() throws ExecutionManagerConfigurationException {
+		return galaxyInstance().getWorkflowsClient();
+	}
+
+	/**
+	 * @return A LibrariesClient for interacting with Galaxy.
+	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.
+	 */
+	@Lazy
+	@Bean
+	public LibrariesClient librariesClient() throws ExecutionManagerConfigurationException {
+		return galaxyInstance().getLibrariesClient();
+	}
+
+	/**
+	 * @return A GalaxyHistoriesService for interacting with Galaxy histories.
+	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.
+	 */
+	@Lazy
+	@Bean
+	public GalaxyHistoriesService galaxyHistoriesService() throws ExecutionManagerConfigurationException {
+		return new GalaxyHistoriesService(historiesClient(), toolsClient(), galaxyLibrariesService());
+	}
+
+	/**
+	 * @return A GalaxyHistoriesService for interacting with Galaxy histories.
+	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.
+	 */
+	@Lazy
+	@Bean
+	public GalaxyLibrariesService galaxyLibrariesService() throws ExecutionManagerConfigurationException {
+		return new GalaxyLibrariesService(librariesClient(), pollingTime, libraryTimeout);
+	}
+
+	/**
+	 * @return A ToolsClient for interacting with Galaxy tools.
+	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.
+	 */
+	@Lazy
+	@Bean
+	public ToolsClient toolsClient() throws ExecutionManagerConfigurationException {
+		return galaxyInstance().getToolsClient();
+	}
+
+	/**
+	 * @return A HistoriesClient for interacting with Galaxy histories.
+	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.
+	 */
+	@Lazy
+	@Bean
+	public HistoriesClient historiesClient() throws ExecutionManagerConfigurationException {
+		return galaxyInstance().getHistoriesClient();
+	}
+
+	/**
+	 * @return An instance of a connection to Galaxy.
+	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.
+	 */
+	@Lazy
+	@Bean
+	public GalaxyInstance galaxyInstance() throws ExecutionManagerConfigurationException {
+		return GalaxyInstanceFactory.get(executionManager().getLocation().toString(), executionManager().getAPIKey());
 	}
 }
