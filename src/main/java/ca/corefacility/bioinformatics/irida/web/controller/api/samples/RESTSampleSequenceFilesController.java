@@ -188,7 +188,7 @@ public class RESTSampleSequenceFilesController {
 		if (fileResource != null) {
 			sf = fileResource.getResource();
 
-			Long miseqRunId = (Long) fileResource.getMiseqRunId();
+			Long miseqRunId = fileResource.getMiseqRunId();
 			if (miseqRunId != null) {
 				miseqRun = miseqRunService.read(miseqRunId);
 				logger.trace("Read miseq run " + miseqRunId);
