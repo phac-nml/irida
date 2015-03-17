@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.utilities;
 
 import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 
 /**
  * Object stored by the {@link RemoteObjectCache}. Includes a reference to
