@@ -34,7 +34,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
@@ -51,14 +50,13 @@ import com.google.common.collect.ImmutableMap;
 @Controller
 @RequestMapping("/analysis")
 public class AnalysisController {
-	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap.of(AnalysisType.PHYLOGENOMICS, "tree");
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
 	// PAGES
 	private static final String REDIRECT_ERROR = "redirect:errors/not_found";
 	private static final String BASE = "analysis/";
-	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
+	public static final String PAGE_ANALYSIS_DETAILS = BASE + "details/details";
 	public static final String PAGE_USER_ANALYSIS = BASE + "analyses";
-	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
+
 	/*
 	 * SERVICES
 	 */
@@ -130,10 +128,8 @@ public class AnalysisController {
 			throw new EntityNotFoundException("Couldn't find workflow for submission " + submission.getId(), e);
 		}
 
-		String viewName = PREVIEW_UNAVAILABLE;
-
+		// Get the name of the workflow
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
-		logger.trace("Workflow type is " + analysisType);
 		String workflowName = messageSource.getMessage("workflow." + analysisType.toString() + ".title", null, locale);
 		model.addAttribute("workflowName", workflowName);
 
@@ -142,26 +138,16 @@ public class AnalysisController {
 		 */
 		try {
 			if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
-
 				if (analysisType.equals(AnalysisType.PHYLOGENOMICS)) {
-
-					model = tree(submission, model);
+					tree(submission, model);
 				}
-
-				Set<AnalysisOutputFile> analysisOutputFiles = submission.getAnalysis().getAnalysisOutputFiles();
-				model.addAttribute("outputFiles", analysisOutputFiles);
-
-				viewName = getViewForAnalysisType(analysisType);
-
-				// Add provenance data
-				model.addAttribute("files", generateOutputFileProvenance(analysisOutputFiles));
 			}
 
 		} catch (IOException e) {
 			logger.error("Couldn't get preview for analysis", e);
 		}
 
-		return viewName;
+		return PAGE_ANALYSIS_DETAILS;
 	}
 
 	
@@ -180,7 +166,7 @@ public class AnalysisController {
 	 * @throws IOException
 	 *             If the tree file couldn't be read
 	 */
-	private Model tree(AnalysisSubmission submission, Model model) throws IOException {
+	private void tree(AnalysisSubmission submission, Model model) throws IOException {
 		assert (submission.getAnalysis().getClass().equals(AnalysisPhylogenomicsPipeline.class));
 
 		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) submission.getAnalysis();
@@ -191,32 +177,6 @@ public class AnalysisController {
 
 		// inform the view to display the tree preview
 		model.addAttribute("preview", "tree");
-
-		return model;
-
-	}
-
-	/**
-	 * Generate a List of provenance data from a set of output files.
-	 *
-	 * @param outputFiles A set of {@link AnalysisOutputFile} to generate the provenance data from.
-	 *
-	 * @return {@link HashMap} containing the provenance data for the {@link AnalysisOutputFile}s.
-	 */
-	private List<Map<String, Object>> generateOutputFileProvenance(Set<AnalysisOutputFile> outputFiles) {
-		List<Map<String, Object>> provenance = new ArrayList<>();
-		for (AnalysisOutputFile analysisOutputFile : outputFiles) {
-			Map<String, Object> map = new HashMap<>();
-			// FILE INFORMATION
-			map.put("filename", analysisOutputFile.getLabel());
-
-			// TOOL INFORMATION
-			ToolInfo tools = new ToolInfo(analysisOutputFile.getCreatedByTool());
-			map.put("tools", tools);
-
-			provenance.add(map);
-		}
-		return provenance;
 	}
 
 	/**
@@ -332,7 +292,7 @@ public class AnalysisController {
 	 * @param locale
 	 * 		{@link Locale} for the current user.
 	 *
-	 * @return {@link List} containting the workflows names and ids.
+	 * @return {@link List} containing the workflows names and ids.
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	private List<Map<String, String>> getAnalysisWorkflowTypes(Locale locale) throws IridaWorkflowNotFoundException {
@@ -352,74 +312,5 @@ public class AnalysisController {
 			));
 		}
 		return flows;
-	}
-
-	/**
-	 * Get the view name for different analysis types
-	 *
-	 * @param type
-	 *            The {@link AnalysisType}
-	 * @return the view name to display
-	 */
-	private String getViewForAnalysisType(AnalysisType type) {
-		String viewName;
-		if (PREVIEWS.containsKey(type)) {
-			viewName = PAGE_DETAILS_DIRECTORY + PREVIEWS.get(type);
-		} else {
-			viewName = PREVIEW_UNAVAILABLE;
-		}
-
-		return viewName;
-	}
-
-	/**
-	 * Used for sending {@link ToolExecution} information to the view.
-	 */
-	private static class ToolInfo {
-		private Set<ToolInfo> previousSteps = new HashSet<>();
-		private String id;
-		private String name;
-		private String label;
-		private String version;
-		private Map<String, String> parameters;
-
-		public ToolInfo(ToolExecution toolExecution) {
-			this.id = toolExecution.getId().toString();
-			this.name = toolExecution.getToolName();
-			this.label = toolExecution.getLabel();
-			this.version = toolExecution.getToolVersion();
-			this.parameters = toolExecution.getExecutionTimeParameters();
-			setPreviousSteps(toolExecution.getPreviousSteps());
-		}
-
-		public Set<ToolInfo> getPreviousSteps() {
-			return previousSteps;
-		}
-
-		private void setPreviousSteps(Set<ToolExecution> steps) {
-			for (ToolExecution toolExecution : steps) {
-				previousSteps.add(new ToolInfo(toolExecution));
-			}
-		}
-
-		public String getId() {
-			return id;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public String getLabel() {
-			return label;
-		}
-
-		public String getVersion() {
-			return version;
-		}
-
-		public Map<String, String> getParameters() {
-			return parameters;
-		}
 	}
 }
