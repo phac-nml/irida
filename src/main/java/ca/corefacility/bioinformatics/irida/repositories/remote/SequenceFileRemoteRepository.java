@@ -5,11 +5,10 @@ import java.nio.file.Path;
 import org.springframework.http.MediaType;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
- * Repository for reading {@link RemoteSequenceFile}s from a Remote IRIDA
+ * Repository for reading {@link SequenceFile}s from a Remote IRIDA
  * installation
  * 
  *
@@ -28,7 +27,7 @@ public interface SequenceFileRemoteRepository extends RemoteRepository<SequenceF
 	public Path downloadRemoteSequenceFile(SequenceFile sequenceFile, RemoteAPI api);
 
 	/**
-	 * Get a local copy of a {@link RemoteSequenceFile}
+	 * Get a local copy of a {@link SequenceFile}
 	 * 
 	 * @param sequenceFile
 	 *            The {@link SequenceFile} to get sequence data for
