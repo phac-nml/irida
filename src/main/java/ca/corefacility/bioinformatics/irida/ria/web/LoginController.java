@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectSamplesContr
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectsController;
 
 /**
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Controller
 public class LoginController extends BaseController {

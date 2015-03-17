@@ -20,8 +20,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  * Download a zip archive of all output files within an
  * {@link AnalysisSubmission}
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class FileUtilities {
 	private static final Logger logger = LoggerFactory.getLogger(FileUtilities.class);
@@ -41,6 +39,7 @@ public class FileUtilities {
 	 * @param files
 	 *            Set of {@link AnalysisOutputFile}
 	 * @throws IOException
+	 *             if the file cannot be read from the filesystem.
 	 */
 	public static void createAnalysisOutputFileZippedResponse(HttpServletResponse response, String fileName,
 			Set<AnalysisOutputFile> files) throws IOException {

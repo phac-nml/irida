@@ -29,7 +29,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFo
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
-import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.ExecutionManagerSearch;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
@@ -55,7 +54,6 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 
 /**
  * Class for working with Galaxy Histories.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyHistoriesService implements ExecutionManagerSearch<History, String> {
@@ -102,61 +100,24 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 		return historiesClient.create(history);
 	}
 	
-	
-	/**
-	 * Count the total number of history items for a given list of state ids.
-	 * @param stateIds  A list of state ids to search through.
-	 * @return  The total number of history items.
-	 */
-	private int countTotalHistoryItems(Map<String, List<String>> stateIds) {
-		return stateIds.values().stream().mapToInt(List::size).sum();
-	}
-	
-	/**
-	 * Count the total number of history items within the given workflow state.
-	 * @param stateIds  The list of history items to search through.
-	 * @param state  A state to search for.
-	 * @return  The number of history items in this state.
-	 */
-	private int countHistoryItemsInState(Map<String, List<String>> stateIds, GalaxyWorkflowState state) {
-		return stateIds.get(state.toString()).size();
-	}
-	
-	/**
-	 * Gets the percentage completed running of items within the given list of history items.
-	 * @param stateIds  The list of history items.
-	 * @return  The percent of history items that are finished running.
-	 */
-	private float getPercentComplete(Map<String, List<String>> stateIds) {
-		return 100.0f*(countHistoryItemsInState(stateIds, GalaxyWorkflowState.OK)/(float)countTotalHistoryItems(stateIds));
-	}
-	
 	/**
 	 * Given a history id returns the status for the given workflow.
-	 * @param historyId  The history id to use to find a workflow.
-	 * @return  The WorkflowStatus for the given workflow.
-	 * @throws ExecutionManagerException If there was an exception when attempting to get the status for a history.
+	 * 
+	 * @param historyId
+	 *            The history id to use to find a workflow.
+	 * @return The WorkflowStatus for the given workflow.
+	 * @throws ExecutionManagerException
+	 *             If there was an exception when attempting to get the status
+	 *             for a history.
 	 */
 	public GalaxyWorkflowStatus getStatusForHistory(String historyId) throws ExecutionManagerException {
 		checkNotNull(historyId, "historyId is null");
-		
-		GalaxyWorkflowStatus workflowStatus;
-		
-		GalaxyWorkflowState workflowState;
-		float percentComplete;
-			
+
 		try {
 			HistoryDetails details = historiesClient.showHistory(historyId);
-			workflowState = GalaxyWorkflowState.stringToState(details.getState());
-			
-			Map<String, List<String>> stateIds = details.getStateIds();
-			percentComplete = getPercentComplete(stateIds);
-			
-			workflowStatus = new GalaxyWorkflowStatus(workflowState, percentComplete);
-			
 			logger.trace("Details for history " + details.getId() + ": state=" + details.getState());
-			
-			return workflowStatus;
+
+			return GalaxyWorkflowStatus.builder(details).build();
 		} catch (ClientHandlerException | UniformInterfaceException e) {
 			throw new WorkflowException(e);
 		}
@@ -280,7 +241,7 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	 * Uploads a list of files into the given history.
 	 * @param dataFiles  The list of files to upload.
 	 * @param inputFileType  The type of files to upload.
-	 * @param workflowHistory  The history to upload the files into.String
+	 * @param history  The history to upload the files into.String
 	 * @return  A list of Datasets describing each uploaded file.
 	 * @throws UploadException  If an error occured uploading the file.
 	 * @throws GalaxyDatasetException If there was an issue finding the corresponding dataset for

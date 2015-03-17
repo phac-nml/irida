@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.exceptions;
 
 /**
  * An exception thrown if a workflow is invalid.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class WorkflowInvalidException extends WorkflowException {

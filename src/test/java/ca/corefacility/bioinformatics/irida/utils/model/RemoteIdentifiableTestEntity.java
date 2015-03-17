@@ -8,7 +8,6 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteRepository
 /**
  * Testing entity for {@link RemoteRepository}s
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class RemoteIdentifiableTestEntity extends IdentifiableTestEntity implements RemoteResource {

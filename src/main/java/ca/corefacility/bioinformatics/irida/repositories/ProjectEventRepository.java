@@ -11,7 +11,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 /**
  * Repository for storing events that occurred on a project
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public interface ProjectEventRepository extends IridaJpaRepository<ProjectEvent, Long> {
@@ -21,6 +20,8 @@ public interface ProjectEventRepository extends IridaJpaRepository<ProjectEvent,
 	 * 
 	 * @param project
 	 *            The project to get events for
+	 * @param pageable
+	 *            the page description for what we should load.
 	 * @return A List of {@link ProjectEvent}s
 	 */
 	@Query("FROM ProjectEvent e WHERE e.project=?1")
@@ -31,6 +32,8 @@ public interface ProjectEventRepository extends IridaJpaRepository<ProjectEvent,
 	 * 
 	 * @param user
 	 *            The {@link User} to get events for
+	 * @param pageable
+	 *            the page description for what we should load.
 	 * @return A List of {@link ProjectEvent}s
 	 */
 	@Query("SELECT e FROM ProjectEvent e INNER JOIN e.project as p INNER JOIN p.users as u WHERE u.user=?1")

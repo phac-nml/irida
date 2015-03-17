@@ -39,7 +39,6 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Controller managing interactions with the selected sequences
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Controller
@@ -72,12 +71,12 @@ public class CartController {
 	}
 
 	/**
-	 * Get a Json representation of what's in the cart. Format: { 'projects' : [
-	 * { 'id': '5', 'label': 'project', 'samples': [ { 'id': '6', 'label': 'a
-	 * sample', 'sequenceFiles': [{href: 'file:///123.fastq',
+	 * Get a Json representation of what's in the cart. Format: {@code 
+	 * 'projects' : [ { 'id': '5', 'label': 'project', 'samples': [ { 'id': '6',
+	 * 'label': 'a sample', 'sequenceFiles': [{href: 'file:///123.fastq',
 	 * href2: 'http://localhost/projects/1/samples/1/sequenceFiles/1'}] } ] } ]}
 	 * 
-	 * @return a Map<String,Object> containing the cart information.
+	 * @return a {@code Map<String,Object>} containing the cart information.
 	 */
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
@@ -112,7 +111,7 @@ public class CartController {
 	 * Set the cart object programatically. Used mostly for testing.
 	 * 
 	 * @param selected
-	 *            A Map<Project,Set<Sample>> of selected samples
+	 *            A {@code Map<Project,Set<Sample>>} of selected samples
 	 */
 	public void setSelected(Map<Project, Set<Sample>> selected) {
 		this.selected = selected;

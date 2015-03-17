@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 /**
  * Generic super-class for permission types to extend from.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  * @param <DomainObjectType>
  *            the type of domain object that this permission is evaluating.
@@ -66,9 +65,11 @@ public abstract class BasePermission<DomainObjectType, IdentifierType extends Se
 	 * 
 	 * @param domainObjectType
 	 *            the domain object type managed by this permission.
-	 * @param repositoryId
-	 *            the identifier of the repository to load from the spring
-	 *            application context.
+	 * @param identifierType
+	 *            the type of identifier used by this object.
+	 * @param repository
+	 *            the repository to load objects of the type for this
+	 *            permission.
 	 */
 	protected BasePermission(Class<DomainObjectType> domainObjectType, Class<IdentifierType> identifierType,
 			CrudRepository<DomainObjectType, IdentifierType> repository) {

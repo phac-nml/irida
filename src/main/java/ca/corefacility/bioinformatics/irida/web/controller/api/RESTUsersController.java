@@ -31,9 +31,6 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProj
 /**
  * Controller for managing users.
  * 
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping(value = "/api/users")

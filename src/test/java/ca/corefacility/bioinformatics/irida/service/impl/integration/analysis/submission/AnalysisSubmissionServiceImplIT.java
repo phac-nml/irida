@@ -58,7 +58,6 @@ import com.google.common.collect.Sets;
 /**
  * Tests for an analysis service.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -539,7 +538,6 @@ public class AnalysisSubmissionServiceImplIT {
 	/**
 	 * Test specification.
 	 * 
-	 * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
 	 *
 	 */
 	private class AnalysisSubmissionTestSpecification implements Specification<AnalysisSubmission> {

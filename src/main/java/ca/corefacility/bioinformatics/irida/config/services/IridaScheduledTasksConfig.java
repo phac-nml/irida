@@ -34,7 +34,6 @@ import com.google.common.collect.Lists;
 /**
  * Config for only activating scheduled tasks in certain profiles.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Profile({ "prod" })

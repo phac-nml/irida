@@ -12,7 +12,6 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 /**
  * Specification class for {@link RemoteAPI}
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class RemoteAPISpecification {

@@ -40,8 +40,6 @@ import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmission;
  * "https://submit.ncbi.nlm.nih.gov/biosample/template/?package=Pathogen.cl.1.0&action=definition"
  * >BioSample Attributes: Package Pathogen</a> for more information.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
 @Table(name = "sample")
@@ -224,7 +222,7 @@ public class Sample implements IridaThing, IridaSample, Comparable<Sample> {
 	/**
 	 * Create a new {@link Sample} with the given name and ID
 	 * 
-	 * @param name
+	 * @param sampleName
 	 *            The sampleName of the sample
 	 * @param sampleId
 	 *            The ID of the sample

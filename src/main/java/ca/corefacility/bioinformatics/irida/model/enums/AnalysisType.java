@@ -16,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhyl
 /**
  * Defines a specific type of an analysis.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @XmlEnum

@@ -25,7 +25,6 @@ import com.sun.jersey.api.client.ClientHandlerException;
 /**
  * Class for performing the actual work of uploading files to Galaxy.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyUploadWorker implements UploadWorker {

@@ -28,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
 /**
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Service
 public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRun> implements SequencingRunService {

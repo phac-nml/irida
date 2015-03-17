@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
 import java.io.IOException;
-import java.security.Principal;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,12 +26,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
@@ -44,7 +46,6 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Controller for Analysis.
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 @Controller
 @RequestMapping("/analysis")
@@ -55,6 +56,10 @@ public class AnalysisController {
 	private static final String REDIRECT_ERROR = "redirect:errors/not_found";
 	private static final String BASE = "analysis/";
 	public static final String PAGE_USER_ANALYSIS = BASE + "analyses";
+	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
+
+	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
+	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap.of(AnalysisType.PHYLOGENOMICS, "tree");
 
 	/*
 	 * SERVICES
@@ -98,6 +103,98 @@ public class AnalysisController {
 		}
 		return response;
 	}
+	
+	/**
+	 * View details about an individual analysis submission
+	 * 
+	 * @param submissionId
+	 *            the ID of the submission
+	 * @param model
+	 *            Model for the view
+	 * @param locale
+	 *            User's locale
+	 * @return name of the details page view
+	 * @throws IOException
+	 *             If analysis files are attempted to be read, but fail.
+	 */
+	@RequestMapping(value = "/{submissionId}", produces = MediaType.TEXT_HTML_VALUE)
+	public String getDetailsPage(@PathVariable Long submissionId, Model model, Locale locale) {
+		logger.trace("reading analysis submission " + submissionId);
+		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
+		model.addAttribute("analysisSubmission", submission);
+
+		UUID workflowUUID = submission.getWorkflowId();
+		logger.trace("Workflow ID is " + workflowUUID);
+
+		IridaWorkflow iridaWorkflow;
+		try {
+			iridaWorkflow = workflowsService.getIridaWorkflow(workflowUUID);
+		} catch (IridaWorkflowNotFoundException e) {
+			logger.error("Error finding workflow, ", e);
+			throw new EntityNotFoundException("Couldn't find workflow for submission " + submission.getId(), e);
+		}
+
+		String viewName = PREVIEW_UNAVAILABLE;
+
+		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
+		logger.trace("Workflow type is " + analysisType);
+		String workflowName = messageSource.getMessage("workflow." + analysisType.toString() + ".title", null, locale);
+		model.addAttribute("workflowName", workflowName);
+
+		/*
+		 * If the analysis is completed, add preview information
+		 */
+		try {
+			if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
+
+				if (analysisType.equals(AnalysisType.PHYLOGENOMICS)) {
+
+					model = tree(submission, model);
+				}
+
+				model.addAttribute("outputFiles", submission.getAnalysis().getAnalysisOutputFiles());
+
+				viewName = getViewForAnalysisType(analysisType);
+			}
+
+		} catch (IOException e) {
+			logger.error("Couldn't get preview for analysis", e);
+		}
+
+		return viewName;
+	}
+
+	
+	// ************************************************************************************************
+	// Analysis view setup
+	// ************************************************************************************************
+
+	/**
+	 * Construct the model parameters for an
+	 * {@link AnalysisPhylogenomicsPipeline}
+	 * 
+	 * @param submission
+	 *            The analysis submission
+	 * @param model
+	 *            The model to add parameters
+	 * @throws IOException
+	 *             If the tree file couldn't be read
+	 */
+	private Model tree(AnalysisSubmission submission, Model model) throws IOException {
+		assert (submission.getAnalysis().getClass().equals(AnalysisPhylogenomicsPipeline.class));
+
+		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) submission.getAnalysis();
+		AnalysisOutputFile file = analysis.getPhylogeneticTree();
+		List<String> lines = Files.readAllLines(file.getFile());
+		model.addAttribute("analysis", analysis);
+		model.addAttribute("newick", lines.get(0));
+
+		// inform the view to display the tree preview
+		model.addAttribute("preview", "tree");
+
+		return model;
+
+	}
 
 	// ************************************************************************************************
 	// AJAX
@@ -108,8 +205,6 @@ public class AnalysisController {
 	 *
 	 * @param all
 	 * 		{@link boolean} whether or not to show all the system analysis or just the users.
-	 * @param principal
-	 * 		{@link Principal} the current user.
 	 * @param locale
 	 * 		{@link Locale} locale for the current user.
 	 * @param httpServletResponse
@@ -173,11 +268,12 @@ public class AnalysisController {
 	 * Download all output files from an {@link AnalysisSubmission}
 	 *
 	 * @param analysisSubmissionId
-	 * 		Id for a {@link AnalysisSubmission}
+	 *            Id for a {@link AnalysisSubmission}
 	 * @param response
-	 * 		{@link HttpServletResponse}
+	 *            {@link HttpServletResponse}
 	 *
 	 * @throws IOException
+	 *             if we fail to create a zip file.
 	 */
 	@RequestMapping(value = "/ajax/download/{analysisSubmissionId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public void getAjaxDownloadAnalysisSubmission(@PathVariable Long analysisSubmissionId, HttpServletResponse response)
@@ -233,5 +329,23 @@ public class AnalysisController {
 			));
 		}
 		return flows;
+	}
+
+	/**
+	 * Get the view name for different analysis types
+	 * 
+	 * @param type
+	 *            The {@link AnalysisType}
+	 * @return the view name to display
+	 */
+	private String getViewForAnalysisType(AnalysisType type) {
+		String viewName = null;
+		if (PREVIEWS.containsKey(type)) {
+			viewName = PAGE_DETAILS_DIRECTORY + PREVIEWS.get(type);
+		} else {
+			viewName = PREVIEW_UNAVAILABLE;
+		}
+
+		return viewName;
 	}
 }

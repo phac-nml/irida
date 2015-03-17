@@ -10,7 +10,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
  * Repository for storing an reading {@link RemoteAPIToken}s
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public interface RemoteApiTokenRepository extends CrudRepository<RemoteAPIToken, Long>, RevisionRepository<RemoteAPIToken, Long, Integer> {

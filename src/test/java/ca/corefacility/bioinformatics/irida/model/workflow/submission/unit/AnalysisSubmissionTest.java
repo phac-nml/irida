@@ -18,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkf
 /**
  * Tests out constructing {@link AnalysisSubmission} objects.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class AnalysisSubmissionTest {

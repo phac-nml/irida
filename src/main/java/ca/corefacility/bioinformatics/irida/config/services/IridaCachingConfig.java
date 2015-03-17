@@ -18,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.impl.SampleRemot
 /**
  * Configuration file for setting up EhCache caching for IRIDA
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Configuration
@@ -35,7 +34,7 @@ public class IridaCachingConfig {
 	/**
 	 * Create the EhCache manager
 	 * 
-	 * @return
+	 * @return the ehcache manager.
 	 */
 	@Bean
 	public net.sf.ehcache.CacheManager ehCacheManager() {
@@ -53,7 +52,7 @@ public class IridaCachingConfig {
 	/**
 	 * Create the Spring cache manager
 	 * 
-	 * @return
+	 * @return the spring cache manager.
 	 */
 	@Bean
 	@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)

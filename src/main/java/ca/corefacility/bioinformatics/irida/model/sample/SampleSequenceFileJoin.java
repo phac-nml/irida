@@ -26,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
 @Table(name = "sequencefile_sample")

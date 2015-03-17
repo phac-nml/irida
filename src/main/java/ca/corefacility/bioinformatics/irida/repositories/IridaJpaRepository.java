@@ -8,11 +8,9 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.history.RevisionRepository;
 
 /**
- * Repository type that extends PagingAndSortingRepository<Type, Identifier>,
- * JpaSpecificationExecutor<Type>, and RevisionRepository<Type, Identifier,
- * Integer>
+ * Repository type that extends {@link PagingAndSortingRepository},
+ * {@link JpaSpecificationExecutor}, and {@link RevisionRepository}.
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  * @param <Type>
  *            Entity type stored by this repository

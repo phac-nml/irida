@@ -20,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 /**
  * Common functions for project related controllers
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Component

@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
  * Error handler for use in {@link OAuthTokenRestTemplate}. Catches HTTP
  * UNAUTHORIZED (401) errors to translate to IridaOAuthExceptions
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class IridaOAuthErrorHandler extends DefaultResponseErrorHandler {
@@ -46,6 +45,7 @@ public class IridaOAuthErrorHandler extends DefaultResponseErrorHandler {
 	 * Set the {@link RemoteAPI} to return to the caller if an error occurs
 	 * 
 	 * @param remoteAPI
+	 *            the {@link RemoteAPI} to include in the exception.
 	 */
 	public void setRemoteAPI(RemoteAPI remoteAPI) {
 		this.remoteAPI = remoteAPI;

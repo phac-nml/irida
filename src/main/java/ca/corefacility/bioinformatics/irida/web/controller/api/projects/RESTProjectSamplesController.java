@@ -41,7 +41,6 @@ import com.google.common.net.HttpHeaders;
  * Controller for managing relationships between {@link Project} and
  * {@link Sample}.
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Controller
 public class RESTProjectSamplesController {
@@ -85,6 +84,8 @@ public class RESTProjectSamplesController {
 	 *            the project to copy the sample to.
 	 * @param sampleIds
 	 *            the collection of sample IDs to copy.
+	 * @param response
+	 *            a reference to the servlet response.
 	 * @return the response indicating that the sample was joined to the
 	 *         project.
 	 */
@@ -131,6 +132,8 @@ public class RESTProjectSamplesController {
 	 *            to.
 	 * @param sample
 	 *            the sample that you want to create.
+	 * @param response
+	 *            a reference to the servlet response.
 	 * @return a response indicating that the sample was created and appropriate
 	 *         location information.
 	 */

@@ -34,7 +34,6 @@ import ca.corefacility.bioinformatics.irida.service.SnapshotService;
 /**
  * Implementation of {@link SnapshotService}
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Service

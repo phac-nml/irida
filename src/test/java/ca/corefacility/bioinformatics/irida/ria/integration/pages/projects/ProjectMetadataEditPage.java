@@ -8,7 +8,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 /**
  * Project Edit Metadata Page
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectMetadataEditPage extends AbstractPage {
 	public static final String RELATIVE_URL = "projects/1/metadata/edit";

@@ -8,13 +8,14 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 /**
  * Class defining an analysis for testing purposes.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class TestAnalysis extends Analysis {
 
-	public TestAnalysis(Set<SequenceFile> inputFiles, String executionManagerAnalysisId, Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
-		super(inputFiles, executionManagerAnalysisId, analysisOutputFilesMap);
+	public TestAnalysis(final Set<SequenceFile> inputFiles, final String executionManagerAnalysisId,
+			final Map<String, AnalysisOutputFile> analysisOutputFilesMap, final String description,
+			final Map<String, String> additionalProperties) {
+		super(inputFiles, executionManagerAnalysisId, analysisOutputFilesMap, description, additionalProperties);
 	}
 	
 	public AnalysisOutputFile getOutputFile1() {

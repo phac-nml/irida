@@ -227,7 +227,7 @@ public class ProjectSamplesController {
 	 * @param principal
 	 * 		The logged in user.
 	 *
-	 * @return a Map<String,Object> containing: total: total number of elements results: A Map<Long,String> of project
+	 * @return a {@code Map<String,Object>} containing: total: total number of elements results: A {@code Map<Long,String>} of project
 	 * IDs and project names.
 	 */
 	@RequestMapping(value = "/projects/ajax/samples/available_projects")
@@ -273,11 +273,16 @@ public class ProjectSamplesController {
 	 * Copy or move samples from one project to another
 	 *
 	 * @param projectId
-	 * 		The original project id
+	 *            The original project id
+	 * @param sampleIds
+	 *            the sample identifiers to copy
 	 * @param newProjectId
-	 * 		The new project id
+	 *            The new project id
 	 * @param removeFromOriginal
-	 * 		true/false whether to remove the samples from the original project
+	 *            true/false whether to remove the samples from the original
+	 *            project
+	 * @param locale
+	 *            the locale specified by the browser.
 	 *
 	 * @return A list of warnings
 	 */
@@ -374,21 +379,22 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Merges a list of samples into either the first sample in the list with a new name if provided, or into the
-	 * selected sample based on the id.
+	 * Merges a list of samples into either the first sample in the list with a
+	 * new name if provided, or into the selected sample based on the id.
 	 *
 	 * @param projectId
-	 * 		The id for the current {@link Project}
+	 *            The id for the current {@link Project}
 	 * @param mergeSampleId
-	 * 		An id for a {@link Sample} to merge the other samples into.
+	 *            An id for a {@link Sample} to merge the other samples into.
 	 * @param sampleIds
-	 * 		A list of ids for {@link Sample} to merge together.
+	 *            A list of ids for {@link Sample} to merge together.
 	 * @param newName
-	 * 		An optional new name for the {@link Sample}.
+	 *            An optional new name for the {@link Sample}.
 	 * @param locale
-	 * 		The {@link Locale} of the current user.
+	 *            The {@link Locale} of the current user.
 	 *
-	 * @return
+	 * @return a map of {@link Sample} properties representing the merged
+	 *         sample.
 	 */
 	@RequestMapping(value = "/projects/{projectId}/ajax/samples/merge", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> ajaxSamplesMerge(@PathVariable Long projectId,
@@ -436,7 +442,7 @@ public class ProjectSamplesController {
 	 * 
 	 * @param projectId
 	 *            ID of the project to remove from
-	 * @param sampleIds
+	 * @param samples
 	 *            {@link Sample} ids to remove
 	 * @param locale
 	 *            User's locale
@@ -471,13 +477,14 @@ public class ProjectSamplesController {
 	 * Download a set of sequence files from selected samples within a project
 	 *
 	 * @param projectId
-	 * 		Id for a {@link Project}
+	 *            Id for a {@link Project}
 	 * @param ids
-	 * 		List of ids ofr {@link Sample} within the project
+	 *            List of ids ofr {@link Sample} within the project
 	 * @param response
-	 * 		{@link HttpServletResponse}
+	 *            {@link HttpServletResponse}
 	 *
 	 * @throws IOException
+	 *             if we fail to read a file from the filesystem.
 	 */
 	@RequestMapping(value = "/projects/{projectId}/download/files")
 	public void downloadSamples(@PathVariable Long projectId, @RequestParam List<Long> ids,
@@ -526,15 +533,21 @@ public class ProjectSamplesController {
 	 * Export samples to the local instance of galaxy
 	 *
 	 * @param projectId
-	 * 		Id for the current {@link Project}
+	 *            Id for the current {@link Project}
 	 * @param email
-	 * 		Email address for the current user
+	 *            Email address for the current user
 	 * @param name
-	 * 		Name of the current user
+	 *            Name of the current user
+	 * @param sampleIds
+	 *            the collection of samples to send to galaxy.
 	 * @param request
-	 * 		{@link HttpServletRequest}
+	 *            {@link HttpServletRequest}
+	 * @param locale
+	 *            the locale specified by the browser issuing the current
+	 *            request.
 	 *
-	 * @return A JSON object containing the current completion status (TODO: Include a way to get an updated status.)
+	 * @return A JSON object containing the current completion status (TODO:
+	 *         Include a way to get an updated status.)
 	 */
 	@RequestMapping(value = "/{projectId}/ajax/samples/galaxy/upload", method = RequestMethod.POST)
 	public @ResponseBody Map<String, Object> postUploadSampleToGalaxy(@PathVariable Long projectId,
@@ -577,7 +590,7 @@ public class ProjectSamplesController {
 	 * @param identifier
 	 *            Number to identify the {@link Sample}. NOTE: This will be
 	 *            different for remote samples
-	 * @return
+	 * @return a formatted map of {@link Sample} objects.
 	 */
 	public static Map<String, Object> getSampleMap(Sample sample, Project project, SampleType type, Number identifier) {
 		Map<String, Object> sampleMap = new HashMap<>();
@@ -611,7 +624,6 @@ public class ProjectSamplesController {
 	 * Type of sample being displayed in the project/samples page. This will be
 	 * used to determine how to link to resources and add them to the cart.
 	 * 
-	 * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
 	 *
 	 */
 	public enum SampleType {

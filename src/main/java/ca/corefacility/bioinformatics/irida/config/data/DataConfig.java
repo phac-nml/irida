@@ -7,8 +7,6 @@ import javax.sql.DataSource;
 /**
  * Common interface for database configuration files.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Tom Matthews <thomas.matthews@phac-aspc.gc.ca>
  * 
  */
 public interface DataConfig {
@@ -22,7 +20,7 @@ public interface DataConfig {
 	/**
 	 * Get the Properties to be used by the data source.
 	 * 
-	 * @return
+	 * @return the properties to be used by the data source.
 	 */
 	public Properties getJpaProperties();
 

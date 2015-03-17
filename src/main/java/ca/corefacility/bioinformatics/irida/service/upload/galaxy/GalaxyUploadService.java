@@ -27,7 +27,6 @@ import com.google.common.collect.Lists;
  * Defines an upload service to upload genomic sequence data into a Galaxy
  * instance.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Service

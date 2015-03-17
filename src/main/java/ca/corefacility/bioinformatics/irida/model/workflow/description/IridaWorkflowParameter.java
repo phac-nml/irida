@@ -14,7 +14,6 @@ import javax.xml.bind.annotation.XmlElement;
 /**
  * Defines input parameters for a workflow which can be adjusted.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)

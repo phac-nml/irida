@@ -5,7 +5,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.ExecutionManagerSear
 
 /**
  * Galaxy-specific implementations of ExecutionManagerSearch.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  * @param <T>  The type of object to search for.
  * @param <ID>  The ID of the object to search for.

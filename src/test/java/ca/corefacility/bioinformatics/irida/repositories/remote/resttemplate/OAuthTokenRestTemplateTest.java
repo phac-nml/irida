@@ -27,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 /**
  * Unit tests for OAuthTokenRestTemplate
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class OAuthTokenRestTemplateTest {

@@ -8,7 +8,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
  * Wraps around a {@link Set} of {@link IridaWorkflow}s to allow it
  * to be handled as a spring managed bean.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class IridaWorkflowSet {

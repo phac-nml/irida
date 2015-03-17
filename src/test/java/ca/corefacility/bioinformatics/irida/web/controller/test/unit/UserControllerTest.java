@@ -37,7 +37,6 @@ import com.google.common.collect.Lists;
 /**
  * Unit tests for {@link RESTUsersController}.
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class UserControllerTest {
 

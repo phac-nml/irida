@@ -13,7 +13,6 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadSample;
  * Used to convert IRIDA Samples to those that can be uploaded into a remote
  * site.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public interface UploadSampleConversionService {
@@ -67,8 +66,8 @@ public interface UploadSampleConversionService {
 	 * Converts a list of {@link SequenceFile} by ids to {@link UploadSample}s
 	 * to be uploaded to Galaxy.
 	 *
-	 * @param sequenceFiles
-	 *            The {@link SequenceFile}s to upload.
+	 * @param sequenceFileIds
+	 *            The ids of the {@link SequenceFile}s to upload.
 	 * @return A set of {@link UploadSample}s.
 	 * @throws EntityNotFoundException
 	 *             If information could not be found for the passed sequence

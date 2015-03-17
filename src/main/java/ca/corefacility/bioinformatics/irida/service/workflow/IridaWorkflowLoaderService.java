@@ -29,7 +29,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkfl
 /**
  * Used to load up IRIDA workflows.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Service

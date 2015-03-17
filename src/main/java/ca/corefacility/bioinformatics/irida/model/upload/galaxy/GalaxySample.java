@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.model.upload.UploadFolderName;
 /**
  * Represents a Sample to be uploaded to Galaxy
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
 public class GalaxySample implements UploadSample {

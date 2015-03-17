@@ -10,7 +10,6 @@ import ca.corefacility.bioinformatics.irida.validators.annotations.Latitude;
 /**
  * Validator for validating latitude portion of a geographic coordinate.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 public class LatitudeValidator implements ConstraintValidator<Latitude, String> {

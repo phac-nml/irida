@@ -12,7 +12,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage
 
 /**
  * Used to create independent connections/objects to Galaxy.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyConnector {

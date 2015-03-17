@@ -27,8 +27,6 @@ import ca.corefacility.bioinformatics.irida.service.impl.SequenceFileServiceImpl
 /**
  * Test the behaviour of {@link SequenceFileService}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class SequenceFileServiceTest {

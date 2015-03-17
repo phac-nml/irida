@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+  <id>9ac828e9-2ee4-409d-80dd-f1bf955fd8b9</id>
+  <name>SNVPhylTest-with-error</name>
+  <version>0.1-with-error</version>
+  <analysisType>phylogenomics</analysisType>
+  <inputs>
+    <sequenceReadsSingle>sequence_reads</sequenceReadsSingle>
+    <reference>reference</reference>
+    <requiresSingleSample>false</requiresSingleSample>
+  </inputs>
+  <outputs>
+    <output name="tree" fileName="phylogeneticTree.txt"/>
+    <output name="matrix" fileName="snpMatrix.tsv"/>
+    <output name="table" fileName="snpTable.tsv"/>
+  </outputs>
+  <toolRepositories>
+    <repository>
+      <name>sam_to_bam</name>
+      <owner>devteam</owner>
+      <url>http://toolshed.g2.bx.psu.edu/</url>
+      <revision>8176b2575aa1</revision>
+    </repository>
+  </toolRepositories>
+</iridaWorkflow>

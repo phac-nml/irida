@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyConnect
 
 /**
  * Tests for class describing a connection to Galaxy.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyConnectorTest {

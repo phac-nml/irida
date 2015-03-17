@@ -40,8 +40,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 /**
  * A user object.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  */
 @Entity
 @Table(name = "user", uniqueConstraints = {
@@ -133,7 +131,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 
 	/**
 	 * Construct an instance of {@link User} with all properties (except
-	 * {@link UserIdentifier}) set.
+	 * identifier) set.
 	 * 
 	 * @param username
 	 *            the username for this {@link User}.
@@ -162,7 +160,7 @@ public class User implements IridaThing, Comparable<User>, UserDetails {
 	 * Construct an instance of {@link User} with all properties set.
 	 * 
 	 * @param id
-	 *            the {@link UserIdentifier} for this {@link User}.
+	 *            the identifier for this {@link User}.
 	 * @param username
 	 *            the username for this {@link User}.
 	 * @param email

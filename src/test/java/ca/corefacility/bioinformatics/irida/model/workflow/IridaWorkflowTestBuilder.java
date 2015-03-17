@@ -21,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkfl
 /**
  * Builds test {@link IridaWorkflow}s.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class IridaWorkflowTestBuilder {

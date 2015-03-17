@@ -39,7 +39,6 @@
 	<!-- All auditing table references *only* refer to the Revisions table, 
 		so they can all be listed in an arbitrary order *after* the Revisions table. -->
 	<Revisions />
-	<overrepresented_sequence_AUD />
 	<project_user_AUD />
 	<project_AUD />
 	<project_sample_AUD />
@@ -64,9 +63,4 @@
 	<client_details_authorities_AUD />
 	<client_role_AUD />
 	<client_details_AUD />
-	<analysis_AUD />
-	<analysis_fastqc_AUD />
-	<analysis_properties_AUD />
-	<analysis_sequence_file_AUD />
-	<analysis_fastqc_overrepresented_sequence_AUD />
 </dataset>

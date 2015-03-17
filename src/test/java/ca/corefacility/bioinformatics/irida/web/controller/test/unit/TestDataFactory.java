@@ -12,7 +12,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 /**
  * Generates test data for unit tests.
  *
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public final class TestDataFactory {
 

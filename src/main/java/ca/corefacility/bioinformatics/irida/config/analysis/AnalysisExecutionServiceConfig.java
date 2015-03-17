@@ -42,7 +42,6 @@ import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
 /**
  * Configuration for an AnalysisExecutionService class.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Configuration

@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 /**
  * Specification for searching project properties
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class ProjectSpecification {
@@ -22,7 +21,8 @@ public class ProjectSpecification {
 	 * Search for a project by name
 	 * 
 	 * @param name
-	 * @return
+	 *            the name to use in the search.
+	 * @return a {@link Specification} on project name.
 	 */
 	public static Specification<Project> searchProjectName(String name) {
 		return new Specification<Project>() {

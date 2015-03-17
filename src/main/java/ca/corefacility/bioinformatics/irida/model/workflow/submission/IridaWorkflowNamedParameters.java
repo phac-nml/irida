@@ -32,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
  * Users can create, save, and re-use named parameters in their workflow
  * submissions.
  * 
- * @author Franklin Bristow franklin.bristow@phac-aspc.gc.ca
  *
  */
 @Entity

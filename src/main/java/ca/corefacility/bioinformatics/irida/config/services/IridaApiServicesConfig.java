@@ -62,7 +62,6 @@ import com.google.common.collect.Lists;
 /**
  * Configuration for the IRIDA platform.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 @Configuration
@@ -138,6 +137,9 @@ public class IridaApiServicesConfig {
 
 	/**
 	 * Builds a new {@link Executor} for analysis tasks.
+	 * 
+	 * @param userService
+	 *            a reference to the user service.
 	 * 
 	 * @return A new {@link Executor} for analysis tasks.
 	 */

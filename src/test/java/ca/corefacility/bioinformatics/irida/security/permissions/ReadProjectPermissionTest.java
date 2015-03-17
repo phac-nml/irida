@@ -32,7 +32,6 @@ import com.google.common.collect.ImmutableList;
 /**
  * Tests for {@link ReadProjectPermission}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public class ReadProjectPermissionTest {

@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
@@ -46,12 +47,12 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.An
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
  * Tests out an execution service for Galaxy analyses.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class AnalysisExecutionServiceGalaxyTest {
@@ -108,7 +109,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 */
 	@Before
 	public void setup() throws IridaWorkflowNotFoundException, IOException, ExecutionManagerException,
-			NoSuchValueException, IridaWorkflowAnalysisTypeException {
+			NoSuchValueException, IridaWorkflowAnalysisTypeException, AnalysisAlreadySetException {
 		MockitoAnnotations.initMocks(this);
 
 		String submissionName = "name";
@@ -379,7 +380,7 @@ public class AnalysisExecutionServiceGalaxyTest {
 	 */
 	@Test
 	public void testGetWorkflowStatusSuccess() throws ExecutionManagerException {
-		GalaxyWorkflowStatus workflowStatus = new GalaxyWorkflowStatus(GalaxyWorkflowState.OK, 1.0f);
+		GalaxyWorkflowStatus workflowStatus = new GalaxyWorkflowStatus(GalaxyWorkflowState.OK, Maps.newHashMap());
 		analysisSubmission.setRemoteAnalysisId(ANALYSIS_ID);
 
 		when(galaxyHistoriesService.getStatusForHistory(analysisSubmission.getRemoteAnalysisId())).thenReturn(

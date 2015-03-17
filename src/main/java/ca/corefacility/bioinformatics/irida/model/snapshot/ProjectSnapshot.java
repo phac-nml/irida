@@ -15,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.model.irida.IridaProject;
 /**
  * Snapshot taken of an {@link IridaProject} object
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 @Entity

@@ -14,7 +14,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.Library;
 
 /**
  * An object containing information about constructed data libraries in Galaxy.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyUploadResult implements UploadResult {
@@ -95,7 +94,7 @@ public class GalaxyUploadResult implements UploadResult {
 
 	/**
 	 * Gets the API url for the data library the files were uploaded to.
-	 * @return
+	 * @return the Galaxy API url for the data library.
 	 */
 	public URL getLibraryAPIURL() {
 		return libraryAPIURL;

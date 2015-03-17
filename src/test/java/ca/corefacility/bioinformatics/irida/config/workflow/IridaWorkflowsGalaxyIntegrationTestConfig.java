@@ -33,7 +33,6 @@ import com.github.jmchilton.blend4j.galaxy.beans.RepositoryInstall;
 /**
  * Class used configure workflows in Galaxy for integration testing.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Configuration
@@ -104,7 +103,8 @@ public class IridaWorkflowsGalaxyIntegrationTestConfig {
 				logger.debug("Installation status=" + status + " for tool " + workflowTool);
 				if (status.equals(InstallationStatus.ERROR)) {
 					// don't even try to proceed with tests if you can't install the required tools.
-					throw new IridaWorkflowException("Failed to install tool [" + workflowTool + "]");
+					throw new IridaWorkflowException("Failed to install tool [" + workflowTool
+							+ "], possible reason: [" + installedRepository.getErrorMessage() + "]");
 				}
 			}
 		}

@@ -18,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 /**
  * Confirms that the authenticated user is allowed to read a project.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 @Component
@@ -32,6 +31,13 @@ public class ReadProjectPermission extends BasePermission<Project, Long> {
 
 	/**
 	 * Construct an instance of {@link ReadProjectPermission}.
+	 * 
+	 * @param projectRepository
+	 *            the project repository.
+	 * @param userRepository
+	 *            the user repository.
+	 * @param pujRepository
+	 *            the project user join repository.
 	 */
 	@Autowired
 	public ReadProjectPermission(ProjectRepository projectRepository, UserRepository userRepository,

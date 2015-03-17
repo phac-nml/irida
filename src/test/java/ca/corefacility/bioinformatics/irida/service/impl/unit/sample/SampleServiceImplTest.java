@@ -25,8 +25,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 
-import com.google.common.collect.Sets;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -45,10 +43,11 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSa
 import ca.corefacility.bioinformatics.irida.service.impl.sample.SampleServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+import com.google.common.collect.Sets;
+
 /**
  * Unit tests for {@link SampleServiceImpl}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 public class SampleServiceImplTest {
 
@@ -245,8 +244,8 @@ public class SampleServiceImplTest {
 
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
 
-		AnalysisFastQC analysisFastQC1 = new AnalysisFastQC(Sets.newHashSet(sf1), "id");
-		analysisFastQC1.setTotalBases(1000l);
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().inputFiles(Sets.newHashSet(sf1))
+				.executionManagerAnalysisId("id").totalBases(1000l).build();
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
 		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(
@@ -299,8 +298,8 @@ public class SampleServiceImplTest {
 
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
 
-		AnalysisFastQC analysisFastQC1 = new AnalysisFastQC(Sets.newHashSet(sf1), "id");
-		analysisFastQC1.setTotalBases(1000l);
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().inputFiles(Sets.newHashSet(sf1))
+				.executionManagerAnalysisId("id").totalBases(1000L).build();
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
 		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(
@@ -329,11 +328,11 @@ public class SampleServiceImplTest {
 		SampleSequenceFileJoin join1 = new SampleSequenceFileJoin(s1, sf1);
 		SampleSequenceFileJoin join2 = new SampleSequenceFileJoin(s1, sf2);
 
-		AnalysisFastQC analysisFastQC1 = new AnalysisFastQC(Sets.newHashSet(sf1), "id");
-		analysisFastQC1.setTotalBases(1000l);
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.sloppyBuilder().inputFiles(Sets.newHashSet(sf1))
+				.executionManagerAnalysisId("id").totalBases(1000l).build();
 
-		AnalysisFastQC analysisFastQC2 = new AnalysisFastQC(Sets.newHashSet(sf2), "id2");
-		analysisFastQC2.setTotalBases(1000l);
+		AnalysisFastQC analysisFastQC2 = AnalysisFastQC.sloppyBuilder().inputFiles(Sets.newHashSet(sf2))
+				.executionManagerAnalysisId("id2").totalBases(1000l).build();
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join1, join2));
 		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf1, AnalysisFastQC.class)).thenReturn(
@@ -363,7 +362,8 @@ public class SampleServiceImplTest {
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
-		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf1, AnalysisFastQC.class)).thenThrow(new EntityNotFoundException(null));
+		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf1, AnalysisFastQC.class)).thenThrow(
+				new EntityNotFoundException(null));
 
 		sampleService.getTotalBasesForSample(s1);
 	}
@@ -383,12 +383,6 @@ public class SampleServiceImplTest {
 		sf1.setId(2222l);
 
 		SampleSequenceFileJoin join = new SampleSequenceFileJoin(s1, sf1);
-
-		AnalysisFastQC analysisFastQC1 = new AnalysisFastQC(Sets.newHashSet(sf1), "id");
-		analysisFastQC1.setTotalBases(1000l);
-
-		AnalysisFastQC analysisFastQC2 = new AnalysisFastQC(Sets.newHashSet(sf1), "id2");
-		analysisFastQC2.setTotalBases(1000l);
 
 		when(ssfRepository.getFilesForSample(s1)).thenReturn(Arrays.asList(join));
 		when(analysisRepository.findMostRecentAnalysisForSequenceFile(sf1, AnalysisFastQC.class)).thenThrow(

@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 /**
  * Defines the output files and file names for a workflow.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)

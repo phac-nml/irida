@@ -28,8 +28,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 /**
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  */
 @Entity
 @Table(name = "project_sample", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "sample_id" }))

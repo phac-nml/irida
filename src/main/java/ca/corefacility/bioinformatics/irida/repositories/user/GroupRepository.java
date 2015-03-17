@@ -6,7 +6,6 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
 /**
  * Repository for managing {@link Group} objects.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 public interface GroupRepository extends IridaJpaRepository<Group, Long> {

@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -27,66 +27,66 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.envers.Audited;
-
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * An analysis object for storing results of an analysis execution.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 @Entity
 @Table(name = "analysis")
 @Inheritance(strategy = InheritanceType.JOINED)
-@Audited
 public class Analysis implements IridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	private final Long id;
 
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date modifiedDate;
-
 	@Lob
-	private String description;
+	private final String description;
 
 	// identifier linking an analysis to an external workflow manager.
 	@NotNull
-	private String executionManagerAnalysisId;
+	private final String executionManagerAnalysisId;
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@MapKeyColumn(name = "property_key", nullable = false)
 	@Column(name = "property_value", nullable = false)
 	@CollectionTable(name = "analysis_properties", joinColumns = @JoinColumn(name = "analysis_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
 			"analysis_id", "property_key" }, name = "UK_ANALYSIS_PROPERTY_KEY"))
-	private Map<String, String> additionalProperties;
+	private final Map<String, String> additionalProperties;
 
 	@NotNull
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	private Set<SequenceFile> inputFiles;
-	
+	private final Set<SequenceFile> inputFiles;
+
 	@ElementCollection(fetch = FetchType.EAGER)
 	@MapKeyColumn(name = "analysis_output_file_key", nullable = false)
 	@Column(name = "analysis_output_file_value", nullable = false)
 	@CollectionTable(name = "analysis_output_file_map", joinColumns = @JoinColumn(name = "analysis_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
 			"analysis_id", "analysis_output_file_key" }, name = "UK_ANALYSIS_OUTPUT_FILE_KEY"))
-	private Map<String, AnalysisOutputFile> analysisOutputFilesMap;
+	private final Map<String, AnalysisOutputFile> analysisOutputFilesMap;
 
-	private Analysis() {
-		this.createdDate = new Date();
-		this.modifiedDate = createdDate;
-		this.analysisOutputFilesMap = new HashMap<>(); 
+	/**
+	 * For hibernate
+	 */
+	protected Analysis() {
+		this.id = null;
+		this.createdDate = null;
+		this.description = null;
+		this.executionManagerAnalysisId = null;
+		this.additionalProperties = null;
+		this.inputFiles = null;
+		this.analysisOutputFilesMap = null;
 	}
 
 	/**
@@ -100,12 +100,42 @@ public class Analysis implements IridaThing {
 	 *            A {@link Map} of output file keys and
 	 *            {@link AnalysisOutputFile}s.
 	 */
-	public Analysis(Set<SequenceFile> inputFiles, String executionManagerAnalysisId,
-			Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
-		this();
+	public Analysis(final Set<SequenceFile> inputFiles, final String executionManagerAnalysisId,
+			final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
+		this.id = null;
+		this.createdDate = new Date();
 		this.inputFiles = inputFiles;
 		this.executionManagerAnalysisId = executionManagerAnalysisId;
 		this.analysisOutputFilesMap = analysisOutputFilesMap;
+		this.description = null;
+		this.additionalProperties = Collections.emptyMap();
+	}
+
+	/**
+	 * Builds a new {@link Analysis} object with the given information.
+	 * 
+	 * @param inputFiles
+	 *            The input {@link SequenceFile}s for this analysis.
+	 * @param executionManagerAnalysisId
+	 *            The id for an execution manager used with this analysis.
+	 * @param analysisOutputFilesMap
+	 *            A {@link Map} of output file keys and
+	 *            {@link AnalysisOutputFile}s.
+	 * @param description
+	 *            a description of the analysis.
+	 * @param additionalProperties
+	 *            any other properties available
+	 */
+	public Analysis(final Set<SequenceFile> inputFiles, final String executionManagerAnalysisId,
+			final Map<String, AnalysisOutputFile> analysisOutputFilesMap, final String description,
+			final Map<String, String> additionalProperties) {
+		this.id = null;
+		this.createdDate = new Date();
+		this.inputFiles = inputFiles;
+		this.executionManagerAnalysisId = executionManagerAnalysisId;
+		this.analysisOutputFilesMap = analysisOutputFilesMap;
+		this.description = description;
+		this.additionalProperties = additionalProperties;
 	}
 
 	/**
@@ -117,12 +147,19 @@ public class Analysis implements IridaThing {
 	 * @param executionManagerAnalysisId
 	 *            The id for an execution manager used with this analysis.
 	 */
-	public Analysis(Set<SequenceFile> inputFiles, String executionManagerAnalysisId) {
-		this(inputFiles, executionManagerAnalysisId, Maps.newHashMap());
+	public Analysis(final Set<SequenceFile> inputFiles, final String executionManagerAnalysisId,
+			final String description, final Map<String, String> additionalProperties) {
+		this.id = null;
+		this.createdDate = new Date();
+		this.inputFiles = inputFiles;
+		this.executionManagerAnalysisId = executionManagerAnalysisId;
+		this.analysisOutputFilesMap = Collections.emptyMap();
+		this.description = description;
+		this.additionalProperties = additionalProperties;
 	}
 
 	public int hashCode() {
-		return Objects.hash(createdDate, modifiedDate, description, executionManagerAnalysisId, analysisOutputFilesMap);
+		return Objects.hash(createdDate, description, executionManagerAnalysisId, analysisOutputFilesMap);
 	}
 
 	public boolean equals(Object o) {
@@ -132,52 +169,39 @@ public class Analysis implements IridaThing {
 
 		if (o instanceof Analysis) {
 			Analysis a = (Analysis) o;
-			return Objects.equals(createdDate, a.createdDate) && Objects.equals(modifiedDate, a.modifiedDate)
-					&& Objects.equals(description, a.description)
+			return Objects.equals(createdDate, a.createdDate) && Objects.equals(description, a.description)
 					&& Objects.equals(executionManagerAnalysisId, a.executionManagerAnalysisId)
-					&& Objects.equals(analysisOutputFilesMap,a.analysisOutputFilesMap);
+					&& Objects.equals(analysisOutputFilesMap, a.analysisOutputFilesMap);
 		}
 
 		return false;
 	}
-	
+
 	/**
 	 * Get all output files produced by this {@link Analysis}.
 	 * 
 	 * @return the set of all output files produced by the {@link Analysis}.
 	 */
 	public Set<AnalysisOutputFile> getAnalysisOutputFiles() {
-		return Sets.newHashSet(analysisOutputFilesMap.values());
+		return ImmutableSet.copyOf(analysisOutputFilesMap.values());
 	}
 
 	public Set<SequenceFile> getInputSequenceFiles() {
-		return inputFiles;
+		return ImmutableSet.copyOf(inputFiles);
 	}
 
 	public String getDescription() {
 		return description;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	public String getExecutionManagerAnalysisId() {
 		return executionManagerAnalysisId;
-	}
-
-	public void setExecutionManagerAnalysisId(String executionManagerAnalysisId) {
-		this.executionManagerAnalysisId = executionManagerAnalysisId;
 	}
 
 	public Date getCreatedDate() {
 		return createdDate;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
 	public AnalysisOutputFile getAnalysisOutputFile(String key) {
 		return this.analysisOutputFilesMap.get(key);
 	}
@@ -194,19 +218,20 @@ public class Analysis implements IridaThing {
 
 	@Override
 	public Date getModifiedDate() {
-		return this.modifiedDate;
+		return this.createdDate;
 	}
 
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
+		throw new UnsupportedOperationException("Analysis types cannot be modified.");
 	}
 
 	public Map<String, String> getAdditionalProperties() {
-		return additionalProperties;
+		return ImmutableMap.copyOf(additionalProperties);
 	}
 
-	public void setAdditionalProperties(Map<String, String> additionalProperties) {
-		this.additionalProperties = additionalProperties;
+	@Override
+	public void setId(Long id) {
+		throw new UnsupportedOperationException("Analysis types cannot be modified.");
 	}
 }

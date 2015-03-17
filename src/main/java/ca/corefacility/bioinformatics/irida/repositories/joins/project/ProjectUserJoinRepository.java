@@ -16,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 /**
  * A repository for {@link ProjectUserJoin}.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  * 
  */
 public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoin, Long>,
@@ -26,7 +25,7 @@ public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoi
 	 * 
 	 * @param project
 	 *            the {@link Project} to get {@link User}s for.
-	 * @return A Collection of {@link Join<Project,User>}s describing users for
+	 * @return A Collection of {@link ProjectUserJoin}s describing users for
 	 *         this project
 	 */
 	@Query("select j from ProjectUserJoin j where j.project = ?1")
@@ -39,7 +38,7 @@ public interface ProjectUserJoinRepository extends CrudRepository<ProjectUserJoi
 	 *            The project to find users for
 	 * @param projectRole
 	 *            The {@link ProjectRole} a user needs to have to be returned
-	 * @return A Collection of {@link Join<Project,User>}s that have the given
+	 * @return A Collection of {@link ProjectUserJoin}s that have the given
 	 *         role
 	 */
 	@Query("select j from ProjectUserJoin j where j.project = ?1 and j.projectRole = ?2")

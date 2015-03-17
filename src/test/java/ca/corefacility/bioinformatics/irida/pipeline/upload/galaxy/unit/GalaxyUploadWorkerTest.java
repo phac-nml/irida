@@ -41,7 +41,6 @@ import com.sun.jersey.api.client.ClientHandlerException;
 
 /**
  * Unit tests for GalaxyUploadWorker.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyUploadWorkerTest {

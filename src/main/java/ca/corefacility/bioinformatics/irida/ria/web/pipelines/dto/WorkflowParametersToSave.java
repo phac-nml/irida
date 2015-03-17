@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * DTO to allow easy access to a set of named parameters supplied by the client.
  * 
- * @author Franklin Bristow franklin.bristow@phac-aspc.gc.ca
  *
  */
 public class WorkflowParametersToSave {
@@ -28,8 +27,10 @@ public class WorkflowParametersToSave {
 	}
 	
 	/**
-	 * Get an instance of {@link IridaWorkflowNamedParameters} that corresponds to this request.
-	 * @return
+	 * Get an instance of {@link IridaWorkflowNamedParameters} that corresponds
+	 * to this request.
+	 * 
+	 * @return an instance of {@link IridaWorkflowNamedParameters} for this DTO.
 	 */
 	public IridaWorkflowNamedParameters namedParameters() {
 		return new IridaWorkflowNamedParameters(parameterSetName, UUID.fromString(pipelineId), parameterValues);

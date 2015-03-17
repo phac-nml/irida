@@ -5,7 +5,6 @@ import org.springframework.core.convert.converter.Converter;
 /**
  * Converts a files size (originally in bytes) to Kilobytes
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class FileSizeConverter implements Converter<Long, String> {
 

@@ -9,7 +9,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage
 
 /**
  * Defines an ExecutionManager Galaxy implementation for interacting with Galaxy.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class ExecutionManagerGalaxy implements ExecutionManager {

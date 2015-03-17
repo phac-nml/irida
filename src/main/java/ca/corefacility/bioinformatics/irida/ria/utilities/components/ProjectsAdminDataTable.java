@@ -1,11 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.utilities.components;
 
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+
 import com.google.common.collect.ImmutableMap;
 
 /**
  * DataTables information for listing all projects for administrators.
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectsAdminDataTable extends DataTable {
 
@@ -34,13 +35,11 @@ public class ProjectsAdminDataTable extends DataTable {
 			.put(MODIFIED_DATE_COL, SORT_BY_MODIFIED_DATE).build();
 
 	/**
-	 * Determines the property of the
-	 * {@link ca.corefacility.bioinformatics.irida.model.Project} to sort by.
+	 * Determines the property of the {@link Project} to sort by.
 	 *
-	 * @param id DataTables column id
-	 * @return property of the
-	 * {@link ca.corefacility.bioinformatics.irida.model.Project} to
-	 * sort by.
+	 * @param id
+	 *            DataTables column id
+	 * @return property of the {@link Project} to sort by.
 	 */
 	public static String getSortStringFromColumnID(int id) {
 		return COLUMN_SORT_MAP.containsKey(id) ? COLUMN_SORT_MAP.get(id) : SORT_BY_MODIFIED_DATE;

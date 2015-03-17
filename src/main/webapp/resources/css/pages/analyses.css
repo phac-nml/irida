@@ -47,3 +47,8 @@
 .analysis__state--error {
   border-color: #F04124;
 }
+
+/* line 25, ../../../styles/pages/analyses.scss */
+.image-preview {
+  text-align: center;
+}

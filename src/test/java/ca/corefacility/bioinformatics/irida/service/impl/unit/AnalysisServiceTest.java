@@ -47,10 +47,10 @@ public class AnalysisServiceTest {
 	@Test
 	public void testCreateAnalysisWithOneOutputFile() throws IOException {
 		SequenceFile sf = new SequenceFile();
-		AnalysisFastQC analysis = new AnalysisFastQC(Sets.newHashSet(sf), "something");
 		Path outputFile = Files.createTempFile(null, null);
-		AnalysisOutputFile report = new AnalysisOutputFile(outputFile, "");
-		analysis.setFastQCReport(report);
+		AnalysisOutputFile report = new AnalysisOutputFile(outputFile, "", null);
+		AnalysisFastQC analysis = AnalysisFastQC.sloppyBuilder().inputFiles(Sets.newHashSet(sf))
+				.description("something").fastQCReport(report).build();
 
 		analysisService.create(analysis);
 
@@ -64,9 +64,9 @@ public class AnalysisServiceTest {
 		Path outputFile1 = Files.createTempFile(null, null);
 		Path outputFile2 = Files.createTempFile(null, null);
 		Path outputFile3 = Files.createTempFile(null, null);
-		AnalysisOutputFile report1 = new AnalysisOutputFile(outputFile1, "");
-		AnalysisOutputFile report2 = new AnalysisOutputFile(outputFile2, "");
-		AnalysisOutputFile report3 = new AnalysisOutputFile(outputFile3, "");
+		AnalysisOutputFile report1 = new AnalysisOutputFile(outputFile1, "", null);
+		AnalysisOutputFile report2 = new AnalysisOutputFile(outputFile2, "", null);
+		AnalysisOutputFile report3 = new AnalysisOutputFile(outputFile3, "", null);
 		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
 				.put("tree", report1).put("matrix", report2).put("table", report3).build();
 		AnalysisPhylogenomicsPipeline analysis = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(sf), "something",

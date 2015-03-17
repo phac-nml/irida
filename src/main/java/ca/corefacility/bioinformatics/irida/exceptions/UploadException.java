@@ -4,7 +4,6 @@ package ca.corefacility.bioinformatics.irida.exceptions;
  * Exception that gets thrown when uploading data to a separate data management
  * system (e.g. Galaxy).
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  * 
  */
 public class UploadException extends ExecutionManagerException {

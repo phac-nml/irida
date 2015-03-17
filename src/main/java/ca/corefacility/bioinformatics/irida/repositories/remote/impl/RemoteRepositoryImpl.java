@@ -20,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
  * Remote repository to request from remote IRIDA instances using
  * {@link OAuthTokenRestTemplate}s
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  * @param <Type>
  *            The type of object to be stored in this repository (extends
@@ -38,11 +37,6 @@ public abstract class RemoteRepositoryImpl<Type extends RemoteResource> implemen
 	/**
 	 * Create a new repository with the given rest template and object params
 	 * 
-	 * @param restTemplate
-	 *            the {@link OAuthTokenRestTemplate} to communicate with
-	 * @param relativeURI
-	 *            the relative URI to the resource collection for this repo (ex:
-	 *            projects)
 	 * @param tokenService
 	 *            service storing api tokens for communication with the remote
 	 *            APIs

@@ -7,7 +7,6 @@ import java.util.Objects;
 /**
  * An ID to uniquely identify a LibraryContent item.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class LibraryContentId {

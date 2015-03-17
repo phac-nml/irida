@@ -28,7 +28,6 @@ import com.google.common.collect.Sets;
 /**
  * Class used to load up installed workflows in IRIDA.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 @Service
@@ -46,7 +45,7 @@ public class IridaWorkflowsService {
 	private Map<AnalysisType, UUID> defaultWorkflowForAnalysis;
 
 	/**
-	 * Builds a new {@link IridaWorkflowService} for loading up installed
+	 * Builds a new {@link IridaWorkflowsService} for loading up installed
 	 * workflows.
 	 * 
 	 * @param iridaWorkflows
@@ -160,6 +159,8 @@ public class IridaWorkflowsService {
 	 *            The type of analysis to search for.
 	 * @return An {@link IridaWorkflow} for this analysis type.
 	 * @throws IridaWorkflowNotFoundException
+	 *             if the workflow could not be found for the specified analysis
+	 *             type.
 	 */
 	public IridaWorkflow getDefaultWorkflowByType(AnalysisType analysisType)
 			throws IridaWorkflowNotFoundException {

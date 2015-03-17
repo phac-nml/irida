@@ -7,6 +7,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowAnalysisTypeException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
@@ -14,7 +15,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
  * Service for submission of {@link AnalysisSubmission}s to an execution
  * manager.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
 public interface AnalysisExecutionService {
 
@@ -83,6 +83,7 @@ public interface AnalysisExecutionService {
 	 *             If there was an error loading the analysis results from an
 	 *             execution manager.
 	 * @throws IridaWorkflowAnalysisTypeException
+	 *             If there was an issue building an {@link Analysis} object.
 	 */
 	public Future<AnalysisSubmission> transferAnalysisResults(AnalysisSubmission submittedAnalysis)
 			throws ExecutionManagerException, IridaWorkflowNotFoundException, IOException,

@@ -35,7 +35,6 @@ import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
 /**
  * Unit Tests for @{link ReferenceFileController}
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ReferenceFileControllerTest {
 	// Constants

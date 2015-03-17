@@ -12,7 +12,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 /**
  * Specification for searching a {@link User}
  * 
- * @author Thomas Matthews <thomas.matthews@phac-aspc.gc.ca>
  *
  */
 public class UserSpecification {
@@ -21,7 +20,8 @@ public class UserSpecification {
 	 * 
 	 * @param searchString
 	 *            The name to search for
-	 * @return
+	 * @return a {@link Specification} to search for any {@link User} account
+	 *         with matching values.
 	 */
 	public static Specification<User> searchUser(String searchString) {
 		return new Specification<User>() {

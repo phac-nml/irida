@@ -7,7 +7,6 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEma
 
 /**
  * When no user is found in Galaxy.
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  *
  */
 public class GalaxyUserNotFoundException extends ExecutionManagerObjectNotFoundException {

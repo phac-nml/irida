@@ -10,7 +10,6 @@ import java.util.Locale;
 /**
  * Utilty methods to determine if lists are in sorted order.
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class SortUtilities {
 	/**

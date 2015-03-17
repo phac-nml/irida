@@ -26,7 +26,6 @@ import com.google.common.collect.ImmutableMap;
  * "An Authentication object was not found in the SecurityContext" when a client
  * attempts to connect without a token.
  * 
- * @author Franklin Bristow <franklin.bristow@phac-aspc.gc.ca>
  *
  */
 public class CustomOAuth2ExceptionTranslator extends DefaultWebResponseExceptionTranslator {

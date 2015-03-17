@@ -19,7 +19,6 @@ import com.google.common.base.Strings;
  * Page Object to represent the projects page.
  * </p>
  * 
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class ProjectsPage extends AbstractPage {
     private static final Logger logger = LoggerFactory.getLogger(ProjectsPage.class);

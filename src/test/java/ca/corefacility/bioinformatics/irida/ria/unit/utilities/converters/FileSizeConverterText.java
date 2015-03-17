@@ -10,7 +10,6 @@ import static org.junit.Assert.assertEquals;
 /**
  * Unit tests for File size conversions
  *
- * @author Josh Adam <josh.adam@phac-aspc.gc.ca>
  */
 public class FileSizeConverterText {
 	private Converter<Long, String> converter;

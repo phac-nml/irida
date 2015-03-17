@@ -60,7 +60,6 @@ import com.google.common.collect.Maps;
 /**
  * A service for performing tasks for analysis in Galaxy.
  * 
- * @author Aaron Petkau <aaron.petkau@phac-aspc.gc.ca>
  */
 public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService {
 
@@ -149,16 +148,21 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 *             If there was an issue creating a local file.
 	 * @throws ExecutionManagerDownloadException
 	 *             If there was an issue downloading the data from Galaxy.
+	 * @throws ExecutionManagerException
+	 *             If there was an issue extracting tool execution provenance
+	 *             from Galaxy.
 	 */
 	private AnalysisOutputFile buildOutputFile(String analysisId, Dataset dataset, Path outputDirectory)
-			throws IOException, ExecutionManagerDownloadException {
+			throws IOException, ExecutionManagerDownloadException, ExecutionManagerException {
 		String datasetId = dataset.getId();
 		String fileName = dataset.getName();
 
 		Path outputFile = outputDirectory.resolve(fileName);
 		galaxyHistoriesService.downloadDatasetTo(analysisId, datasetId, outputFile);
+		final ToolExecution toolExecution = analysisProvenanceServiceGalaxy.buildToolExecutionForOutputFile(
+				analysisId, fileName);
 
-		AnalysisOutputFile analysisOutputFile = new AnalysisOutputFile(outputFile, datasetId);
+		AnalysisOutputFile analysisOutputFile = new AnalysisOutputFile(outputFile, datasetId, toolExecution);
 
 		return analysisOutputFile;
 	}
@@ -364,10 +368,8 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		for (String analysisOutputName : outputsMap.keySet()) {
 			String outputFileName = outputsMap.get(analysisOutputName).getFileName();
 			Dataset outputDataset = galaxyHistoriesService.getDatasetForFileInHistory(outputFileName, analysisId);
+			
 			AnalysisOutputFile analysisOutput = buildOutputFile(analysisId, outputDataset, outputDirectory);
-			final ToolExecution toolExecution = analysisProvenanceServiceGalaxy.buildToolExecutionForOutputFile(
-					analysisSubmission, analysisOutput);
-			analysisOutput.setCreatedByTool(toolExecution);
 			analysisOutputFiles.put(analysisOutputName, analysisOutput);
 		}
 
