@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.oltu.oauth2.client.response.OAuthAuthzResponse;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
@@ -45,7 +46,7 @@ public class GalaxyRedirectionEndpointController {
 	 * @throws URISyntaxException
 	 */
 	@RequestMapping("galaxy/auth_code")
-	public String passAuthCode(Model model, HttpServletRequest request
+	public String passAuthCode(Model model, HttpServletRequest request, HttpSession session
 			) throws IOException, OAuthSystemException, OAuthProblemException {
 		logger.debug("\nParsing auth code from HttpServletRequest");
 		// Get the OAuth2 authorization code
@@ -53,6 +54,8 @@ public class GalaxyRedirectionEndpointController {
 		String code = oar.getCode();
 		logger.debug("\nReceived auth code: " + code);
 		model.addAttribute("auth_code", code);
+		
+		session.removeAttribute("galaxyExportToolCallbackURL");
 		
 		return "templates/galaxy_auth_code.tmpl";
 	}
