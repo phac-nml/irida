@@ -25,6 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 
+import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -227,9 +228,10 @@ public class SampleServiceImplTest {
 	 * file.
 	 * 
 	 * @throws SequenceFileAnalysisException
+	 * @throws AnalysisAlreadySetException 
 	 */
 	@Test
-	public void testGetCoverageForSampleSuccess() throws SequenceFileAnalysisException {
+	public void testGetCoverageForSampleSuccess() throws SequenceFileAnalysisException, AnalysisAlreadySetException {
 		Sample s1 = new Sample();
 		s1.setId(1l);
 
@@ -280,9 +282,10 @@ public class SampleServiceImplTest {
 	 * sequence file.
 	 * 
 	 * @throws SequenceFileAnalysisException
+	 * @throws AnalysisAlreadySetException 
 	 */
 	@Test
-	public void testGetTotalBasesForSampleSuccessOne() throws SequenceFileAnalysisException {
+	public void testGetTotalBasesForSampleSuccessOne() throws SequenceFileAnalysisException, AnalysisAlreadySetException {
 		Sample s1 = new Sample();
 		s1.setId(1l);
 
@@ -306,9 +309,10 @@ public class SampleServiceImplTest {
 	 * sequence files.
 	 * 
 	 * @throws SequenceFileAnalysisException
+	 * @throws AnalysisAlreadySetException 
 	 */
 	@Test
-	public void testGetTotalBasesForSampleSuccessTwo() throws SequenceFileAnalysisException {
+	public void testGetTotalBasesForSampleSuccessTwo() throws SequenceFileAnalysisException, AnalysisAlreadySetException {
 		Sample s1 = new Sample();
 		s1.setId(1l);
 

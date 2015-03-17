@@ -34,6 +34,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
@@ -232,7 +233,20 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 		return this.fastqcAnalysis;
 	}
 	
-	public void setFastQCAnalysis(final AnalysisFastQC fastqcAnalysis) {
-		this.fastqcAnalysis = fastqcAnalysis;
+	/**
+	 * Set the {@link AnalysisFastQC} for this {@link SequenceFile}.
+	 * 
+	 * @param fastqcAnalysis
+	 *            the analysis to set.
+	 * @throws AnalysisAlreadySetException
+	 *             if the analysis has already been set for this
+	 *             {@link SequenceFile}.
+	 */
+	public void setFastQCAnalysis(final AnalysisFastQC fastqcAnalysis) throws AnalysisAlreadySetException {
+		if (this.fastqcAnalysis == null) {
+			this.fastqcAnalysis = fastqcAnalysis;
+		} else {
+			throw new AnalysisAlreadySetException("The FastQC Analysis can only be applied to a sequence file one time.");
+		}
 	}
 }
