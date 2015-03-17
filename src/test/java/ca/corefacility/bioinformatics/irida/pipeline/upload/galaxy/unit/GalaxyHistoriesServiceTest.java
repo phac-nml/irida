@@ -162,7 +162,7 @@ public class GalaxyHistoriesServiceTest {
 		GalaxyWorkflowStatus status = galaxyHistory.getStatusForHistory(VALID_HISTORY_ID);
 		
 		assertEquals(GalaxyWorkflowState.OK, status.getState());
-		assertEquals(100.0f, status.getPercentComplete(), delta);
+		assertEquals("proprotion complete is invalid", 1.0f, status.getProportionComplete(), delta);
 	}
 	
 	/**
@@ -180,7 +180,7 @@ public class GalaxyHistoriesServiceTest {
 		GalaxyWorkflowStatus status = galaxyHistory.getStatusForHistory(VALID_HISTORY_ID);
 		
 		assertEquals(GalaxyWorkflowState.RUNNING, status.getState());
-		assertEquals(0.0f, status.getPercentComplete(), delta);
+		assertEquals("proportion complete is invalid", 0.0f, status.getProportionComplete(), delta);
 	}
 	
 	/**
@@ -199,7 +199,7 @@ public class GalaxyHistoriesServiceTest {
 		GalaxyWorkflowStatus status = galaxyHistory.getStatusForHistory(VALID_HISTORY_ID);
 		
 		assertEquals(GalaxyWorkflowState.RUNNING, status.getState());
-		assertEquals(50.0f, status.getPercentComplete(), delta);
+		assertEquals("proportion complete is invalid", 0.5f, status.getProportionComplete(), delta);
 	}
 	
 	/**

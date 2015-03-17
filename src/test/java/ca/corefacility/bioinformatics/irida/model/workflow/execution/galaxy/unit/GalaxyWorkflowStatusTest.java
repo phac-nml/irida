@@ -208,7 +208,7 @@ public class GalaxyWorkflowStatusTest {
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
 		assertEquals("workflow status not in correct state", GalaxyWorkflowState.OK, workflowStatus.getState());
-		assertEquals("percentage complete not correct", 100.0f, workflowStatus.getPercentComplete(), DELTA);
+		assertEquals("percentage complete not correct", 1.0f, workflowStatus.getProportionComplete(), DELTA);
 	}
 
 	/**
@@ -224,7 +224,7 @@ public class GalaxyWorkflowStatusTest {
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
 		assertEquals("workflow status not in correct state", GalaxyWorkflowState.QUEUED, workflowStatus.getState());
-		assertEquals("percentage complete not correct", 0.0f, workflowStatus.getPercentComplete(), DELTA);
+		assertEquals("percentage complete not correct", 0.0f, workflowStatus.getProportionComplete(), DELTA);
 	}
 
 	/**
@@ -243,7 +243,7 @@ public class GalaxyWorkflowStatusTest {
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
 		assertEquals("workflow status not in correct state", GalaxyWorkflowState.RUNNING, workflowStatus.getState());
-		assertEquals("percentage complete not correct", 50.0f, workflowStatus.getPercentComplete(), DELTA);
+		assertEquals("percentage complete not correct", 0.5f, workflowStatus.getProportionComplete(), DELTA);
 	}
 
 	/**
@@ -263,7 +263,7 @@ public class GalaxyWorkflowStatusTest {
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
 		assertEquals("workflow status not in correct state", GalaxyWorkflowState.RUNNING, workflowStatus.getState());
-		assertEquals("percentage complete not correct", 25.0f, workflowStatus.getPercentComplete(), DELTA);
+		assertEquals("percentage complete not correct", 0.25f, workflowStatus.getProportionComplete(), DELTA);
 	}
 
 	/**

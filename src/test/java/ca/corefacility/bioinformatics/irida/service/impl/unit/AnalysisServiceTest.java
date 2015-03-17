@@ -15,7 +15,6 @@ import javax.validation.Validator;
 import org.junit.Before;
 import org.junit.Test;
 
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisPhylogenomicsPipeline;
@@ -25,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisServiceImpl;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
 
 public class AnalysisServiceTest {
 
@@ -46,11 +44,9 @@ public class AnalysisServiceTest {
 
 	@Test
 	public void testCreateAnalysisWithOneOutputFile() throws IOException {
-		SequenceFile sf = new SequenceFile();
 		Path outputFile = Files.createTempFile(null, null);
 		AnalysisOutputFile report = new AnalysisOutputFile(outputFile, "", null);
-		AnalysisFastQC analysis = AnalysisFastQC.sloppyBuilder().inputFiles(Sets.newHashSet(sf))
-				.description("something").fastQCReport(report).build();
+		AnalysisFastQC analysis = AnalysisFastQC.sloppyBuilder().description("something").fastQCReport(report).build();
 
 		analysisService.create(analysis);
 
@@ -60,7 +56,6 @@ public class AnalysisServiceTest {
 
 	@Test
 	public void testCreateAnalysisWithMultipleOutputFile() throws IOException {
-		SequenceFile sf = new SequenceFile();
 		Path outputFile1 = Files.createTempFile(null, null);
 		Path outputFile2 = Files.createTempFile(null, null);
 		Path outputFile3 = Files.createTempFile(null, null);
@@ -69,8 +64,7 @@ public class AnalysisServiceTest {
 		AnalysisOutputFile report3 = new AnalysisOutputFile(outputFile3, "", null);
 		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
 				.put("tree", report1).put("matrix", report2).put("table", report3).build();
-		AnalysisPhylogenomicsPipeline analysis = new AnalysisPhylogenomicsPipeline(Sets.newHashSet(sf), "something",
-				analysisOutputFiles);
+		AnalysisPhylogenomicsPipeline analysis = new AnalysisPhylogenomicsPipeline("something", analysisOutputFiles);
 
 		analysisService.create(analysis);
 

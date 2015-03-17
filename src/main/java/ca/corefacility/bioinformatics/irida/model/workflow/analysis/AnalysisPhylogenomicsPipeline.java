@@ -1,12 +1,9 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
  * Metadata for Core SNP Pipeline implementation in Galaxy.
@@ -25,9 +22,9 @@ public class AnalysisPhylogenomicsPipeline extends Analysis {
 		super();
 	}
 
-	public AnalysisPhylogenomicsPipeline(final Set<SequenceFile> inputFiles, final String executionManagerAnalysisId,
+	public AnalysisPhylogenomicsPipeline(final String executionManagerAnalysisId,
 			final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
-		super(inputFiles, executionManagerAnalysisId, analysisOutputFilesMap);
+		super(executionManagerAnalysisId, analysisOutputFilesMap);
 	}
 
 	public AnalysisOutputFile getPhylogeneticTree() {

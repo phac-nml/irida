@@ -42,7 +42,6 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.UploadWorker;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Generates test data for unit tests.
@@ -111,12 +110,11 @@ public class TestDataFactory {
 	}
 
 	public static Analysis constructAnalysis() {
-		Set<SequenceFile> files = ImmutableSet.of(constructSequenceFile());
 		Map<String, AnalysisOutputFile> analysisOutputFiles = new ImmutableMap.Builder<String, AnalysisOutputFile>()
 				.put("tree", constructAnalysisOutputFile("snp_tree.tree"))
 				.put("matrix", constructAnalysisOutputFile("test_file_1.fastq"))
 				.put("table", constructAnalysisOutputFile("test_file_2.fastq")).build();
-		AnalysisPhylogenomicsPipeline analysis = new AnalysisPhylogenomicsPipeline(files, FAKE_EXECUTION_MANAGER_ID,
+		AnalysisPhylogenomicsPipeline analysis = new AnalysisPhylogenomicsPipeline(FAKE_EXECUTION_MANAGER_ID,
 				analysisOutputFiles);
 		return analysis;
 	}
