@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="remove-snapshots" author="tom">
+
+		<!-- Drop the snapshot tables -->
+
+		<dropTable tableName="remote_sequence_file_snapshot" />
+
+		<dropTable tableName="remote_sample_snapshot" />
+
+		<dropTable tableName="remote_project_snapshot" />
+
+		<dropTable tableName="snapshot_sequence_file_properties" />
+		
+		<dropTable tableName="snapshot_sample_snapshot" />
+
+		<dropTable tableName="snapshot_sequence_file_snapshot" />
+
+		<dropTable tableName="snapshot_project_snapshot" />
+
+		<dropTable tableName="sequence_file_snapshot" />
+
+		<dropTable tableName="sample_snapshot" />
+
+		<dropTable tableName="project_snapshot" />
+
+		<dropTable tableName="snapshot" />
+
+	</changeSet>
+</databaseChangeLog>
