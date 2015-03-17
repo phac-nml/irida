@@ -23,22 +23,26 @@
 			<ul class="nav navbar-nav">
 				<li th:class="${activeNav} == 'samples' ? 'active'"><a th:href="@{${baseLink}}">[[#{project.nav.samples}]]&nbsp;<span
 						class="badge badge-default" th:text="${samples}"></span> </a></li>
-				<li th:class="${activeNav} == 'members' ? 'active'"><a th:href="@{${baseLink} + '/members'}">[[#{project.nav.members}]]&nbsp;<span
+				<li th:class="${activeNav} == 'members' ? 'active'"><a th:href="@{${baseLink} + '/members'}"
+				        th:unless="${#httpSession.getAttribute('galaxyExportToolCallbackURL')}">[[#{project.nav.members}]]&nbsp;<span
 						class="badge badge-default" th:text="${users}"></span></a>
 				</li>
 				<li th:class="${activeNav} == 'associated' ? 'active'"><a th:href="@{${baseLink} + '/associated'}">[[#{project.nav.associated}]]&nbsp;<span
 						class="badge badge-default" th:text="${related_project_count}"></span></a>
 				</li>
 
-				<li th:class="${activeNav} == 'metadata' ? 'active'">
+				<li th:class="${activeNav} == 'metadata' ? 'active'"
+				    th:unless="${#httpSession.getAttribute('galaxyExportToolCallbackURL')}">
 					<a th:href="@{${baseLink} + '/metadata'}">[[#{project.nav.metadata}]]</a>
 				</li>
-				<li th:class="${activeNav} == 'reference' ? 'active'">
+				<li th:class="${activeNav} == 'reference' ? 'active'"
+				    th:unless="${#httpSession.getAttribute('galaxyExportToolCallbackURL')}">
 					<a href="" th:href="@{${baseLink} + '/referenceFiles'}" th:text="#{project.nav.referenceFiles}">
 						_Reference Files
 					</a>
 				</li>
-                <li th:class="${activeNav} == 'activity' ? 'active'">
+                <li th:class="${activeNav} == 'activity' ? 'active'"
+                    th:unless="${#httpSession.getAttribute('galaxyExportToolCallbackURL')}">
                     <a href="" th:href="@{${baseLink} + '/activity'}" th:text="#{project.nav.activity}">
                         _Recent_Activity_
                     </a>
