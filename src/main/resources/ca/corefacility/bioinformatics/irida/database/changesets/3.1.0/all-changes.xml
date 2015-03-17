@@ -6,4 +6,5 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 	<include file="drop-analysis-audit-tables.xml" relativeToChangelogFile="true"/>
+	<include file="drop-analysis-sequence-files.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

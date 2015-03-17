@@ -24,9 +24,9 @@
                     modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file.fasta"
                     fileRevisionNumber="1"/>
 
-    <sequence_file id="1" createdDate="2013-07-18 14:20:19.0"
-                   modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file.fastq"
-                   fileRevisionNumber="1" sequencingRun_id="1"/>
+    <sequence_file id="1" created_date="2013-07-18 14:20:19.0"
+                   modified_date="2013-07-18 14:20:19.0" file_path="/tmp/file.fastq"
+                   file_revision_number="1" sequencing_run_id="1"/>
 
     <user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
           email="manager@nowhere.com" firstName="Mr." lastName="Manager"
@@ -41,9 +41,6 @@
 
     <analysis id="1" createdDate="2014-02-06 12:01:02" executionManagerAnalysisId="Whole Genome Phylogenomics Pipeline" />
     <analysis id="2" createdDate="2014-02-06 12:01:02" executionManagerAnalysisId="Whole Genome Phylogenomics Pipeline" />
-
-    <analysis_sequence_file analysis_id="1" inputFiles_id="1" />
-    <analysis_sequence_file analysis_id="2" inputFiles_id="1" />
 
     <analysis_phylogenomicspipeline id="1" />
     <analysis_phylogenomicspipeline id="2" />

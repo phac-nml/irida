@@ -35,10 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC.AnalysisFastQCBuilder;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Executes FastQC on a {@link SequenceFile} and stores the report in the
@@ -53,13 +50,19 @@ public class FastqcFileProcessor implements FileProcessor {
 	
 	private static final String EXECUTION_MANAGER_ANALYSIS_ID = "internal-fastqc";
 
-	private final AnalysisRepository analysisRepository;
 	private final SequenceFileRepository sequenceFileRepository;
 	private final MessageSource messageSource;
 
-	public FastqcFileProcessor(AnalysisRepository analysisRepository, MessageSource messageSource,
-			SequenceFileRepository sequenceFileRepository) {
-		this.analysisRepository = analysisRepository;
+	/**
+	 * Create a new {@link FastqcFileProcessor}
+	 * 
+	 * @param messageSource
+	 *            the message source for i18n (used to add an internationalized
+	 *            description for the analysis).
+	 * @param sequenceFileRepository
+	 *            the sequence file repository.
+	 */
+	public FastqcFileProcessor(final MessageSource messageSource, final SequenceFileRepository sequenceFileRepository) {
 		this.messageSource = messageSource;
 		this.sequenceFileRepository = sequenceFileRepository;
 	}
@@ -71,10 +74,12 @@ public class FastqcFileProcessor implements FileProcessor {
 	public void process(final Long sequenceFileId) throws FileProcessorException {
 		final SequenceFile sequenceFile = sequenceFileRepository.findOne(sequenceFileId);
 		Path fileToProcess = sequenceFile.getFile();
-		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC.builder()
-				.inputFiles(ImmutableSet.of(sequenceFile)).executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID)
-				.description(messageSource.getMessage("fastqc.file.processor.analysis.description", null,
-						LocaleContextHolder.getLocale()));
+		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC
+				.builder()
+				.executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID)
+				.description(
+						messageSource.getMessage("fastqc.file.processor.analysis.description", null,
+								LocaleContextHolder.getLocale()));
 		try {
 			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory
 					.getSequenceFile(fileToProcess.toFile());
@@ -101,8 +106,10 @@ public class FastqcFileProcessor implements FileProcessor {
 
 			logger.trace("Saving FastQC analysis.");
 			analysis.overrepresentedSequences(overrepresentedSequences);
+			
+			sequenceFile.setFastQCAnalysis(analysis.build());
 
-			analysisRepository.save(analysis.build());
+			sequenceFileRepository.save(sequenceFile);
 		} catch (Exception e) {
 			logger.error("FastQC failed to process the sequence file. Stack trace follows.", e);
 			throw new FileProcessorException("FastQC failed to parse the sequence file.", e);

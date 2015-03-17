@@ -11,8 +11,8 @@
 
 
 
-	<sequence_file id="4" filePath="/FileThatMayNotExist"
-		createdDate="2013-07-18 14:20:19.0" fileRevisionNumber="1" />
+	<sequence_file id="4" file_path="/FileThatMayNotExist"
+		created_date="2013-07-18 14:20:19.0" file_revision_number="1" />
 
 	<sample id="2" sampleName="sample" sequencerSampleId="sample1"
 		createdDate="2013-07-18 14:20:19.0" />

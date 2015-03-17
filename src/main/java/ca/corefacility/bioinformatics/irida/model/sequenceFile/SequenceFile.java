@@ -21,6 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -28,16 +29,19 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequenceFileJoin;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 
 /**
  * A file that may be stored somewhere on the file system and belongs to a
@@ -54,19 +58,21 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@Column(name = "filePath", unique = true)
+	@Column(name = "file_path", unique = true)
 	private Path file;
 
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
+	@Column(nullable = false, name = "created_date")
 	private final Date createdDate;
 
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "modified_date")
 	private Date modifiedDate;
 
+	@Column(name = "file_revision_number")
 	private Long fileRevisionNumber; // the filesystem file revision number
 
 	// Key/value map of additional properties you could set on a sequence file.
@@ -79,11 +85,16 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	private Map<String, String> optionalProperties;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "sequencingRun_id")
+	@JoinColumn(name = "sequencing_run_id")
 	private SequencingRun sequencingRun;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
 	private List<SampleSequenceFileJoin> samples;
+	
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@NotAudited
+	@JoinColumn(name = "fastqc_analysis_id")
+	private AnalysisFastQC fastqcAnalysis;
 
 	public SequenceFile() {
 		createdDate = new Date();
@@ -216,5 +227,26 @@ public class SequenceFile implements IridaThing, Comparable<SequenceFile>, Versi
 	@Override
 	public void incrementFileRevisionNumber() {
 		this.fileRevisionNumber++;
+	}
+	
+	public AnalysisFastQC getFastQCAnalysis() {
+		return this.fastqcAnalysis;
+	}
+	
+	/**
+	 * Set the {@link AnalysisFastQC} for this {@link SequenceFile}.
+	 * 
+	 * @param fastqcAnalysis
+	 *            the analysis to set.
+	 * @throws AnalysisAlreadySetException
+	 *             if the analysis has already been set for this
+	 *             {@link SequenceFile}.
+	 */
+	public void setFastQCAnalysis(final AnalysisFastQC fastqcAnalysis) throws AnalysisAlreadySetException {
+		if (this.fastqcAnalysis == null) {
+			this.fastqcAnalysis = fastqcAnalysis;
+		} else {
+			throw new AnalysisAlreadySetException("The FastQC Analysis can only be applied to a sequence file one time.");
+		}
 	}
 }

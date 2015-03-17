@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -19,7 +18,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -28,7 +26,6 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -65,10 +62,6 @@ public class Analysis implements IridaThing {
 			"analysis_id", "property_key" }, name = "UK_ANALYSIS_PROPERTY_KEY"))
 	private final Map<String, String> additionalProperties;
 
-	@NotNull
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	private final Set<SequenceFile> inputFiles;
-
 	@ElementCollection(fetch = FetchType.EAGER)
 	@MapKeyColumn(name = "analysis_output_file_key", nullable = false)
 	@Column(name = "analysis_output_file_value", nullable = false)
@@ -85,26 +78,22 @@ public class Analysis implements IridaThing {
 		this.description = null;
 		this.executionManagerAnalysisId = null;
 		this.additionalProperties = null;
-		this.inputFiles = null;
 		this.analysisOutputFilesMap = null;
 	}
 
 	/**
 	 * Builds a new {@link Analysis} object with the given information.
 	 * 
-	 * @param inputFiles
-	 *            The input {@link SequenceFile}s for this analysis.
 	 * @param executionManagerAnalysisId
 	 *            The id for an execution manager used with this analysis.
 	 * @param analysisOutputFilesMap
 	 *            A {@link Map} of output file keys and
 	 *            {@link AnalysisOutputFile}s.
 	 */
-	public Analysis(final Set<SequenceFile> inputFiles, final String executionManagerAnalysisId,
+	public Analysis(final String executionManagerAnalysisId,
 			final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
 		this.id = null;
 		this.createdDate = new Date();
-		this.inputFiles = inputFiles;
 		this.executionManagerAnalysisId = executionManagerAnalysisId;
 		this.analysisOutputFilesMap = analysisOutputFilesMap;
 		this.description = null;
@@ -113,9 +102,7 @@ public class Analysis implements IridaThing {
 
 	/**
 	 * Builds a new {@link Analysis} object with the given information.
-	 * 
-	 * @param inputFiles
-	 *            The input {@link SequenceFile}s for this analysis.
+
 	 * @param executionManagerAnalysisId
 	 *            The id for an execution manager used with this analysis.
 	 * @param analysisOutputFilesMap
@@ -126,12 +113,11 @@ public class Analysis implements IridaThing {
 	 * @param additionalProperties
 	 *            any other properties available
 	 */
-	public Analysis(final Set<SequenceFile> inputFiles, final String executionManagerAnalysisId,
+	public Analysis(final String executionManagerAnalysisId,
 			final Map<String, AnalysisOutputFile> analysisOutputFilesMap, final String description,
 			final Map<String, String> additionalProperties) {
 		this.id = null;
 		this.createdDate = new Date();
-		this.inputFiles = inputFiles;
 		this.executionManagerAnalysisId = executionManagerAnalysisId;
 		this.analysisOutputFilesMap = analysisOutputFilesMap;
 		this.description = description;
@@ -142,16 +128,17 @@ public class Analysis implements IridaThing {
 	 * Builds a new {@link Analysis} object with the given information and an
 	 * empty set of output files.
 	 * 
-	 * @param inputFiles
-	 *            The input {@link SequenceFile}s for this analysis.
 	 * @param executionManagerAnalysisId
 	 *            The id for an execution manager used with this analysis.
+	 * @param description
+	 *            a description of the analysis.
+	 * @param additionalProperties
+	 *            any other properties available
 	 */
-	public Analysis(final Set<SequenceFile> inputFiles, final String executionManagerAnalysisId,
-			final String description, final Map<String, String> additionalProperties) {
+	public Analysis(final String executionManagerAnalysisId, final String description,
+			final Map<String, String> additionalProperties) {
 		this.id = null;
 		this.createdDate = new Date();
-		this.inputFiles = inputFiles;
 		this.executionManagerAnalysisId = executionManagerAnalysisId;
 		this.analysisOutputFilesMap = Collections.emptyMap();
 		this.description = description;
@@ -184,10 +171,6 @@ public class Analysis implements IridaThing {
 	 */
 	public Set<AnalysisOutputFile> getAnalysisOutputFiles() {
 		return ImmutableSet.copyOf(analysisOutputFilesMap.values());
-	}
-
-	public Set<SequenceFile> getInputSequenceFiles() {
-		return ImmutableSet.copyOf(inputFiles);
 	}
 
 	public String getDescription() {

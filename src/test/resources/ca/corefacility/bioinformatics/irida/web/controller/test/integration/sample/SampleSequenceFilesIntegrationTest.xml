@@ -41,10 +41,10 @@
 	<client_details_resource_ids
 		client_details_id="1" resource_id="NmlIrida" />
 
-	<sequence_file id="1" createdDate="2013-07-18 14:20:19.0"
-		filePath="/sequenceFile1" />
-	<sequence_file id="2" createdDate="2013-07-18 14:20:19.0"
-		filePath="/sequenceFile2" />
+	<sequence_file id="1" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile1" />
+	<sequence_file id="2" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile2" />
 
 	<sequencefile_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		sample_id="1" sequencefile_id="1" />
