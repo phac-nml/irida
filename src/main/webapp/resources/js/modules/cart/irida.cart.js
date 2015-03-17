@@ -207,7 +207,7 @@
     svc.exportFromCart = function (libraryName, email, authCode, redirectURI) {
       return CartService.all()
         .then(function (data) {
-          initialize(libraryName, email, authCode);
+          initialize(libraryName, email, authCode, redirectURI);
           var projects = data;
           _.each(projects, function (project) {
             var samples = project.samples;
