@@ -14,7 +14,6 @@ import org.springframework.hateoas.Link;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteSample;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SampleRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
@@ -39,7 +38,7 @@ public class SampleRemoteServiceImplTest {
 		RemoteAPI api = new RemoteAPI();
 		project.setRemoteAPI(api);
 
-		Sample remoteSample = new RemoteSample();
+		Sample remoteSample = new Sample();
 		remoteSample.setRemoteAPI(api);
 		List<Sample> samples = Lists.newArrayList(remoteSample);
 
@@ -63,9 +62,9 @@ public class SampleRemoteServiceImplTest {
 		int page = 0;
 		int size = 10;
 
-		Sample sample1 = new RemoteSample();
+		Sample sample1 = new Sample();
 		sample1.setSampleName("sample 1");
-		Sample sample2 = new RemoteSample();
+		Sample sample2 = new Sample();
 		sample2.setSampleName("sample 2");
 
 		List<Sample> samples = Lists.newArrayList(sample1, sample2);
@@ -92,13 +91,13 @@ public class SampleRemoteServiceImplTest {
 		String searchString = "";
 		int page = 0;
 		int size = 2;
-		Sample sample1 = new RemoteSample();
+		Sample sample1 = new Sample();
 		sample1.setSampleName("sample 1");
-		Sample sample2 = new RemoteSample();
+		Sample sample2 = new Sample();
 		sample2.setSampleName("sample 2");
-		Sample sample3 = new RemoteSample();
+		Sample sample3 = new Sample();
 		sample3.setSampleName("sample 3");
-		Sample sample4 = new RemoteSample();
+		Sample sample4 = new Sample();
 		sample4.setSampleName("sample 4");
 
 		List<Sample> samples = Lists.newArrayList(sample1, sample2, sample3, sample4);

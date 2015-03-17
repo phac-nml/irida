@@ -14,7 +14,6 @@ import org.junit.Test;
 import org.springframework.hateoas.Link;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteSample;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLinks;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
@@ -40,7 +39,7 @@ public class SequenceFileRemoteServiceImplTest {
 	public void testGetSequenceFilesForSample() {
 		String seqFilesHref = "http://somewhere/projects/1/samples/2/sequencefiles";
 		RemoteAPI api = new RemoteAPI();
-		Sample sample = new RemoteSample();
+		Sample sample = new Sample();
 		sample.add(new Link(seqFilesHref,SequenceFileRemoteServiceImpl.SAMPLE_SEQUENCE_FILES_REL));
 
 		sample.setRemoteAPI(api);
