@@ -372,7 +372,10 @@ public class AnalysisController {
 		return viewName;
 	}
 
-	private class ToolInfo {
+	/**
+	 * Used for sending {@link ToolExecution} information to the view.
+	 */
+	private static class ToolInfo {
 		private Set<ToolInfo> previousSteps = new HashSet<>();
 		private String id;
 		private String name;
