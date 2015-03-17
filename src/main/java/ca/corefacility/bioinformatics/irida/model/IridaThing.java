@@ -2,12 +2,13 @@ package ca.corefacility.bioinformatics.irida.model;
 
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * An interface for all model classes in the IRIDA system
  * 
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public interface IridaThing extends Timestamped {
 	/**
 	 * Get a human readable label for this object.
@@ -15,7 +16,6 @@ public interface IridaThing extends Timestamped {
 	 * @return
 	 */
 	@NotNull(message = "{irida.label.notnull}")
-	@JsonIgnore
 	public String getLabel();
 
 	/**
