@@ -20,12 +20,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.Resource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
-import ca.corefacility.bioinformatics.irida.web.controller.api.exception.GenericsException;
 
 import com.google.common.net.HttpHeaders;
 
@@ -42,7 +41,7 @@ import com.google.common.net.HttpHeaders;
  */
 @Controller
 @RequestMapping("/api/generic")
-public abstract class RESTGenericController<Type extends IridaThing & Comparable<Type>, ResourceType extends Resource<Type>> {
+public abstract class RESTGenericController<Type extends IridaResourceSupport & IridaThing & Comparable<Type>> {
 
 	/**
 	 * name of objects sent back to the client for all generic resources.
@@ -72,7 +71,6 @@ public abstract class RESTGenericController<Type extends IridaThing & Comparable
 	 * The type used to serialize/de-serialize the <code>Type</code> to the
 	 * client.
 	 */
-	private Class<ResourceType> resourceType;
 
 	protected RESTGenericController() {
 	}
@@ -91,9 +89,8 @@ public abstract class RESTGenericController<Type extends IridaThing & Comparable
 	 *            the type used to serialize/de-serialize the type to the
 	 *            client.
 	 */
-	protected RESTGenericController(CRUDService<Long, Type> crudService, Class<Type> type, Class<ResourceType> resourceType) {
+	protected RESTGenericController(CRUDService<Long, Type> crudService, Class<Type> type) {
 		this.crudService = crudService;
-		this.resourceType = resourceType;
 	}
 
 	/**
@@ -118,17 +115,11 @@ public abstract class RESTGenericController<Type extends IridaThing & Comparable
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelMap listAllResources() {
 		Iterable<Type> entities = crudService.findAll();
-		ResourceCollection<ResourceType> resources = new ResourceCollection<>();
-		try {
-			for (Type entity : entities) {
-				ResourceType resource = getResourceInstance(entity);
-				resource.setResource(entity);
-				resource.add(constructCustomResourceLinks(entity));
-				resource.add(linkTo(getClass()).slash(entity.getId()).withSelfRel());
-				resources.add(resource);
-			}
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new GenericsException("Could not initialize resourceType: [" + resourceType + "]",e);
+		ResourceCollection<Type> resources = new ResourceCollection<>();
+		for (Type entity : entities) {
+			entity.add(constructCustomResourceLinks(entity));
+			entity.add(linkTo(getClass()).slash(entity.getId()).withSelfRel());
+			resources.add(entity);
 		}
 
 		resources.add(linkTo(getClass()).withSelfRel());
@@ -157,24 +148,15 @@ public abstract class RESTGenericController<Type extends IridaThing & Comparable
 		// supplied by the client.
 		Type t = crudService.read(identifier);
 
-		// prepare the resource for serialization to the client.
-		ResourceType resource = null;
-		try {
-			resource = getResourceInstance(t);
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new GenericsException("Failed to construct an instance of ResourceType for [" + getClass() + "]");
-		}
-		resource.setResource(t);
-
 		// add any custom links for the specific resource type that we're
 		// serving
 		// right now (implemented in the class that extends GenericController).
-		resource.add(constructCustomResourceLinks(t));
+		t.add(constructCustomResourceLinks(t));
 		// add a self-rel to this resource
-		resource.add(linkTo(getClass()).slash(identifier).withSelfRel());
+		t.add(linkTo(getClass()).slash(identifier).withSelfRel());
 
 		// add the resource to the model
-		model.addAttribute(RESOURCE_NAME, resource);
+		model.addAttribute(RESOURCE_NAME, t);
 
 		// send the response back to the client.
 		return model;
@@ -192,12 +174,11 @@ public abstract class RESTGenericController<Type extends IridaThing & Comparable
 	 */
 	@RequestMapping(method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
-	public ModelMap create(@RequestBody ResourceType representation,HttpServletResponse response) {		
+	public ModelMap create(@RequestBody Type resource,HttpServletResponse response) {		
 		ModelMap model = new ModelMap();
 
 		// ask the subclass to map the de-serialized request to a concrete
 		// instance of the type managed by this controller.
-		Type resource = representation.getResource();
 		
 		// persist the resource to the database.
 		resource = crudService.create(resource);
@@ -213,14 +194,6 @@ public abstract class RESTGenericController<Type extends IridaThing & Comparable
 		// accessed from the service/database layer.
 		Type readType = crudService.read(id);
 		
-		ResourceType readResourceType = null;
-		try {
-			readResourceType = getResourceInstance(readType);
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new GenericsException("Failed to construct an instance of ResourceType for [" + getClass() + "]");
-		}
-		readResourceType.setResource(readType);
-		
 		// the location of the new resource is relative to this class (i.e.,
 		// linkTo(getClass())) with the identifier appended.
 		String location = linkTo(getClass()).slash(id).withSelfRel().getHref();
@@ -228,13 +201,13 @@ public abstract class RESTGenericController<Type extends IridaThing & Comparable
 		// add any custom links for the specific resource type that we're
 		// serving
 		// right now (implemented in the class that extends GenericController).
-		readResourceType.add(constructCustomResourceLinks(resource));
+		readType.add(constructCustomResourceLinks(resource));
 		
 		//add a self reference
-		readResourceType.add(linkTo(getClass()).slash(id).withSelfRel());
+		readType.add(linkTo(getClass()).slash(id).withSelfRel());
 		
 		// add the resource to the model
-		model.addAttribute(RESOURCE_NAME,readResourceType);
+		model.addAttribute(RESOURCE_NAME,readType);
 		
 		// add a location header.
 		response.addHeader(HttpHeaders.LOCATION, location);
@@ -302,18 +275,5 @@ public abstract class RESTGenericController<Type extends IridaThing & Comparable
 		modelMap.addAttribute(RESOURCE_NAME, rootResource);
 		// respond to the client
 		return modelMap;
-	}
-	
-	/**
-	 * Get an instance of the resource class for a Type
-	 * @param entity the entity to get a resource instance for
-	 * @return An instance of ResourceType
-	 * @throws InstantiationException If the resource instance cannot be created
-	 * @throws IllegalAccessException If the resource instance cannot be created
-	 */
-	protected ResourceType getResourceInstance(Type entity) throws InstantiationException, IllegalAccessException{
-		logger.trace("Instantiating instance of " + resourceType);
-		ResourceType resource = resourceType.newInstance();
-		return resource;
 	}
 }

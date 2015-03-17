@@ -7,14 +7,14 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.springframework.hateoas.ResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 
 /**
  * Wraps a collection of {@link ResourceCollection} objects to be sent to the client.
  *
  */
 @XmlRootElement(name = "resource")
-public class ResourceCollection<Type extends ResourceSupport> extends ResourceSupport implements Iterable<Type> {
+public class ResourceCollection<Type> extends IridaResourceSupport implements Iterable<Type> {
 
     /**
      * A collection of resources to be serialized.

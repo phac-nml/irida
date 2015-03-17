@@ -6,8 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
@@ -19,30 +17,16 @@ import javax.validation.ConstraintViolationException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.hateoas.Link;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.exception.GenericsException;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestEntity;
-import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestResource;
-
-import com.google.common.collect.Lists;
-import com.google.common.net.HttpHeaders;
 
 /**
  * Unit tests for the {@link RESTGenericController}.
@@ -52,7 +36,7 @@ import com.google.common.net.HttpHeaders;
 public class GenericControllerTest {
 
 	private static final String RELATED_IDENTIFIABLE_TEST_ENTITY_KEY = "related";
-	private RESTGenericController<IdentifiableTestEntity, IdentifiableTestResource> controller;
+	private RESTGenericController<IdentifiableTestEntity> controller;
 	private CRUDService<Long, IdentifiableTestEntity> crudService;
 	private IdentifiableTestEntity entity;
 	private Map<String, Object> updatedFields;
@@ -65,21 +49,19 @@ public class GenericControllerTest {
 		entity = new IdentifiableTestEntity();
 		identifier = 1L;
 		entity.setId(identifier);
-		controller = new RESTGenericController<IdentifiableTestEntity, IdentifiableTestResource>(crudService,
-				IdentifiableTestEntity.class, IdentifiableTestResource.class) {
+		controller = new RESTGenericController<IdentifiableTestEntity>(crudService,
+				IdentifiableTestEntity.class) {
 		};
 		updatedFields = new HashMap<>();
 	}
 
 	@Test
 	public void testCreateBadEntity() {
-		IdentifiableTestResource r = new IdentifiableTestResource(entity);
-
 		when(crudService.create(entity)).thenThrow(
 				new ConstraintViolationException(new HashSet<ConstraintViolation<?>>()));
 
 		try {
-			controller.create(r,new MockHttpServletResponse());
+			controller.create(entity,new MockHttpServletResponse());
 			fail();
 		} catch (ConstraintViolationException ex) {
 		} catch (Exception ex) {
@@ -89,14 +71,13 @@ public class GenericControllerTest {
 
 	@Test
 	public void testCreateGoodEntity() {
-        IdentifiableTestResource resource = new IdentifiableTestResource(entity);
 		when(crudService.create(entity)).thenReturn(entity);
 		when(crudService.read(identifier)).thenReturn(entity);
-		ModelMap model = controller.create(resource,new MockHttpServletResponse());
+		ModelMap model = controller.create(entity,new MockHttpServletResponse());
 		assertTrue("Model should contain resource",model.containsKey("resource"));
-		IdentifiableTestResource testResource = (IdentifiableTestResource) model.get("resource");
-		assertNotNull("Resource should not be null",testResource.getResource());
-		assertTrue("Resource from model should be equivalent to resource added to model",testResource.getResource().equals(entity));
+		IdentifiableTestEntity testResource = (IdentifiableTestEntity) model.get("resource");
+		assertNotNull("Resource should not be null",testResource);
+		assertTrue("Resource from model should be equivalent to resource added to model",testResource.equals(entity));
 		assertTrue("Model should contain a self-reference",testResource.getLink(Link.REL_SELF).getHref().endsWith(identifier.toString()));
 	}
 
@@ -133,7 +114,7 @@ public class GenericControllerTest {
 		}
 
 		assertTrue(model.containsKey("resource"));
-		IdentifiableTestResource resource = (IdentifiableTestResource) model.get("resource");
+		IdentifiableTestEntity resource = (IdentifiableTestEntity) model.get("resource");
 		assertTrue(resource.getLink(Link.REL_SELF).getHref().endsWith(identifier.toString()));
 	}
 
