@@ -8,25 +8,24 @@ import org.junit.Test;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.utils.model.IdentifiableTestEntity;
-import ca.corefacility.bioinformatics.irida.utils.model.RemoteIdentifiableTestEntity;
 
 public class RemoteObjectCacheTest {
 	private RemoteObjectCache<IdentifiableTestEntity> cache;
-	private RemoteIdentifiableTestEntity entity;
+	private IdentifiableTestEntity entity;
 	private Integer entityId;
 	private RemoteAPI api;
 
 	@Before
 	public void setUp() {
 		cache = new RemoteObjectCache<>();
-		entity = new RemoteIdentifiableTestEntity();
+		entity = new IdentifiableTestEntity();
 		api = new RemoteAPI();
 		entityId = cache.addResource(entity, api);
 	}
 
 	@Test
 	public void testAddResource() {
-		RemoteIdentifiableTestEntity testEntity = new RemoteIdentifiableTestEntity();
+		IdentifiableTestEntity testEntity = new IdentifiableTestEntity();
 		testEntity.setIntegerValue(5);
 		Integer addResource = cache.addResource(testEntity, api);
 		assertNotNull(addResource);
