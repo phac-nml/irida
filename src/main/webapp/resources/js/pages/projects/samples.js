@@ -547,7 +547,6 @@
       linker  : function linker() {
         if (vm.localSelected) {
           vm.export.open = false;
-          debugger;
           $modal.open({
             templateUrl: TL.BASE_URL + 'projects/templates/samples/linker',
             controller : 'LinkerCtrl as lCtrl'

@@ -199,11 +199,9 @@ public class ProjectSamplesController {
 				Map<String,Object> self = new HashMap<>(1);
 				seqFileMap.put("_links", links);
 				links.put("self", self);
-				self.put("href", sampleSeqJoin.getObject().getFile().toUri().toString());
-				
 				String seqFileLoc = linkTo(methodOn(RESTSampleSequenceFilesController.class)
 						.getSequenceFileForSample(projectId, sampleSeqJoin.getSubject().getId(),sampleSeqJoin.getObject().getId())).withSelfRel().getHref();
-				self.put("href2", seqFileLoc);
+				self.put("href", seqFileLoc);
 				sequences.add(seqFileMap);
 			}
 			embedded.put("sample_files", sequences);

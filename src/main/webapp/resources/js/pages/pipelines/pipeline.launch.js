@@ -80,6 +80,7 @@
         }
         params['name'] = angular.element("#pipeline-name").val();
 
+
         $http({
           url     : PIPELINE.url,
           method  : 'POST',

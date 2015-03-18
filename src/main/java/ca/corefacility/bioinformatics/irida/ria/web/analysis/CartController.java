@@ -61,6 +61,16 @@ public class CartController {
 		selected = new HashMap<>();
 	}
 	
+	/**
+	 * Get a modal dialog in order to export sample files to Galaxy
+	 * @param model
+	 *            The model to add attributes to for the template
+	 * @param principal
+	 *            A reference to the logged in user.
+	 * @param projectId
+	 *            The {@link Project} ID
+	 * @return the name of the galaxy export modal dialog page
+	 */
 	@RequestMapping("/template/galaxy/project/{projectId}")
 	public String getGalaxyModal(Model model, Principal principal,@PathVariable Long projectId ) {
 		model.addAttribute("email", userService.getUserByUsername(principal.getName()).getEmail());
@@ -73,9 +83,8 @@ public class CartController {
 	/**
 	 * Get a Json representation of what's in the cart. Format: {@code 
 	 * 'projects' : [ { 'id': '5', 'label': 'project', 'samples': [ { 'id': '6',
-	 * 'label': 'a sample', 'sequenceFiles': [{href: 'file:///123.fastq',
-	 * href2: 'http://localhost/projects/1/samples/1/sequenceFiles/1'}] } ] } ]}
-	 * 
+	 * 'label': 'a sample', 'sequenceFiles': [ { 'selfRef' : 
+	 * 'http://localhost/projects/1/samples/1/sequenceFiles/1' } ] } ] } ] }
 	 * @return a {@code Map<String,Object>} containing the cart information.
 	 */
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -292,17 +301,12 @@ public class CartController {
 		List<Map<String,Object>> sequenceFiles = new ArrayList<>();
 		for(Join<Sample, SequenceFile>seqJoin : seqJoinList) {
 			SequenceFile seq = seqJoin.getObject();
-			
-			List<Join<Project,Sample>> projects = projectService.getProjectsForSample(sample);
-			
-			//Maybe 0 projects should be explicitly checked for
-			long projectId = projects.get(0).getId();
+			List<Join<Project,Sample>> projectSamples = projectService.getProjectsForSample(sample);
+			long projectId = projectSamples.get(0).getSubject().getId();
 			
 			String seqFileLoc = linkTo(methodOn(RESTSampleSequenceFilesController.class)
 					.getSequenceFileForSample(projectId, sample.getId(),seq.getId())).withSelfRel().getHref();
-					
-			Map<String, Object> seqMap = ImmutableMap.of("href",seq.getFile().toUri().toString()
-					,"href2",seqFileLoc);
+			Map<String, Object> seqMap = ImmutableMap.of("selfRef",seqFileLoc);
 			sequenceFiles.add(seqMap);
 		}
 		return sequenceFiles;
