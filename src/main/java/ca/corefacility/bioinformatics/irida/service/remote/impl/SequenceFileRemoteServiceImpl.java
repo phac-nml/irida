@@ -4,10 +4,11 @@ import java.nio.file.Path;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
 
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteSample;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
 
@@ -18,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteSer
  *
  */
 @Service
-public class SequenceFileRemoteServiceImpl extends RemoteServiceImpl<RemoteSequenceFile> implements
+public class SequenceFileRemoteServiceImpl extends RemoteServiceImpl<SequenceFile> implements
 		SequenceFileRemoteService {
 	public static final String SAMPLE_SEQUENCE_FILES_REL = "sample/sequenceFiles";
 	private final SequenceFileRemoteRepository repository;
@@ -33,8 +34,9 @@ public class SequenceFileRemoteServiceImpl extends RemoteServiceImpl<RemoteSeque
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<RemoteSequenceFile> getSequenceFilesForSample(RemoteSample sample) {
-		String sequenceFilesRel = sample.getHrefForRel(SAMPLE_SEQUENCE_FILES_REL);
+	public List<SequenceFile> getSequenceFilesForSample(Sample sample) {
+		Link link = sample.getLink(SAMPLE_SEQUENCE_FILES_REL);
+		String sequenceFilesRel = link.getHref();
 		return list(sequenceFilesRel, sample.getRemoteAPI());
 	}
 
@@ -42,7 +44,7 @@ public class SequenceFileRemoteServiceImpl extends RemoteServiceImpl<RemoteSeque
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Path downloadSequenceFile(RemoteSequenceFile sequenceFile) {
+	public Path downloadSequenceFile(SequenceFile sequenceFile) {
 		return repository.downloadRemoteSequenceFile(sequenceFile, sequenceFile.getRemoteAPI());
 	}
 }

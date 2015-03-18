@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.utils.model;
 
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 
 import java.util.Date;
@@ -24,7 +25,7 @@ import org.hibernate.envers.Audited;
 @Entity
 @Table(name="identifiable")
 @Audited
-public class IdentifiableTestEntity implements IridaThing, Comparable<IdentifiableTestEntity> {
+public class IdentifiableTestEntity extends IridaResourceSupport implements IridaThing, Comparable<IdentifiableTestEntity> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

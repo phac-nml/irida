@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.hateoas.Link;
 import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
@@ -30,7 +31,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
-import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLinks;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -58,7 +58,7 @@ public class AssociatedProjectControllerTest {
 	private RemoteAPIService apiService;
 	private ProjectRemoteService projectRemoteService;
 	private SampleService sampleService;
-	private RemoteObjectCache<RemoteProject> remoteProjectCache;
+	private RemoteObjectCache<Project> remoteProjectCache;
 
 	@Before
 	public void setUp() {
@@ -269,16 +269,14 @@ public class AssociatedProjectControllerTest {
 		when(projectService.read(projectId)).thenReturn(project);
 		when(apiService.read(apiId)).thenReturn(api);
 
-		RESTLinks links = new RESTLinks(ImmutableMap.of("self", "http://somewhere"));
-		RemoteProject rp1 = new RemoteProject();
+		Project rp1 = new Project();
 		rp1.setId(3l);
-		rp1.setLinks(links);
+		rp1.add(new Link("http://somewhere",Link.REL_SELF));	
 
 		String selfRel2 = "http://somewhere-else";
-		RESTLinks links2 = new RESTLinks(ImmutableMap.of("self", selfRel2));
 		RemoteProject rp2 = new RemoteProject();
 		rp2.setId(4l);
-		rp2.setLinks(links2);
+		rp2.add(new Link("http://somewhere-else",Link.REL_SELF));
 
 		RemoteRelatedProject rrp = new RemoteRelatedProject(project, api, selfRel2);
 
@@ -307,10 +305,9 @@ public class AssociatedProjectControllerTest {
 		Long apiId = 2l;
 
 		String projectLink = "http://somewhere/projects/1";
-		RESTLinks links = new RESTLinks(ImmutableMap.of("self", projectLink));
-		RemoteProject rp1 = new RemoteProject();
+		Project rp1 = new Project();
 		rp1.setId(3l);
-		rp1.setLinks(links);
+		rp1.add(new Link(projectLink,Link.REL_SELF));
 
 		RemoteAPI api = new RemoteAPI();
 
@@ -342,10 +339,9 @@ public class AssociatedProjectControllerTest {
 		RemoteAPI api = new RemoteAPI();
 
 		String projectLink = "http://somewhere/projects/1";
-		RESTLinks links = new RESTLinks(ImmutableMap.of("self", projectLink));
-		RemoteProject rp1 = new RemoteProject();
+		Project rp1 = new Project();
 		rp1.setId(3l);
-		rp1.setLinks(links);
+		rp1.add(new Link(projectLink,Link.REL_SELF));
 
 		RemoteRelatedProject rrp = new RemoteRelatedProject();
 

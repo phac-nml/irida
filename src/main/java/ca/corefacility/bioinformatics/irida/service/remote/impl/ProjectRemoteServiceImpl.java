@@ -6,18 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 
 /**
- * Remote service for retrieving {@link RemoteProject}s
+ * Remote service for retrieving {@link Project}s
  * 
  *
  */
 @Service
-public class ProjectRemoteServiceImpl extends RemoteServiceImpl<RemoteProject> implements ProjectRemoteService {
+public class ProjectRemoteServiceImpl extends RemoteServiceImpl<Project> implements ProjectRemoteService {
 	// TODO: Get this information from the ProjectsController in the REST API
 	// project when it is merged into this project. Issue #86
 	public static final String PROJECTS_BOOKMARK = "/projects";
@@ -42,7 +43,7 @@ public class ProjectRemoteServiceImpl extends RemoteServiceImpl<RemoteProject> i
 	 *            The {@link RemoteRelatedProject} to read
 	 * @return a {@link RemoteProject}
 	 */
-	public RemoteProject read(RemoteRelatedProject project) {
+	public Project read(RemoteRelatedProject project) {
 		String remoteProjectURI = project.getRemoteProjectURI();
 		RemoteAPI remoteAPI = project.getRemoteAPI();
 
@@ -52,7 +53,7 @@ public class ProjectRemoteServiceImpl extends RemoteServiceImpl<RemoteProject> i
 	/**
 	 * {@inheritDoc}
 	 */
-	public List<RemoteProject> listProjectsForAPI(RemoteAPI api) {
+	public List<Project> listProjectsForAPI(RemoteAPI api) {
 		String projectsHref = api.getServiceURI() + PROJECTS_BOOKMARK;
 
 		return list(projectsHref, api);

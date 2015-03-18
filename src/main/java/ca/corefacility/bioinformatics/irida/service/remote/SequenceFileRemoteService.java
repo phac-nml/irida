@@ -5,13 +5,15 @@ import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSample;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
  * Service for reading {@link RemoteSequenceFile}s
  * 
  *
  */
-public interface SequenceFileRemoteService extends RemoteService<RemoteSequenceFile> {
+public interface SequenceFileRemoteService extends RemoteService<SequenceFile> {
 
 	/**
 	 * Get the list of sequence files in a {@link RemoteSample}
@@ -20,7 +22,7 @@ public interface SequenceFileRemoteService extends RemoteService<RemoteSequenceF
 	 *            The {@link RemoteSample} to read
 	 * @return A list of {@link RemoteSequenceFile}s
 	 */
-	public List<RemoteSequenceFile> getSequenceFilesForSample(RemoteSample sample);
+	public List<SequenceFile> getSequenceFilesForSample(Sample sample);
 
 	/**
 	 * Download a {@link RemoteSequenceFile} locally
@@ -30,5 +32,5 @@ public interface SequenceFileRemoteService extends RemoteService<RemoteSequenceF
 	 *            sequence data for
 	 * @return A temporary {@link Path} object for the downloaded file
 	 */
-	public Path downloadSequenceFile(RemoteSequenceFile sequenceFile);
+	public Path downloadSequenceFile(SequenceFile sequenceFile);
 }

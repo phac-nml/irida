@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.HttpClientErrorException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.ria.utilities.CacheObject;
@@ -32,11 +33,11 @@ public class RemoteProjectsController {
 
 	private final ProjectRemoteService projectRemoteService;
 	private final RemoteRelatedProjectService remoteRelatedProjectService;
-	private RemoteObjectCache<RemoteProject> projectCache;
+	private RemoteObjectCache<Project> projectCache;
 
 	@Autowired
 	public RemoteProjectsController(ProjectRemoteService projectRemoteService,
-			RemoteRelatedProjectService remoteRelatedProjectService, RemoteObjectCache<RemoteProject> projectCache) {
+			RemoteRelatedProjectService remoteRelatedProjectService, RemoteObjectCache<Project> projectCache) {
 		this.projectRemoteService = projectRemoteService;
 		this.remoteRelatedProjectService = remoteRelatedProjectService;
 		this.projectCache = projectCache;
@@ -56,7 +57,7 @@ public class RemoteProjectsController {
 		RemoteRelatedProject remoteRelatedProject = remoteRelatedProjectService.read(remoteProjectId);
 		logger.trace("Reading remote project from service " + remoteRelatedProject.getRemoteAPI());
 		Map<String, Object> map = new HashMap<>();
-		RemoteProject project = projectRemoteService.read(remoteRelatedProject);
+		Project project = projectRemoteService.read(remoteRelatedProject);
 
 		Integer cacheId = projectCache.addResource(project, remoteRelatedProject.getRemoteAPI());
 
@@ -78,7 +79,7 @@ public class RemoteProjectsController {
 	 */
 	@RequestMapping("/{projectCacheId}")
 	public String readRemoteProject(@PathVariable Integer projectCacheId, Model model) {
-		CacheObject<RemoteProject> readResource = projectCache.readResource(projectCacheId);
+		CacheObject<Project> readResource = projectCache.readResource(projectCacheId);
 		model.addAttribute("project", readResource.getResource());
 		model.addAttribute("api", readResource.getAPI());
 

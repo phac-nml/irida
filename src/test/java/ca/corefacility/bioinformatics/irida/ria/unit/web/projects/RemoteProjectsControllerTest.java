@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.ria.utilities.CacheObject;
@@ -25,7 +26,7 @@ public class RemoteProjectsControllerTest {
 	RemoteProjectsController controller;
 	ProjectRemoteService projectRemoteService;
 	RemoteRelatedProjectService remoteRelatedProjectService;
-	RemoteObjectCache<RemoteProject> projectCache;
+	RemoteObjectCache<Project> projectCache;
 
 	@SuppressWarnings("unchecked")
 	@Before
@@ -61,9 +62,9 @@ public class RemoteProjectsControllerTest {
 	public void testReadRemoteProject() {
 		ExtendedModelMap model = new ExtendedModelMap();
 		Integer projectCacheId = 2;
-		RemoteProject remoteProject = new RemoteProject();
+		Project remoteProject = new RemoteProject();
 		RemoteAPI api = new RemoteAPI();
-		CacheObject<RemoteProject> cacheObject = new CacheObject<>(remoteProject, api);
+		CacheObject<Project> cacheObject = new CacheObject<>(remoteProject, api);
 
 		when(projectCache.readResource(projectCacheId)).thenReturn(cacheObject);
 		String readRemoteProject = controller.readRemoteProject(projectCacheId, model);

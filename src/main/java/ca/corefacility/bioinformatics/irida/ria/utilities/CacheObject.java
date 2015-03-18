@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.utilities;
 
+import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 
 /**
  * Object stored by the {@link RemoteObjectCache}. Includes a reference to
@@ -11,7 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource
  * @param <Type>
  *            the type stored by this object
  */
-public class CacheObject<Type extends RemoteResource> {
+public class CacheObject<Type extends IridaResourceSupport> {
 	private Type resource;
 	private RemoteAPI api;
 

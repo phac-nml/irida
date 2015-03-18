@@ -9,6 +9,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.util.Assert;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 
@@ -21,6 +22,8 @@ import com.google.common.collect.ImmutableList;
  */
 public class IridaResourceSupport {
 	private final List<Link> links;
+
+	private RemoteAPI remoteAPI;
 
 	public IridaResourceSupport() {
 		this.links = new ArrayList<Link>();
@@ -139,5 +142,14 @@ public class IridaResourceSupport {
 	@Override
 	public int hashCode() {
 		return this.links.hashCode();
+	}
+
+	@JsonIgnore
+	public RemoteAPI getRemoteAPI() {
+		return remoteAPI;
+	}
+
+	public void setRemoteAPI(RemoteAPI remoteAPI) {
+		this.remoteAPI = remoteAPI;
 	}
 }
