@@ -19,7 +19,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -214,4 +216,23 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
 			Map<String, String> unnamedParameters, IridaWorkflowNamedParameters namedParameters, String name);
+	
+	/**
+	 * Given the id of an {@link AnalysisSubmission} gets the percentage
+	 * complete.
+	 * 
+	 * @param id
+	 *            The id of an {@link AnalysisSubmission}.
+	 * @return The percentage complete for this {@link AnalysisSubmission}.
+	 * @throws NoPercentageCompleteException
+	 *             An exception that indicates there is no percentage complete
+	 *             for the submission.
+	 * @throws ExecutionManagerException
+	 *             If there was an issue when contacting the execution manager.
+	 * @throws EntityNotFoundException
+	 *             If no such corresponding submission exists.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
+	public float getPercentCompleteForAnalysisSubmission(Long id) throws EntityNotFoundException,
+			NoPercentageCompleteException, ExecutionManagerException;
 }

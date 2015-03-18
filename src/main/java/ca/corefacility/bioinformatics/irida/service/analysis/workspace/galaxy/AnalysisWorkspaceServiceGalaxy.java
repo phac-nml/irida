@@ -8,11 +8,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -318,30 +315,6 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		inputs.setInput(workflowReferenceFileInputId, new WorkflowInputs.WorkflowInput(referenceDataset.getId(),
 				WorkflowInputs.InputSourceType.HDA));
 	}
-	
-	/**
-	 * Creates a set of {@link SequenceFile} from the given input files in the
-	 * submission.
-	 * 
-	 * @param analysisSubmission
-	 *            The submission containing the input files.
-	 * @return A {@link Set} of {@link SequenceFile} for any input files in the
-	 *         submission.
-	 */
-	private Set<SequenceFile> createInputSequenceFilesSet(AnalysisSubmission analysisSubmission) {
-		Set<SequenceFile> inputFiles = analysisSubmission.getSingleInputFiles().stream()
-				.map(sf -> sequenceFileService.read(sf.getId())).collect(Collectors.toSet());
-
-		for (SequenceFilePair sfp : analysisSubmission.getPairedInputFiles()) {
-			Iterator<SequenceFile> sfpIter = sfp.getFiles().iterator();
-			SequenceFile sf1 = sfpIter.next();
-			SequenceFile sf2 = sfpIter.next();
-			inputFiles.add(sequenceFileService.read(sf1.getId()));
-			inputFiles.add(sequenceFileService.read(sf2.getId()));
-		}
-
-		return inputFiles;
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -360,8 +333,6 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysisSubmission.getWorkflowId());
 		String analysisId = analysisSubmission.getRemoteAnalysisId();
 
-		Set<SequenceFile> inputFiles = createInputSequenceFilesSet(analysisSubmission);
-
 		Map<String, IridaWorkflowOutput> outputsMap = iridaWorkflow.getWorkflowDescription().getOutputsMap();
 
 		Map<String, AnalysisOutputFile> analysisOutputFiles = Maps.newHashMap();
@@ -376,9 +347,8 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		Class<? extends Analysis> analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType()
 				.getAnalysisClass();
 		try {
-			Constructor<? extends Analysis> analysisConstructor = analysisType.getConstructor(Set.class, String.class,
-					Map.class);
-			return analysisConstructor.newInstance(inputFiles, analysisId, analysisOutputFiles);
+			Constructor<? extends Analysis> analysisConstructor = analysisType.getConstructor(String.class, Map.class);
+			return analysisConstructor.newInstance(analysisId, analysisOutputFiles);
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
 			throw new IridaWorkflowAnalysisTypeException("Error building Analysis object of type " + analysisType, e);
