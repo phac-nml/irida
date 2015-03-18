@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.exceptions;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+
 /**
  * An exception that gets thrown when no percentage complete exists for an
  * {@link AnalysisSubmission}.
