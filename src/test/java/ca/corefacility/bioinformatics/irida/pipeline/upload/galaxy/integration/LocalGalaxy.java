@@ -9,12 +9,14 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import javax.annotation.PreDestroy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import ca.corefacility.bioinformatics.irida.model.upload.UploaderAccountName;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 
@@ -94,9 +96,10 @@ public class LocalGalaxy {
 
 	/**
 	 * Method to cleanup the running instance of Galaxy when finished with tests.
+	 * @throws IOException 
 	 */
 	@PreDestroy
-	public void shutdownGalaxy() {
+	public void shutdownGalaxy() throws IOException {
 		logger.info("Shutting down Galaxy on url=" + galaxyURL);
 		galaxyDaemon.stop();
 		galaxyDaemon.waitForDown();
@@ -105,8 +108,17 @@ public class LocalGalaxy {
 	
 	/**
 	 * Delete Galaxy directory
+	 * @throws IOException 
 	 */
-	public void deleteGalaxy() {
+	public void deleteGalaxy() throws IOException {
+		if (logger.isDebugEnabled()) {
+			Path tempLogFile = Files.createTempFile("galaxy-log", ".log");
+			Path galaxyLog = bootStrapper.getRoot().toPath().resolve("paster.log");
+			Files.copy(galaxyLog, tempLogFile, StandardCopyOption.REPLACE_EXISTING);
+			
+			logger.debug("Copied Galaxy log file " + galaxyLog + " to " + tempLogFile);
+		}
+		
 		logger.debug("Deleting Galaxy directory: " + bootStrapper.getPath());
 		bootStrapper.deleteGalaxyRoot();
 	}
