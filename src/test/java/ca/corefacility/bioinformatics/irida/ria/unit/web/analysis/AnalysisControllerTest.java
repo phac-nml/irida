@@ -68,7 +68,7 @@ public class AnalysisControllerTest {
 		when(iridaWorkflowsServiceMock.getIridaWorkflow(submission.getWorkflowId())).thenReturn(iridaWorkflow);
 
 		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
-		assertEquals("should be details page", AnalysisController.PAGE_ANALYSIS_DETAILS, detailsPage);
+		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "tree", detailsPage);
 
 		assertEquals("Tree preview should be set", "tree", model.get("preview"));
 
@@ -92,7 +92,7 @@ public class AnalysisControllerTest {
 		when(iridaWorkflowsServiceMock.getIridaWorkflow(submission.getWorkflowId())).thenReturn(iridaWorkflow);
 
 		String detailsPage = analysisController.getDetailsPage(submissionId, model, locale);
-		assertEquals("should be details page", AnalysisController.PAGE_ANALYSIS_DETAILS, detailsPage);
+		assertEquals("should be details page", AnalysisController.PAGE_DETAILS_DIRECTORY + "tree", detailsPage);
 
 		assertFalse("No preview should be available", model.containsAttribute("preview"));
 

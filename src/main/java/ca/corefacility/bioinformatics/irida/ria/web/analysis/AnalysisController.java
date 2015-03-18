@@ -52,10 +52,12 @@ import com.google.common.collect.ImmutableMap;
 public class AnalysisController {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
 	// PAGES
+	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap.of(AnalysisType.PHYLOGENOMICS, "tree");
 	private static final String REDIRECT_ERROR = "redirect:errors/not_found";
 	private static final String BASE = "analysis/";
-	public static final String PAGE_ANALYSIS_DETAILS = BASE + "details/details";
+	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
 	public static final String PAGE_USER_ANALYSIS = BASE + "analyses";
+	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
 
 	/*
 	 * SERVICES
@@ -130,6 +132,7 @@ public class AnalysisController {
 
 		// Get the name of the workflow
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
+		String viewName = getViewForAnalysisType(analysisType);
 		String workflowName = messageSource.getMessage("workflow." + analysisType.toString() + ".title", null, locale);
 		model.addAttribute("workflowName", workflowName);
 
@@ -147,7 +150,7 @@ public class AnalysisController {
 			logger.error("Couldn't get preview for analysis", e);
 		}
 
-		return PAGE_ANALYSIS_DETAILS;
+		return viewName;
 	}
 
 	
@@ -312,5 +315,23 @@ public class AnalysisController {
 			));
 		}
 		return flows;
+	}
+
+	/**
+	 * Get the view name for different analysis types
+	 *
+	 * @param type
+	 *            The {@link AnalysisType}
+	 * @return the view name to display
+	 */
+	private String getViewForAnalysisType(AnalysisType type) {
+		String viewName;
+		if (PREVIEWS.containsKey(type)) {
+			viewName = PAGE_DETAILS_DIRECTORY + PREVIEWS.get(type);
+		} else {
+			viewName = PREVIEW_UNAVAILABLE;
+		}
+
+		return viewName;
 	}
 }
