@@ -13,20 +13,10 @@
 </head>
 
 <body>
-<main layout:fragment="main"
-      th:with="isCompleted=${#strings.equalsIgnoreCase(analysisSubmission.analysisState, 'COMPLETED')},
-        analysis=${analysisSubmission.getAnalysis()}">
+<main layout:fragment="main">
 	<div class="row">
 		<div class="col-md-12">
-			<h1>
-				<span th:text="${analysisSubmission.label}">__TITLE__</span>
-				<a id="analysis-download-btn" class="btn btn-primary pull-right" th:if="${isCompleted}"
-				   th:href="@{/analysis/ajax/download/{id}(id=${analysisSubmission.getId()})}" href="#"
-				   data-toggle="tooltip" data-placement="bottom" th:title="#{form.download-files}">
-					<span class="fa fa-download fa-fw"></span>
-					<span class="sr-only" th:text="#{form.download-files}">Download Files</span>
-				</a>
-			</h1>
+			<h1 th:text="${analysisSubmission.label}"></h1>
 		</div>
 	</div>
 	<div class="row">
@@ -44,7 +34,7 @@
 				Output Files Tab
 				*/-->
 				<tab th:if="${isCompleted}" th:with="files=${analysis.getAnalysisOutputFiles()}">
-					<tab-heading id="tab-files" th:text="#{analysis.tab.output-files}"></tab-heading>
+					<tab-heading id="tab-files" th:text="#{analysis.tab.provenance}"></tab-heading>
 					<accordion>
 						<accordion-group class="file-info" th:each="file : ${files}">
 							<accordion-heading class="filename" th:text="${file.getLabel()}">__FILENAME__</accordion-heading>

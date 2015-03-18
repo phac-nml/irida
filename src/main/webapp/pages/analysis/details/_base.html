@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="template/page">
-
+<head>
+  <script>window.dependencies = ['irida.analysis'];</script>
+</head>
 <body>
 
-  <div layout:fragment="page">
+  <div layout:fragment="page" ng-app="irida.analysis"
+       th:with="isCompleted=${#strings.equalsIgnoreCase(analysisSubmission.analysisState, 'COMPLETED')},
+        analysis=${analysisSubmission.getAnalysis()}">
     <main class="col-md-9 col-md-push-3" layout:fragment="main">
 
     </main>
@@ -51,6 +55,26 @@
           </div>
         </div>
       </div>
+
+      <div th:if="${isCompleted}" class="sidebar" th:with="files=${analysis.getAnalysisOutputFiles()}" ng-controller="FileDownloadController as fileDownloadController">
+        <div class="sidebar__heading">
+          <h2 th:text="#{analysis.sidebar.output-files}">__OUTPUT_FILES__</h2>
+        </div>
+        <div class="sidebar__body">
+          <div class="sidebar__item" th:each="file : ${files}">
+            <div class="sidebar__icon">
+              <i class="fa fa-fw fa-file-o"></i>
+            </div>
+            <div th:text="${file.label}"></div>
+          </div>
+          <div class="sidebar__item">
+            <button class="btn btn-primary btn-sm btn-block" data:ng-click="'fileDownloadController.getZipFile(\'' + ${analysisSubmission.getId()} +'\')'">
+              <span class="fa fa-download fa-fw"></span>&nbsp;
+              <th:block th:text="#{form.download-files}">Download Files</th:block>
+            </button>
+          </div>
+        </div>
+      </div>
     </aside>
   </div>
   <th:block layout:fragment="page-scripts">
@@ -58,6 +82,27 @@
 
     <th:block layout:fragment="pageScripts"></th:block>
     <th:block layout:fragment="previewScripts"></th:block>
+
+    <script>
+      function FileDownloadController () {
+        var vm = this;
+
+        vm.getZipFile = function (id) {
+          var iFrameId = 'hiddenDownloader'
+          var hiddenIFrame = document.getElementById(iFrameId);
+          if(hiddenIFrame === null) {
+            hiddenIFrame = document.createElement('iframe');
+            hiddenIFrame.id = iFrameId;
+            hiddenIFrame.style.display = 'none';
+            document.body.appendChild(hiddenIFrame);
+          }
+          hiddenIFrame.src = TL.BASE_URL + "analysis/ajax/download/" + id;
+        };
+      }
+
+      angular.module('irida.analysis', [])
+          .controller('FileDownloadController', [FileDownloadController])
+    </script>
   </th:block>
 </body>
 
