@@ -592,6 +592,39 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testGetPercentageCompleteFailError() throws EntityNotFoundException, ExecutionManagerException {
 		analysisSubmissionService.getPercentCompleteForAnalysisSubmission(7L);
 	}
+	
+	/**
+	 * Tests cleaning up a submission and being granted as a regular user.
+	 * @throws EntityNotFoundException 
+	 * @throws ExecutionManagerException 
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testCleanupSubmissionGrantedRegularUser() throws EntityNotFoundException, ExecutionManagerException {
+		analysisSubmissionService.cleanupSubmission(10L);
+	}
+
+	/**
+	 * Tests cleaning up a submission and being denied as a regular user.
+	 * @throws EntityNotFoundException 
+	 * @throws ExecutionManagerException 
+	 */
+	@Test(expected = AccessDeniedException.class)
+	@WithMockUser(username = "otheraaron", roles = "USER")
+	public void testCleanupSubmissionDeniedRegularUser() throws EntityNotFoundException, ExecutionManagerException {
+		analysisSubmissionService.cleanupSubmission(10L);
+	}
+
+	/**
+	 * Tests cleaning up a submission and being granted as an admin user.
+	 * @throws EntityNotFoundException 
+	 * @throws ExecutionManagerException 
+	 */
+	@Test
+	@WithMockUser(username = "aaron", roles = "ADMIN")
+	public void testCleanupSubmissionGrantedAdminUser() throws EntityNotFoundException, ExecutionManagerException {
+		analysisSubmissionService.cleanupSubmission(10L);
+	}
 
 	/**
 	 * Test specification.

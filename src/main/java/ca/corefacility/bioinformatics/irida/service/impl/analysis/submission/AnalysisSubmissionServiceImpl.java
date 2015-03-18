@@ -459,4 +459,10 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			throw new NoPercentageCompleteException("No valid percent complete for state " + analysisState);
 		}
 	}
+
+	@Override
+	public AnalysisSubmission cleanupSubmission(Long id) throws EntityNotFoundException, ExecutionManagerException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

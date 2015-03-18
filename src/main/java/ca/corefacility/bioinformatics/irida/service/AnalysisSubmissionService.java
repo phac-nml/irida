@@ -235,4 +235,19 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
 	public float getPercentCompleteForAnalysisSubmission(Long id) throws EntityNotFoundException,
 			NoPercentageCompleteException, ExecutionManagerException;
+	
+	/**
+	 * Cleans up any intermediate files for the submission.
+	 * 
+	 * @param id
+	 *            The id of the submission to clean.
+	 * @return The cleaned up {@link AnalysisSubmission}.
+	 * @throws EntityNotFoundException
+	 *             If no such submission exists.
+	 * @throws ExecutionManagerException
+	 *             If there was an issue cleaning up files in the execution
+	 *             manager.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
+	public AnalysisSubmission cleanupSubmission(Long id) throws EntityNotFoundException, ExecutionManagerException;
 }
