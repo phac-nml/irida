@@ -35,9 +35,6 @@ import com.google.common.net.HttpHeaders;
  * 
  * @param <Type>
  *            the type that this controller is working with.
- * @param <ResourceType>
- *            the type that this controller uses to serialize and de-serialize
- *            the <code>Type</code> to the client.
  */
 @Controller
 @RequestMapping("/api/generic")
@@ -84,9 +81,6 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 *            the service used to manage resources in the database.
 	 * @param type
 	 *            the type of that this controller manages.
-	 * @param resourceType
-	 *            the type used to serialize/de-serialize the type to the
-	 *            client.
 	 */
 	protected RESTGenericController(CRUDService<Long, Type> crudService, Class<Type> type) {
 		this.crudService = crudService;
@@ -165,8 +159,8 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 * Create a new instance of {@link Type} in the database, then respond to
 	 * the client with the location of the resource.
 	 * 
-	 * @param representation
-	 *            the {@link ResourceType} that we should de-serialize to get an
+	 * @param resource
+	 *            the {@link Type} that we should de-serialize to get an
 	 *            instance of {@link Type} to persist.
 	 * @param response
 	 *            a reference to the servlet response.
