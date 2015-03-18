@@ -170,8 +170,6 @@ public class AnalysisController {
 	 *             If the tree file couldn't be read
 	 */
 	private void tree(AnalysisSubmission submission, Model model) throws IOException {
-		assert (submission.getAnalysis().getClass().equals(AnalysisPhylogenomicsPipeline.class));
-
 		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) submission.getAnalysis();
 		AnalysisOutputFile file = analysis.getPhylogeneticTree();
 		List<String> lines = Files.readAllLines(file.getFile());
