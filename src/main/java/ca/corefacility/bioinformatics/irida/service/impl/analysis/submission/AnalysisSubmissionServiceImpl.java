@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.analysis.submission;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -36,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedExce
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -462,7 +464,10 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 	@Override
 	public AnalysisSubmission cleanupSubmission(Long id) throws EntityNotFoundException, ExecutionManagerException {
-		// TODO Auto-generated method stub
-		return null;
+		AnalysisSubmission analysisSubmission = read(id);
+		AnalysisCleanedState analysisCleanedState = analysisSubmission.getAnalysisCleanedState();
+		checkState(AnalysisCleanedState.CLEANING.equals(analysisCleanedState), "Cannot clean while in state " + analysisCleanedState);
+		
+		return analysisSubmission;
 	}
 }

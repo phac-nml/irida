@@ -442,7 +442,7 @@ public class AnalysisSubmissionServiceImplIT {
 		User user = userRepository.findOne(1L);
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForUser(user);
 		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 9, submissions.size());
+		assertEquals("submissions should have correct number", 11, submissions.size());
 	}
 
 	/**
@@ -464,7 +464,7 @@ public class AnalysisSubmissionServiceImplIT {
 		User user = userRepository.findOne(1L);
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForUser(user);
 		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 9, submissions.size());
+		assertEquals("submissions should have correct number", 11, submissions.size());
 	}
 	
 	/**
@@ -475,7 +475,7 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testGetAnalysisSubmissionsForCurrentUserAsRegularUser() {
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
 		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 9, submissions.size());
+		assertEquals("submissions should have correct number", 11, submissions.size());
 	}
 
 	/**
@@ -601,7 +601,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testCleanupSubmissionGrantedRegularUser() throws EntityNotFoundException, ExecutionManagerException {
-		analysisSubmissionService.cleanupSubmission(10L);
+		analysisSubmissionService.cleanupSubmission(11L);
 	}
 
 	/**
@@ -612,7 +612,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testCleanupSubmissionDeniedRegularUser() throws EntityNotFoundException, ExecutionManagerException {
-		analysisSubmissionService.cleanupSubmission(10L);
+		analysisSubmissionService.cleanupSubmission(11L);
 	}
 
 	/**
@@ -623,7 +623,29 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCleanupSubmissionGrantedAdminUser() throws EntityNotFoundException, ExecutionManagerException {
+		analysisSubmissionService.cleanupSubmission(11L);
+	}
+	
+	/**
+	 * Tests denying cleanup if submission is in state {@link AnalysisCleanedState.NOT_CLEANED}.
+	 * @throws EntityNotFoundException 
+	 * @throws ExecutionManagerException 
+	 */
+	@Test(expected = IllegalStateException.class)
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testCleanupSubmissionFailNotCleaned() throws EntityNotFoundException, ExecutionManagerException {
 		analysisSubmissionService.cleanupSubmission(10L);
+	}
+	
+	/**
+	 * Tests denying cleanup if submission is in state {@link AnalysisCleanedState.CLEANED}.
+	 * @throws EntityNotFoundException 
+	 * @throws ExecutionManagerException 
+	 */
+	@Test(expected = IllegalStateException.class)
+	@WithMockUser(username = "aaron", roles = "USER")
+	public void testCleanupSubmissionFailCleaned() throws EntityNotFoundException, ExecutionManagerException {
+		analysisSubmissionService.cleanupSubmission(12L);
 	}
 
 	/**

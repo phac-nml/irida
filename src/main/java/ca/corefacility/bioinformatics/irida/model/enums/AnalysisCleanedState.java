@@ -14,6 +14,11 @@ public enum AnalysisCleanedState {
 	NOT_CLEANED("NOT_CLEANED"),
 	
 	/**
+	 * Indicates this analysis is in the process of being cleaned.
+	 */
+	CLEANING("CLEANING"),
+	
+	/**
 	 * Set when an analysis is finished being cleaned.
 	 */
 	CLEANED("CLEANED");
