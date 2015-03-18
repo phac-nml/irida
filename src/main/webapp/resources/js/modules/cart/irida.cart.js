@@ -223,7 +223,7 @@
     };
   }
 
-  function GalaxyCartDialogCtrl($modalInstance, $timeout, $scope, GalaxyExportService, openedByCart, multiProject) {
+  function GalaxyCartDialogCtrl($modalInstance, $timeout, $scope, CartService, GalaxyExportService, openedByCart, multiProject) {
     "use strict";
     var vm = this;
     vm.showOauthIframe = false;
@@ -255,6 +255,7 @@
         vm.showEmailLibInput = true;
 
         if (openedByCart) {
+          CartService.clear()
           GalaxyExportService.exportFromCart(vm.name, vm.email, authToken, vm.redirectURI).then(sendSampleForm);
         }
         else {
@@ -299,7 +300,7 @@
     .module('irida.cart', [])
     .service('CartService', ['$rootScope', '$http', '$q', CartService])
     .controller('CartSliderController', ['CartService', '$modal', CartSliderController])
-    .controller('GalaxyCartDialogCtrl', ['$modalInstance', '$timeout', '$scope', 'GalaxyExportService', 'openedByCart', 'multiProject', GalaxyCartDialogCtrl])
+    .controller('GalaxyCartDialogCtrl', ['$modalInstance', '$timeout', '$scope', 'CartService','GalaxyExportService', 'openedByCart', 'multiProject', GalaxyCartDialogCtrl])
     .service('GalaxyExportService', ['CartService', 'StorageService', GalaxyExportService])
     .directive('cart', [CartDirective])
   ;

@@ -42,11 +42,11 @@ public class GalaxyRedirectionEndpointController {
 	@RequestMapping("galaxy/auth_code")
 	public String passAuthCode(Model model, HttpServletRequest request, HttpSession session
 			) throws OAuthProblemException, IllegalStateException {
-		logger.debug("\nParsing auth code from HttpServletRequest");
+		logger.debug("Parsing auth code from HttpServletRequest");
 		// Get the OAuth2 authorization code
 		OAuthAuthzResponse oar = OAuthAuthzResponse.oauthCodeAuthzResponse(request);
 		String code = oar.getCode();
-		logger.debug("\nReceived auth code: " + code);
+		logger.debug("Received auth code: " + code);
 		model.addAttribute("auth_code", code);
 		
 		session.removeAttribute("galaxyExportToolCallbackURL");
