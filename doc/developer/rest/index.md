@@ -1,5 +1,6 @@
 ---
 layout: "default"
+toc_levels: 1..3
 ---
 
 This document describes the REST API for IRIDA.
