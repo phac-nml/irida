@@ -323,7 +323,7 @@ public class AnalysisController {
 	 * @return the view name to display
 	 */
 	private String getViewForAnalysisType(AnalysisType type) {
-		String viewName;
+		String viewName = null;
 		if (PREVIEWS.containsKey(type)) {
 			viewName = PAGE_DETAILS_DIRECTORY + PREVIEWS.get(type);
 		} else {

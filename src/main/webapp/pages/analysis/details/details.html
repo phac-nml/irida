@@ -21,13 +21,13 @@
 	</div>
 	<div class="row">
 		<div class="col-md-12 ng-cloak">
-			<tabset>
+			<tabset th:if="${isCompleted}">
 				<!--/*
 				Preview Tab
 				*/-->
-				<tab>
+				<tab th:if="${preview}">
 					<tab-heading id="tab-preview" th:text="#{analysis.tab.preview}"></tab-heading>
-					<div th:if="${preview}" layout:fragment="previewContent"></div>
+					<div layout:fragment="previewContent"></div>
 					<div th:unless="${preview}" layout:fragment="noPreview">__NO_PREVIEW__</div>
 				</tab>
 				<!--/*
@@ -43,6 +43,12 @@
 					</accordion>
 				</tab>
 			</tabset>
+			<div th:unless="${isCompleted}">
+				<h2><th:block th:text="#{analysis.details.state}"></th:block> : <th:block th:text="#{'analysis.state.' + ${analysisSubmission.analysisState}}"></th:block></h2>
+				<!--/*
+					Issue #164
+				*/-->
+			</div>
 		</div>
 	</div>
 </main>

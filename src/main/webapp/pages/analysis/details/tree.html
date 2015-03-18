@@ -15,7 +15,7 @@
 	<div id="phyloSVG" class="image-preview"></div>
 </div>
 
-<th:block layout:fragment="previewScripts">
+<th:block th:if="${preview}" layout:fragment="previewScripts">
 	<script th:src="@{/resources/bower_components/raphael/raphael-min.js}"
 	        src="/resources/bower_components/raphael/raphael-min.js"></script>
 	<script th:src="@{/resources/js/vendor/jsphylosvg-min.js}" src="/resources/js/vendor/jsphylosvg-min.js"></script>
