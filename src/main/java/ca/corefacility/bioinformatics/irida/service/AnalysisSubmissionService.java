@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 
@@ -249,5 +250,6 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *             manager.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
+	@Transactional
 	public AnalysisSubmission cleanupSubmission(Long id) throws EntityNotFoundException, ExecutionManagerException;
 }

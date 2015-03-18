@@ -37,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
+import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -601,7 +602,8 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testCleanupSubmissionGrantedRegularUser() throws EntityNotFoundException, ExecutionManagerException {
-		analysisSubmissionService.cleanupSubmission(11L);
+		AnalysisSubmission cleanedSubmission = analysisSubmissionService.cleanupSubmission(11L);
+		assertEquals("not properly cleaned", AnalysisCleanedState.CLEANED, cleanedSubmission.getAnalysisCleanedState());
 	}
 
 	/**
@@ -623,7 +625,8 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCleanupSubmissionGrantedAdminUser() throws EntityNotFoundException, ExecutionManagerException {
-		analysisSubmissionService.cleanupSubmission(11L);
+		AnalysisSubmission cleanedSubmission = analysisSubmissionService.cleanupSubmission(11L);
+		assertEquals("not properly cleaned", AnalysisCleanedState.CLEANED, cleanedSubmission.getAnalysisCleanedState());
 	}
 	
 	/**

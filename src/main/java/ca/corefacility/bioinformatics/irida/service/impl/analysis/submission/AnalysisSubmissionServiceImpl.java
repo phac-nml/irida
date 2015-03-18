@@ -466,8 +466,12 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public AnalysisSubmission cleanupSubmission(Long id) throws EntityNotFoundException, ExecutionManagerException {
 		AnalysisSubmission analysisSubmission = read(id);
 		AnalysisCleanedState analysisCleanedState = analysisSubmission.getAnalysisCleanedState();
-		checkState(AnalysisCleanedState.CLEANING.equals(analysisCleanedState), "Cannot clean while in state " + analysisCleanedState);
-		
-		return analysisSubmission;
+		checkState(AnalysisCleanedState.CLEANING.equals(analysisCleanedState), "Cannot clean while in state "
+				+ analysisCleanedState);
+
+		// TODO cleanup code here
+
+		analysisSubmission.setAnalysisCleanedState(AnalysisCleanedState.CLEANED);
+		return analysisSubmissionRepository.save(analysisSubmission);
 	}
 }
