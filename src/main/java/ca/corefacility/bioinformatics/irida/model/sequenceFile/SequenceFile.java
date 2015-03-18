@@ -57,7 +57,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "sequence_file")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class SequenceFile extends IridaResourceSupport implements IridaThing, Comparable<SequenceFile>, VersionedFileFields<Long>, IridaSequenceFile {
+public class SequenceFile extends IridaResourceSupport implements IridaThing, Comparable<SequenceFile>,
+		VersionedFileFields<Long>, IridaSequenceFile {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -95,7 +96,7 @@ public class SequenceFile extends IridaResourceSupport implements IridaThing, Co
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequenceFile")
 	private List<SampleSequenceFileJoin> samples;
-	
+
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@NotAudited
 	@JoinColumn(name = "fastqc_analysis_id")
@@ -225,8 +226,8 @@ public class SequenceFile extends IridaResourceSupport implements IridaThing, Co
 	 * Set the Map of optional properties
 	 * 
 	 * @param optionalProperties
-	 *            A {@code Map<String,String>} of all the optional properties for this
-	 *            object
+	 *            A {@code Map<String,String>} of all the optional properties
+	 *            for this object
 	 */
 	public void setOptionalProperties(Map<String, String> optionalProperties) {
 		this.optionalProperties = optionalProperties;
@@ -236,15 +237,16 @@ public class SequenceFile extends IridaResourceSupport implements IridaThing, Co
 	public void incrementFileRevisionNumber() {
 		this.fileRevisionNumber++;
 	}
-	
-    public String getFileName() {
-            return getFile().getFileName().toString();
-    }
 
-public AnalysisFastQC getFastQCAnalysis() {
+	public String getFileName() {
+		return getFile().getFileName().toString();
+	}
+
+	@JsonIgnore
+	public AnalysisFastQC getFastQCAnalysis() {
 		return this.fastqcAnalysis;
 	}
-	
+
 	/**
 	 * Set the {@link AnalysisFastQC} for this {@link SequenceFile}.
 	 * 
@@ -254,11 +256,13 @@ public AnalysisFastQC getFastQCAnalysis() {
 	 *             if the analysis has already been set for this
 	 *             {@link SequenceFile}.
 	 */
+	@JsonIgnore
 	public void setFastQCAnalysis(final AnalysisFastQC fastqcAnalysis) throws AnalysisAlreadySetException {
 		if (this.fastqcAnalysis == null) {
 			this.fastqcAnalysis = fastqcAnalysis;
 		} else {
-			throw new AnalysisAlreadySetException("The FastQC Analysis can only be applied to a sequence file one time.");
+			throw new AnalysisAlreadySetException(
+					"The FastQC Analysis can only be applied to a sequence file one time.");
 		}
 	}
 }
