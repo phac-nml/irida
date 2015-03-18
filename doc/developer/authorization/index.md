@@ -1,3 +1,7 @@
+---
+layout: "default"
+---
+
 Security
 ========
 Security in the API project is managed by Spring Security. The API project enforces security at the method-level, inspecting both the role and some more fine-grained access control of the principle attempting to execute the method.

@@ -1,3 +1,7 @@
+---
+layout: "default"
+---
+
 Data Model and Permissions
 ==========================
 
@@ -17,6 +21,9 @@ Authors
 * Aaron Petkau
 * Thomas Matthews
 * Josh Adam
+
+* this comment becomes the table of contents
+{:toc}
 
 Background
 ----------
