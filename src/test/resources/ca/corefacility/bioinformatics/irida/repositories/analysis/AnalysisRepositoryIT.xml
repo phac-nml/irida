@@ -27,22 +27,36 @@
 	<reference_file id="1" createdDate="2013-07-18 14:20:19.0"
 		modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file.fasta"
 		fileRevisionNumber="1" />
+		
+	<analysis id="1" createdDate="2013-07-18 00:00:00.0"
+		description="FastQC" executionManagerAnalysisId="fastqc" />
+	<analysis_fastqc id="1" duplicationLevelChart="x"
+		encoding="x" fileType="x" filteredSequences="0" gcContent="30"
+		maxLength="250" minLength="10" perBaseQualityScoreChart="x"
+		perSequenceQualityScoreChart="x" totalBases="1000" totalSequences="4" />
+	
+	<analysis id="2" createdDate="2013-07-19 00:00:00.0"
+		description="FastQC" executionManagerAnalysisId="fastqc" />
+	<analysis_fastqc id="2" duplicationLevelChart="x"
+		encoding="x" fileType="x" filteredSequences="0" gcContent="30"
+		maxLength="250" minLength="10" perBaseQualityScoreChart="x"
+		perSequenceQualityScoreChart="x" totalBases="1000" totalSequences="4" />
 
-	<sequence_file id="1" createdDate="2013-07-18 14:20:19.0"
-		modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file.fastq"
-		fileRevisionNumber="1" sequencingRun_id="1" />
+	<sequence_file id="1" created_date="2013-07-18 14:20:19.0"
+		modified_date="2013-07-18 14:20:19.0" file_path="/tmp/file.fastq"
+		file_revision_number="1" sequencing_run_id="1" fastqc_analysis_id="1" />
 
-	<sequence_file id="2" createdDate="2013-07-18 14:20:19.0"
-		modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file.fastq2"
-		fileRevisionNumber="1" sequencingRun_id="1" />
+	<sequence_file id="2" created_date="2013-07-18 14:20:19.0"
+		modified_date="2013-07-18 14:20:19.0" file_path="/tmp/file.fastq2"
+		file_revision_number="1" sequencing_run_id="1" fastqc_analysis_id="2"/>
 
-	<sequence_file id="3" createdDate="2013-07-18 14:20:19.0"
-		modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file.fastq3"
-		fileRevisionNumber="1" sequencingRun_id="1" />
+	<sequence_file id="3" created_date="2013-07-18 14:20:19.0"
+		modified_date="2013-07-18 14:20:19.0" file_path="/tmp/file.fastq3"
+		file_revision_number="1" sequencing_run_id="1" />
 
-	<sequence_file id="4" createdDate="2013-07-18 14:20:19.0"
-		modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file.fastq4"
-		fileRevisionNumber="1" sequencingRun_id="1" />
+	<sequence_file id="4" created_date="2013-07-18 14:20:19.0"
+		modified_date="2013-07-18 14:20:19.0" file_path="/tmp/file.fastq4"
+		file_revision_number="1" sequencing_run_id="1" />
 
 	<sequence_file_pair id="1" created_date="2013-07-18 14:20:19.0" />
 	<sequence_file_pair_files pair_id="1"
@@ -62,19 +76,5 @@
 		phoneNumber="867-5309" username="aaron2" system_role="ROLE_USER"
 		credentialsNonExpired="true" enabled="true" />
 
-	<analysis id="1" createdDate="2013-07-18 00:00:00.0"
-		description="FastQC" executionManagerAnalysisId="fastqc" />
-	<analysis_fastqc id="1" duplicationLevelChart="x"
-		encoding="x" fileType="x" filteredSequences="0" gcContent="30"
-		maxLength="250" minLength="10" perBaseQualityScoreChart="x"
-		perSequenceQualityScoreChart="x" totalBases="1000" totalSequences="4" />
-	<analysis_sequence_file analysis_id="1" inputFiles_id="1"/>
-	
-	<analysis id="2" createdDate="2013-07-19 00:00:00.0"
-		description="FastQC" executionManagerAnalysisId="fastqc" />
-	<analysis_fastqc id="2" duplicationLevelChart="x"
-		encoding="x" fileType="x" filteredSequences="0" gcContent="30"
-		maxLength="250" minLength="10" perBaseQualityScoreChart="x"
-		perSequenceQualityScoreChart="x" totalBases="1000" totalSequences="4" />
-	<analysis_sequence_file analysis_id="2" inputFiles_id="1"/>
+
 </dataset>

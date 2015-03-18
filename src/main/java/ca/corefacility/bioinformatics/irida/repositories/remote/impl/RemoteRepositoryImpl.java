@@ -37,11 +37,6 @@ public abstract class RemoteRepositoryImpl<Type extends IridaResourceSupport> im
 	/**
 	 * Create a new repository with the given rest template and object params
 	 * 
-	 * @param restTemplate
-	 *            the {@link OAuthTokenRestTemplate} to communicate with
-	 * @param relativeURI
-	 *            the relative URI to the resource collection for this repo (ex:
-	 *            projects)
 	 * @param tokenService
 	 *            service storing api tokens for communication with the remote
 	 *            APIs

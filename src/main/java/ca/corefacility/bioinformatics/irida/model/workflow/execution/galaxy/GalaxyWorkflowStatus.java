@@ -42,6 +42,41 @@ public class GalaxyWorkflowStatus {
 	}
 
 	/**
+	 * Whether or not this workflow has completed successfully.
+	 * 
+	 * @return True if this workflow has completed successfully, false
+	 *         otherwise.
+	 */
+	public boolean completedSuccessfully() {
+		return state.equals(GalaxyWorkflowState.OK);
+	}
+
+	/**
+	 * Whether or not this workflow is in an error state.
+	 * 
+	 * @return True if this workflow has completed successfully, false
+	 *         otherwise.
+	 */
+	public boolean errorOccurred() {
+		return state.equals(GalaxyWorkflowState.ERROR) || countHistoryItemsInState(GalaxyWorkflowState.ERROR) > 0
+				|| state.equals(GalaxyWorkflowState.FAILED_METADATA)
+				|| countHistoryItemsInState(GalaxyWorkflowState.FAILED_METADATA) > 0
+				|| state.equals(GalaxyWorkflowState.EMPTY) || countHistoryItemsInState(GalaxyWorkflowState.EMPTY) > 0
+				|| state.equals(GalaxyWorkflowState.DISCARDED) || countHistoryItemsInState(GalaxyWorkflowState.DISCARDED) > 0;
+	}
+
+	/**
+	 * Whether or not this workflow is still running.
+	 * 
+	 * @return True if this workflow is still running, false otherwise.
+	 */
+	public boolean isRunning() {
+		return Sets.newHashSet(GalaxyWorkflowState.NEW, GalaxyWorkflowState.UPLOAD, GalaxyWorkflowState.QUEUED,
+				GalaxyWorkflowState.RUNNING, GalaxyWorkflowState.PAUSED, GalaxyWorkflowState.SETTING_METADATA,
+				GalaxyWorkflowState.RESUBMITTED).contains(state);
+	}
+
+	/**
 	 * Gets the state of the workflow.
 	 * 
 	 * @return The {@link GalaxyWorkflowState} for this workflow.
@@ -51,12 +86,12 @@ public class GalaxyWorkflowStatus {
 	}
 
 	/**
-	 * Gets the percentage complete for this workflow.
+	 * Gets the proportion of the workflow tasks complete.
 	 * 
-	 * @return The percentage complete for this workflow.
+	 * @return The proportion complete for this workflow as a number in the range [0.0f,1.0f].
 	 */
-	public float getPercentComplete() {
-		return 100.0f * (countHistoryItemsInState(GalaxyWorkflowState.OK) / (float) countTotalWorkflowItems());
+	public float getProportionComplete() {
+		return countHistoryItemsInState(GalaxyWorkflowState.OK) / (float) countTotalWorkflowItems();
 	}
 
 	/**
@@ -64,7 +99,7 @@ public class GalaxyWorkflowStatus {
 	 */
 	@Override
 	public String toString() {
-		return "WorkflowStatus [state=" + state + ", percentComplete=" + getPercentComplete() + "]";
+		return "WorkflowStatus [state=" + state + ", percentComplete=" + getProportionComplete() + "]";
 	}
 
 	/**

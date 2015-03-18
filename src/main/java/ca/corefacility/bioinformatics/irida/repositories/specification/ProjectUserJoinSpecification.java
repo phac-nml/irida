@@ -29,7 +29,8 @@ public class ProjectUserJoinSpecification {
 	 *            The name to search
 	 * @param user
 	 *            The user to search
-	 * @return
+	 * @return a {@link Specification} to search for a {@link Project} with the
+	 *         specified {@link User}.
 	 */
 	public static Specification<ProjectUserJoin> searchProjectNameWithUser(String name, User user) {
 		return new Specification<ProjectUserJoin>() {
@@ -44,11 +45,12 @@ public class ProjectUserJoinSpecification {
 	/**
 	 * Get a {@link ProjectUserJoin} where the user has a given role
 	 * 
-	 * @param name
-	 *            The name to search
+	 * @param projectRole
+	 *            The {@link ProjectRole} to search for.
 	 * @param user
 	 *            The user to search
-	 * @return
+	 * @return a {@link Specification} to search for {@link Project} where the
+	 *         specified {@link User} has a certain {@link ProjectRole}.
 	 */
 	public static Specification<ProjectUserJoin> getProjectJoinsWithRole(User user, ProjectRole projectRole) {
 		return new Specification<ProjectUserJoin>() {

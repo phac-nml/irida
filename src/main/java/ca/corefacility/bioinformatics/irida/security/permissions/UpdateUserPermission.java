@@ -27,6 +27,9 @@ public class UpdateUserPermission extends BasePermission<User, Long> {
 
 	/**
 	 * Construct an instance of {@link UpdateUserPermission}.
+	 * 
+	 * @param userRepository
+	 *            the user repository.
 	 */
 	@Autowired
 	public UpdateUserPermission(UserRepository userRepository) {

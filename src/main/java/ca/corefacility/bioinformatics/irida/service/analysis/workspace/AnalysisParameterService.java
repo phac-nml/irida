@@ -17,9 +17,8 @@ public interface AnalysisParameterService<WorkflowInputsType extends WorkflowInp
 	 * Prepares any parameters for this {@link IridaWorkflow}.
 	 * 
 	 * @param parameters
-	 *            The parameters to use.
-	 * 
-	 * @param submission
+	 *            The parameters to use. 
+	 * @param iridaWorkflow
 	 *            The {@link IridaWorkflow} to prepare.
 	 * @return A {@link WorkflowInputsGeneric} object defining the inputs to a
 	 *         workflow.

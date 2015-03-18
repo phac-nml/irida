@@ -34,16 +34,16 @@
 	<project_sample id="2" createdDate="2013-07-18 14:20:19.0"
         project_id="1" sample_id="2" />
         
-	<sequence_file id="1" createdDate="2013-07-18 14:20:19.0"
-		filePath="/file1" fileRevisionNumber="1" />
-	<sequence_file id="2" createdDate="2013-07-18 14:20:19.0"
-		filePath="/file2" fileRevisionNumber="1" />
-	<sequence_file id="3" createdDate="2013-07-18 14:20:19.0"
-		filePath="/file3" fileRevisionNumber="1" />
-	<sequence_file id="4" createdDate="2013-07-18 14:20:19.0"
-		filePath="/file4" fileRevisionNumber="1" />
-    <sequence_file id="5" createdDate="2013-07-18 14:20:19.0"
-        filePath="/file5" fileRevisionNumber="1" />		
+	<sequence_file id="1" created_date="2013-07-18 14:20:19.0"
+		file_path="/file1" file_revision_number="1" />
+	<sequence_file id="2" created_date="2013-07-18 14:20:19.0"
+		file_path="/file2" file_revision_number="1" />
+	<sequence_file id="3" created_date="2013-07-18 14:20:19.0"
+		file_path="/file3" file_revision_number="1" />
+	<sequence_file id="4" created_date="2013-07-18 14:20:19.0"
+		file_path="/file4" file_revision_number="1" />
+    <sequence_file id="5" created_date="2013-07-18 14:20:19.0"
+        file_path="/file5" file_revision_number="1" />		
 
 	<sequencefile_sample id="1" createdDate="2013-07-18 14:20:19.0"
 		sample_id="1" sequencefile_id="1" />

@@ -31,14 +31,11 @@ import uk.ac.babraham.FastQC.Sequence.SequenceFactory;
 import uk.ac.babraham.FastQC.Sequence.QualityEncoding.PhredEncoding;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC.AnalysisFastQCBuilder;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Executes FastQC on a {@link SequenceFile} and stores the report in the
@@ -53,12 +50,19 @@ public class FastqcFileProcessor implements FileProcessor {
 	
 	private static final String EXECUTION_MANAGER_ANALYSIS_ID = "internal-fastqc";
 
-	private final AnalysisRepository analysisRepository;
 	private final SequenceFileRepository sequenceFileRepository;
 	private final MessageSource messageSource;
 
-	public FastqcFileProcessor(AnalysisRepository analysisRepository, MessageSource messageSource, SequenceFileRepository sequenceFileRepository) {
-		this.analysisRepository = analysisRepository;
+	/**
+	 * Create a new {@link FastqcFileProcessor}
+	 * 
+	 * @param messageSource
+	 *            the message source for i18n (used to add an internationalized
+	 *            description for the analysis).
+	 * @param sequenceFileRepository
+	 *            the sequence file repository.
+	 */
+	public FastqcFileProcessor(final MessageSource messageSource, final SequenceFileRepository sequenceFileRepository) {
 		this.messageSource = messageSource;
 		this.sequenceFileRepository = sequenceFileRepository;
 	}
@@ -68,9 +72,14 @@ public class FastqcFileProcessor implements FileProcessor {
 	 */
 	@Override
 	public void process(final Long sequenceFileId) throws FileProcessorException {
-		final SequenceFile sequenceFile = sequenceFileRepository.findOne(sequenceFileId);		
+		final SequenceFile sequenceFile = sequenceFileRepository.findOne(sequenceFileId);
 		Path fileToProcess = sequenceFile.getFile();
-		AnalysisFastQC analysis = new AnalysisFastQC(ImmutableSet.of(sequenceFile), EXECUTION_MANAGER_ANALYSIS_ID);
+		AnalysisFastQC.AnalysisFastQCBuilder analysis = AnalysisFastQC
+				.builder()
+				.executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID)
+				.description(
+						messageSource.getMessage("fastqc.file.processor.analysis.description", null,
+								LocaleContextHolder.getLocale()));
 		try {
 			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory
 					.getSequenceFile(fileToProcess.toFile());
@@ -96,11 +105,11 @@ public class FastqcFileProcessor implements FileProcessor {
 			Set<OverrepresentedSequence> overrepresentedSequences = handleOverRepresentedSequences(overRep);
 
 			logger.trace("Saving FastQC analysis.");
-			analysis.setOverrepresentedSequences(overrepresentedSequences);
-			analysis.setDescription(messageSource.getMessage("fastqc.file.processor.analysis.description", null,
-					LocaleContextHolder.getLocale()));
+			analysis.overrepresentedSequences(overrepresentedSequences);
+			
+			sequenceFile.setFastQCAnalysis(analysis.build());
 
-			analysisRepository.save(analysis);
+			sequenceFileRepository.save(sequenceFile);
 		} catch (Exception e) {
 			logger.error("FastQC failed to process the sequence file. Stack trace follows.", e);
 			throw new FileProcessorException("FastQC failed to parse the sequence file.", e);
@@ -113,17 +122,17 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * @param stats
 	 *            the {@link BasicStats} computed by fastqc.
 	 * @param analysis
-	 *            the {@link Analysis} to update.
+	 *            the {@link AnalysisFastQCBuilder} to update.
 	 */
-	private void handleBasicStats(BasicStats stats, AnalysisFastQC analysis) {
-		analysis.setFileType(stats.getFileType());
-		analysis.setEncoding(PhredEncoding.getFastQEncodingOffset(stats.getLowestChar()).name());
-		analysis.setMinLength(stats.getMinLength());
-		analysis.setMaxLength(stats.getMaxLength());
-		analysis.setTotalSequences(stats.getActualCount());
-		analysis.setFilteredSequences(stats.getFilteredCount());
-		analysis.setGcContent(stats.getGCContent());
-		analysis.setTotalBases(stats.getACount() + stats.getGCount() + stats.getCCount() + stats.getTCount()
+	private void handleBasicStats(BasicStats stats, AnalysisFastQCBuilder analysis) {
+		analysis.fileType(stats.getFileType());
+		analysis.encoding(PhredEncoding.getFastQEncodingOffset(stats.getLowestChar()).name());
+		analysis.minLength(stats.getMinLength());
+		analysis.maxLength(stats.getMaxLength());
+		analysis.totalSequences(stats.getActualCount());
+		analysis.filteredSequences(stats.getFilteredCount());
+		analysis.gcContent(stats.getGCContent());
+		analysis.totalBases(stats.getACount() + stats.getGCount() + stats.getCCount() + stats.getTCount()
 				+ stats.getNCount());
 	}
 
@@ -133,9 +142,10 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * @param scores
 	 *            the {@link PerBaseQualityScores} computed by fastqc.
 	 * @param analysis
-	 *            the {@link Analysis} to update.
+	 *            the {@link AnalysisFastQCBuilder} to update.
 	 */
-	private void handlePerBaseQualityScores(PerBaseQualityScores scores, AnalysisFastQC analysis) throws IOException {
+	private void handlePerBaseQualityScores(PerBaseQualityScores scores, AnalysisFastQCBuilder analysis)
+			throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		QualityBoxPlot bp = (QualityBoxPlot) scores.getResultsPanel();
 		BufferedImage b = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
@@ -144,7 +154,7 @@ public class FastqcFileProcessor implements FileProcessor {
 
 		ImageIO.write(b, "PNG", os);
 		byte[] image = os.toByteArray();
-		analysis.setPerBaseQualityScoreChart(image);
+		analysis.perBaseQualityScoreChart(image);
 	}
 
 	/**
@@ -153,10 +163,10 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * @param scores
 	 *            the {@link PerSequenceQualityScores} computed by fastqc.
 	 * @param analysis
-	 *            the {@link Analysis} to update.
+	 *            the {@link AnalysisFastQCBuilder} to update.
 	 */
-	private void handlePerSequenceQualityScores(PerSequenceQualityScores scores, AnalysisFastQC analysis)
-			throws IOException {
+	private void handlePerSequenceQualityScores(PerSequenceQualityScores scores,
+			AnalysisFastQCBuilder analysis) throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LineGraph lg = (LineGraph) scores.getResultsPanel();
 		BufferedImage b = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
@@ -165,7 +175,7 @@ public class FastqcFileProcessor implements FileProcessor {
 
 		ImageIO.write(b, "PNG", os);
 		byte[] image = os.toByteArray();
-		analysis.setPerSequenceQualityScoreChart(image);
+		analysis.perSequenceQualityScoreChart(image);
 	}
 
 	/**
@@ -174,9 +184,10 @@ public class FastqcFileProcessor implements FileProcessor {
 	 * @param duplicationLevel
 	 *            the {@link DuplicationLevel} calculated by fastqc.
 	 * @param analysis
-	 *            the {@link SequenceFile} to update.
+	 *            the {@link AnalysisFastQCBuilder} to update.
 	 */
-	private void handleDuplicationLevel(DuplicationLevel duplicationLevel, AnalysisFastQC analysis) throws IOException {
+	private void handleDuplicationLevel(DuplicationLevel duplicationLevel, AnalysisFastQCBuilder analysis)
+			throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LineGraph lg = (LineGraph) duplicationLevel.getResultsPanel();
 		BufferedImage b = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
@@ -185,7 +196,7 @@ public class FastqcFileProcessor implements FileProcessor {
 
 		ImageIO.write(b, "PNG", os);
 		byte[] image = os.toByteArray();
-		analysis.setDuplicationLevelChart(image);
+		analysis.duplicationLevelChart(image);
 	}
 
 	/**

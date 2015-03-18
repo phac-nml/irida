@@ -33,8 +33,8 @@ public interface ProjectReferenceFileJoinRepository extends IridaJpaRepository<P
 	 * Get the collection of {@link ReferenceFile} for the specified
 	 * {@link Project}.
 	 * 
-	 * @param project
-	 *            the {@link Project} to get {@link ReferenceFile} for.
+	 * @param referenceFile
+	 *            the {@link ReferenceFile} to get {@link Project}s for.
 	 * @return the collection of {@link ReferenceFile} for the specified
 	 *         {@link Project}.
 	 */

@@ -5,7 +5,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 
 /**
- * Service for storing and retrieving {@link RemoteAPIs} that this API can connect to
+ * Service for storing and retrieving {@link RemoteAPI}s that this API can connect to
  *
  */
 public interface RemoteAPIService extends CRUDService<Long, RemoteAPI> {

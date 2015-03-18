@@ -13,7 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 public interface AnalysisExecutionScheduledTask {
 
 	/**
-	 * Cycle through new {@AnalysisSubmission}s and prepare
+	 * Cycle through new {@link AnalysisSubmission}s and prepare
 	 * them for execution.
 	 * 
 	 * @return A {@link Set} of {@link Future} {@link AnalysisSubmission}s

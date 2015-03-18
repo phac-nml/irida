@@ -9,7 +9,6 @@ package ca.corefacility.bioinformatics.irida.model.workflow.execution;
 /**
  * A Workflow that has been prepared for execution.
  *
- * @param <AnalysisIdType> The type of remote analysis id.
  * @param <WorkflowInputsType> The type of WorkflowInputsGeneric.
  */
 public interface PreparedWorkflow<WorkflowInputsType extends WorkflowInputsGeneric> {

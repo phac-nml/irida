@@ -683,6 +683,6 @@ public class GalaxyHistoriesServiceIT {
 		
 		GalaxyWorkflowStatus status = galaxyHistory.getStatusForHistory(history.getId());
 		assertEquals("state is invalid", GalaxyWorkflowState.OK, status.getState());
-		assertEquals("percent complete is invalid", 100.0f, status.getPercentComplete(), DELTA);
+		assertEquals("proportion complete is invalid", 1.0f, status.getProportionComplete(), DELTA);
 	}
 }

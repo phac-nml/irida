@@ -20,7 +20,7 @@ public class ResourceList<Type extends IridaResourceSupport> extends IridaResour
 
 	/**
 	 * Get the list of resources
-	 * @return
+	 * @return the {@link IridaResourceSupport} collection.
 	 */
 	public List<Type> getResources() {
 		return resources;
@@ -28,7 +28,7 @@ public class ResourceList<Type extends IridaResourceSupport> extends IridaResour
 
 	/**
 	 * Set the list of resources
-	 * @param resources
+	 * @param resources the {@link IridaResourceSupport} collection.
 	 */
 	public void setResources(List<Type> resources) {
 		this.resources = resources;
@@ -36,7 +36,7 @@ public class ResourceList<Type extends IridaResourceSupport> extends IridaResour
 
 	/**
 	 * Get the total number of resources in this list
-	 * @return
+	 * @return the total number of {@link IridaResourceSupport} in the collection.
 	 */
 	public Long getTotalResources() {
 		return totalResources;
@@ -44,7 +44,7 @@ public class ResourceList<Type extends IridaResourceSupport> extends IridaResour
 
 	/**
 	 * Set the total number of resources
-	 * @param totalResources
+	 * @param totalResources the total number of {@link IridaResourceSupport} in the collection.
 	 */
 	public void setTotalResources(Long totalResources) {
 		this.totalResources = totalResources;

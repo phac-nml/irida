@@ -12,7 +12,7 @@ public interface SequenceFileUtilities {
 	/**
 	 * Calculate the length of a sequence file in bases
 	 * 
-	 * @param entity
+	 * @param file
 	 *            The reference file object to calculate
 	 * @return The number of bases in the file
 	 */

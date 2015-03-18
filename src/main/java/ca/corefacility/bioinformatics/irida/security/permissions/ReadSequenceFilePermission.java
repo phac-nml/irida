@@ -34,6 +34,17 @@ public class ReadSequenceFilePermission extends BasePermission<SequenceFile, Lon
 
 	/**
 	 * Construct an instance of {@link ReadSequenceFilePermission}.
+	 * 
+	 * @param sequenceFileRepository
+	 *            the sequence file repository.
+	 * @param userRepository
+	 *            the user repository.
+	 * @param pujRepository
+	 *            the project user join repository.
+	 * @param psjRepository
+	 *            the project sample join repository.
+	 * @param ssfRepository
+	 *            the sample sequence file join repository.
 	 */
 	@Autowired
 	public ReadSequenceFilePermission(SequenceFileRepository sequenceFileRepository, UserRepository userRepository,

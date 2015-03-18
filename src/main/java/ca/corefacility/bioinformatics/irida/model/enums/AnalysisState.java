@@ -5,6 +5,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+
 /**
  * Defines a set of states for an {@link AnalysisSubmission}.
  * 

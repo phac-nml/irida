@@ -1,12 +1,9 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
  * Metadata for an assembly and annotation analysis.
@@ -17,24 +14,23 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 @Table(name = "analysis_assemblyannotation")
 public class AnalysisAssemblyAnnotation extends Analysis {
 
+	@SuppressWarnings("unused")
 	private AnalysisAssemblyAnnotation() {
-		super(null, null);
+		super();
 	}
 
 	/**
 	 * Builds a new {@link AnalysisAssemblyAnnotation} with the given
 	 * information.
 	 * 
-	 * @param inputFiles
-	 *            The files used as input for this analysis.
 	 * @param executionManagerAnalysisId
 	 *            The execution manager id for this analysis.
 	 * @param analysisOutputFilesMap
 	 *            A {@link Map} of output files for this analysis.
 	 */
-	public AnalysisAssemblyAnnotation(Set<SequenceFile> inputFiles, String executionManagerAnalysisId,
-			Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
-		super(inputFiles, executionManagerAnalysisId, analysisOutputFilesMap);
+	public AnalysisAssemblyAnnotation(final String executionManagerAnalysisId,
+			final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
+		super(executionManagerAnalysisId, analysisOutputFilesMap);
 	}
 	
 	public AnalysisOutputFile getAssemblyLog() {

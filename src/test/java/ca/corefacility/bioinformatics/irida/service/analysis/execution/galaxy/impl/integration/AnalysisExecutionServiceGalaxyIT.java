@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -48,8 +47,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFo
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.WorkflowUploadException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisAssemblyAnnotation;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
@@ -89,6 +86,8 @@ import com.google.common.collect.Sets;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisExecutionServiceGalaxyIT {
+	
+	private static final float DELTA = 0.000001f;
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceGalaxyIT.class);
 
@@ -484,33 +483,40 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsSuccessPhylogenomics() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, iridaPhylogenomicsWorkflowId);
-		SequenceFile sequenceFile = analysisSubmission.getSingleInputFiles().iterator().next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
+		float percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
+		assertEquals("percent complete is incorrect", 1.0f, percentComplete, DELTA);
 
 		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
 				.executeAnalysis(analysisSubmitted);
 		AnalysisSubmission analysisExecuted = analysisExecutionFuture.get();
 		assertNotNull("remoteInputDataId is null", analysisExecuted.getRemoteInputDataId());
 		String remoteInputDataId = analysisExecuted.getRemoteInputDataId();
+		percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
+		assertTrue("percent complete is incorrect", 10.0f <= percentComplete && percentComplete <= 90.0f);
 
 		analysisExecutionGalaxyITService.waitUntilSubmissionComplete(analysisExecuted);
+		percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
+		assertEquals("percent complete is incorrect", 90.0f, percentComplete, DELTA);
 
 		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
+		percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
+		assertEquals("percent complete is incorrect", 90.0f, percentComplete, DELTA);
+		
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
-		assertEquals(1,
-				analysisRepository.findAnalysesForSequenceFile(sequenceFile, AnalysisPhylogenomicsPipeline.class)
-						.size());
 		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
 				.getId());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompleted.getAnalysisState());
 		assertEquals("remoteInputDataId should be unchanged in the completed analysis", remoteInputDataId,
 				analysisSubmissionCompletedDatabase.getRemoteInputDataId());
+		percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
+		assertEquals("percent complete is incorrect", 100.0f, percentComplete, DELTA);
 
 		Analysis analysisResults = analysisSubmissionCompleted.getAnalysis();
 		Analysis analysisResultsDatabase = analysisSubmissionCompletedDatabase.getAnalysis();
@@ -523,9 +529,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
 				analysisResultsPhylogenomics.getExecutionManagerAnalysisId());
-
-		assertEquals("inputFiles should be the same for submission and results", analysisExecuted.getSingleInputFiles(),
-				analysisResultsPhylogenomics.getInputSequenceFiles());
 
 		assertEquals(3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
 		AnalysisOutputFile phylogeneticTree = analysisResultsPhylogenomics.getPhylogeneticTree();
@@ -560,7 +563,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 				.getPhylogeneticTree().getFile());
 		assertEquals(analysisResultsPhylogenomics.getSnpMatrix().getFile(), savedPhylogenomics.getSnpMatrix().getFile());
 		assertEquals(analysisResultsPhylogenomics.getSnpTable().getFile(), savedPhylogenomics.getSnpTable().getFile());
-		assertEquals(analysisResultsPhylogenomics.getInputSequenceFiles(), savedPhylogenomics.getInputSequenceFiles());
 	}
 	
 	/**
@@ -574,10 +576,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsSuccessPhylogenomicsPaired() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				pairedPaths1, pairedPaths2, referenceFilePath, iridaPhylogenomicsPairedWorkflowId);
-		SequenceFilePair sequenceFilePair = analysisSubmission.getPairedInputFiles().iterator().next();
-		Iterator<SequenceFile> sequenceFilePairIter = sequenceFilePair.getFiles().iterator();
-		SequenceFile sequenceFile1 = sequenceFilePairIter.next();
-		SequenceFile sequenceFile2 = sequenceFilePairIter.next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -593,8 +591,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
-		assertEquals("invalid number of analyses for input sequence file in database", 1, analysisRepository
-				.findAnalysesForSequenceFile(sequenceFile1, AnalysisPhylogenomicsPipeline.class).size());
 		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
 				.getId());
 		assertEquals("analysis state is not completed", AnalysisState.COMPLETED,
@@ -614,9 +610,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
 				analysisResultsPhylogenomics.getExecutionManagerAnalysisId());
-
-		assertEquals("inputFiles for the analysis should be set correctly",
-				Sets.newHashSet(sequenceFile1, sequenceFile2), analysisResultsPhylogenomics.getInputSequenceFiles());
 
 		assertEquals("invalid number of output files", 3, analysisResultsPhylogenomics.getAnalysisOutputFiles().size());
 		AnalysisOutputFile phylogeneticTree = analysisResultsPhylogenomics.getPhylogeneticTree();
@@ -680,8 +673,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 				analysisResultsPhylogenomics.getSnpMatrix().getFile(), savedPhylogenomics.getSnpMatrix().getFile());
 		assertEquals("analysis results from database and from submission should have correct table output file",
 				analysisResultsPhylogenomics.getSnpTable().getFile(), savedPhylogenomics.getSnpTable().getFile());
-		assertEquals("analysis results from database and from submission should have correct input sequence files",
-				analysisResultsPhylogenomics.getInputSequenceFiles(), savedPhylogenomics.getInputSequenceFiles());
 	}
 	
 	/**
@@ -1204,10 +1195,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsSuccessAssemblyAnnotation() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				pairedPaths1, pairedPaths2, iridaAssemblyAnnotationWorkflowId);
-		SequenceFilePair sequenceFilePair = analysisSubmission.getPairedInputFiles().iterator().next();
-		Iterator<SequenceFile> sequenceFilePairIter = sequenceFilePair.getFiles().iterator();
-		SequenceFile sequenceFile1 = sequenceFilePairIter.next();
-		SequenceFile sequenceFile2 = sequenceFilePairIter.next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -1223,8 +1210,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
-		assertEquals("invalid number of analyses for input sequence file in database", 1, analysisRepository
-				.findAnalysesForSequenceFile(sequenceFile1, AnalysisAssemblyAnnotation.class).size());
 		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
 				.getId());
 		assertEquals("analysis state is not completed", AnalysisState.COMPLETED,
@@ -1244,9 +1229,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
 				analysisResultsAssembly.getExecutionManagerAnalysisId());
-
-		assertEquals("inputFiles for the analysis should be set correctly",
-				Sets.newHashSet(sequenceFile1, sequenceFile2), analysisResultsAssembly.getInputSequenceFiles());
 
 		assertEquals("invalid number of output files", 3, analysisResultsAssembly.getAnalysisOutputFiles().size());
 		AnalysisOutputFile contigs = analysisResultsAssembly.getContigs();
@@ -1279,7 +1261,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsSuccessTestAnalysis() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowId);
-		SequenceFile sequenceFile = analysisSubmission.getSingleInputFiles().iterator().next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -1295,7 +1276,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
-		assertEquals(1, analysisRepository.findAnalysesForSequenceFile(sequenceFile, Analysis.class).size());
 		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
 				.getId());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState());
@@ -1311,9 +1291,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		String analysisId = analysisExecuted.getRemoteAnalysisId();
 		assertEquals("id should be set properly for analysis", analysisId,
 				analysisResults.getExecutionManagerAnalysisId());
-
-		assertEquals("inputFiles should be the same for submission and results", analysisExecuted.getSingleInputFiles(),
-				analysisResults.getInputSequenceFiles());
 
 		assertEquals(2, analysisResults.getAnalysisOutputFiles().size());
 		AnalysisOutputFile output1 = analysisResults.getAnalysisOutputFile("output1");
@@ -1354,7 +1331,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsFailTestAnalysisMissingOutput() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowIdMissingOutput);
-		SequenceFile sequenceFile = analysisSubmission.getSingleInputFiles().iterator().next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -1375,9 +1351,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 			logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
 			assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
 					.getAnalysisState());
-			assertEquals(0,
-					analysisRepository.findAnalysesForSequenceFile(sequenceFile, Analysis.class)
-							.size());
 
 			// pull out real exception
 			throw e.getCause();
@@ -1395,7 +1368,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsFailInvalidId() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
-		SequenceFile sequenceFile = analysisSubmission.getSingleInputFiles().iterator().next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -1417,9 +1389,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 			logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
 			assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
 					.getAnalysisState());
-			assertEquals(0,
-					analysisRepository.findAnalysesForSequenceFile(sequenceFile, AnalysisPhylogenomicsPipeline.class)
-							.size());
 
 			// pull out real exception
 			throw e.getCause();
@@ -1437,7 +1406,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsFailInvalidRemoteAnalysisId() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId);
-		SequenceFile sequenceFile = analysisSubmission.getSingleInputFiles().iterator().next();
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -1459,9 +1427,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 			logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
 			assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
 					.getAnalysisState());
-			assertEquals(0,
-					analysisRepository.findAnalysesForSequenceFile(sequenceFile, AnalysisPhylogenomicsPipeline.class)
-							.size());
 
 			// pull out real exception
 			throw e.getCause();

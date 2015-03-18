@@ -34,7 +34,9 @@ public interface SequenceFilePairService extends CRUDService<Long, SequenceFileP
 	 * Create a new {@link SequenceFilePair} for the given files
 	 *
 	 * @param file1
+	 *            the first file in the pair.
 	 * @param file2
+	 *            the second file in the pairl
 	 * @return A new {@link SequenceFilePair} object
 	 */
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or (hasPermission(#file1, 'canReadSequenceFile') and hasPermission(#file2, 'canReadSequenceFile'))")
@@ -44,6 +46,7 @@ public interface SequenceFilePairService extends CRUDService<Long, SequenceFileP
 	 * Get the {@link SequenceFilePair}s associated with a {@link Sample}
 	 *
 	 * @param sample
+	 *            the sample to get pairs for.
 	 * @return a List of {@link SequenceFilePair}s
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#sample, 'canReadSample')")

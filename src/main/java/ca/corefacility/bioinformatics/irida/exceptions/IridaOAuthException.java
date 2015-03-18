@@ -20,7 +20,7 @@ public class IridaOAuthException extends RuntimeException {
 	 * 
 	 * @param message
 	 *            The message for this exception
-	 * @param service
+	 * @param remoteAPI
 	 *            The service trying to be accessed when this exception was
 	 *            thrown
 	 */
@@ -34,7 +34,7 @@ public class IridaOAuthException extends RuntimeException {
 	 * 
 	 * @param message
 	 *            The message for this exception
-	 * @param service
+	 * @param remoteAPI
 	 *            The service trying to be accessed when this exception was
 	 *            thrown
 	 * @param cause
@@ -57,7 +57,7 @@ public class IridaOAuthException extends RuntimeException {
 	/**
 	 * Set the service for this exception
 	 * 
-	 * @param service
+	 * @param remoteAPI
 	 *            the URI of the service
 	 */
 	public void setRemoteAPI(RemoteAPI remoteAPI) {

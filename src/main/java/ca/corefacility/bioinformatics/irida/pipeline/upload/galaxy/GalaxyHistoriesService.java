@@ -241,7 +241,7 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	 * Uploads a list of files into the given history.
 	 * @param dataFiles  The list of files to upload.
 	 * @param inputFileType  The type of files to upload.
-	 * @param workflowHistory  The history to upload the files into.String
+	 * @param history  The history to upload the files into.String
 	 * @return  A list of Datasets describing each uploaded file.
 	 * @throws UploadException  If an error occured uploading the file.
 	 * @throws GalaxyDatasetException If there was an issue finding the corresponding dataset for

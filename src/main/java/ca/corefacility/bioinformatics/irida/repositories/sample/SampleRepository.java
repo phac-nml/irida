@@ -16,7 +16,7 @@ public interface SampleRepository extends IridaJpaRepository<Sample, Long> {
 	 * Get a {@link Sample} with the given string sample identifier from a
 	 * specific project.
 	 * 
-	 * @param project
+	 * @param p
 	 *            The {@link Project} that the {@link Sample} belongs to.
 	 * @param sequencerSampleId
 	 *            The string sample identifier for a sample

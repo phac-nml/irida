@@ -49,7 +49,7 @@ public class ToolExecution implements IridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	private final Long id;
 
 	@NotNull
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -69,7 +69,7 @@ public class ToolExecution implements IridaThing {
 	// @NotNull
 	@Lob
 	@Column(name = "command_line")
-	private String commandLine;
+	private final String commandLine;
 
 	@NotNull
 	@Lob
@@ -104,10 +104,25 @@ public class ToolExecution implements IridaThing {
 		this.createdDate = null;
 	}
 
-	public ToolExecution(final Long id, final Set<ToolExecution> previousSteps, final String toolName,
-			final String toolVersion, final String executionManagerIdentifier,
-			final Map<String, String> executionTimeParameters) {
-		this.id = id;
+	/**
+	 * Construct a new instance of {@link ToolExecution}.
+	 * 
+	 * @param previousSteps
+	 *            the set of {@link ToolExecution} that led to the input of this
+	 *            {@link ToolExecution}.
+	 * @param toolName
+	 *            the name of the tool that was executed.
+	 * @param toolVersion
+	 *            the version of the tool that was executed.
+	 * @param executionManagerIdentifier
+	 *            the execution manager identifier that this provenance was
+	 *            derived from (the history step in Galaxy).
+	 * @param executionTimeParameters
+	 *            the parameters that were passed to the tool at execution time.
+	 */
+	public ToolExecution(final Set<ToolExecution> previousSteps, final String toolName, final String toolVersion,
+			final String executionManagerIdentifier, final Map<String, String> executionTimeParameters) {
+		this.id = null;
 		this.toolName = toolName;
 		this.toolVersion = toolVersion;
 		this.executionManagerIdentifier = executionManagerIdentifier;
@@ -117,9 +132,9 @@ public class ToolExecution implements IridaThing {
 		} else {
 			this.previousSteps = previousSteps;
 		}
-		this.executionTimeParameters = new HashMap<>();
-		addExecutionTimeParameters(executionTimeParameters);
+		this.executionTimeParameters = addExecutionTimeParameters(executionTimeParameters);
 		this.createdDate = new Date();
+		this.commandLine = null;
 	}
 
 	@Override
@@ -145,10 +160,6 @@ public class ToolExecution implements IridaThing {
 		return false;
 	}
 
-	public final void addPreviousStep(final ToolExecution toolExecution) {
-		this.previousSteps.add(toolExecution);
-	}
-
 	public final Set<ToolExecution> getPreviousSteps() {
 		return ImmutableSet.copyOf(previousSteps);
 	}
@@ -165,7 +176,7 @@ public class ToolExecution implements IridaThing {
 		return commandLine;
 	}
 
-	public final Object getExecutionManagerIdentifier() {
+	public final String getExecutionManagerIdentifier() {
 		return executionManagerIdentifier;
 	}
 
@@ -178,15 +189,13 @@ public class ToolExecution implements IridaThing {
 		return Collections.unmodifiableMap(unescapedKeys);
 	}
 
-	public final void addExecutionTimeParameter(final String paramName, final String paramValue) {
-		final String escapedKey = paramName.replaceAll("([A-Z])", "\\\\$1");
-		this.executionTimeParameters.put(escapedKey, paramValue);
-	}
-
-	public final void addExecutionTimeParameters(final Map<String, String> parameters) {
+	private final Map<String, String> addExecutionTimeParameters(final Map<String, String> parameters) {
+		final Map<String, String> escapedParameters = new HashMap<>(parameters.size());
 		for (final Entry<String, String> param : parameters.entrySet()) {
-			addExecutionTimeParameter(param.getKey(), param.getValue());
+			final String escapedKey = param.getKey().replaceAll("([A-Z])", "\\\\$1");
+			escapedParameters.put(escapedKey, param.getValue());
 		}
+		return escapedParameters;
 	}
 
 	@Override
@@ -216,7 +225,7 @@ public class ToolExecution implements IridaThing {
 
 	@Override
 	public void setId(Long id) {
-		this.id = id;
+		throw new UnsupportedOperationException("ToolExecution is immutable.");
 	}
 
 	/**

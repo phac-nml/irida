@@ -50,6 +50,8 @@ public class UploadSampleConversionServiceGalaxy implements
 	 * 
 	 * @param projectRepository
 	 *            The repository of all projects.
+	 * @param psjRepository
+	 *            the project sample join repository.
 	 * @param ssfjRepository
 	 *            The repository for joining sequence files and samples.
 	 * @param sfRepository
