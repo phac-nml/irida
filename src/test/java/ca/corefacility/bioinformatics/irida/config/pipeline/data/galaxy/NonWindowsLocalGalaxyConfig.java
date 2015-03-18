@@ -293,6 +293,8 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 	 * @throws IOException 
 	 */
 	private void buildTestTools(Path galaxyRoot, GalaxyProperties galaxyProperties, LocalGalaxy localGalaxy) throws URISyntaxException, IOException {
+		Path sleepToolSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
+				"sleep.xml").toURI());
 		Path collectionExampleToolSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
 				"collection_list_paired.xml").toURI());
 		Path corePipelineOutputsSingleToolSource = Paths.get(NonWindowsLocalGalaxyConfig.class.getResource(
@@ -321,6 +323,8 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		// copy over necessary files for testing custom tools
 		Path exampleToolDirectory = galaxyRoot.resolve("tools").resolve("irida");
 		Files.createDirectories(exampleToolDirectory);
+		Path sleepToolDestination = 
+				exampleToolDirectory.resolve("sleep.xml");
 		Path collectionExampleToolDestination = 
 				exampleToolDirectory.resolve("collection_list_paired.xml");
 		Path corePipelineExampleToolDestination = 
@@ -335,6 +339,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 				exampleToolDirectory.resolve("core_pipeline_outputs_single_paired.xml");
 		Path assemblyAnnotationPipelinOutputsDestination = 
 				exampleToolDirectory.resolve("assembly_annotation_pipeline_outputs.xml");
+		Files.copy(sleepToolSource, sleepToolDestination);
 		Files.copy(collectionExampleToolSource, collectionExampleToolDestination);
 		Files.copy(corePipelineOutputsSingleToolSource, corePipelineExampleToolDestination);
 		Files.copy(corePipelineOutputsPairedToolSource, corePipelinePairedExampleToolDestination);

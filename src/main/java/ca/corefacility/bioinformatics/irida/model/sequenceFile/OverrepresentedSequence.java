@@ -14,9 +14,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
@@ -27,45 +25,50 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
  */
 @Entity
 @Table(name = "overrepresented_sequence")
-@Audited
 @EntityListeners(AuditingEntityListener.class)
 public class OverrepresentedSequence implements IridaThing, Comparable<OverrepresentedSequence> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	private final Long id;
 
 	@NotNull(message = "{overrepresented.sequence.sequence.notnull}")
-	private String sequence;
+	private final String sequence;
 
 	@NotNull(message = "{overrepresented.sequence.sequence.count.notnull}")
-	private int overrepresentedSequenceCount;
+	private final int overrepresentedSequenceCount;
 
 	@NotNull(message = "{overrepresented.sequence.percentage.notnull}")
-	private BigDecimal percentage;
+	private final BigDecimal percentage;
 
 	@NotNull(message = "{overrepresented.sequence.possibleSource.notnull}")
-	private String possibleSource;
+	private final String possibleSource;
 
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	private final Date createdDate;
 
-	@LastModifiedDate
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date modifiedDate;
-
-	public OverrepresentedSequence() {
-		this.createdDate = new Date();
+	/**
+	 * for hibernate
+	 */
+	@SuppressWarnings("unused")
+	private OverrepresentedSequence() {
+		this.id = null;
+		this.sequence = null;
+		this.overrepresentedSequenceCount = -1;
+		this.percentage = null;
+		this.possibleSource = null;
+		this.createdDate = null;
 	}
 
 	public OverrepresentedSequence(String sequence, int count, BigDecimal percentage, String possibleSource) {
-		this();
 		this.sequence = sequence;
 		this.overrepresentedSequenceCount = count;
 		this.percentage = percentage;
 		this.possibleSource = possibleSource;
+		this.createdDate = new Date();
+		this.id = null;
 	}
 
 	@Override
@@ -87,7 +90,7 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 
 	@Override
 	public int compareTo(OverrepresentedSequence o) {
-		return modifiedDate.compareTo(o.modifiedDate);
+		return createdDate.compareTo(o.createdDate);
 	}
 
 	public String getSequence() {
@@ -96,22 +99,6 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 
 	public int getOverrepresentedSequenceCount() {
 		return overrepresentedSequenceCount;
-	}
-
-	public void setSequence(String sequence) {
-		this.sequence = sequence;
-	}
-
-	public void setOverrepresentedSequenceCount(int overrepresentedSequenceCount) {
-		this.overrepresentedSequenceCount = overrepresentedSequenceCount;
-	}
-
-	public void setPercentage(BigDecimal percentage) {
-		this.percentage = percentage;
-	}
-
-	public void setPossibleSource(String possibleSource) {
-		this.possibleSource = possibleSource;
 	}
 
 	public BigDecimal getPercentage() {
@@ -127,7 +114,7 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 	}
 
 	public void setId(Long id) {
-		this.id = id;
+		throw new UnsupportedOperationException("OverrepresentedSequence is immutable.");
 	}
 
 	@Override
@@ -136,11 +123,11 @@ public class OverrepresentedSequence implements IridaThing, Comparable<Overrepre
 	}
 
 	public Date getModifiedDate() {
-		return modifiedDate;
+		return createdDate;
 	}
 
 	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
+		throw new UnsupportedOperationException("OverrepresentedSequence is immutable.");
 	}
 
 	@Override

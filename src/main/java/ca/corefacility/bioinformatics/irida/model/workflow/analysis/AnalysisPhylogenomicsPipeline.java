@@ -1,14 +1,9 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
-import org.hibernate.envers.Audited;
-
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
  * Metadata for Core SNP Pipeline implementation in Galaxy.
@@ -17,19 +12,19 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
  */
 @Entity
 @Table(name = "analysis_phylogenomicspipeline")
-@Audited
 public class AnalysisPhylogenomicsPipeline extends Analysis {
 	
 	/**
 	 * required for hibernate, marked as private so nobody else uses it.
 	 */
+	@SuppressWarnings("unused")
 	private AnalysisPhylogenomicsPipeline() {
-		super(null, null);
+		super();
 	}
 
-	public AnalysisPhylogenomicsPipeline(Set<SequenceFile> inputFiles, String executionManagerAnalysisId,
-			Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
-		super(inputFiles, executionManagerAnalysisId, analysisOutputFilesMap);
+	public AnalysisPhylogenomicsPipeline(final String executionManagerAnalysisId,
+			final Map<String, AnalysisOutputFile> analysisOutputFilesMap) {
+		super(executionManagerAnalysisId, analysisOutputFilesMap);
 	}
 
 	public AnalysisOutputFile getPhylogeneticTree() {

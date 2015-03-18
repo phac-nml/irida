@@ -176,9 +176,6 @@ public class GalaxyUploaderAPI {
 	 * @param adminEmail
 	 *            The administrators email address for the corresponding API key
 	 *            within the GalaxyInstance.
-	 * @param dataStorage
-	 *            If uploaded files will exist on the same or a separate
-	 *            filesystem as the archive.
 	 * @param galaxyLibrarySearch
 	 *            A GalaxyLibrarySearch object.
 	 * @param galaxyLibraryContentSearch
@@ -518,7 +515,7 @@ public class GalaxyUploaderAPI {
 	 *             If no library with the given name can be found.
 	 * @throws NoGalaxyContentFoundException
 	 *             If an error occured trying to find content for the library.
-	 * @throws ExecutionManagerObjectNotFoundException 
+	 * @throws ExecutionManagerObjectNotFoundException if any galaxy objects cannot be found.
 	 */
 	public GalaxyUploadResult uploadSamples(@Valid List<UploadSample> samples, @Valid GalaxyProjectName libraryName,
 			@Valid GalaxyAccountEmail galaxyUserEmail) throws LibraryUploadException, CreateLibraryException,
@@ -605,7 +602,8 @@ public class GalaxyUploaderAPI {
 	 * @throws NoGalaxyContentFoundException
 	 *             If an error occurred when attempting to find content for the
 	 *             library.
-	 * @throws ExecutionManagerObjectNotFoundException 
+	 * @throws ExecutionManagerObjectNotFoundException
+	 *             if the galaxy library cannot be found.
 	 */
 	public boolean uploadFilesToLibrary(@Valid List<UploadSample> samples, String libraryID)
 			throws LibraryUploadException, ConstraintViolationException, CreateLibraryException, NoGalaxyContentFoundException, ExecutionManagerObjectNotFoundException {

@@ -101,9 +101,9 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	 * their password if the password is expired. The
 	 * {@link IgnoreExpiredCredentialsForPasswordChangeChecker} allows
 	 * authenticated users with expired credentials to invoke one method, the
-	 * {@link UserService.changePassword} method.
+	 * {@link UserService#changePassword(Long, String)} method.
 	 * 
-	 * @return
+	 * @return the user details checker (that ignores password expired credentials exceptions).
 	 */
 	@Bean
 	public UserDetailsChecker postAuthenticationChecker() {
@@ -132,7 +132,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	 * Thymeleaf plugin looks for this expression handler in the ROOT context
 	 * instead of in the context that it's running in.
 	 * 
-	 * @return
+	 * @return the web security expression handler.
 	 */
 	@Bean
 	public WebSecurityExpressionHandler webSecurityExpressionHandler() {

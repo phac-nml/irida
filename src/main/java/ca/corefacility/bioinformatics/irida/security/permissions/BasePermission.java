@@ -65,9 +65,11 @@ public abstract class BasePermission<DomainObjectType, IdentifierType extends Se
 	 * 
 	 * @param domainObjectType
 	 *            the domain object type managed by this permission.
-	 * @param repositoryId
-	 *            the identifier of the repository to load from the spring
-	 *            application context.
+	 * @param identifierType
+	 *            the type of identifier used by this object.
+	 * @param repository
+	 *            the repository to load objects of the type for this
+	 *            permission.
 	 */
 	protected BasePermission(Class<DomainObjectType> domainObjectType, Class<IdentifierType> identifierType,
 			CrudRepository<DomainObjectType, IdentifierType> repository) {

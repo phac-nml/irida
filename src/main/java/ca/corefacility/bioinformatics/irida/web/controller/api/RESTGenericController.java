@@ -77,14 +77,13 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 
 	/**
 	 * Construct an instance of {@link RESTGenericController}.
-	 * {@link RESTGenericController} is an abstract type, and should only be used as
-	 * a super-class.
+	 * {@link RESTGenericController} is an abstract type, and should only be
+	 * used as a super-class.
 	 * 
 	 * @param crudService
 	 *            the service used to manage resources in the database.
-	 * @param identifierType
-	 *            the type of identifier used by the type that this controller
-	 *            manages.
+	 * @param type
+	 *            the type of that this controller manages.
 	 * @param resourceType
 	 *            the type used to serialize/de-serialize the type to the
 	 *            client.
@@ -169,6 +168,8 @@ public abstract class RESTGenericController<Type extends IridaResourceSupport & 
 	 * @param representation
 	 *            the {@link ResourceType} that we should de-serialize to get an
 	 *            instance of {@link Type} to persist.
+	 * @param response
+	 *            a reference to the servlet response.
 	 * @return a response containing the location of the newly persisted
 	 *         resource.
 	 */

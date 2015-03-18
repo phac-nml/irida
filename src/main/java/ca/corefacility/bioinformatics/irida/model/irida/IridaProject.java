@@ -17,14 +17,14 @@ public interface IridaProject {
 	/**
 	 * Get the local numerical identifier for this project
 	 * 
-	 * @return
+	 * @return the numerical ID for the project.
 	 */
 	public Long getId();
 
 	/**
 	 * Get the name of the project
 	 * 
-	 * @return
+	 * @return the name of the project.
 	 */
 	@NotNull(message = "{project.name.notnull}")
 	@Size(min = 5, message = "{project.name.size}")
@@ -34,7 +34,7 @@ public interface IridaProject {
 	/**
 	 * Get a text description of the project
 	 * 
-	 * @return
+	 * @return the description of the project.
 	 */
 	public String getProjectDescription();
 
@@ -42,7 +42,7 @@ public interface IridaProject {
 	 * Get a URL that information for the project might be found. This might be
 	 * a wiki page or discussion board.
 	 * 
-	 * @return
+	 * @return an external URL for the project.
 	 */
 	@URL(message = "{project.remoteURL.url}")
 	public String getRemoteURL();
@@ -50,7 +50,7 @@ public interface IridaProject {
 	/**
 	 * Get the name of the organism being studied in this project
 	 * 
-	 * @return
+	 * @return the organism of samples in the project.
 	 */
 	public String getOrganism();
 }

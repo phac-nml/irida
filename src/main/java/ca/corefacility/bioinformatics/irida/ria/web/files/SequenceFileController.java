@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
-import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 
@@ -58,14 +56,11 @@ public class SequenceFileController {
 	 * SERVICES
 	 */
 	private SequenceFileService sequenceFileService;
-	private AnalysisService analysisService;
 	private SequencingRunService sequencingRunService;
 
 	@Autowired
-	public SequenceFileController(SequenceFileService sequenceFileService, AnalysisService analysisService,
-			SequencingRunService sequencingRunService) {
+	public SequenceFileController(SequenceFileService sequenceFileService, SequencingRunService sequencingRunService) {
 		this.sequenceFileService = sequenceFileService;
-		this.analysisService = analysisService;
 		this.sequencingRunService = sequencingRunService;
 		this.dateFormatter = new DateFormatter();
 	}
@@ -118,6 +113,7 @@ public class SequenceFileController {
 	 * @param response
 	 *            {@link HttpServletResponse}
 	 * @throws IOException
+	 *             if we can't write the file to the response.
 	 */
 	@RequestMapping("/sequenceFiles/download/{sequenceFileId}")
 	public void downloadSequenceFile(@PathVariable Long sequenceFileId, HttpServletResponse response)
@@ -139,12 +135,13 @@ public class SequenceFileController {
 	 * @param response
 	 *            {@link HttpServletResponse}
 	 * @throws IOException
+	 *             if we can't write the image out to the response.
 	 */
 	@RequestMapping(value = "/sequenceFiles/img/{sequenceFileId}/{type}", produces = MediaType.IMAGE_PNG_VALUE)
 	public void downloadSequenceFileImages(@PathVariable Long sequenceFileId, @PathVariable String type,
 			HttpServletResponse response) throws IOException {
 		SequenceFile file = sequenceFileService.read(sequenceFileId);
-		AnalysisFastQC fastQC = getFastQCAnalysis(file);
+		AnalysisFastQC fastQC = file.getFastQCAnalysis();
 		if (fastQC != null) {
 			byte[] chart = new byte[0];
 			if (type.equals(IMG_PERBASE)) {
@@ -162,22 +159,6 @@ public class SequenceFileController {
 	}
 
 	/**
-	 * Gets the FastQC analysis for a sequence file.
-	 *
-	 * @param file
-	 *            {@link SequenceFile}
-	 * @return {@link AnalysisFastQC}
-	 */
-	private AnalysisFastQC getFastQCAnalysis(SequenceFile file) {
-		AnalysisFastQC analysisFastQC = null;
-		Set<AnalysisFastQC> analysis = analysisService.getAnalysesForSequenceFile(file, AnalysisFastQC.class);
-		if (analysis.size() > 0) {
-			analysisFastQC = analysis.iterator().next();
-		}
-		return analysisFastQC;
-	}
-
-	/**
 	 * Populates the model with the default information for a file.
 	 *
 	 * @param sequenceFileId
@@ -188,7 +169,7 @@ public class SequenceFileController {
 	private void createDefaultPageInfo(Long sequenceFileId, Model model) {
 		SequenceFile file = sequenceFileService.read(sequenceFileId);
 		SequencingRun run = sequencingRunService.getSequencingRunForSequenceFile(file);
-		AnalysisFastQC fastQC = getFastQCAnalysis(file);
+		AnalysisFastQC fastQC = file.getFastQCAnalysis();
 		model.addAttribute("file", file);
 		model.addAttribute("created", dateFormatter.print(file.getCreatedDate(), LocaleContextHolder.getLocale()));
 		model.addAttribute("fastQC", fastQC);

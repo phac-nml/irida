@@ -223,7 +223,7 @@ public class Sample extends IridaResourceSupport implements IridaThing, IridaSam
 	/**
 	 * Create a new {@link Sample} with the given name and ID
 	 * 
-	 * @param name
+	 * @param sampleName
 	 *            The sampleName of the sample
 	 * @param sampleId
 	 *            The ID of the sample

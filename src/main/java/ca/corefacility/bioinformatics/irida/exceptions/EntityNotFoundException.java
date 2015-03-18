@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.exceptions;
 
 /**
- * When an {@link Identifiable} entity cannot be found in the database.
+ * When an entity cannot be found in the database.
  *
  */
 public class EntityNotFoundException extends RuntimeException {

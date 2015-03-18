@@ -25,7 +25,7 @@ public class ProjectSampleJoinSpecification {
 	 *            The name to search
 	 * @param project
 	 *            The project to search
-	 * @return
+	 * @return a {@link Specification} to use in the repository.
 	 */
 	public static Specification<ProjectSampleJoin> searchSampleWithNameInProject(String name, Project project) {
 		return new Specification<ProjectSampleJoin>() {

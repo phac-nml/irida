@@ -60,11 +60,12 @@ public class ReferenceFileController {
 	 * Download a reference file based on the id passed.
 	 *
 	 * @param fileId
-	 * 		The id of the file to download
+	 *            The id of the file to download
 	 * @param response
-	 * 		{@link HttpServletResponse} to write to file to
+	 *            {@link HttpServletResponse} to write to file to
 	 *
 	 * @throws IOException
+	 *             if we fail to read the file from disk.
 	 */
 	@RequestMapping(value = "/download/{fileId}")
 	public void downloadReferenceFile(@PathVariable Long fileId,
@@ -80,12 +81,15 @@ public class ReferenceFileController {
 	 * Add a new reference file to a project.
 	 *
 	 * @param projectId
-	 * 		The id of the project to add the file to.
+	 *            The id of the project to add the file to.
 	 * @param file
-	 * 		{@link MultipartFile} file being uploaded.
+	 *            {@link MultipartFile} file being uploaded.
+	 * @param locale
+	 *            the locale specified by the browser.
 	 *
-	 * @return
+	 * @return a Map representation of the status of the creation.
 	 * @throws IOException
+	 *             if we fail to write the reference file to disk.
 	 */
 	@RequestMapping("/project/{projectId}/new")
 	public @ResponseBody Map<String, Object> createNewReferenceFile(@PathVariable Long projectId,
@@ -136,12 +140,17 @@ public class ReferenceFileController {
 	}
 
 	/**
-	 * Delete a reference file.  This will remove it from the project.
+	 * Delete a reference file. This will remove it from the project.
 	 *
 	 * @param fileId
-	 * 		The id of the file to remove.
+	 *            The id of the file to remove.
+	 * @param projectId
+	 *            the project to delete the reference file for.
 	 * @param response
-	 * 		{@link HttpServletResponse} required for returning an error state.
+	 *            {@link HttpServletResponse} required for returning an error
+	 *            state.
+	 * @param locale
+	 *            the locale specified by the browser.
 	 *
 	 * @return Success or error based on the result of deleting the file.
 	 */

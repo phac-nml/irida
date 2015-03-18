@@ -22,7 +22,7 @@ public class MethodEvent {
 	/**
 	 * Get the arguments from the method call
 	 * 
-	 * @return
+	 * @return the args passed to the method that was called.
 	 */
 	public Object[] getArgs() {
 		return args;
@@ -31,7 +31,7 @@ public class MethodEvent {
 	/**
 	 * Get the return value for the method call
 	 * 
-	 * @return
+	 * @return the value returned by the method call
 	 */
 	public Object getReturnValue() {
 		return returnValue;
@@ -40,7 +40,7 @@ public class MethodEvent {
 	/**
 	 * Get the class of event to be created
 	 * 
-	 * @return
+	 * @return the type of object that the method was called on.
 	 */
 	public Class<? extends ProjectEvent> getEventClass() {
 		return eventClass;

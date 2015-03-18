@@ -194,6 +194,8 @@ public class UsersController {
 	 *            the lastname to update
 	 * @param email
 	 *            the email to update
+	 * @param phoneNumber
+	 *            the phone number to update
 	 * @param systemRole
 	 *            the role to update
 	 * @param password
@@ -202,7 +204,10 @@ public class UsersController {
 	 *            password confirmation
 	 * @param model
 	 *            The model to work on
-	 *
+	 * @param enabled
+	 *            whether the user account should be enabled or disabled.
+	 * @param principal
+	 *            a reference to the logged in user.
 	 * @return The name of the user view
 	 */
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
@@ -443,6 +448,7 @@ public class UsersController {
 	 * @param length
 	 *            The length of a page
 	 * @param draw
+	 *            a WET-specific variable.
 	 * @param sortColumn
 	 *            The column to sort on
 	 * @param direction
@@ -450,7 +456,7 @@ public class UsersController {
 	 * @param searchValue
 	 *            The value to search with
 	 *
-	 * @return A Model Map<String,Object> containing the users to list
+	 * @return A Model {@code Map<String,Object>} containing the users to list
 	 */
 	@RequestMapping(value = "/ajax/list", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Map<String, Object> getAjaxUserList(final Principal principal,

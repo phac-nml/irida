@@ -26,13 +26,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityRevisionDeletedException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -41,8 +44,10 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
@@ -60,11 +65,32 @@ import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, AnalysisSubmission> implements
 		AnalysisSubmissionService {
 	
+	/**
+	 * A {@link Map} defining the progress transitions points for each state in
+	 * an {@link AnalysisSubmission}.
+	 */
+	// @formatter:off
+	private static final Map<AnalysisState,Float> STATE_PERCENTAGE = ImmutableMap.<AnalysisState,Float>builder().
+			put(AnalysisState.NEW,              0.0f).
+			put(AnalysisState.PREPARING,        0.0f).
+			put(AnalysisState.PREPARED,         1.0f).
+			put(AnalysisState.SUBMITTING,       5.0f).
+			put(AnalysisState.RUNNING,          10.0f).
+			put(AnalysisState.FINISHED_RUNNING, 90.0f).
+			put(AnalysisState.COMPLETING,       95.0f).
+			put(AnalysisState.COMPLETED,        100.0f).
+			build();
+	// @formatter:on
+	
+	private static final float RUNNING_PERCENT = STATE_PERCENTAGE.get(AnalysisState.RUNNING);
+	private static final float FINISHED_RUNNING_PERCENT = STATE_PERCENTAGE.get(AnalysisState.FINISHED_RUNNING);
+	
 	private UserRepository userRepository;
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	private final ReferenceFileRepository referenceFileRepository;
 	private final SequenceFileService sequenceFileService;
 	private final SequenceFilePairService sequenceFilePairService;
+	private final GalaxyHistoriesService galaxyHistoriesService;
 
 	/**
 	 * Builds a new AnalysisSubmissionServiceImpl with the given information.
@@ -73,6 +99,14 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 *            A repository for accessing analysis submissions.
 	 * @param userRepository
 	 *            A repository for accessing user information.
+	 * @param referenceFileRepository
+	 *            the reference file repository
+	 * @param sequenceFileService
+	 *            the sequence file service.
+	 * @param sequenceFilePairService
+	 *            the sequence file pair service
+	 * @param galaxyHistoriesService
+	 *            The {@link galaxyHistoriesService}.
 	 * @param validator
 	 *            A validator.
 	 */
@@ -80,13 +114,14 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
 			UserRepository userRepository, final ReferenceFileRepository referenceFileRepository,
 			final SequenceFileService sequenceFileService, final SequenceFilePairService sequenceFilePairService,
-			Validator validator) {
+			final GalaxyHistoriesService galaxyHistoriesService, Validator validator) {
 		super(analysisSubmissionRepository, validator, AnalysisSubmission.class);
 		this.userRepository = userRepository;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.referenceFileRepository = referenceFileRepository;
 		this.sequenceFileService = sequenceFileService;
 		this.sequenceFilePairService = sequenceFilePairService;
+		this.galaxyHistoriesService = galaxyHistoriesService;
 	}
 
 	/**
@@ -375,5 +410,53 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 		// Create the submission
 		return create(builder.build());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public float getPercentCompleteForAnalysisSubmission(Long id) throws EntityNotFoundException,
+			ExecutionManagerException, NoPercentageCompleteException {
+		AnalysisSubmission analysisSubmission = read(id);
+		AnalysisState analysisState = analysisSubmission.getAnalysisState();
+
+		switch (analysisState) {
+		case NEW:
+		case PREPARING:
+		case PREPARED:
+		case SUBMITTING:
+			return STATE_PERCENTAGE.get(analysisState);
+
+			/**
+			 * If the analysis is in a state of {@link AnalysisState.RUNNING}
+			 * then we are able to ask Galaxy for the proportion of jobs that
+			 * are complete. We can scale this value between RUNNING_PERCENT
+			 * (10%) and FINISHED_RUNNING_PERCENT (90%) so that after all jobs
+			 * are complete we are only at 90%. The remaining 10% involves
+			 * transferring files back to Galaxy.
+			 * 
+			 * For example, if there are 10 out of 20 jobs finished on Galaxy,
+			 * then the proportion of jobs complete is 10/20 = 0.5. So, the
+			 * percent complete for the overall analysis is: percentComplete =
+			 * 10 + (90 - 10) * 0.5 = 50%.
+			 * 
+			 * If there are 20 out of 20 jobs finished in Galaxy, then the
+			 * percent complete is: percentComplete = 10 + (90 - 10) * 1.0 =
+			 * 90%.
+			 */
+		case RUNNING:
+			String workflowHistoryId = analysisSubmission.getRemoteAnalysisId();
+			GalaxyWorkflowStatus workflowStatus = galaxyHistoriesService.getStatusForHistory(workflowHistoryId);
+			return RUNNING_PERCENT + (FINISHED_RUNNING_PERCENT - RUNNING_PERCENT)
+					* workflowStatus.getProportionComplete();
+			
+		case FINISHED_RUNNING:
+		case COMPLETING:
+		case COMPLETED:
+			return STATE_PERCENTAGE.get(analysisState);
+		default:
+			throw new NoPercentageCompleteException("No valid percent complete for state " + analysisState);
+		}
 	}
 }

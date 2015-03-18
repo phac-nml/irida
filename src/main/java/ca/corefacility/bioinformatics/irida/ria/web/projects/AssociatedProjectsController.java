@@ -103,6 +103,8 @@ public class AssociatedProjectsController {
 	 *            The ID of the project to get associated projects
 	 * @param model
 	 *            A model for the view
+	 * @param principal
+	 *            a reference to the logged in user.
 	 * @return The view name of the assocated projects view
 	 */
 	@RequestMapping(value = "/{projectId}/associated", method = RequestMethod.GET)
@@ -214,7 +216,7 @@ public class AssociatedProjectsController {
 	 *            The direction to sort in
 	 * @param projectName
 	 *            The project name to search for
-	 * @return A Map<String,Object> of elements for a datatable
+	 * @return A {@code Map<String,Object>} of elements for a datatable
 	 */
 	@RequestMapping("/{projectId}/associated/ajax/available")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#projectId, 'isProjectOwner')")
@@ -308,7 +310,8 @@ public class AssociatedProjectsController {
 	 *            The Cache ID of the {@link RemoteProject}
 	 * @param apiId
 	 *            The ID of the api this project resides on
-	 * @return
+	 * @return a Map representation of the status of adding the associated
+	 *         project.
 	 */
 	@RequestMapping(value = "/{projectId}/associated/remote", method = RequestMethod.POST)
 	@ResponseBody
@@ -334,7 +337,8 @@ public class AssociatedProjectsController {
 	 *            The ID of the project to remove the association from
 	 * @param associatedProjectId
 	 *            The cache identifier for the remote element
-	 * @return
+	 * @return a Map representation of the status of removing the associated
+	 *         project.
 	 */
 	@RequestMapping(value = "/{projectId}/associated/remote/{associatedProjectId}", method = RequestMethod.DELETE)
 	@ResponseBody
@@ -357,11 +361,7 @@ public class AssociatedProjectsController {
 	 * 
 	 * @param projectId
 	 *            the ID of the local project
-	 * @param model
-	 *            Model for the view
-	 * @param principal
-	 *            logged in user
-	 * @return Map<String, Object> containing samples: list of samples
+	 * @return {@code Map<String, Object>} containing samples: list of samples
 	 */
 	@RequestMapping(value = "/{projectId}/associated/samples")
 	@ResponseBody
@@ -532,8 +532,8 @@ public class AssociatedProjectsController {
 	/**
 	 * Handle entity exists exceptions for creating {@link RelatedProjectJoin}s
 	 * 
-	 * @param ex
-	 * @return
+	 * @param ex the exception to handle.
+	 * @return a {@link ResponseEntity} to render the exception to the client.
 	 */
 	@ExceptionHandler(EntityExistsException.class)
 	public ResponseEntity<String> handleEntityExistsException(EntityExistsException ex) {

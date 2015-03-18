@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.unit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.List;
 import java.util.Map;
@@ -34,6 +34,168 @@ public class GalaxyWorkflowStatusTest {
 	}
 
 	/**
+	 * Tests whether or not this workflow completed successfully.
+	 */
+	@Test
+	public void testCompletedSuccessfully() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("ok");
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("ok", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow did not complete successfully", workflowStatus.completedSuccessfully());
+	}
+
+	/**
+	 * Tests whether or not this workflow is still running.
+	 */
+	@Test
+	public void testIsRunning() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("running");
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("running", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow is not still running", workflowStatus.isRunning());
+	}
+
+	/**
+	 * Tests whether or not this workflow is considered still running (while
+	 * queued).
+	 */
+	@Test
+	public void testIsRunningWhileQueued() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("queued");
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("queued", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow is not still running", workflowStatus.isRunning());
+	}
+
+	/**
+	 * Tests whether or not this workflow is in an error state.
+	 */
+	@Test
+	public void testErrorOccured() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("error");
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("error", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+	}
+
+	/**
+	 * Tests whether or not an error occured even while still running.
+	 */
+	@Test
+	public void testErrorOccuredWhileStillRunning() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("running");
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("error", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+	}
+
+	/**
+	 * Tests whether or not this workflow is in an error state when there is
+	 * failed metadata.
+	 */
+	@Test
+	public void testErrorOccuredFailedMetadata() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("failed_metadata");
+		historyDetails
+				.setStateIds(Util.buildStateIdsWithStateFilled("failed_metadata", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+	}
+
+	/**
+	 * Tests whether or not this workflow is in an error state when there is
+	 * failed metadata but the overall workflow is still running.
+	 */
+	@Test
+	public void testErrorOccuredFailedMetadataStillRunning() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("running");
+		historyDetails
+				.setStateIds(Util.buildStateIdsWithStateFilled("failed_metadata", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+	}
+
+	/**
+	 * Tests whether or not this workflow is in an error state when it is an
+	 * empty state.
+	 */
+	@Test
+	public void testErrorOccuredEmpty() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("empty");
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("empty", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+	}
+
+	/**
+	 * Tests whether or not this workflow is in an error state when it is empty
+	 * but the overall workflow is still running.
+	 */
+	@Test
+	public void testErrorOccuredEmptyStillRunning() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("running");
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("empty", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+	}
+	
+	/**
+	 * Tests whether or not this workflow is in an error state when it is discarded.
+	 */
+	@Test
+	public void testErrorOccuredDiscarded() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("discarded");
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("discarded", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+	}
+
+	/**
+	 * Tests whether or not this workflow is in an error state when it is discarded
+	 * but the overall workflow is still running.
+	 */
+	@Test
+	public void testErrorOccuredDiscardedStillRunning() {
+		HistoryDetails historyDetails = new HistoryDetails();
+		historyDetails.setState("discarded");
+		historyDetails.setStateIds(Util.buildStateIdsWithStateFilled("discarded", Lists.newArrayList(DATASET_ID)));
+
+		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
+
+		assertTrue("Workflow is not in an error state", workflowStatus.errorOccurred());
+	}
+
+	/**
 	 * Tests successfully building a workflow status from history details
 	 * (everything complete).
 	 */
@@ -46,7 +208,7 @@ public class GalaxyWorkflowStatusTest {
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
 		assertEquals("workflow status not in correct state", GalaxyWorkflowState.OK, workflowStatus.getState());
-		assertEquals("percentage complete not correct", 100.0f, workflowStatus.getPercentComplete(), DELTA);
+		assertEquals("percentage complete not correct", 1.0f, workflowStatus.getProportionComplete(), DELTA);
 	}
 
 	/**
@@ -62,7 +224,7 @@ public class GalaxyWorkflowStatusTest {
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
 		assertEquals("workflow status not in correct state", GalaxyWorkflowState.QUEUED, workflowStatus.getState());
-		assertEquals("percentage complete not correct", 0.0f, workflowStatus.getPercentComplete(), DELTA);
+		assertEquals("percentage complete not correct", 0.0f, workflowStatus.getProportionComplete(), DELTA);
 	}
 
 	/**
@@ -81,7 +243,7 @@ public class GalaxyWorkflowStatusTest {
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
 		assertEquals("workflow status not in correct state", GalaxyWorkflowState.RUNNING, workflowStatus.getState());
-		assertEquals("percentage complete not correct", 50.0f, workflowStatus.getPercentComplete(), DELTA);
+		assertEquals("percentage complete not correct", 0.5f, workflowStatus.getProportionComplete(), DELTA);
 	}
 
 	/**
@@ -101,7 +263,7 @@ public class GalaxyWorkflowStatusTest {
 		GalaxyWorkflowStatus workflowStatus = GalaxyWorkflowStatus.builder(historyDetails).build();
 
 		assertEquals("workflow status not in correct state", GalaxyWorkflowState.RUNNING, workflowStatus.getState());
-		assertEquals("percentage complete not correct", 25.0f, workflowStatus.getPercentComplete(), DELTA);
+		assertEquals("percentage complete not correct", 0.25f, workflowStatus.getProportionComplete(), DELTA);
 	}
 
 	/**
