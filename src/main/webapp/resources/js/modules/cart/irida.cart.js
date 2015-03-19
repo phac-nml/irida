@@ -1,14 +1,5 @@
 (function () {
-  "use strict";
-
-  function CartController($scope, $timeout, cart) {
     "use strict";
-    var vm = this,
-        initialized = false;
-    vm.show = false;
-    vm.projects = [];
-    vm.count = 0;
-    vm.collapsed = {};
 
     function CartController($scope, $timeout, cart) {
         "use strict";
@@ -22,16 +13,39 @@
         $scope.$on('cart.update', function () {
             getCart(false);
         });
-    }
 
-    getCart(true);
-  }
+        function getCart (collapse) {
+            cart.all()
+              .then(function (data) {
+                var prev = vm.count;
+                vm.count = 0;
+                  vm.projects = data;
+                  _.each(data, function(p) {
+                      vm.count += p.samples.length;
+                      if(collapse){
+                        vm.collapsed[p.id] = true;
+                      }
+                  });
+                if (initialized && prev !== vm.count) {
+                  vm.animation = 'glow';
+                  $timeout(function () {
+                    vm.animation = '';
+                  }, 3000);
+                } else {
+                  // This is just to prevent animation on page load.
+                  initialized = true;
+                }
+              });
+        }
+
+        getCart(true);
+    }
 
   /**
    * Controller for functions on the cart slider
    * @param CartService The cart service to communicate with the server
    */
-    function CartSliderController(CartService){
+    function CartSliderController(CartService, $modal) {
       "use strict";
 
       var vm = this;
@@ -47,6 +61,28 @@
       vm.removeSample = function(projectId,sampleId){
         CartService.removeSample(projectId,sampleId);
       }
+
+    vm.exportToGalaxy = function () {
+      CartService.all()
+        .then(function (data) {
+          if (data != null) {
+            var firstProjID = data[0].id
+
+            $modal.open({
+              templateUrl: TL.BASE_URL + 'cart/template/galaxy/project/' + firstProjID,
+              controller : 'GalaxyCartDialogCtrl as gCtrl',
+              resolve    : {
+                openedByCart: function () {
+                  return true;
+                },
+                multiProject: function () {
+                  return (data.length > 1)
+                }
+              }
+            });
+          }
+        });
+    }
     }
 
     function CartDirective() {
@@ -58,7 +94,6 @@
             controller  : ['$scope', '$timeout', 'CartService', CartController]
         }
     }
-  }
 
     function CartService(scope, $http, $q) {
         var svc = this,
@@ -98,19 +133,72 @@
           scope.$broadcast("cart.update", {});
         });
       };
-    };
 
       svc.removeProject = function(projectId){
         return $http.delete(urls.project+projectId).then(function () {
           scope.$broadcast("cart.update", {});
         })
       };
-      return [sampleFormEntity];
-    };
 
       svc.removeSample = function(projectId,sampleId){
         return $http.delete(urls.project+projectId+"/samples/"+sampleId).then(function () {
           scope.$broadcast("cart.update", {});
+        })
+      }
+
+    }
+
+  function GalaxyExportService(CartService, StorageService) {
+    "use strict";
+    var svc = this;
+    var params = {};
+    var samples = [];
+
+
+    function initialize(libraryName, email, authCode, redirectURI) {
+      params = {
+        "_embedded": {
+          "library": {"name": libraryName},
+          "user"   : {"email": email},
+          "oauth2" : {
+            "code"    : authCode,
+            "redirect": redirectURI
+          },
+          "samples": samples
+        }
+      };
+    };
+
+    function addSampleFile(sampleName, sampleFilePath) {
+      var sample = _.find(samples, function (sampleItr) {
+        return (sampleItr.name == sampleName)
+      });
+      if (sample == null) {
+        sample = {
+          "name"     : sampleName,
+          "_links"   : {"self": {"href": ""}}, //expected by the tool
+          "_embedded": {"sample_files": []}
+        };
+        samples.push(sample);
+      }
+      sample._embedded.sample_files.push({'_links': {'self': {'href': sampleFilePath}}});
+    };
+
+    function getSampleFormEntities() {
+      var sampleFormEntity = {
+        "name" : "json_params",
+        "value": JSON.stringify(params)
+      };
+      return [sampleFormEntity];
+    };
+
+    svc.exportFromProjSampPage = function (libraryName, email, authCode, redirectURI) {
+      initialize(libraryName, email, authCode, redirectURI);
+
+      var samples = StorageService.getSamples()
+      _.each(samples, function (sample) {
+        _.each(sample.embedded.sample_files, function (sequenceFile) {
+          addSampleFile(sample.sample.label, sequenceFile._links.self.href)
         })
       });
       return getSampleFormEntities();
@@ -191,10 +279,29 @@
       });
     }
 
-    angular
+    vm.setName = function (name, orgName) {
+      if (multiProject) {
+        vm.name = orgName;
+      }
+      else {
+        vm.name = name;
+      }
+    };
+    vm.setEmail = function (email) {
+      vm.email = email;
+    };
+    vm.close = function () {
+      $modalInstance.close();
+    };
+
+  }
+
+  angular
       .module('irida.cart', [])
       .service('CartService', ['$rootScope', '$http', '$q', CartService])
-      .controller('CartSliderController', ['CartService', CartSliderController])
+    .controller('CartSliderController', ['CartService', '$modal', CartSliderController])
+    .controller('GalaxyCartDialogCtrl', ['$modalInstance', '$timeout', '$scope', 'CartService','GalaxyExportService', 'openedByCart', 'multiProject', GalaxyCartDialogCtrl])
+    .service('GalaxyExportService', ['CartService', 'StorageService', GalaxyExportService])
       .directive('cart', [CartDirective])
     ;
 })();
