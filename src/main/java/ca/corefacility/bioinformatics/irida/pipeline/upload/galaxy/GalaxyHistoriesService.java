@@ -42,6 +42,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.HistoryContents;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryContentsProvenance;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDataset.Source;
+import com.github.jmchilton.blend4j.galaxy.beans.HistoryDeleteResponse;
 import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
@@ -495,6 +496,20 @@ public class GalaxyHistoriesService implements ExecutionManagerSearch<History, S
 	public HistoryContentsProvenance showProvenance(final String historyId, final String historyProvenanceId) throws ExecutionManagerException {
 		try {
 			return historiesClient.showProvenance(historyId, historyProvenanceId);
+		} catch (RuntimeException e) {
+			throw new ExecutionManagerException(e);
+		}
+	}
+	
+	/**
+	 * Deletes a history from Galaxy with the given id.
+	 * @param historyId The id of the history to delete. 
+	 * @return A {@link HistoryDeleteResponse} from Galaxy.
+	 * @throws ExecutionManagerException If there was an error deleting a history.
+	 */
+	public HistoryDeleteResponse deleteHistory(final String historyId) throws ExecutionManagerException {
+		try {
+			return historiesClient.deleteHistory(historyId);
 		} catch (RuntimeException e) {
 			throw new ExecutionManagerException(e);
 		}
