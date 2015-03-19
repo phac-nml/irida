@@ -158,6 +158,7 @@ public class AnalysisController {
 			logger.error("Couldn't get the percent complete", e);
 		} catch (ExecutionManagerException e) {
 			logger.error("Error", e);
+		}
 
 		return viewName;
 	}
