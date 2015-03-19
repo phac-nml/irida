@@ -133,13 +133,28 @@ table {
 tr {
   color: slategrey;
 }
+/* line 59, ../../../styles/pages/analyses.scss */
+tr .progress {
+  margin-bottom: 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+}
+/* line 65, ../../../styles/pages/analyses.scss */
+tr .progress-bar {
+  height: 2px;
+  border-bottom: 1px solide #f3f3f3;
+  color: #939393;
+  text-align: left;
+  font-size: 1rem;
+}
 
-/* line 60, ../../../styles/pages/analyses.scss */
+/* line 73, ../../../styles/pages/analyses.scss */
 td.para-key {
   word-wrap: break-word;
 }
 
-/* line 63, ../../../styles/pages/analyses.scss */
+/* line 76, ../../../styles/pages/analyses.scss */
 td.para-value {
   text-align: right;
 }
