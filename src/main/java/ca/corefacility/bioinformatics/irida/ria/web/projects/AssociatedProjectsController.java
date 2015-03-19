@@ -43,8 +43,6 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectUserJoinSpecification;
-import ca.corefacility.bioinformatics.irida.ria.utilities.CacheObject;
-import ca.corefacility.bioinformatics.irida.ria.utilities.RemoteObjectCache;
 import ca.corefacility.bioinformatics.irida.ria.utilities.components.ProjectsDataTable;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
@@ -79,8 +77,7 @@ public class AssociatedProjectsController {
 	@Autowired
 	public AssociatedProjectsController(RemoteRelatedProjectService remoteRelatedProjectService,
 			ProjectService projectService, ProjectControllerUtils projectControllerUtils, UserService userService,
-			RemoteAPIService apiService, ProjectRemoteService projectRemoteService, SampleService sampleService,
-			RemoteObjectCache<Project> remoteProjectCache) {
+			RemoteAPIService apiService, ProjectRemoteService projectRemoteService, SampleService sampleService) {
 
 		this.remoteRelatedProjectService = remoteRelatedProjectService;
 		this.projectService = projectService;
@@ -311,15 +308,13 @@ public class AssociatedProjectsController {
 	 */
 	@RequestMapping(value = "/{projectId}/associated/remote", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, String> addRemoteAssociatedProject(@PathVariable Long projectId,
-			@RequestParam String projectUrl) {
+	public Map<String, String> addRemoteAssociatedProject(@PathVariable Long projectId, @RequestParam String projectUrl) {
 		Project project = projectService.read(projectId);
 		RemoteAPI remoteAPI = apiService.getRemoteAPIForUrl(projectUrl);
 		Project readResource = projectRemoteService.read(projectUrl, remoteAPI);
 
 		Link selfLink = readResource.getLink(Link.REL_SELF);
-		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject(project, remoteAPI,
-				selfLink.getHref());
+		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject(project, remoteAPI, selfLink.getHref());
 		remoteRelatedProjectService.create(remoteRelatedProject);
 
 		return ImmutableMap.of("result", "success");
@@ -410,7 +405,7 @@ public class AssociatedProjectsController {
 			pmap.put("name", project.getName());
 			pmap.put("organism", project.getOrganism());
 			pmap.put("createdDate", dateFormatter.print(project.getCreatedDate(), LocaleContextHolder.getLocale()));
-			
+
 			Link selfLink = project.getLink(Link.REL_SELF);
 			if (remoteUrls.containsKey(selfLink.getHref())) {
 				pmap.put("associated", "associated");
@@ -523,7 +518,8 @@ public class AssociatedProjectsController {
 	/**
 	 * Handle entity exists exceptions for creating {@link RelatedProjectJoin}s
 	 * 
-	 * @param ex the exception to handle.
+	 * @param ex
+	 *            the exception to handle.
 	 * @return a {@link ResponseEntity} to render the exception to the client.
 	 */
 	@ExceptionHandler(EntityExistsException.class)

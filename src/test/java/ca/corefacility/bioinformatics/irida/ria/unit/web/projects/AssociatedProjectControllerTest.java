@@ -33,7 +33,6 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.utilities.RemoteObjectCache;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.AssociatedProjectsController;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -57,7 +56,6 @@ public class AssociatedProjectControllerTest {
 	private RemoteAPIService apiService;
 	private ProjectRemoteService projectRemoteService;
 	private SampleService sampleService;
-	private RemoteObjectCache<Project> remoteProjectCache;
 
 	@Before
 	public void setUp() {
@@ -68,9 +66,8 @@ public class AssociatedProjectControllerTest {
 		projectRemoteService = mock(ProjectRemoteService.class);
 		remoteRelatedProjectService = mock(RemoteRelatedProjectService.class);
 		sampleService = mock(SampleService.class);
-		remoteProjectCache = new RemoteObjectCache<>();
 		controller = new AssociatedProjectsController(remoteRelatedProjectService, projectService, projectUtils,
-				userService, apiService, projectRemoteService, sampleService, remoteProjectCache);
+				userService, apiService, projectRemoteService, sampleService);
 	}
 
 	@Test
@@ -301,7 +298,6 @@ public class AssociatedProjectControllerTest {
 	@Test
 	public void testAddRemoteAssociatedProject() {
 		Long projectId = 1l;
-		Long apiId = 2l;
 
 		String projectLink = "http://somewhere/projects/1";
 		Project rp1 = new Project();
