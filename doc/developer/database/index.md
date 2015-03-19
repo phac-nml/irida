@@ -1,3 +1,7 @@
+---
+layout: "default"
+---
+
 Database Change Management
 ==========================
 
@@ -13,6 +17,9 @@ Background
 The IRIDA NGS Archive and Bioinformatics Platform uses JPA and Hibernate for interacting with relational databases. In development, Hibernate provides a feature for dynamically generating a database schema. Hibernate also provides a feature to import the generated schema and a file with a SQL script with data to be inserted into the database.
 
 These Hibernate features are suitable for development, but not suitable for production purposes (see: http://pragmatastic.blogspot.ca/2010/10/managing-database-changes-in-java.html and https://community.jboss.org/wiki/HibernateFAQ-MiscellaneousFAQs#jive_content_id_Hibernate_doesnt_generate_the_database_indexes_I_want_in_the_schema). Furthermore, these features cannot be adapted in a straightforward way to provide support for upgrading production instances from one version to the next.
+
+* this comment becomes the toc
+{:toc}
 
 Requirements
 ------------
