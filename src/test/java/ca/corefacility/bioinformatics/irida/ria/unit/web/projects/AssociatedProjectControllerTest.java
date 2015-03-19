@@ -29,7 +29,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -274,7 +273,7 @@ public class AssociatedProjectControllerTest {
 		rp1.add(new Link("http://somewhere",Link.REL_SELF));	
 
 		String selfRel2 = "http://somewhere-else";
-		RemoteProject rp2 = new RemoteProject();
+		Project rp2 = new Project();
 		rp2.setId(4l);
 		rp2.add(new Link("http://somewhere-else",Link.REL_SELF));
 

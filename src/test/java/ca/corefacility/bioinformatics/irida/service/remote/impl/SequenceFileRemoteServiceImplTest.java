@@ -14,16 +14,11 @@ import org.junit.Test;
 import org.springframework.hateoas.Link;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteSample;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.remote.resource.RESTLinks;
-import ca.corefacility.bioinformatics.irida.model.remote.resource.RemoteResource;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 public class SequenceFileRemoteServiceImplTest {
@@ -40,12 +35,12 @@ public class SequenceFileRemoteServiceImplTest {
 	public void testGetSequenceFilesForSample() {
 		String seqFilesHref = "http://somewhere/projects/1/samples/2/sequencefiles";
 		RemoteAPI api = new RemoteAPI();
-		Sample sample = new RemoteSample();
+		Sample sample = new Sample();
 		sample.add(new Link(seqFilesHref,SequenceFileRemoteServiceImpl.SAMPLE_SEQUENCE_FILES_REL));
 
 		sample.setRemoteAPI(api);
 
-		List<SequenceFile> filesList = Lists.newArrayList(new RemoteSequenceFile());
+		List<SequenceFile> filesList = Lists.newArrayList(new SequenceFile());
 		when(repository.list(seqFilesHref, api)).thenReturn(filesList);
 
 		List<SequenceFile> sequenceFilesForSample = service.getSequenceFilesForSample(sample);
@@ -58,9 +53,9 @@ public class SequenceFileRemoteServiceImplTest {
 	public void testDownloadSequenceFile() {
 		String seqFilesHref = "http://somewhere/projects/1/samples/2/sequencefiles/3";
 		RemoteAPI api = new RemoteAPI();
-		RemoteSequenceFile sequenceFile = new RemoteSequenceFile();
+		SequenceFile sequenceFile = new SequenceFile();
 		sequenceFile.setRemoteAPI(api);
-		sequenceFile.setLinks(new RESTLinks(ImmutableMap.of(RemoteResource.SELF_REL, seqFilesHref)));
+		sequenceFile.add(new Link(seqFilesHref,Link.REL_SELF));
 
 		Path returned = Paths.get("/");
 		when(repository.downloadRemoteSequenceFile(sequenceFile, api)).thenReturn(returned);

@@ -17,7 +17,6 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.ria.utilities.CacheObject;
 import ca.corefacility.bioinformatics.irida.ria.utilities.RemoteObjectCache;
@@ -69,7 +68,7 @@ public class RemoteProjectsController {
 	}
 
 	/**
-	 * Get the info page about a given {@link RemoteProject}
+	 * Get the info page about a given {@link Project}
 	 * 
 	 * @param projectCacheId
 	 *            The {@link RemoteObjectCache} id of the project

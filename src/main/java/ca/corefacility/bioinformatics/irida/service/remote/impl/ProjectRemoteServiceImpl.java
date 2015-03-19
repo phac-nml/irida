@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.remote.RemoteProject;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteRelatedProject;
 import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
@@ -36,12 +35,12 @@ public class ProjectRemoteServiceImpl extends RemoteServiceImpl<Project> impleme
 	}
 
 	/**
-	 * Read a {@link RemoteProject} for a given {@link RemoteRelatedProject}
+	 * Read a {@link Project} for a given {@link RemoteRelatedProject}
 	 * reference
 	 * 
 	 * @param project
 	 *            The {@link RemoteRelatedProject} to read
-	 * @return a {@link RemoteProject}
+	 * @return a {@link Project}
 	 */
 	public Project read(RemoteRelatedProject project) {
 		String remoteProjectURI = project.getRemoteProjectURI();

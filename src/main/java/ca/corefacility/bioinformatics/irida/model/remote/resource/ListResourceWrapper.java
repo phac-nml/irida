@@ -8,7 +8,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
  * 
  * @param <Type>
  *            The type of object being stored in the list extends
- *            {@link RemoteResource}
+ *            {@link IridaResourceSupport}
  */
 public class ListResourceWrapper<Type extends IridaResourceSupport> {
 	private ResourceList<Type> resource;
