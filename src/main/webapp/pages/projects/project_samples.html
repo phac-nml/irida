@@ -99,14 +99,13 @@
 				<div ng-controller="SampleDisplayCtrl as displayCtrl" class="btn-group drop-check" dropdown=""
 				     is-open="subnav.display.isopen">
 					<button id="displayBtn" type="button" class="btn btn-default btn-sm dropdown-toggle"
-					        th:unless="${#httpSession.getAttribute('galaxyExportToolCallbackURL')}"
+					        ng:hide="mainGalaxyController.inGalaxy"
 					        dropdown-toggle="">
 						<span th:text="#{project.samples.display.title}">_Display_</span>
 						&nbsp;
 						<span class="caret"></span>
 					</button>
-					<ul class="dropdown-menu noclose" role="menu"
-					    th:unless="${#httpSession.getAttribute('galaxyExportToolCallbackURL')}">
+					<ul class="dropdown-menu noclose" role="menu" ng:hide="mainGalaxyController.inGalaxy">
 						<li>
 							<label> <input id="displayLocal" type="checkbox" ng-change="displayCtrl.displaySamples()"
 							               ng-model="displayCtrl.displayLocal"/>
@@ -127,14 +126,13 @@
 				<!-- Samples Options (Download, Copy, Merge, Move)-->
 				<div class="btn-group" dropdown="" is-open="subnav.samplesOptions.open">
 					<button id="samplesOptionsBtn" class="btn btn-default btn-sm dropdown-toggle" dropdown-toggle=""
-					        th:unless="${#httpSession.getAttribute('galaxyExportToolCallbackURL')}"
+					        ng:hide="mainGalaxyController.inGalaxy"
 					        ng-disabled="subnav.count&lt;1">
 						<span>Samples</span>
 						&nbsp;
 						<span class="caret"></span>
 					</button>
-					<ul class="dropdown-menu" role="menu"
-					    th:unless="${#httpSession.getAttribute('galaxyExportToolCallbackURL')}">
+					<ul class="dropdown-menu" role="menu" ng:hide="mainGalaxyController.inGalaxy">
 						<li ng-class="{disabled:subnav.count&lt;2 || ! subnav.localSelected}"
 						    ng-attr-tooltip="{{subnav.showTooltip()}}" tooltip-append-to-body="true"
 						    tooltip-placement="right">

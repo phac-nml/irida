@@ -18,7 +18,7 @@
 	<div style="height: 100%;">
 		<div style="height: 100%;" class="st-container" ng-class="{'cart-open':cart.show}">
 			<div class="st-content">
-				<div class="st-content-inner">
+				<div class="st-content-inner" ng-controller="MainGalaxyController as mainGalaxyController">
 					<nav th:replace="template/bootstrap :: #topnav"></nav>
 					<div ng-controller="BreadcrumbController as breadcrumb" class="breadcrumbs">
 						<div class="container ng-cloak">
@@ -125,7 +125,8 @@
 					"next" : /*[[#{table.next}]]*/ 'Next',
 					"last" : /*[[#{table.last}]]*/ 'Last'
 				}
-			}
+			},
+			galaxy : /*[[${#httpSession.getAttribute('galaxyExportToolCallbackURL')}]]*/ false
 		};
 	</script>
 
