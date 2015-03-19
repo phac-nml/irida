@@ -12,7 +12,7 @@
 	<script>window.dependencies = ['irida.analysis.user'];</script>
 	<style>
 		.animate-hide {
-			transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+			transition: 250ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
 			position: relative;
 			display: block;
 			opacity: 1;
@@ -20,7 +20,7 @@
 		}
 
 		.animate-hide.ng-hide {
-			top: 30px;
+			top: 20px;
 			opacity: 0;
 		}
 
@@ -117,28 +117,30 @@
 					</b>
 				</div>
 				<div ng-hide="ctrl.loading">
-					<table ng-show="ctrl.showAnalyses" class="table" ng-table="ctrl.tableParams">
+					<table width="100%" ng-show="ctrl.showAnalyses" class="table animate-hide" ng-table="ctrl.tableParams">
 						<tr class="analysis__state" ng-class="'analysis__state--' +ctrl.createClass(analysis.state)"
 						    ng-repeat="analysis in ctrl.analyses | analysesFilter | orderBy: ctrl.tableParams.orderBy()">
-							<td data:title="'\'' + #{analyses.state} + '\''" sortable="'state'">{{analysis.state}}</td>
-							<td data:title="'\'' + #{analyses.analysis-name} + '\''" sortable="'label'">
+							<td data:title="'\'' + #{analyses.state} + '\''" sortable="'state'">{{analysis.state}}
+								<progressbar ng-if="analysis.analysisState !== 'ERROR'" value="analysis.percentComplete">{{ analysis.percentComplete | number:0 }}%</progressbar>
+							</td>
+							<td width="30%" data:title="'\'' + #{analyses.analysis-name} + '\''" sortable="'label'">
                               <a class="btn btn-default btn-xs" th:href="@{/analysis/{{analysis.id}}}" href="#">
 							    {{analysis.label}}
                               </a>
 							</td>
-							<td data:title="'\'' + #{analyses.type} + '\''" sortable="'type'">
+							<td width="30%" data:title="'\'' + #{analyses.type} + '\''" sortable="'type'">
 								{{analysis.workflowName}}
 							</td>
                             <td th:if="${admin}" data:title="'\'' + #{analyses.submitter} + '\''" sortable="'submitter'">
                                 {{analysis.submitter}}
                             </td>
-							<td data:title="'\'' + #{analysis.date-created} + '\''" sortable="'createdDate'">
-								{{analysis.createdDate | date:'short'}}
+							<td style="width: 15%;" data:title="'\'' + #{analysis.date-created} + '\''" sortable="'createdDate'">
+								<span tooltip="{{ analysis.createdDate | date:'medium' }}">{{analysis.createdDate | date:'mediumDate'}}</span>
 							</td>
 							<td data:title="'\'' + #{analysis.duration} + '\''" sortable="'duration'">
 								{{ ctrl.convertTime(analysis.duration) }}
 							</td>
-							<td>
+							<td style="width: 20px;">
 								<button ng-show="analysis.analysisState==='COMPLETED'"
 								        class="btn btn-default btn-xs pull-right download-analysis-btn"
 								        th:title="#{form.download}" ng-click="ctrl.download(analysis.id)">
