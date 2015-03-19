@@ -23,6 +23,8 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 @Service
 public class RemoteAPIServiceImpl extends CRUDServiceImpl<Long, RemoteAPI> implements RemoteAPIService {
 
+	RemoteAPIRepository repository;
+	
 	private RemoteAPIServiceImpl() {
 		super(null, null, RemoteAPI.class);
 	}
@@ -31,6 +33,7 @@ public class RemoteAPIServiceImpl extends CRUDServiceImpl<Long, RemoteAPI> imple
 	public RemoteAPIServiceImpl(RemoteAPIRepository repository, Validator validator)
 			throws ConstraintViolationException, EntityExistsException {
 		super(repository, validator, RemoteAPI.class);
+		this.repository = repository;
 	}
 
 	@Override
@@ -41,6 +44,11 @@ public class RemoteAPIServiceImpl extends CRUDServiceImpl<Long, RemoteAPI> imple
 	@Override
 	public Iterable<RemoteAPI> findAll() {
 		return super.findAll();
+	}
+
+	@Override
+	public RemoteAPI getRemoteAPIForUrl(String url) {
+		return repository.getRemoteAPIForUrl(url);
 	}
 
 }
