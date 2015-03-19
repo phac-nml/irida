@@ -1,8 +1,15 @@
+---
+layout: "default"
+---
+
 Mozilla Persona
 ===============
 Background
 ----------
 Persona is a decentralized login platform used to identify users by their email addresses easily across websites.  This allows users to log in to any Persona enabled website without having to remember individual usernames and passwords for the sites.  It also makes it easy for a website to create a login system without having to worry about managing authentication, passwords, and password security.
+
+* this comment becomes the toc
+{:toc}
 
 Login Process
 ----------
