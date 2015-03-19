@@ -108,7 +108,7 @@
 						<li>
 							<label> <input id="displayLocal" type="checkbox" ng-change="displayCtrl.displaySamples()"
 							               ng-model="displayCtrl.displayLocal"/>
-								<span th:text="#{project.samples.display.local}">_Local Samples_</span>
+								<span th:text="#{project.samples.display.local(${project.label})}">_Local Samples_</span>
 							</label>
 
 						</li>
