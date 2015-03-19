@@ -927,7 +927,7 @@
 
 		<!-- Galaxy Testing Revision: either 'latest' or a revision from the branch 
 			in the defined repository -->
-		<test.galaxy.revision>097bbb3b7d3246faaa5188a1fc2a79b01630025c</test.galaxy.revision>
+		<test.galaxy.revision>28113eeee212db2eef9cf4304abe9c3b2a92abcd</test.galaxy.revision>
 
 		<!-- URL to a pre-populated SQLite database for Galaxy -->
 		<!-- Set to 'local' to use the local version stored in irida-api, or set 
