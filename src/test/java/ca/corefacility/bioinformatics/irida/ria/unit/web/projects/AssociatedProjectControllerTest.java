@@ -270,12 +270,12 @@ public class AssociatedProjectControllerTest {
 
 		Project rp1 = new Project();
 		rp1.setId(3l);
-		rp1.add(new Link("http://somewhere",Link.REL_SELF));	
+		rp1.add(new Link("http://somewhere", Link.REL_SELF));
 
 		String selfRel2 = "http://somewhere-else";
 		Project rp2 = new Project();
 		rp2.setId(4l);
-		rp2.add(new Link("http://somewhere-else",Link.REL_SELF));
+		rp2.add(new Link("http://somewhere-else", Link.REL_SELF));
 
 		RemoteRelatedProject rrp = new RemoteRelatedProject(project, api, selfRel2);
 
@@ -306,19 +306,18 @@ public class AssociatedProjectControllerTest {
 		String projectLink = "http://somewhere/projects/1";
 		Project rp1 = new Project();
 		rp1.setId(3l);
-		rp1.add(new Link(projectLink,Link.REL_SELF));
+		rp1.add(new Link(projectLink, Link.REL_SELF));
 
 		RemoteAPI api = new RemoteAPI();
-
-		Integer associatedProjectId = remoteProjectCache.addResource(rp1, api);
 
 		Project project = new Project();
 
 		when(projectService.read(projectId)).thenReturn(project);
-		when(apiService.read(apiId)).thenReturn(api);
+		when(apiService.getRemoteAPIForUrl(projectLink)).thenReturn(api);
+		when(projectRemoteService.read(projectLink, api)).thenReturn(rp1);
 
 		Map<String, String> addRemoteAssociatedProject = controller.addRemoteAssociatedProject(projectId,
-				associatedProjectId, apiId);
+				rp1.getLink(Link.REL_SELF).getHref());
 
 		assertEquals("success", addRemoteAssociatedProject.get("result"));
 
@@ -335,21 +334,18 @@ public class AssociatedProjectControllerTest {
 	public void testRemoveRemoteAssociatedProject() {
 		Long projectId = 1l;
 		Project project = new Project();
-		RemoteAPI api = new RemoteAPI();
 
 		String projectLink = "http://somewhere/projects/1";
 		Project rp1 = new Project();
 		rp1.setId(3l);
-		rp1.add(new Link(projectLink,Link.REL_SELF));
+		rp1.add(new Link(projectLink, Link.REL_SELF));
 
 		RemoteRelatedProject rrp = new RemoteRelatedProject();
 
 		when(projectService.read(projectId)).thenReturn(project);
 		when(remoteRelatedProjectService.getRemoteRelatedProjectForProjectAndURI(project, projectLink)).thenReturn(rrp);
 
-		Integer associatedProjectId = remoteProjectCache.addResource(rp1, api);
-
-		controller.removeRemoteAssociatedProject(projectId, associatedProjectId);
+		controller.removeRemoteAssociatedProject(projectId, projectLink);
 
 		verify(remoteRelatedProjectService).delete(rrp.getId());
 	}
