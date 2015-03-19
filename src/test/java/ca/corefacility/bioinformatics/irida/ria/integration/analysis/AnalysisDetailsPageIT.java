@@ -60,6 +60,7 @@ public class AnalysisDetailsPageIT {
 
 	@Test
 	public void testPageSetUp() throws URISyntaxException, IOException {
+		logger.debug("Testing 'Analysis Details Page'");
 		addOutputFile();
 
 		LoginPage.loginAsAdmin(driver);
@@ -78,9 +79,11 @@ public class AnalysisDetailsPageIT {
 	}
 
 	private void addOutputFile() throws URISyntaxException, IOException {
+		String filePath = "/tmp/snp_tree_28329923473842346785384sd2s.tree";
+		logger.debug("Testing 'Analysis Details Page' - adding file [" + filePath + "]");
 		Path sequenceFilePathReal = Paths
 				.get(AnalysisDetailsPageIT.class.getResource("snp_tree.tree").toURI());
-		Files.copy(sequenceFilePathReal, Paths.get("/tmp/snp_tree_28329923473842346785384sd2s.tree"),
+		Files.copy(sequenceFilePathReal, Paths.get(filePath),
 				StandardCopyOption.REPLACE_EXISTING);
 
 	}
