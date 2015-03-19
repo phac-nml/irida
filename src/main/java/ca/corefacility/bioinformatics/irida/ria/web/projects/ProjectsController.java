@@ -116,8 +116,11 @@ public class ProjectsController {
 	 * currently logged in user.
 	 * 
 	 * @param model
-	 *            the model to add attributes to for the template.
-	 *
+	 *            The model to add attributes to for the template.
+	 * @param galaxyCallbackURL
+	 *            The URL at which to call the Galaxy export tool
+	 * @param httpSession
+	 *            The user's session
 	 * @return The name of the page.
 	 */
 	@RequestMapping("/projects")

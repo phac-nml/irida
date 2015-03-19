@@ -114,8 +114,6 @@ public class AnalysisController {
 	 * @param locale
 	 *            User's locale
 	 * @return name of the details page view
-	 * @throws IOException
-	 *             If analysis files are attempted to be read, but fail.
 	 */
 	@RequestMapping(value = "/{submissionId}", produces = MediaType.TEXT_HTML_VALUE)
 	public String getDetailsPage(@PathVariable Long submissionId, Model model, Locale locale) {

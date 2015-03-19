@@ -135,6 +135,8 @@ public class ProjectSamplesController {
 	 * 		The user reading the project
 	 * @param projectId
 	 * 		The ID of the project
+	 * @param httpSession
+	 *      The user's session
 	 *
 	 * @return Name of the project samples list view
 	 */

@@ -1,14 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.oltu.oauth2.client.response.OAuthAuthzResponse;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -18,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 /**
  * Controller for handling OAuth2 authorization codes for the Galaxy exporter
  * 
- * @author Joel Thiessen <joel.thiessen@phac-aspc.gc.ca>
+ * 
  *
  */
 
