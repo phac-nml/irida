@@ -8,6 +8,7 @@
 
   <div layout:fragment="page" ng-app="irida.analysis"
        th:with="isCompleted=${#strings.equalsIgnoreCase(analysisSubmission.analysisState, 'COMPLETED')},
+        isError=${#strings.equalsIgnoreCase(analysisSubmission.analysisState, 'ERROR')},
         analysis=${analysisSubmission.getAnalysis()}">
     <main class="col-md-9 col-md-push-3" layout:fragment="main">
 
