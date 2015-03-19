@@ -9,6 +9,9 @@
 			font-size: .75em;
 			color: #d5d5d5;
 		}
+		.progress, .progress-bar {
+			height: 5px;
+		}
 	</style>
 </head>
 
@@ -16,8 +19,9 @@
 <main layout:fragment="main">
 	<div class="row">
 		<div class="col-md-12">
-			<h1 th:text="${analysisSubmission.label}"></h1>
-		</div>
+			<h1><th:block th:text="${analysisSubmission.label}"></th:block> <small th:unless="${isError}" th:text="#{generic.percent-complete(${#numbers.formatDecimal(percentComplete, 0, 0)})}"></small></h1>
+			<progressbar th:unless="${isError}" class="active" th:attr="type=${isCompleted} ?  'success' : 'striped'" th:value="${percentComplete}"></progressbar>
+	</div>
 	</div>
 	<div class="row">
 		<div class="col-md-12 ng-cloak">
