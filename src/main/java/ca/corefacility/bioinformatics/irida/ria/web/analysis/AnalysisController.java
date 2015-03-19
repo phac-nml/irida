@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -233,6 +235,12 @@ public class AnalysisController {
 					map.put("duration", String.valueOf(Math.abs(duration)));
 				}
 
+				if (!sub.getAnalysisState().equals(AnalysisState.ERROR)) {
+					float percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(
+							sub.getId());
+					map.put("percentComplete", Float.toString(percentComplete));
+				}
+
 				analysesMap.add(map);
 			}
 			response.put("analyses", analysesMap);
@@ -240,6 +248,10 @@ public class AnalysisController {
 			logger.error("Error finding workflow, ", e);
 			httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			response.put("error", ImmutableMap.of("url", "errors/not_found"));
+		} catch (NoPercentageCompleteException e) {
+			logger.error("Error getting percent complete.", e);
+		} catch (ExecutionManagerException e) {
+			logger.error("ExecutionManagerException error", e);
 		}
 		return response;
 	}
