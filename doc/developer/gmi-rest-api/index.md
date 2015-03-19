@@ -1,3 +1,7 @@
+---
+layout: "default"
+---
+
 Proposal for a Unifying REST API for GMI-Compliant Repositories
 ===============================================================
 The goal of the [Global Microbial Identifier (GMI)](http://www.globalmicrobialidentifier.org/) initiative is to create a global platform for storing whole-genome sequencing data and epidemiological metadata, and to implement an analysis platform for detecting outbreaks and emerging pathogens.
@@ -7,6 +11,9 @@ A major component of such a global resource, as envisioned by the GMI, is a repo
 First, we provide a brief review of the existing INSDC repositories, and the available methods for accessing those repositories. Then we describe, at a high-level, a hierarchical data model that follows the existing INSDC data model. We then provide a basic description of REST and some motivation for the creation of a common REST API, followed by a detailed description of the metadata, links and media types associated with the proposed data model. Finally, we show some example usage scenarios of how an analytical tool developer might interact with the common REST API.
 
 Please note that this document is a **DRAFT**. Comments, errata, discussion, and constructive criticism are welcome.
+
+* this comment becomes the toc
+{:toc}
 
 Review
 ------
