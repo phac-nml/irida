@@ -299,10 +299,8 @@ public class AssociatedProjectsController {
 	 * 
 	 * @param projectId
 	 *            The ID of the owning project
-	 * @param associatedProjectId
-	 *            The Cache ID of the {@link Project}
-	 * @param apiId
-	 *            The ID of the api this project resides on
+	 * @param projectUrl
+	 *            The URL of the remote {@link Project}
 	 * @return a Map representation of the status of adding the associated
 	 *         project.
 	 */
@@ -325,8 +323,8 @@ public class AssociatedProjectsController {
 	 * 
 	 * @param projectId
 	 *            The ID of the project to remove the association from
-	 * @param associatedProjectId
-	 *            The cache identifier for the remote element
+	 * @param projectUrl
+	 *            The url for the remote element
 	 * @return a Map representation of the status of removing the associated
 	 *         project.
 	 */
@@ -385,6 +383,8 @@ public class AssociatedProjectsController {
 	 * @param associatedProjects
 	 *            The {@link RemoteRelatedProject}s associated with the current
 	 *            project
+	 * @param api
+	 *            The Remote API to get projects for
 	 * @return
 	 */
 	private List<Map<String, String>> getRemoteAssociatedProjectsMap(List<Project> projects,
@@ -475,15 +475,8 @@ public class AssociatedProjectsController {
 	 *
 	 * @param projectList
 	 *            a List of {@link ProjectUserJoin} for the current user.
-	 * @param draw
-	 *            property sent from {@link ProjectsDataTable} as the table to
-	 *            render information to.
-	 * @param totalElements
-	 *            Total number of elements that could go into the table.
-	 * @param sortColumn
-	 *            Column to sort by.
-	 * @param sortDirection
-	 *            Direction to sort the column
+	 * @param relatedProjectJoins
+	 *            The current related projects
 	 * @return Map containing the information to put into the
 	 *         {@link ProjectsDataTable}
 	 */
