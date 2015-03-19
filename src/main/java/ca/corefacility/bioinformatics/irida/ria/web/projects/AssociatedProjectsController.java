@@ -76,8 +76,6 @@ public class AssociatedProjectsController {
 
 	private final Formatter<Date> dateFormatter;
 
-	private RemoteObjectCache<Project> remoteProjectCache;
-
 	@Autowired
 	public AssociatedProjectsController(RemoteRelatedProjectService remoteRelatedProjectService,
 			ProjectService projectService, ProjectControllerUtils projectControllerUtils, UserService userService,
@@ -90,7 +88,6 @@ public class AssociatedProjectsController {
 		this.userService = userService;
 		this.apiService = apiService;
 		this.projectRemoteService = projectRemoteService;
-		this.remoteProjectCache = remoteProjectCache;
 		this.sampleService = sampleService;
 		dateFormatter = new DateFormatter();
 	}
@@ -315,11 +312,10 @@ public class AssociatedProjectsController {
 	@RequestMapping(value = "/{projectId}/associated/remote", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, String> addRemoteAssociatedProject(@PathVariable Long projectId,
-			@RequestParam Integer associatedProjectId, @RequestParam Long apiId) {
+			@RequestParam String projectUrl) {
 		Project project = projectService.read(projectId);
-		RemoteAPI remoteAPI = apiService.read(apiId);
-		CacheObject<Project> cacheObject = remoteProjectCache.readResource(associatedProjectId);
-		Project readResource = cacheObject.getResource();
+		RemoteAPI remoteAPI = apiService.getRemoteAPIForUrl(projectUrl);
+		Project readResource = projectRemoteService.read(projectUrl, remoteAPI);
 
 		Link selfLink = readResource.getLink(Link.REL_SELF);
 		RemoteRelatedProject remoteRelatedProject = new RemoteRelatedProject(project, remoteAPI,
@@ -339,17 +335,14 @@ public class AssociatedProjectsController {
 	 * @return a Map representation of the status of removing the associated
 	 *         project.
 	 */
-	@RequestMapping(value = "/{projectId}/associated/remote/{associatedProjectId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{projectId}/associated/remote/remove", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, String> removeRemoteAssociatedProject(@PathVariable Long projectId,
-			@PathVariable Integer associatedProjectId) {
+			@RequestParam String projectUrl) {
 		Project project = projectService.read(projectId);
-		CacheObject<Project> cacheObject = remoteProjectCache.readResource(associatedProjectId);
-		Project readResource = cacheObject.getResource();
 
-		Link selfLink = readResource.getLink(Link.REL_SELF);
 		RemoteRelatedProject remoteRelatedProjectForProjectAndURI = remoteRelatedProjectService
-				.getRemoteRelatedProjectForProjectAndURI(project, selfLink.getHref());
+				.getRemoteRelatedProjectForProjectAndURI(project, projectUrl);
 		remoteRelatedProjectService.delete(remoteRelatedProjectForProjectAndURI.getId());
 
 		return ImmutableMap.of("result", "success");
@@ -411,10 +404,9 @@ public class AssociatedProjectsController {
 
 		for (Project project : projects) {
 			Map<String, String> pmap = new HashMap<>();
-			Integer remoteId = remoteProjectCache.addResource(project, api);
 
 			pmap.put("id", project.getId().toString());
-			pmap.put("remoteId", remoteId.toString());
+			pmap.put("selfRel", project.getLink(Link.REL_SELF).getHref());
 			pmap.put("name", project.getName());
 			pmap.put("organism", project.getOrganism());
 			pmap.put("createdDate", dateFormatter.print(project.getCreatedDate(), LocaleContextHolder.getLocale()));

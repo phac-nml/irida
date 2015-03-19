@@ -148,9 +148,7 @@
 					<tbody cg-busy="filterPromise">
 					<tr class="associated-project-row" ng-repeat="project in remoteAssociated | filter:filterCriteria">
 						<td class="project-id">{{project.id}}</td>
-						<td class="project-name">
-                            <a href="#" th:href="@{/projects/remote/} + '{{project.remoteId}}'">{{project.name}}</a>
-                        </td>
+						<td class="project-name">{{project.name}}</td>
 						<td>{{project.organism}}</td>
                         <td>{{project.createdDate}}</td>
 						<td>
@@ -208,8 +206,8 @@
 				return base.customPOST(params, "remote/");
 			};
 			
-			self.removeRemoteAssociatedStatus = function (remoteProjectId) {
-				return base.customDELETE("remote/"+remoteProjectId);
+			self.removeRemoteAssociatedStatus = function (params) {
+			    return base.customPOST(params, "remote/remove");
 			};
 		}
 
@@ -387,7 +385,7 @@
 			var titleElem = angular.element(".navbar-sm li.active span"),
 					titleVal = parseInt(titleElem.html());
 			if (project.associated) {
-				AssociatedService.removeRemoteAssociatedStatus(project.remoteId).then(function (data) {
+				AssociatedService.removeRemoteAssociatedStatus({projectUrl: project.selfRel}).then(function (data) {
 					if (data.result === 'success') {
 						delete project.associated;
 						notySuccess(/*[[#{project.associated.removed}]]*/ "Associated project removed.");
@@ -398,7 +396,7 @@
 				});
 			}
 			else {
-				AssociatedService.addRemoteAssociatedProject({associatedProjectId: project.remoteId, apiId: $scope.apiSelection}).then(function (data) {
+				AssociatedService.addRemoteAssociatedProject({projectUrl: project.selfRel}).then(function (data) {
 					if (data.result === 'success') {
 						project.associated = 'associated';
 						notySuccess(/*[[#{project.associated.added}]]*/ "Associated project added.");
