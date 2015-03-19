@@ -44,6 +44,8 @@ public class AssociatedProjectsEditPageIT {
 
 	AssociatedProjectEditPage page;
 
+	private static final Long projectId = 1l;
+
 	private WebDriver driver;
 	private static final List<Long> ASSOCIATED_PROJECTS = Lists.newArrayList(2l, 3l, 5l);
 
@@ -65,6 +67,7 @@ public class AssociatedProjectsEditPageIT {
 
 	@Test
 	public void hasTheCorrectProjectsDisplayed() {
+		page.goTo(projectId);
 		logger.debug("Testing: hasTheCorrectProjectsDisplayed");
 		List<String> projectsDiv = page.getProjects();
 		assertEquals("Has the correct number of projects", 4, projectsDiv.size());
@@ -74,6 +77,7 @@ public class AssociatedProjectsEditPageIT {
 
 	@Test
 	public void hasInitialAssocaitedProjects() {
+		page.goTo(projectId);
 		logger.debug("Testing: hasTheCorrectProjectsDisplayed");
 		List<String> projectsDiv = page.getAssociatedProjects();
 		assertEquals("Has the correct number of associated projects", 3, projectsDiv.size());
@@ -84,6 +88,7 @@ public class AssociatedProjectsEditPageIT {
 
 	@Test
 	public void testAddAssociatedProject() {
+		page.goTo(projectId);
 		logger.debug("Testing: testAddAssociatedProject");
 		page.clickAssociatedButton(4l);
 		page.checkNotyStatus("success");
@@ -92,6 +97,7 @@ public class AssociatedProjectsEditPageIT {
 
 	@Test
 	public void testRemoveAssociatedProject() {
+		page.goTo(projectId);
 		logger.debug("Testing: testAddAssociatedProject");
 		page.clickAssociatedButton(2l);
 		page.checkNotyStatus("success");
