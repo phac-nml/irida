@@ -12,5 +12,4 @@
 	<include file="workflow-provenance.xml" relativeToChangelogFile="true"/>
 	<include file="analysis-assembly-annotation.xml" relativeToChangelogFile="true"/>
 	<include file="fix-project-referencefile-fk.xml" relativeToChangelogFile="true"/>
-	<include file="remove-snapshots.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
