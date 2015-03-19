@@ -51,15 +51,13 @@ import com.google.common.collect.ImmutableMap;
 @RequestMapping("/analysis")
 public class AnalysisController {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisController.class);
-
 	// PAGES
+	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap.of(AnalysisType.PHYLOGENOMICS, "tree");
 	private static final String REDIRECT_ERROR = "redirect:errors/not_found";
 	private static final String BASE = "analysis/";
-	public static final String PAGE_USER_ANALYSIS = BASE + "analyses";
 	public static final String PAGE_DETAILS_DIRECTORY = BASE + "details/";
-
+	public static final String PAGE_USER_ANALYSIS = BASE + "analyses";
 	public static final String PREVIEW_UNAVAILABLE = PAGE_DETAILS_DIRECTORY + "unavailable";
-	public static final Map<AnalysisType, String> PREVIEWS = ImmutableMap.of(AnalysisType.PHYLOGENOMICS, "tree");
 
 	/*
 	 * SERVICES
@@ -132,10 +130,9 @@ public class AnalysisController {
 			throw new EntityNotFoundException("Couldn't find workflow for submission " + submission.getId(), e);
 		}
 
-		String viewName = PREVIEW_UNAVAILABLE;
-
+		// Get the name of the workflow
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
-		logger.trace("Workflow type is " + analysisType);
+		String viewName = getViewForAnalysisType(analysisType);
 		String workflowName = messageSource.getMessage("workflow." + analysisType.toString() + ".title", null, locale);
 		model.addAttribute("workflowName", workflowName);
 
@@ -144,15 +141,9 @@ public class AnalysisController {
 		 */
 		try {
 			if (submission.getAnalysisState().equals(AnalysisState.COMPLETED)) {
-
 				if (analysisType.equals(AnalysisType.PHYLOGENOMICS)) {
-
-					model = tree(submission, model);
+					tree(submission, model);
 				}
-
-				model.addAttribute("outputFiles", submission.getAnalysis().getAnalysisOutputFiles());
-
-				viewName = getViewForAnalysisType(analysisType);
 			}
 
 		} catch (IOException e) {
@@ -178,9 +169,7 @@ public class AnalysisController {
 	 * @throws IOException
 	 *             If the tree file couldn't be read
 	 */
-	private Model tree(AnalysisSubmission submission, Model model) throws IOException {
-		assert (submission.getAnalysis().getClass().equals(AnalysisPhylogenomicsPipeline.class));
-
+	private void tree(AnalysisSubmission submission, Model model) throws IOException {
 		AnalysisPhylogenomicsPipeline analysis = (AnalysisPhylogenomicsPipeline) submission.getAnalysis();
 		AnalysisOutputFile file = analysis.getPhylogeneticTree();
 		List<String> lines = Files.readAllLines(file.getFile());
@@ -189,14 +178,7 @@ public class AnalysisController {
 
 		// inform the view to display the tree preview
 		model.addAttribute("preview", "tree");
-
-		return model;
-
 	}
-
-	// ************************************************************************************************
-	// AJAX
-	// ************************************************************************************************
 
 	/**
 	 * Get a list of analyses either for a user or an administrator
@@ -262,6 +244,10 @@ public class AnalysisController {
 		return response;
 	}
 
+	// ************************************************************************************************
+	// AJAX
+	// ************************************************************************************************
+
 	/**
 	 * Download all output files from an {@link AnalysisSubmission}
 	 *
@@ -307,7 +293,7 @@ public class AnalysisController {
 	 * @param locale
 	 * 		{@link Locale} for the current user.
 	 *
-	 * @return {@link List} containting the workflows names and ids.
+	 * @return {@link List} containing the workflows names and ids.
 	 * @throws IridaWorkflowNotFoundException
 	 */
 	private List<Map<String, String>> getAnalysisWorkflowTypes(Locale locale) throws IridaWorkflowNotFoundException {
@@ -331,7 +317,7 @@ public class AnalysisController {
 
 	/**
 	 * Get the view name for different analysis types
-	 * 
+	 *
 	 * @param type
 	 *            The {@link AnalysisType}
 	 * @return the view name to display
