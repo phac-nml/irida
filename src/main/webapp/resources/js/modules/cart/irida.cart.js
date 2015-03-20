@@ -242,7 +242,6 @@
     }
 
     function buildOauth2Request(clientID, responseType, scope, redirectURI) {
-      //Is there an URL builder I should use?
       return "?&client_id=" + clientID + "&response_type=" + responseType + "&scope=" + scope + "&redirect_uri=" + redirectURI;
     }
 
@@ -255,7 +254,6 @@
         vm.showEmailLibInput = true;
 
         if (openedByCart) {
-          CartService.clear()
           GalaxyExportService.exportFromCart(vm.name, vm.email, authToken, vm.redirectURI).then(sendSampleForm);
         }
         else {
@@ -266,6 +264,10 @@
 
     function sendSampleForm(sampleFormEntities) {
       vm.sampleFormEntities = sampleFormEntities;
+
+      if(openedByCart) {
+        CartService.clear();
+      }
 
       //$timeout is necessary because it adds a new event to the browser event queue,
       //allowing the full form to be generated before it is submitted.
