@@ -189,7 +189,7 @@ public class IridaApiNoGalaxyTestConfig {
 		}
 
 		@Override
-		public ClientResponse deleteLibraryResponse(String libraryId) {
+		public ClientResponse deleteLibraryRequest(String libraryId) {
 			throw new UnsupportedOperationException();
 		}
 	}
@@ -306,7 +306,7 @@ public class IridaApiNoGalaxyTestConfig {
 		}
 
 		@Override
-		public ClientResponse deleteHistoryResponse(String historyId) {
+		public ClientResponse deleteHistoryRequest(String historyId) {
 			throw new UnsupportedOperationException();
 		}
 
