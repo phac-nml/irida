@@ -120,7 +120,7 @@
 					<table width="100%" ng-show="ctrl.showAnalyses" class="table animate-hide" ng-table="ctrl.tableParams">
 						<tr class="analysis__state" ng-class="'analysis__state--' +ctrl.createClass(analysis.state)"
 						    ng-repeat="analysis in ctrl.analyses | analysesFilter | orderBy: ctrl.tableParams.orderBy()">
-							<td data:title="'\'' + #{analyses.state} + '\''" sortable="'state'">{{analysis.state}}
+							<td class="analysis-percent" data:title="'\'' + #{analyses.state} + '\''" sortable="'state'">{{analysis.state}}
 								<progressbar ng-if="analysis.analysisState !== 'ERROR'" value="analysis.percentComplete">{{ analysis.percentComplete | number:0 }}%</progressbar>
 							</td>
 							<td width="30%" data:title="'\'' + #{analyses.analysis-name} + '\''" sortable="'label'">
