@@ -28,6 +28,16 @@ public interface RemoteService<Type extends IridaResourceSupport & IridaThing> {
 	public Type read(String uri, RemoteAPI remoteAPI);
 
 	/**
+	 * Read individual resource at the given URI. The required {@link RemoteAPI}
+	 * will be found using the given resource URI.
+	 * 
+	 * @param uri
+	 *            The URI of the resource
+	 * @return an object of Type
+	 */
+	public Type read(String uri);
+
+	/**
 	 * List the resources available from this service
 	 *
 	 * @param uri
