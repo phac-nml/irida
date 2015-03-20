@@ -84,13 +84,13 @@
 					</li>
 				</ul>
 				<div class="cart-control-bottom">
-					<button id="go-to-pipeline-btn" href="#" th:href="@{/pipelines}" class="btn btn-primary pull-right"
+					<a id="go-to-pipeline-btn" href="#" th:href="@{/pipelines}" class="btn btn-primary pull-right"
 					        ng-hide="mainGalaxyController.inGalaxy" th:text="#{cart.btn.run}">Run Pipeline
-					</button>
-					<button id="go-to-galaxy-export-btn" href="#" ng-click="cartCtrl.exportToGalaxy()"
+					</a>
+					<a id="go-to-galaxy-export-btn" href="#" ng-click="cartCtrl.exportToGalaxy()"
 					        class="btn btn-primary pull-right"
 					        ng-show="mainGalaxyController.inGalaxy" th:text="#{cart.btn.export}">Export to Galaxy
-					</button>
+					</a>
 				</div>
 			</section>
 		</aside>
