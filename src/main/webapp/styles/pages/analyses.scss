@@ -56,6 +56,19 @@ table {
 }
 tr {
   color: slategrey;
+  .progress {
+    margin-bottom: 0;
+    border-radius: 0;
+    background: transparent;
+    border: none;
+  }
+  .progress-bar {
+    height: 2px;
+    border-bottom: 1px solide $color-grey-light;
+    color: $color-grey-darker;
+    text-align: left;
+    font-size: 1rem;
+  }
 }
 td.para-key {
   word-wrap: break-word;
