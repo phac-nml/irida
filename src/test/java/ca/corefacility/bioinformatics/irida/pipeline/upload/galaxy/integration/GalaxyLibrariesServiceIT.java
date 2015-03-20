@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
@@ -213,7 +214,7 @@ public class GalaxyLibrariesServiceIT {
 	 * 
 	 * @throws ExecutionManagerException
 	 */
-	@Test(expected = ExecutionManagerException.class)
+	@Test(expected = DeleteGalaxyObjectFailedException.class)
 	public void testDeleteLibraryFail() throws ExecutionManagerException {
 		galaxyLibrariesService.deleteLibrary("invalid");
 	}
