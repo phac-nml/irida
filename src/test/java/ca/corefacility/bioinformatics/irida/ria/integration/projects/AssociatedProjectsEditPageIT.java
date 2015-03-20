@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceCo
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiPropertyPlaceholderConfig;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.AssociatedProjectEditPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.TestUtilities;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -102,6 +103,18 @@ public class AssociatedProjectsEditPageIT {
 		page.clickAssociatedButton(2l);
 		page.checkNotyStatus("success");
 		assertFalse("Project should not be associated", isProjectAssociated(2l));
+		assertTrue("Project should be associated", isProjectAssociated(2l));
+	}
+
+	@Test
+	public void testAddRemoteAssociatedProject() {
+		RemoteApiUtilities.addRemoteApi(driver);
+		page.goTo(projectId);
+		page.viewRemoteTab();
+		page.clickAssociatedButton(4l);
+		page.checkNotyStatus("success");
+		assertTrue("Project should be associated", isProjectAssociated(4l));
+
 	}
 
 	private boolean isProjectAssociated(Long projectId) {
