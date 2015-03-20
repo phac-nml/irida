@@ -595,19 +595,19 @@ public class AnalysisSubmissionServiceImplIT {
 	}
 	
 	/**
-	 * Tests cleaning up a submission and being granted as a regular user.
+	 * Tests cleaning up a submission and failing as the owner.
 	 * @throws EntityNotFoundException 
 	 * @throws ExecutionManagerException 
 	 */
-	@Test
+	@Test(expected = AccessDeniedException.class)
 	@WithMockUser(username = "aaron", roles = "USER")
-	public void testCleanupSubmissionGrantedRegularUser() throws EntityNotFoundException, ExecutionManagerException {
+	public void testCleanupSubmissionFailOwner() throws EntityNotFoundException, ExecutionManagerException {
 		AnalysisSubmission cleanedSubmission = analysisSubmissionService.cleanupSubmission(11L);
 		assertEquals("not properly cleaned", AnalysisCleanedState.CLEANED, cleanedSubmission.getAnalysisCleanedState());
 	}
 
 	/**
-	 * Tests cleaning up a submission and being denied as a regular user.
+	 * Tests cleaning up a submission and being denied as a regular (non-owner) user.
 	 * @throws EntityNotFoundException 
 	 * @throws ExecutionManagerException 
 	 */
@@ -635,7 +635,7 @@ public class AnalysisSubmissionServiceImplIT {
 	 * @throws ExecutionManagerException 
 	 */
 	@Test(expected = IllegalStateException.class)
-	@WithMockUser(username = "aaron", roles = "USER")
+	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCleanupSubmissionFailNotCleaned() throws EntityNotFoundException, ExecutionManagerException {
 		analysisSubmissionService.cleanupSubmission(10L);
 	}
@@ -646,7 +646,7 @@ public class AnalysisSubmissionServiceImplIT {
 	 * @throws ExecutionManagerException 
 	 */
 	@Test(expected = IllegalStateException.class)
-	@WithMockUser(username = "aaron", roles = "USER")
+	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCleanupSubmissionFailCleaned() throws EntityNotFoundException, ExecutionManagerException {
 		analysisSubmissionService.cleanupSubmission(12L);
 	}

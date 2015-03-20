@@ -249,7 +249,7 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	 *             If there was an issue cleaning up files in the execution
 	 *             manager.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@Transactional
 	public AnalysisSubmission cleanupSubmission(Long id) throws EntityNotFoundException, ExecutionManagerException;
 }
