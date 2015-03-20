@@ -194,7 +194,7 @@ public class RESTProjectSamplesController {
 		 * Using ResourceAdditionalProperties<Sample> so that we can add the
 		 * number of files in the sample to the JSON entity.
 		 */
-		ResourceCollection<ResourceAdditionalProperties<Sample>> sampleResources = new ResourceCollection<>(relationships.size());
+		ResourceCollection<Sample> sampleResources = new ResourceCollection<>(relationships.size());
 
 		for (Join<Project, Sample> r : relationships) {
 			Sample sample = r.getObject();
@@ -208,7 +208,7 @@ public class RESTProjectSamplesController {
 					methodOn(RESTSampleSequenceFilesController.class).getSampleSequenceFiles(projectId, sample.getId()))
 					.withRel(RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILES));
 			sample.add(linkTo(RESTProjectsController.class).slash(projectId).withRel(REL_PROJECT));
-			sampleResources.add(resourceAdditionalProperties);
+			sampleResources.add(sample);
 		}
 
 		sampleResources
