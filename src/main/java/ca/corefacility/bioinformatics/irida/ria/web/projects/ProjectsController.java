@@ -98,6 +98,7 @@ public class ProjectsController {
 	
 	// HTTP session variable name for Galaxy callback variable
 	public static final String GALAXY_CALLBACK_VARIABLE_NAME = "galaxyExportToolCallbackURL";
+	public static final String GALAXY_CLIENT_ID_NAME = "galaxyExportToolClientID";
 
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
@@ -119,6 +120,8 @@ public class ProjectsController {
 	 *            The model to add attributes to for the template.
 	 * @param galaxyCallbackURL
 	 *            The URL at which to call the Galaxy export tool
+	 * @param galaxyClientID
+	 *            The OAuth2 client ID of the Galaxy instance to export to
 	 * @param httpSession
 	 *            The user's session
 	 * @return The name of the page.
@@ -126,13 +129,15 @@ public class ProjectsController {
 	@RequestMapping("/projects")
 	public String getProjectsPage(Model model,
 			@RequestParam(value="galaxyCallbackUrl",required=false) String galaxyCallbackURL,
+			@RequestParam(value="galaxyClientID",required=false) String galaxyClientID,
 			HttpSession httpSession) {
 		model.addAttribute("ajaxURL", "/projects/ajax/list");
 		model.addAttribute("isAdmin", false);
 
 		//External exporting functionality
-		if(galaxyCallbackURL != null) {
+		if(galaxyCallbackURL != null && galaxyClientID != null) {
 			httpSession.setAttribute(GALAXY_CALLBACK_VARIABLE_NAME, galaxyCallbackURL);
+			httpSession.setAttribute(GALAXY_CLIENT_ID_NAME, galaxyClientID);
 		}
 		
 		return LIST_PROJECTS_PAGE;

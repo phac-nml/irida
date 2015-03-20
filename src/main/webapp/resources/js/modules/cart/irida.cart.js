@@ -231,7 +231,7 @@
     vm.redirectURI = TL.BASE_URL + "galaxy/auth_code";
 
     vm.upload = function () {
-      vm.makeOauth2AuthRequest("webClient");
+      vm.makeOauth2AuthRequest(TL.galaxyClientID);
       vm.showEmailLibInput = false;
       vm.showOauthIframe = true;
     };

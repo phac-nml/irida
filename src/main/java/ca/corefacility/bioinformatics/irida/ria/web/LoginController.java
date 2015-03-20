@@ -33,12 +33,14 @@ public class LoginController extends BaseController {
 	public String showLogin(Model model,
 			@RequestParam(value = "error", required = false, defaultValue = "false") Boolean hasError,
 			@RequestParam(value="galaxyCallbackUrl",required=false) String galaxyCallbackURL,
+			@RequestParam(value="galaxyClientID",required=false) String galaxyClientID,
 			HttpSession httpSession) {
 		logger.debug("Displaying login page.");
 		
 		//External exporting functionality
-		if(galaxyCallbackURL != null) {
+		if(galaxyCallbackURL != null && galaxyClientID !=null) {
 			httpSession.setAttribute(ProjectsController.GALAXY_CALLBACK_VARIABLE_NAME, galaxyCallbackURL);
+			httpSession.setAttribute(ProjectsController.GALAXY_CLIENT_ID_NAME, galaxyClientID);
 		}
 		
 		if (isAuthenticated()) {

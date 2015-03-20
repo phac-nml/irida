@@ -22,6 +22,6 @@ public class LoginControllerTest {
 	public void testShowLoginPage() {
 		Model model = new ExtendedModelMap();
 		HttpSession ses = mock(HttpSession.class);
-		assertEquals("login", controller.showLogin(model, false, null, ses));
+		assertEquals("login", controller.showLogin(model, false, null,null, ses));
 	}
 }
