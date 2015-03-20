@@ -244,7 +244,7 @@
      * @param getLocal Load local samples
      * @param getAssociated Load associated samples
      */
-    svc.loadSamples = function (getLocal, getAssociated) {
+    svc.loadSamples = function (getLocal, getAssociated, getRemote) {
       var samplePromises = [];
       svc.samples = [];
 
@@ -253,6 +253,9 @@
       }
       if (getAssociated) {
         samplePromises.push(getAssociatedSamples());
+      }
+      if(getRemote){
+          samplePromises.push(getAssociatedSamples());
       }
 
       return $q.all(samplePromises).then(function (response) {
@@ -325,6 +328,13 @@
       return base.customGET('associated/samples').then(function (data) {
         return data.samples;
       });
+    }
+
+    function getAssociatedSamples(f) {
+        _.extend(svc.filter, f || {});
+        return base.customGET('associated/remote/samples').then(function (data) {
+            return data.samples;
+        });
     }
   }
 
@@ -498,9 +508,10 @@
     //set the initial display options
     vm.displayLocal = true;
     vm.displayAssociated = false;
+    vm.displayRemote = false;
 
     vm.displaySamples = function () {
-      SamplesService.loadSamples(vm.displayLocal, vm.displayAssociated);
+      SamplesService.loadSamples(vm.displayLocal, vm.displayAssociated, vm.displayRemote);
     };
 
     $rootScope.$on("SAMPLE_CONTENT_MODIFIED", function () {
