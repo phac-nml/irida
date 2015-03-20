@@ -48,6 +48,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteRelatedProjectService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -69,6 +70,7 @@ public class AssociatedProjectsController {
 	private final RemoteAPIService apiService;
 	private final UserService userService;
 	private final ProjectRemoteService projectRemoteService;
+	private SampleRemoteService sampleRemoteService;
 
 	private final SampleService sampleService;
 
@@ -77,7 +79,7 @@ public class AssociatedProjectsController {
 	@Autowired
 	public AssociatedProjectsController(RemoteRelatedProjectService remoteRelatedProjectService,
 			ProjectService projectService, ProjectControllerUtils projectControllerUtils, UserService userService,
-			RemoteAPIService apiService, ProjectRemoteService projectRemoteService, SampleService sampleService) {
+			RemoteAPIService apiService, ProjectRemoteService projectRemoteService, SampleService sampleService, SampleRemoteService sampleRemoteService) {
 
 		this.remoteRelatedProjectService = remoteRelatedProjectService;
 		this.projectService = projectService;
@@ -86,6 +88,7 @@ public class AssociatedProjectsController {
 		this.apiService = apiService;
 		this.projectRemoteService = projectRemoteService;
 		this.sampleService = sampleService;
+		this.sampleRemoteService = sampleRemoteService;
 		dateFormatter = new DateFormatter();
 	}
 
@@ -368,6 +371,28 @@ public class AssociatedProjectsController {
 					.map((j) -> ProjectSamplesController.getSampleMap(j.getObject(), j.getSubject(),
 							ProjectSamplesController.SampleType.ASSOCIATED, j.getObject().getId()))
 					.collect(Collectors.toList());
+
+			sampleList.addAll(collect);
+		}
+
+		return ImmutableMap.of("samples", sampleList);
+	}
+
+	@RequestMapping(value = "/{projectId}/associated/remote/samples")
+	public Map<String, Object> getRemoteAssociatedSamplesForProject(@PathVariable Long projectId) {
+		Project project = projectService.read(projectId);
+		List<RemoteRelatedProject> remoteProjectsForProject = remoteRelatedProjectService
+				.getRemoteProjectsForProject(project);
+
+		List<Map<String, Object>> sampleList = new ArrayList<>();
+		for (RemoteRelatedProject rrp : remoteProjectsForProject) {
+			Project read = projectRemoteService.read(rrp);
+			List<Sample> samplesForProject = sampleRemoteService.getSamplesForProject(read);
+
+			List<Map<String, Object>> collect = samplesForProject
+					.stream()
+					.map((s) -> ProjectSamplesController.getSampleMap(s, read,
+							ProjectSamplesController.SampleType.REMOTE, s.getId())).collect(Collectors.toList());
 
 			sampleList.addAll(collect);
 		}
