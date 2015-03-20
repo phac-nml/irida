@@ -619,6 +619,9 @@ public class ProjectSamplesController {
 		// samples in the local project
 		LOCAL,
 		// samples in associated projects
-		ASSOCIATED;
+		ASSOCIATED,
+		// samples in remote projects
+		REMOTE;
+		
 	}
 }
