@@ -103,7 +103,6 @@ public class AssociatedProjectsEditPageIT {
 		page.clickAssociatedButton(2l);
 		page.checkNotyStatus("success");
 		assertFalse("Project should not be associated", isProjectAssociated(2l));
-		assertTrue("Project should be associated", isProjectAssociated(2l));
 	}
 
 	@Test
