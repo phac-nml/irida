@@ -20,7 +20,7 @@
 	</div>
 
 	<div tabset="">
-		<div tab="" th:attr="heading=#{project.associated.local.tab}">
+		<div id="local-tab" tab="" th:attr="heading=#{project.associated.local.tab}">
 			<div ng-controller="AssociatedTableCtrl">
 				<div class="form-inline">
 					<button id="filterBtn" class="btn btn-info"
@@ -102,7 +102,7 @@
 				</div>
 			</div>
 		</div>
-		<div tab="" th:attr="heading=#{project.associated.remote.tab}">
+		<div id="remote-tab" tab="" th:attr="heading=#{project.associated.remote.tab}">
 			<div th:unless="${#lists.isEmpty(apis)}" class="panel panel-default" ng-controller="RemoteAssociatedCtrl">
                  <button id="filterBtn" class="btn btn-info"
                         ng-click="filter.isCollapsed = !filter.isCollapsed"
