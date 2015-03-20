@@ -20,7 +20,9 @@ import java.util.concurrent.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteLibraryFailedException;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 
@@ -30,6 +32,7 @@ import com.github.jmchilton.blend4j.galaxy.beans.GalaxyObject;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
 import com.github.jmchilton.blend4j.galaxy.beans.LibraryDataset;
+import com.sun.jersey.api.client.ClientResponse;
 
 /**
  * A service class for dealing with Galaxy libraries.
@@ -189,5 +192,24 @@ public class GalaxyLibrariesService {
 		}
 
 		return datasetLibraryIdsMap;
+	}
+	
+	/**
+	 * Deletes the Galaxy library with the given id.
+	 * 
+	 * @param libraryId
+	 *            The id of the library to delete.
+	 * @throws ExecutionManagerException
+	 */
+	public void deleteLibrary(String libraryId) throws ExecutionManagerException {
+		try {
+			ClientResponse response = librariesClient.deleteLibraryRequest(libraryId);
+			if (!ClientResponse.Status.OK.equals(response.getClientResponseStatus())) {
+				throw new DeleteLibraryFailedException("Could not delete library with id " + libraryId + ", status="
+						+ response.getClientResponseStatus() + ", content=" + response.getEntity(String.class));
+			}
+		} catch (RuntimeException e) {
+			throw new ExecutionManagerException(e);
+		}
 	}
 }
