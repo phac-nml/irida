@@ -15,7 +15,7 @@
     <aside class="col-md-3 col-md-pull-9 visible-md visible-lg">
       <div class="sidebar">
         <div class="sidebar__heading" th:classappend="${'analysis__alert--' + #strings.toLowerCase(analysisSubmission.analysisState)}">
-          <h2 th:text="${analysisSubmission.getLabel()}">__NAME__</h2>
+          <h2 th:text="#{analysis.sidebar.details}">__NAME__</h2>
         </div>
         <div class="sidebar__body">
           <div class="sidebar__item">
@@ -24,13 +24,6 @@
             </div>
             <div th:text="#{iridaThing.id}">_ID_</div>
             <div class="sidebar__value" th:text="${analysisSubmission.getId()}"></div>
-          </div>
-          <div class="sidebar__item">
-            <div class="sidebar__icon">
-              <i class="fa fa-tag"></i>
-            </div>
-            <div th:text="#{analysis.details.name}">_NAME_</div>
-            <div class="sidebar__value" th:text="${analysisSubmission.name}"></div>
           </div>
           <div class="sidebar__item">
             <div class="sidebar__icon">
@@ -65,7 +58,7 @@
             <div class="sidebar__icon">
               <i class="fa fa-fw fa-file-o"></i>
             </div>
-            <div th:text="${file.label}"></div>
+            <div th:text="${file.getLabel()}"></div>
           </div>
           <div class="sidebar__item">
             <button class="btn btn-primary btn-sm btn-block" data:ng-click="'fileDownloadController.getZipFile(\'' + ${analysisSubmission.getId()} +'\')'">
