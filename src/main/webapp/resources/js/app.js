@@ -16,7 +16,7 @@
     var vm = this;
 
     //A page is in Galaxy if it's in an iframe and IRIDA was accessed from Galaxy
-    vm.inGalaxy = inIframe() && TL.galaxy
+    vm.inGalaxy = inIframe() && TL.galaxy;
 
     function inIframe() {
       try {

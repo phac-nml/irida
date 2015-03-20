@@ -16,9 +16,10 @@
 <body>
 <th:block layout:fragment="content">
 	<div style="height: 100%;">
-		<div style="height: 100%;" class="st-container" ng-class="{'cart-open':cart.show}">
+		<div style="height: 100%;" class="st-container" ng-class="{'cart-open':cart.show}"
+		     ng-controller="MainGalaxyController as mainGalaxyController">
 			<div class="st-content">
-				<div class="st-content-inner" ng-controller="MainGalaxyController as mainGalaxyController">
+				<div class="st-content-inner">
 					<nav th:replace="template/bootstrap :: #topnav"></nav>
 					<div ng-controller="BreadcrumbController as breadcrumb" class="breadcrumbs">
 						<div class="container ng-cloak">
@@ -82,12 +83,15 @@
 						</ul>
 					</li>
 				</ul>
-				<a id="go-to-pipeline-btn" href="#" th:href="@{/pipelines}" class="btn btn-primary pull-right"
-				   th:text="#{cart.btn.run}">Run Pipeline
-				</a>
-				<a id="go-to-pipeline-btn" href="#" ng-click="cartCtrl.exportToGalaxy()" class="btn btn-primary pull-right"
-				   th:text="#{cart.btn.export}">Export to Galaxy
-				</a>
+				<div class="cart-control-bottom">
+					<button id="go-to-pipeline-btn" href="#" th:href="@{/pipelines}" class="btn btn-primary pull-right"
+					        ng-hide="mainGalaxyController.inGalaxy" th:text="#{cart.btn.run}">Run Pipeline
+					</button>
+					<button id="go-to-galaxy-export-btn" href="#" ng-click="cartCtrl.exportToGalaxy()"
+					        class="btn btn-primary pull-right"
+					        ng-show="mainGalaxyController.inGalaxy" th:text="#{cart.btn.export}">Export to Galaxy
+					</button>
+				</div>
 			</section>
 		</aside>
 	</script>
@@ -126,7 +130,7 @@
 					"last" : /*[[#{table.last}]]*/ 'Last'
 				}
 			},
-			galaxy : /*[[${#httpSession.getAttribute('galaxyExportToolCallbackURL')}]]*/ false
+			galaxy: /*[[${#httpSession.getAttribute('galaxyExportToolCallbackURL')}!= null]]*/ false
 		};
 	</script>
 

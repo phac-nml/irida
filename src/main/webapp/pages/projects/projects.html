@@ -10,7 +10,7 @@
 <body>
 <div layout:fragment="page">
     <main class="col-md-12" role="main" property="mainContentOfPage">
-        <h1><span th:text="#{projects.title}">Projects</span><a ng:hide="mainGalaxyController.inGalaxy" th:href="@{/projects/new}" href="/projects/new" class="btn btn-default pull-right"  id="newProjectBtn"><span class="fa fa-fw fa-plus"></span>&nbsp;<span th:text="#{projects.btb.create-project}">Create New Project</span></a></h1>
+        <h1><span th:text="#{projects.title}">Projects</span><a ng-hide="mainGalaxyController.inGalaxy" th:href="@{/projects/new}" href="/projects/new" class="btn btn-default pull-right"  id="newProjectBtn"><span class="fa fa-fw fa-plus"></span>&nbsp;<span th:text="#{projects.btb.create-project}">Create New Project</span></a></h1>
         <table id="projectsTable" class="table table-hover">
             <thead>
             <tr role="row" th:inline="text">
