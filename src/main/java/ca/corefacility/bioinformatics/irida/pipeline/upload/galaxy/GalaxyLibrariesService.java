@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteLibraryFailedException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.Uploader.DataStorage;
 
@@ -205,7 +205,7 @@ public class GalaxyLibrariesService {
 		try {
 			ClientResponse response = librariesClient.deleteLibraryRequest(libraryId);
 			if (!ClientResponse.Status.OK.equals(response.getClientResponseStatus())) {
-				throw new DeleteLibraryFailedException("Could not delete library with id " + libraryId + ", status="
+				throw new DeleteGalaxyObjectFailedException("Could not delete library with id " + libraryId + ", status="
 						+ response.getClientResponseStatus() + ", content=" + response.getEntity(String.class));
 			}
 		} catch (RuntimeException e) {
