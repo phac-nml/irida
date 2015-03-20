@@ -65,7 +65,7 @@
             <div class="sidebar__icon">
               <i class="fa fa-fw fa-file-o"></i>
             </div>
-            <div th:text="${file.label}"></div>
+            <div th:text="${file.getLabel()}"></div>
           </div>
           <div class="sidebar__item">
             <button class="btn btn-primary btn-sm btn-block" data:ng-click="'fileDownloadController.getZipFile(\'' + ${analysisSubmission.getId()} +'\')'">
