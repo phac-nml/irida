@@ -16,6 +16,7 @@ import org.springframework.hateoas.Link;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.SequenceFileRemoteService;
 
@@ -24,11 +25,13 @@ import com.google.common.collect.Lists;
 public class SequenceFileRemoteServiceImplTest {
 	SequenceFileRemoteService service;
 	SequenceFileRemoteRepository repository;
+	RemoteAPIRepository apiRepo;
 
 	@Before
 	public void setUp() {
 		repository = mock(SequenceFileRemoteRepository.class);
-		service = new SequenceFileRemoteServiceImpl(repository);
+		apiRepo = mock(RemoteAPIRepository.class);
+		service = new SequenceFileRemoteServiceImpl(repository, apiRepo);
 	}
 
 	@Test
@@ -36,7 +39,7 @@ public class SequenceFileRemoteServiceImplTest {
 		String seqFilesHref = "http://somewhere/projects/1/samples/2/sequencefiles";
 		RemoteAPI api = new RemoteAPI();
 		Sample sample = new Sample();
-		sample.add(new Link(seqFilesHref,SequenceFileRemoteServiceImpl.SAMPLE_SEQUENCE_FILES_REL));
+		sample.add(new Link(seqFilesHref, SequenceFileRemoteServiceImpl.SAMPLE_SEQUENCE_FILES_REL));
 
 		sample.setRemoteAPI(api);
 
@@ -55,7 +58,7 @@ public class SequenceFileRemoteServiceImplTest {
 		RemoteAPI api = new RemoteAPI();
 		SequenceFile sequenceFile = new SequenceFile();
 		sequenceFile.setRemoteAPI(api);
-		sequenceFile.add(new Link(seqFilesHref,Link.REL_SELF));
+		sequenceFile.add(new Link(seqFilesHref, Link.REL_SELF));
 
 		Path returned = Paths.get("/");
 		when(repository.downloadRemoteSequenceFile(sequenceFile, api)).thenReturn(returned);

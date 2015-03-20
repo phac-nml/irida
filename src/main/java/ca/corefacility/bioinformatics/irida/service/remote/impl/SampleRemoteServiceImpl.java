@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SampleRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.remote.SampleRemoteService;
 
@@ -29,8 +30,8 @@ public class SampleRemoteServiceImpl extends RemoteServiceImpl<Sample> implement
 	public static final String SAMPLES_CACHE_NAME = "samplesForProject";
 
 	@Autowired
-	public SampleRemoteServiceImpl(SampleRemoteRepository sampleRemoteRepository) {
-		super(sampleRemoteRepository);
+	public SampleRemoteServiceImpl(SampleRemoteRepository sampleRemoteRepository, RemoteAPIRepository apiRepository) {
+		super(sampleRemoteRepository, apiRepository);
 	}
 
 	@Override
